@@ -158,9 +158,7 @@ public:
 
 	// - undoes the action (if canUndo()==curYes && prepareForUndo was true)
 	// - if channel is passed, restores the selection positions from before the action executed if a channel was given to doAction
-	// - note, willResize includes not only changing the length of the data, but also moving data into undo pools and such
-	// 	// ??? when/if this is private don't have default parameters
-	void undoAction(CSoundPlayerChannel *channel=NULL,bool willResize=true);
+	void undoAction(CSoundPlayerChannel *channel=NULL);
 
 
 	// this CPoolFile object needs to be instantiated at startup and destroyed at
@@ -247,6 +245,7 @@ private:
 
 
 	CActionSound actionSound;		// the CActionSound this action was constructed with
+	bool willResize;
 	bool done;				// true if this action has already been done
 
 	// members used to keep track of undo backup information

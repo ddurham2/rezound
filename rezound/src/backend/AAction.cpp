@@ -172,6 +172,7 @@ AAction::AAction(const CActionSound &_actionSound) :
 	tempAudioPoolKey2(-1),
 
 	actionSound(_actionSound),
+	willResize(false),
 	done(false),
 	oldSelectStart(NIL_SAMPLE_POS),
 	oldSelectStop(NIL_SAMPLE_POS),
@@ -205,7 +206,7 @@ bool AAction::doesWarrantSaving() const
 	return true; // by default
 }
 
-bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool willResize,bool crossfadeEdgesIsApplicable)
+bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _willResize,bool crossfadeEdgesIsApplicable)
 {
 	if(done)
 		throw(runtime_error(string(__func__)+" -- action has already been done"));
@@ -215,8 +216,10 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool wil
 	origIsModified=actionSound.sound->isModified();
 	actionSound.sound->setIsModified(actionSound.sound->isModified() || doesWarrantSaving());
 
+	willResize=_willResize;
+
 	// even though the AAction derived class might not resize the sound, we will if crossfading is to be done
-	willResize|=actionSound.doCrossfadeEdges!=cetNone;
+	willResize|= (actionSound.doCrossfadeEdges!=cetNone && crossfadeEdgesIsApplicable);
 
 	if(willResize)
 		actionSound.sound->lockForResize();
@@ -310,14 +313,12 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool wil
 
 // ??? probably need to do what we can to be able to redo the action
 
-void AAction::undoAction(CSoundPlayerChannel *channel,bool willResize)
+void AAction::undoAction(CSoundPlayerChannel *channel)
 {
 	if(!done)
 		throw(runtime_error(string(__func__)+" -- action has not yet been done"));
 
-	// even though the AAction derived class might not resize the sound, we will if crossfading is to be done
-	willResize|=actionSound.doCrossfadeEdges!=cetNone;
-
+	// willResize is set from doAction, and it's needed value should be consistant with the way the action will be undo
 	if(willResize)
 		actionSound.sound->lockForResize();
 	else

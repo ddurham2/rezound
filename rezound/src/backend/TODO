@@ -93,6 +93,10 @@
 		- or the backend could have a wrapper around AAction that called AAction's current implementation with with a single region but grouped all of these into a single undo/redo unit (probably rename then current AAction to ASubAction or APartialAction and create a new AAction which created one of these for each region)
 			- in either case problems would arise with actions that used two selected regions to do a single action
 
+	- something to clean up:
+		- the parameters which are given to AAction's constructor and doAction are somewhat arbirary in which ones are where
+		- possibly I should just give all of them to the constructor or all to the doAction method, except maybe the channel
+		- or I could decide which ones logically go where and for what reason
 
 
 
