@@ -36,9 +36,10 @@
 
 #define DOT string(CNestedDataFile::delimChar)
 
-// one of ENABLE_OSS, or ENABLE_PORTAUDIO will be defined
-#include "CPortAudioSoundPlayer.h"
+// one of ENABLE_OSS, ENABLE_PORTAUDIO or ENABLE_JACK will be defined
 #include "COSSSoundPlayer.h"
+#include "CPortAudioSoundPlayer.h"
+#include "CJACKSoundPlayer.h"
 static ASoundPlayer *soundPlayer=NULL;
 
 
@@ -192,18 +193,35 @@ bool initializeBackend(ASoundPlayer *&_soundPlayer,int argc,char *argv[])
 			throw runtime_error(string(__func__)+" -- DesiredOutputBufferSize in "+registryFilename+" must be a power of 2 and >= than 256");
 
 
-#if defined(ENABLE_PORTAUDIO)
-		if(gSettingsRegistry->keyExists("PortAudioOutputDevice"))
-			gPortAudioOutputDevice= atoi(gSettingsRegistry->getValue("PortAudioOutputDevice").c_str());
-
-		if(gSettingsRegistry->keyExists("PortAudioInputDevice"))
-			gPortAudioInputDevice= atoi(gSettingsRegistry->getValue("PortAudioInputDevice").c_str());
-#elif defined(ENABLE_OSS)
+#if defined(ENABLE_OSS)
 		if(gSettingsRegistry->keyExists("OSSOutputDevice"))
 			gOSSOutputDevice= gSettingsRegistry->getValue("OSSOutputDevice");
 
 		if(gSettingsRegistry->keyExists("OSSInputDevice"))
 			gOSSInputDevice= gSettingsRegistry->getValue("OSSInputDevice");
+#elif defined(ENABLE_PORTAUDIO)
+		if(gSettingsRegistry->keyExists("PortAudioOutputDevice"))
+			gPortAudioOutputDevice= atoi(gSettingsRegistry->getValue("PortAudioOutputDevice").c_str());
+
+		if(gSettingsRegistry->keyExists("PortAudioInputDevice"))
+			gPortAudioInputDevice= atoi(gSettingsRegistry->getValue("PortAudioInputDevice").c_str());
+#elif defined(ENABLE_JACK)
+		// ??? could do these with array-keys I suppose
+		for(unsigned t=0;t<MAX_CHANNELS;t++)
+		{
+			if(gSettingsRegistry->keyExists(("JACKOutputPortName"+istring(t+1)).c_str()))
+				gJACKOutputPortNames[t]=gSettingsRegistry->getValue(("JACKOutputPortName"+istring(t+1)).c_str());
+			else
+				break;
+		}
+	
+		for(unsigned t=0;t<MAX_CHANNELS;t++)
+		{
+			if(gSettingsRegistry->keyExists(("JACKInputPortName"+istring(t+1)).c_str()))
+				gJACKInputPortNames[t]=gSettingsRegistry->getValue(("JACKInputPortName"+istring(t+1)).c_str());
+			else
+				break;
+		}
 #endif
 
 
@@ -261,12 +279,33 @@ bool initializeBackend(ASoundPlayer *&_soundPlayer,int argc,char *argv[])
 
 
 		// -- 2
-		AAction::clipboards.push_back(new CNativeSoundClipboard("Native Clipboard 1",gClipboardDir+CPath::dirDelim+gClipboardFilenamePrefix+".clipboard1"));
-		AAction::clipboards.push_back(new CNativeSoundClipboard("Native Clipboard 2",gClipboardDir+CPath::dirDelim+gClipboardFilenamePrefix+".clipboard2"));
-		AAction::clipboards.push_back(new CNativeSoundClipboard("Native Clipboard 3",gClipboardDir+CPath::dirDelim+gClipboardFilenamePrefix+".clipboard3"));
-		AAction::clipboards.push_back(new CRecordSoundClipboard("Record Clipboard 1",gClipboardDir+CPath::dirDelim+gClipboardFilenamePrefix+".record1"));
-		AAction::clipboards.push_back(new CRecordSoundClipboard("Record Clipboard 2",gClipboardDir+CPath::dirDelim+gClipboardFilenamePrefix+".record2"));
-		AAction::clipboards.push_back(new CRecordSoundClipboard("Record Clipboard 3",gClipboardDir+CPath::dirDelim+gClipboardFilenamePrefix+".record3"));
+		for(unsigned t=1;t<=3;t++)
+		{
+			const string filename=gClipboardDir+CPath::dirDelim+gClipboardFilenamePrefix+".clipboard"+istring(t);
+			try
+			{
+				AAction::clipboards.push_back(new CNativeSoundClipboard("Native Clipboard "+istring(t),filename));
+			}
+			catch(exception &e)
+			{
+				Warning(e.what());
+				remove(filename.c_str());
+			}
+		}
+		for(unsigned t=1;t<=3;t++)
+		{
+			const string filename=gClipboardDir+CPath::dirDelim+gClipboardFilenamePrefix+".record"+istring(t);
+			try
+			{
+				AAction::clipboards.push_back(new CRecordSoundClipboard("Record Clipboard "+istring(t),filename));
+			}
+			catch(exception &e)
+			{
+				Warning(e.what());
+				remove(filename.c_str());
+			}
+		}
+
 
 			// make sure the global clipboard selector index is in range
 		if(gWhichClipboard>=AAction::clipboards.size())
@@ -274,10 +313,12 @@ bool initializeBackend(ASoundPlayer *&_soundPlayer,int argc,char *argv[])
 
 
 		// -- 3
-#if defined(ENABLE_PORTAUDIO)
-		_soundPlayer=soundPlayer=new CPortAudioSoundPlayer();
-#elif defined(ENABLE_OSS)
+#if defined(ENABLE_OSS)
 		_soundPlayer=soundPlayer=new COSSSoundPlayer();
+#elif defined(ENABLE_PORTAUDIO)
+		_soundPlayer=soundPlayer=new CPortAudioSoundPlayer();
+#elif defined(ENABLE_JACK)
+		_soundPlayer=soundPlayer=new CJACKSoundPlayer();
 #endif
 
 
@@ -389,12 +430,34 @@ void deinitializeBackend()
 	gSettingsRegistry->createKey("DesiredOutputBufferSize",gDesiredOutputBufferSize);
 
 
-#if defined(ENABLE_PORTAUDIO)
-	gSettingsRegistry->createKey("PortAudioOutputDevice",gPortAudioOutputDevice);
-	gSettingsRegistry->createKey("PortAudioInputDevice",gPortAudioInputDevice);
-#elif defined(ENABLE_OSS)
+#if defined(ENABLE_OSS)
 	gSettingsRegistry->createKey("OSSOutputDevice",gOSSOutputDevice);
 	gSettingsRegistry->createKey("OSSInputDevice",gOSSInputDevice);
+#elif defined(ENABLE_PORTAUDIO)
+	gSettingsRegistry->createKey("PortAudioOutputDevice",gPortAudioOutputDevice);
+	gSettingsRegistry->createKey("PortAudioInputDevice",gPortAudioInputDevice);
+#elif defined(ENABLE_JACK)
+	// ??? could do these with array-keys I suppose
+	for(unsigned t=0;t<MAX_CHANNELS;t++)
+	{
+		if(gJACKOutputPortNames[t]!="")
+			gSettingsRegistry->createKey(("JACKOutputPortName"+istring(t+1)).c_str(),gJACKOutputPortNames[t]);
+		else
+		{
+			gSettingsRegistry->removeKey(("JACKOutputPortName"+istring(t+2)).c_str());
+			break;
+		}
+	}
+	for(unsigned t=0;t<MAX_CHANNELS;t++)
+	{
+		if(gJACKInputPortNames[t]!="")
+			gSettingsRegistry->createKey(("JACKInputPortName"+istring(t+1)).c_str(),gJACKInputPortNames[t]);
+		else
+		{
+			gSettingsRegistry->removeKey(("JACKInputPortName"+istring(t+2)).c_str());
+			break;
+		}
+	}
 #endif
 
 	gSettingsRegistry->createKey("fallbackWorkDir",gFallbackWorkDir);
