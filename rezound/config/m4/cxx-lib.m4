@@ -149,7 +149,6 @@ ajv_inc$1_path="")] dnl
 [	ajv_lib$1_path=-L$withval
 	enable_$1_check="no" ], dnl
 ajv_lib$1_path="")] 
-LIBS="-l$1 $LIBS"
 LDFLAGS="$ajv_lib$1_path $LDFLAGS"
 CXXFLAGS="$ajv_inc$1_path $CXXFLAGS"
 if test "$enable_$1_check" = "yes"; then
@@ -203,5 +202,7 @@ EOF
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ])]
 	fi
+else
+	LIBS="-l$1 $LIBS"
 fi
 )
