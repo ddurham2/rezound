@@ -40,7 +40,7 @@ void ASoundPlayer::initialize()
 
 void ASoundPlayer::deinitialize()
 {
-	killAll();
+	stopAll();
 }
 
 CSoundPlayerChannel *ASoundPlayer::newSoundPlayerChannel(CSound *sound)
@@ -56,7 +56,7 @@ void ASoundPlayer::addSoundPlayerChannel(CSoundPlayerChannel *soundPlayerChannel
 
 void ASoundPlayer::removeSoundPlayerChannel(CSoundPlayerChannel *soundPlayerChannel)
 {
-	soundPlayerChannel->kill();
+	soundPlayerChannel->stop();
 	
 	set<CSoundPlayerChannel *>::const_iterator i=soundPlayerChannels.find(soundPlayerChannel);
 	if(i!=soundPlayerChannels.end())
@@ -74,10 +74,10 @@ void ASoundPlayer::mixSoundPlayerChannels(const unsigned nChannels,sample_t * co
 		(*i)->mixOntoBuffer(nChannels,buffer,bufferSize);
 }
 
-void ASoundPlayer::killAll()
+void ASoundPlayer::stopAll()
 {
 	for(set<CSoundPlayerChannel *>::iterator i=soundPlayerChannels.begin();i!=soundPlayerChannels.end();i++)
-		(*i)->kill();
+		(*i)->stop();
 }
 
 

@@ -27,10 +27,11 @@
 class CSoundPlayerChannel;
 
 #include <CMutex.h>
+#include <CConditionVariable.h>
+#include <AThread.h>
+#include <TMemoryPipe.h>
 
 #include "CTrigger.h"
-#include "CEnvelope.h"
-
 #include "CSound_defs.h"
 class ASoundPlayer;
 
@@ -38,35 +39,28 @@ class ASoundPlayer;
 #define MAX_VOLUME_SCALAR 32767
 #define MAX_VOLUME_SCALAR_DIV 32768
 
-static CEnvelope __defaultEnvelope;
-
 class CSoundPlayerChannel
 {
 public:
-
-	explicit CSoundPlayerChannel(const CSoundPlayerChannel &src);
 	virtual ~CSoundPlayerChannel();
 
 	CSound *getSound() const;
 	CSound * const sound;
 
-	CSoundPlayerChannel &operator=(const CSoundPlayerChannel &src);
-
-	void play(bool _playLooped=false,bool _playSelectionOnly=false,CEnvelope &_envelope=__defaultEnvelope);
+	void play(bool _playLooped=false,bool _playSelectionOnly=false);
 	void pause();
 	void stop();
-	void kill();
 
 	bool isPlaying() const;
 	bool isPaused() const;
 	bool isPlayingSelectionOnly() const;
 	bool isPlayingLooped() const;
 
-	void setPlaySpeed(float _playSpeed);
-	float getPlaySpeed() const;
+	void setSeekSpeed(float _seekSpeed);
+	float getSeekSpeed() const;
 
 	// really play position
-	sample_pos_t getPosition() const { return (sample_pos_t)playPosition; }
+	sample_pos_t getPosition() const { return playPosition; }
 	void setPosition(sample_pos_t newPosition);
 
 	sample_pos_t getStartPosition() const { return startPosition; }
@@ -77,11 +71,6 @@ public:
 
 	void setMute(unsigned channel,bool mute);
 	bool getMute(unsigned channel) const;
-
-	// value = 0.0 to 1.0
-	void setVolume(float value);
-	// value = -1.0(left) to 1.0(right)
-	void setPan(float value);
 
 	void addOnPlayTrigger(TriggerFunc triggerFunc,void *data);
 	void removeOnPlayTrigger(TriggerFunc triggerFunc,void *data);
@@ -97,29 +86,60 @@ private:
 	// - bufferSize is in sample frames
 	void mixOntoBuffer(const unsigned nChannels,sample_t * const buffer,const size_t bufferSize);
 
-	void lock() const;
-	void unlock() const;
+	CMutex prebufferPositionMutex;
+	sample_pos_t prebufferPosition;
+	bool prebufferChunk();
 
-	mutable CMutex mutex;
+	void playingHasEnded();
+
+	class CPrebufferThread : public AThread
+	{
+	public:
+		CPrebufferThread(CSoundPlayerChannel *parent);
+		void main();
+
+		CSoundPlayerChannel *parent;
+		bool kill;
+		CConditionVariable waitForPlay;
+		CMutex waitForPlayMutex;
+	} prebufferThread;
+
+	friend class CPrebufferThread;
+
+	struct RPrebufferedChunk
+	{
+		RPrebufferedChunk(unsigned channelCount);
+		virtual ~RPrebufferedChunk();
+
+		unsigned channelCount;
+		sample_t *data;
+		unsigned size; // how many sample frames are in data (does not depend on offset)
+		sample_fpos_t offset; // how many sample frames have already been used from data (should always be less than size)
+
+		sample_pos_t playPosition; // this is the play position of the first sample in this chunk
+	};
+
+	size_t prebufferedChunksIndex; // this is the index of the next chunk to use from prebufferedChunks;
+	vector<RPrebufferedChunk *> prebufferedChunks;
+	TMemoryPipe<RPrebufferedChunk *> prebufferedChunkPipe;
+
+	sample_t prevFrame[MAX_CHANNELS];
+
+	void createPrebufferedChunks();
+	void destroyPrebufferedChunks();
+
 	ASoundPlayer *player;
 	CSoundPlayerChannel(ASoundPlayer *_player,CSound *_sound);
 
 	// Playing Status and Play Positions
-	volatile bool playing,paused,playLooped,playSelectionOnly;
-	volatile sample_fpos_t playPosition;
-	float playSpeed;
+	volatile bool prebuffering,playing,paused,playLooped,playSelectionOnly;
+	sample_pos_t playPosition;
+	float seekSpeed;
+		float playSpeedForMixer; int playSpeedForChunker;
 	volatile sample_pos_t startPosition,stopPosition;
-
-	// Envelope stuff
-	CEnvelope envelope;
 
 	// Mute
 	bool muted[MAX_CHANNELS];
-
-	// Volume and Pan
-	void calcVolumeScalars();
-	volatile float volume,pan;
-	volatile int leftVolumeScalar,rightVolumeScalar; // ??? there somehow needs to be volume scalars for each channel on the output device (for now, I just map left and right to every other channel)
 
 	// Which output route to use
 	unsigned outputRoute;
@@ -129,6 +149,7 @@ private:
 	void deinit();
 	void init();
 
+	CMutex routingInfoMutex;
 	void createInitialOutputRoute();
 	void getOutputRouteParams(unsigned route,unsigned channel,unsigned &outputDevice,unsigned &outputDeviceChannel);
 

@@ -243,7 +243,7 @@ void ASoundFileManager::close(CloseTypes closeType,CLoadedSound *closeWhichSound
 		loaded->getSound()->lockForResize();
 		try
 		{
-			loaded->channel->kill(); // stop any playing
+			loaded->channel->stop();
 			loaded->getSound()->unlockForResize();
 		}
 		catch(...)

@@ -24,6 +24,7 @@
 #include <string.h>
 
 #include <stdio.h> // for fprintf
+#include <math.h> // for log
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -32,6 +33,7 @@
 #include <unistd.h>
 
 #include <sys/soundcard.h>
+
 
 #include <stdexcept>
 #include <string>
@@ -51,11 +53,12 @@
 #define OSS_PCM_FORMAT AFMT_S16_LE
 #define SAMPLE_RATE 44100
 #define CHANNELS 2
-
+		
+#define BUFFER_SIZE_FRAMES 1024							// buffer size in frames (MUST be a power of 2)
 #define BUFFER_COUNT 4
-#define BUFFER_SIZE_BYTES 4096						// buffer size in bytes
-#define BUFFER_SIZE_BYTES_LOG2 12					// log2(BUFFER_SIZE_BYTES) -- that is 2^this is BUFFER_SIZE_BYTES
-#define BUFFER_SIZE_FRAMES (BUFFER_SIZE_BYTES/(sizeof(sample_t))/CHANNELS) 	// in sample frames
+
+#define BUFFER_SIZE_BYTES (BUFFER_SIZE_FRAMES*sizeof(sample_t)*CHANNELS)	// buffer size in bytes
+#define BUFFER_SIZE_BYTES_LOG2 ((size_t)(log(BUFFER_SIZE_BYTES)/log(2.0)))	// log2(BUFFER_SIZE_BYTES) -- that is 2^this is BUFFER_SIZE_BYTES
 
 
 COSSSoundPlayer::COSSSoundPlayer() :
@@ -132,7 +135,7 @@ void COSSSoundPlayer::initialize()
 		} 
 		if (sampleRate!=SAMPLE_RATE)
 		{ 
-			fprintf(stderr,("warning: OSS used a different sample rate ("+istring(sampleRate)+") than what was asked for ("+istring(SAMPLE_RATE)+")\n").c_str());
+			fprintf(stderr,("warning: OSS used a different sample rate ("+istring(sampleRate)+") than what was asked for ("+istring(SAMPLE_RATE)+"); will have to do extra calculations to compensate\n").c_str());
 			//close(audio_fd);
 			//throw(runtime_error(string(__func__)+" -- error setting the sample rate -- the sample rate is not supported"));
 		} 

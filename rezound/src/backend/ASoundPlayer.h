@@ -68,6 +68,8 @@ public:
 	virtual void deinitialize();
 	virtual bool isInitialized() const=0;
 
+	void stopAll();
+
 	/*
 	 * These need to be implemented to know if the output device(s)
 	 * support full duplex mode or not. If not, then when ReZound
@@ -86,8 +88,6 @@ public:
 	 */
 	virtual void aboutToRecord()=0;
 	virtual void doneRecording()=0;
-
-	void killAll();
 
 	CSoundPlayerChannel *newSoundPlayerChannel(CSound *sound);
 
