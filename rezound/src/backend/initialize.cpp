@@ -337,6 +337,9 @@ static void printUsage(const string app)
 #ifdef ENABLE_OSS
 	printf("\t\toss\n");
 #endif
+#ifdef ENABLE_ALSA
+	printf("\t\talsa\n");
+#endif
 #ifdef ENABLE_JACK
 	printf("\t\tjack\n");
 #endif
