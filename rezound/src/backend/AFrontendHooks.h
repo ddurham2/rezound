@@ -153,7 +153,7 @@ public:
 		unsigned dataLength; // in frames; can be 0 for no user limit
 
 	};
-	virtual bool promptForRawParameters(RawParameters &parameters,bool showOffsetAndLengthParameters)=0;
+	virtual bool promptForRawParameters(RawParameters &parameters,bool showLoadRawParameters)=0;
 
 
 	// called when the user is saving an ogg file and compression parameters are needed

@@ -54,7 +54,9 @@ protected:
 
 private:
 
+	FXLabel *channelsCountLabel;
 	FXComboBox *channelsCountComboBox;
+	FXLabel *sampleRateLabel;
 	FXComboBox *sampleRateComboBox;
 	FXComboBox *sampleFormatComboBox;
 	FXToggleButton *byteOrderToggleButton;

@@ -342,9 +342,9 @@ bool CFrontendHooks::promptForRezSaveParameters(RezSaveParameters &parameters)
 	return rezSaveParametersDialog->show(parameters);
 }
 
-bool CFrontendHooks::promptForRawParameters(RawParameters &parameters,bool showOffsetAndLengthParameters)
+bool CFrontendHooks::promptForRawParameters(RawParameters &parameters,bool showLoadRawParameters)
 {
-	return rawDialog->show(parameters,showOffsetAndLengthParameters);
+	return rawDialog->show(parameters,showLoadRawParameters);
 }
 
 bool CFrontendHooks::promptForOggCompressionParameters(OggCompressionParameters &parameters)
