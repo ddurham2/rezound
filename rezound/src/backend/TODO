@@ -1,6 +1,10 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- Add a feature to ASoundRecorder that tells it to start when a certain threshold is hit in percent
+
+	- Need to purge waiting audio input when COSSSoundRecorder does a redo()
+
 	- in CrezSound::saveSound, copyToFile unnecessarily copies any temp pools and peak chunk pools...  thus making the saved file way too big
 		- so I should manually copy the pools... TPoolAccessor should have a method for copying pool efficiently
 
