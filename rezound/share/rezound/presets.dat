@@ -366,3 +366,53 @@ Change\ Rate
 		}
 	}
 }
+
+Change\ Amplitude\ According\ to\ a\ Curve
+{
+	Curved\ Fade\ In
+	{
+		Gain\ Curve
+		{
+			node_positions[]={"0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1"};
+			node_values[]={"0", "0.005", "0.02", "0.045", "0.08", "0.125", "0.18", "0.245", "0.32", "0.405", "0.5"};
+			scalar="2";
+		}
+
+	}
+
+	Curved\ Fade\ Out
+	{
+		Gain\ Curve
+		{
+			node_positions[]={"0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1"};
+			node_values[]={"0.5", "0.405", "0.32", "0.245", "0.18", "0.125", "0.08", "0.045", "0.02", "0.005", "0.0"};
+			scalar="2";
+		}
+
+	}
+
+	Linear\ Fade\ In
+	{
+		Gain\ Curve
+		{
+			node_positions[]={"0", "1"};
+			node_values[]={"0", "0.5"};
+			scalar="2";
+		}
+
+	}
+
+	Linear\ Fade\ Out
+	{
+		Gain\ Curve
+		{
+			node_positions[]={"0", "1"};
+			node_values[]={"0.5", "0"};
+			scalar="2";
+		}
+
+	}
+
+	names[]={"Curved Fade In", "Curved Fade Out", "Linear Fade In", "Linear Fade Out"};
+}
+
