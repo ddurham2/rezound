@@ -157,7 +157,7 @@ bool CMacroPlayer::doMacro(ASoundFileManager *soundFileManager,unsigned &count)
 
 				// it is not supposed to matter what order these are called despite where the positions may currently be
 			loadedSound->channel->setStartPosition((sample_pos_t)sample_fpos_floor(startPosition));
-			loadedSound->channel->setStopPosition((sample_pos_t)sample_fpos_floor(stopPosition));
+			loadedSound->channel->setStopPosition((sample_pos_t)sample_fpos_ceil(stopPosition));
 		}
 		
 		// retrieve the parameters for doing the action
