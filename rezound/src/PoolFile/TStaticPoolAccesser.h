@@ -27,7 +27,7 @@
 
 #include "TPoolFile.h"
 
-// ??? make the parametes const than can be
+// ??? make the parameters const than can be
 
 template <class pool_element_t,class pool_file_t> class TStaticPoolAccesser
 {
