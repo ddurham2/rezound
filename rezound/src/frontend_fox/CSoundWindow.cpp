@@ -655,7 +655,7 @@ long CSoundWindow::onBothZoomDialMinusIndClick(FXObject *sender,FXSelector sel,v
 // selection position spinners
 long CSoundWindow::onSelectStartSpinnerChange(FXObject *sender,FXSelector sel,void *ptr)
 {
-	sample_pos_t newSelectStart=loadedSound->channel->getStartPosition()+selectStartSpinner->getValue();
+	sample_fpos_t newSelectStart=(sample_fpos_t)loadedSound->channel->getStartPosition()+selectStartSpinner->getValue();
 
 
 	if(newSelectStart>=loadedSound->getSound()->getLength()-1)
@@ -663,7 +663,7 @@ long CSoundWindow::onSelectStartSpinnerChange(FXObject *sender,FXSelector sel,vo
 	if(newSelectStart<0)
 		newSelectStart=0;
 
-	loadedSound->channel->setStartPosition(newSelectStart);
+	loadedSound->channel->setStartPosition((sample_pos_t)newSelectStart);
 	selectStartSpinner->setValue(0);
 	waveView->updateFromSelectionChange(FXRezWaveView::lcpStart);
 	return 1;
@@ -671,14 +671,14 @@ long CSoundWindow::onSelectStartSpinnerChange(FXObject *sender,FXSelector sel,vo
 
 long CSoundWindow::onSelectStopSpinnerChange(FXObject *sender,FXSelector sel,void *ptr)
 {
-	sample_pos_t newSelectStop=loadedSound->channel->getStopPosition()+selectStopSpinner->getValue();
+	sample_fpos_t newSelectStop=(sample_fpos_t)loadedSound->channel->getStopPosition()+selectStopSpinner->getValue();
 
 	if(newSelectStop>=loadedSound->getSound()->getLength()-1)
 		newSelectStop=loadedSound->getSound()->getLength()-1;
 	if(newSelectStop<0)
 		newSelectStop=0;
 
-	loadedSound->channel->setStopPosition(newSelectStop);
+	loadedSound->channel->setStopPosition((sample_pos_t)newSelectStop);
 	selectStopSpinner->setValue(0);
 	waveView->updateFromSelectionChange(FXRezWaveView::lcpStop);
 	return 1;
