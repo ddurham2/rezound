@@ -46,13 +46,12 @@ public:
 
 	CActionButton(AActionFactory *_actionFactory,FXComposite* p, const FXString& text, FXIcon* ic=NULL, FXuint opts=BUTTON_NORMAL, FXint x=0, FXint y=0, FXint w=0, FXint h=0, FXint pl=DEFAULT_PAD, FXint pr=DEFAULT_PAD, FXint pt=DEFAULT_PAD, FXint pb=DEFAULT_PAD);
 
-	long onButtonClick(FXObject *sender,FXSelector sel,void *ptr);
-
+	long onMouseClick(FXObject *sender,FXSelector sel,void *ptr);
+	long onKeyClick(FXObject *sender,FXSelector sel,void *ptr);
+	
 	enum
 	{
-		ID_PRESS=FXButton::ID_LAST,	// used by mouse events
-		ID_KEY,				// used by accelerator keys
-		ID_LAST
+		ID_ACCEL_KEY=FXButton::ID_LAST
 	};
 
 protected:

@@ -196,20 +196,20 @@ void setupAccels(CMainWindow *mainWindow)
 
 
 	// edits
-	at->addAccel(MKUINT(KEY_a,CONTROLMASK) ,gEditToolbar->selectAllButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_a,CONTROLMASK) ,gEditToolbar->selectAllButton,MKUINT(CActionButton::ID_ACCEL_KEY,SEL_COMMAND));
 	
-	at->addAccel(MKUINT(KEY_c,CONTROLMASK), gEditToolbar->copyButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
-	at->addAccel(MKUINT(KEY_C,CONTROLMASK|SHIFTMASK), gEditToolbar->copyButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
-	at->addAccel(MKUINT(KEY_x,CONTROLMASK), gEditToolbar->cutButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
-	at->addAccel(MKUINT(KEY_X,CONTROLMASK|SHIFTMASK), gEditToolbar->cutButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
-	at->addAccel(MKUINT(KEY_d,CONTROLMASK), gEditToolbar->delButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
-	at->addAccel(MKUINT(KEY_D,CONTROLMASK|SHIFTMASK), gEditToolbar->delButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
-	at->addAccel(KEY_Delete, gEditToolbar->delButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
-	at->addAccel(MKUINT(KEY_Delete,SHIFTMASK), gEditToolbar->delButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
-	at->addAccel(MKUINT(KEY_r,CONTROLMASK), gEditToolbar->cropButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
-	at->addAccel(MKUINT(KEY_R,CONTROLMASK|SHIFTMASK), gEditToolbar->cropButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
-	at->addAccel(MKUINT(KEY_v,CONTROLMASK), gEditToolbar->pasteInsertButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
-	at->addAccel(MKUINT(KEY_V,CONTROLMASK|SHIFTMASK), gEditToolbar->pasteInsertButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_c,CONTROLMASK), gEditToolbar->copyButton,MKUINT(CActionButton::ID_ACCEL_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_C,CONTROLMASK|SHIFTMASK), gEditToolbar->copyButton,MKUINT(CActionButton::ID_ACCEL_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_x,CONTROLMASK), gEditToolbar->cutButton,MKUINT(CActionButton::ID_ACCEL_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_X,CONTROLMASK|SHIFTMASK), gEditToolbar->cutButton,MKUINT(CActionButton::ID_ACCEL_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_d,CONTROLMASK), gEditToolbar->delButton,MKUINT(CActionButton::ID_ACCEL_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_D,CONTROLMASK|SHIFTMASK), gEditToolbar->delButton,MKUINT(CActionButton::ID_ACCEL_KEY,SEL_COMMAND));
+	at->addAccel(KEY_Delete, gEditToolbar->delButton,MKUINT(CActionButton::ID_ACCEL_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_Delete,SHIFTMASK), gEditToolbar->delButton,MKUINT(CActionButton::ID_ACCEL_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_r,CONTROLMASK), gEditToolbar->cropButton,MKUINT(CActionButton::ID_ACCEL_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_R,CONTROLMASK|SHIFTMASK), gEditToolbar->cropButton,MKUINT(CActionButton::ID_ACCEL_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_v,CONTROLMASK), gEditToolbar->pasteInsertButton,MKUINT(CActionButton::ID_ACCEL_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_V,CONTROLMASK|SHIFTMASK), gEditToolbar->pasteInsertButton,MKUINT(CActionButton::ID_ACCEL_KEY,SEL_COMMAND));
 
 	at->addAccel(MKUINT(KEY_z,CONTROLMASK) ,gEditToolbar,MKUINT(CEditToolbar::ID_UNDO_BUTTON,SEL_COMMAND));
 }

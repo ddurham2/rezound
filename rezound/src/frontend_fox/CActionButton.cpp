@@ -32,41 +32,34 @@
 FXDEFMAP(CActionButton) CActionButtonMap[]=
 {
 	//Message_Type				ID				Message_Handler
-	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	CActionButton::ID_PRESS,	CActionButton::onButtonClick),
-	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	CActionButton::ID_PRESS,	CActionButton::onButtonClick),
-	FXMAPFUNC(SEL_COMMAND,			CActionButton::ID_KEY,		CActionButton::onButtonClick),
+	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	0,				CActionButton::onMouseClick),
+	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	0,				CActionButton::onMouseClick),
+	FXMAPFUNC(SEL_KEYRELEASE,		0,				CActionButton::onKeyClick),
+
+	FXMAPFUNC(SEL_COMMAND,			CActionButton::ID_ACCEL_KEY,	CActionButton::onKeyClick),
 };
 
 FXIMPLEMENT(CActionButton,FXButton,CActionButtonMap,ARRAYNUMBER(CActionButtonMap))
 
 CActionButton::CActionButton(AActionFactory *_actionFactory,FXComposite* p, const FXString& text, FXIcon* ic, FXuint opts, FXint x, FXint y, FXint w, FXint h, FXint pl, FXint pr, FXint pt, FXint pb) :
-	FXButton(p,text+("\t"+_actionFactory->getDescription()).c_str(),ic,this,ID_PRESS,opts,x,y,w,h,pl,pr,pt),
+	FXButton(p,text+("\t"+_actionFactory->getDescription()).c_str(),ic,NULL,0,opts,x,y,w,h,pl,pr,pt),
 	actionFactory(_actionFactory)
 {
 }
 
-long CActionButton::onButtonClick(FXObject *sender,FXSelector sel,void *ptr)
+long CActionButton::onMouseClick(FXObject *sender,FXSelector sel,void *ptr)
 {
-	// ??? I think I need to heed FXWindow's implementation of onBtnRelease because it does some stuff with grab and ungrab...
-	// right now, if you press the button, then move out of the window, and release it, it still clicks which it shouldn't probably do
-
-	if(ptr==NULL || ptr==((void *)1))
-		throw(runtime_error(string(__func__)+" -- ptr was NULL"));
+	if(!FXButton::handle(sender,sel,ptr))
+		return(0);
 
 	FXEvent *ev=((FXEvent *)ptr);
 
 	CLoadedSound *activeSound=gSoundFileManager->getActive();
 	if(activeSound)
 	{
-		CActionParameters actionParameters;
-
-		if(SELID(sel)==ID_KEY)
+		if((ev->click_button==LEFTBUTTON || ev->click_button==RIGHTBUTTON) && underCursor())
 		{
-			if(actionFactory->performAction(activeSound,&actionParameters,ev->state&SHIFTMASK,false))
-				gSoundFileManager->updateAfterEdit();
-		}
-		else if((ev->click_button==LEFTBUTTON || ev->click_button==RIGHTBUTTON) && underCursor())
-		{
+			CActionParameters actionParameters;
 			if(actionFactory->performAction(activeSound,&actionParameters,ev->state&SHIFTMASK,ev->click_button==RIGHTBUTTON))
 				gSoundFileManager->updateAfterEdit();
 		}
@@ -74,7 +67,35 @@ long CActionButton::onButtonClick(FXObject *sender,FXSelector sel,void *ptr)
 	else
 		getApp()->beep();
 
-	return(0); // since this is currently the button_release event, we have to return 0 so that FXButton will draw the button in an up state
+	return(1);
+}
+
+/*
+	This method handles either just any keypress in which case it asks 
+	the base class to handle it and depending on the return value proceeds 
+	to do the action or not...   Or it handles an accelerator key press.
+*/
+long CActionButton::onKeyClick(FXObject *sender,FXSelector sel,void *ptr)
+{
+	if(SELID(sel)!=ID_ACCEL_KEY)
+	{
+		if(!FXButton::handle(sender,sel,ptr))
+			return(0);
+	}
+
+	FXEvent *ev=((FXEvent *)ptr);
+
+	CLoadedSound *activeSound=gSoundFileManager->getActive();
+	if(activeSound)
+	{
+		CActionParameters actionParameters;
+		if(actionFactory->performAction(activeSound,&actionParameters,ev->state&SHIFTMASK,false))
+			gSoundFileManager->updateAfterEdit();
+	}
+	else
+		getApp()->beep();
+
+	return(1);
 }
 
 
