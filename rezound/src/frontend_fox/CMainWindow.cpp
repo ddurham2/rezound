@@ -145,8 +145,8 @@ CMainWindow::CMainWindow(FXApp* a) :
 		new FXButton(miscControlsFrame,"&ClrUndo",NULL,this,ID_CLEAR_UNDO_HISTORY_BUTTON,FRAME_RAISED);
 		followPlayPositionButton=new FXCheckButton(miscControlsFrame,"Follow Play Position",this,ID_FOLLOW_PLAY_POSITION_BUTTON);
 		FXPacker *t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
-			crossfadeEdgesCheckbox=new FXCheckButton(t,"Crossfade Edges",this,ID_CROSSFADE_EDGES_CHECKBOX);
-			new FXButton(t,"...",NULL,this,ID_CROSSFADE_EDGES_SETTINGS);
+			crossfadeEdgesCheckbox=new FXCheckButton(t,"Crossfade Edges\tAfter Most Actions a Crossfade can be Performed at the Start and Stop \nPositions to Give a Smoother Transition in to and out of the Modified Selection",this,ID_CROSSFADE_EDGES_CHECKBOX, CHECKBUTTON_NORMAL | LAYOUT_CENTER_Y);
+			new FXButton(t,"...\tChange Crossfade Times",NULL,this,ID_CROSSFADE_EDGES_SETTINGS, BUTTON_NORMAL & ~FRAME_THICK);
 
 	/* ??? it is not necessary to have all these data members for all the buttons */
 
