@@ -25,7 +25,6 @@
 
 AC_INIT(rezound, 0.8.3beta, [http://sourceforge.net/tracker/?atid=105056&group_id=5056])
 AC_CONFIG_AUX_DIR(config)
-# ??? AC_CONFIG_SRCDIR([config/config.h])
 AM_CONFIG_HEADER([config/config.h])
 AM_INIT_AUTOMAKE
 AC_DISABLE_SHARED	# This makes libtool only build static libs 
