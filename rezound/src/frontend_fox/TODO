@@ -80,6 +80,8 @@
 
 --- POSSIBLE THINGS TO DO ---
 
+	- A more musical friendly unit would be BPM instead of Hz for parameters like LFO frequency
+
 	- If I did every want to get rid of using reswrap, then I could have CFOXIcons go out and manually load from disk the icon files by looking in the share directory.. this would allow the user to replace the icons if they wanted and it would still avoid loading a reused icon over and over since it's abstracted in the CFOXIcon class
 
 	- like a webbrowser... if the program is already running and they run it again with a filename... just open it in the existing process... 
