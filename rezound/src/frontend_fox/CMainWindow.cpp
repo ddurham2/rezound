@@ -907,7 +907,7 @@ void CMainWindow::buildMenu(FXMenuPane *menu,const CNestedDataFile *menuLayoutFi
 	}
 
 	// if the item is a submenu item, recur for each item in it; otherwise, add as normal menu item
-	if(menuLayoutFile->keyExists(menuKey))
+	if(menuLayoutFile->keyExists(menuKey)==CNestedDataFile::ktScope)
 	{	// add as a submenu
 		FXMenuPane *submenu=NULL;
 
@@ -944,8 +944,16 @@ void CMainWindow::buildMenu(FXMenuPane *menu,const CNestedDataFile *menuLayoutFi
 		if(menuItemRegistry.find(strippedItemName)!=menuItemRegistry.end())
 		{
 			if(menuItemRegistry[strippedItemName]->getParent()!=dummymenu) // just a check
-				printf("NOTE: registered menu item '%s' was mapped more than once in layout\n",strippedItemName.c_str());
+				printf("NOTE: registered menu item '%s' was mapped more than once in layout; only the last one will be effective\n",strippedItemName.c_str());
 			menuItemRegistry[strippedItemName]->reparent(menu);
+
+			// change menu name's caption if there is an alias defined: 'origMenuName="new menu name";' in the same scope as where menuitems is defined
+			if(menuLayoutFile->keyExists(menuKey)==CNestedDataFile::ktValue) 
+			{
+				FXMenuCaption *menuItem=menuItemRegistry[strippedItemName];
+				const string alias=menuLayoutFile->getValue<string>(menuKey);
+				menuItem->setText(gettext(alias.c_str()));
+			}
 		}
 		else
 			new FXMenuCommand(menu,(itemName+" (unregistered)").c_str(),NULL,this,0);
