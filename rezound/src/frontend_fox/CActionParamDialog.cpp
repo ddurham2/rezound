@@ -31,6 +31,7 @@
 
 #include "../backend/CActionParameters.h"
 #include "../backend/CActionSound.h"
+#include "../backend/AAction.h" // for EUserMessage
 
 #include "CFOXIcons.h"
 
@@ -527,110 +528,136 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 			((FXPluginRoutingParamValue *)parameters[t].second)->setSound(actionSound->sound);
 	}
 
+reshow:
+
 	if(execute(PLACEMENT_CURSOR))
 	{
-		for(unsigned t=0;t<parameters.size();t++)
+		vector<string> addedParameters;
+		try
 		{
-			switch(parameters[t].first)
+			for(unsigned t=0;t<parameters.size();t++)
 			{
-			case ptConstant:
+				switch(parameters[t].first)
 				{
-					FXConstantParamValue *slider=(FXConstantParamValue *)parameters[t].second;
-					double ret=slider->getValue();
-
-					if(retValueConvs[t]!=NULL)
-						ret=retValueConvs[t](ret);
-
-					actionParameters->addDoubleParameter(slider->getName(),ret);
-				}
-				break;
-
-			case ptNumericText:
-				{
-					FXTextParamValue *textEntry=(FXTextParamValue *)parameters[t].second;
-					double ret=textEntry->getValue();
-
-					if(retValueConvs[t]!=NULL)
-						ret=retValueConvs[t](ret);
-
-					actionParameters->addDoubleParameter(textEntry->getName(),ret);	
-				}
-				break;
-
-			case ptStringText:
-				{
-					FXTextParamValue *textEntry=(FXTextParamValue *)parameters[t].second;
-					const string ret=textEntry->getText();
-					actionParameters->addStringParameter(textEntry->getName(),ret);	
-				}
-				break;
-
-			case ptDiskEntity:
-				{
-					FXDiskEntityParamValue *diskEntityEntry=(FXDiskEntityParamValue *)parameters[t].second;
-					const string ret=diskEntityEntry->getEntityName();
-
-					actionParameters->addStringParameter(diskEntityEntry->getName(),ret);	
-
-					if(diskEntityEntry->getEntityType()==FXDiskEntityParamValue::detAudioFilename)
-						actionParameters->addBoolParameter(diskEntityEntry->getName()+" OpenAsRaw",diskEntityEntry->getOpenAsRaw());	
-				}
-				break;
-
-			case ptComboText:
-				{
-					FXComboTextParamValue *comboTextEntry=(FXComboTextParamValue *)parameters[t].second;
-					FXint ret=comboTextEntry->getValue();
-
-					actionParameters->addUnsignedParameter(comboTextEntry->getName(),(unsigned)ret);	
-				}
-				break;
-
-			case ptCheckBox:
-				{
-					FXCheckBoxParamValue *checkBoxEntry=(FXCheckBoxParamValue *)parameters[t].second;
-					bool ret=checkBoxEntry->getValue();
-
-					actionParameters->addBoolParameter(checkBoxEntry->getName(),ret);	
-				}
-				break;
-
-			case ptGraph:
-			case ptGraphWithWaveform:
-				{
-					FXGraphParamValue *graph=(FXGraphParamValue *)parameters[t].second;
-					CGraphParamValueNodeList nodes=graph->getNodes();
-
-					if(retValueConvs[t]!=NULL)
+				case ptConstant:
 					{
-						for(size_t i=0;i<nodes.size();i++)
-							nodes[i].y=retValueConvs[t](nodes[i].y);
+						FXConstantParamValue *slider=(FXConstantParamValue *)parameters[t].second;
+						double ret=slider->getValue();
+
+						if(retValueConvs[t]!=NULL)
+							ret=retValueConvs[t](ret);
+
+						actionParameters->addDoubleParameter(slider->getName(),ret);
+						addedParameters.push_back(slider->getName());
 					}
+					break;
 
-					actionParameters->addGraphParameter(graph->getName(),nodes);
+				case ptNumericText:
+					{
+						FXTextParamValue *textEntry=(FXTextParamValue *)parameters[t].second;
+						double ret=textEntry->getValue();
+
+						if(retValueConvs[t]!=NULL)
+							ret=retValueConvs[t](ret);
+
+						actionParameters->addDoubleParameter(textEntry->getName(),ret);	
+						addedParameters.push_back(textEntry->getName());
+					}
+					break;
+
+				case ptStringText:
+					{
+						FXTextParamValue *textEntry=(FXTextParamValue *)parameters[t].second;
+						const string ret=textEntry->getText();
+						actionParameters->addStringParameter(textEntry->getName(),ret);	
+						addedParameters.push_back(textEntry->getName());
+					}
+					break;
+
+				case ptDiskEntity:
+					{
+						FXDiskEntityParamValue *diskEntityEntry=(FXDiskEntityParamValue *)parameters[t].second;
+						const string ret=diskEntityEntry->getEntityName();
+
+						actionParameters->addStringParameter(diskEntityEntry->getName(),ret);	
+
+						if(diskEntityEntry->getEntityType()==FXDiskEntityParamValue::detAudioFilename)
+							actionParameters->addBoolParameter(diskEntityEntry->getName()+" OpenAsRaw",diskEntityEntry->getOpenAsRaw());	
+						addedParameters.push_back(diskEntityEntry->getName());
+					}
+					break;
+
+				case ptComboText:
+					{
+						FXComboTextParamValue *comboTextEntry=(FXComboTextParamValue *)parameters[t].second;
+						FXint ret=comboTextEntry->getValue();
+
+						actionParameters->addUnsignedParameter(comboTextEntry->getName(),(unsigned)ret);	
+						addedParameters.push_back(comboTextEntry->getName());
+					}
+					break;
+
+				case ptCheckBox:
+					{
+						FXCheckBoxParamValue *checkBoxEntry=(FXCheckBoxParamValue *)parameters[t].second;
+						bool ret=checkBoxEntry->getValue();
+
+						actionParameters->addBoolParameter(checkBoxEntry->getName(),ret);	
+						addedParameters.push_back(checkBoxEntry->getName());
+					}
+					break;
+
+				case ptGraph:
+				case ptGraphWithWaveform:
+					{
+						FXGraphParamValue *graph=(FXGraphParamValue *)parameters[t].second;
+						CGraphParamValueNodeList nodes=graph->getNodes();
+
+						if(retValueConvs[t]!=NULL)
+						{
+							for(size_t i=0;i<nodes.size();i++)
+								nodes[i].y=retValueConvs[t](nodes[i].y);
+						}
+
+						actionParameters->addGraphParameter(graph->getName(),nodes);
+						addedParameters.push_back(graph->getName());
+					}
+					break;
+
+				case ptLFO:
+					{
+						FXLFOParamValue *LFOEntry=(FXLFOParamValue *)parameters[t].second;
+						actionParameters->addLFODescription(LFOEntry->getName(),LFOEntry->getValue());
+						addedParameters.push_back(LFOEntry->getName());
+					}
+					break;
+
+				case ptPluginRouting:
+					{
+						FXPluginRoutingParamValue *pluginRoutingEntry=(FXPluginRoutingParamValue *)parameters[t].second;
+						actionParameters->addPluginMapping(pluginRoutingEntry->getName(),pluginRoutingEntry->getValue());
+						addedParameters.push_back(pluginRoutingEntry->getName());
+					}
+					break;
+
+				default:
+					throw runtime_error(string(__func__)+" -- unhandled parameter type: "+istring(parameters[t].first));
 				}
-				break;
-
-			case ptLFO:
-				{
-					FXLFOParamValue *LFOEntry=(FXLFOParamValue *)parameters[t].second;
-					actionParameters->addLFODescription(LFOEntry->getName(),LFOEntry->getValue());
-				}
-				break;
-
-			case ptPluginRouting:
-				{
-					FXPluginRoutingParamValue *pluginRoutingEntry=(FXPluginRoutingParamValue *)parameters[t].second;
-					actionParameters->addPluginMapping(pluginRoutingEntry->getName(),pluginRoutingEntry->getValue());
-				}
-				break;
-
-			default:
-				throw runtime_error(string(__func__)+" -- unhandled parameter type: "+istring(parameters[t].first));
 			}
+			retval=true;
 		}
-
-		retval=true;
+		catch(EUserMessage &e)
+		{
+			if(e.what()[0])
+			{
+				Message(e.what());
+				for(size_t t=0;t<addedParameters.size();t++)
+					actionParameters->removeParameter(addedParameters[t]);
+				goto reshow;
+			}
+			else
+				retval=false;;
+		}
 	}
 
 	// save the splitter's position
