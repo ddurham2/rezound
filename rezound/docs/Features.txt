@@ -8,6 +8,10 @@
 	- Ogg Vorbis		(libogg and libvorbis)
 	- MPEG Layer-3,2,1	(lame)
 
+- Audio I/O Interfaces
+	- native OSS
+	- PortAudio ( http://www.portaudio.com )
+
 - Fast Editing of Large Files
 
 - Undo
@@ -66,6 +70,7 @@
 	- Change Rate (by constant or curve)
 	- Flange
 	- Delay (Echo)
+	- Quantize
 	- Varied Repeat
 
 - IIR Single Pole Filters
@@ -82,4 +87,6 @@
 	- Noise Gate
 	- Dynamic Range Compression
 	- Normalization
+
+- Selectable LFO Shapes for Actions that Use an LFO (more to come)
 
