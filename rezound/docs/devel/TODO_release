@@ -46,5 +46,5 @@ distro tarball(eg: removing warning flags)
 	- make release on sourceforge.net
 	- add a news blurb in the news section at sourceforge
 	- freshmeat.net
-	- demudi mailing lists
+	- demudi, demudi-devel, portaudio, FOX, ReZound, linux-audio-dev, jackit-devel, etc  mailing lists
 
