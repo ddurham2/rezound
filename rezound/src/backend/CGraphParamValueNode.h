@@ -56,6 +56,11 @@ extern const CGraphParamValueNodeList singleValueToGraph(const double v);
 
 extern void interpretGraphNodes(const CGraphParamValueNodeList &nodes,const unsigned i,const sample_pos_t totalLength,sample_pos_t &segmentStartPosition,double &segmentStartValue,sample_pos_t &segmentStopPosition,double &segmentStopValue,sample_pos_t &segmentLength);
 
+// these assume that the range of x and y in the nodes are [0,1]
+extern const CGraphParamValueNodeList flipGraphNodesHorizontally(const CGraphParamValueNodeList &nodes);
+extern const CGraphParamValueNodeList flipGraphNodesVertically(const CGraphParamValueNodeList &nodes);
+extern const CGraphParamValueNodeList smoothGraphNodes(const CGraphParamValueNodeList &nodes);
+
 
 class CGraphParamValueIterator
 {
