@@ -29,8 +29,9 @@
 #include <stdio.h> // for rename
 
 #include <stdexcept>
-#include <string>
 #include <algorithm>
+
+#include <istring>
 
 #include <CPath.h>
 

@@ -28,9 +28,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <sys/types.h> // for off_t
+#include <string>
 
-#include <istring>
+#include <sys/types.h> // for off_t
 
 class CMultiFile
 {
