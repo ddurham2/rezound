@@ -26,6 +26,8 @@
 
 #include <cc++/path.h>
 
+#include <CNestedDataFile/CNestedDataFile.h>
+
 #include "settings.h"
 
 #include "CMainWindow.h"
@@ -41,7 +43,7 @@
 CSoundFileManager *gSoundFileManager=NULL;
 
 
-CSoundFileManager::CSoundFileManager(CSoundManager &_soundManager,ASoundPlayer &_soundPlayer,TPoolFile<unsigned,unsigned> &_loadedRegistryFile) :
+CSoundFileManager::CSoundFileManager(CSoundManager &_soundManager,ASoundPlayer &_soundPlayer,CNestedDataFile &_loadedRegistryFile) :
 	ASoundFileManager(_soundManager,_soundPlayer,_loadedRegistryFile)
 {
 }
@@ -195,9 +197,9 @@ void CSoundFileManager::updateReopenHistory(const string &filename)
 	// rewrite the reopen history to the gSettingsRegistry
 	vector<string> reopenFilenames;
 	
-	for(size_t t=0;gSettingsRegistry->contains("ReopenHistory"+istring(t));t++)
+	for(size_t t=0;gSettingsRegistry->keyExists(("ReopenHistory"+istring(t)).c_str());t++)
 	{
-		const string h=gSettingsRegistry->getValue("ReopenHistory"+istring(t));
+		const string h=gSettingsRegistry->getValue(("ReopenHistory"+istring(t)).c_str());
 		if(h!=filename)
 			reopenFilenames.push_back(h);
 	}
@@ -208,6 +210,6 @@ void CSoundFileManager::updateReopenHistory(const string &filename)
 	reopenFilenames.insert(reopenFilenames.begin(),filename);
 
 	for(size_t t=0;t<reopenFilenames.size();t++)
-		gSettingsRegistry->setValue("ReopenHistory"+istring(t),reopenFilenames[t]);
+		gSettingsRegistry->createKey(("ReopenHistory"+istring(t)).c_str(),reopenFilenames[t]);
 }
 

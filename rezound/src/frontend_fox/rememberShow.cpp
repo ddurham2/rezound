@@ -29,7 +29,8 @@
 
 #include <fox/fx.h>
 
-#include <CStringDiskTable.h>
+#include <CNestedDataFile/CNestedDataFile.h>
+
 #include "settings.h"
 
 bool rememberShow(FXTopWindow *window)
@@ -44,7 +45,7 @@ return(false);
 
 
 	const string title=window->getTitle().text();
-	if(!gSettingsRegistry->contains(title+"-X"))
+	if(!gSettingsRegistry->keyExists((title+"_X").c_str()))
 	{
 		inThis=false;
 		return(false);
@@ -53,11 +54,11 @@ return(false);
 	{
 		// ??? right now there is a bug... fox seems to read the screen pos according to the very top left corner including the decorations, but sets the screen pos according to the top left not including the decorations
 
-		printf("window: %s %d %d\n",title.c_str(),atoi(gSettingsRegistry->getValue(title+"-X").c_str()),atoi(gSettingsRegistry->getValue(title+"-Y").c_str()));
+		printf("window: %s %d %d\n",title.c_str(),atoi(gSettingsRegistry->getValue((title+"_X").c_str()).c_str()),atoi(gSettingsRegistry->getValue((title+"_Y").c_str()).c_str()));
 		// ??? X and Y need to be guarenteed on screen, but fox or the window manager may handle that
 		window->position(
-			atoi(gSettingsRegistry->getValue(title+"-X").c_str()),atoi(gSettingsRegistry->getValue(title+"-Y").c_str()),
-			max(50,atoi(gSettingsRegistry->getValue(title+"-W").c_str())),max(50,atoi(gSettingsRegistry->getValue(title+"-H").c_str()))
+			atoi(gSettingsRegistry->getValue((title+"_X").c_str()).c_str()),atoi(gSettingsRegistry->getValue((title+"_Y").c_str()).c_str()),
+			max(50,atoi(gSettingsRegistry->getValue((title+"_W").c_str()).c_str())),max(50,atoi(gSettingsRegistry->getValue((title+"_H").c_str()).c_str()))
 		);
 
 /* could do it this way, but the offset is not what really happend.. fox needs to read it back from X after placing the window
@@ -66,8 +67,8 @@ return(false);
 		const FXint offsetY=window->getY();
 		printf("offsetY: %d\n",offsetY);
 
-		window->move(atoi(gSettingsRegistry->getValue(title+"-X").c_str()),atoi(gSettingsRegistry->getValue(title+"-Y").c_str())-offsetY);
-		window->resize(max(50,atoi(gSettingsRegistry->getValue(title+"-W").c_str())),max(50,atoi(gSettingsRegistry->getValue(title+"-H").c_str())));
+		window->move(atoi(gSettingsRegistry->getValue((title+"_X").c_str()).c_str()),atoi(gSettingsRegistry->getValue((title+"_Y").c_str()).c_str())-offsetY);
+		window->resize(max(50,atoi(gSettingsRegistry->getValue((title+"_W").c_str()).c_str())),max(50,atoi(gSettingsRegistry->getValue((title+"_H").c_str()).c_str())));
 */
 	}
 	inThis=false;
@@ -79,8 +80,8 @@ void rememberHide(FXTopWindow *window)
 return;
 	const string title=window->getTitle().text();
 	printf("closing window: %d %d\n",window->getX(),window->getY());
-	gSettingsRegistry->setValue(title+"-X",istring(window->getX()));
-	gSettingsRegistry->setValue(title+"-Y",istring(window->getY()));
-	gSettingsRegistry->setValue(title+"-W",istring(window->getWidth()));
-	gSettingsRegistry->setValue(title+"-H",istring(window->getHeight()));
+	gSettingsRegistry->createKey((title+"_X").c_str(),istring(window->getX()));
+	gSettingsRegistry->createKey((title+"_Y").c_str(),istring(window->getY()));
+	gSettingsRegistry->createKey((title+"_W").c_str(),istring(window->getWidth()));
+	gSettingsRegistry->createKey((title+"_H").c_str(),istring(window->getHeight()));
 }

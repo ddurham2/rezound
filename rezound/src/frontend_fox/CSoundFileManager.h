@@ -28,12 +28,12 @@
 
 #include <vector>
 class CSoundWindow;
-
+class CNestedDataFile;
 
 class CSoundFileManager : public ASoundFileManager
 {
 public:
-	CSoundFileManager(CSoundManager &soundManager,ASoundPlayer &soundPlayer,TPoolFile<unsigned,unsigned> &loadedRegistryFile);
+	CSoundFileManager(CSoundManager &soundManager,ASoundPlayer &soundPlayer,CNestedDataFile &loadedRegistryFile);
 
 	void untoggleActiveForAllSoundWindows(CSoundWindow *exceptThisOne);
 	

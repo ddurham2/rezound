@@ -31,17 +31,15 @@ class ASoundFileManager;
 
 #include "CLoadedSound.h"
 
-#include <TPoolFile.h>
-//#include <TList_types.h>
-#include <CStringDiskTable.h>
+class CNestedDataFile;
 
-class EStopClosing {public: };
+struct EStopClosing { };
 
 class ASoundFileManager
 {
 public:
 
-	ASoundFileManager(CSoundManager &soundManager,ASoundPlayer &soundPlayer,TPoolFile<unsigned,unsigned> &loadedRegistryFile);
+	ASoundFileManager(CSoundManager &soundManager,ASoundPlayer &soundPlayer,CNestedDataFile &loadedRegistryFile);
 	// should a destructor be responsible for closing all files???
 	virtual ~ASoundFileManager() { }
 
@@ -93,12 +91,12 @@ private:
 	CSoundManager &soundManager;
 	ASoundPlayer &soundPlayer;
 
-	TPoolFile<unsigned,unsigned> &loadedRegistryFile;
-	CStringDiskTable loadedSoundsRegistry;
+	CNestedDataFile &loadedRegistryFile;
 
 	void prvOpen(const string &filename,bool readOnly,bool registerFilename);
 	void registerFilename(const string filename);
 	void unregisterFilename(const string filename);
+	bool isFilenameRegistered(const string filename);
 
 };
 

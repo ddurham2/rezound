@@ -26,12 +26,12 @@
 
 #include <cc++/path.h>
 
+#include <CNestedDataFile/CNestedDataFile.h>
 
-ASoundFileManager::ASoundFileManager(CSoundManager &_soundManager,ASoundPlayer &_soundPlayer,TPoolFile<unsigned,unsigned> &_loadedRegistryFile) :
+ASoundFileManager::ASoundFileManager(CSoundManager &_soundManager,ASoundPlayer &_soundPlayer,CNestedDataFile &_loadedRegistryFile) :
 	soundManager(_soundManager),
 	soundPlayer(_soundPlayer),
-	loadedRegistryFile(_loadedRegistryFile),
-	loadedSoundsRegistry(_loadedRegistryFile,"LOADED_SOUNDS")
+	loadedRegistryFile(_loadedRegistryFile)
 {
 }
 
@@ -85,7 +85,7 @@ void ASoundFileManager::open(const string _filename)
 
 void ASoundFileManager::prvOpen(const string &filename,bool readOnly,bool doRegisterFilename)
 {
-	if(doRegisterFilename && loadedSoundsRegistry.contains(filename))
+	if(doRegisterFilename && isFilenameRegistered(filename))
 		throw(runtime_error(string(__func__)+" -- file already opened"));
 
 	CSoundManagerClient *client=NULL;
@@ -257,16 +257,17 @@ void ASoundFileManager::revert()
 
 
 
+#define LOADED_REG_KEY "loaded"
+
 const vector<string> ASoundFileManager::loadFilesInRegistry()
 {
 	vector<string> errors;
-	for(size_t t=0;t<loadedSoundsRegistry.getSize();t++)
+	for(size_t t=0;t<loadedRegistryFile.getArraySize(LOADED_REG_KEY);t++)
 	{
 		string filename;
 		try
 		{
-			string info;
-			loadedSoundsRegistry.get(t,filename,info);
+			filename=loadedRegistryFile.getArrayValue(LOADED_REG_KEY,t);
 			printf("--- reopening file: %s\n",filename.c_str()); // ??? should be dprintf
 
 			if(Question("Load sound from previous session?\n   "+filename,yesnoQues)==yesAns)
@@ -296,14 +297,33 @@ const vector<string> ASoundFileManager::loadFilesInRegistry()
 
 void ASoundFileManager::registerFilename(const string filename)
 {
-	if(loadedSoundsRegistry.contains(filename))
-		throw(runtime_error(string(__func__)+" -- file already opened"));
+	if(isFilenameRegistered(filename))
+		throw(runtime_error(string(__func__)+" -- file already registered"));
 
-	loadedSoundsRegistry.setValue(filename,"some data about the file");        
+	loadedRegistryFile.createArrayKey(LOADED_REG_KEY,loadedRegistryFile.getArraySize(LOADED_REG_KEY),filename);
 }
 
 void ASoundFileManager::unregisterFilename(const string filename)
 {
-	loadedSoundsRegistry.removeValue(filename);
+	size_t l=loadedRegistryFile.getArraySize(LOADED_REG_KEY);
+	for(size_t t=0;t<l;t++)
+	{
+		if(loadedRegistryFile.getArrayValue(LOADED_REG_KEY,t)==filename);
+		{
+			loadedRegistryFile.removeArrayKey(LOADED_REG_KEY,t);
+			break;
+		}
+	}
+}
+
+bool ASoundFileManager::isFilenameRegistered(const string filename)
+{
+	size_t l=loadedRegistryFile.getArraySize(LOADED_REG_KEY);
+	for(size_t t=0;t<l;t++)
+	{
+		if(loadedRegistryFile.getArrayValue(LOADED_REG_KEY,t)==filename)
+			return(true);
+	}
+	return(false);
 }
 

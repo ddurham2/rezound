@@ -29,7 +29,8 @@
 
 #include "CSoundFileManager.h"
 
-#include <CStringDiskTable.h>
+#include <CNestedDataFile/CNestedDataFile.h>
+
 #include "settings.h"
 
 #include "../backend/file.h"
@@ -330,10 +331,10 @@ long CMainWindow::onReopenMenuPopup(FXObject *sender,FXSelector sel,void *ptr)
 	bool hasSome=false;
 	FXMenuPane reopenMenu(this);
 		size_t t=0;
-		while(gSettingsRegistry->contains("ReopenHistory"+istring(t)))
+		while(gSettingsRegistry->keyExists(("ReopenHistory"+istring(t)).c_str()))
 		{
 			// ??? make sure that these get deleted when reopenMenu is deleted
-			new FXMenuCommand(&reopenMenu,gSettingsRegistry->getValue("ReopenHistory"+istring(t)).c_str(),NULL,this,ID_REOPEN_MENU_SELECT);
+			new FXMenuCommand(&reopenMenu,gSettingsRegistry->getValue(("ReopenHistory"+istring(t)).c_str()).c_str(),NULL,this,ID_REOPEN_MENU_SELECT);
 			t++;
 			hasSome=true;
 		}

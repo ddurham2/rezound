@@ -134,8 +134,6 @@ CActionButton.o: CActionButton.cpp \
 	$(top_srcdir)/src/PoolFile/CMultiFile.h \
 	$(top_srcdir)/src/misc/istring \
 	$(top_srcdir)/src/PoolFile/TStaticPoolAccesser.h \
-	$(top_srcdir)/src/PoolFile/DiskTable/CStringDiskTable.h \
-	$(top_srcdir)/src/PoolFile/DiskTable/TDiskTable.h \
 	$(top_srcdir)/src/misc/cc++/TAutoBuffer.h \
 	$(top_srcdir)/src/PoolFile/TPoolAccesser.h 
 
@@ -317,8 +315,6 @@ CMainWindow.o: CMainWindow.cpp \
 	$(top_srcdir)/src/misc/cc++/TAutoBuffer.h \
 	$(top_srcdir)/src/misc/istring \
 	$(top_srcdir)/src/PoolFile/CMultiFile.h \
-	$(top_srcdir)/src/PoolFile/DiskTable/CStringDiskTable.h \
-	$(top_srcdir)/src/PoolFile/DiskTable/TDiskTable.h \
 	$(top_srcdir)/src/PoolFile/TPoolAccesser.h \
 	$(top_srcdir)/src/PoolFile/TPoolFile.h \
 	$(top_srcdir)/src/PoolFile/TStaticPoolAccesser.h  
@@ -384,8 +380,6 @@ CSoundFileManager.o: CSoundFileManager.cpp \
 	$(top_srcdir)/src/misc/cc++/TAutoBuffer.h \
 	$(top_srcdir)/src/misc/istring \
 	$(top_srcdir)/src/PoolFile/CMultiFile.h \
-	$(top_srcdir)/src/PoolFile/DiskTable/CStringDiskTable.h \
-	$(top_srcdir)/src/PoolFile/DiskTable/TDiskTable.h \
 	$(top_srcdir)/src/PoolFile/TPoolAccesser.h \
 	$(top_srcdir)/src/PoolFile/TPoolFile.h \
 	$(top_srcdir)/src/PoolFile/TStaticPoolAccesser.h 
@@ -436,8 +430,6 @@ CSoundWindow.o: CSoundWindow.cpp \
 	$(top_srcdir)/src/misc/cc++/TAutoBuffer.h \
 	$(top_srcdir)/src/misc/istring \
 	$(top_srcdir)/src/PoolFile/CMultiFile.h \
-	$(top_srcdir)/src/PoolFile/DiskTable/CStringDiskTable.h \
-	$(top_srcdir)/src/PoolFile/DiskTable/TDiskTable.h \
 	$(top_srcdir)/src/PoolFile/TPoolAccesser.h \
 	$(top_srcdir)/src/PoolFile/TPoolFile.h \
 	$(top_srcdir)/src/PoolFile/TStaticPoolAccesser.h  
@@ -595,8 +587,6 @@ initialize.o: initialize.cpp \
 	$(top_srcdir)/src/misc/cc++/TAutoBuffer.h \
 	$(top_srcdir)/src/misc/istring \
 	$(top_srcdir)/src/PoolFile/CMultiFile.h \
-	$(top_srcdir)/src/PoolFile/DiskTable/CStringDiskTable.h \
-	$(top_srcdir)/src/PoolFile/DiskTable/TDiskTable.h \
 	$(top_srcdir)/src/PoolFile/TPoolAccesser.h \
 	$(top_srcdir)/src/PoolFile/TPoolFile.h \
 	$(top_srcdir)/src/PoolFile/TStaticPoolAccesser.h 
@@ -631,8 +621,6 @@ main.o: main.cpp \
 	$(top_srcdir)/src/misc/cc++/TAutoBuffer.h \
 	$(top_srcdir)/src/misc/istring \
 	$(top_srcdir)/src/PoolFile/CMultiFile.h \
-	$(top_srcdir)/src/PoolFile/DiskTable/CStringDiskTable.h \
-	$(top_srcdir)/src/PoolFile/DiskTable/TDiskTable.h \
 	$(top_srcdir)/src/PoolFile/TPoolAccesser.h \
 	$(top_srcdir)/src/PoolFile/TPoolFile.h \
 	$(top_srcdir)/src/PoolFile/TStaticPoolAccesser.h 
@@ -664,8 +652,6 @@ rememberShow.o: rememberShow.cpp \
 	$(top_srcdir)/src/misc/cc++/TAutoBuffer.h \
 	$(top_srcdir)/src/misc/istring \
 	$(top_srcdir)/src/PoolFile/CMultiFile.h \
-	$(top_srcdir)/src/PoolFile/DiskTable/CStringDiskTable.h \
-	$(top_srcdir)/src/PoolFile/DiskTable/TDiskTable.h \
 	$(top_srcdir)/src/PoolFile/TPoolAccesser.h \
 	$(top_srcdir)/src/PoolFile/TPoolFile.h \
 	$(top_srcdir)/src/PoolFile/TStaticPoolAccesser.h 

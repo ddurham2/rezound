@@ -27,8 +27,8 @@
 /*
  * This is a repository to which settings can be saved
  */
-class CStringDiskTable;
-extern CStringDiskTable *gSettingsRegistry;
+class CNestedDataFile;
+extern CNestedDataFile *gSettingsRegistry;
 
 /*
  * This is the directory that a open/save dialog should open to

@@ -22,7 +22,7 @@
 
 #include <stddef.h>
 
-CStringDiskTable *gSettingsRegistry=NULL;
+CNestedDataFile *gSettingsRegistry=NULL;
 
 
 string gPromptDialogDirectory="";

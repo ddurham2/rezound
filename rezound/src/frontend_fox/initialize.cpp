@@ -31,7 +31,7 @@
 #include <stdexcept>
 #include <string>
 
-#include <CStringDiskTable.h>
+#include <CNestedDataFile/CNestedDataFile.h>
 
 
 // ... except for a few things.. this could probably be moved into the backend.. it'd have to be done for all frontends if I didn't move it
@@ -45,10 +45,6 @@ static CSoundManager *soundManager=NULL;
 //static CWinSoundPlayer *soundPlayer=NULL;
 #include "../backend/COSSSoundPlayer.h"
 static COSSSoundPlayer *soundPlayer=NULL;
-
-#include <TPoolFile.h>
-static TPoolFile<unsigned,unsigned> *loadedRegistryPoolFile=NULL;
-
 
 #include "CSoundFileManager.h"
 
@@ -80,24 +76,30 @@ void initializeReZound()
 		if(!ost::Path(gSysDataDirectory).Exists()) 
 			gSysDataDirectory=INSTALL_PREFIX"/share/rezound";
 
+
 		// -- 1
-		// ??? I probably want to use an XML library or CNestedDataFile class for the registry instead of a pool file so it can be edited more easily
-		loadedRegistryPoolFile=new TPoolFile<unsigned,unsigned>(4096,"ReZoundR");
-		loadedRegistryPoolFile->openFile(gUserDataDirectory+"/registry.dat",true);
-
-
-		// -- 2
 			// if there is an error opening the registry file then
 			// the system probably crashed... delete the registry file and
 			// warn user that the previous run history is lost.. but that
 			// they may beable to recover the last edits if they go load
 			// the files that were being edited (since the pool files will
 			// still exist for all previously open files)
-		gSettingsRegistry=new CStringDiskTable(*loadedRegistryPoolFile,"ReZound Settings");
+		try
+		{
+			gSettingsRegistry=new CNestedDataFile(gUserDataDirectory+"/registry.dat",true);
+		}
+		catch(exception &e)
+		{
+			// well, then start with an empty one
+			gSettingsRegistry=new CNestedDataFile("",true);
+			gSettingsRegistry->setFilename(gUserDataDirectory+"/registry.dat");
+
+			Error(string("Error reading registry -- ")+e.what());
+		}
 		gPromptDialogDirectory=gSettingsRegistry->getValue("promptDialogDirectory");
 
 
-		// -- 3
+		// -- 2
 						// ??? this filename needs to be an application setting just as in ASound.cpp
 		const string clipboardPoolFilename="/tmp/rezound.clipboard";
 		remove(clipboardPoolFilename.c_str());
@@ -105,19 +107,19 @@ void initializeReZound()
 		AAction::clipboardPoolFile->openFile(clipboardPoolFilename,true);
 
 
-		// -- 4
+		// -- 3
 		soundPlayer=new COSSSoundPlayer();
 
 
-		// -- 5
+		// -- 4
 		soundManager=new CSoundManager();
 
 
+		// -- 5
+		gSoundFileManager=new CSoundFileManager(*soundManager,*soundPlayer,*gSettingsRegistry);
+
+
 		// -- 6
-		gSoundFileManager=new CSoundFileManager(*soundManager,*soundPlayer,*loadedRegistryPoolFile);
-
-
-		// -- 7
 		soundPlayer->initialize();
 
 	}
@@ -134,24 +136,24 @@ void deinitializeReZound()
 	// reverse order of creation
 
 
-	// -- 7
+	// -- 6
 	if(soundPlayer!=NULL)
 		soundPlayer->deinitialize();
 
 
-	// -- 6
+	// -- 5
 	delete gSoundFileManager;
 
 
-	// -- 5
+	// -- 4
 	delete soundManager;
 
 
-	// -- 4
+	// -- 3
 	delete soundPlayer;
 
 
-	// -- 3
+	// -- 2
 	if(AAction::clipboardPoolFile!=NULL)
 	{
 		if(AAction::clipboardPoolFile->isOpen())
@@ -161,16 +163,10 @@ void deinitializeReZound()
 	}
 
 
-	// -- 2
-	gPromptDialogDirectory=istring(gPromptDialogDirectory).truncate(_CSDT_STRING_SIZE-1); // define from CStringDiskTable.h
-	gSettingsRegistry->setValue("promptDialogDirectory",gPromptDialogDirectory);
+	// -- 1
+	gSettingsRegistry->createKey("promptDialogDirectory",gPromptDialogDirectory);
 	delete gSettingsRegistry;
 
-
-	// -- 1
-	if(loadedRegistryPoolFile!=NULL)
-		loadedRegistryPoolFile->closeFile(true,false);
-	delete loadedRegistryPoolFile;
 }
 
 
