@@ -18,6 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
+#warning add a read-only feature to TPoolFile and use it in CrezSoundTranslator::onLoadSound
+
 #include "../../config/common.h"
 #include "fox_compat.h"
 
