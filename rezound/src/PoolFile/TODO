@@ -1,4 +1,6 @@
 
+	- I don't like that opening a .rez file requires write permission on the file you're opening!
+
 	- figure out the proper way to make a template parameter be a friend of a template class in TStaticPoolAccesser
 
 	- reimplement TStaticPoolAccesser::copyData and zeroData to use memcpy and memset instead of for-loops
