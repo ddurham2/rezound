@@ -413,6 +413,17 @@ Change\ Amplitude\ According\ to\ a\ Curve
 
 	}
 
-	names[]={"Curved Fade In", "Curved Fade Out", "Linear Fade In", "Linear Fade Out"};
+	Mute\ Very\ Edges
+	{
+		Gain\ Curve
+		{
+			node_positions[]={"0", "0.001", "0.999", "1"};
+			node_values[]={"0", "0.5", "0.5", "0"};
+			scalar="2";
+		}
+
+	}
+
+	names[]={"Curved Fade In", "Curved Fade Out", "Linear Fade In", "Linear Fade Out","Mute Very Edges"};
 }
 
