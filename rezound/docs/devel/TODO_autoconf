@@ -8,8 +8,6 @@ and move it into config
 -- See if things might possibly work with -O2 set. Decide if we should be using 
 -O2 or not.
 
---make sure this works on cf.sourceforge.net
-
 - Don't get mad at me.... :)   But, I added another directory under misc called
   CNestedDataFile.  This is the class I talked about for storing information
   about an action's parameters so the same parameters can be used at a later
