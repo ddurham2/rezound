@@ -28,8 +28,10 @@ CCrossfadeEdgesDialog *gCrossfadeEdgesDialog=NULL;
 
 
 CCrossfadeEdgesDialog::CCrossfadeEdgesDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Crossfade Edges Settings"))
+	CActionParamDialog(mainWindow)
 {
+	CActionParamDialog::setTitle(N_("Crossfade Edges Settings"));
+
 	setMargin(130);
 
 	void *p=newVertPanel(NULL);
