@@ -1026,7 +1026,7 @@ long CMainWindow::onControlAction(FXObject *sender,FXSelector sel,void *ptr)
 
 	case ID_REDRAW:
 		if(gSoundFileManager->getActiveWindow())
-			gSoundFileManager->getActiveWindow()->onRedrawButton(NULL,0,NULL);
+			gSoundFileManager->getActiveWindow()->redraw();
 		break;
 
 	default:

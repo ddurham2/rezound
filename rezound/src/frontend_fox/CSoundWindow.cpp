@@ -87,8 +87,6 @@ FXDEFMAP(CSoundWindow) CSoundWindowMap[]=
 
 	FXMAPFUNC(SEL_COMMAND,			CSoundWindow::ID_BOTH_ZOOM_DIAL_MINUS,		CSoundWindow::onBothZoomDialMinusIndClick),
 
-	FXMAPFUNC(SEL_COMMAND,			CSoundWindow::ID_REDRAW_BUTTON,			CSoundWindow::onRedrawButton),
-
 		// timer event to draw the play status position
 	FXMAPFUNC(SEL_TIMEOUT,			CSoundWindow::ID_DRAW_PLAY_POSITION,		CSoundWindow::onDrawPlayPosition),
 
@@ -165,8 +163,6 @@ CSoundWindow::CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound) :
 	playingLEDOn(false),
 	pausedLEDOn(false)
 {
-	new FXButton(horzZoomPanel,"Redraw",NULL,this,ID_REDRAW_BUTTON,FRAME_RAISED | LAYOUT_SIDE_RIGHT | LAYOUT_FILL_Y);
-
 	waveView->setTarget(this);
 	waveView->setSelector(ID_WAVEVIEW);
 
@@ -636,6 +632,12 @@ void CSoundWindow::horzZoomSelectionFit()
 	horzZoomValueLabel->setText(("  "+istring(horzZoomDial->getValue()/(double)ZOOM_MUL,3,1,true)+"%").c_str());
 }
 
+void CSoundWindow::redraw()
+{
+	loadedSound->sound->invalidateAllPeakData();
+	updateFromEdit(); // to cause everything to redraw even if not necessary
+}
+
 
 
 // vert zoom handlers
@@ -668,13 +670,6 @@ long CSoundWindow::onBothZoomDialMinusIndClick(FXObject *sender,FXSelector sel,v
 	vertZoomDial->setValue(0);
 	onVertZoomDialChange(NULL,0,NULL);
 
-	return 1;
-}
-
-long CSoundWindow::onRedrawButton(FXObject *sender,FXSelector sel,void *ptr)
-{
-	loadedSound->sound->invalidateAllPeakData();
-	updateFromEdit(); // to cause everything to redraw even if not necessary
 	return 1;
 }
 

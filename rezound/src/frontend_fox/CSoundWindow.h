@@ -116,17 +116,16 @@ public:
 	void horzZoomOutFull();
 	void horzZoomSelectionFit();
 
+	void redraw();
+
 
 	// vert zoom handlers
 	long onVertZoomDialChange(FXObject *sender,FXSelector,void*);
 	long onVertZoomDialPlusIndClick(FXObject *sender,FXSelector sel,void *ptr);
 	long onVertZoomDialMinusIndClick(FXObject *sender,FXSelector sel,void *ptr);
 
-
-
 	long onBothZoomDialMinusIndClick(FXObject *sender,FXSelector sel,void *ptr);
 
-	long onRedrawButton(FXObject *sender,FXSelector sel,void *ptr);
 
 	// selection position spinner handlers
 	long onSelectStartSpinnerChange(FXObject *sender,FXSelector sel,void *ptr);
