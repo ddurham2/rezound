@@ -19,6 +19,7 @@
  */
 
 #warning add a read-only feature to TPoolFile and use it in CrezSoundTranslator::onLoadSound
+#warning add ctrl-mousewheel  perform horizontal zoom into the cursor position (seems like something like this already exists)
 
 #include "../../config/common.h"
 #include "fox_compat.h"
