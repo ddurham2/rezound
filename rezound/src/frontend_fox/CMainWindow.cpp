@@ -427,7 +427,7 @@ public:
 #include "FilterActionDialogs.h"
 
 #include "../backend/Looping/LoopingActions.h"
-//#include "LoopingActionDialogs.h"
+#include "LoopingActionDialogs.h"
 
 #include "../backend/Remaster/RemasterActions.h"
 #include "RemasterActionDialogs.h"
@@ -549,6 +549,7 @@ void CMainWindow::createMenus()
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&Looping",NULL,menu);
 		new CActionMenuCommand(new CMakeSymetricActionFactory(gChannelSelectDialog),menu,"");
+		new CActionMenuCommand(new CAddCuesActionFactory(new CAddCuesDialog(this)),menu,"");
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&Remaster",NULL,menu);
