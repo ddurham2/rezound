@@ -265,7 +265,7 @@ FXDEFMAP(FXRezWaveView) FXRezWaveViewMap[]=
 FXIMPLEMENT(FXRezWaveView,FXPacker,FXRezWaveViewMap,ARRAYNUMBER(FXRezWaveViewMap))
 
 FXRezWaveView::FXRezWaveView(FXComposite* p,CLoadedSound *_loadedSound) :
-	FXPacker(p,FRAME_RIDGE|LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0),
+	FXPacker(p,FRAME_NONE|LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0),
 
 	rulerPanel(new FXWaveRuler(this,this,_loadedSound/*,FRAME_NONE | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0,0,0,15*/)),
 	waveScrollArea(new FXWaveScrollArea(this,this,_loadedSound))
