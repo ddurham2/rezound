@@ -41,7 +41,7 @@ so that the meter and analyzer widgets are not tied to using ASoundPlayer
 
 // color definitions
 #define M_BACKGROUND (FXRGB(0,0,0))
-#define M_TEXT_COLOR (FXRGB(164,164,164))
+#define M_TEXT_COLOR (FXRGB(220,220,220))
 #define M_METER_OFF (FXRGB(48,48,48))
 
 #define M_GREEN (FXRGB(80,255,32))
