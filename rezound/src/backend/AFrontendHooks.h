@@ -107,7 +107,7 @@ public:
 		string startPosCueName;
 		string stopPosCueName;
 	};
-	virtual void showMacroActionParamsDialog(const AActionFactory *actionFactory,MacroActionParameters &macroActionParams,CLoadedSound *loadedSound)=0; // loadedSound may be NULL
+	virtual bool showMacroActionParamsDialog(const AActionFactory *actionFactory,MacroActionParameters &macroActionParams,CLoadedSound *loadedSound)=0; // loadedSound may be NULL
 
 
 #ifdef ENABLE_JACK

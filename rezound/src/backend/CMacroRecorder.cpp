@@ -87,7 +87,7 @@ void CMacroRecorder::stopRecording()
 	}
 }
 
-void CMacroRecorder::pushAction(const string actionName,const CActionParameters *actionParameters,CLoadedSound *loadedSound)
+bool CMacroRecorder::pushAction(const string actionName,const CActionParameters *actionParameters,CLoadedSound *loadedSound)
 {
 	if(!recording)
 		throw runtime_error(string(__func__)+" -- not recording");
@@ -95,14 +95,15 @@ void CMacroRecorder::pushAction(const string actionName,const CActionParameters 
 	if(gRegisteredActionFactories.find(actionName)==gRegisteredActionFactories.end())
 	{
 		Message(_("The action just performed will not be recorded in your macro.")+string("\n\n")+actionName);
-		return;
+		return true;
 	}
 
 	const AActionFactory *actionFactory=gRegisteredActionFactories[actionName];
 
 	// ask the user how they want to handle certain things for this action when the macro is played back
 	AFrontendHooks::MacroActionParameters macroActionParameters;
-	gFrontendHooks->showMacroActionParamsDialog(actionFactory,macroActionParameters,loadedSound);
+	if(!gFrontendHooks->showMacroActionParamsDialog(actionFactory,macroActionParameters,loadedSound))
+		return false;
 
 	const string actionKey=key DOT "action"+istring(actionCount,3,true);
 
@@ -129,6 +130,7 @@ void CMacroRecorder::pushAction(const string actionName,const CActionParameters 
 	actionParameters->writeToFile(file,actionKey DOT "parameters");
 
 	file->setValue<unsigned>(key DOT "actionCount",++actionCount);
+	return true;
 }
 
 void CMacroRecorder::pushActiveSoundChange(size_t index)

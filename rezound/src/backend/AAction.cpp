@@ -110,7 +110,10 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 
 		// if we're not already running an action and we're recording a macro.. then add this action to the macro
 		if(AAction::doActionRecursionCount<=0 && macroRecorder.isRecording())
-			macroRecorder.pushAction(actionName,actionParameters,loadedSound);
+		{
+			if(!macroRecorder.pushAction(actionName,actionParameters,loadedSound))
+				return false; // dialog was cancelled
+		}
 
 		AAction *action=manufactureAction(actionSound.get(),actionParameters);
 

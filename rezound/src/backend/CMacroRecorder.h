@@ -24,7 +24,8 @@ public:
 
 		// this is called by AActionFactory::performAction() before the action is actually performed .. a hook point for all actions performed
 		// loadedSound is optional and is used when the selection positions are needed for calculating how to set the selection positions at playback
-	void pushAction(const string actionName,const CActionParameters *actionParameters,CLoadedSound *loadedSound);
+		// normally returns true; returns false of something was cancelled and the action should not proceed
+	bool pushAction(const string actionName,const CActionParameters *actionParameters,CLoadedSound *loadedSound);
 
 		// this is called when an action is undone but we recorded it in the macro
 	void popAction(const string actionName);

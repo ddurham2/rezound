@@ -102,7 +102,7 @@ bool CMacroActionParamsDialog::showIt(const AActionFactory *actionFactory,AFront
 	if(!hasDialog && !selectionPositionsAreApplicable)
 	{
 		macroActionParameters.askToPromptForActionParametersAtPlayback=false;
-		return false; // don't bother even showing the dialog
+		return true; // don't bother even showing the dialog
 	}
 
 	if(hasDialog)

@@ -324,9 +324,9 @@ bool CFrontendHooks::showRecordMacroDialog(string &macroName)
 
 }
 
-void CFrontendHooks::showMacroActionParamsDialog(const AActionFactory *actionFactory,MacroActionParameters &macroActionParameters,CLoadedSound *loadedSound)
+bool CFrontendHooks::showMacroActionParamsDialog(const AActionFactory *actionFactory,MacroActionParameters &macroActionParameters,CLoadedSound *loadedSound)
 {
-	macroActionParamsDialog->showIt(actionFactory,macroActionParameters,loadedSound);
+	return macroActionParamsDialog->showIt(actionFactory,macroActionParameters,loadedSound);
 }
 
 const string CFrontendHooks::promptForJACKPort(const string message,const vector<string> portNames)

@@ -73,7 +73,7 @@ public:
 
 	bool showRecordMacroDialog(string &macroName);
 
-	void showMacroActionParamsDialog(const AActionFactory *actionFactory,MacroActionParameters &macroActionParameters,CLoadedSound *loadedSound);
+	bool showMacroActionParamsDialog(const AActionFactory *actionFactory,MacroActionParameters &macroActionParameters,CLoadedSound *loadedSound);
 
 	const string promptForJACKPort(const string message,const vector<string> portNames);
 
