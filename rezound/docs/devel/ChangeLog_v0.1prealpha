@@ -1,3 +1,5 @@
+$Id$
+
 These are the final changes I've made in preparing v0.1prealpha
 
 Wed Mar  6 13:21:17 EST 2002 -- Anthony Ventimiglia  
@@ -67,5 +69,9 @@ Put URL's in relevent places in the documentation and configure scripts.
 That's really all I'll do for now. Still some stuff to do, but I think we're
 ready to release on my end. 
 ----------------------------------------------------
+Following are CVS Log entries
+$Log$
+Revision 1.2  2002/03/22 20:57:43  lergnom
+Added some cvs keywords (see Keywords in index of cvs info pages) tracks revision and other stuff.
 
 

@@ -1,4 +1,4 @@
-
+$Id$
 
 - might ought to verify that bootstrap is running within the toplevel directory
 and move it into config
