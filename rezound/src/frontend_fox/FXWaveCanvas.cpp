@@ -175,8 +175,7 @@ void FXWaveCanvas::setHorzZoom(double v,HorzRecenterTypes horzRecenterType)
 
 const sample_pos_t FXWaveCanvas::getHorzSize() const
 {
-			  	// ??? added the ceil just because it needed to be in the vertical calculation of this value.. verify that it's needed
-	return((sample_pos_t)sample_fpos_ceil((sample_fpos_t)loadedSound->getSound()->getLength()/horzZoomFactor)+RIGHT_MARGIN); // accounting for the right margin of unused space
+	return((sample_pos_t)((sample_fpos_t)loadedSound->getSound()->getLength()/horzZoomFactor)+RIGHT_MARGIN); // accounting for the right margin of unused space
 }
 
 const double FXWaveCanvas::getHorzZoom() const
