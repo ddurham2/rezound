@@ -262,7 +262,7 @@ FXIMPLEMENT(FXWaveRuler,FXComposite,FXWaveRulerMap,ARRAYNUMBER(FXWaveRulerMap))
 
 
 FXWaveRuler::FXWaveRuler(FXComposite *p,FXRezWaveView *_parent,CLoadedSound *_loadedSound) :
-	FXComposite(p,FRAME_NONE | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0,0,0,13+8),
+	FXComposite(p,FRAME_NONE | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0,0,0,13+9),
 
 	parent(_parent),
 
