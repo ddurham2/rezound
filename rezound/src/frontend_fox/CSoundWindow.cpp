@@ -116,7 +116,7 @@ void playTrigger(void *Pthis)
 	CSoundWindow *that=(CSoundWindow *)Pthis;
 	// ??? this is called from another thread.. I don't know if it will cause a problem in FOX
 	if(that->timerHandle==NULL)
-		that->timerHandle=that->getApp()->addTimeout(DRAW_PLAY_POSITION_TIME,that,CSoundWindow::ID_DRAW_PLAY_POSITION);
+		that->timerHandle=that->getApp()->addTimeout(that,CSoundWindow::ID_DRAW_PLAY_POSITION,DRAW_PLAY_POSITION_TIME);
 }
 
 // ----------------------------------------------------------
@@ -555,7 +555,7 @@ long CSoundWindow::onDrawPlayPosition(FXObject *sender,FXSelector,void*)
 		// ??? I could make the calculation of the next event more intelligent
 		// 	- if the onscreen data is smaller I could register to get the timer faster 
 		// reregister to get this event again
-		timerHandle=getApp()->addTimeout(DRAW_PLAY_POSITION_TIME,this,ID_DRAW_PLAY_POSITION);
+		timerHandle=getApp()->addTimeout(this,ID_DRAW_PLAY_POSITION,DRAW_PLAY_POSITION_TIME);
 	}
 	else
 	{

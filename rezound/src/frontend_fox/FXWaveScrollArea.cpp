@@ -329,7 +329,11 @@ long FXWaveScrollArea::onMouseMove(FXObject*,FXSelector,void *ptr)
 	{
 		if(!(ev->state&SHIFTMASK))
 		{
+#if REZ_FOX_VERSION>=10125
+			if(startAutoScroll(ev))
+#else
 			if(startAutoScroll(ev->win_x,ev->win_y))
+#endif
 				return 0;
 		}
 	}

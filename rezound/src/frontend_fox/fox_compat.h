@@ -41,6 +41,10 @@
 	#define FXSEL(x,y) MKUINT(y,x)
 #endif
 
+#if REZ_FOX_VERSION<10125
+	#include <fox/fx.h>  // so that the class gets defined before we redefine the method name's meaning
+	#define addTimeout(tgt,sel,ms) addTimeout(ms,tgt,sel)
+#endif
 
 
 

@@ -839,7 +839,7 @@ CMetersWindow::CMetersWindow(FXComposite *parent) :
 
 
 	// schedule the first update meters event
-	timeout=getApp()->addTimeout(gMeterUpdateTime,this,ID_UPDATE_TIMEOUT);
+	timeout=getApp()->addTimeout(this,ID_UPDATE_TIMEOUT,gMeterUpdateTime);
 }
 
 CMetersWindow::~CMetersWindow()
@@ -897,7 +897,7 @@ long CMetersWindow::onUpdateMeters(FXObject *sender,FXSelector sel,void *ptr)
 	}
 
 	// schedule another update again in METER_UPDATE_RATE milliseconds
-	timeout=getApp()->addTimeout(gMeterUpdateTime,this,ID_UPDATE_TIMEOUT);
+	timeout=getApp()->addTimeout(this,ID_UPDATE_TIMEOUT,gMeterUpdateTime);
 	return 0; // returning 0 because 1 makes it use a ton of CPU (because returning 1 causes FXApp::refresh() to be called)
 }
 
