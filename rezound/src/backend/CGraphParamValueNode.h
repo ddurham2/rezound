@@ -34,10 +34,8 @@ public:
 	double x;
 	double y; // ??? could be float -- need to change to typedef probably
 
-	void *userData; // for use in the front-end code for the graphical representation of this node
-
 	CGraphParamValueNode();
-	CGraphParamValueNode(double _x,double _y,void *_userData=NULL);
+	CGraphParamValueNode(double _x,double _y);
 	CGraphParamValueNode(const CGraphParamValueNode &src);
 
 	CGraphParamValueNode &operator=(const CGraphParamValueNode &rhs);

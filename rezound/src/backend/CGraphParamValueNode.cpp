@@ -29,14 +29,12 @@
 CGraphParamValueNode::CGraphParamValueNode()
 {
 	x=y=0.0;
-	userData=NULL;
 }
 
-CGraphParamValueNode::CGraphParamValueNode(double _x,double _y,void *_userData)
+CGraphParamValueNode::CGraphParamValueNode(double _x,double _y)
 {
 	x=_x;
 	y=_y;
-	userData=_userData;
 }
 
 CGraphParamValueNode::CGraphParamValueNode(const CGraphParamValueNode &src)
@@ -48,8 +46,7 @@ CGraphParamValueNode &CGraphParamValueNode::operator=(const CGraphParamValueNode
 {
 	x=rhs.x;
 	y=rhs.y;
-	userData=rhs.userData;
-	return(*this);
+	return *this;
 }
 
 
@@ -67,7 +64,7 @@ const CGraphParamValueNodeList singleValueToGraph(const double v)
 	l.push_back(CGraphParamValueNode(0.0,v));
 	//l.append(CGraphParamValueNode(1.0,v));
 	l.push_back(CGraphParamValueNode(1.0,v));
-	return(l);
+	return l;
 }
 
 #include <math.h>
@@ -75,7 +72,7 @@ void interpretGraphNodes(const CGraphParamValueNodeList &nodes,const unsigned i,
 {
 	//if(i<0 || i>=nodes.getSize()-1)
 	if(i<0 || i>=nodes.size()-1)
-		throw(runtime_error(string(__func__)+" -- i ("+istring(i)+") is out of range for "+istring(nodes.size())+" nodes"));
+		throw runtime_error(string(__func__)+" -- i ("+istring(i)+") is out of range for "+istring(nodes.size())+" nodes");
 
 	const CGraphParamValueNode &startNode=nodes[i];
 	const CGraphParamValueNode &stopNode=nodes[i+1];
@@ -104,7 +101,7 @@ void interpretGraphNodes(const CGraphParamValueNodeList &nodes,const unsigned i,
 		segmentLength=0;
 	}
 	else if(startNode.x>stopNode.x)
-		throw(runtime_error(string(__func__)+" -- invalid node list -- node "+istring(i)+"'s x is greater than node "+istring(i+1)+"'s"));
+		throw runtime_error(string(__func__)+" -- invalid node list -- node "+istring(i)+"'s x is greater than node "+istring(i+1)+"'s");
 	*/
 
 	segmentStartValue=startNode.y;
