@@ -99,7 +99,10 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 
 				const sample_fpos_t m=(s2-s1)/(readStop-readStart);
 
-				const sample_pos_t subWriteLength=(sample_pos_t)sample_fpos_round(getWriteLength(oldLength,rateNode1,rateNode2));
+				sample_pos_t _subWriteLength=(sample_pos_t)sample_fpos_round(getWriteLength(oldLength,rateNode1,rateNode2));
+				if(_subWriteLength>0 && writePos+_subWriteLength>=dest.getSize()) // fudge fix for the above rounding creating one too many samples
+					_subWriteLength--;
+				const sample_pos_t subWriteLength=_subWriteLength;
 
 				if(m!=0)
 				{ // rate is going up or down
