@@ -54,8 +54,6 @@
 
 	- add tip text support to the reusable slider and graph widget to and allow a way to set it in the base class dialogs
 
-	- it is possible to close the application while a modal dialog is opened... this probably should not be permitted
-
 	- I should use FXAccelTable so that I can make key bindings to things like 
 		- (ctrl-a)select all (space)play, (space)stop, (p)pause, (a,z)seek, (ctrl-c)copy, (ctrl-x)cut, (ctrl-d,del)delete, (ctrl-v)paste, etc
 		- this should be relatively simple I think... 
@@ -149,4 +147,6 @@
 		- need to modify the ASoundRecorder public interface some, because I need the record dialog to have a start, stop, redo buttons, if you start, then stop, then start again, the second start should void the previous recorded data, but stop should just leave whats there intact
 
 	- set the horz and vert spacing of the channel select dialogs to 1, this should decrease the necessary dialog size
+
+	- it is possible to close the application while a modal dialog is opened... this probably should not be permitted
 
