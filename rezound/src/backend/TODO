@@ -6,6 +6,8 @@
 		  implementation that reads from the system clipboard.
 		- this base class would probably have some sort of accesser class with a operator[] defined because I need
 		  to support all the mixing methods when pasting...
+		- When pasting data, there is no heeding of the differences in sample rate of the src data when pasting to the destination
+			- I should fix this problem when I implement a real clipboard system and I would have to supply the PCM parameters to the clipboard when I copied the data there, then pasting could do something to resolve any differances when reading from it
 
 	- need a method that can make an available cue name which isn't already used
 		- use whenever the new-cue-dialog is shown
@@ -15,9 +17,6 @@
 
 	- in CrezSoundTranslator::onSaveSound, copyToFile unnecessarily copies any temp pools and peak chunk pools...  thus making the saved file way too big
 		- so I should manually copy the pools... TPoolAccessor should have a method for copying pool efficiently
-
-	- When pasting data, there is no heeding of the differences in sample rate of the src data when pasting to the destination
-		- I should fix this problem when I implement a real clipboard system and I would have to supply the PCM parameters to the clipboard when I copied the data there, then pasting could do something to resolve any differances when reading from it
 
 	- need to make 'add channel' and remove channel actions so I can test more than stereo number of channels... 
 		- DONE (but no frontend control yet): when I do implement the more than 2 channels, I need to have a way to route the multiple channels of a sound to the 2 (or more) channels of sound card output
@@ -37,11 +36,12 @@
 
 	- warn the user if he's saving an exported file format and information such as cues and user notes will not be exported (for now)
 		- implement in the derivations from ASoundTranslator
+
 	- use a registry setting for knowing where to put working files and the clipboard instead of always /tmp
 
 	- Need to handle duplicate named cues when loading a file.. I don't allow them, but a file format might
 
-	- Truncate file formats that don't save more than 32bits worth of sound and the sound file is longer than that
+	- Warn the user if saving to a file format that doesn't save more than 31bits worth of sound and the sound file is longer than that
 
 	- I need to eventually handle command line arguments.
 		- I should implement handling them in the backend so that I wouldn't have to reimplement parsing them for each frontend.
