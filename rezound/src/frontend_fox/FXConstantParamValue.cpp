@@ -47,6 +47,7 @@ FXDEFMAP(FXConstantParamValue) FXConstantParamValueMap[]=
 	FXMAPFUNC(SEL_COMMAND,			FXConstantParamValue::ID_VALUE_TEXTBOX,		FXConstantParamValue::onValueTextBoxChange),
 
 	FXMAPFUNC(SEL_COMMAND,			FXConstantParamValue::ID_SCALAR_SPINNER,	FXConstantParamValue::onScalarSpinnerChange),
+	FXMAPFUNC(SEL_CHANGED,			FXConstantParamValue::ID_SCALAR_SPINNER,	FXConstantParamValue::onScalarSpinnerChange),
 
 	FXMAPFUNC(SEL_COMMAND,			FXConstantParamValue::ID_INVERSE_BUTTON,	FXConstantParamValue::onInverseButton),
 };
@@ -84,10 +85,9 @@ FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _unin
 
 	if(minScalar!=maxScalar)
 	{
-		scalarPanel=new FXHorizontalFrame(this,LAYOUT_BOTTOM|LAYOUT_FILL_X | JUSTIFY_CENTER_X | FRAME_SUNKEN, 0,0,0,0, 4,4,4,4, 2,2);
+		scalarPanel=new FXHorizontalFrame(this,LAYOUT_BOTTOM|LAYOUT_FILL_X | JUSTIFY_CENTER_X, 0,0,0,0, 4,4,4,4, 2,2);
 			scalarLabel=new FXLabel(scalarPanel,"Scalar",NULL, LAYOUT_CENTER_Y);
-			scalarSpinner=new FXSpinner(scalarPanel,5,this,ID_SCALAR_SPINNER,SPIN_NORMAL | LAYOUT_CENTER_Y);
-			//scalarSpinner->isEditable(false);
+			scalarSpinner=new FXSpinner(scalarPanel,5,this,ID_SCALAR_SPINNER,SPIN_NORMAL | LAYOUT_CENTER_Y | FRAME_SUNKEN|FRAME_THICK);
 
 		scalarSpinner->setRange(minScalar,maxScalar);
 		scalarSpinner->setValue(initScalar);
