@@ -1,7 +1,7 @@
 # vim:tw=78
 # ReZound config/am_include.mk Written by Anthony Ventimiglia
 ## Process this file with automake to create Makefile.in
-##
+## $Id$
 ##
 ## Copyright (C) 2002 - Anthony Ventimiglia
 ## 
@@ -50,6 +50,7 @@ INCLUDES=\
 ## The Debian gcc chokes on -Wno-unused-variable and -Wno-unused-function
 ## so I'm removing it for now.
 CXXFLAGS=-Wall -g -D_GNU_SOURCE @CXXFLAGS@
+#CXXFLAGS=-Wall -g @CXXFLAGS@
 
 ## LDFLAGS will be added at link time
 ##LDFLAGS= -lFOX -laudiofile -lccgnu -ldl -lm -lpthread @LDFLAGS@

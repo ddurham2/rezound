@@ -1,4 +1,4 @@
-/* 
+/* $Id$
  * 
  * Copyright (C) 2002 - Anthony Ventimiglia
  * 
@@ -50,8 +50,24 @@
 #endif
 
 /* I'm trying to move this here instead if as CXXFLAGS from am_include.mk (I think ccgnu wants this). For some reason It's not happy with this here, but until I figure it out it will remain as a CXXFLAG  */
+//#define _GNU_SOURCE (1)
+
+
+/* 
+ * According to the gcc info pages this should take care of detecting gcc and
+ * define __func__ to __PRETTY_FUNCTION__ if g++ is being used to compile. No
+ * configure trickery is needed. Defining here will affect all code since
+ * common.h is included all around. 
+ */
+#ifdef __GNUC__ //Using gcc
+# define __func__ __PRETTY_FUNCTION__
+#else // not gcc
 /*
-#define _GNU_SOURCE (1)
-*/
+ * I'm not sure if I should define this to __func__ or undefine it, this is
+ * redundant, but I put it here to make it obvious, so if we'd rather undefine
+ * it, it stands out here. 
+ */
+# define __func__ __func__
+#endif //__GNUC__
 
 #endif /* COMMON_H */

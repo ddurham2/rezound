@@ -1,18 +1,6 @@
 $Id$
 
---
-Hey, could you add "-D__func__=__PRETTY_FUNCTION__"  to the compiler 
-flags if gcc is detected as the compiler.  __func__ is ANSI C which says 
-that that macro name should contain the name of the function.  Well, 
-__PRETTY_FUNCTION__ is a gcc extension which contains a more complete 
-name of the function/method.
-
-I would have added it myslef to configure.in's CXXFLAGS variable's 
-initial value, but then I thought about non-gcc compilers.  So it needs 
-to be done when gcc iff detected.  Other compilers would probably have 
-this extension, but __func__ will do if there is not that extension on 
-another brand compiler.
-
+--Move -D_GNU_SOURCE into common.h and out of am_include.mk
 
 - might ought to verify that bootstrap is running within the toplevel directory
 and move it into config

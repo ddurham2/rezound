@@ -23,6 +23,3 @@
 
 /* This is defined only if the check for sstream passes */
 #undef HAVE_SSTREAM 
-
-#definde _GNU_SOURCE
-
