@@ -105,7 +105,11 @@ public:
 
 		FXDCWindow dc(this,ev);
 		dc.setForeground(FXRGB(20,20,20));
+#if REZ_FOX_VERSION<10117
 		dc.setTextFont(font);
+#else
+		dc.setFont(font);
+#endif
 
 		#define H_TICK_FREQ 50
 
@@ -211,7 +215,11 @@ public:
 
 		FXDCWindow dc(this,ev);
 		dc.setForeground(FXRGB(20,20,20));
+#if REZ_FOX_VERSION<10117
 		dc.setTextFont(font);
+#else
+		dc.setFont(font);
+#endif
 
 		#define V_TICK_FREQ 20
 
