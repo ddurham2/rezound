@@ -27,8 +27,6 @@
 
 #include "ASoundTranslator.h"
 
-#include <audiofile.h>
-
 class ClibvorbisSoundTranslator : public ASoundTranslator
 {
 public:
