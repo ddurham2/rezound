@@ -167,7 +167,9 @@ bool CStatusComm::updateProgressBar(int handle,int progress)
 		try
 		{
 			progressDialogs[handle]->setProgress(progress);
+#if FOX_MAJOR<1 // stupid debian's old crap
 			progressDialogs[handle]->getApp()->repaint();
+#endif
 			return progressDialogs[handle]->isCancelled;
 		}
 		catch(exception &e)

@@ -488,7 +488,9 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 	}
 
 	hide(); // hide now and ... 
+#if FOX_MAJOR<1 // stupid debian's old crap
 	getApp()->repaint(); // force redraws from disappearing dialogs now
+#endif
 
 	return(retval);
 }
