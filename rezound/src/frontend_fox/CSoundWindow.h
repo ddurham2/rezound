@@ -160,7 +160,7 @@ public:
 
 protected:
 
-	CSoundWindow(){}
+	CSoundWindow() : loadedSound(NULL) {}
 
 private:
 

@@ -75,7 +75,7 @@ public:
 
 
 protected:
-	FXDiskEntityParamValue() {}
+	FXDiskEntityParamValue() : entityType(detAudioFilename) {}
 
 private:
 	const string name;

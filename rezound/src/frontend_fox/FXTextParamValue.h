@@ -68,7 +68,7 @@ public:
 
 
 protected:
-	FXTextParamValue() {}
+	FXTextParamValue() : isNumeric(false) {}
 
 private:
 	const string name;
