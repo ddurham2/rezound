@@ -311,7 +311,8 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 		else
 			actionSound.sound->unlockSize();
 
-		Message(e.what());
+		if(e.what()[0])
+			Message(e.what());
 		return false;
 	}
 	catch(...)
@@ -402,7 +403,8 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 		else
 			actionSound.sound->unlockSize();
 
-		Message(e.what());
+		if(e.what()[0])
+			Message(e.what());
 	}
 	catch(...)
 	{
