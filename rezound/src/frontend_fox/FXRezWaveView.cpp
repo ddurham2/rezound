@@ -114,6 +114,7 @@ private:
 
 	FXFont *font;
 
+	#define NIL_CUE_INDEX (0xffffffff)
 	size_t cueClicked; // the index of the cue clicked on holding the value between the click event and the menu item event
 	int cueClickedOffset; // used when dragging cues to know how far from the middle a cue was clicked
 	sample_pos_t origCueClickedTime;
@@ -121,7 +122,7 @@ private:
 	sample_pos_t origStopPosition; // stop position before drag cue start (for undo purposes)
 	sample_pos_t addCueTime; // the time in the audio where the mouse was clicked to add a cue if that's what they choose
 
-	size_t focusedCueIndex; // 0xffff,ffff if none focused
+	size_t focusedCueIndex; // NIL_CUE_INDEX if none focused
 	sample_pos_t focusedCueTime;
 
 	FXPopupHint *dragCueHint;
@@ -337,7 +338,9 @@ FXWaveRuler::FXWaveRuler(FXComposite *p,FXRezWaveView *_parent,CLoadedSound *_lo
 	d.size=65;
 	font=new FXFont(getApp(),d);
 
-	focusedCueIndex=0xffffffff;
+	cueClicked=NIL_CUE_INDEX;
+
+	focusedCueIndex=NIL_CUE_INDEX;
 	focusNextCue(); // to make it focus the first one if there is one
 
 	dragCueHint->create();
@@ -434,7 +437,7 @@ long FXWaveRuler::onPaint(FXObject *object,FXSelector sel,void *ptr)
 			dc.drawLine(cueXPosition,height-1,cueXPosition,CUE_Y);
 			dc.drawLine(cueXPosition+1,height-4,cueXPosition+1,CUE_Y-1);
 
-			if(hasFocus() && focusedCueIndex!=0xffffffff && focusedCueTime==sound->getCueTime(t))
+			if(hasFocus() && focusedCueIndex!=NIL_CUE_INDEX && focusedCueTime==sound->getCueTime(t))
 			{	// draw focus rectangle
 				const int textWidth=font->getTextWidth(cueName.data(),cueName.size());
 				const int textHeight=font->getTextHeight(cueName.data(),cueName.size());
@@ -454,7 +457,7 @@ long FXWaveRuler::onPaint(FXObject *object,FXSelector sel,void *ptr)
 size_t FXWaveRuler::getClickedCue(FXint x,FXint y)
 {
 	const size_t cueCount=sound->getCueCount();
-	size_t cueClicked=cueCount;
+	size_t cueClicked=NIL_CUE_INDEX;
 	if(cueCount>0)
 	{
 		// go in reverse order so that the more recent one created can be removed first
@@ -490,7 +493,7 @@ long FXWaveRuler::onPopupMenu(FXObject *object,FXSelector sel,void *ptr)
 	FXEvent *event=(FXEvent*)ptr;
 
 	// see if any cue was clicked on
-	cueClicked=getClickedCue(event->win_x,event->win_y);
+	cueClicked=getClickedCue(event->win_x,event->win_y); // setting data member for onSetPositionToCue's sake
 
 	if(cueClicked<sound->getCueCount())
 	{
@@ -539,8 +542,8 @@ long FXWaveRuler::onPopupMenu(FXObject *object,FXSelector sel,void *ptr)
 		getApp()->runModalWhileShown(&gotoMenu);
 	}
 
-
-	return(0);
+	cueClicked=NIL_CUE_INDEX;
+	return 0;
 }
 
 long FXWaveRuler::onFindStartPosition(FXObject *object,FXSelector sel,void *ptr)
@@ -764,7 +767,6 @@ long FXWaveRuler::onLeftBtnRelease(FXObject *object,FXSelector sel,void *ptr)
 	FXEvent* event=(FXEvent*)ptr;
 	if(event->click_count==1) //	<-- single click
 	{
-
 		if(cueClicked<sound->getCueCount() && sound->getCueTime(cueClicked)!=origCueClickedTime)
 		{	// was dragging a cue around
 			const sample_pos_t newCueTime=sound->getCueTime(cueClicked);
@@ -792,6 +794,8 @@ long FXWaveRuler::onLeftBtnRelease(FXObject *object,FXSelector sel,void *ptr)
 		else
 			return onShowCueList(object,sel,ptr);
 	}
+
+	cueClicked=NIL_CUE_INDEX;
 	return 0;
 }
 
@@ -850,7 +854,7 @@ long FXWaveRuler::onKeyPress(FXObject *object,FXSelector sel,void *ptr)
 		if(focusedCueIndex>=sound->getCueCount())
 			focusLastCue(); // find last cue if we just deleted what was the last cue
 
-		if(focusedCueIndex!=0xffffffff)
+		if(focusedCueIndex!=NIL_CUE_INDEX)
 			parent->waveScrollArea->centerTime(focusedCueTime);
 		parent->waveScrollArea->redraw();
 		update();
@@ -870,7 +874,7 @@ long FXWaveRuler::onKeyPress(FXObject *object,FXSelector sel,void *ptr)
 			sound->setCueTime(cueClicked,origCueClickedTime);
 			dragCueHint->hide();
 			parent->waveScrollArea->stopAutoScroll();
-			cueClicked=sound->getCueCount();
+			cueClicked=NIL_CUE_INDEX;
 			update();
 			parent->waveScrollArea->redraw();
 			return 1;
@@ -879,7 +883,7 @@ long FXWaveRuler::onKeyPress(FXObject *object,FXSelector sel,void *ptr)
 		return 0;
 	}
 
-	if(focusedCueIndex!=0xffffffff)
+	if(focusedCueIndex!=NIL_CUE_INDEX)
 	{
 		parent->waveScrollArea->centerTime(focusedCueTime);
 		update();
@@ -891,11 +895,11 @@ long FXWaveRuler::onKeyPress(FXObject *object,FXSelector sel,void *ptr)
 
 void FXWaveRuler::focusNextCue()
 {
-	if(focusedCueIndex==0xffffffff)
+	if(focusedCueIndex==NIL_CUE_INDEX)
 	{
 		sample_pos_t dummy;
 		if(!sound->findNearestCue(0,focusedCueIndex,dummy))
-			focusedCueIndex=0xffffffff;
+			focusedCueIndex=NIL_CUE_INDEX;
 		else
 			focusedCueTime=sound->getCueTime(focusedCueIndex);
 	}
@@ -904,20 +908,20 @@ void FXWaveRuler::focusNextCue()
 		if(sound->findNextCue(focusedCueTime,focusedCueIndex))
 			focusedCueTime=sound->getCueTime(focusedCueIndex);
 		else
-			focusedCueIndex=0xffffffff;
+			focusedCueIndex=NIL_CUE_INDEX;
 	}
 }
 
 void FXWaveRuler::focusPrevCue()
 {
-	if(focusedCueIndex==0xffffffff)
+	if(focusedCueIndex==NIL_CUE_INDEX)
 		focusNextCue(); // would implement the same thing here, so just call it
 	else
 	{
 		if(sound->findPrevCue(focusedCueTime,focusedCueIndex))
 			focusedCueTime=sound->getCueTime(focusedCueIndex);
 		else
-			focusedCueIndex=0xffffffff;
+			focusedCueIndex=NIL_CUE_INDEX;
 	}
 }
 
@@ -925,7 +929,7 @@ void FXWaveRuler::focusFirstCue()
 {
 	sample_pos_t dummy;
 	if(!sound->findNearestCue(0,focusedCueIndex,dummy))
-		focusedCueIndex=0xffffffff;
+		focusedCueIndex=NIL_CUE_INDEX;
 	else
 		focusedCueTime=sound->getCueTime(focusedCueIndex);
 }
@@ -934,7 +938,7 @@ void FXWaveRuler::focusLastCue()
 {
 	sample_pos_t dummy;
 	if(!sound->findNearestCue(sound->getLength()-1,focusedCueIndex,dummy))
-		focusedCueIndex=0xffffffff;
+		focusedCueIndex=NIL_CUE_INDEX;
 	else
 		focusedCueTime=sound->getCueTime(focusedCueIndex);
 }
