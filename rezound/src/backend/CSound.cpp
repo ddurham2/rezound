@@ -401,12 +401,12 @@ void CSound::invalidateAllPeakData()
 }
 
 
-void CSound::addChannel()
+void CSound::addChannel(bool doZeroData)
 {
-	prvAddChannel(true);
+	prvAddChannel(true,doZeroData);
 }
 
-void CSound::prvAddChannel(bool addAudioSpaceForNewChannel)
+void CSound::prvAddChannel(bool addAudioSpaceForNewChannel,bool doZeroData)
 {
 	ASSERT_RESIZE_LOCK
 
@@ -430,7 +430,7 @@ void CSound::prvAddChannel(bool addAudioSpaceForNewChannel)
 		addedToChannelCount=true;
 
 		if(addAudioSpaceForNewChannel)
-			matchUpChannelLengths(getLength());
+			matchUpChannelLengths(getLength(),doZeroData);
 	}
 	catch(...)
 	{ // attempt to recover
@@ -447,7 +447,7 @@ void CSound::prvAddChannel(bool addAudioSpaceForNewChannel)
 	saveMetaInfo();
 }
 
-void CSound::addChannels(unsigned where,unsigned count)
+void CSound::addChannels(unsigned where,unsigned count,bool doZeroData)
 {
 	ASSERT_RESIZE_LOCK
 
@@ -468,7 +468,7 @@ void CSound::addChannels(unsigned where,unsigned count)
 	for(unsigned t=0;t<count;t++)
 	{
 		// add a channel to the end
-		addChannel();
+		addChannel(doZeroData);
 
 		// through a series of swaps move that channel to where+t
 		for(unsigned i=0;i<swapCount;i++)
@@ -599,7 +599,7 @@ void CSound::moveChannelsFromTemp(int tempAudioPoolKey,const bool whichChannels[
 	{
 		if(whichChannels[t])
 		{
-			prvAddChannel(false);
+			prvAddChannel(false,false);
 			moveDataIntoChannel(tempAudioPoolKey,getChannelCount()-1,getChannelCount()-1,0,getLength(),true);
 		}
 	}
@@ -1660,6 +1660,7 @@ void CSound::createWorkingPoolFile(const string originalFilename,const unsigned 
 
 	createCueAccesser();
 
+/*??? maybe could speed things up by not zeroing the data here */
 	matchUpChannelLengths(NIL_SAMPLE_POS);
 
 	saveMetaInfo();
@@ -1883,7 +1884,7 @@ void CSound::removeAllTempAudioPools()
 
 
 // appends silence to the end of any channel that is shorter than the longest one
-void CSound::matchUpChannelLengths(sample_pos_t maxLength)
+void CSound::matchUpChannelLengths(sample_pos_t maxLength,bool doZeroData)
 {
 /*
 	if(maxLength>MAX_LENGTH)
@@ -1902,7 +1903,7 @@ void CSound::matchUpChannelLengths(sample_pos_t maxLength)
 		{
 			const sample_pos_t channelSize=getAudioInternal(t).getSize();
 			if(channelSize<maxAudioPoolSize)
-				addSpaceToChannel(t,channelSize,maxAudioPoolSize-channelSize,true);
+				addSpaceToChannel(t,channelSize,maxAudioPoolSize-channelSize,doZeroData);
 		}
 	}
 	else
@@ -1916,7 +1917,7 @@ void CSound::matchUpChannelLengths(sample_pos_t maxLength)
 			if(channelSize>maxAudioPoolSize)
 				removeSpaceFromChannel(t,maxAudioPoolSize,channelSize-maxAudioPoolSize);
 			else if(channelSize<maxAudioPoolSize)
-				addSpaceToChannel(t,channelSize,maxAudioPoolSize-channelSize,true);
+				addSpaceToChannel(t,channelSize,maxAudioPoolSize-channelSize,doZeroData);
 		}
 	}
 

@@ -126,8 +126,8 @@ public:
 
 	// Structure Manipulation Members (Most require a resize lock to have been obtained)
 	
-	void addChannel(); // adds a new channel at the end
-	void addChannels(unsigned where,unsigned count);
+	void addChannel(bool doZeroData); // adds a new channel at the end
+	void addChannels(unsigned where,unsigned count,bool doZeroData);
 
 	void removeChannel(); // removes the last channel
 	void removeChannels(unsigned where,unsigned count);
@@ -445,7 +445,7 @@ private:
 
 	// this should be called after every space modification and even loading of a file
 	// and pass NIL_SAMPLE_POS as the maxLength parameter to match to the longest channel
-	void matchUpChannelLengths(sample_pos_t maxLength);
+	void matchUpChannelLengths(sample_pos_t maxLength,bool doZeroData=true);
 
 	void addSpaceToChannel(unsigned channel,sample_pos_t where,sample_pos_t length,bool doZeroData);
 	void removeSpaceFromChannel(unsigned channel,sample_pos_t where,sample_pos_t length);
@@ -455,7 +455,7 @@ private:
 
 	static void appendForFudgeFactor(CInternalRezPoolAccesser dest,const CInternalRezPoolAccesser src,sample_pos_t srcWhere,sample_pos_t fudgeFactor);
 
-	void prvAddChannel(bool addAudioSpaceForNewChannel);
+	void prvAddChannel(bool addAudioSpaceForNewChannel,bool doZeroData);
 
 	struct RFormatInfo
 	{
