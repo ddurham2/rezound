@@ -2,15 +2,14 @@
 -- HOW TO FIX --
 
 ** If you have problems in the final linking stage of ReZound
-because of GL library problems, you can try this.  In the 
+because of GL libraries missing, you can try this:  In the 
 top level source directory you should find a libtool.GL.patch
-file.  Change your current directory there and apply the 
-patch:
+file.  Change directories there and apply the patch:
 
-	cd toplevel_source_dir
-	patch < libtool.GL.patch
+	[prompt]$ cd toplevel_source_dir
+	[prompt]$ patch < libtool.GL.patch
 
-And then rerun 'make'.  The patch must be applied *AFTER*
+and then rerun 'make'.  The patch must be applied *AFTER*
 you have run configure.  And if configure is re-run, it will
 probably be necessary to apply the patch again since 
 configure will probably regenerate libtool.
@@ -18,10 +17,11 @@ configure will probably regenerate libtool.
 
 
 ** ALSO, if you build and installed the FOX library yourself, 
-then you can re-configure FOX with an '--with-opengl=no` 
+then you can re-configure FOX with an '--with-opengl=no' 
 flag and reinstall FOX.  However, if you're the one that built
-FOX, then it probably required OpenGL then, or you already
-used this flag to configure.
+FOX, then it probably required OpenGL at that time, or you 
+already used this flag to configure FOX and are not even reading 
+this document!
 
 
 
@@ -32,12 +32,11 @@ used this flag to configure.
 library references from the .la files' dependency_libs
 value.  
 
-Unfortunatly, at this point, the FOX GUI library contains
-some OpenGL widgets and thus wants to require linking with
-the OpenGL libraries.  ReZound does not use any of these
-OpenGL widgets and so excluding the libraries from the link
-command works around the problem.  (Actually, this works 
-because the (hopefully) your linker does not require a symbol
-from any library if it was never used by the applicating being
-linked.)
+Unfortunatly, at this point, the FOX GUI library contains some 
+OpenGL widgets and thus wants to link with the OpenGL libraries.  
+ReZound does not use any of these OpenGL widgets and so excluding 
+the libraries from the link command works around the problem.  
+(Actually, this works because the (hopefully) your linker does 
+not require a symbol referenced from a library if it was never 
+called by the applicating being linked with that library.)
 
