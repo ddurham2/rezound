@@ -18,16 +18,6 @@
 
 	- The SAT being a vector really does slow things down with VERY large files... If I didn't actually need direct indexing, then this could be changed to something more efficient to modify instead of O(n) operations
 
-	- whenever a pool is added or removed, outstanding poolIds are now not for sure valid anymore.  This is because the poolId was actually the index into the SAT.
-		- This even messes up outstanding accessors
-	 	- I had to worry about this in CSound::addChannels or removeChannels and cannot allow CSound::removeGeneralDataPool to be public because it would invalidate any pools created after the removed generalDataPool was created
-		- two ways of fixing this are:
-			- 1) don't remove the spot in the SAT vector when removing a pool..just reuse it the next time a pool is created
-				- but then I do need to remember that it is not valid.. probably name it ""
-			- 2) go thru the code and everywhere that a pool ids could be modified, alter all outstanding accessors
-				- but this wouldn't help for objects just storing the poolId obtained from the class.
-
-
 
 
 - DONE -
@@ -46,6 +36,16 @@
 
 	- make moveData detect the situation that if the whole pool is being moved to an empty pool then just to simply move the whole SAT data to the empty pool and clear the SAT data at the moved pool
 		- this will make removing and adding channels more efficient
+
+	- whenever a pool is added or removed, outstanding poolIds are now not for sure valid anymore.  This is because the poolId was actually the index into TPoolFile::SAT and TPoolFile::pools.
+		- This even messes up outstanding accessors
+	 	- I had to worry about this in CSound::addChannels or removeChannels and cannot allow CSound::removeGeneralDataPool to be public because it would invalidate any pools created after the removed generalDataPool was created
+		- two ways of fixing this are:
+			* - 1) don't remove the spot in the SAT vector when removing a pool..just reuse it the next time a pool is created
+				- but then I do need to remember that it is not valid.. probably name it ""
+			- 2) go thru the code and everywhere that a pool ids could be modified, alter all outstanding accessors
+				- but this wouldn't help for objects just storing the poolId obtained from the class.
+
 
 
 

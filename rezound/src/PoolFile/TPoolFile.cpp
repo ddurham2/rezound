@@ -36,17 +36,8 @@
  * see if I can eliminate this
  */
 
-/*
- * try to fix the problem that poolIds are not gaurenteed after removing a pool
- * 	- use an ever increasing value
- * 	- this value would be reset to 0 after the pool file has been opened and closed tho unless I saved that info too
- */
-
 /*???
- * 	In many functions i have SAT[poolId][index].. I should probably reduce that to  vector<RLogicalBlock> &poolSAT=SAT[poolId];
- */
-
-/* ??? I don't know what this checkCurrent thing was in blockFile's size... but I can probably remove it now unless it used to do something interesting
+ * 	In many functions i re-evaluate over and over SAT[poolId][index].. I should probably reduce that to  vector<RLogicalBlock> &poolSAT=SAT[poolId];
  */
 
 /* ??? One possible improvment, would be to fix this situation:
@@ -70,7 +61,7 @@
 #ifndef __TPoolFile_CPP__
 #define __TPoolFile_CPP__
 
-#include <stdio.h> // for the printf errors... should probably use assert (but assumably temporary>
+#include <stdio.h> // for the printf errors... should probably use assert (but assumably temporary)  (It's also for printSAT())
 
 #include <stdexcept>
 #include <utility>
@@ -81,7 +72,6 @@
 
 #include "TPoolFile.h"
 #include "TStaticPoolAccesser.h"
-//#include "CStreamPoolAccesser.h"
 
 #include <TAutoBuffer.h>
 
@@ -530,7 +520,7 @@ template<class l_addr_t,class p_addr_t>
 	{
 		if(!opened)
 			throw(runtime_error(string(__func__)+" -- no file is open"));
-		if(poolId>=getPoolCount())
+		if(!isValidPoolId(poolId))
 			throw(runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId)));
 		if(sizeof(pool_element_t)!=pools[poolId].alignment)
 			throw(runtime_error(string(__func__)+" -- method instantiated with a type whose size does not match the pool's alignment: sizeof(pool_element_t): "+istring(sizeof(pool_element_t))+" -- "+getPoolDescription(poolId)));
@@ -552,17 +542,6 @@ template<class l_addr_t,class p_addr_t>
 	return(getPoolAccesser<pool_element_t>(getPoolIdByName(poolName)));
 }
 
-/*
-CStreamPoolAccesser CPoolFile::getStreamPoolAccesser(const poolId_t poolId)
-{
-	return(CStreamPoolAccesser(getPoolAccesser(poolId)));
-}
-
-CStreamPoolAccesser CPoolFile::getStreamPoolAccesser(const string poolName)
-{
-	return(CStreamPoolAccesser(getPoolAccesser(poolName)));
-}
-*/
 
 // Const Pool Accesser Methods
 template<class l_addr_t,class p_addr_t>
@@ -573,7 +552,7 @@ template<class l_addr_t,class p_addr_t>
 	{
 		if(!opened)
 			throw(runtime_error(string(__func__)+" -- no file is open"));
-		if(poolId>=getPoolCount())
+		if(!isValidPoolId(poolId))
 			throw(runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId)));
 		if(sizeof(pool_element_t)!=pools[poolId].alignment)
 			throw(runtime_error(string(__func__)+" -- method instantiated with a type whose size does not match the pool's alignment: sizeof(pool_element_t): "+istring(sizeof(pool_element_t))+" -- "+getPoolDescription(poolId)));
@@ -597,24 +576,14 @@ template<class l_addr_t,class p_addr_t>
 	return(getPoolAccesser<pool_element_t>(getPoolIdByName(poolName)));
 }
 
-/*
-const CStreamPoolAccesser CPoolFile::getStreamPoolAccesser(const poolId_t poolId) const
-{
-	return(CStreamPoolAccesser(getPoolAccesser(poolId)));
-}
 
-const CStreamPoolAccesser CPoolFile::getStreamPoolAccesser(const string poolName) const
-{
-	return(CStreamPoolAccesser(getPoolAccesser(poolName)));
-}
-*/
 
 template<class l_addr_t,class p_addr_t>
 	size_t TPoolFile<l_addr_t,p_addr_t>::readPoolRaw(const poolId_t poolId,void *buffer,size_t readSize)
 {
 	if(!opened)
 		throw(runtime_error(string(__func__)+" -- no file is open"));
-	if(poolId>=getPoolCount())
+	if(!isValidPoolId(poolId))
 		throw(runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId)));
 
 	const TStaticPoolAccesser<uint8_t,TPoolFile<l_addr_t,p_addr_t> > accesser(const_cast<TPoolFile<l_addr_t,p_addr_t> *>(this),poolId);
@@ -648,26 +617,21 @@ template<class l_addr_t,class p_addr_t>
 	return(getPoolAccesser<pool_element_t>(poolName));
 }
 
-/*
-CStreamPoolAccesser CPoolFile::createStreamPool(const string poolName,const bool throwOnExistance)
-{
-	try
-	{
-		return(CStreamPoolAccesser(createPool(poolName,sizeof(StreamPoolAccesserType),throwOnExistance)));
-	}
-	catch(exception &e)
-	{
-		throw(runtime_error(string(__func__)+" -- "+string(e.what())));
-	}
-}
-*/
 
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::clear()
 {
-	while(poolNames.size()>0)
-		removePool(poolNames.begin()->first);
+	if(!accessers.empty())
+		throw(runtime_error(string(__func__)+" -- there are outstanding accessors"));
+
+	invalidateAllCachedBlocks();
+	poolNames.clear();
+	SAT.clear();
+	pools.clear();
+	physicalBlockList.clear();
+	makeBlockFileSmallest();
+	backupSAT();
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -678,58 +642,34 @@ template<class l_addr_t,class p_addr_t>
 	{
 		if(!opened)
 			throw(runtime_error(string(__func__)+" -- no file is open"));
+		if(!isValidPoolId(poolId))
+			throw(runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId)));
 
 		invalidateAllCachedBlocks();
         
 		// remove poolName with poolId of the parameter
-		//for(size_t t=0;t<poolNames.getSize();t++)
 		for(map<string,poolId_t>::const_iterator t=poolNames.begin();t!=poolNames.end();t++)
 		{
 			if(t->second==poolId)
 			{
-				//poolNames.remove(t->first);
 				poolNames.erase(t->first);
 				break;
 			}
 		}
 
-		// decrement any other pools whose poolId is greater than the parameter
-		/*
-		for(size_t t=0;t<poolNames.getSize();t++)
-		{
-			if(poolNames[t]>poolId)
-				poolNames[t]--;
-		}
-		*/
-		for(map<string,poolId_t>::iterator t=poolNames.begin();t!=poolNames.end();t++)
-		{
-			if(t->second>poolId)
-				t->second--;
-		}
+		// mark pool as not valid
+		pools[poolId].size=0;
+		pools[poolId].alignment=0;
+		pools[poolId].isValid=false;
 
-		// remove SAT entries with this poolId
-		//pools.remove(poolId);
-		pools.erase(pools.begin()+poolId);
-		//for(size_t t=0;t<SAT[poolId].getSize();t++)
 		for(size_t t=0;t<SAT[poolId].size();t++)
 		{
 			RLogicalBlock &block=SAT[poolId][t];
-			/*
-			size_t index;
-			if(!physicalBlockList.contains(RPhysicalBlock(block.physicalStart,0),index))
-			{
-				printf("SAT and physical block list inconsistancies");
-				exit(0);
-			}
-			physicalBlockList.remove(index);
-			*/
 				// could just call physicalBLockList.erase(serach...)
 			const size_t index=findPhysicalBlockContaining(block.physicalStart);
 			physicalBlockList.erase(physicalBlockList.begin()+index);
 		}
-		//SAT[poolId].clear();
-		//SAT.remove(poolId);
-		SAT.erase(SAT.begin()+poolId);
+		SAT[poolId].clear();
 
 		makeBlockFileSmallest();
 
@@ -765,14 +705,6 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	const size_t TPoolFile<l_addr_t,p_addr_t>::getPoolCount() const
-{
-	if(!opened)
-		throw(runtime_error(string(__func__)+" -- no file is open"));
-	return(pools.size());
-}
-
-template<class l_addr_t,class p_addr_t>
 	const typename TPoolFile<l_addr_t,p_addr_t>::alignment_t TPoolFile<l_addr_t,p_addr_t>::getPoolAlignment(const poolId_t poolId) const
 {
 	//readStructureInfoLock();
@@ -780,8 +712,8 @@ template<class l_addr_t,class p_addr_t>
 	{
 		if(!opened)
 			throw(runtime_error(string(__func__)+" -- no file is open"));
-		if(poolId>=pools.size())
-			throw(runtime_error(string(__func__)+" -- invalid poolId parameter"));
+		if(!isValidPoolId(poolId))
+			throw(runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId)));
 
 		const alignment_t alignment=pools[poolId].alignment;
 
@@ -806,10 +738,10 @@ template<class l_addr_t,class p_addr_t>
 {
 		if(!opened)
 			throw(runtime_error(string(__func__)+" -- no file is open"));
-		if(poolId>=pools.size())
-			throw(runtime_error(string(__func__)+" -- invalid poolId parameter"));
+		if(!isValidPoolId(poolId))
+			throw(runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId)));
 		if(pools[poolId].size>0)
-			throw(runtime_error(string(__func__)+" -- pool is not empty"));
+			throw(runtime_error(string(__func__)+" -- pool must be empty to change alignment"));
 		if(alignment==0 ||alignment>maxBlockSize)
 			throw(runtime_error(string(__func__)+" -- invalid alignment: "+istring(alignment)+" alignment must be 0 < alignment <= maxBlockSize (which is: "+istring(maxBlockSize)+")"));
 
@@ -835,9 +767,9 @@ template<class l_addr_t,class p_addr_t>
 	//writeStructureInfoLock();
 	try
 	{
-		if(poolId1>=pools.getSize())
+		if(!isValidPoolId(poolId1))
 			throw(runtime_error(string(__func__)+" -- invalid poolId1 parameter: "+istring(poolId1)));
-		if(poolId2>=pools.getSize())
+		if(!isValidPoolId(poolId2))
 			throw(runtime_error(string(__func__)+" -- invalid poolId2 parameter: "+istring(poolId2)));
 		if(poolId1==poolId2)
 		{
@@ -848,9 +780,9 @@ template<class l_addr_t,class p_addr_t>
 		invalidateAllCachedBlocks();
 
 		// swap SATs for two pools
-		//STL const TUniqueSortList<RLogicalBlock> temp=SAT[poolId1];
+		vector<vector<RLogicalBlock> > tempSAT=SAT[poolId1];
 		SAT[poolId1]=SAT[poolId2];
-		SAT[poolId2]=temp;
+		SAT[poolId2]=tempSAT;
 
 		// swap pool size info
 		const RPoolInfo tempPool=pools[poolId1];
@@ -873,16 +805,10 @@ template<class l_addr_t,class p_addr_t>
 }
 
 
+
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::prvGetPoolIdByName(const string poolName,poolId_t &poolId) const
 {
-	/*
-	size_t index=poolNames.findItem(poolName);
-	if(index==DL_NOT_FOUND)
-		return(false);
-	poolId=poolNames[index];
-	return(true);
-	*/
 	map<const string,poolId_t>::const_iterator i=poolNames.find(poolName);
 	if(i==poolNames.end())
 		return(false);
@@ -905,7 +831,15 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	const typename TPoolFile<l_addr_t,p_addr_t>::poolId_t TPoolFile<l_addr_t,p_addr_t>::getPoolIdByIndex(const size_t index) const // where index is 0 to getPoolCount()-1
+	const size_t TPoolFile<l_addr_t,p_addr_t>::getPoolIndexCount() const
+{
+	if(!opened)
+		throw(runtime_error(string(__func__)+" -- no file is open"));
+	return(poolNames.size());
+}
+
+template<class l_addr_t,class p_addr_t>
+	const typename TPoolFile<l_addr_t,p_addr_t>::poolId_t TPoolFile<l_addr_t,p_addr_t>::getPoolIdByIndex(const size_t index) const // where index is 0 to getPoolIndexCount()-1
 {
 	if(index>=poolNames.size())
 		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(index)));
@@ -918,16 +852,9 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	const string TPoolFile<l_addr_t,p_addr_t>::getPoolNameById(const poolId_t poolId) const
 {
-	if(poolId>=pools.size())
+	if(!isValidPoolId(poolId))
 		throw(runtime_error(string(__func__)+" -- poolId parameter out of bounds: "+istring(poolId)));
 
-	/*
-	for(size_t i=0;i<poolNames.getSize();i++)
-	{
-		if(poolNames[i]==poolId)
-			return(poolNames.getKey(i));
-	}
-	*/
 	for(map<const string,poolId_t>::const_iterator i=poolNames.begin();i!=poolNames.end();i++)
 	{
 		if(i->second==poolId)
@@ -938,6 +865,12 @@ template<class l_addr_t,class p_addr_t>
 	exit(0);
 	return("");
 }
+template<class l_addr_t,class p_addr_t>
+	const bool  TPoolFile<l_addr_t,p_addr_t>::isValidPoolId(const poolId_t poolId) const
+{
+	return(poolId<pools.size() && pools[poolId].isValid);
+}
+
 
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::containsPool(const string poolName) const
@@ -1024,49 +957,31 @@ template<class l_addr_t,class p_addr_t>
 	filename="";
 
 	SAT.clear();
-	//SAT.setReallocQuantum(64);
 	SAT.reserve(64);
 
 	physicalBlockList.clear();
-	//physicalBlockList.setReallocQuantum(8192);
 	physicalBlockList.reserve(1024);
 
 	poolNames.clear();
-	//poolNames.reserve(64);
 
 	pools.clear();
-	//pools.setReallocQuantum(64);
 	pools.reserve(64);
 
 	accessers.clear();
-	//accessers.setReallocQuantum(64);
-	//accessers.reserve(64);
 
 	if(createInitialCachedBlocks)
 	{
-		/*
-		while(unusedCachedBlocks.getSize()>INITIAL_CACHED_BLOCK_COUNT)
-			delete unusedCachedBlocks.dequeue();
-		*/
 		while(unusedCachedBlocks.size()>INITIAL_CACHED_BLOCK_COUNT)
 		{
 			delete unusedCachedBlocks.front();
 			unusedCachedBlocks.pop();
 		}
 
-		/*
-		while(unusedCachedBlocks.getSize()<INITIAL_CACHED_BLOCK_COUNT)
-			unusedCachedBlocks.enqueue(new RCachedBlock(maxBlockSize));
-		*/
 		while(unusedCachedBlocks.size()<INITIAL_CACHED_BLOCK_COUNT)
 			unusedCachedBlocks.push(new RCachedBlock(maxBlockSize));
 	}
 	else
 	{
-		/*
-		while(!unusedCachedBlocks.isEmpty())
-			delete unusedCachedBlocks.dequeue();
-		*/
 		while(!unusedCachedBlocks.empty())
 		{
 			delete unusedCachedBlocks.front();
@@ -1074,12 +989,6 @@ template<class l_addr_t,class p_addr_t>
 		}
 	}
 
-	/*
-	while(!unreferencedCachedBlocks.isEmpty())
-		delete unreferencedCachedBlocks.dequeue();
-	while(!activeCachedBlocks.isEmpty())
-		delete activeCachedBlocks.dequeue();
-	*/
 	while(!unreferencedCachedBlocks.empty())
 	{
 		delete unreferencedCachedBlocks.front();
@@ -1098,11 +1007,11 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::verifyBlockInfo(const poolId_t poolId) const
 {
+	if(!validPoolId(poolId))
+		throw(runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId)));
+
 		// this didn't seem to catch some errors I put in on purpose, so I wrote verifyAllBlockInfo()
-	// poolId not verified itself
 	p_addr_t start=0;
-	//for(size_t t=0;t<SAT[poolId].getSize();t++)
-	//for(set<RLogicalBlock>::const_iterator t=SAT[poolId].begin();t!=SAT[poolId].end();t++)
 	for(size_t t=0;t<SAT[poolId].size();t++)
 	{
 		//RLogicalBlock block=SAT[poolId][t];
@@ -1141,15 +1050,15 @@ template<class l_addr_t,class p_addr_t>
 	// and for each block in the logical space, make sure there is a physical block with the right size
 	for(size_t poolId=0;poolId<pools.size();poolId++)
 	{
+		if(!pools[poolId].isValid)
+			continue;
+
 		l_addr_t expectedStart=0;
-		//for(size_t t=0;t<SAT[poolId].getSize();t++)
 	
 		
-		//for(set<RLogicalBlock>::const_iterator t=SAT[poolId].begin();t!=SAT[poolId].end();t++)
 		for(size_t t=0;t<SAT[poolId].size();t++)
 		{
 			const RLogicalBlock &logicalBlock=SAT[poolId][t];
-			//const RLogicalBlock &logicalBlock=*t;
 
 			if(logicalBlock.logicalStart!=expectedStart)
 			{
@@ -1161,7 +1070,6 @@ template<class l_addr_t,class p_addr_t>
 
 			size_t pbIndex=findPhysicalBlockContaining(logicalBlock.physicalStart);
 			const RPhysicalBlock &physicalBlock=physicalBlockList[pbIndex];
-			//const RPhysicalBlock &physicalBlock=*findPhysicalBlockContaining(logicalBlock.physicalStart);
 			if(physicalBlock.physicalStart!=logicalBlock.physicalStart)
 			{
 				printSAT();
@@ -1183,7 +1091,6 @@ template<class l_addr_t,class p_addr_t>
 
 			bool startFound=false;
 			for(size_t i=0;i<physicalBlockList.size();i++)
-			//for(set<RPhysicalBlock>::const_iterator i=physicalBlockList.begin();i!=physicalBlockList.end();i++)
 			{
 				const RPhysicalBlock &physicalBlock=physicalBlockList[i];
 				if(logicalBlock.physicalStart==physicalBlock.physicalStart)
@@ -1212,7 +1119,6 @@ template<class l_addr_t,class p_addr_t>
 
 			unsigned p=0;
 			for(size_t i=0;i<physicalBlockList.size()-1;i++)
-			//for(set<RPhysicalBlock>::const_iterator i=physicalBlockList.begin();i!=physicalBlockList.end();i++)
 			{
 				const RPhysicalBlock &physicalBlock=physicalBlockList[i];
 				if(logicalBlock.physicalStart>=physicalBlock.physicalStart && (logicalBlock.physicalStart+logicalBlock.size-1)<=(physicalBlock.physicalStart+physicalBlock.size-1))
@@ -1234,19 +1140,11 @@ template<class l_addr_t,class p_addr_t>
 	}
 
 	// make sure that no blocks in physicalBlockList overlap (should have been found above if it's happening)
-	//if(physicalBlockList.getSize()>0)
 	if(physicalBlockList.size()>0)
 	{
 		for(size_t t=0;t<physicalBlockList.size()-1;t++)
-		//for(set<RPhysicalBlock>::const_iterator t=physicalBlockList.begin();t!=physicalBlockList.end();t++)
 		{
-			/*
-			if(next(t)==physicalBlockList.end())
-				break;
-			*/
-
 			const RPhysicalBlock &physicalBlock1=physicalBlockList[t];
-			//set<RPhysicalBlock>::const_iterator next_t=t;next_t++;
 			const RPhysicalBlock &physicalBlock2=physicalBlockList[t+1];
 			
 			if(physicalBlock1.physicalStart+physicalBlock1.size>physicalBlock2.physicalStart)
@@ -1265,7 +1163,6 @@ template<class l_addr_t,class p_addr_t>
 	{
 		p_addr_t expectedStart=0;
 		for(size_t t=0;t<physicalBlockList.size();t++)
-		//for(set<RPhysicalBlock>::const_iterator t=physicalBlockList.begin();t!=physicalBlockList.end();t++)
 		{
 			const RPhysicalBlock &physicalBlock=physicalBlockList[t];
 			if(physicalBlock.physicalStart!=expectedStart)
@@ -1286,7 +1183,10 @@ template<class l_addr_t,class p_addr_t>
 {
 	p_addr_t proceedingPoolSizes=0;
 	for(size_t t=0;t<poolId;t++)
-		proceedingPoolSizes+=pools[t].size;
+	{
+		if(pools[t].isValid) // wouldn't really matter cause size of invalids is supposed to be zero
+			proceedingPoolSizes+=pools[t].size;
+	}
 	return(proceedingPoolSizes);
 }
 
@@ -1302,7 +1202,7 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	const l_addr_t TPoolFile<l_addr_t,p_addr_t>::getPoolSize(const poolId_t poolId) const
 {
-	if(poolId>=pools.size())
+	if(!isValidPoolId(poolId))
 		throw(runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId)));
 
 	return(pools[poolId].size);
@@ -1317,7 +1217,8 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::writeMetaData(CMultiFile *f)
 {
-	makeBlockFileSmallest(false); // doesn't necessarily help if f is not &this->blockFile
+	if(f==&blockFile) // only do if we're working on our blockFile
+		makeBlockFileSmallest();
 
 	// write meta and user info
 	uint64_t metaDataOffset=f->getSize();
@@ -1348,18 +1249,36 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::prvCreatePool(const string poolName,const alignment_t alignment,const bool throwOnExistance)
+	void TPoolFile<l_addr_t,p_addr_t>::prvCreatePool(const string poolName,const alignment_t alignment,const bool throwOnExistance,const bool reuseOldPoolIds)
 {
+	/* the stuff about a the poolName being "__internal_invalid_pool" deals with a restoring of the SAT from disk and needing to create same poolIds (isValid and !isValid) as before */
 	poolId_t poolId;
-	if(!prvGetPoolIdByName(poolName,poolId))
+	if(poolName=="__internal_invalid_pool" || !prvGetPoolIdByName(poolName,poolId))
 	{	// poolName not found
 		if(poolName.length()>MAX_POOL_NAME_LENGTH)
 			throw(runtime_error(string(__func__)+" -- pool name too long: "+poolName));
 
-			// ??? this is where the poolId get's created.. pools.size()
-		//addPool(poolNames.getOrAdd(poolName)=pools.getSize(),alignment);
-		addPool(poolNames.insert(make_pair(poolName,pools.size())).first->second,alignment);
-		return;
+		// this is where the poolId get's created.. either pools.size() or a recycled element in the pools vector
+		
+		// check for any unused positions in the pools vector
+		poolId_t newPoolId=pools.size(); // <-- the would-be new one if we don't find one to use
+		if(reuseOldPoolIds) // sometimes (buildSATFromFile()) we don't want to use the old poolIds because we want to preserve original poolId numbers
+		{
+			for(size_t t=0;t<pools.size();t++)
+			{
+				if(!pools[t].isValid)
+				{
+					newPoolId=t;
+					break;
+				}
+			}
+		}
+
+
+		// either record the name of the new pool or set as not valid
+		if(poolName!="__internal_invalid_pool")
+			poolNames.insert(make_pair(poolName,newPoolId));
+		addPool(newPoolId,alignment,poolName!="__internal_invalid_pool");
 	}
 	else
 	{
@@ -1370,18 +1289,26 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::addPool(const poolId_t poolId,const alignment_t alignment)
+	void TPoolFile<l_addr_t,p_addr_t>::addPool(const poolId_t poolId,const alignment_t alignment,bool isValid)
 {
-	if(poolId!=pools.size())
-		throw(runtime_error(string(__func__)+" -- invalid new pool id or pool already exists: "+istring(poolId)));
-	if(alignment==0 ||alignment>maxBlockSize)
-		throw(runtime_error(string(__func__)+" -- invalid alignment: "+istring(alignment)+" alignment must be 0 < alignment <= maxBlockSize (which is: "+istring(maxBlockSize)+")"));
-
 	invalidateAllCachedBlocks();
 
-	appendNewSAT();
-	//pools.append(RPoolInfo(0,alignment));
-	pools.push_back(RPoolInfo(0,alignment));
+	if((isValid && alignment==0) || alignment>maxBlockSize)
+		throw(runtime_error(string(__func__)+" -- invalid alignment: "+istring(alignment)+" alignment must be 0 < alignment <= maxBlockSize (which is: "+istring(maxBlockSize)+")"));
+
+	if(poolId<pools.size() && !pools[poolId].isValid)
+	{ // reusing existing element the SAT vector
+		pools[poolId].size=0;
+		pools[poolId].alignment=alignment;
+		pools[poolId].isValid=isValid;
+	}
+	else if(poolId==pools.size())
+	{ // create new entry in the SAT vector
+		appendNewSAT();
+		pools.push_back(RPoolInfo(0,alignment,isValid));
+	}
+	else
+		throw(runtime_error(string(__func__)+" -- invalid new pool id or pool already exists: "+istring(poolId)));
 }
 
 
@@ -1400,31 +1327,19 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::makeBlockFileSmallest(const bool checkCurrent)
+	void TPoolFile<l_addr_t,p_addr_t>::makeBlockFileSmallest()
 {
 	size_t l=physicalBlockList.size();
 	if(l>0)
-		changeBlockFileSize(physicalBlockList[l-1].physicalStart+physicalBlockList[l-1].size,checkCurrent);
+		changeBlockFileSize(physicalBlockList[l-1].physicalStart+physicalBlockList[l-1].size);
 	else
-		changeBlockFileSize(0,checkCurrent);
-	/*
-	if(physicalBlockList.empty())
-		changeBlockFileSize(0,checkCurrent);
-	else
-	{
-		const RPhysicalBlock &b=*(--physicalBlockList.end());
-		changeBlockFileSize(b.physicalStart+b.size,checkCurrent);
-	}
-	*/
-
+		changeBlockFileSize(0);
 }
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::appendNewSAT()
 {
 	SAT.push_back(vector<RLogicalBlock>());
-	//STL SAT.append(TUniqueSortList<RLogicalBlock>());
-	//SAT[SAT.getSize()-1].setReallocQuantum(8192);
 	SAT[SAT.size()-1].reserve(1024);
 }
 
@@ -1494,7 +1409,10 @@ template<class l_addr_t,class p_addr_t>
 	for(size_t poolId=0;poolId<SAT.size();poolId++)
 	{
 		// write name of pool
-		writeString(getPoolNameById(poolId),f,multiFileHandle);
+		if(pools[poolId].isValid)
+			writeString(getPoolNameById(poolId),f,multiFileHandle);
+		else
+			writeString(string("__internal_invalid_pool"),f,multiFileHandle);
 
 		// write pool info structure
 		pools[poolId].writeToFile(f,multiFileHandle);
@@ -1568,7 +1486,7 @@ template<class l_addr_t,class p_addr_t>
 
 		try
 		{
-			prvCreatePool(poolName,poolInfo.alignment);
+			prvCreatePool(poolName,poolInfo.alignment,true,false);
 		}
 		catch(...)
 		{
@@ -1620,7 +1538,7 @@ template<class l_addr_t,class p_addr_t>
 			exit(0);
 		}
 	}
-	makeBlockFileSmallest(false);
+	makeBlockFileSmallest();
 }
 
 
@@ -1838,6 +1756,7 @@ template<class l_addr_t,class p_addr_t>
 {
 	// perhaps coeless blocks to make space.. and move actual data in file IF that
 	// space is represented in the file yet
+	// need to make sure that there are not cached blocks not written to disk
 
 	return(blockFile.getSize());
 }
@@ -1858,7 +1777,10 @@ template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::joinAllAdjacentBlocks()
 {
 	for(size_t poolId=0;poolId<pools.size();poolId++)
-		joinAdjacentBlocks(poolId);
+	{
+		if(pools[poolId].isValid)
+			joinAdjacentBlocks(poolId);
+	}
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -1868,13 +1790,11 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	//void TPoolFile<l_addr_t,p_addr_t>::joinAdjacentBlocks(const poolId_t poolId,const set<RLogicalBlock>::const_iterator firstBlockIndex,const set<RLogicalBlock>::const_iterator end)
 	void TPoolFile<l_addr_t,p_addr_t>::joinAdjacentBlocks(const poolId_t poolId,const size_t firstBlockIndex,const size_t blockCount)
 {
 	const size_t totalBlocks=SAT[poolId].size();
 
 	for(size_t t=firstBlockIndex;t<firstBlockIndex+blockCount;t++)
-	//for(set<RLogicalBlock>::const_iterator t=firstBlockIndex;t!=end;t++)
 	{
 		if(t==firstBlockIndex)
 			continue; // skip first iteration because we're looking at t and the one before t (also avoids t-1 being underflowing)
@@ -1882,8 +1802,6 @@ template<class l_addr_t,class p_addr_t>
 			break; // just in case firstBlockIndex + blockCount specifies too many blocks
 
 		RLogicalBlock &b1=SAT[poolId][t-1];
-		//const RLogicalBlock &b1=*prev(t);
-		//const RLogicalBlock &b2=*t;
 		const RLogicalBlock &b2=SAT[poolId][t];
 
 		if((b1.physicalStart+b1.size)==b2.physicalStart)
@@ -1894,13 +1812,9 @@ template<class l_addr_t,class p_addr_t>
 			if(newSize<=maxBlockSize)
 			{ // now join blocks blockIndex and blockIndex+1
 
-				//set<RPhysicalBlock>::const_iterator pbIndex=findPhysicalBlockContaining(b1.physicalStart);
 				const size_t pbIndex=findPhysicalBlockContaining(b1.physicalStart);
-				//set<RPhysicalBlock>::const_iterator next_pbIndex=next(pbIndex);
-				//const size_t next_pbIndex=pbIndex+1;
 
 				// sanity check
-				//if(next_pbIndex->physicalStart!=(b1.physicalStart+b1.size))
 				if(physicalBlockList[pbIndex+1].physicalStart!=(b1.physicalStart+b1.size))
 				{
 					printSAT();
@@ -1910,19 +1824,15 @@ template<class l_addr_t,class p_addr_t>
 					exit(1);
 				}
 
-				//const_cast<l_addr_t &>(b1.size)=newSize;
 				b1.size=newSize;
 				SAT[poolId].erase(SAT[poolId].begin()+t);
-				//totalBlocks--;
 
-				if(/*pbIndex->physicalStart*/physicalBlockList[pbIndex].physicalStart!=b1.physicalStart) // sanity check
+				if(physicalBlockList[pbIndex].physicalStart!=b1.physicalStart) // sanity check
 				{
 					printf("atStartOfBlock is false but should have been\n");
 					exit(1);
 				}
 				physicalBlockList[pbIndex].size=newSize;
-				//const_cast<l_addr_t &>(pbIndex->size)=newSize;
-				//physicalBlockList.remove(pbIndex+1);
 				physicalBlockList.erase(physicalBlockList.begin()+pbIndex+1);
 
 				// check this block again the next time around
@@ -1938,11 +1848,16 @@ template<class l_addr_t,class p_addr_t>
 	printf("\nSAT(s): (maxBlockSize: %u)\n",maxBlockSize);
 	for(size_t poolId=0;poolId<pools.size();poolId++)
 	{
+		if(!pools[poolId].isValid)
+			continue;
+
 		printf("\t%-4u Pool: '%s' size: %lld\n",poolId,getPoolNameById(poolId).c_str(),(long long)getPoolSize(poolId));
 		size_t p=0;
 		for(size_t t=0;t<SAT[poolId].size();t++)
-		//for(set<RLogicalBlock>::const_iterator t=SAT[poolId].begin();t!=SAT[poolId].end();t++)
 		{
+			if(!pools[t].isValid)
+				continue;
+
 			printf("\t\t%-4u ",p++);
 			//t->print();
 			SAT[poolId][t].print();
@@ -1952,10 +1867,8 @@ template<class l_addr_t,class p_addr_t>
 	printf("\nPhysicalBlockList:\n");
 	size_t p=0;
 	for(size_t t=0;t<physicalBlockList.size();t++)
-	//for(set<RPhysicalBlock>::const_iterator t=physicalBlockList.begin();t!=physicalBlockList.end();t++)
 	{
 		printf("\t%-4u ",p++);
-		//t->print();
 		physicalBlockList[t].print();
 	}
 
@@ -1965,7 +1878,7 @@ template<class l_addr_t,class p_addr_t>
 
 // Basic I/O
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::changeBlockFileSize(const p_addr_t newSize,bool checkCurrent)
+	void TPoolFile<l_addr_t,p_addr_t>::changeBlockFileSize(const p_addr_t newSize)
 {
 	blockFile.setSize(newSize+LEADING_DATA_SIZE);
 }
@@ -1983,7 +1896,7 @@ template<class l_addr_t,class p_addr_t>
 	//writeStructureInfoLock();
 	try
 	{
-		if(poolId>=pools.size())
+		if(!isValidPoolId(poolId))
 			throw(runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId)));
 
 		const alignment_t bAlignment=pools[poolId].alignment;
@@ -2006,7 +1919,6 @@ template<class l_addr_t,class p_addr_t>
 		bool didSplitOne=false;
 
 		//size_t logicalBlockIndex=NIL_INDEX;
-		//set<RLogicalBlock>::const_iterator logicalBlockIndex=SAT[poolId].end();
 		size_t logicalBlockIndex=SAT[poolId].size();
 		if(bWhere<bPoolSize)
 		{ // in the middle (not appending)
@@ -2260,7 +2172,7 @@ template<class l_addr_t,class p_addr_t>
 	try
 	{
 		// validate the parameters
-		if(pools.size()<=poolId)
+		if(!isValidPoolId(poolId))
 			throw(runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId)));
 
 		const alignment_t bAlignment=pools[poolId].alignment;
@@ -2453,9 +2365,9 @@ template<class l_addr_t,class p_addr_t>
 	try
 	{
 		// validate the parameters
-		if(srcPoolId>=pools.size())
+		if(!isValidPoolId(srcPoolId))
 			throw(runtime_error(string(__func__)+" -- invalid srcPoolId: "+istring(srcPoolId)));
-		if(destPoolId>=pools.size())
+		if(!isValidPoolId(destPoolId))
 			throw(runtime_error(string(__func__)+" -- invalid destPoolId: "+istring(destPoolId)));
 
 		const alignment_t bAlignment=pools[srcPoolId].alignment;
@@ -2877,7 +2789,7 @@ template<class l_addr_t,class p_addr_t>
 {
 	if(!opened)
 		throw(runtime_error(string(__func__)+" -- no file is open"));
-	if(poolId>=pools.size())
+	if(!isValidPoolId(poolId))
 		throw(runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId)));
 
 	invalidateAllCachedBlocks();
@@ -2908,6 +2820,7 @@ template<class l_addr_t,class p_addr_t>
 	//readStructureInfoLock();
 	try
 	{
+			// assume is valid
 		const poolId_t poolId=accesser->poolId;
 
 		if(peWhere>=maxLogicalAddress/sizeof(pool_element_t))
@@ -3187,6 +3100,9 @@ template<class l_addr_t,class p_addr_t>
 	// to defrag, correct all block positions
 	for(size_t poolId=0;poolId<pools.size();poolId++)
 	{
+		if(!pools[poolId].isValid)
+			continue;
+
 		for(size_t t=0;t<SAT[poolId].size();t++)
 	 	//for(typename set<RLogicalBlock>::const_iterator t=SAT[poolId].begin();t!=SAT[poolId].end();t++)
 			correctBlockPosition(poolId,t,getProceedingPoolSizes(poolId));
@@ -3208,6 +3124,9 @@ template<class l_addr_t,class p_addr_t>
 	for(size_t poolId=0;poolId<pools.size();poolId++)
 	{
 		appendNewSAT();
+
+		if(!pools[poolId].isValid)
+			continue;
 
 		const alignment_t alignment=pools[poolId].alignment;
 		const l_addr_t poolSize=pools[poolId].size;
@@ -3280,6 +3199,9 @@ template<class l_addr_t,class p_addr_t>
 			// for any block in the way (and not the current block), recur
 			for(size_t i=0;i<pools.size();i++)
 			{
+				if(!pools[i].isValid)
+					continue;
+
 				//for(typename set<RLogicalBlock>::const_iterator t=SAT[i].begin();t!=SAT[i].end();t++)
 				for(size_t t=0;t<SAT[i].size();t++)
 				{
@@ -3299,6 +3221,9 @@ template<class l_addr_t,class p_addr_t>
 				// for any block in the way (and not the current block), move it to the END
 				for(size_t i=0;i<pools.size();i++)
 				{
+					if(!pools[i].isValid)
+						continue;
+
 					//for(typename set<RLogicalBlock>::const_iterator t=SAT[i].begin();t!=SAT[i].end();t++)
 					for(size_t t=0;t<SAT[i].size();t++)
 					{
@@ -3326,6 +3251,9 @@ template<class l_addr_t,class p_addr_t>
 			// for any block in the way (and not the current block), move it
 			for(size_t i=0;i<pools.size();i++)
 			{
+				if(!pools[i].isValid)
+					continue;
+
 				//for(typename set<RLogicalBlock>::const_iterator t=SAT[i].begin();t!=SAT[i].end();t++)
 				for(size_t t=0;t<SAT[i].size();t++)
 				{
@@ -3414,13 +3342,15 @@ template<class l_addr_t,class p_addr_t>
 {
 	size=0;
 	alignment=0;
+	isValid=false;
 }
 
 template<class l_addr_t,class p_addr_t>
-	TPoolFile<l_addr_t,p_addr_t>::RPoolInfo::RPoolInfo(const l_addr_t _size,const alignment_t _alignment)
+	TPoolFile<l_addr_t,p_addr_t>::RPoolInfo::RPoolInfo(const l_addr_t _size,const alignment_t _alignment,const bool _isValid)
 {
 	size=_size;
 	alignment=_alignment;
+	isValid=_isValid;
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -3434,6 +3364,7 @@ template<class l_addr_t,class p_addr_t>
 {
 	size=src.size;
 	alignment=src.alignment;
+	isValid=src.alignment;
 	return(*this);
 }
 

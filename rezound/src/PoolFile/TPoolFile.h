@@ -133,9 +133,7 @@ public:
 	size_t readPoolRaw(const string poolName,void *buffer,size_t readSize);
 
 
-	// pool managment methods
-	const size_t getPoolCount() const;
-
+	// pool information/managment methods
 	const l_addr_t getPoolSize(poolId_t poolId) const;
 	const l_addr_t getPoolSize(const string poolName) const;
 
@@ -161,9 +159,12 @@ public:
 	void swapPools(const poolId_t poolId1,const poolId_t poolId2);
 	void swapPools(const string poolName1,const string poolName2);
 
+	const size_t getPoolIndexCount() const; // to iterate through the pools use this method and getPoolIdByIndex(); the indexes will access the pools in alphabetical order
+
 	const poolId_t getPoolIdByName(const string poolName) const;
-	const poolId_t getPoolIdByIndex(const size_t index) const; // where index is 0 to getPoolCount()-1
+	const poolId_t getPoolIdByIndex(const size_t index) const; // where index is 0 to getPoolIndexCount()-1
 	const string getPoolNameById(const poolId_t poolId) const;
+	const bool isValidPoolId(const poolId_t poolId) const;
 
 	void clearPool(const poolId_t poolId);
 	void clearPool(const string poolName);
@@ -212,9 +213,10 @@ private:
 	{
 		l_addr_t size;
 		alignment_t alignment;
+		bool isValid; // false if the pool has been removed, but the poolId hasn't been reused yet
 
 		RPoolInfo();
-		RPoolInfo(const l_addr_t _size,const alignment_t _alignment);
+		RPoolInfo(const l_addr_t _size,const alignment_t _alignment,const bool _isValid);
 		RPoolInfo(const RPoolInfo &src);
 		RPoolInfo &operator=(const RPoolInfo &src);
 
@@ -222,15 +224,7 @@ private:
 		void readFromFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle);
 	};
 
-		// ??? poolId wouldn't seem to be consistant if you remove a pool... I should perhaps fix this problematic area
-		// 	- I should let pools be a map<poolId_t,RPoolInfo> and the poolId_t is ever increasing 
-		// 		- change it to this when I get the rest of the stuff converted to the STL
-		//  	- EXCEPT... I use poolId as an index into SAT[poolId_i] for speed
-		//  		- perhaps I just need another vector which maps poolId_t to index into SAT and Pools
-		//  			- anytime I modify the number of pools I should recreate this index
-
 	map<const string,poolId_t> poolNames;		// the integer data indexes into pools and SAT given a name string key, which is the 'poolId'
-		// change to map<poolId_t,RPoolInfo> pools ???
 	vector<RPoolInfo> pools;			// this list is parallel to SAT
 	vector<vector<RLogicalBlock> > SAT;		// the outer vector is parallel to pools; note, the inner vector is kept sorted by logicalStart, so we shan't modify logicalStart such that it becomes out of order
 
@@ -244,11 +238,11 @@ private:
 	const p_addr_t getProceedingPoolSizes(const poolId_t poolId) const;
 	const l_addr_t getMaxBlockSizeFromAlignment(const alignment_t alignment) const;
 	void writeMetaData(CMultiFile *f);
-	void prvCreatePool(const string poolName,const alignment_t alignment,const bool throwOnExistance=true);
-	void addPool(const poolId_t poolId,const alignment_t alignment);
+	void prvCreatePool(const string poolName,const alignment_t alignment,const bool throwOnExistance=true,const bool useOldPoolIds=true);
+	void addPool(const poolId_t poolId,const alignment_t alignment,bool isValid);
 	const string getPoolDescription(const poolId_t poolId) const;
 	void writeDirtyIndicator(const bool dirty,CMultiFile *f);
-	void makeBlockFileSmallest(const bool checkCurrent=true);
+	void makeBlockFileSmallest();
 	void appendNewSAT();
 
 	// Structural Integrity Methods
@@ -311,7 +305,7 @@ private:
 	template<class pool_element_t> void addAccesser(const TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > *accesser);
 	template<class pool_element_t> void removeAccesser(const TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > *accesser);
 
-	void changeBlockFileSize(const p_addr_t newSize,bool checkCurrent=true);
+	void changeBlockFileSize(const p_addr_t newSize);
 
 	// defragging
 	map<poolId_t,map<l_addr_t,bool> > correctionsTried;
