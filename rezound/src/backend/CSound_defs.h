@@ -45,7 +45,7 @@ class CSound;
 	typedef uint32_t 	sample_pos_t;	// integral sample count
 	typedef double		sample_fpos_t;	// floating-point sample count
 
-	#define MAX_LENGTH (0x7fffffff-1024)
+	#define MAX_LENGTH (0x7fffffff-(1024*1024))
 
 	#include <math.h>
 	#define sample_fpos_floor(a)	(floor(a))
@@ -61,7 +61,7 @@ class CSound;
 	typedef uint64_t 	sample_pos_t;	// integral sample position
 	typedef long double 	sample_fpos_t;	// floating-point sample position
 
-	#define MAX_LENGTH (0x7fffffffffffffff-1024)
+	#define MAX_LENGTH (0x7fffffffffffffff-(1024*1024))
 
 	#include <math.h>
 	#define sample_fpos_floor(a)	(floorl(a))
