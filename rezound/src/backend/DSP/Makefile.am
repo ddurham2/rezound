@@ -36,4 +36,6 @@ noinst_HEADERS= \
 	Distorter.h \
 	SinglePoleFilters.h \
 	BiquadResFilters.h \
-	TSoundStretcher.h
+	TSoundStretcher.h \
+	TPitchChanger.h \
+	TTempoChanger.h

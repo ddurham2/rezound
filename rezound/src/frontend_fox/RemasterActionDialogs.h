@@ -122,4 +122,26 @@ public:
 
 
 
+// --- change pitch ----------------------
+
+class CChangePitchDialog : public CActionParamDialog
+{
+public:
+	CChangePitchDialog(FXWindow *mainWindow);
+	virtual ~CChangePitchDialog(){}
+};
+
+
+
+// --- change tempo ----------------------
+
+class CChangeTempoDialog : public CActionParamDialog
+{
+public:
+	CChangeTempoDialog(FXWindow *mainWindow);
+	virtual ~CChangeTempoDialog(){}
+};
+
+
+
 #endif

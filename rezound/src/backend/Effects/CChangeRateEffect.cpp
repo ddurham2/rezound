@@ -129,6 +129,7 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 				}
 				else
 				{ // rate is constant
+							//??? Use CSound::mixSound() or TSoundStretcher itself
 					if(s1!=1.0)
 					{
 						const sample_fpos_t subReadLength=(readStop-readStart)+1;

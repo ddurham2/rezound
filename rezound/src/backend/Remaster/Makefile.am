@@ -36,6 +36,8 @@ noinst_HEADERS= \
 		CCompressorAction.h \
 		CNormalizeAction.h \
 		CResampleAction.h \
+		CChangePitchAction.h \
+		CChangeTempoAction.h \
 		CMarkQuietAreasAction.h \
 		RemasterActions.h
 
@@ -49,6 +51,11 @@ libRemaster_la_SOURCES= \
 			CCompressorAction.cpp \
 			CNormalizeAction.cpp \
 			CResampleAction.cpp \
+			CChangePitchAction.cpp \
+			CChangeTempoAction.cpp \
 			CMarkQuietAreasAction.cpp 
 
 
+AM_CXXFLAGS=@SOUNDTOUCH_CXXFLAGS@
+# had to put this in here or it wouldn't link because of lib order
+libRemaster_la_LIBADD=@SOUNDTOUCH_LIBS@ 

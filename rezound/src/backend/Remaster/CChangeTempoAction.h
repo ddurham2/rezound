@@ -18,22 +18,37 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __RemasterActions_H__
-#define __RemasterActions_H__
+#ifndef __CChangeTempoAction_H__
+#define __CChangeTempoAction_H__
 
 #include "../../../config/common.h"
 
+#include "../AAction.h"
 
-#include "CBalanceAction.h"
-#include "CMonoizeAction.h"
-#include "CUnclipAction.h"
-#include "CRemoveDCAction.h"
-#include "CNoiseGateAction.h"
-#include "CCompressorAction.h"
-#include "CNormalizeAction.h"
-#include "CResampleAction.h"
-#include "CChangePitchAction.h"
-#include "CChangeTempoAction.h"
-#include "CMarkQuietAreasAction.h"
+class CChangeTempoAction : public AAction
+{
+public:
+	CChangeTempoAction(const CActionSound &actionSound,const double tempoChange);
+	virtual ~CChangeTempoAction();
+
+protected:
+	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound &actionSound);
+	CanUndoResults canUndo(const CActionSound &actionSound) const;
+
+private:
+	sample_pos_t undoRemoveLength;
+	const double tempoChange;
+};
+
+
+class CChangeTempoActionFactory : public AActionFactory
+{
+public:
+	CChangeTempoActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
+	virtual ~CChangeTempoActionFactory();
+
+	CChangeTempoAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+};
 
 #endif

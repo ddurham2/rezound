@@ -31,7 +31,6 @@
 #include "ActionParamMappers.h"
 
 
-
 // --- balance ------------------------
 
 #include "../backend/Remaster/CBalanceAction.h"
@@ -466,5 +465,37 @@ CResampleDialog::CResampleDialog(FXWindow *mainWindow) :
 			true
 		);
 			getComboText("New Sample Rate")->setValue(44100);
+}
+
+
+// --- change pitch ------------------------
+
+CChangePitchDialog::CChangePitchDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,false)
+{
+	void *p0=newVertPanel(NULL);
+		addSlider(
+			p0,
+			N_("Semitones"),
+			"semitones",
+			new CActionParamMapper_linear_bipolar(1,7,60),
+			NULL,
+			true);
+}
+
+
+// --- change tempo ------------------------
+
+CChangeTempoDialog::CChangeTempoDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,false)
+{
+	void *p0=newVertPanel(NULL);
+		addSlider(
+			p0,
+			N_("Tempo Change"),
+			"x",
+			new CActionParamMapper_recipsym(0.9,2,1,10),
+			NULL,
+			true);
 }
 

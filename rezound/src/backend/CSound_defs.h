@@ -177,7 +177,7 @@ enum SourceFitTypes
 {
 	sftNone,
 	sftChangeRate,
-	//sftChangeSpeed // without changing pitch (??? future)
+	sftChangeTempo
 };
 
 #endif

@@ -882,6 +882,8 @@ void CMainWindow::buildActionMap()
 	addToActionMap(								new CActionMenuCommand(new CMarkQuietAreasActionFactory(new CMarkQuietAreasDialog(this)),dummymenu,					""),																	menuItemRegistry);
 	// -
 	addToActionMap(								new CActionMenuCommand(new CResampleActionFactory(gChannelSelectDialog,new CResampleDialog(this)),dummymenu,				""),																	menuItemRegistry);
+	addToActionMap(								new CActionMenuCommand(new CChangePitchActionFactory(gChannelSelectDialog,new CChangePitchDialog(this)),dummymenu,			""),																	menuItemRegistry);
+	addToActionMap(								new CActionMenuCommand(new CChangeTempoActionFactory(gChannelSelectDialog,new CChangeTempoDialog(this)),dummymenu,			""),																	menuItemRegistry);
 	// -
 	addToActionMap(								new CActionMenuCommand(new CRemoveDCActionFactory(gChannelSelectDialog),dummymenu,							""),																	menuItemRegistry);
 	// -

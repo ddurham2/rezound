@@ -1,6 +1,8 @@
 ReZound 0.9.0beta Installation instructions 
 
 If building/installing directly from the CVS repository see CVS-INSTALL
+
+Run 'configure --help' for additional information about configuration options.
 	
 REQUIRED OR RECOMMENDED LIBRARIES AND APPLICATIONS:
 
@@ -8,7 +10,7 @@ Before attempting to build ReZound you will need to have (or are encouraged to h
 
 1. Libraries: 
 
-	- libaudiofile v0.2.3 (or later) -- http://oss.sgi.com/projects/audiofile/ --
+	- libaudiofile v0.2.3 (or later) -- http://www.68k.org/~michael/audiofile/ --
 	Development was done with v0.2.3, but earlier versions above than v0.1.9-0.1 
 	may work as well. audiofile is available on most distributions. 
 
@@ -22,23 +24,30 @@ Before attempting to build ReZound you will need to have (or are encouraged to h
 			to run unless the files in src/images are newer than 
 			src/frontend_fox/CFOXIcons.h|cpp
 
-	- libfftw v2.1.3 (or later) -- http://www.fftw.org -- This is required for 
-	convolution filtering and the frequency analyzer and will be required for 
-	planned features.
+	- libfftw v2.1.3 (or later (not version 3.x yet)) -- http://www.fftw.org -- This 
+	is required for convolution filtering, arbitrary FIR filtering and the frequency 
+	analyzer and will be required for planned features.
 
 	- lame v3.92 (or later) -- http://www.mp3dev.org/mp3 -- It is recommended that 
 	you have lame installed because it provides ReZound with the ability to load and 
 	save .mp3 files.  Some distros name the package: 'notlame'.
 
+	- cdrdao -- http://cdrdao.sourceforge.net/ -- This is require for the "Burn to CD"
+	action
+
 	- libogg, libvorbis, libvorbisfile and libvorbisenc -- http://www.xiph.org/ogg/vorbis/ 
 	These are required for loading and saving .ogg files
 
-	- libFLAC, libFLAC++ -- http://flac.sourceforge.net/
-	These are required for loading and saving FLAC files
+	- libFLAC, libFLAC++ -- http://flac.sourceforge.net/ -- These are required for loading
+	and saving FLAC files
 
-	- libportaudio -- http://www.portaudio.com -- This can be used if you know what 
-	you're doing and need it for some reason.  Support for it can be enabled with 
-	the configure flag: 
+	- libSoundTouch -- http://www.iki.fi/oparviai/soundtouch This library is required for 
+	the the actions that change pitch without changing tempo and that change tempo without 
+	changing pitch.
+
+	- libportaudio -- http://www.portaudio.com -- This can be used if you know what you're
+	doing and need it for some reason.  Support for it can be enabled with the configure 
+	flag: 
 			--enable-portaudio
 
 	- libjack -- http://jackit.sourceforge.net -- This can be used to enable JACK 

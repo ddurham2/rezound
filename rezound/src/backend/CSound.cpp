@@ -1069,6 +1069,8 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 	const sample_pos_t destOffset=where;
 	const unsigned destSampleRate=getSampleRate();
 
+#warning implement using sftChangeTempo now that I have a TTempoChanger DSP block
+
 	switch(mixMethod)
 	{
 	case mmOverwrite:

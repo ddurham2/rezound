@@ -18,22 +18,36 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __RemasterActions_H__
-#define __RemasterActions_H__
+#ifndef __CChangePitchAction_H__
+#define __CChangePitchAction_H__
 
 #include "../../../config/common.h"
 
+#include "../AAction.h"
 
-#include "CBalanceAction.h"
-#include "CMonoizeAction.h"
-#include "CUnclipAction.h"
-#include "CRemoveDCAction.h"
-#include "CNoiseGateAction.h"
-#include "CCompressorAction.h"
-#include "CNormalizeAction.h"
-#include "CResampleAction.h"
-#include "CChangePitchAction.h"
-#include "CChangeTempoAction.h"
-#include "CMarkQuietAreasAction.h"
+class CChangePitchAction : public AAction
+{
+public:
+	CChangePitchAction(const CActionSound &actionSound,const float deltaSemitones);
+	virtual ~CChangePitchAction();
+
+protected:
+	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound &actionSound);
+	CanUndoResults canUndo(const CActionSound &actionSound) const;
+
+private:
+	const float deltaSemitones;
+};
+
+
+class CChangePitchActionFactory : public AActionFactory
+{
+public:
+	CChangePitchActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
+	virtual ~CChangePitchActionFactory();
+
+	CChangePitchAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+};
 
 #endif
