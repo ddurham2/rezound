@@ -82,7 +82,7 @@ void interpretGraphNodes(const CGraphParamValueNodeList &nodes,const unsigned i,
 
 	// - This condition is here to prevent out of range problems should the 
 	//   totalLength be less than the number of segments in the parameter curve
-	// - Here, when the segtment in the parameter curve to process is more than
+	// - Here, when the segment in the parameter curve to process is more than
 	//   than the total length of the data being processed, we just act like 
 	//   there's nothing left to do by returning segmentLength as 0
 	if(i>=totalLength)
@@ -110,8 +110,8 @@ void interpretGraphNodes(const CGraphParamValueNodeList &nodes,const unsigned i,
 	segmentStartValue=startNode.value;
 	segmentStopValue=stopNode.value;
 
-	segmentStartPosition=(sample_pos_t)ceil(startNode.position*(totalLength-1));
-	segmentStopPosition=(sample_pos_t)floor(stopNode.position*(totalLength-1));
+	segmentStartPosition=(sample_pos_t)floor(startNode.position*(totalLength));
+	segmentStopPosition=(sample_pos_t)floor(stopNode.position*(totalLength))-1;
 	segmentLength=(segmentStopPosition-segmentStartPosition+1);
 }
 

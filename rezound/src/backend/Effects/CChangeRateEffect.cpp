@@ -75,6 +75,7 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 			sample_pos_t writePos=actionSound.start;
 			for(unsigned x=0;x<rateCurve.size()-1;x++)
 			{
+					// ??? but I've fixed some boundry conditions since trying it so perhaps I should try again
 				// ??? I tried using interpretGraphNodes, but it seems to be like maybe one sample off in reading
 				// at the beginning of a segment; either that or the interpolated sample positions differing between
 				// rates between segments started to make it self more pronounced.   The way I'm doing it here, is 

@@ -56,7 +56,7 @@ bool CChangeAmplitudeEffect::doActionSizeSafe(CActionSound &actionSound,bool pre
 
 				// ??? I could check if segmentStartValue and segmentStopValue were the same, if so, don't interpolate between them
 
-				// ??? change to use the same implementation, but just get srcAccesser based off of prepare for undo
+				// ??? change to use the same implementation (for undoable or not-undoable), but just get srcAccesser based off of prepare for undo
 
 				// either get the data from the undo pool or get it right from the audio pool if we didn't prepare for undo
 				if(prepareForUndo)
@@ -65,7 +65,7 @@ bool CChangeAmplitudeEffect::doActionSizeSafe(CActionSound &actionSound,bool pre
 					CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 					for(sample_pos_t t=0;t<segmentLength;t++)
 					{
-						float scalar=(float)(segmentStartValue+(((segmentStopValue-segmentStartValue)*(double)(t))/(segmentLength-1)));
+						float scalar=(float)(segmentStartValue+(((segmentStopValue-segmentStartValue)*(double)(t))/(segmentLength)));
 						dest[t+segmentStartPosition]=ClipSample((mix_sample_t)(src[srcp++]*scalar));
 
 						UPDATE_PROGRESS_BAR(srcp);
@@ -76,7 +76,7 @@ bool CChangeAmplitudeEffect::doActionSizeSafe(CActionSound &actionSound,bool pre
 					CRezPoolAccesser a=actionSound.sound->getAudio(i);
 					for(sample_pos_t t=segmentStartPosition;t<=segmentStopPosition;t++)
 					{
-						float scalar=(float)(segmentStartValue+(((segmentStopValue-segmentStartValue)*(double)(t-segmentStartPosition))/(segmentLength-1)));
+						float scalar=(float)(segmentStartValue+(((segmentStopValue-segmentStartValue)*(double)(t-segmentStartPosition))/(segmentLength)));
 						a[t]=ClipSample((mix_sample_t)(a[t]*scalar));
 
 						UPDATE_PROGRESS_BAR(t-start);
