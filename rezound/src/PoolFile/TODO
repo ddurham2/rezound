@@ -27,9 +27,6 @@
 			- 2) go thru the code and everywhere that a pool ids could be modified, alter all outstanding accessors
 				- but this wouldn't help for objects just storing the poolId obtained from the class.
 
-	- make moveData detect the situation that if the whole pool is being moved to an empty pool then just to simply move the whole SAT data to the empty pool and clear the SAT data at the moved pool
-		- this will make removing and adding channels more efficient
-
 
 
 
@@ -46,6 +43,9 @@
 			- put mutex protection around actually changing the counter
 		- it would still not be quite perfect this way because between the lock/unlock and the counter getting changed there would be a lie returned by isExclusiveLocked() or getSharedLockCount()
 			- but I don't believe this is a problem, since getting the lock count would really never be guarenteed accurate
+
+	- make moveData detect the situation that if the whole pool is being moved to an empty pool then just to simply move the whole SAT data to the empty pool and clear the SAT data at the moved pool
+		- this will make removing and adding channels more efficient
 
 
 

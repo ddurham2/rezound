@@ -2513,342 +2513,353 @@ template<class l_addr_t,class p_addr_t>
 		l_addr_t bDestWhere=peDestWhere*bAlignment;
 		const l_addr_t bCount=peCount*bAlignment;
 
-		//const l_addr_t maxBlockSize=getMaxBlockSizeFromAlignment(bAlignment);
+		if(bDestWhere==0 && bDestPoolSize==0 && bSrcWhere==0 && bCount==bSrcPoolSize)
+		{ // the whole src pool is moving to an empty dest pool, so just assign the whole SAT
+			// move src to dest
+			SAT[destPoolId]=SAT[srcPoolId];
+			pools[destPoolId].size=bSrcPoolSize;
+
+			// clear src
+			SAT[srcPoolId].clear();
+			pools[srcPoolId].size=0;
+		}
+		else
+		{ // only part of the src pool is moving or all of it is moving to a non-empty pool
+			bool atStartOfSrcBlock;
+			const size_t srcBlockIndex=findSATBlockContaining(srcPoolId,bSrcWhere,atStartOfSrcBlock);
+
+			size_t destBlockIndex=0;
+			if(bDestWhere<bDestPoolSize)
+			{
+				bool atStartOfDestBlock;
+				destBlockIndex=findSATBlockContaining(destPoolId,bDestWhere,atStartOfDestBlock);
+				if(!atStartOfDestBlock)
+				{ // go ahead and split the destination block so that we can simply insert new ones along the way
+
+					if(bDestWhere<=SAT[destPoolId][destBlockIndex].logicalStart)
+					{ // logcal impossibility since atStartOfBlock wasn't true (unless it was wrong)
+						printf("oops...\n");
+						exit(1);
+					}
+
+					const l_addr_t firstPartSize=bDestWhere-SAT[destPoolId][destBlockIndex].logicalStart;
+					const l_addr_t secondPartSize=SAT[destPoolId][destBlockIndex].size-firstPartSize;
 
 
-		bool atStartOfSrcBlock;
-		const size_t srcBlockIndex=findSATBlockContaining(srcPoolId,bSrcWhere,atStartOfSrcBlock);
+					// find the physical block for this logical block
+					/*
+					RPhysicalBlock searchPhysicalBlock;
+					size_t physicalBlockIndex;
+					searchPhysicalBlock.physicalStart=SAT[destPoolId][destBlockIndex].physicalStart;
+					if(!physicalBlockList.contains(searchPhysicalBlock,physicalBlockIndex))
+					{
+						printf("physical block list inconsistancies...\n");
+						exit(1);
+					}
+					*/
+					const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(SAT[destPoolId][destBlockIndex].physicalStart));
 
-		size_t destBlockIndex=0;
-		if(bDestWhere<bDestPoolSize)
-		{
-			bool atStartOfDestBlock;
-			destBlockIndex=findSATBlockContaining(destPoolId,bDestWhere,atStartOfDestBlock);
-			if(!atStartOfDestBlock)
-			{ // go ahead and split the destination block so that we can simply insert new ones along the way
+					// shrink the logical and physical blocks' sizes
+					//physicalBlockList[physicalBlockIndex].size=SAT[destPoolId][destBlockIndex].size=firstPartSize;
+					physicalBlockIndex->size=SAT[destPoolId][destBlockIndex].size=firstPartSize;
 
-				if(bDestWhere<=SAT[destPoolId][destBlockIndex].logicalStart)
-				{ // logcal impossibility since atStartOfBlock wasn't true (unless it was wrong)
-					printf("oops...\n");
-					exit(1);
+					// create the new logical and physical blocks which are the second part of the old blocks
+					RLogicalBlock newLogicalBlock;
+					newLogicalBlock.logicalStart=SAT[destPoolId][destBlockIndex].logicalStart+firstPartSize;
+					newLogicalBlock.physicalStart=SAT[destPoolId][destBlockIndex].physicalStart+firstPartSize;
+					newLogicalBlock.size=secondPartSize;
+
+					// add the new logical block
+					/*
+					if(!SAT[destPoolId].add(newLogicalBlock))
+					{	// inconsistancies
+						printf("error adding to SAT\n");
+						exit(1);
+					}
+					*/
+					sortedInsert(SAT[destPoolId],newLogicalBlock);
+
+					// add the new physical block
+					/*
+					if(!physicalBlockList.add(RPhysicalBlock(newLogicalBlock)))
+					{	// error
+						printf("error adding to physical block list\n");
+						exit(1);
+					}
+					*/
+					sortedInsert(physicalBlockList,RPhysicalBlock(newLogicalBlock));
+
+					destBlockIndex++;
 				}
 
-				const l_addr_t firstPartSize=bDestWhere-SAT[destPoolId][destBlockIndex].logicalStart;
-				const l_addr_t secondPartSize=SAT[destPoolId][destBlockIndex].size-firstPartSize;
+				// move upward all the logicalStarts in the dest pool past the destination where point
+				for(size_t t=destBlockIndex;t<SAT[destPoolId].size();t++)
+					SAT[destPoolId][t].logicalStart+=bCount;
+
+			}
 
 
-				// find the physical block for this logical block
+			size_t loopCount=0;
+			l_addr_t moveSize=bCount;
+			size_t src_t=srcBlockIndex;
+			while(moveSize>0 && src_t<SAT[srcPoolId].size())
+			{
+				RLogicalBlock &srcBlock=SAT[srcPoolId][src_t];
+				const l_addr_t src_block_start=srcBlock.logicalStart;
+				const l_addr_t src_block_end=src_block_start+(srcBlock.size-1);
+				const l_addr_t src_remove_start= (bSrcWhere<src_block_start) ? src_block_start : bSrcWhere;
+				const l_addr_t src_remove_end= ((bSrcWhere+(bCount-1))>src_block_end) ? src_block_end : (bSrcWhere+(bCount-1));
+				const l_addr_t remove_in_src_block_size=src_remove_end-src_remove_start+1;
+
+				// ??? Optimization: I could probably most of the time assume its the next block the previous iteration of this loop... if I checked that and it was false, then I should do a search
 				/*
-				RPhysicalBlock searchPhysicalBlock;
 				size_t physicalBlockIndex;
-				searchPhysicalBlock.physicalStart=SAT[destPoolId][destBlockIndex].physicalStart;
-				if(!physicalBlockList.contains(searchPhysicalBlock,physicalBlockIndex))
+				if(!physicalBlockList.contains(RPhysicalBlock(srcBlock.physicalStart,0),physicalBlockIndex))
 				{
-					printf("physical block list inconsistancies...\n");
+					printf("inconsistances in SAT and physicalBlockList\n");
 					exit(1);
 				}
 				*/
-				const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(SAT[destPoolId][destBlockIndex].physicalStart));
+				const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(srcBlock.physicalStart));
 
-				// shrink the logical and physical blocks' sizes
-				//physicalBlockList[physicalBlockIndex].size=SAT[destPoolId][destBlockIndex].size=firstPartSize;
-				physicalBlockIndex->size=SAT[destPoolId][destBlockIndex].size=firstPartSize;
+				if(src_remove_start==src_block_start && src_remove_end==src_block_end)
+				{ // case 1 -- remove whole block from src pool -- on first and only block, middle or last block
+					// |[.......]|	([..] -- block ; |..| -- section to remove)
+					
+					RLogicalBlock newDestLogicalBlock(srcBlock);
+					newDestLogicalBlock.logicalStart=bDestWhere;
 
-				// create the new logical and physical blocks which are the second part of the old blocks
-				RLogicalBlock newLogicalBlock;
-				newLogicalBlock.logicalStart=SAT[destPoolId][destBlockIndex].logicalStart+firstPartSize;
-				newLogicalBlock.physicalStart=SAT[destPoolId][destBlockIndex].physicalStart+firstPartSize;
-				newLogicalBlock.size=secondPartSize;
+					//SAT[srcPoolId].remove(src_t);
+					SAT[srcPoolId].erase(SAT[srcPoolId].begin()+src_t);
 
-				// add the new logical block
-				/*
-				if(!SAT[destPoolId].add(newLogicalBlock))
-				{	// inconsistancies
-					printf("error adding to SAT\n");
+					/*
+					if(!SAT[destPoolId].add(newDestLogicalBlock))
+					{	// inconsistancies
+						printf("error adding to SAT\n");
+						exit(1);
+					}
+					*/
+					sortedInsert(SAT[destPoolId],newDestLogicalBlock);
+
+				}
+				else if(src_remove_start==src_block_start && src_remove_end<src_block_end)
+				{ // case 2 -- remove a head of block -- on first and only block, last block
+					// |[.....|..]
+
+					/* I think I can put this back in instead of doing what I do below (that is, removing and adding the block)
+					// create the new logical block in dest pool and new physical block
+					RLogicalBlock newDestLogicalBlock;
+					newDestLogicalBlock.logicalStart=bDestWhere;
+					newDestLogicalBlock.size=remove_in_src_block_size;
+					newDestLogicalBlock.physicalStart=srcBlock.physicalStart;
+
+					// simply modify the src block and physical block's sizes and starts
+					RPhysicalBlock &srcPhysicalBlock=physicalBlockList[physicalBlockIndex];
+					srcBlock.logicalStart-=bCount-remove_in_src_block_size; // do this because, this srcBlock is not gonna be affected by the loop which does this later since we increment t
+					srcPhysicalBlock.physicalStart=srcBlock.physicalStart=(srcBlock.physicalStart+remove_in_src_block_size);
+					srcPhysicalBlock.size=srcBlock.size=(srcBlock.size-remove_in_src_block_size);
+
+					// actually add the new logical and physical blocks (had to delay because of unique constraints)
+					if(!SAT[destPoolId].add(newDestLogicalBlock))
+					{
+						printf("error adding to dest SAT\n");
+						exit(1);
+					}
+					if(!physicalBlockList.add(RPhysicalBlock(newDestLogicalBlock)))
+					{
+						printf("error adding to physicalBlockList\n");
+						exit(1);
+					}
+					*/
+
+					// create the new logical block in dest pool and new physical block
+					RLogicalBlock newDestLogicalBlock; 
+					newDestLogicalBlock.logicalStart=bDestWhere;
+					newDestLogicalBlock.size=remove_in_src_block_size;
+					newDestLogicalBlock.physicalStart=srcBlock.physicalStart;
+
+
+					// I remove and re-add the logical block to the SAT list because it's logical start may get out of order
+					// ??? I shouldn't have to do the physical block this way I don't think
+
+					RLogicalBlock newSrcLogicalBlock(srcBlock);
+					newSrcLogicalBlock.size-=remove_in_src_block_size;
+					newSrcLogicalBlock.physicalStart+=remove_in_src_block_size;
+					newSrcLogicalBlock.logicalStart-=bCount-remove_in_src_block_size; // do this because, this block is not gonna be affected by the loop which does this later since we increment t
+
+					//SAT[srcPoolId].remove(src_t);
+					SAT[srcPoolId].erase(SAT[srcPoolId].begin()+src_t);
+					//physicalBlockList.remove(physicalBlockIndex);
+					physicalBlockList.erase(physicalBlockIndex);
+
+					/*
+					if(!SAT[srcPoolId].add(newSrcLogicalBlock))
+					{
+						printf("error adding to SAT\n");
+						exit(1);
+					}
+					*/
+					sortedInsert(SAT[srcPoolId],newSrcLogicalBlock);
+
+					/*
+					if(!physicalBlockList.add(RPhysicalBlock(newSrcLogicalBlock)))
+					{
+						printf("error adding to physicalBlockList\n");
+						exit(1);
+					}
+					*/
+					sortedInsert(physicalBlockList,RPhysicalBlock(newSrcLogicalBlock));
+
+					// actually add the new logical and physical blocks (had to delay because of unique constraints)
+					/*
+					if(!SAT[destPoolId].add(newDestLogicalBlock))
+					{
+						printf("error adding to dest SAT\n");
+						exit(1);
+					}
+					*/
+					sortedInsert(SAT[destPoolId],newDestLogicalBlock);
+					/*
+					if(!physicalBlockList.add(RPhysicalBlock(newDestLogicalBlock)))
+					{
+						printf("error adding to physicalBlockList\n");
+						exit(1);
+					}
+					*/
+					sortedInsert(physicalBlockList,RPhysicalBlock(newDestLogicalBlock));
+
+					src_t++;
+				}
+				else if(src_remove_start>src_block_start && src_remove_end==src_block_end)
+				{ // case 3 -- remove a tail of block -- first and only block, first block
+					// [..|.....]|
+					
+					// create the new logcal block for dest pool and a new physical block
+					RLogicalBlock newDestLogicalBlock;
+					newDestLogicalBlock.logicalStart=bDestWhere;
+					newDestLogicalBlock.size=remove_in_src_block_size;
+					newDestLogicalBlock.physicalStart=(srcBlock.physicalStart+(srcBlock.size-remove_in_src_block_size));
+
+					// actually add the new logical and physical blocks
+					/*
+					if(!SAT[destPoolId].add(newDestLogicalBlock))
+					{
+						printf("error adding to dest SAT\n");
+						exit(1);
+					}
+					*/
+					sortedInsert(SAT[destPoolId],newDestLogicalBlock);
+					/*
+					if(!physicalBlockList.add(RPhysicalBlock(newDestLogicalBlock)))
+					{
+						printf("error adding to physicalBlockList\n");
+						exit(1);
+					}
+					*/
+					sortedInsert(physicalBlockList,RPhysicalBlock(newDestLogicalBlock));
+
+					// simply modify the logcal and physcal blocks
+					srcBlock.size-=remove_in_src_block_size;
+					//physicalBlockList[physicalBlockIndex].size=srcBlock.size;
+					physicalBlockIndex->size=srcBlock.size;
+
+					src_t++;
+				}
+				else if(src_remove_start>src_block_start && src_remove_end<src_block_end)
+				{ // case 4 -- split block -- on first and only block
+					// [..|...|..]
+				
+					const l_addr_t headSize=src_remove_start-src_block_start; // part at the beginning of the block
+
+
+					// insert new logical block in dest pool and create new physical block
+					RLogicalBlock newDestLogicalBlock;
+					newDestLogicalBlock.logicalStart=bDestWhere;
+					newDestLogicalBlock.physicalStart=srcBlock.physicalStart+headSize;
+					newDestLogicalBlock.size=src_remove_end-src_remove_start+1;
+
+					/*
+					if(!SAT[destPoolId].add(newDestLogicalBlock))
+					{
+						printf("error adding to dest SAT\n");
+						exit(1);
+					}
+					*/
+					sortedInsert(SAT[destPoolId],newDestLogicalBlock);
+					/*
+					if(!physicalBlockList.add(RPhysicalBlock(newDestLogicalBlock)))
+					{
+						printf("error adding to physicalBlockList\n");
+						exit(1);
+					}
+					*/
+					sortedInsert(physicalBlockList,RPhysicalBlock(newDestLogicalBlock));
+
+					// modify logical and physical src blocks' sizes
+					//physicalBlockList[physicalBlockIndex].size=srcBlock.size=headSize;
+					physicalBlockIndex->size=srcBlock.size=headSize;
+
+					// create new block in src pool and new physical block
+					RLogicalBlock newSrcLogicalBlock;
+					newSrcLogicalBlock.logicalStart=src_remove_start;
+					newSrcLogicalBlock.physicalStart=srcBlock.physicalStart+srcBlock.size+remove_in_src_block_size;
+					newSrcLogicalBlock.size=src_block_end-src_remove_end;
+
+					/*
+					if(!SAT[srcPoolId].add(newSrcLogicalBlock))
+					{
+						printf("error adding to src SAT\n");
+						exit(1);
+					}
+					*/
+					sortedInsert(SAT[srcPoolId],newSrcLogicalBlock);
+					/*
+					if(!physicalBlockList.add(RPhysicalBlock(newSrcLogicalBlock)))
+					{
+						printf("error adding to physicalBlockList\n");
+						exit(1);
+					}
+					*/
+					sortedInsert(physicalBlockList,RPhysicalBlock(newSrcLogicalBlock));
+
+					src_t+=2;
+
+				}
+				else
+				{
+					printf("error in cases 1-4\n");
 					exit(1);
 				}
-				*/
-				sortedInsert(SAT[destPoolId],newLogicalBlock);
 
-				// add the new physical block
-				/*
-				if(!physicalBlockList.add(RPhysicalBlock(newLogicalBlock)))
-				{	// error
-					printf("error adding to physical block list\n");
+				loopCount++;
+				bDestWhere+=remove_in_src_block_size;
+
+				// ??? sanity check
+				if(remove_in_src_block_size>moveSize)
+				{
+					printf("remove_in_src_block_size is greater than moveSize\n");
 					exit(1);
 				}
-				*/
-				sortedInsert(physicalBlockList,RPhysicalBlock(newLogicalBlock));
 
-				destBlockIndex++;
+				moveSize-=remove_in_src_block_size;
 			}
 
-			// move upward all the logicalStarts in the dest pool past the destination where point
-			for(size_t t=destBlockIndex;t<SAT[destPoolId].size();t++)
-				SAT[destPoolId][t].logicalStart+=bCount;
+			pools[srcPoolId].size-=bCount;
+			pools[destPoolId].size+=bCount;
 
-		}
+			// move all the subsequent logicalStarts of the src pool downward
+			for(;src_t<SAT[srcPoolId].size();src_t++)
+				SAT[srcPoolId][src_t].logicalStart-=bCount;
 
 
-		size_t loopCount=0;
-		l_addr_t moveSize=bCount;
-		size_t src_t=srcBlockIndex;
-		while(moveSize>0 && src_t<SAT[srcPoolId].size())
-		{
-			RLogicalBlock &srcBlock=SAT[srcPoolId][src_t];
-			const l_addr_t src_block_start=srcBlock.logicalStart;
-			const l_addr_t src_block_end=src_block_start+(srcBlock.size-1);
-			const l_addr_t src_remove_start= (bSrcWhere<src_block_start) ? src_block_start : bSrcWhere;
-			const l_addr_t src_remove_end= ((bSrcWhere+(bCount-1))>src_block_end) ? src_block_end : (bSrcWhere+(bCount-1));
-			const l_addr_t remove_in_src_block_size=src_remove_end-src_remove_start+1;
+			/* ??? don't I want to do this?
+			// join any adjacent blocks in the dest pool than could be
+			joinAdjacentBlocks(destPoolId,destBlockIndex>0 ? destBlockIndex-1 : 0,loopCount+1);
 
-			// ??? Optimization: I could probably most of the time assume its the next block the previous iteration of this loop... if I checked that and it was false, then I should do a search
-			/*
-			size_t physicalBlockIndex;
-			if(!physicalBlockList.contains(RPhysicalBlock(srcBlock.physicalStart,0),physicalBlockIndex))
-			{
-				printf("inconsistances in SAT and physicalBlockList\n");
-				exit(1);
-			}
+			// join the blocks that just became adjacent in the src pool if possible
+			joinAdjacentBlocks(srcPoolId,srcBlockIndex>0 ? srcBlockIndex-1 : 0,1);
 			*/
-			const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(srcBlock.physicalStart));
-
-			if(src_remove_start==src_block_start && src_remove_end==src_block_end)
-			{ // case 1 -- remove whole block from src pool -- on first and only block, middle or last block
-				// |[.......]|	([..] -- block ; |..| -- section to remove)
-				
-				RLogicalBlock newDestLogicalBlock(srcBlock);
-				newDestLogicalBlock.logicalStart=bDestWhere;
-
-				//SAT[srcPoolId].remove(src_t);
-				SAT[srcPoolId].erase(SAT[srcPoolId].begin()+src_t);
-
-				/*
-				if(!SAT[destPoolId].add(newDestLogicalBlock))
-				{	// inconsistancies
-					printf("error adding to SAT\n");
-					exit(1);
-				}
-				*/
-				sortedInsert(SAT[destPoolId],newDestLogicalBlock);
-
-			}
-			else if(src_remove_start==src_block_start && src_remove_end<src_block_end)
-			{ // case 2 -- remove a head of block -- on first and only block, last block
-				// |[.....|..]
-
-				/* I think I can put this back in instead of doing what I do below (that is, removing and adding the block)
-				// create the new logical block in dest pool and new physical block
-				RLogicalBlock newDestLogicalBlock;
-				newDestLogicalBlock.logicalStart=bDestWhere;
-				newDestLogicalBlock.size=remove_in_src_block_size;
-				newDestLogicalBlock.physicalStart=srcBlock.physicalStart;
-
-				// simply modify the src block and physical block's sizes and starts
-				RPhysicalBlock &srcPhysicalBlock=physicalBlockList[physicalBlockIndex];
-				srcBlock.logicalStart-=bCount-remove_in_src_block_size; // do this because, this srcBlock is not gonna be affected by the loop which does this later since we increment t
-				srcPhysicalBlock.physicalStart=srcBlock.physicalStart=(srcBlock.physicalStart+remove_in_src_block_size);
-				srcPhysicalBlock.size=srcBlock.size=(srcBlock.size-remove_in_src_block_size);
-
-				// actually add the new logical and physical blocks (had to delay because of unique constraints)
-				if(!SAT[destPoolId].add(newDestLogicalBlock))
-				{
-					printf("error adding to dest SAT\n");
-					exit(1);
-				}
-				if(!physicalBlockList.add(RPhysicalBlock(newDestLogicalBlock)))
-				{
-					printf("error adding to physicalBlockList\n");
-					exit(1);
-				}
-				*/
-
-				// create the new logical block in dest pool and new physical block
-				RLogicalBlock newDestLogicalBlock; 
-				newDestLogicalBlock.logicalStart=bDestWhere;
-				newDestLogicalBlock.size=remove_in_src_block_size;
-				newDestLogicalBlock.physicalStart=srcBlock.physicalStart;
-
-
-				// I remove and re-add the logical block to the SAT list because it's logical start may get out of order
-				// ??? I shouldn't have to do the physical block this way I don't think
-
-				RLogicalBlock newSrcLogicalBlock(srcBlock);
-				newSrcLogicalBlock.size-=remove_in_src_block_size;
-				newSrcLogicalBlock.physicalStart+=remove_in_src_block_size;
-				newSrcLogicalBlock.logicalStart-=bCount-remove_in_src_block_size; // do this because, this block is not gonna be affected by the loop which does this later since we increment t
-
-				//SAT[srcPoolId].remove(src_t);
-				SAT[srcPoolId].erase(SAT[srcPoolId].begin()+src_t);
-				//physicalBlockList.remove(physicalBlockIndex);
-				physicalBlockList.erase(physicalBlockIndex);
-
-				/*
-				if(!SAT[srcPoolId].add(newSrcLogicalBlock))
-				{
-					printf("error adding to SAT\n");
-					exit(1);
-				}
-				*/
-				sortedInsert(SAT[srcPoolId],newSrcLogicalBlock);
-
-				/*
-				if(!physicalBlockList.add(RPhysicalBlock(newSrcLogicalBlock)))
-				{
-					printf("error adding to physicalBlockList\n");
-					exit(1);
-				}
-				*/
-				sortedInsert(physicalBlockList,RPhysicalBlock(newSrcLogicalBlock));
-
-				// actually add the new logical and physical blocks (had to delay because of unique constraints)
-				/*
-				if(!SAT[destPoolId].add(newDestLogicalBlock))
-				{
-					printf("error adding to dest SAT\n");
-					exit(1);
-				}
-				*/
-				sortedInsert(SAT[destPoolId],newDestLogicalBlock);
-				/*
-				if(!physicalBlockList.add(RPhysicalBlock(newDestLogicalBlock)))
-				{
-					printf("error adding to physicalBlockList\n");
-					exit(1);
-				}
-				*/
-				sortedInsert(physicalBlockList,RPhysicalBlock(newDestLogicalBlock));
-
-				src_t++;
-			}
-			else if(src_remove_start>src_block_start && src_remove_end==src_block_end)
-			{ // case 3 -- remove a tail of block -- first and only block, first block
-				// [..|.....]|
-				
-				// create the new logcal block for dest pool and a new physical block
-				RLogicalBlock newDestLogicalBlock;
-				newDestLogicalBlock.logicalStart=bDestWhere;
-				newDestLogicalBlock.size=remove_in_src_block_size;
-				newDestLogicalBlock.physicalStart=(srcBlock.physicalStart+(srcBlock.size-remove_in_src_block_size));
-
-				// actually add the new logical and physical blocks
-				/*
-				if(!SAT[destPoolId].add(newDestLogicalBlock))
-				{
-					printf("error adding to dest SAT\n");
-					exit(1);
-				}
-				*/
-				sortedInsert(SAT[destPoolId],newDestLogicalBlock);
-				/*
-				if(!physicalBlockList.add(RPhysicalBlock(newDestLogicalBlock)))
-				{
-					printf("error adding to physicalBlockList\n");
-					exit(1);
-				}
-				*/
-				sortedInsert(physicalBlockList,RPhysicalBlock(newDestLogicalBlock));
-
-				// simply modify the logcal and physcal blocks
-				srcBlock.size-=remove_in_src_block_size;
-				//physicalBlockList[physicalBlockIndex].size=srcBlock.size;
-				physicalBlockIndex->size=srcBlock.size;
-
-				src_t++;
-			}
-			else if(src_remove_start>src_block_start && src_remove_end<src_block_end)
-			{ // case 4 -- split block -- on first and only block
-				// [..|...|..]
-			
-				const l_addr_t headSize=src_remove_start-src_block_start; // part at the beginning of the block
-
-
-				// insert new logical block in dest pool and create new physical block
-				RLogicalBlock newDestLogicalBlock;
-				newDestLogicalBlock.logicalStart=bDestWhere;
-				newDestLogicalBlock.physicalStart=srcBlock.physicalStart+headSize;
-				newDestLogicalBlock.size=src_remove_end-src_remove_start+1;
-
-				/*
-				if(!SAT[destPoolId].add(newDestLogicalBlock))
-				{
-					printf("error adding to dest SAT\n");
-					exit(1);
-				}
-				*/
-				sortedInsert(SAT[destPoolId],newDestLogicalBlock);
-				/*
-				if(!physicalBlockList.add(RPhysicalBlock(newDestLogicalBlock)))
-				{
-					printf("error adding to physicalBlockList\n");
-					exit(1);
-				}
-				*/
-				sortedInsert(physicalBlockList,RPhysicalBlock(newDestLogicalBlock));
-
-				// modify logical and physical src blocks' sizes
-				//physicalBlockList[physicalBlockIndex].size=srcBlock.size=headSize;
-				physicalBlockIndex->size=srcBlock.size=headSize;
-
-				// create new block in src pool and new physical block
-				RLogicalBlock newSrcLogicalBlock;
-				newSrcLogicalBlock.logicalStart=src_remove_start;
-				newSrcLogicalBlock.physicalStart=srcBlock.physicalStart+srcBlock.size+remove_in_src_block_size;
-				newSrcLogicalBlock.size=src_block_end-src_remove_end;
-
-				/*
-				if(!SAT[srcPoolId].add(newSrcLogicalBlock))
-				{
-					printf("error adding to src SAT\n");
-					exit(1);
-				}
-				*/
-				sortedInsert(SAT[srcPoolId],newSrcLogicalBlock);
-				/*
-				if(!physicalBlockList.add(RPhysicalBlock(newSrcLogicalBlock)))
-				{
-					printf("error adding to physicalBlockList\n");
-					exit(1);
-				}
-				*/
-				sortedInsert(physicalBlockList,RPhysicalBlock(newSrcLogicalBlock));
-
-				src_t+=2;
-
-			}
-			else
-			{
-				printf("error in cases 1-4\n");
-				exit(1);
-			}
-
-			loopCount++;
-			bDestWhere+=remove_in_src_block_size;
-
-			// ??? sanity check
-			if(remove_in_src_block_size>moveSize)
-			{
-				printf("remove_in_src_block_size is greater than moveSize\n");
-				exit(1);
-			}
-
-			moveSize-=remove_in_src_block_size;
 		}
-
-		pools[srcPoolId].size-=bCount;
-		pools[destPoolId].size+=bCount;
-
-		// move all the subsequent logicalStarts of the src pool downward
-		for(;src_t<SAT[srcPoolId].size();src_t++)
-			SAT[srcPoolId][src_t].logicalStart-=bCount;
-
-		/* ??? don't I want to do this?
-		// join any adjacent blocks in the dest pool than could be
-		joinAdjacentBlocks(destPoolId,destBlockIndex>0 ? destBlockIndex-1 : 0,loopCount+1);
-
-		// join the blocks that just became adjacent in the src pool if possible
-		joinAdjacentBlocks(srcPoolId,srcBlockIndex>0 ? srcBlockIndex-1 : 0,1);
-		*/
 
 		backupSAT();
 
