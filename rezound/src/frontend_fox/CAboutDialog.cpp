@@ -40,7 +40,7 @@ FXIMPLEMENT(CAboutDialog,FXDialogBox,CAboutDialogMap,ARRAYNUMBER(CAboutDialogMap
 // ----------------------------------------
 
 CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
-	FXDialogBox(mainWindow,"About ReZound",DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE,0,0,620,452, 0,0,0,0, 0,0)
+	FXDialogBox(mainWindow,_("About ReZound"),DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE,0,0,620,452, 0,0,0,0, 0,0)
 {
 	FXPacker *contents=new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 2,2,2,2, 0,0);
 
@@ -66,7 +66,7 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 		}
 
 	// ??? temporary for the alpha stage
-	tab=new FXTabItem(tabs,"Please Read",NULL,TAB_TOP_NORMAL);
+	tab=new FXTabItem(tabs,_("Please Read"),NULL,TAB_TOP_NORMAL);
 	{
 		FXPacker *t=new FXPacker(tabs, LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_RAISED|FRAME_THICK);
 
@@ -88,32 +88,32 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 	// this until there are actually two frontends.. of course I really would hate to maintain two separate
 	// frontends.
 
-	tab=new FXTabItem(tabs,"About",NULL,TAB_TOP_NORMAL);
+	tab=new FXTabItem(tabs,_("About"),NULL,TAB_TOP_NORMAL);
 	{
 		FXMatrix *t=new FXMatrix(tabs,2,MATRIX_BY_COLUMNS | LAYOUT_FILL_X | FRAME_RAISED|FRAME_THICK);
 
-		MAKE_TEXT(t,"Author","Davy Durham, ddurham@users.sourceforge.net");
+		MAKE_TEXT(t,_("Author"),"Davy Durham, ddurham@users.sourceforge.net");
 		MAKE_TEXT(t,"Autoconfiscator","Anthony Ventimiglia");
-		MAKE_TEXT(t,"Artistic Consultant","Will Jayroe");
-		MAKE_LINK(t,"Home Page","http://rezound.sourceforge.net");
-		MAKE_LINK(t,"Mailing List","http://lists.sourceforge.net/lists/listinfo/rezound-users");
-		MAKE_LINK(t,"Bug Reports","http://sourceforge.net/tracker/?atid=105056&group_id=5056");
-		MAKE_LINK(t,"Support Requests","http://sourceforge.net/tracker/?atid=205056&group_id=5056");
-		MAKE_LINK(t,"Feature Requests","http://sourceforge.net/tracker/?atid=355056&group_id=5056");
+		MAKE_TEXT(t,_("Artistic Consultant"),"Will Jayroe");
+		MAKE_LINK(t,_("Home Page"),"http://rezound.sourceforge.net");
+		MAKE_LINK(t,_("Mailing List"),"http://lists.sourceforge.net/lists/listinfo/rezound-users");
+		MAKE_LINK(t,_("Bug Reports"),"http://sourceforge.net/tracker/?atid=105056&group_id=5056");
+		MAKE_LINK(t,_("Support Requests"),"http://sourceforge.net/tracker/?atid=205056&group_id=5056");
+		MAKE_LINK(t,_("Feature Requests"),"http://sourceforge.net/tracker/?atid=355056&group_id=5056");
 		MAKE_LINK(t,"","");
-		MAKE_LINK(t,"Also Please Read","http://sourceforge.net/docman/display_doc.php?docid=9886&group_id=5056");
+		MAKE_LINK(t,_("Also Please Read"),"http://sourceforge.net/docman/display_doc.php?docid=9886&group_id=5056");
 	}
 
-	tab=new FXTabItem(tabs,"Thanks To",NULL,TAB_TOP_NORMAL);
+	tab=new FXTabItem(tabs,_("Thanks To"),NULL,TAB_TOP_NORMAL);
 	{
 		FXMatrix *t=new FXMatrix(tabs,2,MATRIX_BY_COLUMNS | LAYOUT_FILL_X | FRAME_RAISED|FRAME_THICK);
 
-		MAKE_TEXT(t,"Richard Lovison","Bug Finding");
-		MAKE_TEXT(t,"Veres Imre","Bug Finding");
-		MAKE_TEXT(t,"Götz Waschk","Bug Finding");
-		MAKE_TEXT(t,"Heiko Irrgang","Bug Finding");
-		MAKE_TEXT(t,"Jason Lyons","Bug Finding");
-		MAKE_TEXT(t,"Stakker","Feature Suggestions");
+		MAKE_TEXT(t,"Richard Lovison",_("Bug Finding"));
+		MAKE_TEXT(t,"Veres Imre",_("Bug Finding"));
+		MAKE_TEXT(t,"Götz Waschk",_("Bug Finding"));
+		MAKE_TEXT(t,"Heiko Irrgang",_("Bug Finding"));
+		MAKE_TEXT(t,"Jason Lyons",_("Bug Finding"));
+		MAKE_TEXT(t,"Stakker",_("Feature Suggestions"));
 	}
 
 	tab=new FXTabItem(tabs,"License",NULL,TAB_TOP_NORMAL);
@@ -124,7 +124,7 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 	}
 
 	FXPacker *lowerFrame=new FXHorizontalFrame(contents,FRAME_RAISED|FRAME_THICK | LAYOUT_FILL_X|LAYOUT_FIX_HEIGHT, 0,0,0,55);
-		FXButton *okayButton=new FXButton(lowerFrame,"&Close",FOXIcons->GreenCheck1,this,ID_ACCEPT,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_BEFORE_TEXT | LAYOUT_CENTER_X|LAYOUT_CENTER_Y, 0,0,0,0, 10,10,5,5);
+		FXButton *okayButton=new FXButton(lowerFrame,_("&Close"),FOXIcons->GreenCheck1,this,ID_ACCEPT,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_BEFORE_TEXT | LAYOUT_CENTER_X|LAYOUT_CENTER_Y, 0,0,0,0, 10,10,5,5);
 }
 
 CAboutDialog::~CAboutDialog()

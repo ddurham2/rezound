@@ -58,7 +58,7 @@ bool CSaveSelectionAsAction::doesWarrantSaving() const
 // ------------------------------
 
 CSaveSelectionAsActionFactory::CSaveSelectionAsActionFactory() :
-	AActionFactory("Save Selection As...","Save Selection As...",NULL,NULL,false,false)
+	AActionFactory(_("Save Selection As")+string("..."),_("Save Selection As")+string("..."),NULL,NULL,false,false)
 {
 }
 
