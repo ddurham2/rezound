@@ -473,6 +473,7 @@ public:
 		FXHorizontalFrame(parent,LAYOUT_RIGHT|LAYOUT_FIX_WIDTH|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0),
 		canvasFrame(new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_SUNKEN|FRAME_THICK,0,0,0,0, 2,2,2,2, 0,1)),
 			canvas(new FXBackBufferedCanvas(canvasFrame,this,ID_CANVAS,LAYOUT_FILL_X|LAYOUT_FILL_Y)),
+		zoomDial(new FXDial(this,this,ID_ZOOM_DIAL,DIAL_VERTICAL|DIAL_HAS_NOTCH|LAYOUT_FILL_Y|LAYOUT_FIX_WIDTH,0,0,16,0)),
 
 		statusFont(getApp()->getNormalFont()),
 
@@ -494,6 +495,13 @@ public:
 		canvas->setBackBufferOptions(IMAGE_OWNED); /* 1.1.29 and later always has 32bit image data */
 #endif
 
+		zoomDial->setRange(100,200);
+		zoomDial->setValue(100);
+		zoomDial->setRevolutionIncrement(100*2);
+		zoomDial->setTipText(_("Adjust Zoom Factor for Stereo Phase Meter\nAll the way down means no zooming"));
+		zoom=((float)zoomDial->getValue())/100.0;
+
+
 		// create the font to use for numbers
 		FXFontDesc d;
 		statusFont->getFontDesc(d);
@@ -507,10 +515,17 @@ public:
 		delete statusFont;
 	}
 
+	long CStereoPhaseMeter::onZoomDial(FXObject *sender,FXSelector sel,void *ptr)
+	{
+		zoom=((float)zoomDial->getValue())/100.0;
+		canvas->update(); // not really necessary since we're doing it several times a second anyway
+		return 1;
+	}
+
 	long CStereoPhaseMeter::onResize(FXObject *sender,FXSelector sel,void *ptr)
 	{
 		// make square
-		resize(getHeight(),getHeight());
+		resize(getHeight()+getHSpacing()+zoomDial->getWidth(),getHeight());
 		recalcRotateLookup();
 		clearCanvas();
 		return 1;
@@ -552,9 +567,8 @@ public:
 		for(size_t t=0;t<samplingNFrames;t++)
 		{
 			// let x and y be the normalized (1.0) sample values (x:right y:left) then scaled up to the canvas width/height and centered in the square
-			const FXint x= (FXint)(samplingBuffer[t*samplingNChannels+samplingRightChannel]*(int)canvasSize/2/MAX_SAMPLE + canvasSize/2);
-			const FXint y=(FXint)(-samplingBuffer[t*samplingNChannels+samplingLeftChannel ]*(int)canvasSize/2/MAX_SAMPLE + canvasSize/2); // negation because increasing values go down on the screen which is up-side-down from the Cartesian plane
-
+			const FXint x=(FXint)((zoom*(samplingBuffer[t*samplingNChannels+samplingRightChannel]*(int)canvasSize/2/MAX_SAMPLE)) + canvasSize/2);
+			const FXint y=(FXint)((zoom*(-samplingBuffer[t*samplingNChannels+samplingLeftChannel ]*(int)canvasSize/2/MAX_SAMPLE)) + canvasSize/2); // negation because increasing values go down on the screen which is up-side-down from the Cartesian plane
 
 			if(x>=0 && x<canvasSize && y>=0 && y<canvasSize)
 			{
@@ -619,6 +633,7 @@ public:
 	enum
 	{
 		ID_CANVAS=FXHorizontalFrame::ID_LAST,
+		ID_ZOOM_DIAL,
 		ID_UNROTATE,
 	};
 
@@ -628,6 +643,7 @@ protected:
 private:
 	FXPacker *canvasFrame;
 		FXBackBufferedCanvas *canvas;
+	FXDial *zoomDial;
 	FXFont *statusFont;
 
 	const sample_t *samplingBuffer;
@@ -637,6 +653,8 @@ private:
 	const unsigned samplingRightChannel;
 
 	bool clear;
+
+	float zoom;
 
 	TAutoBuffer<FXint> unrotateMapping; // width*height number of pixels mapping
 
@@ -685,6 +703,7 @@ FXDEFMAP(CStereoPhaseMeter) CStereoPhaseMeterMap[]=
 	FXMAPFUNC(SEL_CONFIGURE,		0,				CStereoPhaseMeter::onResize),
 	FXMAPFUNC(SEL_RIGHTBUTTONPRESS,		CStereoPhaseMeter::ID_CANVAS,	CStereoPhaseMeter::onPopupMenu),
 	FXMAPFUNC(SEL_COMMAND,			CStereoPhaseMeter::ID_UNROTATE,	CStereoPhaseMeter::onUnrotateMenuItem),
+	FXMAPFUNC(SEL_CHANGED,			CStereoPhaseMeter::ID_ZOOM_DIAL,CStereoPhaseMeter::onZoomDial),
 };
 
 FXIMPLEMENT(CStereoPhaseMeter,FXHorizontalFrame,CStereoPhaseMeterMap,ARRAYNUMBER(CStereoPhaseMeterMap))
@@ -708,7 +727,7 @@ public:
 			canvas(new FXBackBufferedCanvas(canvasFrame,this,ID_CANVAS,LAYOUT_FILL_X|LAYOUT_FILL_Y)),
 			labelFrame(new FXHorizontalFrame(canvasFrame,LAYOUT_FILL_X|FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0)),
 
-		zoomDial(new FXDial(this,this,ID_ZOOM_DIAL,DIAL_VERTICAL|DIAL_HAS_NOTCH|LAYOUT_FILL_Y|LAYOUT_FIX_WIDTH,0,0,18,0)),
+		zoomDial(new FXDial(this,this,ID_ZOOM_DIAL,DIAL_VERTICAL|DIAL_HAS_NOTCH|LAYOUT_FILL_Y|LAYOUT_FIX_WIDTH,0,0,16,0)),
 
 		statusFont(getApp()->getNormalFont()),
 
