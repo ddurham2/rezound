@@ -1852,14 +1852,9 @@ template<class l_addr_t,class p_addr_t>
 			continue;
 
 		printf("\t%-4u Pool: '%s' size: %lld\n",poolId,getPoolNameById(poolId).c_str(),(long long)getPoolSize(poolId));
-		size_t p=0;
 		for(size_t t=0;t<SAT[poolId].size();t++)
 		{
-			if(!pools[t].isValid)
-				continue;
-
-			printf("\t\t%-4u ",p++);
-			//t->print();
+			printf("\t\t%-4u ",t);
 			SAT[poolId][t].print();
 		}
 
