@@ -195,7 +195,5 @@ void setupAccels(CMainWindow *mainWindow)
 	at->addAccel(MKUINT(KEY_V,CONTROLMASK|SHIFTMASK), gEditToolbar->pasteInsertButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
 
 	at->addAccel(MKUINT(KEY_z,CONTROLMASK) ,mainWindow,MKUINT(CMainWindow::ID_UNDO_BUTTON,SEL_COMMAND));
-
-	gEditToolbar->setAccelTable(at);
 }
 

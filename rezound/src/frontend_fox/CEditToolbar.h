@@ -37,6 +37,7 @@ class CEditToolbar : public FXTopWindow
 public:
 
 	CEditToolbar(FXWindow *mainWindow);
+	~CEditToolbar();
 
 	virtual void show();
 	virtual void hide();

@@ -51,9 +51,17 @@ CSoundListWindow::CSoundListWindow(FXWindow *mainWindow) :
 		soundListFrame(new FXPacker(contents,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_SUNKEN|FRAME_THICK, 0,0,0,0, 0,0,0,0, 0,0)), // had to do this because FXList won't take that frame style
 			soundList(new FXList(soundListFrame,0,this,ID_SOUND_LIST,LIST_BROWSESELECT | LAYOUT_FILL_X|LAYOUT_FILL_Y))
 {
+	delete getAccelTable();
+	setAccelTable(mainWindow->getAccelTable());
+
 	setTitle("Opened");
 
 	setAccelTable(mainWindow->getAccelTable());
+}
+
+CSoundListWindow::~CSoundListWindow()
+{
+	setAccelTable(NULL);
 }
 
 void CSoundListWindow::create()

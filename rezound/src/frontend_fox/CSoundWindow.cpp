@@ -181,6 +181,7 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 	addCueActionFactory(NULL),
 	removeCueActionFactory(NULL)
 {
+	delete getAccelTable(); // delete the existing one to setup a new one
 	setAccelTable(mainWindow->getAccelTable());
 
 	waveView->setTarget(this);
@@ -282,6 +283,8 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 
 CSoundWindow::~CSoundWindow()
 {
+	setAccelTable(NULL); // unset it since ~FXWindow delete's it and ours is global
+
 	if(timerHandle!=NULL)
 		getApp()->removeTimeout(timerHandle);
 

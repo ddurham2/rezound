@@ -53,6 +53,8 @@ CEditToolbar::CEditToolbar(FXWindow *mainWindow) :
 	scrollWindow(new FXScrollWindow(this,LAYOUT_FILL_X|LAYOUT_FILL_Y)),
 	contents(new FXMatrix(scrollWindow,2,MATRIX_BY_COLUMNS|FRAME_RAISED, 0,0,0,0, 4,4,4,4, 1,1))
 {
+	delete getAccelTable();
+	setAccelTable(mainWindow->getAccelTable());
 
 	#define MAKE_FILLER new FXFrame(contents,LAYOUT_FIX_HEIGHT, 0,0,0,8);
 
@@ -94,6 +96,12 @@ CEditToolbar::CEditToolbar(FXWindow *mainWindow) :
 	new CActionButton(new CInsertSilenceEditFactory(gChannelSelectDialog,new CInsertSilenceDialog(mainWindow)),contents,"slnc",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
 	new CActionButton(new CMuteEditFactory(gChannelSelectDialog),contents,"mute",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
 }
+
+CEditToolbar::~CEditToolbar()
+{
+	setAccelTable(NULL);
+}
+
 
 /*
 void CEditToolbar::create()

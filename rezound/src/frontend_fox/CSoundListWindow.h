@@ -37,6 +37,7 @@ class CSoundListWindow : public FXToolbarShell
 public:
 
 	CSoundListWindow(FXWindow *mainWindow);
+	~CSoundListWindow();
 
 	enum 
 	{
