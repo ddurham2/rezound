@@ -426,8 +426,7 @@ AC_ARG_ENABLE(
 		AC_MSG_NOTICE([*** NOTICE *** stand-alone build enabled -- now static versions of all the dependancy libraries will be required.  If final linking fails, then make sure a static version of the failed library is installed.])
 
 		dnl warn about needing static libs if using FOX and statically linking
-		if echo "$LD_FLAGS" | grep "FOX" >/dev/null
-		then
+		if ! test -z "$FOX_LIBS"; then
 			AC_MSG_NOTICE([*** NOTICE *** since static linking is enabled, FOX will require static versions of libjpeg, libpng, libtiff, XFree86-libs, and maybe others])
 		fi
 		
