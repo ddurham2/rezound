@@ -459,7 +459,8 @@ ASoundRecorder *ASoundRecorder::createInitializedSoundRecorder(CSound *sound)
 #else
 		// OSS was not the original method chosen at configure time so now fall back to using OSS if it wasn't disabled
 	#ifdef ENABLE_OSS
-		Warning(string(e.what())+"\nAttempting to fall back to using OSS for audio input.");
+		fprintf(stderr,"%s\n",(string(e.what())+"\nAttempting to fall back to using OSS for audio input.").c_str());
+		//Warning(string(e.what())+"\nAttempting to fall back to using OSS for audio input.");
 
 		// try OSS
 		soundRecorder=new COSSSoundRecorder();
@@ -471,7 +472,7 @@ ASoundRecorder *ASoundRecorder::createInitializedSoundRecorder(CSound *sound)
 		catch(exception &e)
 		{ // now really give up
 			delete soundRecorder;
-			throw;
+			throw runtime_error(string("Error occurred after trying to fall back to OSS\n")+e.what());
 		}
 	#else
 		throw;

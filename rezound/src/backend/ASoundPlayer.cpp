@@ -462,6 +462,8 @@ const size_t ASoundPlayer::getFrequencyAnalysisOctaveStride() const
 
 #include "AStatusComm.h"
 
+#include <stdio.h> // just for fprintf
+
 ASoundPlayer *ASoundPlayer::createInitializedSoundPlayer()
 {
 	ASoundPlayer *soundPlayer=NULL;
@@ -486,7 +488,8 @@ ASoundPlayer *ASoundPlayer::createInitializedSoundPlayer()
 #else
 		// OSS was not the original method chosen at configure time so now fall back to using OSS if it wasn't disabled
 	#ifdef ENABLE_OSS
-		Warning(string(e.what())+"\nAttempting to fall back to using OSS for audio output.");
+		fprintf(stderr,"%s\n",(string(e.what())+"\nAttempting to fall back to using OSS for audio output.").c_str());
+		//Warning(string(e.what())+"\nAttempting to fall back to using OSS for audio output.");
 
 		// try OSS
 		delete soundPlayer;
@@ -497,7 +500,7 @@ ASoundPlayer *ASoundPlayer::createInitializedSoundPlayer()
 		}
 		catch(exception &e)
 		{ // now really give up
-			Error(string(e.what())+"\nPlaying will be disabled.");
+			Error(string("Error occurred after trying to fall back to OSS\n")+e.what()+"\nPlaying will be disabled.");
 		}
 	#else
 		Error(string(e.what())+"\nPlaying will be disabled.");
