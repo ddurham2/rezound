@@ -84,11 +84,18 @@ private:
 			FXComboBox *lengthComboBox;
 			FXLabel *lengthUnitsLabel;
 
+	FXCheckButton *rememberAsDefault;
+
+	FXHorizontalSeparator *separator;
+
 	string filename;
 	bool rawFormat;
 	unsigned channelCount;
 	unsigned sampleRate;
 	sample_pos_t length;
+
+	void saveDefault();
+	void restoreDefault();
 };
 
 #endif

@@ -30,6 +30,9 @@
 #include "CFrontendHooks.h"
 #include "../backend/AStatusComm.h"
 
+#include <CNestedDataFile/CNestedDataFile.h>
+#include "settings.h"
+
 
 FXDEFMAP(CNewSoundDialog) CNewSoundDialogMap[]=
 {
@@ -64,7 +67,11 @@ CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 		lengthLabel(new FXLabel(matrix,_("Length:"),NULL,LABEL_NORMAL|LAYOUT_RIGHT)),
 		lengthFrame(new FXHorizontalFrame(matrix,LAYOUT_CENTER_X,0,0,0,0, 0,0,0,0, 0,0)),
 			lengthComboBox(new FXComboBox(lengthFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK)),
-			lengthUnitsLabel(new FXLabel(lengthFrame,_("second(s)")))
+			lengthUnitsLabel(new FXLabel(lengthFrame,_("second(s)"))),
+
+
+	rememberAsDefault(new FXCheckButton(getFrame(),_("Remember as Default"),NULL,0,CHECKBUTTON_NORMAL|LAYOUT_BOTTOM|LAYOUT_CENTER_X)),
+	separator(new FXHorizontalSeparator(getFrame(),SEPARATOR_GROOVE|LAYOUT_FILL_X|LAYOUT_BOTTOM))
 {
 	for(size_t t=0;t<MAX_CHANNELS;t++)
 		channelsComboBox->appendItem(istring(t+1).c_str());
@@ -81,9 +88,9 @@ CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 	sampleRateComboBox->setCurrentItem(4);
 
 
-	lengthComboBox->appendItem("0.25");
-	lengthComboBox->appendItem("0.5");
-	lengthComboBox->appendItem("0.75");
+	lengthComboBox->appendItem(_("0.25"));
+	lengthComboBox->appendItem(_("0.5"));
+	lengthComboBox->appendItem(_("0.75"));
 	lengthComboBox->appendItem("1");
 	lengthComboBox->appendItem("15");
 	lengthComboBox->appendItem("30");
@@ -116,6 +123,9 @@ void CNewSoundDialog::show(FXuint placement)
 {
 	filenameTextBox->setText(filename.c_str());
 	rawFormatCheckButton->setCheck(rawFormat);
+
+	restoreDefault();
+
 	FXModalDialogBox::show(placement);
 }
 
@@ -224,6 +234,38 @@ bool CNewSoundDialog::validateOnOkay()
 	else
 		this->length=1;
 
+	saveDefault();
+
 	return true;
+}
+
+void CNewSoundDialog::saveDefault()
+{
+	// ??? could I possibly use the streaming features of FOX? or would that recreate the widgets on restore?
+	const string keyPrefix="FOX" DOT "Defaults" DOT getOrigTitle();
+	gSettingsRegistry->removeKey(keyPrefix);
+	if(rememberAsDefault->getCheck())
+	{
+		gSettingsRegistry->createValue(keyPrefix DOT "filename",filename);
+		gSettingsRegistry->createValue(keyPrefix DOT "rawFormat",rawFormat);
+		gSettingsRegistry->createValue(keyPrefix DOT "channelCount",channelCount);
+		gSettingsRegistry->createValue(keyPrefix DOT "sampleRate",sampleRate);
+		gSettingsRegistry->createValue(keyPrefix DOT "length",atof(lengthComboBox->getText().text()));
+	}
+}
+
+void CNewSoundDialog::restoreDefault()
+{
+	const string keyPrefix="FOX" DOT "Defaults" DOT getOrigTitle();
+	if(gSettingsRegistry->keyExists(keyPrefix))
+	{
+		filenameTextBox->setText(		gSettingsRegistry->getValue<string>	(keyPrefix DOT "filename").c_str());
+		rawFormatCheckButton->setCheck(		gSettingsRegistry->getValue<bool>	(keyPrefix DOT "rawFormat"));
+		channelsComboBox->setText(istring(	gSettingsRegistry->getValue<unsigned>	(keyPrefix DOT "channelCount")).c_str());
+		sampleRateComboBox->setText(istring(	gSettingsRegistry->getValue<unsigned>	(keyPrefix DOT "sampleRate")).c_str());
+		lengthComboBox->setText(istring(	gSettingsRegistry->getValue<sample_pos_t>(keyPrefix DOT "length")).c_str());
+
+		rememberAsDefault->setCheck(TRUE);
+	}
 }
 
