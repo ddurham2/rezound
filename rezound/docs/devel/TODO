@@ -23,6 +23,15 @@
 		- let there be a parameter which says in milliseconds how long the blend takes
 		- if not every action, at least paste for editing
 
+	- I've said that I want to support another audio file libary in the future, but I did find that libaudiofile's API at least has support for loop points, cues, notes and arbitrary data, but it doesn't seem to even be implemented on wave save.
+		- Perhaps I will work to patch libaudiofile to get this functionality working.  Because SOX's lib form is far from existing
+		- libsndfile has more formats than libaudiofile but has no API provisions for arbitrary data. AND it isn't packaged on hardly any distroes
+		- Now another possiblity for at least giving a decent effort toward being able to load and save numerous other formats could be done by making a CSOXSound : ASound and have it shell out and actually run the sox command.  Maybe sox can even read and write to std i/o so I could avoid intermediate copies by sending it and receiving from it raw PCM data.
+			- This would be under an explicit import/export set of buttons under the file actions because it would probably support no form of saving the cues and notes and such and the user could be warned that none of this information will be preserved.
+			- configure should test for `sox` being valid and make it a depenancy... If it's not found, then the import and export file operations will be disabled
+				- the configure script should make a big note of this on screen that import/export will be disabled
+		- But I should still use libaudiofile to load and save wav, aiff, (ogg and mp3 when it's available)
+
 	- create selection edits which:
 		- grow or shrink the selection by a given duration
 			- either symetically
