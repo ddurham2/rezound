@@ -15,5 +15,14 @@
 
 	at the prompt before running ReZound.
 	
+
+- Gotcha - 
+	A while back I had loaded a file from a cdrom then exited the program and 
+	ejected the CD.  Well, on exit ReZound remembers the last location that you 
+	opened a file.  So, the next time that I ran ReZound it tried to verify
+	that last-opened path and hung the application for about 10 seconds and 
+	then finally came up.  After loading a file from a different location the
+	next time ReZound started up fine.  Otherwise, you can edit 
+	~/.rezound/registry.dat and just remove the 'promptDialogDirectory' line.
 	
 
