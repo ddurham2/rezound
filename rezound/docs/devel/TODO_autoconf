@@ -3,16 +3,12 @@
 
 2. Look for other possible trouble spots such as stdint.h int32_t int16_t etc and set up a common.h header to deal with these problems. 
 
-3. write a common.h header and include it in every file. It will conditionally include config.h and take care of some of the workarounds we may have to use. 
-
 
 - How is the best way to enable the -g flag for the compiler? Is it a flag to configure?  I didn't see a --enable-debug option or anything in configure
 	- the -g, of course, is necessary for being able to use gdb to debug the application
 	- I would be happy to always have it enabled, even on releases unless they configure it with --strip-debug (which is a flag in configure, so I suppose that's what it does, that is strips the debug info out of the binary at the end)
 
 - THE MOST IMPORTANT -
-	- well.. I don't know why this is but here's the senario
-	
 	- Does it do this on yours (btw- I'm running on a 1.2ghz... I feel for
 	  ya man).. After I compile, it was failing because of not finding
 	  /usr/X11R6/lib/libGL.so, but then if I immediately did 'make' again
