@@ -347,12 +347,12 @@ public:
 
 	const size_t getCueCount() const;
 
-	const string getCueName(size_t index);
+	const string getCueName(size_t index) const;
 
-	const sample_pos_t getCueTime(size_t index);
+	const sample_pos_t getCueTime(size_t index) const;
 	void setCueTime(size_t index,sample_pos_t newTime);
 
-	const bool isCueAnchored(size_t index);
+	const bool isCueAnchored(size_t index) const;
 
 	void addCue(const string &name,const sample_pos_t time,const bool isAnchored);
 	void insertCue(size_t index,const string &name,const sample_pos_t time,const bool isAnchored);

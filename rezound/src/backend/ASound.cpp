@@ -1325,12 +1325,12 @@ const size_t ASound::getCueCount() const
 	return(cueAccesser->getSize());
 }
 
-const string ASound::getCueName(size_t index)
+const string ASound::getCueName(size_t index) const
 {
 	return((*cueAccesser)[index].name);
 }
 
-const sample_pos_t ASound::getCueTime(size_t index)
+const sample_pos_t ASound::getCueTime(size_t index) const
 {
 	return((*cueAccesser)[index].time);
 }
@@ -1345,7 +1345,7 @@ void ASound::setCueTime(size_t index,sample_pos_t newTime)
 	rebuildCueIndex();
 }
 
-const bool ASound::isCueAnchored(size_t index)
+const bool ASound::isCueAnchored(size_t index) const
 {
 	return((*cueAccesser)[index].isAnchored);
 }
