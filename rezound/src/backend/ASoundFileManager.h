@@ -74,6 +74,10 @@ public:
 	// returns a list of error messages
 	const vector<string> loadFilesInRegistry();
 
+	// returns a registered translator object that can handle loading the file
+		// ??? perhaps I should have some enum here which indicates a desired format incase the extension is non-standard
+	static const ASoundTranslator *getTranslator(const string filename,bool isRaw);
+
 protected:
 
 	// should create a new sound window with the given CLoadedSound object
@@ -88,9 +92,6 @@ protected:
 	void updateReopenHistory(const string &filename);
 
 private:
-
-	// ??? perhaps I should have some enum here which indicates a desired format incase the extension is non-standard
-	static const ASoundTranslator *getTranslator(const string filename,bool isRaw);
 
 	ASoundPlayer *soundPlayer;
 
