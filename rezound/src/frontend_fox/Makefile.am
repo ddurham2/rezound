@@ -148,6 +148,7 @@ noinst_HEADERS=\
 	FXRezWaveView.h \
 	FXWaveScrollArea.h \
 	FXWaveCanvas.h \
+	FXPopupHint.h \
 	drawPortion.h \
 	rememberShow.h \
 	custom_cursors.h \
