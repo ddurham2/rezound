@@ -22,6 +22,8 @@ fi
 
 # now determine if reswrap should be run with -n or -r depending on the version of reswrap
 maj_ver=`reswrap -v 2>&1 | head -1 | cut -f2 -d' ' | cut -f1 -d'.'`
+# older version print "reswrap version 1.x.x"
+test $maj_ver = "version" && maj_ver=`reswrap -v 2>&1 | head -1 | cut -f3 -d' ' | cut -f1 -d'.'`
 if test $maj_ver -le 2; then 	# versions 1 and 2
 	RESWRAP="$RESWRAP -n"
 else				# version 3
