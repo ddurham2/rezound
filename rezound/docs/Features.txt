@@ -1,5 +1,4 @@
 - File Formats:
-	- (soon support for libsndfile in place of libaudiofile)
 	- Native ReZound
 	- WAVE				(libaudiofile)
 	- AIFF/AIFF-C			(libaudiofile)
@@ -132,6 +131,7 @@
 	- Resample
 
 - Generate Various Colors of Noise
+- Generate Various Timbres of a frequency
 
 - Selectable LFO Shapes for Actions that Use an LFO (more to come)
 
