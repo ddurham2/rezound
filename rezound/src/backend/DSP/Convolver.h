@@ -244,6 +244,18 @@ public:
 		return M;
 	}
 
+	static const vector<size_t> getGoodFilterKernelSizes()
+	{
+		//                                                                                 2^13 5^6   2^14  3^9   2^15  3^10  2^16  5^7   7^6    2^17   3^11   2^18   5^8    2^19   3^12   7^7    2^20    3^13    5^9     2^21    2^22    3^14    7^8     2^23    5^10    3^15     2^24     11^7
+		static const size_t fftw_good_sizes[]={0,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,15625,16384,19683,32768,59049,65536,78125,117649,131072,177147,262144,390625,524288,531441,823543,1048576,1594323,1953125,2097152,4194304,4782969,5764801,8388608,9765625,14348907,16777216,19487171};
+		static const size_t num_sizes=sizeof(fftw_good_sizes)/sizeof(*fftw_good_sizes);
+
+		vector<size_t> v;
+		for(unsigned t=0;t<num_sizes;t++)
+			v.push_back(fftw_good_sizes[t]);
+		return v;
+	}
+
 private:
 
 	const size_t M; // length of filter kernel
@@ -271,12 +283,10 @@ private:
 		if(M<=0)
 			throw runtime_error(string(__func__)+" -- filter kernel length is <= 0 -- "+istring(M));
 
-		//                                                                  2^13 5^6   2^14  3^9   2^15  3^10  2^16  5^7   7^6    2^17   3^11   2^18   5^8    2^19   3^12   7^7    2^20    3^13    5^9     2^21    2^22    3^14    7^8     2^23    5^10    3^15     2^24     11^7
-		static const size_t fftw_good_sizes[]={0,128,256,512,1024,2048,4096,8192,15625,16384,19683,32768,59049,65536,78125,117649,131072,177147,262144,390625,524288,531441,823543,1048576,1594323,1953125,2097152,4194304,4782969,5764801,8388608,9765625,14348907,16777216,19487171};
-		static const size_t num_sizes=sizeof(fftw_good_sizes)/sizeof(*fftw_good_sizes);
+		const vector<size_t> fftw_good_sizes=getGoodFilterKernelSizes();
 
 		// the window size to use should be the first item in fftw_good_sizes that can accomidate the filterKernel, then one more bigger
-		for(size_t t=0;t<num_sizes-1;t++)
+		for(size_t t=0;t<fftw_good_sizes.size()-1;t++)
 		{
 			if(fftw_good_sizes[t]>=M)
 				return fftw_good_sizes[t+1];
