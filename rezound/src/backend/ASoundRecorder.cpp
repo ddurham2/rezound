@@ -206,10 +206,10 @@ void ASoundRecorder::onData(sample_t *samples,const size_t _sampleFramesRecorded
 			if(DCOffsetCompensation[i]!=0)
 			{
 				sample_t *_samples=samples+i;
-				const sample_t DCOffsetCompensation=this->DCOffsetCompensation[i];
+				const mix_sample_t DCOffsetCompensation=this->DCOffsetCompensation[i];
 				for(size_t t=0;t<sampleFramesRecorded;t++)
 				{
-					(*_samples)+=DCOffsetCompensation;
+					*_samples=ClipSample(*_samples+DCOffsetCompensation);
 					_samples+=channelCount;
 				}
 			}
