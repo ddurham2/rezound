@@ -468,56 +468,95 @@ const size_t ASoundPlayer::getFrequencyAnalysisOctaveStride() const
 
 // ----------------------------
 
+#include <stdio.h> // just for fprintf
+#include <vector>
+#include <string>
+
 #include "COSSSoundPlayer.h"
 #include "CPortAudioSoundPlayer.h"
 #include "CJACKSoundPlayer.h"
 
 #include "AStatusComm.h"
 
-#include <stdio.h> // just for fprintf
+#include <CNestedDataFile/CNestedDataFile.h>
 
 ASoundPlayer *ASoundPlayer::createInitializedSoundPlayer()
 {
+	// if the registry doesn't already contain a methods setting, then create the default one
+	if(gSettingsRegistry->keyExists("AudioOutputMethods")!=CNestedDataFile::ktValue)
+	{
+		vector<string> methods;
+		methods.push_back("oss");
+		methods.push_back("jack");
+		methods.push_back("portaudio");
+		gSettingsRegistry->createValue("AudioOutputMethods",methods);
+	}
+
+
+	bool initializeThrewException=false;
 	ASoundPlayer *soundPlayer=NULL;
 
-#if defined(ENABLE_PORTAUDIO)
-	soundPlayer=new CPortAudioSoundPlayer();
-#elif defined(ENABLE_JACK)
-	soundPlayer=new CJACKSoundPlayer();
-#elif defined(ENABLE_OSS)
-	soundPlayer=new COSSSoundPlayer();
-#endif
+	vector<string> methods=gSettingsRegistry->getValue<vector<string> >("AudioOutputMethods");
+	
+	// add --audio-method=... to the beginning
+	if(gDefaultAudioMethod!="")
+		methods.insert(methods.begin(),gDefaultAudioMethod);
 
-	try
+	// for each requested method in registry.AudioOutputMethods try each until one succeeds
+	// 'suceeding' is true if the method was enabled at build time and it can initialize now at run-time
+	for(size_t t=0;t<methods.size();t++)
 	{
-		soundPlayer->initialize();
-	}
-	catch(exception &e)
-	{
-#if !defined(ENABLE_PORAUDIO) && !defined(ENABLE_JACK)
-		// OSS was the only defined method
-		Error(string(e.what())+"\n"+_("Playing will be disabled."));
-#else
-		// OSS was not the original method chosen at configure time so now fall back to using OSS if it wasn't disabled
-	#ifdef ENABLE_OSS
-		fprintf(stderr,"%s\n",(string(e.what())+"\nAttempting to fall back to using OSS for audio output.").c_str());
-		//Warning(string(e.what())+"\nAttempting to fall back to using OSS for audio output.");
-
-		// try OSS
-		delete soundPlayer;
-		soundPlayer=new COSSSoundPlayer();
+		const string method=methods[t];
 		try
 		{
-			soundPlayer->initialize();
+#define INITIALIZE_PLAYER(ClassName)					\
+			{						\
+				initializeThrewException=false;		\
+				delete soundPlayer;			\
+				soundPlayer=new ClassName();		\
+				soundPlayer->initialize();		\
+				break; /* no exception thrown from initialize() so we're good to go */ \
+			}
+
+			if(method=="oss")
+			{	
+#ifdef ENABLE_OSS
+				INITIALIZE_PLAYER(COSSSoundPlayer)
+#endif
+			}
+			else if(method=="jack")
+			{
+#ifdef ENABLE_JACK
+				INITIALIZE_PLAYER(CJACKSoundPlayer)
+#endif
+			}
+			else if(method=="portaudio")
+			{
+#ifdef ENABLE_PORTAUDIO
+				INITIALIZE_PLAYER(CPortAudioSoundPlayer)
+#endif
+			}
+			else
+			{
+				Warning("unhandled method type in the registry:AudioOutputMethods[] '"+method+"'");
+				continue;
+			}
 		}
 		catch(exception &e)
 		{ // now really give up
-			Error(string(_("Error occurred after trying to fall back to OSS"))+"\n"+e.what()+"\n"+_("Playing will be disabled."));
+			fprintf(stderr,"Error occurred while initializing audio output method '%s' -- %s\n",method.c_str(),e.what());
+			initializeThrewException=true;
 		}
-	#else
-		Error(string(e.what())+"\n"+_("Playing will be disabled."));
-	#endif
-#endif
 	}
-	return soundPlayer;
+
+	if(soundPlayer)
+	{
+		if(initializeThrewException)
+			Error(_("No audio output method could be initialized -- Playing will be disabled."));
+
+		return soundPlayer;
+	}
+	else
+		throw runtime_error(string(__func__)+" -- "+_("Either no audio output method was enabled at configure-time, or no method was recognized in the registry:AudioOutputMethods[] setting"));
 }
+

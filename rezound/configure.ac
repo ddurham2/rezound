@@ -144,12 +144,33 @@ dnl # Handle the flags that choose which audio I/O system to use               #
 dnl ############################################################################
 audioIOMethod=""
 
+AC_MSG_NOTICE([Tests for methods to use for audio I/O will follow below.  The method actually used will be determined at run-time depending on the order of the values in the ~/.rezound/registry.dat file in AudioOutput(or Input)Methods and will depend on which method first initializes successfully.  Alternatively, there is an --audio-method=... flag to the rezound binary to choose which method to try first.  See 'rezound --help' for more information.])
+
+dnl handle the --enable-oss flag
+AH_TEMPLATE(ENABLE_OSS)
+AC_ARG_ENABLE(
+	oss,
+	[  --enable/disable-oss            enable/disable ReZound to use OSS for audio I/O ],
+	[ dnl action if either enable or disable flag is given
+		if [[ "$enableval" = "yes" ]]
+		then 
+			AC_DEFINE(ENABLE_OSS)
+			AC_MSG_RESULT([*** enabling OSS for audio I/O])
+		else
+			AC_MSG_RESULT([*** disabling OSS for audio I/O])
+		fi
+	],
+	[ dnl action if neither enable or disable flag is given
+			AC_DEFINE(ENABLE_OSS)
+			AC_MSG_RESULT([*** enabling OSS for audio I/O])
+	]
+)
+
 dnl handle the --enable-portaudio flag
 AH_TEMPLATE(ENABLE_PORTAUDIO)
 AC_ARG_ENABLE(
 	portaudio,
-	[
-  --enable-portaudio      build ReZound to use PortAudio for audio I/O ],
+	[  --enable/disable-portaudio      enable/disable ReZound to use PortAudio for audio I/O ],
 	[
 		if [[ "$enableval" = "yes" ]]
 		then 
@@ -167,8 +188,7 @@ AC_ARG_ENABLE(
 					portaudio.h,
 					[
 						AC_DEFINE(ENABLE_PORTAUDIO)
-						AC_MSG_RESULT([*** using libportaudio for audio I/O])
-						audioIOMethod="portaudio"
+						AC_MSG_RESULT([*** enabling libportaudio for audio I/O])
 					],
 					[
 						LIBS="$origLIBS"
@@ -178,82 +198,78 @@ AC_ARG_ENABLE(
 
 				AC_MSG_ERROR([***** libportaudio.a not found (http://www.portaudio.com) *****])
 			)
+		else
+			AC_MSG_RESULT([*** disabling libportaudio for audio I/O])
 		fi
+	],
+	[ dnl action if neither enable or disable flag was given
+		dnl if libportaudio and portaudio.h are found, then enable it
+		AC_CHECK_LIB(
+			portaudio,
+			Pa_Initialize,
+
+			origLIBS="$LIBS"
+			LIBS="-lportaudio $LIBS"
+			
+			dnl libportaudio found, now check for portaudio header file
+			[AC_CHECK_HEADER(
+				portaudio.h,
+				[
+					AC_DEFINE(ENABLE_PORTAUDIO)
+					AC_MSG_RESULT([*** enabling libportaudio for audio I/O])
+				],
+				[
+					LIBS="$origLIBS"
+				]
+			)]
+		)
 	]
 )
 
 dnl handle the --enable-jack flag
 AH_TEMPLATE(ENABLE_JACK)
-if [[ "$audioIOMethod" = "" ]]
-then
-	AC_ARG_ENABLE(
-		jack,
-		[  --enable-jack           build ReZound to use JACK for audio I/O ],
-		[ dnl action if either enable or disable flag is given
-			if [[ "$enableval" = "yes" ]]
-			then 
-				PKG_CHECK_MODULES(
-					JACK,
-					jack,
-					[
-						AC_DEFINE(ENABLE_JACK)
-						AC_MSG_RESULT([*** using JACK for audio I/O])
-						audioIOMethod="jack"
-					],
-					AC_MSG_ERROR([***** libjack.a or jack/jack.h not found (http://jackit.sourceforge.net) *****])
-				)
-				
-				AC_MSG_RESULT([*** See http://sourceforge.net/docman/display_doc.php?docid=15095&group_id=5056 for more help on using ReZound with JACK])
-			fi
-		]
-	)
-fi
+AC_ARG_ENABLE(
+	jack,
+	[  --enable/disable-jack           enable/disable ReZound to use JACK for audio I/O ],
+	[ dnl action if either enable or disable flag is given
+		if [[ "$enableval" = "yes" ]]
+		then 
+			PKG_CHECK_MODULES(
+				JACK,
+				jack,
+				[
+					AC_DEFINE(ENABLE_JACK)
+					AC_MSG_RESULT([*** enabling JACK for audio I/O])
+				],
+				AC_MSG_ERROR([***** libjack.a or jack/jack.h not found (http://jackit.sourceforge.net) *****])
+			)
+			
+			AC_MSG_RESULT([*** See http://sourceforge.net/docman/display_doc.php?docid=15095&group_id=5056 for more help on using ReZound with JACK])
+		else
+			AC_MSG_RESULT([*** disabling JACK for audio I/O])
+		fi
+	],
+	[ dnl action if neither enable or disable flag was given
+		dnl if the jack lib is found, then enable it
+		PKG_CHECK_MODULES(
+			JACK,
+			jack,
+			[
+				AC_DEFINE(ENABLE_JACK)
+				AC_MSG_RESULT([*** enabling JACK for audio I/O])
+			],
+			[
+				dnl disable default action of exiting if not found
+				AC_MSG_RESULT([*** JACK not enabled for audio I/O])
+			]
+		)
+	]
+)
 
 
 dnl ...
 dnl handle other possible audio I/O system flags here
 dnl ...
-
-dnl handle the --enable-oss flag
-dnl the behavior of this is that if no other audio I/O method was specified
-dnl then OSS will be the default and the only one compiled.  If another method
-dnl was specified, then ReZound will fall back on using OSS if that method
-dnl fails to initialize at run-time.  There may be a better way to do this
-dnl such as, enable as let them enable as many methods as they want, then
-dnl choose at run-time which method to use.  Ask the first time and use that
-dnl until they choose another one through the preferences interface or the 
-dnl chosen one cannot be initialized.  I should probably do this when a 
-dnl settings interface is created ???
-AH_TEMPLATE(ENABLE_OSS)
-AC_ARG_ENABLE(
-	oss,
-	[  --enable-oss (default)  build ReZound to use OSS for audio I/O ],
-	[ dnl action if either enable or disable flag is given
-		if [[ "$enableval" = "yes" ]]
-		then 
-			AC_DEFINE(ENABLE_OSS)
-			if [[ "$audioIOMethod" = "" ]]
-			then # no other audio I/O system specified
-				AC_MSG_RESULT([*** using OSS for audio I/O])
-				audioIOMethod="oss"
-			else
-				AC_MSG_RESULT([*** using OSS for audio I/O if $audioIOMethod fails to initialize])
-			fi
-		else
-			AC_MSG_RESULT([*** disabling OSS for audio I/O])
-		fi
-	],
-	[ dnl action if neither enable or disable flag is given (default to OSS)
-			AC_DEFINE(ENABLE_OSS)
-			if [[ "$audioIOMethod" = "" ]]
-			then # no other audio I/O system specified
-				AC_MSG_RESULT([*** using OSS for audio I/O])
-				audioIOMethod="oss"
-			else
-				AC_MSG_RESULT([*** using OSS for audio I/O if $audioIOMethod fails to initialize])
-			fi
-	]
-)
 
 
 

@@ -56,6 +56,8 @@ string gSysPresetsFilename="";
 CNestedDataFile *gSysPresetsFile=NULL;
 
 
+string gDefaultAudioMethod="";
+
 unsigned gDesiredOutputSampleRate=44100;
 unsigned gDesiredOutputChannelCount=2;
 int gDesiredOutputBufferCount=2;

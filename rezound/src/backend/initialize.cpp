@@ -53,6 +53,8 @@ static bool checkForHelpFlag(int argc,char *argv[]);
 static bool checkForVersionFlag(int argc,char *argv[]);
 static void printUsage(const string app);
 
+static void checkForAudioMethodFlag(int argc,char *argv[]);
+
 
 /* 
  * These are expected to be provided by whatever frontend is enabled,
@@ -71,6 +73,8 @@ bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[])
 			return false;
 		if(checkForVersionFlag(argc,argv))
 			return false;
+
+		checkForAudioMethodFlag(argc,argv);
 
 
 		// make sure that ~/.rezound exists
@@ -281,6 +285,18 @@ static bool checkForVersionFlag(int argc,char *argv[])
 	return false;
 }
 
+static void checkForAudioMethodFlag(int argc,char *argv[])
+{
+	for(int t=1;t<argc;t++)
+	{
+		if(strcmp(argv[t],"--")==0)
+			break; // stop at '--'
+
+		if(strncmp(argv[t],"--audio-method=",15)==0)
+			gDefaultAudioMethod=argv[t]+15;
+	}
+}
+
 static void printUsage(const string app)
 {
 	printf("Usage: %s [option | filename]... [-- [filename]...]\n",app.c_str());
@@ -289,8 +305,19 @@ static void printUsage(const string app)
 	printf("\t--raw filename   load filename interpreted as raw data\n");
 #endif                             
 	printf("\n");              
-	printf("\t--help           show this help message and exit\n");
-	printf("\t--version        show version information and exit\n");
+	printf("\t--help                   show this help message and exit\n");
+	printf("\t--version                show version information and exit\n");
+	printf("\t--audio-method=<method>  method to try first for audio I/O\n");
+	printf("\t  Audio Method(s) Are:\n");
+#ifdef ENABLE_OSS
+	printf("\t\toss\n");
+#endif
+#ifdef ENABLE_JACK
+	printf("\t\tjack\n");
+#endif
+#ifdef ENABLE_PORTAUDIO
+	printf("\t\tportaudio\n");
+#endif
 
 	printf("\n");
 	printf("Notes:\n");
