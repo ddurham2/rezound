@@ -206,15 +206,15 @@ CMainWindow::CMainWindow(FXApp* a) :
 	// build sound list 
 	t=new FXPacker(s,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_RIDGE);
 		t=new FXPacker(t,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_SUNKEN|FRAME_THICK, 0,0,0,0, 0,0,0,0, 0,0);
-			soundList=new FXIconList(t,this,ID_SOUND_LIST,ICONLIST_BROWSESELECT|LAYOUT_FILL_X|LAYOUT_FILL_Y);
-				soundList->getHeader()->setPadLeft(1);
-				soundList->getHeader()->setPadRight(1);
-				soundList->getHeader()->setPadTop(1);
-				soundList->getHeader()->setPadBottom(1);
+			soundList=new FXIconList(t,this,ID_SOUND_LIST,HSCROLLER_NEVER|ICONLIST_BROWSESELECT|LAYOUT_FILL_X|LAYOUT_FILL_Y);
+				soundList->getHeader()->setPadLeft(0);
+				soundList->getHeader()->setPadRight(0);
+				soundList->getHeader()->setPadTop(0);
+				soundList->getHeader()->setPadBottom(0);
 				// soundList->getHeader()-> make font smaller ???
 				soundList->appendHeader(" #",NULL,25);
 				soundList->appendHeader("Name",NULL,200);
-				soundList->appendHeader("Path",NULL,190);
+				soundList->appendHeader("Path",NULL,9999);
 
 	soundWindowFrame=new FXPacker(contents,LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 0,0,0,0, 0,0);
 }
