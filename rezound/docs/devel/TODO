@@ -296,6 +296,7 @@
 		- for multi-track editing, I could create a derivation of CSound that wraps around a given CSound that returns peak data according to the volume envelopes
 			- I would need to address how real-time effects get inserted into the play queue, perhaps CSoundPlayerChannel would pull data from a module chain
 				- then different playback rates and formats could be handled by just having an initial sample rate conversion module to the native sample rate
+		- either have an option to render a click track, or make a feature that just plays one while recording
 
 		- or for multi-track editing, I could create a derivation of CSoundPlayerChannel that overrides prebufferChunk() so that it reads from all the sounds that are in the multitrack sound for that chunk period and apply any real-time alterations
 
