@@ -214,7 +214,7 @@ const string CSaveAsMultipleFilesAction::getExplaination()
 To save a large file (or just a selection from it) as several smaller segments you can create cues that define the segments and then click on \"Save As Multiple Files\" under the \"File\" menu.
 
 In general, cues can be named '(' and ')' to define the beginning and end of each segment to be saved.
-However, a ')' cue can be ommitted if a previous segment is to end at the beginning of the next segment.
+However, a ')' cue (closing a prior '(' cue) can be ommitted if a segment is to end at the beginning of the next segment.
 The very last ')' cue can also be ommitted if the last defined segment is to end at the end of the original audio file (or the end of the selection).
 Furthermore, the '(' cue can optionally be named '(xyz' if 'xyz' is to be included in the segment's filename.
 
