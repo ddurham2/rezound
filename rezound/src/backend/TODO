@@ -7,6 +7,8 @@
 
 		- before  do this.. check the CPU usage when playing 5 sounds... after changing it, check 5 sounds again
 
+	- bite the bullet and implement a windowed FFT DSP block
+
 
 	- figure out what to do with the 4 bogus cues that appear in an aiff file when the file had no cues in it, itself
 
