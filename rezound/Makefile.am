@@ -40,7 +40,8 @@ pkgdoc_DATA=\
 pkgdata_DATA= \
 	share/presets.dat \
 	share/menu.dat \
-	share/impulse_hall1.wav
+	share/impulse_hall1.wav \
+	src/images/icon_logo_32.gif
 
 ## These extra files and directories will be included in the distribution. by
 ## using make-dist by default many common filenames are automatically included
@@ -55,7 +56,9 @@ EXTRA_DIST= \
 	share \
 	bootstrap \
 	libtool.GL.patch \
-	README.GL_PROBLEMS
+	README.GL_PROBLEMS \
+	packaging
+	
 
 ## This removes stuff from the distribution which may be present
 ## from a cvs checkout or other build reasons
@@ -72,5 +75,12 @@ distcleancheck:
 
 POTFILES.in:
 	cd $(top_srcdir) && (grep "^#" po/POTFILES.in ; find src -name "*.cpp" ; find src -name "*.h") > POTFILES.in && mv -f POTFILES.in po/POTFILES.in
+
+install-kde-parts:
+	$(mkinstalldirs) $(DESTDIR)$(datadir)/mimelnk/audio
+	${INSTALL} -m 644 $(srcdir)/packaging/generic_rpm/kde/x-rez.desktop $(DESTDIR)$(datadir)/mimelnk/audio/x-rez.desktop
+	${INSTALL} -m 644 $(srcdir)/packaging/generic_rpm/kde/x-rez.kdelnk $(DESTDIR)$(datadir)/mimelnk/audio/x-rez.kdelnk
+	$(mkinstalldirs) $(DESTDIR)$(datadir)/applnk/Multimedia
+	${INSTALL} -m 644 $(srcdir)/packaging/generic_rpm/kde/rezound.desktop $(DESTDIR)$(datadir)/applnk/Multimedia/rezound.desktop
 
 ACLOCAL_AMFLAGS = -I config/m4

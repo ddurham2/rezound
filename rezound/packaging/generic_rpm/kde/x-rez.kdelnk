@@ -1,0 +1,9 @@
+# KDE Config File
+[KDE Desktop Entry]
+Comment[C]=
+Name=audio/x-rez
+MimeType=audio/x-rez
+DefaultApp=ReZound
+Icon=sound
+Type=MimeType
+Patterns=*.rez;*.REZ;

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=MimeType
+MimeType=audio/x-rez
+Icon=sound
+Patterns=*.rez;*.REZ;
+Comment=ReZound Audio
