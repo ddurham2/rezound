@@ -1,6 +1,8 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- Would be nice to get the Title of Action Dialogs from the ActionFactory (optionally)
+
 	- put a menu at the top of the LADSPA dropdown for "Recent" which would work like the reopen menu, but for recently used LADSPA plugings.. this would be helpful since there's so many
 	- I could also have one other submenu at the top which ordered by author instead of name 
 	- put a menu separator below these two
