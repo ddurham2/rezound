@@ -24,8 +24,7 @@
 include $(top_srcdir)/config/am_include.mk
 
 SUBDIRS= \
-	CNestedDataFile\
-	missing
+	CNestedDataFile
 
 noinst_HEADERS=\
 		AThread.h\
@@ -35,4 +34,5 @@ noinst_HEADERS=\
 		TAutoBuffer.h		
 
 EXTRA_DIST= \
-	istring
+	istring \
+	missing

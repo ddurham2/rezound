@@ -23,5 +23,4 @@
 ## I used config/am_include.mk for common definitions
 include $(top_srcdir)/config/am_include.mk
 
-EXTRA_DIST=presets.dat
 pkgdata_DATA=presets.dat

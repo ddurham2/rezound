@@ -26,9 +26,9 @@ include $(top_srcdir)/config/am_include.mk
 ## Descend into SUBDIRS and run make. Look at the Makefile.am files in the
 ## subdirectories Start at frontend_fox/Makefile.am to see how everything works.
 SUBDIRS=\
+	src \
 	docs \
-	src\
-	share
+	share 
 
 ## These extra files and directories will be included in the distribution. by
 ## using make-dist by default many common filenames are automatically included
@@ -36,5 +36,15 @@ SUBDIRS=\
 ## of a final package, but it is useful for developers who might want to make
 ## changes to the configure scripts or makefiles.
 EXTRA_DIST= \
-	config \
-	bootstrap
+	bootstrap \
+	docs \
+	share \
+	config 
+
+## This removes stuff from the distribution which may be present
+## from a cvs checkout or other build reasons
+dist-hook:
+	rm -rf `find $(distdir) -type d -name CVS`	# remove all CVS directories
+	rm -rf `find $(distdir) -type f -name Makefile` # from including docs and share on the EXTRA_DIST line
+	rm -rf $(distdir)/src/images/WORK		# makes the tarball much smaller
+

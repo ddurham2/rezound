@@ -26,6 +26,8 @@ SUBDIRS=\
 	misc \
 	PoolFile \
 	backend \
-	frontend_fox \
+	frontend_fox
+
+EXTRA_DIST=\
 	images
 

@@ -125,9 +125,9 @@ noinst_HEADERS=\
 
 EXTRA_DIST=convert_images.sh
 
-CFOXIcons.h: CFOXIcons.cpp
-CFOXIcons.cpp: $(top_srcdir)/src/images/*.gif
-	./convert_images.sh ${RESWRAP} $(top_srcdir)/src/images
+$(top_srcdir)/src/frontend_fox/CFOXIcons.h: $(top_srcdir)/src/frontend_fox/CFOXIcons.cpp
+$(top_srcdir)/src/frontend_fox/CFOXIcons.cpp: $(top_srcdir)/src/images/*.gif
+	cd $(top_srcdir)/src/frontend_fox && convert_images.sh ${RESWRAP} $(top_srcdir)/src/images
 
 
 clean-local: 

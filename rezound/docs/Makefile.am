@@ -30,13 +30,3 @@ pkgdoc_DATA=\
 		README_DOCS\
 		FrontendFoxFeatures.txt
 
-EXTRA_DIST=\
-	AUTHORS\
-	COPYING\
-	NEWS\
-	README_DOCS\
-	FrontendFoxFeatures.txt\
-	CVS-INSTALL\
-	INSTALL\
-	code\
-	devel
