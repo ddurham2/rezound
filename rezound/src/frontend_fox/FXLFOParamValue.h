@@ -46,6 +46,9 @@ public:
 
 	const string getName() const;
 
+	void enable();
+	void disable();
+
 /*
 	void setTipText(const FXString &text);
 	FXString getTipText() const;

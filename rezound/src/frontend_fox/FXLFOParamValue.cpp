@@ -132,6 +132,21 @@ const string FXLFOParamValue::getName() const
 	return name;
 }
 
+void FXLFOParamValue::enable()
+{
+	FXVerticalFrame::enable();
+	enableAllChildren(this);
+
+	onLFOTypeChange(NULL,0,NULL);
+}
+
+void FXLFOParamValue::disable()
+{
+	FXVerticalFrame::disable();
+	disableAllChildren(this);
+}
+
+
 /*
 void FXLFOParamValue::setTipText(const FXString &text)
 {
@@ -166,7 +181,8 @@ void FXLFOParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 	{
 		LFOTypeComboBox->setCurrentItem(0); // default to the first position which should be sine
 	}
-	onLFOTypeChange(NULL,0,NULL);
+	if(isEnabled())
+		onLFOTypeChange(NULL,0,NULL);
 
 	if(amplitudeSlider->getName()!="")
 		amplitudeSlider->readFromFile(key,f);
