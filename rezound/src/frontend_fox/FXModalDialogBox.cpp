@@ -82,20 +82,10 @@ long FXModalDialogBox::onOkayButton(FXObject *sender,FXSelector sel,void *ptr)
 
 void FXModalDialogBox::show(FXuint placement)
 {
-/*
 	if(!rememberShow(this))
 		FXDialogBox::show(placement);
 	else
 		FXDialogBox::show();
-*/
-	FXDialogBox::show(placement);
-/*
-	if(rememberShow(this))
-	{
-		FXDialogBox::hide();
-		FXDialogBox::show();
-	}
-*/
 }
 
 void FXModalDialogBox::hide()

@@ -196,28 +196,16 @@ void CMainWindow::create()
 
 void CMainWindow::show()
 {
-	//printf("main window: %d %d\n",getX(),getY());
 	rememberShow(this);
 	FXMainWindow::show();
-/*
-	FXMainWindow::show();
-	if(rememberShow(this))
-	{
-		FXMainWindow::hide();
-		FXMainWindow::show();
-	}
-*/
 
 	followPlayPositionButton->setCheck(gFollowPlayPosition);
 }
 
 void CMainWindow::hide()
 {
-	//printf("1 mainWindow closing: %d %d \n",getRoot()->getX(),getRoot()->getY());
 	rememberHide(this);
-	//printf("2.5 mainWindow closing: %d %d \n",getX(),getY());
 	FXMainWindow::hide();
-	//printf("2 mainWindow closing: %d %d \n",getX(),getY());
 }
 
 void setupButton(CActionButton *b)
@@ -364,6 +352,28 @@ long CMainWindow::onReopenMenuSelect(FXObject *sender,FXSelector sel,void *ptr)
 // play control events
 long CMainWindow::onPlayControlButton(FXObject *sender,FXSelector sel,void *ptr)
 {
+
+/*
+	{
+		int origX=getX();
+		int origY=getY();
+
+		move(100,100);
+		hide();
+		show();
+		getApp()->runWhileEvents(this);
+
+		int decorWidth=getX()-100;
+		int decorHeight=getY()-100;
+
+		printf("decor size: (%d,%d)\n",decorWidth,decorHeight);
+
+		move(origX-decorWidth,origY-decorHeight);
+		hide();
+		show();
+	}
+*/
+
 	switch(SELID(sel))
 	{
 	case ID_PLAY_ALL_ONCE_BUTTON:
