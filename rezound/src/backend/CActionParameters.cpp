@@ -174,10 +174,13 @@ const unsigned CActionParameters::getUnsignedParameter(const unsigned i) const
 {
 	if(i>=parameters.size())
 		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(i)+" -- caller probably didn't pass enough parameters to the action"));
-	if(parameterTypes[i]!=ptUnsigned)
-		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptUnsigned"));
-	else
+
+	if(parameterTypes[i]==ptUnsigned)
 		return(*((unsigned *)parameters[i]));
+	else if(parameterTypes[i]==ptDouble)
+		return((unsigned)(*((double *)parameters[i])));
+	else
+		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptUnsigned nor ptDouble"));
 }
 
 const sample_pos_t CActionParameters::getSamplePosParameter(const unsigned i) const
@@ -194,10 +197,12 @@ const double CActionParameters::getDoubleParameter(const unsigned i) const
 {
 	if(i>=parameters.size())
 		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(i)+" -- caller probably didn't pass enough parameters to the action"));
-	if(parameterTypes[i]!=ptDouble)
-		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptDouble"));
-	else
+	if(parameterTypes[i]==ptDouble)
 		return(*((double *)parameters[i]));
+	else if(parameterTypes[i]==ptUnsigned)
+		return((double)(*((unsigned *)parameters[i])));
+	else
+		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptDouble nor ptUnsigned"));
 }
 
 const CGraphParamValueNodeList CActionParameters::getGraphParameter(const unsigned i) const
