@@ -23,6 +23,9 @@
 
 #include "../../config/common.h"
 
+#include "CSound_defs.h"
+
+#include <string>
 
 /* --- ALFO ---------------------
  *  - This is an abstract class used to generate an LFO value
@@ -35,134 +38,65 @@
 class ALFO
 {
 public:
-	virtual ~ALFO()
-	{
-	}
+	virtual ~ALFO();
 
 	virtual const float nextValue()=0;
 	virtual const float getValue(sample_pos_t time) const=0; // time is in samples, that is not seconds or ms
 
 protected:
-
-	ALFO()
-	{
-	}
+	ALFO();
 
 };
 
 
-
-// --- some LFO implementations ------
-
-#include "unit_conv.h"
-#include <math.h>
-
-/*
- * - LFO with simply a constant value
- */
-class CConstantLFO : public ALFO
+class CLFODescription
 {
 public:
-	CConstantLFO(float _value) :
-		value(_value)
+	CLFODescription(const float _amp,const float _freq,const float _phase,const size_t _LFOType) :
+		amp(_amp),
+		freq(_freq),
+		phase(_phase),
+		LFOType(_LFOType)
 	{
 	}
 
-	virtual ~CConstantLFO()
+	CLFODescription(const CLFODescription &src) :
+		amp(src.amp),
+		freq(src.freq),
+		phase(src.phase),
+		LFOType(src.LFOType)
 	{
 	}
 
-	const float nextValue()
+	const CLFODescription &operator=(const CLFODescription &rhs)
 	{
-		return(value);
+		amp=rhs.amp;
+		freq=rhs.freq;
+		phase=rhs.phase;
+		LFOType=rhs.LFOType;
+		return(*this);
 	}
 
-	const float getValue(const sample_pos_t time) const
-	{
-		return(value);
-	}
+	float amp,freq,phase;
+	size_t LFOType;
+};
 
-private:
-	const float value;
+class CLFORegistry
+{
+public:
+	CLFORegistry();
+	virtual ~CLFORegistry();
 	
+	const size_t getCount() const;
+	const string getName(const size_t index) const;
+	const bool isBipolar(const size_t index) const;
+	const size_t getIndexByName(const string name) const;
+
+	// the return value should be deleted by the caller
+	ALFO *createLFO(const CLFODescription &desc,const unsigned sampleRate) const;
 };
 
-
-
-/*
- * - Sine shaped LFO with a range of [-1,1] and a frequenct and initial value specified by the constructor's arguments
- * - Note: I use sinf which is (from glibc) a faster float version of sine rather than double percision
- * 	- This function should be available on other platforms because it is mentioned in the ANSI C99 specification
- */
-class CSinLFO : public ALFO
-{
-public:
-	// frequency is in hertz
-	// initialAngle is in desgrees
-	// sampleRate is given to know how often nextValue will be called per cycle
-	CSinLFO(float _frequency,float initialAngle,unsigned sampleRate) :
-			// convert from herz to scalar to mul with counter
-		frequency((1.0/((float)sampleRate/_frequency))*(2.0*M_PI)),
-		initial(degrees_to_radians(initialAngle)/frequency),
-
-			// initialize the counter to return the initial angle
-		counter(initial)
-	{
-	}
-
-	virtual ~CSinLFO()
-	{
-	}
-
-	const float nextValue()
-	{
-		return(sinf((counter++)*frequency));
-	}
-
-	const float getValue(const sample_pos_t time) const
-	{
-		return(sinf((time+initial)*frequency));
-	}
-
-protected:
-	float frequency;
-	float initial;
-	// ??? I probably do need to worry about counter wrap around
-		// perhaps I could know a threshold when to fmod the counter
-	float counter;
-};
-
-
-
-
-/* 
- * - Same as CSinLFO except it has a range of [0,1] (but it still has the same shape as sine)
- */
-class CPosSinLFO : public CSinLFO
-{
-public:
-	CPosSinLFO(float frequency,float initialAngle,unsigned sampleRate) :
-		CSinLFO(frequency,initialAngle,sampleRate)
-	{
-	}
-
-	virtual ~CPosSinLFO()
-	{
-	}
-
-	const float nextValue()
-	{
-		return((sinf((counter++)*frequency)+1.0)/2.0);
-	}
-
-	const float getValue(const sample_pos_t time) const
-	{
-		return((sinf((time+initial)*frequency)+1.0)/2.0);
-	}
-
-};
-
-
+extern const CLFORegistry gLFORegistry;
 
 
 #endif
