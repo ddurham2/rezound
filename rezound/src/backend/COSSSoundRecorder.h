@@ -40,12 +40,9 @@ public:
 
 	void redo();
 
-	//????This was changed from it's private status
-	//????To make gcc 2.95.2 happy -AV
-	int audio_fd;
 private:
 
-	//????audio_fd was moved from here to public
+	int audio_fd;
 	bool initialized;
 
 	class CRecordThread : public ost::Thread
@@ -70,6 +67,7 @@ private:
 	ost::Semaphore threadFinishedSem;
 	//ost::Mutex redoMutex;
 
+	friend class CRecordThread;
 };
 
 
