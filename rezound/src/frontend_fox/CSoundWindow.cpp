@@ -294,8 +294,15 @@ CSoundWindow::~CSoundWindow()
 
 void CSoundWindow::recreateMuteButtons(bool callCreate)
 {
+	FXbool state[MAX_CHANNELS];
+	for(unsigned t=0;t<MAX_CHANNELS;t++)
+		state[t]=false;
+
 	for(unsigned t=0;t<muteButtonCount;t++)
+	{
+		state[t]=muteButtons[t]->getCheck();
 		delete muteButtons[t];
+	}
 
 	muteButtonCount=loadedSound->getSound()->getChannelCount();
 	for(unsigned t=0;t<muteButtonCount;t++)
@@ -303,6 +310,7 @@ void CSoundWindow::recreateMuteButtons(bool callCreate)
 		muteButtons[t]=new FXCheckButton(muteContents,"",this,ID_MUTE_BUTTON,CHECKBUTTON_NORMAL|LAYOUT_CENTER_Y);
 		if(callCreate)
 			muteButtons[t]->create();
+		muteButtons[t]->setCheck(state[t]); // restore the checked state
 	}
 }
 
