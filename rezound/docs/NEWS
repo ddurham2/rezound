@@ -7,7 +7,7 @@ rezound-0.9.0beta -- 11/7/2003
 	- Added a frontend for formats such as .wav and .aiff for choosing compression and sample format types
 	- Added an action to generate various tones at a given frequency
 	- Added a 'Burn to CD' action which can create tracks based on cues named '('...[')'] (requires cdrdao)
-	- Added a 'Mark Quite Areas' action that adds cues based on where quiet regious of audio are
+	- Added a 'Mark Quite Areas' action that adds cues based on where quiet regions of audio are
 	- Added a 'Duplicate Channel' edit action
 	- Added a new play button that places from the selection start to the end of the sound
 	- Added brown noise to the noise generator
