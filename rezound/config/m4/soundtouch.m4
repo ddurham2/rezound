@@ -44,8 +44,13 @@ AC_DEFUN(AM_PATH_SOUNDTOUCH,[
 				dnl make sure libSoundTouch is linkable
 				AC_CHECK_LIB([SoundTouch],[soundtouch_ac_test],[
 					dnl libSoundTouch found
-					SOUNDTOUCH_CXXFLAGS="-I$soundtouch_prefix/include"
-					SOUNDTOUCH_LIBS="-L$soundtouch_prefix/lib -lSoundTouch"
+					if test -z "$soundtouch_prefix"; then
+						SOUNDTOUCH_CXXFLAGS=""
+						SOUNDTOUCH_LIBS="-lSoundTouch"
+					else
+						SOUNDTOUCH_CXXFLAGS="-I$soundtouch_prefix/include"
+						SOUNDTOUCH_LIBS="-L$soundtouch_prefix/lib -lSoundTouch"
+					fi
 					AC_DEFINE([HAVE_LIBSOUNDTOUCH])
 
 					dnl run action-if-found
