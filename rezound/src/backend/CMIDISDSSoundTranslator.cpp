@@ -790,7 +790,7 @@ bool CMIDISDSSoundTranslator::supportsFormat(const string filename) const
 	FILE *f=fopen(filename.c_str(),"r");
 	if(f!=NULL)
 	{
-		int8_t buffer[21]={0};
+		uint8_t buffer[21]={0};
 		fread(buffer,21,1,f);
 		if(buffer[0]==0xf0 && buffer[1]==0x7e && buffer[3]==0x01 && buffer[20]==0xf7)
 			ret=true;
