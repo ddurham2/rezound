@@ -58,10 +58,10 @@ enum VAnswer {yesAns,noAns,cancelAns,defaultAns};
 class AStatusComm
 {
 public:
-	virtual void error(const string &message,VSeverity severity=none)=0;
-	virtual void warning(const string &message)=0;
-	virtual void message(const string &message)=0;
-	virtual VAnswer question(const string &message,VQuestion options)=0;
+	virtual void error(const string &message,VSeverity severity=none,bool reformatIfNeeded=true)=0;
+	virtual void warning(const string &message,bool reformatIfNeeded=true)=0;
+	virtual void message(const string &message,bool reformatIfNeeded=true)=0;
+	virtual VAnswer question(const string &message,VQuestion options,bool reformatIfNeeded=true)=0;
 
 	virtual void beep()=0;
 
@@ -77,10 +77,10 @@ public:
 extern AStatusComm *gStatusComm;
 
 // Easy Coders
-void Error(const string &message,VSeverity severity=none);
-void Warning(const string &message);
-void Message(const string &message);
-VAnswer Question(const string &message,VQuestion options);
+void Error(const string &message,VSeverity severity=none,bool reformatIfNeeded=true);
+void Warning(const string &message,bool reformatIfNeeded=true);
+void Message(const string &message,bool reformatIfNeeded=true);
+VAnswer Question(const string &message,VQuestion options,bool reformatIfNeeded=true);
 
 
 

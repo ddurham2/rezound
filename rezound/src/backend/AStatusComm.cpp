@@ -54,24 +54,24 @@ const string AStatusComm::breakIntoLines(const string _s)
 	return(s);
 }
 
-void Error(const string &message,VSeverity severity)
+void Error(const string &message,VSeverity severity,bool reformatIfNeeded)
 {
-	gStatusComm->error(message,severity);
+	gStatusComm->error(message,severity,reformatIfNeeded);
 }
 
-void Warning(const string &message)
+void Warning(const string &message,bool reformatIfNeeded)
 {
-	gStatusComm->warning(message);
+	gStatusComm->warning(message,reformatIfNeeded);
 }
 
-void Message(const string &message)
+void Message(const string &message,bool reformatIfNeeded)
 {
-	gStatusComm->message(message);
+	gStatusComm->message(message,reformatIfNeeded);
 }
 
-VAnswer Question(const string &message,VQuestion options)
+VAnswer Question(const string &message,VQuestion options,bool reformatIfNeeded)
 {
-	return(gStatusComm->question(message,options));
+	return(gStatusComm->question(message,options,reformatIfNeeded));
 }
 
 
