@@ -28,7 +28,6 @@ include $(top_srcdir)/config/am_include.mk
 ## I have to include this because the build depends on the headers in 
 ## DiskTable are a necessity.
 EXTRA_DIST= \
-	DiskTable \
 	TPoolAccesser.cpp \
 	TPoolFile.cpp \
 	TStaticPoolAccesser.cpp 
