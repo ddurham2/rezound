@@ -39,6 +39,9 @@ static const mix_sample_t percent_to_amp(const double percent) { return((mix_sam
 									// ??? if I use this function should I abs the amp value?
 static const double amp_to_percent(const mix_sample_t amp) { return((double)amp*100.0/(double)MAX_SAMPLE); }
 
+static const mix_sample_t dBFS_to_amp(const double dBFS) { return((mix_sample_t)(MAX_SAMPLE*pow(10.0,dBFS/20.0))); }
+static const double amp_to_dBFS(const mix_sample_t amp) { return(20.0*log10(fabs((double)amp/MAX_SAMPLE))); }
+
 
 // rate
 
