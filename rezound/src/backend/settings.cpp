@@ -39,7 +39,7 @@ CNestedDataFile *gSysPresetsFile=NULL;
 
 
 	// ??? would be something else on non-unix platforms
-vector<string> gFallbackWorkDir="/tmp";
+string gFallbackWorkDir="/tmp";
 
 
 size_t gWhichClipboard=0;
