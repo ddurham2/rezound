@@ -358,7 +358,7 @@ bool ClibvorbisSoundTranslator::onSaveSound(const string filename,const CSound *
 
 	if(parameters.method==AFrontendHooks::OggCompressionParameters::brVBR)
 	{
-		if((e=vorbis_encode_init(&vi,channelCount,48000,parameters.maxBitRate,parameters.normBitRate,parameters.minBitRate))<0)
+		if((e=vorbis_encode_init(&vi,channelCount,sampleRate,parameters.maxBitRate,parameters.normBitRate,parameters.minBitRate))<0)
 			throw runtime_error(string(__func__)+" -- error initializing the Ogg Vorbis encoder engine; perhaps try different compression parameters -- "+OVstrerror(e));
 	}
 	else if(parameters.method==AFrontendHooks::OggCompressionParameters::brQuality)
