@@ -906,6 +906,19 @@ void CMainWindow::buildActionMap()
 
 	// Generate
 	addToActionMap(								new CActionMenuCommand(new CGenerateNoiseActionFactory(gChannelSelectDialog,new CGenerateNoiseDialog(this)),dummymenu,			""),																	menuItemRegistry);
+
+
+
+	// These are here simply so that xgettext will add entries for these in the rezound.pot file
+	N_("&File");
+	N_("&Control");
+	N_("&Edit");
+		N_("Selection");
+	N_("Effec&ts");
+	N_("&Looping");
+	N_("F&ilters");
+	N_("&Remaster");
+	N_("&Generate");
 }
 
 void CMainWindow::buildMenu(FXMenuPane *menu,const CNestedDataFile *menuLayoutFile,const string menuKey,const string itemName)
@@ -929,12 +942,12 @@ void CMainWindow::buildMenu(FXMenuPane *menu,const CNestedDataFile *menuLayoutFi
 		else if(DOTCount==1)
 		{	// we've been passed a top-level pull-down menu name
 			submenu=new FXMenuPane(this);
-			new FXMenuTitle(menubar,itemName.c_str(),NULL,submenu);
+			new FXMenuTitle(menubar,_(itemName.c_str()),NULL,submenu);
 		}
 		else if(DOTCount>1)
 		{	// submenu of menu
 			submenu=new FXMenuPane(this);
-			new FXMenuCascade(menu,itemName.c_str(),NULL,submenu);
+			new FXMenuCascade(menu,_(itemName.c_str()),NULL,submenu);
 		}
 
 		const string menuItemsKey=menuKey DOT "menuitems";
