@@ -47,14 +47,14 @@ public:
 	{
 		const int ret=pthread_mutex_destroy(&mutex);
 		if(ret)
-			throw(runtime_error(string(__func__)+" -- error destroying mutex -- "+strerror(ret))); // may not care tho
+			throw std::runtime_error(std::string(__func__)+" -- error destroying mutex -- "+strerror(ret)); // may not care tho
 	}
 
 	void lock()
 	{
 		const int ret=pthread_mutex_lock(&mutex);
 		if(ret)
-			throw(runtime_error(string(__func__)+" -- error aquiring lock -- "+strerror(ret)));
+			throw std::runtime_error(std::string(__func__)+" -- error aquiring lock -- "+strerror(ret));
 		locked++;
 	}
 
@@ -62,10 +62,10 @@ public:
 	{
 		const int ret=pthread_mutex_trylock(&mutex);
 		if(ret!=EBUSY && ret!=0)
-			throw(runtime_error(string(__func__)+" -- error doing try lock -- "+strerror(ret)));
+			throw std::runtime_error(std::string(__func__)+" -- error doing try lock -- "+strerror(ret));
 		if(ret==0)
 			locked++;
-		return(ret==0);
+		return ret==0;
 	}
 
 	void unlock()
@@ -74,12 +74,12 @@ public:
 			locked--;
 		const int ret=pthread_mutex_unlock(&mutex);
 		if(ret)
-			throw(runtime_error(string(__func__)+" -- error unlocking mutex -- "+strerror(ret)));
+			throw std::runtime_error(std::string(__func__)+" -- error unlocking mutex -- "+strerror(ret));
 	}
 
 	int isLocked() const
 	{
-		return(locked);
+		return locked;
 	}
 
 private:
