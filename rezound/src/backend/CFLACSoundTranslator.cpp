@@ -31,6 +31,7 @@
 
 #include <string>
 #include <stdexcept>
+#include <typeinfo>
 
 #include <FLAC++/all.h>
 
