@@ -1,6 +1,17 @@
 
 - if the sound is playing and a certain button is pressed (or key also bound to that button) I should place a marker with a given name "cue #" where the number is an integer being kept up with
 
+- before the first public release, I should create an about dialog:
+	- give version, name
+	- give authors
+	- give introductary instructions
+	- give where to go for bugs
+	- give where to go for feature requests
+	- give a few of the major features hopefully implemented in the future
+
+	- either list these things themselves, or give URLs or file paths of where to find the information
+		- could I actually #include the file from the docs directory ?
+
 - in order to create multiple taps for an echo effect... I could have the dialog have tabs and each tap could be tap.. there would be buttons outside the tab bar to insert, remove, move left/right the tabs to rearrange the taps
 
 - the 'active' sound window is not staying raised and I don't know why (when focus method is fmActiveButton)
