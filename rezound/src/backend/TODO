@@ -33,12 +33,6 @@
 
 	- Warn the user if saving to a file format that doesn't save more than 31bits worth of sound and the sound file is longer than that
 
-	- I need to eventually handle command line arguments.
-		- I should implement handling them in the backend so that I wouldn't have to reimplement parsing them for each frontend.
-		- I need to check that when I pass argv to fox's initialize function that it either does or does not remove the X arguments.
-		- --help should be detected by all processers of command line arguement and add to the stdout the arguments that they handle.
-		- I suppose I should use popt because it is packaged for most all rpm abd deb based distros.. I need to find URL of popt's homepage and refer to that on error in configure
-
 	- There may be some more formats that libaudiofile supports... I just didn't see them in the docs... work with the author to include any others
 	
 	- implement a windowed FFT DSP block... I'm not quite sure what the interface should be
@@ -279,4 +273,10 @@
 		- but I should probably pop up a notice if the bitrate they are choosing is more values than the native format which wouldn't change anything
 		- to implement, I just map the 0 to MAX value to 0 to NEW_MAX with floating point calculations and floor the integer values
 			- I think this would even work with sample_t being float
+
+	- I need to eventually handle command line arguments.
+		- I should implement handling them in the backend so that I wouldn't have to reimplement parsing them for each frontend.
+		- I need to check that when I pass argv to fox's initialize function that it either does or does not remove the X arguments.
+		- --help should be detected by all processers of command line arguement and add to the stdout the arguments that they handle.
+		NOT FOR NOW - I suppose I should use popt because it is packaged for most all rpm and deb based distros.. I need to find URL of popt's homepage and refer to that on error in configure
 
