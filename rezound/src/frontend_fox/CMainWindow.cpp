@@ -306,7 +306,7 @@ void CMainWindow::createMenus()
 		new FXMenuSeparator(menu);
 		new CActionMenuCommand(new CCopyEditFactory(gChannelSelectDialog),menu,"Ctrl+C",new FXGIFIcon(getApp(),edit_copy_gif));
 		new CActionMenuCommand(new CCutEditFactory(gChannelSelectDialog),menu,"Ctrl+X",new FXGIFIcon(getApp(),edit_cut_gif));
-		new CActionMenuCommand(new CDeleteEditFactory(gChannelSelectDialog),menu,"Ctrl+D");
+		new CActionMenuCommand(new CDeleteEditFactory(gChannelSelectDialog),menu,"Ctrl+D",new FXGIFIcon(getApp(),edit_delete_gif));
 		new CActionMenuCommand(new CCropEditFactory(gChannelSelectDialog),menu,"Ctrl+R");
 
 		new FXMenuSeparator(menu);
