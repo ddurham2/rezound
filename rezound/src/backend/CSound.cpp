@@ -1069,19 +1069,36 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 	const sample_pos_t destOffset=where;
 	const unsigned destSampleRate=getSampleRate();
 
-	const sample_pos_t srcLength=(fitSrc==sftNone) ? length : (src.getSize()-srcWhere) ;
-
 	switch(mixMethod)
 	{
 	case mmOverwrite:
-		if(srcSampleRate==destSampleRate && fitSrc==sftNone)
+		if(fitSrc!=sftNone)
 		{
-			// ??? need a progress bar
-			dest.copyData(destOffset,src,srcWhere,length);
+			if(fitSrc==sftChangeRate)
+			{
+				TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,src.getSize()-srcWhere,length);
+				const sample_pos_t last=where+length;
+				if(showProgressBar)
+				{
+					CStatusBar statusBar("Copying/Fitting Data -- Channel "+istring(channel),where,last);
+					for(sample_pos_t t=where;t<last;t++)
+					{
+						dest[t]=srcStretcher.getSample();
+						statusBar.update(t);
+					}
+				}
+				else
+				{
+					for(sample_pos_t t=where;t<last;t++)
+						dest[t]=srcStretcher.getSample();
+				}
+			}
+			else
+				throw runtime_error(string(__func__)+" -- unimplemented fitSrc type: "+istring(fitSrc));
 		}
-		else
+		else if(srcSampleRate!=destSampleRate)
 		{ // do sample rate conversion
-			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)srcLength/destSampleRate*srcSampleRate),length);
+			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)length/destSampleRate*srcSampleRate),length);
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
@@ -1098,32 +1115,42 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 					dest[t]=srcStretcher.getSample();
 			}
 		}
+		else
+		{
+			// ??? need a progress bar
+			dest.copyData(destOffset,src,srcWhere,length);
+		}
 
 		break;
 
 	case mmAdd:
-		if(srcSampleRate==destSampleRate && fitSrc==sftNone)
+		if(fitSrc!=sftNone)
 		{
-			const sample_pos_t last=where+length;
-			if(showProgressBar)
+			if(fitSrc==sftChangeRate)
 			{
-				CStatusBar statusBar("Mixing Data (add) -- Channel "+istring(channel),where,last);
-				for(sample_pos_t t=where;t<last;t++)
+				TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,src.getSize()-srcWhere,length);
+				const sample_pos_t last=where+length;
+				if(showProgressBar)
 				{
-					dest[t]=ClipSample((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++]);
-
-					statusBar.update(t);
+					CStatusBar statusBar("Mixing/Fitting Data (add) -- Channel "+istring(channel),where,last);
+					for(sample_pos_t t=where;t<last;t++)
+					{
+						dest[t]=ClipSample((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample());
+						statusBar.update(t);
+					}
+				}
+				else
+				{
+					for(sample_pos_t t=where;t<last;t++)
+						dest[t]=ClipSample((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample());
 				}
 			}
 			else
-			{
-				for(sample_pos_t t=where;t<last;t++)
-					dest[t]=ClipSample((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++]);
-			}
-		} 
-		else 
-		{ // do sample rate conversion
-			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)srcLength/destSampleRate*srcSampleRate),length);
+				throw runtime_error(string(__func__)+" -- unimplemented fitSrc type: "+istring(fitSrc));
+		}
+		else if(srcSampleRate!=destSampleRate)
+		{
+			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)length/destSampleRate*srcSampleRate),length);
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
@@ -1138,34 +1165,57 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 			{
 				for(sample_pos_t t=where;t<last;t++)
 					dest[t]=ClipSample((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample());
+			}
+		}
+		else
+		{ // not fiting src and sample rates match
+			const sample_pos_t last=where+length;
+			if(showProgressBar)
+			{
+				CStatusBar statusBar("Mixing Data (add) -- Channel "+istring(channel),where,last);
+				for(sample_pos_t t=where;t<last;t++)
+				{
+					dest[t]=ClipSample((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++]);
+					statusBar.update(t);
+				}
+			}
+			else
+			{
+				for(sample_pos_t t=where;t<last;t++)
+					dest[t]=ClipSample((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++]);
 			}
 		}
 
 		break;
 
 	case mmSubtract:
-		if(srcSampleRate==destSampleRate && fitSrc==sftNone)
+		if(fitSrc!=sftNone)
 		{
-			const sample_pos_t last=where+length;
-			if(showProgressBar)
+			if(fitSrc==sftChangeRate)
 			{
-				CStatusBar statusBar("Mixing Data (subtract) -- Channel "+istring(channel),where,last);
-				for(sample_pos_t t=where;t<last;t++)
+				TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,src.getSize()-srcWhere,length);
+				const sample_pos_t last=where+length;
+				if(showProgressBar)
 				{
-					dest[t]=ClipSample((mix_sample_t)dest[t]-(mix_sample_t)src[srcWhere++]);
-
-					statusBar.update(t);
+					CStatusBar statusBar("Mixing/Fitting Data (subtract) -- Channel "+istring(channel),where,last);
+					for(sample_pos_t t=where;t<last;t++)
+					{
+						dest[t]=ClipSample((mix_sample_t)dest[t]-(mix_sample_t)srcStretcher.getSample());
+						statusBar.update(t);
+					}
+				}
+				else
+				{
+					for(sample_pos_t t=where;t<last;t++)
+						dest[t]=ClipSample((mix_sample_t)dest[t]-(mix_sample_t)srcStretcher.getSample());
 				}
 			}
 			else
-			{
-				for(sample_pos_t t=where;t<last;t++)
-					dest[t]=ClipSample((mix_sample_t)dest[t]-(mix_sample_t)src[srcWhere++]);
-			}
-		} 
-		else 
-		{ // do sample rate conversion
-			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)srcLength/destSampleRate*srcSampleRate),length);
+				throw runtime_error(string(__func__)+" -- unimplemented fitSrc type: "+istring(fitSrc));
+		}
+		else if(srcSampleRate!=destSampleRate)
+		{
+			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)length/destSampleRate*srcSampleRate),length);
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
@@ -1180,88 +1230,154 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 			{
 				for(sample_pos_t t=where;t<last;t++)
 					dest[t]=ClipSample((mix_sample_t)dest[t]-(mix_sample_t)srcStretcher.getSample());
+			}
+		}
+		else
+		{ // not fiting src and sample rates match
+			const sample_pos_t last=where+length;
+			if(showProgressBar)
+			{
+				CStatusBar statusBar("Mixing Data (subtract) -- Channel "+istring(channel),where,last);
+				for(sample_pos_t t=where;t<last;t++)
+				{
+					dest[t]=ClipSample((mix_sample_t)dest[t]-(mix_sample_t)src[srcWhere++]);
+					statusBar.update(t);
+				}
+			}
+			else
+			{
+				for(sample_pos_t t=where;t<last;t++)
+					dest[t]=ClipSample((mix_sample_t)dest[t]-(mix_sample_t)src[srcWhere++]);
 			}
 		}
 
 		break;
 
 	case mmMultiply:
-		if(srcSampleRate==destSampleRate && fitSrc==sftNone)
+		if(fitSrc!=sftNone)
 		{
+			if(fitSrc==sftChangeRate)
+			{
+				TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,src.getSize()-srcWhere,length);
+				const sample_pos_t last=where+length;
+				if(showProgressBar)
+				{
+					CStatusBar statusBar("Mixing/Fitting Data (multiply) -- Channel "+istring(channel),where,last);
+					for(sample_pos_t t=where;t<last;t++)
+					{
+						dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)srcStretcher.getSample()/MAX_SAMPLE);
+						statusBar.update(t);
+					}
+				}
+				else
+				{
+					for(sample_pos_t t=where;t<last;t++)
+						dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)srcStretcher.getSample()/MAX_SAMPLE);
+				}
+			}
+			else
+				throw runtime_error(string(__func__)+" -- unimplemented fitSrc type: "+istring(fitSrc));
+		}
+		else if(srcSampleRate!=destSampleRate)
+		{
+			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)length/destSampleRate*srcSampleRate),length);
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
 				CStatusBar statusBar("Mixing Data (multiply) -- Channel "+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
-					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)src[srcWhere++]/MAX_SAMPLE);
+					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)srcStretcher.getSample()/MAX_SAMPLE);
 					statusBar.update(t);
 				}
 			}
 			else
-			{	
+			{
 				for(sample_pos_t t=where;t<last;t++)
-					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)src[srcWhere++]/MAX_SAMPLE);
+					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)srcStretcher.getSample()/MAX_SAMPLE);
 			}
 		}
 		else
-		{ // do sample rate conversion
-			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)srcLength/destSampleRate*srcSampleRate),length);
+		{ // not fiting src and sample rates match
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
 				CStatusBar statusBar("Mixing Data (multiply) -- Channel "+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
-					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)srcStretcher.getSample()/MAX_SAMPLE);
+					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)src[srcWhere++]/MAX_SAMPLE);
 					statusBar.update(t);
 				}
 			}
 			else
 			{
 				for(sample_pos_t t=where;t<last;t++)
-					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)srcStretcher.getSample()/MAX_SAMPLE);
+					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)src[srcWhere++]/MAX_SAMPLE);
 			}
 		}
 
 		break;
 
 	case mmAverage:
-		if(srcSampleRate==destSampleRate && fitSrc==sftNone)
+		if(fitSrc!=sftNone)
 		{
+			if(fitSrc==sftChangeRate)
+			{
+				TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,src.getSize()-srcWhere,length);
+				const sample_pos_t last=where+length;
+				if(showProgressBar)
+				{
+					CStatusBar statusBar("Mixing/Fitting Data (average) -- Channel "+istring(channel),where,last);
+					for(sample_pos_t t=where;t<last;t++)
+					{
+						dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample())/2;
+						statusBar.update(t);
+					}
+				}
+				else
+				{
+					for(sample_pos_t t=where;t<last;t++)
+						dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample())/2;
+				}
+			}
+			else
+				throw runtime_error(string(__func__)+" -- unimplemented fitSrc type: "+istring(fitSrc));
+		}
+		else if(srcSampleRate!=destSampleRate)
+		{
+			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)length/destSampleRate*srcSampleRate),length);
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
 				CStatusBar statusBar("Mixing Data (average) -- Channel "+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
-					dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++])/2;
+					dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample())/2;
 					statusBar.update(t);
 				}
 			}
 			else
 			{
 				for(sample_pos_t t=where;t<last;t++)
-					dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++])/2;
+					dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample())/2;
 			}
 		}
 		else
-		{ // do sample rate conversion
-			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)srcLength/destSampleRate*srcSampleRate),length);
+		{ // not fiting src and sample rates match
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
 				CStatusBar statusBar("Mixing Data (average) -- Channel "+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
-					dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample())/2;
+					dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++])/2;
 					statusBar.update(t);
 				}
 			}
 			else
 			{
 				for(sample_pos_t t=where;t<last;t++)
-					dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample())/2;
+					dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++])/2;
 			}
 		}
 
