@@ -711,3 +711,497 @@ Change\ Gain
 	}
 }
 
+Convolution\ Filter
+{
+	names[]={"Bright Room 1", "Subtle Room 1", "Large Room 1", "Large Room 2", "Booth", "Hall 1", "Big Hall", "Dark Hall", "Some Distance Away", "Reversed Reverb"};
+
+	Big\ Hall
+	{
+		Filter\ Kernel="$share/impulse_hall1.wav";
+
+		FK\ Gain
+		{
+			scalar="5";
+			value="0.399951";
+		}
+		FK\ Lowpass
+		{
+			scalar="25000";
+			value="25000";
+		}
+		FK\ Rate
+		{
+			scalar="2";
+			value="0.875513";
+		}
+		Input\ Gain
+		{
+			value="4.44089e-15";
+		}
+		Input\ Lowpass
+		{
+			scalar="25000";
+			value="25000";
+		}
+		Output\ Gain
+		{
+			value="-2.67718";
+		}
+		Predelay
+		{
+			scalar="100";
+			value="10";
+		}
+		Reverse
+		{
+			value="false";
+		}
+		Wet\/Dry\ Mix
+		{
+			value="42.14";
+		}
+		Wrap\ Decay\ back\ to\ Beginning
+		{
+			value="false";
+		}
+	}
+	Booth
+	{
+		Filter\ Kernel="$share/impulse_hall1.wav";
+
+		FK\ Gain
+		{
+			scalar="30";
+			value="0.137109";
+		}
+		FK\ Lowpass
+		{
+			scalar="25000";
+			value="8567.5";
+		}
+		FK\ Rate
+		{
+			scalar="8";
+			value="6.93935";
+		}
+		Input\ Gain
+		{
+			value="8.47071";
+		}
+		Input\ Lowpass
+		{
+			scalar="25000";
+			value="6137.5";
+		}
+		Output\ Gain
+		{
+			value="6.42478";
+		}
+		Predelay
+		{
+			scalar="100";
+			value="0";
+		}
+		Reverse
+		{
+			value="false";
+		}
+		Wet\/Dry\ Mix
+		{
+			value="98";
+		}
+	}
+	Bright\ Room\ 1
+	{
+		Filter\ Kernel="$share/impulse_hall1.wav";
+
+		FK\ Gain
+		{
+			scalar="30";
+			value="0.186085";
+		}
+		FK\ Lowpass
+		{
+			scalar="25000";
+			value="25000";
+		}
+		FK\ Rate
+		{
+			scalar="5";
+			value="4.19144";
+		}
+		Input\ Gain
+		{
+			value="2.30118";
+		}
+		Input\ Lowpass
+		{
+			scalar="25000";
+			value="25000";
+		}
+		Output\ Gain
+		{
+			value="5.59131";
+		}
+		Predelay
+		{
+			scalar="100";
+			value="0";
+		}
+		Reverse
+		{
+			value="false";
+		}
+		Wet\/Dry\ Mix
+		{
+			value="50";
+		}
+		Wrap\ Decay\ back\ to\ Beginning
+		{
+			value="false";
+		}
+	}
+	Dark\ Hall
+	{
+		Filter\ Kernel="$share/impulse_hall1.wav";
+
+		FK\ Gain
+		{
+			scalar="5";
+			value="0.613667";
+		}
+		FK\ Lowpass
+		{
+			scalar="25000";
+			value="280";
+		}
+		FK\ Rate
+		{
+			scalar="2";
+			value="1";
+		}
+		Input\ Gain
+		{
+			value="4.44089e-15";
+		}
+		Input\ Lowpass
+		{
+			scalar="25000";
+			value="3907.5";
+		}
+		Output\ Gain
+		{
+			value="4.44089e-15";
+		}
+		Predelay
+		{
+			scalar="100";
+			value="0";
+		}
+		Reverse
+		{
+			value="false";
+		}
+		Wet\/Dry\ Mix
+		{
+			value="42.14";
+		}
+		Wrap\ Decay\ back\ to\ Beginning
+		{
+			value="false";
+		}
+	}
+	Hall\ 1
+	{
+		Filter\ Kernel="$share/impulse_hall1.wav";
+
+		FK\ Gain
+		{
+			scalar="5";
+			value="0.399951";
+		}
+		FK\ Lowpass
+		{
+			scalar="25000";
+			value="6882.5";
+		}
+		FK\ Rate
+		{
+			scalar="2";
+			value="1.26786";
+		}
+		Input\ Gain
+		{
+			value="4.44089e-15";
+		}
+		Input\ Lowpass
+		{
+			scalar="25000";
+			value="25000";
+		}
+		Output\ Gain
+		{
+			value="4.44089e-15";
+		}
+		Predelay
+		{
+			scalar="100";
+			value="0";
+		}
+		Reverse
+		{
+			value="false";
+		}
+		Wet\/Dry\ Mix
+		{
+			value="42.14";
+		}
+		Wrap\ Decay\ back\ to\ Beginning
+		{
+			value="false";
+		}
+	}
+	Large\ Room\ 1
+	{
+		Filter\ Kernel="$share/impulse_hall1.wav";
+
+		FK\ Gain
+		{
+			scalar="30";
+			value="0.0716037";
+		}
+		FK\ Lowpass
+		{
+			scalar="25000";
+			value="1685";
+		}
+		FK\ Rate
+		{
+			scalar="3";
+			value="2.39293";
+		}
+		Input\ Gain
+		{
+			value="6.41945";
+		}
+		Input\ Lowpass
+		{
+			scalar="25000";
+			value="25000";
+		}
+		Output\ Gain
+		{
+			value="6.41945";
+		}
+		Predelay
+		{
+			scalar="100";
+			value="0";
+		}
+		Reverse
+		{
+			value="false";
+		}
+		Wet\/Dry\ Mix
+		{
+			value="67.18";
+		}
+		Wrap\ Decay\ back\ to\ Beginning
+		{
+			value="false";
+		}
+	}
+	Large\ Room\ 2
+	{
+		Filter\ Kernel="$share/impulse_hall1.wav";
+
+		FK\ Gain
+		{
+			scalar="30";
+			value="0.074384";
+		}
+		FK\ Lowpass
+		{
+			scalar="25000";
+			value="1685";
+		}
+		FK\ Rate
+		{
+			scalar="3";
+			value="1.7717";
+		}
+		Input\ Gain
+		{
+			value="6.41945";
+		}
+		Input\ Lowpass
+		{
+			scalar="25000";
+			value="25000";
+		}
+		Output\ Gain
+		{
+			value="6.41945";
+		}
+		Predelay
+		{
+			scalar="100";
+			value="0";
+		}
+		Reverse
+		{
+			value="false";
+		}
+		Wet\/Dry\ Mix
+		{
+			value="67.18";
+		}
+		Wrap\ Decay\ back\ to\ Beginning
+		{
+			value="false";
+		}
+	}
+	Reversed\ Reverb
+	{
+		Filter\ Kernel="$share/impulse_hall1.wav";
+
+		FK\ Gain
+		{
+			scalar="30";
+			value="0.137109";
+		}
+		FK\ Lowpass
+		{
+			scalar="25000";
+			value="16855";
+		}
+		FK\ Rate
+		{
+			scalar="3";
+			value="3";
+		}
+		Input\ Gain
+		{
+			value="4.44089e-15";
+		}
+		Input\ Lowpass
+		{
+			scalar="25000";
+			value="25000";
+		}
+		Output\ Gain
+		{
+			value="9.27075";
+		}
+		Predelay
+		{
+			scalar="100";
+			value="0";
+		}
+		Reverse
+		{
+			value="true";
+		}
+		Wet\/Dry\ Mix
+		{
+			value="100";
+		}
+	}
+	Some\ Distance\ Away
+	{
+		Filter\ Kernel="$share/impulse_hall1.wav";
+
+		FK\ Gain
+		{
+			scalar="30";
+			value="0.074384";
+		}
+		FK\ Lowpass
+		{
+			scalar="25000";
+			value="14887.5";
+		}
+		FK\ Rate
+		{
+			scalar="4";
+			value="2.44122";
+		}
+		Input\ Gain
+		{
+			value="6.42478";
+		}
+		Input\ Lowpass
+		{
+			scalar="25000";
+			value="25000";
+		}
+		Output\ Gain
+		{
+			value="5.16133";
+		}
+		Predelay
+		{
+			scalar="100";
+			value="0";
+		}
+		Reverse
+		{
+			value="false";
+		}
+		Wet\/Dry\ Mix
+		{
+			value="100";
+		}
+	}
+	Subtle\ Room\ 1
+	{
+		Filter\ Kernel="$share/impulse_hall1.wav";
+
+		FK\ Gain
+		{
+			scalar="30";
+			value="0.186085";
+		}
+		FK\ Lowpass
+		{
+			scalar="25000";
+			value="702.5";
+		}
+		FK\ Rate
+		{
+			scalar="5";
+			value="4.19144";
+		}
+		Input\ Gain
+		{
+			value="2.30696";
+		}
+		Input\ Lowpass
+		{
+			scalar="25000";
+			value="25000";
+		}
+		Output\ Gain
+		{
+			value="5.59131";
+		}
+		Predelay
+		{
+			scalar="100";
+			value="0";
+		}
+		Reverse
+		{
+			value="false";
+		}
+		Wet\/Dry\ Mix
+		{
+			value="50";
+		}
+		Wrap\ Decay\ back\ to\ Beginning
+		{
+			value="false";
+		}
+	}
+}
+
