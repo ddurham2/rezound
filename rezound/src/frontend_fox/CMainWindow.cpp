@@ -227,8 +227,8 @@ CMainWindow::CMainWindow(FXApp* a) :
 				soundListHeaderFont=new FXFont(getApp(),d);
 
 				soundList->getHeader()->setFont(soundListHeaderFont);
-				soundList->getHeader()->setPadLeft(0);
-				soundList->getHeader()->setPadRight(0);
+				soundList->getHeader()->setPadLeft(2);
+				soundList->getHeader()->setPadRight(2);
 				soundList->getHeader()->setPadTop(0);
 				soundList->getHeader()->setPadBottom(0);
 
