@@ -18,21 +18,40 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __EditActions_H__
-#define __EditActions_H__
+#ifndef __CRemoveChannelsEdit_H__
+#define __CRemoveChannelsEdit_H__
+
 
 #include "../../../config/common.h"
 
-#include "CCropEdit.h"
-#include "CCopyCutDeleteEdit.h"
-#include "CMuteEdit.h"
-#include "CSelectionEdit.h"
-#include "CPasteEdit.h"
-//#include "CTrimEdit.h"
-#include "CInsertSilenceEdit.h"
-#include "CRotateEdit.h"
-#include "CSwapChannelsEdit.h"
-#include "CAddChannelsEdit.h"
-#include "CRemoveChannelsEdit.h"
+#include "../AAction.h"
+
+class CRemoveChannelsEdit : public AAction
+{
+public:
+	CRemoveChannelsEdit(const CActionSound actionSound);
+	virtual ~CRemoveChannelsEdit();
+
+protected:
+	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound &actionSound);
+	CanUndoResults canUndo(const CActionSound &actionSound) const;
+
+private:
+	int tempAudioPoolKey;
+	CSound *sound;
+
+};
+
+class CRemoveChannelsEditFactory : public AActionFactory
+{
+public:
+	CRemoveChannelsEditFactory(AActionDialog *normalDialog);
+
+	CRemoveChannelsEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+
+protected:
+	bool doPreActionSetup(CLoadedSound *loadedSound);
+};
 
 #endif

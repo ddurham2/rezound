@@ -35,6 +35,8 @@ noinst_HEADERS= \
 		CPasteEdit.h \
 		CRotateEdit.h \
 		CSwapChannelsEdit.h \
+		CAddChannelsEdit.h \
+		CRemoveChannelsEdit.h \
 		CSelectionEdit.h \
 		EditActions.h
 
@@ -50,4 +52,6 @@ libEdits_la_SOURCES= \
 		CPasteEdit.cpp \
 		CRotateEdit.cpp \
 		CSwapChannelsEdit.cpp \
+		CAddChannelsEdit.cpp \
+		CRemoveChannelsEdit.cpp \
 		CSelectionEdit.cpp 

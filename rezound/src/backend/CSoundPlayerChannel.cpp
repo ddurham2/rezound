@@ -43,19 +43,7 @@
  *   the last iteration's results so it can save the new values in the data members.
  *   (synced positions among devices)
  *
- * - ??? Need to make the output routing a simple matrix of bools
- *   - or array of matricies to support muliple route configs
- * - Well, I made the provisions for assigning routes, but I did it in such a way that each
- *   channel in a sound file gets assigned to only 1 device and channel.  This sounds fine, 
- *   except, a loaded mono sound can only play out of one speaker... Perhaps I could handle
- *   them separately or alter the route defining structure to be more of a list of destiations
- *   instead of 1 value.
- *
  * - See AudioIO for more info about how these class fits into the whole picture
- *
- * - ??? If I *EVER* alter the number of channels in a CSound object, I must invalidate and
- *   recreate the prebuffereChunks.. probably should have the channel object stopped
- *   playing too
  *
  * - If I ever do have TSoundStretcher support more than 2 pointer sample interpolation then I 
  *   should make mixOntoBuffer support saving N samples instead of a fixed 1 samples.
@@ -702,7 +690,48 @@ bool CSoundPlayerChannel::prebufferChunk()
 	return(ret);
 }
 
+const vector<int16_t> CSoundPlayerChannel::getOutputRoutes() const
+{
+	CMutexLocker l(routingInfoMutex);
 
+	vector<int16_t> v;
+	const TPoolAccesser<int16_t,CSound::PoolFile_t> a=sound->getGeneralDataAccesser<int16_t>("OutputRoutes_v2");
+	v.reserve(a.getSize());
+	for(size_t t=0;t<a.getSize();t++)
+		v.push_back(a[t]);
+
+	return(v);
+}
+
+void CSoundPlayerChannel::updateAfterEdit(const vector<int16_t> &restoreOutputRoutes)
+{
+	if(prebufferedChunks[0]->channelCount!=sound->getChannelCount())
+	{ // channel count has changed
+		stop();
+		CMutexLocker l(prebufferPositionMutex); // lock so that prebufferChunk won't be running
+
+		// re-create prebuffer chunks
+		destroyPrebufferedChunks();
+		createPrebufferedChunks();
+
+		// restore/recreate routing information
+		TPoolAccesser<int16_t,CSound::PoolFile_t> a=sound->getGeneralDataAccesser<int16_t>("OutputRoutes_v2");
+		if(restoreOutputRoutes.size()>1)
+		{ // restore from what was given, trusting that it was saved from the information when it had the current number of channels
+			CMutexLocker l2(routingInfoMutex);
+			a.clear();
+			a.append(restoreOutputRoutes.size());
+			for(size_t t=0;t<restoreOutputRoutes.size();t++)
+				a[t]=restoreOutputRoutes[t];
+		}
+		else
+		{ // recreate the default routing
+			CMutexLocker l2(routingInfoMutex);
+			a.clear();
+			createInitialOutputRoute();
+		}
+	}
+}
 
 // --- Output Routing ---------------------------------
 
@@ -770,8 +799,6 @@ bool CSoundPlayerChannel::prebufferChunk()
 */
 void CSoundPlayerChannel::createInitialOutputRoute()
 {
-	CMutexLocker l(routingInfoMutex);
-
 	TPoolAccesser<int16_t,CSound::PoolFile_t> a=sound->getGeneralDataAccesser<int16_t>("OutputRoutes_v2");
 
 	const size_t outputDeviceIndex=0;

@@ -238,14 +238,22 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 	try
 	{
 		// save the cues so that if they are modified by the action, then they can be restored at undo
-		restoreCues.clear();
-		for(size_t t=0;t<actionSound.sound->getCueCount();t++)
-			restoreCues.push_back(CSound::RCue(actionSound.sound->getCueName(t).c_str(),actionSound.sound->getCueTime(t),actionSound.sound->isCueAnchored(t)));
+		if(prepareForUndo)
+		{
+			restoreCues.clear();
+			for(size_t t=0;t<actionSound.sound->getCueCount();t++)
+				restoreCues.push_back(CSound::RCue(actionSound.sound->getCueName(t).c_str(),actionSound.sound->getCueTime(t),actionSound.sound->isCueAnchored(t)));
+		}
 
 		if(channel!=NULL)
 		{
+			// save the selection positions
 			oldSelectStart=channel->getStartPosition();
 			oldSelectStop=channel->getStopPosition();
+
+			// save the output routing informations
+			if(prepareForUndo)
+				restoreOutputRoutes=channel->getOutputRoutes();
 		}
 
 		CActionSound _actionSound(actionSound);
@@ -284,7 +292,12 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 		}
 	
 		if(channel!=NULL)
+		{
 			setSelection(_actionSound.start,_actionSound.stop,channel);
+
+			vector<int16_t> dummy;
+			channel->updateAfterEdit(dummy);
+		}
 
 		if(willResize)
 			actionSound.sound->unlockForResize();
@@ -356,10 +369,6 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 			_actionSound.stop=_actionSound.sound->getLength()-1;
 	
 
-
-		if(channel!=NULL && oldSelectStart!=NIL_SAMPLE_POS && oldSelectStop!=NIL_SAMPLE_POS)
-			setSelection(oldSelectStart,oldSelectStop,channel);
-
 		// restore the cues
 		actionSound.sound->clearCues();
 		for(size_t t=0;t<restoreCues.size();t++)
@@ -367,10 +376,21 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 		restoreCues.clear();
 
 
+		// one thing this will do is restore the output routing information
+		if(channel!=NULL)
+			channel->updateAfterEdit(restoreOutputRoutes);
+
+
+		// restore the selection position
+		if(channel!=NULL && oldSelectStart!=NIL_SAMPLE_POS && oldSelectStop!=NIL_SAMPLE_POS)
+			setSelection(oldSelectStart,oldSelectStop,channel);
+
+
 		if(willResize)
 			actionSound.sound->unlockForResize();
 		else
 			actionSound.sound->unlockSize();
+
 
 		actionSound.sound->flush();
 

@@ -16,11 +16,6 @@
 
 	- Add a feature to ASoundRecorder that tells it to start when a certain threshold is hit in percent or dBFS
 
-	- need to make 'add channel' and remove channel actions so I can test more than stereo number of channels... 
-		- DONE (but no frontend control yet): when I do implement the more than 2 channels, I need to have a way to route the multiple channels of a sound to the 2 (or more) channels of sound card output
-		- DONE the default (when a sound is loaded) should be just to assign each channel to the lesser number of sound card channels in a rotating fashion
-		- DONE the routing should be assigned per CSoundPlayerChannel object, but the routing information should also be saved in a pool in the sound object
-
 	- use progress bars when doing TPoolAccesser::copyData and TPoolAccesser::zeroData 
 		- acutally... break the call into 100 chunks and update a progress bar then
 
@@ -255,4 +250,9 @@
 
 	- With the new way of doing audio output, I can enhance the output routing info where it can actually play a mono file in both speakers
 		- I will need to rename the pool "OutputRoutes" to "OutputRoutes_v2"
+
+	- need to make 'add channel' and remove channel actions so I can test more than stereo number of channels... 
+		- DONE (but no frontend control yet): when I do implement the more than 2 channels, I need to have a way to route the multiple channels of a sound to the 2 (or more) channels of sound card output
+		- DONE the default (when a sound is loaded) should be just to assign each channel to the lesser number of sound card channels in a rotating fashion
+		- DONE the routing should be assigned per CSoundPlayerChannel object, but the routing information should also be saved in a pool in the sound object
 

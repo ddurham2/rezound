@@ -77,6 +77,11 @@ public:
 	void addOnPauseTrigger(TriggerFunc triggerFunc,void *data);
 	void removeOnPauseTrigger(TriggerFunc triggerFunc,void *data);
 
+	const vector<int16_t> getOutputRoutes() const;
+
+	// pass and empty vector if this is not to restore, but possibly recreate the output routes
+	void updateAfterEdit(const vector<int16_t> &restoreOutputRoutes);
+
 private:
 
 	friend class ASoundPlayer;
@@ -86,7 +91,7 @@ private:
 	// - bufferSize is in sample frames
 	void mixOntoBuffer(const unsigned nChannels,sample_t * const buffer,const size_t bufferSize);
 
-	CMutex prebufferPositionMutex;
+	mutable CMutex prebufferPositionMutex;
 	sample_pos_t prebufferPosition;
 	bool prebufferChunk();
 
@@ -101,7 +106,7 @@ private:
 		CSoundPlayerChannel *parent;
 		bool kill;
 		CConditionVariable waitForPlay;
-		CMutex waitForPlayMutex;
+		mutable CMutex waitForPlayMutex;
 	} prebufferThread;
 
 	friend class CPrebufferThread;
@@ -149,10 +154,9 @@ private:
 	void deinit();
 	void init();
 
-	CMutex routingInfoMutex;
+	mutable CMutex routingInfoMutex;
 	void createInitialOutputRoute();
 	const vector<bool> getOutputRoute(unsigned deviceIndex,unsigned audioChannel) const;
-
 };
 
 #endif

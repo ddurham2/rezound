@@ -121,8 +121,27 @@ public:
 	 */
 	// ??? all of the space modifier methods should make sure that a resize lock has been obtained... if it hasn't do INTERNAL_ERROR
 
-	// Structure Manipulation Members
-	void deleteChannel(unsigned channel);
+
+
+	// Structure Manipulation Members (Most require a resize lock to have been obtained)
+	
+	void addChannel(); // adds a new channel at the end
+	void addChannels(unsigned where,unsigned count);
+
+	void removeChannel(); // removes the last channel
+	void removeChannels(unsigned where,unsigned count);
+
+	// moves each channel specified by whichChannels to a temp pool and returns a handle (tempAudioPoolKey) to those temp pools to be restored
+	int moveChannelsToTemp(const bool whichChannels[MAX_CHANNELS]);
+	
+	// moves channels back into position from a moveChannelsToTempPool()
+	// tempAudioPoolKey was returned by moveChannelsToTempPool()
+	// whichChannels MUST be the same as when moveChannelsToTempPool() was called
+	// the audio length MUST be the same as when moveChannelsToTempPool() was called
+	// the channel layout MUST be the same as after the moveChannelsToTempPool() was finished
+	void moveChannelsFromTemp(int tempAudioPoolKey,const bool whichChannels[MAX_CHANNELS]);
+
+
 
 	/* 
 	 * - Adds 'length' samples of space at position 'where' to all channels
@@ -322,6 +341,9 @@ public:
 		else
 			return(poolFile.PoolFile_t::createPool<T>("__GENERAL__ "+poolName));
 	}
+	
+	void removeGeneralDataPool(const string poolName) { poolFile.removePool("__GENERAL__ "+poolName,false); }
+
 
 	void flush();
 
@@ -350,7 +372,6 @@ private:
 	// and pass NIL_SAMPLE_POS as the maxLength parameter to match to the longest channel
 	void matchUpChannelLengths(sample_pos_t maxLength);
 
-
 	void addSpaceToChannel(unsigned channel,sample_pos_t where,sample_pos_t length,bool doZeroData);
 	void removeSpaceFromChannel(unsigned channel,sample_pos_t where,sample_pos_t length);
 	void copyDataFromChannel(unsigned tempAudioPoolKey,unsigned channel,sample_pos_t where,sample_pos_t length);
@@ -358,6 +379,8 @@ private:
 	void moveDataIntoChannel(unsigned tempAudioPoolKey,unsigned channelInTempPool,unsigned channelInAudio,sample_pos_t where,sample_pos_t length,bool removeTempAudioPool);
 
 	static void appendForFudgeFactor(CInternalRezPoolAccesser dest,const CInternalRezPoolAccesser src,sample_pos_t srcWhere,sample_pos_t fudgeFactor);
+
+	void prvAddChannel(bool addAudioSpaceForNewChannel);
 
 	struct RFormatInfo
 	{
