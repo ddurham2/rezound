@@ -1,5 +1,7 @@
 --- THINGS TO DO FOR SURE ---
 
+	- Create a crossfade feature when pasting and a gain parameter.
+
 	- When they're all implemented, I need to update the description to something like: 
 		... Including features such as: Recording, Effects Previews, Realistic Reverbs, Convolution, Custom FIR Filters, Several IIR Filters, Many Supported Audio Formats, LADSPA Support, Undo/Redo, Level Meters & Frequency Analyzer, Seek Shuttle Wheel, Loads of Editing Tools, Dynamic Range Compressor, and Many Other Tools
 			- and decide on the best ordering of this listing
