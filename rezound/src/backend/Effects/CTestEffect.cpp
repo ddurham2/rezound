@@ -20,6 +20,8 @@
 
 #include "CTestEffect.h"
 
+#include "../DSPBlocks.h"
+
 CTestEffect::CTestEffect(const CActionSound &actionSound) :
 	AAction(actionSound)
 {
@@ -38,25 +40,17 @@ bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 	{
 		if(actionSound.doChannel[i])
 		{
-			CRezPoolAccesser a=actionSound.sound->getAudio(i);
-
-			if(prepareForUndo)
-				a.copyData(start,actionSound.sound->getTempAudio(tempAudioPoolKey,i),0,selectionLength);
-
+			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
+			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
+			sample_pos_t srcOffset=prepareForUndo ? start : 0;
 
 // --- Insert your test effect here -- BEGIN --------------------------------------------
 
 /* Digital filter designed by mkfilter/mkshape/gencode   A.J. Fisher
    Command line: /www/usr/fisher/helpers/mkshape -c 1.3605442177e-03 5.0000000000e-01 255 -b 16 -l */
 
-
-//#define NZEROS 254
-//#define GAIN   9.999694824e-01
-
 #define NZEROS 254
 #define GAIN   2.318215027e+02
-
-static float xv[NZEROS+1];
 
 static float xcoeffs[] =
   { +0.7397766113, +0.7434692383, +0.7471313477, +0.7507934570,
@@ -125,27 +119,23 @@ static float xcoeffs[] =
     +0.7471313477, +0.7434692383, +0.7397766113,
   };
 
-
-
+			BEGIN_PROGRESS_BAR("Filtering -- Channel "+istring(i),start,stop); 
+			TDSPConvolver<mix_sample_t,float> convolver(xcoeffs,sizeof(xcoeffs)/sizeof(*xcoeffs));
 			for(sample_pos_t t=start;t<=stop;t++)
 			{
-				float sum; int i;
-				for (int i = 0; i < NZEROS; i++) 
-					xv[i] = xv[i+1];
-				xv[NZEROS] = a[t] / GAIN;
-				sum = 0.0;
-				for (int i = 0; i <= NZEROS; i++) 
-					sum += (xcoeffs[i] * xv[i]);
-
-				a[t]=ClipSample(sum);
+				dest[t]=ClipSample(convolver.processSample(src[t-srcOffset])/GAIN);
+				UPDATE_PROGRESS_BAR(t);
 			}
 
+		
+			END_PROGRESS_BAR();
 
 
 // --- Insert your test effect here -- END ----------------------------------------------
 
 
-			actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
+			if(!prepareForUndo)
+				actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
 		}
 	}
 

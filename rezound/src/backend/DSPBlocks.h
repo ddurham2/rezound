@@ -36,17 +36,19 @@
 
 // ??? make these that could be a template be a template rather than fixed types
 
-/* --- CDSPDelay --------------------------------
+/* --- TDSPDelay --------------------------------
  *	- This class is uses a circular buffer to delay the input values by a certain delay time
  *	- There are several ways of retrieving samples out of the delay line.
  *		- Some to pull from the end of the delay, and some to pull from the middle of the delay
  *
  *	- all delay time parameters are in samples not seconds
+ *
+ *      - the template parameter is the type of data to be delayed
  */
-class CDSPDelay
+template<class sample_t> class TDSPDelay
 {
 public:
-	CDSPDelay(const unsigned _maxDelayTime=1) :
+	TDSPDelay(const unsigned _maxDelayTime=1) :
 		buffer(NULL),
 		maxDelayTime(0),
 
@@ -69,11 +71,11 @@ public:
 		if(buffer!=NULL)
 			delete [] buffer;
 
-		buffer=new mix_sample_t[maxDelayTime]; // expect to get an exception on error
+		buffer=new sample_t[maxDelayTime]; // expect to get an exception on error
 		clear();
 	}
 
-	virtual ~CDSPDelay()
+	virtual ~TDSPDelay()
 	{
 		if(buffer!=NULL)
 			delete [] buffer;
@@ -85,25 +87,33 @@ public:
 		putPos=getPos=maxDelayTime;
 	}
 
-	void putSample(const mix_sample_t s)
+	// give an input sample, returns the sample delayed by the constructed delay time
+	sample_t processSample(const sample_t input)
+	{
+		sample_t output=getSample();
+		putSample(input);
+		return(output);
+	}
+
+	void putSample(const sample_t s)
 	{
 		buffer[(putPos++)%maxDelayTime]=s;
 	}
 
-	const mix_sample_t getSample()
+	const sample_t getSample()
 	{
-		const mix_sample_t s=buffer[(getPos-maxDelayTime)%maxDelayTime];
+		const sample_t s=buffer[(getPos-maxDelayTime)%maxDelayTime];
 		getPos++;
 		return(s);
 	}
 
-	const mix_sample_t getSample(const unsigned delayTime)
+	const sample_t getSample(const unsigned delayTime)
 	{
-		const mix_sample_t s=buffer[(putPos-delayTime)%maxDelayTime];
+		const sample_t s=buffer[(putPos-delayTime)%maxDelayTime];
 		return(s);
 	}
 
-	const mix_sample_t getSample(const float delayTime)
+	const sample_t getSample(const float delayTime)
 	{
 		const float fReadPos=putPos-delayTime;
 		const unsigned iReadPos=(unsigned)fReadPos; // floored
@@ -111,13 +121,13 @@ public:
 		const float p2=fReadPos-iReadPos;
 		const float p1=1.0-p2;
 
-		const mix_sample_t s=(mix_sample_t)(p1*buffer[(iReadPos)%maxDelayTime] + p2*buffer[(iReadPos+1)%maxDelayTime]);
+		const sample_t s=(sample_t)(p1*buffer[(iReadPos)%maxDelayTime] + p2*buffer[(iReadPos+1)%maxDelayTime]);
 		return(s);
 	}
 
 
 private:
-	mix_sample_t *buffer;
+	sample_t *buffer;
 	unsigned maxDelayTime;
 	unsigned putPos,getPos;
 };
@@ -171,7 +181,7 @@ public:
 
 private:
 
-	CDSPDelay window; // used to know a past set of samples
+	TDSPDelay<mix_sample_t> window; // used to know a past set of samples
 	double sumOfSquaredSamples;
 	const double windowTime;
 	const unsigned iWindowTime;
@@ -434,7 +444,7 @@ public:
 		tapGains(_tapGains),
 		tapFeedbacks(_tapFeedbacks),
 
-		delays(new CDSPDelay[_tapCount])
+		delays(new TDSPDelay<mix_sample_t>[_tapCount])
 	{
 		// perhaps fill with data from the past not zero for initial delay time number of samples
 		for(size_t t=0;t<tapCount;t++)
@@ -480,7 +490,7 @@ private:
 	const float *tapGains; // ??? change to unsigned
 	const float *tapFeedbacks;
 
-	CDSPDelay *delays;
+	TDSPDelay<mix_sample_t> *delays;
 };
 
 
@@ -555,13 +565,60 @@ public:
 	}
 
 private:
-	CDSPDelay delay;
+	TDSPDelay<mix_sample_t> delay;
 	const float delayTime;
 	const float wetGain;
 	const float dryGain;
 	ALFO * const LFO;
 	const float LFODepth;
 	const float feedback;
+};
+
+
+
+
+/* --- TDSPConvolver ------------------------------------
+ * 
+	This class is a DSP block to do a sample by sample convolution of the given 
+	array of coefficients with the input given by the repeated calls to processSample()
+
+	The frist template parameter specifies the type of the input samples (and is thus 
+	the type also of the output, the return value of processSample() ).  And The second
+	template parameter specifies the type of the coefficients.
+ */
+template<class sample_t,class coefficient_t> class TDSPConvolver
+{
+public:
+	TDSPConvolver(const coefficient_t _coefficients[],size_t _coefficientCount) :
+		coefficients(_coefficients),
+		coefficientCount(_coefficientCount),
+		coefficientCountSub1(_coefficientCount-1),
+		delay(_coefficientCount)
+	{
+	}
+
+	virtual ~TDSPConvolver()
+	{
+	}
+
+	sample_t processSample(const sample_t input)
+	{
+		coefficient_t output=0;
+		delay.putSample((coefficient_t)input);
+
+		register unsigned i=0;
+		for(int t=coefficientCountSub1;t>=0;t--)
+			output+=delay.getSample(i++)*coefficients[t];
+		
+		return((sample_t)output);
+	}
+
+private:
+	const coefficient_t *coefficients; // aka, the impluse response
+	const int coefficientCount;
+	const int coefficientCountSub1;
+
+	TDSPDelay<coefficient_t> delay;
 };
 
 #if 0
@@ -584,7 +641,7 @@ public:
 
 private:
 	const float g;
-	CDSPDelay delay;
+	TDSPDelay<mix_sample_t> delay;
 };
 
 class CDSPAllPassFilter
@@ -610,7 +667,7 @@ public:
 
 private:
 	const float g;
-	CDSPDelay delay;
+	TDSPDelay<mix_sample_t> delay;
 };
 
 #endif
