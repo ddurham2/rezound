@@ -956,7 +956,13 @@ void CMainWindow::buildMenu(FXMenuPane *menu,const CNestedDataFile *menuLayoutFi
 			}
 		}
 		else
-			new FXMenuCommand(menu,(itemName+" (unregistered)").c_str(),NULL,this,0);
+		{
+			if(menu)
+				new FXMenuCommand(menu,(itemName+" (unregistered)").c_str(),NULL,this,0);
+			else
+				// since menu is NULL, this is a top-level menu without a defined body
+				new FXMenuTitle(menubar,(itemName+" (no subitems defined)").c_str(),NULL,new FXMenuPane(this));
+		}
 	}
 }
 
