@@ -433,3 +433,7 @@ dnl will just always remove the cache file after running
 rm -f config.cache
 rm -f a.out #autoconf  is leaving this around for some reason
 
+echo
+echo "Please consider joining the ReZound-users mailing list: 
+	http://lists.sourceforge.net/lists/listinfo/rezound-users"
+echo
