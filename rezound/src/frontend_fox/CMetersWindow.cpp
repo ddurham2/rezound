@@ -399,11 +399,13 @@ public:
 				x+=barWidth;
 			}
 		}
+#ifndef HAVE_LIBRFFTW
 		else
 		{
 			dc.drawText(3,3+12,"Configure with FFTW",19);
 			dc.drawText(3,20+12,"for Freq. Analysis",18);
 		}
+#endif
 
 
 		// draw the peaks
