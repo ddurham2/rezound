@@ -48,7 +48,6 @@ noinst_HEADERS= \
 	   AStatusComm.h \
 	   CActionParameters.h \
 	   CActionSound.h \
-	   CEnvelope.h \
 	   CGraphParamValueNode.h \
 	   CLoadedSound.h \
 	   CNativeSoundClipboard.h \
@@ -92,7 +91,6 @@ libbackend_la_SOURCES= \
 			ASoundClipboard.cpp \
 			CNativeSoundClipboard.cpp \
 			CRecordSoundClipboard.cpp \
-			CEnvelope.cpp \
 			CGraphParamValueNode.cpp \
 			CLoadedSound.cpp  \
 			COSSSoundPlayer.cpp \
