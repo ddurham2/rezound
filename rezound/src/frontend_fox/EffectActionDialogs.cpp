@@ -103,7 +103,7 @@ static const double interpretValue_flange_feedback(const double x,const int s) {
 static const double uninterpretValue_flange_feedback(const double x,const int s) { return(otherRange_to_unitRange_linear(x,-0.95,0.95)); }
 
 CFlangeDialog::CFlangeDialog(FXWindow *mainWindow) :
-	CConstantParamActionDialog(mainWindow,"Flange",900,400)
+	CActionParamDialog(mainWindow,"Flange",900,400)
 {
 	addSlider("Delay","ms",interpretValue_flange,uninterpretValue_flange,NULL,2.0,2,10,2,false);
 	addSlider("Wet Gain","x",interpretValue_flange,uninterpretValue_flange,NULL,1.0,-5,5,1,false);

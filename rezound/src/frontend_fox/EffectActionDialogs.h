@@ -27,6 +27,8 @@
 #include "CConstantParamActionDialog.h"
 #include "CGraphParamActionDialog.h"
 
+#include "CActionParamDialog.h"
+
 
 // --- volume ----------------------------
 
@@ -64,7 +66,7 @@ public:
 
 // --- flange ----------------------------
 
-class CFlangeDialog : public CConstantParamActionDialog
+class CFlangeDialog : public CActionParamDialog
 {
 public:
 	CFlangeDialog(FXWindow *mainWindow);

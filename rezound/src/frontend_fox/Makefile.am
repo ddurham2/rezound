@@ -28,6 +28,7 @@ include $(top_srcdir)/config/am_include.mk
 noinst_LTLIBRARIES=libfrontend.la
 libfrontend_la_SOURCES= CActionButton.cpp \
 		 CChannelSelectDialog.cpp \
+		 CActionParamDialog.cpp \
 		 CConstantParamActionDialog.cpp \
 		 CCueDialog.cpp \
 		 CCueListDialog.cpp \
@@ -83,6 +84,7 @@ ReZound_LDADD= libfrontend.la\
 EXTRA_DIST=\
 	CActionButton.h \
 	CChannelSelectDialog.h \
+	CActionParamDialog.h \
 	CConstantParamActionDialog.h \
 	CCueDialog.h \
 	CCueListDialog.h \

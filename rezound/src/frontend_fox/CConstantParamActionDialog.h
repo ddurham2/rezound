@@ -23,12 +23,27 @@
 
 #include "../../config/common.h"
 
+/*
+	The purpose of this class is to be a general purpose class for creating
+	dialogs for actions.  It has several methods for adding widgets to the 
+	dialog for letting the user set the parameters for an action.  Also, it
+	has a panel for letting the user use presets and create their own presets.
+	
+	??? Later, I would like to enhance the preset functionality to let a 
+	preset create a button with an image instead of it showing up in the 
+	list box under a name.  I would thing it's easier to look at an image to
+	know what a curve looks like for a graph parameter than a name.  And more, 
+	perhaps if the user creates a preset on a graph parameter it could take a 
+	little screenshot and use that as the image on the button.
+*/
+
 
 class CConstantParamActionDialog;
 
 #include <vector>
 
 #include "FXModalDialogBox.h"
+
 #include "FXConstantParamValue.h"
 
 #include "../backend/AAction.h"

@@ -24,15 +24,13 @@
 
 #include <istring>
 
+#include <CNestedDataFile/CNestedDataFile.h>
 
-/* TODO:
- *
- * 	- It would be neat if you could put an image for the slider head... 
- * 		- same would go for any other controls like that
- * 		- or maybe just beable to get the onPaint event for the head
- *	   
- */
-
+/*
+	- This is the slider widget used over and over by ReZound on action dialogs
+	- It can also be constructed not to have the slider to serve as a text entry widget
+	- Its purpose is to select a constant value for a parameter to an action
+*/
 
 // this didn't exist much before fox 1.0
 #if FOX_MAJOR < 1
@@ -233,4 +231,24 @@ const string FXConstantParamValue::getTitle() const
 {
 	return(titleLabel->getText().text());
 }
+
+void FXConstantParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
+{
+	const string key=prefix+"."+getTitle()+".";
+	const string v=f.getValue((key+"value").c_str());
+	const string s=f.getValue((key+"scalar").c_str());
+
+	setScalar(atoi(s.c_str()));
+	setValue(atof(v.c_str()));
+}
+
+void FXConstantParamValue::writeToFile(const string &prefix,CNestedDataFile &f) const
+{
+	const string key=prefix+"."+getTitle()+".";
+
+	f.createKey((key+"value").c_str(),istring(getValue()));
+	if(getMinScalar()!=getMaxScalar())
+		f.createKey((key+"scalar").c_str(),istring(getScalar()));
+}
+
 

@@ -29,7 +29,7 @@
 #include "../backend/ASound.h"
 
 class FXConstantParamNode;
-
+class CNestedDataFile;
 
 class FXConstantParamValue : public FXVerticalFrame
 {
@@ -69,9 +69,11 @@ public:
 
 	const int getMinScalar() const;
 	const int getMaxScalar() const;
-	
 
 	const string getTitle() const;
+
+	void readFromFile(const string &prefix,CNestedDataFile &f);
+	void writeToFile(const string &prefix,CNestedDataFile &f) const;
 
 	enum
 	{
