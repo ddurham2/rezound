@@ -44,11 +44,12 @@ FXDEFMAP(FXTextParamValue) FXTextParamValueMap[]=
 
 FXIMPLEMENT(FXTextParamValue,FXHorizontalFrame,FXTextParamValueMap,ARRAYNUMBER(FXTextParamValueMap))
 
-FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title,const double _minValue,const double _maxValue) :
+FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title,const double _initialValue,const double _minValue,const double _maxValue) :
 	FXHorizontalFrame(p,opts|FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 2,2,4,4, 0,0),
 
 	isNumeric(true),
-
+	
+	initialValue(istring(_initialValue)),
 	minValue(_minValue),
 	maxValue(_maxValue),
 
@@ -66,14 +67,17 @@ FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title,con
         textFont=new FXFont(getApp(),d);
 
 	valueSpinner->setRange(-10,10);
+	setValue(_initialValue);
 
 	//setFontOfAllChildren(this,textFont);
 }
 
-FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title) :
+FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title,const string _initialValue) :
 	FXHorizontalFrame(p,opts|FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 2,2,4,4, 0,0),
 
 	isNumeric(false),
+
+	initialValue(_initialValue),
 
 	titleLabel(new FXLabel(this,title,NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
 	valueTextBox(new FXTextField(this,8,this,ID_VALUE_TEXTBOX, TEXTFIELD_NORMAL | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
@@ -89,6 +93,7 @@ FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title) :
         textFont=new FXFont(getApp(),d);
 
 	//setFontOfAllChildren(this,textFont);
+	setText(_initialValue);
 }
 
 FXTextParamValue::~FXTextParamValue()
@@ -191,7 +196,7 @@ FXString FXTextParamValue::getTipText() const
 void FXTextParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
 	const string key=prefix+DOT+getTitle()+DOT;
-	const string v=f->getValue((key+"value").c_str());
+	const string v= f->keyExists((key+"value").c_str()) ? f->getValue((key+"value").c_str()) : initialValue;
 	if(isNumeric)
 		setValue(atof(v.c_str()));
 	else

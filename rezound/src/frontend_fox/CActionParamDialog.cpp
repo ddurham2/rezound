@@ -177,9 +177,8 @@ void CActionParamDialog::addNumericTextEntry(void *parent,const string name,cons
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
-	FXTextParamValue *textEntry=new FXTextParamValue((FXPacker *)parent,0,name.c_str(),minValue,maxValue);
+	FXTextParamValue *textEntry=new FXTextParamValue((FXPacker *)parent,0,name.c_str(),initialValue,minValue,maxValue);
 	textEntry->setUnits(units.c_str(),unitsTipText.c_str());
-	textEntry->setValue(initialValue);
 	parameters.push_back(make_pair(ptNumericText,(void *)textEntry));
 	retValueConvs.push_back(NULL);
 }
@@ -188,8 +187,7 @@ void CActionParamDialog::addStringTextEntry(void *parent,const string name,const
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
-	FXTextParamValue *textEntry=new FXTextParamValue((FXPacker *)parent,0,name.c_str());
-	textEntry->setText(initialValue);
+	FXTextParamValue *textEntry=new FXTextParamValue((FXPacker *)parent,0,name.c_str(),initialValue);
 	parameters.push_back(make_pair(ptStringText,(void *)textEntry));
 	retValueConvs.push_back(NULL);
 }
