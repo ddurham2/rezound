@@ -175,6 +175,16 @@ void COSSSoundRecorder::deinitialize()
 	}
 }
 
+void COSSSoundRecorder::redo()
+{
+	ASoundRecorder::redo();
+
+	// in OSS, do I want to clear out the buffers already recorded??? Cause it may cause a hiccup in the input containig some of the already buffered data
+	// 	I could do non-blocking reads while info.fragments is >0 or something
+	// there may be a way to do this with OSS
+
+}
+
 COSSSoundRecorder::CRecordThread::CRecordThread(COSSSoundRecorder *_parent) :
 	Thread(),
 

@@ -20,6 +20,8 @@
 
 #include "ASoundRecorder.h"
 
+#include "AStatusComm.h"
+
 #include <algorithm>
 
 #define PREALLOC_SECONDS 5
@@ -102,10 +104,9 @@ void ASoundRecorder::redo()
 	mutex.EnterMutex();
 	try
 	{
+		// clear all cues that were added during the last record
+		addedCues.clear();
 
-		// in OSS, do I want to clear out the buffers already recorded??? Cause it may cause a hiccup in the input containig some of the already buffered data
-		// 	I could do non-blocking reads while info.fragments is >0 or something
-		// there may be a way to do this with OSS
 		writePos=origLength;
 		prealloced=sound->getLength()-origLength;
 
@@ -131,6 +132,17 @@ void ASoundRecorder::done()
 			// remove extra space
 			sound->removeSpace(writePos,sound->getLength()-writePos);
 
+		try
+		{
+			for(size_t t=0;t<addedCues.size();t++)
+				sound->addCue(addedCues[t].name,addedCues[t].time,addedCues[t].isAnchored);
+		}
+		catch(exception &e)
+		{	
+			Error(e.what());
+		}
+		
+
 		sound->unlockForResize();
 	}
 	catch(...)
@@ -140,7 +152,6 @@ void ASoundRecorder::done()
 		throw;
 	}
 
-	
 }
 
 
@@ -286,6 +297,25 @@ string ASoundRecorder::getRecordedSizeS() const
 }
 
 
+bool ASoundRecorder::cueNameExists(const string name) const
+{
+	for(size_t t=0;t<addedCues.size();t++)
+	{
+		if(strcmp(addedCues[t].name,name.c_str())==0)
+			return(true);
+	}
+	return(false);
+}
+
+void ASoundRecorder::addCueNow(const string name,bool isAnchored)
+{
+	if(sound->containsCue(name) || cueNameExists(istring(name).truncate(MAX_SOUND_CUE_NAME_LENGTH)))
+		throw(runtime_error(string(__func__)+" -- a cue already exist with the name: '"+name+"'"));
+
+	// this actually adds the cue at the last 20th of a second or so
+	// depending on the how often the derived class is invoking onData
+	addedCues.push_back(ASound::RCue(istring(name).truncate(MAX_SOUND_CUE_NAME_LENGTH).c_str(),origLength+writePos,isAnchored));
+}
 
 /*
  * The get-and-reset idea ensures that we get the peak (maximum) value since

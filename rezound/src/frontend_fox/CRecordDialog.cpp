@@ -22,6 +22,8 @@
 
 #include "../backend/ASoundRecorder.h"
 
+#include "CStatusComm.h"
+
 #include <istring>
 
 #define STATUS_UPDATE_TIME 100
@@ -34,6 +36,9 @@ FXDEFMAP(CRecordDialog) CRecordDialogMap[]=
 	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_START_BUTTON,		CRecordDialog::onStartButton),
 	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_STOP_BUTTON,		CRecordDialog::onStopButton),
 	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_REDO_BUTTON,		CRecordDialog::onRedoButton),
+
+	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_ADD_CUE_BUTTON,	CRecordDialog::onAddCueButton),
+	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_ADD_ANCHORED_CUE_BUTTON,CRecordDialog::onAddCueButton),
 
 	FXMAPFUNC(SEL_TIMEOUT,		CRecordDialog::ID_STATUS_UPDATE,	CRecordDialog::onStatusUpdate),
 
@@ -48,7 +53,7 @@ FXIMPLEMENT(CRecordDialog,FXModalDialogBox,CRecordDialogMap,ARRAYNUMBER(CRecordD
 // ----------------------------------------
 
 CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"Record",350,300,FXModalDialogBox::ftVertical),
+	FXModalDialogBox(mainWindow,"Record",350,320,FXModalDialogBox::ftVertical),
 
 	recorder(NULL),
 	showing(false),
@@ -66,6 +71,14 @@ CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
 	frame1=new FXHorizontalFrame(getFrame(),LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 1,1);
 		frame2=new FXVerticalFrame(frame1,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 1,1);
 			frame3=new FXVerticalFrame(frame2,FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_FILL_Y);
+				frame4=new FXHorizontalFrame(frame3,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
+					new FXLabel(frame4,"   Cue Prefix:");
+					cueNamePrefix=new FXTextField(frame4,10);
+						cueNamePrefix->setText("cue");
+				frame4=new FXHorizontalFrame(frame3,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
+					new FXLabel(frame4,"Cue Number:");
+					cueNameNumber=new FXSpinner(frame4,3,NULL,0,SPIN_NORMAL|FRAME_NORMAL);
+						cueNameNumber->setRange(-1,1000);
 				new FXButton(frame3,"Add Cue",NULL,this,ID_ADD_CUE_BUTTON);
 				new FXButton(frame3,"Add Anchored Cue",NULL,this,ID_ADD_ANCHORED_CUE_BUTTON);
 					// but what name shall I give the cues
@@ -144,6 +157,9 @@ bool CRecordDialog::show(ASoundRecorder *_recorder)
 	recorder=_recorder;
 	clearClipCount();
 
+	// ??? should find name (using a method on ASound) that finds the first available number or 1 more than the max actually
+	cueNameNumber->setValue(1);
+
 	for(unsigned i=0;i<recorder->getChannelCount();i++)
 	{
 		FXProgressBar *meter=new FXProgressBar(meterFrame,NULL,0,PROGRESSBAR_NORMAL|PROGRESSBAR_VERTICAL | LAYOUT_FILL_Y);
@@ -199,6 +215,21 @@ long CRecordDialog::onRedoButton(FXObject *sender,FXSelector sel,void *ptr)
 
 long CRecordDialog::onAddCueButton(FXObject *sender,FXSelector sel,void *ptr)
 {
+	try
+	{
+		if(cueNameNumber->getValue()==-1)
+			recorder->addCueNow(cueNamePrefix->getText().text(),SELID(sel)==ID_ADD_ANCHORED_CUE_BUTTON);
+		else
+		{
+			recorder->addCueNow((cueNamePrefix->getText().text()+istring(cueNameNumber->getValue())).c_str(),SELID(sel)==ID_ADD_ANCHORED_CUE_BUTTON);
+			cueNameNumber->increment();
+		}
+	}
+	catch(exception &e)
+	{
+		Error(e.what());
+	}
+
 	return 1;
 }
 

@@ -1,6 +1,10 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- inquire to jaroen if FXLabel could become an FXComposite so that the label would go beside, above, below, etc, whatever any child objects there were
+
+	- make the cue list dialog's list box have a fixed width font
+
 	- need a default value in the newSound dialog's filename edit, either a temporary name that is incremented each time the dialog shows and check agains the FS, or just 'untitled0.rez'
 
 	- need to design a record dialog that has the format selection, real-time level meters, start, redo, stop buttons, create cue buttons (one for anchored, one not), check mark to add cues at the beginning and end of the recorded section, (more useful for insert record)

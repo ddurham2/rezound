@@ -73,8 +73,6 @@ public:
 	void start();
 	void stop();
 	virtual void redo();
-	void done(); // should be called while initialized, but after stop to do extra-space-cleanup
-
 
 
 	size_t clipCount;
@@ -85,6 +83,8 @@ public:
 	const sample_pos_t getRecordedLength() const;
 	string getRecordedLengthS() const;
 	string getRecordedSizeS() const;
+
+	void addCueNow(const string name,bool isAnchored);
 
 	// This function should be called when a data chunk is recorded
 	// data should come in an interlaced format that is [sL1sR1 sL2sR2 sL3sR3 ...]
@@ -101,12 +101,19 @@ private:
 	sample_pos_t origLength;
 	sample_pos_t writePos;
 
+	vector<ASound::RCue> addedCues;
+
 	CTrigger statusTrigger;
 
 	float lastPeakValues[MAX_CHANNELS];
 
 	ost::Mutex mutex;
 
+	// deinitialize invokes this to cleanup any unnecessary prealloced space
+	// and actually adds the cues to the sound if any were requested
+	void done();
+
+	bool cueNameExists(const string name) const;
 };
 
 #endif

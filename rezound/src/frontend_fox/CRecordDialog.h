@@ -56,7 +56,6 @@ public:
 		ID_LAST
 	};
 
-	
 	long onStartButton(FXObject *sender,FXSelector sel,void *ptr);
 	long onStopButton(FXObject *sender,FXSelector sel,void *ptr);
 	long onRedoButton(FXObject *sender,FXSelector sel,void *ptr);
@@ -86,6 +85,8 @@ private:
 	FXCheckButton *setDurationButton;
 	FXTextField *durationEdit;
 
+	FXTextField *cueNamePrefix;
+	FXSpinner *cueNameNumber;
 
 	void cleanupMeters();
 	void setMeterValue(unsigned channel,float value); // value is 0 to 1
