@@ -68,6 +68,10 @@
 
 	- in order to create multiple taps for an echo effect... I could have the dialog have tabs and each tap could be tap.. there would be buttons outside the tab bar to insert, remove, move left/right the tabs to rearrange the taps
 
+	- make cues draggable
+		- snap them to the start, stop, beginning and end positions
+		- maybe even autoscroll when a cue is near the edge if it's not terribly difficult
+
 	- perhaps I should have volume and gain as separate actions... but the same backend code would be used
 		- I could even have advanced and normal dialogs for both
 		- negative gain could also be used to invert the phase with a gain of -1
