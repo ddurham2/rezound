@@ -39,6 +39,9 @@ protected:
 	void undoActionSizeSafe(const CActionSound &actionSound);
 	CanUndoResults canUndo(const CActionSound &actionSound) const;
 
+private:
+	bool allowCancel;
+
 };
 
 class CReverseEffectFactory : public AActionFactory
