@@ -119,6 +119,9 @@
 
 --- POSSIBLE THINGS TO DO ---
 
+	- If I really create some decent FFT actions and a filter toolkit of some kind, then it would be nice to have the backend somehow interact more actively with the frontend while selecting parameters like the cutoff frequency and ripple parameters of the filters, etc...
+		- Perhaps the backend could render a pixel array as an image to display for whatever frontend there is.
+
 	- A simple thing that could avoid errors later... create a template class that is used that locks a given mutex on construction and unlock on deconstruction... this would let me remove the try catchs that are just there to unlock the mutex and would keep me from having to remember to write code later that will unlock the mutex... just declare local variable of one of these and it will do it
 
 	- After reading more of the DSP book about filters
