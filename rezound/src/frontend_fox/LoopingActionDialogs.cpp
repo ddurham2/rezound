@@ -18,13 +18,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __LoopingActions_H__
-#define __LoopingActions_H__
+#include "LoopingActionDialogs.h"
 
-#include "../../../config/common.h"
+// --- add cues -------------------------------
+
+CAddCuesDialog::CAddCuesDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Add Cues")
+{
+	void *p=newVertPanel(NULL);
+		addStringTextEntry(p,"Cue Name","(","What to Name the New Cues");
+		addNumericTextEntry(p,"Cue Count","",4,1,100,"How Many Cues to Place Equally Spaced within the Selection");
+}
 
 
-#include "CMakeSymetricAction.h"
-#include "CAddCuesAction.h"
 
-#endif

@@ -18,13 +18,26 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __LoopingActions_H__
-#define __LoopingActions_H__
+#ifndef __LoopingActionDialogs_H__
+#define __LoopingActionDialogs_H__
 
-#include "../../../config/common.h"
+#include "../../config/common.h"
+#include "fox_compat.h"
+
+#include "CActionParamDialog.h"
 
 
-#include "CMakeSymetricAction.h"
-#include "CAddCuesAction.h"
+// --- add cues --------------------------
+
+class CAddCuesDialog : public CActionParamDialog
+{
+public:
+	CAddCuesDialog(FXWindow *mainWindow);
+	virtual ~CAddCuesDialog(){}
+};
+
+
+
+
 
 #endif

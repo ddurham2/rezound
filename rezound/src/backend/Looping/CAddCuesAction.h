@@ -18,13 +18,40 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __LoopingActions_H__
-#define __LoopingActions_H__
+#ifndef __CAddCuesAction_H__
+#define __CAddCuesAction_H__
 
 #include "../../../config/common.h"
 
+class CAddCuesAction;
+class CAddCuesActionFactory;
 
-#include "CMakeSymetricAction.h"
-#include "CAddCuesAction.h"
+#include "../AAction.h"
+
+class CAddCuesAction : public AAction
+{
+public:
+	CAddCuesAction(const CActionSound &actionSound,const string cueName,const unsigned cueCount);
+	virtual ~CAddCuesAction();
+
+protected:
+	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound &actionSound);
+	CanUndoResults canUndo(const CActionSound &actionSound) const;
+
+private:
+	const string cueName;
+	const unsigned cueCount;
+
+};
+
+class CAddCuesActionFactory : public AActionFactory
+{
+public:
+	CAddCuesActionFactory(AActionDialog *channelSelectDialog);
+	virtual ~CAddCuesActionFactory();
+
+	CAddCuesAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+};
 
 #endif

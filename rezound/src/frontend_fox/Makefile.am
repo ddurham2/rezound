@@ -54,6 +54,7 @@ libfrontend_la_SOURCES= \
 			EffectActionDialogs.cpp \
 			FilterActionDialogs.cpp \
 			RemasterActionDialogs.cpp \
+			LoopingActionDialogs.cpp \
 			CAboutDialog.cpp \
 			FXConstantParamValue.cpp \
 			FXTextParamValue.cpp \
@@ -123,6 +124,7 @@ noinst_HEADERS=\
 	EffectActionDialogs.h \
 	FilterActionDialogs.h \
 	RemasterActionDialogs.h \
+	LoopingActionDialogs.h \
 	CAboutDialog.h \
 	FXConstantParamValue.h \
 	FXTextParamValue.h \

@@ -29,10 +29,12 @@ include $(top_srcdir)/config/am_include.mk
 ## 
 noinst_HEADERS= \
 		CMakeSymetricAction.h \
+		CAddCuesAction.h \
 		LoopingActions.h
 
 noinst_LTLIBRARIES=libLooping.la
 libLooping_la_SOURCES= \
-			CMakeSymetricAction.cpp
+			CMakeSymetricAction.cpp \
+			CAddCuesAction.cpp
 
 
