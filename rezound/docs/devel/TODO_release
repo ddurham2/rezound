@@ -10,6 +10,7 @@ distro tarball(eg: removing warning flags)
 2. Revise AUTHORS to give proper credit, and only list files included in final release. Might want to save separate version to keep in CVS.
 
 3. Make a cvs release tag
+	- cvs tag ReZound-1_2_3alpha
 
 4. Update the version number in configure.in and docs/INSTALL
 	- and then do a bootstrap
