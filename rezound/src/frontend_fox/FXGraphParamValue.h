@@ -156,8 +156,8 @@ private:
 
 	int findNodeAt(int x,int y);
 
-	double screenToNodeHorzValue(int x);
-	double screenToNodeVertValue(int y);
+	double screenToNodeHorzValue(int x,bool undeform=true);
+	double screenToNodeVertValue(int y,bool undeform=true);
 
 	int nodeToScreenX(const CGraphParamValueNode &node);
 	int nodeToScreenY(const CGraphParamValueNode &node);

@@ -127,7 +127,7 @@ public:
 		const int s=0;
 		const int e=parent->getGraphPanelWidth()-1;
 
-		// y actually goes from the event's min-10 to max+10 incase part of some text needs be be redrawn (and we limit it to 0..height)
+		// x actually goes from the event's min-10 to max+10 incase part of some text needs be be redrawn (and we limit it to 0..height)
 		const int maxX=min(parent->getGraphPanelWidth(),(ev->rect.w+ev->rect.x)+10);
 		for(int x=max(0,(ev->rect.x)-10);x<=maxX;x++)
 		{
@@ -140,7 +140,7 @@ public:
 				dc.drawLine(renderX,getHeight()-2,renderX,getHeight()-10);
 				//dc.drawLine(renderX+H_TICK_FREQ/2,getHeight()-2,renderX+H_TICK_FREQ/2,getHeight()-4);
 
-				const string sValue=parent->getHorzValueString(parent->screenToNodeHorzValue(x));
+				const string sValue=parent->getHorzValueString(parent->screenToNodeHorzValue(x,false));
 
 				int offset=font->getTextWidth(sValue.c_str(),sValue.length()); // put text left of the tick mark
 
@@ -865,24 +865,32 @@ int FXGraphParamValue::nodeToScreenY(const CGraphParamValueNode &node)
 	return (int)((1.0-deformNodeX(node.y,vertDeformSlider->getValue()))*(getGraphPanelHeight()));
 }
 
-double FXGraphParamValue::screenToNodeHorzValue(int x)
+double FXGraphParamValue::screenToNodeHorzValue(int x,bool undeform)
 {
 	double v=((double)x/(double)(graphCanvas->getWidth()-1));
 	if(v<0.0)
 		v=0.0;
 	else if(v>1.0)
 		v=1.0;
-	return undeformNodeX(v,horzDeformSlider->getValue());
+
+	if(undeform)
+		return undeformNodeX(v,horzDeformSlider->getValue());
+	else
+		return v;
 }
 
-double FXGraphParamValue::screenToNodeVertValue(int y)
+double FXGraphParamValue::screenToNodeVertValue(int y,bool undeform)
 {
 	double v=(1.0-((double)y/(double)(getGraphPanelHeight()-1)));
 	if(v<0.0)
 		v=0.0;
 	else if(v>1.0)
 		v=1.0;
-	return undeformNodeX(v,vertDeformSlider->getValue());
+
+	if(undeform)
+		return undeformNodeX(v,vertDeformSlider->getValue());
+	else
+		return v;
 }
 
 void FXGraphParamValue::updateNumbers()
@@ -897,10 +905,13 @@ const CGraphParamValueNodeList &FXGraphParamValue::getNodes() const
 	retNodes=nodes;
 	for(size_t t=0;t<retNodes.size();t++)
 	{
+		retNodes[t].x=deformNodeX(retNodes[t].x,horzDeformSlider->getValue());
+		retNodes[t].y=deformNodeX(retNodes[t].y,vertDeformSlider->getValue());
+
 		if(horzInterpretValue!=NULL)
-			retNodes[t].x=horzInterpretValue(nodes[t].x,0);
+			retNodes[t].x=horzInterpretValue(retNodes[t].x,0);
 		if(vertInterpretValue!=NULL)
-			retNodes[t].y=vertInterpretValue(nodes[t].y,getScalar());
+			retNodes[t].y=vertInterpretValue(retNodes[t].y,getScalar());
 	}
 
 	return retNodes;
@@ -928,8 +939,8 @@ void FXGraphParamValue::updateStatus()
 	const CGraphParamValueNode &n=nodes[draggingNode];
 
 	// draw status
-	horzValueLabel->setText((horzAxisLabel+": "+getHorzValueString(n.x)+horzUnits).c_str());
-	vertValueLabel->setText((vertAxisLabel+": "+getVertValueString(n.y)+vertUnits).c_str());
+	horzValueLabel->setText((horzAxisLabel+": "+getHorzValueString(deformNodeX(n.x,horzDeformSlider->getValue()))+horzUnits).c_str());
+	vertValueLabel->setText((vertAxisLabel+": "+getVertValueString(deformNodeX(n.y,vertDeformSlider->getValue()))+vertUnits).c_str());
 }
 
 void FXGraphParamValue::clearStatus()
