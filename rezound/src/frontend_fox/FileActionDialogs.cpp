@@ -227,8 +227,12 @@ long CRunMacroDialog::onRemoveButton(FXObject *object,FXSelector sel,void *ptr)
 	FXComboTextParamValue *cb=getComboText("Macro Name");
 	const string macroName=cb->getStringValue();
 	if(Question(_("Are you sure you want to delete the macro: ")+macroName,yesnoQues)==yesAns)
+	{
 		CMacroRecorder::removeMacro(gUserMacroStore,macroName);
 
+		vector<string> items=gUserMacroStore->getValue<vector<string> >("MacroNames");
+		getComboText("Macro Name")->setItems(items);
+	}
 	return 0;
 }
 
