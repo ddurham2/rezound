@@ -125,6 +125,7 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 
 	FXMAPFUNC(SEL_CHANGED,			CMainWindow::ID_SOUND_LIST,			CMainWindow::onSoundListChange),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SOUND_LIST_HOTKEY,		CMainWindow::onSoundListHotKey),
+	FXMAPFUNC(SEL_KEYPRESS,			CMainWindow::ID_SOUND_LIST,			CMainWindow::onSoundListKeyPress),
 };
 
 FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
@@ -398,6 +399,46 @@ long CMainWindow::onSoundListHotKey(FXObject *sender,FXSelector sel,void *ptr)
 		else
 			return 0;
 	}
+}
+
+/*
+	This handler steals the key press events from the soundList FXIconList because
+	it will take all my accelerator keys and search the list rather than pass them
+	on to be handled by the accelerators.  I do this for all keys except things like
+	up, down, tab, et al.
+	
+*/
+long CMainWindow::onSoundListKeyPress(FXObject *sender,FXSelector sel,void *ptr)
+{
+	switch(((FXEvent*)ptr)->code)
+	{
+	case KEY_Up:
+	case KEY_KP_Up:
+	case KEY_Down:
+	case KEY_KP_Down:
+
+	case KEY_Page_Up:
+	case KEY_KP_Page_Up:
+	case KEY_Page_Down:
+	case KEY_KP_Page_Down:
+
+	case KEY_Home:
+	case KEY_KP_Home:
+	case KEY_End:
+	case KEY_KP_End:
+
+	case KEY_Tab:
+	case KEY_KP_Tab:
+		return 0;
+	}
+
+	// kill the focus (so the generated event won't pass the event back to the 
+	// sound list), then generate an key even to the main window, then set the 
+	// focus again on the sound list
+	soundList->killFocus();
+	this->handle(sender,FXSEL(SEL_KEYPRESS,0),ptr);
+	soundList->setFocus();
+	return 1;
 }
 
 extern const string escapeAmpersand(const string i); // defined in CStatusComm.cpp

@@ -75,6 +75,7 @@ public:
 
 	long onSoundListChange(FXObject *sender,FXSelector sel,void *ptr);
 	long onSoundListHotKey(FXObject *sender,FXSelector sel,void *ptr);
+	long onSoundListKeyPress(FXObject *sender,FXSelector sel,void *ptr);
 
 	// used to control the shuttle control with the keyboard
 	long onKeyboardSeek(FXObject *sender,FXSelector sel,void *ptr);
