@@ -43,6 +43,7 @@ class CRemoveDCActionFactory : public AActionFactory
 {
 public:
 	CRemoveDCActionFactory(AActionDialog *channelSelectDialog);
+	virtual ~CRemoveDCActionFactory();
 
 	CRemoveDCAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

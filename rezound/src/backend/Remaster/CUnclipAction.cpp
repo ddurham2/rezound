@@ -355,6 +355,10 @@ CUnclipActionFactory::CUnclipActionFactory(AActionDialog *channelSelectDialog) :
 {
 }
 
+CUnclipActionFactory::~CUnclipActionFactory()
+{
+}
+
 CUnclipAction *CUnclipActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	return(new CUnclipAction(actionSound));

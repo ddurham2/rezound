@@ -47,6 +47,10 @@ CNoiseGateAction::CNoiseGateAction(const CActionSound &actionSound,const float _
 		throw(runtime_error(string(__func__)+" -- gainReleaseTime is negative"));
 }
 
+CNoiseGateAction::~CNoiseGateAction()
+{
+}
+
 bool CNoiseGateAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
 	const sample_pos_t start=actionSound.start;
@@ -121,6 +125,10 @@ void CNoiseGateAction::undoActionSizeSafe(const CActionSound &actionSound)
 
 CNoiseGateActionFactory::CNoiseGateActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
 	AActionFactory("Noise Gate","Applies a gain [0,1] to the sound when the level becomes less than the threshold.\nThe gain changes with a velocity according to the attack and release times",false,channelSelectDialog,normalDialog,NULL)
+{
+}
+
+CNoiseGateActionFactory::~CNoiseGateActionFactory()
 {
 }
 

@@ -23,7 +23,6 @@
 
 #include "../../../config/common.h"
 
-
 class CMakeSymetricAction;
 class CMakeSymetricActionFactory;
 
@@ -33,6 +32,7 @@ class CMakeSymetricAction : public AAction
 {
 public:
 	CMakeSymetricAction(const CActionSound &actionSound);
+	virtual ~CMakeSymetricAction();
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
@@ -45,6 +45,7 @@ class CMakeSymetricActionFactory : public AActionFactory
 {
 public:
 	CMakeSymetricActionFactory(AActionDialog *channelSelectDialog);
+	virtual ~CMakeSymetricActionFactory();
 
 	CMakeSymetricAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

@@ -39,6 +39,7 @@ class CNoiseGateAction : public AAction
 {
 public:
 	CNoiseGateAction(const CActionSound &actionSound,const float windowTime,const float threshold,const float gainAttackTime,const float gainReleaseTime);
+	virtual ~CNoiseGateAction();
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
@@ -57,6 +58,7 @@ class CNoiseGateActionFactory : public AActionFactory
 {
 public:
 	CNoiseGateActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	virtual ~CNoiseGateActionFactory();
 
 	CNoiseGateAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

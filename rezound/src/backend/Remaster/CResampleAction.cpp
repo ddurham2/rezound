@@ -39,6 +39,10 @@ CResampleAction::CResampleAction(const CActionSound &actionSound,const unsigned 
 		throw runtime_error(string(__func__)+" -- an unlikely sample rate: +"+istring(newSampleRate));
 }
 
+CResampleAction::~CResampleAction()
+{
+}
+
 bool CResampleAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
 	const sample_pos_t oldLength=actionSound.sound->getLength();
@@ -107,6 +111,10 @@ void CResampleAction::undoActionSizeSafe(const CActionSound &actionSound)
 
 CResampleActionFactory::CResampleActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
 	AActionFactory("Resample","Change Sample Rate",false,channelSelectDialog,normalDialog,NULL,true,false)
+{
+}
+
+CResampleActionFactory::~CResampleActionFactory()
 {
 }
 

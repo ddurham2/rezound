@@ -33,6 +33,7 @@ class CNormalizeAction : public AAction
 {
 public:
 	CNormalizeAction(const CActionSound &actionSound,float normalizationLevel,unsigned regionCount,bool lockChannels);
+	virtual ~CNormalizeAction();
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
@@ -50,6 +51,7 @@ class CNormalizeActionFactory : public AActionFactory
 {
 public:
 	CNormalizeActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	virtual ~CNormalizeActionFactory();
 
 	CNormalizeAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

@@ -35,6 +35,10 @@ CNormalizeAction::CNormalizeAction(const CActionSound &actionSound,float _normal
 {
 }
 
+CNormalizeAction::~CNormalizeAction()
+{
+}
+
 template <class type> const type my_abs(const type v) { return v<0 ? -v : v; }
 
 bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
@@ -242,9 +246,13 @@ void CNormalizeAction::undoActionSizeSafe(const CActionSound &actionSound)
 
 
 // --------------------------------------------------
-//
+
 CNormalizeActionFactory::CNormalizeActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
 	AActionFactory("Normalize","Normalize Amplitude (Some of this technique is experimental, please let me know if you approve or disapprove of the result's quality)",false,channelSelectDialog,normalDialog,NULL)
+{
+}
+
+CNormalizeActionFactory::~CNormalizeActionFactory()
 {
 }
 

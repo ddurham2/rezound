@@ -11,6 +11,7 @@ class CCompressorAction : public AAction
 {
 public:
 	CCompressorAction(const CActionSound &actionSound,float windowTime,float threshold,float ratio,float attackTime,float releaseTime,float inputGain,float outputGain,bool syncChannels);
+	virtual ~CCompressorAction();
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
@@ -32,6 +33,7 @@ class CCompressorActionFactory : public AActionFactory
 {
 public:
 	CCompressorActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	virtual ~CCompressorActionFactory();
 
 	CCompressorAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

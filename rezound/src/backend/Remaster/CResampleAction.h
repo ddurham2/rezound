@@ -29,6 +29,7 @@ class CResampleAction : public AAction
 {
 public:
 	CResampleAction(const CActionSound &actionSound,const unsigned newSampleRate);
+	virtual ~CResampleAction();
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
@@ -46,6 +47,7 @@ class CResampleActionFactory : public AActionFactory
 {
 public:
 	CResampleActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	virtual ~CResampleActionFactory();
 
 	CResampleAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

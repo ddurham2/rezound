@@ -25,6 +25,10 @@ CMakeSymetricAction::CMakeSymetricAction(const CActionSound &actionSound) :
 {
 }
 
+CMakeSymetricAction::~CMakeSymetricAction()
+{
+}
+
 bool CMakeSymetricAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
 	const sample_pos_t start=actionSound.start;
@@ -91,6 +95,10 @@ void CMakeSymetricAction::undoActionSizeSafe(const CActionSound &actionSound)
 //
 CMakeSymetricActionFactory::CMakeSymetricActionFactory(AActionDialog *channelSelectDialog) :
 	AActionFactory("Make Symetric","Make Symetric For Noise Loops",false,channelSelectDialog,NULL,NULL)
+{
+}
+
+CMakeSymetricActionFactory::~CMakeSymetricActionFactory()
 {
 }
 
