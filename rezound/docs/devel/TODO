@@ -6,6 +6,7 @@
 		- In many places I have to have a +1, -1, max(1,...) etc.. also, the stop could wind up being less than the start
 		- if I used a start/length combination, I would have a fair amount of code to modify, but I think border conditions would be less of a problem.
 		- I could still have the getStart/Stop setStart/Stop methods in channel
+		- also, this should allow me to have zero length sounds with no trouble... I shouldn't have to make an exception; I just make it a rule to draw the selection carefully on screen
 		
 
 	- Is there any way while recording we could know if data was dropped?
@@ -102,6 +103,9 @@
 
 
 --- POSSIBLE THINGS TO DO ---
+
+	- I thought of a cool way to do hints and warnings... If it's not an error where we want the user to really acknowledge the message, and it's not a question requiring feedback from the user.
+		- We could have Warning() and Note(), accept an optional MSG_ID where there would be a sound file associated with that ID, and we would play that warning message or note message out of the speakers... Temporarily, the ASoundPlayerChannel should know that if one of these is playing then it should cut the volume by 50%, by including that in the amplitude parameter
 
 	- needs some compressor action(s)
 
