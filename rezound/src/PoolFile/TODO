@@ -1,5 +1,7 @@
 
 
+	- reimplemente TStaticPoolAccesser::copyData and zeroData to use memcpy and memset instead of for-loops
+
 	- I really need to play with very large files (>500meg) and make them faster if ay all possible
 
 	- make TPoolFile::accessers (and others sets instead of vectors?) direct indexing isn't necessary, then searching and inserting would become faster
@@ -14,6 +16,8 @@
 		- this way, I don't unnecessarily copy data that doesn't belong to any pool
 
 	- The SAT being a vector really does slow things down with VERY large files... If I didn't actually need direct indexing, then this could be changed to something more efficient to modify instead of O(n) operations
+
+
 
 
 - DONE -
