@@ -1265,11 +1265,12 @@ void CMainWindow::buildLADSPAMenus()
 /* this function sets a key-binding if one has been defined for the given FXMenuCommand */
 void CMainWindow::setupKeyBindings()
 {
-	// clear existing accelerator table
-	delete getAccelTable();
-	setAccelTable(new FXAccelTable());
+	
+	// clear existing accelerator table (not doing this now.. see below)
+	//delete getAccelTable();
+	//setAccelTable(new FXAccelTable());
 
-	// reassign all accelerators
+	// reassign all accelerators (would prefer to wipe the slate clean before doing this, but there's no good way to restore the alt-&letter menu key bindings after doing so)
 	for(map<string,FXMenuCommand *>::iterator i=gKeyBindingRegistry.begin(); i!=gKeyBindingRegistry.end(); i++)
 	{
 		const string name=i->first;
@@ -1318,8 +1319,21 @@ long CMainWindow::onQuit(FXObject *sender,FXSelector sel,void *ptr)
 
 long CMainWindow::onSetupKeyBindings(FXObject *sender,FXSelector sel,void *ptr)
 {
+	// create a list of the keys that are currently bound because we need to remove those from the current accel table before assigning the new key bindings
+	// this is done to avoid having to delete and re-create the accel table each time in setupKeyBindings() which destroys the alt-&letter key bindings that
+	// already exist there.
+	vector<FXHotKey> removeKeyBindingsList;
+	const vector<string> actionsWithKeyBindings=gKeyBindingsStore->getChildKeys("");
+	for(size_t t=0;t<actionsWithKeyBindings.size();t++)
+		removeKeyBindingsList.push_back(fxparseAccel(gKeyBindingsStore->getValue<string>(actionsWithKeyBindings[t]).c_str()));
+
 	if(gKeyBindingsDialog->showIt(gKeyBindingRegistry))
+	{
+		for(size_t t=0;t<removeKeyBindingsList.size();t++)
+			getAccelTable()->removeAccel(removeKeyBindingsList[t]);
+
 		setupKeyBindings();
+	}
 	return 1;
 }
 
