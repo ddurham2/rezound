@@ -123,9 +123,13 @@ noinst_HEADERS=\
 	rememberShow.h \
 	settings.h 
 
+EXTRA_DIST=convert_images.sh
+
 images.h: images.cpp
 images.cpp: 
 	./convert_images.sh ${RESWRAP} ../images
 
+
 clean-local: 
 	-rm -f images.cpp images.h
+
