@@ -49,6 +49,7 @@ noinst_HEADERS= \
 	   ASoundRecorder.h \
 	   ASoundFileManager.h \
 	   AStatusComm.h \
+	   ASoundClipboard.h \
 	   CEnvelope.h \
 	   CGraphParamValueNode.h \
 	   CLoadedSound.h \
@@ -77,6 +78,7 @@ libbackend_la_SOURCES= \
 			ASoundPlayer.cpp  \
 			ASoundRecorder.cpp \
 			AStatusComm.cpp \
+			ASoundClipboard.cpp \
 			CEnvelope.cpp \
 			CGraphParamValueNode.cpp \
 			CLoadedSound.cpp  \
