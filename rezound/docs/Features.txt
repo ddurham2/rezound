@@ -26,6 +26,7 @@
 - Undo
 
 - Labeled Cue Positions
+	- Cues can be dragged
 
 - Automatic Crossfading of Selection Edges on All Applicable Actions to Create Smooth Transitions
 

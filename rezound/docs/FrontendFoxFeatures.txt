@@ -23,6 +23,12 @@
 		- holding SHIFT while changing the selection positions will also momentarily disable auto scrolling when selecting near the edges
 	- DOUBLE LEFT clicking the ruler brings up the cue list dialog
 	- DOUBLE LEFT clicking a cue brings up the edit dialog
+	- A cue can be dragged using the LEFT mouse button.  Pressing ESCAPE while dragging a cue will cancel the drag
+		- If the start or stop position is exactly on a cue position when dragging the cue starts then that start or stop position will be dragged too. Holding SHIFT when starting the drag disables this action.
+	- LEFT clicking a cue focueses that cue.  
+		- Cues can be deleted by pressing DELETE 
+		- The LEFT, RIGHT, HOME and END cursor keys will focues the next or previous cue.  When the next or previous cue is focued that cue's position will be centered (useful when zoomed in)
+		- Pressing RETURN will bring up the edit dialog for that focused cue
 
 	- Holding SHIFT while changing the horizontal zoom level dial will center the start position on screen
 	- Holding CONTROL while changing the horizontal zoom level dial will center the stop position on screen
