@@ -313,7 +313,7 @@ void CSoundWindow::show()
 	{
 			// approximately show 10 (setting) seconds of sound (apx because we haven't done layout yet)
 			// can't do this at construction because we don't know the max until the window's are laid out
-		waveView->showAmount(10.0,0);
+		waveView->showAmount(gInitialLengthToShow,0);
 
 		horzZoomDial->setValue((FXint)(waveView->getHorzZoom()*100*ZOOM_MUL));
 		horzZoomValueLabel->setText(("  "+istring(horzZoomDial->getValue()/(double)ZOOM_MUL,3,1,true)+"%").c_str());
