@@ -138,7 +138,7 @@ bool CConvolutionFilter::doActionSizeSafe(CActionSound &actionSound,bool prepare
 					}
 
 					//TSimpleConvolver<mix_sample_t,float> convolver(filterKernel,filterKernelLength-filterKernelLengthSub);
-					TFFTConvolver<float,float> convolver(filterKernel,filterKernelLength-filterKernelLengthSub);
+					TFFTConvolverTimeDomainKernel<float,float> convolver(filterKernel,filterKernelLength-filterKernelLengthSub);
 
 					TDSPSinglePoleLowpassFilter<float,float> inputLowpassFilter(freq_to_fraction(inputLowpassFreq,actionSound.sound->getSampleRate()));
 
