@@ -126,7 +126,7 @@ noinst_HEADERS=\
 EXTRA_DIST=convert_images.sh
 
 images.h: images.cpp
-images.cpp: 
+images.cpp: ../images/*.gif
 	./convert_images.sh ${RESWRAP} ../images
 
 
