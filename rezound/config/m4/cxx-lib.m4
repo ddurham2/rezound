@@ -51,7 +51,8 @@ dnl This macro will also #define HAVE_LIBXXX where XXX is the capitalized
 dnl normalized name if arg 1
 AC_DEFUN(ajv_CXX_CHECK_LIB, dnl
 [AC_ARG_ENABLE($1-check, dnl
-[  --disable-$1-check     Override the check for $1 library ], dnl
+[
+  --disable-$1-check     Override the check for $1 library ], dnl
 [enable_$1_check=$enableval], dnl
 [enable_$1_check="yes" ])]
 [AC_ARG_WITH($1-include, dnl
@@ -151,7 +152,8 @@ dnl
 dnl 4. URL to download library given in abort message.
 AC_DEFUN(ajv_CHECK_LIB_ABORT, dnl
 [AC_ARG_ENABLE($1-check, dnl
-[  --disable-$1-check     Override the check for $1 library ], dnl
+[
+  --disable-$1-check     Override the check for $1 library ], dnl
 [enable_$1_check=$enableval], dnl
 [enable_$1_check="yes" ])]
 [AC_ARG_WITH($1-include, dnl
