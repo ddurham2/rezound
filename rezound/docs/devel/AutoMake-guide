@@ -56,7 +56,7 @@ TOP_DIRECTORY/make
 					libRemaster.la	--------|
 					libbackend.la	--------|
 					libfrontend_fox.la  ----|
-								|---ReZound
+								|---rezound
 
 	You might want to take a look at the Makefile.am files following the
 	directory structure shown above to see how this all works. Basically
@@ -209,7 +209,7 @@ SUBDIRS=Equalizer
 	linking. This takes place in src/frontend_fox/Makefile.am. Open it up
 	now and find the following entry:
 
-ReZound_LDADD= \
+rezound_LDADD= \
 	$(top_builddir)/src/misc/cc++/libmisc.la \
 	$(top_builddir)/src/PoolFile/libPoolFile.la \
 	$(top_builddir)/src/backend/Edits/libEdits.la \
@@ -221,7 +221,7 @@ ReZound_LDADD= \
 	libfrontend_fox.la
 
 	This is a list of all the objects that will be linked in to the
-	ReZound binary. For our example we would add
+	rezound binary. For our example we would add
 	`Equalizer/libEqualizer.la' to the list. Notice however the use of the
 	$(top_builddir) macro. This macro corresponds to the $(top_srcdir)
 	macro used earlier. But since we're looking for built objects and not
