@@ -43,7 +43,7 @@ bool CCompressorAction::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 			CDSPCompressor compressor(
 				ms_to_samples(windowTime,actionSound.sound->getSampleRate()),
 				dBFS_to_amp(threshold),
-				dB_to_scalar(ratio),
+				ratio,
 				ms_to_samples(attackTime,actionSound.sound->getSampleRate()),
 				ms_to_samples(releaseTime,actionSound.sound->getSampleRate())
 			);
@@ -92,7 +92,9 @@ CCompressorActionFactory::CCompressorActionFactory(AActionDialog *channelSelectD
 
 CCompressorAction *CCompressorActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CCompressorAction(actionSound,20,-14.75,2,0.25,1));
+	//return(new CCompressorAction(actionSound,20,-14.75,2,500,1000));
+	return(new CCompressorAction(actionSound,40,-19.75,2,10,50));
+	//return(new CCompressorAction(actionSound,2,-19.75,2,2,50));
 }
 
 
