@@ -410,14 +410,21 @@ void FXWaveCanvas::drawPortion(int left,int width,FXDCWindow *dc)
 }
 
 
+const sample_pos_t FXWaveCanvas::getHorzOffsetToCenterTime(sample_pos_t time) const
+{
+	if(time>=loadedSound->sound->getLength())
+		time=loadedSound->sound->getLength()-1;
+	return (sample_pos_t)max((sample_fpos_t)0.0,sample_fpos_round(time/horzZoomFactor)-getWidth()/2);
+}
+
 const sample_pos_t FXWaveCanvas::getHorzOffsetToCenterStartPos() const
 {
-	return (sample_pos_t)max((sample_fpos_t)0.0,sample_fpos_round(loadedSound->channel->getStartPosition()/horzZoomFactor)-getWidth()/2);
+	return getHorzOffsetToCenterTime(loadedSound->channel->getStartPosition());
 }
 
 const sample_pos_t FXWaveCanvas::getHorzOffsetToCenterStopPos() const
 {
-	return (sample_pos_t)max((sample_fpos_t)0.0,sample_fpos_round(loadedSound->channel->getStopPosition()/horzZoomFactor)-getWidth()/2);
+	return getHorzOffsetToCenterTime(loadedSound->channel->getStopPosition());
 }
 
 void FXWaveCanvas::showAmount(double seconds,sample_pos_t pos,int marginPixels)

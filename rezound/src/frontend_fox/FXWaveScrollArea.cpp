@@ -371,6 +371,11 @@ void FXWaveScrollArea::centerStopPos()
 	setPosition(-canvas->getHorzOffsetToCenterStopPos(),pos_y);
 }
 
+void FXWaveScrollArea::centerTime(const sample_pos_t time)
+{
+	setPosition(-canvas->getHorzOffsetToCenterTime(time),pos_y);
+}
+
 void FXWaveScrollArea::showAmount(double seconds,sample_pos_t pos,int marginPixels)
 {
 	canvas->showAmount(seconds,pos,marginPixels);

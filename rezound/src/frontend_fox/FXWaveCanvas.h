@@ -78,6 +78,7 @@ public:
 	const int getVertOffset() const;
 
 
+	const sample_pos_t getHorzOffsetToCenterTime(sample_pos_t time) const;
 	const sample_pos_t getHorzOffsetToCenterStartPos() const;
 	const sample_pos_t getHorzOffsetToCenterStopPos() const;
 	void showAmount(double seconds,sample_pos_t pos,int marginPixels=0);

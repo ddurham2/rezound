@@ -47,6 +47,7 @@ public:
 	double getHorzZoom() const;
 	void setVertZoom(double v);
 
+	void centerTime(const sample_pos_t time);
 	void centerStartPos();
 	void centerStopPos();
 	void showAmount(double seconds,sample_pos_t pos,int marginPixels=0);
