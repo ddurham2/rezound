@@ -36,15 +36,13 @@
 bool rememberShow(FXTopWindow *window)
 {
 return(false);
-
 	// using this mechanism because FXToolbarShell's position method calls show which causes infinite recursion
 	static bool inThis=false;
 	if(inThis)
 		return(false);
 	inThis=true;
 
-
-	const string title=window->getTitle().text();
+	const string title=("WindowDimensions."+window->getTitle()).text();
 	if(!gSettingsRegistry->keyExists((title+"_X").c_str()))
 	{
 		inThis=false;
@@ -54,22 +52,22 @@ return(false);
 	{
 		// ??? right now there is a bug... fox seems to read the screen pos according to the very top left corner including the decorations, but sets the screen pos according to the top left not including the decorations
 
-		printf("window: %s %d %d\n",title.c_str(),atoi(gSettingsRegistry->getValue((title+"_X").c_str()).c_str()),atoi(gSettingsRegistry->getValue((title+"_Y").c_str()).c_str()));
-		// ??? X and Y need to be guarenteed on screen, but fox or the window manager may handle that
+		/*
+		printf("window: %s X:%d Y:%d W:%d H:%d\n",
+			title.c_str(),
+			atoi(gSettingsRegistry->getValue((title+"_X").c_str()).c_str()),
+			atoi(gSettingsRegistry->getValue((title+"_Y").c_str()).c_str()),
+			atoi(gSettingsRegistry->getValue((title+"_W").c_str()).c_str()),
+			atoi(gSettingsRegistry->getValue((title+"_H").c_str()).c_str()) );
+		*/
+
 		window->position(
-			atoi(gSettingsRegistry->getValue((title+"_X").c_str()).c_str()),atoi(gSettingsRegistry->getValue((title+"_Y").c_str()).c_str()),
-			max(50,atoi(gSettingsRegistry->getValue((title+"_W").c_str()).c_str())),max(50,atoi(gSettingsRegistry->getValue((title+"_H").c_str()).c_str()))
+			atoi(gSettingsRegistry->getValue((title+"_X").c_str()).c_str()),
+			atoi(gSettingsRegistry->getValue((title+"_Y").c_str()).c_str()),
+			max(50,atoi(gSettingsRegistry->getValue((title+"_W").c_str()).c_str())),
+			max(50,atoi(gSettingsRegistry->getValue((title+"_H").c_str()).c_str()))
 		);
 
-/* could do it this way, but the offset is not what really happend.. fox needs to read it back from X after placing the window
-		// getX/Y is not returning what it should !!!
-		window->move(0,0);
-		const FXint offsetY=window->getY();
-		printf("offsetY: %d\n",offsetY);
-
-		window->move(atoi(gSettingsRegistry->getValue((title+"_X").c_str()).c_str()),atoi(gSettingsRegistry->getValue((title+"_Y").c_str()).c_str())-offsetY);
-		window->resize(max(50,atoi(gSettingsRegistry->getValue((title+"_W").c_str()).c_str())),max(50,atoi(gSettingsRegistry->getValue((title+"_H").c_str()).c_str())));
-*/
 	}
 	inThis=false;
 	return(true);
@@ -77,11 +75,11 @@ return(false);
 
 void rememberHide(FXTopWindow *window)
 {
-return;
-	const string title=window->getTitle().text();
-	printf("closing window: %d %d\n",window->getX(),window->getY());
+	const string title=("WindowDimensions."+window->getTitle()).text();
+	//printf("closing window: %s %d %d\n",window->getTitle().text(),window->getX(),window->getY());
 	gSettingsRegistry->createKey((title+"_X").c_str(),istring(window->getX()));
 	gSettingsRegistry->createKey((title+"_Y").c_str(),istring(window->getY()));
 	gSettingsRegistry->createKey((title+"_W").c_str(),istring(window->getWidth()));
 	gSettingsRegistry->createKey((title+"_H").c_str(),istring(window->getHeight()));
 }
+

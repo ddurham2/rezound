@@ -221,6 +221,14 @@ void CMainWindow::show()
 	//printf("main window: %d %d\n",getX(),getY());
 	rememberShow(this);
 	FXMainWindow::show();
+/*
+	FXMainWindow::show();
+	if(rememberShow(this))
+	{
+		FXMainWindow::hide();
+		FXMainWindow::show();
+	}
+*/
 
 	followPlayPositionButton->setCheck(gFollowPlayPosition);
 }
@@ -356,10 +364,10 @@ long CMainWindow::onReopenMenuPopup(FXObject *sender,FXSelector sel,void *ptr)
 	bool hasSome=false;
 	FXMenuPane reopenMenu(this);
 		size_t t=0;
-		while(gSettingsRegistry->keyExists(("ReopenHistory"+istring(t)).c_str()))
+		while(gSettingsRegistry->keyExists(("ReopenHistory.item"+istring(t)).c_str()))
 		{
 			// ??? make sure that these get deleted when reopenMenu is deleted
-			new FXMenuCommand(&reopenMenu,gSettingsRegistry->getValue(("ReopenHistory"+istring(t)).c_str()).c_str(),NULL,this,ID_REOPEN_MENU_SELECT);
+			new FXMenuCommand(&reopenMenu,gSettingsRegistry->getValue(("ReopenHistory.item"+istring(t)).c_str()).c_str(),NULL,this,ID_REOPEN_MENU_SELECT);
 			t++;
 			hasSome=true;
 		}
@@ -385,6 +393,12 @@ long CMainWindow::onReopenMenuSelect(FXObject *sender,FXSelector sel,void *ptr)
 // play control events
 long CMainWindow::onPlayControlButton(FXObject *sender,FXSelector sel,void *ptr)
 {
+/*
+	position(getX()+1,getY(),getWidth(),getHeight());
+	hide();
+	show();
+*/
+
 	switch(SELID(sel))
 	{
 	case ID_PLAY_ALL_ONCE_BUTTON:

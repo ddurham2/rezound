@@ -224,9 +224,9 @@ void CSoundFileManager::updateReopenHistory(const string &filename)
 	// rewrite the reopen history to the gSettingsRegistry
 	vector<string> reopenFilenames;
 	
-	for(size_t t=0;gSettingsRegistry->keyExists(("ReopenHistory"+istring(t)).c_str());t++)
+	for(size_t t=0;gSettingsRegistry->keyExists(("ReopenHistory.item"+istring(t)).c_str());t++)
 	{
-		const string h=gSettingsRegistry->getValue(("ReopenHistory"+istring(t)).c_str());
+		const string h=gSettingsRegistry->getValue(("ReopenHistory.item"+istring(t)).c_str());
 		if(h!=filename)
 			reopenFilenames.push_back(h);
 	}
@@ -237,6 +237,6 @@ void CSoundFileManager::updateReopenHistory(const string &filename)
 	reopenFilenames.insert(reopenFilenames.begin(),filename);
 
 	for(size_t t=0;t<reopenFilenames.size();t++)
-		gSettingsRegistry->createKey(("ReopenHistory"+istring(t)).c_str(),reopenFilenames[t]);
+		gSettingsRegistry->createKey(("ReopenHistory.item"+istring(t)).c_str(),reopenFilenames[t]);
 }
 

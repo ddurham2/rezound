@@ -1,6 +1,12 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- move to the backend what can be from intializations
+		- have two initializations, one for the backend and one for the front
+
+	- move reopen history code (writting to the registry) to the backend
+		- create a method in the backend for getting the reopen history items rather than the front end reading directly from the registry
+
 	- figure out why the limit isn't always working.. twice I entered 90:00.00 and it didn't stop
 		- I haven't seen it since, but with the limit label I should know when it is at least going to happen
 
