@@ -252,6 +252,8 @@ void ClibaudiofileSound::loadSound(const string _filename)
 	}
 
 	matchUpChannelLengths(NIL_SAMPLE_POS);
+
+	setIsModified(false);
 }
 
 void ClibaudiofileSound::saveSound(const string filename)

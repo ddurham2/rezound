@@ -84,7 +84,8 @@ void CrezSound::loadSound(const string _filename)
 
 			if(!createFromWorkingPoolFileIfExists(_filename,false))
 				throw(runtime_error(string(__func__)+" -- internal error -- bad data in file or TPoolFile::copyToFile failed"));
-			// undo the side-effect that createFromWrokingPoolFile set isModified to try
+
+			// undo the side-effect that createFromWrokingPoolFile set isModified to true
 			_isModified=false;
 
 		}
