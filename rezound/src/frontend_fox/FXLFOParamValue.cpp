@@ -81,12 +81,12 @@ FXLFOParamValue::FXLFOParamValue(FXComposite *p,int opts,const char *_name,const
 
 	textFont(getApp()->getNormalFont()),
 
-	minHeight(236),
-	minWidth(0)
+	minWidth(0),
+	minHeight(236)
 {
-	amplitudeSlider->setDefaultSize(0,0);
-	frequencySlider->setDefaultSize(0,0);
-	phaseSlider->setDefaultSize(0,0);
+	amplitudeSlider->setMinSize(0,0);
+	frequencySlider->setMinSize(0,0);
+	phaseSlider->setMinSize(0,0);
 
 	// create a smaller font to use 
         FXFontDesc d;
