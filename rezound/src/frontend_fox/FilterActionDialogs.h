@@ -37,6 +37,31 @@ public:
 };
 
 
+// --- arbitrary FIR filter --------------
+
+class CArbitraryFIRFilterDialog : public CActionParamDialog
+{
+	FXDECLARE(CArbitraryFIRFilterDialog);
+public:
+	CArbitraryFIRFilterDialog(FXWindow *mainWindow);
+	virtual ~CArbitraryFIRFilterDialog(){}
+
+	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
+
+	long onFrequencyRangeChange(FXObject *sender,FXSelector sel,void *ptr);
+
+	enum
+	{
+		ID_BASE_FREQUENCY=CActionParamDialog::ID_LAST,
+		ID_NUMBER_OF_OCTAVES,
+		ID_LAST
+	};
+
+protected:
+	CArbitraryFIRFilterDialog() {}
+};
+
+
 // --- single pole lowpass ---------------
 
 class CSinglePoleLowpassFilterDialog : public CActionParamDialog

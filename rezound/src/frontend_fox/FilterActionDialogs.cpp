@@ -23,7 +23,6 @@
 
 
 
-
 static const double interpretValue_filter(const double x,const int s) { return(x*s); }
 static const double uninterpretValue_filter(const double x,const int s) { return(x/s); }
 
@@ -69,6 +68,123 @@ CConvolutionFilterDialog::CConvolutionFilterDialog(FXWindow *mainWindow) :
 			p1=newHorzPanel(p0,false);
 				addCheckBoxEntry(p1,"Wrap Decay back to Beginning",false);
 }
+
+
+
+
+
+// --- arbitrary FIR filter --------------
+
+static unsigned gBaseFrequency=20; // is set dynamically at runtime in CArbitraryFIRFilterDialog::show (but would be better if these functions had user data *'s)
+static unsigned gNumberOfOctaves=11; // is set dynamically at runtime in CArbitraryFIRFilterDialog::show (but would be better if these functions had user data *'s)
+static const double interpretValue_freq(const double x,const int s) { return octave_to_freq(x*gNumberOfOctaves,gBaseFrequency); }
+static const double uninterpretValue_freq(const double x,const int s) { return freq_to_octave(x,gBaseFrequency)/gNumberOfOctaves; }
+
+		// ??? perhaps should be done in dB
+static const double interpretValue_coefficient(const double x,const int s) { return x*s; }
+static const double uninterpretValue_coefficient(const double x,const int s) { return x/s; }
+
+
+// define the interpretValue_kernelLength and uninterpretValue_kernelLength functions
+#ifdef HAVE_LIBFFTW
+	#include "../backend/DSP/Convolver.h"
+	static vector<size_t> goodFilterKernelSizes;
+	static const double interpretValue_kernelLength(const double x,const int s) 
+	{ 
+		if(goodFilterKernelSizes.size()<=0) // first time
+			goodFilterKernelSizes=TFFTConvolverTimeDomainKernel<float,float>::getGoodFilterKernelSizes();
+
+			// use min and max to place reasonable limits on the kernel size
+		return min((unsigned)(4*1024*1024),max((size_t)8,goodFilterKernelSizes[(size_t)ceil(x*(goodFilterKernelSizes.size()-2))])); // -2 cause I need padding in the actual convolver
+	}
+	static const double uninterpretValue_kernelLength(const double x,const int s) 
+	{
+		if(goodFilterKernelSizes.size()<=0) // first time
+			goodFilterKernelSizes=TFFTConvolverTimeDomainKernel<float,float>::getGoodFilterKernelSizes();
+
+		for(size_t t=0;t<goodFilterKernelSizes.size();t++)
+		{
+			if(goodFilterKernelSizes[t]==x)
+				return ((double)t)/(goodFilterKernelSizes.size()-2); // -2 cause I need padding in the actual convolver
+		}
+		return 0;
+	}
+#else 
+		// just for show
+	static const double interpretValue_kernelLength(const double x,const int s) { return floor(x*1024.0); }
+	static const double uninterpretValue_kernelLength(const double x,const int s) { return x/1024.0; }
+#endif
+
+
+FXDEFMAP(CArbitraryFIRFilterDialog) CArbitraryFIRFilterDialogMap[]=
+{
+	//Message_Type			ID							Message_Handler
+
+	FXMAPFUNC(SEL_COMMAND,		CArbitraryFIRFilterDialog::ID_BASE_FREQUENCY,		CArbitraryFIRFilterDialog::onFrequencyRangeChange),
+	FXMAPFUNC(SEL_COMMAND,		CArbitraryFIRFilterDialog::ID_NUMBER_OF_OCTAVES,	CArbitraryFIRFilterDialog::onFrequencyRangeChange),
+};
+
+FXIMPLEMENT(CArbitraryFIRFilterDialog,CActionParamDialog,CArbitraryFIRFilterDialogMap,ARRAYNUMBER(CArbitraryFIRFilterDialogMap))
+
+CArbitraryFIRFilterDialog::CArbitraryFIRFilterDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Arbitrary FIR Filter")
+{
+	void *p0=newHorzPanel(NULL);
+		addSlider(p0,"Wet/Dry Mix","%",interpretValue_wetdry_mix,uninterpretValue_wetdry_mix,NULL,100.0,0,0,0,true);
+		void *p1=newVertPanel(p0,false);
+			addGraph(p1,"Frequency Response","Frequency","Hz",interpretValue_freq,uninterpretValue_freq,"Coefficient","x",interpretValue_coefficient,uninterpretValue_coefficient,NULL,1,10,2);
+			void *p2=newHorzPanel(p1,false);
+				addNumericTextEntry(p2,"Base Frequency","Hz",20,10,1000,"This Sets the Lowest Frequency Displayed on the Graph.\nThis is the Frequency of the First Octave.");
+				addNumericTextEntry(p2,"Number of Octaves","",11,1,15,"This Sets the Number of Octaves Displayed on the Graph.\nBut Note that no Frequency Higher than Half of the Sound's Sampling Rate can be Affected Since it Cannot Contain a Frequency Higher than That.");
+
+		p1=newVertPanel(p0,false);
+			addSlider(p1,"Kernel Length","",interpretValue_kernelLength,uninterpretValue_kernelLength,NULL,1024,0,0,0,false); 
+			setTipText("Kernel Length","This is the Size of the Filter Kernel Computed (in samples) From Your Curve to be Convolved with the Audio");
+			addCheckBoxEntry(p1,"Undelay",true,"This Counteracts the Delay Side-Effect of Custom FIR Filters");
+
+		// ??? I suppose if the add... methods would return the widget, then I could avoid this method call
+	FXTextParamValue *w=getTextParam("Base Frequency");
+		w->setTarget(this);
+		w->setSelector(ID_BASE_FREQUENCY);
+
+	w=getTextParam("Number of Octaves");
+		w->setTarget(this);
+		w->setSelector(ID_NUMBER_OF_OCTAVES);
+
+	onFrequencyRangeChange(NULL,0,NULL);
+
+// need to try to make some buttons or deformation sliders that change the symmetry (build this symmetry changing code into CGraphParamValue nodes) and I should build this into FXGraphParamValue so that all the widgets can have it
+}
+
+long CArbitraryFIRFilterDialog::onFrequencyRangeChange(FXObject *sender,FXSelector sel,void *ptr)
+{
+	FXGraphParamValue *g=getGraphParam("Frequency Response");
+
+	FXTextParamValue *baseFrequency=getTextParam("Base Frequency");
+	FXTextParamValue *numberOfOctaves=getTextParam("Number of Octaves");
+
+	gBaseFrequency=(unsigned)baseFrequency->getValue();
+	gNumberOfOctaves=(unsigned)numberOfOctaves->getValue();
+
+	g->updateNumbers();
+
+	return 1;
+}
+
+#include "../backend/CActionSound.h"
+#include "../backend/CSound.h"
+bool CArbitraryFIRFilterDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
+{
+	//gSampleRate=actionSound->sound->getSampleRate();
+	return CActionParamDialog::show(actionSound,actionParameters);
+}
+
+
+
+
+
+
+
 
 // --- single pole lowpass ---------------
 
