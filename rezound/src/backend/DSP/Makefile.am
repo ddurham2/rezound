@@ -33,6 +33,7 @@ noinst_HEADERS= \
 	LevelDetector.h \
 	NoiseGate.h \
 	Quantizer.h \
+	Distorter.h \
 	SinglePoleFilters.h \
 	BiquadResFilters.h \
 	TSoundStretcher.h
