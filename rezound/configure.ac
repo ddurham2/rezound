@@ -338,6 +338,37 @@ AC_ARG_ENABLE(
 	]
 )
 
+# handle the --enable-alsa flag
+AH_TEMPLATE(ENABLE_ALSA)
+AC_ARG_ENABLE(
+	alsa,
+	AC_HELP_STRING([--enable/disable-alsa],[enable/disable ReZound to use ALSA for audio I/O]),
+	[ # action if either enable or disable flag is given
+		if [[ "$enableval" = "yes" ]]
+		then 
+			AC_CHECK_HEADER(
+				[1.0.0],
+				[
+					AC_DEFINE(ENABLE_ALSA)
+					AC_MSG_RESULT([*** enabling ALSA for audio I/O])
+				]
+			)
+		else
+			AC_MSG_RESULT([*** disabling ALSA for audio I/O])
+		fi
+	],
+	[ # action if neither enable or disable flag is given
+		AM_PATH_ALSA(
+			[1.0.0],
+			[
+				AC_DEFINE(ENABLE_ALSA)
+				AC_MSG_RESULT([*** enabling ALSA for audio I/O])
+			],
+			[]
+		)
+	]
+)
+
 # handle the --enable-portaudio flag
 AH_TEMPLATE(ENABLE_PORTAUDIO)
 if test -z "$enable_standalone"; then

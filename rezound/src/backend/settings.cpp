@@ -70,6 +70,10 @@ unsigned gDesiredOutputBufferSize=2048; // in frames (must be a power of 2)
 string gOSSOutputDevice="/dev/dsp";
 string gOSSInputDevice="/dev/dsp";
 #endif
+#ifdef ENABLE_ALSA
+string gALSAOutputDevice="hw:0";
+string gALSAInputDevice="hw:0";
+#endif
 #ifdef ENABLE_PORTAUDIO
 int gPortAudioOutputDevice=0;
 int gPortAudioInputDevice=0;
@@ -219,6 +223,11 @@ void readBackendSettings()
 	GET_SETTING("OSSInputDevice",gOSSInputDevice,string)
 #endif
 
+#ifdef ENABLE_ALSA
+	GET_SETTING("ALSAOutputDevice",gALSAOutputDevice,string)
+	GET_SETTING("ALSAInputDevice",gALSAInputDevice,string)
+#endif
+
 #ifdef ENABLE_PORTAUDIO
 	GET_SETTING("PortAudioOutputDevice",gPortAudioOutputDevice,int)
 	GET_SETTING("PortAudioInputDevice",gPortAudioInputDevice,int)
@@ -245,7 +254,10 @@ void readBackendSettings()
 	if(gLADSPAPath=="")
 	{
 		if(getenv("LADSPA_PATH")==NULL)
-    			fprintf(stderr,"Warning: You do not have a LADSPA_PATH environment variable set.\n");
+		{
+    			fprintf(stderr,"Notice: You do not have a LADSPA_PATH environment variable set.  Defaulting to \"/usr/local/lib/ladspa:/usr/lib/ladspa\"\n");
+			gLADSPAPath="/usr/local/lib/ladspa:/usr/lib/ladspa";
+		}
 		else
 			gLADSPAPath=mnn(getenv("LADSPA_PATH"));
 	}

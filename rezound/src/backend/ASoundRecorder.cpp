@@ -463,6 +463,7 @@ void ASoundRecorder::removeStatusTrigger(TriggerFunc triggerFunc,void *data)
 #include "settings.h"
 
 #include "COSSSoundRecorder.h"
+#include "CALSASoundRecorder.h"
 #include "CPortAudioSoundRecorder.h"
 #include "CJACKSoundRecorder.h"
 
@@ -512,6 +513,12 @@ ASoundRecorder *ASoundRecorder::createInitializedSoundRecorder(CSound *sound)
 			{	
 #ifdef ENABLE_OSS
 				INITIALIZE_RECORDER(COSSSoundRecorder)
+#endif
+			}
+			else if(method=="alsa")
+			{	
+#ifdef ENABLE_ALSA
+				INITIALIZE_RECORDER(CALSASoundRecorder)
 #endif
 			}
 			else if(method=="jack")

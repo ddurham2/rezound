@@ -70,9 +70,14 @@ extern int gDesiredOutputBufferCount;		// defaulted to 2
 extern unsigned gDesiredOutputBufferSize;	// defaulted to 2048 (in frames)
 
 #ifdef ENABLE_OSS
-// the OSS devices to use (when not using libportaudio)
+// the OSS devices to use 
 extern string gOSSOutputDevice;			// defaulted to "/dev/dsp"
 extern string gOSSInputDevice;			// defaulted to "/dev/dsp"
+#endif
+#ifdef ENABLE_ALSA
+// the ALSA devices to use 
+extern string gALSAOutputDevice;		// defaulted to "hw:0"
+extern string gALSAInputDevice;			// defaulted to "hw:0"
 #endif
 #ifdef ENABLE_PORTAUDIO
 // the PortAudio devices to use

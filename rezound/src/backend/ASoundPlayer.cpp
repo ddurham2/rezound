@@ -474,6 +474,7 @@ const size_t ASoundPlayer::getFrequencyAnalysisOctaveStride() const
 
 #include "CNULLSoundPlayer.h"
 #include "COSSSoundPlayer.h"
+#include "CALSASoundPlayer.h"
 #include "CPortAudioSoundPlayer.h"
 #include "CJACKSoundPlayer.h"
 
@@ -526,6 +527,12 @@ ASoundPlayer *ASoundPlayer::createInitializedSoundPlayer()
 			{	
 #ifdef ENABLE_OSS
 				INITIALIZE_PLAYER(COSSSoundPlayer)
+#endif
+			}
+			else if(method=="alsa")
+			{	
+#ifdef ENABLE_ALSA
+				INITIALIZE_PLAYER(CALSASoundPlayer)
 #endif
 			}
 			else if(method=="jack")

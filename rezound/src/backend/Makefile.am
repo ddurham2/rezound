@@ -67,6 +67,8 @@ noinst_HEADERS= \
 	   CNULLSoundPlayer.h \
 	   COSSSoundPlayer.h \
 	   COSSSoundRecorder.h \
+	   CALSASoundPlayer.h \
+	   CALSASoundRecorder.h \
 	   CPortAudioSoundPlayer.h \
 	   CPortAudioSoundRecorder.h \
 	   CJACKSoundPlayer.h \
@@ -114,6 +116,8 @@ libbackend_la_SOURCES= \
 			Cold_rezSoundTranslator.cpp \
 			COSSSoundPlayer.cpp \
 			COSSSoundRecorder.cpp \
+			CALSASoundPlayer.cpp \
+			CALSASoundRecorder.cpp \
 	   		CPortAudioSoundPlayer.cpp \
 	   		CPortAudioSoundRecorder.cpp \
 	   		CJACKSoundPlayer.cpp \
@@ -132,8 +136,8 @@ libbackend_la_SOURCES= \
 		        settings.cpp
 
 # SOUNDTOUCH_CXXFLAGS is in Remaster/Makefile.am
-AM_CXXFLAGS=@AUDIOFILE_CFLAGS@ @JACK_CFLAGS@ @OGG_CFLAGS@ @VORBIS_CFLAGS@ @LIBFLACPP_CFLAGS@ @LIBFLAC_CFLAGS@
+AM_CXXFLAGS=@AUDIOFILE_CFLAGS@ @ALSA_CFLAGS@ @JACK_CFLAGS@ @OGG_CFLAGS@ @VORBIS_CFLAGS@ @LIBFLACPP_CFLAGS@ @LIBFLAC_CFLAGS@
 
 # SOUNDTOUCH_LIBS is in Remaster/Makefile.am
-libbackend_la_LIBADD=@LTLIBINTL@ @AUDIOFILE_LIBS@ @JACK_LIBS@ @OGG_LIBS@ @VORBISFILE_LIBS@ @VORBISENC_LIBS@ @VORBIS_LIBS@ @LIBFLACPP_LIBS@ @LIBFLAC_LIBS@
+libbackend_la_LIBADD=@LTLIBINTL@ @AUDIOFILE_LIBS@ @ALSA_LIBS@ @JACK_LIBS@ @OGG_LIBS@ @VORBISFILE_LIBS@ @VORBISENC_LIBS@ @VORBIS_LIBS@ @LIBFLACPP_LIBS@ @LIBFLAC_LIBS@
 
