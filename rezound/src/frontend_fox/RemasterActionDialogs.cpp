@@ -254,7 +254,40 @@ CNormalizeDialog::CNormalizeDialog(FXWindow *mainWindow) :
 			addSlider(p2,N_("Normalization Level"),"dBFS",interpretValue_dBFS,uninterpretValue_dBFS,NULL,-0.5,0,0,1,false);
 			addSlider(p2,N_("Region Count"),"",interpretValue_regionCount,uninterpretValue_regionCount,NULL,1,0,0,0,false);
 		p2=newVertPanel(p1,false);
-			addCheckBoxEntry(p2,N_("Lock Channels"),true,"Calculate Maximum Sample Value in a Region Across All Channels");
+			addCheckBoxEntry(p2,N_("Lock Channels"),true,_("Calculate Maximum Sample Value in a Region Across All Channels"));
+}
+
+
+// --- mark quiet areas --------------------
+
+static const double interpretValue_quietTime(const double x,const int s) { return x*s; }
+static const double uninterpretValue_quietTime(const double x,const int s) { return x/s; }
+
+static const double interpretValue_detectorWindow(const double x,const int s) { return(unitRange_to_otherRange_linear(x,.1,100)*s); }
+static const double uninterpretValue_detectorWindow(const double x,const int s) { return(otherRange_to_unitRange_linear(x/s,.1,100)); }
+
+
+CMarkQuietAreasDialog::CMarkQuietAreasDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow)
+{
+	FXConstantParamValue *t;
+	void *p1=newVertPanel(NULL);
+		void *p2=newHorzPanel(p1,false);
+			t=addSlider(p2,N_("Threshold for Quiet"),"dBFS",interpretValue_dBFS,uninterpretValue_dBFS,NULL,-48,0,0,1,false);
+			t->setTipText(_("An audio level below this threshold is considered to be quiet."));
+
+			t=addSlider(p2,N_("Must Remain Quiet for"),"ms",interpretValue_quietTime,uninterpretValue_quietTime,NULL,500,10,10000,1000,false);
+			t->setTipText(_("The audio level must remain below the threshold for this long before a beginning cue will be added."));
+
+			t=addSlider(p2,N_("Must Remain Unquiet for"),"ms",interpretValue_quietTime,uninterpretValue_quietTime,NULL,0,10,10000,1000,false);
+			t->setTipText(_("After the beginning of a quiet area has been detected the audio level must rise above the threshold for this long for an ending cue to be added."));
+
+			t=addSlider(p2,N_("Level Detector Window Time"),"ms",interpretValue_detectorWindow,uninterpretValue_detectorWindow,NULL,35.0,1,10,1,false);
+			t->setTipText(_("This is the length of the window of audio to analyze for detecting the audio level."));
+
+		p2=newVertPanel(p1,false);
+			addStringTextEntry(p2,N_("Quiet Begin Cue Name"),"[",_("What to Name a Cue That Marks Beginning of a Quiet Region"));
+			addStringTextEntry(p2,N_("Quiet End Cue Name"),"]",_("What to Name a Cue That Marks End of a Quiet Region"));
 }
 
 

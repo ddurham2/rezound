@@ -36,7 +36,7 @@ default
 	}
 	Remaster
 	{
-		menuitems={"Balance...", "Curved Balance...", "-", "Monoize...", "-", "Noise Gate...", "Dynamic Range Compressor...", "Normalize...", "-", "Resample...", "-", "Remove DC Component", "-", "Unclip (just messing around)"};
+		menuitems={"Balance...", "Curved Balance...", "-", "Monoize...", "-", "Noise Gate...", "Dynamic Range Compressor...", "Normalize...", "Mark Quiet Areas...", "-", "Resample...", "-", "Remove DC Component", "-", "Unclip (just messing around)"};
 	}
 	Generate
 	{

@@ -100,6 +100,17 @@ public:
 
 
 
+// --- mark quiet areas ------------------
+
+class CMarkQuietAreasDialog : public CActionParamDialog
+{
+public:
+	CMarkQuietAreasDialog(FXWindow *mainWindow);
+	virtual ~CMarkQuietAreasDialog(){}
+};
+
+
+
 // --- remaster --------------------------
 
 class CResampleDialog : public CActionParamDialog

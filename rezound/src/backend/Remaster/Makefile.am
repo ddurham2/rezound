@@ -36,6 +36,7 @@ noinst_HEADERS= \
 		CCompressorAction.h \
 		CNormalizeAction.h \
 		CResampleAction.h \
+		CMarkQuietAreasAction.h \
 		RemasterActions.h
 
 noinst_LTLIBRARIES=libRemaster.la
@@ -47,6 +48,7 @@ libRemaster_la_SOURCES= \
 			CUnclipAction.cpp \
 			CCompressorAction.cpp \
 			CNormalizeAction.cpp \
-			CResampleAction.cpp 
+			CResampleAction.cpp \
+			CMarkQuietAreasAction.cpp 
 
 
