@@ -31,7 +31,6 @@
 #include <map>
 
 #ifdef THREAD_SAFE_CSCOPE
-#error no no.. I need to convert this to use CommonC++ if I am to actually support threadsafe-ness
 #include <CMutex.h>
 #endif
 

@@ -7,20 +7,19 @@ missing from particular distributions or platforms.  This is where code is
 placed for either a workaround or substitution for what didn't exist on a
 particular distribution or platform.
 
-- istring is a  C++ class derived from std::string, the STL string class, and 
+- istring is a C++ class derived from std::string, the STL string class, and 
   provides some functionality missing in the STL implementation which may be 
   possible with other parts of the STL but is rather cumbersome or verbose.
 
-- cc++/path.* is a class intended to be added to the GNU CommonC++ library.  
-  It is used to perform various operations on pathnames (i.e. does exist?, 
+- CPath is used to perform various operations on pathnames (i.e. does exist?, 
   touch, size of file).
 
-- cc++/TAutoBuffer.h is a class intended to be added to the GNU CommonC++ 
-  library.  It is used to allocate buffer of memory that will be freed when 
+- TAutoBuffer is used to allocate buffer of memory that will be freed when 
   the object goes out of scope.
 
-- cc++/TAutoArray.h is a class intended to be added to the GNU CommonC++ 
-  library.  It is used to allocate an array of objects that will be freed 
-  when the object goes out of scope.
+- AThread is a posix (pthread) thread wrapper class
 
+- CMutex is a posix (pthread) mutex wrapper class
+
+- CRWLock is a posix (pthread) rwlock wrapper class
 

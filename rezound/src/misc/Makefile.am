@@ -24,7 +24,6 @@
 include $(top_srcdir)/config/am_include.mk
 
 SUBDIRS= \
-	cc++ \
 	CNestedDataFile
 
 EXTRA_DIST= \
