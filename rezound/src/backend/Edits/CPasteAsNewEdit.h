@@ -18,27 +18,40 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __EditActions_H__
-#define __EditActions_H__
+#ifndef __CPasteAsNewEdit_H__
+#define __CPasteAsNewEdit_H__
 
 #include "../../../config/common.h"
 
-#include "CCropEdit.h"
-#include "CCopyCutDeleteEdit.h"
-#include "CMuteEdit.h"
-#include "CSelectionEdit.h"
-#include "CPasteEdit.h"
-#include "CPasteAsNewEdit.h"
-//#include "CTrimEdit.h"
-#include "CInsertSilenceEdit.h"
-#include "CRotateEdit.h"
-#include "CSwapChannelsEdit.h"
-#include "CAddChannelsEdit.h"
-#include "CRemoveChannelsEdit.h"
+#include "../AAction.h"
+class CLoadedSound;
+class ASoundFileManager;
 
-// ---------- does not appear actually under the Edit menu
-#include "CSaveSelectionAsAction.h"
-#include "CSaveAsMultipleFilesAction.h"
+class CPasteAsNewEdit : public AAction
+{
+public:
+	CPasteAsNewEdit(const CActionSound actionSound,ASoundFileManager *soundFileManager);
+	virtual ~CPasteAsNewEdit();
 
+protected:
+	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound &actionSound);
+	CanUndoResults canUndo(const CActionSound &actionSound) const;
+
+private:
+	ASoundFileManager *soundFileManager;
+
+};
+
+class CPasteAsNewEditFactory : public AActionFactory
+{
+public:
+	CPasteAsNewEditFactory();
+	virtual ~CPasteAsNewEditFactory();
+
+	CPasteAsNewEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+
+	bool doPreActionSetup(CLoadedSound *loadedSound);
+};
 
 #endif

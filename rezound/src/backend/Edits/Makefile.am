@@ -33,6 +33,7 @@ noinst_HEADERS= \
 		CInsertSilenceEdit.h \
 		CMuteEdit.h \
 		CPasteEdit.h \
+		CPasteAsNewEdit.h \
 		CRotateEdit.h \
 		CSwapChannelsEdit.h \
 		CAddChannelsEdit.h \
@@ -52,6 +53,7 @@ libEdits_la_SOURCES= \
 		CInsertSilenceEdit.cpp \
 		CMuteEdit.cpp \
 		CPasteEdit.cpp \
+		CPasteAsNewEdit.cpp \
 		CRotateEdit.cpp \
 		CSwapChannelsEdit.cpp \
 		CAddChannelsEdit.cpp \
