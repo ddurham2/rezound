@@ -5,7 +5,8 @@
 	- NeXT/Sun 		(libaudiofile)
 	- Berkeley/IRCAM/CARL	(libaudiofile)
 	- raw			(libaudiofile)
-	- Ogg Vorbis		(libogg)
+	- Ogg Vorbis		(libogg and libvorbis)
+	- MPEG Layer-3,2,1	(lame)
 
 - Fast Editing of Large Files
 
