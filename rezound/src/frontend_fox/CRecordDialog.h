@@ -58,6 +58,8 @@ public:
 
 		ID_STATUS_UPDATE,
 
+		ID_DC_OFFSET_COMPENSATE_BUTTON,
+
 		ID_LAST
 	};
 
@@ -75,6 +77,8 @@ public:
 
 	long onStartThresholdSpinner(FXObject *sender,FXSelector sel,void *ptr);
 
+	long onDCOffsetCompensateButton(FXObject *sender,FXSelector sel,void *ptr);
+
 protected:
 	CRecordDialog() {}
 
@@ -89,6 +93,8 @@ private:
 	FXLabel *recordedLengthStatusLabel;
 	FXLabel *recordedSizeStatusLabel;
 	FXLabel *recordLimitLabel;
+
+	FXLabel *DCOffsetLabel;
 
 	FXPacker *recordingLED;
 	FXPacker *waitingForThresholdLED;

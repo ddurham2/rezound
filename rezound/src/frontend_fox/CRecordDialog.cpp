@@ -24,28 +24,33 @@
 #include "../backend/AStatusComm.h"
 #include "CFOXIcons.h"
 
+#include <stdlib.h> // abs
 
 #include <istring>
+
+#include "../backend/unit_conv.h"
 
 #define STATUS_UPDATE_TIME 100
 
 FXDEFMAP(CRecordDialog) CRecordDialogMap[]=
 {
-//	Message_Type			ID					Message_Handler
-	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_START_BUTTON,		CRecordDialog::onStartButton),
-	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_STOP_BUTTON,		CRecordDialog::onStopButton),
-	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_REDO_BUTTON,		CRecordDialog::onRedoButton),
+//	Message_Type			ID						Message_Handler
+	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_START_BUTTON,			CRecordDialog::onStartButton),
+	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_STOP_BUTTON,			CRecordDialog::onStopButton),
+	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_REDO_BUTTON,			CRecordDialog::onRedoButton),
 
-	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_ADD_CUE_BUTTON,	CRecordDialog::onAddCueButton),
-	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_ADD_ANCHORED_CUE_BUTTON,CRecordDialog::onAddCueButton),
+	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_ADD_CUE_BUTTON,		CRecordDialog::onAddCueButton),
+	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_ADD_ANCHORED_CUE_BUTTON,	CRecordDialog::onAddCueButton),
 
-	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_DURATION_SPINNER,	CRecordDialog::onDurationSpinner),
+	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_DURATION_SPINNER,		CRecordDialog::onDurationSpinner),
 
 	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_START_THRESHOLD_SPINNER,	CRecordDialog::onStartThresholdSpinner),
 
-	FXMAPFUNC(SEL_TIMEOUT,		CRecordDialog::ID_STATUS_UPDATE,	CRecordDialog::onStatusUpdate),
+	FXMAPFUNC(SEL_TIMEOUT,		CRecordDialog::ID_STATUS_UPDATE,		CRecordDialog::onStatusUpdate),
 
-	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_CLEAR_CLIP_COUNT_BUTTON,CRecordDialog::onClearClipCountButton),
+	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_CLEAR_CLIP_COUNT_BUTTON,	CRecordDialog::onClearClipCountButton),
+
+	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_DC_OFFSET_COMPENSATE_BUTTON,	CRecordDialog::onDCOffsetCompensateButton),
 };
 		
 
@@ -107,6 +112,9 @@ CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
 					recordedLengthStatusLabel=new FXLabel(frame4,"00:00.000",NULL,LAYOUT_FILL_X|JUSTIFY_LEFT);
 					recordedSizeStatusLabel=new FXLabel(frame4,"0",NULL,LAYOUT_FILL_X|JUSTIFY_LEFT);
 					recordLimitLabel=new FXLabel(frame4,"",NULL,LAYOUT_FILL_X|JUSTIFY_LEFT);
+			frame3=new FXVerticalFrame(frame2,FRAME_RAISED | LAYOUT_FILL_X);
+				DCOffsetLabel=new FXLabel(frame3,"DCOffset: ",NULL,LAYOUT_CENTER_Y);
+				new FXButton(frame3,"Compensate\tSubtract out the currently reported DC Offset from any further recorded data",NULL,this,ID_DC_OFFSET_COMPENSATE_BUTTON,BUTTON_NORMAL|LAYOUT_CENTER_Y);
 		frame2=new FXVerticalFrame(frame1,FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_FILL_Y);
 			frame3=new FXHorizontalFrame(frame2,0,0,0,0, 0,0,0,0, 0,0);
 				new FXButton(frame3,"Reset",NULL,this,ID_CLEAR_CLIP_COUNT_BUTTON);
@@ -213,6 +221,17 @@ long CRecordDialog::onStatusUpdate(FXObject *sender,FXSelector sel,void *ptr)
 	}
 	else
 		waitingForThresholdLED->getFirst()->lower();
+
+	// display the current DC Offset
+	const unsigned channelCount=recorder->getChannelCount();
+		// get greatest abs DCOffset
+	sample_t DCOffset=recorder->getDCOffset(0);
+	for(unsigned i=1;i<channelCount;i++)
+	{
+		if(abs(DCOffset)>abs(recorder->getDCOffset(i)))
+			DCOffset=recorder->getDCOffset(i);
+	}
+	DCOffsetLabel->setText(("DC Offset: "+istring(amp_to_dBFS(recorder->getDCOffset(1)))+"dBFS").c_str());
 
 	// schedule for the next status update
 	timerHandle=getApp()->addTimeout(STATUS_UPDATE_TIME,this,CRecordDialog::ID_STATUS_UPDATE);
@@ -384,3 +403,8 @@ long CRecordDialog::onStartThresholdSpinner(FXObject *sender,FXSelector sel,void
 	return 1;
 }
 
+long CRecordDialog::onDCOffsetCompensateButton(FXObject *sender,FXSelector sel,void *ptr)
+{
+	recorder->compensateForDCOffset();
+	return 1;
+}
