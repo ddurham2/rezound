@@ -104,6 +104,74 @@ bool ASoundTranslator::saveSound(const string filename,const CSound *sound,const
 	}
 }
 
+// --- static methods --------------------------------------------
+
+/* just a thought:
+	This method could be given some abstract stream class pointer instead 
+	of a filename which could access a file or a network URL.   Then the 
+	translators would also have to be changed to read from that stream 
+	instead of the file, and libaudiofile would at this point in time have 
+	trouble doing that.
+*/
+#include <CPath.h>
+const ASoundTranslator *ASoundTranslator::findTranslator(const string filename,bool isRaw)
+{
+	if(registeredTranslators.size()<=0)
+		buildRegisteredTranslatorsVector();
+
+	if(isRaw)
+	{
+		for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
+		{
+			if(ASoundTranslator::registeredTranslators[t]->handlesRaw())
+				return(ASoundTranslator::registeredTranslators[t]);
+		}
+	}
+
+	CPath path(filename);
+	if(path.exists() && path.isRegularFile())
+	{ // try to determine from the contents of the file
+		for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
+		{
+			if(ASoundTranslator::registeredTranslators[t]->supportsFormat(filename))
+				return(ASoundTranslator::registeredTranslators[t]);
+		}
+	}
+
+	// file doesn't exist or no supported signature, so attempt to determine the translater based on the file extension
+	const string extension=istring(CPath(filename).extension()).lower();
+	if(extension=="")
+		throw(runtime_error(string(__func__)+" -- cannot determine the extension on the filename: "+filename));
+	else
+	{
+		for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
+		{
+			if(ASoundTranslator::registeredTranslators[t]->handlesExtension(extension))
+				return(ASoundTranslator::registeredTranslators[t]);
+		}
+	}
+
+	// find the raw translator and ask the user if they want to use it
+	for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
+	{
+		if(ASoundTranslator::registeredTranslators[t]->handlesRaw())
+		{
+			if(Question("No handler found to support the format for "+filename+"\nWould you like to use a raw format?",yesnoQues)==yesAns)
+				return(ASoundTranslator::registeredTranslators[t]);
+			else
+				break;
+		}
+	}
+	throw(runtime_error(string(__func__)+" -- unhandled format/extension for the filename '"+filename+"'"));
+}
+
+const vector<const ASoundTranslator *> ASoundTranslator::getTranslators()
+{
+	if(registeredTranslators.size()<=0)
+		buildRegisteredTranslatorsVector();
+	return registeredTranslators;
+}
+
 const vector<string> ASoundTranslator::getFlatFormatList()
 {
 	vector<string> v;
@@ -121,3 +189,48 @@ const vector<string> ASoundTranslator::getFlatFormatList()
 
 	return v;
 }
+
+
+#include "CrezSoundTranslator.h"
+#include "ClibvorbisSoundTranslator.h"
+#include "ClibaudiofileSoundTranslator.h"
+#include "ClameSoundTranslator.h"
+#include "CvoxSoundTranslator.h"
+#include "CrawSoundTranslator.h"
+#include "Cold_rezSoundTranslator.h"
+void ASoundTranslator::buildRegisteredTranslatorsVector()
+{
+	registeredTranslators.clear();
+
+	static const CrezSoundTranslator rezSoundTranslator;
+	registeredTranslators.push_back(&rezSoundTranslator);
+
+#ifdef HAVE_LIBVORBIS
+	static const ClibvorbisSoundTranslator libvorbisSoundTranslator;
+	registeredTranslators.push_back(&libvorbisSoundTranslator);
+#endif
+
+#ifdef HAVE_LIBAUDIOFILE
+	static const ClibaudiofileSoundTranslator libaudiofileSoundTranslator;
+	registeredTranslators.push_back(&libaudiofileSoundTranslator);
+
+	static const CrawSoundTranslator rawSoundTranslator;
+	registeredTranslators.push_back(&rawSoundTranslator);
+#endif
+
+	if(ClameSoundTranslator::checkForApp())
+	{
+		static const ClameSoundTranslator lameSoundTranslator;
+		registeredTranslators.push_back(&lameSoundTranslator);
+	}
+
+	if(CvoxSoundTranslator::checkForApp())
+	{
+		static const CvoxSoundTranslator voxSoundTranslator;
+		registeredTranslators.push_back(&voxSoundTranslator);
+	}
+
+	static const Cold_rezSoundTranslator old_rezSoundTranslator;
+	registeredTranslators.push_back(&old_rezSoundTranslator);
+}
+

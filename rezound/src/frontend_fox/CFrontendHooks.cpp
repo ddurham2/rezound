@@ -110,6 +110,7 @@ void CFrontendHooks::doSetupAfterBackendIsSetup()
 
 const string CFrontendHooks::getFOXFileTypes() const
 {
+	const vector<const ASoundTranslator *> translators=ASoundTranslator::getTranslators();
 	string types;
 	string allTypes;
 
@@ -119,10 +120,10 @@ const string CFrontendHooks::getFOXFileTypes() const
 		   Format Name (*.ext,*.EXT)\nFormat Name (*.ext,*.EXT)\n...
 		And built a list for "All Types" with the *.ext,*.ext,...,*.EXT,*.EXT
 	*/
-	for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
+	for(size_t t=0;t<translators.size();t++)
 	{
-		const vector<string> names=ASoundTranslator::registeredTranslators[t]->getFormatNames();
-		const vector<vector<string> > extensions=ASoundTranslator::registeredTranslators[t]->getFormatExtensions();
+		const vector<string> names=translators[t]->getFormatNames();
+		const vector<vector<string> > extensions=translators[t]->getFormatExtensions();
 	
 		for(size_t i=0;i<names.size();i++)
 		{
@@ -143,10 +144,10 @@ const string CFrontendHooks::getFOXFileTypes() const
 		}
 	}
 
-	for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
+	for(size_t t=0;t<translators.size();t++)
 	{
-		const vector<string> names=ASoundTranslator::registeredTranslators[t]->getFormatNames();
-		const vector<vector<string> > extensions=ASoundTranslator::registeredTranslators[t]->getFormatExtensions();
+		const vector<string> names=translators[t]->getFormatNames();
+		const vector<vector<string> > extensions=translators[t]->getFormatExtensions();
 	
 		for(size_t i=0;i<names.size();i++)
 		{

@@ -31,7 +31,6 @@
 
 #include "../unit_conv.h"
 
-#include "../ASoundFileManager.h"
 #include "../ASoundTranslator.h"
 #include "../CActionParameters.h"
 
@@ -79,7 +78,7 @@ bool CConvolutionFilter::doActionSizeSafe(CActionSound &actionSound,bool prepare
 	symlink(filename.c_str(),tempFilename.c_str());
 	try
 	{
-		const ASoundTranslator *translator=ASoundFileManager::getTranslator(tempFilename,openFilterKernelAsRaw);
+		const ASoundTranslator *translator=ASoundTranslator::findTranslator(tempFilename,openFilterKernelAsRaw);
 
 		CSound filterKernelFile;
 		try

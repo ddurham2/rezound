@@ -52,8 +52,6 @@ static ASoundPlayer *gSoundPlayer=NULL; // saved value for deinitialize
 
 #include <CPath.h>
 
-static void setupSoundTranslators();
-
 static bool checkForHelpFlag(int argc,char *argv[]);
 static bool checkForVersionFlag(int argc,char *argv[]);
 static void printUsage(const string app);
@@ -67,8 +65,6 @@ bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[])
 		if(checkForVersionFlag(argc,argv))
 			return false;
 
-
-		setupSoundTranslators();
 
 		// make sure that ~/.rezound exists
 		gUserDataDirectory=string(getenv("HOME"))+istring(CPath::dirDelim)+".rezound";
@@ -492,50 +488,6 @@ void deinitializeBackend()
 	gSettingsRegistry->save();
 	delete gSettingsRegistry;
 
-}
-
-#include "CrezSoundTranslator.h"
-#include "ClibvorbisSoundTranslator.h"
-#include "ClibaudiofileSoundTranslator.h"
-#include "ClameSoundTranslator.h"
-#include "CvoxSoundTranslator.h"
-#include "CrawSoundTranslator.h"
-#include "Cold_rezSoundTranslator.h"
-static void setupSoundTranslators()
-{
-	ASoundTranslator::registeredTranslators.clear();
-
-	static const CrezSoundTranslator rezSoundTranslator;
-	ASoundTranslator::registeredTranslators.push_back(&rezSoundTranslator);
-
-#ifdef HAVE_LIBVORBIS
-	static const ClibvorbisSoundTranslator libvorbisSoundTranslator;
-	ASoundTranslator::registeredTranslators.push_back(&libvorbisSoundTranslator);
-#endif
-
-#ifdef HAVE_LIBAUDIOFILE
-	static const ClibaudiofileSoundTranslator libaudiofileSoundTranslator;
-	ASoundTranslator::registeredTranslators.push_back(&libaudiofileSoundTranslator);
-
-	static const CrawSoundTranslator rawSoundTranslator;
-	ASoundTranslator::registeredTranslators.push_back(&rawSoundTranslator);
-#endif
-
-	if(ClameSoundTranslator::checkForApp())
-	{
-		static const ClameSoundTranslator lameSoundTranslator;
-		ASoundTranslator::registeredTranslators.push_back(&lameSoundTranslator);
-	}
-
-	if(CvoxSoundTranslator::checkForApp())
-	{
-		static const CvoxSoundTranslator voxSoundTranslator;
-		ASoundTranslator::registeredTranslators.push_back(&voxSoundTranslator);
-	}
-
-	static const Cold_rezSoundTranslator old_rezSoundTranslator;
-	ASoundTranslator::registeredTranslators.push_back(&old_rezSoundTranslator);
-	
 }
 
 

@@ -26,7 +26,6 @@
 #include "settings.h"
 
 #include <stdexcept>
-#include <algorithm>
 #include <CPath.h>
 
 #include <CNestedDataFile/CNestedDataFile.h>
@@ -74,7 +73,7 @@ CLoadedSound *ASoundFileManager::createNew(const string filename,unsigned channe
 		throw runtime_error(string(__func__)+" -- a file named '"+filename+"' is already opened");
 
 	// should get based on extension
-	const ASoundTranslator *translator=getTranslator(filename,rawFormat);
+	const ASoundTranslator *translator=ASoundTranslator::findTranslator(filename,rawFormat);
 
 	try
 	{
@@ -146,7 +145,7 @@ void ASoundFileManager::prvOpen(const string &filename,bool readOnly,bool doRegi
 	try
 	{
 		if(translatorToUse==NULL)
-			translatorToUse=getTranslator(filename,asRaw);
+			translatorToUse=ASoundTranslator::findTranslator(filename,asRaw);
 		sound=new CSound;
 
 		if(!translatorToUse->loadSound(filename,sound))
@@ -260,7 +259,7 @@ askAgain:
 				}
 			}
 
-			const ASoundTranslator *translator=getTranslator(filename,saveAsRaw);
+			const ASoundTranslator *translator=ASoundTranslator::findTranslator(filename,saveAsRaw);
 
 			if(translator->saveSound(filename,loaded->sound))
 			{
@@ -308,7 +307,7 @@ askAgain:
 			goto askAgain;
 	}
 
-	const ASoundTranslator *translator=getTranslator(filename,saveAsRaw);
+	const ASoundTranslator *translator=ASoundTranslator::findTranslator(filename,saveAsRaw);
 
 	if(translator->saveSound(filename,sound,saveStart,saveLength))
 		updateReopenHistory(filename);
@@ -583,60 +582,4 @@ const string ASoundFileManager::getReopenHistoryItem(const size_t index) const
 	else
 		return("");
 }
-
-
-/*
-	This method could be given some abstract stream class pointer instead 
-	of a filename which could access a file or a network URL.   Then the 
-	translators would also have to be changed to read from that stream 
-	instead of the file, and libaudiofile would at this point in time have 
-	trouble doing that.
-*/
-const ASoundTranslator *ASoundFileManager::getTranslator(const string filename,bool isRaw)
-{
-	if(isRaw)
-	{
-		for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
-		{
-			if(ASoundTranslator::registeredTranslators[t]->handlesRaw())
-				return(ASoundTranslator::registeredTranslators[t]);
-		}
-	}
-
-	if(CPath(filename).exists())
-	{ // try to determine from the contents of the file
-		for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
-		{
-			if(ASoundTranslator::registeredTranslators[t]->supportsFormat(filename))
-				return(ASoundTranslator::registeredTranslators[t]);
-		}
-	}
-
-	// file doesn't exist or no supported signature, so attempt to determine the translater based on the file extension
-	const string extension=istring(CPath(filename).extension()).lower();
-	if(extension=="")
-		throw(runtime_error(string(__func__)+" -- cannot determine the extension on the filename: "+filename));
-	else
-	{
-		for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
-		{
-			if(ASoundTranslator::registeredTranslators[t]->handlesExtension(extension))
-				return(ASoundTranslator::registeredTranslators[t]);
-		}
-	}
-
-	// find the raw translator and ask the user if they want to use it
-	for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
-	{
-		if(ASoundTranslator::registeredTranslators[t]->handlesRaw())
-		{
-			if(Question("No handler found to support the format for "+filename+"\nWould you like to use a raw format?",yesnoQues)==yesAns)
-				return(ASoundTranslator::registeredTranslators[t]);
-			else
-				break;
-		}
-	}
-	throw(runtime_error(string(__func__)+" -- unhandled format/extension for the filename '"+filename+"'"));
-}
-
 
