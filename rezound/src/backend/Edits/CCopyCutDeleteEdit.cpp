@@ -62,7 +62,7 @@ bool CCopyCutDeleteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepare
 		else
 			actionSound.sound->removeSpace(actionSound.doChannel,actionSound.start,actionSound.selectionLength());
 
-		actionSound.stop=actionSound.start;
+		actionSound.stop=actionSound.start=actionSound.start-1;
 	}
 
 	return(true);
