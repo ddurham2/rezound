@@ -33,6 +33,10 @@ or sample values to follow
 
 	- add   PCM to PWM  and  PWM to PCM  actions... I'm not sure if they would really fall under Effects... Maybe a new category should be created.  If a new one, then plan other new actions related to these.
 
+	- when I get ready to create a settings dialog and as settings become more numerous I need to create a class for getting the settings' values
+		- perhaps I should create sub-classes than separate the settings by group.. but all-in-all the code for saving and loading the settings should be in that class rather than directly in initialize.cpp and initialize.h
+			- I should probably create template methods (for the different types) so I'm not always rewriting the same code
+				- it would be easier to switch to xml if I ever did
 
 
 
