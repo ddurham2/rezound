@@ -64,16 +64,16 @@
 
 #include <stdio.h> // for the printf errors... should probably use assert (but assumably temporary)  (It's also for printSAT())
 
-#ifdef __GNUC__
+#if defined(__GNUC__) && (__GNUC__>=3)
 	#ifdef TESTING_TPOOLFILE
 		#define dprintf(...) printf(__VA_ARGS__)
 	#else
 		#define dprintf(...)
 	#endif
-
 #else
 	#define dprintf
 #endif
+
 
 #include <stdexcept>
 #include <utility>
