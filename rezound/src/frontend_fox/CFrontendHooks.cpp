@@ -34,6 +34,7 @@
 #include "COggDialog.h"
 #include "CMp3Dialog.h"
 #include "CVoxDialog.h"
+#include "CMIDIDumpSampleIdDialog.h"
 
 #include "../backend/ASoundTranslator.h"
 
@@ -53,7 +54,8 @@ CFrontendHooks::CFrontendHooks(FXWindow *_mainWindow) :
 	rawDialog(NULL),
 	oggDialog(NULL),
 	mp3Dialog(NULL),
-	voxDialog(NULL)
+	voxDialog(NULL),
+	MIDIDumpSampleIdDialog(NULL)
 {
 	dirDialog=new FXDirDialog(mainWindow,_("Select Directory"));
 
@@ -71,6 +73,7 @@ CFrontendHooks::~CFrontendHooks()
 	delete oggDialog;
 	delete mp3Dialog;
 	delete voxDialog;
+	delete MIDIDumpSampleIdDialog;
 }
 
 void CFrontendHooks::doSetupAfterBackendIsSetup()
@@ -106,6 +109,7 @@ void CFrontendHooks::doSetupAfterBackendIsSetup()
 	mp3Dialog=new CMp3Dialog(mainWindow);
 	voxDialog=new CVoxDialog(mainWindow);
 	
+	MIDIDumpSampleIdDialog=new CMIDIDumpSampleIdDialog(mainWindow);
 }
 
 const string CFrontendHooks::getFOXFileTypes() const
@@ -162,7 +166,7 @@ const string CFrontendHooks::getFOXFileTypes() const
 	
 	types=string(_("All Supported Types"))+" ("+allTypes+")\n"+types+_("All Files")+"(*)\n";
 
-	return(types);
+	return types;
 }
 
 bool CFrontendHooks::promptForOpenSoundFilename(string &filename,bool &readOnly,bool &openAsRaw)
@@ -181,9 +185,9 @@ bool CFrontendHooks::promptForOpenSoundFilename(string &filename,bool &readOnly,
 		readOnly=openDialog->getReadOnly();
 		openAsRaw=openAsRawCheckButton->getCheck();
 
-		return(true);
+		return true;
 	}
-	return(false);
+	return false;
 }
 
 bool CFrontendHooks::promptForOpenSoundFilenames(vector<string> &filenames,bool &readOnly,bool &openAsRaw)
@@ -208,9 +212,9 @@ bool CFrontendHooks::promptForOpenSoundFilenames(vector<string> &filenames,bool 
 		readOnly=openDialog->getReadOnly();
 		openAsRaw=openAsRawCheckButton->getCheck();
 
-		return(true);
+		return true;
 	}
-	return(false);
+	return false;
 }
 
 bool CFrontendHooks::promptForSaveSoundFilename(string &filename,bool &saveAsRaw)
@@ -229,9 +233,9 @@ bool CFrontendHooks::promptForSaveSoundFilename(string &filename,bool &saveAsRaw
 		filename=saveDialog->getFilename().text();
 		saveAsRaw=saveAsRawCheckButton->getCheck();
 
-		return(true);
+		return true;
 	}
-	return(false);
+	return false;
 }
 
 bool CFrontendHooks::promptForNewSoundParameters(string &filename,bool &rawFormat,bool hideFilename,unsigned &channelCount,bool hideChannelCount,unsigned &sampleRate,bool hideSampleRate,sample_pos_t &length,bool hideLength)
@@ -273,16 +277,16 @@ bool CFrontendHooks::promptForDirectory(string &dirname,const string title)
 	if(dirDialog->execute())
 	{
 		dirname=dirDialog->getDirectory().text();
-		return(true);
+		return true;
 	}
-	return(false);
+	return false;
 }
 
 bool CFrontendHooks::promptForRecord(ASoundRecorder *recorder)
 {
 	if(recordDialog->show(recorder))
-		return(true);
-	return(false);
+		return true;
+	return false;
 }
 
 const string CFrontendHooks::promptForJACKPort(const string message,const vector<string> portNames)
@@ -295,21 +299,31 @@ const string CFrontendHooks::promptForJACKPort(const string message,const vector
 
 bool CFrontendHooks::promptForRawParameters(RawParameters &parameters,bool showOffsetAndLengthParameters)
 {
-	return(rawDialog->show(parameters,showOffsetAndLengthParameters));
+	return rawDialog->show(parameters,showOffsetAndLengthParameters);
 }
 
 bool CFrontendHooks::promptForOggCompressionParameters(OggCompressionParameters &parameters)
 {
-	return(oggDialog->show(parameters));
+	return oggDialog->show(parameters);
 }
 
 bool CFrontendHooks::promptForMp3CompressionParameters(Mp3CompressionParameters &parameters)
 {
-	return(mp3Dialog->show(parameters));
+	return mp3Dialog->show(parameters);
 }
 
 bool CFrontendHooks::promptForVoxParameters(VoxParameters &parameters)
 {
-	return(voxDialog->show(parameters));
+	return voxDialog->show(parameters);
+}
+
+bool CFrontendHooks::promptForOpenMIDISampleDump(int &sysExChannel,int &waveformId)
+{
+	return MIDIDumpSampleIdDialog->showForOpen(sysExChannel,waveformId);
+}
+
+bool CFrontendHooks::promptForSaveMIDISampleDump(int &sysExChannel,int &waveformId,int &loopType)
+{
+	return MIDIDumpSampleIdDialog->showForSave(sysExChannel,waveformId,loopType);
 }
 

@@ -51,6 +51,7 @@ libfrontend_la_SOURCES= \
 			COggDialog.cpp \
 			CMp3Dialog.cpp \
 			CJACKPortChoiceDialog.cpp \
+			CMIDIDumpSampleIdDialog.cpp \
 			drawPortion.cpp \
 			EditActionDialogs.cpp \
 			EffectActionDialogs.cpp \
@@ -126,6 +127,7 @@ noinst_HEADERS=\
 	COggDialog.h \
 	CMp3Dialog.h \
 	CJACKPortChoiceDialog.h \
+	CMIDIDumpSampleIdDialog.h \
 	EditActionDialogs.h \
 	EffectActionDialogs.h \
 	FilterActionDialogs.h \

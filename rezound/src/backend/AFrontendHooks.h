@@ -154,6 +154,17 @@ public:
 
 	};
 	virtual bool promptForVoxParameters(VoxParameters &parameters)=0;
+
+
+	// -1 can be passed for the parameters not be be changed from the previous values on the dialog
+	// if Id comes back -1, then just wait for one
+	// if false is returned, then cancel was pressed
+	virtual bool promptForOpenMIDISampleDump(int &sysExChannel,int &waveformId)=0;
+
+	// -1 can be passed for the parameters not be be changed from the previous values on the dialog
+	// if false is returned, then cancel was pressed
+	virtual bool promptForSaveMIDISampleDump(int &sysExChannel,int &waveformId,int &loopType)=0;
+
 };
 
 #endif

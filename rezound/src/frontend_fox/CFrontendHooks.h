@@ -43,6 +43,7 @@ class CRawDialog;
 class COggDialog;
 class CMp3Dialog;
 class CVoxDialog;
+class CMIDIDumpSampleIdDialog;
 
 class CFrontendHooks : public AFrontendHooks
 {
@@ -71,6 +72,9 @@ public:
 	bool promptForMp3CompressionParameters(Mp3CompressionParameters &parameters);
 	bool promptForVoxParameters(VoxParameters &parameters);
 
+	bool promptForOpenMIDISampleDump(int &sysExChannel,int &waveformId);
+	bool promptForSaveMIDISampleDump(int &sysExChannel,int &waveformId,int &loopType);
+
 private:
 	FXWindow *mainWindow;
 
@@ -87,6 +91,7 @@ private:
 	COggDialog *oggDialog;
 	CMp3Dialog *mp3Dialog;
 	CVoxDialog *voxDialog;
+	CMIDIDumpSampleIdDialog *MIDIDumpSampleIdDialog;
 };
 
 #endif
