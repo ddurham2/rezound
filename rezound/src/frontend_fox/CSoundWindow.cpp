@@ -152,13 +152,15 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 			vertZoomPlusInd(new FXButton(vertZoomPanel,"+\tZoom In Full",NULL,this,ID_VERT_ZOOM_DIAL_PLUS,FRAME_RAISED | LAYOUT_SIDE_TOP | LAYOUT_FILL_X)),
 			vertZoomDial(new FXDial(vertZoomPanel,this,LAYOUT_SIDE_TOP | ID_VERT_ZOOM_DIAL,DIAL_VERTICAL|DIAL_HAS_NOTCH | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0,0,0,100, 0,0,0,0)),
 			vertZoomMinusInd(new FXButton(vertZoomPanel,"-\tZoom Out Full",NULL,this,ID_VERT_ZOOM_DIAL_MINUS,FRAME_RAISED | LAYOUT_SIDE_TOP | LAYOUT_FILL_X)),
-		mutePanel(loadedSound->getSound()->getChannelCount()<=1 ? NULL : new FXPacker(waveViewPanel,LAYOUT_SIDE_LEFT | FRAME_NONE | LAYOUT_FILL_Y, 0,0,0,0, 2,2,2,2, 0,0)),
+		mutePanel(new FXPacker(waveViewPanel,LAYOUT_SIDE_LEFT | FRAME_NONE | LAYOUT_FILL_Y, 0,0,0,0, 2,2,2,2, 0,0)),
 			upperMuteLabel(mutePanel==NULL ? NULL : new FXLabel(mutePanel,"M\tMute Channels",NULL,LABEL_NORMAL|LAYOUT_SIDE_TOP|LAYOUT_FIX_HEIGHT)),
 			invertMuteButton(mutePanel==NULL ? NULL : new FXButton(mutePanel,"!\tInvert the Muted State of Each Channel or (right click) Unmute All Channels",NULL,this,ID_INVERT_MUTE_BUTTON,LAYOUT_FILL_X | FRAME_RAISED|FRAME_THICK | LAYOUT_SIDE_BOTTOM|LAYOUT_FIX_HEIGHT)),
 			muteContents(mutePanel==NULL ? NULL : new FXVerticalFrame(mutePanel,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
 		waveView(new FXRezWaveView(waveViewPanel,_loadedSound)),
 
 	statusFont(getApp()->getNormalFont()),
+
+	muteButtonCount(0),
 
 	addCueActionFactory(NULL),
 	removeCueActionFactory(NULL),
@@ -180,12 +182,7 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 		//activeToggleButton->setFocusRectangleStyle to nothing...
 	}
 
-	if(mutePanel!=NULL)
-	{
-		for(unsigned t=0;t<loadedSound->getSound()->getChannelCount();t++)
-			muteButtons[t]=new FXCheckButton(muteContents,"",this,ID_MUTE_BUTTON,CHECKBUTTON_NORMAL|LAYOUT_CENTER_Y);
-	}
-
+	recreateMuteButtons(false);
 	
 	// create the font to use for status information
         FXFontDesc d;
@@ -295,6 +292,20 @@ CSoundWindow::~CSoundWindow()
 	delete statusFont;
 }
 
+void CSoundWindow::recreateMuteButtons(bool callCreate)
+{
+	for(unsigned t=0;t<muteButtonCount;t++)
+		delete muteButtons[t];
+
+	muteButtonCount=loadedSound->getSound()->getChannelCount();
+	for(unsigned t=0;t<muteButtonCount;t++)
+	{
+		muteButtons[t]=new FXCheckButton(muteContents,"",this,ID_MUTE_BUTTON,CHECKBUTTON_NORMAL|LAYOUT_CENTER_Y);
+		if(callCreate)
+			muteButtons[t]->create();
+	}
+}
+
 void CSoundWindow::setActiveState(bool isActive)
 {
 	if(isActive)
@@ -382,6 +393,13 @@ void CSoundWindow::drawPlayPosition(bool justErasing)
 
 void CSoundWindow::updateFromEdit()
 {
+	// see if the number of channels changed
+	if(loadedSound->getSound()->getChannelCount()!=muteButtonCount)
+	{
+		recreateMuteButtons(true);
+		onVertZoomDialMinusIndClick(NULL,0,NULL);
+	}
+
 	setTitle(loadedSound->getFilename().c_str()); // incase the filename changed
 	waveView->updateFromEdit();
 	onHorzZoomDialChange(NULL,0,NULL);

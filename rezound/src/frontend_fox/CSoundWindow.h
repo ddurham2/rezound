@@ -231,6 +231,8 @@ private:
 	FXFont *statusFont;
 
 	FXCheckButton *muteButtons[MAX_CHANNELS];
+	unsigned muteButtonCount;
+	void recreateMuteButtons(bool callCreate);
 
 	CAddCueActionFactory * addCueActionFactory;
 	CRemoveCueActionFactory * removeCueActionFactory;
