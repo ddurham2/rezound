@@ -179,6 +179,8 @@ CMainWindow::CMainWindow(FXApp* a) :
 		new FXButton(playControlsFrame,"\tStop",FOXIcons->stop,this,ID_STOP_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,0,32,32),
 		new FXButton(playControlsFrame,"\tPause",FOXIcons->pause,this,ID_PAUSE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32,32,32),
 
+		new FXButton(playControlsFrame,"\tRecord",FOXIcons->record,this,ID_FILE_RECORD_MENUITEM,PLAY_CONTROLS_BUTTON_STYLE, 32+32+32+32,32+32,32,32),
+
 		new FXButton(playControlsFrame,"\tJump to Beginning",FOXIcons->jump_to_beginning,this,ID_JUMP_TO_BEGINNING_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32+32,32+32,16);
 		new FXButton(playControlsFrame,"\tJump to Start Position",FOXIcons->jump_to_selection,this,ID_JUMP_TO_START_POSITION_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32+32,32+32,16);
 
@@ -603,7 +605,7 @@ void CMainWindow::createMenus()
 		new FXMenuCommand(menu,"Re&vert",FOXIcons->file_revert,this,ID_FILE_REVERT_MENUITEM);
 
 		new FXMenuSeparator(menu);
-		new FXMenuCommand(menu,"Record",NULL,this,ID_FILE_RECORD_MENUITEM);
+		new FXMenuCommand(menu,"Record",FOXIcons->small_record,this,ID_FILE_RECORD_MENUITEM);
 
 		new FXMenuSeparator(menu);
 		new FXMenuCommand(menu,"User No&tes"/*\tUser notes about the sound (and preserved in the file if the format supports it)"*/,FOXIcons->notes,this,ID_NOTES_MENUITEM);

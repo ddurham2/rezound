@@ -63,6 +63,8 @@ CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
 	timerHandle(NULL)
 
 {
+	setIcon(FOXIcons->small_record);
+
 	getFrame()->setHSpacing(1);
 	getFrame()->setVSpacing(1);
 
