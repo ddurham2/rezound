@@ -38,7 +38,7 @@ public:
 	virtual void hide();
 
 	void createToolbars();
-	
+
 
 	long onQuit(FXObject *sender,FXSelector sel,void *ptr);
 
@@ -67,6 +67,9 @@ public:
 
 	long onShuttleReturn(FXObject *sender,FXSelector sel,void *ptr);
 	long onShuttleChange(FXObject *sender,FXSelector sel,void *ptr);
+
+	// used to control the shuttle control with the keyboard
+	long onKeyboardSeek(FXObject *sender,FXSelector sel,void *ptr);
 
 	long onDefragButton(FXObject *sender,FXSelector sel,void *ptr);
 	long onPrintSATButton(FXObject *sender,FXSelector sel,void *ptr);
@@ -98,6 +101,12 @@ public:
 		ID_JUMP_TO_NEXT_CUE_BUTTON,
 	
 		ID_SHUTTLE_DIAL,
+
+		// used for key bindings
+		ID_SEEK_NORMAL,
+		ID_SEEK_LEFT,
+		ID_SEEK_MODIFY,
+		ID_SEEK_RIGHT,
 
 		ID_REDRAW_BUTTON,
 

@@ -178,6 +178,9 @@ void setupAccels(CMainWindow *mainWindow)
 	at->addAccel(KEY_a ,mainWindow,MKUINT(CMainWindow::ID_PLAY_SELECTION_ONCE_BUTTON,SEL_COMMAND));
 	at->addAccel(KEY_s ,mainWindow,MKUINT(CMainWindow::ID_STOP_BUTTON,SEL_COMMAND));
 
+	at->addAccel(KEY_1 ,mainWindow,MKUINT(CMainWindow::ID_SEEK_LEFT,SEL_COMMAND),MKUINT(CMainWindow::ID_SEEK_NORMAL,SEL_COMMAND));
+	at->addAccel(KEY_2 ,mainWindow,MKUINT(CMainWindow::ID_SEEK_MODIFY,SEL_COMMAND));
+	at->addAccel(KEY_3 ,mainWindow,MKUINT(CMainWindow::ID_SEEK_RIGHT,SEL_COMMAND),MKUINT(CMainWindow::ID_SEEK_NORMAL,SEL_COMMAND));
 
 
 	// edits
@@ -189,6 +192,8 @@ void setupAccels(CMainWindow *mainWindow)
 	at->addAccel(MKUINT(KEY_X,CONTROLMASK|SHIFTMASK), gEditToolbar->cutButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
 	at->addAccel(MKUINT(KEY_d,CONTROLMASK), gEditToolbar->delButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
 	at->addAccel(MKUINT(KEY_D,CONTROLMASK|SHIFTMASK), gEditToolbar->delButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
+	at->addAccel(KEY_Delete, gEditToolbar->delButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_Delete,SHIFTMASK), gEditToolbar->delButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
 	at->addAccel(MKUINT(KEY_r,CONTROLMASK), gEditToolbar->cropButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
 	at->addAccel(MKUINT(KEY_R,CONTROLMASK|SHIFTMASK), gEditToolbar->cropButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
 	at->addAccel(MKUINT(KEY_v,CONTROLMASK), gEditToolbar->pasteInsertButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));

@@ -87,6 +87,11 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	CMainWindow::ID_SHUTTLE_DIAL,			CMainWindow::onShuttleReturn),
 	FXMAPFUNC(SEL_CHANGED,			CMainWindow::ID_SHUTTLE_DIAL,			CMainWindow::onShuttleChange),
 
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SEEK_NORMAL,			CMainWindow::onShuttleReturn),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SEEK_LEFT,			CMainWindow::onKeyboardSeek),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SEEK_MODIFY,			CMainWindow::onKeyboardSeek),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SEEK_RIGHT,			CMainWindow::onKeyboardSeek),
+
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REDRAW_BUTTON,			CMainWindow::onRedrawButton),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_UNDO_BUTTON,			CMainWindow::onUndoButton),
@@ -526,6 +531,43 @@ long CMainWindow::onShuttleChange(FXObject *sender,FXSelector sel,void *ptr)
 
 	return 1;
 }
+
+long CMainWindow::onKeyboardSeek(FXObject *sender,FXSelector sel,void *ptr)
+{
+	FXint lo,hi;
+	shuttleDial->getRange(lo,hi);
+
+	FXint inc= (hi-lo)/14; // 7 positions surrounding 0 
+
+	FXint pos=shuttleDial->getValue();
+
+	if(pos==0 && SELID(sel)==ID_SEEK_LEFT)
+	{
+		shuttleDial->setValue(pos-inc);
+		onShuttleChange(sender,sel,ptr);
+	}
+	else if(pos==0 && SELID(sel)==ID_SEEK_RIGHT)
+	{
+		shuttleDial->setValue(pos+inc);
+		onShuttleChange(sender,sel,ptr);
+	}
+	else if(pos!=0 && SELID(sel)==ID_SEEK_MODIFY)
+	{
+		if(pos<0)
+		{ // go more leftward
+			shuttleDial->setValue(pos-inc);
+		}
+		else if(pos>0)
+		{ // go more rightward
+			shuttleDial->setValue(pos+inc);
+		}
+		onShuttleChange(sender,sel,ptr);
+	}
+
+
+	return 1;
+}
+
 
 long CMainWindow::onDefragButton(FXObject *sender,FXSelector sel,void *ptr)
 {

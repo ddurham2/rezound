@@ -16,10 +16,6 @@
 		XXX - When loading a sound it doesn't start zoomed out to see the whole thing.. 
 		- if I had a thread always running in the background low priority, I could be calculating peak chunk information while the user isn't looking
 
-	- I should use FXAccelTable so that I can make key bindings to things like 
-		- (ctrl-a)select all (space)play, (space)stop, (p)pause, (a,z)seek, (ctrl-c)copy, (ctrl-x)cut, (ctrl-d,del)delete, (ctrl-v)paste, etc
-		- this should be relatively simple I think... 
-
 	- figure out why the limit isn't always working.. twice I entered 90:00.00 and it didn't stop
 		- I haven't seen it since, but with the limit label I should know when it is at least going to happen
 
@@ -67,6 +63,9 @@
 	- supply icons for all the windows
 		- just new FXIcon(...) instead of passing NULL
 		- Will is supposedly doing this
+
+	- decide on exactly what keys to finally bind to by default for play controls
+		- all bindings should (at some point in development) be configurable
 
 	- the frontend needs a way to tell COSSSoundPlayer and COSSSoundRecorder which device to use
 		- I should be able to test this at home since I have 2 sound cards installed
@@ -167,4 +166,9 @@
 	- make the cue list dialog's list box have a fixed width font
 
 	- add tip text support to the reusable slider and graph widget to and allow a way to set it in the base class dialogs
+
+	- I should use FXAccelTable so that I can make key bindings to things like 
+		- (ctrl-a)select all (space)play, (space)stop, (p)pause, (a,z)seek, (ctrl-c)copy, (ctrl-x)cut, (ctrl-d,del)delete, (ctrl-v)paste, etc
+		- make keys for zooming out full
+		- this should be relatively simple I think... 
 
