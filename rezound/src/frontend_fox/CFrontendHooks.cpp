@@ -41,11 +41,13 @@ CFrontendHooks::CFrontendHooks(FXWindow *_mainWindow) :
 	openDialog->setSelectMode(SELECTFILE_EXISTING);
 	openDialog->setPatternList(getFOXFileTypes().c_str());
 	openDialog->setCurrentPattern(0);
+	openDialog->setDirectory(gPromptDialogDirectory.c_str());
 
 	saveDialog=new FXFileDialog(mainWindow,"Save File");
 	saveDialog->setSelectMode(SELECTFILE_ANY);
 	saveDialog->setPatternList(getFOXFileTypes().c_str());
 	saveDialog->setCurrentPattern(0);
+	saveDialog->setDirectory(gPromptDialogDirectory.c_str());
 
 }
 
@@ -97,7 +99,6 @@ const string CFrontendHooks::getFOXFileTypes() const
 
 bool CFrontendHooks::promptForOpenSoundFilename(string &filename,bool &readOnly)
 {
-	openDialog->setDirectory(gPromptDialogDirectory.c_str());
 	if(openDialog->execute())
 	{
 		// save directory to open the opendialog to next time
@@ -113,9 +114,7 @@ bool CFrontendHooks::promptForOpenSoundFilename(string &filename,bool &readOnly)
 
 bool CFrontendHooks::promptForSaveSoundFilename(string &filename)
 {
-	if(filename=="")
-		saveDialog->setDirectory(gPromptDialogDirectory.c_str());
-	else
+	if(filename!="")
 		saveDialog->setFilename(filename.c_str());
 
 	if(saveDialog->execute())
