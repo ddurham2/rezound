@@ -20,6 +20,8 @@
 
 #include "CPasteEdit.h"
 
+#include <math.h>
+
 #include <stdexcept>
 #include <algorithm>
 #include <utility>
@@ -69,6 +71,9 @@ CPasteEdit::~CPasteEdit()
 #include <stdio.h> // ??? just for the printf below
 bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
+//const double repeatCount=2.05;
+const double repeatCount=1.0;
+
 	for(unsigned y=0;y<MAX_CHANNELS;y++)
 	{
 		for(unsigned x=0;x<MAX_CHANNELS;x++)
@@ -78,19 +83,25 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 		printf("\n");
 	}
 
-	const ASoundClipboard *clipboard=clipboards[gWhichClipboard];
+	ASoundClipboard *clipboard=clipboards[gWhichClipboard];
 	const sample_pos_t clipboardLength=clipboard->getLength(actionSound.sound->getSampleRate());
+	
+	// this is the length of the clipboard after we repeat it the number of times the user asked for
+	const sample_pos_t repeatedClipboardLength=(sample_pos_t)sample_fpos_floor((sample_fpos_t)clipboardLength*repeatCount);
+
+	if(repeatCount<0.0 || repeatedClipboardLength<1)
+		return false;
 
 	// save info for undo
-	undoRemoveLength=clipboardLength;
+	undoRemoveLength=repeatedClipboardLength;
 	originalLength=actionSound.sound->getLength();
 
 	switch(pasteType)
 	{
 	case ptInsert:
 		// insert the space into the channels we need to
-		actionSound.sound->addSpace(whichChannels,actionSound.start,clipboardLength);
-		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,false,mmOverwrite,mixMethod,sftNone);
+		actionSound.sound->addSpace(whichChannels,actionSound.start,repeatedClipboardLength);
+		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,repeatCount,false,mmOverwrite,mixMethod,sftNone);
 		break;
 
 	case ptReplace:
@@ -100,15 +111,15 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 			for(unsigned t=0;t<MAX_CHANNELS;t++)
 				_actionSound.doChannel[t]=whichChannels[t];
 
-			moveSelectionToTempPools(_actionSound,mmSelection,clipboardLength);
+			moveSelectionToTempPools(_actionSound,mmSelection,undoRemoveLength);
 		}
 		else
 		{
 			actionSound.sound->removeSpace(whichChannels,actionSound.start,actionSound.selectionLength());
-			actionSound.sound->addSpace(whichChannels,actionSound.start,clipboardLength);
+			actionSound.sound->addSpace(whichChannels,actionSound.start,repeatedClipboardLength);
 		}
 
-		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,false,mmOverwrite,mixMethod,sftNone);
+		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,repeatCount,false,mmOverwrite,mixMethod,sftNone);
 		break;
 
 	case ptOverwrite:
@@ -128,10 +139,11 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 		 * 	                      ^-- extraLength
 		 */
 
+
 		// it is the amount that the clipboard, if pasted starting at the start position, overhangs the end of the sound
 		sample_pos_t extraLength=0;
-		if((actionSound.start+clipboardLength)>actionSound.sound->getLength())
-			extraLength=(actionSound.start+clipboardLength)-actionSound.sound->getLength();
+		if((actionSound.start+repeatedClipboardLength)>actionSound.sound->getLength())
+			extraLength=(actionSound.start+repeatedClipboardLength)-actionSound.sound->getLength();
 
 		if(prepareForUndo)
 		{
@@ -142,16 +154,19 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 			if(extraLength>0)
 				_actionSound.stop=actionSound.sound->getLength()-1;
 			else // doesn't overhang the end
-				_actionSound.stop=_actionSound.start+clipboardLength-1;
+				_actionSound.stop=_actionSound.start+repeatedClipboardLength-1;
 
 			// move the data that is going to be affected into a temp pool and replace the space
 			moveSelectionToTempPools(_actionSound,mmSelection,_actionSound.selectionLength());
 
-			// copy the data back after moving it to the temp pool to mix on top of
-			for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+			if(pasteType!=ptOverwrite && mixMethod!=mmOverwrite)
 			{
-				if(whichChannels[i])
-					actionSound.sound->getAudio(i).copyData(actionSound.start,actionSound.sound->getTempAudio(tempAudioPoolKey,i),0,_actionSound.selectionLength());
+				// copy the data back after moving it to the temp pool to mix on top of
+				for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+				{
+					if(whichChannels[i])
+						actionSound.sound->getAudio(i).copyData(actionSound.start,actionSound.sound->getTempAudio(tempAudioPoolKey,i),0,_actionSound.selectionLength());
+				}
 			}
 		}
 
@@ -159,7 +174,7 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 		if(extraLength>0)
 			actionSound.sound->addSpace(whichChannels,actionSound.sound->getLength(),extraLength,true);
 
-		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,!prepareForUndo,pasteType==ptOverwrite ? mmOverwrite : mixMethod,mixMethod,sftNone);
+		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,repeatCount,!prepareForUndo,pasteType==ptOverwrite ? mmOverwrite : mixMethod,mixMethod,sftNone);
 
 	}
 		break;
@@ -172,7 +187,7 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 			for(unsigned t=0;t<MAX_CHANNELS;t++)
 				_actionSound.doChannel[t]=whichChannels[t];
 
-			_actionSound.stop=min(_actionSound.start+clipboardLength-1,_actionSound.stop);
+			_actionSound.stop=min(_actionSound.start+repeatedClipboardLength-1,_actionSound.stop);
 
 			// reassign this value for undo
 			undoRemoveLength=_actionSound.selectionLength();
@@ -180,18 +195,31 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 			// move the data that is going to be affected into a temp pool and replace the space
 			moveSelectionToTempPools(_actionSound,mmSelection,_actionSound.selectionLength());
 
-			// copy the data back after moving it to the temp pool to mix on top of
-			for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+			if(pasteType!=ptLimitedOverwrite && mixMethod!=mmOverwrite)
 			{
-				if(whichChannels[i])
-					actionSound.sound->getAudio(i).copyData(actionSound.start,actionSound.sound->getTempAudio(tempAudioPoolKey,i),0,_actionSound.selectionLength());
+				// copy the data back after moving it to the temp pool to mix on top of
+				for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+				{
+					if(whichChannels[i])
+						actionSound.sound->getAudio(i).copyData(actionSound.start,actionSound.sound->getTempAudio(tempAudioPoolKey,i),0,_actionSound.selectionLength());
+				}
 			}
 		}
 
-		pasteData(clipboard,pasteChannels,actionSound,undoRemoveLength,!prepareForUndo,pasteType==ptLimitedOverwrite ? mmOverwrite : mixMethod,mixMethod,sftNone);
+		{
+			// send pasteData an adjustedRepeatCount, if the limited length (undoRemoveLength) is less than what we would like to paste (repeatedClipboardLength), then calculate how many times we can actually repeat the clipboard (which could be <=1 or even >1)
+			double adjustedRepeatCount;
+			if(undoRemoveLength<repeatedClipboardLength)
+				adjustedRepeatCount=(double)((sample_fpos_t)undoRemoveLength/(sample_fpos_t)clipboardLength);
+			else
+				adjustedRepeatCount=repeatCount;
+
+			pasteData(clipboard,pasteChannels,actionSound,clipboardLength,adjustedRepeatCount,!prepareForUndo,pasteType==ptLimitedOverwrite ? mmOverwrite : mixMethod,mixMethod,sftNone);
+		}
 		break;
 
 	case ptFitMix:
+#warning using jack and CRecordClipboard has a bug when using fit mix paste
 		if(prepareForUndo)
 		{
 			CActionSound _actionSound(actionSound);
@@ -205,14 +233,54 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 			moveSelectionToTempPools(_actionSound,mmSelection,actionSound.selectionLength());
 
 			// copy the data back after moving it to the temp pool to mix on top of
-			for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+			if(mixMethod!=mmOverwrite)
 			{
-				if(whichChannels[i])
-					actionSound.sound->getAudio(i).copyData(actionSound.start,actionSound.sound->getTempAudio(tempAudioPoolKey,i),0,_actionSound.selectionLength());
+				for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+				{
+					if(whichChannels[i])
+						actionSound.sound->getAudio(i).copyData(actionSound.start,actionSound.sound->getTempAudio(tempAudioPoolKey,i),0,_actionSound.selectionLength());
+				}
 			}
 		}
 
-		pasteData(clipboard,pasteChannels,actionSound,actionSound.selectionLength(),!prepareForUndo,mixMethod,mixMethod,sftChangeRate);
+		// instead of being able to simply pass repeatCount to pasteData, I have to break it into its multiple repeats here
+		{
+			CActionSound _actionSound(actionSound);
+			double iRepeatCount;
+			const double fRepeatCount=modf(repeatCount,&iRepeatCount);
+
+			// do all the n iterations of repeatCount as n.xyz
+			const sample_pos_t oneIterationLength=(sample_pos_t)sample_fpos_floor((sample_fpos_t)_actionSound.selectionLength()/(sample_fpos_t)repeatCount);
+			for(unsigned k=0;k<(unsigned)iRepeatCount;k++)
+			{
+				pasteData(clipboard,pasteChannels,_actionSound,oneIterationLength,1,!prepareForUndo,mixMethod,mixMethod,sftChangeRate);
+				_actionSound.start+=oneIterationLength;
+			}
+
+
+			// this would be the way to do it, but ...
+			//sample_pos_t lastIterationLength=(sample_pos_t)sample_fpos_floor(((sample_fpos_t)actionSound.selectionLength()*(sample_fpos_t)fRepeatCount)/(sample_fpos_t)repeatCount);
+		
+			// ... this will be sure to cover the remainder left off from flooring errors in the n iterations above
+			const sample_pos_t lastIterationLength=actionSound.selectionLength()-(oneIterationLength*(unsigned)iRepeatCount);
+
+			if(lastIterationLength>0 && clipboardLength>1/*has a little bug from flooring if this is true*/)
+			{
+				const sample_pos_t shortenedClipboardLength=(sample_pos_t)sample_fpos_floor((sample_fpos_t)clipboard->getLength(_actionSound.sound->getSampleRate())*fRepeatCount);
+				clipboard->temporarilyShortenLength(_actionSound.sound->getSampleRate(),shortenedClipboardLength);
+				try
+				{
+					pasteData(clipboard,pasteChannels,_actionSound,lastIterationLength,1,!prepareForUndo,mixMethod,mixMethod,sftChangeRate);
+
+					clipboard->undoTemporaryShortenLength();
+				}
+				catch(...)
+				{
+					clipboard->undoTemporaryShortenLength();
+					throw;
+				}
+			}
+		}
 		break;
 
 	default:
@@ -229,7 +297,7 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
  * 	pasteChannels came from the user
  */
 //                                                          const bool pasteChannels[MAX_CHANNELS][MAX_CHANNELS]
-void CPasteEdit::pasteData(const ASoundClipboard *clipboard,const vector<vector<bool> > &pasteChannels,const CActionSound &actionSound,const sample_pos_t srcLength,bool invalidatePeakData,MixMethods initialMixMethod,MixMethods nonInitialMixMethod,SourceFitTypes fitSrc)
+void CPasteEdit::pasteData(const ASoundClipboard *clipboard,const vector<vector<bool> > &pasteChannels,const CActionSound &actionSound,const sample_pos_t srcToUse,const double repeatCount,bool invalidatePeakData,MixMethods initialMixMethod,MixMethods nonInitialMixMethod,SourceFitTypes fitSrc)
 {
 	for(unsigned y=0;y<actionSound.sound->getChannelCount();y++)
 	{
@@ -238,13 +306,28 @@ void CPasteEdit::pasteData(const ASoundClipboard *clipboard,const vector<vector<
 		{
 			if(pasteChannels[y][x])
 			{
-				clipboards[gWhichClipboard]->copyTo(actionSound.sound,y,x,actionSound.start,srcLength,first ? initialMixMethod : nonInitialMixMethod,fitSrc,first && invalidatePeakData);
+				sample_pos_t start=actionSound.start;
+				double iRepeatCount;
+				const double fRepeatCount=modf(repeatCount,&iRepeatCount);
+
+				// do all the n iterations of repeatCount as n.xyz
+				for(unsigned k=0;k<(unsigned)iRepeatCount;k++)
+				{
+					clipboards[gWhichClipboard]->copyTo(actionSound.sound,y,x,start,srcToUse,first ? initialMixMethod : nonInitialMixMethod,fitSrc,first && invalidatePeakData);
+					start+=srcToUse;
+				}
+
+				// do the .xyz remaining part of the paste
+				if(fRepeatCount>0.0 && (srcToUse*fRepeatCount)>=1.0)
+					clipboards[gWhichClipboard]->copyTo(actionSound.sound,y,x,start,(sample_pos_t)((sample_fpos_t)srcToUse*fRepeatCount),first ? initialMixMethod : nonInitialMixMethod,fitSrc,first && invalidatePeakData);
+
 				first=false;
 			}
 		}
 	}
 
-	actionSound.stop=actionSound.start+srcLength-1;
+	const sample_pos_t repeatedSrcToUse=(sample_pos_t)sample_fpos_floor((sample_fpos_t)srcToUse*repeatCount);
+	actionSound.stop=actionSound.start+repeatedSrcToUse-1;
 }
 
 AAction::CanUndoResults CPasteEdit::canUndo(const CActionSound &actionSound) const
