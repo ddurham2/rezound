@@ -1,30 +1,35 @@
 
 ASound is the base class that represents a manipulatable set of audio data within ReZound.  Its
 contents are PCM data in a specific format.  Any supported file format is to be implemented by
-deriving from ASound and performing the necessary logic to read the audio data from the foreign
-format and put it into ASound as the native format.
+deriving from ASoundTranslator and performing the necessary logic to read/write the audio data from 
+the foreign format, translate it into the native format and write into or read out of  a given 
+CSound.
 
-Therefore, all foreign formats are 'imported' and 'exported' rather than loaded and saved
-	- ??? I have manually implemented: .wav, and .au formats, but I could use libsndfile
-	  or sox to support many other formats.  These implementations I have written actually
-	  do not support all the features of those formats.  If I did use a 3rd party library
-	  it would need to have the ability to get the data in PCM form...
+The CSound has a TPoolFile object which is used for the working space of all the audio and relatively
+small other information.  TPoolFile maps physical space in a file to a contiguous logical address 
+space and gives methods which simply modify the logical address space to give the appearance of a 
+very quick remove of space or adding of space inserted into the middle of the whole space.
 
-The native ReZound file format is actually a CPoolFile which is the container of all 
-the audio data and information about that audio data.  Except when a ReZound native file
-is loaded, actually a copy is made so as not to be working on the original data.
-
-ASound has a getData method which returns a CPoolFileAccessor that allows access to the data.  It
+CSound has a getAudio method which returns a TPoolFileAccessor that allows access to the data.  It
 also has methods to manipulate the size of the data which manages how to add/remove space when an 
 action which changes the size of the data but the action was not applied to all channels.
 
-CPoolFile is explained more in CPoolFile.cpp/h, but basically it is a container of arbitrary
+The derived ASoundTranslator class should implement the methods... In short, it should just call 
+createWorkingPoolFile given the numer of channels, sample rate, and length.  Then it should read the 
+audio out of the foreign format and use the getAudio's returned TPoolFileAccessor to copy data into
+the audio pools.  Then if there is any available other data like user notes or cue positions/names 
+there are methods in the CSound class to add that information.
+
+The native .rez ReZound file format is actually just a TPoolFile, so the loading and saving of it
+requires little work.
+
+TPoolFile is explained more in TPoolFile.cpp/h, but basically it is a container of arbitrary
 data, but manages its space in chunks which allow it to add and remove space very quickly.  
 Hence, delete or adding space anywhere in the sound file is not laborious, as the new space
 can be added physically whereever there is available space, but logically anywhere else, and 
 deleted space just becomes logically unused.  All the data lives on disk, except there is 
-considerable caching which speeds up usual data access.  However, CPoolFile has a higher 
-level of organization called 'pools' in which a CPoolFile is a collection of many pools where
+considerable caching which speeds up usual data access.  However, TPoolFile has a higher 
+level of organization called 'pools' in which a TPoolFile is a collection of many pools where
 ASound maintains PCM data of one channel in a pool named 'Channel 1' and data of another channel
 in 'Channel 2' etc.  Also, format information about the PCM data is in a pool named 'Format'.  
 Calculated peak data is also in pools called 'Peak Channel 1'...

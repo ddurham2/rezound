@@ -1,0 +1,28 @@
+
+   When a file is asked to be loaded a call is made to ASoundFileManager::openFile
+This in turn makes a call to the pure virtual method promptForOpen and the frontend
+should have implemented this method to ask the user for a filename to open.
+
+   Next, a CSound object is constructed.  Then ASoundTranslator object is obtained 
+which is actually one of the derived objects according to the filename's extension 
+or file's signature.  This translator object is then asked to load the file.
+
+   Then a the ASoundPlayer object, given the CSound object, is asked for a 
+CSoundPlayerChannel.  This CSoundPlayerObject is used to control when and how the
+audio in the CSound object is played.
+
+   Finally, a CLoadedSound object is constructed from the CSound, CSoundPlayerChannel
+objects and the filename.  Now, ASoundFileManager asks the frontend (again, via an
+overridden method) to construct a sound window; the CLoadedSound object is passed.
+
+
+   Also, during all this a registry of loaded files is kept so that we'll know which
+files were last loaded if the application or system crashes.  Also, it is used to
+keep from reopening files more than once and used to know what an available filename
+is when showing the new-sound-dialog or record-dialog
+
+--- 
+
+   A new sound or new recording is done in pretty much the same way except the CSound
+doesn't get loaded from an ASoundTranslator object
+
