@@ -284,6 +284,7 @@ CSoundWindow::~CSoundWindow()
 
 	delete addCueActionFactory;
 	delete removeCueActionFactory;
+	delete replaceCueActionFactory;
 
 	// ??? do I need to delete the stuff I allocated
 
