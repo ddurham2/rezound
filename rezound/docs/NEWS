@@ -1,6 +1,6 @@
 rezound-0.3.0alpha
 	This is a new-feature and bug-fix release -- As some totally new code now exists
-	I ask that you please report and bugs or crashes that you may have.  Please try
+	I ask that you please report any bugs or crashes that you may have.  Please try
 	to determine under what circumstances the crash or bug appeared in.  If all goes
 	well in this release, I think I will bump it to a beta stage.
 	- Added new edit actions: "Swap Channels", "Add Channels" and "Remove Channels"
