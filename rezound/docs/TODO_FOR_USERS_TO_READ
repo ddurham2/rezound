@@ -7,8 +7,6 @@
 
 - Yes... Icons and graphics need to be present... I'm putting a call out for an artist to create them
 
-- The "draw a graph parameter" GUI widgets needs more work... it's sometimes querky
-
 - I have not implemented recording yet
 
 - I have not imeplemented 'redo' yet, but provisions are mostly in place for implementing it.

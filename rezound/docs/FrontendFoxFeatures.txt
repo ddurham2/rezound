@@ -47,4 +47,7 @@
 - Cue List Dialog:
 	- Double clicking a cue brings up the edit cue dialog
 
+- Graph Parameter Widget:
+	- Holding shift or control while dragging a node will lock either the horizontal or vertical movement when only needed to change the node in one direction.
+
 
