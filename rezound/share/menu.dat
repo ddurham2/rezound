@@ -28,6 +28,7 @@ default
 	Filters
 	{
 		menuitems={"Convolution Filter...", "Arbitrary FIR Filter...", "Morphing Arbitrary FIR Filter...", "-", "Single Pole Lowpass Filter...", "Single Pole Highpass Filter...", "Bandpass Filter...", "Notch Filter...", "-", "Biquad Resonant Lowpass Filter...", "Biquad Resonant Highpass Filter...", "Biquad Resonant Bandpass Filter..."};
+		/*this is an example of aliasing a menu item's caption: Convolution\ Filter\.\.\.=gettext("&Reverb...");*/
 	}
 	Looping
 	{
