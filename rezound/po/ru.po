@@ -8,8 +8,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
-"POT-Creation-Date: 2003-07-08 14:07-0500\n"
-"PO-Revision-Date: 2003-07-07 15:50+0400\n"
+"POT-Creation-Date: 2003-07-31 17:48-0500\n"
+"PO-Revision-Date: 2003-08-28 18:45+0400\n"
 "Last-Translator: Alexandre Prokoudine <avp@altlinux.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -17,11 +17,210 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.0.2\n"
 
+#: src/backend/ALFO.cpp:489
+msgid "Sine Wave [-1,1]"
+msgstr "Синусоидная волна [-1,1]"
+
+#: src/backend/ALFO.cpp:491
+msgid "Sine Wave [ 0,1]"
+msgstr "Синусоидная волна [0,1]"
+
+#: src/backend/ALFO.cpp:493
+msgid "ABS Sine Wave [ 0,1]"
+msgstr "ABS синусоидная волна [0,1]"
+
+#: src/backend/ALFO.cpp:495
+msgid "Constant"
+msgstr "Константа"
+
+#: src/backend/ALFO.cpp:497
+msgid "Rising Sawtooth Wave [-1,1]"
+msgstr "Нарастающая пилообразная волна [-1,1]"
+
+#: src/backend/ALFO.cpp:499
+msgid "Rising Sawtooth Wave [ 0,1]"
+msgstr "Нарастающая пилообразная волна [0,1]"
+
+#: src/backend/ALFO.cpp:501
+msgid "Falling Sawtooth Wave [-1,1]"
+msgstr "Угасающая пилообразная волна [-1,1]"
+
+#: src/backend/ALFO.cpp:503
+msgid "Falling Sawtooth Wave [ 0,1]"
+msgstr "Угасающая пилообразная волна [0,1]"
+
+#: src/backend/ALFO.cpp:505
+msgid "Square Wave [-1,1]"
+msgstr "Прямоугольная волна [-1,1]"
+
+#: src/backend/ALFO.cpp:507
+msgid "Square Wave [ 0,1]"
+msgstr "Прямоугольная волна [0,1]"
+
+#: src/backend/ASoundFileManager.cpp:135
+msgid " -- file already opened"
+msgstr " -- файл уже открывался"
+
+#: src/backend/ASoundFileManager.cpp:250 src/backend/ASoundFileManager.cpp:304
+msgid " -- file is currently opened"
+msgstr " -- файл сейчас открыт"
+
+#: src/backend/ASoundFileManager.cpp:256 src/backend/ASoundFileManager.cpp:308
+msgid "Overwrite Existing File"
+msgstr "Перезаписать существующий файл"
+
+#: src/backend/ASoundFileManager.cpp:328 src/backend/ASoundFileManager.cpp:335
+msgid "Save Modified Sound"
+msgstr "Сохранить изменённый звук"
+
+#: src/backend/ASoundFileManager.cpp:386
+msgid "Are you sure you want to revert to the last saved copy of"
+msgstr "Вы уверены, что хотите вернуться к последней сохранённой копии "
+
+#: src/backend/ASoundFileManager.cpp:493
+msgid "Load sound from previous session?"
+msgstr "Загрузить звук из предыдущей сессии?"
+
+#: src/backend/ASoundPlayer.cpp:555
+msgid "No audio output method could be initialized -- Playing will be disabled."
+msgstr ""
+
+#: src/backend/ASoundPlayer.cpp:560
+msgid ""
+"Either no audio output method was enabled at configure-time, or no method "
+"was recognized in the registry:AudioOutputMethods[] setting"
+msgstr ""
+
+#: src/backend/ASoundRecorder.cpp:547
+msgid "No audio input method could be initialized"
+msgstr ""
+
+#: src/backend/ASoundRecorder.cpp:553
+msgid ""
+"Either no audio input method was enabled at configure-time, or no method was "
+"recognized in the registry:AudioInputMethods[] setting"
+msgstr ""
+
+#: src/backend/ASoundTranslator.cpp:154
+msgid "No handler found to support the format for "
+msgstr "Не найдено средство обработки формата для "
+
+#: src/backend/ASoundTranslator.cpp:154
+msgid "Would you like to use a raw format?"
+msgstr "Вы хотите использовать беззаголовочный формат?"
+
+#: src/backend/ASoundTranslator.cpp:160
+msgid " -- unhandled format/extension for the filename"
+msgstr " -- необрабатываемый формат/расширение для имени файла"
+
+#: src/backend/CJACKSoundPlayer.cpp:78 src/backend/CJACKSoundRecorder.cpp:65
+msgid " -- error connecting to jack server -- jackd not running?"
+msgstr " -- ошибка при соединении с JACK-сервером -- сервер не запущен?"
+
+#: src/backend/CJACKSoundPlayer.cpp:125
+msgid "Choose Port for Output Channel "
+msgstr "Выберите порт для канала вывода "
+
+#: src/backend/CJACKSoundPlayer.cpp:131 src/backend/CJACKSoundRecorder.cpp:116
+msgid "Cannot connect to JACK port, "
+msgstr "Невозможно подсоединиться к JACK-порту, "
+
+#: src/backend/CJACKSoundPlayer.cpp:131 src/backend/CJACKSoundRecorder.cpp:116
+msgid ", please choose a different one"
+msgstr ", выберите другой"
+
+#: src/backend/CJACKSoundRecorder.cpp:110
+msgid "Choose Port for Input Channel "
+msgstr "Выберите порт для входного канала "
+
+#: src/backend/CMIDISDSSoundTranslator.cpp:385
+msgid "Downloading Sample"
+msgstr "Закачивается семпл"
+
+#: src/backend/CMIDISDSSoundTranslator.cpp:478
+msgid "Keeping what was received"
+msgstr "Сохраняется полученное"
+
+#: src/backend/CMIDISDSSoundTranslator.cpp:652
+msgid "Uploading Sample"
+msgstr "Загружается семпл"
+
+#: src/backend/CMIDISDSSoundTranslator.cpp:652
+msgid "Dumping Sample"
+msgstr "Передача семпла"
+
 #: src/backend/CRecordSoundClipboard.cpp:70
 msgid ""
 "There is already data on this recording clipboard.  Do you want to record "
 "something new?"
 msgstr "В буфере записи уже есть данные. Вы хотите записать что-то новое?"
+
+#: src/backend/CSound.cpp:1083
+msgid "Copying/Fitting Data -- Channel "
+msgstr "Копирование/Ужатие данных -- Канал "
+
+#: src/backend/CSound.cpp:1105
+msgid "Copying Data -- Channel "
+msgstr "Копирование данных -- Канал "
+
+#: src/backend/CSound.cpp:1135
+msgid "Mixing/Fitting Data (add) -- Channel "
+msgstr "Сведение/Ужатие данных (прибавление) -- Канал "
+
+#: src/backend/CSound.cpp:1157 src/backend/CSound.cpp:1175
+msgid "Mixing Data (add) -- Channel "
+msgstr "Сведение данных (прибавление) -- Канал "
+
+#: src/backend/CSound.cpp:1200
+msgid "Mixing/Fitting Data (subtract) -- Channel "
+msgstr "Сведение/Ужатие данных (вычитание) -- Канал "
+
+#: src/backend/CSound.cpp:1222 src/backend/CSound.cpp:1240
+msgid "Mixing Data (subtract) -- Channel "
+msgstr "Сведение данных (вычитание) -- Канал "
+
+#: src/backend/CSound.cpp:1265
+msgid "Mixing/Fitting Data (multiply) -- Channel "
+msgstr "Сведение/Ужатие данных (умножение) -- Канал "
+
+#: src/backend/CSound.cpp:1287 src/backend/CSound.cpp:1305
+msgid "Mixing Data (multiply) -- Channel "
+msgstr "Сведение данных (умножение) -- Канал "
+
+#: src/backend/CSound.cpp:1330
+msgid "Mixing/Fitting Data (average) -- Channel "
+msgstr "Сведение/Ужатие данных (среднее арифм.) -- Канал "
+
+#: src/backend/CSound.cpp:1352 src/backend/CSound.cpp:1370
+msgid "Mixing Data (average) -- Channel "
+msgstr "Сведение данных (среднее арифм.) -- Канал "
+
+#: src/backend/CSound.cpp:1676
+msgid "File: "
+msgstr "Файл: "
+
+#: src/backend/CSound.cpp:1676
+msgid ""
+"A temporary file was found indicating that this file was previously being "
+"edited when a crash occurred or the process was killed.\n"
+"\n"
+"Do you wish to attempt to recover from this temporary file (otherwise the "
+"file will be deleted)?"
+msgstr ""
+"Был найден временный файл. Это значит, что данный файл\n"
+"изменялся, когда произошёл аварийный выход из программы.\n"
+"\n"
+"Вы хотите попытаться восстановить данные из этого \n"
+"временного файла? Если вы откажетесь, этот файл будет удалён."
+
+#: src/backend/CStubAction.cpp:26
+msgid "Stub Action -- Channel "
+msgstr "Вырывающее действие -- Канал "
+
+#: src/backend/CStubAction.cpp:81
+#, fuzzy
+msgid "Stub"
+msgstr "Остаток"
 
 #: src/backend/ClameSoundTranslator.cpp:229
 msgid ""
@@ -33,25 +232,50 @@ msgstr ""
 
 #: src/backend/ClameSoundTranslator.cpp:322
 #: src/backend/ClibaudiofileSoundTranslator.cpp:413
+#: src/backend/CFLACSoundTranslator.cpp:210
 msgid "Saving Sound"
 msgstr "Звуковой файл сохраняется"
 
-#: src/backend/ASoundPlayer.cpp:499 src/backend/ASoundPlayer.cpp:515
-#: src/backend/ASoundPlayer.cpp:518
-msgid "Playing will be disabled."
-msgstr "Воспроизведение будет отключено."
+#: src/backend/ClibaudiofileSoundTranslator.cpp:86
+msgid " -- error opening"
+msgstr " -- ошибка при открытии"
 
-#: src/backend/ASoundPlayer.cpp:515
-msgid "Error occurred after trying to fall back to OSS"
-msgstr "Произошла ошибка при откате на OSS"
+#: src/backend/ClibaudiofileSoundTranslator.cpp:219
+#: src/backend/CFLACSoundTranslator.cpp:67
+msgid "Loading Sound"
+msgstr "Загружается звуковой файл"
 
-#: src/backend/Edits/CRemoveChannelsEdit.cpp:76
-msgid "Remove Channels"
-msgstr "Удалить каналы"
+#: src/backend/ClibaudiofileSoundTranslator.cpp:333
+msgid "This format does not support saving cues"
+msgstr "Этот формат не поддерживает сохранение маркеров"
 
-#: src/backend/Edits/CRemoveChannelsEdit.cpp:76
-msgid "Remove Channels of Audio"
-msgstr "Удалить звуковые каналы"
+#: src/backend/CrezSoundTranslator.cpp:197
+msgid "Loading Channel "
+msgstr "Загружается канал "
+
+#: src/backend/CrezSoundTranslator.cpp:294
+msgid "Saving Channel "
+msgstr "Сохраняется канал "
+
+#: src/backend/CrezSoundTranslator.cpp:357
+msgid "Native ReZound"
+msgstr "Собственный формат"
+
+#: src/backend/initialize.cpp:128
+msgid "Native Clipboard "
+msgstr "Собственный буфер обмена "
+
+#: src/backend/initialize.cpp:141
+msgid "Record Clipboard "
+msgstr "Буфер записи "
+
+#: src/backend/Edits/CAddChannelsEdit.cpp:60
+msgid "Add Channels"
+msgstr "Добавить каналы"
+
+#: src/backend/Edits/CAddChannelsEdit.cpp:60
+msgid "Add New Channels of Audio"
+msgstr "Добавить новые каналы"
 
 #: src/backend/Edits/CCopyCutDeleteEdit.cpp:48
 msgid "cannot copy/cut to clipboard: "
@@ -69,9 +293,25 @@ msgstr "Вырезать"
 msgid "Delete"
 msgstr "Удалить"
 
-#: src/backend/Edits/CMuteEdit.cpp:62
-msgid "Mute"
-msgstr "Приглушить"
+#: src/backend/Edits/CCopyCutToNewEdit.cpp:105
+msgid "Copy to New"
+msgstr "Скопировать в новый файл"
+
+#: src/backend/Edits/CCopyCutToNewEdit.cpp:105
+msgid "Copy to Selection to a Newly Created Sound Window"
+msgstr "Скопировать в выделение в новое окно ReZound"
+
+#: src/backend/Edits/CCopyCutToNewEdit.cpp:124
+msgid "Cut to New"
+msgstr "Вырезать в новый файл"
+
+#: src/backend/Edits/CCopyCutToNewEdit.cpp:124
+msgid "Cut and Move the Selection to a Newly Created Sound Window"
+msgstr "Вырезать и переместить выделение в новое окно ReZound"
+
+#: src/backend/Edits/CCropEdit.cpp:70
+msgid "Crop"
+msgstr "Обрезать"
 
 #: src/backend/Edits/CCueAction.cpp:63 src/frontend_fox/CRecordDialog.cpp:92
 msgid "Add Cue"
@@ -89,111 +329,35 @@ msgstr "Заменить маркер"
 msgid "Move Cue"
 msgstr "Переместить маркер"
 
-#: src/backend/Edits/CSwapChannelsEdit.cpp:66
-msgid "Swap Channels"
-msgstr "Поменять местами каналы"
+#: src/backend/Edits/CInsertSilenceEdit.cpp:31
+msgid " -- silenceLength is less than zero: "
+msgstr " -- silenceLength меньше нуля: "
 
-#: src/backend/Edits/CSwapChannelsEdit.cpp:66
-msgid "Swap the Audio Between Two Channels"
-msgstr "Обменяться данными между двумя каналами"
+#: src/backend/Edits/CInsertSilenceEdit.cpp:69
+msgid "Insert Silence"
+msgstr "Вставить фрагмент тишины"
 
-#: src/backend/Edits/CSelectionEdit.cpp:27
-msgid "Select All"
-msgstr "Выделить всё"
+#: src/backend/Edits/CMuteEdit.cpp:62
+msgid "Mute"
+msgstr "Приглушить"
 
-#: src/backend/Edits/CSelectionEdit.cpp:28
-msgid "Select to Beginning"
-msgstr "Выделить до начала"
+#: src/backend/Edits/CPasteAsNewEdit.cpp:94
+msgid "Paste As New"
+msgstr "Вставить в новый файл"
 
-#: src/backend/Edits/CSelectionEdit.cpp:29
-msgid "Select to End"
-msgstr "Выделить до конца"
+#: src/backend/Edits/CPasteAsNewEdit.cpp:94
+msgid "Paste the Clipboard's Contents into a Newly Created Sound Window"
+msgstr "Вставить содержимое буфера обмена в новое окно ReZound"
 
-#: src/backend/Edits/CSelectionEdit.cpp:30
-msgid "Flip to Beginning"
-msgstr "Перепрыгнуть к началу"
-
-#: src/backend/Edits/CSelectionEdit.cpp:31
-msgid "Flip to End"
-msgstr "Перепрыгнуть к концу"
-
-#: src/backend/Edits/CSelectionEdit.cpp:32
-msgid "Move Stop to Start Position"
-msgstr "Переместить конец к начальной позиции"
-
-#: src/backend/Edits/CSelectionEdit.cpp:33
-msgid "Move Start to Stop Position"
-msgstr "Переместить начало к начальной позиции"
-
-#: src/backend/Edits/CSelectionEdit.cpp:39
-msgid "Move Start Position to Beginning"
-msgstr "Переместить начальную позицию к началу"
-
-#: src/backend/Edits/CSelectionEdit.cpp:40
-msgid "Move Stop Position to End"
-msgstr "Переместить конечную позицию к концу"
-
-#: src/backend/Edits/CSelectionEdit.cpp:41
-msgid "Move Stop Position to Beginning"
-msgstr "Переместить конечную позицию к началу"
-
-#: src/backend/Edits/CSelectionEdit.cpp:42
-msgid "Move Start Position to End"
-msgstr "Переместить начальную позицию к концу"
-
-#: src/backend/Edits/CSelectionEdit.cpp:43
-msgid "Move Stop Position Backward to Start Position"
-msgstr "Переместить конечную позицию назад к начальной позиции"
-
-#: src/backend/Edits/CSelectionEdit.cpp:44
-msgid "Move Start Position Forward to Stop Position"
-msgstr "Переместить начальную позицию вперёд к конечной позиции"
-
-#: src/backend/Edits/CSelectionEdit.cpp:250
-msgid "Selection Change"
-msgstr "Изменение выделения"
-
-#: src/backend/Edits/CSelectionEdit.cpp:250
-msgid "Selection Change From Mouse"
-msgstr "Изменение выделение мышкой"
-
-#: src/backend/Edits/CSelectionEdit.cpp:270
-msgid "Grow or Slide Selection"
-msgstr "Увеличить или уменьшить выделение"
-
-#: src/backend/Edits/CRotateEdit.cpp:33
-msgid " -- amount is negative"
-msgstr " -- количество является отрицательным числом"
-
-#: src/backend/Edits/CRotateEdit.cpp:73
-msgid "<< Rotate Left"
-msgstr "<< Повернуть влево"
-
-#: src/backend/Edits/CRotateEdit.cpp:94
-msgid ">> Rotate Right"
-msgstr ">> Повернуть вправо"
-
-#: src/backend/Edits/CAddChannelsEdit.cpp:60
-msgid "Add Channels"
-msgstr "Добавить каналы"
-
-#: src/backend/Edits/CAddChannelsEdit.cpp:60
-msgid "Add New Channels of Audio"
-msgstr "Добавить новые каналы"
-
-#: src/backend/Edits/CCropEdit.cpp:70
-msgid "Crop"
-msgstr "Обрезать"
+#: src/backend/Edits/CPasteAsNewEdit.cpp:114
+#: src/backend/Edits/CPasteEdit.cpp:410
+msgid "No data has been cut or copied to the selected clipboard yet."
+msgstr "Никаких данных ещё не было помещено в буфер обмена."
 
 #: src/backend/Edits/CPasteEdit.cpp:281 src/backend/Edits/CPasteEdit.cpp:359
 #: src/backend/Edits/CPasteEdit.cpp:392
 msgid " -- unhandled pasteType: "
 msgstr " -- неуправляемый тип вставки: "
-
-#: src/backend/Edits/CPasteEdit.cpp:410
-#: src/backend/Edits/CPasteAsNewEdit.cpp:114
-msgid "No data has been cut or copied to the selected clipboard yet."
-msgstr "Никаких данных ещё не было помещено в буфер обмена."
 
 #: src/backend/Edits/CPasteEdit.cpp:465
 msgid "Insert Paste"
@@ -224,8 +388,7 @@ msgid "Limited Overwrite Paste"
 msgstr "Вставка ограниченной перезаписью"
 
 #: src/backend/Edits/CPasteEdit.cpp:524
-msgid ""
-"Overwrite Starting at the Start Position But Not Beyond the Stop Position"
+msgid "Overwrite Starting at the Start Position But Not Beyond the Stop Position"
 msgstr "Перезаписать с начальной позиции, но не дальше конечной позиции"
 
 #: src/backend/Edits/CPasteEdit.cpp:544
@@ -254,13 +417,25 @@ msgid ""
 "Fit Within the Selection"
 msgstr ""
 
-#: src/backend/Edits/CInsertSilenceEdit.cpp:31
-msgid " -- silenceLength is less than zero: "
-msgstr " -- silenceLength меньше нуля: "
+#: src/backend/Edits/CRemoveChannelsEdit.cpp:76
+msgid "Remove Channels"
+msgstr "Удалить каналы"
 
-#: src/backend/Edits/CInsertSilenceEdit.cpp:69
-msgid "Insert Silence"
-msgstr "Вставить фрагмент тишины"
+#: src/backend/Edits/CRemoveChannelsEdit.cpp:76
+msgid "Remove Channels of Audio"
+msgstr "Удалить звуковые каналы"
+
+#: src/backend/Edits/CRotateEdit.cpp:33
+msgid " -- amount is negative"
+msgstr " -- количество является отрицательным числом"
+
+#: src/backend/Edits/CRotateEdit.cpp:73
+msgid "<< Rotate Left"
+msgstr "<< Повернуть влево"
+
+#: src/backend/Edits/CRotateEdit.cpp:94
+msgid ">> Rotate Right"
+msgstr ">> Повернуть вправо"
 
 #: src/backend/Edits/CSaveAsMultipleFilesAction.cpp:104
 msgid ""
@@ -343,147 +518,107 @@ msgstr "Сохранить как несколько файлов"
 msgid "Save Selection As..."
 msgstr "Сохранить выделение как..."
 
-#: src/backend/Edits/CPasteAsNewEdit.cpp:94
-msgid "Paste As New"
-msgstr "Вставить в новый файл"
+#: src/backend/Edits/CSelectionEdit.cpp:27
+msgid "Select All"
+msgstr "Выделить всё"
 
-#: src/backend/Edits/CPasteAsNewEdit.cpp:94
-msgid "Paste the Clipboard's Contents into a Newly Created Sound Window"
-msgstr "Вставить содержимое буфера обмена в новое окно ReZound"
+#: src/backend/Edits/CSelectionEdit.cpp:28
+msgid "Select to Beginning"
+msgstr "Выделить до начала"
 
-#: src/backend/Edits/CCopyCutToNewEdit.cpp:105
-msgid "Copy to New"
-msgstr "Скопировать в новый файл"
+#: src/backend/Edits/CSelectionEdit.cpp:29
+msgid "Select to End"
+msgstr "Выделить до конца"
 
-#: src/backend/Edits/CCopyCutToNewEdit.cpp:105
-msgid "Copy to Selection to a Newly Created Sound Window"
-msgstr "Скопировать в выделение в новое окно ReZound"
+#: src/backend/Edits/CSelectionEdit.cpp:30
+msgid "Flip to Beginning"
+msgstr "Перепрыгнуть к началу"
 
-#: src/backend/Edits/CCopyCutToNewEdit.cpp:124
-msgid "Cut to New"
-msgstr "Вырезать в новый файл"
+#: src/backend/Edits/CSelectionEdit.cpp:31
+msgid "Flip to End"
+msgstr "Перепрыгнуть к концу"
 
-#: src/backend/Edits/CCopyCutToNewEdit.cpp:124
-msgid "Cut and Move the Selection to a Newly Created Sound Window"
-msgstr "Вырезать и переместить выделение в новое окно ReZound"
+#: src/backend/Edits/CSelectionEdit.cpp:32
+msgid "Move Stop to Start Position"
+msgstr "Переместить конец к начальной позиции"
 
-#: src/backend/CSound.cpp:1083
-msgid "Copying/Fitting Data -- Channel "
-msgstr "Копирование/Ужатие данных -- Канал "
+#: src/backend/Edits/CSelectionEdit.cpp:33
+msgid "Move Start to Stop Position"
+msgstr "Переместить начало к начальной позиции"
 
-#: src/backend/CSound.cpp:1105
-msgid "Copying Data -- Channel "
-msgstr "Копирование данных -- Канал "
+#: src/backend/Edits/CSelectionEdit.cpp:39
+msgid "Move Start Position to Beginning"
+msgstr "Переместить начальную позицию к началу"
 
-#: src/backend/CSound.cpp:1135
-msgid "Mixing/Fitting Data (add) -- Channel "
-msgstr "Сведение/Ужатие данных (прибавление) -- Канал "
+#: src/backend/Edits/CSelectionEdit.cpp:40
+msgid "Move Stop Position to End"
+msgstr "Переместить конечную позицию к концу"
 
-#: src/backend/CSound.cpp:1157 src/backend/CSound.cpp:1175
-msgid "Mixing Data (add) -- Channel "
-msgstr "Сведение данных (прибавление) -- Канал "
+#: src/backend/Edits/CSelectionEdit.cpp:41
+msgid "Move Stop Position to Beginning"
+msgstr "Переместить конечную позицию к началу"
 
-#: src/backend/CSound.cpp:1200
-msgid "Mixing/Fitting Data (subtract) -- Channel "
-msgstr "Сведение/Ужатие данных (вычитание) -- Канал "
+#: src/backend/Edits/CSelectionEdit.cpp:42
+msgid "Move Start Position to End"
+msgstr "Переместить начальную позицию к концу"
 
-#: src/backend/CSound.cpp:1222 src/backend/CSound.cpp:1240
-msgid "Mixing Data (subtract) -- Channel "
-msgstr "Сведение данных (вычитание) -- Канал "
+#: src/backend/Edits/CSelectionEdit.cpp:43
+msgid "Move Stop Position Backward to Start Position"
+msgstr "Переместить конечную позицию назад к начальной позиции"
 
-#: src/backend/CSound.cpp:1265
-msgid "Mixing/Fitting Data (multiply) -- Channel "
-msgstr "Сведение/Ужатие данных (умножение) -- Канал "
+#: src/backend/Edits/CSelectionEdit.cpp:44
+msgid "Move Start Position Forward to Stop Position"
+msgstr "Переместить начальную позицию вперёд к конечной позиции"
 
-#: src/backend/CSound.cpp:1287 src/backend/CSound.cpp:1305
-msgid "Mixing Data (multiply) -- Channel "
-msgstr "Сведение данных (умножение) -- Канал "
+#: src/backend/Edits/CSelectionEdit.cpp:250
+msgid "Selection Change"
+msgstr "Изменение выделения"
 
-#: src/backend/CSound.cpp:1330
-msgid "Mixing/Fitting Data (average) -- Channel "
-msgstr "Сведение/Ужатие данных (среднее арифм.) -- Канал "
+#: src/backend/Edits/CSelectionEdit.cpp:250
+msgid "Selection Change From Mouse"
+msgstr "Изменение выделение мышкой"
 
-#: src/backend/CSound.cpp:1352 src/backend/CSound.cpp:1370
-msgid "Mixing Data (average) -- Channel "
-msgstr "Сведение данных (среднее арифм.) -- Канал "
+#: src/backend/Edits/CSelectionEdit.cpp:270
+msgid "Grow or Slide Selection"
+msgstr "Увеличить или уменьшить выделение"
 
-#: src/backend/CSound.cpp:1676
-msgid "File: "
-msgstr "Файл: "
+#: src/backend/Edits/CSwapChannelsEdit.cpp:66
+msgid "Swap Channels"
+msgstr "Поменять местами каналы"
 
-#: src/backend/CSound.cpp:1676
-msgid ""
-"A temporary file was found indicating that this file was previously being "
-"edited when a crash occurred or the process was killed.\n"
-"\n"
-"Do you wish to attempt to recover from this temporary file (otherwise the "
-"file will be deleted)?"
-msgstr ""
-"Был найден временный файл. Это значит, что данный файл\n"
-"изменялся, когда произошёл аварийный выход из программы.\n"
-"\n"
-"Вы хотите попытаться восстановить данные из этого \n"
-"временного файла? Если вы откажетесь, этот файл будет удалён."
+#: src/backend/Edits/CSwapChannelsEdit.cpp:66
+msgid "Swap the Audio Between Two Channels"
+msgstr "Обменяться данными между двумя каналами"
 
-#: src/backend/ALFO.cpp:414
-msgid "Sine Wave [-1,1]"
-msgstr "Синусоидная волна [-1,1]"
+#: src/backend/Effects/CChangeAmplitudeEffect.cpp:49
+msgid "Changing Amplitude -- Channel "
+msgstr "Смена амплитуды -- Канал "
 
-#: src/backend/ALFO.cpp:416
-msgid "Sine Wave [ 0,1]"
-msgstr "Синусоидная волна [0,1]"
+#: src/backend/Effects/CChangeAmplitudeEffect.cpp:94
+msgid "Change Volume"
+msgstr "Изменить уровень"
 
-#: src/backend/ALFO.cpp:418
-msgid "Constant"
-msgstr "Константа"
+#: src/backend/Effects/CChangeAmplitudeEffect.cpp:114
+#: src/frontend_fox/EffectActionDialogs.cpp:57
+#: src/frontend_fox/EffectActionDialogs.cpp:64
+#: src/frontend_fox/EffectActionDialogs.cpp:148
+#: src/frontend_fox/FilterActionDialogs.cpp:309
+#: src/frontend_fox/FilterActionDialogs.cpp:319
+#: src/frontend_fox/FilterActionDialogs.cpp:329
+#: src/frontend_fox/FilterActionDialogs.cpp:340
+#: src/frontend_fox/FilterActionDialogs.cpp:353
+#: src/frontend_fox/FilterActionDialogs.cpp:364
+#: src/frontend_fox/FilterActionDialogs.cpp:375
+msgid "Gain"
+msgstr "Чувствительность"
 
-#: src/backend/ALFO.cpp:420
-msgid "Rising Sawtooth Wave [-1,1]"
-msgstr "Нарастающая пилообразная волна [-1,1]"
-
-#: src/backend/ALFO.cpp:422
-msgid "Rising Sawtooth Wave [ 0,1]"
-msgstr "Нарастающая пилообразная волна [0,1]"
-
-#: src/backend/ALFO.cpp:424
-msgid "Falling Sawtooth Wave [-1,1]"
-msgstr "Угасающая пилообразная волна [-1,1]"
-
-#: src/backend/ALFO.cpp:426
-msgid "Falling Sawtooth Wave [ 0,1]"
-msgstr "Угасающая пилообразная волна [0,1]"
-
-#: src/backend/CrezSoundTranslator.cpp:197
-msgid "Loading Channel "
-msgstr "Загружается канал "
-
-#: src/backend/CrezSoundTranslator.cpp:294
-msgid "Saving Channel "
-msgstr "Сохраняется канал "
-
-#: src/backend/CrezSoundTranslator.cpp:357
-msgid "Native ReZound"
-msgstr "Собственный формат"
-
-#: src/backend/CStubAction.cpp:26
-msgid "Stub Action -- Channel "
-msgstr "Вырывающее действие -- Канал "
-
-#: src/backend/CStubAction.cpp:81
-msgid "Stub"
+#: src/backend/Effects/CChangeAmplitudeEffect.cpp:132
+msgid "Curved Gain"
 msgstr ""
 
-#: src/backend/Effects/CVariedRepeatEffect.cpp:43
-msgid "Varied Repeat -- Channel "
-msgstr "Варьирующийся повтор -- Канал "
-
-#: src/backend/Effects/CVariedRepeatEffect.cpp:91
-msgid "Varied Repeat"
-msgstr "Варьирующийся повтор"
-
-#: src/backend/Effects/CVariedRepeatEffect.cpp:91
-msgid "Repeat the Selection Variably According to an LFO"
-msgstr "Повторить выделение с изменением по LFO"
+#: src/backend/Effects/CChangeAmplitudeEffect.cpp:132
+msgid "Change Gain According to a Curve"
+msgstr "Изменить чувствительность по кривой"
 
 #: src/backend/Effects/CChangeRateEffect.cpp:61
 msgid "newLength calulated out of range -- action not taken"
@@ -515,36 +650,6 @@ msgstr "Задержка -- Канал "
 msgid "Simple Delay (Echo)"
 msgstr "Простая задержка (Эхо)"
 
-#: src/backend/Effects/CChangeAmplitudeEffect.cpp:49
-msgid "Changing Amplitude -- Channel "
-msgstr "Смена амплитуды -- Канал "
-
-#: src/backend/Effects/CChangeAmplitudeEffect.cpp:94
-msgid "Change Volume"
-msgstr "Изменить уровень"
-
-#: src/backend/Effects/CChangeAmplitudeEffect.cpp:114
-#: src/frontend_fox/FilterActionDialogs.cpp:194
-#: src/frontend_fox/FilterActionDialogs.cpp:204
-#: src/frontend_fox/FilterActionDialogs.cpp:214
-#: src/frontend_fox/FilterActionDialogs.cpp:225
-#: src/frontend_fox/FilterActionDialogs.cpp:238
-#: src/frontend_fox/FilterActionDialogs.cpp:249
-#: src/frontend_fox/FilterActionDialogs.cpp:260
-#: src/frontend_fox/EffectActionDialogs.cpp:57
-#: src/frontend_fox/EffectActionDialogs.cpp:64
-#: src/frontend_fox/EffectActionDialogs.cpp:148
-msgid "Gain"
-msgstr "Чувствительность"
-
-#: src/backend/Effects/CChangeAmplitudeEffect.cpp:132
-msgid "Curved Gain"
-msgstr ""
-
-#: src/backend/Effects/CChangeAmplitudeEffect.cpp:132
-msgid "Change Gain According to a Curve"
-msgstr "Изменить чувствительность по кривой"
-
 #: src/backend/Effects/CDistortionEffect.cpp:32
 msgid "Distortion -- Channel "
 msgstr "Искажение -- Канал "
@@ -552,18 +657,6 @@ msgstr "Искажение -- Канал "
 #: src/backend/Effects/CDistortionEffect.cpp:86
 msgid "Distortion"
 msgstr "Искажение"
-
-#: src/backend/Effects/CQuantizeEffect.cpp:56
-msgid "Quantize -- Channel "
-msgstr "Квантовать -- Канал "
-
-#: src/backend/Effects/CQuantizeEffect.cpp:101
-msgid "Quantize"
-msgstr "Квантовать"
-
-#: src/backend/Effects/CQuantizeEffect.cpp:101
-msgid "Quantize the Number of Possible Sample Levels"
-msgstr "Квантовать количество возможных уровней семпла"
 
 #: src/backend/Effects/CFlangeEffect.cpp:47
 msgid " -- _delayTime is negative"
@@ -581,6 +674,18 @@ msgstr "Флейндж -- Канал "
 msgid "Flange"
 msgstr "Флейндж"
 
+#: src/backend/Effects/CQuantizeEffect.cpp:56
+msgid "Quantize -- Channel "
+msgstr "Квантовать -- Канал "
+
+#: src/backend/Effects/CQuantizeEffect.cpp:101
+msgid "Quantize"
+msgstr "Квантовать"
+
+#: src/backend/Effects/CQuantizeEffect.cpp:101
+msgid "Quantize the Number of Possible Sample Levels"
+msgstr "Квантовать количество возможных уровней семпла"
+
 #: src/backend/Effects/CReverseEffect.cpp:53
 msgid "Reversing -- Channel "
 msgstr "Разворачивание -- Канал "
@@ -591,36 +696,128 @@ msgid "Cancelling Reverse -- Channel "
 msgstr "Отменяется разворачивание -- Канал "
 
 #: src/backend/Effects/CReverseEffect.cpp:144
-#: src/frontend_fox/FilterActionDialogs.cpp:67
+#: src/frontend_fox/FilterActionDialogs.cpp:68
 msgid "Reverse"
 msgstr "Перевернуть"
 
-#: src/backend/ClibaudiofileSoundTranslator.cpp:86
-msgid " -- error opening"
-msgstr " -- ошибка при открытии"
+#: src/backend/Effects/CVariedRepeatEffect.cpp:43
+msgid "Varied Repeat -- Channel "
+msgstr "Варьирующийся повтор -- Канал "
 
-#: src/backend/ClibaudiofileSoundTranslator.cpp:219
-msgid "Loading Sound"
-msgstr "Загружается звуковой файл"
+#: src/backend/Effects/CVariedRepeatEffect.cpp:91
+msgid "Varied Repeat"
+msgstr "Варьирующийся повтор"
 
-#: src/backend/ClibaudiofileSoundTranslator.cpp:333
-msgid "This format does not support saving cues"
-msgstr "Этот формат не поддерживает сохранение маркеров"
+#: src/backend/Effects/CVariedRepeatEffect.cpp:91
+msgid "Repeat the Selection Variably According to an LFO"
+msgstr "Повторить выделение с изменением по LFO"
 
-#: src/backend/main_controls.cpp:131
-msgid "Are you sure you want to quit?"
-msgstr "Вы уверены, что хотите выйти из программы?"
+#: src/backend/Filters/CArbitraryFIRFilter.cpp:92
+#: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:84
+msgid "Filtering -- Channel "
+msgstr "Фильтрование... -- Канал "
 
-#: src/backend/Looping/CMakeSymetricAction.cpp:56
-msgid "Make Symetric -- Channel "
-msgstr "Сделать симметричным -- Канал "
+#: src/backend/Filters/CArbitraryFIRFilter.cpp:187
+#: src/backend/Filters/CConvolutionFilter.cpp:239
+#: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:216
+msgid ""
+" -- feature disabled because the fftw/rfftw library was not installed or "
+"detected when configure was run"
+msgstr ""
+" -- эта функция отключена из-за отсутствия в системе библиотеки fftw/rfftw "
+"или её ненахождения при работе сценария './configure'"
 
-#: src/backend/Looping/CMakeSymetricAction.cpp:98
-msgid "Make Symetric"
-msgstr "Сделать симметричным"
+#: src/backend/Filters/CArbitraryFIRFilter.cpp:204
+msgid "Arbitrary FIR Filter"
+msgstr "Произвольный FIR-фильтр"
 
-#: src/backend/Looping/CMakeSymetricAction.cpp:98
-msgid "Make Symetric For Noise Loops"
+#: src/backend/Filters/CArbitraryFIRFilter.cpp:204
+msgid "Finite Impulse Response Filter Given a Custom/User-Defined Frequency Response"
+msgstr ""
+
+#: src/backend/Filters/CBiquadResFilter.cpp:75
+#: src/backend/Filters/CSinglePoleFilter.cpp:75
+msgid "Lowpass Filter -- Channel "
+msgstr "Фильтр НЧ... -- Канал "
+
+#: src/backend/Filters/CBiquadResFilter.cpp:88
+#: src/backend/Filters/CSinglePoleFilter.cpp:88
+msgid "Highpass Filter -- Channel "
+msgstr "Фильтр ВЧ... -- Канал "
+
+#: src/backend/Filters/CBiquadResFilter.cpp:101
+#: src/backend/Filters/CSinglePoleFilter.cpp:101
+msgid "Bandpass Filter -- Channel "
+msgstr "Полосно-пропускающий фильтр... -- Канал "
+
+#: src/backend/Filters/CBiquadResFilter.cpp:139
+msgid "Biquad Resonant Lowpass Filter"
+msgstr "Биквадратичный резонантный фильтр НЧ"
+
+#: src/backend/Filters/CBiquadResFilter.cpp:161
+msgid "Biquad Resonant Highpass Filter"
+msgstr "Биквадратичный резонантный фильтр ВЧ"
+
+#: src/backend/Filters/CBiquadResFilter.cpp:183
+msgid "Biquad Resonant Bandpass Filter"
+msgstr "Биквадратичный резонантный полосно-пропускающий фильтр"
+
+#: src/backend/Filters/CConvolutionFilter.cpp:70
+msgid " -- cannot read kernel filter file '"
+msgstr " --- невозможно прочитать файл корневой фильтрации '"
+
+#: src/backend/Filters/CConvolutionFilter.cpp:149
+msgid "Convolving -- Channel "
+msgstr "Моделирование -- Канал "
+
+#: src/backend/Filters/CConvolutionFilter.cpp:256
+msgid "Convolution Filter"
+msgstr "Моделирующий фильтр"
+
+#: src/backend/Filters/CConvolutionFilter.cpp:256
+msgid "Convolve One Audio File with this One"
+msgstr "Свернуть другой звуковой файл с этим"
+
+#: src/backend/Filters/CSinglePoleFilter.cpp:114
+msgid "Notch Filter -- Channel "
+msgstr "Режекторный фильтр... -- Канал "
+
+#: src/backend/Filters/CSinglePoleFilter.cpp:151
+msgid "Single Pole Lowpass Filter"
+msgstr "Однополосной фильтр НЧ"
+
+#: src/backend/Filters/CSinglePoleFilter.cpp:172
+msgid "Single Pole Highpass Filter"
+msgstr "Однополосной фильтр ВЧ"
+
+#: src/backend/Filters/CSinglePoleFilter.cpp:193
+msgid "Bandpass Filter"
+msgstr "Полосно-пропускающий фильтр"
+
+#: src/backend/Filters/CSinglePoleFilter.cpp:215
+msgid "Notch Filter"
+msgstr "Режекторный фильтр"
+
+#: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:44
+msgid " -- sweepLFODesc.amp is negative"
+msgstr " -- sweepLFODesc.amp является отрицательным числом"
+
+#: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:46
+msgid " -- freqResponse1 and freqResonse2 do not contain the same number of nodes"
+msgstr ""
+
+#: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:232
+msgid "explain this"
+msgstr "Справка"
+
+#: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:238
+msgid "Morphing Arbitrary FIR Filter"
+msgstr "Произвольный трансформирующийся FIR-фильтр"
+
+#: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:238
+msgid ""
+"Animated Finite Impulse Response Filter Given two Custom/User-Defined "
+"Frequency Responses"
 msgstr ""
 
 #: src/backend/Looping/CAddCuesAction.cpp:58
@@ -651,102 +848,49 @@ msgstr "Добавить синхр. маркеры"
 msgid "Add a Cue Every X Seconds"
 msgstr "Добавить по маркеру каждые X секунд"
 
-#: src/backend/ASoundTranslator.cpp:154
-msgid "No handler found to support the format for "
-msgstr "Не найдено средство обработки формата для "
+#: src/backend/Looping/CMakeSymetricAction.cpp:56
+msgid "Make Symetric -- Channel "
+msgstr "Сделать симметричным -- Канал "
 
-#: src/backend/ASoundTranslator.cpp:154
-msgid "Would you like to use a raw format?"
-msgstr "Вы хотите использовать беззаголовочный формат?"
+#: src/backend/Looping/CMakeSymetricAction.cpp:98
+msgid "Make Symetric"
+msgstr "Сделать симметричным"
 
-#: src/backend/ASoundTranslator.cpp:160
-msgid " -- unhandled format/extension for the filename"
-msgstr " -- необрабатываемый формат/расширение для имени файла"
-
-#: src/backend/Filters/CConvolutionFilter.cpp:70
-msgid " -- cannot read kernel filter file '"
-msgstr " --- невозможно прочитать файл корневой фильтрации '"
-
-#: src/backend/Filters/CConvolutionFilter.cpp:149
-msgid "Convolving -- Channel "
-msgstr "Моделирование -- Канал "
-
-#: src/backend/Filters/CConvolutionFilter.cpp:239
-#: src/backend/Filters/CArbitraryFIRFilter.cpp:225
-msgid ""
-" -- feature disabled because the fftw/rfftw library was not installed or "
-"detected when configure was run"
+#: src/backend/Looping/CMakeSymetricAction.cpp:98
+msgid "Make Symetric For Noise Loops"
 msgstr ""
-" -- эта функция отключена из-за отсутствия в системе библиотеки fftw/rfftw "
-"или её ненахождения при работе сценария './configure'"
 
-#: src/backend/Filters/CConvolutionFilter.cpp:256
-msgid "Convolution Filter"
-msgstr "Моделирующий фильтр"
+#: src/backend/Remaster/CBalanceAction.cpp:57
+msgid "Changing Balance"
+msgstr "Изменяется баланс"
 
-#: src/backend/Filters/CConvolutionFilter.cpp:256
-msgid "Convolve One Audio File with this One"
-msgstr "Свернуть другой звуковой файл с этим"
-
-#: src/backend/Filters/CSinglePoleFilter.cpp:75
-#: src/backend/Filters/CBiquadResFilter.cpp:75
-msgid "Lowpass Filter -- Channel "
-msgstr "Фильтр НЧ... -- Канал "
-
-#: src/backend/Filters/CSinglePoleFilter.cpp:88
-#: src/backend/Filters/CBiquadResFilter.cpp:88
-msgid "Highpass Filter -- Channel "
-msgstr "Фильтр ВЧ... -- Канал "
-
-#: src/backend/Filters/CSinglePoleFilter.cpp:101
-#: src/backend/Filters/CBiquadResFilter.cpp:101
-msgid "Bandpass Filter -- Channel "
-msgstr "Полосно-пропускающий фильтр... -- Канал "
-
-#: src/backend/Filters/CSinglePoleFilter.cpp:114
-msgid "Notch Filter -- Channel "
-msgstr "Режекторный фильтр... -- Канал "
-
-#: src/backend/Filters/CSinglePoleFilter.cpp:151
-msgid "Single Pole Lowpass Filter"
-msgstr "Однополосной фильтр НЧ"
-
-#: src/backend/Filters/CSinglePoleFilter.cpp:172
-msgid "Single Pole Highpass Filter"
-msgstr "Однополосной фильтр ВЧ"
-
-#: src/backend/Filters/CSinglePoleFilter.cpp:193
-msgid "Bandpass Filter"
-msgstr "Полосно-пропускающий фильтр"
-
-#: src/backend/Filters/CSinglePoleFilter.cpp:215
-msgid "Notch Filter"
-msgstr "Режекторный фильтр"
-
-#: src/backend/Filters/CBiquadResFilter.cpp:139
-msgid "Biquad Resonant Lowpass Filter"
-msgstr "Биквадратичный резонантный фильтр НЧ"
-
-#: src/backend/Filters/CBiquadResFilter.cpp:161
-msgid "Biquad Resonant Highpass Filter"
-msgstr "Биквадратичный резонантный фильтр ВЧ"
-
-#: src/backend/Filters/CBiquadResFilter.cpp:183
-msgid "Biquad Resonant Bandpass Filter"
-msgstr "Биквадратичный резонантный полосно-пропускающий фильтр"
-
-#: src/backend/Filters/CArbitraryFIRFilter.cpp:130
-msgid "Filtering -- Channel "
-msgstr "Фильтрование... -- Канал "
-
-#: src/backend/Filters/CArbitraryFIRFilter.cpp:242
-msgid "Arbitrary FIR Filter"
-msgstr "Произвольный FIR-фильтр"
-
-#: src/backend/Filters/CArbitraryFIRFilter.cpp:242
+#: src/backend/Remaster/CBalanceAction.cpp:181
+#, c-format
 msgid ""
-"Finite Impulse Response Filter Given a Custom/User-Defined Frequency Response"
+"Strict Balance: -100% means normal A and no B, 0 means normal A and normal "
+"B, 100% means no A and normal B\n"
+"1x Balance: -100% means normal A and no B, 0 means half A and half B, 100% "
+"means no A and normal B\n"
+"2x Balance: -100% means 2x A and no B, 0 means normal A and normal B, 100% "
+"means no A and 2x B"
 msgstr ""
+"Точный баланс: -100% означает наличие нормального A и отсутствие B; 0 "
+"означает наличие нормального A и нормального B; 100% означает отсутствие A и "
+"наличие нормального B\n"
+"1x Баланс: -100% означает наличие нормального A и отсутствие B; 0 означает "
+"половину A и половину B; 100% означает отсутствие A и наличие нормального B\n"
+"2x Баланс: -100% означает наличие 2-x A и отсутствие B; 0 означает наличие "
+"нормального A и нормального B; 100% означает отсутствие A и наличие 2-x B"
+
+#: src/backend/Remaster/CBalanceAction.cpp:195
+#: src/frontend_fox/RemasterActionDialogs.cpp:52
+#: src/frontend_fox/RemasterActionDialogs.cpp:105
+msgid "Balance"
+msgstr "Баланс"
+
+#: src/backend/Remaster/CBalanceAction.cpp:217
+msgid "Curved Balance"
+msgstr "Изменение баланса по кривой"
 
 #: src/backend/Remaster/CCompressorAction.cpp:47
 msgid "Compressor -- Channel "
@@ -760,17 +904,33 @@ msgstr "Компрессор "
 msgid "Dynamic Range Compressor"
 msgstr "Компрессор динамического диапазона"
 
-#: src/backend/Remaster/CRemoveDCAction.cpp:76
-msgid "Remove DC Component -- Channel "
-msgstr "Удаление DC Component... -- Канал "
+#: src/backend/Remaster/CMonoizeAction.cpp:85
+#: src/backend/Remaster/CMonoizeAction.cpp:191
+msgid "Monoizing"
+msgstr "Монофонизация"
 
-#: src/backend/Remaster/CRemoveDCAction.cpp:118
-msgid "Remove DC Component"
-msgstr "Удалить смещение сигнала относительно центральной оси"
+#: src/backend/Remaster/CMonoizeAction.cpp:289
+msgid "Monoize"
+msgstr "Монофонизация"
 
-#: src/backend/Remaster/CRemoveDCAction.cpp:133
-msgid "Removes a DC offset from the audio, recentering it around zero"
-msgstr "Удаляет смещение сигнала относительно центральной оси"
+#: src/backend/Remaster/CNoiseGateAction.cpp:74
+msgid "Noise Gating -- Channel "
+msgstr "Применяется фильтр шума -- Канал "
+
+#: src/backend/Remaster/CNoiseGateAction.cpp:126
+msgid ""
+"Applies a gain [0,1] to the sound when the level becomes less than the "
+"threshold.\n"
+"The gain changes with a velocity according to the attack and release times"
+msgstr ""
+"К звуку применяется чувствительность [0,1], когда \n"
+"уровень становится меньше порога.\n"
+"Чувствительность меняется со скоростью относительно \n"
+"времени атаки и затухания."
+
+#: src/backend/Remaster/CNoiseGateAction.cpp:133
+msgid "Noise Gate"
+msgstr "Фильтр шума"
 
 #: src/backend/Remaster/CNormalizeAction.cpp:72
 msgid "Analyzing -- Channel "
@@ -797,65 +957,17 @@ msgstr ""
 "Нормализовать амплитуду (часть кода этой функции экспериментальна; "
 "пожалуйста, сообщите мне о ваших впечатлениях от её работы)"
 
-#: src/backend/Remaster/CNoiseGateAction.cpp:74
-msgid "Noise Gating -- Channel "
-msgstr "Применяется фильтр шума -- Канал "
+#: src/backend/Remaster/CRemoveDCAction.cpp:76
+msgid "Remove DC Component -- Channel "
+msgstr "Удаление DC Component... -- Канал "
 
-#: src/backend/Remaster/CNoiseGateAction.cpp:126
-msgid ""
-"Applies a gain [0,1] to the sound when the level becomes less than the "
-"threshold.\n"
-"The gain changes with a velocity according to the attack and release times"
-msgstr ""
-"К звуку применяется чувствительность [0,1], когда \n"
-"уровень становится меньше порога.\n"
-"Чувствительность меняется со скоростью относительно \n"
-"времени атаки и затухания."
+#: src/backend/Remaster/CRemoveDCAction.cpp:118
+msgid "Remove DC Component"
+msgstr "Удалить смещение сигнала относительно центральной оси"
 
-#: src/backend/Remaster/CNoiseGateAction.cpp:133
-msgid "Noise Gate"
-msgstr "Фильтр шума"
-
-#: src/backend/Remaster/CBalanceAction.cpp:57
-msgid "Changing Balance"
-msgstr "Изменяется баланс"
-
-#: src/backend/Remaster/CBalanceAction.cpp:181
-#, fuzzy, c-format
-msgid ""
-"Strict Balance: -100% means normal A and no B, 0 means normal A and normal "
-"B, 100% means no A and normal B\n"
-"1x Balance: -100% means normal A and no B, 0 means half A and half B, 100% "
-"means no A and normal B\n"
-"2x Balance: -100% means 2x A and no B, 0 means normal A and normal B, 100% "
-"means no A and 2x B"
-msgstr ""
-"Точный баланс: -100% означает наличие нормального A и отсутствие B; 0 "
-"означает наличие нормального A и нормального B; 100% означает отсутствие A и "
-"наличие нормального B\n"
-"1x Баланс: -100% означает наличие нормального A и отсутствие B; 0 означает "
-"половину A и половину B; 100% означает отсутствие A и наличие нормального B\n"
-"2x Баланс: -100% означает наличие 2x A и отсутствие B; 0 означает наличие "
-"нормального A и нормального B; 100% означает отсутствие A и наличие 2x B"
-
-#: src/backend/Remaster/CBalanceAction.cpp:195
-#: src/frontend_fox/RemasterActionDialogs.cpp:52
-#: src/frontend_fox/RemasterActionDialogs.cpp:105
-msgid "Balance"
-msgstr "Баланс"
-
-#: src/backend/Remaster/CBalanceAction.cpp:217
-msgid "Curved Balance"
-msgstr "Изменение баланса по кривой"
-
-#: src/backend/Remaster/CMonoizeAction.cpp:85
-#: src/backend/Remaster/CMonoizeAction.cpp:191
-msgid "Monoizing"
-msgstr "Монофонизация"
-
-#: src/backend/Remaster/CMonoizeAction.cpp:289
-msgid "Monoize"
-msgstr "Монофонизация"
+#: src/backend/Remaster/CRemoveDCAction.cpp:133
+msgid "Removes a DC offset from the audio, recentering it around zero"
+msgstr "Удаляет смещение сигнала относительно центральной оси"
 
 #: src/backend/Remaster/CResampleAction.cpp:63
 msgid "Changing Sample Rate -- Channel "
@@ -869,85 +981,173 @@ msgstr "Изменить частоту дискретизации"
 msgid "Change Sample Rate"
 msgstr "Изменить частоту семплирования"
 
-#: src/backend/Generate/CGenerateNoiseAction.cpp:214
+#: src/backend/main_controls.cpp:131
+msgid "Are you sure you want to quit?"
+msgstr "Вы уверены, что хотите выйти из программы?"
+
+#: src/backend/Generate/CGenerateNoiseAction.cpp:255
 msgid "Generate Noise"
 msgstr "Создать шум"
 
-#: src/backend/Generate/CGenerateNoiseAction.cpp:214
+#: src/backend/Generate/CGenerateNoiseAction.cpp:255
 msgid "Generate Various Colors of Noise"
 msgstr "Создать различные виды шума"
 
-#: src/backend/CJACKSoundPlayer.cpp:78 src/backend/CJACKSoundRecorder.cpp:65
-msgid " -- error connecting to jack server -- jackd not running?"
-msgstr " -- ошибка при соединении с JACK-сервером -- сервер не запущен?"
+#: src/backend/Generate/CGenerateToneAction.cpp:66
+msgid "Generating Tone -- Channel "
+msgstr "Создание тона -- Канал "
 
-#: src/backend/CJACKSoundPlayer.cpp:125
-msgid "Choose Port for Output Channel "
-msgstr "Выберите порт для канала вывода "
+#: src/backend/Generate/CGenerateToneAction.cpp:177
+msgid "Generate Tone"
+msgstr "Создать тон"
 
-#: src/backend/CJACKSoundPlayer.cpp:131 src/backend/CJACKSoundRecorder.cpp:116
-msgid "Cannot connect to JACK port, "
-msgstr "Невозможно подсоединиться к JACK-порту, "
+#: src/backend/CFLACSoundTranslator.cpp:230
+msgid ""
+"Saving user notes or cues is unimplemented for FLAC\n"
+"Do you wish to continue?"
+msgstr ""
+"Заметки пользователя и метки не могут быть сохранены в формате FLAC.\n"
+"Вы хотите продолжить?"
 
-#: src/backend/CJACKSoundPlayer.cpp:131 src/backend/CJACKSoundRecorder.cpp:116
-msgid ", please choose a different one"
-msgstr ", выберите другой"
+#: src/frontend_fox/CAboutDialog.cpp:43
+msgid "About ReZound"
+msgstr "О программе ReZound"
 
-#: src/backend/CMIDISDSSoundTranslator.cpp:385
-msgid "Downloading Sample"
-msgstr "Закачивается семпл"
+#: src/frontend_fox/CAboutDialog.cpp:69
+msgid "Please Read"
+msgstr "Для информации"
 
-#: src/backend/CMIDISDSSoundTranslator.cpp:478
-msgid "Keeping what was received"
-msgstr "Сохраняется полученное"
+#: src/frontend_fox/CAboutDialog.cpp:91
+msgid "About"
+msgstr "О программе"
 
-#: src/backend/CMIDISDSSoundTranslator.cpp:652
-msgid "Uploading Sample"
-msgstr "Загружается семпл"
+#: src/frontend_fox/CAboutDialog.cpp:95
+msgid "Author"
+msgstr "Автор"
 
-#: src/backend/CMIDISDSSoundTranslator.cpp:652
-msgid "Dumping Sample"
-msgstr "Передача семпла"
+#: src/frontend_fox/CAboutDialog.cpp:96
+msgid "Original Autoconfiscation"
+msgstr "Оригинальное автозаимствование"
 
-#: src/backend/initialize.cpp:124
-msgid "Native Clipboard "
-msgstr "Собственный буфер обмена "
+#: src/frontend_fox/CAboutDialog.cpp:97
+msgid "Additional Programming"
+msgstr "Вспомогательное программирование"
 
-#: src/backend/initialize.cpp:137
-msgid "Record Clipboard "
-msgstr "Буфер записи "
+#: src/frontend_fox/CAboutDialog.cpp:98
+msgid "Artistic Consultant"
+msgstr "Консультант по графике"
 
-#: src/backend/CJACKSoundRecorder.cpp:110
-msgid "Choose Port for Input Channel "
-msgstr "Выберите порт для входного канала "
+#: src/frontend_fox/CAboutDialog.cpp:99
+msgid "Home Page"
+msgstr "Домашняя страница"
 
-#: src/backend/ASoundFileManager.cpp:135
-msgid " -- file already opened"
-msgstr " -- файл уже открывался"
+#: src/frontend_fox/CAboutDialog.cpp:100
+msgid "Mailing List"
+msgstr "Список рассылки"
 
-#: src/backend/ASoundFileManager.cpp:250 src/backend/ASoundFileManager.cpp:304
-msgid " -- file is currently opened"
-msgstr " -- файл сейчас открыт"
+#: src/frontend_fox/CAboutDialog.cpp:101
+msgid "Bug Reports"
+msgstr "Сообщения об ошибках"
 
-#: src/backend/ASoundFileManager.cpp:256 src/backend/ASoundFileManager.cpp:308
-msgid "Overwrite Existing File"
-msgstr "Перезаписать существующий файл"
+#: src/frontend_fox/CAboutDialog.cpp:102
+msgid "Support Requests"
+msgstr "Запросы поддержки"
 
-#: src/backend/ASoundFileManager.cpp:328 src/backend/ASoundFileManager.cpp:335
-msgid "Save Modified Sound"
-msgstr "Сохранить изменённый звук"
+#: src/frontend_fox/CAboutDialog.cpp:103
+msgid "Feature Requests"
+msgstr "Запросы расширения функциональности"
 
-#: src/backend/ASoundFileManager.cpp:386
-msgid "Are you sure you want to revert to the last saved copy of"
-msgstr "Вы уверены, что хотите вернуться к последней сохранённой копии "
+#: src/frontend_fox/CAboutDialog.cpp:105
+msgid "Also Please Read"
+msgstr "Также на заметку"
 
-#: src/backend/ASoundFileManager.cpp:493
-msgid "Load sound from previous session?"
-msgstr "Загрузить звук из предыдущей сессии?"
+#: src/frontend_fox/CAboutDialog.cpp:108
+msgid "Thanks To"
+msgstr "Благодарности"
 
-#: src/frontend_fox/CUserNotesDialog.cpp:43
-msgid "User Notes"
-msgstr "Пользовательские заметки"
+#: src/frontend_fox/CAboutDialog.cpp:112 src/frontend_fox/CAboutDialog.cpp:113
+#: src/frontend_fox/CAboutDialog.cpp:114 src/frontend_fox/CAboutDialog.cpp:115
+#: src/frontend_fox/CAboutDialog.cpp:116 src/frontend_fox/CAboutDialog.cpp:119
+msgid "Bug Finding"
+msgstr "Поиск ошибок"
+
+#: src/frontend_fox/CAboutDialog.cpp:117
+msgid "Feature Suggestions"
+msgstr "Предложения новых функций"
+
+#: src/frontend_fox/CAboutDialog.cpp:118
+msgid "Bug Finding/Fixing"
+msgstr "Поиск и исправление ошибок"
+
+#: src/frontend_fox/CAboutDialog.cpp:131
+#: src/frontend_fox/CCueListDialog.cpp:74 src/frontend_fox/CMainWindow.cpp:722
+msgid "&Close"
+msgstr "&Закрыть"
+
+#: src/frontend_fox/CActionParamDialog.cpp:95
+msgid "Explain"
+msgstr "Справка"
+
+#: src/frontend_fox/CActionParamDialog.cpp:748
+msgid "Preset Name"
+msgstr "Имя предустановки"
+
+#: src/frontend_fox/CActionParamDialog.cpp:752
+msgid "Invalid Preset Name"
+msgstr "Неверное имя предустановки"
+
+#: src/frontend_fox/CActionParamDialog.cpp:761
+msgid "Preset Name cannot contain"
+msgstr "Имя предустановки не может содержать "
+
+#: src/frontend_fox/CActionParamDialog.cpp:776
+msgid "Overwrite Existing Preset"
+msgstr "Перезаписать существующую предустановку"
+
+#: src/frontend_fox/CActionParamDialog.cpp:844
+msgid "Remove Preset"
+msgstr "Удалить предустановку"
+
+#: src/frontend_fox/CActionParamDialog.cpp:901
+msgid "&Use\tOr Double-Click an Item in the List"
+msgstr "&Использовать\tили дважды щёлкнуть мышкой по объекту в списке"
+
+#: src/frontend_fox/CActionParamDialog.cpp:902
+#: src/frontend_fox/CMainWindow.cpp:718
+msgid "&Save"
+msgstr "&Сохранить"
+
+#: src/frontend_fox/CActionParamDialog.cpp:903
+#: src/frontend_fox/CCueListDialog.cpp:77
+msgid "&Remove"
+msgstr "&Удалить"
+
+#: src/frontend_fox/CChannelSelectDialog.cpp:58
+msgid "Channel Select"
+msgstr "Выбор канала"
+
+#: src/frontend_fox/CChannelSelectDialog.cpp:60
+msgid "Channels to Which This Action Should Apply:"
+msgstr "Каналы, к которым должно быть применено это действие:"
+
+#: src/frontend_fox/CChannelSelectDialog.cpp:67
+#: src/frontend_fox/CPasteChannelsDialog.cpp:114
+#: src/frontend_fox/CPasteChannelsDialog.cpp:119
+#: src/frontend_fox/RemasterActionDialogs.cpp:80
+#: src/frontend_fox/RemasterActionDialogs.cpp:126
+#: src/frontend_fox/RemasterActionDialogs.cpp:155
+msgid "Channel "
+msgstr "Канал "
+
+#: src/frontend_fox/CChannelSelectDialog.cpp:70
+#: src/frontend_fox/CPasteChannelsDialog.cpp:95
+msgid "Default"
+msgstr "По умолчанию"
+
+#: src/frontend_fox/CChannelSelectDialog.cpp:71
+#: src/frontend_fox/CPasteChannelsDialog.cpp:96
+msgid "Clear"
+msgstr "Очистить"
 
 #: src/frontend_fox/CCrossfadeEdgesDialog.cpp:33
 msgid "Crossfade Edges Settings"
@@ -989,6 +1189,517 @@ msgstr ""
 "Параболический метод даст более реалистичный звук\n"
 "Линейный метод рекомендуется для быстрого\n"
 "изменения громкости (меньше 250 мс)"
+
+#: src/frontend_fox/CCueDialog.cpp:48
+msgid "Cue Properties"
+msgstr "Свойства маркера"
+
+#: src/frontend_fox/CCueDialog.cpp:51
+msgid "Cue Name:"
+msgstr "Имя маркера"
+
+#: src/frontend_fox/CCueDialog.cpp:55
+msgid " Cue Time:"
+msgstr " Время маркера:"
+
+#: src/frontend_fox/CCueDialog.cpp:59
+msgid ""
+"Anchored in Time\tMeaning That This Cue's Position Will Not Be Affected by "
+"Adding and Removing Space Within the Audio"
+msgstr ""
+
+#: src/frontend_fox/CCueDialog.cpp:101
+msgid "Cue Name Too Long"
+msgstr "Слишком длинное имя маркера"
+
+#: src/frontend_fox/CCueDialog.cpp:109
+msgid "Invalid Cue Time.  Format: HH:MM:SS.sssss or MM:SS.sssss"
+msgstr "Невреное время маркера.  Формат: HH:MM:SS.sssss или MM:SS.sssss"
+
+#: src/frontend_fox/CCueListDialog.cpp:66
+msgid "Cue List"
+msgstr "Список маркеров"
+
+#: src/frontend_fox/CCueListDialog.cpp:76
+msgid "&Add"
+msgstr "&Добавить"
+
+#: src/frontend_fox/CCueListDialog.cpp:78 src/frontend_fox/CMainWindow.cpp:892
+msgid "&Edit"
+msgstr "&Правка"
+
+#: src/frontend_fox/CFrontendHooks.cpp:60
+msgid "Select Directory"
+msgstr "Выбрать каталог"
+
+#: src/frontend_fox/CFrontendHooks.cpp:81
+msgid "Open File"
+msgstr "Открыть файл"
+
+#: src/frontend_fox/CFrontendHooks.cpp:89
+msgid "Open as Raw"
+msgstr "Открыть как файл без заголовка"
+
+#: src/frontend_fox/CFrontendHooks.cpp:94
+msgid "Save File"
+msgstr "Сохранить файл"
+
+#: src/frontend_fox/CFrontendHooks.cpp:102
+msgid "Save as Raw"
+msgstr "Сохранить как файл без заголовка"
+
+#: src/frontend_fox/CFrontendHooks.cpp:166
+msgid "All Supported Types"
+msgstr "Все поддерживаемые типы"
+
+#: src/frontend_fox/CFrontendHooks.cpp:166
+msgid "All Files"
+msgstr "Все файлы"
+
+#: src/frontend_fox/CJACKPortChoiceDialog.cpp:40
+msgid "JACK Port Selection"
+msgstr "Выбор JACK-порта"
+
+#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:45
+msgid "MIDI Sample Dump"
+msgstr "Дамп семпла MIDI"
+
+#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:49
+msgid "Wait for Dump"
+msgstr ""
+
+#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:52
+msgid "Sample ID"
+msgstr "ID семпла"
+
+#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:57
+msgid "SysEx Channel"
+msgstr "Канал SysEx"
+
+#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:62
+msgid "Loop Type"
+msgstr "Тип цикла"
+
+#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:102
+#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:139
+msgid "Waveform IDs must be from 0 to 16384"
+msgstr "Waveform IDs должны быть от 0 до 16384"
+
+#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:148
+msgid "Loop type must be from 0 to 127"
+msgstr "Тип цикла должен быть между 0 и 127"
+
+#: src/frontend_fox/CMetersWindow.cpp:579
+#: src/frontend_fox/CMetersWindow.cpp:581
+msgid "Unrotate from Natural 45 Degree Line"
+msgstr ""
+
+#: src/frontend_fox/CMetersWindow.cpp:725
+msgid ""
+"Adjust Zoom Factor for Analyzer\n"
+"Right-click for Default"
+msgstr ""
+"Подстроить масштаб-фактор для анализатора\n"
+"Щелчок правой кнопкой мыши для стандартных установок"
+
+#: src/frontend_fox/CMetersWindow.cpp:800
+msgid "Configure with FFTW"
+msgstr "Настроить с FFTW"
+
+#: src/frontend_fox/CMetersWindow.cpp:801
+msgid "for Freq. Analysis"
+msgstr "для частотного анализа"
+
+#: src/frontend_fox/CMp3Dialog.cpp:68
+msgid "mp3 Compression Parameters"
+msgstr "Параметры сжатия в MP3"
+
+#: src/frontend_fox/CMp3Dialog.cpp:75 src/frontend_fox/COggDialog.cpp:73
+msgid "Constant Bit Rate"
+msgstr "Постоянная битовая частота (CBR)"
+
+#: src/frontend_fox/CMp3Dialog.cpp:77 src/frontend_fox/COggDialog.cpp:75
+msgid "Bit Rate: "
+msgstr "Битовая частота: "
+
+#: src/frontend_fox/CMp3Dialog.cpp:83
+msgid "Average Bit Rate"
+msgstr "Усреднённая битовая частота (ABR)"
+
+#: src/frontend_fox/CMp3Dialog.cpp:85 src/frontend_fox/COggDialog.cpp:83
+msgid "Minimum Bit Rate: "
+msgstr "Минимальная битовая частота: "
+
+#: src/frontend_fox/CMp3Dialog.cpp:88
+msgid "Average Bit Rate: "
+msgstr "Усреднённая битовая частота (ABR): "
+
+#: src/frontend_fox/CMp3Dialog.cpp:91 src/frontend_fox/COggDialog.cpp:89
+msgid "Maximum Bit Rate: "
+msgstr "Максимальная битовая частота: "
+
+#: src/frontend_fox/CMp3Dialog.cpp:97
+msgid "Variable Bit Rate Quality Setting"
+msgstr "Настройка качества переменной битовой частосты (VBR)"
+
+#: src/frontend_fox/CMp3Dialog.cpp:99 src/frontend_fox/COggDialog.cpp:65
+msgid "Quality: "
+msgstr "Качество: "
+
+#: src/frontend_fox/CMp3Dialog.cpp:104
+msgid "0(Highest Quality -> 9(Lowest Quality)"
+msgstr "0 (Наилучшеекачество -> 9 (Наихудшее качество)"
+
+#: src/frontend_fox/CMp3Dialog.cpp:109
+msgid "Use Only These Flags"
+msgstr "Использовать только эти параметры"
+
+#: src/frontend_fox/CMp3Dialog.cpp:113
+msgid "Additional Flags: "
+msgstr "Дополнительные параметры: "
+
+#: src/frontend_fox/CMp3Dialog.cpp:116
+msgid "To lame"
+msgstr "для lame"
+
+#: src/frontend_fox/CNewSoundDialog.cpp:48
+msgid "New Sound"
+msgstr "Новый звуковой файл"
+
+#: src/frontend_fox/CNewSoundDialog.cpp:51
+msgid "Filename:"
+msgstr "Имя файла:"
+
+#: src/frontend_fox/CNewSoundDialog.cpp:53
+msgid "&Browse"
+msgstr "&Просмотреть"
+
+#: src/frontend_fox/CNewSoundDialog.cpp:55
+msgid "Raw Format"
+msgstr "Беззаголовочный формат"
+
+#: src/frontend_fox/CNewSoundDialog.cpp:58 src/frontend_fox/CRawDialog.cpp:51
+#: src/frontend_fox/CVoxDialog.cpp:47
+msgid "Channels:"
+msgstr "Каналы:"
+
+#: src/frontend_fox/CNewSoundDialog.cpp:61 src/frontend_fox/CRawDialog.cpp:57
+#: src/frontend_fox/CVoxDialog.cpp:53
+msgid "Sample Rate:"
+msgstr "Частота дискретизации:"
+
+#: src/frontend_fox/CNewSoundDialog.cpp:64
+msgid "Length:"
+msgstr "Продолжительность:"
+
+#: src/frontend_fox/CNewSoundDialog.cpp:67
+msgid "second(s)"
+msgstr "секунд(а)"
+
+#: src/frontend_fox/CNewSoundDialog.cpp:176
+msgid "Please supply a filename"
+msgstr "Укажите имя файла"
+
+#: src/frontend_fox/CNewSoundDialog.cpp:187
+msgid ""
+"Are you sure you want to overwrite the existing file:\n"
+"   "
+msgstr ""
+"Вы уверены,что хотите перезаписать существующий файл:\n"
+"   "
+
+#: src/frontend_fox/CNewSoundDialog.cpp:200
+msgid "Invalid number of channels"
+msgstr "Неверное количество каналов"
+
+#: src/frontend_fox/CNewSoundDialog.cpp:209
+msgid "Invalid sample rate"
+msgstr "Неверная частота дискретизации"
+
+#: src/frontend_fox/CNewSoundDialog.cpp:219
+msgid "Invalid length"
+msgstr "Неверная продолжительность"
+
+#: src/frontend_fox/COggDialog.cpp:56
+msgid "Ogg Compression Parameters"
+msgstr "Параметры сжатия в Ogg"
+
+#: src/frontend_fox/COggDialog.cpp:63
+msgid "Quality Setting"
+msgstr "Настройка качества"
+
+#: src/frontend_fox/COggDialog.cpp:69
+msgid "0 (lowest) to 1 (highest)"
+msgstr "от 0 (наихудшее) до 1 (наилучшее)"
+
+#: src/frontend_fox/COggDialog.cpp:81
+msgid "Variable Bit Rate"
+msgstr "Переменная битовая частота (VBR)"
+
+#: src/frontend_fox/COggDialog.cpp:86
+msgid "Normal Bit Rate: "
+msgstr "Обычная битовая частота"
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:60
+msgid "Paste Channels"
+msgstr "Вставить каналы"
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:62
+msgid "Pasting Parameters:"
+msgstr "Параметры вставки:"
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:73
+#: src/frontend_fox/CPasteChannelsDialog.cpp:203
+#: src/frontend_fox/CPasteChannelsDialog.cpp:207
+msgid "Repeat Count"
+msgstr "Подсчёт повторов"
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:77
+msgid "Repeat Time"
+msgstr "Время повтора"
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:84
+msgid "Repeat X Times"
+msgstr "Повторить X раз"
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:85
+msgid "Repeat for X Seconds"
+msgstr "Повторить X секунд"
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:98
+msgid "Mix Type:"
+msgstr "Тип смешивания:"
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:100
+msgid "Add"
+msgstr "Добавить"
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:101
+msgid "Subtract"
+msgstr "Вычесть"
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:102
+msgid "Multiply"
+msgstr "Умножить"
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:103
+msgid "Average"
+msgstr "Средний"
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:107
+msgid "Clipboard"
+msgstr "Буфер обмена"
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:108
+msgid "Destination"
+msgstr "Место назначения"
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:199
+msgid "MixMethod"
+msgstr "Способ смешивания"
+
+#: src/frontend_fox/CProgressDialog.cpp:44
+#: src/frontend_fox/FXModalDialogBox.cpp:58
+msgid "&Cancel"
+msgstr "&Отменить"
+
+#: src/frontend_fox/CRawDialog.cpp:46
+msgid "Raw Parameters"
+msgstr "Параметры Raw"
+
+#: src/frontend_fox/CRawDialog.cpp:70
+msgid "Sample Format:"
+msgstr "Формат семпла:"
+
+#: src/frontend_fox/CRawDialog.cpp:72
+msgid "8bit Signed PCM"
+msgstr "8bit Signed PCM"
+
+#: src/frontend_fox/CRawDialog.cpp:73
+msgid "8bit Unsigned PCM"
+msgstr "8bit Unsigned PCM"
+
+#: src/frontend_fox/CRawDialog.cpp:74
+msgid "16bit Signed PCM"
+msgstr "16bit Signed PCM"
+
+#: src/frontend_fox/CRawDialog.cpp:75
+msgid "16bit Unsigned PCM"
+msgstr "16bit Unsigned PCM"
+
+#: src/frontend_fox/CRawDialog.cpp:76
+msgid "24bit Signed PCM"
+msgstr "24bit Signed PCM"
+
+#: src/frontend_fox/CRawDialog.cpp:77
+msgid "24bit Unsigned PCM"
+msgstr "24bit Unsigned PCM"
+
+#: src/frontend_fox/CRawDialog.cpp:78
+msgid "32bit Signed PCM"
+msgstr "32bit Signed PCM"
+
+#: src/frontend_fox/CRawDialog.cpp:79
+msgid "32bit Unsigned PCM"
+msgstr "32bit Unsigned PCM"
+
+#: src/frontend_fox/CRawDialog.cpp:80
+msgid "32bit Floating Point PCM"
+msgstr "32bit Floating Point PCM"
+
+#: src/frontend_fox/CRawDialog.cpp:81
+msgid "64bit Floating Point PCM"
+msgstr "64bit Floating Point PCM"
+
+#: src/frontend_fox/CRawDialog.cpp:84
+msgid "Byte Order:"
+msgstr "Байтовый порядок:"
+
+#: src/frontend_fox/CRawDialog.cpp:85
+msgid "Little Endian (Intel)"
+msgstr "\"Остроконечник\" (Intel)"
+
+#: src/frontend_fox/CRawDialog.cpp:85
+msgid "Big Endian (non-Intel)"
+msgstr "\"Тупоконечник\" (не-Intel)"
+
+#: src/frontend_fox/CRawDialog.cpp:89
+msgid "Data Start:"
+msgstr "Начало данных:"
+
+#: src/frontend_fox/CRawDialog.cpp:93
+msgid "in bytes"
+msgstr "в байтах"
+
+#: src/frontend_fox/CRawDialog.cpp:95
+msgid "Data Length:"
+msgstr "Продолжительность данных:"
+
+#: src/frontend_fox/CRawDialog.cpp:96 src/frontend_fox/CRawDialog.cpp:100
+#: src/frontend_fox/CRawDialog.cpp:101
+msgid "normally leave this 0"
+msgstr "обычно оставить как 0"
+
+#: src/frontend_fox/CRawDialog.cpp:101
+msgid "in audio frames"
+msgstr "в звуковых кадрах"
+
+#: src/frontend_fox/CRawDialog.cpp:151
+msgid "invalid negative data offset"
+msgstr "неверное отрицательное смещение данных"
+
+#: src/frontend_fox/CRawDialog.cpp:158
+msgid "invalid negative data length"
+msgstr "неверная отрицательная продолжительность данных"
+
+#: src/frontend_fox/CRecordDialog.cpp:64 src/frontend_fox/CMainWindow.cpp:208
+#: src/frontend_fox/CMainWindow.cpp:748
+msgid "Record"
+msgstr "Записать"
+
+#: src/frontend_fox/CRecordDialog.cpp:85
+msgid "   Cue Prefix:"
+msgstr "   Префикс маркера:"
+
+#: src/frontend_fox/CRecordDialog.cpp:89
+msgid "Cue Number:"
+msgstr "Номер маркера:"
+
+#: src/frontend_fox/CRecordDialog.cpp:93
+msgid "Add Anchored Cue"
+msgstr "Добавить маркер-якорь"
+
+#: src/frontend_fox/CRecordDialog.cpp:99
+#: src/frontend_fox/CRecordDialog.cpp:100
+msgid "Recording:"
+msgstr "Запись:"
+
+#: src/frontend_fox/CRecordDialog.cpp:102
+#: src/frontend_fox/CRecordDialog.cpp:103
+msgid "Waiting for Threshold:"
+msgstr "Ожидание порога:"
+
+#: src/frontend_fox/CRecordDialog.cpp:108
+msgid "Record Length: "
+msgstr "Продолжительность записи: "
+
+#: src/frontend_fox/CRecordDialog.cpp:109
+msgid "Record Size: "
+msgstr "Объём записи: "
+
+#: src/frontend_fox/CRecordDialog.cpp:110
+msgid "Record Limit: "
+msgstr "Предел записи: "
+
+#: src/frontend_fox/CRecordDialog.cpp:116
+msgid "DCOffset: "
+msgstr "Смещение сигнала: "
+
+#: src/frontend_fox/CRecordDialog.cpp:117
+msgid "Reported Every 5 Seconds"
+msgstr "Сообщено каждые 5 секунд"
+
+#: src/frontend_fox/CRecordDialog.cpp:118
+msgid ""
+"Compensate\tSubtract out the currently reported DC Offset from any further "
+"recorded data"
+msgstr ""
+"Компенсировать\tВычесть известное смещение сигнала от центральной оси из "
+"любых записанных данных"
+
+#: src/frontend_fox/CRecordDialog.cpp:121
+msgid "Reset"
+msgstr "Перечитать"
+
+#: src/frontend_fox/CRecordDialog.cpp:122
+#: src/frontend_fox/CRecordDialog.cpp:184
+#: src/frontend_fox/CRecordDialog.cpp:361
+msgid "Clip Count: "
+msgstr "Число вырезаний: "
+
+#: src/frontend_fox/CRecordDialog.cpp:126
+msgid ""
+"Record/\n"
+"Resume"
+msgstr ""
+"Записать/\n"
+"Продолжить"
+
+#: src/frontend_fox/CRecordDialog.cpp:127
+msgid ""
+"Stop/\n"
+"Pause"
+msgstr ""
+"Остановить/\n"
+"Приостановить"
+
+#: src/frontend_fox/CRecordDialog.cpp:128
+msgid ""
+"Redo/\n"
+"Reset"
+msgstr ""
+"Повторить/\n"
+"Перезагрузить"
+
+#: src/frontend_fox/CRecordDialog.cpp:131
+msgid "Limit Duration to "
+msgstr "Ограничить продолжительность до "
+
+#: src/frontend_fox/CRecordDialog.cpp:138
+msgid "Effective on Threshold "
+msgstr "Эффективно при пороге "
+
+#: src/frontend_fox/CRecordDialog.cpp:235
+msgid "DC Offset: "
+msgstr "Смещение сигнала от центральной оси: "
+
+#: src/frontend_fox/CRecordDialog.cpp:291
+msgid ""
+"Invalid record time limit -- Should be in the form of HH:MM:SS.sss, MM:SS."
+"sss or SS.sss"
+msgstr ""
+"Неверно задано ограничение продолжительности записи -- оно должно выглядеть "
+"как HH:MM:SS.sss, MM:SS.sss или SS.sss"
 
 #: src/frontend_fox/CSoundWindow.cpp:140
 msgid "Fit\tZoom to Fit Selection"
@@ -1082,283 +1793,29 @@ msgstr "Объём данных: "
 msgid "Playing: "
 msgstr "Воспроизведение: "
 
-#: src/frontend_fox/CAboutDialog.cpp:43
-msgid "About ReZound"
-msgstr "О программе ReZound"
+#: src/frontend_fox/CStatusComm.cpp:95
+msgid "Warning"
+msgstr "Предупреждение"
 
-#: src/frontend_fox/CAboutDialog.cpp:69
-msgid "Please Read"
-msgstr "Для информации"
+#: src/frontend_fox/CStatusComm.cpp:100
+msgid "Note"
+msgstr "Примечание"
 
-#: src/frontend_fox/CAboutDialog.cpp:91
-msgid "About"
-msgstr "О программе"
+#: src/frontend_fox/CStatusComm.cpp:115
+msgid "Question"
+msgstr "Вопрос"
 
-#: src/frontend_fox/CAboutDialog.cpp:95
-msgid "Author"
-msgstr "Автор"
+#: src/frontend_fox/CUserNotesDialog.cpp:43
+msgid "User Notes"
+msgstr "Пользовательские заметки"
 
-#: src/frontend_fox/CAboutDialog.cpp:96
-msgid "Original Autoconfiscation"
-msgstr "Оригинальное автозаимствование"
-
-#: src/frontend_fox/CAboutDialog.cpp:97
-msgid "Additional Programming"
-msgstr "Вспомогательное программирование"
-
-#: src/frontend_fox/CAboutDialog.cpp:98
-msgid "Artistic Consultant"
-msgstr "Консультант по графике"
-
-#: src/frontend_fox/CAboutDialog.cpp:99
-msgid "Home Page"
-msgstr "Домашняя страница"
-
-#: src/frontend_fox/CAboutDialog.cpp:100
-msgid "Mailing List"
-msgstr "Список рассылки"
-
-#: src/frontend_fox/CAboutDialog.cpp:101
-msgid "Bug Reports"
-msgstr "Сообщения об ошибках"
-
-#: src/frontend_fox/CAboutDialog.cpp:102
-msgid "Support Requests"
-msgstr "Запросы поддержки"
-
-#: src/frontend_fox/CAboutDialog.cpp:103
-msgid "Feature Requests"
-msgstr "Запросы расширения функциональности"
-
-#: src/frontend_fox/CAboutDialog.cpp:105
-msgid "Also Please Read"
-msgstr "Также на заметку"
-
-#: src/frontend_fox/CAboutDialog.cpp:108
-msgid "Thanks To"
-msgstr "Благодарности"
-
-#: src/frontend_fox/CAboutDialog.cpp:112 src/frontend_fox/CAboutDialog.cpp:113
-#: src/frontend_fox/CAboutDialog.cpp:114 src/frontend_fox/CAboutDialog.cpp:115
-#: src/frontend_fox/CAboutDialog.cpp:116 src/frontend_fox/CAboutDialog.cpp:119
-msgid "Bug Finding"
-msgstr "Поиск ошибок"
-
-#: src/frontend_fox/CAboutDialog.cpp:117
-msgid "Feature Suggestions"
-msgstr "Предложения новых функций"
-
-#: src/frontend_fox/CAboutDialog.cpp:118
-#, fuzzy
-msgid "Bug Finding/Fixing"
-msgstr "Поиск ошибок"
-
-#: src/frontend_fox/CAboutDialog.cpp:131
-#: src/frontend_fox/CCueListDialog.cpp:74 src/frontend_fox/CMainWindow.cpp:722
-msgid "&Close"
-msgstr "&Закрыть"
-
-#: src/frontend_fox/FilterActionDialogs.cpp:52
-#: src/frontend_fox/FilterActionDialogs.cpp:132
-msgid "Wet/Dry Mix"
-msgstr "Wet/Dry Mix"
-
-#: src/frontend_fox/FilterActionDialogs.cpp:54
-msgid "Input Lowpass"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:55
-#: src/frontend_fox/EffectActionDialogs.cpp:168
-#: src/frontend_fox/RemasterActionDialogs.cpp:230
-msgid "Input Gain"
-msgstr "Вход. чувствительность"
-
-#: src/frontend_fox/FilterActionDialogs.cpp:56
-#: src/frontend_fox/EffectActionDialogs.cpp:171
-#: src/frontend_fox/RemasterActionDialogs.cpp:231
-msgid "Output Gain"
-msgstr "Выход. чувствительность"
-
-#: src/frontend_fox/FilterActionDialogs.cpp:57
-msgid "Predelay"
-msgstr "Предзадержка"
-
-#: src/frontend_fox/FilterActionDialogs.cpp:60
-msgid "Filter Kernel"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:60
-msgid "The Audio File to Use as the Filter Kernel"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:63
-msgid "FK Gain"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:64
-msgid "FK Lowpass"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:66
-msgid "FK Rate"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:69
-msgid "Wrap Decay back to Beginning"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:134
-msgid "Frequency Response"
-msgstr "Частотный отклик"
-
-#: src/frontend_fox/FilterActionDialogs.cpp:134
-#: src/frontend_fox/FXLFOParamValue.cpp:57
-msgid "Frequency"
-msgstr "Частота"
-
-#: src/frontend_fox/FilterActionDialogs.cpp:134
-msgid "Change"
-msgstr "Изменить"
-
-#: src/frontend_fox/FilterActionDialogs.cpp:136
-msgid "Base Frequency"
-msgstr "Основная частота"
-
-#: src/frontend_fox/FilterActionDialogs.cpp:136
-msgid ""
-"This Sets the Lowest Frequency Displayed on the Graph.\n"
-"This is the Frequency of the First Octave."
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:137
-msgid "Number of Octaves"
-msgstr "Количество октав"
-
-#: src/frontend_fox/FilterActionDialogs.cpp:137
-msgid ""
-"This Sets the Number of Octaves Displayed on the Graph.\n"
-"But Note that no Frequency Higher than Half of the Sound's Sampling Rate can "
-"be Affected Since it Cannot Contain a Frequency Higher than That."
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:140
-msgid "Kernel Length"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:141
-msgid ""
-"This is the Size of the Filter Kernel Computed (in samples) From Your Curve "
-"to be Convolved with the Audio"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:142
-msgid "Undelay"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:142
-msgid "This Counteracts the Delay Side-Effect of Custom FIR Filters"
-msgstr "Это нейтрализует сайд-эффект задержки пользовательских FIR-фильтров"
-
-#: src/frontend_fox/FilterActionDialogs.cpp:195
-#: src/frontend_fox/FilterActionDialogs.cpp:205
-#: src/frontend_fox/FilterActionDialogs.cpp:239
-#: src/frontend_fox/FilterActionDialogs.cpp:250
-msgid "Cutoff Frequency"
-msgstr "Частота вырезания"
-
-#: src/frontend_fox/FilterActionDialogs.cpp:215
-#: src/frontend_fox/FilterActionDialogs.cpp:226
-#: src/frontend_fox/FilterActionDialogs.cpp:261
-msgid "Center Frequency"
-msgstr "Центральная частота"
-
-#: src/frontend_fox/FilterActionDialogs.cpp:216
-#: src/frontend_fox/FilterActionDialogs.cpp:227
-msgid "Band Width"
-msgstr "Ширина полосы"
-
-#: src/frontend_fox/FilterActionDialogs.cpp:240
-#: src/frontend_fox/FilterActionDialogs.cpp:251
-#: src/frontend_fox/FilterActionDialogs.cpp:262
-msgid "Resonance"
-msgstr "Резонанс"
-
-#: src/frontend_fox/EffectActionDialogs.cpp:42
-msgid "Volume Change"
-msgstr "Насколько изменить"
-
-#: src/frontend_fox/EffectActionDialogs.cpp:64
-msgid "Gain Curve"
-msgstr "Кривая чувствительности"
-
-#: src/frontend_fox/EffectActionDialogs.cpp:85
-msgid "Rate Change"
-msgstr "Изменение частоты"
-
-#: src/frontend_fox/EffectActionDialogs.cpp:103
-msgid "Rate Curve"
-msgstr "Кривая чувствительности"
-
-#: src/frontend_fox/EffectActionDialogs.cpp:103
-msgid "Rate"
-msgstr "Частота"
-
-#: src/frontend_fox/EffectActionDialogs.cpp:127
-#: src/frontend_fox/EffectActionDialogs.cpp:147
-msgid "Delay"
-msgstr "Задержка"
-
-#: src/frontend_fox/EffectActionDialogs.cpp:128
-msgid "Wet Gain"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:129
-msgid "Dry Gain"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:130
-msgid "Flange LFO"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:130
-msgid "LFO Depth"
-msgstr "Глубина LFO"
-
-#: src/frontend_fox/EffectActionDialogs.cpp:131
-#: src/frontend_fox/EffectActionDialogs.cpp:149
-msgid "Feedback"
-msgstr "Отдача"
-
-#: src/frontend_fox/EffectActionDialogs.cpp:169
-msgid "Quantum Count"
-msgstr "Число квантов"
-
-#: src/frontend_fox/EffectActionDialogs.cpp:170
-msgid "The Number of Possible Sample Values Above Zero"
-msgstr "Число возможных значений семплов выше нуля"
-
-#: src/frontend_fox/EffectActionDialogs.cpp:188
-msgid "Curve"
-msgstr "Кривая"
-
-#: src/frontend_fox/EffectActionDialogs.cpp:188
-msgid "Input"
-msgstr "Вход"
-
-#: src/frontend_fox/EffectActionDialogs.cpp:188
-msgid "Output"
-msgstr "Выход"
-
-#: src/frontend_fox/EffectActionDialogs.cpp:210
-msgid "LFO"
-msgstr "LFO"
-
-#: src/frontend_fox/EffectActionDialogs.cpp:211
-msgid "Time"
-msgstr "Время"
+#: src/frontend_fox/CVoxDialog.cpp:42
+msgid "Vox Parameters"
+msgstr "Параметры Vox"
 
 #: src/frontend_fox/EditActionDialogs.cpp:34
-#: src/frontend_fox/GenerateActionDialogs.cpp:42
+#: src/frontend_fox/GenerateActionDialogs.cpp:53
+#: src/frontend_fox/GenerateActionDialogs.cpp:115
 msgid "Length"
 msgstr "Продолжительность"
 
@@ -1486,6 +1943,407 @@ msgstr "Уменьшить выделение справа"
 msgid "How"
 msgstr "Как"
 
+#: src/frontend_fox/EffectActionDialogs.cpp:42
+msgid "Volume Change"
+msgstr "Насколько изменить"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:64
+msgid "Gain Curve"
+msgstr "Кривая чувствительности"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:85
+msgid "Rate Change"
+msgstr "Изменение частоты"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:103
+msgid "Rate Curve"
+msgstr "Кривая чувствительности"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:103
+msgid "Rate"
+msgstr "Частота"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:127
+#: src/frontend_fox/EffectActionDialogs.cpp:147
+msgid "Delay"
+msgstr "Задержка"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:128
+#, fuzzy
+msgid "Wet Gain"
+msgstr "Чувствительность послеэффекта"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:129
+#, fuzzy
+msgid "Dry Gain"
+msgstr "Чувствительность доэффекта"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:130
+msgid "Flange LFO"
+msgstr "LFO флейнджа"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:130
+msgid "LFO Depth"
+msgstr "Глубина LFO"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:131
+#: src/frontend_fox/EffectActionDialogs.cpp:149
+msgid "Feedback"
+msgstr "Отдача"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:168
+#: src/frontend_fox/FilterActionDialogs.cpp:56
+#: src/frontend_fox/RemasterActionDialogs.cpp:230
+msgid "Input Gain"
+msgstr "Вход. чувствительность"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:169
+msgid "Quantum Count"
+msgstr "Число квантов"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:170
+msgid "The Number of Possible Sample Values Above Zero"
+msgstr "Число возможных значений семплов выше нуля"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:171
+#: src/frontend_fox/FilterActionDialogs.cpp:57
+#: src/frontend_fox/RemasterActionDialogs.cpp:231
+msgid "Output Gain"
+msgstr "Выход. чувствительность"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:188
+msgid "Curve"
+msgstr "Кривая"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:188
+msgid "Input"
+msgstr "Вход"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:188
+msgid "Output"
+msgstr "Выход"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:210
+msgid "LFO"
+msgstr "LFO"
+
+#: src/frontend_fox/EffectActionDialogs.cpp:211
+msgid "Time"
+msgstr "Время"
+
+#: src/frontend_fox/FXLFOParamValue.cpp:57
+#: src/frontend_fox/FilterActionDialogs.cpp:135
+#: src/frontend_fox/FilterActionDialogs.cpp:198
+#: src/frontend_fox/FilterActionDialogs.cpp:203
+#: src/frontend_fox/GenerateActionDialogs.cpp:114
+msgid "Frequency"
+msgstr "Частота"
+
+#: src/frontend_fox/FXLFOParamValue.cpp:58
+msgid "Phase"
+msgstr "Фаза"
+
+#: src/frontend_fox/FXModalDialogBox.cpp:57
+msgid "&Okay"
+msgstr "&Ok"
+
+#: src/frontend_fox/FXRezWaveView.cpp:503
+#: src/frontend_fox/FXRezWaveView.cpp:508
+msgid "Set Start Position to Cue"
+msgstr "Установить маркер на начальную позицию"
+
+#: src/frontend_fox/FXRezWaveView.cpp:505
+#: src/frontend_fox/FXRezWaveView.cpp:509
+msgid "Set Stop Position to Cue"
+msgstr "Установить маркер на позицию остановки"
+
+#: src/frontend_fox/FXRezWaveView.cpp:513
+msgid "&Edit Cue"
+msgstr "&Изменить маркер"
+
+#: src/frontend_fox/FXRezWaveView.cpp:514
+msgid "&Remove Cue"
+msgstr "&Удалить маркер"
+
+#: src/frontend_fox/FXRezWaveView.cpp:516
+#: src/frontend_fox/FXRezWaveView.cpp:535
+msgid "Show Cues &List"
+msgstr "Показать &список маркеров"
+
+#: src/frontend_fox/FXRezWaveView.cpp:528
+msgid "Center Start Position"
+msgstr "Поместить в центр начальную позицию"
+
+#: src/frontend_fox/FXRezWaveView.cpp:529
+msgid "Center Stop Position"
+msgstr "Поместить в центр позицию остановки"
+
+#: src/frontend_fox/FXRezWaveView.cpp:531
+msgid "Add Cue at This Position"
+msgstr "Добавить маркер в эту позицию"
+
+#: src/frontend_fox/FXRezWaveView.cpp:532
+msgid "Add Cue at Start Position"
+msgstr "Добавить маркер в начальную позицию"
+
+#: src/frontend_fox/FXRezWaveView.cpp:533
+msgid "Add Cue at Stop Position"
+msgstr "Добавить маркер в позицию остановки"
+
+#: src/frontend_fox/FilterActionDialogs.cpp:53
+#: src/frontend_fox/FilterActionDialogs.cpp:133
+#: src/frontend_fox/FilterActionDialogs.cpp:216
+msgid "Wet/Dry Mix"
+msgstr "Wet/Dry Mix"
+
+#: src/frontend_fox/FilterActionDialogs.cpp:55
+msgid "Input Lowpass"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:58
+msgid "Predelay"
+msgstr "Предзадержка"
+
+#: src/frontend_fox/FilterActionDialogs.cpp:61
+msgid "Filter Kernel"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:61
+msgid "The Audio File to Use as the Filter Kernel"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:64
+msgid "FK Gain"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:65
+msgid "FK Lowpass"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:67
+msgid "FK Rate"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:70
+msgid "Wrap Decay back to Beginning"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:135
+msgid "Frequency Response"
+msgstr "Частотный отклик"
+
+#: src/frontend_fox/FilterActionDialogs.cpp:135
+#: src/frontend_fox/FilterActionDialogs.cpp:198
+#: src/frontend_fox/FilterActionDialogs.cpp:203
+msgid "Change"
+msgstr "Изменить"
+
+#: src/frontend_fox/FilterActionDialogs.cpp:137
+#: src/frontend_fox/FilterActionDialogs.cpp:206
+msgid "Base Frequency"
+msgstr "Основная частота"
+
+#: src/frontend_fox/FilterActionDialogs.cpp:137
+#: src/frontend_fox/FilterActionDialogs.cpp:206
+msgid ""
+"This Sets the Lowest Frequency Displayed on the Graph.\n"
+"This is the Frequency of the First Octave."
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:138
+#: src/frontend_fox/FilterActionDialogs.cpp:209
+msgid "Number of Octaves"
+msgstr "Количество октав"
+
+#: src/frontend_fox/FilterActionDialogs.cpp:138
+#: src/frontend_fox/FilterActionDialogs.cpp:209
+msgid ""
+"This Sets the Number of Octaves Displayed on the Graph.\n"
+"But Note that no Frequency Higher than Half of the Sound's Sampling Rate can "
+"be Affected Since it Cannot Contain a Frequency Higher than That."
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:141
+#: src/frontend_fox/FilterActionDialogs.cpp:226
+msgid "Kernel Length"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:142
+#: src/frontend_fox/FilterActionDialogs.cpp:227
+msgid ""
+"This is the Size of the Filter Kernel Computed (in samples) From Your Curve "
+"to be Convolved with the Audio"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:143
+#: src/frontend_fox/FilterActionDialogs.cpp:228
+msgid "Undelay"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:143
+#: src/frontend_fox/FilterActionDialogs.cpp:228
+msgid "This Counteracts the Delay Side-Effect of Custom FIR Filters"
+msgstr "Это нейтрализует сайд-эффект задержки пользовательских FIR-фильтров"
+
+#: src/frontend_fox/FilterActionDialogs.cpp:198
+msgid "Frequency Response 1"
+msgstr "Частотный отклик 1"
+
+#: src/frontend_fox/FilterActionDialogs.cpp:200
+msgid "Copy Response 1 to Response 2"
+msgstr "Скопировать Отклик 1 в Отклик 2"
+
+#: src/frontend_fox/FilterActionDialogs.cpp:201
+msgid "Swap Response 1 and Response 2"
+msgstr "Поменять местами Отклик 1 и Отклик 2"
+
+#: src/frontend_fox/FilterActionDialogs.cpp:202
+msgid "Copy Response 2 to Response 1"
+msgstr "Скопировать Отклик 2 в Отклик 1"
+
+#: src/frontend_fox/FilterActionDialogs.cpp:203
+msgid "Frequency Response 2"
+msgstr "Частотный отклик 2"
+
+#: src/frontend_fox/FilterActionDialogs.cpp:219
+msgid "Use LFO"
+msgstr "Использовать LFO"
+
+#: src/frontend_fox/FilterActionDialogs.cpp:223
+msgid "Sweep LFO"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:283
+msgid ""
+"Frequency Response 1 and Frequency Response 2 must contain the same number "
+"of nodes"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:310
+#: src/frontend_fox/FilterActionDialogs.cpp:320
+#: src/frontend_fox/FilterActionDialogs.cpp:354
+#: src/frontend_fox/FilterActionDialogs.cpp:365
+msgid "Cutoff Frequency"
+msgstr "Частота вырезания"
+
+#: src/frontend_fox/FilterActionDialogs.cpp:330
+#: src/frontend_fox/FilterActionDialogs.cpp:341
+#: src/frontend_fox/FilterActionDialogs.cpp:376
+msgid "Center Frequency"
+msgstr "Центральная частота"
+
+#: src/frontend_fox/FilterActionDialogs.cpp:331
+#: src/frontend_fox/FilterActionDialogs.cpp:342
+msgid "Band Width"
+msgstr "Ширина полосы"
+
+#: src/frontend_fox/FilterActionDialogs.cpp:355
+#: src/frontend_fox/FilterActionDialogs.cpp:366
+#: src/frontend_fox/FilterActionDialogs.cpp:377
+msgid "Resonance"
+msgstr "Резонанс"
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:55
+#: src/frontend_fox/GenerateActionDialogs.cpp:116
+msgid "Volume"
+msgstr "Уровень"
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:56
+msgid "Max Particle Velocity"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:60
+msgid "White (Equal Energy per Frequency)"
+msgstr "Белый (одинаковая громкость каждой частоты)"
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:61
+msgid "Pink (Natural, Equal Energy per Octave; response: f^(-1))"
+msgstr "Розовый (натуральный, одинаковая громкость каждой октавы; отклик: f^(-1))"
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:62
+msgid "Brown (as in Brownian Motion; response: f^(-2))"
+msgstr "Коричневый (как в броуновском движении; отклик: f^(-2))"
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:63
+msgid "Black :)"
+msgstr "Чёрный :)"
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:68
+msgid "Noise Color"
+msgstr "Цвет шума"
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:77
+msgid "Independent Channels"
+msgstr "Независимые каналы"
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:78
+msgid "Mono"
+msgstr "Моно"
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:79
+msgid "Inverse Mono"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:81
+msgid "Stereo Image"
+msgstr "Стереопанорама"
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:119
+msgid "Sine Wave"
+msgstr "Синусоидная волна"
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:120
+msgid "Square Wave"
+msgstr "Прямоугольная волна"
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:121
+msgid "Rising Sawtooth Wave"
+msgstr "Нарастающая пилообразная волна"
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:122
+msgid "Falling Sawtooth Wave"
+msgstr "Угасающая пилообразная волна"
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:123
+msgid "Triangle Wave"
+msgstr "Треугольная волна"
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:124
+msgid "Tone Type"
+msgstr "Тип тона"
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:29
+#: src/frontend_fox/LoopingActionDialogs.cpp:41
+msgid "Cue Name"
+msgstr "Имя маркера"
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:29
+#: src/frontend_fox/LoopingActionDialogs.cpp:41
+msgid "What to Name the New Cues"
+msgstr "Как назвать новые маркеры"
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:30
+msgid "Cue Count"
+msgstr "Подсчёт маркеров"
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:30
+msgid "How Many Cues to Place Equally Spaced within the Selection"
+msgstr "Сколько маркеров поместить на одинаковом расстоянии внутри выделения"
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:31
+#: src/frontend_fox/LoopingActionDialogs.cpp:43
+msgid "Anchor Cues in Time"
+msgstr "\"Пришвартовать\" маркеры к позиции во времени"
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:31
+#: src/frontend_fox/LoopingActionDialogs.cpp:43
+msgid "Set the Cues to be Anchored in Time or Not"
+msgstr "Установить статус \"швартовки\" маркеров к позиции во времени"
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:42
+msgid "Time Interval"
+msgstr "Временной интервал"
+
 #: src/frontend_fox/RemasterActionDialogs.cpp:55
 #: src/frontend_fox/RemasterActionDialogs.cpp:108
 msgid "Strict Balance"
@@ -1506,15 +2364,6 @@ msgstr "2x Панорамирование"
 msgid "Balance Type"
 msgstr "Тип баланса"
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:80
-#: src/frontend_fox/RemasterActionDialogs.cpp:126
-#: src/frontend_fox/RemasterActionDialogs.cpp:155
-#: src/frontend_fox/CPasteChannelsDialog.cpp:114
-#: src/frontend_fox/CPasteChannelsDialog.cpp:119
-#: src/frontend_fox/CChannelSelectDialog.cpp:67
-msgid "Channel "
-msgstr "Канал "
-
 #: src/frontend_fox/RemasterActionDialogs.cpp:105
 msgid "Balance Curve"
 msgstr "Кривая баланса"
@@ -1534,7 +2383,7 @@ msgstr "Метод"
 #: src/frontend_fox/RemasterActionDialogs.cpp:186
 #: src/frontend_fox/RemasterActionDialogs.cpp:225
 msgid "Window Time"
-msgstr ""
+msgstr "Время оконной функции"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:187
 #: src/frontend_fox/RemasterActionDialogs.cpp:226
@@ -1583,423 +2432,6 @@ msgstr "Число областей"
 #: src/frontend_fox/RemasterActionDialogs.cpp:277
 msgid "New Sample Rate"
 msgstr "Новая частота дискретизации"
-
-#: src/frontend_fox/CProgressDialog.cpp:44
-#: src/frontend_fox/FXModalDialogBox.cpp:58
-msgid "&Cancel"
-msgstr "&Отменить"
-
-#: src/frontend_fox/CRecordDialog.cpp:64 src/frontend_fox/CMainWindow.cpp:208
-#: src/frontend_fox/CMainWindow.cpp:748
-msgid "Record"
-msgstr "Записать"
-
-#: src/frontend_fox/CRecordDialog.cpp:85
-msgid "   Cue Prefix:"
-msgstr "   Префикс маркера:"
-
-#: src/frontend_fox/CRecordDialog.cpp:89
-msgid "Cue Number:"
-msgstr "Номер маркера:"
-
-#: src/frontend_fox/CRecordDialog.cpp:93
-msgid "Add Anchored Cue"
-msgstr "Добавить маркер-якорь"
-
-#: src/frontend_fox/CRecordDialog.cpp:99
-#: src/frontend_fox/CRecordDialog.cpp:100
-msgid "Recording:"
-msgstr "Запись:"
-
-#: src/frontend_fox/CRecordDialog.cpp:102
-#: src/frontend_fox/CRecordDialog.cpp:103
-msgid "Waiting for Threshold:"
-msgstr "Ожидание порога:"
-
-#: src/frontend_fox/CRecordDialog.cpp:108
-msgid "Record Length: "
-msgstr "Продолжительность записи: "
-
-#: src/frontend_fox/CRecordDialog.cpp:109
-msgid "Record Size: "
-msgstr "Объём записи: "
-
-#: src/frontend_fox/CRecordDialog.cpp:110
-msgid "Record Limit: "
-msgstr "Предел записи: "
-
-#: src/frontend_fox/CRecordDialog.cpp:116
-msgid "DCOffset: "
-msgstr "Смещение сигнала: "
-
-#: src/frontend_fox/CRecordDialog.cpp:117
-msgid "Reported Every 5 Seconds"
-msgstr "Сообщено каждые 5 секунд"
-
-#: src/frontend_fox/CRecordDialog.cpp:118
-msgid ""
-"Compensate\tSubtract out the currently reported DC Offset from any further "
-"recorded data"
-msgstr ""
-"Компенсировать\tВычесть известное смещение сигнала от центральной оси из "
-"любых записанных данных"
-
-#: src/frontend_fox/CRecordDialog.cpp:121
-msgid "Reset"
-msgstr "Перечитать"
-
-#: src/frontend_fox/CRecordDialog.cpp:122
-#: src/frontend_fox/CRecordDialog.cpp:184
-#: src/frontend_fox/CRecordDialog.cpp:361
-msgid "Clip Count: "
-msgstr "Число вырезаний: "
-
-#: src/frontend_fox/CRecordDialog.cpp:126
-msgid ""
-"Record/\n"
-"Resume"
-msgstr ""
-"Записать/\n"
-"Продолжить"
-
-#: src/frontend_fox/CRecordDialog.cpp:127
-msgid ""
-"Stop/\n"
-"Pause"
-msgstr ""
-"Остановить/\n"
-"Приостановить"
-
-#: src/frontend_fox/CRecordDialog.cpp:128
-msgid ""
-"Redo/\n"
-"Reset"
-msgstr ""
-"Повторить/\n"
-"Перезагрузить"
-
-#: src/frontend_fox/CRecordDialog.cpp:131
-msgid "Limit Duration to "
-msgstr "Ограничить продолжительность до "
-
-#: src/frontend_fox/CRecordDialog.cpp:138
-msgid "Effective on Threshold "
-msgstr "Эффективно при пороге "
-
-#: src/frontend_fox/CRecordDialog.cpp:235
-msgid "DC Offset: "
-msgstr "Смещение сигнала от центральной оси: "
-
-#: src/frontend_fox/CRecordDialog.cpp:291
-msgid ""
-"Invalid record time limit -- Should be in the form of HH:MM:SS.sss, MM:SS."
-"sss or SS.sss"
-msgstr ""
-"Неверно задано ограничение продолжительности записи -- оно должно выглядеть "
-"как HH:MM:SS.sss, MM:SS.sss или SS.sss"
-
-#: src/frontend_fox/CActionParamDialog.cpp:95
-msgid "Explain"
-msgstr "Справка"
-
-#: src/frontend_fox/CActionParamDialog.cpp:703
-msgid "Preset Name"
-msgstr "Имя предустановки"
-
-#: src/frontend_fox/CActionParamDialog.cpp:707
-msgid "Invalid Preset Name"
-msgstr "Неверное имя предустановки"
-
-#: src/frontend_fox/CActionParamDialog.cpp:716
-msgid "Preset Name cannot contain"
-msgstr "Имя предустановки не может содержать "
-
-#: src/frontend_fox/CActionParamDialog.cpp:731
-msgid "Overwrite Existing Preset"
-msgstr "Перезаписать существующую предустановку"
-
-#: src/frontend_fox/CActionParamDialog.cpp:799
-msgid "Remove Preset"
-msgstr "Удалить предустановку"
-
-#: src/frontend_fox/CActionParamDialog.cpp:856
-msgid "&Use\tOr Double-Click an Item in the List"
-msgstr "&Использовать\tили дважды щёлкнуть мышкой по объекту в списке"
-
-#: src/frontend_fox/CActionParamDialog.cpp:857
-#: src/frontend_fox/CMainWindow.cpp:718
-msgid "&Save"
-msgstr "&Сохранить"
-
-#: src/frontend_fox/CActionParamDialog.cpp:858
-#: src/frontend_fox/CCueListDialog.cpp:77
-msgid "&Remove"
-msgstr "&Удалить"
-
-#: src/frontend_fox/CCueDialog.cpp:48
-msgid "Cue Properties"
-msgstr "Свойства маркера"
-
-#: src/frontend_fox/CCueDialog.cpp:51
-msgid "Cue Name:"
-msgstr "Имя маркера"
-
-#: src/frontend_fox/CCueDialog.cpp:55
-msgid " Cue Time:"
-msgstr " Время маркера:"
-
-#: src/frontend_fox/CCueDialog.cpp:59
-msgid ""
-"Anchored in Time\tMeaning That This Cue's Position Will Not Be Affected by "
-"Adding and Removing Space Within the Audio"
-msgstr ""
-
-#: src/frontend_fox/CCueDialog.cpp:96
-msgid "Cue Name Too Long"
-msgstr "Слишком длинное имя маркера"
-
-#: src/frontend_fox/CCueDialog.cpp:104
-msgid "Invalid Cue Time.  Format: HH:MM:SS.sssss or MM:SS.sssss"
-msgstr "Невреное время маркера.  Формат: HH:MM:SS.sssss или MM:SS.sssss"
-
-#: src/frontend_fox/CStatusComm.cpp:95
-msgid "Warning"
-msgstr "Предупреждение"
-
-#: src/frontend_fox/CStatusComm.cpp:100
-msgid "Note"
-msgstr "Примечание"
-
-#: src/frontend_fox/CStatusComm.cpp:115
-msgid "Question"
-msgstr "Вопрос"
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:60
-msgid "Paste Channels"
-msgstr "Вставить каналы"
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:62
-msgid "Pasting Parameters:"
-msgstr "Параметры вставки:"
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:73
-#: src/frontend_fox/CPasteChannelsDialog.cpp:203
-#: src/frontend_fox/CPasteChannelsDialog.cpp:207
-msgid "Repeat Count"
-msgstr "Подсчёт повторов"
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:77
-msgid "Repeat Time"
-msgstr ""
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:84
-msgid "Repeat X Times"
-msgstr "Повторить X раз"
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:85
-msgid "Repeat for X Seconds"
-msgstr "Повторить X секунд"
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:95
-#: src/frontend_fox/CChannelSelectDialog.cpp:70
-msgid "Default"
-msgstr "По умолчанию"
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:96
-#: src/frontend_fox/CChannelSelectDialog.cpp:71
-msgid "Clear"
-msgstr "Очистить"
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:98
-msgid "Mix Type:"
-msgstr "Тип смешивания:"
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:100
-msgid "Add"
-msgstr "Добавить"
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:101
-msgid "Subtract"
-msgstr "Вычесть"
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:102
-msgid "Multiply"
-msgstr "Умножить"
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:103
-msgid "Average"
-msgstr "Средний"
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:107
-msgid "Clipboard"
-msgstr "Буфер обмена"
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:108
-msgid "Destination"
-msgstr "Место назначения"
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:199
-msgid "MixMethod"
-msgstr "Способ смешивания"
-
-#: src/frontend_fox/CNewSoundDialog.cpp:48
-msgid "New Sound"
-msgstr "Новый звуковой файл"
-
-#: src/frontend_fox/CNewSoundDialog.cpp:51
-msgid "Filename:"
-msgstr "Имя файла:"
-
-#: src/frontend_fox/CNewSoundDialog.cpp:53
-msgid "&Browse"
-msgstr "&Просмотреть"
-
-#: src/frontend_fox/CNewSoundDialog.cpp:55
-msgid "Raw Format"
-msgstr "Беззаголовочный формат"
-
-#: src/frontend_fox/CNewSoundDialog.cpp:58 src/frontend_fox/CRawDialog.cpp:51
-#: src/frontend_fox/CVoxDialog.cpp:47
-msgid "Channels:"
-msgstr "Каналы:"
-
-#: src/frontend_fox/CNewSoundDialog.cpp:61 src/frontend_fox/CRawDialog.cpp:57
-#: src/frontend_fox/CVoxDialog.cpp:53
-msgid "Sample Rate:"
-msgstr "Частота дискретизации:"
-
-#: src/frontend_fox/CNewSoundDialog.cpp:64
-msgid "Length:"
-msgstr "Продолжительность:"
-
-#: src/frontend_fox/CNewSoundDialog.cpp:67
-msgid "second(s)"
-msgstr "секунд(а)"
-
-#: src/frontend_fox/CNewSoundDialog.cpp:176
-msgid "Please supply a filename"
-msgstr "Укажите имя файла"
-
-#: src/frontend_fox/CNewSoundDialog.cpp:187
-msgid ""
-"Are you sure you want to overwrite the existing file:\n"
-"   "
-msgstr ""
-"Вы уверены,что хотите перезаписать существующий файл:\n"
-"   "
-
-#: src/frontend_fox/CNewSoundDialog.cpp:200
-msgid "Invalid number of channels"
-msgstr "Неверное количество каналов"
-
-#: src/frontend_fox/CNewSoundDialog.cpp:209
-msgid "Invalid sample rate"
-msgstr "Неверная частота дискретизации"
-
-#: src/frontend_fox/CNewSoundDialog.cpp:219
-msgid "Invalid length"
-msgstr "Неверная продолжительность"
-
-#: src/frontend_fox/CRawDialog.cpp:46
-msgid "Raw Parameters"
-msgstr "Параметры Raw"
-
-#: src/frontend_fox/CRawDialog.cpp:70
-msgid "Sample Format:"
-msgstr "Формат семпла:"
-
-#: src/frontend_fox/CRawDialog.cpp:72
-msgid "8bit Signed PCM"
-msgstr "8bit Signed PCM"
-
-#: src/frontend_fox/CRawDialog.cpp:73
-msgid "8bit Unsigned PCM"
-msgstr "8bit Unsigned PCM"
-
-#: src/frontend_fox/CRawDialog.cpp:74
-msgid "16bit Signed PCM"
-msgstr "16bit Signed PCM"
-
-#: src/frontend_fox/CRawDialog.cpp:75
-msgid "16bit Unsigned PCM"
-msgstr "16bit Unsigned PCM"
-
-#: src/frontend_fox/CRawDialog.cpp:76
-msgid "24bit Signed PCM"
-msgstr "24bit Signed PCM"
-
-#: src/frontend_fox/CRawDialog.cpp:77
-msgid "24bit Unsigned PCM"
-msgstr "24bit Unsigned PCM"
-
-#: src/frontend_fox/CRawDialog.cpp:78
-msgid "32bit Signed PCM"
-msgstr "32bit Signed PCM"
-
-#: src/frontend_fox/CRawDialog.cpp:79
-msgid "32bit Unsigned PCM"
-msgstr "32bit Unsigned PCM"
-
-#: src/frontend_fox/CRawDialog.cpp:80
-msgid "32bit Floating Point PCM"
-msgstr "32bit Floating Point PCM"
-
-#: src/frontend_fox/CRawDialog.cpp:81
-msgid "64bit Floating Point PCM"
-msgstr "64bit Floating Point PCM"
-
-#: src/frontend_fox/CRawDialog.cpp:84
-msgid "Byte Order:"
-msgstr "Байтовый порядок:"
-
-#: src/frontend_fox/CRawDialog.cpp:85
-msgid "Little Endian (Intel)"
-msgstr "\"Остроконечник\" (Intel)"
-
-#: src/frontend_fox/CRawDialog.cpp:85
-msgid "Big Endian (non-Intel)"
-msgstr "\"Тупоконечник\" (не-Intel)"
-
-#: src/frontend_fox/CRawDialog.cpp:89
-msgid "Data Start:"
-msgstr "Начало данных:"
-
-#: src/frontend_fox/CRawDialog.cpp:93
-msgid "in bytes"
-msgstr "в байтах"
-
-#: src/frontend_fox/CRawDialog.cpp:95
-msgid "Data Length:"
-msgstr "Продолжительность данных:"
-
-#: src/frontend_fox/CRawDialog.cpp:96 src/frontend_fox/CRawDialog.cpp:100
-#: src/frontend_fox/CRawDialog.cpp:101
-msgid "normally leave this 0"
-msgstr "обычно оставить как 0"
-
-#: src/frontend_fox/CRawDialog.cpp:101
-msgid "in audio frames"
-msgstr "в звуковых кадрах"
-
-#: src/frontend_fox/CRawDialog.cpp:151
-msgid "invalid negative data offset"
-msgstr "неверное отрицательное смещение данных"
-
-#: src/frontend_fox/CRawDialog.cpp:158
-msgid "invalid negative data length"
-msgstr "неверная отрицательная продолжительность данных"
-
-#: src/frontend_fox/CCueListDialog.cpp:66
-msgid "Cue List"
-msgstr "Список маркеров"
-
-#: src/frontend_fox/CCueListDialog.cpp:76
-msgid "&Add"
-msgstr "&Добавить"
-
-#: src/frontend_fox/CCueListDialog.cpp:78 src/frontend_fox/CMainWindow.cpp:890
-msgid "&Edit"
-msgstr "&Правка"
 
 #: src/frontend_fox/CMainWindow.cpp:198 src/frontend_fox/CMainWindow.cpp:749
 msgid "Play All Once"
@@ -2244,295 +2676,53 @@ msgstr "Стереть историю изменений"
 msgid "&Recent Actions"
 msgstr "&Недавние действия"
 
-#: src/frontend_fox/CMainWindow.cpp:888
+#: src/frontend_fox/CMainWindow.cpp:890
 msgid "&File"
 msgstr "&Файл"
 
-#: src/frontend_fox/CMainWindow.cpp:889
+#: src/frontend_fox/CMainWindow.cpp:891
 msgid "&Control"
 msgstr "&Управление"
 
-#: src/frontend_fox/CMainWindow.cpp:891
+#: src/frontend_fox/CMainWindow.cpp:893
 msgid "Selection"
 msgstr "Выделение"
 
-#: src/frontend_fox/CMainWindow.cpp:892
+#: src/frontend_fox/CMainWindow.cpp:894
 msgid "Effec&ts"
 msgstr "Эффек&ты"
 
-#: src/frontend_fox/CMainWindow.cpp:893
+#: src/frontend_fox/CMainWindow.cpp:895
 msgid "&Looping"
 msgstr "&Циклы"
 
-#: src/frontend_fox/CMainWindow.cpp:894
+#: src/frontend_fox/CMainWindow.cpp:896
 msgid "F&ilters"
 msgstr "Ф&ильтры"
 
-#: src/frontend_fox/CMainWindow.cpp:895
+#: src/frontend_fox/CMainWindow.cpp:897
 msgid "&Remaster"
 msgstr "&Ремастеринг"
 
-#: src/frontend_fox/CMainWindow.cpp:896
+#: src/frontend_fox/CMainWindow.cpp:898
 msgid "&Generate"
 msgstr "&Создание"
 
-#: src/frontend_fox/CMainWindow.cpp:1305 src/frontend_fox/CMainWindow.cpp:1339
-#: src/frontend_fox/CMainWindow.cpp:1399 src/frontend_fox/CMainWindow.cpp:1437
-#: src/frontend_fox/CMainWindow.cpp:1438
-#, fuzzy
+#: src/frontend_fox/CMainWindow.cpp:1321 src/frontend_fox/CMainWindow.cpp:1355
+#: src/frontend_fox/CMainWindow.cpp:1415 src/frontend_fox/CMainWindow.cpp:1453
+#: src/frontend_fox/CMainWindow.cpp:1454
 msgid "semitones"
-msgstr "секунд"
+msgstr "полутонов"
 
-#: src/frontend_fox/CChannelSelectDialog.cpp:58
-msgid "Channel Select"
-msgstr "Выбор канала"
+#~ msgid "Playing will be disabled."
+#~ msgstr "Воспроизведение будет отключено."
 
-#: src/frontend_fox/CChannelSelectDialog.cpp:60
-msgid "Channels to Which This Action Should Apply:"
-msgstr "Каналы, к которым должно быть применено это действие:"
-
-#: src/frontend_fox/CFrontendHooks.cpp:60
-msgid "Select Directory"
-msgstr "Выбрать каталог"
-
-#: src/frontend_fox/CFrontendHooks.cpp:81
-msgid "Open File"
-msgstr "Открыть файл"
-
-#: src/frontend_fox/CFrontendHooks.cpp:89
-msgid "Open as Raw"
-msgstr "Открыть как файл без заголовка"
-
-#: src/frontend_fox/CFrontendHooks.cpp:94
-msgid "Save File"
-msgstr "Сохранить файл"
-
-#: src/frontend_fox/CFrontendHooks.cpp:102
-msgid "Save as Raw"
-msgstr "Сохранить как файл без заголовка"
-
-#: src/frontend_fox/CFrontendHooks.cpp:166
-msgid "All Supported Types"
-msgstr "Все поддерживаемые типы"
-
-#: src/frontend_fox/CFrontendHooks.cpp:166
-msgid "All Files"
-msgstr "Все файлы"
-
-#: src/frontend_fox/FXRezWaveView.cpp:477
-#: src/frontend_fox/FXRezWaveView.cpp:482
-msgid "Set Start Position to Cue"
-msgstr "Установить маркер на начальную позицию"
-
-#: src/frontend_fox/FXRezWaveView.cpp:479
-#: src/frontend_fox/FXRezWaveView.cpp:483
-msgid "Set Stop Position to Cue"
-msgstr "Установить маркер на позицию остановки"
-
-#: src/frontend_fox/FXRezWaveView.cpp:487
-msgid "&Edit Cue"
-msgstr "&Изменить маркер"
-
-#: src/frontend_fox/FXRezWaveView.cpp:488
-msgid "&Remove Cue"
-msgstr "&Удалить маркер"
-
-#: src/frontend_fox/FXRezWaveView.cpp:490
-#: src/frontend_fox/FXRezWaveView.cpp:509
-msgid "Show Cues &List"
-msgstr "Показать &список маркеров"
-
-#: src/frontend_fox/FXRezWaveView.cpp:502
-msgid "Center Start Position"
-msgstr "Поместить в центр начальную позицию"
-
-#: src/frontend_fox/FXRezWaveView.cpp:503
-msgid "Center Stop Position"
-msgstr "Поместить в центр позицию остановки"
-
-#: src/frontend_fox/FXRezWaveView.cpp:505
-msgid "Add Cue at This Position"
-msgstr "Добавить маркер в эту позицию"
-
-#: src/frontend_fox/FXRezWaveView.cpp:506
-msgid "Add Cue at Start Position"
-msgstr "Добавить маркер в начальную позицию"
-
-#: src/frontend_fox/FXRezWaveView.cpp:507
-msgid "Add Cue at Stop Position"
-msgstr "Добавить маркер в позицию остановки"
-
-#: src/frontend_fox/FXLFOParamValue.cpp:58
-msgid "Phase"
-msgstr "Фаза"
-
-#: src/frontend_fox/FXModalDialogBox.cpp:57
-msgid "&Okay"
-msgstr "&Ok"
-
-#: src/frontend_fox/CMp3Dialog.cpp:68
-msgid "mp3 Compression Parameters"
-msgstr "Параметры сжатия в MP3"
-
-#: src/frontend_fox/CMp3Dialog.cpp:75 src/frontend_fox/COggDialog.cpp:73
-msgid "Constant Bit Rate"
-msgstr "Постоянная битовая частота (CBR)"
-
-#: src/frontend_fox/CMp3Dialog.cpp:77 src/frontend_fox/COggDialog.cpp:75
-msgid "Bit Rate: "
-msgstr "Битовая частота: "
-
-#: src/frontend_fox/CMp3Dialog.cpp:83
-msgid "Average Bit Rate"
-msgstr "Усреднённая битовая частота (ABR)"
-
-#: src/frontend_fox/CMp3Dialog.cpp:85 src/frontend_fox/COggDialog.cpp:83
-msgid "Minimum Bit Rate: "
-msgstr "Минимальная битовая частота: "
-
-#: src/frontend_fox/CMp3Dialog.cpp:88
-msgid "Average Bit Rate: "
-msgstr "Усреднённая битовая частота (ABR): "
-
-#: src/frontend_fox/CMp3Dialog.cpp:91 src/frontend_fox/COggDialog.cpp:89
-msgid "Maximum Bit Rate: "
-msgstr "Максимальная битовая частота: "
-
-#: src/frontend_fox/CMp3Dialog.cpp:97
-msgid "Variable Bit Rate Quality Setting"
-msgstr "Настройка качества переменной битовой частосты (VBR)"
-
-#: src/frontend_fox/CMp3Dialog.cpp:99 src/frontend_fox/COggDialog.cpp:65
-msgid "Quality: "
-msgstr "Качество: "
-
-#: src/frontend_fox/CMp3Dialog.cpp:104
-msgid "0(Highest Quality -> 9(Lowest Quality)"
-msgstr "0 (Наилучшеекачество -> 9 (Наихудшее качество)"
-
-#: src/frontend_fox/CMp3Dialog.cpp:109
-msgid "Use Only These Flags"
-msgstr "Использовать только эти параметры"
-
-#: src/frontend_fox/CMp3Dialog.cpp:113
-msgid "Additional Flags: "
-msgstr "Дополнительные параметры: "
-
-#: src/frontend_fox/CMp3Dialog.cpp:116
-msgid "To lame"
-msgstr "для lame"
-
-#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:45
-msgid "MIDI Sample Dump"
-msgstr ""
-
-#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:49
-msgid "Wait for Dump"
-msgstr ""
-
-#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:52
-msgid "Sample ID"
-msgstr "ID семпла"
-
-#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:57
-msgid "SysEx Channel"
-msgstr "Канал SysEx"
-
-#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:62
-msgid "Loop Type"
-msgstr "Тип цикла"
-
-#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:102
-#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:139
-msgid "Waveform IDs must be from 0 to 16384"
-msgstr "Waveform IDs должны быть от 0 до 16384"
-
-#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:148
-msgid "Loop type must be from 0 to 127"
-msgstr "Тип цикла должен быть между 0 и 127"
-
-#: src/frontend_fox/CMetersWindow.cpp:644
-msgid ""
-"Adjust Zoom Factor for Analyzer\n"
-"Right-click for Default"
-msgstr ""
-"Подстроить масштаб-фактор для анализатора\n"
-"Щелчок правой кнопкой мыши для стандартных установок"
-
-#: src/frontend_fox/CMetersWindow.cpp:719
-msgid "Configure with FFTW"
-msgstr "Настроить с FFTW"
-
-#: src/frontend_fox/CMetersWindow.cpp:720
-msgid "for Freq. Analysis"
-msgstr "для частотного анализа"
-
-#: src/frontend_fox/LoopingActionDialogs.cpp:29
-#: src/frontend_fox/LoopingActionDialogs.cpp:41
-msgid "Cue Name"
-msgstr "Имя маркера"
-
-#: src/frontend_fox/LoopingActionDialogs.cpp:29
-#: src/frontend_fox/LoopingActionDialogs.cpp:41
-msgid "What to Name the New Cues"
-msgstr "Как назвать новые маркеры"
-
-#: src/frontend_fox/LoopingActionDialogs.cpp:30
-msgid "Cue Count"
-msgstr "Подсчёт маркеров"
-
-#: src/frontend_fox/LoopingActionDialogs.cpp:30
-msgid "How Many Cues to Place Equally Spaced within the Selection"
-msgstr "Сколько маркеров поместить на одинаковом расстоянии внутри выделения"
-
-#: src/frontend_fox/LoopingActionDialogs.cpp:31
-#: src/frontend_fox/LoopingActionDialogs.cpp:43
-msgid "Anchor Cues in Time"
-msgstr "\"Пришвартовать\" маркеры к позиции во времени"
-
-#: src/frontend_fox/LoopingActionDialogs.cpp:31
-#: src/frontend_fox/LoopingActionDialogs.cpp:43
-msgid "Set the Cues to be Anchored in Time or Not"
-msgstr "Установить статус \"швартовки\" маркеров к позиции во времени"
-
-#: src/frontend_fox/LoopingActionDialogs.cpp:42
-msgid "Time Interval"
-msgstr "Временной интервал"
-
-#: src/frontend_fox/CVoxDialog.cpp:42
-msgid "Vox Parameters"
-msgstr "Параметры Vox"
-
-#: src/frontend_fox/COggDialog.cpp:56
-msgid "Ogg Compression Parameters"
-msgstr "Параметры сжатия в Ogg"
-
-#: src/frontend_fox/COggDialog.cpp:63
-msgid "Quality Setting"
-msgstr "Настройка качества"
-
-#: src/frontend_fox/COggDialog.cpp:69
-msgid "0 (lowest) to 1 (highest)"
-msgstr "от 0 (наихудшее) до 1 (наилучшее)"
-
-#: src/frontend_fox/COggDialog.cpp:81
-msgid "Variable Bit Rate"
-msgstr "Переменная битовая частота (VBR)"
-
-#: src/frontend_fox/COggDialog.cpp:86
-msgid "Normal Bit Rate: "
-msgstr "Обычная битовая частота"
-
-#: src/frontend_fox/CJACKPortChoiceDialog.cpp:40
-msgid "JACK Port Selection"
-msgstr "Выбор JACK-порта"
-
-#: src/frontend_fox/GenerateActionDialogs.cpp:44
-msgid "Volume"
-msgstr "Уровень"
+#~ msgid "Error occurred after trying to fall back to OSS"
+#~ msgstr "Произошла ошибка при откате на OSS"
 
 #~ msgid " -- a cue already exist with the name"
 #~ msgstr " -- маркер с таким именем уже существует"
 
 #~ msgid "Simple Balance Change"
 #~ msgstr "Простое изменения баланса"
+
