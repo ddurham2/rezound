@@ -127,7 +127,6 @@ int main(int argc,char *argv[])
 #include "CCueListDialog.h"
 #include "CUserNotesDialog.h"
 #include "CCrossfadeEdgesDialog.h"
-#include "CEditToolbar.h"
 #include "CSoundListWindow.h"
 
 void setupWindows(CMainWindow *mainWindow)
@@ -158,12 +157,6 @@ void setupWindows(CMainWindow *mainWindow)
 		// create the dialog used to set the length of the crossfade on the edges
 		gCrossfadeEdgesDialog=new CCrossfadeEdgesDialog(mainWindow);
 
-		/*
-		// create the editing toolbar and set the global gEditToolbar variable
-		gEditToolbar=new CEditToolbar(mainWindow);
-		gEditToolbar->create();
-		*/
-
 		if(gFocusMethod==fmSoundWindowList)
 		{
 			gSoundListWindow=new CSoundListWindow(mainWindow);
@@ -171,10 +164,9 @@ void setupWindows(CMainWindow *mainWindow)
 		}
 
 		// create the tool bars in CMainWindow
-		mainWindow->createToolbars();
+		mainWindow->createMenus();
 
 		mainWindow->show();
-		//gEditToolbar->show();
 }
 
 #include <fox/fxkeys.h>
