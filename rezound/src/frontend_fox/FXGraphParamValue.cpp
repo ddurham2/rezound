@@ -27,6 +27,16 @@
 
 #include <istring>
 
+#warning I for the most part fixed the nodes strange moving behavior, but Ive come to the conclusion that I think I would rather just manage the nodes on my own...
+/*
+ * - that is, just drawing filled circles for the nodes and determining when and if the mouse is inside one of these circles and where the button is pressed and such...
+ * - I should write a function that given an X and Y, return the node (if any) that is at that x and y position.
+ * - this should make porting to windows easier since I was going to have to contend with calling or not calling grab() for a child window and other various problems
+ *   	- the only real thing I see to watch out for is not letting the node go outside the bounds of its parent window
+ *   	- also I can color the end nodes with a different color and probably avoid ever swaping out what is the end node
+ *   	- I should be able to use the userData member of CGraphParam node to store all the information that I need
+ */
+
 
 #define GET_SCALAR_VALUE(o) ( o->scalarSpinner==NULL ? 0 : o->scalarSpinner->getValue() )
 	
@@ -165,10 +175,7 @@ public:
 		FXFrame(p->graphPanel,FRAME_RAISED | LAYOUT_EXPLICIT, x,y,NODE_WIDTH,NODE_HEIGHT),
 		isEdgeNode(_isEdgeNode), // if this node is on the edge (can't remove it and can't move it left and right)
 		owner(p),
-		dragging(false),
-
-		dragOffsetX(0),
-		dragOffsetY(0)
+		dragging(false)
 	{
 		disable(); // I have to disable so that if I press the right button while dragging after create it messes things up
 		if(isEdgeNode)
@@ -209,12 +216,8 @@ public:
 	{
 		//printf("node left press\n");
 		dragging=true;
+		grab();
 
-		FXEvent *ev=(FXEvent *)ptr;
-		//dragOffsetX=ev->win_x;
-		//dragOffsetY=ev->win_y;
-
-		onDrag(sender,sel,ptr);
 		return(0);
 	}
 
@@ -222,6 +225,7 @@ public:
 	{
 		//printf("node left release\n");
 		dragging=false;
+		ungrab();
 
 		// erase status ??? make sure that changing these doesn't cause everything to re-layout
 		clearStatus();
@@ -234,11 +238,13 @@ public:
 		{
 			FXEvent *ev=(FXEvent *)ptr;
 			
-			static int g=0;
-			printf("%5d node move while dragging x:%d y:%d\n",g++,ev->win_x,ev->win_y);fflush(stdout);
-
 			int x,y;
-			translateCoordinatesTo(x,y,getParent(),ev->win_x-dragOffsetX,ev->win_y-dragOffsetY);
+			getParent()->translateCoordinatesFrom(x,y,getRoot(),ev->root_x-ev->click_x,ev->root_y-ev->click_y);
+
+
+			static int g=0;
+			printf("%5d node move while dragging x:%d y:%d\n",g++,x,y);fflush(stdout);
+
 
 			// if shift or control is held, lock the x or y position
 			if(ev->state&SHIFTMASK)
@@ -260,13 +266,9 @@ public:
 	FXGraphParamValue *owner;
 	bool dragging;
 
-	// the place where the mouse was clicked within the node so its middle doesn't jump under the cursor when clicked
-	int dragOffsetX;
-	int dragOffsetY;
-
 	void updateStatus()
 	{
-//return;
+return;
 		const int index=owner->findNode(this);
 		if(index==-1)
 			return;
@@ -694,6 +696,7 @@ long FXGraphParamValue::onCreateNode(FXObject *sender,FXSelector sel,void *ptr)
 	FX_NODE(n)->create();
 	FX_NODE(n)->recalc();
 	FX_NODE(n)->dragging=true;
+	//FX_NODE(n)->grab();  on purpose so that the onDragNodeAfterCreateEvent still works
 	draggingNodeAfterCreate=(FXGraphParamNode *)n.userData;
 
 	insertIntoNodes(n);
@@ -701,9 +704,12 @@ long FXGraphParamValue::onCreateNode(FXObject *sender,FXSelector sel,void *ptr)
 	if(draggingNodeAfterCreate!=NULL)
 	{
 		FXEvent ev2=*((FXEvent *)ptr); // making a copy of event since we're modifying it
-		((FXWindow *)sender)->translateCoordinatesTo(ev2.win_x,ev2.win_y,draggingNodeAfterCreate,ev2.win_x-NODE_WIDTH/2,ev2.win_y-NODE_HEIGHT/2);
+		//((FXWindow *)sender)->translateCoordinatesTo(ev2.win_x,ev2.win_y,draggingNodeAfterCreate,ev2.win_x-NODE_WIDTH/2,ev2.win_y-NODE_HEIGHT/2);
+		ev2.click_x=NODE_WIDTH/2;
+		ev2.click_y=NODE_HEIGHT/2;
 		draggingNodeAfterCreate->onDrag(sender,sel,&ev2);
 	}
+
 
 	graphPanel->update();
 	return(0);
@@ -723,7 +729,9 @@ long FXGraphParamValue::onDragNodeAfterCreate(FXObject *sender,FXSelector sel,vo
 		//printf("panel move while dragging after create\n");
 
 		FXEvent ev=*((FXEvent *)ptr); // making a copy of event since we're modifying it
-		((FXWindow *)sender)->translateCoordinatesTo(ev.win_x,ev.win_y,draggingNodeAfterCreate,ev.win_x-NODE_WIDTH/2,ev.win_y-NODE_HEIGHT/2);
+		//((FXWindow *)sender)->translateCoordinatesTo(ev.win_x,ev.win_y,draggingNodeAfterCreate,ev.win_x-NODE_WIDTH/2,ev.win_y-NODE_HEIGHT/2);
+		ev.click_x=NODE_WIDTH/2;
+		ev.click_y=NODE_HEIGHT/2;
 		draggingNodeAfterCreate->onDrag(sender,sel,&ev);
 	}
 	return(0);
@@ -737,6 +745,7 @@ long FXGraphParamValue::onStopDraggingNodeAfterCreate(FXObject *sender,FXSelecto
 		draggingNodeAfterCreate->onDragStop(sender,sel,ptr);
 		draggingNodeAfterCreate->enable();
 		draggingNodeAfterCreate->dragging=false;
+		//draggingNodeAfterCreate->ungrab();
 		draggingNodeAfterCreate=NULL;
 	}
 	return(0);
