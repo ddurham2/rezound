@@ -69,6 +69,8 @@ or sample values to follow
 
 --- POSSIBLE THINGS TO DO ---
 
+	- after evolution of the code, some TAutoBuffers might now be trivially turned into stack arrays
+
 	- consider moving the cue oriented actions to a Cue directory or something
 	- if no more looping actions get created, consider moving the make symetric action under effects
 
