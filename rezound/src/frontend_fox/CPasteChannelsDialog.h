@@ -36,6 +36,7 @@ class CPasteChannelsDialog;
 
 
 extern CPasteChannelsDialog *gPasteChannelsDialog;
+class FXConstantParamValue;
 
 /*
  * This is the implementation of AActionDialog that the backend
@@ -61,10 +62,14 @@ public:
 	{
 		ID_DEFAULT_BUTTON=FXModalDialogBox::ID_LAST,
 		ID_CLEAR_BUTTON,
+
+		ID_REPEAT_TYPE_COMBOBOX
 	};
 
 	long onDefaultButton(FXObject *sender,FXSelector sel,void *ptr);
 	long onClearButton(FXObject *sender,FXSelector sel,void *ptr);
+
+	long onRepeatTypeChange(FXObject *sender,FXSelector sel,void *ptr);
 
 protected:
 	CPasteChannelsDialog() {}
@@ -73,12 +78,20 @@ private:
 	const CActionSound *actionSound;
 
 	FXLabel *label;
-	FXMatrix *contents;
-		// dummy
-		FXLabel *sourceLabel;
-		FXLabel *destinationLabel;
-		FXMatrix *checkBoxMatrix;
-			FXCheckButton *checkBoxes[MAX_CHANNELS][MAX_CHANNELS];
+	FXHorizontalSeparator *horzSeparator;
+	FXComposite *topFrame;
+		FXComposite *repeatFrame;
+			FXSwitcher *repeatTypeSwitcher;
+				FXConstantParamValue *repeatCountSlider;
+				FXConstantParamValue *repeatTimeSlider;
+			FXComboBox *repeatTypeComboBox;
+		
+		FXMatrix *contents;
+			// dummy
+			FXLabel *sourceLabel;
+			FXLabel *destinationLabel;
+			FXMatrix *checkBoxMatrix;
+				FXCheckButton *checkBoxes[MAX_CHANNELS][MAX_CHANNELS];
 	
 	FXPacker *mixTypeFrame;
 		FXComboBox *mixTypeComboBox;

@@ -31,6 +31,8 @@
 #include "../backend/CActionParameters.h"
 #include "../backend/ASoundClipboard.h"
 
+#include "../misc/CNestedDataFile/CNestedDataFile.h" // so I can override what rememberShow does
+
 CPasteChannelsDialog *gPasteChannelsDialog=NULL;
 
 
@@ -39,6 +41,8 @@ FXDEFMAP(CPasteChannelsDialog) CPasteChannelsDialogMap[]=
 //	Message_Type			ID						Message_Handler
 	FXMAPFUNC(SEL_COMMAND,		CPasteChannelsDialog::ID_DEFAULT_BUTTON,	CPasteChannelsDialog::onDefaultButton),
 	FXMAPFUNC(SEL_COMMAND,		CPasteChannelsDialog::ID_CLEAR_BUTTON,		CPasteChannelsDialog::onClearButton),
+
+	FXMAPFUNC(SEL_COMMAND,		CPasteChannelsDialog::ID_REPEAT_TYPE_COMBOBOX,	CPasteChannelsDialog::onRepeatTypeChange),
 };
 		
 
@@ -48,12 +52,42 @@ FXIMPLEMENT(CPasteChannelsDialog,FXModalDialogBox,CPasteChannelsDialogMap,ARRAYN
 
 // ----------------------------------------
 
+// ??? derive this from CActionDialog if I can so that it can have presets, maybe not possible as it is
+
+#include "FXConstantParamValue.h"
+static const double interpret_repeat(const double x,const int s) { return x*s; }
+static const double uninterpret_repeat(const double x,const int s) { return x/s; }
+
 CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
 	FXModalDialogBox(mainWindow,"Paste Channels",100,100,FXModalDialogBox::ftVertical),
 
 	label(new FXLabel(getFrame(),"Pasting Routing Information:",NULL,LAYOUT_CENTER_X)),
-	contents(new FXMatrix(getFrame(),2,MATRIX_BY_COLUMNS | LAYOUT_FILL_X|LAYOUT_FILL_Y))
+	horzSeparator(new FXHorizontalSeparator(getFrame())),
+	topFrame(new FXHorizontalFrame(getFrame())),
+		repeatFrame(new FXVerticalFrame(topFrame,LAYOUT_CENTER_X)),
+		contents(new FXMatrix(topFrame,2,MATRIX_BY_COLUMNS | LAYOUT_FILL_X|LAYOUT_FILL_Y))
 {
+	// setup the repeat type controls
+
+	repeatTypeSwitcher=new FXSwitcher(repeatFrame,LAYOUT_CENTER_X);
+
+		repeatCountSlider=new FXConstantParamValue(interpret_repeat,uninterpret_repeat,1,100,4,false,repeatTypeSwitcher,LAYOUT_CENTER_X,"Repeat Count");
+		repeatCountSlider->setUnits("x");
+		repeatCountSlider->setValue(1.0);
+
+		repeatTimeSlider=new FXConstantParamValue(interpret_repeat,uninterpret_repeat,1,3600,60,false,repeatTypeSwitcher,LAYOUT_CENTER_X,"Repeat Time");
+		repeatTimeSlider->setUnits("s");
+		repeatTimeSlider->setValue(10.0);
+
+		repeatTypeSwitcher->setCurrent(0);
+
+	repeatTypeComboBox=new FXComboBox(repeatFrame,0,2,this,ID_REPEAT_TYPE_COMBOBOX,COMBOBOX_NORMAL|COMBOBOX_STATIC | FRAME_SUNKEN|FRAME_THICK | LAYOUT_CENTER_X);
+		repeatTypeComboBox->appendItem("Repeat X Times");
+		repeatTypeComboBox->appendItem("Repeat for X Seconds");
+		repeatTypeComboBox->setCurrentItem(0);
+
+
+
 	getFrame()->setVSpacing(1);
 	getFrame()->setHSpacing(1);
 
@@ -68,26 +102,26 @@ CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
 			mixTypeComboBox->appendItem("Subtract",(void *)mmSubtract);
 			mixTypeComboBox->appendItem("Multiply",(void *)mmMultiply);
 			mixTypeComboBox->appendItem("Average",(void *)mmAverage);
-			
+
 
 	new FXLabel(contents,"");
-	sourceLabel=new FXLabel(contents,"Source",NULL,LAYOUT_CENTER_X);
+	sourceLabel=new FXLabel(contents,"Clipboard",NULL,LAYOUT_CENTER_X);
 	destinationLabel=new FXLabel(contents,"Destination",NULL,LAYOUT_CENTER_Y);
 	checkBoxMatrix=new FXMatrix(contents,MAX_CHANNELS+1,MATRIX_BY_COLUMNS | LAYOUT_FILL_X|LAYOUT_FILL_Y);
 
 	// put top source labels 
 	new FXLabel(checkBoxMatrix,"");
-	for(unsigned x=0;x<MAX_CHANNELS;x++)
-		new FXLabel(checkBoxMatrix,("Channel "+istring(x)).c_str());
+	for(unsigned t=0;t<MAX_CHANNELS;t++)
+		new FXLabel(checkBoxMatrix,("Channel "+istring(t)).c_str());
 
-	for(unsigned y=0;y<MAX_CHANNELS;y++)
+	for(unsigned t=0;t<MAX_CHANNELS;t++)
 	{
 		// put side destination label
-		new FXLabel(checkBoxMatrix,("Channel "+istring(y)).c_str(),NULL,LAYOUT_RIGHT);
+		new FXLabel(checkBoxMatrix,("Channel "+istring(t)).c_str(),NULL,LAYOUT_RIGHT);
 
 		// built a row of check boxes
-		for(unsigned x=0;x<MAX_CHANNELS;x++)
-			checkBoxes[y][x]=new FXCheckButton(checkBoxMatrix,"",NULL,0,CHECKBUTTON_NORMAL | LAYOUT_CENTER_X);
+		for(unsigned col=0;col<MAX_CHANNELS;col++)
+			new FXCheckButton(checkBoxMatrix,"",NULL,0,CHECKBUTTON_NORMAL | LAYOUT_CENTER_X);
 	}
 
 }
@@ -104,17 +138,52 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 	if(clipboard->isEmpty())
 		return false;
 
-	// uncheck all check boxes and enable only the valid ones where data could be pasted to and from
-	for(unsigned y=0;y<MAX_CHANNELS;y++)
-	for(unsigned x=0;x<MAX_CHANNELS;x++)
+	// only show the checkboxes that matter
+	for(unsigned row=0;row<MAX_CHANNELS;row++)
+	for(unsigned col=0;col<MAX_CHANNELS;col++)
 	{
-		if(y<actionSound->sound->getChannelCount() && clipboard->getWhichChannels()[x])
-			checkBoxes[y][x]->enable();
+		FXCheckButton *cb=(FXCheckButton *)checkBoxMatrix->childAtRowCol(row+1,col+1);
+
+		cb->enable();
+
+		if(row<actionSound->sound->getChannelCount() && col<clipboard->getChannelCount())
+			cb->show();
 		else
-			checkBoxes[y][x]->disable();
+			cb->hide();
+
+		// disable it's showm, but disabled since there is no data for that channel in the clipboard
+		if(!clipboard->getWhichChannels()[col])
+			cb->disable();
 	}
 
-	// by default enable a 1:1 paste mapping
+	// show/hide labels across the top that matter
+	for(unsigned col=0;col<MAX_CHANNELS;col++)
+	{
+		if(col<clipboard->getChannelCount())
+			checkBoxMatrix->childAtRowCol(0,col+1)->show();
+		else
+			checkBoxMatrix->childAtRowCol(0,col+1)->hide();
+	}
+
+	// show/hide labels on the left that matter
+	for(unsigned row=0;row<MAX_CHANNELS;row++)
+	{
+		if(row<actionSound->sound->getChannelCount())
+			checkBoxMatrix->childAtRowCol(row+1,0)->show();
+		else
+			checkBoxMatrix->childAtRowCol(row+1,0)->hide();
+	}
+
+	// this should make FXModalDialog::execute() resize the dialog to it's default size
+	{
+		resize(25,25);
+	
+		const string title=("WindowDimensions"+FXString(CNestedDataFile::delimChar)+getTitle()).text();
+		gSettingsRegistry->removeKey((title+"_W").c_str());
+		gSettingsRegistry->removeKey((title+"_H").c_str());
+	}
+	
+	// by default check a 1:1 paste mapping
 	onDefaultButton(NULL,0,NULL);
 
 
@@ -123,15 +192,27 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 		pasteChannels.clear();
 
 		actionParameters->addUnsignedParameter("MixMethod",(unsigned)(mixTypeComboBox->getItemData(mixTypeComboBox->getCurrentItem())));
+		
+		if(repeatTypeComboBox->getCurrentItem()==0)
+		{ // repeating it a given number of times
+			actionParameters->addDoubleParameter("Repeat Count",repeatCountSlider->getValue());
+		}
+		else
+		{ // repeating it for a given number of seconds
+			actionParameters->addDoubleParameter("Repeat Count",
+				(double)( (sample_fpos_t)repeatTimeSlider->getValue() * actionSound->sound->getSampleRate() / clipboard->getLength(actionSound->sound->getSampleRate()) )
+			);
+		}
 
 		bool ret=false; // or all the checks together, if they're all false, it's like hitting cancel
-		for(unsigned y=0;y<MAX_CHANNELS;y++)
+		for(unsigned row=0;row<MAX_CHANNELS;row++)
 		{
 			pasteChannels.push_back(vector<bool>());
-			for(unsigned x=0;x<MAX_CHANNELS;x++)
+			for(unsigned col=0;col<MAX_CHANNELS;col++)
 			{
-				pasteChannels[y].push_back(checkBoxes[y][x]->getCheck());
-				ret|=pasteChannels[y][x];
+				FXCheckButton *cb=(FXCheckButton *)checkBoxMatrix->childAtRowCol(row+1,col+1);
+				pasteChannels[row].push_back(cb->shown() ? cb->getCheck() : false);
+				ret|=pasteChannels[row][col];
 			}
 		}
 
@@ -149,14 +230,18 @@ void *CPasteChannelsDialog::getUserData()
 
 long CPasteChannelsDialog::onDefaultButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-	for(unsigned y=0;y<MAX_CHANNELS;y++)
-	for(unsigned x=0;x<MAX_CHANNELS;x++)
-		checkBoxes[y][x]->setCheck(FALSE);
-
-	for(unsigned y=0;y<actionSound->sound->getChannelCount();y++)
+	for(unsigned row=0;row<MAX_CHANNELS;row++)
+	for(unsigned col=0;col<MAX_CHANNELS;col++)
 	{
-		if(checkBoxes[y][y]->isEnabled())
-			checkBoxes[y][y]->setCheck(TRUE);
+		FXCheckButton *cb=(FXCheckButton *)checkBoxMatrix->childAtRowCol(row+1,col+1);
+		cb->setCheck(FALSE);
+	}
+
+	for(unsigned t=0;t<actionSound->sound->getChannelCount();t++)
+	{
+		FXCheckButton *cb=(FXCheckButton *)checkBoxMatrix->childAtRowCol(t+1,t+1);
+		if(cb->shown() && cb->isEnabled())
+			cb->setCheck(TRUE);
 	}
 
 	return 1;
@@ -164,9 +249,18 @@ long CPasteChannelsDialog::onDefaultButton(FXObject *sender,FXSelector sel,void 
 
 long CPasteChannelsDialog::onClearButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-	for(unsigned y=0;y<MAX_CHANNELS;y++)
-	for(unsigned x=0;x<MAX_CHANNELS;x++)
-		checkBoxes[y][x]->setCheck(FALSE);
+	for(unsigned row=0;row<MAX_CHANNELS;row++)
+	for(unsigned col=0;col<MAX_CHANNELS;col++)
+	{
+		FXCheckButton *cb=(FXCheckButton *)checkBoxMatrix->childAtRowCol(row+1,col+1);
+		cb->setCheck(FALSE);
+	}
+
 	return 1;
 }
 
+long CPasteChannelsDialog::onRepeatTypeChange(FXObject *sender,FXSelector sel,void *ptr)
+{
+	repeatTypeSwitcher->setCurrent(repeatTypeComboBox->getCurrentItem());
+	return 1;
+}
