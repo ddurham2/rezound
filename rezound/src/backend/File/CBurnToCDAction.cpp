@@ -23,6 +23,7 @@
 #include "../CActionSound.h"
 #include "../CActionParameters.h"
 #include "../DSP/TSoundStretcher.h"
+#include "../AStatusComm.h"
 
 #include <istring>
 #include <CPath.h>
@@ -350,10 +351,25 @@ bool CBurnToCDAction::doActionSizeSafe(CActionSound *actionSound,bool prepareFor
 	do {
 
 		// burn the files
-		const string command="'"+pathTo_cdrdao+"' "+(testOnly ? "simulate " : "write ")+endianSwap+"--speed "+istring(burnSpeed)+(istring(device).trim()=="" ? string("") : (" --device "+device))+" "+extra_cdrdao_options+" '"+TOCFilename+"'";
+		const string command="'"+pathTo_cdrdao+"' "+(testOnly ? "simulate " : "write ")+" -n "+endianSwap+"--speed "+istring(burnSpeed)+(istring(device).trim()=="" ? string("") : (" --device "+device))+" "+extra_cdrdao_options+" '"+TOCFilename+"' 2>&1"; // send err to out so we can capture it
 		printf("about to run command: %s\n",command.c_str());
+		/*
 		int status=system(command.c_str());
 		if(WEXITSTATUS(status)!=0)
+			Warning(_("cdrdao returned non-zero exit status.  Consult standard output/error for problems."));
+		else
+			CDCount++;
+		*/
+
+		FILE *p=popen(command.c_str(),"r");
+		showStatus(p);
+
+		// finish eating the output of the command (otherwise it causes errors)
+		for(char c; (fread(&c,1,1,p)==1); )
+			{ fwrite(&c,1,1,stdout); fflush(stdout); }
+
+		int ret=pclose(p);
+		if(WEXITSTATUS(ret)!=0)
 			Warning(_("cdrdao returned non-zero exit status.  Consult standard output/error for problems."));
 		else
 			CDCount++;
@@ -429,6 +445,130 @@ const string CBurnToCDAction::detectDevice(const string pathTo_cdrdao)
 	return "";
 }
 
+#include <ctype.h>
+void CBurnToCDAction::showStatus(FILE *p)
+{
+	CStatusBar s(_("Burning..."),0,100,false); // ??? can I know pid to send a kill signal to for cancel?
+
+	// state machine looks for " [0-9]+ of [0-9]+ " and bases the progress upon the two parsed numbers
+	char c;
+	int state=0;
+	string str;
+	while(fread(&c,1,1,p)==1)
+	{
+		// output everything we read
+		fwrite(&c,1,1,stdout); fflush(stdout);
+
+		switch(state)
+		{
+		case 0:
+			str="";
+			if(c==' ')
+			{
+				str+=c;
+				state=1;
+			}
+			else
+				state=0;
+			break;
+
+		case 1:
+			if(isdigit(c))
+			{
+				str+=c;
+				state=2;
+			}
+			else
+				state=0;
+			break;
+
+		case 2:
+			if(isdigit(c))
+			{
+				str+=c;
+				state=2;
+			}
+			else if(c==' ')
+			{
+				str+=c;
+				state=3;
+			}
+			else
+				state=0;
+			break;
+
+		case 3:
+			if(c=='o')
+			{
+				str+=c;
+				state=4;
+			}
+			else
+				state=0;
+			break;
+
+		case 4:
+			if(c=='f')
+			{
+				str+=c;
+				state=5;
+			}
+			else
+				state=0;
+			break;
+
+		case 5:
+			if(c==' ')
+			{
+				str+=c;
+				state=6;
+			}
+			else
+				state=0;
+			break;
+
+		case 6:
+			if(isdigit(c))
+			{
+				str+=c;
+				state=7;
+			}
+			else
+				state=0;
+			break;
+
+		case 7:
+			if(isdigit(c))
+			{
+				str+=c;
+				state=7;
+			}
+			else if(c==' ')
+			{
+				str+=c;
+
+				// now we have our parsed string " [0-9]+ of [0-9] ", so update the progress
+				int part=1;
+				int whole=1;
+				sscanf(str.c_str()," %d of %d ",&part,&whole);
+
+				s.update(part*100/whole);
+
+				if(part>=whole)
+					return; // we're done
+
+				state=0;
+			}
+			else
+				state=0;
+			break;
+
+		default:
+			printf("%s: the state machine is messed up\n",__func__);
+			state=0; // messed up state machine
+		}
+	}
+}
 
 // ------------------------------
 

@@ -25,6 +25,7 @@
 #include "../../../config/common.h"
 
 #include "../AAction.h"
+#include <stdio.h>
 
 class CBurnToCDAction : public AAction
 {
@@ -51,6 +52,8 @@ private:
 	const string extra_cdrdao_options;
 	const bool selectionOnly;
 	const bool testOnly;
+
+	void showStatus(FILE *p);
 
 };
 
