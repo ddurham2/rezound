@@ -38,10 +38,12 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AM_PROG_LIBTOOL
 AC_PROG_CPP
+
 dnl AC_PROG_CXX automatically sets CXXFLAGS to -g -O2 if g++ is c++ compiler
 dnl and CXXFLAGS hasn't been set, so by setting CXXFLAGS, we can avoid this.
 CXXFLAGS=
 AC_PROG_CXX
+
 dnl These are some custom checks to see if cc accepts some extra warning flags
 dnl see config/cxx.m4 for macro definition
 ajv_CXX_FLAG(-Wno-unused-function)
@@ -51,7 +53,20 @@ AC_PROG_CXXCPP
 AM_PROG_LEX
 AC_PROG_YACC
 
-AC_C_BIGENDIAN(AC_MSG_ERROR([ReZound has not been made to compile on big endian platforms yet]))
+dnl define WORDS_BIGENDIAN if this is a big endian platform
+dnl NOTE: autoconf 2.5 supports passing what to do if it is a big endian 
+dnl platform, but 2.13 only defines WORD_BIGENDIAN
+AC_C_BIGENDIAN
+AC_TRY_RUN([
+	#include "confdefs.h"
+	#include <stdio.h>
+	int main() {
+	#ifdef WORDS_BIGENDIAN
+	printf("WARNING!!! ReZound has not be made to work on big endian platforms yet.  However, you are welcome to see what goes wrong.\n");
+	#endif
+	return 0; }
+	])
+
 
 dnl ---------------------|
 dnl Checks for libraries.|
