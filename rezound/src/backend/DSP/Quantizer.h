@@ -57,7 +57,7 @@ public:
 
 	const sample_t processSample(const sample_t input) const
 	{
-		return (sample_t)(floorl((float)input/(float)maxSample*quantumCount)*s);
+		return (sample_t)(floorf((float)input/(float)maxSample*quantumCount)*s);
 	}
 
 private:
