@@ -80,11 +80,6 @@ void CJACKSoundPlayer::initialize()
 			// tell the JACK server to call `processAudio()' whenever there is work to be done
 			jack_set_process_callback(client,processAudio,this);
 
-// I would like to put an #if version < 0.5 here but those #defines don't exist
-			// tell the JACK server to call `maxToProcessChanged()' whenever the maximum number of frames that 
-			// will be passed to `processAudio()' changes
-			jack_set_buffer_size_callback(client,maxToProcessChanged,this);
-
 			// tell the JACK server to call `sampleRateChanged()' whenever the sample rate of the system changes
 			jack_set_sample_rate_callback(client,sampleRateChanged,this);
 
@@ -96,7 +91,7 @@ void CJACKSoundPlayer::initialize()
 			sampleRateChanged(jack_get_sample_rate(client),this); // make note of the sample rate for this device
 			devices[0].channelCount=gDesiredOutputChannelCount;
 
-			maxToProcessChanged(jack_get_buffer_size(client),this); // initially set tempBuffer to the right size
+			tempBuffer.setSize(jack_get_buffer_size(client)*devices[0].channelCount); // ??? this is simply always device zero for now
 
 
 			// create two ports
@@ -233,14 +228,6 @@ int CJACKSoundPlayer::processAudio(jack_nframes_t nframes,void *arg)
 	{
 		fprintf(stderr,"unknown exception caught in play callback\n");
 	}
-	return 0;
-}
-
-int CJACKSoundPlayer::maxToProcessChanged(jack_nframes_t nframes,void *arg)
-{
-	CJACKSoundPlayer *that=(CJACKSoundPlayer *)arg;
-
-	that->tempBuffer.setSize(nframes*that->devices[0].channelCount); // ??? this is simply always device zero for now
 	return 0;
 }
 

@@ -67,10 +67,6 @@ void CJACKSoundRecorder::initialize(CSound *sound)
 			// tell the JACK server to call `processAudio()' whenever there is work to be done
 			jack_set_process_callback(client,processAudio,this);
 
-			// tell the JACK server to call `maxToProcessChanged()' whenever the maximum number of frames that 
-			// will be passed to `processAudio()' changes
-			jack_set_buffer_size_callback(client,maxToProcessChanged,this);
-
 			// tell the JACK server to call `sampleRateChanged()' whenever the sample rate of the system changes
 			jack_set_sample_rate_callback(client,sampleRateChanged,this);
 
@@ -80,8 +76,7 @@ void CJACKSoundRecorder::initialize(CSound *sound)
 
 			sampleRateChanged(jack_get_sample_rate(client),this); // make note of the sample rate for this device
 
-			maxToProcessChanged(jack_get_buffer_size(client),this); // initially set tempBuffer to the right size
-
+			tempBuffer.setSize(jack_get_buffer_size(client)*sound->getChannelCount());
 
 			// create two ports
 			channelCount=sound->getChannelCount(); // saved for later in deinitialize too
@@ -202,14 +197,6 @@ int CJACKSoundRecorder::processAudio(jack_nframes_t nframes,void *arg)
 		fprintf(stderr,"unknown exception caught in record callback\n");
 	}
 
-	return 0;
-}
-
-int CJACKSoundRecorder::maxToProcessChanged(jack_nframes_t nframes,void *arg)
-{
-	CJACKSoundRecorder *that=(CJACKSoundRecorder *)arg;
-
-	that->tempBuffer.setSize(nframes*that->getSound()->getChannelCount());
 	return 0;
 }
 

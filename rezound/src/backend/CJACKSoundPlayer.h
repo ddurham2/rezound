@@ -56,7 +56,6 @@ private:
 	TAutoBuffer<sample_t> tempBuffer;
 
 	static int processAudio(jack_nframes_t nframes,void *arg);
-	static int maxToProcessChanged(jack_nframes_t nframes,void *arg);
 	static int sampleRateChanged(jack_nframes_t nframes,void *arg);
 	static void jackShutdown(void *arg);
 };
