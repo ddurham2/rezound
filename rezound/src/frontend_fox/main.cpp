@@ -40,27 +40,19 @@ DECLARE_STATIC_CPATH // to declare CPath::dirDelim
 
 #include "CFOXIcons.h"
 
-void setupWindows(CMainWindow *mainWindow);
-void setupAccels(CMainWindow *mainWindow);
+#include "CAboutDialog.h"
+
+static void setupWindows(CMainWindow *mainWindow);
+static void setupAccels(CMainWindow *mainWindow);
+
+static void setLocaleFont(FXApp *application);
 
 
-#if 0
-int wc=1;
-void countWidgets(FXWindow *w)
-{
-	w=w->getFirst();
-	if(w)
-	{
-		do
-		{
-			wc++;
-			countWidgets(w);
-		}
-		while((w=w->getNext()));
-	}
-}
-#endif
-
+// --- FOR TESTING
+static void countWidgets(FXWindow *w);
+static void printNormalFontProperties(FXApp *application);
+static void listFonts();
+// ---
 
 int main(int argc,char *argv[])
 {
@@ -74,6 +66,13 @@ int main(int argc,char *argv[])
 	{
 		FXApp* application=new FXApp("ReZound","NLT");
 		application->init(argc,argv);
+
+#ifdef ENABLE_NLS
+		setLocaleFont(application);
+#endif
+
+		//printNormalFontProperties(application);
+		//listFonts();
 
 		FOXIcons=new CFOXIcons(application);
 
@@ -134,25 +133,11 @@ int main(int argc,char *argv[])
 		if(!handleMoreBackendArgs(gSoundFileManager,argc,argv))
 			return 0;
 
-		mainWindow->showAbout();
-
+		gAboutDialog->showOnStartup();
 		mainWindow->show();
-
-		/*
-		{
-			FXFontDialog *d=new FXFontDialog(mainWindow,"Font");
-			d->create();
-			d->show();
-		}
-		*/
-
 		application->run();
 
-#if 0
-		countWidgets(application->getRootWindow());
-		printf("wc: %d\n",wc);
-#endif
-
+		//countWidgets(application->getRootWindow()); printf("wc: %d\n",wc);
 
 		delete gSoundFileManager;
 
@@ -188,8 +173,6 @@ int main(int argc,char *argv[])
 }
 
 
-
-#include "CAboutDialog.h"
 
 #include "CChannelSelectDialog.h"
 #include "CPasteChannelsDialog.h"
@@ -259,5 +242,85 @@ void setupAccels(CMainWindow *mainWindow)
 	at->addAccel(MKUINT(KEY_0,ALTMASK),mainWindow,MKUINT(CMainWindow::ID_SOUND_LIST_HOTKEY,SEL_COMMAND));
 	at->addAccel(MKUINT(KEY_quoteleft,ALTMASK),mainWindow,MKUINT(CMainWindow::ID_SOUND_LIST_HOTKEY,SEL_COMMAND));
 }
+
+
+#ifdef ENABLE_NLS
+void setLocaleFont(FXApp *application)
+{
+	/*??? it'd be nice if I knew if the font choice was overridden in the FOX registry... I should also have a font dialog for choosing in the config system later */
+	const string lang=setlocale(LC_MESSAGES,NULL);
+	if(lang=="")
+		return;
+	else if(lang=="ru" || lang=="ru_RU")
+	{ // setup KOI-8 encoded font
+		FXFontDesc desc={
+			"helvetica",
+			100,
+			FONTWEIGHT_BOLD,
+			FONTSLANT_REGULAR,
+			FONTENCODING_KOI8_R,
+			FONTSETWIDTH_DONTCARE,
+			0
+		};
+
+		application->setNormalFont(new FXFont(application,desc));
+	}
+}
+#endif
+
+
+// --- FUNCTIONS ONLY USED WHEN TESTING THINGS ---
+
+#if 0
+int wc=1;
+void countWidgets(FXWindow *w)
+{
+	w=w->getFirst();
+	if(w)
+	{
+		do
+		{
+			wc++;
+			countWidgets(w);
+		}
+		while((w=w->getNext()));
+	}
+}
+#endif
+
+#if 0
+void printNormalFontProperties(FXApp *application)
+{
+	FXFontDesc desc;
+	application->getNormalFont()->getFontDesc(desc);
+	printf("normal font {\n");
+	printf("\tface: '%s'\n",desc.face);
+	printf("\tsize: %d\n",desc.size);
+	printf("\tweight: %d\n",desc.weight);
+	printf("\tslant: %d\n",desc.slant);
+	printf("\tencoding: %d\n",desc.encoding);
+	printf("\tsetwidth: %d\n",desc.setwidth);
+	printf("\tflags: %d\n",desc.flags);
+	printf("}\n");
+}
+#endif
+
+#if 0
+void listFonts()
+{
+	printf("font_listing {\n");
+
+	FXFontDesc *fonts;
+	FXuint numfonts;
+	if(FXFont::listFonts(fonts,numfonts,"helvetica"))
+	{
+		printf("\tnum fonts: %d\n",numfonts);
+		for(FXuint t=0;t<numfonts;t++)
+			printf("\t%d: face: '%s' encoding: %d\n",t,fonts[t].face,fonts[t].encoding);
+	}
+	
+	printf("}\n");
+}
+#endif
 
 
