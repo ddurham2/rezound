@@ -260,12 +260,13 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 			//sample_pos_t lastIterationLength=(sample_pos_t)sample_fpos_floor(((sample_fpos_t)actionSound.selectionLength()*(sample_fpos_t)fRepeatCount)/(sample_fpos_t)repeatCount);
 		
 			// ... this will be sure to cover the remainder left off from flooring errors in the n iterations above
+				// perhaps there's a better way, maybe rounding instead of flooring when calculating oneIterationLength
 			const sample_pos_t lastIterationLength=actionSound.selectionLength()-(oneIterationLength*(unsigned)iRepeatCount);
 
 			if(lastIterationLength>0 && clipboardLength>1/*has a little bug from flooring if this is true*/)
 			{
 				const sample_pos_t shortenedClipboardLength=(sample_pos_t)sample_fpos_floor((sample_fpos_t)clipboard->getLength(_actionSound.sound->getSampleRate())*fRepeatCount);
-				clipboard->temporarilyShortenLength(_actionSound.sound->getSampleRate(),shortenedClipboardLength);
+				clipboard->temporarilyShortenLength(_actionSound.sound->getSampleRate(),max(shortenedClipboardLength,(sample_pos_t)1));
 				try
 				{
 					pasteData(clipboard,pasteChannels,_actionSound,lastIterationLength,1,!prepareForUndo,mixMethod,mixMethod,sftChangeRate);
