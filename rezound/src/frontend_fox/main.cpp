@@ -200,8 +200,8 @@ void setupAccels(CMainWindow *mainWindow)
 	at->addAccel(KEY_3 ,mainWindow,MKUINT(CMainWindow::ID_SHUTTLE_FORWARD,SEL_COMMAND),MKUINT(CMainWindow::ID_SHUTTLE_RETURN,SEL_COMMAND));
 
 	// view
-	at->addAccel(KEY_z ,mainWindow,MKUINT(CMainWindow::ID_FIND_SELECTION_STOP,SEL_COMMAND));
-	at->addAccel(KEY_x ,mainWindow,MKUINT(CMainWindow::ID_FIND_SELECTION_START,SEL_COMMAND));
+	at->addAccel(KEY_z ,mainWindow,MKUINT(CMainWindow::ID_FIND_SELECTION_START,SEL_COMMAND));
+	at->addAccel(KEY_x ,mainWindow,MKUINT(CMainWindow::ID_FIND_SELECTION_STOP,SEL_COMMAND));
 
 	// sound switching
 	at->addAccel(MKUINT(KEY_1,ALTMASK),mainWindow,MKUINT(CMainWindow::ID_SOUND_LIST_HOTKEY,SEL_COMMAND));

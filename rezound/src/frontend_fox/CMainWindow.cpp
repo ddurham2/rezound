@@ -654,10 +654,6 @@ void CMainWindow::createMenus()
 		new FXMenuCommand(menu,"Find Sto&p Position\tx",FOXIcons->normal_action_buff,this,ID_FIND_SELECTION_STOP);
 
 		new FXMenuSeparator(menu);
-		toggleLevelMetersMenuItem=new FXMenuCommand(menu,"Toggle &Level Meters",NULL,this,ID_TOGGLE_LEVEL_METERS);
-		toggleFrequencyAnalyzerMenuItem=new FXMenuCommand(menu,"Toggle Frequency &Analyzer",NULL,this,ID_TOGGLE_FREQUENCY_ANALYZER);
-
-		new FXMenuSeparator(menu);
 		new FXMenuCommand(menu,"&Redraw",FOXIcons->normal_action_buff,this,ID_REDRAW);
 
 		new FXMenuSeparator(menu);
@@ -675,6 +671,10 @@ void CMainWindow::createMenus()
 		new FXMenuCommand(menu,"Shuttle Rewind\t1",FOXIcons->shuttle_backward,this,ID_SHUTTLE_BACKWARD);
 		new FXMenuCommand(menu,"Shuttle Amount\t2",FOXIcons->shuttle_normal,this,ID_SHUTTLE_INCREASE_RATE);
 		new FXMenuCommand(menu,"Shuttle Forward\t3",FOXIcons->shuttle_forward,this,ID_SHUTTLE_FORWARD);
+
+		new FXMenuSeparator(menu);
+		toggleLevelMetersMenuItem=new FXMenuCommand(menu,"Toggle &Level Meters",NULL,this,ID_TOGGLE_LEVEL_METERS);
+		toggleFrequencyAnalyzerMenuItem=new FXMenuCommand(menu,"Toggle Frequency &Analyzer",NULL,this,ID_TOGGLE_FREQUENCY_ANALYZER);
 
 		new FXMenuSeparator(menu);
 		new FXMenuCommand(menu,"View Loaded File 1\tAlt+1");
