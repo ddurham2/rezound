@@ -73,8 +73,9 @@ string currentFilename;
 
 
 
+(([0-9]*\.[0-9]+)|([0-9]+))		{ yylval.floatValue=atof(yytext); return(LIT_NUMBER); }
 
-([\_A-Za-z:]|"\\ ")([\_0-9A-Za-z:]|"\\ ")*	{ 
+([\_0-9A-Za-z:]|"\\ ")+	{ 
 		if(strcmp(yytext,"include")==0)
 			return(INCLUDE);
 		else if(strcmp(yytext,"true")==0)
@@ -99,7 +100,6 @@ string currentFilename;
 		}
 	}
 			
-(([0-9]*\.[0-9]+)|([0-9]+))		{ yylval.floatValue=atof(yytext); return(LIT_NUMBER); }
 
 
 \"(\\.|[^\\"\n])*\"			{         
