@@ -70,7 +70,7 @@ bool CCompressorAction::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 
 				if(lookAheadForLevel && stop>hWindowSize)
 				{
-					const CRezPoolAccesser src_alt=src;
+					const CRezPoolAccesser src_alt=src; // could be improved by possibly using a delay line instead of having another src to read from
 					const sample_pos_t _stop=stop-hWindowSize;
 					while(destPos<=_stop)
 					{
