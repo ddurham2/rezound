@@ -49,7 +49,7 @@ string currentFilename;
 	for(int t=0;t<yyleng;t++) 		\
 		if(yytext[t]=='\n') 		\
 			yylineno++; 		\
-	PRINTF("%s:%d: token: %s\n",currentFilename.c_str(),yylineno,yytext);fflush(stdout);
+	printf("%s:%d: token: %s\n",currentFilename.c_str(),yylineno,yytext);fflush(stdout);
 
 
 %}
@@ -63,13 +63,13 @@ string currentFilename;
 
 %%
 
-\/\/.*$					{ PRINTF("// comment skipped\n"); }
+\/\/.*$					{ /* comment skipped */ }
 
 "/*"					{ yy_push_state(COMMENT); }
 <COMMENT>[^*\n]*			{ /* eat anything that's not a '*' */ }
 <COMMENT>"*"+[^*/\n]*			{ /* eat up '*'s not followed by '/'s */ }
 <COMMENT>\n				{ /* handle multiple lines */ }
-<COMMENT>"*"+"/"			{ PRINTF("/*...*/ comment skipped\n"); yy_pop_state(); }
+<COMMENT>"*"+"/"			{ yy_pop_state(); /* comment skipped */ }
 
 
 
