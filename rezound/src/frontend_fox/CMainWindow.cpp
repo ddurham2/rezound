@@ -698,15 +698,15 @@ void CMainWindow::createMenus()
 		new CActionMenuCommand(new CConvolutionFilterFactory(gChannelSelectDialog,new CConvolutionFilterDialog(this)),menu,"");
 
 		new FXMenuSeparator(menu);
-		new CActionMenuCommand(new CSinglePoleLowpassFilterFactory(gChannelSelectDialog,new CSinglePoleLowpassFilterDialog(this)),menu,"");
-		new CActionMenuCommand(new CSinglePoleHighpassFilterFactory(gChannelSelectDialog,new CSinglePoleHighpassFilterDialog(this)),menu,"");
-		new CActionMenuCommand(new CBandpassFilterFactory(gChannelSelectDialog,new CBandpassFilterDialog(this)),menu,"");
-		new CActionMenuCommand(new CNotchFilterFactory(gChannelSelectDialog,new CNotchFilterDialog(this)),menu,"");
+		new CActionMenuCommand(new CSinglePoleLowpassFilterFactory(gChannelSelectDialog,new CSinglePoleLowpassFilterDialog(this)),menu,"",FOXIcons->filter_lowpass);
+		new CActionMenuCommand(new CSinglePoleHighpassFilterFactory(gChannelSelectDialog,new CSinglePoleHighpassFilterDialog(this)),menu,"",FOXIcons->filter_highpass);
+		new CActionMenuCommand(new CBandpassFilterFactory(gChannelSelectDialog,new CBandpassFilterDialog(this)),menu,"",FOXIcons->filter_bandpass);
+		new CActionMenuCommand(new CNotchFilterFactory(gChannelSelectDialog,new CNotchFilterDialog(this)),menu,"",FOXIcons->filter_notch);
 
 		new FXMenuSeparator(menu);
-		new CActionMenuCommand(new CBiquadResLowpassFilterFactory(gChannelSelectDialog,new CBiquadResLowpassFilterDialog(this)),menu,"");
-		new CActionMenuCommand(new CBiquadResHighpassFilterFactory(gChannelSelectDialog,new CBiquadResHighpassFilterDialog(this)),menu,"");
-		new CActionMenuCommand(new CBiquadResBandpassFilterFactory(gChannelSelectDialog,new CBiquadResBandpassFilterDialog(this)),menu,"");
+		new CActionMenuCommand(new CBiquadResLowpassFilterFactory(gChannelSelectDialog,new CBiquadResLowpassFilterDialog(this)),menu,"",FOXIcons->filter_lowpass);
+		new CActionMenuCommand(new CBiquadResHighpassFilterFactory(gChannelSelectDialog,new CBiquadResHighpassFilterDialog(this)),menu,"",FOXIcons->filter_highpass);
+		new CActionMenuCommand(new CBiquadResBandpassFilterFactory(gChannelSelectDialog,new CBiquadResBandpassFilterDialog(this)),menu,"",FOXIcons->filter_bandpass);
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&Looping",NULL,menu);
