@@ -21,13 +21,20 @@
 #ifndef __backend_initialize_H__
 #define __backend_initialize_H__
 
-
 #include "../../config/common.h"
 
 class ASoundPlayer;
-class CSoundManager;
+class ASoundFileManager;
 
-void initializeBackend(ASoundPlayer *&soundPlayer);
+// returns false if args were incorrect and initialization failed
+bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[]);
+
+// this should be called again after initializeBackend and the frontend has finished initializing
+// so that the backend can handle more arguments (like loading files given on the command line)
+// and it too returns false if the arguments were incorrect and the progam should halt
+bool handleMoreBackendArgs(ASoundFileManager *fileManager,int argc,char *argv[]);
+
 void deinitializeBackend();
+
 
 #endif

@@ -23,6 +23,7 @@
 #include "initialize.h"
 #include "settings.h"
 
+#include <stdio.h>
 #include <stdint.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -50,16 +51,25 @@ static ASoundPlayer *soundPlayer=NULL;
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <stdlib.h>	// for getenv
-#include <stdio.h>	// for possible printf of REZ_SHARE_DIR
 
 #include <CPath.h>
 
-void setupSoundTranslators();
+static void setupSoundTranslators();
 
-void initializeBackend(ASoundPlayer *&_soundPlayer)
+static bool checkForHelpFlag(int argc,char *argv[]);
+static bool checkForVersionFlag(int argc,char *argv[]);
+static void printUsage(const string app);
+
+bool initializeBackend(ASoundPlayer *&_soundPlayer,int argc,char *argv[])
 {
 	try
 	{
+		if(checkForHelpFlag(argc,argv))
+			return false;
+		if(checkForVersionFlag(argc,argv))
+			return false;
+
+
 		setupSoundTranslators();
 
 		// make sure that ~/.rezound exists
@@ -257,6 +267,62 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 		try { deinitializeBackend(); } catch(...) { /* oh well */ }
 		exit(0);
 	}
+
+	return true;
+}
+
+#include "ASoundFileManager.h"
+bool handleMoreBackendArgs(ASoundFileManager *fileManager,int argc,char *argv[])
+{
+	bool forceFilenames=false;
+	for(int t=1;t<argc;t++)
+	{
+		if(strcmp(argv[t],"--")==0)
+		{ // anything after a '--' flag is assumed as a filename to load
+			forceFilenames=true;
+			continue;
+		}
+
+#ifdef HAVE_LIBAUDIOFILE
+		// also handle a --raw flag to force the loading of the following argument as a file
+		if(!forceFilenames && strcmp(argv[t],"--raw")==0)
+		{
+			if(t>=argc-1)
+			{
+				printUsage(argv[0]);
+				return(false);
+			}
+
+			t++; // next arg is filename
+			const string filename=argv[t];
+
+			try
+			{
+				fileManager->open(filename,true);
+			}
+			catch(exception &e)
+			{
+				Error(e.what());
+			}
+		}
+		else
+#endif
+		// load as a filename if the first char of the arg is not a '-'
+		if(forceFilenames || argv[t][0]!='-')
+		{ // not a flag
+			const string filename=argv[t];
+			try
+			{
+				fileManager->open(filename,true);
+			}
+			catch(exception &e)
+			{
+				Error(e.what());
+			}
+		}
+	}
+
+	return true;
 }
 
 void deinitializeBackend()
@@ -323,7 +389,7 @@ void deinitializeBackend()
 #include "ClameSoundTranslator.h"
 #include "CrawSoundTranslator.h"
 #include "Cold_rezSoundTranslator.h"
-void setupSoundTranslators()
+static void setupSoundTranslators()
 {
 	ASoundTranslator::registeredTranslators.clear();
 
@@ -354,4 +420,59 @@ void setupSoundTranslators()
 	
 }
 
+
+static bool checkForHelpFlag(int argc,char *argv[])
+{
+	for(int t=1;t<argc;t++)
+	{
+		if(strcmp(argv[t],"--")==0)
+			break; // stop at '--'
+
+		if(strcmp(argv[t],"--help")==0)
+		{
+			printUsage(argv[0]);
+			return true;
+		}
+	}
+	return false;
+}
+
+static bool checkForVersionFlag(int argc,char *argv[])
+{
+	for(int t=1;t<argc;t++)
+	{
+		if(strcmp(argv[t],"--")==0)
+			break; // stop at '--'
+
+		if(strcmp(argv[t],"--version")==0)
+		{
+			printf("%s %s\n",REZOUND_PACKAGE,REZOUND_VERSION);
+			printf("Written primarily by David W. Durham\nSee the AUTHORS document for more details\n\n");
+			printf("This is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");
+			printf("Please report bugs to\n\thttp://sourceforge.net/tracker/?group_id=5056&atid=105056\n");
+			return true;
+		}
+	}
+	return false;
+}
+
+static void printUsage(const string app)
+{
+	printf("Usage: %s [option | filename]... [-- [filename]...]\n",app.c_str());
+	printf("Options:\n");
+#ifdef HAVE_LIBAUDIOFILE
+	printf("\t--raw filename   load filename interpreted as raw data\n");
+#endif                             
+	printf("\n");              
+	printf("\t--help           show this help message and exit\n");
+	printf("\t--version        show version information and exit\n");
+
+	printf("\n");
+	printf("Notes:\n");
+	printf("\t- Anything after a '--' flag will be assumed as a filename to load\n");
+	printf("\t- The file ~/.rezound/registry.dat does contain some settings that\n\t  can only be changed by editing the file (right now)\n");
+
+	printf("\n");
+	printf("Please report bugs to\n\thttp://sourceforge.net/tracker/?group_id=5056&atid=105056\n");
+}
 

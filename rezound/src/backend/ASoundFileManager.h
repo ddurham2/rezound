@@ -46,7 +46,7 @@ public:
 	virtual ~ASoundFileManager() { }
 
 	void createNew();
-	void open(const string filename="");
+	void open(const string filename="",bool asRaw=false);
 	// ??? should rename these to, saveActive... 
 	void save();
 	void saveAs();
@@ -96,7 +96,7 @@ private:
 
 	CNestedDataFile *loadedRegistryFile;
 
-	void prvOpen(const string &filename,bool readOnly,bool registerFilename,const ASoundTranslator *translatorToUse=NULL);
+	void prvOpen(const string &filename,bool readOnly,bool registerFilename,bool asRaw=false,const ASoundTranslator *translatorToUse=NULL);
 	void registerFilename(const string filename);
 	void unregisterFilename(const string filename);
 	bool isFilenameRegistered(const string filename);

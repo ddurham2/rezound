@@ -97,7 +97,7 @@ CLoadedSound *ASoundFileManager::prvCreateNew(bool askForLength)
 	return(NULL);
 }
 
-void ASoundFileManager::open(const string _filename)
+void ASoundFileManager::open(const string _filename,bool asRaw)
 {
 	string filename=_filename;
 	bool readOnly=false;
@@ -107,7 +107,7 @@ void ASoundFileManager::open(const string _filename)
 			return;
 	}
 
-	prvOpen(filename,readOnly,true);
+	prvOpen(filename,readOnly,true,asRaw);
 	updateReopenHistory(filename);
 }
 
@@ -116,10 +116,13 @@ void ASoundFileManager::open(const string _filename)
  * when we are loading the registered files from a previous sessions, so they would already be
  * in the registry
  */
-void ASoundFileManager::prvOpen(const string &filename,bool readOnly,bool doRegisterFilename,const ASoundTranslator *translatorToUse)
+void ASoundFileManager::prvOpen(const string &filename,bool readOnly,bool doRegisterFilename,bool asRaw,const ASoundTranslator *translatorToUse)
 {
 	if(doRegisterFilename && isFilenameRegistered(filename))
 		throw(runtime_error(string(__func__)+" -- file already opened"));
+
+	if(readOnly)
+		throw(runtime_error(string(__func__)+" -- readOnly is true -- read only loading is not implemented yet"));
 
 	CSound *sound=NULL;
 	CSoundPlayerChannel *channel=NULL;
@@ -128,7 +131,7 @@ void ASoundFileManager::prvOpen(const string &filename,bool readOnly,bool doRegi
 	try
 	{
 		if(translatorToUse==NULL)
-			translatorToUse=getTranslator(filename,/*isRaw*/false);
+			translatorToUse=getTranslator(filename,asRaw);
 		sound=new CSound;
 
 		if(!translatorToUse->loadSound(filename,sound))
@@ -294,7 +297,7 @@ void ASoundFileManager::revert()
 
 		// could be more effecient by not destroying then creating the sound window
 		close(ctSaveNone); // ??? I need a way to know not to defrag since we're not attempting to save any results... altho.. I may never want to defrag.. perhaps on open... 
-		prvOpen(filename,readOnly,true,translatorToUse);
+		prvOpen(filename,readOnly,true,translatorToUse->handlesRaw(),translatorToUse);
 		// should I remember the selection positions and use them if they're valid? ???
 	}
 }
@@ -396,8 +399,8 @@ const vector<string> ASoundFileManager::loadFilesInRegistry()
 			filename=loadedRegistryFile->getArrayValue(LOADED_REG_KEY,t);
 			if(Question("Load sound from previous session?\n   "+filename,yesnoQues)==yesAns)
 			{
-						// ??? readOnly (really needs to be whatever the last value was, when it was originally loaded)
-				prvOpen(filename,false,false);
+						// ??? readOnly and asRaw really need to be whatever the last value was, when it was originally loaded
+				prvOpen(filename,false,false,false);
 			}
 			else
 			{

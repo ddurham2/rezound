@@ -81,7 +81,8 @@ int main(int argc,char *argv[])
 		//   ??? I suppose I could atleast print to strerr if gStatusComm was not created yet
 
 		ASoundPlayer *soundPlayer=NULL;
-		initializeBackend(soundPlayer);
+		if(!initializeBackend(soundPlayer,argc,argv))
+			return 0;
 
 		// the backend needed to be setup before this stuff was done
 		static_cast<CFrontendHooks *>(gFrontendHooks)->doSetupAfterBackendIsSetup();
@@ -98,6 +99,10 @@ int main(int argc,char *argv[])
 		const vector<string> errors=gSoundFileManager->loadFilesInRegistry();
 		for(size_t t=0;t<errors.size();t++)
 			Error(errors[t]);
+
+		// give the backend another oppertunity to handle arguments (like loading files)
+		if(!handleMoreBackendArgs(gSoundFileManager,argc,argv))
+			return 0;
 
 		mainWindow->showAbout();
 
@@ -122,7 +127,7 @@ int main(int argc,char *argv[])
 		else
 			fprintf(stderr,"exception -- %s\n",e.what());
 
-		return(1);
+		return 1;
 	}
 	catch(...)
 	{
@@ -131,10 +136,10 @@ int main(int argc,char *argv[])
 		else
 			fprintf(stderr,"unknown exception caught\n");
 
-		return(1);
+		return 1;
 	}
 
-	return(0);
+	return 0;
 }
 
 
