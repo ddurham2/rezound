@@ -38,6 +38,7 @@
 
 
 // ??? libaudiofile doesn't seem to provide a way of preserving any other information within a file, if I could even get it, I could store it in the working pool file and if they export it to the same format, I could replace that information
+// 	- yes it does... just found it.... lots'a'stuffes can be saved
 
 static string errorMessage;
 static void errorFunction(long code,const char *msg)
@@ -48,6 +49,47 @@ static void errorFunction(long code,const char *msg)
 ClibaudiofileSound::ClibaudiofileSound() :
 	ASound()
 {
+}
+
+ClibaudiofileSound::ClibaudiofileSound(const string &_filename,const unsigned _sampleRate,const unsigned _channelCount,const sample_pos_t _size) :
+	ASound(_filename,_sampleRate,_channelCount,_size)
+{
+#if 0
+	sampleRate=_sampleRate;
+	channelCount=_channelCount;
+	size=_size;
+
+/* done in createWorkingPoolFile
+	if(channelCount>=MAX_CHANNELS)
+		throw(runtime_error(string(__func__)+" -- invalid number of channels: "+istring(channelCount)));
+*/
+/*
+	if(_size>MAX_LENGTH)
+		throw(runtime_error(string(__func__)+" -- size is greater than MAX_LENGTH"));
+*/
+
+	const string tempFilename=_filename;
+
+	try
+	{
+		// get a real temp file name
+		remove(tempFilename.c_str());
+
+		createWorkingPoolFile(tempFilename);
+		filename=tempFilename;
+	}
+	catch(...)
+	{
+		try 
+		{
+			poolFile.closeFile(false,true);
+		} catch(...) {}
+		//remove(tempFilename);
+		throw;
+	}
+
+	matchUpChannelLengths(NIL_SAMPLE_POS);
+#endif
 }
 
 void ClibaudiofileSound::loadSound(const string _filename)
@@ -113,6 +155,50 @@ void ClibaudiofileSound::loadSound(const string _filename)
 			accessers[t]=new CRezPoolAccesser(getAudio(t));
 
 
+		// load the cues
+		const size_t cueCount=afGetMarkIDs(h,AF_DEFAULT_TRACK,NULL);
+		if(cueCount<4096) // check for a sane amount
+		{
+			clearCues();
+
+			ost::TAutoBuffer<int> markIDs(cueCount);
+			afGetMarkIDs(h,AF_DEFAULT_TRACK,markIDs);
+			for(size_t t=0;t<cueCount;t++)
+			{
+				string name=afGetMarkName(h,AF_DEFAULT_TRACK,markIDs[t]);
+				if(name=="")
+					continue;
+
+				const sample_pos_t time=afGetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[t]);
+
+				// to determine if the cue is anchored or not, name will be:
+				// "asdf|+" if anchored, or "asdf|-" or "asdf" if not anchored
+				const size_t delimPos=name.rfind("|");
+				bool isAnchored=false;
+				if(delimPos!=string::npos)
+				{
+					isAnchored=name.substr(delimPos+1)=="+";
+					name.erase(delimPos);
+				}
+
+				try
+				{
+					addCue(name,time,isAnchored);
+				}
+				catch(exception &e)
+				{ // don't make an error adding a cue cause the whole file not to load
+					Warning("file: '"+_filename+"' -- "+e.what());
+				}
+			}
+		}
+		else
+			Warning("Insane amount of markers so they were ignored: "+istring(cueCount)+" -- "+filename);
+		
+
+		// load the user notes
+		
+
+		// load the audio data
 		ost::TAutoBuffer<sample_t> buffer((size_t)(afGetVirtualFrameSize(h,AF_DEFAULT_TRACK,1)*4096/sizeof(sample_t)));
 		sample_pos_t pos=0;
 		AFframecount count=size/4096+1;
@@ -136,7 +222,7 @@ void ClibaudiofileSound::loadSound(const string _filename)
 		}
 
 		END_PROGRESS_BAR();
-		
+
 		afCloseFile(h);
 
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
@@ -162,15 +248,53 @@ void ClibaudiofileSound::saveSound(const string filename)
 	CRezPoolAccesser *accessers[MAX_CHANNELS]={0};
 	try
 	{
+		int fileType;
+
+		if(istring(ost::Path(filename).Extension()).lower()=="wav")
+			fileType=AF_FILE_WAVE;
+		else if(istring(ost::Path(filename).Extension()).lower()=="aiff")
+			fileType=AF_FILE_AIFF;
+		else if(istring(ost::Path(filename).Extension()).lower()=="snd" || istring(ost::Path(filename).Extension()).lower()=="au")
+			fileType=AF_FILE_NEXTSND;
+		else if(istring(ost::Path(filename).Extension()).lower()=="sf")
+			fileType=AF_FILE_BICSF;
+		else
+			throw(runtime_error(string(__func__)+" -- unhandled extension for filename: "+filename));
+
+		
 		errorMessage="";
 		afSetErrorHandler(errorFunction);
 
 		// ??? all the following parameters need to be passed in somehow as the export format
 		AFfilesetup newFile=afNewFileSetup();
-		afInitFileFormat(newFile,AF_FILE_WAVE); 
+		afInitFileFormat(newFile,fileType); 
 		afInitSampleFormat(newFile,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,sizeof(int16_t)*8); // ??? int16_t matching AF_SAMPFMT_TWOSCOMP
 		afInitChannels(newFile,AF_DEFAULT_TRACK,channelCount);
 		afInitRate(newFile,AF_DEFAULT_TRACK,sampleRate);
+
+		// setup for saving the cues (except for positions)
+		ost::TAutoBuffer<int> markIDs(getCueCount());
+		if(getCueCount()>0)
+		{
+			for(size_t t=0;t<getCueCount();t++)
+				markIDs[t]=t;
+
+			afInitMarkIDs(newFile,AF_DEFAULT_TRACK,markIDs,(int)getCueCount());
+			for(size_t t=0;t<getCueCount();t++)
+			{
+				// to indicate if the cue is anchored we append to the name:
+				// "|+" or "|-" whether it is or isn't
+				const string name=getCueName(t)+"|"+(isCueAnchored(t) ? "+" : "-");
+				afInitMarkName(newFile,AF_DEFAULT_TRACK,markIDs[t],name.c_str());
+
+				// can't save position yet because that function requires a file handle, but
+				// we can't move this code after the afOpenFile, or it won't save cues at all
+				//afSetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[t],getCueTime(t));
+			}
+		}
+
+		// save the user notes
+		
 
 		unlink(filename.c_str());
 		AFfilehandle h=afOpenFile(filename.c_str(),"w",newFile);
@@ -196,12 +320,12 @@ void ClibaudiofileSound::saveSound(const string filename)
 			throw(runtime_error(string(__func__)+" -- error setting virtual byte order -- "+errorMessage));
 		afSetVirtualChannels(h,AF_DEFAULT_TRACK,channelCount);
 
-		afFreeFileSetup(newFile);
 
 		for(unsigned t=0;t<channelCount;t++)
 			accessers[t]=new CRezPoolAccesser(getAudio(t));
 
-
+		
+		// save the audio data
 		ost::TAutoBuffer<sample_t> buffer((size_t)(channelCount*4096));
 		sample_pos_t pos=0;
 		AFframecount count=size/4096+1;
@@ -226,7 +350,14 @@ void ClibaudiofileSound::saveSound(const string filename)
 
 		END_PROGRESS_BAR();
 		
+		// write the cue's positions
+		for(size_t t=0;t<getCueCount();t++)
+			afSetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[t],getCueTime(t));
+
+
+		afFreeFileSetup(newFile);
 		afCloseFile(h);
+
 
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 		{
@@ -236,6 +367,8 @@ void ClibaudiofileSound::saveSound(const string filename)
 	}
 	catch(...)
 	{
+		// attempt to close the file ??? and free the setup???
+
 		endAllProgressBars();
 
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
@@ -257,5 +390,13 @@ bool ClibaudiofileSound::supportsFormat(const string filename)
 	close(fd);
 
 	return(implemented);
+}
+
+bool ClibaudiofileSound::handlesExtension(const string _extension)
+{
+	istring extension(_extension);
+	extension.lower();
+
+	return(extension=="wav" || extension=="aiff" || extension=="au" || extension=="snd" || extension=="sf");
 }
 

@@ -31,11 +31,15 @@ class ClibaudiofileSound : public ASound
 public:
 
 	ClibaudiofileSound();
+	ClibaudiofileSound(const string &_filename,const unsigned _sampleRate,const unsigned _channelCount,const sample_pos_t _size);
 
 	virtual void loadSound(const string filename);
 	virtual void saveSound(const string filename);
 
+	// actually opens the file to determine the format
 	static bool supportsFormat(const string filename);
+	// only returns true if the given extension is one that it handles
+	static bool handlesExtension(const string extension);
 
 protected:
 

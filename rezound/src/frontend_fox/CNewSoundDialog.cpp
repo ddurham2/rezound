@@ -95,6 +95,7 @@ CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 
 long CNewSoundDialog::onBrowseButton(FXObject *sender,FXSelector sel,void *ptr)
 {
+													// ??? need to add other extensions
 	FXString filename=FXFileDialog::getSaveFilename(gMainWindow,"New file",gPromptDialogDirectory.c_str(),"New File Type (*.rez)\nAll Files(*)",0);
 	if(filename!="")
 	{
@@ -120,9 +121,8 @@ bool CNewSoundDialog::validateOnOkay()
 	}
 
 
-	// make sure filename has '.rez' at the end
-	istring _tmp=filename;_tmp.lower();
-	if(_tmp.rfind(".rez")!=(_tmp.size()-4))
+	// make sure filename has some extension at the end
+	if(ost::Path(filename).Extension()=="")
 		filename.append(".rez");
 
 	if(ost::Path(filename).Exists())

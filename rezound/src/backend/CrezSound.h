@@ -34,11 +34,11 @@ class CrezSound : public ASound
 {
 public:
 
-    CrezSound(const string &filename,const unsigned sampleRate,const unsigned channels,const sample_pos_t size);
-    CrezSound();
+	CrezSound();
+	CrezSound(const string &filename,const unsigned sampleRate,const unsigned channels,const sample_pos_t size);
 
-    void loadSound(const string filename);
-    void saveSound(const string filename);
+	void loadSound(const string filename);
+	void saveSound(const string filename);
 
 };
 

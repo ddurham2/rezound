@@ -401,6 +401,7 @@ protected:
 	typedef TPoolAccesser<sample_t,PoolFile_t > CInternalRezPoolAccesser;
 
 	ASound();
+	ASound(const string &_filename,const unsigned _sampleRate,const unsigned _channelCount,const sample_pos_t _size);
 
 	CInternalRezPoolAccesser getAudioInternal(unsigned channel);
 	CInternalRezPoolAccesser getTempDataInternal(unsigned tempAudioPoolKey,unsigned channel);

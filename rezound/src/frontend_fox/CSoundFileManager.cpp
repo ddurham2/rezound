@@ -49,7 +49,8 @@ CSoundFileManager::CSoundFileManager(CSoundManager &_soundManager,ASoundPlayer &
 bool CSoundFileManager::promptForOpen(string &filename,bool &readOnly)
 {
 	// I can do getOpenFilenames to be able to open multiple files ??? then the parameter would need to be a vector<string>
-	FXString _filename=FXFileDialog::getOpenFilename(gMainWindow,"Open file",gPromptDialogDirectory.c_str(),"Supported Files (*.wav,*.WAV,*.rez,*.au,*.AU,*.raw)\nAll Files(*)",0);
+																// this list could be build programatically from all the ASound derivations
+	FXString _filename=FXFileDialog::getOpenFilename(gMainWindow,"Open file",gPromptDialogDirectory.c_str(),"Supported Files (*.wav,*.WAV,*.rez,*.aiff,*.AIFF,*.au,*.AU,*.snd,*.SND,*.sf,*.SF,*.raw)\nAll Files(*)",0);
 	if(_filename!="")
 	{
 		// save directory to open the opendialog to next time

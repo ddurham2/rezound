@@ -28,8 +28,9 @@ CrezSound::CrezSound() :
 }
 
 CrezSound::CrezSound(const string &_filename,const unsigned _sampleRate,const unsigned _channelCount,const sample_pos_t _size) :
-	ASound()
+	ASound(_filename,_sampleRate,_channelCount,_size)
 {
+#if 0
 	sampleRate=_sampleRate;
 	channelCount=_channelCount;
 	size=_size;
@@ -64,6 +65,7 @@ CrezSound::CrezSound(const string &_filename,const unsigned _sampleRate,const un
 	}
 
 	matchUpChannelLengths(NIL_SAMPLE_POS);
+#endif
 }
 
 void CrezSound::loadSound(const string _filename)

@@ -87,9 +87,60 @@ ASound::ASound() :
 
 	cueAccesser(NULL)
 {
-    for(unsigned t=0;t<MAX_CHANNELS;t++)
-    	peakChunkAccessers[t]=NULL;
+	for(unsigned t=0;t<MAX_CHANNELS;t++)
+		peakChunkAccessers[t]=NULL;
 
+}
+
+ASound::ASound(const string &_filename,const unsigned _sampleRate,const unsigned _channelCount,const sample_pos_t _size) :
+	poolFile(REZOUND_POOLFILE_BLOCKSIZE,REZOUND_POOLFILE_SIGNATURE),
+	filename(_filename),
+
+	size(_size),
+	sampleRate(_sampleRate),
+	channelCount(_channelCount),
+
+	metaInfoPoolID(0),
+
+	tempAudioPoolKeyCounter(0),
+
+	_isModified(false),
+
+	cueAccesser(NULL)
+{
+	for(unsigned t=0;t<MAX_CHANNELS;t++)
+		peakChunkAccessers[t]=NULL;
+
+/* done in createWorkingPoolFile
+	if(channelCount>=MAX_CHANNELS)
+		throw(runtime_error(string(__func__)+" -- invalid number of channels: "+istring(channelCount)));
+*/
+/*
+	if(_size>MAX_LENGTH)
+		throw(runtime_error(string(__func__)+" -- size is greater than MAX_LENGTH"));
+*/
+
+	const string tempFilename=_filename;
+
+	try
+	{
+		// get a real temp file name
+		remove(tempFilename.c_str());
+
+		createWorkingPoolFile(tempFilename);
+		filename=tempFilename;
+	}
+	catch(...)
+	{
+		try 
+		{
+			poolFile.closeFile(false,true);
+		} catch(...) {}
+		//remove(tempFilename);
+		throw;
+	}
+
+	matchUpChannelLengths(NIL_SAMPLE_POS);
 }
 
 ASound::~ASound()

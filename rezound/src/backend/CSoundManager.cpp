@@ -29,10 +29,9 @@
 
 #include "CrezSound.h"
 #include "Cold_rezSound.h"
-//#include "CwavSound.h"
-//#include "CauSound.h"
-//#include "CrawSound.h"
 #include "ClibaudiofileSound.h"
+
+#include <cc++/path.h>
 
 CSoundManager::CSoundManager()
 {
@@ -64,33 +63,24 @@ bool checkForOldRezFormat(const string &filename)
 
 CSoundManagerClient CSoundManager::openSound(const string filename,const bool readOnly,const bool raw)
 {
-	string extention;
+	string extension;
 	if(!raw)
 	{
-		const size_t periodPosition=filename.rfind(".");
-		if(periodPosition==string::npos)
-			throw(runtime_error(string(__func__)+" -- cannot determine the extention on the filename: "+filename));
-
-		extention=istring(filename.substr(periodPosition+1)).lower();
+		extension=istring(ost::Path(filename).Extension()).lower();
+		if(extension=="")
+			throw(runtime_error(string(__func__)+" -- cannot determine the extension on the filename: "+filename));
 	}
 	else
-		extention="raw";
+		extension="raw";
 
 	ASound *sound;
-	if(extention=="rez")
+	if(extension=="rez")
 		sound=checkForOldRezFormat(filename) ? static_cast<ASound *>(new Cold_rezSound()) : static_cast<ASound *>(new CrezSound());
-/*
-	else if(extention=="wav")
-		sound=new CwavSound();
-	else if(extention=="au")
-		sound=new CauSound();
-	else if(extention=="raw")
-		sound=new CrawSound();
-	else
-		throw(runtime_error(string(__func__)+" -- unknown file type with extention: "+extention));
-*/
-	else
+	else if(ClibaudiofileSound::supportsFormat(filename))
 		sound=new ClibaudiofileSound();
+	// else sox
+	else
+		throw(runtime_error(string(__func__)+" -- unhandled file type with extension: "+extension));
 
 	try
 	{
@@ -102,11 +92,8 @@ CSoundManagerClient CSoundManager::openSound(const string filename,const bool re
 		throw;
 	}
 
-	//sounds.append(sound);
 	sounds.push_back(sound);
-	//closeSoundLater.append(false);
 	closeSoundLater.push_back(false);
-	//soundReferenceCounts.append(0);
 	soundReferenceCounts.push_back(0);
 
 	return(CSoundManagerClient(sound,this,readOnly));
@@ -114,13 +101,21 @@ CSoundManagerClient CSoundManager::openSound(const string filename,const bool re
 
 CSoundManagerClient CSoundManager::newSound(const string &filename,const unsigned sampleRate,const unsigned channels,const sample_pos_t size)
 {
-	ASound *sound=new CrezSound(filename,sampleRate,channels,size);
+	string extension=istring(ost::Path(filename).Extension()).lower();
+	if(extension=="")
+		throw(runtime_error(string(__func__)+" -- cannot determine the extension on the filename: "+filename));
 
-	//sounds.append(sound);
+	ASound *sound;
+	if(extension=="rez")
+		sound=new CrezSound(filename,sampleRate,channels,size);
+	else if(ClibaudiofileSound::handlesExtension(extension))
+		sound=new ClibaudiofileSound(filename,sampleRate,channels,size);
+	// else sox
+	else
+		throw(runtime_error(string(__func__)+" -- unhandled extension on the filename: "+filename));
+
 	sounds.push_back(sound);
-	//closeSoundLater.append(false);
 	closeSoundLater.push_back(false);
-	//soundReferenceCounts.append(0);
 	soundReferenceCounts.push_back(0);
 
 	return(CSoundManagerClient(sound,this,false));
@@ -135,7 +130,6 @@ void CSoundManager::closeSound(CSoundManagerClient &client)
 
 void CSoundManager::addClient(CSoundManagerClient *client)
 {
-	//clients.append(client);
 	clients.push_back(client);
 	addSoundReference(client->sound);
 }
@@ -146,7 +140,6 @@ void CSoundManager::removeClient(CSoundManagerClient *client)
 	{
 		if(clients[t]==client)
 		{
-			//clients.remove(t);
 			clients.erase(clients.begin()+t);
 			removeSoundReference(client->sound);
 			return;
@@ -169,11 +162,8 @@ void CSoundManager::removeSoundReference(ASound *sound)
 			sounds[index]->closeSound();
 		delete sounds[index];
 
-		//sounds.remove(index);
 		sounds.erase(sounds.begin()+index);
-		//closeSoundLater.remove(index);
 		closeSoundLater.erase(closeSoundLater.begin()+index);
-		//soundReferenceCounts.remove(index);
 		soundReferenceCounts.erase(soundReferenceCounts.begin()+index);
 	}
 }
