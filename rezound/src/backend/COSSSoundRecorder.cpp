@@ -47,6 +47,8 @@
 // 	and AFMT_AC3 which would be nice for mroe than stereo
 #define OSS_PCM_FORMAT AFMT_S16_LE
 
+// ??? as the sample rate is lower these need to be lower so that onData is called more often and the view meters on the record dialog don't seem to lag
+
 #define BUFFER_SIZE_BYTES 8192						// buffer size in bytes
 #define BUFFER_SIZE_BYTES_LOG2 13					// log2(BUFFER_SIZE_BYTES) -- that is 2^this is BUFFER_SIZE_BYTES
 

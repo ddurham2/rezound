@@ -53,13 +53,13 @@ CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 		filenameLabel(new FXLabel(filenameFrame,"(.rez)Filename:")),
 		filenameTextBox(new FXTextField(filenameFrame,30,NULL,0,TEXTFIELD_NORMAL | LAYOUT_FILL_X)),
 		browseButton(new FXButton(filenameFrame,"&Browse",NULL,this,ID_BROWSE_BUTTON)),
-	channelsFrame(new FXHorizontalFrame(getFrame())),
+	channelsFrame(new FXHorizontalFrame(getFrame(),LAYOUT_CENTER_X)),
 		channelsLabel(new FXLabel(channelsFrame,"      Channels:")),
 		channelsComboBox(new FXComboBox(channelsFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC)),
-	sampleRateFrame(new FXHorizontalFrame(getFrame())),
+	sampleRateFrame(new FXHorizontalFrame(getFrame(),LAYOUT_CENTER_X)),
 		sampleRateLabel(new FXLabel(sampleRateFrame,"Sample Rate:")),
 		sampleRateComboBox(new FXComboBox(sampleRateFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK)),
-	lengthFrame(new FXHorizontalFrame(getFrame())),
+	lengthFrame(new FXHorizontalFrame(getFrame(),LAYOUT_CENTER_X)),
 		lengthLabel(new FXLabel(lengthFrame,"         Length:")),
 		lengthComboBox(new FXComboBox(lengthFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK)),
 		lengthUnitsLabel(new FXLabel(lengthFrame,"second(s)"))
@@ -114,6 +114,14 @@ void CNewSoundDialog::show(FXuint placement)
 	FXModalDialogBox::show(placement);
 }
 
+void CNewSoundDialog::hideFilename(bool hide)
+{
+	if(hide)
+		filenameFrame->hide();
+	else
+		filenameFrame->show();
+}
+
 void CNewSoundDialog::hideLength(bool hide)
 {
 	if(hide)
@@ -124,26 +132,31 @@ void CNewSoundDialog::hideLength(bool hide)
 
 bool CNewSoundDialog::validateOnOkay()
 {
-	istring filename=filenameTextBox->getText().text();
-	filename.trim();
-
-	if(filename=="")
+	if(filenameFrame->shown())
 	{
-		Warning("Please supply a filename");
-		return(false);
-	}
+		istring filename=filenameTextBox->getText().text();
+		filename.trim();
 
-
-	// make sure filename has some extension at the end
-	if(ost::Path(filename).Extension()=="")
-		filename.append(".rez");
-
-	if(ost::Path(filename).Exists())
-	{
-		if(Question(string("Are you sure you want to overwrite the existing file:\n   ")+filename.c_str(),yesnoQues)!=yesAns)
+		if(filename=="")
+		{
+			Warning("Please supply a filename");
 			return(false);
+		}
+
+
+		// make sure filename has some extension at the end
+		if(ost::Path(filename).Extension()=="")
+			filename.append(".rez");
+
+		if(ost::Path(filename).Exists())
+		{
+			if(Question(string("Are you sure you want to overwrite the existing file:\n   ")+filename.c_str(),yesnoQues)!=yesAns)
+				return(false);
+		}
+		this->filename=filename;
 	}
-	this->filename=filename;
+	else
+		this->filename="";
 
 	int channelCount=atoi(channelsComboBox->getText().text());
 	if(channelCount<0 || channelCount>=MAX_CHANNELS)
@@ -155,7 +168,7 @@ bool CNewSoundDialog::validateOnOkay()
 
 	
 	int sampleRate=atoi(sampleRateComboBox->getText().text());
-	if(sampleRate<100 || sampleRate>1000000)
+	if(sampleRate<1000 || sampleRate>1000000)
 	{
 		Error("Invalid sample rate");
 		return(false);

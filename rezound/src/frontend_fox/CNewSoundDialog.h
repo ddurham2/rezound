@@ -55,6 +55,7 @@ public:
 	const unsigned getSampleRate() const { return(sampleRate); }
 	const sample_pos_t getLength() const { return(length); }
 
+	void hideFilename(bool hide);
 	void hideLength(bool hide);
 
 protected:

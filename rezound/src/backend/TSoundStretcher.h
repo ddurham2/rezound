@@ -29,7 +29,7 @@ public:
 	/*
 	 * src is the data to read
 	 * srcOffset is the first sample that this class will look at
-  	 * srcLength is the number of samples including and beyond the sample at srcOffset that will be read
+  	 * srcLength is the length of samples beyond the srcOffset that should be read
 	 * toLength is the amount of times that getSample() will be called
 	 */
 	TSoundStretcher(const src_type &_src,const sample_pos_t _srcOffset,const sample_pos_t _srcLength,const sample_pos_t _toLength) :
@@ -46,7 +46,7 @@ public:
 	const sample_t getSample()
 	{
 		// ??? temporary simple implementation
-		return(src[((pos++)*srcLength/toLength)+srcOffset]);
+		return(src[(sample_pos_t)(((sample_fpos_t)(pos++)*(sample_fpos_t)srcLength/(sample_fpos_t)toLength)+srcOffset)]);
 	}
 
 private:

@@ -3,8 +3,6 @@
 
 	- enhance TSoundStretcher to do interpolation
 
-	- have CRecordClipboard ask for recording parameters
-
 	- figure out what to do with the 4 bogus cues that appear in an aiff file when the file had no cues in it, itself
 
 	- Add a feature to ASoundRecorder that tells it to start when a certain threshold is hit in percent
@@ -16,7 +14,6 @@
 		- DONE (but no frontend control yet): when I do implement the more than 2 channels, I need to have a way to route the multiple channels of a sound to the 2 (or more) channels of sound card output
 		- DONE the default (when a sound is loaded) should be just to assign each channel to the lesser number of sound card channels in a rotating fashion
 		- DONE the routing should be assigned per CSoundPlayerChannel object, but the routing information should also be saved in a pool in the sound object
-
 
 	- use progress bars when doing TPoolAccesser::copyData and TPoolAccesser::zeroData 
 		- PoolFile::copyToFile is still without a progress bar, this is used when loading native .rez files
@@ -208,4 +205,6 @@
 	- need a method that can make an available cue name which isn't already used
 		- use whenever the new-cue-dialog is shown
 		- or when a button is pressed while playing (hmm.. ??? latency of play position might matter.. maybe I could work with COSSSoundPlayer to know where the real play position is by subtracting the amount of prebuffered samples from the CSoundPlayerChannel's playPosition... looping would be an issue and so would sample rate... )
+
+	- have CRecordClipboard ask for recording parameters
 

@@ -60,8 +60,12 @@ bool CRecordSoundClipboard::prepareForCopyTo()
 {
 	if(!isEmpty())
 	{
-		if(Question("There is already data on this recording clipboard.  Do you want to record something new?",yesnoQues)!=yesAns)
+		VAnswer ans=Question("There is already data on this recording clipboard.  Do you want to record something new?",cancelQues);
+		if(ans==noAns)
 			return(true);
+		else if(ans==cancelAns)
+			return(false);
+		//else go ahead and record
 	}
 
 	clearWhichChannels();
@@ -72,11 +76,14 @@ bool CRecordSoundClipboard::prepareForCopyTo()
 
 	try
 	{
-		const unsigned CHANNELS=2;
+		unsigned channelCount;
+		unsigned sampleRate;
+		if(!gFrontendHooks->promptForNewSoundParameters(channelCount,sampleRate))
+			return(false);
 
 		remove(workingFilename.c_str());
-		workingFile=new CSound(workingFilename,44100,CHANNELS,1); // at least 1 sample is manditory
-		this->sampleRate=44100;
+		workingFile=new CSound(workingFilename,sampleRate,channelCount,1); // at least 1 sample is manditory
+		this->sampleRate=sampleRate;
 
 		recorder.initialize(workingFile);
 
@@ -88,7 +95,7 @@ bool CRecordSoundClipboard::prepareForCopyTo()
 		}
 
 		// recorded for each channel
-		for(size_t t=0;t<CHANNELS;t++)
+		for(size_t t=0;t<channelCount;t++)
 			whichChannels[t]=true;
 
 		// after recording remove the manditory 1 sample from the beginning

@@ -201,6 +201,12 @@ void ASoundRecorder::deinitialize()
 
 void ASoundRecorder::onData(const sample_t *samples,const size_t _sampleFramesRecorded)
 {
+	{
+	FILE *f=fopen("test.raw","a");
+	fwrite(samples,1,_sampleFramesRecorded*2,f);
+	fclose(f);
+	}
+
 	size_t sampleFramesRecorded=_sampleFramesRecorded;
 	mutex.EnterMutex();
 	try
