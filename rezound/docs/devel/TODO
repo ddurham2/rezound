@@ -128,6 +128,8 @@
 
 --- POSSIBLE THINGS TO DO ---
 
+	- If CActionParameters could have a getText() method, then I could log all of the actions on the sound incase someone wanted to know
+
 	- If I really create some decent FFT actions and a filter toolkit of some kind, then it would be nice to have the backend somehow interact more actively with the frontend while selecting parameters like the cutoff frequency and ripple parameters of the filters, etc...
 
 		- Perhaps the backend could render a pixel array as an image to display for whatever frontend there is.
