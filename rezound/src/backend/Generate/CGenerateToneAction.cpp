@@ -101,7 +101,7 @@ bool CGenerateToneAction::doActionSizeSafe(CActionSound &actionSound,bool prepar
 				for(sample_pos_t t=0;t<sampleCount;t++)
 				{
 					// The idea is that when sin is positive we should create the max value else the min value
-					dest[t+start]=sinf(t*freq)>0 ? s_pos : s_neg;
+					dest[t+start]=sinf(t*freq)>=0 ? s_pos : s_neg;
 					STATUS_UPDATE
 				}
 				break;
