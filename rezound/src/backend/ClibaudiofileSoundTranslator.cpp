@@ -35,6 +35,16 @@
 #include "CSound.h"
 #include "AStatusComm.h"
 
+#ifndef LIBAUDIOFILE_MICRO_VERSION // this didn't start getting defined until 0.2.4
+	#define LIBAUDIOFILE_MICRO_VERSION 0
+#endif
+
+#if (LIBAUDIOFILE_MAJOR_VERSION*10000+LIBAUDIOFILE_MINOR_VERSION*100+LIBAUDIOFILE_MICRO_VERSION) > /*000300*/203
+	#define HANDLE_CUES_AND_MISC
+#else
+	#warning LIBAUDIOFILE VERSION IS LESS THAN 0.2.3 AND SAVING AND LOADING OF CUES AND USER NOTES WILL BE DISABLED
+#endif
+
 static int getUserNotesMiscType(int type)
 {
 	if(type==AF_FILE_AIFFC || type==AF_FILE_AIFF)
@@ -124,6 +134,8 @@ void ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 
 	sound->createWorkingPoolFile(filename,sampleRate,channelCount,size);
 
+#ifdef HANDLE_CUES_AND_MISC
+
 	// load the cues
 	const size_t cueCount=afGetMarkIDs(h,AF_DEFAULT_TRACK,NULL);
 	if(cueCount<4096) // check for a sane amount
@@ -192,6 +204,7 @@ void ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 		}
 	}
 	
+#endif // HANDLE_CUES_AND_MISC
 
 	// load the audio data
 
@@ -304,6 +317,8 @@ void ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 	const unsigned sampleRate=sound->getSampleRate();
 	const sample_pos_t size=sound->getLength();
 
+#ifdef HANDLE_CUES_AND_MISC
+
 	// setup for saving the cues (except for positions)
 	TAutoBuffer<int> markIDs(sound->getCueCount());
 	if(sound->getCueCount()>0)
@@ -331,7 +346,6 @@ void ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 	}
 
 
-
 	// prepare to save the user notes
 	const string userNotes=sound->getUserNotes();
 	int userNotesMiscID=1;
@@ -339,6 +353,7 @@ void ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 	if(userNotes.length()>0)
 	{
 		/* this is not implemented in libaudiofile yet
+		 *  ??? if this is changed in cvs before the verison is bumped to 0.2.4, then I can just add this in because it would be disabled if the version wasn't >0.2.4
 		if(!afQueryLong(AF_QUERYTYPE_MISC,AF_QUERY_SUPPORTED,fileFormatType,0,0))
 			Warning("This format does not support saving user notes");
 		else
@@ -349,6 +364,9 @@ void ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 			afInitMiscSize(initialSetup,userNotesMiscID,userNotes.length());
 		}
 	}
+
+#endif // HANDLE_CUES_AND_MISC
+
 
 	unlink(filename.c_str());
 	AFfilehandle h=afOpenFile(filename.c_str(),"w",initialSetup);
@@ -377,10 +395,8 @@ void ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 	CRezPoolAccesser *accessers[MAX_CHANNELS]={0};
 	try
 	{
-
 		for(unsigned t=0;t<channelCount;t++)
 			accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
-
 		
 		// save the audio data
 		TAutoBuffer<sample_t> buffer((size_t)(channelCount*4096));
@@ -406,6 +422,8 @@ void ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 		}
 
 		END_PROGRESS_BAR();
+
+#ifdef HANDLE_CUES_AND_MISC
 		
 		// write the cue's positions
 		if(afQueryLong(AF_QUERYTYPE_MARK,AF_QUERY_SUPPORTED,fileFormatType,0,0))
@@ -426,6 +444,8 @@ void ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 				afWriteMisc(h,userNotesMiscID,(void *)userNotes.c_str(),userNotes.length());
 			}
 		}
+
+#endif // HANDLE_CUES_AND_MISC
 
 
 		afCloseFile(h);
