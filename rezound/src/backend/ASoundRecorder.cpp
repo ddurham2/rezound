@@ -159,6 +159,14 @@ void ASoundRecorder::initialize(CSound *_sound)
 	prealloced=0;
 	origLength=sound->getLength();
 	writePos=origLength; // ??? - 1?
+
+	for(unsigned i=0;i<MAX_CHANNELS;i++)
+	{
+		DCOffset[i]=0;
+		DCOffsetSum[i]=0;
+		DCOffsetCompensation[i]=0;
+	}
+	DCOffsetCount=0;
 }
 
 
@@ -176,7 +184,7 @@ void ASoundRecorder::deinitialize()
 }
 
 
-void ASoundRecorder::onData(const sample_t *samples,const size_t _sampleFramesRecorded)
+void ASoundRecorder::onData(sample_t *samples,const size_t _sampleFramesRecorded)
 {
 /* just to see the data if I need to
 	{
@@ -191,6 +199,21 @@ void ASoundRecorder::onData(const sample_t *samples,const size_t _sampleFramesRe
 	try
 	{
 		const unsigned channelCount=sound->getChannelCount();
+
+		// modify samples by the DC Offset compensation
+		for(unsigned i=0;i<channelCount;i++)
+		{
+			if(DCOffsetCompensation[i]!=0)
+			{
+				sample_t *_samples=samples+i;
+				const sample_t DCOffsetCompensation=this->DCOffsetCompensation[i];
+				for(size_t t=0;t<sampleFramesRecorded;t++)
+				{
+					(*_samples)+=DCOffsetCompensation;
+					_samples+=channelCount;
+				}
+			}
+		}
 
 		// give realtime peak data updates
 		for(unsigned i=0;i<channelCount;i++)
@@ -214,6 +237,32 @@ void ASoundRecorder::onData(const sample_t *samples,const size_t _sampleFramesRe
 			}
 			lastPeakValues[i]=(float)maxSample/(float)MAX_SAMPLE;
 		}
+
+		// calculate the DC offset of data being recorded
+		for(unsigned i=0;i<channelCount;i++)
+		{
+			const sample_t *_samples=samples+i;
+			double &DCOffsetSum=this->DCOffsetSum[i];
+			for(size_t t=0;t<sampleFramesRecorded;t++)
+			{
+				DCOffsetSum+=*_samples;
+				// next sample in interleaved format
+				_samples+=channelCount;
+			}
+		}
+		DCOffsetCount+=sampleFramesRecorded;
+
+		if(DCOffsetCount>=(sound->getSampleRate()*5))
+		{ // at least 5 second has been sampled, so record this as the current DCOffset and start over
+			for(unsigned i=0;i<channelCount;i++)
+			{
+				DCOffset[i]=(sample_t)(DCOffsetSum[i]/DCOffsetCount);
+				DCOffsetSum[i]=0;
+			}
+			DCOffsetCount=0;
+		}
+
+
 		statusTrigger.trip();
 
 		if(started)
@@ -377,6 +426,18 @@ float ASoundRecorder::getAndResetLastPeakValue(unsigned channel)
 	float p=lastPeakValues[channel];
 	lastPeakValues[channel]=0.0;
 	return p;
+}
+
+sample_t ASoundRecorder::getDCOffset(unsigned channel) const
+{
+	return DCOffset[channel];
+}
+
+void ASoundRecorder::compensateForDCOffset()
+{
+	// subtract current DC Offset output current DC Offset compensation 
+	for(unsigned t=0;t<MAX_CHANNELS;t++)
+		DCOffsetCompensation[t]+= -DCOffset[t];
 }
 
 void ASoundRecorder::setStatusTrigger(TriggerFunc triggerFunc,void *data)

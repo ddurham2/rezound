@@ -97,11 +97,16 @@ public:
 
 	void addCueNow(const string name,bool isAnchored);
 
+	sample_t getDCOffset(unsigned channel) const;
+
+	// compensates for the current reported DC Offset
+	void compensateForDCOffset();
+
 protected:
 
 	// This function should be called when a data chunk is recorded
 	// data should come in an interlaced format that is [sL1sR1 sL2sR2 sL3sR3 ...]
-	void onData(const sample_t *samples,const size_t sampleFramesRecorded);
+	void onData(sample_t *samples,const size_t sampleFramesRecorded);
 
 private:
 	CSound *sound;
@@ -117,6 +122,12 @@ private:
 	CTrigger statusTrigger;
 
 	float lastPeakValues[MAX_CHANNELS];
+
+	sample_t DCOffset[MAX_CHANNELS];
+	double DCOffsetSum[MAX_CHANNELS];
+	double DCOffsetCount;
+
+	sample_t DCOffsetCompensation[MAX_CHANNELS];
 
 	CMutex mutex;
 
