@@ -61,6 +61,8 @@ noinst_HEADERS= \
 	   COSSSoundRecorder.h \
 	   CPortAudioSoundPlayer.h \
 	   CPortAudioSoundRecorder.h \
+	   CJACKSoundPlayer.h \
+	   CJACKSoundRecorder.h \
 	   CrawSoundTranslator.h \
 	   CRecordSoundClipboard.h \
 	   CrezSoundTranslator.h \
@@ -105,6 +107,8 @@ libbackend_la_SOURCES= \
 			COSSSoundRecorder.cpp \
 	   		CPortAudioSoundPlayer.cpp \
 	   		CPortAudioSoundRecorder.cpp \
+	   		CJACKSoundPlayer.cpp \
+			CJACKSoundRecorder.cpp \
 			CrawSoundTranslator.cpp \
 			CRecordSoundClipboard.cpp \
 			CrezSoundTranslator.cpp \
