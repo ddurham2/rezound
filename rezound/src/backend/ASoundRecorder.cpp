@@ -60,6 +60,13 @@ void ASoundRecorder::start(const double _startThreshold,const sample_pos_t maxDu
 void ASoundRecorder::stop()
 {
 	CMutexLocker l(mutex);
+	prvStop();
+
+}
+
+/* prvStop is an unmutex protected stop that I only call privately -- it's what actually does the work */
+void ASoundRecorder::prvStop()
+{
 	if(started)
 	{
 		started=false;
@@ -196,158 +203,151 @@ void ASoundRecorder::onData(sample_t *samples,const size_t _sampleFramesRecorded
 
 	size_t sampleFramesRecorded=_sampleFramesRecorded;
 	CMutexLocker l(mutex);
-	try
+	const unsigned channelCount=sound->getChannelCount();
+
+	// modify samples by the DC Offset compensation
+	for(unsigned i=0;i<channelCount;i++)
 	{
-		const unsigned channelCount=sound->getChannelCount();
-
-		// modify samples by the DC Offset compensation
-		for(unsigned i=0;i<channelCount;i++)
+		if(DCOffsetCompensation[i]!=0)
 		{
-			if(DCOffsetCompensation[i]!=0)
-			{
-				sample_t *_samples=samples+i;
-				const mix_sample_t DCOffsetCompensation=this->DCOffsetCompensation[i];
-				for(size_t t=0;t<sampleFramesRecorded;t++)
-				{
-					*_samples=ClipSample(*_samples+DCOffsetCompensation);
-					_samples+=channelCount;
-				}
-			}
-		}
-
-		// give realtime peak data updates
-		for(unsigned i=0;i<channelCount;i++)
-		{
-			mix_sample_t maxSample=(mix_sample_t)(lastPeakValues[i]*MAX_SAMPLE);
-			const sample_t *_samples=samples+i;
+			sample_t *_samples=samples+i;
+			const mix_sample_t DCOffsetCompensation=this->DCOffsetCompensation[i];
 			for(size_t t=0;t<sampleFramesRecorded;t++)
 			{
-				mix_sample_t s=*_samples;
-
-				if(s>=MAX_SAMPLE || s<=MIN_SAMPLE)
-					clipCount++;
-
-				if(s<0)
-					s=-s; // only use positive values
-
-				maxSample=max(maxSample,s);
-
-				// next sample in interleaved format
+				*_samples=ClipSample(*_samples+DCOffsetCompensation);
 				_samples+=channelCount;
-			}
-			lastPeakValues[i]=(float)maxSample/(float)MAX_SAMPLE;
-		}
-
-		// calculate the DC offset of data being recorded
-		for(unsigned i=0;i<channelCount;i++)
-		{
-			const sample_t *_samples=samples+i;
-			double &DCOffsetSum=this->DCOffsetSum[i];
-			for(size_t t=0;t<sampleFramesRecorded;t++)
-			{
-				DCOffsetSum+=*_samples;
-				// next sample in interleaved format
-				_samples+=channelCount;
-			}
-		}
-		DCOffsetCount+=sampleFramesRecorded;
-
-		if(DCOffsetCount>=(sound->getSampleRate()*5))
-		{ // at least 5 second has been sampled, so record this as the current DCOffset and start over
-			for(unsigned i=0;i<channelCount;i++)
-			{
-				DCOffset[i]=(sample_t)(DCOffsetSum[i]/DCOffsetCount);
-				DCOffsetSum[i]=0;
-			}
-			DCOffsetCount=0;
-		}
-
-
-		statusTrigger.trip();
-
-		if(started)
-		{
-			// if a startThreshold has been set, then ignore data even if started if no data is above the threshold
-			if(startThreshold>=0)
-			{
-				for(unsigned i=0;i<channelCount;i++)
-				{
-					const sample_t *_samples=samples+i;
-					for(size_t t=0;t<sampleFramesRecorded;t++)
-					{
-						sample_t s=*_samples;
-						if(s<0)
-							s=-s;
-						if(s>=startThreshold)
-						{
-							// threshold met, now turn off the threshold check
-							startThreshold=-1;
-
-							// ignore data in chunk before the first sample that met the treshold
-							samples+=(t*channelCount);
-							sampleFramesRecorded-=t;
-
-							goto goAheadAndSave; // using 'goto', because 'break' can't go past two loops
-						}
-						_samples+=channelCount;
-					}
-
-				}
-				return;
-			}
-
-			goAheadAndSave:
-
-			// we preallocate space in the sound in PREALLOC_SECONDS second chunks
-			if(prealloced<sampleFramesRecorded)
-			{
-				sound->lockForResize();
-				try
-				{
-					while(prealloced<sampleFramesRecorded)
-					{
-						sound->addSpace(sound->getLength(),PREALLOC_SECONDS*sound->getSampleRate(),false);
-						prealloced+=(PREALLOC_SECONDS*sound->getSampleRate());
-					}
-					sound->unlockForResize();
-				}
-				catch(...)
-				{
-					sound->unlockForResize();
-					throw;
-				}
-			}
-
-			if(stopPosition!=NIL_SAMPLE_POS && (this->writePos+sampleFramesRecorded)>stopPosition)
-				sampleFramesRecorded=stopPosition-this->writePos;
-
-			sample_pos_t writePos=0;
-			for(unsigned i=0;i<channelCount;i++)
-			{
-				CRezPoolAccesser a=sound->getAudio(i);
-				const sample_t *_samples=samples+i;
-				writePos=this->writePos;
-				for(size_t t=0;t<sampleFramesRecorded;t++)
-				{
-					a[writePos++]=*_samples;
-					_samples+=channelCount;
-				}
-
-			}
-
-			prealloced-=sampleFramesRecorded;
-			this->writePos=writePos;
-
-			if(stopPosition!=NIL_SAMPLE_POS && writePos>=stopPosition)
-			{
-				stop();
-				return;
 			}
 		}
 	}
-	catch(...)
+
+	// give realtime peak data updates
+	for(unsigned i=0;i<channelCount;i++)
 	{
-		throw;
+		mix_sample_t maxSample=(mix_sample_t)(lastPeakValues[i]*MAX_SAMPLE);
+		const sample_t *_samples=samples+i;
+		for(size_t t=0;t<sampleFramesRecorded;t++)
+		{
+			mix_sample_t s=*_samples;
+
+			if(s>=MAX_SAMPLE || s<=MIN_SAMPLE)
+				clipCount++;
+
+			if(s<0)
+				s=-s; // only use positive values
+
+			maxSample=max(maxSample,s);
+
+			// next sample in interleaved format
+			_samples+=channelCount;
+		}
+		lastPeakValues[i]=(float)maxSample/(float)MAX_SAMPLE;
+	}
+
+	// calculate the DC offset of data being recorded
+	for(unsigned i=0;i<channelCount;i++)
+	{
+		const sample_t *_samples=samples+i;
+		double &DCOffsetSum=this->DCOffsetSum[i];
+		for(size_t t=0;t<sampleFramesRecorded;t++)
+		{
+			DCOffsetSum+=*_samples;
+			// next sample in interleaved format
+			_samples+=channelCount;
+		}
+	}
+	DCOffsetCount+=sampleFramesRecorded;
+
+	if(DCOffsetCount>=(sound->getSampleRate()*5))
+	{ // at least 5 second has been sampled, so record this as the current DCOffset and start over
+		for(unsigned i=0;i<channelCount;i++)
+		{
+			DCOffset[i]=(sample_t)(DCOffsetSum[i]/DCOffsetCount);
+			DCOffsetSum[i]=0;
+		}
+		DCOffsetCount=0;
+	}
+
+
+	statusTrigger.trip();
+
+	if(started)
+	{
+		// if a startThreshold has been set, then ignore data even if started if no data is above the threshold
+		if(startThreshold>=0)
+		{
+			for(unsigned i=0;i<channelCount;i++)
+			{
+				const sample_t *_samples=samples+i;
+				for(size_t t=0;t<sampleFramesRecorded;t++)
+				{
+					sample_t s=*_samples;
+					if(s<0)
+						s=-s;
+					if(s>=startThreshold)
+					{
+						// threshold met, now turn off the threshold check
+						startThreshold=-1;
+
+						// ignore data in chunk before the first sample that met the treshold
+						samples+=(t*channelCount);
+						sampleFramesRecorded-=t;
+
+						goto goAheadAndSave; // using 'goto', because 'break' can't go past two loops
+					}
+					_samples+=channelCount;
+				}
+
+			}
+			return;
+		}
+
+		goAheadAndSave:
+
+		// we preallocate space in the sound in PREALLOC_SECONDS second chunks
+		if(prealloced<sampleFramesRecorded)
+		{
+			sound->lockForResize();
+			try
+			{
+				while(prealloced<sampleFramesRecorded)
+				{
+					sound->addSpace(sound->getLength(),PREALLOC_SECONDS*sound->getSampleRate(),false);
+					prealloced+=(PREALLOC_SECONDS*sound->getSampleRate());
+				}
+				sound->unlockForResize();
+			}
+			catch(...)
+			{
+				sound->unlockForResize();
+				throw;
+			}
+		}
+
+		if(stopPosition!=NIL_SAMPLE_POS && (this->writePos+sampleFramesRecorded)>stopPosition)
+			sampleFramesRecorded=stopPosition-this->writePos;
+
+		sample_pos_t writePos=0;
+		for(unsigned i=0;i<channelCount;i++)
+		{
+			CRezPoolAccesser a=sound->getAudio(i);
+			const sample_t *_samples=samples+i;
+			writePos=this->writePos;
+			for(size_t t=0;t<sampleFramesRecorded;t++)
+			{
+				a[writePos++]=*_samples;
+				_samples+=channelCount;
+			}
+
+		}
+
+		prealloced-=sampleFramesRecorded;
+		this->writePos=writePos;
+
+		if(stopPosition!=NIL_SAMPLE_POS && writePos>=stopPosition)
+		{
+			prvStop();
+			return;
+		}
 	}
 }
 

@@ -135,6 +135,8 @@ private:
 	// and actually adds the cues to the sound if any were requested
 	void done();
 
+	void prvStop();
+
 	bool cueNameExists(const string name) const;
 };
 
