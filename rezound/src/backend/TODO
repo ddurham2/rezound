@@ -45,6 +45,9 @@ or sample values to follow
 				- it would be easier to switch to xml if I ever did
 
 
+	- There is an issue with falling back to OSS for recording.  In ASoundFileManager and CRecordClipboard there are #ifdef checks for ENABLE_JACK which are used to know the sample rate of the recorder since I need to know the sample rate before I created the sound and I need to create the sound before I initialize the recorder.
+		- Probably what I need to do is have a method in CJACKSoundRecorder which will do its best to determine the sample rate and return it.. ENABLE_JACK is enabled if this method succeeds then I use the returned value, otherwise prompt for the sample rate
+
 
 --- POSSIBLE THINGS TO DO ---
 
