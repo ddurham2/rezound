@@ -161,7 +161,7 @@ FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
 #include "custom_cursors.h"
 
 CMainWindow::CMainWindow(FXApp* a) :
-	FXMainWindow(a,"ReZound",FOXIcons->icon_logo_32,FOXIcons->icon_logo_16,DECOR_ALL,10,20,800,600, 0,0,0,0, 0,0),
+	FXMainWindow(a,"ReZound",FOXIcons->icon_logo_32,FOXIcons->icon_logo_16,DECOR_ALL,10,20,799,600, 0,0,0,0, 0,0),
 	shuttleFont(NULL),
 	soundListFont(NULL),
 	soundListHeaderFont(NULL),
