@@ -22,7 +22,7 @@
 	- Save As Multiple Files (according to cue positions)
 	- Burn to CD
 
-- Either 16bit or 32bit floating point can be chosen as the interal sample format
+- Either 16bit integer or 32bit floating point can be chosen as the interal sample format
 
 - Fast Editing of Large Files
 
@@ -135,9 +135,13 @@
 	- Noise Gate
 	- Dynamic Range Compression
 	- Normalization
+	- Adaptive Normalize
 	- Mark Quiet Areas (with cues)
 	- Resample
+	- Change Pitch
+	- Change Tempo
 	- Remove DC Component
+	- Invert Phase
 
 - Generate Various Colors of Noise
 - Generate Various Timbres of a frequency
@@ -149,6 +153,7 @@
 - gettext support (i18n, internationalization)
 	- Russian
 	- German
+	- Spanish
 
 - Tested Platforms
 	Mandrake 9.1/x86

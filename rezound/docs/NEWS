@@ -1,3 +1,33 @@
+rezound-0.10.0beta -- 7/19/2004
+	- Added support for libSoundTouch which gives decent results for changing the speed and pitch independantly
+	- Added a Change Pitch action
+	- Added a Change Tempo action
+	- Added an Adaptive Normalize action which is a cross between compression and normalization
+	- Added an Invert Phase action (instead of the user having to apply a -1 gain)
+	- Added scrolling in very tall dropdown menus (i.e. LADSPA)
+	- Default internal sample format is now 32bit floating point
+	- Time units on the status area of a wave view are now selectable (right click)
+	- Fixed some issues with wandering cues and a cue redraw issue
+	- Fixed an issue where cues did not load correctly for .ogg files and a few other formats
+	- Now multiple CDs can be burned in the Create CD option before the generated image is deleted
+	- Now the user is prompted for the format to save a .rez file
+	- Made major changes to audio output code for better JACK compatibility in the future (I hope this doesn't cause problems; only sometimes studders on seek-backwards because of key-repeat issues with FOX)
+	- Added ETA and Time Elapsed values to the progress bar
+	- Added a Spanish translation
+	- Added more status bars for some lengthy operations
+	- Added a "look ahead" feature to the Compressor action's signal level detector.  This improves the "reaction time" of the compressor.
+	- Improved the 64bit file I/O handling (still may not be perfect)
+	- Reworked some of the working file code that should speed up some operations (more improvements to come)
+	- Fixed a bug in the working file code that caused crashes with working files over 2 gigs
+	- Fixed a segfaulting issue with some LADSPA plugins
+	- Fixed that pesky yylineno issue
+	- Updated translations
+	- Changed to work with FOX-1.0, FOX-1.1, FOX-1.2 and FOX-1.3 releases
+	- Fixed compatibility issues with gcc-3.3.x and gcc-3.4.x
+	- Made CPU efficiency changes
+	- Made stability bugfixes
+	- Other minor bugfixes and minor cosmetic changes
+
 rezound-0.9.0beta -- 11/7/2003
 	- Added LADSPA support (make sure LADSPA_PATH is defined before running)
 	- Added support for floating point as the interal type (use --enable-internal-sample-type= configure flag)
