@@ -125,6 +125,17 @@ public:
 
 
 
+// --- shorten quiet areas ------------------
+
+class CShortenQuietAreasDialog : public CActionParamDialog
+{
+public:
+	CShortenQuietAreasDialog(FXWindow *mainWindow);
+	virtual ~CShortenQuietAreasDialog(){}
+};
+
+
+
 // --- resample --------------------------
 
 class CResampleDialog : public CActionParamDialog

@@ -40,7 +40,7 @@ default
 	}
 	Remaster
 	{
-		menuitems={"Balance", "Curved Balance", "-", "Monoize", "-", "Noise Gate", "Dynamic Range Compressor", "Normalize", "Adaptive Normalize", "Mark Quiet Areas", "-", "Resample", "Change Pitch", "Change Tempo","-", "Remove DC Component", "Invert Phase", "-", "Unclip (just messing around)"};
+		menuitems={"Balance", "Curved Balance", "-", "Monoize", "-", "Noise Gate", "Dynamic Range Compressor", "Normalize", "Adaptive Normalize", "Mark Quiet Areas", "Shorten Quiet Areas", "-", "Resample", "Change Pitch", "Change Tempo","-", "Remove DC Component", "Invert Phase", "-", "Unclip (just messing around)"};
 	}
 	Generate
 	{

@@ -37,5 +37,6 @@
 #include "CChangePitchAction.h"
 #include "CChangeTempoAction.h"
 #include "CMarkQuietAreasAction.h"
+#include "CShortenQuietAreasAction.h"
 
 #endif

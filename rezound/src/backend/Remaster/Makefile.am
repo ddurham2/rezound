@@ -41,6 +41,7 @@ noinst_HEADERS= \
 		CChangePitchAction.h \
 		CChangeTempoAction.h \
 		CMarkQuietAreasAction.h \
+		CShortenQuietAreasAction.h \
 		RemasterActions.h
 
 noinst_LTLIBRARIES=libRemaster.la
@@ -57,7 +58,8 @@ libRemaster_la_SOURCES= \
 			CResampleAction.cpp \
 			CChangePitchAction.cpp \
 			CChangeTempoAction.cpp \
-			CMarkQuietAreasAction.cpp 
+			CMarkQuietAreasAction.cpp \
+			CShortenQuietAreasAction.cpp 
 
 
 AM_CXXFLAGS=@SOUNDTOUCH_CXXFLAGS@
