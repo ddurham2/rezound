@@ -55,20 +55,24 @@ so that the meter and analyzer widgets are not tied to using ASoundPlayer
 #define MIN_METER_HEIGHT 15
 #define MIN_METERS_WINDOW_HEIGHT 75
 
+#define M_RMS_BALANCE_COLOR M_GREEN
+#define M_PEAK_BALANCE_COLOR M_GREEN
+
 #define ANALYZER_BAR_WIDTH 3
 
-#define NUM_LEVEL_TICKS 17
+#define NUM_LEVEL_METER_TICKS 17
+#define NUM_BALANCE_METER_TICKS 9
 
-// --- CMeter ----------------------------------------------------------------
+// --- CLevelMeter -----------------------------------------------------------
 
-class CMeter : public FXHorizontalFrame
+class CLevelMeter : public FXHorizontalFrame
 {
-	FXDECLARE(CMeter);
+	FXDECLARE(CLevelMeter);
 public:
-	CMeter::CMeter(FXComposite *parent) :
+	CLevelMeter::CLevelMeter(FXComposite *parent) :
 		FXHorizontalFrame(parent,LAYOUT_FILL_X|LAYOUT_FIX_HEIGHT|LAYOUT_TOP | FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0),
 		statusFont(getApp()->getNormalFont()),
-		canvas(new FXCanvas(this,this,ID_CANVAS,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,400,0)),
+		canvas(new FXCanvas(this,this,ID_CANVAS,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y)),
 		grandMaxPeakLevelLabel(new FXLabel(this,"",NULL,LABEL_NORMAL|LAYOUT_RIGHT|LAYOUT_FIX_WIDTH|LAYOUT_FILL_Y,0,0,0,0, 1,1,0,0)),
 		RMSLevel(0),
 		peakLevel(0),
@@ -77,6 +81,8 @@ public:
 		maxPeakFallTimer(0),
 		stipplePattern(NULL)
 	{
+		setBackColor(M_BACKGROUND);
+
 		// create the font to use for numbers
 		FXFontDesc d;
 		statusFont->getFontDesc(d);
@@ -102,7 +108,7 @@ public:
 
 	}
 
-	CMeter::~CMeter()
+	CLevelMeter::~CLevelMeter()
 	{
 		delete statusFont;
 	}
@@ -114,20 +120,20 @@ public:
 		setHeight(max(statusFont->getFontHeight(),MIN_METER_HEIGHT)); // make meter only as tall as necessary (also with a defined minimum)
 	}
 
-	long CMeter::onCanvasPaint(FXObject *sender,FXSelector sel,void *ptr)
+	long CLevelMeter::onCanvasPaint(FXObject *sender,FXSelector sel,void *ptr)
 	{
 		FXDCWindow dc(canvas);
 
 		const FXint width=canvas->getWidth();
 		const FXint height=canvas->getHeight();
 
-		// draw NUM_LEVEL_TICKS tick marks above level indication
+		// draw NUM_LEVEL_METER_TICKS tick marks above level indication
 		dc.setForeground(M_BACKGROUND);
 		dc.fillRectangle(0,0,width,2);
 		dc.setForeground(M_TEXT_COLOR);
-		for(int t=0;t<NUM_LEVEL_TICKS;t++)
+		for(int t=0;t<NUM_LEVEL_METER_TICKS;t++)
 		{
-			const int x=(width-1)*t/(NUM_LEVEL_TICKS-1);
+			const int x=(width-1)*t/(NUM_LEVEL_METER_TICKS-1);
 			dc.drawLine(x,0,x,1);
 		}
 
@@ -240,6 +246,16 @@ public:
 		canvas->update(); // flag for repainting
 	}
 
+	sample_t getRMSLevel() const
+	{
+		return RMSLevel;
+	}
+
+	sample_t getPeakLevel() const
+	{
+		return peakLevel;
+	}
+
 	void setGrandMaxPeakLevel(const sample_t maxPeakLevel)
 	{
 		grandMaxPeakLevel=maxPeakLevel;
@@ -265,7 +281,7 @@ public:
 	};
 
 protected:
-	CMeter() { }
+	CLevelMeter() { }
 
 private:
 	friend class CMetersWindow;
@@ -279,15 +295,165 @@ private:
 	
 };
 
-FXDEFMAP(CMeter) CMeterMap[]=
+FXDEFMAP(CLevelMeter) CLevelMeterMap[]=
 {
-	//	  Message_Type			ID					Message_Handler
-	FXMAPFUNC(SEL_PAINT,			CMeter::ID_CANVAS,			CMeter::onCanvasPaint),
-	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	CMeter::ID_GRAND_MAX_PEAK_LEVEL_LABEL,	CMeter::onResetGrandMaxPeakLevel),
+	//	  Message_Type			ID						Message_Handler
+	FXMAPFUNC(SEL_PAINT,			CLevelMeter::ID_CANVAS,				CLevelMeter::onCanvasPaint),
+	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	CLevelMeter::ID_GRAND_MAX_PEAK_LEVEL_LABEL,	CLevelMeter::onResetGrandMaxPeakLevel),
 };
 
-FXIMPLEMENT(CMeter,FXHorizontalFrame,CMeterMap,ARRAYNUMBER(CMeterMap))
+FXIMPLEMENT(CLevelMeter,FXHorizontalFrame,CLevelMeterMap,ARRAYNUMBER(CLevelMeterMap))
 
+
+
+
+
+// --- CBalanceMeter -----------------------------------------------------------
+
+class CBalanceMeter : public FXHorizontalFrame
+{
+	FXDECLARE(CBalanceMeter);
+public:
+	CBalanceMeter::CBalanceMeter(FXComposite *parent) :
+		FXHorizontalFrame(parent,LAYOUT_FILL_X|LAYOUT_FIX_HEIGHT | FRAME_NONE, 0,0,0,0, 0,0,0,0, 0,0),
+		statusFont(getApp()->getNormalFont()),
+		leftLabel(new FXLabel(this,"-1.0")),
+		canvas(new FXCanvas(this,this,ID_CANVAS,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y)),
+		rightLabel(new FXLabel(this,"+1.0")),
+		RMSBalance(0),
+		peakBalance(0),
+		stipplePattern(NULL)
+	{
+		setBackColor(M_BACKGROUND);
+
+		// create the font to use for numbers
+		FXFontDesc d;
+		statusFont->getFontDesc(d);
+		d.size=60;
+		d.weight=FONTWEIGHT_NORMAL;
+		statusFont=new FXFont(getApp(),d);
+
+		leftLabel->setFont(statusFont);
+		leftLabel->setTextColor(M_TEXT_COLOR);
+		leftLabel->setBackColor(M_BACKGROUND);
+
+		rightLabel->setFont(statusFont);
+		rightLabel->setTextColor(M_TEXT_COLOR);
+		rightLabel->setBackColor(M_BACKGROUND);
+
+		static char pix[]={0xaa,0x55};
+		stipplePattern=new FXBitmap(getApp(),pix,0,8,2);
+
+		stipplePattern->create();
+
+	}
+
+	CBalanceMeter::~CBalanceMeter()
+	{
+		delete statusFont;
+	}
+
+	void create()
+	{
+		FXHorizontalFrame::create();
+		setHeight(max(statusFont->getFontHeight(),MIN_METER_HEIGHT)); // make meter only as tall as necessary (also with a defined minimum)
+	}
+
+	long CBalanceMeter::onCanvasPaint(FXObject *sender,FXSelector sel,void *ptr)
+	{
+		FXDCWindow dc(canvas);
+
+		const FXint width=canvas->getWidth();
+		const FXint height=canvas->getHeight();
+
+		// draw NUM_LEVEL_METER_TICKS tick marks above level indication
+		dc.setForeground(M_BACKGROUND);
+		dc.fillRectangle(0,0,width,2);
+		dc.setForeground(M_TEXT_COLOR);
+		for(int t=0;t<NUM_BALANCE_METER_TICKS;t++)
+		{
+			const int x=(width-1)*t/(NUM_BALANCE_METER_TICKS-1);
+			dc.drawLine(x,0,x,1);
+		}
+
+		// draw horz line below level indication
+		dc.setForeground(M_TEXT_COLOR);
+		dc.drawLine(0,height-1,width,height-1);
+
+		// draw gray background underneath the stippled level indication 
+		dc.setForeground(M_METER_OFF);
+		dc.fillRectangle(0,2,width,height-3);
+
+
+		// if the global setting is disabled, stop drawing right here
+		if(!gLevelMetersEnabled)
+			return 1;
+
+
+		// draw RMS balance indication
+		FXint x=(FXint)(RMSBalance*width)/2;
+		dc.setFillStyle(FILL_STIPPLED);
+		dc.setStipple(stipplePattern);
+
+		dc.setForeground(M_RMS_BALANCE_COLOR);
+		if(x>0)
+			dc.fillRectangle(width/2,2,x,height-3);
+		else // drawing has to be done a little differently when x is negative
+			dc.fillRectangle(width/2+x,2,-x,height-3);
+
+
+		// draw the peak balance indicator
+		FXint y=height/2;
+		x=(FXint)(peakBalance*width)/2;
+		dc.setFillStyle(FILL_SOLID);
+		dc.setForeground(M_PEAK_BALANCE_COLOR);
+		if(x>0)
+			dc.fillRectangle(width/2,y,x,2);
+		else // drawing has to be done a little differently when x is negative
+			dc.fillRectangle(width/2+x,y,-x,2);
+
+		dc.setForeground(M_TEXT_COLOR);
+		dc.drawLine(width/2,2,width/2,height-1);
+
+		return 1;
+	}
+
+	void setBalance(sample_t leftRMSLevel,sample_t rightRMSLevel,sample_t leftPeakLevel,sample_t rightPeakLevel)
+	{
+		RMSBalance=((float)rightRMSLevel-(float)leftRMSLevel)/(float)MAX_SAMPLE;
+		peakBalance=((float)rightPeakLevel-(float)leftPeakLevel)/(float)MAX_SAMPLE;
+		canvas->update(); // flag for repainting
+	}
+
+	enum
+	{
+		ID_CANVAS=FXHorizontalFrame::ID_LAST
+	};
+
+protected:
+	CBalanceMeter() { }
+
+private:
+	FXFont *statusFont;
+
+	FXLabel *leftLabel;
+	FXCanvas *canvas;
+	FXLabel *rightLabel;
+
+	float RMSBalance;
+	float peakBalance;
+
+	FXBitmap *stipplePattern;
+	
+};
+
+FXDEFMAP(CBalanceMeter) CBalanceMeterMap[]=
+{
+	//	  Message_Type			ID						Message_Handler
+	FXMAPFUNC(SEL_PAINT,			CBalanceMeter::ID_CANVAS,			CBalanceMeter::onCanvasPaint),
+};
+
+FXIMPLEMENT(CBalanceMeter,FXHorizontalFrame,CBalanceMeterMap,ARRAYNUMBER(CBalanceMeterMap))
 
 
 
@@ -563,8 +729,6 @@ protected:
 	CAnalyzer() { }
 
 private:
-	friend class CMetersWindow;
-
 	FXPacker *canvasFrame;
 		FXCanvas *canvas;
 		FXPacker *labelFrame;
@@ -618,7 +782,7 @@ FXIMPLEMENT(CMetersWindow,FXHorizontalFrame,CMetersWindowMap,ARRAYNUMBER(CMeters
 
 
 /*
- * To update the meters often I add a timeout to be fired every x-th of a second.
+ * To update the meters I add a timeout to be fired every x-th of a second.
  */
 
 CMetersWindow::CMetersWindow(FXComposite *parent) :
@@ -628,6 +792,8 @@ CMetersWindow::CMetersWindow(FXComposite *parent) :
 		headerFrame(new FXHorizontalFrame(levelMetersFrame,LAYOUT_FILL_X|FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0)),
 			labelFrame(new FXPacker(headerFrame,LAYOUT_FILL_X|LAYOUT_BOTTOM|FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0)),
 			grandMaxPeakLevelLabel(new FXLabel(headerFrame,"max",NULL,LABEL_NORMAL|LAYOUT_FIX_WIDTH|LAYOUT_RIGHT,0,0,0,0, 1,1,0,0)),
+		balanceMetersFrame(new FXHorizontalFrame(levelMetersFrame,FRAME_NONE | LAYOUT_BOTTOM | LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0)),
+			balanceMetersRightMargin(new FXLabel(balanceMetersFrame," ",NULL,LAYOUT_RIGHT | FRAME_NONE | LAYOUT_FIX_WIDTH|LAYOUT_FILL_Y)),
 	analyzer(new CAnalyzer(this)),
 	soundPlayer(NULL)
 {
@@ -647,13 +813,13 @@ CMetersWindow::CMetersWindow(FXComposite *parent) :
 			labelFrame->setBackColor(M_BACKGROUND);
 			#define MAKE_DB_LABEL(text) { FXLabel *l=new FXLabel(labelFrame,(text),NULL,LAYOUT_FIX_X|LAYOUT_FIX_Y,0,0,0,0, 0,0,0,0); l->setBackColor(M_BACKGROUND); l->setTextColor(M_TEXT_COLOR); l->setFont(statusFont); }
 			MAKE_DB_LABEL("dBFS") // create the -infinity label as just the units label
-			for(int t=1;t<NUM_LEVEL_TICKS;t++)
+			for(int t=1;t<NUM_LEVEL_METER_TICKS;t++)
 			{
 				istring s;
-				if(t>NUM_LEVEL_TICKS/2)
-					s=istring(round(scalar_to_dB((double)t/(NUM_LEVEL_TICKS-1))*10)/10,3,1); // round to nearest tenth
+				if(t>NUM_LEVEL_METER_TICKS/2)
+					s=istring(round(scalar_to_dB((double)t/(NUM_LEVEL_METER_TICKS-1))*10)/10,3,1); // round to nearest tenth
 				else 
-					s=istring(round(scalar_to_dB((double)t/(NUM_LEVEL_TICKS-1))),3,1); // round to nearest int
+					s=istring(round(scalar_to_dB((double)t/(NUM_LEVEL_METER_TICKS-1))),3,1); // round to nearest int
 
 				if(s.rfind(".0")!=istring::npos) // remove .0's from the right side
 					s.erase(s.length()-2,2);
@@ -665,6 +831,11 @@ CMetersWindow::CMetersWindow(FXComposite *parent) :
 			grandMaxPeakLevelLabel->setFont(statusFont);
 			grandMaxPeakLevelLabel->setTextColor(M_TEXT_COLOR);
 			grandMaxPeakLevelLabel->setBackColor(M_BACKGROUND);
+
+		balanceMetersFrame->setBackColor(M_BACKGROUND);
+			balanceMetersRightMargin->setFont(statusFont);
+			balanceMetersRightMargin->setTextColor(M_TEXT_COLOR);
+			balanceMetersRightMargin->setBackColor(M_BACKGROUND);
 
 
 	// schedule the first update meters event
@@ -678,21 +849,27 @@ CMetersWindow::~CMetersWindow()
 
 long CMetersWindow::onUpdateMeters(FXObject *sender,FXSelector sel,void *ptr)
 {
-	if(soundPlayer!=NULL && meters.size()>0 && soundPlayer->isInitialized())
+	if(soundPlayer!=NULL && levelMeters.size()>0 && soundPlayer->isInitialized())
 	{
 		if(gLevelMetersEnabled)
 		{
-			for(size_t t=0;t<meters.size();t++)
-				meters[t]->setLevel(soundPlayer->getRMSLevel(t),soundPlayer->getPeakLevel(t));
+			// set the level for all the level meters
+			for(size_t t=0;t<levelMeters.size();t++)
+				levelMeters[t]->setLevel(soundPlayer->getRMSLevel(t),soundPlayer->getPeakLevel(t));
 
-			// make sure all the meters' grandMaxPeakLabels are the same width
+			// set the balance meter position
+			for(size_t t=0;t<balanceMeters.size();t++)
+				// there is a balance meter for every two level meters
+				balanceMeters[t]->setBalance(levelMeters[t*2+0]->getRMSLevel(),levelMeters[t*2+1]->getRMSLevel(),levelMeters[t*2+0]->getPeakLevel(),levelMeters[t*2+1]->getPeakLevel());
+
+			// make sure all the levelMeters' grandMaxPeakLabels are the same width
 			int maxGrandMaxPeakLabelWidth=grandMaxPeakLevelLabel->getWidth();
 			bool resize=false;
-			for(size_t t=0;t<meters.size();t++)
+			for(size_t t=0;t<levelMeters.size();t++)
 			{
-				if(maxGrandMaxPeakLabelWidth<meters[t]->grandMaxPeakLevelLabel->getWidth())
+				if(maxGrandMaxPeakLabelWidth<levelMeters[t]->grandMaxPeakLevelLabel->getWidth())
 				{
-					maxGrandMaxPeakLabelWidth=meters[t]->grandMaxPeakLevelLabel->getWidth();
+					maxGrandMaxPeakLabelWidth=levelMeters[t]->grandMaxPeakLevelLabel->getWidth();
 					resize=true;
 				}
 			}
@@ -700,8 +877,9 @@ long CMetersWindow::onUpdateMeters(FXObject *sender,FXSelector sel,void *ptr)
 			if(resize)
 			{
 				grandMaxPeakLevelLabel->setWidth(maxGrandMaxPeakLabelWidth);
-				for(size_t t=0;t<meters.size();t++)
-					meters[t]->grandMaxPeakLevelLabel->setWidth(maxGrandMaxPeakLabelWidth);
+				for(size_t t=0;t<levelMeters.size();t++)
+					levelMeters[t]->grandMaxPeakLevelLabel->setWidth(maxGrandMaxPeakLabelWidth);
+				balanceMetersRightMargin->setWidth(maxGrandMaxPeakLabelWidth);
 			}
 		}
 
@@ -751,11 +929,15 @@ void CMetersWindow::setSoundPlayer(ASoundPlayer *_soundPlayer)
 	soundPlayer=_soundPlayer;
 
 	for(size_t t=0;t<soundPlayer->devices[0].channelCount;t++)
-		meters.push_back(new CMeter(levelMetersFrame));
+		levelMeters.push_back(new CLevelMeter(levelMetersFrame));
+
+	for(size_t t=0;t<soundPlayer->devices[0].channelCount/2;t++)
+		balanceMeters.push_back(new CBalanceMeter(balanceMetersFrame));
 
 	setHeight(
 		max(
-			headerFrame->getHeight() + (soundPlayer->devices[0].channelCount * max(statusFont->getFontHeight(),MIN_METER_HEIGHT+levelMetersFrame->getVSpacing())) + (getVSpacing()*(numChildren()-1)) + (getPadTop()+getPadBottom()+levelMetersFrame->getPadTop()+levelMetersFrame->getPadBottom() + 2+2+2+2/*frame rendering*/),
+								// +1 for the balance meter(s)
+			headerFrame->getHeight() + ((soundPlayer->devices[0].channelCount+1) * max(statusFont->getFontHeight(),MIN_METER_HEIGHT+levelMetersFrame->getVSpacing())) + (getVSpacing()*(numChildren()-1)) + (getPadTop()+getPadBottom()+levelMetersFrame->getPadTop()+levelMetersFrame->getPadBottom() + 2+2+2+2/*frame rendering*/),
 			(unsigned)MIN_METERS_WINDOW_HEIGHT
 		)
 	);
@@ -763,8 +945,8 @@ void CMetersWindow::setSoundPlayer(ASoundPlayer *_soundPlayer)
 
 void CMetersWindow::resetGrandMaxPeakLevels()
 {
-	for(size_t t=0;t<meters.size();t++)
-		meters[t]->setGrandMaxPeakLevel(0);
+	for(size_t t=0;t<levelMeters.size();t++)
+		levelMeters[t]->setGrandMaxPeakLevel(0);
 }
 
 bool CMetersWindow::isLevelMetersEnabled() const
@@ -776,9 +958,12 @@ void CMetersWindow::enableLevelMeters(bool enable)
 {
 	gLevelMetersEnabled=enable;
 	if(!enable)
-	{
-		for(size_t t=0;t<meters.size();t++)
-			meters[t]->setLevel(0,0); // just to cause a canvas update
+	{ 
+		// just to cause a canvas update
+		for(size_t t=0;t<levelMeters.size();t++)
+			levelMeters[t]->setLevel(0,0);
+		for(size_t t=0;t<balanceMeters.size();t++)
+			balanceMeters[t]->setBalance(0,0,0,0);
 	}
 }
 

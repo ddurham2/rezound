@@ -28,8 +28,10 @@
 
 #include <fox/fx.h>
 
-class CMeter;
+class CLevelMeter;
+class CBalanceMeter;
 class CAnalyzer;
+
 class ASoundPlayer;
 
 class CMetersWindow : public FXHorizontalFrame
@@ -74,10 +76,13 @@ private:
 		FXPacker *headerFrame;
 			FXPacker *labelFrame;
 			FXLabel *grandMaxPeakLevelLabel;
+		FXPacker *balanceMetersFrame;
+			FXLabel *balanceMetersRightMargin;
 
 	CAnalyzer *analyzer;
 
-	vector<CMeter *> meters;
+	vector<CLevelMeter *> levelMeters;
+	vector<CBalanceMeter *> balanceMeters;
 
 	ASoundPlayer *soundPlayer;
 
