@@ -30,6 +30,7 @@
 
 #include <math.h>
 #include <stdexcept>
+#include <algorithm>
 #include <istring>
 #include "CSound_defs.h"
 
@@ -66,8 +67,8 @@ static inline const double radians_to_degrees(const double radians) { return(rad
 
 
 // frequency
-static inline const double freq_to_fraction(const double frequency,const unsigned sampleRate) { if(frequency<0.0 || frequency>sampleRate/2) throw(runtime_error(string(__func__)+" -- frequency out of range, "+istring(frequency)+", for sample rate of, "+istring(sampleRate))); return(frequency/(double)sampleRate); }
-static inline const double fraction_to_freq(const double fraction,const unsigned sampleRate) { if(fraction<0.0 || fraction>0.5) throw(runtime_error(string(__func__)+" -- fraction out of range, "+istring(fraction))); return(fraction*(double)sampleRate); }
+static inline const double freq_to_fraction(const double frequency,const unsigned sampleRate,bool throwOnError=false) { if(throwOnError && (frequency<0.0 || frequency>sampleRate/2)) {throw runtime_error(string(__func__)+" -- frequency out of range, "+istring(frequency)+", for sample rate of, "+istring(sampleRate)); } return max(0.0,min(0.5,frequency/(double)sampleRate)); }
+static inline const double fraction_to_freq(const double fraction,const unsigned sampleRate,bool throwOnError=false) { if(throwOnError && (fraction<0.0 || fraction>0.5)) { throw runtime_error(string(__func__)+" -- fraction out of range, "+istring(fraction)); } return max(0.0,min(sampleRate/2.0,fraction*(double)sampleRate)); }
 
 
 // range conversions -- generally for user interface convenience
