@@ -359,8 +359,15 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 
 
 		// restore the selection position
-		if(channel!=NULL && oldSelectStart!=NIL_SAMPLE_POS && oldSelectStop!=NIL_SAMPLE_POS)
-			setSelection(oldSelectStart,oldSelectStop,channel);
+		if(channel!=NULL)
+		{
+			// either restore the selection from our saved position before doActionSizeSafe() was called 
+			// or what the undoActionSizeSafe() just said
+			if(oldSelectStart!=NIL_SAMPLE_POS && oldSelectStop!=NIL_SAMPLE_POS)
+				setSelection(oldSelectStart,oldSelectStop,channel);
+			else
+				setSelection(_actionSound.start,_actionSound.stop,channel);
+		}
 
 
 		if(willResize)
@@ -403,6 +410,12 @@ void AAction::setSelection(sample_pos_t start,sample_pos_t stop,CSoundPlayerChan
 {
 	channel->setStartPosition(start);
 	channel->setStopPosition(stop);
+}
+
+void AAction::clearSavedSelectionPositions()
+{
+	oldSelectStart=NIL_SAMPLE_POS;
+	oldSelectStop=NIL_SAMPLE_POS;
 }
 
 /*

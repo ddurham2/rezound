@@ -222,6 +222,9 @@ protected:
 	int tempAudioPoolKey;
 	int tempAudioPoolKey2; // used incase MoveMethod was mmAllButSelection
 
+	// call this if it's needed to clear the saved start/stop selection positions (so it won't restore them after undoActionSizeSafe)
+	void clearSavedSelectionPositions();
+
 private:
 	friend class AActionFactory;
 
