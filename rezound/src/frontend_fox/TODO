@@ -1,9 +1,6 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- presets might look better as a drop-down list instead of a list box... then figure where the buttons will go.. probably just normal file buttons save/delete/rename
-		- there should then be no 'use' button
-
 	- Other commercial audio editors do this, and now I think I know why...
 		XXX - When loading a sound it doesn't start zoomed out to see the whole thing.. 
 		- if I had a thread always running in the background low priority, I could be calculating peak chunk information while the user isn't looking
@@ -99,6 +96,14 @@
 	
 	- if the frontend gets too slow about saving user presets, I could create a gUserPresetFile which stays allocated and doesn't have to reparse the file every time like it does now.
 
+
+
+
+--- TRIED ---
+
+	- presets might look better as a drop-down list instead of a list box... then figure where the buttons will go.. probably just normal file buttons save/delete/rename
+		- there should then be no 'use' button
+		- I did this, but didn't completely like the way it looked.. I saved the patch as CActionParamDialog.comboboxes.patch
 
 
 
