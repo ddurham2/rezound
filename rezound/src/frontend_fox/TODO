@@ -1,0 +1,86 @@
+
+- if the sound is playing and a certain button is pressed (or key also bound to that button) I should place a marker with a given name "cue #" where the number is an integer being kept up with
+
+- add seek buttons that move the play position forward to the next cue or backwards to the prior cue
+
+- in order to create multiple taps for an echo effect... I could have the dialog have tabs and each tap could be tap.. there would be buttons outside the tab bar to insert, remove, move left/right the tabs to rearrange the taps
+
+- the 'active' sound window is not staying raised and I don't know why (when focus method is fmActiveButton)
+
+- I still probably need to instatiate a FXFileDialog to use for saving and opening because it doesn't remember the size, view mode, etc.. when it opens each time
+
+- set any "stay on top" flags that need to be for dialogs 
+
+- perhaps I should have volume and gain as separate actions... but the same backend code would be used
+	- I could even have advanced and normal dialogs for both
+	- negative gain could also be used to invert the phase with a gain of -1
+
+- perhaps I could have the channel select dialog default its check boxes according to the mute buttons of the sound window
+
+- I need to display the sample rate (and perhaps the number of channels) in the status info of CSoundWindow
+- I could also, put the name of each channel horizontally along the left of the channels so that if the sound is 5 channels you label the first 2 'left' and 'right' then the next ones 'center', 'rear left' and 'rear right' 
+
+- I need to make some predefiner buttons on the dialogs of any graph param of common curves, and in flange and delay dialogs
+
+- I should probably pass the factory objects to the channelSelect dialog, since I could use the NxN matrix of radio buttons for the paste edits' channel select dialog and the others could have the default one
+
+- right now all the play control buttons are activated on mouse_button_release events, where it might be good to active on mouse button down.... perhaps I could derive my own button class... or get a feature added to FXButton to selected which way it should behave
+
+- make sure that nothing is being allocated and left around when a file is unable to be loaded at startup...
+	- I guess that should go for any load of a sound... that upon having an error (unsupported format perhaps) that nothing be left around...
+	- Also if there's  an error creating perhaps the CSoundPlayerChannel that the ASound is deleted and all temp data is cleaned up
+
+
+- I should probably put whatever code in the frontend (i.e. button handlers in CMainWindow) that could be put in the backend (i.e. would be done by any frontend) into the backend like the file operations already are
+
+- move the undo/redo buttons off of the file tab and to an always visible location (play controls)
+
+- add tip text support to the reusable slider and graph widget to and allow a way to set it in the base class dialogs
+
+- it is possible to close the application while a modal dialog is opened... this probably should not be permitted
+
+- I should use FXAccelTable so that I can make key bindings to things like 
+	- (ctrl-a)select all (space)play, (space)stop, (p)pause, (a,z)seek, (ctrl-c)copy, (ctrl-x)cut, (ctrl-d,del)delete, (ctrl-v)paste, etc
+	- this should be relatively simple I think... 
+
+- all the dialogs are based on fixed widths and heights (of the dialog itself)
+	- I would rather these widths and heights that I'm passing the dialogs, be minimums
+	- I added remember support so it wouldn't be as much of a problem, but perhaps ask the fox people how to get the dialog to make itself large enough for all the inner widgets
+	- If I tought about it long enough, I might be able to come up with the answer
+
+- some of the stuff with repaints after action dialogs show isn't pretty, but its at least functional
+	- I tried, but one place to fix some of the problems is to handle all repaint events after an FXModalDialog hide's in its hide() method
+	- I called app->flush() but in there, but it didn't seem to help... perhaps X hadn't sent repaint messages yet... but then I called repaint on mainWindow but it didn't help either
+	- These issues I may figure out on my own as I learn more about fox, but perhaps it would be nice if the fox author could look at my app and tell me just how to fix it
+
+- I'm not sure why it's not a problem and perhaps it will be in the future...
+	- But, while the pogress dialog is showing, the sound object being worked on is usually locked for resize so if a paint message tried to be processed for the sound window's waveform view it would cause the applicaiton to lock up
+	- Perhaps fox doesn't process paint messages in a sparate thread, which is fortunate at the moment, however if he changes this behavior, I would need to probably trylock and just paint the background color if it couldn't lock... Actions usually call refresh after the action is completed, so that should redraw any places where we couldn't update
+
+
+
+- perhaps put some buttons on the shift dialogs meaning, half, quarter, eight of the selection length
+	- I could probably think of other things of this nature for the other actions
+
+
+
+
+--- DONE ---
+	- there are still some issues with scaling I think
+
+	- perhaps create a base class for some of the windows to derive from that remember their locations when last the application was run
+		- ??? however fox seems to have a problem with top windows relative coordinates
+
+	- right now the PWD of the open dialog is not maintained across showings of it... I think this is becase teh method I'm using is recreating the open dialog each tiem
+		- if CSoundFileManager were to opene it differently, it should fix that
+		- ??? however it doesn't maintain the same scroll position in the file listing which would be nice too
+
+- create a dialog which shows a list of the cues and their times.... perhaps have buttons which set the start or stop position, add remove, etc
+
+- I need to consider that sometimes a user may not want to affect the cues when editing
+	- perhaps this would be a check box on the CChannelSelectDialog and CPasteChannelsDialog
+	- or have a check box on the main form which says to adjust cues at all
+
+- allow the user to make notes and store them within a pool... use a pool of chars
+
+- in the documentation mention that the right mouse button often does things... whether clicking a button or dragging a scroll bar
