@@ -105,6 +105,7 @@ FXLFOParamValue::FXLFOParamValue(FXComposite *p,int opts,const char *_name,const
 	phaseSlider->setUnits("deg");
 
 
+	LFOTypeComboBox->setWidth(180);
 	LFOTypeComboBox->setNumVisible(16);
 	for(size_t t=0;t<gLFORegistry.getCount();t++)
 	{
