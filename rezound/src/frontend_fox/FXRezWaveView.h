@@ -22,7 +22,7 @@
 #define __FXRezWaveView_H__
 
 #include "../../config/common.h"
-
+#include "fox_compat.h"
 
 #include <fox/fx.h>
 

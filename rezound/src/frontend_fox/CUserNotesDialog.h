@@ -22,7 +22,7 @@
 #define __CUserNotesDialog_H__
 
 #include "../../config/common.h"
-
+#include "fox_compat.h"
 
 class CUserNotesDialog;
 

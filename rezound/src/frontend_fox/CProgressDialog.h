@@ -20,7 +20,9 @@
 
 #ifndef __CProgressDialog_H__
 #define __CProgressDialog_H__
+
 #include "../../config/common.h"
+#include "fox_compat.h"
 
 #include <fox/fx.h>
 

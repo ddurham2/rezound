@@ -88,6 +88,7 @@ ReZound_LDADD= libfrontend.la\
 	$(top_builddir)/src/misc/cc++/libmiscCC.la 
 
 noinst_HEADERS=\
+	fox_compat.h \
 	CActionButton.h \
 	CActionMenuCommand.h \
 	CChannelSelectDialog.h \

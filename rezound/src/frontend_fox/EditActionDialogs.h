@@ -22,7 +22,7 @@
 #define __ActionDialogs_H__
 
 #include "../../config/common.h"
-
+#include "fox_compat.h"
 
 #include "CActionParamDialog.h"
 

@@ -20,7 +20,9 @@
 
 #ifndef __CRecordDialog_H__
 #define __CRecordDialog_H__
+
 #include "../../config/common.h"
+#include "fox_compat.h"
 
 class CRecordDialog;
 

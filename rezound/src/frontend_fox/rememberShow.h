@@ -22,9 +22,14 @@
 #define __rememberShow_H__
 
 #include "../../config/common.h"
+#include "fox_compat.h"
 
-
-class FXTopWindow;
+#ifdef FOX_NO_NAMESPACE
+	class FXTopWindow;
+#else
+	namespace FX { class FXTopWindow; }
+	using namespace FX;
+#endif
 
 bool rememberShow(FXTopWindow *window);
 void rememberHide(FXTopWindow *window);

@@ -21,15 +21,27 @@
 #define DRAW_PORTION_H
 
 #include "../../config/common.h"
-
+#include "fox_compat.h"
 
 class CSound;
-class FXDCWindow;
-extern void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth,int canvasHeight,int drawSelectStart,int drawSelectStop,double horzZoomFactor,int hOffset,double vertZoomFactor,int vOffset,bool darkened=false);
 
 #include <fox/fxdefs.h>
-extern FXColor backGroundColor;
-extern FXColor clippedWaveformColor;
+
+#ifdef FOX_NO_NAMESPACE
+	class FXDCWindow;
+
+	extern FXColor backGroundColor;
+	extern FXColor clippedWaveformColor;
+#else
+	namespace FX { class FXDCWindow; }
+	using namespace FX;
+
+	extern FX::FXColor backGroundColor;
+	extern FX::FXColor clippedWaveformColor;
+#endif
+
+extern void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth,int canvasHeight,int drawSelectStart,int drawSelectStop,double horzZoomFactor,int hOffset,double vertZoomFactor,int vOffset,bool darkened=false);
+
 
 
 #endif

@@ -128,9 +128,9 @@ FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
 #include <fox/fxkeys.h>
 
 CMainWindow::CMainWindow(FXApp* a) :
-	FXMainWindow(a,"ReZound",NULL,NULL,DECOR_ALL,0,0,800,160)
+	FXMainWindow(a,"ReZound",NULL,NULL,DECOR_ALL,0,0,346,145)
 {
-	menubar=new FXMenubar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X);
+	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X);
 
 	//contents=new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 1,1,1,1, 1,1);
 	contents=new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 1,1,0,0, 1,0);
@@ -349,7 +349,10 @@ void CMainWindow::createToolbars()
 		new FXMenuSeparator(menu);
 		new FXMenuCommand(menu,"&Quit\tCtrl+Q",NULL,this,ID_FILE_QUIT_MENUITEM);
 
-			// ??? I might be able to get the name of the effect from the action rather than having to type it here
+
+		// ??? in CActionMenuItem I should be able to do something intelligent to 
+		// have it figure out (based on past entries it its parent) what letter in
+		// the name should have a & in front
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&Edit",NULL,menu);
@@ -357,59 +360,59 @@ void CMainWindow::createToolbars()
 		new FXMenuCommand(menu,"Clear Undo History",NULL,this,ID_CLEAR_UNDO_HISTORY_MENUITEM);
 
 		new FXMenuSeparator(menu);
-		new CActionMenuCommand(new CCopyEditFactory(gChannelSelectDialog),menu,"Copy\tCtrl+C");
-		new CActionMenuCommand(new CCutEditFactory(gChannelSelectDialog),menu,"Cut\tCtrl+X");
-		new CActionMenuCommand(new CDeleteEditFactory(gChannelSelectDialog),menu,"Delete\tDel");
-		new CActionMenuCommand(new CCropEditFactory(gChannelSelectDialog),menu,"Crop\tCtrl+R");
+		new CActionMenuCommand(new CCopyEditFactory(gChannelSelectDialog),menu,"Ctrl+C");
+		new CActionMenuCommand(new CCutEditFactory(gChannelSelectDialog),menu,"Ctrl+X");
+		new CActionMenuCommand(new CDeleteEditFactory(gChannelSelectDialog),menu,"Ctrl+D");
+		new CActionMenuCommand(new CCropEditFactory(gChannelSelectDialog),menu,"Ctrl+R");
 
 		new FXMenuSeparator(menu);
-		new CActionMenuCommand(new CInsertPasteEditFactory(gPasteChannelsDialog),menu,"Paste Insert\tCtrl+V");
-		new CActionMenuCommand(new CReplacePasteEditFactory(gPasteChannelsDialog),menu,"Paste Replace");
-		new CActionMenuCommand(new COverwritePasteEditFactory(gPasteChannelsDialog),menu,"Paste Overwrite");
-		new CActionMenuCommand(new CLimitedOverwritePasteEditFactory(gPasteChannelsDialog),menu,"Paste Limited Overwrite");
-		new CActionMenuCommand(new CMixPasteEditFactory(gPasteChannelsDialog),menu,"Paste Mix");
-		new CActionMenuCommand(new CLimitedMixPasteEditFactory(gPasteChannelsDialog),menu,"Paste Limited Mix");
+		new CActionMenuCommand(new CInsertPasteEditFactory(gPasteChannelsDialog),menu,"Ctrl+V");
+		new CActionMenuCommand(new CReplacePasteEditFactory(gPasteChannelsDialog),menu,"");
+		new CActionMenuCommand(new COverwritePasteEditFactory(gPasteChannelsDialog),menu,"");
+		new CActionMenuCommand(new CLimitedOverwritePasteEditFactory(gPasteChannelsDialog),menu,"");
+		new CActionMenuCommand(new CMixPasteEditFactory(gPasteChannelsDialog),menu,"");
+		new CActionMenuCommand(new CLimitedMixPasteEditFactory(gPasteChannelsDialog),menu,"");
 
 		new FXMenuSeparator(menu);
-		new CActionMenuCommand(new CInsertSilenceEditFactory(gChannelSelectDialog,new CInsertSilenceDialog(this)),menu,"Insert Silence");
-		new CActionMenuCommand(new CMuteEditFactory(gChannelSelectDialog),menu,"Mute");
+		new CActionMenuCommand(new CInsertSilenceEditFactory(gChannelSelectDialog,new CInsertSilenceDialog(this)),menu,"");
+		new CActionMenuCommand(new CMuteEditFactory(gChannelSelectDialog),menu,"Ctrl+M");
 
 		new FXMenuSeparator(menu);
-		new CActionMenuCommand(new CRotateLeftEditFactory(gChannelSelectDialog,new CRotateDialog(this)),menu,"<< Rotate Leftward");
-		new CActionMenuCommand(new CRotateRightEditFactory(gChannelSelectDialog,new CRotateDialog(this)),menu,">> Rotate Rightward");
+		new CActionMenuCommand(new CRotateLeftEditFactory(gChannelSelectDialog,new CRotateDialog(this)),menu,"");
+		new CActionMenuCommand(new CRotateRightEditFactory(gChannelSelectDialog,new CRotateDialog(this)),menu,"");
 
 		new FXMenuSeparator(menu);
-		new CActionMenuCommand(new CSelectionEditFactory(sSelectAll),menu,"Select All\tCtrl+A");
-		new CActionMenuCommand(new CSelectionEditFactory(sSelectToBeginning),menu,"Select to Beginning");
-		new CActionMenuCommand(new CSelectionEditFactory(sSelectToEnd),menu,"Select to End");
-		new CActionMenuCommand(new CSelectionEditFactory(sFlopToBeginning),menu,"Flip to Beginning");
-		new CActionMenuCommand(new CSelectionEditFactory(sFlopToEnd),menu,"Flip to End");
-		new CActionMenuCommand(new CSelectionEditFactory(sSelectToSelectStart),menu,"Move Stop to Start Position");
-		new CActionMenuCommand(new CSelectionEditFactory(sSelectToSelectStop),menu,"Move Start to Stop Position");
+		new CActionMenuCommand(new CSelectionEditFactory(sSelectAll),menu,"Ctrl+A");
+		new CActionMenuCommand(new CSelectionEditFactory(sSelectToBeginning),menu,"");
+		new CActionMenuCommand(new CSelectionEditFactory(sSelectToEnd),menu,"");
+		new CActionMenuCommand(new CSelectionEditFactory(sFlopToBeginning),menu,"");
+		new CActionMenuCommand(new CSelectionEditFactory(sFlopToEnd),menu,"");
+		new CActionMenuCommand(new CSelectionEditFactory(sSelectToSelectStart),menu,"");
+		new CActionMenuCommand(new CSelectionEditFactory(sSelectToSelectStop),menu,"");
 
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"Effec&ts",NULL,menu);
-		new CActionMenuCommand(new CReverseEffectFactory(gChannelSelectDialog),menu,"Re&verse");
-		new CActionMenuCommand(new CChangeAmplitudeEffectFactory(gChannelSelectDialog,new CNormalAmplitudeChangeDialog(this),new CAdvancedAmplitudeChangeDialog(this)),menu,"Change &Amplitude");
-		new CActionMenuCommand(new CChangeRateEffectFactory(gChannelSelectDialog,new CNormalRateChangeDialog(this),new CAdvancedRateChangeDialog(this)),menu,"Change &Rate");
-		new CActionMenuCommand(new CFlangeEffectFactory(gChannelSelectDialog,new CFlangeDialog(this)),menu,"&Flange");
-		new CActionMenuCommand(new CSimpleDelayEffectFactory(gChannelSelectDialog,new CSimpleDelayDialog(this)),menu,"&Delay (Echo)");
-		new CActionMenuCommand(new CStaticReverbEffectFactory(gChannelSelectDialog),menu,"Reverb");
-		new CActionMenuCommand(new CVariedRepeatEffectFactory(gChannelSelectDialog,new CVariedRepeatDialog(this)),menu,"Variable Repeat");
+		new CActionMenuCommand(new CReverseEffectFactory(gChannelSelectDialog),menu,"");
+		new CActionMenuCommand(new CChangeAmplitudeEffectFactory(gChannelSelectDialog,new CNormalAmplitudeChangeDialog(this),new CAdvancedAmplitudeChangeDialog(this)),menu,"");
+		new CActionMenuCommand(new CChangeRateEffectFactory(gChannelSelectDialog,new CNormalRateChangeDialog(this),new CAdvancedRateChangeDialog(this)),menu,"");
+		new CActionMenuCommand(new CFlangeEffectFactory(gChannelSelectDialog,new CFlangeDialog(this)),menu,"");
+		new CActionMenuCommand(new CSimpleDelayEffectFactory(gChannelSelectDialog,new CSimpleDelayDialog(this)),menu,"");
+		new CActionMenuCommand(new CStaticReverbEffectFactory(gChannelSelectDialog),menu,"");
+		new CActionMenuCommand(new CVariedRepeatEffectFactory(gChannelSelectDialog,new CVariedRepeatDialog(this)),menu,"");
 
-		new CActionMenuCommand(new CTestEffectFactory(gChannelSelectDialog),menu,"test");
+		new CActionMenuCommand(new CTestEffectFactory(gChannelSelectDialog),menu,"");
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&Looping",NULL,menu);
-		new CActionMenuCommand(new CMakeSymetricActionFactory(gChannelSelectDialog),menu,"Make &Symetric");
+		new CActionMenuCommand(new CMakeSymetricActionFactory(gChannelSelectDialog),menu,"");
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&Remaster",NULL,menu);
-		new CActionMenuCommand(new CUnclipActionFactory(gChannelSelectDialog),menu,"&Unclip");
-		new CActionMenuCommand(new CRemoveDCActionFactory(gChannelSelectDialog),menu,"Remove &DC");
-		new CActionMenuCommand(new CNoiseGateActionFactory(gChannelSelectDialog,new CNoiseGateDialog(this)),menu,"&Noise Gate");
-		new CActionMenuCommand(new CCompressorActionFactory(gChannelSelectDialog,new CCompressorDialog(this)),menu,"Dynamic Range &Compressor");
+		new CActionMenuCommand(new CUnclipActionFactory(gChannelSelectDialog),menu,"");
+		new CActionMenuCommand(new CRemoveDCActionFactory(gChannelSelectDialog),menu,"");
+		new CActionMenuCommand(new CNoiseGateActionFactory(gChannelSelectDialog,new CNoiseGateDialog(this)),menu,"");
+		new CActionMenuCommand(new CCompressorActionFactory(gChannelSelectDialog,new CCompressorDialog(this)),menu,"");
 
 
 	create(); // re-call create for this window which will call it for all new child windows

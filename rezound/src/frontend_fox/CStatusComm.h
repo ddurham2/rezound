@@ -22,12 +22,19 @@
 #define __CStatusComm_H__
 
 #include "../../config/common.h"
-
+#include "fox_compat.h"
 
 #include "../backend/AStatusComm.h"
 
 class CProgressDialog;
-class FXWindow;
+
+
+#ifdef FOX_NO_NAMESPACE
+	class FXWindow;
+#else
+	namespace FX { class FXWindow; }
+	using namespace FX;
+#endif
 
 #define MAX_PROGRESS_DIALOGS 8
 

@@ -22,6 +22,7 @@
 #define __CMainWindow_H__
 
 #include "../../config/common.h"
+#include "fox_compat.h"
 
 #include <map>
 
@@ -144,7 +145,7 @@ protected:
 
 private:
 
-	FXMenubar 		*menubar;
+	FXMenuBar 		*menubar;
 	FXHorizontalFrame	*contents;		// top horizontal main frame which contains play controls and action controls
 		FXPacker	*editFrame;		// top horizontal main frame which contains play controls and action controls
 

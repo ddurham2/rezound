@@ -58,6 +58,7 @@ FXModalDialogBox::FXModalDialogBox(FXWindow *owner,const FXString &title,int w,i
 	getFrame()->setFrameStyle(getFrame()->getFrameStyle()|FRAME_RAISED|FRAME_THICK);
 
 		// ??? this doesn't seem to be having any effect... ask mailing list
+#warning fix this
 	okayButton->setDefault(TRUE);
 
 	// keep the dialog from getting too narrow
@@ -85,7 +86,11 @@ void FXModalDialogBox::show(FXuint placement)
 	if(!rememberShow(this))
 		FXDialogBox::show(placement);
 	else
+#ifdef FOX_RESTORE_WINDOW_POSITIONS
+		FXDialogBox::show();
+#else
 		FXDialogBox::show(placement/*wouldn't send placement except remember show can't reliable set the window position*/);
+#endif
 }
 
 void FXModalDialogBox::hide()

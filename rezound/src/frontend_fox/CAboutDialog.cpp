@@ -39,7 +39,7 @@ FXIMPLEMENT(CAboutDialog,FXDialogBox,CAboutDialogMap,ARRAYNUMBER(CAboutDialogMap
 // ----------------------------------------
 
 CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
-	FXDialogBox(mainWindow,"About ReZound",DECOR_TITLE|DECOR_BORDER,0,0,620,400, 0,0,0,0, 0,0)
+	FXDialogBox(mainWindow,"About ReZound",DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE,0,0,620,400, 0,0,0,0, 0,0)
 {
 	FXPacker *contents=new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 2,2,2,2, 0,0);
 

@@ -20,7 +20,9 @@
 
 #ifndef __CCrossfadeEdgesDialog_H__
 #define __CCrossfadeEdgesDialog_H__
+
 #include "../../config/common.h"
+#include "fox_compat.h"
 
 class CCrossfadeEdgesDialog;
 

@@ -22,13 +22,21 @@
 #define __CSoundFileManager_H__
 
 #include "../../config/common.h"
+#include "fox_compat.h"
 
 #include "../backend/ASoundFileManager.h"
 
 #include <vector>
+
 class CSoundWindow;
 class CNestedDataFile;
-class FXWindow;
+
+#ifdef FOX_NO_NAMESPACE
+	class FXWindow;
+#else
+	namespace FX { class FXWindow; }
+	using namespace FX;
+#endif
 
 class CSoundFileManager : public ASoundFileManager
 {

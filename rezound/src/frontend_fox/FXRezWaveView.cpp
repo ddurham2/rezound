@@ -350,7 +350,7 @@ void FXRezWaveView::updateFromEdit()
 void FXRezWaveView::getWaveSize(int &top,int &height)
 {
 	top=waveScrollArea->getY();
-	height=waveScrollArea->getHeight()-waveScrollArea->horizontalScrollbar()->getHeight();
+	height=waveScrollArea->getHeight()-waveScrollArea->horizontalScrollBar()->getHeight();
 }
 
 // --- FXWaveScrollArea -------------------------------------------------------
@@ -403,8 +403,8 @@ FXWaveScrollArea::FXWaveScrollArea(FXComposite *p,FXRezWaveView *_parent,CLoaded
 
 	setScrollStyle(HSCROLLER_ALWAYS|VSCROLLER_ALWAYS);
 
-	horizontalScrollbar()->setLine(25);
-	verticalScrollbar()->setLine(25);
+	horizontalScrollBar()->setLine(25);
+	verticalScrollBar()->setLine(25);
 
 	// start out with something selected
 	loadedSound->channel->setStartPosition(loadedSound->getSound()->getLength()/2-loadedSound->getSound()->getLength()/4);
@@ -497,14 +497,14 @@ double FXWaveScrollArea::getMaxHorzZoomFactor()
 
 void FXWaveScrollArea::setVertZoomFactor(double v)
 {
-	int old_vOffset=(-pos_y)-((verticalScrollbar()->getRange()-getSupposedCanvasHeight())/2);
+	int old_vOffset=(-pos_y)-((verticalScrollBar()->getRange()-getSupposedCanvasHeight())/2);
 	vertZoomFactor=v;
 
 	layout();
 
 	// adjust the vertical scroll bar so it keeps the same thing on screen (just solved the vOffset calc equation for the position variable)
 	skipDraw++; // set position causes a draw, so lets skip it
-	setPosition(pos_x, -(old_vOffset+((verticalScrollbar()->getRange()-getSupposedCanvasHeight())/2))  );
+	setPosition(pos_x, -(old_vOffset+((verticalScrollBar()->getRange()-getSupposedCanvasHeight())/2))  );
 	skipDraw--;
 }
 
@@ -787,13 +787,13 @@ long FXWaveScrollArea::onAutoScroll(FXObject *object,FXSelector sel,void *ptr)
 FXuint FXWaveScrollArea::getSupposedCanvasWidth()
 {
 	// ??? if I allow the scrollbars to disappear I don't need to subtract it's size
-	return getWidth()-verticalScrollbar()->getWidth();
+	return getWidth()-verticalScrollBar()->getWidth();
 }
 
 FXuint FXWaveScrollArea::getSupposedCanvasHeight()
 {
 	// ??? if I allow the scrollbars to disappear I don't need to subtract it's size
-	return getHeight()-(horizontalScrollbar()->getHeight());
+	return getHeight()-(horizontalScrollBar()->getHeight());
 }
 
 void FXWaveScrollArea::drawPortion(int left,int width,FXDCWindow *dc)
@@ -808,7 +808,7 @@ void FXWaveScrollArea::drawPortion(int left,int width,FXDCWindow *dc)
 	sound->lockSize();
 	try
 	{
-		const int vOffset=pos_y+((verticalScrollbar()->getRange()-getSupposedCanvasHeight())/2);
+		const int vOffset=pos_y+((verticalScrollBar()->getRange()-getSupposedCanvasHeight())/2);
 		::drawPortion(left,width,dc,sound,getSupposedCanvasWidth(),getSupposedCanvasHeight(),(int)getDrawSelectStart(),(int)getDrawSelectStop(),horzZoomFactor,-pos_x,vertZoomFactor,vOffset);
 		sound->unlockSize();
 	}

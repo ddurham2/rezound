@@ -22,11 +22,17 @@
 #define __CFrontendHooks_H__
 
 #include "../../config/common.h"
+#include "fox_compat.h"
 
 #include "../backend/AFrontendHooks.h"
 
-class FXWindow;
-class FXFileDialog;
+#ifdef FOX_NO_NAMESPACE
+	class FXWindow;
+	class FXFileDialog;
+#else
+	namespace FX { class FXWindow; class FXFileDialog; }
+	using namespace FX;
+#endif
 
 class CFrontendHooks : public AFrontendHooks
 {

@@ -19,6 +19,7 @@
  */
 
 #include "../../config/common.h"
+#include "fox_compat.h"
 
 #include <fox/fx.h>
 #include <stdexcept>
@@ -51,7 +52,7 @@ int main(int argc,char *argv[])
 		*/
 
 		// you have to do this for hints to be activated
-		new FXTooltip(application,TOOLTIP_VARIABLE);
+		new FXToolTip(application,TOOLTIP_VARIABLE);
 
 		// create the main window 
 		CMainWindow *mainWindow=new CMainWindow(application);

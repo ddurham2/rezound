@@ -22,6 +22,7 @@
 #define __CActionParamDialog_H__
 
 #include "../../config/common.h"
+#include "fox_compat.h"
 
 
 class CActionParamDialog;

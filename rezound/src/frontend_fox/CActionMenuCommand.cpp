@@ -38,16 +38,26 @@ FXDEFMAP(CActionMenuCommand) CActionMenuCommandMap[]=
 
 	FXMAPFUNC(SEL_KEYRELEASE,		0,				CActionMenuCommand::onKeyClick),
 
+	FXMAPFUNC(SEL_COMMAND,			CActionMenuCommand::ID_HOTKEY,	CActionMenuCommand::onCommand),
+
 	FXMAPFUNC(SEL_UPDATE,			FXWindow::ID_QUERY_TIP,		CActionMenuCommand::onQueryTip)
 };
 
 FXIMPLEMENT(CActionMenuCommand,FXMenuCommand,CActionMenuCommandMap,ARRAYNUMBER(CActionMenuCommandMap))
 
-CActionMenuCommand::CActionMenuCommand(AActionFactory *_actionFactory,FXComposite* p, const FXString& text, FXIcon* ic, FXuint opts) :
-	FXMenuCommand(p,text,(ic==NULL ? new FXGIFIcon(p->getApp(),_actionFactory->hasAdvancedMode() ? advanced_action_gif : normal_action_gif) : ic),NULL,0,opts),
+CActionMenuCommand::CActionMenuCommand(AActionFactory *_actionFactory,FXComposite* p, const FXString& accelKeyText, FXIcon* ic, FXuint opts) :
+	FXMenuCommand(
+		p,
+		(_actionFactory->getName()+"\t"+accelKeyText.text()).c_str(),
+		(ic==NULL ? new FXGIFIcon(p->getApp(),_actionFactory->hasAdvancedMode() ? advanced_action_gif : normal_action_gif) : ic),
+		this,
+		ID_HOTKEY,
+		opts
+		),
 	actionFactory(_actionFactory)
 {
-	tip=_actionFactory->getDescription().c_str();
+	if(actionFactory->getName()!=actionFactory->getDescription()) // don't be stupid (no need for a popup hint)
+		tip=actionFactory->getDescription().c_str();
 }
 
 long CActionMenuCommand::onMouseClick(FXObject *sender,FXSelector sel,void *ptr)
@@ -91,6 +101,22 @@ long CActionMenuCommand::onKeyClick(FXObject *sender,FXSelector sel,void *ptr)
 	{
 		CActionParameters actionParameters;
 		if(actionFactory->performAction(activeSound,&actionParameters,ev->state&SHIFTMASK,false))
+			gSoundFileManager->updateAfterEdit();
+	}
+	else
+		getApp()->beep();
+
+	return(1);
+}
+
+long CActionMenuCommand::onCommand(FXObject *sender,FXSelector sel,void *ptr)
+{
+	CLoadedSound *activeSound=gSoundFileManager->getActive();
+	if(activeSound)
+	{
+		CActionParameters actionParameters;
+		//if(actionFactory->performAction(activeSound,&actionParameters,keyboardState&SHIFTMASK,false))
+		if(actionFactory->performAction(activeSound,&actionParameters,false,false))
 			gSoundFileManager->updateAfterEdit();
 	}
 	else

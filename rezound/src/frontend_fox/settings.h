@@ -22,6 +22,7 @@
 #define __frontend_setting_H__
 
 #include "../../config/common.h"
+#include "fox_compat.h"
 
 #include "../backend/settings.h"
 

@@ -22,6 +22,7 @@
 #define __CActionMenuCommand_H__
 
 #include "../../config/common.h"
+#include "fox_compat.h"
 
 #include <fox/fx.h>
 
@@ -44,12 +45,19 @@ class CActionMenuCommand : public FXMenuCommand
 	FXDECLARE(CActionMenuCommand)
 public:
 
-	CActionMenuCommand(AActionFactory *_actionFactory,FXComposite* p, const FXString& text, FXIcon* ic=NULL, FXuint opts=0);
+	CActionMenuCommand(AActionFactory *_actionFactory,FXComposite* p, const FXString& accelKeyText, FXIcon* ic=NULL, FXuint opts=0);
 
 	long onMouseClick(FXObject *sender,FXSelector sel,void *ptr);
 	long onKeyClick(FXObject *sender,FXSelector sel,void *ptr);
 
+	long onCommand(FXObject *sender,FXSelector sel,void *ptr);
+
 	long onQueryTip(FXObject* sender,FXSelector sel,void *ptr);
+
+	enum
+	{
+		ID_HOTKEY=FXMenuCommand::ID_LAST
+	};
 
 protected:
 	CActionMenuCommand() {}

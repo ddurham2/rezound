@@ -20,7 +20,9 @@
 
 #ifndef __CChannelSelectDialog_H__
 # define __CChannelSelectDialog_H__
+
 #include "../../config/common.h"
+#include "fox_compat.h"
 
 
 class CChannelSelectDialog;

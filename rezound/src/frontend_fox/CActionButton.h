@@ -22,6 +22,7 @@
 #define __CActionButton_H__
 
 #include "../../config/common.h"
+#include "fox_compat.h"
 
 #include <fox/fx.h>
 

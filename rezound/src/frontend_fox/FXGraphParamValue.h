@@ -22,6 +22,7 @@
 #define __FXGraphParamValue_H__
 
 #include "../../config/common.h"
+#include "fox_compat.h"
 
 #include <string>
 

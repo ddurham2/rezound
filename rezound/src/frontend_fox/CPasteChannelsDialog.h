@@ -22,7 +22,7 @@
 #define __CPasteChannelsDialog_H__
 
 #include "../../config/common.h"
-
+#include "fox_compat.h"
 
 class CPasteChannelsDialog;
 
