@@ -140,7 +140,6 @@ public:
 			if(t<(N-1))
 			{ // draw and label this tick
 				dc.drawLine(getWidth()-2,renderY,getWidth()-10,renderY);
-				printf("renderY: %d\n",renderY);
 
 				double value=parent->interpretValue(parent->screenToNodeValue(y),GET_SCALAR_VALUE(parent));
 
