@@ -55,7 +55,7 @@ CLADSPAAction::CLADSPAAction(const LADSPA_Descriptor *_desc,const CActionSound &
 	restoreChannelsTempAudioPoolKey(-1),
 	origSound(NULL)
 {
-	channelMapping.print();
+	//channelMapping.print();
 	for(unsigned t=0;t<desc->PortCount;t++)
 	{
 		const LADSPA_PortDescriptor pd=desc->PortDescriptors[t];
