@@ -234,6 +234,7 @@ bool CrezSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 {
 	// ??? The user still needs to be able to choose what format the data will be saved in... whether 16bit float.. etc.. and the import/export process needs to convert to and from the working format
 
+	remove(filename.c_str()); // remove file incase it exists
 	CSound::PoolFile_t saveToFile(REZOUND_POOLFILE_BLOCKSIZE,REZOUND_POOLFILE_SIGNATURE);
 	saveToFile.openFile(filename,true);
 	saveToFile.clear();
