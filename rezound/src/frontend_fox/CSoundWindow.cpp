@@ -563,7 +563,7 @@ long CSoundWindow::onDrawPlayPosition(FXObject *sender,FXSelector,void*)
 		drawPlayPosition(true);
 	}
 
-	return 1;
+	return 0; // returning 0 because 1 makes it use a ton of CPU (because returning 1 causes FXApp::refresh() to be called)
 }
 
 // horz zoom handlers
