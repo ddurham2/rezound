@@ -32,6 +32,7 @@ noinst_HEADERS= \
 		CMonoizeAction.h \
 		CNoiseGateAction.h \
 		CRemoveDCAction.h \
+		CInvertPhaseAction.h \
 		CUnclipAction.h \
 		CCompressorAction.h \
 		CNormalizeAction.h \
@@ -47,6 +48,7 @@ libRemaster_la_SOURCES= \
 			CMonoizeAction.cpp \
 			CNoiseGateAction.cpp \
 			CRemoveDCAction.cpp \
+			CInvertPhaseAction.cpp \
 			CUnclipAction.cpp \
 			CCompressorAction.cpp \
 			CNormalizeAction.cpp \

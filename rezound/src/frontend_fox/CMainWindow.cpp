@@ -886,6 +886,7 @@ void CMainWindow::buildActionMap()
 	addToActionMap(								new CActionMenuCommand(new CChangeTempoActionFactory(gChannelSelectDialog,new CChangeTempoDialog(this)),dummymenu,			""),																	menuItemRegistry);
 	// -
 	addToActionMap(								new CActionMenuCommand(new CRemoveDCActionFactory(gChannelSelectDialog),dummymenu,							""),																	menuItemRegistry);
+	addToActionMap(								new CActionMenuCommand(new CInvertPhaseActionFactory(gChannelSelectDialog),dummymenu,							""),																	menuItemRegistry);
 	// -
 	addToActionMap(								new CActionMenuCommand(new CUnclipActionFactory(gChannelSelectDialog),dummymenu,							""),																	menuItemRegistry);
 

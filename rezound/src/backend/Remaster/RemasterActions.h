@@ -28,6 +28,7 @@
 #include "CMonoizeAction.h"
 #include "CUnclipAction.h"
 #include "CRemoveDCAction.h"
+#include "CInvertPhaseAction.h"
 #include "CNoiseGateAction.h"
 #include "CCompressorAction.h"
 #include "CNormalizeAction.h"
