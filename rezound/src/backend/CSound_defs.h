@@ -46,6 +46,7 @@ class CSound;
 
 	#define MAX_LENGTH (0x7fffffff-1024)
 
+	#include <math.h>
 	#define sample_fpos_floor(a)	(floor(a))
 	#define sample_fpos_ceil(a)	(ceil(a))
 	#define sample_fpos_round(a)	(nearbyint(a))
@@ -61,6 +62,7 @@ class CSound;
 
 	#define MAX_LENGTH (0x7fffffffffffffff-1024)
 
+	#include <math.h>
 	#define sample_fpos_floor(a)	(floorl(a))
 	#define sample_fpos_ceil(a)	(ceill(a))
 	#define sample_fpos_round(a)	(nearbyintl(a))
