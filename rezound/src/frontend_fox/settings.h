@@ -37,7 +37,16 @@ extern CStringDiskTable *gSettingsRegistry;
 extern string gPromptDialogDirectory;
 
 
+/*
+ * These are the paths to the /usr/share/rezound or ~/.rezound directories
+ */
+extern string gUserDataDirectory;	// "~/.rezound"
+extern string gSysDataDirectory;	// "/usr/share/rezound" (or whereever the --prefix was set)
 
+
+/*
+ * how sound windows are focused
+ */
 enum FocusMethods
 { 
 	fmFocusButton,		// each sound window has an 'Active' button that one has to press to make that the 'working' sound window

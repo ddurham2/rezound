@@ -27,6 +27,8 @@ CStringDiskTable *gSettingsRegistry=NULL;
 
 string gPromptDialogDirectory="";
 
+string gUserDataDirectory="";
+string gSysDataDirectory="";
 
 FocusMethods gFocusMethod=fmSoundWindowList;
 

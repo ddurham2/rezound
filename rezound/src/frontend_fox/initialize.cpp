@@ -18,6 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
+#include "../../config/common.h"
+
 #include "CStatusComm.h"
 #include "initialize.h"
 #include "settings.h"
@@ -32,7 +34,7 @@
 #include <CStringDiskTable.h>
 
 
-// ... except for a few things.. this could probably be moved into the backend.. it'd have to be done for all frontends
+// ... except for a few things.. this could probably be moved into the backend.. it'd have to be done for all frontends if I didn't move it
 
 #include "../backend/file.h"
 
@@ -53,10 +55,11 @@ static TPoolFile<unsigned,unsigned> *loadedRegistryPoolFile=NULL;
 #include "../backend/AAction.h"
 
 
-// for mkdir  --- possibly wouldn't port
+// for mkdir  --- possibly wouldn't port???
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include <cc++/path.h>
 
 void initializeReZound()
 {
@@ -64,16 +67,21 @@ void initializeReZound()
 	{
 
 		// make sure that ~/.rezound exists
-		const string appDirectory=string(getenv("HOME"))+"/.rezound";
-		const int mkdirResult=mkdir(appDirectory.c_str(),0700);
+		gUserDataDirectory=string(getenv("HOME"))+"/.rezound";
+		const int mkdirResult=mkdir(gUserDataDirectory.c_str(),0700);
 		const int mkdirErrno=errno;
 		if(mkdirResult!=0 && mkdirErrno!=EEXIST)
-			throw(runtime_error(string(__func__)+" -- error creating ~/.rezound -- "+strerror(mkdirErrno)));
+			throw(runtime_error(string(__func__)+" -- error creating "+gUserDataDirectory+" -- "+strerror(mkdirErrno)));
+
+		// determine where /usr/share/rezound has been placed (try the install-from directory first)
+		gSysDataDirectory=SOURCE_DIR"/share/rezound";
+		if(!ost::Path(gSysDataDirectory).Exists()) 
+			gSysDataDirectory=INSTALL_PREFIX"/share/rezound";
 
 		// -- 1
-		// ??? I might wanna use an XML library or my CScope (please rename) class for the registry instead of a pool file so it can be edited more easily
+		// ??? I probably want to use an XML library or CNestedDataFile class for the registry instead of a pool file so it can be edited more easily
 		loadedRegistryPoolFile=new TPoolFile<unsigned,unsigned>(4096,"ReZoundR");
-		loadedRegistryPoolFile->openFile(appDirectory+"/registry.dat",true);
+		loadedRegistryPoolFile->openFile(gUserDataDirectory+"/registry.dat",true);
 
 
 		// -- 2
