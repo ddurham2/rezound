@@ -311,10 +311,15 @@ void CMainWindow::show()
 
 	clipboardComboBox->setCurrentItem(gWhichClipboard);
 
+#if REZ_FOX_VERSION>=10119
+	dynamic_cast<FXMenuCheck *>(toggleLevelMetersMenuItem)->setCheck(gLevelMetersEnabled);
+	dynamic_cast<FXMenuCheck *>(toggleFrequencyAnalyzerMenuItem)->setCheck(gFrequencyAnalyzerEnabled);
+#else // older than 1.1.19 used FXMenuCommand
 	if(gLevelMetersEnabled)
 		toggleLevelMetersMenuItem->check();
 	if(gFrequencyAnalyzerEnabled)
 		toggleFrequencyAnalyzerMenuItem->check();
+#endif
 
 }
 
@@ -673,8 +678,13 @@ void CMainWindow::createMenus()
 		new FXMenuCommand(menu,"Shuttle Forward\t3",FOXIcons->shuttle_forward,this,ID_SHUTTLE_FORWARD);
 
 		new FXMenuSeparator(menu);
+#if REZ_FOX_VERSION>=10119
+		toggleLevelMetersMenuItem=new FXMenuCheck(menu,"Toggle &Level Meters",this,ID_TOGGLE_LEVEL_METERS);
+		toggleFrequencyAnalyzerMenuItem=new FXMenuCheck(menu,"Toggle Frequency &Analyzer",this,ID_TOGGLE_FREQUENCY_ANALYZER);
+#else // older than 1.1.19 used FXMenuCommand
 		toggleLevelMetersMenuItem=new FXMenuCommand(menu,"Toggle &Level Meters",NULL,this,ID_TOGGLE_LEVEL_METERS);
 		toggleFrequencyAnalyzerMenuItem=new FXMenuCommand(menu,"Toggle Frequency &Analyzer",NULL,this,ID_TOGGLE_FREQUENCY_ANALYZER);
+#endif
 
 		new FXMenuSeparator(menu);
 		new FXMenuCommand(menu,"View Loaded File 1\tAlt+1");
@@ -969,19 +979,27 @@ long CMainWindow::onControlAction(FXObject *sender,FXSelector sel,void *ptr)
 
 
 	case ID_TOGGLE_LEVEL_METERS:
+#if REZ_FOX_VERSION>=10119
+		metersWindow->enableLevelMeters(dynamic_cast<FXMenuCheck *>(sender)->getCheck());
+#else // older than 1.1.19 used FXMenuCommand
 		if(dynamic_cast<FXMenuCommand *>(sender)->isChecked())
 			dynamic_cast<FXMenuCommand *>(sender)->uncheck();
 		else
 			dynamic_cast<FXMenuCommand *>(sender)->check();
 		metersWindow->enableLevelMeters(dynamic_cast<FXMenuCommand *>(sender)->isChecked());
+#endif
 		break;
 
 	case ID_TOGGLE_FREQUENCY_ANALYZER:
+#if REZ_FOX_VERSION>=10119
+		metersWindow->enableFrequencyAnalyzer(dynamic_cast<FXMenuCheck *>(sender)->getCheck());
+#else // older than 1.1.19 used FXMenuCommand
 		if(dynamic_cast<FXMenuCommand *>(sender)->isChecked())
 			dynamic_cast<FXMenuCommand *>(sender)->uncheck();
 		else
 			dynamic_cast<FXMenuCommand *>(sender)->check();
 		metersWindow->enableFrequencyAnalyzer(dynamic_cast<FXMenuCommand *>(sender)->isChecked());
+#endif
 		break;
 
 
