@@ -75,7 +75,7 @@ CCompressorDialog::CCompressorDialog(FXWindow *mainWindow) :
 			addSlider(p1,"Input Gain","x",interpretValue_compressGain,uninterpretValue_compressGain,NULL,1.0,0,0,0,true);
 			addSlider(p1,"Output Gain","x",interpretValue_compressGain,uninterpretValue_compressGain,NULL,1.0,0,0,0,true);
 		p1=newVertPanel(p0,false);
-			addCheckBoxEntry(p1,"Lock Channels",true);
+			addCheckBoxEntry(p1,"Lock Channels",true,"This Toggles That Compression Should be Applied to Both Channels when Either Channel Needs Compression");
 }
 
 // ??? remove this before 1.0 and make sure it is up-to-standard as far as a compressor goes before 1.0
