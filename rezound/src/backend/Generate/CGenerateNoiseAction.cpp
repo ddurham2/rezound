@@ -23,13 +23,16 @@
 
 #include "../CActionParameters.h"
 
-CGenerateNoiseAction::CGenerateNoiseAction(const CActionSound actionSound,const double _noiseLength,const double _volume,const NoiseTypes _noiseType,const StereoImage _stereoImage):
+CGenerateNoiseAction::CGenerateNoiseAction(const CActionSound actionSound,const double _noiseLength,const double _volume,const NoiseTypes _noiseType,const StereoImage _stereoImage,const double _maxParticleVelocity):
 	AAction(actionSound),
 	noiseLength(_noiseLength),	// seconds
 	volume(_volume),		// 0 to 1 (a multiplier)
 	noiseType(_noiseType),		// enum
 	stereoImage(_stereoImage),	// enum
-	origLength(0)
+	origLength(0),
+
+	maxParticleSpeed(_maxParticleVelocity),
+	oldRandL(0),oldRandR(0)
 {
 	if(noiseLength<0)
 		throw runtime_error(string(__func__)+" -- noiseLength is less than zero: "+istring(noiseLength));
@@ -86,6 +89,30 @@ double CGenerateNoiseAction::generatePinkNoise(PinkNoise *pink)
 	return 2.0*pink->pink_Scalar*sum;  // *2 because it's actually returning half the range we want (fix nature of algorithm?)
 }
 
+static double gaussrand(int n)
+{
+	double X=0.0;
+	for (int i=0;i<n;i++)
+		X+=((rand()/(RAND_MAX+1.0))-.5)*2.0;
+	return X/n;
+}
+
+double CGenerateNoiseAction::generateBrownNoise(double *_oldRand,const double maxParticleSpeed)
+{
+	double oldRand=*_oldRand;
+	double randval=gaussrand(20)*maxParticleSpeed/100.0;
+
+	if( ((oldRand+randval)>=1.0) || (oldRand+randval<=-1.0)) 
+		randval=-randval;
+
+	oldRand+=randval;
+	oldRand=min(1.0,max(-1.0,oldRand)); // limit to [-1.0, 1.0]
+
+	*_oldRand=oldRand;
+	return oldRand;
+}
+
+
 // return a noise value from -1 to 1
 double CGenerateNoiseAction::getRandNoiseVal(const int noiseChannel)
 {
@@ -96,6 +123,10 @@ double CGenerateNoiseAction::getRandNoiseVal(const int noiseChannel)
 			return ((double)rand()/RAND_MAX)*2.0-1.0;
 		case ntPink:
 			return generatePinkNoise(noiseChannel ? &pinkR : &pinkL);
+		case ntBrown:
+			return generateBrownNoise(noiseChannel ? &oldRandR : &oldRandL, maxParticleSpeed);
+		case ntBlack:
+			return 0.0; // :)
 		default:
 			throw runtime_error(string(__func__)+" -- internal error -- unimplemented noiseType: "+istring(noiseType));
 	}
@@ -129,9 +160,18 @@ bool CGenerateNoiseAction::doActionSizeSafe(CActionSound &actionSound,bool prepa
 			initializePinkNoise(&pinkR,16);
 			break;
 
+		case ntBrown:
+			oldRandL=0;
+			oldRandR=0;
+			break;
+
+		case ntBlack:
+			break;
+
 		default:
 			throw runtime_error(string(__func__)+" -- internal error -- unimplemented noiseType: "+istring(noiseType));
 	}
+
 	srand(time(NULL));
 
 	// build a vector of indexes to the only channels that should be affected
@@ -227,7 +267,8 @@ CGenerateNoiseAction *CGenerateNoiseActionFactory::manufactureAction(const CActi
 		actionParameters->getDoubleParameter("Length"),
 		actionParameters->getDoubleParameter("Volume"),
 		(CGenerateNoiseAction::NoiseTypes)actionParameters->getUnsignedParameter("Noise Color"),
-		(CGenerateNoiseAction::StereoImage)actionParameters->getUnsignedParameter("Stereo Image")
+		(CGenerateNoiseAction::StereoImage)actionParameters->getUnsignedParameter("Stereo Image"),
+		actionParameters->getDoubleParameter("Max Particle Velocity")
 	);
 }	
 

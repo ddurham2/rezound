@@ -33,7 +33,9 @@ public:
 	{
 		ntWhite=0,
 		ntPink=1,
-		// others still unassigned are brown,blue,green,black,grey,violet,binary.
+		ntBrown=2,
+		ntBlack=3,
+		// others still unassigned are blue,green,grey,violet,binary.
 	};
 
 	enum StereoImage
@@ -44,7 +46,7 @@ public:
 		siSpatialStereo=3
 	};
 							    // length in seconds
-	CGenerateNoiseAction(const CActionSound actionSound,const double noiseLength,const double volume, const NoiseTypes noiseType, const StereoImage stereoImage); 
+	CGenerateNoiseAction(const CActionSound actionSound,const double noiseLength,const double volume, const NoiseTypes noiseType, const StereoImage stereoImage,const double maxParticleVelocity); 
 	virtual ~CGenerateNoiseAction();
 	
 protected:
@@ -86,8 +88,15 @@ private:
 		float pink_Scalar;
 	} pinkL,pinkR;
 
+	// for brown noise
+	const double maxParticleSpeed; // in percent.
+
+
+	double oldRandL,oldRandR;
+
 	void initializePinkNoise(PinkNoise *pink,int numRows);
 	static double generatePinkNoise(PinkNoise *pink);
+	static double generateBrownNoise(double *oldRand,const double maxParticleSpeed);
 
 };
 
