@@ -57,7 +57,7 @@
 
 #define HEADER_SIZE 512
 
-#define PHYSICAL_MAX_FILE_SIZE ((CMultiFile::l_addr_t)LONG_MAX) // ??? this needs to change based on off_t's type... won't be a problem when simple 64bit fs is in place commonly
+#define PHYSICAL_MAX_FILE_SIZE ((CMultiFile::l_addr_t)2147000000) // ??? this needs to change based on off_t's type... won't be a problem when simple 64bit fs is in place commonly
 #define LOGICAL_MAX_FILE_SIZE ((CMultiFile::l_addr_t)(PHYSICAL_MAX_FILE_SIZE-HEADER_SIZE))
 
 #define CMULTIFILE_SIGNATURE (*((uint32_t *)"CMFL"))
