@@ -20,7 +20,7 @@
 	#define sinf(a) ((float)sin((double)(a)))
 	#define cosf(a) ((float)cos((double)(a)))
 	#define tanf(a) ((float)tan((double)(a)))
-	#define powf(a) ((float)pow((double)(a)))
+	#define powf(a,b) ((float)pow((double)(a),(double)(b)))
 	#define isnanf(a) ((float)isnan((double)(a)))
 
 	/*
