@@ -1,6 +1,8 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- See if I can speed up the loading of .rez files it seems much slower than simply loading a .wav
+
 	- oops.. many actions don't use 'const CActionSound &actionSound', instead they're using a copy not a reference
 		- fix that
 
