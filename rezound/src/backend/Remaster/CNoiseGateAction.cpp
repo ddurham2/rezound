@@ -60,6 +60,7 @@ bool CNoiseGateAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 	if(prepareForUndo)
 		moveSelectionToTempPools(actionSound,mmSelection,selectionLength);
 
+	unsigned channelsDoneCount=0;
 	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 	{
 		if(actionSound.doChannel[i])
@@ -70,7 +71,7 @@ bool CNoiseGateAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 			if(prepareForUndo)
 				a.copyData(start,actionSound.sound->getTempAudio(tempAudioPoolKey,i),0,selectionLength);
 
-			CStatusBar statusBar("Noise Gating -- Channel "+istring(i),start,stop,true);
+			CStatusBar statusBar("Noise Gating -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true);
 
 			CDSPNoiseGate gate(
 				ms_to_samples(windowTime,actionSound.sound->getSampleRate()),

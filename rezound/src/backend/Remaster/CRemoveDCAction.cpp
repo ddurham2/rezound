@@ -40,6 +40,7 @@ bool CRemoveDCAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 	if(prepareForUndo)
 		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
 
+	unsigned channelsDoneCount=0;
 	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 	{
 		if(actionSound.doChannel[i])
@@ -74,7 +75,7 @@ bool CRemoveDCAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 				return false;
 			}
 
-			CStatusBar statusBar("Remove DC Component -- Channel "+istring(i),start,stop,true);
+			CStatusBar statusBar("Remove DC Component -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true);
 
 			sample_pos_t srcPos=srcStart;
 			for(sample_pos_t t=start;t<=stop;t++)

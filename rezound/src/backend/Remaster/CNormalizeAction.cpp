@@ -60,6 +60,7 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 	vector<sample_pos_t> maxValuePositions[MAX_CHANNELS];
 
 	// get max amplitude per region for each channel
+	unsigned channelsDoneCount=0;
 	for(unsigned i=0;i<channelCount;i++)
 	{
 		if(actionSound.doChannel[i])
@@ -68,7 +69,7 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 			sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 			sample_pos_t posAdd=prepareForUndo ? start : 0; // add this to the positions incase src is a tempPool for undo purposes because it would start at 0 instead of start
 
-			CStatusBar statusBar("Analyzing -- Channel "+istring(i),srcOffset,srcOffset+selectionLength,true); 
+			CStatusBar statusBar("Analyzing -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),srcOffset,srcOffset+selectionLength,true); 
 
 			for(unsigned t=0;t<regionCount;t++)
 			{
@@ -131,6 +132,7 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 	if(regionCount==1)
 	{
 		// now adjust the amplitude of the data according to the maxValues
+		unsigned channelsDoneCount=0;
 		for(unsigned i=0;i<channelCount;i++)
 		{
 			if(actionSound.doChannel[i])
@@ -140,7 +142,7 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 				sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 				sample_pos_t destPos=start;
 
-				CStatusBar statusBar("Normalizing -- Channel "+istring(i),start,stop,true); 
+				CStatusBar statusBar("Normalizing -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
 
 				const float gain=(float)normalizationLevel/(float)maxValues[i][0];
 				for(sample_pos_t j=0;j<selectionLength;j++)
@@ -184,6 +186,7 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 		sample_fpos_t fNormalizationLevel=normalizationLevel;
 
 		// now adjust the amplitude of the data according to the maxValues
+		unsigned channelsDoneCount=0;
 		for(unsigned i=0;i<channelCount;i++)
 		{
 			if(actionSound.doChannel[i])
@@ -193,7 +196,7 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 				sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 				sample_pos_t destPos=start;
 
-				CStatusBar statusBar("Normalizing -- Channel "+istring(i),start,stop,true); 
+				CStatusBar statusBar("Normalizing -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
 
 				for(unsigned t=0;t<=regionCount;t++)
 				{

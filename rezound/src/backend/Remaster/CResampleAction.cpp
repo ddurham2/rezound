@@ -59,11 +59,12 @@ bool CResampleAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 
 	undoRemoveLength=newLength;
 
+	unsigned channelsDoneCount=0;
 	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 	{
 		if(actionSound.doChannel[i])
 		{
-			CStatusBar statusBar("Changing Sample Rate -- Channel "+istring(i),0,newLength,true); 
+			CStatusBar statusBar("Changing Sample Rate -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),0,newLength,true); 
 	
 			// here, we're using the undo data as a source from which to calculate the new data
 			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempAudioPoolKey,i);

@@ -39,11 +39,12 @@ bool CCompressorAction::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 
 	if(!syncChannels)
 	{
+		unsigned channelsDoneCount=0;
 		for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 		{
 			if(actionSound.doChannel[i])
 			{
-				CStatusBar statusBar("Compressor -- Channel "+istring(i),start,stop,true);
+				CStatusBar statusBar("Compressor -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true);
 
 				sample_pos_t srcPos=prepareForUndo ? 0 : start;
 				const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);

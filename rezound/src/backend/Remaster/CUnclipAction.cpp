@@ -82,6 +82,7 @@ bool CUnclipAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 	if(prepareForUndo)
 		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
 
+	unsigned channelsDoneCount=0;
 	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 	{
 		#warning my clipped region finding algorithm needs help.. its finding things which are not region which need to be repaired and  making up data for them
@@ -91,7 +92,7 @@ bool CUnclipAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 
 		if(actionSound.doChannel[i])
 		{
-			CStatusBar statusBar("Unclip -- Channel "+istring(i),start,stop);
+			CStatusBar statusBar("Unclip -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop);
 
 			CRezPoolAccesser a=actionSound.sound->getAudio(i);
 
