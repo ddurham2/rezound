@@ -321,7 +321,6 @@ public:
 		zoomDial->setRevolutionIncrement(200*2);
 		zoomDial->setTipText("Adjust Zoom Factor for Analyzer\nRight-click for Default");
 		zoom=zoomDial->getValue();
-
 	}
 
 	CAnalyzer::~CAnalyzer()
@@ -345,9 +344,6 @@ public:
 	long CAnalyzer::onCanvasPaint(FXObject *sender,FXSelector sel,void *ptr)
 	{
 		FXDC &dc=*((FXDC*)ptr); // back buffered canvases send the DC to draw onto in ptr
-		//FXDCWindow dc(canvas);
-
-		// I could elimenat any flick by drawing to a back buffer and blitting.. but I thought that's what begin might effectively do
 
 		dc.setForeground(M_BACKGROUND);
 		dc.fillRectangle(0,0,canvas->getWidth(),canvas->getHeight());
