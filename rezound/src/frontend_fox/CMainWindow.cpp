@@ -410,27 +410,17 @@ long CMainWindow::onSoundListChange(FXObject *sender,FXSelector sel,void *ptr)
 {
 	FXint index=(FXint)ptr;
 
-	if(AActionFactory::macroRecorder.isRecording())
+	if(index>=0 && index<soundList->getNumItems())
 	{
-		// since the current item has already changed, we have to change it back now
-		CSoundWindow *asw=gSoundFileManager->getActiveWindow();
-		for(int t=0;t<soundList->getNumItems();t++)
-		{
-			if(((CSoundWindow *)soundList->getItemData(t))==asw)
-			{
-				if(index==t)
-					return 1; // it's not changing anyway
-				soundList->setCurrentItem(t);
-				break;
-			}
-		}
+		((CSoundWindow *)soundList->getItemData(index))->setActiveState(true);
 
-		Message("Cannot change sound windows while recording a macro");
-		return 1;
+		if(AActionFactory::macroRecorder.isRecording())
+		{
+			Warning(_("You have changed the selected audio file while a macro is being recorded to position: ")+istring(index+1)+"\n\n"+_("Note that when the macro is played back the audio file loaded in the same position in the loaded sounds list will be selected at this step in the macro."));
+			AActionFactory::macroRecorder.pushActiveSoundChange(index);
+		}
 	}
 
-	if(index>=0 && index<soundList->getNumItems())
-		((CSoundWindow *)soundList->getItemData(index))->setActiveState(true);
 
 	return 1;
 }
@@ -438,12 +428,6 @@ long CMainWindow::onSoundListChange(FXObject *sender,FXSelector sel,void *ptr)
 extern CSoundWindow *previousActiveWindow;
 long CMainWindow::onSoundListHotKey(FXObject *sender,FXSelector sel,void *ptr)
 {
-	if(AActionFactory::macroRecorder.isRecording())
-	{
-		Message("Cannot change sound windows while recording a macro");
-		return 1;
-	}
-
 	FXEvent *ev=(FXEvent *)ptr;
 	
 	if(ev->code=='`')
@@ -456,9 +440,9 @@ long CMainWindow::onSoundListHotKey(FXObject *sender,FXSelector sel,void *ptr)
 				if(((CSoundWindow *)soundList->getItemData(index))==previousActiveWindow)
 					break;
 			}
-			previousActiveWindow->setActiveState(true);
 			soundList->setCurrentItem(index);
 			soundList->makeItemVisible(soundList->getCurrentItem());
+			return onSoundListChange(NULL,0,(void *)index);
 		}
 		return 1;
 	}

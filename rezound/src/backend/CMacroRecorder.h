@@ -22,6 +22,17 @@ public:
 
 	static void removeMacro(CNestedDataFile *file,const string macroName);
 
+		// this is called by AActionFactory::performAction() before the action is actually performed .. a hook point for all actions performed
+		// loadedSound is optional and is used when the selection positions are needed for calculating how to set the selection positions at playback
+	void pushAction(const string actionName,const CActionParameters *actionParameters,CLoadedSound *loadedSound);
+
+		// this is called when an action is undone but we recorded it in the macro
+	void popAction(const string actionName);
+
+		// this is called by the frontend whenever the active sound changes so we can know to change it at playback
+		// presently, it can only know which sound to change to at playback by the index of the loaded sound it changed to.  I don't know of a better way to do this
+	void pushActiveSoundChange(size_t index);
+
 private:
 	bool recording;
 	CNestedDataFile *file;
@@ -29,14 +40,7 @@ private:
 	string key;
 	unsigned actionCount;
 
-	friend class AActionFactory;
-		// this is called by AActionFactory::performAction() before the action is actually performed .. a hook point for all actions performed
-		// loadedSound is optional and is used when the selection positions are needed for calculating how to set the selection positions at playback
-	void pushAction(const string actionName,const CActionParameters *actionParameters,CLoadedSound *loadedSound);
-
-	friend void undo(ASoundFileManager *);
-		// this is called when an action is undone but we recorded it in the macro
-	void popAction(const string actionName);
+	int activeSoundIndex;
 
 };
 

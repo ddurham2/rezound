@@ -48,6 +48,7 @@ void CMacroRecorder::startRecording(CNestedDataFile *_file,const string _macroNa
 	}
 
 	actionCount=0;
+	activeSoundIndex=-1; // indicates to use the active sound
 	file->setValue<unsigned>(key DOT "actionCount",actionCount);
 
 	recording=true;
@@ -106,6 +107,9 @@ void CMacroRecorder::pushAction(const string actionName,const CActionParameters 
 	const string actionKey=key DOT "action"+istring(actionCount,3,true);
 
 	file->setValue<string>(actionKey DOT "actionName",actionName);
+	if(activeSoundIndex>=0)
+		file->setValue<size_t>(actionKey DOT "activeSoundIndex",(size_t)activeSoundIndex);
+	activeSoundIndex=-1; // and from now out use activeSound (until next pushActiveSoundChange) call
 	file->setValue<bool>(actionKey DOT "askToPromptForActionParametersAtPlayback",macroActionParameters.askToPromptForActionParametersAtPlayback);
 	file->setValue<string>(actionKey DOT "selectedClipboardDescription",AAction::clipboards[gWhichClipboard]->getDescription());
 	file->setValue<bool>(actionKey DOT "selectionPositionsAreApplicable",actionFactory->selectionPositionsAreApplicable);
@@ -125,6 +129,11 @@ void CMacroRecorder::pushAction(const string actionName,const CActionParameters 
 	actionParameters->writeToFile(file,actionKey DOT "parameters");
 
 	file->setValue<unsigned>(key DOT "actionCount",++actionCount);
+}
+
+void CMacroRecorder::pushActiveSoundChange(size_t index)
+{
+	activeSoundIndex=(int)index;
 }
 
 void CMacroRecorder::popAction(const string actionName)

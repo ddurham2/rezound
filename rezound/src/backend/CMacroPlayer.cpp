@@ -49,6 +49,18 @@ bool CMacroPlayer::doMacro(ASoundFileManager *soundFileManager,unsigned &count)
 		// retrieve the action name (that must match one of the registered action names)
 		const string actionName=macroStore->getValue<string>(key DOT "actionName");
 
+		if(macroStore->keyExists(key DOT "activeSoundIndex"))
+		{
+			const size_t activeSoundIndex=macroStore->getValue<size_t>(key DOT "activeSoundIndex");
+			if(activeSoundIndex>=soundFileManager->getOpenedCount())
+			{ // index is out of range (could prompt for which sound to set to active at this point rather than bailing completely)
+				Error(_("At this point when the macro was recorded the selected sound was changed to position: ")+istring(activeSoundIndex+1)+"\n\n"+_("No audio file is loaded in this position now as the macro is being played back.\n\nThe macro playback is bailing."));
+				return false;
+			}
+
+			soundFileManager->setActiveSound(activeSoundIndex);
+		}
+
 		printf("action to run: %s\n",actionName.c_str());
 		if(gRegisteredActionFactories.find(actionName)==gRegisteredActionFactories.end())
 			throw runtime_error(string(__func__)+" -- action not found with name: "+actionName);
