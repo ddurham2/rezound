@@ -35,7 +35,22 @@
 
 
 CFrontendHooks::CFrontendHooks(FXWindow *_mainWindow) :
-	mainWindow(_mainWindow)
+	mainWindow(_mainWindow),
+
+	openDialog(NULL),
+	saveDialog(NULL)
+{
+
+	dirDialog=new FXDirDialog(mainWindow,"Select Directory");
+}
+
+CFrontendHooks::~CFrontendHooks()
+{
+	delete openDialog;
+	delete saveDialog;
+}
+
+void CFrontendHooks::doSetupAfterBackendIsSetup()
 {
 	openDialog=new FXFileDialog(mainWindow,"Open File");
 	openDialog->setSelectMode(SELECTFILE_EXISTING);
@@ -48,14 +63,6 @@ CFrontendHooks::CFrontendHooks(FXWindow *_mainWindow) :
 	saveDialog->setPatternList(getFOXFileTypes().c_str());
 	saveDialog->setCurrentPattern(0);
 	saveDialog->setDirectory(gPromptDialogDirectory.c_str());
-
-	dirDialog=new FXDirDialog(mainWindow,"Select Directory");
-}
-
-CFrontendHooks::~CFrontendHooks()
-{
-	delete openDialog;
-	delete saveDialog;
 }
 
 const string CFrontendHooks::getFOXFileTypes() const
@@ -67,6 +74,7 @@ const string CFrontendHooks::getFOXFileTypes() const
 		From all the registered translators build a string to use as the file type 
 		drop-down in the FOX file dialogs:
 		   Format Name (*.ext,*.EXT)\nFormat Name (*.ext,*.EXT)\n...
+		And built a list for "All Types" with the *.ext,*.ext,...,*.EXT,*.EXT
 	*/
 	for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
 	{
@@ -86,10 +94,25 @@ const string CFrontendHooks::getFOXFileTypes() const
 
 				if(allTypes!="")
 					allTypes+=",";
-				allTypes+="*."+extensions[i][k]+",";
-				allTypes+="*."+istring(extensions[i][k]).upper();
+				allTypes+="*."+extensions[i][k];
 			}
 			types+=")\n";
+		}
+	}
+
+	for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
+	{
+		const vector<string> names=ASoundTranslator::registeredTranslators[t]->getFormatNames();
+		const vector<vector<string> > extensions=ASoundTranslator::registeredTranslators[t]->getFormatExtensions();
+	
+		for(size_t i=0;i<names.size();i++)
+		{
+			for(size_t k=0;k<extensions[i].size();k++)
+			{
+				if(allTypes!="")
+					allTypes+=",";
+				allTypes+="*."+istring(extensions[i][k]).upper();
+			}
 		}
 	}
 	

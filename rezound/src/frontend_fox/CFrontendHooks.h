@@ -41,6 +41,8 @@ public:
 	CFrontendHooks(FXWindow *mainWindow);
 	virtual ~CFrontendHooks();
 
+	void doSetupAfterBackendIsSetup();
+
 	const string getFOXFileTypes() const; // returns a string to pass as the file types drop-down in FOX file dialogs
 
 	bool promptForOpenSoundFilename(string &filename,bool &readOnly);

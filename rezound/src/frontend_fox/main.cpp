@@ -83,6 +83,9 @@ int main(int argc,char *argv[])
 		ASoundPlayer *soundPlayer=NULL;
 		initializeBackend(soundPlayer);
 
+		// the backend needed to be setup before this stuff was done
+		static_cast<CFrontendHooks *>(gFrontendHooks)->doSetupAfterBackendIsSetup();
+
 		gSoundFileManager=new CSoundFileManager(mainWindow,soundPlayer,gSettingsRegistry);
 
 		// create all the dialogs 
