@@ -403,7 +403,7 @@ fi
 
 
 dnl ############################################################################
-dnl # $define some install paths to be hard coded into the binary              #
+dnl # #define some install paths to be hard coded into the binary              #
 dnl ############################################################################
 
 AC_DEFINE_DIR(INSTALL_PREFIX,prefix,[ This is the prefix passed to configure])
