@@ -1,16 +1,10 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- I might want to at least touch a file (and remove if closed) when a new file is created so that it will at least exist on disk if I every try to determine a default filename for the CNewSoundDialog
-		- this functionality which determines the default filename should be in the backend so I don't have to rewrite that code for a different frontend
-
 	- Add a feature to ASoundRecorder that tells it to start when a certain threshold is hit in percent
 
-	- in CrezSound::saveSound, copyToFile unnecessarily copies any temp pools and peak chunk pools...  thus making the saved file way too big
+	- in CrezSoundTranslator::onSaveSound, copyToFile unnecessarily copies any temp pools and peak chunk pools...  thus making the saved file way too big
 		- so I should manually copy the pools... TPoolAccessor should have a method for copying pool efficiently
-
-	- need to do a backup of the sat after recording because right now, all the insertSpace calls didn't do it
-		- do this AFTER backupSAT is faster
 
 	- use a registry setting for knowing where to put working files and the clipboard instead of always /tmp
 
@@ -154,4 +148,11 @@
 		- I think my motives were to be able to implement MIDISamplePlayer with most of ReZound's code, but a different front end
 			- while this may be feasible, I also need to think thru how multitrack editing may be accomplished... Perhaps it already can
 		- I just don't have a good grip that there is a reason for everything I did in the backend as far as these managers... 
+
+	- I might want to at least touch a file (and remove if closed) when a new file is created so that it will at least exist on disk if I every try to determine a default filename for the CNewSoundDialog
+		- this functionality which determines the default filename should be in the backend so I don't have to rewrite that code for a different frontend
+		- FIXED: now I just check the list of loaded filenames as well as the file system
+
+	- need to do a backup of the SAT after recording because right now, all the insertSpace calls didn't do it
+		- do this AFTER backupSAT is faster
 

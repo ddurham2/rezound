@@ -140,6 +140,9 @@ void ASoundRecorder::done()
 			// remove extra space
 			sound->removeSpace(writePos,sound->getLength()-writePos);
 
+		else // since TPoolFile::insertSpace didn't do it all along, we need to do it now (but removeSpace would do it)
+			sound->poolFile.backupSAT();
+
 		try
 		{
 			for(size_t t=0;t<addedCues.size();t++)

@@ -88,6 +88,10 @@ public:
 
 	void flushData();
 
+	// for now, since insertSpace doesn't backupSAT for speed reasons, I need 
+	// to be able to call it incase of a crash after I'm finished inserting
+	void backupSAT();
+
 	void defrag();
 
 	void closeFile(const bool defrag,const bool removeFile);
@@ -254,7 +258,6 @@ private:
 	void openSATFiles(const bool mustExist=false);
 	void closeSATFiles(const bool removeFiles=true);
 	void writeWhichSATFile();
-	void backupSAT();
 	void writeSATToFile(CMultiFile *f,const p_addr_t writeWhere);
 	void restoreSAT();
 	void buildSATFromFile(CMultiFile *f,const p_addr_t readWhere);

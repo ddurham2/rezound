@@ -343,8 +343,8 @@ protected:
 
 private:
 
-		// ??? temporary until CrezSoundTranslator saves properly
-	friend class CrezSoundTranslator;
+	friend class CrezSoundTranslator; // ??? temporary until CrezSoundTranslator saves properly
+	friend class ASoundRecorder; // so it can backupSAT() on the pool file when recording is done
 
 	void addSpaceToChannel(unsigned channel,sample_pos_t where,sample_pos_t length,bool doZeroData);
 	void removeSpaceFromChannel(unsigned channel,sample_pos_t where,sample_pos_t length);
