@@ -18,54 +18,34 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __COSSSoundPlayer_H__
-#define __COSSSoundPlayer_H__
+#ifndef __CPortAudioSoundRecorder_H__
+#define __CPortAudioSoundRecorder_H__
 
 #include "../../config/common.h"
 
-#ifndef HAVE_LIBPORTAUDIO
+#ifdef HAVE_LIBPORTAUDIO
 
-#include "ASoundPlayer.h"
+#include "ASoundRecorder.h"
 
-#include <AThread.h>
+#include <portaudio.h>
 
-class COSSSoundPlayer : public ASoundPlayer
+class CPortAudioSoundRecorder : public ASoundRecorder
 {
 public:
 
-	COSSSoundPlayer();
-	virtual ~COSSSoundPlayer();
+	CPortAudioSoundRecorder();
+	virtual ~CPortAudioSoundRecorder();
 
-	void initialize();
+	void initialize(CSound *sound);
 	void deinitialize();
-	bool isInitialized() const;
 
-	void aboutToRecord();
-	void doneRecording();
+	void redo();
+
 private:
-
+	PortAudioStream *stream;
 	bool initialized;
-	int audio_fd;
-	bool supportsFullDuplex;
 
-	class CPlayThread : public AThread
-	{
-	public:
-		CPlayThread(COSSSoundPlayer *parent);
-		virtual ~CPlayThread();
-
-		bool kill;
-
-	protected:
-		void main();
-
-		COSSSoundPlayer *parent;
-
-
-	};
-
-	CPlayThread playThread;
-	friend class CPlayThread;
+	static int PortAudioCallback(void *inputBuffer,void *outputBuffer,unsigned long framesPerBuffer,PaTimestamp outTime,void *userData);
 };
 
 #endif // HAVE_LIBPORTAUDIO

@@ -274,4 +274,9 @@
 
 	- make SAMPLE_RATE and CHANNELS registry settings
 
-	- add a quantize effect
+	- quantize would be a pretty easy effect.. it would need to have a parameter to define the number of values from 0 to 0dBFS
+		- then I could have presets for 1bit 2bit 3bit 4bit 5bit ... which would be 1 value, 2 values, ... 32678 values
+		- but I should probably pop up a notice if the bitrate they are choosing is more values than the native format which wouldn't change anything
+		- to implement, I just map the 0 to MAX value to 0 to NEW_MAX with floating point calculations and floor the integer values
+			- I think this would even work with sample_t being float
+

@@ -51,6 +51,8 @@ noinst_HEADERS= \
 	   CGraphParamValueNode.h \
 	   CLoadedSound.h \
 	   CNativeSoundClipboard.h \
+	   CPortAudioSoundPlayer.h \
+	   CPortAudioSoundRecorder.h \
 	   COSSSoundPlayer.h \
 	   COSSSoundRecorder.h \
 	   CRecordSoundClipboard.h \
@@ -94,6 +96,8 @@ libbackend_la_SOURCES= \
 			CRecordSoundClipboard.cpp \
 			CGraphParamValueNode.cpp \
 			CLoadedSound.cpp  \
+	   		CPortAudioSoundPlayer.cpp \
+	   		CPortAudioSoundRecorder.cpp \
 			COSSSoundPlayer.cpp \
 			COSSSoundRecorder.cpp \
 			CSoundPlayerChannel.cpp \

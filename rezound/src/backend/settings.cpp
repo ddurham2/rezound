@@ -38,8 +38,17 @@ string gSysPresetsFilename="";
 CNestedDataFile *gSysPresetsFile=NULL;
 
 
+unsigned gDesiredOutputSampleRate=44100;
+unsigned gDesiredOutputChannelCount=2;
+
+
+#ifdef HAVE_LIBPORTAUDIO
+int gPortAudioOutputDevice=0;
+int gPortAudioInputDevice=0;
+#else
 string gOSSOutputDevice="/dev/dsp";
 string gOSSInputDevice="/dev/dsp";
+#endif
 
 
 string gFallbackWorkDir="/tmp"; // ??? would be something else on non-unix platforms

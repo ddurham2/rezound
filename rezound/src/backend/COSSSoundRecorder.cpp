@@ -20,6 +20,8 @@
 
 #include "COSSSoundRecorder.h"
 
+#ifndef HAVE_LIBPORTAUDIO
+
 #include <errno.h>
 #include <string.h>
 
@@ -312,3 +314,4 @@ void COSSSoundRecorder::CRecordThread::main()
 	}
 }
 
+#endif // HAVE_LIBPORTAUDIO

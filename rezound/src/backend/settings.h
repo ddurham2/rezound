@@ -42,7 +42,7 @@ extern string gPromptDialogDirectory;
  * These are the paths to the /usr/share/rezound or ~/.rezound directories
  */
 extern string gUserDataDirectory;		// "~/.rezound"
-extern string gSysDataDirectory;		// "/usr/share/rezound" (or whereever the --prefix was set)
+extern string gSysDataDirectory;		// "/usr/share/rezound" (or from whereever the --prefix was set)
 
 
 extern string gUserPresetsFilename;		// gUserDataDirectory+"/presets.dat"
@@ -52,20 +52,30 @@ extern string gSysPresetsFilename;		// gSysDataDirectory+"/presets.dat"
 extern CNestedDataFile *gSysPresetsFile;	// opened to gSysPresetsFilename
 
 
+// the desired output device parameters to try to open with
+extern unsigned gDesiredOutputSampleRate;	// defaulted to 44100
+extern unsigned gDesiredOutputChannelCount;	// defaulted to 2
 
-// the OSS devices to use
-extern string gOSSOutputDevice;			// default to "/dev/dsp"
-extern string gOSSInputDevice;			// default to "/dev/dsp"
+
+#ifdef HAVE_LIBPORTAUDIO
+// the PortAudio devices to use
+extern int gPortAudioOutputDevice;		// defaulted to 0
+extern int gPortAudioInputDevice;		// defaulted to 0
+#else
+// the OSS devices to use (when not using libportaudio)
+extern string gOSSOutputDevice;			// defaulted to "/dev/dsp"
+extern string gOSSInputDevice;			// defaulted to "/dev/dsp"
+#endif 
 
 
 // This specifies the directory to fall back to if we cannot write
 // to the directory where we're loading a file from, or if it's 
 // a nearly full file system
-extern string gFallbackWorkDir;			// default to /tmp
+extern string gFallbackWorkDir;			// defaulted to /tmp
 
 
 // This specifies where to open the clipboard poolfiles
-extern string gClipboardDir;			// default to /tmp
+extern string gClipboardDir;			// defaulted to /tmp
 
 // This specifies the prefix on the filename used for the clipboard pool files
 extern string gClipboardFilenamePrefix;

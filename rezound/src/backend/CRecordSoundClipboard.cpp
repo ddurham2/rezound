@@ -27,8 +27,11 @@
 #include <istring>
 
 #include "AStatusComm.h"
-#include "COSSSoundRecorder.h"
 #include "AFrontendHooks.h"
+
+// one or the other of these two will ifdef itself in or out based on HAVE_LIBPORTAUDIO
+#include "CPortAudioSoundRecorder.h"
+#include "COSSSoundRecorder.h"
 
 typedef TPoolAccesser<sample_t,CSound::PoolFile_t > CClipboardPoolAccesser;
 
@@ -71,9 +74,11 @@ bool CRecordSoundClipboard::prepareForCopyTo()
 	clearWhichChannels();
 	delete workingFile;workingFile=NULL;
 
-	// need to somehow choose an implementation ??? perhaps we should be constructed with an ASoundRecorder class
+#ifdef HAVE_LIBPORTAUDIO
+	CPortAudioSoundRecorder recorder;
+#else
 	COSSSoundRecorder recorder;
-
+#endif
 	try
 	{
 		unsigned channelCount;

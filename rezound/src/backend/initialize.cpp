@@ -35,10 +35,10 @@
 
 
 
-//#include "CWinSoundPlayer.h"
-//static CWinSoundPlayer *soundPlayer=NULL;
+// one or the other of these two will ifdef itself in or out based on HAVE_LIBPORTAUDIO
+#include "CPortAudioSoundPlayer.h"
 #include "COSSSoundPlayer.h"
-static COSSSoundPlayer *soundPlayer=NULL;
+static ASoundPlayer *soundPlayer=NULL;
 
 
 #include "AAction.h"
@@ -165,12 +165,27 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 
 		gPromptDialogDirectory=gSettingsRegistry->getValue("promptDialogDirectory");
 
+	
+		if(gSettingsRegistry->keyExists("DesiredOutputSampleRate"))
+			gDesiredOutputSampleRate= atoi(gSettingsRegistry->getValue("DesiredOutputSampleRate").c_str());
 
+		if(gSettingsRegistry->keyExists("DesiredOutputChannelCount"))
+			gDesiredOutputChannelCount= atoi(gSettingsRegistry->getValue("DesiredOutputChannelCount").c_str());
+
+
+#ifdef HAVE_LIBPORTAUDIO
+		if(gSettingsRegistry->keyExists("PortAudioOutputDevice"))
+			gPortAudioOutputDevice= atoi(gSettingsRegistry->getValue("PortAudioOutputDevice").c_str());
+
+		if(gSettingsRegistry->keyExists("PortAudioInputDevice"))
+			gPortAudioInputDevice= atoi(gSettingsRegistry->getValue("PortAudioInputDevice").c_str());
+#else
 		if(gSettingsRegistry->keyExists("OSSOutputDevice"))
 			gOSSOutputDevice= gSettingsRegistry->getValue("OSSOutputDevice");
 
 		if(gSettingsRegistry->keyExists("OSSInputDevice"))
 			gOSSInputDevice= gSettingsRegistry->getValue("OSSInputDevice");
+#endif
 
 
 		// where ReZound should fallback to put working files if it can't write to where it loaded a file from
@@ -218,7 +233,11 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 
 
 		// -- 3
+#ifdef HAVE_LIBPORTAUDIO
+		_soundPlayer=soundPlayer=new CPortAudioSoundPlayer();
+#else
 		_soundPlayer=soundPlayer=new COSSSoundPlayer();
+#endif
 
 
 		// -- 4
@@ -266,8 +285,18 @@ void deinitializeBackend()
 	gSettingsRegistry->createKey("shareDirectory",gSysDataDirectory);
 	gSettingsRegistry->createKey("promptDialogDirectory",gPromptDialogDirectory);
 
+
+	gSettingsRegistry->createKey("DesiredOutputSampleRate",gDesiredOutputSampleRate);
+	gSettingsRegistry->createKey("DesiredOutputChannelCount",gDesiredOutputChannelCount);
+
+
+#ifdef HAVE_LIBPORTAUDIO
+	gSettingsRegistry->createKey("PortAudioOutputDevice",gPortAudioOutputDevice);
+	gSettingsRegistry->createKey("PortAudioInputDevice",gPortAudioInputDevice);
+#else
 	gSettingsRegistry->createKey("OSSOutputDevice",gOSSOutputDevice);
 	gSettingsRegistry->createKey("OSSInputDevice",gOSSInputDevice);
+#endif
 
 	gSettingsRegistry->createKey("fallbackWorkDir",gFallbackWorkDir);
 

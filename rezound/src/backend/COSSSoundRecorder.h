@@ -23,6 +23,7 @@
 
 #include "../../config/common.h"
 
+#ifndef HAVE_LIBPORTAUDIO
 
 #include "ASoundRecorder.h"
 
@@ -64,5 +65,6 @@ private:
 	friend class CRecordThread;
 };
 
+#endif // HAVE_LIBPORTAUDIO
 
 #endif

@@ -18,23 +18,23 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __COSSSoundPlayer_H__
-#define __COSSSoundPlayer_H__
+#ifndef __CPortAudioSoundPlayer_H__
+#define __CPortAudioSoundPlayer_H__
 
 #include "../../config/common.h"
 
-#ifndef HAVE_LIBPORTAUDIO
+#ifdef HAVE_LIBPORTAUDIO
 
 #include "ASoundPlayer.h"
 
-#include <AThread.h>
+#include <portaudio.h>
 
-class COSSSoundPlayer : public ASoundPlayer
+class CPortAudioSoundPlayer : public ASoundPlayer
 {
 public:
 
-	COSSSoundPlayer();
-	virtual ~COSSSoundPlayer();
+	CPortAudioSoundPlayer();
+	virtual ~CPortAudioSoundPlayer();
 
 	void initialize();
 	void deinitialize();
@@ -42,30 +42,14 @@ public:
 
 	void aboutToRecord();
 	void doneRecording();
-private:
 
+private:
 	bool initialized;
-	int audio_fd;
+	PortAudioStream *stream;
 	bool supportsFullDuplex;
 
-	class CPlayThread : public AThread
-	{
-	public:
-		CPlayThread(COSSSoundPlayer *parent);
-		virtual ~CPlayThread();
+	static int PortAudioCallback(void *inputBuffer,void *outputBuffer,unsigned long framesPerBuffer,PaTimestamp outTime,void *userData);
 
-		bool kill;
-
-	protected:
-		void main();
-
-		COSSSoundPlayer *parent;
-
-
-	};
-
-	CPlayThread playThread;
-	friend class CPlayThread;
 };
 
 #endif // HAVE_LIBPORTAUDIO

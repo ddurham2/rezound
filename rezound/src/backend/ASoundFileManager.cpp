@@ -293,7 +293,9 @@ void ASoundFileManager::revert()
 	}
 }
 
-#include <COSSSoundRecorder.h> // ??? when porting we need to somehow choose which implementation to instantiate and use
+// one or the other of these two will ifdef itself in or out based on HAVE_LIBPORTAUDIO
+#include "CPortAudioSoundRecorder.h"
+#include "COSSSoundRecorder.h"
 
 void ASoundFileManager::recordToNew()
 {
@@ -305,8 +307,11 @@ void ASoundFileManager::recordToNew()
 	try
 	{
 
-		// need to somehow choose an implementation ???
+#ifdef HAVE_LIBPORTAUDIO
+		CPortAudioSoundRecorder recorder;
+#else
 		COSSSoundRecorder recorder;
+#endif
 		try
 		{
 			recorder.initialize(loaded->getSound());
