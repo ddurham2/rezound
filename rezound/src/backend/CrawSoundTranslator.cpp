@@ -75,7 +75,7 @@ void CrawSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 
 bool CrawSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 {
-	throw(runtime_error(string(__func__)+" -- unimplemented"));
+	throw(runtime_error(string(__func__)+" -- unimplemented -- I need to create a frontend to allow the user to choose the export parameters"));
 }
 
 
