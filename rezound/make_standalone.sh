@@ -1,7 +1,7 @@
 
 if [ -z $1 ]
 then
-	echo usage: $0 release_name
+	echo usage: $0 release_name "(as in 0.2.1alpha)"
 	exit 1
 fi
 
