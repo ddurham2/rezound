@@ -77,9 +77,9 @@ public:
 			throw(runtime_error(string(__func__)+" -- error unlocking mutex -- "+strerror(ret)));
 	}
 
-	bool isLocked() const
+	int isLocked() const
 	{
-		return(locked>0);
+		return(locked);
 	}
 
 private:
