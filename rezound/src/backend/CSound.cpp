@@ -22,6 +22,7 @@
 #include "AStatusComm.h"
 
 #include <math.h>
+#include <stdio.h> // ??? just for console info printfs
 
 #include <stdexcept>
 
@@ -83,7 +84,7 @@ CSound::CSound() :
 
 	metaInfoPoolID(0),
 
-	tempAudioPoolKeyCounter(0),
+	tempAudioPoolKeyCounter(1),
 
 	_isModified(true),
 
@@ -102,7 +103,7 @@ CSound::CSound(const string &_filename,const unsigned _sampleRate,const unsigned
 
 	metaInfoPoolID(0),
 
-	tempAudioPoolKeyCounter(0),
+	tempAudioPoolKeyCounter(1),
 
 	_isModified(true),
 
@@ -1053,7 +1054,6 @@ void CSound::silenceSound(unsigned channel,sample_pos_t where,sample_pos_t lengt
 }
 
 #include "DSP/TSoundStretcher.h"
-#include <stdio.h> // ??? just for test printfs
 
 void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser src,sample_pos_t srcWhere,unsigned srcSampleRate,sample_pos_t length,MixMethods mixMethod,SourceFitTypes fitSrc,bool doInvalidatePeakData,bool showProgressBar)
 {
