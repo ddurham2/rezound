@@ -91,15 +91,20 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 			if(prepareForUndo)
 			{
 			*/
-				AAction::CanUndoResults result=action->canUndo();
-				if(ret && result==AAction::curYes)
-					loadedSound->actions.push(action);
-				else 
-				{
-					if(result==AAction::curNo)
-						Warning("not handling non-undoable actions currently.... should I clear the actions stack?");
-
+				const AAction::CanUndoResults result=action->canUndo();
+				if(result==AAction::curNA)
 					delete action;
+				else
+				{
+					if(ret && result==AAction::curYes)
+						loadedSound->actions.push(action);
+					else 
+					{
+						if(result==AAction::curNo)
+							Warning("not handling non-undoable actions currently.... should I clear the actions stack?");
+
+						delete action;
+					}
 				}
 			/*
 			}
