@@ -1,8 +1,8 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- images.h is causing a problem because 'make dist' deletes images.h but images.cpp goes with it and when someone does make, images.cpp isn't too old so images.h isn't recreated
-		- I think this got fixed now
+	- need a logo icon
+		- make a large medium and small scaled version so that It can be used on the website, in the about dialog, and as the tiny icons in the decor
 
 	- perhaps a 'view' pull-down ... possible menu items...
 		- zoom controls.. increase/decrease zoom both vert and horz
@@ -34,6 +34,7 @@
 	- make sure that nothing is being allocated and left around when a file is unable to be loaded at startup...
 		- I guess that should go for any load of a sound... that upon having an error (unsupported format perhaps) that nothing be left around...
 		- Also if there's  an error creating perhaps the CSoundPlayerChannel that the ASound is deleted and all temp data is cleaned up
+		- use valgrind for this
 
 	- some of the stuff with repaints after action dialogs show isn't pretty, but its at least functional
 		- I tried, but one place to fix some of the problems is to handle all repaint events after an FXModalDialog hide's in its hide() method
@@ -47,10 +48,6 @@
 	- make some checkbox on the mainWindow that disable undo functionality incase they know they don't want it or don't want to incurr the overhead of undo resources
 		- the backend already supports this (although it hasn't been tested yet since there's been no frontend means)
 		- when an action is done after undo is disabled, I must clear all previous undo history
-
-	- supply icons for all the windows
-		- just new FXIcon(...) instead of passing NULL
-		- Will is supposedly doing this
 
 	- decide on exactly what keys to finally bind to by default for play controls
 		- all bindings should (at some point in development) be configurable
@@ -226,4 +223,7 @@
 		- on jack's machine it complained that the registry.dat was not found.. it shouldn't have complained, but should have just touched the file before opening
 		- on jack's machine it complained that presets.dat was not found.. it should be detecting it in the build directory tho
 		- on jack's machine using CommonC++ 2.0 wouldn't compile (2.x is quite different and can coexist with a 1.x install sort of like libpng2 and 3 can)
+
+	- images.h is causing a problem because 'make dist' deletes images.h but images.cpp goes with it and when someone does make, images.cpp isn't too old so images.h isn't recreated
+		- I think this got fixed now
 
