@@ -103,12 +103,11 @@ FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _unin
 	updateNumbers();
 }
 
-void FXConstantParamValue::setUnits(const FXString _units,const FXString helpText)
+void FXConstantParamValue::setUnits(const FXString _units)
 {
 	units=_units;
 
 	unitsLabel->setText(units);
-	unitsLabel->setTipText(helpText);
 	updateNumbers();
 }
 
@@ -228,6 +227,39 @@ void FXConstantParamValue::setHelpText(const FXString &text)
 FXString FXConstantParamValue::getHelpText() const
 {
 	return(titleLabel->getHelpText());	
+}
+
+/* ??? I might want to move this into a common place so that other action parameter widgets can use them */
+// recursively call enable for all descendants of a given window
+static void enableAllChildren(FXWindow *w)
+{
+	for(int t=0;t<w->numChildren();t++)
+	{
+		w->childAtIndex(t)->enable();
+		enableAllChildren(w->childAtIndex(t));
+	}
+}
+
+// recursively call disable for all descendants of a given window
+static void disableAllChildren(FXWindow *w)
+{
+	for(int t=0;t<w->numChildren();t++)
+	{
+		w->childAtIndex(t)->disable();
+		disableAllChildren(w->childAtIndex(t));
+	}
+}
+
+void FXConstantParamValue::enable()
+{
+	FXVerticalFrame::enable();
+	enableAllChildren(this);
+}
+
+void FXConstantParamValue::disable()
+{
+	FXVerticalFrame::disable();
+	disableAllChildren(this);
 }
 
 void FXConstantParamValue::readFromFile(const string &prefix,CNestedDataFile *f)

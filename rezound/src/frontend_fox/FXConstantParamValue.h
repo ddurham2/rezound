@@ -54,7 +54,7 @@ public:
 	// call if the tick labels, slider position, or edit box value need to be reevaluated
 	void updateNumbers();
 
-	void setUnits(const FXString units,const FXString helpText="");
+	void setUnits(const FXString units);
 
 	const double getValue() const;
 	void setValue(const double value);
@@ -69,6 +69,9 @@ public:
 
 	void setHelpText(const FXString &text);
 	FXString getHelpText() const;
+
+	void enable();
+	void disable();
 
 	void readFromFile(const string &prefix,CNestedDataFile *f);
 	void writeToFile(const string &prefix,CNestedDataFile *f) const;
