@@ -20,7 +20,7 @@
 
 #include "CTestEffect.h"
 
-#include "../DSPBlocks.h"
+#include "../DSP/Convolver.h"
 
 CTestEffect::CTestEffect(const CActionSound &actionSound) :
 	AAction(actionSound)
