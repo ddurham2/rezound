@@ -28,7 +28,7 @@ AC_ARG_ENABLE(libFLACPPtest,AC_HELP_STRING([--disable-libFLACPPtest],[Do not try
     LIBFLACPP_CFLAGS="-I$libFLACPP_includes"
   elif test "x$libFLACPP_prefix" != "x" ; then
     LIBFLACPP_CFLAGS="-I$libFLACPP_prefix/include"
-  elif test "$prefix" != "xNONE"; then
+  elif test "x$prefix" != "xNONE"; then
     LIBFLACPP_CFLAGS="-I$prefix/include"
   fi
 
