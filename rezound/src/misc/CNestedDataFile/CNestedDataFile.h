@@ -35,10 +35,10 @@ class CNestedDataFile
 public:
 	static const string delim; // the scope separator character so it can be changed easily
 	#define DOT +(CNestedDataFile::delim)+
-	// ZZZ
 
 	// create a scope from this filename
 	CNestedDataFile(const string filename="",bool saveOnEachEdit=false);
+	CNestedDataFile(const CNestedDataFile &src);
 	virtual ~CNestedDataFile();
 
 
@@ -56,7 +56,7 @@ public:
 
 
 	template<class type> const type getValue(const string &key,bool throwIfNotExists=false) const;
-	template<class type> void createValue(const string &key,const type value); // will create the parents of key as necessary
+	template<class type> void setValue(const string &key,const type value,bool throwIfExists=false); // will create the parents of key as necessary, overwrites any existing value
 	void removeKey(const string &key,bool throwOnError=false);
 
 	void clear();
@@ -65,13 +65,30 @@ public:
 	// or "foo" for a list of all keys under the scope named "foo"
 	const vector<string> getChildKeys(const string &parentKey,bool throwIfNotExists=false) const;
 
+// these methods may need to be organized/documented better ???
+// 	the filename datamember is annoying .. would be nice if I just had to always pass the filename when saving
+// 	also, then could remove the filename from the constructor, and just require them to call parseFile()
+// 	ack, but then saveOnEveryEdit can't work
+
 	// CAUTION: these collaps all arithmetic expressions to the evaluated value and throws away all comments in the original file
 	void save() const;
 	void writeFile(const string filename) const;
 
+	// creates this data struction from a string
+	void parseString(const string str,bool clearExisting=true);
+
+	// returns this data struction as a string
+	const string asString() const;
+
 	void parseFile(const string filename,bool clearExisting=true);
 	void setFilename(const string filename);
 	const string getFilename() const { return filename; }
+
+	// write our files to the given CNestedDataFile under the given key
+	void writeToFile(CNestedDataFile *f,const string key) const;
+
+	// read our values from the given CNestedDataFile that are under the given key (but the scope names within 'key' will not be included in this object's struction)
+	void readFromFile(const CNestedDataFile *f,const string key,bool clearExisting=true);
 
 private:
 
@@ -84,6 +101,11 @@ private:
 		virtual ~CVariant();
 
 		const CVariant &operator=(const CVariant &src);
+
+		void writeToFile(CNestedDataFile *f,const string key) const;
+		void readFromFile(const CNestedDataFile *f,const string key);
+
+		void asString(string &acc,int indent,const string &name) const;
 
 		KeyTypes type;			// depending on this we use one of the following data-members
 		//union {   would, but can't have constructor-ed classes in a union
@@ -109,9 +131,6 @@ private:
 	// this could be a method of CVariant
 	void prvCreateKey(const string &key,int offset,const CVariant &value,CVariant *variant);
 
-	// this could be a method of CVariant
-	void prvWriteData(void *f,int indent,const string &name,const CVariant *variant) const;
-
 	void verifyKey(const string &key);
 
 	// used in cfg_parse/cfg_init
@@ -122,6 +141,7 @@ private:
 
 	static CMutex cfg_parse_mutex;
 
+	static const string stripLeadingDOTs(const string &key);
 
 	friend void checkForDupMember(int line,const char *key);
 	friend int cfg_parse();
@@ -134,8 +154,9 @@ private:
 
 #include "anytype.h"
 #include <istring>
-template<class type> const type CNestedDataFile::getValue(const string &key,bool throwIfNotExists) const
+template<class type> const type CNestedDataFile::getValue(const string &_key,bool throwIfNotExists) const
 {
+	const string key=stripLeadingDOTs(_key);
 	CVariant *value;
 	if(!findVariantNode(value,key,0,true,root))
 	{
@@ -162,8 +183,12 @@ template<class type> const type CNestedDataFile::getValue(const string &key,bool
 	}
 }
 
-template<class type> void CNestedDataFile::createValue(const string &key,const type value)
+template<class type> void CNestedDataFile::setValue(const string &_key,const type value,bool throwIfExists)
 {
+	if(throwIfExists && keyExists(_key))
+		throw runtime_error(string(__func__)+" -- key already exists: "+_key);
+
+	const string key=stripLeadingDOTs(_key);
 	CVariant newVariant(anytype_to_string(value));
 	prvCreateKey(key,0,newVariant,root);
 

@@ -18,6 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
+#warning parseFile doesnt need to set the filename, only the constructor and setFilename should do that
 #warning see about retaining the order that things were parsed in the file
 	// if I did this, I could remove the 'names' array in presets.dat because I could call getChildKeys to know the preset's names and they would remain in the order they were parsed
 	
@@ -41,6 +42,7 @@
 #include <algorithm>
 
 #include <istring>
+#include <CPath.h>
 
 
 extern int cfg_parse();
@@ -52,8 +54,43 @@ string CNestedDataFile::s2at_string;
 
 CMutex CNestedDataFile::cfg_parse_mutex;
 
+static const string escapeIdent(const string &_name)
+{
+	string name=_name; // make copy to be able to escape certain chars
+
+	// escape non-alnum to '\'non-alnum (and also don't make '_' into '\_')
+	// and escape the first char if it's a digit
+	for(size_t t=0;t<name.length();t++)
+	{
+		const char c=name[t];
+		if( 	
+			// corrisponding with the RE for IDENT in cfg.l, escape non-[_0-9A-Za-z]
+			(!(c=='_' || (c>='a' && c<='z') || (c>='A' && c<='Z') || isdigit(c)))
+			||
+			// OR escape first char if it's a 0-9 (so it won't match the LIT_NUMBER ruler in the lexer)
+			(t==0 && isdigit(c))
+		)
+		{
+			name.insert(t,"\\");
+			t++;
+		}
+	}
+	return name;
+}
+
 
 const string CNestedDataFile::delim="|"; // !!!NOTE!!! Change the qualified_ident rule in cfg.y also!!!
+
+const string CNestedDataFile::stripLeadingDOTs(const string &key)
+{
+	// look until we don't see a DOT
+	size_t t=0;
+	while(t<key.length() && key[t]==delim[0])
+		t++;
+
+	// return everything past where we found leading DOTs
+	return key.substr(t);
+}
 
 CNestedDataFile::CNestedDataFile(const string _filename,bool _saveOnEachEdit) :
 	root(NULL),
@@ -62,6 +99,13 @@ CNestedDataFile::CNestedDataFile(const string _filename,bool _saveOnEachEdit) :
 	clear();
 	if(_filename!="")
 		parseFile(_filename);
+}
+
+CNestedDataFile::CNestedDataFile(const CNestedDataFile &src) :
+	filename(src.filename),
+	root(new CVariant(*(src.root))),
+	saveOnEachEdit(src.saveOnEachEdit)
+{
 }
 
 CNestedDataFile::~CNestedDataFile()
@@ -75,7 +119,7 @@ void CNestedDataFile::clear()
 	root=new CVariant(ktScope);
 }
 
-void CNestedDataFile::parseFile(const string _filename,bool clearExisting)
+void CNestedDataFile::parseString(const string str,bool clearExisting)
 {
 	if(clearExisting)
 		clear();
@@ -84,13 +128,54 @@ void CNestedDataFile::parseFile(const string _filename,bool clearExisting)
 	{
 		CMutexLocker l(cfg_parse_mutex); // because bison/flex aren't thread-safe
 
-		initialFilename=_filename;
-		s2at_string="";		 // make sure the yacc parser not in s2at mode
-		filename=_filename;
+		initialFilename="";	// make sure the lexer is not in read-file mode
+		s2at_string=str;
 		parseTree=this;
 
 		if(cfg_parse())
-			throw runtime_error(string(__func__)+" -- error while parsing "+_filename);
+			throw runtime_error(string(__func__)+" -- error while parsing string");
+	}
+	catch(...)
+	{
+		if(clearExisting)
+			clear();
+
+		throw;
+	}
+}
+
+const string CNestedDataFile::asString() const
+{
+	string acc;
+	root->asString(acc,-1,"");
+	return acc;
+}
+
+void CNestedDataFile::parseFile(const string _filename,bool clearExisting)
+{
+	if(clearExisting)
+		clear();
+
+	try
+	{
+		CMutexLocker l(cfg_parse_mutex); // because bison/flex aren't thread-safe
+		filename=_filename;
+
+		if(CPath(filename).exists())
+		{
+
+			initialFilename=_filename;
+			s2at_string="";		 // make sure the lexer is not in s2at mode
+			parseTree=this;
+
+			if(cfg_parse())
+				throw runtime_error(string(__func__)+" -- error while parsing "+_filename);
+		}
+		else
+		{
+			// create an empty file
+			CPath(filename).touch();
+		}
 	}
 	catch(...)
 	{
@@ -110,8 +195,9 @@ void CNestedDataFile::setFilename(const string _filename)
 //template<class type> const type CNestedDataFile::getValue(const string &key,bool throwIfNotExists) const
 //	in .h file
 
-CNestedDataFile::KeyTypes CNestedDataFile::keyExists(const string &key) const
+CNestedDataFile::KeyTypes CNestedDataFile::keyExists(const string &_key) const
 {
+	const string key=stripLeadingDOTs(_key);
 	CVariant *value;
 	if(findVariantNode(value,key,0,false,root))
 		return value->type;
@@ -119,8 +205,9 @@ CNestedDataFile::KeyTypes CNestedDataFile::keyExists(const string &key) const
 		return ktNotExists;
 }
 
-const vector<string> CNestedDataFile::getChildKeys(const string &parentKey,bool throwIfNotExists) const
+const vector<string> CNestedDataFile::getChildKeys(const string &_parentKey,bool throwIfNotExists) const
 {
+	const string parentKey=stripLeadingDOTs(_parentKey);
 	vector<string> childKeys;
 	CVariant *scope;
 
@@ -142,7 +229,6 @@ const vector<string> CNestedDataFile::getChildKeys(const string &parentKey,bool 
 				throw runtime_error(string(__func__)+" -- parent key '"+parentKey+"' resolved to a value from "+filename);
 			else
 				return childKeys;
-
 		}
 	}
 
@@ -219,8 +305,9 @@ void CNestedDataFile::prvCreateKey(const string &key,int offset,const CVariant &
 	}
 }
 
-void CNestedDataFile::removeKey(const string &key,bool throwOnError)
+void CNestedDataFile::removeKey(const string &_key,bool throwOnError)
 {
+	const string key=stripLeadingDOTs(_key);
 	CVariant *parent=NULL;;
 
 	string parentKey;
@@ -262,6 +349,9 @@ void CNestedDataFile::writeFile(const string filename) const
 	if(filename=="")
 		return;
 
+	string acc;
+	root->asString(acc,-1,"");
+
 	CMutexLocker l(cfg_parse_mutex);  // just to keep two threads from writing the file at the same time
 
 	FILE *f=fopen(filename.c_str(),"wt");
@@ -270,16 +360,13 @@ void CNestedDataFile::writeFile(const string filename) const
 
 	fprintf(f,"// ReZound program generated data; be careful if modifying.  Modify ONLY when ReZound is NOT running.  Consider making a backup before modifying!\n\n");
 
-	try
-	{
-		prvWriteData(f,-1,"",root);
-		fclose(f);
-	}
-	catch(...)
+	size_t ret;
+	if((ret=fwrite(acc.data(),1,acc.length(),f))!=acc.length())
 	{
 		fclose(f);
-		throw;
+		throw runtime_error(string(__func__)+" -- fwrite did not write everything: "+istring(ret)+"!="+istring(acc.length()));
 	}
+	fclose(f);
 }
 
 /* translate \ to \\ and " to \" in the given filename */
@@ -295,85 +382,6 @@ static const string fixEscapes(const string _s)
 		}
 	}
 	return s;
-}
-
-void CNestedDataFile::prvWriteData(void *_f,int indent,const string &_name,const CVariant *variant) const
-{
-	FILE *f=(FILE *)_f; // to avoid including stdio.h in the .h file
-
-	for(int t=0;t<indent;t++)
-		fprintf(f,"\t");
-
-	string name=_name; // make copy to be able to escape certain chars
-
-	// escape non-alnum to '\'non-alnum (and also don't make '_' into '\_')
-	// and escape the first char if it's a digit
-	for(size_t t=0;t<name.length();t++)
-	{
-		const char c=name[t];
-		if( 	
-			// corrisponding with the RE for IDENT in cfg.l, escape non-[_0-9A-Za-z]
-			(!(c=='_' || (c>='a' && c<='z') || (c>='A' && c<='Z') || isdigit(c)))
-			||
-			// OR escape first char if it's a 0-9 (so it won't match the LIT_NUMBER ruler in the lexer)
-			(t==0 && isdigit(c))
-		)
-		{
-			name.insert(t,"\\");
-			t++;
-		}
-	}
-
-	switch(variant->type)
-	{
-	case ktValue:
-		fprintf(f,"%s=%s;\n",name.c_str(),variant->stringValue.c_str());
-		break;
-
-	case ktScope:
-	{
-		if(indent>=0) // not root scope
-		{
-			fprintf(f,"%s\n",name.c_str());
-
-			for(int t=0;t<indent;t++)
-				fprintf(f,"\t");
-			fprintf(f,"{\n");
-		}
-
-		// write non scopes first (just to look nicer)
-		bool more=false;
-		for(map<string,CVariant>::const_iterator i=variant->members.begin();i!=variant->members.end();i++)
-		{
-			if(i->second.type!=ktScope)
-				prvWriteData(f,indent+1,i->first,&i->second);
-			else
-				more=true;
-		}
-		if(more) // there will be scopes written
-			fprintf(f,"\n");
-
-		// write scopes after non-scopes
-		for(map<string,CVariant>::const_iterator i=variant->members.begin();i!=variant->members.end();i++)
-		{
-			if(i->second.type==ktScope)
-				prvWriteData(f,indent+1,i->first,&i->second);
-		}
-
-		if(indent>=0) // not root scope
-		{
-			for(int t=0;t<indent;t++)
-				fprintf(f,"\t");
-			fprintf(f,"}\n");
-			if(indent==0)
-				fprintf(f,"\n");
-		}
-		break;
-	}
-
-	default:
-		throw runtime_error(string(__func__)+" -- internal error: unhandled type: "+istring(variant->type)+" from "+filename);
-	}
 }
 
 /*
@@ -396,6 +404,17 @@ void CNestedDataFile::verifyKey(const string &key)
 	}
 }
 
+void CNestedDataFile::writeToFile(CNestedDataFile *f,const string key) const
+{
+	root->writeToFile(f,key);
+}
+
+void CNestedDataFile::readFromFile(const CNestedDataFile *f,const string key,bool clearExisting)
+{
+	if(clearExisting)
+		clear();
+	root->readFromFile(f,key);
+}
 
 
 
@@ -418,6 +437,10 @@ CNestedDataFile::CVariant::CVariant(const CVariant &src) :
 	operator=(src);
 }
 
+CNestedDataFile::CVariant::~CVariant()
+{
+}
+
 const CNestedDataFile::CVariant &CNestedDataFile::CVariant::operator=(const CVariant &rhs)
 {
 	if(this!=&rhs)
@@ -433,7 +456,96 @@ const CNestedDataFile::CVariant &CNestedDataFile::CVariant::operator=(const CVar
 	return *this;
 }
 
-CNestedDataFile::CVariant::~CVariant()
+void CNestedDataFile::CVariant::writeToFile(CNestedDataFile *f,const string key) const
 {
+	// make sure the scope exists (create a value in it)
+	f->setValue<int>(key DOT "__bogus__",0);
+
+	// find the scope (that already existed or we just created)
+	CVariant *v;
+	if(!f->findVariantNode(v,key,0,false,f->root))
+		throw runtime_error(string(__func__)+" -- internal error");
+
+	// merge our contents into theirs
+	v->type=type;
+	v->stringValue=stringValue;
+	for(map<string,CVariant>::const_iterator i=members.begin(); i!=members.end(); i++)
+		v->members[i->first]=i->second;
+	
+	// remove the value we created to make sure key existed
+	f->removeKey(key DOT "__bogus__");
+}
+
+void CNestedDataFile::CVariant::readFromFile(const CNestedDataFile *f,const string key)
+{
+	// find the scope within f
+	CVariant *v;
+	if(!f->findVariantNode(v,key,0,false,f->root))
+		return;
+
+	// merge their contents with ours
+	type=v->type;
+	stringValue=v->stringValue;
+	for(map<string,CVariant>::const_iterator i=v->members.begin(); i!=v->members.end(); i++)
+		members[i->first]=i->second;
+}
+
+void CNestedDataFile::CVariant::asString(string &acc,int indent,const string &_name) const
+{
+	for(int t=0;t<indent;t++)
+		acc+='\t';
+
+	string name=escapeIdent(_name);
+
+	switch(type)
+	{
+	case ktValue:
+		acc+=name+"="+stringValue+";\n";
+		break;
+
+	case ktScope:
+	{
+		if(indent>=0) // not root scope
+		{
+			acc+=name+"\n";
+
+			for(int t=0;t<indent;t++)
+				acc+='\t';
+			acc+="{\n";
+		}
+
+		// write non scopes first (just to look nicer)
+		bool more=false;
+		for(map<string,CVariant>::const_iterator i=members.begin();i!=members.end();i++)
+		{
+			if(i->second.type!=ktScope)
+				i->second.asString(acc,indent+1,i->first);
+			else
+				more=true;
+		}
+		if(more) // there will be scopes written
+			acc+='\n';
+
+		// write scopes after non-scopes
+		for(map<string,CVariant>::const_iterator i=members.begin();i!=members.end();i++)
+		{
+			if(i->second.type==ktScope)
+				i->second.asString(acc,indent+1,i->first);
+		}
+
+		if(indent>=0) // not root scope
+		{
+			for(int t=0;t<indent;t++)
+				acc+='\t';
+			acc+="}\n";
+			if(indent==0)
+				acc+='\n';
+		}
+		break;
+	}
+
+	default:
+		throw runtime_error(string(__func__)+" -- internal error: unhandled type: "+istring(type));
+	}
 }
 

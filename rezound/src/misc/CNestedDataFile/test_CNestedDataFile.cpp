@@ -33,7 +33,7 @@ int main()
 
 		// should cause a somewhat informative error message
 		//s.getValue<foo>("foo");
-		//s.createValue<foo>("foo",foo());
+		//s.setValue<foo>("foo",foo());
 
 		// test reading vector<vector<string> > on top level
 		{
@@ -60,22 +60,22 @@ int main()
 
 		// test writing int to deep scopes
 		cout << "writing d.eee.f.baz_int" << endl;
-		s.createValue<int>("d"DOT"eee"DOT"f"DOT"baz_int",27);
+		s.setValue<int>("d"DOT"eee"DOT"f"DOT"baz_int",27);
 
 		// test writing float to deep scopes
 		cout << "writing d.eee.f.baz_float1" << endl;
-		s.createValue<double>("d"DOT"eee"DOT"f"DOT"baz_float1",12.12345678912345678);
+		s.setValue<double>("d"DOT"eee"DOT"f"DOT"baz_float1",12.12345678912345678);
 		cout << "writing d.eee.f.baz_float2" << endl;
-		s.createValue<double>("d"DOT"eee"DOT"f"DOT"baz_float2",10000000.12345);
+		s.setValue<double>("d"DOT"eee"DOT"f"DOT"baz_float2",10000000.12345);
 
 		// test writing string to deep scopes
 		cout << "writing d.eee.f.baz_string" << endl;
-		s.createValue<string>("d"DOT"eee"DOT"f"DOT"baz_string","\"qwer\"asdf\\zxcv\"");
+		s.setValue<string>("d"DOT"eee"DOT"f"DOT"baz_string","\"qwer\"asdf\\zxcv\"");
 
 		// test writing bool to deep scopes
 		cout << "writing d.eee.f.baz_bool" << endl;
-		s.createValue<bool>("d"DOT"eee"DOT"f"DOT"baz_bool1",true);
-		s.createValue<bool>("d"DOT"eee"DOT"f"DOT"baz_bool2",false);
+		s.setValue<bool>("d"DOT"eee"DOT"f"DOT"baz_bool1",true);
+		s.setValue<bool>("d"DOT"eee"DOT"f"DOT"baz_bool2",false);
 
 		// test writing vector<vector<string> > to deep scopes
 		cout << "writing d.eee.f.baz_vector" << endl;
@@ -94,7 +94,7 @@ int main()
 			v.push_back(v1);
 			v.push_back(v2);
 
-			s.createValue<vector<vector<string> > >("d"DOT"eee"DOT"f"DOT"baz_vector",v);
+			s.setValue<vector<vector<string> > >("d"DOT"eee"DOT"f"DOT"baz_vector",v);
 		}
 
 

@@ -58,6 +58,7 @@ namespace s2at // s2at signifies string_to_anytype/anytype_to_string
  */
 
 // or we could leave these unimplemented to get a linker error instead (that's what I have to do with gcc>=3.4
+// 	/* the reason I haven't made string_to_anytype return a reference is because currently, it's probably not a big deal for most types.. and with string, we'd be making a copy into the ret parameter if I implemented it that way anyway.. perhaps I could remove the return type all together and always use the ret parameter to get back the data */
 template<typename Type> static const Type string_to_anytype(const string &str,Type &ret)       ;// { no_specialization_of_this_template_with_the_given_type; }
 template<typename Type> static const string anytype_to_string(const Type &any)                 ;// { no_specialization_of_this_template_with_the_given_type; }
 
@@ -90,6 +91,8 @@ template<> static const double string_to_anytype<double>(const string &str,doubl
 template<> static const long double string_to_anytype<long double>(const string &str,long double &ret)               { istringstream ss(s2at::remove_surrounding_quotes(str)); ret=0; ss >> ret; return ret; }
 
 // I really wished that I didn't have to explicitly use 'vector' in the definition; I'd have like to use any container with an iterator interface
+#include <CMutex.h>
+#include <CNestedDataFile/CNestedDataFile.h>
 template<class Type> static const vector<Type> &string_to_anytype(const string &str,vector<Type> &ret)
 {
 	// This function has to parse '{' ..., ... '}' where the ... can contain nested array
@@ -99,7 +102,7 @@ template<class Type> static const vector<Type> &string_to_anytype(const string &
 	CMutexLocker l(CNestedDataFile::cfg_parse_mutex);
 	ret.clear();
 	
-	CNestedDataFile::s2at_string="~"+str;           // the parse knows '~' sets off an s2at_array_body
+	CNestedDataFile::s2at_string="~"+str;           // the parser knows '~' sets off an s2at_array_body
 	CNestedDataFile::s2at_return_value.clear();
 	if(!cfg_parse())
 	{       // successful
