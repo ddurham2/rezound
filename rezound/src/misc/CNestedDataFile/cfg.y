@@ -108,6 +108,8 @@ union cfg_parse_union
 %token			FALSE
 %token			INCLUDE
 
+%token			GETTEXT
+
 %token			NE
 %token			EQ
 %token			GE
@@ -281,6 +283,12 @@ primary_expr
 	{
 		$$=new CNestedDataFile::CVariant(anytype_to_string<string>($1));
 		free($1);
+	}
+	| GETTEXT '(' LIT_STRING ')' 
+	{
+		/* having gettext(...) around a string simply causes an entry to be created in the rezound.pot file */
+		$$=new CNestedDataFile::CVariant(anytype_to_string<string>($3));
+		free($3);
 	}
 	| TRUE
 	{

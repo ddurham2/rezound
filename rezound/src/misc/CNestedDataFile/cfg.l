@@ -87,6 +87,10 @@ string currentFilename;
 			return TRUE;
 		else if(strcmp(yytext,"false")==0)
 			return FALSE;
+		else if(strcmp(yytext,"gettext")==0) 
+			// doesn't actually do anything, except cause an entry for a string 
+			// tagged with this keyword to be created in the rezound.pot file
+			return GETTEXT;
 		else
 		{
 			yylval.stringValue=strdup(yytext); 
