@@ -57,9 +57,12 @@ bool CvoxSoundTranslator::checkForApp()
 	if(gPathToVox=="")
 		fprintf(stderr,"'vox' executable not found in $PATH -- vox format support will be disabled\n");
 
-	gPathToDevox=findAppOnPath("devox");
-	if(gPathToDevox=="")
-		fprintf(stderr,"'devox' executable not found in $PATH -- vox format support will be disabled\n");
+	if(gPathToVox!="") // don't bother searching for devox if vox isn't found
+	{
+		gPathToDevox=findAppOnPath("devox");
+		if(gPathToDevox=="")
+			fprintf(stderr,"'devox' executable not found in $PATH -- vox format support will be disabled\n");
+	}
 
 	return gPathToVox!="" && gPathToDevox!="";
 }
