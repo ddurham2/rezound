@@ -264,6 +264,10 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 	
 		bool ret=doActionSizeSafe(_actionSound,prepareForUndo && canUndo()==curYes);
 
+		// restore the original value for isModified unless we didn't prepare for undo
+		if(!ret)
+			actionSound.sound->setIsModified(origIsModified || !prepareForUndo);
+
 		// make sure that the start and stop positions are in range after the action
 		if(_actionSound.start<0)
 			_actionSound.start=0;
