@@ -122,7 +122,7 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 	const sample_pos_t fileSize=CPath(filename).getSize(false)/(channelCount*sizeof(sample_t));
 	if(fileSize<(size/25)) // ??? possibly 1/25th compression... really just trying to check for a sane value
 	{
-		Warning("libaudiofile reports that "+filename+" contains "+istring(size)+" samples yet the file is most likely not large enough to contain that many samples.\nLoading what can be loaded.");
+		Warning("libaudiofile reports that "+filename+" contains "+istring(size)+" sample frames yet the file is most likely not large enough to contain that many samples.\nLoading what can be loaded.");
 		//size=fileSize; not doing this because I once ran across a situation where you could read more from the file that stat said it was... even ls showed it smaller than I could actually read
 		//		??? however ^^^ on the other hand, I don't want the length to be 8 gigs worth of space...   Perhaps I should always ignore the given size, and add space in large units until I run out of file... I should apply cues last then
 		//throw runtime_error(string(__func__)+" -- libaudiofile is not seeing this as a corrupt file -- it thinks the data length is "+istring(size)+" yet when the file is only "+istring(fileSize)+" bytes");
@@ -232,18 +232,25 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 			const int chunkSize=  (t==count-1 ) ? size%4096 : 4096;
 			if(chunkSize!=0)
 			{
-				if(afReadFrames(h,AF_DEFAULT_TRACK,(void *)buffer,chunkSize)!=chunkSize)
+				const int read=afReadFrames(h,AF_DEFAULT_TRACK,(void *)buffer,chunkSize);
+				if(read>0)
 				{
-					Error("error reading audio data from "+filename+" -- "+errorMessage+" -- keeping what was read");
-					break;
+					for(unsigned c=0;c<channelCount;c++)
+					{
+						for(int i=0;i<read;i++)
+							(*(accessers[c]))[pos+i]=buffer[i*channelCount+c];
+					}
+					pos+=read;
 				}
 
-				for(unsigned c=0;c<channelCount;c++)
+				if(read!=chunkSize)
 				{
-					for(int i=0;i<chunkSize;i++)
-						(*(accessers[c]))[pos+i]=buffer[i*channelCount+c];
+					Error("Error reading audio data from "+filename+" -- "+errorMessage+" -- keeping what was read");
+					// remove unnecessary silence
+					if(sound->getLength()>pos)
+						sound->removeSpace(pos,sound->getLength()-pos);
+					break;
 				}
-				pos+=chunkSize;
 			}
 
 			if(statusBar.update(pos))
