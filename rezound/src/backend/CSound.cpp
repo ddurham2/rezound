@@ -2282,7 +2282,12 @@ template void TPoolFile<sample_pos_t,uint64_t>::unreferenceCachedBlock<int>(TSta
 template void TPoolFile<sample_pos_t,uint64_t>::removeAccesser<int>(TStaticPoolAccesser<int, TPoolFile<sample_pos_t,uint64_t> > const *);
 template void TStaticPoolAccesser<int, TPoolFile<sample_pos_t,uint64_t> >::cacheBlock(const sample_pos_t) const;
 template void TPoolFile<sample_pos_t,uint64_t>::cacheBlock<int>(sample_pos_t, TStaticPoolAccesser<int, TPoolFile<sample_pos_t,uint64_t> > const *);
+
 template TStaticPoolAccesser<int, TPoolFile<sample_pos_t,uint64_t> > TPoolFile<sample_pos_t,uint64_t>::getPoolAccesser<int>(const string);
 template TStaticPoolAccesser<int, TPoolFile<sample_pos_t,uint64_t> > const TPoolFile<sample_pos_t,uint64_t>::getPoolAccesser<int>(const string) const;
 template TStaticPoolAccesser<int, TPoolFile<sample_pos_t,uint64_t> > TPoolFile<sample_pos_t,uint64_t>::createPool<int>(const string, const bool);
+
+template TStaticPoolAccesser<uint8_t, TPoolFile<sample_pos_t,uint64_t> > TPoolFile<sample_pos_t,uint64_t>::getPoolAccesser<uint8_t>(const string);
+template TStaticPoolAccesser<uint8_t, TPoolFile<sample_pos_t,uint64_t> > const TPoolFile<sample_pos_t,uint64_t>::getPoolAccesser<uint8_t>(const string) const;
+template TStaticPoolAccesser<uint8_t, TPoolFile<sample_pos_t,uint64_t> > TPoolFile<sample_pos_t,uint64_t>::createPool<uint8_t>(const string, const bool);
 
