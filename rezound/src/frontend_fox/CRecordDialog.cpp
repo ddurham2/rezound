@@ -64,8 +64,7 @@ CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
 	FXModalDialogBox(mainWindow,N_("Record"),350,360,FXModalDialogBox::ftVertical),
 
 	recorder(NULL),
-	showing(false),
-	timerHandle(NULL)
+	showing(false)
 
 {
 	setIcon(FOXIcons->small_record);
@@ -235,7 +234,7 @@ long CRecordDialog::onStatusUpdate(FXObject *sender,FXSelector sel,void *ptr)
 	DCOffsetLabel->setText((_("DC Offset: ")+istring(amp_to_dBFS(recorder->getDCOffset(1)))+"dBFS").c_str());
 
 	// schedule for the next status update
-	timerHandle=getApp()->addTimeout(this,CRecordDialog::ID_STATUS_UPDATE,STATUS_UPDATE_TIME);
+	getApp()->addTimeout(this,CRecordDialog::ID_STATUS_UPDATE,STATUS_UPDATE_TIME);
 	return 0;
 }
 
@@ -260,7 +259,7 @@ bool CRecordDialog::show(ASoundRecorder *_recorder)
 	try
 	{
 		showing=true;
-		timerHandle=getApp()->addTimeout(this,CRecordDialog::ID_STATUS_UPDATE,STATUS_UPDATE_TIME);
+		getApp()->addTimeout(this,CRecordDialog::ID_STATUS_UPDATE,STATUS_UPDATE_TIME);
 
 		// ??? might wanna use rememberShow or some base method
 		if(execute(PLACEMENT_CURSOR) && recorder->getRecordedLength()>0)

@@ -86,7 +86,6 @@ private:
 
 	ASoundRecorder *recorder;
 	bool showing;
-	FXTimer *timerHandle;
 
 	FXHorizontalFrame *meterFrame;
 
