@@ -91,6 +91,7 @@ ReZound_LDADD= libfrontend.la\
 
 noinst_HEADERS=\
 	fox_compat.h \
+	images.h \
 	CActionMenuCommand.h \
 	CChannelSelectDialog.h \
 	CCrossfadeEdgesDialog.h \
