@@ -75,7 +75,7 @@ string currentFilename;
 
 (([0-9]*\.[0-9]+)|([0-9]+))		{ yylval.floatValue=atof(yytext); return(LIT_NUMBER); }
 
-([\_0-9A-Za-z:]|"\\ ")+	{ 
+([_0-9A-Za-z]|(\\[\x20-\x7e]))+	{ 
 		if(strcmp(yytext,"include")==0)
 			return(INCLUDE);
 		else if(strcmp(yytext,"true")==0)
@@ -88,11 +88,10 @@ string currentFilename;
 		{
 			yylval.stringValue=strdup(yytext); 
 
-				// ??? besure to convert the other way when outputing the data file
-			// convert "\ " to " "
+			// convert remove the '\' from '\char'
 			for(size_t t=0;t<strlen(yylval.stringValue);t++)
 			{
-				if(yylval.stringValue[t]=='\\' && yylval.stringValue[t+1]==' ')
+				if(yylval.stringValue[t]=='\\')
 					memmove(yylval.stringValue+t,yylval.stringValue+t+1,strlen(yylval.stringValue+t+1)+1);
 			}
 
