@@ -50,10 +50,12 @@ int main(int argc,char *argv[])
 
 		FOXIcons=new CFOXIcons(application);
 
+#if FOX_MAJOR >= 1 // otherwise they just look funny which is okay i guess
 		// these icons have a special property that they don't need a transparent color
 		FOXIcons->logo->setTransparentColor(FXRGB(0,0,0));
 		FOXIcons->icon_logo_16->setTransparentColor(FXRGB(0,0,0));
 		FOXIcons->icon_logo_32->setTransparentColor(FXRGB(0,0,0));
+#endif
 
 		/*
 		// set application wide colors
