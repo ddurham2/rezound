@@ -51,6 +51,8 @@
 	#error unimplemented for win32 platform (yet)
 #endif
 
+#include <stdio.h> /* for popen/pclose */
+
 #include <stdexcept>
 #include <string>
 
@@ -263,6 +265,25 @@ public:
 	bool isDevice() const
 	{
 		return S_ISCHR(statBuf.st_mode) || S_ISBLK(statBuf.st_mode);
+	}
+
+	/* returns a string containing the first time the executable 'exeName' is found on $PATH */
+	static const string which(const string exeName)
+	{
+		/*??? would have to change implementation if WIN32 was ACTUALLY supported */
+		string ret;
+		FILE *p=popen(("which '"+exeName+"' 2>/dev/null").c_str(),"r");
+
+		char buffer[1024+1];
+		if(p!=NULL && fgets(buffer,1024,p))
+		{
+			if(strlen(buffer)>0) // remove trailing \n
+				buffer[strlen(buffer)-1]=0;
+			ret=buffer;
+		}
+		pclose(p);
+
+		return ret;
 	}
 
 private:
