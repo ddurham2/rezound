@@ -263,10 +263,10 @@ long CRecordDialog::onAddCueButton(FXObject *sender,FXSelector sel,void *ptr)
 	try
 	{
 		if(cueNameNumber->getValue()==-1)
-			recorder->addCueNow(cueNamePrefix->getText().text(),SELID(sel)==ID_ADD_ANCHORED_CUE_BUTTON);
+			recorder->addCueNow(cueNamePrefix->getText().text(),FXSELID(sel)==ID_ADD_ANCHORED_CUE_BUTTON);
 		else
 		{
-			recorder->addCueNow((cueNamePrefix->getText().text()+istring(cueNameNumber->getValue())).c_str(),SELID(sel)==ID_ADD_ANCHORED_CUE_BUTTON);
+			recorder->addCueNow((cueNamePrefix->getText().text()+istring(cueNameNumber->getValue())).c_str(),FXSELID(sel)==ID_ADD_ANCHORED_CUE_BUTTON);
 			cueNameNumber->increment();
 		}
 	}

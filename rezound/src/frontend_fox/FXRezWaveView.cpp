@@ -289,7 +289,7 @@ long FXWaveRuler::onPaint(FXObject *object,FXSelector sel,void *ptr)
 		e=lastX;
 
 	dc.setForeground(FXRGB(20,20,20));
-	dc.setTextFont(font);
+	dc.setFont(font);
 	for(FXint x=s;x<=e;x++)
 	{
 		if((x%LABEL_TICK_FREQ)==0)
@@ -438,7 +438,7 @@ long FXWaveRuler::onFindStopPosition(FXObject *object,FXSelector sel,void *ptr)
 
 long FXWaveRuler::onSetPositionToCue(FXObject *object,FXSelector sel,void *ptr)
 {
-	switch(SELID(sel))
+	switch(FXSELID(sel))
 	{
 	case ID_SET_START_POSITION:
 		loadedSound->channel->setStartPosition((sample_pos_t)sound->getCueTime(cueClicked));
@@ -456,7 +456,7 @@ long FXWaveRuler::onSetPositionToCue(FXObject *object,FXSelector sel,void *ptr)
 
 long FXWaveRuler::onAddCue(FXObject *object,FXSelector sel,void *ptr)
 {
-	switch(SELID(sel))
+	switch(FXSELID(sel))
 	{
 	case ID_ADD_CUE:
 		if(parent->target)
