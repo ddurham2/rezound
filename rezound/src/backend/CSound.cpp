@@ -502,7 +502,7 @@ void CSound::removeSpace(const bool whichChannels[MAX_CHANNELS],sample_pos_t whe
 
 	if(where>size)
 		throw(runtime_error(string(__func__)+" -- where parameter out of range: "+istring(where)));
-	if(where+length>size)
+	if(length>(size-where))
 		throw(runtime_error(string(__func__)+" -- length parameter out of range: "+istring(length)));
 
 	for(unsigned t=0;t<channelCount;t++)
@@ -530,7 +530,7 @@ unsigned CSound::copyDataToTemp(const bool whichChannels[MAX_CHANNELS],sample_po
 
 	if(where>size)
 		throw(runtime_error(string(__func__)+" -- where parameter out of range: "+istring(where)));
-	if(where+length>size)
+	if(length>(size-where))
 		throw(runtime_error(string(__func__)+" -- length parameter out of range: "+istring(length)));
 
 	const unsigned tempAudioPoolKey=tempAudioPoolKeyCounter++;
@@ -550,7 +550,7 @@ unsigned CSound::moveDataToTempAndReplaceSpace(const bool whichChannels[MAX_CHAN
 
 	if(where>size)
 		throw(runtime_error(string(__func__)+" -- where parameter out of range: "+istring(where)));
-	if(where+length>size)
+	if(length>(size-where))
 		throw(runtime_error(string(__func__)+" -- length parameter out of range: "+istring(length)));
 /*
 	if(replaceLength>MAX_LENGTH)
@@ -593,7 +593,7 @@ void CSound::removeSpaceAndMoveDataFromTemp(const bool whichChannels[MAX_CHANNEL
 {
 	ASSERT_RESIZE_LOCK 
 
-	if(removeLength!=0 && removeWhere+removeLength>size)
+	if(removeLength!=0 && (removeWhere>size || removeLength>(size-removeWhere)))
 		throw(runtime_error(string(__func__)+" -- removeWhere/removeLength parameter out of range: "+istring(removeWhere)+"/"+istring(removeLength)));
 	if(moveWhere>(size-removeLength))
 		throw(runtime_error(string(__func__)+" -- moveWhere parameter out of range: "+istring(moveWhere)+" for removeWhere "+istring(removeLength)));
@@ -603,7 +603,7 @@ void CSound::removeSpaceAndMoveDataFromTemp(const bool whichChannels[MAX_CHANNEL
 		if(whichChannels[t])
 		{ // remove then add the space (by moving from temp pool)
 			removeSpaceFromChannel(t,removeWhere,removeLength);
-			moveDataIntoChannel(tempAudioPoolKey,t,moveWhere,moveLength,removeTempAudioPools);
+			moveDataIntoChannel(tempAudioPoolKey,t,t,moveWhere,moveLength,removeTempAudioPools);
 		}
 	}
 
@@ -690,6 +690,37 @@ void CSound::rotateRight(const bool whichChannels[MAX_CHANNELS],const sample_pos
 }
 
 
+void CSound::swapChannels(unsigned channelA,unsigned channelB,const sample_pos_t where,const sample_pos_t length)
+{
+	ASSERT_RESIZE_LOCK 
+
+	if(channelA>=getChannelCount())
+		throw(runtime_error(string(__func__)+" -- channelA is out of range: "+istring(channelA)+">="+istring(getChannelCount())));
+	if(channelB>=getChannelCount())
+		throw(runtime_error(string(__func__)+" -- channelB is out of range: "+istring(channelB)+">="+istring(getChannelCount())));
+
+	if(where>size)
+		throw(runtime_error(string(__func__)+" -- where parameter out of range: "+istring(where)));
+	if(length>(size-where))
+		throw(runtime_error(string(__func__)+" -- where/length parameter out of range: "+istring(where)+"/"+istring(length)));
+
+	if(channelA==channelB)
+		return;
+	if(length<=0)
+		return;
+
+
+	const unsigned tempAudioPoolKeyA=tempAudioPoolKeyCounter++;
+	const unsigned tempAudioPoolKeyB=tempAudioPoolKeyCounter++;
+
+	// move data from each channel to its temp pool
+	moveDataOutOfChannel(tempAudioPoolKeyA,channelA,where,length);
+	moveDataOutOfChannel(tempAudioPoolKeyB,channelB,where,length);
+
+	// move the data back into the channel from each temp pool but swapped (and pass true to remove the temp pool)
+	moveDataIntoChannel(tempAudioPoolKeyA,channelA,channelB,where,length,true);
+	moveDataIntoChannel(tempAudioPoolKeyB,channelB,channelA,where,length,true);
+}
 
 
 void CSound::addSpaceToChannel(unsigned channel,sample_pos_t where,sample_pos_t length,bool doZeroData)
@@ -798,26 +829,26 @@ void CSound::moveDataOutOfChannel(unsigned tempAudioPoolKey,unsigned channel,sam
 	}
 }
 
-void CSound::moveDataIntoChannel(unsigned tempAudioPoolKey,unsigned channel,sample_pos_t where,sample_pos_t length,bool removeTempAudioPool)
+void CSound::moveDataIntoChannel(unsigned tempAudioPoolKey,unsigned channelInTempPool,unsigned channelInAudio,sample_pos_t where,sample_pos_t length,bool removeTempAudioPool)
 {
 	if(length==0)
 		return;
 
-	CInternalRezPoolAccesser destAccesser=getAudioInternal(channel);
+	CInternalRezPoolAccesser destAccesser=getAudioInternal(channelInAudio);
 
-	const sample_pos_t peakChunkCountHave=peakChunkAccessers[channel]==NULL ? 0 : peakChunkAccessers[channel]->getSize();
+	const sample_pos_t peakChunkCountHave=peakChunkAccessers[channelInAudio]==NULL ? 0 : peakChunkAccessers[channelInAudio]->getSize();
 	const sample_pos_t peakChunkCountNeeded=calcPeakChunkCount(destAccesser.getSize()+length);
 
-	CInternalRezPoolAccesser srcAccesser=getTempDataInternal(tempAudioPoolKey,channel);
+	CInternalRezPoolAccesser srcAccesser=getTempDataInternal(tempAudioPoolKey,channelInTempPool);
 	if(length>srcAccesser.getSize())
 		throw(runtime_error(string(__func__)+" -- length parameter out of range: "+istring(length)));
 		
 	destAccesser.moveData(where,srcAccesser,0,length);
 
 	if(removeTempAudioPool)
-		poolFile.removePool(createTempAudioPoolName(tempAudioPoolKey,channel));
+		poolFile.removePool(createTempAudioPoolName(tempAudioPoolKey,channelInTempPool));
 
-	if(peakChunkAccessers[channel]!=NULL)
+	if(peakChunkAccessers[channelInAudio]!=NULL)
 	{
 		// add more peak chunks if the needed size is more than we have
 		if(peakChunkCountNeeded>peakChunkCountHave)
@@ -825,12 +856,12 @@ void CSound::moveDataIntoChannel(unsigned tempAudioPoolKey,unsigned channel,samp
 			const sample_pos_t insertWhere=where/PEAK_CHUNK_SIZE;
 			const sample_pos_t insertCount=peakChunkCountNeeded-peakChunkCountHave;
 
-			peakChunkAccessers[channel]->insert(insertWhere,insertCount);
+			peakChunkAccessers[channelInAudio]->insert(insertWhere,insertCount);
 			for(sample_pos_t t=0;t<insertCount;t++)
-				(*(peakChunkAccessers[channel]))[insertWhere+t].dirty=true;
+				(*(peakChunkAccessers[channelInAudio]))[insertWhere+t].dirty=true;
 		}
 		else // just mark the one we inserted into as dirty
-			(*(peakChunkAccessers[channel]))[where/PEAK_CHUNK_SIZE].dirty=true;
+			(*(peakChunkAccessers[channelInAudio]))[where/PEAK_CHUNK_SIZE].dirty=true;
 	}
 
 }

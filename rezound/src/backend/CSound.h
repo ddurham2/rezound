@@ -208,6 +208,9 @@ public:
 	void rotateLeft(const bool whichChannels[MAX_CHANNELS],const sample_pos_t start,const sample_pos_t stop,const sample_pos_t amount);
 	void rotateRight(const bool whichChannels[MAX_CHANNELS],const sample_pos_t start,const sample_pos_t stop,const sample_pos_t amount);
 
+	// swaps the audio between channel A and channel B within the given region
+	void swapChannels(unsigned channelA,unsigned channelB,const sample_pos_t where,const sample_pos_t length);
+
 
 	void silenceSound(unsigned channel,sample_pos_t where,sample_pos_t length,bool doInvalidatePeakData=true,bool showProgressBar=true);
 
@@ -352,7 +355,7 @@ private:
 	void removeSpaceFromChannel(unsigned channel,sample_pos_t where,sample_pos_t length);
 	void copyDataFromChannel(unsigned tempAudioPoolKey,unsigned channel,sample_pos_t where,sample_pos_t length);
 	void moveDataOutOfChannel(unsigned tempAudioPoolKey,unsigned channel,sample_pos_t where,sample_pos_t length);
-	void moveDataIntoChannel(unsigned tempAudioPoolKey,unsigned channel,sample_pos_t where,sample_pos_t length,bool removeTempAudioPool);
+	void moveDataIntoChannel(unsigned tempAudioPoolKey,unsigned channelInTempPool,unsigned channelInAudio,sample_pos_t where,sample_pos_t length,bool removeTempAudioPool);
 
 	static void appendForFudgeFactor(CInternalRezPoolAccesser dest,const CInternalRezPoolAccesser src,sample_pos_t srcWhere,sample_pos_t fudgeFactor);
 
