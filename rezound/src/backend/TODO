@@ -1,6 +1,8 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- Make ASoundTranslator::onSaveSound not take const CSound * so I can set the general pool data so that subsequent saves have the right values on the save-parameters prompt dialog
+
 	- Hmm, when portaudio failed to initialize I would get a segfault elsewhere in ASoundPlayer when it the failed-to-initialize object was deleted
 
 	- See if I can speed up the loading of .rez files it seems much slower than simply loading a .wav
