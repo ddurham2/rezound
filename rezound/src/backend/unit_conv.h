@@ -29,6 +29,8 @@
  */
 
 #include <math.h>
+#include <stdexcept>
+#include <istring>
 #include "CSound_defs.h"
 
 // volume
@@ -62,6 +64,10 @@ static inline const sample_fpos_t samples_to_s(const sample_pos_t samples,const 
 static inline const double degrees_to_radians(const double degrees) { return(degrees*(2.0*M_PI)/360.0); }
 static inline const double radians_to_degrees(const double radians) { return(radians*360.0/(2.0*M_PI)); }
 
+
+// frequency
+static inline const double freq_to_fraction(const double frequency,const unsigned sampleRate) { if(frequency<0.0 || frequency>sampleRate/2) throw(runtime_error(string(__func__)+" -- frequency out of range, "+istring(frequency)+", for sample rate of, "+istring(sampleRate))); return(frequency/(double)sampleRate); }
+static inline const double fraction_to_freq(const double fraction,const unsigned sampleRate) { if(fraction<0.0 || fraction>0.5) throw(runtime_error(string(__func__)+" -- fraction out of range, "+istring(fraction))); return(fraction*(double)sampleRate); }
 
 
 // range conversions -- generally for user interface convenience
