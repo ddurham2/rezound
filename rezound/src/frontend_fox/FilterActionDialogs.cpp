@@ -70,3 +70,33 @@ CNotchFilterDialog::CNotchFilterDialog(FXWindow *mainWindow) :
 
 
 
+// --- biquad resonant lowpass -----------
+
+CBiquadResLowpassFilterDialog::CBiquadResLowpassFilterDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Biquad Resonant Lowpass Filter")
+{
+	addSlider("Gain","x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
+	addSlider("Cutoff Frequency","Hz",interpretValue_filter,uninterpretValue_filter,NULL,500.0,5,100000,5000,false);
+	addSlider("Resonance","x",interpretValue_gain,uninterpretValue_gain,NULL,2.0,1,20,2,true);
+}
+
+// --- biquad resonant highpass ----------
+
+CBiquadResHighpassFilterDialog::CBiquadResHighpassFilterDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Biquad Resonant Highpass Filter")
+{
+	addSlider("Gain","x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
+	addSlider("Cutoff Frequency","Hz",interpretValue_filter,uninterpretValue_filter,NULL,500.0,5,100000,5000,false);
+	addSlider("Resonance","x",interpretValue_gain,uninterpretValue_gain,NULL,2.0,1,20,2,true);
+}
+
+// --- biquad resonant bandpass ----------
+
+CBiquadResBandpassFilterDialog::CBiquadResBandpassFilterDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Biquad Resonant Bandpass Filter")
+{
+	addSlider("Gain","x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
+	addSlider("Center Frequency","Hz",interpretValue_filter,uninterpretValue_filter,NULL,500.0,5,100000,5000,false);
+	addSlider("Resonance","x",interpretValue_gain,uninterpretValue_gain,NULL,2.0,1,20,2,true);
+}
+

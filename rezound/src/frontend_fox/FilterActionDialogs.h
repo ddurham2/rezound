@@ -63,6 +63,29 @@ public:
 };
 
 
+// --- biquad resonant lowpass -----------
+
+class CBiquadResLowpassFilterDialog : public CActionParamDialog
+{
+public:
+	CBiquadResLowpassFilterDialog(FXWindow *mainWindow);
+};
+
+// --- biquad resonant highpass ----------
+
+class CBiquadResHighpassFilterDialog : public CActionParamDialog
+{
+public:
+	CBiquadResHighpassFilterDialog(FXWindow *mainWindow);
+};
+
+// --- biquad resonant bandpass ----------
+
+class CBiquadResBandpassFilterDialog : public CActionParamDialog
+{
+public:
+	CBiquadResBandpassFilterDialog(FXWindow *mainWindow);
+};
 
 
 

@@ -424,6 +424,11 @@ void CMainWindow::createMenus()
 		new CActionMenuCommand(new CBandpassFilterFactory(gChannelSelectDialog,new CBandpassFilterDialog(this)),menu,"");
 		new CActionMenuCommand(new CNotchFilterFactory(gChannelSelectDialog,new CNotchFilterDialog(this)),menu,"");
 
+		new FXMenuSeparator(menu);
+		new CActionMenuCommand(new CBiquadResLowpassFilterFactory(gChannelSelectDialog,new CBiquadResLowpassFilterDialog(this)),menu,"");
+		new CActionMenuCommand(new CBiquadResHighpassFilterFactory(gChannelSelectDialog,new CBiquadResHighpassFilterDialog(this)),menu,"");
+		new CActionMenuCommand(new CBiquadResBandpassFilterFactory(gChannelSelectDialog,new CBiquadResBandpassFilterDialog(this)),menu,"");
+
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&Looping",NULL,menu);
 		new CActionMenuCommand(new CMakeSymetricActionFactory(gChannelSelectDialog),menu,"");
