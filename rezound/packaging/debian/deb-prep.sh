@@ -9,12 +9,22 @@
 #
 # For more info read packaging/debian/README.cvs
 
-if [ test ! -f configure] ; then
-    cp bootstrap bootstrap.orig
-    # The new autoheader doesn't need -l and causes an error
-    sed 's/\(autoheader\) -l config/\1/g' < bootstrap.orig > bootstrap
-    rm bootstrap.orig ;
-    ./bootstrap ;
-    ./configure ;
-fi
+cp bootstrap bootstrap.orig
+# The new autoheader doesn't need -l and causes an error
+sed -e 's/\(AUTOHEADER="autoheader\)/\12.13/g' bootstrap.orig |\
+    sed -e 's/\(AUTOCONF="autoconf\)/\12.13/g' |\
+    sed -e 's/\(ACLOCAL="aclocal\)/\1-1.5/g' |\
+    sed -e 's/\(AUTOMAKE="automake\)/\1-1.5/g' > bootstrap
+
+./bootstrap ;
+./configure ;
+
 make dist ;
+
+mv bootstrap.orig bootstrap
+mv rezound-*.tar.gz ..
+make maintainer-clean
+./bootstrap --clean
+rm -rf autom4te.cache rezound
+
+

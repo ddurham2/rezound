@@ -31,4 +31,6 @@ Here are the steps to making a debian package.
 	process. In addition, there should be a distribution tarball
 	it the next highest directory (..) .
 
+	You must have the automake-1.5 and autoconf2.13 packages
+	installed for this to work
 
