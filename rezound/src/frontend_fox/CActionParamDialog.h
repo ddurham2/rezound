@@ -52,7 +52,7 @@ class CActionParamDialog : public FXModalDialogBox, public AActionDialog
 public:
 	typedef const double (*f_at_x)(const double x);
 
-	CActionParamDialog(FXWindow *mainWindow,const FXString title);
+	CActionParamDialog(FXWindow *mainWindow,const FXString title,bool showPresetPanel=true);
 
 	// these are used to create new parents for the controls
 	// 	pass NULL the first time
@@ -62,6 +62,7 @@ public:
 	void addSlider(void *parent,const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton);
 	void addTextEntry(void *parent,const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsTipText="");
 	void addFilenameEntry(void *parent,const string name,const string intialFilename,const string tipText="");
+		/* is isEditable then the value is an integer of the actual value, if isEditable is false, then the integer value is the index of the items */
 	void addComboTextEntry(void *parent,const string name,const vector<string> &items,const string tipText="",bool isEditable=false);
 		FXComboTextParamValue *getComboText(const string name); // so a derived class can set the values
 	void addCheckBoxEntry(void *parent,const string name,const bool checked,const string tipText="");

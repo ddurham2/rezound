@@ -59,7 +59,7 @@ FXIMPLEMENT(CActionParamDialog,FXModalDialogBox,CActionParamDialogMap,ARRAYNUMBE
 // work the same what.. I'll work on figuring that out and then both 
 // parameters should be unnecessary
 
-CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title) :
+CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title,bool showPresetPanel) :
 	FXModalDialogBox(mainWindow,title,0,0,FXModalDialogBox::ftVertical),
 	
 	splitter(new FXSplitter(getFrame(),SPLITTER_VERTICAL|SPLITTER_REVERSED | LAYOUT_FILL_X|LAYOUT_FILL_Y)),
@@ -67,7 +67,7 @@ CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title
 			leftMargin(new FXFrame(topPanel,FRAME_NONE|LAYOUT_FILL_Y|LAYOUT_FIX_WIDTH,0,0,0,0, 0,0,0,0)),
 			controlsFrame(new FXPacker(topPanel,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0)),
 			rightMargin(new FXFrame(topPanel,FRAME_NONE|LAYOUT_FILL_Y|LAYOUT_FIX_WIDTH,0,0,0,0, 0,0,0,0)),
-		presetsFrame(new FXHorizontalFrame(splitter,FRAME_RAISED|FRAME_THICK | LAYOUT_FILL_X, 0,0,0,0, 5,5,5,5)),
+		presetsFrame(showPresetPanel ? new FXHorizontalFrame(splitter,FRAME_RAISED|FRAME_THICK | LAYOUT_FILL_X, 0,0,0,0, 5,5,5,5) : NULL),
 			nativePresetList(NULL),
 			userPresetList(NULL)
 {
@@ -75,31 +75,34 @@ CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title
 
 	setHeight(getHeight()+100); // since we're adding this presets section, make the dialog taller
 
-	try
+	if(showPresetPanel)
 	{
-		if(gSysPresetsFile->getArraySize((getTitle()+DOT+"names").text())>0)
+		try
 		{
-			// native preset stuff
-			FXPacker *listFrame=new FXPacker(presetsFrame,FRAME_SUNKEN|FRAME_THICK|LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y, 0,0,200,0, 0,0,0,0, 0,0); // had to do this because FXList won't take that frame style
-				nativePresetList=new FXList(listFrame,4,this,ID_NATIVE_PRESET_LIST,LIST_BROWSESELECT | LAYOUT_FILL_X|LAYOUT_FILL_Y);
-			new FXButton(presetsFrame,"&Use\tOr Double-Click an Item in the List",NULL,this,ID_NATIVE_PRESET_BUTTON);
+			if(gSysPresetsFile->getArraySize((getTitle()+DOT+"names").text())>0)
+			{
+				// native preset stuff
+				FXPacker *listFrame=new FXPacker(presetsFrame,FRAME_SUNKEN|FRAME_THICK|LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y, 0,0,200,0, 0,0,0,0, 0,0); // had to do this because FXList won't take that frame style
+					nativePresetList=new FXList(listFrame,4,this,ID_NATIVE_PRESET_LIST,LIST_BROWSESELECT | LAYOUT_FILL_X|LAYOUT_FILL_Y);
+				new FXButton(presetsFrame,"&Use\tOr Double-Click an Item in the List",NULL,this,ID_NATIVE_PRESET_BUTTON);
+			}
 		}
-	}
-	catch(exception &e)
-	{
-		nativePresetList=NULL;
-		Error(e.what());
-	}
+		catch(exception &e)
+		{
+			nativePresetList=NULL;
+			Error(e.what());
+		}
 
-	// user preset stuff
-	FXPacker *listFrame=new FXPacker(presetsFrame,FRAME_SUNKEN|FRAME_THICK|LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y, 0,0,200,0, 0,0,0,0, 0,0); // had to do this because FXList won't take that frame style
-		userPresetList=new FXList(listFrame,4,this,ID_USER_PRESET_LIST,LIST_BROWSESELECT | LAYOUT_FILL_X|LAYOUT_FILL_Y);
-	FXPacker *buttonGroup=new FXVerticalFrame(presetsFrame);
-		new FXButton(buttonGroup,"&Use\tOr Double-Click an Item in the List",NULL,this,ID_USER_PRESET_USE_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
-		new FXButton(buttonGroup,"&Save",NULL,this,ID_USER_PRESET_SAVE_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
-		new FXButton(buttonGroup,"&Remove",NULL,this,ID_USER_PRESET_REMOVE_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
+		// user preset stuff
+		FXPacker *listFrame=new FXPacker(presetsFrame,FRAME_SUNKEN|FRAME_THICK|LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y, 0,0,200,0, 0,0,0,0, 0,0); // had to do this because FXList won't take that frame style
+			userPresetList=new FXList(listFrame,4,this,ID_USER_PRESET_LIST,LIST_BROWSESELECT | LAYOUT_FILL_X|LAYOUT_FILL_Y);
+		FXPacker *buttonGroup=new FXVerticalFrame(presetsFrame);
+			new FXButton(buttonGroup,"&Use\tOr Double-Click an Item in the List",NULL,this,ID_USER_PRESET_USE_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
+			new FXButton(buttonGroup,"&Save",NULL,this,ID_USER_PRESET_SAVE_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
+			new FXButton(buttonGroup,"&Remove",NULL,this,ID_USER_PRESET_REMOVE_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
 
-	buildPresetLists();
+		buildPresetLists();
+	}
 
 	// make sure the dialog has at least a minimum height and width
 	//ASSURE_HEIGHT(this,10);
@@ -380,7 +383,8 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 
 	// restore the splitter's position
 	const FXint h=atoi(gSettingsRegistry->getValue((FXString("SplitterPositions")+DOT+getTitle()).text()).c_str());
-	presetsFrame->setHeight(h);
+	if(presetsFrame!=NULL)
+		presetsFrame->setHeight(h);
 
 
 	// initialize all the graphs to this sound
@@ -477,8 +481,11 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 	}
 
 	// save the splitter's position
-	FXint h2=presetsFrame->getHeight();
-	gSettingsRegistry->createKey((FXString("SplitterPositions")+DOT+getTitle()).text(),istring(h2));
+	if(presetsFrame!=NULL)
+	{
+		FXint h2=presetsFrame->getHeight();
+		gSettingsRegistry->createKey((FXString("SplitterPositions")+DOT+getTitle()).text(),istring(h2));
+	}
 
 	hide(); // hide now and ... 
 	getApp()->repaint(); // force redraws from disappearing dialogs now
