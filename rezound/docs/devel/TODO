@@ -3,6 +3,14 @@
 	- Is there any way while recording we could know if data was dropped?
 		- perhaps OSS can give a sequence number?  Then if one's missing it dropped something?
 
+	- create an action under remaster called prepare-as-CD-track
+		- this action should assume that the entire sound is going to be a track on a CD
+			- I need to figure out how actionSound.start and stop are going to get set to the very endpoints automatically.... perhaps a flag to AAction to ignore the channel's positions
+		- it should use an amplitude finder to trim all the silence from the end-points and then add the user-specified amount of space at the beginning and end.. 
+			- or perhaps it should just use trim for any data that exceeds these amounts and add more space if necessary
+		- the silence margins on the ends should also fade in and out to/from 0
+
+
 	- Put in the documentation or application help somewhere a brief description about how recording works in linux (you have a recording source selected, then igain which is the recording gain of that source)
 
 	- When it's up on sourceforge (and ready to debut) announce to:
@@ -87,6 +95,8 @@
 
 
 --- POSSIBLE THINGS TO DO ---
+
+	- needs some compressor action(s)
 
 	- could easily make the play buttons stop if playing and then do their action so that they don't do nothing while it's playing
 		- plus you have to hit stop and play to make it do something else... stop needs to be nice and big anyway
