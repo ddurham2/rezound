@@ -47,6 +47,9 @@ public:
 
 	virtual void create();
 
+	virtual FXbool canFocus() const;
+
+
 	size_t getClickedCue(FXint x,FXint y);
 
 	// events I get by message
@@ -68,9 +71,16 @@ public:
 	long onMouseMove(FXObject *object,FXSelector sel,void *ptr);
 	long onLeftBtnRelease(FXObject *object,FXSelector sel,void *ptr);
 
+	long onFocusIn(FXObject* sender,FXSelector sel,void* ptr);
+	long onFocusOut(FXObject* sender,FXSelector sel,void* ptr);
+
+	long onKeyPress(FXObject *object,FXSelector sel,void *ptr);
+
 	// methods get information about and for altering which cue is focused
 	void focusNextCue();
 	void focusPrevCue();
+	void focusFirstCue();
+	void focusLastCue();
 
 	enum
 	{
@@ -115,6 +125,7 @@ private:
 	FXPopupHint *dragCueHint;
 
 	CMoveCueActionFactory *moveCueActionFactory;
+	CRemoveCueActionFactory *removeCueActionFactory;
 };
 
 
@@ -229,8 +240,6 @@ void FXRezWaveView::getWaveSize(int &top,int &height)
 #include "../backend/CSound.h"
 #include "../backend/CSoundPlayerChannel.h"
 
-#warning I might try making the zoom action zoom in and center the focused cue; then I would probably want to make clicking an un-cued area on the ruler make no cue focused so it would behave as before (with the start and stop positions)
-
 FXDEFMAP(FXWaveRuler) FXWaveRulerMap[]=
 {
 	//Message_Type				ID						Message_Handler
@@ -256,6 +265,13 @@ FXDEFMAP(FXWaveRuler) FXWaveRulerMap[]=
 	FXMAPFUNC(SEL_LEFTBUTTONPRESS,		0,						FXWaveRuler::onLeftBtnPress),
 	FXMAPFUNC(SEL_MOTION,			0,						FXWaveRuler::onMouseMove),
 	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	0,						FXWaveRuler::onLeftBtnRelease),
+
+	FXMAPFUNC(SEL_KEYPRESS,			0,						FXWaveRuler::onKeyPress),
+
+
+	FXMAPFUNC(SEL_FOCUSIN,			0,						FXWaveRuler::onFocusIn),
+	FXMAPFUNC(SEL_FOCUSOUT,			0,						FXWaveRuler::onFocusOut),
+
 };
 
 FXIMPLEMENT(FXWaveRuler,FXComposite,FXWaveRulerMap,ARRAYNUMBER(FXWaveRulerMap))
@@ -273,7 +289,8 @@ FXWaveRuler::FXWaveRuler(FXComposite *p,FXRezWaveView *_parent,CLoadedSound *_lo
 
 	dragCueHint(new FXPopupHint(p->getApp())),
 
-	moveCueActionFactory(NULL)
+	moveCueActionFactory(NULL),
+	removeCueActionFactory(NULL)
 {
 	enable();
 	flags|=FLAG_SHOWN; // I have to do this, or it will not show up.. like height is 0 or something
@@ -290,6 +307,7 @@ FXWaveRuler::FXWaveRuler(FXComposite *p,FXRezWaveView *_parent,CLoadedSound *_lo
 	dragCueHint->create();
 
 	moveCueActionFactory=new CMoveCueActionFactory;
+	removeCueActionFactory=new CRemoveCueActionFactory;
 }
 
 FXWaveRuler::~FXWaveRuler()
@@ -301,6 +319,11 @@ void FXWaveRuler::create()
 {
 	FXComposite::create();
 	font->create();
+}
+
+FXbool FXWaveRuler::canFocus() const
+{
+	return 1;
 }
 
 #define CUE_Y ((height-1)-(1+CUE_RADIUS))
@@ -375,7 +398,7 @@ long FXWaveRuler::onPaint(FXObject *object,FXSelector sel,void *ptr)
 			dc.drawLine(cueXPosition,height-1,cueXPosition,CUE_Y);
 			dc.drawLine(cueXPosition+1,height-4,cueXPosition+1,CUE_Y-1);
 
-			if(focusedCueIndex!=0xffffffff && focusedCueTime==sound->getCueTime(t))
+			if(hasFocus() && focusedCueIndex!=0xffffffff && focusedCueTime==sound->getCueTime(t))
 			{	// draw focus rectangle
 				const int textWidth=font->getTextWidth(cueName.data(),cueName.size());
 				const int textHeight=font->getTextHeight(cueName.data(),cueName.size());
@@ -565,6 +588,8 @@ long FXWaveRuler::onShowCueList(FXObject *object,FXSelector sel,void *ptr)
 /* ??? when I have keyboard event handling for doing something with the focused cue,  make it so that if you press esc while dragging a cue that it moves back to the original location */
 long FXWaveRuler::onLeftBtnPress(FXObject *object,FXSelector sel,void *ptr)
 {
+	handle(this,FXSEL(SEL_FOCUS_SELF,0),ptr);
+
 	FXEvent* event=(FXEvent*)ptr;
 	if(event->click_count==1)
 	{
@@ -687,6 +712,88 @@ long FXWaveRuler::onLeftBtnRelease(FXObject *object,FXSelector sel,void *ptr)
 	return 0;
 }
 
+long FXWaveRuler::onFocusIn(FXObject* sender,FXSelector sel,void* ptr){
+	FXComposite::onFocusIn(sender,sel,ptr);
+	update();
+	return 1;
+}
+
+long FXWaveRuler::onFocusOut(FXObject* sender,FXSelector sel,void* ptr){
+	FXComposite::onFocusOut(sender,sel,ptr);
+	update();
+	return 1;
+}
+
+#include <fox/fxkeys.h>
+long FXWaveRuler::onKeyPress(FXObject *object,FXSelector sel,void *ptr)
+{
+	FXEvent* event=(FXEvent*)ptr;
+	if(event->code==KEY_Left || event->code==KEY_KP_Left)
+	{
+		focusPrevCue();
+	}
+	else if(event->code==KEY_Right || event->code==KEY_KP_Right)
+	{
+		focusNextCue();
+	}
+	else if(event->code==KEY_Home || event->code==KEY_KP_Home)
+	{
+		focusFirstCue();
+	}
+	else if(event->code==KEY_End || event->code==KEY_KP_End)
+	{
+		focusLastCue();
+	}
+	else if(event->code==KEY_Delete || event->code==KEY_KP_Delete)
+	{
+		if(focusedCueIndex>=sound->getCueCount())
+			return 0;
+
+		const size_t removeCueIndex=focusedCueIndex;
+
+		focusNextCue();
+
+		CActionParameters actionParameters(NULL);
+		actionParameters.addUnsignedParameter("index",removeCueIndex);
+		removeCueActionFactory->performAction(loadedSound,&actionParameters,false);
+		if(removeCueIndex<focusedCueIndex)
+			focusedCueIndex--; // decrement since we just remove one below it
+
+		if(focusedCueIndex>=sound->getCueCount())
+			focusLastCue(); // find last cue if we just deleted what was the last cue
+
+		if(focusedCueIndex!=0xffffffff)
+			parent->waveScrollArea->centerTime(focusedCueTime);
+		parent->waveScrollArea->redraw();
+		update();
+		return 1; // handled
+	}
+	else
+	{
+		if(event->code==KEY_Escape && event->state&LEFTBUTTONMASK && cueClicked<sound->getCueCount())
+		{ // ESC pressed for cancelling a drag
+			sound->setCueTime(cueClicked,origCueClickedTime);
+			dragCueHint->hide();
+			parent->waveScrollArea->stopAutoScroll();
+			cueClicked=sound->getCueCount();
+			update();
+			parent->waveScrollArea->redraw();
+			return 1;
+		}
+
+		return 0;
+	}
+
+	if(focusedCueIndex!=0xffffffff)
+	{
+		parent->waveScrollArea->centerTime(focusedCueTime);
+		update();
+		return 1; // handled
+	}
+	else
+		return 0;
+}
+
 void FXWaveRuler::focusNextCue()
 {
 	if(focusedCueIndex==0xffffffff)
@@ -701,6 +808,8 @@ void FXWaveRuler::focusNextCue()
 	{
 		if(sound->findNextCue(focusedCueTime,focusedCueIndex))
 			focusedCueTime=sound->getCueTime(focusedCueIndex);
+		else
+			focusedCueIndex=0xffffffff;
 	}
 }
 
@@ -713,6 +822,26 @@ void FXWaveRuler::focusPrevCue()
 		size_t dummy;
 		if(sound->findPrevCue(focusedCueTime,focusedCueIndex))
 			focusedCueTime=sound->getCueTime(focusedCueIndex);
+		else
+			focusedCueIndex=0xffffffff;
 	}
+}
+
+void FXWaveRuler::focusFirstCue()
+{
+	size_t dummy;
+	if(!sound->findNearestCue(0,focusedCueIndex,dummy))
+		focusedCueIndex=0xffffffff;
+	else
+		focusedCueTime=sound->getCueTime(focusedCueIndex);
+}
+
+void FXWaveRuler::focusLastCue()
+{
+	size_t dummy;
+	if(!sound->findNearestCue(sound->getLength()-1,focusedCueIndex,dummy))
+		focusedCueIndex=0xffffffff;
+	else
+		focusedCueTime=sound->getCueTime(focusedCueIndex);
 }
 
