@@ -235,6 +235,17 @@ public:
 	//time_t get ... Time() const;
 
 
+	// returns true even if it's a link to a regular file
+	bool isRegularFile() const
+	{
+		return S_ISREG(statBuf.st_mode);
+	}
+
+	bool isLink() const
+	{
+		return S_ISLNK(statBuf.st_mode);
+	}
+
 private:
 	char *path;
 	bool _exists;
