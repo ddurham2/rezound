@@ -35,7 +35,7 @@ CSaveSelectionAsAction::~CSaveSelectionAsAction()
 
 bool CSaveSelectionAsAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
-	soundFileManager->savePartial(actionSound.sound,"",actionSound.start,actionSound.selectionLength());
+	soundFileManager->savePartial(actionSound.sound,"",actionSound.start,actionSound.selectionLength(),false);
 	return true;
 }
 
