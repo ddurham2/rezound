@@ -30,6 +30,7 @@ class CSound;
 	// ??? rename to something more specific to audio, PCM, or rezound
 	// create a MAX_LENGTH that I check for in the methods... I've made it, but I don't think I use it yet much
 	// right now I made this lower only because I haven't made the frontend dialogs not show unnecessary check boxes and such...so the dialogs were huge even when many channels were not in use
+	// if this is changed, also consider the array size of gJACKOutputPortNames and gJACKInputPortNames in settings.h/cpp (although it should be big enough)
 #define MAX_CHANNELS 8
 
 
