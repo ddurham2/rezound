@@ -59,7 +59,7 @@ static void listFonts();
 int main(int argc,char *argv[])
 {
 #ifdef ENABLE_NLS
-	setlocale(LC_ALL,"");
+	printf("locale is: %s\n",setlocale(LC_ALL,""));
 	bindtextdomain(REZOUND_PACKAGE,DATA_DIR"/locale");
 	textdomain(REZOUND_PACKAGE);
 #endif
@@ -267,6 +267,20 @@ void setLocaleFont(FXApp *application)
 
 		application->setNormalFont(new FXFont(application,desc));
 	}
+	else if(lang=="de" || lang=="de_DE")
+	{ // setup ISO_8859-2 encoded font
+		FXFontDesc desc={
+			"helvetica",
+			90,
+			FONTWEIGHT_BOLD,
+			FONTSLANT_REGULAR,
+			FONTENCODING_ISO_8859_1,
+			FONTSETWIDTH_DONTCARE,
+			0
+		};
+
+		application->setNormalFont(new FXFont(application,desc));
+	}
 }
 #endif
 
@@ -305,9 +319,7 @@ void printNormalFontProperties(FXApp *application)
 	printf("\tflags: %d\n",desc.flags);
 	printf("}\n");
 }
-#endif
 
-#if 0
 void listFonts()
 {
 	printf("font_listing {\n");
