@@ -82,7 +82,7 @@ public:
 		// formatted integer type to string (min_width can be <0 to left justify or >=0 to right justify)
 	template<class T> explicit istring(const T val,const int min_width,const bool zero_pad=false) { ostringstream ss; ss.width((min_width<0) ? -min_width : min_width); ss.setf((min_width<0) ? ios::left : ios::right); ss.fill((zero_pad && min_width>=0) ? '0' : ' '); ss << val; assign(ss.str()); }
 		// formatted floating point type to string (min_width can be <0 to left justify or >=0 to right justify, precision is the number of place to show after the decimal place)
-	template<class T> explicit istring(const T val,const int min_width,const streamsize precision,const bool zero_pad=false) { ostringstream ss; ss.width((min_width<0) ? -min_width : min_width); ss.precision(precision); ss.setf(ios::fixed); ss.setf((min_width<0) ? ios::left : ios::right); ss.fill((zero_pad && min_width>=0) ? '0' : ' '); ss << val; assign(ss.str()); }
+	template<class T> explicit istring(const T val,const int min_width,const int precision,const bool zero_pad=false) { ostringstream ss; ss.width((min_width<0) ? -min_width : min_width); ss.precision(precision); ss.setf(ios::fixed); ss.setf((min_width<0) ? ios::left : ios::right); ss.fill((zero_pad && min_width>=0) ? '0' : ' '); ss << val; assign(ss.str()); }
 
 
 	// --- auto-cast to const char *
