@@ -44,6 +44,8 @@
 			limited to, linux.
 
 		- also, put up on IOTD on flipcode and other announcement places like that
+		- comp.dsp
+		- freshmeat
 
 	- I've said that I want to support another audio file libary in the future, but I did find that libaudiofile's API at least has support for loop points, cues, notes and arbitrary data, but it doesn't seem to even be implemented on wave save.
 		- Perhaps I will work to patch libaudiofile to get this functionality working.  Because SOX's lib form is far from existing
