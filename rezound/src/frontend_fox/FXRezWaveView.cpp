@@ -530,7 +530,8 @@ void FXWaveScrollArea::drawPlayPosition(sample_pos_t dataPosition,bool justErasi
 		drawPlayStatusX=(FXint)((sample_fpos_t)dataPosition/horzZoomFactor+pos_x);
 
 
-		if(scrollToMakeVisible && !loadedSound->channel->isPaused())
+						// don't follow play position if paused unless the user is shuttling
+		if(scrollToMakeVisible && (!loadedSound->channel->isPaused() || loadedSound->channel->getPlaySpeed()!=1.0))
 		{ // scroll the wave view to make the play position visible on the left most side of the screen
 
 			// if the play position is off the screen
