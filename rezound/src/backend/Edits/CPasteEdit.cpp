@@ -218,7 +218,6 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 		break;
 
 	case ptFitMix:
-#warning using jack and CRecordClipboard has a bug when using fit mix paste
 		if(prepareForUndo)
 		{
 			CActionSound _actionSound(actionSound);
