@@ -537,6 +537,8 @@ but I can't see in the code why... perhaps a careful
 run-through on paper would help
 */
 
+// ??? I might wanna use x^.5 instead of x^2  ... something makes me think it would be better... fade out 1-x^.5 and fade in x^.5
+
 			sample_pos_t srcPos=0;
 
 			// crossfade with what already there and what's in the temp audio pool
