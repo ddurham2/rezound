@@ -217,7 +217,6 @@ public:
 		// start decreasing the max peak level after maxPeakFallTimer falls below zero
 		if((--maxPeakFallTimer)<0)
 		{
-			//maxPeakLevel=0;
 			maxPeakLevel=maxPeakLevel-(sample_t)(MAX_SAMPLE*gMaxPeakFallRate);
 			maxPeakLevel=maxPeakLevel<0 ? 0 : maxPeakLevel;
 			maxPeakFallTimer=0;
