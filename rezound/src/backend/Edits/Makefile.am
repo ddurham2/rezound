@@ -38,6 +38,7 @@ noinst_HEADERS= \
 		CRotateEdit.h \
 		CSwapChannelsEdit.h \
 		CAddChannelsEdit.h \
+		CDuplicateChannelEdit.h \
 		CRemoveChannelsEdit.h \
 		CSelectionEdit.h \
 		CSaveSelectionAsAction.h \
@@ -61,6 +62,7 @@ libEdits_la_SOURCES= \
 		CRotateEdit.cpp \
 		CSwapChannelsEdit.cpp \
 		CAddChannelsEdit.cpp \
+		CDuplicateChannelEdit.cpp \
 		CRemoveChannelsEdit.cpp \
 		CSaveSelectionAsAction.cpp \
 		CSaveAsMultipleFilesAction.cpp \

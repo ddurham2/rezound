@@ -53,7 +53,7 @@ CRotateDialog::CRotateDialog(FXWindow *mainWindow) :
 CSwapChannelsDialog::CSwapChannelsDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
-	void *p=newHorzPanel(NULL);
+	void *p=newVertPanel(NULL);
 		vector<string> items;
 		addComboTextEntry(p,N_("Channel A"),items,"");
 		addComboTextEntry(p,N_("Channel B"),items,"");
@@ -64,12 +64,12 @@ CSwapChannelsDialog::CSwapChannelsDialog(FXWindow *mainWindow) :
 bool CSwapChannelsDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
 	if(actionSound->sound->getChannelCount()<2)
-		return(false);
+		return false;
 	else if(actionSound->sound->getChannelCount()==2)
 	{ // only one possibility of swapping the two channels
 		actionParameters->addUnsignedParameter("Channel A",0);
 		actionParameters->addUnsignedParameter("Channel B",1);
-		return(true);
+		return true;
 	}
 	else
 	{
@@ -77,7 +77,7 @@ bool CSwapChannelsDialog::show(CActionSound *actionSound,CActionParameters *acti
 		{
 			vector<string> items;
 			for(size_t t=0;t<actionSound->sound->getChannelCount();t++)
-					items.push_back("Channel "+istring(t));
+				items.push_back("Channel "+istring(t));
 
 			// set the combo boxes according to actionSound
 			getComboText("Channel A")->setItems(items);
@@ -86,7 +86,7 @@ bool CSwapChannelsDialog::show(CActionSound *actionSound,CActionParameters *acti
 			getComboText("Channel B")->setCurrentItem(1);
 		}
 
-		return(CActionParamDialog::show(actionSound,actionParameters));
+		return CActionParamDialog::show(actionSound,actionParameters);
 	}
 }
 
@@ -96,9 +96,43 @@ bool CSwapChannelsDialog::show(CActionSound *actionSound,CActionParameters *acti
 CAddChannelsDialog::CAddChannelsDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
-	void *p=newHorzPanel(NULL);
+	void *p=newVertPanel(NULL);
 		addNumericTextEntry(p,N_("Insert Where"),"",0,0,MAX_CHANNELS);
 		addNumericTextEntry(p,N_("Insert Count"),"",1,1,MAX_CHANNELS);
+}
+
+
+
+// --- duplicate channel ----------------------
+
+CDuplicateChannelDialog::CDuplicateChannelDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow)
+{
+	void *p=newVertPanel(NULL);
+		vector<string> items;
+		addComboTextEntry(p,N_("Which Channel"),items,"");
+		addComboTextEntry(p,N_("Insert Where"),items,"");
+		addNumericTextEntry(p,N_("How Many Times"),"",1,1,MAX_CHANNELS);
+}
+
+bool CDuplicateChannelDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
+{
+	if(getComboText("Which Channel")->getItems().size()!=actionSound->sound->getChannelCount())
+	{
+		vector<string> items;
+		for(size_t t=0;t<actionSound->sound->getChannelCount();t++)
+			items.push_back("Channel "+istring(t));
+
+		// set the combo boxes according to actionSound
+		getComboText("Which Channel")->setItems(items);
+		getComboText("Which Channel")->setCurrentItem(0);
+
+		items.push_back("Channel "+istring(actionSound->sound->getChannelCount()));
+		getComboText("Insert Where")->setItems(items);
+		getComboText("Insert Where")->setCurrentItem(1);
+	}
+
+	return CActionParamDialog::show(actionSound,actionParameters);
 }
 
 
@@ -195,8 +229,8 @@ const string CBurnToCDDialog::getExplanation() const
 
 // --- grow or slide selection dialog ---------
 
-static const double interpretValue_alterSelection(const double x,const int s) { return(x*s); }
-static const double uninterpretValue_alterSelection(const double x,const int s) { return(x/s); }
+static const double interpretValue_alterSelection(const double x,const int s) { return x*s; }
+static const double uninterpretValue_alterSelection(const double x,const int s) { return x/s; }
 
 CGrowOrSlideSelectionDialog::CGrowOrSlideSelectionDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)

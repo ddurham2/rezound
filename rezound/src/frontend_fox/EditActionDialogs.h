@@ -73,6 +73,20 @@ public:
 
 
 
+// --- duplicate channel -----------------
+
+class CDuplicateChannelDialog : public CActionParamDialog
+{
+public:
+	CDuplicateChannelDialog(FXWindow *mainWindow);
+	virtual ~CDuplicateChannelDialog(){}
+
+	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
+};
+
+
+
+
 
 // --- save as multiple filenames --------
 

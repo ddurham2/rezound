@@ -10,7 +10,7 @@ default
 	}
 	Edit
 	{
-		menuitems={"Undo", "Clear Undo History", "Recent Actions", "-", "Copy", "Copy to New", "Cut", "Cut to New", "Delete", "Crop", "-", "Insert Paste", "Replace Paste", "Overwrite Paste", "Limited Overwrite Paste", "Mix Paste", "Limited Mix Paste", "Fit Mix Paste", "Paste As New", "-", "Insert Silence...", "Mute", "-", "Add Channels...", "Remove Channels...", "Swap Channels...", "-", "<< Rotate Left...", ">> Rotate Right...", "-", "Selection"};
+		menuitems={"Undo", "Clear Undo History", "Recent Actions", "-", "Copy", "Copy to New", "Cut", "Cut to New", "Delete", "Crop", "-", "Insert Paste", "Replace Paste", "Overwrite Paste", "Limited Overwrite Paste", "Mix Paste", "Limited Mix Paste", "Fit Mix Paste", "Paste As New", "-", "Insert Silence...", "Mute", "-", "Add Channels...", "Duplicate Channel...", "Remove Channels...", "Swap Channels...", "-", "<< Rotate Left...", ">> Rotate Right...", "-", "Selection"};
 
 		Selection
 		{

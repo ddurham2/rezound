@@ -811,6 +811,7 @@ void CMainWindow::buildActionMap()
 	addToActionMap(								new CActionMenuCommand(new CMuteEditFactory(gChannelSelectDialog),dummymenu,								"Ctrl+M"),																menuItemRegistry);
 	// -
 	addToActionMap(								new CActionMenuCommand(new CAddChannelsEditFactory(new CAddChannelsDialog(this)),dummymenu,						""),																	menuItemRegistry);
+	addToActionMap(								new CActionMenuCommand(new CDuplicateChannelEditFactory(new CDuplicateChannelDialog(this)),dummymenu,						""),																menuItemRegistry);
 	addToActionMap(								new CActionMenuCommand(new CRemoveChannelsEditFactory(gChannelSelectDialog),dummymenu,							""),																	menuItemRegistry);
 	addToActionMap(								new CActionMenuCommand(new CSwapChannelsEditFactory(new CSwapChannelsDialog(this)),dummymenu,						""),																	menuItemRegistry);
 	// -
