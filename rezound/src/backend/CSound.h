@@ -256,7 +256,7 @@ public:
 	// these members are used to manage the cues which a sound object can contain
 	// --------------------------------------------------------------------------
 
-	#define MAX_SOUND_CUE_NAME_LENGTH 32
+	#define MAX_SOUND_CUE_NAME_LENGTH 64
 	struct RCue
 	{
 		RCue(const char _name[MAX_SOUND_CUE_NAME_LENGTH],sample_pos_t _time,bool _isAnchored)
@@ -291,7 +291,7 @@ public:
 		// I could just go with a new pool name and when loading an
 		// older version, just update to the new pool name and convert
 		// the older cues
-		uint8_t reserved[90];
+		uint8_t reserved[58];
 		uint8_t isAnchored;
 		uint64_t time;
 	};

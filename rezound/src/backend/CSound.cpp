@@ -1853,8 +1853,6 @@ void CSound::addCue(const string &name,const sample_pos_t time,const bool isAnch
 {
 	if(name.size()>=MAX_SOUND_CUE_NAME_LENGTH-1)
 		throw(runtime_error(string(__func__)+" -- cue name too long"));
-	if(containsCue(name))
-		throw(runtime_error(string(__func__)+" -- a cue with that name already exists"));
 
 	cueAccesser->append(1);
 	(*cueAccesser)[cueAccesser->getSize()-1]=RCue(name.c_str(),time,isAnchored);
@@ -1869,9 +1867,6 @@ void CSound::insertCue(size_t index,const string &name,const sample_pos_t time,c
 		throw(runtime_error(string(__func__)+" -- cue name too long"));
 	if(index>cueAccesser->getSize())
 		throw(runtime_error(string(__func__)+" -- invalid index: "+istring(index)));
-
-	if(containsCue(name))
-		throw(runtime_error(string(__func__)+" -- a cue with that name already exists"));
 
 	cueAccesser->insert(index,1);
 	(*cueAccesser)[index]=RCue(name.c_str(),time,isAnchored);
