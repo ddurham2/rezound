@@ -31,6 +31,7 @@ class AAction;
 #include <string>
 #include <vector>
 
+#include "settings.h"
 #include "CActionSound.h"
 #include "AStatusComm.h"
 
@@ -268,14 +269,19 @@ private:
 	
 	// members used for crossfading and uncrossfading the edges after an action
 	void crossfadeEdges(CActionSound &actionSound);
+	void prepareForInnerCrossfade(CActionSound &actionSound);
+	void crossfadeEdgesInner(CActionSound &actionSound);
+	void crossfadeEdgesOuter(CActionSound &actionSound);
 	void uncrossfadeEdges();
-	bool didCrossfadeEdges;
+	CrossfadeEdgesTypes didCrossfadeEdges;
+		// these data members are used differently depending on whether an inner or outer crossfade is done
 	int tempCrossfadePoolKeyStart;
 	int tempCrossfadePoolKeyStop;
 	sample_pos_t crossfadeStart;
 	sample_pos_t crossfadeStartLength;
 	sample_pos_t crossfadeStop;
 	sample_pos_t crossfadeStopLength;
+	sample_pos_t crossfadeMoveMul;
 	
 	
 

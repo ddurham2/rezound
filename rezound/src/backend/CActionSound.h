@@ -27,6 +27,7 @@ class CActionSound;
 
 
 #include "CSound_defs.h"
+#include "settings.h"
 
 class CSoundPlayerChannel;
 
@@ -40,14 +41,14 @@ class CActionSound
 public:
 	CSound *sound;
 	bool doChannel[MAX_CHANNELS];
-	bool doCrossfadeEdges;
+	CrossfadeEdgesTypes doCrossfadeEdges;
 
 	// the start and stop data-members are used to set the
 	// selectStart and selectStop positions after doing the action
 	mutable sample_pos_t start,stop;
 
 	// default method of doing an action (all channels, apply just to selection)
-	CActionSound(CSoundPlayerChannel *channel,bool doCrossfadeEdges);
+	CActionSound(CSoundPlayerChannel *channel,CrossfadeEdgesTypes doCrossfadeEdges);
 	CActionSound(const CActionSound &src);
 
 	unsigned countChannels() const;

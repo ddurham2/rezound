@@ -30,7 +30,7 @@
 // -- CActionSound ------------------------------------------------------
 // ----------------------------------------------------------------------
 
-CActionSound::CActionSound(CSoundPlayerChannel *_channel,bool _doCrossfadeEdges) :
+CActionSound::CActionSound(CSoundPlayerChannel *_channel,CrossfadeEdgesTypes _doCrossfadeEdges) :
 	sound(_channel->sound),
 	doCrossfadeEdges(_doCrossfadeEdges)
 {

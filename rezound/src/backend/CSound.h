@@ -172,6 +172,12 @@ public:
 	unsigned moveDataToTemp(const bool whichChannels[MAX_CHANNELS],sample_pos_t where,sample_pos_t length,sample_pos_t fudgeFactor=0,sample_pos_t maxLength=NIL_SAMPLE_POS);
 
 	/*
+	 * - Copies 'length' samples of data from position 'where' for each channel where whichChannels[i] is true to a newly created temporary pool in the pool file for this sound object
+	 * - The value returned is a handle to the temporary pools created by the copy, it is the tempAudioPoolKey parameter passed to getTempData, moveDataFromTemp, removeSpaceAndMoveDataFromTemp, etc
+	 */
+	unsigned copyDataToTemp(const bool whichChannels[MAX_CHANNELS],sample_pos_t where,sample_pos_t length);
+
+	/*
 	 * - Moves 'length' samples of data from position 'where' but replaces the space with 'replaceLength' samples, for each channel where whichChannels[i] is true to a newly created temporary pool in the pool file for this sound object
 	 * - If all channels were not affected then:
 	 *   	- if more space is moved than replaced, then each channel affected will have 'length-replaceLength' samples of silence appended to it
@@ -210,11 +216,6 @@ public:
 	void rotateLeft(const bool whichChannels[MAX_CHANNELS],const sample_pos_t start,const sample_pos_t stop,const sample_pos_t amount);
 	void rotateRight(const bool whichChannels[MAX_CHANNELS],const sample_pos_t start,const sample_pos_t stop,const sample_pos_t amount);
 
-
-	/*
-	void blendSelectEdges();
-	void blendSelectEdges(TWhichChannels &WhichChannels);
-	*/
 
 	void silenceSound(unsigned channel,sample_pos_t where,sample_pos_t length,bool doInvalidatePeakData=true,bool showProgressBar=true);
 	void mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser src,sample_pos_t srcWhere,sample_pos_t length,MixMethods mixMethod,bool doInvalidatePeakData=true,bool showProgressBar=true);
@@ -348,6 +349,7 @@ private:
 
 	void addSpaceToChannel(unsigned channel,sample_pos_t where,sample_pos_t length,bool doZeroData);
 	void removeSpaceFromChannel(unsigned channel,sample_pos_t where,sample_pos_t length);
+	void copyDataFromChannel(unsigned tempAudioPoolKey,unsigned channel,sample_pos_t where,sample_pos_t length);
 	void moveDataOutOfChannel(unsigned tempAudioPoolKey,unsigned channel,sample_pos_t where,sample_pos_t length);
 	void moveDataIntoChannel(unsigned tempAudioPoolKey,unsigned channel,sample_pos_t where,sample_pos_t length,bool removeTempAudioPool);
 

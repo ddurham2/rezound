@@ -216,7 +216,7 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool wil
 	actionSound.sound->setIsModified(actionSound.sound->isModified() || doesWarrantSaving());
 
 	// even though the AAction derived class might not resize the sound, we will if crossfading is to be done
-	willResize|=actionSound.doCrossfadeEdges;
+	willResize|=actionSound.doCrossfadeEdges!=cetNone;
 
 	if(willResize)
 		actionSound.sound->lockForResize();
@@ -237,6 +237,10 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool wil
 		}
 
 		CActionSound _actionSound(actionSound);
+
+		if(crossfadeEdgesIsApplicable)
+			prepareForInnerCrossfade(_actionSound);
+
 	
 		bool ret=doActionSizeSafe(_actionSound,prepareForUndo && canUndo()==curYes);
 
@@ -312,7 +316,7 @@ void AAction::undoAction(CSoundPlayerChannel *channel,bool willResize)
 		throw(runtime_error(string(__func__)+" -- action has not yet been done"));
 
 	// even though the AAction derived class might not resize the sound, we will if crossfading is to be done
-	willResize|=actionSound.doCrossfadeEdges;
+	willResize|=actionSound.doCrossfadeEdges!=cetNone;
 
 	if(willResize)
 		actionSound.sound->lockForResize();
@@ -407,15 +411,164 @@ void AAction::setSelection(sample_pos_t start,sample_pos_t stop,CSoundPlayerChan
 */
 void AAction::crossfadeEdges(CActionSound &actionSound)
 {
-	didCrossfadeEdges=false;
+	didCrossfadeEdges=cetNone;
 
 	// might have the user specify some other reasons not to do the crossfade if say, the selection length is below the crossfade times or something
-	if(!actionSound.doCrossfadeEdges)
-		return;
+	if(actionSound.doCrossfadeEdges==cetInner)
+		crossfadeEdgesInner(actionSound);
+	else if(actionSound.doCrossfadeEdges==cetOuter)
+		crossfadeEdgesOuter(actionSound);
+}
 
+
+/*
+	An inner crossfade on the edges means that before the action is done
+	data is saved from the inner edges of the selection, then after the 
+	action is done, that saved data is then blended with a crossfade on
+	top of the new selection.
+
+	Except the way I implemented it was so that even if a delete is done
+	the first part of the deleted selection will get crossfaded after what
+	is beyond the new start==stop selection positions.  So, data outside
+	the selection can still be modified, but not shortened
+*/
+
+void AAction::prepareForInnerCrossfade(CActionSound &actionSound)
+{
+	if(actionSound.doCrossfadeEdges==cetInner)
+	{
+		bool allChannels[MAX_CHANNELS];
+		for(size_t t=0;t<MAX_CHANNELS;t++)
+			allChannels[t]=true;
+
+		sample_pos_t crossfadeStartTime=(sample_pos_t)(gCrossfadeStartTime*actionSound.sound->getSampleRate()/1000.0);
+		sample_pos_t wantedCrossfadeStartTime=crossfadeStartTime;
+		sample_pos_t crossfadeStopTime=(sample_pos_t)(gCrossfadeStopTime*actionSound.sound->getSampleRate()/1000.0);
+
+		if(actionSound.selectionLength()<(crossfadeStartTime+crossfadeStopTime))
+			// crossfades would overlap.. fall back to selectionLength/2 as the start and stop crossfade times
+			crossfadeStartTime=crossfadeStopTime= actionSound.selectionLength()/2;
+
+		// special case
+		if(actionSound.start==actionSound.stop)
+			// min of what's possible and how much the user setting is
+			crossfadeStartTime=min(actionSound.sound->getLength()-actionSound.start,wantedCrossfadeStartTime);
+
+		// backup the area to crossfade after the start position
+		tempCrossfadePoolKeyStart=actionSound.sound->copyDataToTemp(allChannels,actionSound.start,crossfadeStartTime);
+		crossfadeStart=actionSound.start;
+		crossfadeStartLength=crossfadeStartTime;
+
+		// backup the area to crossfade before the stop position
+		tempCrossfadePoolKeyStop=actionSound.sound->copyDataToTemp(allChannels,actionSound.stop-crossfadeStopTime+1,crossfadeStopTime);
+		crossfadeStop=actionSound.stop-crossfadeStopTime;
+		crossfadeStopLength=crossfadeStopTime;
+	}
+}
+
+void AAction::crossfadeEdgesInner(CActionSound &actionSound)
+{
 	bool allChannels[MAX_CHANNELS];
 	for(size_t t=0;t<MAX_CHANNELS;t++)
 		allChannels[t]=true;
+
+	crossfadeMoveMul=1;
+
+	sample_pos_t crossfadeStartTime=crossfadeStartLength;
+	sample_pos_t crossfadeStopTime=crossfadeStopLength;
+
+	if(actionSound.selectionLength()<(crossfadeStartLength+crossfadeStopLength))
+		// crossfades would overlap.. fall back to selectionLength/2 as the start and stop crossfade times
+		crossfadeStartTime=crossfadeStopTime= actionSound.selectionLength()/2;
+
+	crossfadeStartTime=min(crossfadeStartTime,crossfadeStartLength);
+	crossfadeStopTime=min(crossfadeStopTime,crossfadeStopLength);
+
+
+	// special case
+	if(actionSound.start==actionSound.stop)
+		// min of what's possible and how much prepareForInnerCrossfade backed up
+		crossfadeStartTime=min(actionSound.sound->getLength()-actionSound.start,crossfadeStartLength);
+
+
+	// crossfade at the start position
+	{
+
+		// save what we're about to modify because undoAction needs the data the way it was
+		// just after doAction
+		int tempPoolKey=actionSound.sound->copyDataToTemp(allChannels,actionSound.start,crossfadeStartTime);
+
+		for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+		{	
+			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
+			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempCrossfadePoolKeyStart,i);
+
+/* 
+??? when I do careful listening on a crossfade after a 
+delete of a selection on a sine wave, there's always a 
+little click and it looks like it left out one sample, 
+but I can't see in the code why... perhaps a careful 
+run-through on paper would help
+*/
+
+			sample_pos_t srcPos=0;
+
+			// crossfade with what already there and what's in the temp audio pool
+			for(sample_pos_t t=actionSound.start;t<actionSound.start+crossfadeStartTime;t++,srcPos++)
+				dest[t]=(sample_t)
+					(
+						(dest[t]*(float)srcPos/(float)crossfadeStartTime)
+						+
+						(src[srcPos]*(1.0-((float)srcPos/(float)crossfadeStartTime)))
+					);
+		}
+
+		// setup so undoCrossfade will restore the part we just modified
+		actionSound.sound->removeTempAudioPools(tempCrossfadePoolKeyStart);
+		tempCrossfadePoolKeyStart=tempPoolKey;
+		crossfadeStart=actionSound.start;
+		crossfadeStartLength=crossfadeStartTime;
+	}
+		
+	// crossfade at stop position
+	{
+		int tempPoolKey=actionSound.sound->copyDataToTemp(allChannels,actionSound.stop-crossfadeStopTime+1,crossfadeStopTime);
+
+		for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+		{	
+			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
+			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempCrossfadePoolKeyStop,i);
+
+			sample_pos_t srcPos=0;
+
+			// crossfade with what already there and what's in the temp audio pool
+			for(sample_pos_t t=actionSound.stop-crossfadeStopTime+1;t<=actionSound.stop;t++,srcPos++)
+				dest[t]=(sample_t)
+					(
+						(dest[t]*(1.0-((float)srcPos/(float)crossfadeStopTime)))
+						+
+						(src[srcPos]*(float)srcPos/(float)crossfadeStopTime)
+					);
+		}
+
+		// setup so undoCrossfade will restore the part we just modified
+		actionSound.sound->removeTempAudioPools(tempCrossfadePoolKeyStop);
+		tempCrossfadePoolKeyStop=tempPoolKey;
+		crossfadeStop=actionSound.stop-crossfadeStopTime+1;
+		crossfadeStopLength=crossfadeStopTime;
+
+	}
+	
+	didCrossfadeEdges=cetInner;
+}
+
+void AAction::crossfadeEdgesOuter(CActionSound &actionSound)
+{
+	bool allChannels[MAX_CHANNELS];
+	for(size_t t=0;t<MAX_CHANNELS;t++)
+		allChannels[t]=true;
+
+	crossfadeMoveMul=2;
 
 	// crossfade at the start position
 	sample_pos_t crossfadeTime=(sample_pos_t)(gCrossfadeStartTime*actionSound.sound->getSampleRate()/1000.0);
@@ -444,7 +597,7 @@ void AAction::crossfadeEdges(CActionSound &actionSound)
 
 		// info to uncrossfadeEdges()
 		crossfadeStart=actionSound.start-crossfadeTime;
-		crossfadeStartLength=crossfadeTime*2;
+		crossfadeStartLength=crossfadeTime;
 
 		for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 		{	
@@ -467,7 +620,7 @@ void AAction::crossfadeEdges(CActionSound &actionSound)
 		actionSound.start-=crossfadeTime;
 		actionSound.stop-=crossfadeTime;
 
-		didCrossfadeEdges=true;
+		didCrossfadeEdges=cetOuter;
 	}
 
 
@@ -494,7 +647,7 @@ void AAction::crossfadeEdges(CActionSound &actionSound)
 
 			// info to uncrossfadeEdges()
 			crossfadeStop=actionSound.stop-crossfadeTime;
-			crossfadeStopLength=crossfadeTime*2;
+			crossfadeStopLength=crossfadeTime;
 
 			for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 			{	
@@ -514,27 +667,31 @@ void AAction::crossfadeEdges(CActionSound &actionSound)
 
 			}
 
-			didCrossfadeEdges=true;
+			didCrossfadeEdges=cetOuter;
 		}
 	}
 }
 
 void AAction::uncrossfadeEdges()
 {
-	if(!didCrossfadeEdges)
-		return;
+	/*
+		Normally, for an inner crossfade there would be no need to restore the edges
+		except that not all actions restore the data using temp pools (i.e. rotate and reverse)
+	*/
+	if(didCrossfadeEdges==cetOuter || didCrossfadeEdges==cetInner)
+	{
+		bool allChannels[MAX_CHANNELS];
+		for(size_t t=0;t<MAX_CHANNELS;t++)
+			allChannels[t]=true;
 
-	bool allChannels[MAX_CHANNELS];
-	for(size_t t=0;t<MAX_CHANNELS;t++)
-		allChannels[t]=true;
-
-	if(crossfadeStopLength>0)
-		actionSound.sound->removeSpaceAndMoveDataFromTemp(allChannels,crossfadeStop,crossfadeStopLength/2,tempCrossfadePoolKeyStop,crossfadeStop,crossfadeStopLength,false);
-		
-	if(crossfadeStartLength>0)
-		actionSound.sound->removeSpaceAndMoveDataFromTemp(allChannels,crossfadeStart,crossfadeStartLength/2,tempCrossfadePoolKeyStart,crossfadeStart,crossfadeStartLength,false);
-		
-	didCrossfadeEdges=false;
+		if(crossfadeStopLength>0)
+			actionSound.sound->removeSpaceAndMoveDataFromTemp(allChannels,crossfadeStop,crossfadeStopLength,tempCrossfadePoolKeyStop,crossfadeStop,crossfadeStopLength*crossfadeMoveMul,false);
+			
+		if(crossfadeStartLength>0)
+			actionSound.sound->removeSpaceAndMoveDataFromTemp(allChannels,crossfadeStart,crossfadeStartLength,tempCrossfadePoolKeyStart,crossfadeStart,crossfadeStartLength*crossfadeMoveMul,false);
+			
+		didCrossfadeEdges=cetNone;
+	}
 }
 
 

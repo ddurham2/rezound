@@ -108,7 +108,7 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 
 		if(gSettingsRegistry->keyExists("crossfadeEdges"))
 		{
-			gCrossfadeEdges= gSettingsRegistry->getValue("crossfadeEdges")=="true";
+			gCrossfadeEdges= (CrossfadeEdgesTypes)atof(gSettingsRegistry->getValue("crossfadeEdges").c_str());
 			gCrossfadeStartTime= atof(gSettingsRegistry->getValue("crossfadeStartTime").c_str());
 			gCrossfadeStopTime= atof(gSettingsRegistry->getValue("crossfadeStopTime").c_str());
 		}
@@ -166,7 +166,7 @@ void deinitializeBackend()
 	gSettingsRegistry->createKey("promptDialogDirectory",gPromptDialogDirectory);
 	gSettingsRegistry->createKey("followPlayPosition",gFollowPlayPosition ? "true" : "false");
 	gSettingsRegistry->createKey("initialLengthToShow",gInitialLengthToShow);
-	gSettingsRegistry->createKey("crossfadeEdges",gCrossfadeEdges ? "true" : "false");
+	gSettingsRegistry->createKey("crossfadeEdges",(float)gCrossfadeEdges);
 		gSettingsRegistry->createKey("crossfadeStartTime",gCrossfadeStartTime);
 		gSettingsRegistry->createKey("crossfadeStopTime",gCrossfadeStopTime);
 

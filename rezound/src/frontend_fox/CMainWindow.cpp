@@ -107,7 +107,7 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_MOTION,			CMainWindow::ID_ACTIONCONTROL_TAB,		CMainWindow::onActionControlTabMouseMove),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FOLLOW_PLAY_POSITION_BUTTON,	CMainWindow::onFollowPlayPositionButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CROSSFADE_EDGES_CHECKBOX,	CMainWindow::onCrossfadeEdgesCheckbox),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CROSSFADE_EDGES_COMBOBOX,	CMainWindow::onCrossfadeEdgesComboBox),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CROSSFADE_EDGES_SETTINGS,	CMainWindow::onCrossfadeEdgesSettings),
 };
 
@@ -155,7 +155,13 @@ CMainWindow::CMainWindow(FXApp* a) :
 		new FXButton(miscControlsFrame,"&Redraw",NULL,this,ID_REDRAW_BUTTON,FRAME_RAISED);
 		followPlayPositionButton=new FXCheckButton(miscControlsFrame,"Follow Play Position",this,ID_FOLLOW_PLAY_POSITION_BUTTON);
 		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
-			crossfadeEdgesCheckbox=new FXCheckButton(t,"Crossfade Edges\tAfter Most Actions a Crossfade can be Performed at the Start and Stop \nPositions to Give a Smoother Transition in to and out of the Modified Selection",this,ID_CROSSFADE_EDGES_CHECKBOX, CHECKBUTTON_NORMAL | LAYOUT_CENTER_Y);
+			//new FXLabel(t,"Crossfade Edges: ");
+			crossfadeEdgesComboBox=new FXComboBox(t,8,8, this,ID_CROSSFADE_EDGES_COMBOBOX, FRAME_SUNKEN|FRAME_THICK | COMBOBOX_NORMAL|COMBOBOX_STATIC | LAYOUT_CENTER_Y);
+				crossfadeEdgesComboBox->setTipText("After Most Actions a Crossfade can be Performed at the Start and Stop \nPositions to Give a Smoother Transition in to and out of the Modified Selection");
+				crossfadeEdgesComboBox->appendItem("No Crossfade");
+				crossfadeEdgesComboBox->appendItem("Crossfade Inner Edges");
+				crossfadeEdgesComboBox->appendItem("Crossfade Outer Edges");
+				crossfadeEdgesComboBox->setCurrentItem(0);
 			new FXButton(t,"...\tChange Crossfade Times",NULL,this,ID_CROSSFADE_EDGES_SETTINGS, BUTTON_NORMAL & ~FRAME_THICK);
 
 	/* ??? it is not necessary to have all these data members for all the buttons */
@@ -207,7 +213,11 @@ void CMainWindow::show()
 	FXMainWindow::show();
 
 	followPlayPositionButton->setCheck(gFollowPlayPosition);
-	crossfadeEdgesCheckbox->setCheck(gCrossfadeEdges);
+
+	if(gCrossfadeEdges>=cetNone && gCrossfadeEdges<=cetOuter)
+		crossfadeEdgesComboBox->setCurrentItem((FXint)gCrossfadeEdges);
+	else
+		crossfadeEdgesComboBox->setCurrentItem(0);
 }
 
 void CMainWindow::hide()
@@ -289,9 +299,9 @@ long CMainWindow::onFollowPlayPositionButton(FXObject *sender,FXSelector sel,voi
 	return 1;
 }
 
-long CMainWindow::onCrossfadeEdgesCheckbox(FXObject *sender,FXSelector sel,void *ptr)
+long CMainWindow::onCrossfadeEdgesComboBox(FXObject *sender,FXSelector sel,void *ptr)
 {
-	gCrossfadeEdges=crossfadeEdgesCheckbox->getCheck();
+	gCrossfadeEdges=(CrossfadeEdgesTypes)crossfadeEdgesComboBox->getCurrentItem();
 	return 1;
 }
 

@@ -523,6 +523,26 @@ unsigned CSound::moveDataToTemp(const bool whichChannels[MAX_CHANNELS],sample_po
 	return(moveDataToTempAndReplaceSpace(whichChannels,where,length,0,fudgeFactor));
 }
 
+unsigned CSound::copyDataToTemp(const bool whichChannels[MAX_CHANNELS],sample_pos_t where,sample_pos_t length)
+{
+	ASSERT_SIZE_LOCK 
+
+	if(where>size)
+		throw(runtime_error(string(__func__)+" -- where parameter out of range: "+istring(where)));
+	if(where+length>size)
+		throw(runtime_error(string(__func__)+" -- length parameter out of range: "+istring(length)));
+
+	const unsigned tempAudioPoolKey=tempAudioPoolKeyCounter++;
+
+	for(unsigned t=0;t<channelCount;t++)
+	{
+		if(whichChannels[t])
+			copyDataFromChannel(tempAudioPoolKey,t,where,length);
+	}
+
+	return(tempAudioPoolKey);
+}
+
 unsigned CSound::moveDataToTempAndReplaceSpace(const bool whichChannels[MAX_CHANNELS],sample_pos_t where,sample_pos_t length,sample_pos_t replaceLength,sample_pos_t fudgeFactor,sample_pos_t maxLength)
 {
 	ASSERT_RESIZE_LOCK 
@@ -731,6 +751,19 @@ void CSound::removeSpaceFromChannel(unsigned channel,sample_pos_t where,sample_p
 		if((where/PEAK_CHUNK_SIZE)<peakChunkAccessers[channel]->getSize())
 			(*(peakChunkAccessers[channel]))[where/PEAK_CHUNK_SIZE].dirty=true;
 	}
+}
+
+void CSound::copyDataFromChannel(unsigned tempAudioPoolKey,unsigned channel,sample_pos_t where,sample_pos_t length)
+{
+	CInternalRezPoolAccesser destAccesser=createTempAudioPool(tempAudioPoolKey,channel);
+
+	if(length==0)
+		return;
+
+	CInternalRezPoolAccesser srcAccesser=getAudioInternal(channel);
+
+	destAccesser.append(length);
+	destAccesser.copyData(0,srcAccesser,where,length);
 }
 
 void CSound::moveDataOutOfChannel(unsigned tempAudioPoolKey,unsigned channel,sample_pos_t where,sample_pos_t length)

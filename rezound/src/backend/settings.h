@@ -72,7 +72,27 @@ extern double gInitialLengthToShow;
 /*
  * Setting for how to cross fade the edges
  */
-extern bool gCrossfadeEdges;
+enum CrossfadeEdgesTypes
+{
+	cetNone=0,	// do no crossfading of the edges
+
+
+	// - blend with the data existing near the inner sides of the edges	...|<- ... ->|...
+	// - this causes no change to the data outside of the selection except
+	//   when the new selection after the action is made shorter than the 
+	//   crossfade start time (i.e. a delete). 
+	//		...|...|... --paste_action--> ...|X...X|... <- crossfade after action
+	//		...|...|... --delete_action--> ...|X... <- crossfade after action
+	cetInner=1,
+
+
+	// - blend with the data existing just outside the selection		... ->| ... |<- ...
+	// - this lessens the amount of space outside the selection because it was
+	//   blended with the data inside the selection after the action has occured
+	//		...|...|... --paste_action--> ...X|...|X... <- crossfade after action
+	cetOuter=2
+};
+extern CrossfadeEdgesTypes gCrossfadeEdges;
 extern float gCrossfadeStartTime;
 extern float gCrossfadeStopTime;
 
