@@ -1245,10 +1245,14 @@ template<class l_addr_t,class p_addr_t>
 		// read pool info structure
 		RPoolInfo poolInfo;
 		poolInfo.readFromFile(f,multiFileHandle);
+		poolInfo.isValid= (poolName!="__internal_invalid_pool");
 
-		if(poolInfo.alignment==0 || poolInfo.alignment>this->maxBlockSize)
-			throw runtime_error(string(__func__)+" -- invalid pool alignment read from file: "+istring(poolInfo.alignment)+" alignment must be 0 < alignment <= maxBlockSize (which is: "+istring(this->maxBlockSize)+")");
-
+		if(poolInfo.isValid)
+		{
+			if(poolInfo.alignment==0 || poolInfo.alignment>this->maxBlockSize)
+				throw runtime_error(string(__func__)+" -- invalid pool alignment read from file: "+istring(poolInfo.alignment)+" alignment must be 0 < alignment <= maxBlockSize (which is: "+istring(this->maxBlockSize)+")");
+		}
+		
 		try
 		{
 			prvCreatePool(poolName,poolInfo.alignment,true,false);
@@ -1264,11 +1268,14 @@ template<class l_addr_t,class p_addr_t>
 		f->read(&SATSize,sizeof(SATSize),multiFileHandle);
 		lethe(&SATSize);
 
+		if(!poolInfo.isValid && SATSize>0)
+			throw runtime_error(string(__func__)+" -- SATSize is >0 on an invalid pool: '"+poolName+"'");
+
 		// read SAT into mem buffer
 		TAutoBuffer<uint8_t> mem(SATSize*RLogicalBlock().getMemSize());
 		f->read(mem,mem.getSize(),multiFileHandle);
 
-		const blocksize_t maxBlockSize=getMaxBlockSizeFromAlignment(poolInfo.alignment);
+		const blocksize_t maxBlockSize=poolInfo.isValid ? getMaxBlockSizeFromAlignment(poolInfo.alignment) : 0;
 
 		// read each SAT entry from that mem buffer and put into the actual SAT data-member
 		size_t offset=0;
