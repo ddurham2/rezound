@@ -1,18 +1,17 @@
-ReZound 0.4.0beta Installation instructions 
+ReZound 0.5.0beta Installation instructions 
 
 	
-REQUIRED LIBRARIES AND APPLICATIONS:
+REQUIRED OR RECOMMENDED LIBRARIES AND APPLICATIONS:
 
 Before attempting to build ReZound you will need the following:
 
 
-1. audiofile-0.2.3 (or later) -- Development was done with v0.2.3, but earlier
-versions above than v0.1.9-0.1 may work as well. audiofile is available
+1. libaudiofile v0.2.3 (or later) -- Development was done with v0.2.3, but 
+earlier versions above than v0.1.9-0.1 may work as well. audiofile is available
 on most distributions, if your version is not up to date, you can download 
 at http://oss.sgi.com/projects/audiofile/
 
-
-2. fox-0.99.193 (or later) -- The fox GUI toolkit, ReZound should build fine 
+   libfox v0.99.193 (or later) -- The fox GUI toolkit, ReZound should build fine 
 with v0.99.193, but versions earlier that 0.99.87-2 may not work. If you don't 
 have fox or need to get a newer version go to http://www.fox-toolkit.org/
 	- NOTE: reswrap comes with fox.  If you install from the fox tarball
@@ -23,24 +22,42 @@ have fox or need to get a newer version go to http://www.fox-toolkit.org/
 		to run unless the files in src/images are newer than 
 		src/frontend_fox/CFOXIcons.h|cpp
 
+   libfftw v2.1.3 (or later) -- This is required for convolution filtering and 
+will be required for planned features
+		http://www.fftw.org
 
-3. pthreads -- This is pretty much standard on all Linux systems' glibc package 
-now. If you don't have it already, It should be available on your distribution 
-discs.
+   lame v3.92 (or later) It is recommended that you have lame installed because
+it provides ReZound with the ability to load and save .mp3 files.
+		http://www.mp3dev.org/mp3
+
+   libogg, libvorbis, libvorbisfile and libvorbisenc -- These are required for 
+loading and saving .ogg files
+
+   libportaudio -- This can be used if you know what you're doing and need it for 
+some reason.  Support for it can be enabled with the configure flag: 
+		--enable-portaudio
+
+   libpthreads -- This is pretty much standard on all Linux systems' glibc 
+package now. If you don't have it already, It should be available on your 
+distribution discs.
+
+   vox/devox -- required if you want to load .vox files.  This seems to be a
+quite obscure format, so support would be for rather few people I think.
+	http://www.cis.ksu.edu/~tim/vox/
 
 
-4. You should also have a working c++ compiler (g++ is preferred) as well as the 
+2. You should also have a working c++ compiler (g++ is preferred) as well as the 
 normal group of regular libraries and headers for compiling packages. 
 
 
-5. -- PROBLEMS WITH yacc (shipped with SuSE) -- the file, 
+3. -- PROBLEMS WITH yacc (shipped with SuSE) -- the file, 
 src/misc/CNestedDataFile/cfg.y will have problems if you do not have bison 
 installed.  I am using some features from bison that yacc does not have.  
 Perhaps when ReZound is ported to other operatings systems I will resolve any 
 yacc related issues.   However, this whole issue may be avoided if the .cc file 
 generated from the .y file is intact.
 
-6. flex -- (free-lex) This is commonly installed, but there should be a package 
+4. flex -- (free-lex) This is commonly installed, but there should be a package 
 for your distro.  I have not tried building ReZound using lex.  Like bison, 
 flex should not even have to run if the .c file created from the .l file is
 intact.
@@ -59,9 +76,9 @@ If at all possible try to send details, preferably a screen dump or script file.
 
 The ReZound homepage is at http://rezound.sourceforge.net/
 
-
 To strip the rezound binary, use `make install-strip' as the final installation step.
 
+To build a stand alone binary use the configure flag: --enable-standalone
 
 
 
@@ -270,4 +287,12 @@ ADDITIONAL CONFIGURE FLAGS:
 				your FOX headers are in /home/ant/include/fox,
 				you would use 
 				--with-FOX-includes=/home/ant/include
+
+--enable-portaudio		Specify to use portaudio istead of OSS for audio
+				I/O
+
+--enable-standalone		Build ReZound to statically link with all libraries
+				possible so that the binary can almost exist on its
+				own.
+
 

@@ -1,3 +1,19 @@
+rezound-0.5.0beta
+	This is a mostly new-feature release, but some bugs also have been fixed.
+	- Added a Convolution filter and some presets for reverbs
+	- Added a Distortion by a curve action (not complete)
+	- Added a Resample action
+	- Added a Fit Mix Paste edit action
+	- Added 3 Biquad Resonance Filter actions
+	- More complete support for raw data
+	- Added support for the vox format
+	- Added a choice of mix type when using paste edits that mix audio
+	- Added Lock Channels to the compressor action
+	- Made all the actions cancellable
+	- Added a status bar and cancel support when loading mp3s
+	- Minor bug fixes and other enhancements
+
+
 rezound-0.4.0beta
 	This is a new-feature and bug-fix release.  I am making this release simply 
 	because it has been a month since the last one.  I have bumped ReZound to
