@@ -422,6 +422,9 @@ void CSoundPlayerChannel::unprebuffer(float origSeekSpeed,sample_pos_t origStart
 
 void CSoundPlayerChannel::setSeekSpeed(float _seekSpeed)
 {
+	if(seekSpeed==_seekSpeed)
+		return; // bail if not changing
+
 	/*
 	printf("%s %f\n",__func__,_seekSpeed);
 	if(_seekSpeed==1.0)
