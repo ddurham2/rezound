@@ -28,7 +28,9 @@
 #include "../ASoundFileManager.h"
 #include "../ASoundTranslator.h"
 
-CSaveAsMultipleFilesAction::CSaveAsMultipleFilesAction(const CActionSound actionSound,ASoundFileManager *_soundFileManager,const string _directory,const string _filenamePrefix,const string _filenameSuffix,const string _extension,bool _openSavedSegments,unsigned _segmentNumberOffset,bool _selectionOnly) :
+#include "parse_segment_cues.h"
+
+CSaveAsMultipleFilesAction::CSaveAsMultipleFilesAction(const CActionSound &actionSound,ASoundFileManager *_soundFileManager,const string _directory,const string _filenamePrefix,const string _filenameSuffix,const string _extension,bool _openSavedSegments,unsigned _segmentNumberOffset,bool _selectionOnly) :
 	AAction(actionSound),
 	soundFileManager(_soundFileManager),
 	directory(_directory),
@@ -47,122 +49,41 @@ CSaveAsMultipleFilesAction::~CSaveAsMultipleFilesAction()
 
 bool CSaveAsMultipleFilesAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
+	const CSound &sound=*(actionSound.sound);
 	const sample_pos_t selectionStart= selectionOnly ? actionSound.start : 0;
-	const sample_pos_t selectionLength= selectionOnly ? actionSound.selectionLength() : actionSound.sound->getLength();
+	const sample_pos_t selectionLength= selectionOnly ? actionSound.selectionLength() : sound.getLength();
 
-	// built a list of a cues ordered by the time and keeping only the cues that start with '(' or ')'
-	multimap<sample_pos_t,size_t> timeOrderedCueIndex;
-	for(size_t t=0;t<actionSound.sound->getCueCount();t++)
+	class CBuildFilename : public FBuildFilename
 	{
-		const string cueName=actionSound.sound->getCueName(t);
-		if(cueName.size()>0 && (cueName[0]=='(' || cueName[0]==')'))
+	public:
+		const string prefix,suffix;
+		CBuildFilename(const string _prefix,const string _suffix) :
+			prefix(_prefix),
+			suffix(_suffix)
 		{
-			const sample_pos_t cueTime=actionSound.sound->getCueTime(t);
-			if(cueTime>=selectionStart && (cueTime-selectionStart)<selectionLength)
-				timeOrderedCueIndex.insert(make_pair(cueTime,t));
 		}
-	}
+		virtual ~CBuildFilename() {}
 
-	vector<pair<string,pair<sample_pos_t,sample_pos_t> > > segments;
+		const string operator()(const string str)
+		{
+			return prefix+str+suffix;
+		}
+	};
 
 	const string prefix=directory+string(&CPath::dirDelim,1)+filenamePrefix;
 	const string suffix=filenameSuffix+extension;
+	CBuildFilename BuildFilename(prefix,suffix);
 
-	/*
-		State Machine:
-		                "("
-		                --- 
-		               |   |
-		         "("   V   |
-		----> 0 -----> 1 -- 
-		      ^         
-		      |        |
-		      |________|
-		         ")"
-	*/
-
-	string filename="";
-	sample_pos_t start=selectionStart;
-	int state=0;
-	for(multimap<sample_pos_t,size_t>::iterator i=timeOrderedCueIndex.begin();i!=timeOrderedCueIndex.end();i++)
-	{
-		const string cueName=actionSound.sound->getCueName(i->second);
-		const sample_pos_t time=actionSound.sound->getCueTime(i->second);
-		const char c=cueName[0];
-	
-		switch(state)
-		{
-		case 0:
-			if(c=='(')
-			{
-				filename=prefix+cueName.substr(1)+suffix;
-				start=time;
-		
-				state=1;
-			}
-			else
-				throw runtime_error(string(__func__)+_(" -- syntax error in cue names -- expected to find a cue beginning with '(' at time: ")+actionSound.sound->getTimePosition(time));
-
-			break;
-
-		case 1:
-			if(c=='(')
-			{
-				segments.push_back(pair<string,pair<sample_pos_t,sample_pos_t> >(filename,pair<sample_pos_t,sample_pos_t>(start,time>0 ? time-1 : time)));
-
-				filename=prefix+cueName.substr(1)+suffix;
-				start=time;
-
-				state=1;
-			}
-			else if(c==')')
-			{
-				segments.push_back(pair<string,pair<sample_pos_t,sample_pos_t> >(filename,pair<sample_pos_t,sample_pos_t>(start,time)));
-				// clear out for test after the loop
-				filename="";
-				start=0;
-
-				state=0;
-			}
-			else
-				throw runtime_error(string(__func__)+_(" -- syntax error in cue names -- expected to find a cue beginning with '(' or ')' at time: ")+actionSound.sound->getTimePosition(time));
-
-			break;
-	
-		default:
-			throw runtime_error(string(__func__)+_(" -- internal error -- invalid state: ")+istring(state));
-		}
-	}
-
-	// if a (... was encourtered without a closing ) then we assume to save to the end of file
-	if(filename!="" && start!=selectionStart)
-		segments.push_back(make_pair(filename,make_pair(start, (selectionOnly ? selectionStart+selectionLength-1 : actionSound.sound->getLength()-1) )));
-
-	
-	// remove segments with the same start and stop
-	startOver:
-	for(vector<pair<string,pair<sample_pos_t,sample_pos_t> > >::iterator i=segments.begin();i!=segments.end();i++)
-	{
-		if(i->second.first==i->second.second)
-		{
-			segments.erase(i);
-			goto startOver; // cause I'm not sure if it's valid to delete from vector while pointing to it
-		}
-	}
-
-
+	segments_t segments=parse_segment_cues(sound,selectionStart,selectionLength,BuildFilename);
 
 	if(segments.size()<=0)
-	{
-		Message(_("No appropriately named cues found to define segments to save.  See the 'explain' button on the previous window for how to name the cues."));
-		return false;
-	}
+		throw EUserMessage(_("No appropriately named cues found to define segments to save.  See the 'explain' button on the previous window for how to name the cues."));
 
 	
 	// translate the '#'s to the track numbers
 	size_t track=segmentNumberOffset;
 	size_t alignBy=(size_t)floor(log10((float)segments.size()))+1;
-	for(vector<pair<string,pair<sample_pos_t,sample_pos_t> > >::iterator i=segments.begin();i!=segments.end();i++)
+	for(segments_t::iterator i=segments.begin();i!=segments.end();i++)
 	{
 		string::size_type p;
 		while((p=i->first.find("#"))!=string::npos) // while we find a '#' in the string
@@ -172,19 +93,21 @@ bool CSaveAsMultipleFilesAction::doActionSizeSafe(CActionSound &actionSound,bool
 
 #warning need to i18n this but it probably needs to be done better than just putting _() around each string literal
 	// show the results and ask the user if they want to continue
-	string msg="These are the files about to be created...\n\n";
-	for(vector<pair<string,pair<sample_pos_t,sample_pos_t> > >::iterator i=segments.begin();i!=segments.end();i++)
-		msg+="from "+actionSound.sound->getTimePosition(i->second.first)+" to "+actionSound.sound->getTimePosition(i->second.second)+" ("+actionSound.sound->getTimePosition(i->second.second-i->second.first)+") as '"+i->first+"'\n";
-	msg+="\nDo you want to continue?";
+	{
+		string msg="These are the files about to be created...\n\n";
+		for(segments_t::iterator i=segments.begin();i!=segments.end();i++)
+			msg+="from "+sound.getTimePosition(i->second.first)+" to "+sound.getTimePosition(i->second.second)+" ("+sound.getTimePosition(i->second.second-i->second.first)+") as '"+i->first+"'\n";
+		msg+="\nDo you want to continue?";
 
-	if(Question(msg,yesnoQues,false)!=yesAns)
-		return false;
+		if(Question(msg,yesnoQues,false)!=yesAns)
+			return false;
+	}
 
 
 	// proceed to save files
-	for(vector<pair<string,pair<sample_pos_t,sample_pos_t> > >::iterator i=segments.begin();i!=segments.end();i++)
+	for(segments_t::iterator i=segments.begin();i!=segments.end();i++)
 	{
-		soundFileManager->savePartial(actionSound.sound,i->first,i->second.first,i->second.second-i->second.first);
+		soundFileManager->savePartial(&sound,i->first,i->second.first,i->second.second-i->second.first);
 
 		if(openSavedSegments)
 			soundFileManager->open(i->first);
