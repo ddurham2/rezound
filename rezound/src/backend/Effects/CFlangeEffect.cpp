@@ -87,6 +87,8 @@ bool CFlangeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 				{ // cancelled
 					if(prepareForUndo)
 						undoActionSizeSafe(actionSound);
+					else
+						actionSound.sound->invalidatePeakData(i,actionSound.start,t);
 					return false;
 				}
 			}
@@ -98,6 +100,8 @@ bool CFlangeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 				UPDATE_PROGRESS_BAR(t);
 			}
 */
+			if(!prepareForUndo)
+				actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
 		}
 	}
 

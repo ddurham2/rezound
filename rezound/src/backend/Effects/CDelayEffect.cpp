@@ -107,9 +107,14 @@ bool CDelayEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUnd
 				{ // cancelled
 					if(prepareForUndo)
 						undoActionSizeSafe(actionSound);
+					else
+						actionSound.sound->invalidatePeakData(i,actionSound.start,t);
 					return false;
 				}
 			}
+
+			if(!prepareForUndo)
+				actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
 		}
 	}
 

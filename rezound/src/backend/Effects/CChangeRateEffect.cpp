@@ -157,7 +157,6 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 						// 	 ??? need to do
 						dest.copyData((sample_pos_t)writePos,src,(sample_pos_t)readStart,copyLength);
 						writePos+=copyLength;
-
 					}
 				}
 			}

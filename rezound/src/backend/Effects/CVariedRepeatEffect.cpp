@@ -55,6 +55,9 @@ bool CVariedRepeatEffect::doActionSizeSafe(CActionSound &actionSound,bool prepar
 					return false;
 				}
 			}
+
+			if(!prepareForUndo)
+				actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
 		}
 	}
 
