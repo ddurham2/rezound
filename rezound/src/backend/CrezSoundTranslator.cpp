@@ -26,7 +26,6 @@
 #include <string.h> // for memcpy
 
 #include <stdexcept>
-#include <typeinfo>
 
 #include <endian_util.h>
 
@@ -91,7 +90,8 @@ struct RFormatInfo1
 
 enum AudioEncodingTypes
 {
-	aetPCMSigned16BitInteger=1
+	aetPCMSigned16BitInteger=1,
+	aetPCM32BitFloat=2
 };
 
 struct RFormatInfo2
@@ -382,69 +382,118 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 		
 
 		// read the audio
+		for(unsigned i=0;i<channelCount;i++)
 		{
-			// ??? need to do convertions to the native type
-			if((audioEncodingType==aetPCMSigned16BitInteger && typeid(sample_t)==typeid(int16_t)) )
+			CStatusBar statusBar(_("Loading Channel ")+istring(i+1)+"/"+istring(channelCount),0,99,true);
+
+			CSound::CInternalRezPoolAccesser dest=sound->getAudioInternal(i);
+
+			const register sample_pos_t chunkSize=size/100;
+
+/* ??? see if some of this can be reworked.. when audioEncodingType matches sample_t exactly, use copyData, else use convert_sample<>() and for-loops */
+			if(audioEncodingType==aetPCMSigned16BitInteger)
 			{
-				for(unsigned i=0;i<channelCount;i++)
+#if defined(SAMPLE_TYPE_S16)
+				for(unsigned int t=0;t<100 && chunkSize>0;t++)
 				{
-					CStatusBar statusBar(_("Loading Channel ")+istring(i+1)+"/"+istring(channelCount),0,99,true);
-
-					CSound::CInternalRezPoolAccesser dest=sound->getAudioInternal(i);
-
-					const register sample_pos_t chunkSize=size/100;
-
-					if(chunkSize>0)
-					{
-						for(unsigned int t=0;t<100;t++)
-						{
-							dest.copyData(t*chunkSize,loadFromFile.getPoolAccesser<sample_t>("Channel "+istring(i+1)),t*chunkSize,chunkSize);
-#ifdef WORDS_BIGENDIAN
-							if(endian==eLittleEndian)
-							{ // need to convert from little endian to big
-								const sample_pos_t start=t*chunkSize;
-								const sample_pos_t end=start+chunkSize;
-								for(unsigned k=start;k<end;k++)
-									dest[k]=swap_endian(dest[k]);
-							}
-#else // LITTLE ENDIAN
-							if(endian==eBigEndian)
-							{ // need to convert from big endian to little
-								const sample_pos_t start=t*chunkSize;
-								const sample_pos_t end=start+chunkSize;
-								for(unsigned k=start;k<end;k++)
-									dest[k]=swap_endian(dest[k]);
-							}
-#endif
-							if(statusBar.update(t))
-							{
-								loadFromFile.closeFile(false,false);
-								return false; // cancelled
-							}
-						}
-					}
-					dest.copyData(100*chunkSize,loadFromFile.getPoolAccesser<sample_t>("Channel "+istring(i+1)),100*chunkSize,size%100);
-#ifdef WORDS_BIGENDIAN
+					dest.copyData(t*chunkSize,loadFromFile.getPoolAccesser<sample_t>("Channel "+istring(i+1)),t*chunkSize,chunkSize);
+	#ifdef WORDS_BIGENDIAN
 					if(endian==eLittleEndian)
 					{ // need to convert from little endian to big
-						const sample_pos_t start=100*chunkSize;
-						const sample_pos_t end=start+(size%100);
+						const sample_pos_t start=t*chunkSize;
+						const sample_pos_t end=start+chunkSize;
 						for(unsigned k=start;k<end;k++)
 							dest[k]=swap_endian(dest[k]);
 					}
-#else // LITTLE ENDIAN
+	#else // LITTLE ENDIAM
 					if(endian==eBigEndian)
 					{ // need to convert from big endian to little
-						const sample_pos_t start=100*chunkSize;
-						const sample_pos_t end=start+(size%100);
+						const sample_pos_t start=t*chunkSize;
+						const sample_pos_t end=start+chunkSize;
 						for(unsigned k=start;k<end;k++)
 							dest[k]=swap_endian(dest[k]);
 					}
-#endif
+	#endif
+					if(statusBar.update(t))
+					{
+						loadFromFile.closeFile(false,false);
+						return false; // cancelled
+					}
 				}
+
+				// ??? perhaps handle this is the above for-loop on a last-iteration test
+				dest.copyData(100*chunkSize,loadFromFile.getPoolAccesser<sample_t>("Channel "+istring(i+1)),100*chunkSize,size%100);
+	#ifdef WORDS_BIGENDIAN
+				if(endian==eLittleEndian)
+				{ // need to convert from little endian to big
+					const sample_pos_t start=100*chunkSize;
+					const sample_pos_t end=start+(size%100);
+					for(unsigned k=start;k<end;k++)
+						dest[k]=swap_endian(dest[k]);
+				}
+	#else // LITTLE ENDIAN
+				if(endian==eBigEndian)
+				{ // need to convert from big endian to little
+					const sample_pos_t start=100*chunkSize;
+					const sample_pos_t end=start+(size%100);
+					for(unsigned k=start;k<end;k++)
+						dest[k]=swap_endian(dest[k]);
+				}
+	#endif
+
+#elif defined(SAMPLE_TYPE_FLOAT)
+				TStaticPoolAccesser<int16_t,CSound::PoolFile_t> src=loadFromFile.getPoolAccesser<int16_t>("Channel "+istring(i+1));
+				sample_pos_t pos=0;
+				
+				// copy 100 chunks (where chunkSize is floor(size/100))
+				for(unsigned int t=0;t<100 && chunkSize>0;t++)
+				{
+					if(endian==eLittleEndian)
+					{ // need to convert from little endian to host endian
+						for(sample_pos_t k=0;k<chunkSize;k++)
+						{
+							dest[pos]=convert_sample<int16_t,sample_t>(lethe(src[pos]));
+							pos++;
+						}
+					}
+					else if(endian==eBigEndian)
+					{ // need to convert from big endian to host endian
+						for(sample_pos_t k=0;k<chunkSize;k++)
+						{
+							dest[pos]=convert_sample<int16_t,sample_t>(bethe(src[pos]));;
+							pos++;
+						}
+					}
+					if(statusBar.update(t))
+					{
+						loadFromFile.closeFile(false,false);
+						return false; // cancelled
+					}
+				}
+
+				// copy remainder (??? perhaps handle this above in a last-iteration test)
+				if(endian==eLittleEndian)
+				{ // need to convert from little endian to host endian
+					for(sample_pos_t k=0;k<size%100;k++)
+					{
+						dest[pos]=convert_sample<int16_t,sample_t>(lethe(src[pos]));
+						pos++;
+					}
+				}
+				else if(endian==eBigEndian)
+				{ // need to convert from big endian to host endian
+					for(sample_pos_t k=0;k<size%100;k++)
+					{
+						dest[pos]=convert_sample<int16_t,sample_t>(bethe(src[pos]));
+						pos++;
+					}
+				}
+#else
+				#error unhandled SAMPLE_TYPE_xxx define
+#endif
 			}
 			else
-				throw runtime_error(string(__func__)+" -- unhandled format conversion while loading");
+				throw runtime_error(string(__func__)+" -- internal error -- unhandled audioEncodingType");
 		}
 
 	}
@@ -524,22 +573,23 @@ bool CrezSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 	{
 		// ??? need to make sure it's going to fit before I start writing... a convertion in sample format could as much as double the size
 
-		// need to do conversions from the native type ???
-		if((audioEncodingType==aetPCMSigned16BitInteger && typeid(sample_t)==typeid(int16_t)) )
+		// need to prompt the user about what format to save it in (also make the current format the default on the interface ???
+		if(audioEncodingType==aetPCMSigned16BitInteger)
 		{
 			for(unsigned i=0;i<sound->getChannelCount();i++)
 			{
 				CStatusBar statusBar(_("Saving Channel ")+istring(i+1)+"/"+istring(sound->getChannelCount()),0,99,true);
-
+				const CRezPoolAccesser src=sound->getAudio(i);
+/* ??? see if some of this can be reworked.. when audioEncodingType matches sample_t exactly, use copyData, else use convert_sample<>() and for-loops */
+#if defined(SAMPLE_TYPE_S16)
+				// sample_t is the same as what we're saving as
 				TPoolAccesser<sample_t,CSound::PoolFile_t> dest=saveToFile.createPool<sample_t>("Channel "+istring(i+1));
-
 				const sample_pos_t chunkSize=saveLength/100;
-
 				if(chunkSize>0)
 				{
 					for(unsigned int t=0;t<100;t++)
 					{
-						dest.copyData(t*chunkSize,sound->getAudio(i),t*chunkSize+saveStart,chunkSize,true);
+						dest.copyData(t*chunkSize,src,t*chunkSize+saveStart,chunkSize,true);
 
 						if(statusBar.update(t))
 						{ // cancelled
@@ -548,7 +598,42 @@ bool CrezSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 						}
 					}
 				}
-				dest.copyData(100*chunkSize,sound->getAudio(i),100*chunkSize+saveStart,saveLength%100,true);
+				dest.copyData(100*chunkSize,src,100*chunkSize+saveStart,saveLength%100,true);
+
+#elif defined(SAMPLE_TYPE_FLOAT)
+				TPoolAccesser<int16_t,CSound::PoolFile_t> dest=saveToFile.createPool<int16_t>("Channel "+istring(i+1));
+				dest.append(saveLength);
+
+				const sample_pos_t chunkSize=saveLength/100;
+				sample_pos_t pos=0;
+				if(chunkSize>0)
+				{
+					for(unsigned int t=0;t<100;t++)
+					{
+						for(sample_pos_t k=0;k<chunkSize;k++)
+						{
+							dest[pos]=convert_sample<float,int16_t>(src[pos+saveStart]);
+							pos++;
+						}
+
+						if(statusBar.update(t))
+						{ // cancelled
+							saveToFile.closeFile(false,true);
+							return false;
+						}
+					}
+				}
+
+				// ??? perhaps handle this above in a last-iteration test
+				for(sample_pos_t k=0;k<saveLength%100;k++)
+				{
+					dest[pos]=convert_sample<float,int16_t>(src[pos+saveStart]);
+					pos++;
+				}
+
+#else
+				#error unhandled SAMPLE_TYPE_xxx define
+#endif
 			}
 		}
 		else

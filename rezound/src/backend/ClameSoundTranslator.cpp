@@ -28,7 +28,6 @@
 
 #include "ClameSoundTranslator.h"
 
-#include <typeinfo>
 #include <stdexcept>
 
 #include <CPath.h>
@@ -181,51 +180,54 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 		while(fgets(errBuffer,BUFFER_SIZE,errStream)!=NULL) // non-blocking i/o set by mypopen on this stream
 			printf("%s",errBuffer);
 
-		if(bits==16 && typeid(sample_t)==typeid(int16_t))
+		TAutoBuffer<int8_t> mem_buffer((bits/8)*BUFFER_SIZE*channelCount); // set this up so it deallocates itself
+		void * const buffer=mem_buffer;
+
+		sample_pos_t pos=0;
+
+		CStatusBar statusBar("Loading Sound",0,100,true);
+		for(;;)
 		{
+			size_t chunkSize=fread(buffer,(bits/8)*channelCount,BUFFER_SIZE,p);
+			if(chunkSize<=0)
+				break;
 
-			TAutoBuffer<sample_t> buffer(BUFFER_SIZE*channelCount);
-			sample_pos_t pos=0;
+			if((pos+chunkSize)>sound->getLength())
+				sound->addSpace(sound->getLength(),REALLOC_FILE_SIZE);
 
-			CStatusBar statusBar("Loading Sound",0,100,true);
-			for(;;)
+			if(bits==16)
 			{
-				size_t chunkSize=fread((void *)((sample_t *)buffer),sizeof(sample_t)*channelCount,BUFFER_SIZE,p);
-				if(chunkSize<=0)
-					break;
-
-				if((pos+chunkSize)>sound->getLength())
-					sound->addSpace(sound->getLength(),REALLOC_FILE_SIZE);
-
 				for(unsigned c=0;c<channelCount;c++)
 				{
+					CRezPoolAccesser &accesser=*(accessers[c]);
 					for(unsigned i=0;i<chunkSize;i++)
-						(*(accessers[c]))[pos+i]=lethe(buffer[i*channelCount+c]);
+						accesser[pos+i]=convert_sample<int16_t,sample_t>(lethe(((int16_t *)buffer)[i*channelCount+c]));
 				}
-				pos+=chunkSize;
-
-				// read and parse the stderr of 'lame' to determine the progress of the load
-				while(fgets(errBuffer,BUFFER_SIZE,errStream)!=NULL) // non-blocking i/o set by mypopen on this stream
-				{
-					int frameNumber,totalFrames;
-					sscanf(errBuffer,"%*s %d%*c%d ",&frameNumber,&totalFrames);
-					printf("%s",errBuffer);
-					if(statusBar.update(frameNumber*100/totalFrames))
-					{ // cancelled
-						ret=false;
-						goto cancelled;
-					}
-				}
-
 			}
-			printf("\n"); // after lame stderr output
+			else
+				throw runtime_error(string(__func__)+" -- an unhandled bit rate of "+istring(bits));
 
-			// remove any extra allocated space
-			if(sound->getLength()>pos)
-				sound->removeSpace(pos,sound->getLength()-pos);
+			pos+=chunkSize;
+
+			// read and parse the stderr of 'lame' to determine the progress of the load
+			while(fgets(errBuffer,BUFFER_SIZE,errStream)!=NULL) // non-blocking i/o set by mypopen on this stream
+			{
+				int frameNumber,totalFrames;
+				sscanf(errBuffer,"%*s %d%*c%d ",&frameNumber,&totalFrames);
+				printf("%s",errBuffer);
+				if(statusBar.update(frameNumber*100/totalFrames))
+				{ // cancelled
+					ret=false;
+					goto cancelled;
+				}
+			}
+
 		}
-		else
-			throw runtime_error(string(__func__)+" -- an unhandled bit rate of "+istring(bits));
+		printf("\n"); // after lame stderr output
+
+		// remove any extra allocated space
+		if(sound->getLength()>pos)
+			sound->removeSpace(pos,sound->getLength()-pos);
 
 		cancelled:
 
@@ -345,39 +347,37 @@ bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound
 			accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
 
 		#define BUFFER_SIZE 4096
-		if(typeid(sample_t)==typeid(int16_t))
+
+		TAutoBuffer<int16_t> buffer(BUFFER_SIZE*channelCount);
+		sample_pos_t pos=0;
+
+		CStatusBar statusBar(_("Saving Sound"),0,saveLength,true);
+		while(pos<saveLength)
 		{
-			TAutoBuffer<sample_t> buffer(BUFFER_SIZE*channelCount);
-			sample_pos_t pos=0;
+			size_t chunkSize=BUFFER_SIZE;
+			if(pos+chunkSize>saveLength)
+				chunkSize=saveLength-pos;
 
-			CStatusBar statusBar(_("Saving Sound"),0,saveLength,true);
-			while(pos<saveLength)
+			for(unsigned c=0;c<channelCount;c++)
 			{
-				size_t chunkSize=BUFFER_SIZE;
-				if(pos+chunkSize>saveLength)
-					chunkSize=saveLength-pos;
+				const CRezPoolAccesser &accesser=*(accessers[c]);
+				for(unsigned i=0;i<chunkSize;i++)
+					buffer[i*channelCount+c]=hetle( (convert_sample<sample_t,int16_t>(accesser[pos+i+saveStart])) );
+			}
 
-				for(unsigned c=0;c<channelCount;c++)
-				{
-					for(unsigned i=0;i<chunkSize;i++)
-						buffer[i*channelCount+c]=hetle((*(accessers[c]))[pos+i+saveStart]);
-				}
-				pos+=chunkSize;
+			pos+=chunkSize;
 
-				if(SIGPIPECaught)
-					throw runtime_error(string(__func__)+" -- lame aborted -- check stderr for more information");
-				if(fwrite((void *)((sample_t *)buffer),sizeof(sample_t)*channelCount,chunkSize,p)!=chunkSize)
-					fprintf(stderr,"%s -- dropped some data while writing\n",__func__);
+			if(SIGPIPECaught)
+				throw runtime_error(string(__func__)+" -- lame aborted -- check stderr for more information");
+			if(fwrite(buffer,sizeof(int16_t)*channelCount,chunkSize,p)!=chunkSize)
+				fprintf(stderr,"%s -- dropped some data while writing\n",__func__);
 
-				if(statusBar.update(pos))
-				{ // cancelled
-					ret=false;
-					goto cancelled;
-				}
+			if(statusBar.update(pos))
+			{ // cancelled
+				ret=false;
+				goto cancelled;
 			}
 		}
-		else
-			throw runtime_error(string(__func__)+" -- internal error -- an unhandled sample_t type");
 
 		cancelled:
 

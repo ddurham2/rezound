@@ -47,20 +47,49 @@ static FXColor darkenedWaveformColor=FXRGB(min(255, FXREDVAL(waveformColor)+DARK
 
 #define SELECTED_WAVE_ADD 142
 static FXColor selectedWaveformColor=FXRGB(min(255, FXREDVAL(selectedBackGroundColor)+SELECTED_WAVE_ADD),min(255,FXGREENVAL(selectedBackGroundColor)+SELECTED_WAVE_ADD),min(255,FXBLUEVAL(selectedBackGroundColor)+SELECTED_WAVE_ADD)); // selectedBackGroundColor + SELECTED_WAVE_ADD
-
+	
 FXColor clippedWaveformColor=FXRGB(255,0,127); // pink to stand out
+
+static inline float sample_to_y(sample_t sampleValue,float vertZoomFactor,int vertOffset,float channelOffset);
 
 /* TODO
  * 	there seems to be a slight drawing bug (STILL) in that if I zoom all the way in to the sound
  * 	and set the start position just up against the first non-zero sample (and zero samples preceed the audio)
  * 	when I zoom out it the selected portion doesn't look to cover the whole audio... same for the end postion too except still shifted to the left
+ *
  */
 
 
 // ??? some of these int types would need to be changed to be sample_pos_t or int64_t if >31bits zoomed-in lengths were supported
-// need to lock sound's size before calling this to be safe
-void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth,int canvasHeight,int drawSelectStart,int drawSelectStop,double horzZoomFactor,sample_pos_t hOffset,double vertZoomFactor,int vOffset,bool darkened,bool invertColors)
+/*
+ * NOTE: need to lock sound's size before calling this to be safe
+ *
+ * left: 		X position in the dc of where to start drawing
+ * width:		how far past left to draw
+ * dc:			the drawing context to draw on
+ * sound:		the sound to render from
+ * canvasWidth:		the total width of the canvas that is being drawn on
+ * drawSelectStart:	the X position in the dc where the selection begins
+ * drawSelectStop:	the X position in the dc where the selection ends
+ * horzZoomFactor:	how many sample positions are represented by one pixels.  hence, 1.0 is zoomed all the way in
+ * hOffset:		how many sample positions the left edge of the canvas is offset
+ * vertZoomFactor:	how many sample values are represented by one pixel. hence 1.0 is zoomed all the way in
+ * vOffset:		how many sample values the middle of a channel is offset by
+ * darkened:		true if the whole drawing is to be somewhat darkened
+ * invert colors:	true if to bitwise not any color when drawing
+ *
+ * NOTE: on vertZoomFactor and vOffset, it should be thought of as rendering a single channel.  IOW, and caculations done
+ * outside this function should not be concerned with how many channels are being rendered on screen.
+ * NOTE: on vertZoomFactor and vOffset, values should be calculated as if there were only MAX_WAVE_HEIGHT possible sample
+ * values i.e. whether sample_t is float, int16_t or int32_t, etc these values should be calculated that there are 
+ * MAX_WAVE_HEIGHT number of sample values.
+ *
+ */
+void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth,int canvasHeight,int drawSelectStart,int drawSelectStop,double horzZoomFactor,sample_pos_t hOffset,float vertZoomFactor,int vOffset,bool darkened,bool invertColors)
 {
+	vertZoomFactor*=(float)sound->getChannelCount();
+	vOffset/=(int)sound->getChannelCount();
+
 	try
 	{
 		struct // created this just because the code came over from C++Builder
@@ -102,9 +131,8 @@ void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth
 		{
 			float _channelTop=0;
 			const float channelHeight=(float)canvasHeight/(float)sound->getChannelCount();
-			float channelOffset;
 
-			channelOffset=channelHeight/2;
+			float channelOffset=channelHeight/2;
 			if(left<0)
 			{
 				width-=(-left);
@@ -113,7 +141,7 @@ void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth
 
 			for(unsigned i=0;i<sound->getChannelCount();i++)
 			{
-				const int channelTop=(int)nearbyint(_channelTop);
+				const int channelTop=(int)round(_channelTop);
 
 				const CRezPoolAccesser a=sound->getAudio(i);
 				const sample_pos_t soundLength=sound->getLength();
@@ -130,13 +158,13 @@ void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth
 
 						RPeakChunk r=sound->getPeakData(i,dataPosition,next_dataPosition,a);
 
-						float min_y=((-r.max/vertZoomFactor)+channelOffset)+vOffset;
+						float min_y=sample_to_y(r.max,vertZoomFactor,vOffset,channelOffset);
 						if(min_y<channelOffset-channelHeight/2)
 							min_y=channelOffset-channelHeight/2;
 						else if(min_y>channelOffset+channelHeight/2)
 							min_y=channelOffset+channelHeight/2;
 
-						float max_y=((-r.min/vertZoomFactor)+channelOffset)+vOffset;
+						float max_y=sample_to_y(r.min,vertZoomFactor,vOffset,channelOffset);
 						if(max_y<channelOffset-channelHeight/2)
 							max_y=channelOffset-channelHeight/2;
 						else if(max_y>channelOffset+channelHeight/2)
@@ -183,13 +211,13 @@ void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth
 						// sample position pretty much eliminates the flicker I used to get when 
 						// painting the entire background and then drawing the waveform on top of that.
 
-						const int _min_y=(int)nearbyint(min_y);
-						const int _max_y=(int)nearbyint(max_y);
+						const int _min_y=(int)round(min_y);
+						const int _max_y=(int)round(max_y);
 						
 						// draw the background
 						dc->setForeground(invertColors ? ~bgc : bgc);
 						dc->drawLine(x,channelTop,x,_min_y-1);
-						dc->drawLine(x,_max_y+1,x,(int)nearbyint(channelTop+channelHeight));
+						dc->drawLine(x,_max_y+1,x,(int)round(channelTop+channelHeight));
 
 						// draw the waveform
 						dc->setForeground(invertColors ? ~wfc : wfc);
@@ -198,7 +226,7 @@ void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth
 					else
 					{
 						dc->setForeground(invertColors ? ~backGroundColor : backGroundColor);
-						dc->drawLine(x,(int)nearbyint(channelTop),x,(int)nearbyint(channelTop+channelHeight));
+						dc->drawLine(x,(int)round(channelTop),x,(int)round(channelTop+channelHeight));
 					}
 				}
 
@@ -208,7 +236,7 @@ void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth
 				{
 					dc->setForeground(invertColors ? ~axisColor : axisColor);
 
-					float y=nearbyint(channelOffset+vOffset);
+					float y=round(channelOffset+vOffset);
 					if(y<channelOffset-channelHeight/2)
 						y=channelOffset-channelHeight/2;
 					else if(y>channelOffset+channelHeight/2)
@@ -222,11 +250,11 @@ void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth
 					int y;
 					dc->setForeground(invertColors ? ~dBAxisColor : dBAxisColor);
 
-					y=(int)nearbyint(channelOffset+vOffset+dBFS_to_amp(-6.0)/vertZoomFactor);
+					y=(int)round(sample_to_y(dBFS_to_amp(-6.0),vertZoomFactor,vOffset,channelOffset));
 					if(y>=channelOffset-channelHeight/2 && y<=channelOffset+channelHeight/2)
 						dc->drawLine(left,y,right,y);
 
-					y=(int)nearbyint(channelOffset+vOffset-dBFS_to_amp(-6.0)/vertZoomFactor);
+					y=(int)round(sample_to_y(-dBFS_to_amp(-6.0),vertZoomFactor,vOffset,channelOffset));
 					if(y>=channelOffset-channelHeight/2 && y<=channelOffset+channelHeight/2)
 						dc->drawLine(left,y,right,y);
 				}
@@ -250,5 +278,13 @@ void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth
 	{
 		printf("error -- %s\n",e.what());
 	}
+}
+
+float sample_to_y(sample_t sampleValue,float vertZoomFactor,int vertOffset,float channelOffset)
+{
+	//           the sample value, normalized to [-1,1], scaled to MAX_WAVE_HEIGHT (max height/2 because range is -1 to +1) 
+	//                                                               then scaled by the vertical zoom factor and finally offset
+	return ( ( (-(float)sampleValue/(float)MAX_SAMPLE) * (MAX_WAVE_HEIGHT/2) ) / vertZoomFactor) + channelOffset + vertOffset;
+	//          negated because up the screen represents greater sample values
 }
 

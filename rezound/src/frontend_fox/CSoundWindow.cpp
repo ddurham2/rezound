@@ -688,7 +688,7 @@ long CSoundWindow::onBothZoomDialMinusIndClick(FXObject *sender,FXSelector sel,v
 void CSoundWindow::updateVertZoomDial()
 {
 				// inverse of expr in onVertZoomDialChange
-	vertZoomDial->setValue((FXint)(100*ZOOM_MUL*pow(waveView->getVertZoom(),2.0)));
+	vertZoomDial->setValue((FXint)(100*ZOOM_MUL*pow((double)waveView->getVertZoom(),2.0)));
 }
 
 

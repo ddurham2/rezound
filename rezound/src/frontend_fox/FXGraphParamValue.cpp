@@ -32,7 +32,8 @@
 #include "utils.h"
 
 #include "../backend/CSound.h"
-#include "../backend/CSound.h"
+
+#include "settings.h"
 
 #include "CFOXIcons.h"
 
@@ -668,7 +669,7 @@ long FXGraphParamValue::onGraphPanelResize(FXObject *sender,FXSelector sel,void 
 		const sample_pos_t length=stop-start+1;
 		const double hScalar=(double)((sample_fpos_t)length/canvasWidth);
 		const int hOffset=(int)(start/hScalar);
-		const double vScalar=(65536.0/(double)canvasHeight)*(double)sound->getChannelCount();
+		const float vScalar=MAX_WAVE_HEIGHT/(float)canvasHeight;
 
 		drawPortion(0,canvasWidth,&dc,sound,canvasWidth,canvasHeight,-1,-1,hScalar,hOffset,vScalar,0,true);
 	}

@@ -144,7 +144,7 @@ void CJACKSoundPlayer::initialize()
 		}
 	}
 	else
-		throw(runtime_error(string(__func__)+" -- already initialized"));
+		throw runtime_error(string(__func__)+" -- already initialized");
 }
 
 void CJACKSoundPlayer::deinitialize()
@@ -185,35 +185,22 @@ int CJACKSoundPlayer::processAudio(jack_nframes_t nframes,void *arg)
  */
 
 	CJACKSoundPlayer *that=(CJACKSoundPlayer *)arg;
-
 	try
 	{
-		
-		if(typeid(sample_t)==typeid(jack_default_audio_sample_t *)) // no conversion necessary
+		sample_t *tempBuffer=that->tempBuffer;
+
+		that->mixSoundPlayerChannels(gDesiredOutputChannelCount,tempBuffer,(unsigned)nframes);
+
+		// copy interlaced tempBuffer to 'out[0..n-1]' (and converting the sample type as needed)
+		const unsigned channelCount=that->devices[0].channelCount;
+		for(unsigned i=0;i<channelCount;i++)
 		{
-			// ??? implement this to write to a temp buffer and then copy to out1 and out2
-			throw(runtime_error(string(__func__)+" -- unhandled sample_t/jack_default_audio_sample_t combination (2)"));
-			//that->mixSoundPlayerChannels(gDesiredOutputChannelCount,(sample_t *)out,(unsigned)nframes);
+			jack_default_audio_sample_t *out=(jack_default_audio_sample_t *)jack_port_get_buffer(that->output_ports[i],nframes);
+
+			const sample_t *tt=tempBuffer+i;
+			for(unsigned t=0;t<nframes;t++,tt+=channelCount)
+				out[t]=convert_sample<sample_t,jack_default_audio_sample_t>(*tt);
 		}
-		else if(typeid(jack_default_audio_sample_t)==typeid(float) && typeid(sample_t)==typeid(int16_t))
-		{
-			sample_t *tempBuffer=that->tempBuffer;
-
-			that->mixSoundPlayerChannels(gDesiredOutputChannelCount,tempBuffer,(unsigned)nframes);
-
-			// copy back to 'out1 & 2' but normalizing it to [-1,1]
-			const unsigned channelCount=that->devices[0].channelCount;
-			for(unsigned i=0;i<channelCount;i++)
-			{
-				jack_default_audio_sample_t *out=(jack_default_audio_sample_t *)jack_port_get_buffer(that->output_ports[i],nframes);
-
-				sample_t const *tt=tempBuffer+i;
-				for(unsigned t=0;t<nframes;t++,tt+=channelCount)
-					out[t]=(jack_default_audio_sample_t)(*tt)/(jack_default_audio_sample_t)MAX_SAMPLE;
-			}
-		}
-		else
-			throw(runtime_error(string(__func__)+" -- unhandled sample_t/jack_default_audio_sample_t combination"));
 	}
 	catch(exception &e)
 	{

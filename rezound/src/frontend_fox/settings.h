@@ -30,6 +30,8 @@
 #define CUE_RADIUS 3
 #define CUE_OFF_SCREEN (-(CUE_RADIUS+1000))
 
+// 32767 is just a height in pixels of a wave in any data type I want to be able to draw when fully zoomed in
+#define MAX_WAVE_HEIGHT 65536
 
 /*
  * True if vertical cue positions should be drawn across the waveform

@@ -36,10 +36,6 @@ class CSoundPlayerChannel;
 #include "CSound_defs.h"
 class ASoundPlayer;
 
-// ??? perhaps these should change to float if sample_t is floating point .. perhap define them where sample_t is defined
-#define MAX_VOLUME_SCALAR 32767
-#define MAX_VOLUME_SCALAR_DIV 32768
-
 class CSoundPlayerChannel
 {
 public:

@@ -175,6 +175,35 @@ AC_C_BIGENDIAN([AC_DEFINE(WORDS_BIGENDIAN)])
 
 
 
+############################################################################
+# Handle user's choice of data types                                       #
+############################################################################
+AH_TEMPLATE(SAMPLE_TYPE_S16)
+AH_TEMPLATE(SAMPLE_TYPE_FLOAT)
+AC_ARG_ENABLE(
+	internal-sample-type,
+	AC_HELP_STRING([--enable-internal-sample-type=],[int16 or float]),
+	[ # action if flag was given
+		if [[ "$enableval" = "int16" ]]
+		then
+			AC_DEFINE(SAMPLE_TYPE_S16)
+			AC_MSG_RESULT([*** setting the internal sample type to signed 16 bit])
+		elif [[ "$enableval" = "float" ]]
+		then
+			AC_DEFINE(SAMPLE_TYPE_FLOAT)
+			AC_MSG_RESULT([*** setting the internal sample type to 32 bit floating point])
+		else
+			AC_MSG_ERROR([--enable-internal-sample-type= must be given int16 or float -- "$enableval" is invalid])
+		fi
+	],
+	[ # action if flag was not given
+	 	# default to signed 16 bit
+		AC_DEFINE(SAMPLE_TYPE_S16)
+		AC_MSG_RESULT([*** (default) setting the internal sample type to signed 16 bit])
+	]
+)
+
+
 
 
 

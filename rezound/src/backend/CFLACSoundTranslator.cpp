@@ -31,7 +31,7 @@
 
 #include <string>
 #include <stdexcept>
-#include <typeinfo>
+#include <utility>
 
 #include <FLAC++/all.h>
 
@@ -103,6 +103,7 @@ protected:
 	{
 		if(sound->isEmpty())
 		{
+#warning an exception thrown from here causes an abort because it is running in a thread??? why? I dunno, might want to talk to the FLAC guys
 			sampleRate=get_sample_rate();
 			channelCount=get_channels();
 			bitRate=get_bits_per_sample();
@@ -111,14 +112,16 @@ protected:
 			//printf("br %d\n",bitRate);
 			//printf("cc %d\n",channelCount);
 			//printf("sr %d\n",sampleRate);
-			if(typeid(sample_t)!=typeid(int16_t) || bitRate!=16)
-				throw runtime_error(string(__func__)+" -- internal error -- unhandled sample_t type with bitrate: "+istring(bitRate));
+			if(bitRate!=16)
+			{
+				Error("unhandled bitrate! (data will be incorrect): "+istring(bitRate));
+			}
 
 			if(channelCount<=0 || channelCount>MAX_CHANNELS) // ??? could just ignore the extra channels
-				throw(runtime_error(string(__func__)+" -- invalid number of channels in audio file: "+istring(channelCount)+" -- you could simply increase MAX_CHANNELS in CSound.h"));
+				throw runtime_error(string(__func__)+" -- invalid number of channels in audio file: "+istring(channelCount)+" -- you could simply increase MAX_CHANNELS in CSound.h");
 
 			if(sampleRate<100 || sampleRate>197000)
-				throw(runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate)));
+				throw runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate));
 
 			sound->createWorkingPoolFile(filename,sampleRate,channelCount,REALLOC_FILE_SIZE);
 
@@ -127,7 +130,6 @@ protected:
 		}
 
 
-#warning would need to handle bitrate conversion here
 		const sample_pos_t sampleframes_read=frame->header.blocksize;
 
 		if((pos+sampleframes_read)>sound->getLength())
@@ -138,8 +140,15 @@ protected:
 			const FLAC__int32 *src=buffer[i];
 			CRezPoolAccesser &dest=*(accessers[i]);
 
-			for(unsigned t=0;t<sampleframes_read;t++)
-				dest[pos+t]=src[t];
+			if(bitRate==16)
+			{
+				for(unsigned t=0;t<sampleframes_read;t++)
+					// the FLAC__int32 src seems to actually be 16bit (maybe this changes depending on the file?)
+					dest[pos+t]=convert_sample<int16_t,sample_t>(src[t]);
+			}
+			else
+			{ // warned user already
+			}
 		}
 
 		pos+=sampleframes_read;
@@ -225,6 +234,8 @@ protected:
 
 bool CFLACSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs) const
 {
+	int bitRate=0;
+
 	if(sound->getCueCount()>0 || sound->getUserNotes()!="")
 	{
 		if(Question(_("Saving user notes or cues is unimplemented for FLAC\nDo you wish to continue?"),yesnoQues)!=yesAns)
@@ -237,10 +248,9 @@ bool CFLACSoundTranslator::onSaveSound(const string filename,const CSound *sound
 
 	f.set_channels(sound->getChannelCount());
 
-	if(typeid(sample_t)==typeid(int16_t))
-		f.set_bits_per_sample(16);
-	else 
-		throw runtime_error(string(__func__)+" -- internal error -- unhandled sample_t type ");
+	/* ??? needs to be a user choice */
+	f.set_bits_per_sample(16);
+	bitRate=16;
 
 	f.set_sample_rate(sound->getSampleRate());
 
@@ -273,8 +283,13 @@ bool CFLACSoundTranslator::onSaveSound(const string filename,const CSound *sound
 				const CRezPoolAccesser src=sound->getAudio(i);
 				FLAC__int32 *dest=buffers[i];
 
-				for(sample_pos_t t=0;t<len;t++)
-					dest[t]=src[t+pos+saveStart];
+				if(bitRate==16)
+				{
+					for(sample_pos_t t=0;t<len;t++)
+						dest[t]=convert_sample<sample_t,int16_t>(src[t+pos+saveStart]);
+				}
+				else
+					throw runtime_error(string(__func__)+" -- internal error -- unhandled bitRate: "+istring(bitRate));
 			}
 
 			if(!f.process(_buffers,len))

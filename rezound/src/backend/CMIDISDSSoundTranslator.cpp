@@ -26,7 +26,6 @@
 #include "CMIDISDSSoundTranslator.h"
 
 #include <stdexcept>
-#include <typeinfo>
 #include <algorithm>
 
 #include <errno.h>
@@ -441,8 +440,7 @@ bool CMIDISDSSoundTranslator::onLoadSound(const string filename,CSound *sound) c
 			printf("processing data\n");
 #endif
 			// read the 120 bytes worth of sample data
-				// assuming 16 bit data
-			if(typeid(sample_t)==typeid(int16_t))
+				// assuming 16bit unsigned data from MIDI device
 			{
 				CRezPoolAccesser dest=sound->getAudio(0);
 				sample_pos_t k=0;
@@ -450,14 +448,12 @@ bool CMIDISDSSoundTranslator::onLoadSound(const string filename,CSound *sound) c
 				for(int t=0;t<120 && lengthRead<length;t+=3)
 				{
 					// bits are left-justified in 3 byte sections except that bit 7 is unused in each byte
-					mix_sample_t s=( (((sample_t)ptr[t+0]))<<9 ) + ( (((sample_t)ptr[t+1]))<<2 ) + (((sample_t)ptr[t+2])>>5);
-					dest[lengthRead++]=s-0x8000;
+					int16_t s=( (((int16_t)ptr[t+0]))<<9 ) + ( (((int16_t)ptr[t+1]))<<2 ) + (((int16_t)ptr[t+2])>>5);
+					dest[lengthRead++]=convert_sample<int16_t,sample_t>(s-0x8000);
 				}
 
 				// could perform checksum verification
 			}
-			else
-				throw runtime_error(string(__func__)+" -- unimplemented sample type conversion");
 
 			if(isDevice)
 			{ // send ACK message
@@ -528,10 +524,6 @@ bool CMIDISDSSoundTranslator::onSaveSound(const string filename,const CSound *so
 	{
 		unsigned char buffer[256];
 		int l;
-
-			// ??? handle later
-		if(typeid(sample_t)!=typeid(int16_t))
-			throw runtime_error(string(__func__)+" -- unimplemented sample_t type");
 
 		// prompt for some necessary things
 		sysExChannel=	sound->containsGeneralDataPool("SDS Data") ? sound->getGeneralDataAccesser<int16_t>("SDS Data")[0] : -1;
@@ -663,7 +655,7 @@ bool CMIDISDSSoundTranslator::onSaveSound(const string filename,const CSound *so
 			unsigned char *b=buffer+5;
 			for(int t=0;t<len;t++)
 			{
-				mix_sample_t s=src[saveStart+(packetSeq*SAMPLES_PER_PACK)+t]+0x8000;
+				int s=(int)convert_sample<sample_t,int16_t>(src[saveStart+(packetSeq*SAMPLES_PER_PACK)+t])+0x8000;
 				(*(b++))=(s>>9)&0x7f;
 				(*(b++))=(s>>2)&0x7f;
 				(*(b++))=s&0x3;

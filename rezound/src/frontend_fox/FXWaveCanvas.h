@@ -68,8 +68,8 @@ public:
 
 
 	// v is 0 to 1 (0 is all the way zoomed out, 1 is all the way zoomed in)
-	void setVertZoom(double v);
-	const double getVertZoom() const;
+	void setVertZoom(float v);
+	const float getVertZoom() const;
 
 	// returns the width of the wave according to the zoom factor
 	const int getVertSize() const;
@@ -115,7 +115,7 @@ private:
 	CLoadedSound *loadedSound;
 
 	sample_fpos_t horzZoomFactor;
-	double vertZoomFactor;
+	float vertZoomFactor;
 
 	sample_pos_t horzOffset;
 	sample_fpos_t prevHorzZoomFactor_horzOffset;
@@ -125,7 +125,8 @@ private:
 	FXint prevDrawPlayStatusX;
 	sample_pos_t renderedStartPosition,renderedStopPosition;
 
-	double lastHorzZoom,lastVertZoom;
+	double lastHorzZoom;
+	float lastVertZoom;
 
 	LastChangedPositions lastChangedPosition;
 	bool lastDrawWasUnsuccessful;

@@ -169,12 +169,12 @@ double FXRezWaveView::getHorzZoom() const
 	return waveScrollArea->getHorzZoom();
 }
 
-void FXRezWaveView::setVertZoom(double v)
+void FXRezWaveView::setVertZoom(float v)
 {
 	waveScrollArea->setVertZoom(v);
 }
 
-double FXRezWaveView::getVertZoom() const
+float FXRezWaveView::getVertZoom() const
 {
 	return waveScrollArea->getVertZoom();
 }

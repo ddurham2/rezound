@@ -46,7 +46,6 @@
 
 
 #include <stdexcept>
-#include <typeinfo>
 #include <vector>
 
 #include <istring>
@@ -266,40 +265,64 @@ bool ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 		for(unsigned t=0;t<channelCount;t++)
 			accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
 
+		unsigned long count=CPath(filename).getSize();
+		CStatusBar statusBar("Loading Sound",ftell(f),count,true);
+
 		// ??? if sample_t is not the bit type that ogg is going to return I should write some convertion functions... that are overloaded to go to and from several types to and from sample_t
 			// ??? this needs to match the type of sample_t
 			// ??? float is supported by ov_read_float
 		#define BIT_RATE 16
 
-		TAutoBuffer<sample_t> buffer((size_t)((BIT_RATE/8)*4096/sizeof(sample_t)));
+		TAutoBuffer<sample_t> mem_buffer(4096);
 		sample_pos_t pos=0;
-
-		unsigned long count=CPath(filename).getSize();
-		CStatusBar statusBar("Loading Sound",ftell(f),count,true);
-
+		
 		int eof=0;
 		int current_section;
 		for(;;)
 		{
-			const long readLength=ov_read(&vf,(char *)((sample_t *)buffer),buffer.getSize()*sizeof(sample_t),ENDIAN,BIT_RATE/8,1,&current_section);
-			if(readLength==0)
-				break;
-			else if(readLength<0)
-			{ // error in the stream... may not be fatal however
-			}
-			else // if(readLength>0)
-			{
-				const int chunkSize= readLength/((BIT_RATE/8)*channelCount);
+#if defined(SAMPLE_TYPE_S16)
+			sample_t * const buffer=mem_buffer;
+			const long read_ret=ov_read(&vf,(char *)buffer,mem_buffer.getSize()*sizeof(sample_t),ENDIAN,sizeof(sample_t),1,&current_section);
+			const int readLength=read_ret/(sizeof(sample_t)*channelCount);
 
+#elif defined(SAMPLE_TYPE_FLOAT)
+			float **buffer;
+			const long read_ret=ov_read_float(&vf,&buffer,mem_buffer.getSize(),&current_section);
+			const int readLength=read_ret;
+
+#else
+			#error unhandle SAMPLE_TYPE_xxx define
+#endif
+
+			if(read_ret==0)
+				break;
+			else if(read_ret<0)
+			{ // error in the stream... may not be fatal however
+				fprintf(stderr,"error returned from ov_read_xxx -- continuing to read -- skip may exist in audio now -- %s\n",OVstrerror(read_ret).c_str());
+			}
+			else // if(read_ret>0)
+			{
 				if((pos+REALLOC_FILE_SIZE)>sound->getLength())
 					sound->addSpace(sound->getLength(),REALLOC_FILE_SIZE);
 
 				for(unsigned c=0;c<channelCount;c++)
 				{
-					for(int i=0;i<chunkSize;i++)
-						(*(accessers[c]))[pos+i]=buffer[i*channelCount+c];
+					CRezPoolAccesser &accesser=*(accessers[c]);
+#if defined(SAMPLE_TYPE_S16) 
+					// buffer points to frames of audio
+					for(int i=0;i<readLength;i++)
+						accesser[pos+i]=buffer[i*channelCount+c];
+#elif defined(SAMPLE_TYPE_FLOAT)
+					// buffer points to arrays of samples of audio (1 array for each channel)
+					const float * const _buffer=buffer[c];
+					for(int i=0;i<readLength;i++)
+						accesser[pos+i]=_buffer[i];
+#else
+					#error unhandle SAMPLE_TYPE_xxx define
+#endif
 				}
-				pos+=chunkSize;
+
+				pos+=readLength;
 			}
 
 			if(statusBar.update(ftell(f)))
@@ -498,8 +521,11 @@ bool ClibvorbisSoundTranslator::onSaveSound(const string filename,const CSound *
 				// copy data into buffer
 				const unsigned chunkSize= (t==chunkCount-1) ? (saveLength%CHUNK_SIZE) : CHUNK_SIZE;
 				for(unsigned c=0;c<channelCount;c++)
-				for(unsigned i=0;i<chunkSize;i++)
-					buffer[c][i]=(float)((*(accessers[c]))[pos+i+saveStart])/(float)MAX_SAMPLE;
+				{
+					const CRezPoolAccesser &accesser=*(accessers[c]);
+					for(unsigned i=0;i<chunkSize;i++)
+						buffer[c][i]=convert_sample<sample_t,float>(accesser[pos+i+saveStart]);
+				}
 				pos+=chunkSize;
 
 				// tell the library how much we actually submitted

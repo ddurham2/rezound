@@ -46,8 +46,8 @@ public:
 	void setHorzZoom(double v,FXWaveCanvas::HorzRecenterTypes horzRecenterType);
 	double getHorzZoom() const;
 
-	void setVertZoom(double v);
-	double getVertZoom() const;
+	void setVertZoom(float v);
+	float getVertZoom() const;
 
 	void setHorzOffset(sample_pos_t offset);
 	sample_pos_t getHorzOffset() const;

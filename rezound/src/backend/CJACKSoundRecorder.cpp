@@ -162,31 +162,20 @@ void CJACKSoundRecorder::redo()
 int CJACKSoundRecorder::processAudio(jack_nframes_t nframes,void *arg)
 {
 	CJACKSoundRecorder *that=(CJACKSoundRecorder *)arg;
-
 	try
 	{
-		if(typeid(sample_t)==typeid(jack_default_audio_sample_t *)) // no conversion necessary
+		sample_t *tempBuffer=that->tempBuffer;
+
+		// convert the recorded buffer to the native type and give to ASoundRecorder::onData
+		const unsigned channelCount=that->getSound()->getChannelCount();
+		for(unsigned i=0;i<channelCount;i++)
 		{
-			throw(runtime_error(string(__func__)+" -- unhandled sample_t/jack_default_audio_sample_t combination (2)"));
+			const jack_default_audio_sample_t * const in=(jack_default_audio_sample_t *)jack_port_get_buffer(that->input_ports[i],nframes);
+
+			sample_t *tt=tempBuffer+i;
+			for(unsigned t=0;t<nframes;t++,tt+=channelCount)
+				(*tt)=convert_sample<jack_default_audio_sample_t,sample_t>(in[t]);
 		}
-		else if(typeid(jack_default_audio_sample_t)==typeid(float) && typeid(sample_t)==typeid(int16_t))
-		{
-			sample_t *tempBuffer=that->tempBuffer;
-
-			// convert the recorded buffer to the native type and give to ASoundRecorder::onData
-			const unsigned channelCount=that->getSound()->getChannelCount();
-			for(unsigned i=0;i<channelCount;i++)
-			{
-				const jack_default_audio_sample_t * const in=(jack_default_audio_sample_t *)jack_port_get_buffer(that->input_ports[i],nframes);
-
-				sample_t *tt=tempBuffer+i;
-				for(unsigned t=0;t<nframes;t++,tt+=channelCount)
-					(*tt)=(sample_t)(in[t]*MAX_SAMPLE);
-			}
-		}
-		else
-			throw(runtime_error(string(__func__)+" -- unhandled sample_t/jack_default_audio_sample_t combination"));
-
 		that->onData(that->tempBuffer,nframes);
 	}
 	catch(exception &e)

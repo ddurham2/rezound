@@ -1131,7 +1131,7 @@ void CSoundPlayerChannel::createPrebufferedChunks()
 	for(unsigned i=0;i<channelCount;i++)
 	{
 		for(unsigned t=0;t<gapSignalBufferLength;t++)
-			_gapSignalBuffer[t*channelCount+i]=ClipSample((float)rand()/RAND_MAX*MAX_SAMPLE/20.0);
+			_gapSignalBuffer[t*channelCount+i]=convert_sample<float,sample_t>((float)rand()/RAND_MAX/20.0);
 	}
 	*/
 
@@ -1142,13 +1142,13 @@ void CSoundPlayerChannel::createPrebufferedChunks()
 		const float freq2=freq1*1.6;
 		const float freq3=freq2*1.7;
 		for(unsigned t=0;t<gapSignalBufferLength;t++)
-			_gapSignalBuffer[t*channelCount+i]=ClipSample(
+			_gapSignalBuffer[t*channelCount+i]=convert_sample<float,sample_t>(
 			(0.5-0.5*cos(2*M_PI*t/gapSignalBufferLength))*	// fade in/out window
 			((						// produce the tone
 				sin(t*freq1/sampleRate*2.0*M_PI)+
 				sin(t*freq2/sampleRate*2.0*M_PI)+
 				sin(t*freq3/sampleRate*2.0*M_PI)
-			)*MAX_SAMPLE/20.0));
+			)/20.0));
 	}
 
 }

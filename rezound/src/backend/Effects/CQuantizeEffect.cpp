@@ -58,7 +58,8 @@ bool CQuantizeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
 
-			TDSPQuantizer<mix_sample_t,MAX_SAMPLE> quantizer(quantumCount);
+						// ??? hmm wouldn't work well if it wasn't an integral value perhaps I should make it a parameter to the constructor
+			TDSPQuantizer<mix_sample_t,(int)MAX_SAMPLE> quantizer(quantumCount);
 
 			sample_pos_t srcP=prepareForUndo ? 0 : start;
 			for(sample_pos_t t=start;t<=stop;t++)

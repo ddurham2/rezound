@@ -27,7 +27,6 @@
 
 #include "CvoxSoundTranslator.h"
 
-#include <typeinfo>
 #include <stdexcept>
 
 #include <CPath.h>
@@ -112,15 +111,15 @@ bool CvoxSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 			accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
 
 		#define BUFFER_SIZE 4096
+		sample_pos_t pos=0;
 
-		if(bits==16 && typeid(sample_t)==typeid(int16_t))
+		if(bits==16)
 		{
-			TAutoBuffer<sample_t> buffer(BUFFER_SIZE*channelCount);
-			sample_pos_t pos=0;
+			TAutoBuffer<int16_t> buffer(BUFFER_SIZE*channelCount);
 
 			for(;;)
 			{
-				size_t chunkSize=fread((void *)((sample_t *)buffer),sizeof(sample_t)*channelCount,BUFFER_SIZE,p);
+				size_t chunkSize=fread((void *)((int16_t *)buffer),sizeof(int16_t)*channelCount,BUFFER_SIZE,p);
 				if(chunkSize<=0)
 					break;
 
@@ -129,18 +128,21 @@ bool CvoxSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 
 				for(unsigned c=0;c<channelCount;c++)
 				{
+					CRezPoolAccesser &accesser=*(accessers[c]);
 					for(unsigned i=0;i<chunkSize;i++)
-						(*(accessers[c]))[pos+i]=buffer[i*channelCount+c];
+						accesser[pos+i]=convert_sample<int16_t,sample_t>(buffer[i*channelCount+c]);
 				}
+
 				pos+=chunkSize;
 			}
 
-			// remove any extra allocated space
-			if(sound->getLength()>pos)
-				sound->removeSpace(pos,sound->getLength()-pos);
 		}
 		else
 			throw runtime_error(string(__func__)+" -- an unhandled bit rate of "+istring(bits));
+
+		// remove any extra allocated space
+		if(sound->getLength()>pos)
+			sound->removeSpace(pos,sound->getLength()-pos);
 
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 			delete accessers[t];
@@ -189,10 +191,11 @@ bool CvoxSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 	{
 		const unsigned channelCount=sound->getChannelCount();
 
-		#define BITS 16 // has to go along with how we're writing it to the pipe below
+			// could make this a user choice
+		const unsigned bits=16; // has to go along with how we're writing it to the pipe below
 
-		if(saveLength>((0x7fffffff-4096)/((BITS/2)*channelCount)))
-			throw runtime_error(string(__func__)+" -- audio data is too large to be converted to vox (more than 2gigs of "+istring(BITS)+"bit/"+istring(channelCount)+"channels");
+		if(saveLength>((0x7fffffff-4096)/((bits/8)*channelCount)))
+			throw runtime_error(string(__func__)+" -- audio data is too large to be converted to vox (more than 2gigs of "+istring(bits)+"bit/"+istring(channelCount)+"channels");
 
 		if(SIGPIPECaught)
 			throw runtime_error(string(__func__)+" -- vox aborted -- check stderr for more information");
@@ -201,12 +204,14 @@ bool CvoxSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 			accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
 
 		#define BUFFER_SIZE 4096
-		if(typeid(sample_t)==typeid(int16_t))
-		{
-			TAutoBuffer<sample_t> buffer(BUFFER_SIZE*channelCount);
-			sample_pos_t pos=0;
+		sample_pos_t pos=0;
 
-			CStatusBar statusBar("Saving Sound",0,saveLength,true);
+		CStatusBar statusBar("Saving Sound",0,saveLength,true);
+
+		if(bits==16)
+		{
+			TAutoBuffer<int16_t> buffer(BUFFER_SIZE*channelCount);
+	
 			while(pos<saveLength)
 			{
 				size_t chunkSize=BUFFER_SIZE;
@@ -215,14 +220,16 @@ bool CvoxSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 
 				for(unsigned c=0;c<channelCount;c++)
 				{
+					const CRezPoolAccesser &accesser=*(accessers[c]);
 					for(unsigned i=0;i<chunkSize;i++)
-						buffer[i*channelCount+c]=(*(accessers[c]))[pos+i+saveStart];
+						buffer[i*channelCount+c]=convert_sample<sample_t,int16_t>(accesser[pos+i+saveStart]);
 				}
 				pos+=chunkSize;
 
 				if(SIGPIPECaught)
 					throw runtime_error(string(__func__)+" -- lame aborted -- check stderr for more information");
-				if(fwrite((void *)((sample_t *)buffer),sizeof(sample_t)*channelCount,chunkSize,p)!=chunkSize)
+
+				if(fwrite(buffer,sizeof(int16_t)*channelCount,chunkSize,p)!=chunkSize)
 					fprintf(stderr,"%s -- dropped some data while writing\n",__func__);
 
 				if(statusBar.update(pos))
@@ -233,7 +240,7 @@ bool CvoxSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 			}
 		}
 		else
-			throw runtime_error(string(__func__)+" -- internal error -- an unhandled sample_t type");
+			throw runtime_error(string(__func__)+" -- internal error -- an unhandled bit rate of "+istring(bits));
 
 		cancelled:
 

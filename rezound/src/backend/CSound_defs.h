@@ -83,29 +83,83 @@ static const sample_pos_t NIL_SAMPLE_POS=~((sample_pos_t)0);
 
 // ??? probably should add conversion macros which convert to and from several types of formats to and from the native format 
 //	- this would help in importing and exporting audio data
-//	- might deal with endian-ness too
+//	- might deal with endian-ness to
+
 
 // audio type specifications
-#if 1 // 16 bit PCM
+#if defined(SAMPLE_TYPE_S16) // 16 bit PCM
 
 	#define MAX_SAMPLE ((sample_t)32767)
-	#define MIN_SAMPLE ((sample_t)-MAX_SAMPLE) // these should stay symetric so I don't have to handle the possilbility of them being off center in the frontend rendering
+	#define MIN_SAMPLE ((sample_t)-MAX_SAMPLE) // these should stay symetric so I don't have to handle the possibility of them being off center in the frontend rendering
 	typedef int16_t sample_t;
 	typedef int_fast32_t mix_sample_t; // this needs to hold at least a value of MAX_SAMPLE squared
 
-#elif 0 // 32 bit floating point PCM (??? UNTESTED!)
-	#define MAX_SAMPLE ((float)1.0)
-	#define MIN_SAMPLE ((float)-MAX_SAMPLE) // these should stay symetric so I don't have to handle the possilbility of them being off center in the frontend rendering
+	static mix_sample_t _SSS;
+	#define ClipSample(s) ((sample_t)(_SSS=((mix_sample_t)(s)), _SSS>MAX_SAMPLE ? MAX_SAMPLE : ( _SSS<MIN_SAMPLE ? MIN_SAMPLE : _SSS ) ) )
+
+#elif defined(SAMPLE_TYPE_FLOAT) // 32 bit floating point PCM
+	#define MAX_SAMPLE (1.0f)
+	#define MIN_SAMPLE (-MAX_SAMPLE) // these should stay symetric so I don't have to handle the possibility of them being off center in the frontend rendering
 	typedef float sample_t;
 	typedef float mix_sample_t;
 
+	// empty implementation so that samples are not truncated until playback
+	#define ClipSample(s) (s)
+
 #else
-	#error please enable one section above
+	#error no SAMPLE_TYPE_xxx defined -- was supposed to be defined from the configure script
 #endif
 
 
-static mix_sample_t _SSS;
-#define ClipSample(s) ((sample_t)(_SSS=((mix_sample_t)(s)), _SSS>MAX_SAMPLE ? MAX_SAMPLE : ( _SSS<MIN_SAMPLE ? MIN_SAMPLE : _SSS ) ) )
+
+/***************************/
+/* sample type conversions */
+/***************************/
+
+// ??? how would I handle 24bit? since I think it'd be represented with an int32_t;
+// perhaps also have a bits integer template parameter that gets passed in
+
+// It is necessary to call this template function with the template arguments because the
+// compiler cannot infer the specialization to used since not all the template parameters
+// types are used in the function's parameter list.
+
+template<typename from_sample_t,typename to_sample_t> static inline const to_sample_t convert_sample(const register from_sample_t sample) { sample_type_conversion_for_this_combination_unimplemented; }
+
+// int16_t -> int16_t
+template<> static inline const int16_t convert_sample<int16_t,int16_t>(const register int16_t sample) { return sample; }
+
+// int16_t -> float
+template<> static inline const float convert_sample<int16_t,float>(const register int16_t sample) { return (float)sample/32767.0f; }
+
+// int16_t -> double
+template<> static inline const double convert_sample<int16_t,double>(const register int16_t sample) { return (double)sample/32767.0; }
+
+
+// float -> int16_t
+template<> static inline const int16_t convert_sample<float,int16_t>(const register float sample) { const int s=(int)(sample*32767.0f); return s>=32767 ? 32767 : (s<=-32767 ? -32767 : s); }
+
+// float -> float
+template<> static inline const float convert_sample<float,float>(const register float sample) { return sample; }
+
+// float -> double
+template<> static inline const double convert_sample<float,double>(const register float sample) { return (double)sample; }
+
+
+// double -> int16_t
+template<> static inline const int16_t convert_sample<double,int16_t>(const register double sample) { const int s=(int)(sample*32767.0); return s>=32767 ? 32767 : (s<=-32767 ? -32767 : s); }
+
+// double -> float
+template<> static inline const float convert_sample<double,float>(const register double sample) { return (float)sample; }
+
+// double -> double
+template<> static inline const double convert_sample<double,double>(const register double sample) { return sample; }
+
+/**************************/
+
+
+
+
+
 
 
 // used in CSound::mixSound()

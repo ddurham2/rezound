@@ -88,7 +88,7 @@ bool CGenerateToneAction::doActionSizeSafe(CActionSound &actionSound,bool prepar
 				const float freq=(2.0*M_PI)/(actionSound.sound->getSampleRate()/frequency);
 				for(sample_pos_t t=0;t<sampleCount;t++)
 				{
-					dest[t+start]=ClipSample(MAX_SAMPLE*sinf(t*freq)*volume);
+					dest[t+start]=convert_sample<float,sample_t>(sinf(t*freq)*volume);
 					STATUS_UPDATE
 				}
 				break;
@@ -96,8 +96,8 @@ bool CGenerateToneAction::doActionSizeSafe(CActionSound &actionSound,bool prepar
 
 			case ttSquareWave: {
 				const float freq=(2.0*M_PI)/(actionSound.sound->getSampleRate()/frequency);
-				const sample_t s_pos=ClipSample(MAX_SAMPLE*volume);
-				const sample_t s_neg=ClipSample(-MAX_SAMPLE*volume);
+				const sample_t s_pos=convert_sample<float,sample_t>(volume);
+				const sample_t s_neg=convert_sample<float,sample_t>(-volume);
 				for(sample_pos_t t=0;t<sampleCount;t++)
 				{
 					// The idea is that when sin is positive we should create the max value else the min value
@@ -112,39 +112,39 @@ bool CGenerateToneAction::doActionSizeSafe(CActionSound &actionSound,bool prepar
 				const float c= (toneType==ttRisingSawtoothWave) ? 1.0 : -1.0;
 
 				/* ??? this may not be the best implementation since the periodLength is integer division */
-				const mix_sample_t periodLength=(mix_sample_t)(actionSound.sound->getSampleRate()/frequency);
+				const int periodLength=(int)(actionSound.sound->getSampleRate()/frequency);
 				for(sample_pos_t t=0;t<sampleCount;t++)
 				{
 					const sample_pos_t tt=t+periodLength/2; // tt must be offset to start the wave on 0
 
 					// The idea is that t%p will wrap every p samples where p is the periodLength
 					//
-					//          (          t%p  )
-					// saw(t) = ( 2*MAX * ----- ) - MAX
-					//          (           p   )
+					//          (      t%p  )
+					// saw(t) = ( 2 * ----- ) - 1
+					//          (       p   )
 					//
-					// basically [0,periodLength) is mapped to [-MAX_SAMPLE,MAX_SAMPLE) then * volume
-					const float s= ((2*MAX_SAMPLE*(mix_sample_t)(tt%periodLength)/periodLength)-MAX_SAMPLE)*volume;
-					dest[t+start]=ClipSample(c*s);
+					// basically [0,periodLength) is mapped to [-1,1) then * volume
+					const float s= ((2.0f*(tt%periodLength)/periodLength)-1.0f)*volume;
+					dest[t+start]=convert_sample<float,sample_t>(c*s);
 					STATUS_UPDATE
 				}
 				break;
 			}
 
 			case ttTriangleWave: {
-				const mix_sample_t periodLength=(mix_sample_t)(2*(actionSound.sound->getSampleRate()/frequency));
+				const int periodLength=(int)(2*(actionSound.sound->getSampleRate()/frequency));
 				for(sample_pos_t t=0;t<sampleCount;t++)
 				{
 					const sample_pos_t tt=t+periodLength/4; // tt must be offset to start the wave on 0
 
 					// I derived this from doubling the period on a sawtooth and taking the abs
 					//
-					//               | 4*MAX * (t%p)         |
-					// triangle(t) = | ------------- - 2*MAX | - MAX
-					//               |       p               |
+					//               |  4 * (t%p)     |
+					// triangle(t) = | ---------- - 2 | - 1
+					//               |      p         |
 					//
-					const float s= (abs((4*MAX_SAMPLE*(mix_sample_t)(tt%periodLength)/periodLength)-(2*MAX_SAMPLE))-MAX_SAMPLE)*volume;
-					dest[t+start]=ClipSample(-s);
+					const float s= (abs((4.0f*(float)(tt%periodLength)/periodLength)-2.0f)-1)*volume;
+					dest[t+start]=convert_sample<float,sample_t>(-s);
 					STATUS_UPDATE
 				}
 				break;

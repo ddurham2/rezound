@@ -48,13 +48,13 @@
 // needs to match for what is above and type of sample_t ???
 // ??? BTW- on a big endian machine, AFMT_S16_BE is available
 // 	also now existing the OSS documenation I was reading are AFMT_MPEG 
-// 	and AFMT_AC3 which would be nice for mroe than stereo
+// 	and AFMT_AC3 which would be nice for more than stereo
 #define OSS_PCM_FORMAT AFMT_S16_LE
 
 // ??? as the sample rate is lower these need to be lower so that onData is called more often and the view meters on the record dialog don't seem to lag
 
-#define BUFFER_SIZE_BYTES 4096						// buffer size in bytes
-#define BUFFER_SIZE_BYTES_LOG2 12					// log2(BUFFER_SIZE_BYTES) -- that is 2^this is BUFFER_SIZE_BYTES
+#define BUFFER_SIZE_BYTES 4096		// buffer size in bytes
+#define BUFFER_SIZE_BYTES_LOG2 12	// log2(BUFFER_SIZE_BYTES) -- that is 2^this is BUFFER_SIZE_BYTES
 
 
 COSSSoundRecorder::COSSSoundRecorder() :
@@ -97,6 +97,8 @@ void COSSSoundRecorder::initialize(CSound *sound)
 				close(audio_fd);
 				throw(runtime_error(string(__func__)+" -- error setting OSS device '"+device+" back to blocking I/O mode -- "+errString));
 			}
+
+			// ??? need to give the user a choice and/or try several formats starting with the best first
 
 			// set the bit rate and endianness
 			int format=OSS_PCM_FORMAT; // signed 16-bit little endian
@@ -298,7 +300,11 @@ void COSSSoundRecorder::CRecordThread::main()
 */
 	try
 	{
-		sample_t buffer[BUFFER_SIZE_BYTES/sizeof(sample_t)]; 
+		const int bits=16; // ??? this needs to be passed in as how it was initialized! and there needs to be a choice of recording mode
+		int8_t read_buffer[BUFFER_SIZE_BYTES]; 
+		sample_t _converted_buffer[BUFFER_SIZE_BYTES/sizeof(sample_t)];
+		void *write_buffer;
+
 		while(!kill)
 		{
 /*
@@ -307,16 +313,38 @@ void COSSSoundRecorder::CRecordThread::main()
 */
 
 			int len,err;
-			if((len=read(parent->audio_fd,buffer,BUFFER_SIZE_BYTES))!=BUFFER_SIZE_BYTES)
+
+			if((len=read(parent->audio_fd,read_buffer,BUFFER_SIZE_BYTES))!=BUFFER_SIZE_BYTES)
 			{
 				if(len==-1)
 					fprintf(stderr,"warning: error returned by read() function -- %s\n",strerror(errno));
 				else
 					fprintf(stderr,"warning: didn't read whole buffer -- only read %d of %d bytes\n",len,BUFFER_SIZE_BYTES);
 			}
+			const int samplesRead=len/(bits/8);
+			const int framesRead=samplesRead/parent->getChannelCount();
 
 			if(len!=-1)
-				parent->onData(buffer,len/(sizeof(sample_t)*parent->getChannelCount()));
+			{
+#if defined(SAMPLE_TYPE_S16)
+				if(bits==16)
+				{ // no conversion necessary
+					write_buffer=read_buffer;
+				}
+#elif defined(SAMPLE_TYPE_FLOAT)
+				if(bits==16)
+				{ // need to convert int16_t -> float
+					write_buffer=_converted_buffer;
+					for(int t=0;t<samplesRead;t++)
+						_converted_buffer[t]=convert_sample<int16_t,float>(((int16_t *)read_buffer)[t]);
+				}
+#else
+				#error unhandled SAMPLE_TYPE_xxx define
+#endif
+				else
+					throw runtime_error(string(__func__)+" -- internal error -- unhandled bit rate: "+istring(bits));
+				parent->onData((sample_t *)write_buffer,framesRead);
+			}
 			// else wait a few milliseconds?
 
 /*

@@ -102,8 +102,8 @@ void FXWaveCanvas::updateFromEdit(bool undoing)
 	else
 		setHorzZoom(hZoom,hrtLeftEdge);
 
-	const double origVertZoomFactor=vertZoomFactor;
-	const double vZoom=getVertZoom();
+	const float origVertZoomFactor=vertZoomFactor;
+	const float vZoom=getVertZoom();
 	lastVertZoom=-1.0;
 	setVertZoom(vZoom);
 	if(origVertZoomFactor!=vertZoomFactor) // if the vertical zoom factor had to change, then re-center the vertical offset
@@ -189,24 +189,24 @@ const double FXWaveCanvas::getHorzZoom() const
 	return(lastHorzZoom);
 }
 
-const double FXWaveCanvas::getVertZoom() const
+const float FXWaveCanvas::getVertZoom() const
 {
 	return(lastVertZoom);
 }
 
-void FXWaveCanvas::setVertZoom(double v)
+void FXWaveCanvas::setVertZoom(float v)
 {
-	v=max(0.0,min(1.0,v)); // make v in range: [0,1]
+	v=max(0.0f,min(1.0f,v)); // make v in range: [0,1]
 
 	if(v!=lastVertZoom)
 	{
-		// how many sample values are represented by one pixel when fully zoomed out
-		const double maxZoomFactor=(MAX_SAMPLE*2.0)/(double)getHeight() * loadedSound->sound->getChannelCount();
+		// how many sample values are represented by one pixel when fully zoomed out (as if there were one channel)
+		const float maxZoomFactor=MAX_WAVE_HEIGHT/(float)getHeight();
 
 		const int oldSize=getVertSize()/2;
 
 		// map v:0..1 --> vertZoomFactor:maxZoomFactor..1
-		vertZoomFactor=maxZoomFactor+((1.0-maxZoomFactor)*v);
+		vertZoomFactor=maxZoomFactor+((1.0f-maxZoomFactor)*v);
 
 		// adjust the vertical offset to try to keep the same thing centered when changing the zoom factor
 		const int newSize=getVertSize()/2;
@@ -220,7 +220,7 @@ void FXWaveCanvas::setVertZoom(double v)
 
 const int FXWaveCanvas::getVertSize() const
 {
-	return((int)ceil(((MAX_SAMPLE*2)/vertZoomFactor)*loadedSound->sound->getChannelCount()));
+	return (int)ceil(MAX_WAVE_HEIGHT/vertZoomFactor);
 }
 
 

@@ -195,7 +195,7 @@ bool CGenerateNoiseAction::doActionSizeSafe(CActionSound &actionSound,bool prepa
 			{
 				double randval=getRandNoiseVal(0);
 
-				destL[destPos]=ClipSample(randval*volume*MAX_SAMPLE);
+				destL[destPos]=convert_sample<double,sample_t>(randval*volume);
 
 				switch(stereoImage) 
 				{
@@ -215,7 +215,7 @@ bool CGenerateNoiseAction::doActionSizeSafe(CActionSound &actionSound,bool prepa
 					default: 
 						throw runtime_error(string(__func__)+" -- internal error -- unimplemented stereoImage: "+istring(stereoImage));
 				}
-				destR[destPos]=ClipSample(randval*volume*MAX_SAMPLE);
+				destR[destPos]=convert_sample<double,sample_t>(randval*volume);
 
 				destPos++;
 			}
@@ -228,7 +228,7 @@ bool CGenerateNoiseAction::doActionSizeSafe(CActionSound &actionSound,bool prepa
 			for(sample_pos_t t=0;t<sampleCount;t++)
 			{
 				const double randval=getRandNoiseVal(0);
-				destL[destPos]=ClipSample(randval*volume*MAX_SAMPLE);
+				destL[destPos]=convert_sample<double,sample_t>(randval*volume);
 				destPos++;
 			}
 		}

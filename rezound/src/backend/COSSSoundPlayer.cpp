@@ -39,7 +39,6 @@
 
 #include <stdexcept>
 #include <string>
-#include <typeinfo>
 
 #include <istring>
 #include <TAutoBuffer.h>
@@ -48,8 +47,8 @@
 
 #define BUFFER_COUNT gDesiredOutputBufferCount
 #define BUFFER_SIZE_FRAMES gDesiredOutputBufferSize
-#define BUFFER_SIZE_BYTES (BUFFER_SIZE_FRAMES*sizeof(sample_t)*gDesiredOutputChannelCount)	// buffer size in bytes
-#define BUFFER_SIZE_BYTES_LOG2 ((size_t)(log((double)BUFFER_SIZE_BYTES)/log(2.0)))		// log2(BUFFER_SIZE_BYTES) -- that is 2^this is BUFFER_SIZE_BYTES
+#define BUFFER_SIZE_BYTES(sample_size) (BUFFER_SIZE_FRAMES*(sample_size)*gDesiredOutputChannelCount)		// buffer size in bytes
+#define BUFFER_SIZE_BYTES_LOG2(sample_size) ((size_t)(log((double)BUFFER_SIZE_BYTES((sample_size)))/log(2.0)))	// log2(BUFFER_SIZE_BYTES) -- that is 2^this is BUFFER_SIZE_BYTES
 
 
 COSSSoundPlayer::COSSSoundPlayer() :
@@ -81,38 +80,36 @@ void COSSSoundPlayer::initialize()
 		try
 		{
 			int sampleFormat=0;
+			int sampleSize=0;
 			string sSampleFormat="none";
+#warning need to change this to try several formats for a supported implementation because float is being reduced to 16bit right now
 #ifndef WORDS_BIGENDIN
 			// little endian platform
-			if(typeid(sample_t)==typeid(int16_t))
-			{
-				sampleFormat=AFMT_S16_LE;
-				sSampleFormat="little endian 16bit signed";
-			}
-			else if(typeid(sample_t)==typeid(float))
-			{
-				// ??? AND THIS WILL REQUIRE CONVERTING
-				throw runtime_error(string(__func__)+" -- not implemented just yet -- this will require setting a flag in this object to tell it to convert from float to int16");
-				sampleFormat=AFMT_S16_LE;
-				sSampleFormat="little endian 16bit signed";
-			}
+	#if defined(SAMPLE_TYPE_S16)
+			sampleFormat=AFMT_S16_LE;
+			sampleSize=2;
+			sSampleFormat="little endian 16bit signed";
+	#elif defined(SAMPLE_TYPE_FLOAT)
+			sampleFormat=AFMT_S16_LE; // closest thing
+			sampleSize=2;
+			sSampleFormat="little endian 24bit signed";
+	#else
+			#error unhandled SAMPLE_TYPE_xxx define
+	#endif
 #else
 			// big endian platform
-			if(typeid(sample_t)==typeid(int16_t))
-			{
-				sampleFormat=AFMT_S16_BE;
-				sSampleFormat="big endian 16bit signed";
-			}
-			else if(typeid(sample_t)==typeid(float))
-			{
-				// ??? AND THIS WILL REQUIRE CONVERTING
-				throw runtime_error(string(__func__)+" -- not implemented just yet -- this will require setting a flag in this object to tell it to convert from float to int16");
-				sampleFormat=AFMT_S16_BE;
-				sSampleFormat="big endian 16bit signed";
-			}
+	#if defined(SAMPLE_TYPE_S16)
+			sampleFormat=AFMT_S16_BE;
+			sampleSize=2;
+			sSampleFormat="big endian 16bit signed";
+	#elif defined(SAMPLE_TYPE_FLOAT)
+			sampleFormat=AFMT_S16_BE; // closest thing
+			sampleSize=2;
+			sSampleFormat="big endian 24bit signed";
+	#else
+			#error unhandled SAMPLE_TYPE_xxx define
+	#endif
 #endif
-			else
-				throw runtime_error(string(__func__)+" -- unhandled sample_t format");
 
 			// open OSS device
 			const string device=gOSSOutputDevice;
@@ -186,7 +183,7 @@ void COSSSoundPlayer::initialize()
 
 
 			// set the buffering parameters
-			const int arg=((BUFFER_COUNT)<<16)|BUFFER_SIZE_BYTES_LOG2;  // 0xMMMMSSSS; where 0xMMMM is the number of buffers and 2^0xSSSS is the buffer size
+			const int arg=((BUFFER_COUNT)<<16)|BUFFER_SIZE_BYTES_LOG2(sampleSize);  // 0xMMMMSSSS; where 0xMMMM is the number of buffers and 2^0xSSSS is the buffer size
 			int parm=arg;
 			if (ioctl(audio_fd, SNDCTL_DSP_SETFRAGMENT, &parm)==-1) 
 			{
@@ -206,10 +203,10 @@ void COSSSoundPlayer::initialize()
 
 				// check fragment size
 				const unsigned actualBufferSize=parm&0xffff;
-				if(actualBufferSize!=BUFFER_SIZE_BYTES_LOG2)
+				if(actualBufferSize!=BUFFER_SIZE_BYTES_LOG2(sampleSize))
 				{
 					close(audio_fd);
-					throw runtime_error(string(__func__)+" -- error setting the buffering parameters -- asking for "+istring(BUFFER_COUNT)+" buffers, each "+istring(BUFFER_SIZE_BYTES)+" bytes long, not supported");
+					throw runtime_error(string(__func__)+" -- error setting the buffering parameters -- asking for "+istring(BUFFER_COUNT)+" buffers, each "+istring(BUFFER_SIZE_BYTES(sampleSize))+" bytes long, not supported");
 				}
 			}
 
@@ -316,6 +313,10 @@ void COSSSoundPlayer::CPlayThread::main()
 		 *      So, I'm just making it bigger than necessary
 		 */
 		TAutoBuffer<sample_t> buffer(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount*2); 
+			// these are possibly used if sample format conversion is required
+		TAutoBuffer<int16_t> buffer__int16_t(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount);
+		TAutoBuffer<int32_t> buffer__int32_t(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount);
+		TAutoBuffer<float> buffer__float(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount);
 
 		while(!kill)
 		{
@@ -323,9 +324,29 @@ void COSSSoundPlayer::CPlayThread::main()
 			parent->mixSoundPlayerChannels(gDesiredOutputChannelCount,buffer,BUFFER_SIZE_FRAMES);
 
 			int len;
-			if((len=write(parent->audio_fd,buffer,BUFFER_SIZE_FRAMES*sizeof(sample_t)*gDesiredOutputChannelCount))!=(int)BUFFER_SIZE_BYTES)
-				fprintf(stderr,"warning: didn't write whole buffer -- only wrote %d of %d bytes\n",len,BUFFER_SIZE_BYTES);
 
+			// must do conversion of sample_t type -> initialized format type if necessary
+#if defined(SAMPLE_TYPE_S16)
+			// if(initialize to S16) ???
+			{ // no conversion necessary
+				if((len=write(parent->audio_fd,buffer,BUFFER_SIZE_FRAMES*sizeof(sample_t)*gDesiredOutputChannelCount))!=(int)BUFFER_SIZE_BYTES(sizeof(int16_t)))
+					fprintf(stderr,"warning: didn't write whole buffer -- only wrote %d of %d bytes\n",len,BUFFER_SIZE_BYTES(sizeof(int16_t)));
+			}
+
+#elif defined(SAMPLE_TYPE_FLOAT)
+			
+			// if(initialized to S16) ???
+			{ // we need to convert float->int16_t
+				unsigned l=BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount;
+				for(unsigned t=0;t<l;t++)
+					buffer__int16_t[t]=convert_sample<float,int16_t>(buffer[t]);
+				if((len=write(parent->audio_fd,buffer__int16_t,BUFFER_SIZE_FRAMES*sizeof(int16_t)*gDesiredOutputChannelCount))!=(int)BUFFER_SIZE_BYTES(sizeof(int16_t)))
+					fprintf(stderr,"warning: didn't write whole buffer -- only wrote %d of %d bytes\n",len,BUFFER_SIZE_BYTES(sizeof(int16_t)));
+			}
+
+#else
+			#error unhandled SAMPLE_TYPE_xxx define
+#endif
 		}
 	}
 	catch(exception &e)

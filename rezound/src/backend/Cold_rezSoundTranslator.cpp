@@ -79,7 +79,7 @@ bool Cold_rezSoundTranslator::onLoadSound(const string filename,CSound *sound) c
 		fread(&tmp,sizeof(tmp),1,f);
 		Data_Style=(RezDataStyles)tmp;
 
-		unsigned size=(CPath(filename).getSize()-ftell(f))/(channelCount*sizeof(sample_t));
+		unsigned size=(CPath(filename).getSize()-ftell(f))/(channelCount*sizeof(int16_t));
 
 
 		sound->createWorkingPoolFile(filename,sampleRate,channelCount,size);
@@ -88,21 +88,22 @@ bool Cold_rezSoundTranslator::onLoadSound(const string filename,CSound *sound) c
 			accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
 
 
-		sample_t buffer[4096];
+		int16_t buffer[4096];
 		size_t count=size/4096+1;
 		for(unsigned c=0;c<channelCount;c++)
 		{
+			CRezPoolAccesser &accesser=*(accessers[c]);
 			sample_pos_t pos=0;
 			for(size_t t=0;t<count;t++)
 			{
 				const size_t chunkSize=  (t==count-1 ) ? size%4096 : 4096;
 				if(chunkSize!=0)
 				{
-					if(fread(buffer,sizeof(sample_t),chunkSize,f)!=chunkSize)
+					if(fread(buffer,sizeof(int16_t),chunkSize,f)!=chunkSize)
 						throw runtime_error(string(__func__)+" -- error reading audio data -- "+strerror(errno));
 
 					for(size_t i=0;i<chunkSize;i++)
-						(*(accessers[c]))[pos++]=buffer[i];
+						accesser[pos++]=convert_sample<int16_t,sample_t>(buffer[i]);
 				}
 			}
 		}

@@ -110,7 +110,7 @@ bool CConvolutionFilter::doActionSizeSafe(CActionSound &actionSound,bool prepare
 
 					TDSPSinglePoleLowpassFilter<float,float> filterKernelLowpassFilter(freq_to_fraction(filterKernelLowpassFreq,filterKernelFile.getSampleRate()));
 					for(sample_pos_t t=0;t<filterKernelLength;t++)
-						filterKernel[t]=filterKernelLowpassFilter.processSample(((float)filterKernelStretcher.getSample()/(float)MAX_SAMPLE)*filterKernelGain);
+						filterKernel[t]=filterKernelLowpassFilter.processSample(convert_sample<sample_t,float>(filterKernelStretcher.getSample())*filterKernelGain);
 
 					if(reverseFilterKernel)
 					{

@@ -135,9 +135,9 @@ double FXWaveScrollArea::getHorzZoom() const
 	return canvas->getHorzZoom();
 }
 
-void FXWaveScrollArea::setVertZoom(double v)
+void FXWaveScrollArea::setVertZoom(float v)
 {
-	const double oldZoom=canvas->getVertZoom();
+	const float oldZoom=canvas->getVertZoom();
 
 	canvas->setVertZoom(v);
 	const int vertOffset=canvas->getVertOffset();
@@ -155,7 +155,7 @@ void FXWaveScrollArea::setVertZoom(double v)
 	vertical->repaint(); // cause it's a little slow to update on its own
 }
 
-double FXWaveScrollArea::getVertZoom() const
+float FXWaveScrollArea::getVertZoom() const
 {
 	return canvas->getVertZoom();
 }

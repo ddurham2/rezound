@@ -39,7 +39,8 @@ bool CDistortionEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 			sample_pos_t destPos=start;
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 			
-			TDSPDistorter<sample_t,MAX_SAMPLE> d(curve,curve);
+						//??? wouldn't work well if it wasn't an integral value, perhaps I should make it a parameter to the constructor
+			TDSPDistorter<sample_t,(int)MAX_SAMPLE> d(curve,curve);
 
 			while(destPos<=stop)
 			{

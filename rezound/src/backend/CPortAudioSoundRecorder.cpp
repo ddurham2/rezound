@@ -23,7 +23,6 @@
 #ifdef ENABLE_PORTAUDIO
 
 #include <stdexcept>
-#include <typeinfo>
 
 #include "settings.h"
 
@@ -39,7 +38,7 @@ CPortAudioSoundRecorder::CPortAudioSoundRecorder() :
 {
 	PaError err=Pa_Initialize();
 	if(err!=paNoError) 
-		throw(runtime_error(string(__func__)+" -- error initializing PortAudio -- "+Pa_GetErrorText(err)));
+		throw runtime_error(string(__func__)+" -- error initializing PortAudio -- "+Pa_GetErrorText(err));
 }
 
 CPortAudioSoundRecorder::~CPortAudioSoundRecorder()
@@ -54,13 +53,14 @@ void CPortAudioSoundRecorder::initialize(CSound *sound)
 	{
 		PaError err;
 
-		PaSampleFormat sampleFormat=0;
-		if(typeid(sample_t)==typeid(int16_t))
+		PaSampleFormat sampleFormat;
+#if defined(SAMPLE_TYPE_S16)
 			sampleFormat=paInt16;
-		else if(typeid(sample_t)==typeid(float))
+#elif defined(SAMPLE_TYPE_FLOAT)
 			sampleFormat=paFloat32;
-		else
-			throw(runtime_error(string(__func__)+" -- unhandled sample_t format"));
+#else
+			#error unhandled SAMPLE_TYPE_xxx define
+#endif
 		
 		ASoundRecorder::initialize(sound);
 
@@ -71,9 +71,9 @@ void CPortAudioSoundRecorder::initialize(CSound *sound)
 			sound->getChannelCount(),
 			sampleFormat,
 			NULL,
-			paNoDevice,			/* no output device */
-			0,				/* no output */
-			paInt16,			/* no output */
+			paNoDevice,			/* output parameter, we're not doing output */
+			0,				/* output parameter, we're not doing output */
+			paInt16,			/* output parameter, we're not doing output */
 			NULL,
 			sound->getSampleRate(),
 			BUFFER_SIZE_FRAMES,
@@ -83,18 +83,18 @@ void CPortAudioSoundRecorder::initialize(CSound *sound)
 			this);
 
 		if(err!=paNoError) 
-			throw(runtime_error(string(__func__)+" -- error opening PortAudio stream -- "+Pa_GetErrorText(err)));
+			throw runtime_error(string(__func__)+" -- error opening PortAudio stream -- "+Pa_GetErrorText(err));
 #warning test with some parameters that I know will fail
 
 		// start the PortAudio stream
 		err=Pa_StartStream(stream);
 		if(err!=paNoError) 
-			throw(runtime_error(string(__func__)+" -- error starting PortAudio stream -- "+Pa_GetErrorText(err)));
+			throw runtime_error(string(__func__)+" -- error starting PortAudio stream -- "+Pa_GetErrorText(err));
 
 		initialized=true;
 	}
 	else
-		throw(runtime_error(string(__func__)+" -- already initialized"));
+		throw runtime_error(string(__func__)+" -- already initialized");
 }
 
 void CPortAudioSoundRecorder::deinitialize()
@@ -135,7 +135,8 @@ int CPortAudioSoundRecorder::PortAudioCallback(void *inputBuffer,void *outputBuf
 {
 	try
 	{
-		((CPortAudioSoundRecorder *)userData)->onData((const sample_t *)inputBuffer,framesPerBuffer);
+		// no conversion necessary because we initialized it with the type of sample_t (if portaudio didn't support our sample_t type natively then we would need to do conversion here)
+		((CPortAudioSoundRecorder *)userData)->onData((sample_t *)inputBuffer,framesPerBuffer);
 	}
 	catch(exception &e)
 	{

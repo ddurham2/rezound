@@ -25,7 +25,6 @@
 #include <stdio.h>
 
 #include <stdexcept>
-#include <typeinfo>
 
 #include "settings.h"
 
@@ -40,7 +39,7 @@ CPortAudioSoundPlayer::CPortAudioSoundPlayer() :
 {
 	PaError err=Pa_Initialize();
 	if(err!=paNoError) 
-		throw(runtime_error(string(__func__)+" -- error initializing PortAudio -- "+Pa_GetErrorText(err)));
+		throw runtime_error(string(__func__)+" -- error initializing PortAudio -- "+Pa_GetErrorText(err));
 }
 
 CPortAudioSoundPlayer::~CPortAudioSoundPlayer()
@@ -51,7 +50,7 @@ CPortAudioSoundPlayer::~CPortAudioSoundPlayer()
 
 bool CPortAudioSoundPlayer::isInitialized() const
 {
-	return(initialized);
+	return initialized;
 }
 
 void CPortAudioSoundPlayer::initialize()
@@ -60,21 +59,22 @@ void CPortAudioSoundPlayer::initialize()
 	{
 		PaError err;
 
-		PaSampleFormat sampleFormat=0;
-		if(typeid(sample_t)==typeid(int16_t))
+		PaSampleFormat sampleFormat;
+#if defined(SAMPLE_TYPE_S16)
 			sampleFormat=paInt16;
-		else if(typeid(sample_t)==typeid(float))
+#elif defined(SAMPLE_TYPE_FLOAT)
 			sampleFormat=paFloat32;
-		else
-			throw(runtime_error(string(__func__)+" -- unhandled sample_t format"));
+#else
+			#error unhandled SAMPLE_TYPE_xxx define
+#endif
 		
 
 		// open a PortAudio stream
 		err = Pa_OpenStream(
 			&stream,
-			paNoDevice,			/* no input device */
-			0,				/* no input */
-			paInt16,			/* no input */
+			paNoDevice,			/* recording parameter, we're not recording */
+			0,				/* recording parameter, we're not recording */
+			paInt16,			/* recording parameter, we're not recording */
 			NULL,
 			gPortAudioOutputDevice,
 			gDesiredOutputChannelCount,
@@ -88,7 +88,7 @@ void CPortAudioSoundPlayer::initialize()
 			this);
 
 		if(err!=paNoError) 
-			throw(runtime_error(string(__func__)+" -- error opening PortAudio stream -- "+Pa_GetErrorText(err)));
+			throw runtime_error(string(__func__)+" -- error opening PortAudio stream -- "+Pa_GetErrorText(err));
 #warning test with some parameters that I know will fail
 
 				// ??? is PortAudio is not going to make the conversion if it cannot get this exact sample reate
@@ -100,7 +100,7 @@ void CPortAudioSoundPlayer::initialize()
 		// start the PortAudio stream
 		err=Pa_StartStream(stream);
 		if(err!=paNoError) 
-			throw(runtime_error(string(__func__)+" -- error starting PortAudio stream -- "+Pa_GetErrorText(err)));
+			throw runtime_error(string(__func__)+" -- error starting PortAudio stream -- "+Pa_GetErrorText(err));
 
 		supportsFullDuplex=false;
 /* ??? implement this when/if possible
@@ -111,7 +111,7 @@ void CPortAudioSoundPlayer::initialize()
 		initialized=true;
 	}
 	else
-		throw(runtime_error(string(__func__)+" -- already initialized"));
+		throw runtime_error(string(__func__)+" -- already initialized");
 }
 
 void CPortAudioSoundPlayer::deinitialize()
@@ -160,6 +160,7 @@ int CPortAudioSoundPlayer::PortAudioCallback(void *inputBuffer,void *outputBuffe
 {
 	try
 	{
+		// no conversion necessary because we initialized it with the type of sample_t (if portaudio didn't support our sample_t type natively then we would need to do conversion here)
 		((CPortAudioSoundPlayer *)userData)->mixSoundPlayerChannels(gDesiredOutputChannelCount,(sample_t *)outputBuffer,framesPerBuffer);
 	}
 	catch(exception &e)

@@ -32,7 +32,7 @@ ASoundRecorder::ASoundRecorder() :
 	sound(NULL)
 {
 	for(unsigned i=0;i<MAX_CHANNELS;i++)
-		lastPeakValues[i]=0.0;
+		lastPeakValues[i]=0.0f;
 }
 
 ASoundRecorder::~ASoundRecorder()
@@ -223,7 +223,7 @@ void ASoundRecorder::onData(sample_t *samples,const size_t _sampleFramesRecorded
 	// give realtime peak data updates
 	for(unsigned i=0;i<channelCount;i++)
 	{
-		mix_sample_t maxSample=(mix_sample_t)(lastPeakValues[i]*MAX_SAMPLE);
+		mix_sample_t maxSample=convert_sample<float,sample_t>(lastPeakValues[i]);
 		const sample_t *_samples=samples+i;
 		for(size_t t=0;t<sampleFramesRecorded;t++)
 		{
@@ -240,7 +240,7 @@ void ASoundRecorder::onData(sample_t *samples,const size_t _sampleFramesRecorded
 			// next sample in interleaved format
 			_samples+=channelCount;
 		}
-		lastPeakValues[i]=(float)maxSample/(float)MAX_SAMPLE;
+		lastPeakValues[i]=convert_sample<sample_t,float>(maxSample);
 	}
 
 	// calculate the DC offset of data being recorded

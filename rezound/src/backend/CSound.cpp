@@ -2255,3 +2255,7 @@ void CSound::setUserNotes(const string &notes)
 #include <TPoolFile.cpp>
 template class TPoolFile<sample_pos_t,uint64_t>;
 
+/* I'm not sure why, but when I enable float instead of int16_t as the native audio type, it complains that these methods weren't instantiated anywhere when linking .. fine, but I'm not explicitly instantiating them when the type if int16_t either */
+template TStaticPoolAccesser<int16_t,TPoolFile<sample_pos_t,uint64_t> > TPoolFile<sample_pos_t,uint64_t>::createPool<int16_t>(const string, const bool);
+template TStaticPoolAccesser<int16_t,TPoolFile<sample_pos_t,uint64_t> > const TPoolFile<sample_pos_t,uint64_t>::getPoolAccesser<int16_t>(const string) const;
+
