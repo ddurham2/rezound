@@ -28,6 +28,7 @@ include $(top_srcdir)/config/am_include.mk
 noinst_LTLIBRARIES=libfrontend.la
 libfrontend_la_SOURCES= \
 			CActionButton.cpp \
+			CActionMenuCommand.cpp \
 			CChannelSelectDialog.cpp \
 			CCrossfadeEdgesDialog.cpp \
 			CActionParamDialog.cpp \
@@ -88,6 +89,7 @@ ReZound_LDADD= libfrontend.la\
 
 noinst_HEADERS=\
 	CActionButton.h \
+	CActionMenuCommand.h \
 	CChannelSelectDialog.h \
 	CCrossfadeEdgesDialog.h \
 	CActionParamDialog.h \

@@ -74,6 +74,7 @@ public:
 
 	const string &getName() const;
 	const string &getDescription() const;
+	const bool hasAdvancedMode() const;
 
 	/*
 	 * The showChannelSelectDialog parameter:
@@ -126,7 +127,7 @@ protected:
 	AActionDialog * const advancedDialog;
 
 private: 
-	const bool hasAdvancedMode;
+	const bool _hasAdvancedMode;
 	const bool willResize;
 	const bool crossfadeEdgesIsApplicable;
 

@@ -20,6 +20,7 @@
 
 #include "CMainWindow.h"
 #include "CActionButton.h"
+#include "CActionMenuCommand.h"
 
 #include <stdexcept>
 #include <string>
@@ -53,6 +54,7 @@
 
 #include "rememberShow.h"
 
+
 /* TODO:
  * 	- make a button that brings back the editing toolbar incase they closed it
  *
@@ -67,20 +69,19 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	//Message_Type				ID						Message_Handler
 
 	FXMAPFUNC(SEL_CLOSE,			0,						CMainWindow::onQuit),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_QUIT_MENUITEM,		CMainWindow::onQuit),
 	
 		// file actions
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_NEW_BUTTON,		CMainWindow::onFileButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_OPEN_BUTTON,		CMainWindow::onFileButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_SAVE_BUTTON,		CMainWindow::onFileButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_SAVE_AS_BUTTON,		CMainWindow::onFileButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_CLOSE_BUTTON,		CMainWindow::onFileButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_REVERT_BUTTON,		CMainWindow::onFileButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_RECORD_BUTTON,		CMainWindow::onFileButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_NEW_MENUITEM,		CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_OPEN_MENUITEM,		CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_REOPEN_MENUITEM,		CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_SAVE_MENUITEM,		CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_SAVE_AS_MENUITEM,		CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_CLOSE_MENUITEM,		CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_REVERT_MENUITEM,		CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_RECORD_MENUITEM,		CMainWindow::onFileAction),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_ABOUT_BUTTON,			CMainWindow::onFileButton),
-
-	FXMAPFUNC(SEL_RIGHTBUTTONPRESS,		CMainWindow::ID_FILE_OPEN_BUTTON,		CMainWindow::onReopenMenuPopup),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REOPEN_MENU_SELECT,		CMainWindow::onReopenMenuSelect),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_ABOUT_MENUITEM,			CMainWindow::onFileAction),
 
 
 		// play controls
@@ -111,12 +112,10 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REDRAW_BUTTON,			CMainWindow::onRedrawButton),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_NOTES_BUTTON,			CMainWindow::onUserNotesButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_NOTES_MENUITEM,			CMainWindow::onUserNotesButton),
 	
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_DEFRAG_BUTTON,			CMainWindow::onDefragButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PRINT_SAT_BUTTON,		CMainWindow::onPrintSATButton),
-
-	FXMAPFUNC(SEL_MOTION,			CMainWindow::ID_ACTIONCONTROL_TAB,		CMainWindow::onActionControlTabMouseMove),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_DEFRAG_MENUITEM,		CMainWindow::onDefragButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PRINT_SAT_MENUITEM,		CMainWindow::onPrintSATButton),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FOLLOW_PLAY_POSITION_BUTTON,	CMainWindow::onFollowPlayPositionButton),
 
@@ -131,10 +130,10 @@ FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
 #include <fox/fxkeys.h>
 
 CMainWindow::CMainWindow(FXApp* a) :
-	FXMainWindow(a,"ReZound",NULL,NULL,DECOR_ALL,0,0,800,0),
-
-	mouseMoveLastTab(NULL)
+	FXMainWindow(a,"ReZound",NULL,NULL,DECOR_ALL,0,0,800,0)
 {
+	menubar=new FXMenubar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X);
+
 	contents=new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 1,1,1,1, 1,1);
 
 	#define BUTTON_STYLE FRAME_RAISED|LAYOUT_EXPLICIT
@@ -178,49 +177,6 @@ CMainWindow::CMainWindow(FXApp* a) :
 			new FXButton(t,"...\tChange Crossfade Times",NULL,this,ID_CROSSFADE_EDGES_SETTINGS, BUTTON_NORMAL & ~FRAME_THICK);
 		clipboardComboBox=new FXComboBox(miscControlsFrame,8,8, this,ID_CLIPBOARD_COMBOBOX, FRAME_SUNKEN|FRAME_THICK | COMBOBOX_NORMAL|COMBOBOX_STATIC);
 
-	/* ??? it is not necessary to have all these data members for all the buttons */
-
-	int actionControlTabOrder=0;
-	actionControlsFrame=new FXTabBook(contents,NULL,0,TABBOOK_NORMAL|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_NONE, 0,0,0,0, 1,1,1,1);
-		fileTab=new FXTabItem(actionControlsFrame,"&File",NULL,TAB_TOP_NORMAL);
-		fileTab->setTarget(this);
-		fileTab->setSelector(ID_ACTIONCONTROL_TAB);
-		actionControlTabOrdering[fileTab]=actionControlTabOrder++;
-			fileTabFrame=new FXHorizontalFrame(actionControlsFrame,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|FRAME_RAISED, 0,0,0,0, 4,4,4,4, 3,3);
-				fileNewButton=new FXButton(fileTabFrame,"&New",new FXGIFIcon(getApp(),new_gif),this,ID_FILE_NEW_BUTTON,FRAME_RAISED | ICON_ABOVE_TEXT);
-				fileOpenButton=new FXButton(fileTabFrame,"&Open/\nReopen\t(Right Click for Reopen History)",new FXGIFIcon(getApp(),open_gif),this,ID_FILE_OPEN_BUTTON,FRAME_RAISED | ICON_ABOVE_TEXT);
-				fileSaveButton=new FXButton(fileTabFrame,"&Save",new FXGIFIcon(getApp(),save_gif),this,ID_FILE_SAVE_BUTTON,FRAME_RAISED | ICON_ABOVE_TEXT);
-				fileSaveAsButton=new FXButton(fileTabFrame,"Save &As",new FXGIFIcon(getApp(),saveas_gif),this,ID_FILE_SAVE_AS_BUTTON,FRAME_RAISED | ICON_ABOVE_TEXT);
-				fileCloseButton=new FXButton(fileTabFrame,"&Close",new FXGIFIcon(getApp(),close_gif),this,ID_FILE_CLOSE_BUTTON,FRAME_RAISED | ICON_ABOVE_TEXT);
-				fileRevertButton=new FXButton(fileTabFrame,"Re&vert",new FXGIFIcon(getApp(),revert_gif),this,ID_FILE_REVERT_BUTTON,FRAME_RAISED | ICON_ABOVE_TEXT);
-				fileRecordButton=new FXButton(fileTabFrame,"&Record",NULL,this,ID_FILE_RECORD_BUTTON,FRAME_RAISED);
-				notesButton=new FXButton(fileTabFrame,"Notes\tUser notes about the sound (and preserved in the file if the format supports it)",new FXGIFIcon(getApp(),notes_gif),this,ID_NOTES_BUTTON,FRAME_RAISED | ICON_ABOVE_TEXT);
-
-				new FXButton(fileTabFrame,"&About",NULL,this,ID_ABOUT_BUTTON,FRAME_RAISED | ICON_ABOVE_TEXT);
-
-				// just for testing
-				new FXFrame(fileTabFrame,FRAME_NONE);
-				new FXLabel(fileTabFrame,"debug:");
-				new FXButton(fileTabFrame,"&Defrag",NULL,this,ID_DEFRAG_BUTTON,FRAME_RAISED);
-				new FXButton(fileTabFrame,"&PrintSAT",NULL,this,ID_PRINT_SAT_BUTTON,FRAME_RAISED);
-
-		effectsTab=new FXTabItem(actionControlsFrame,"&Effects",NULL,TAB_TOP_NORMAL);
-		effectsTab->setTarget(this);
-		effectsTab->setSelector(ID_ACTIONCONTROL_TAB);
-		actionControlTabOrdering[effectsTab]=actionControlTabOrder++;
-			effectsTabFrame=new FXHorizontalFrame(actionControlsFrame,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|FRAME_RAISED, 0,0,0,0, 4,4,4,4, 3,3);
-
-		loopingTab=new FXTabItem(actionControlsFrame,"&Looping",NULL,TAB_TOP_NORMAL);
-		loopingTab->setTarget(this);
-		loopingTab->setSelector(ID_ACTIONCONTROL_TAB);
-		actionControlTabOrdering[loopingTab]=actionControlTabOrder++;
-			loopingTabFrame=new FXHorizontalFrame(actionControlsFrame,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|FRAME_RAISED, 0,0,0,0, 4,4,4,4, 3,3);
-
-		remasterTab=new FXTabItem(actionControlsFrame,"&Remaster",NULL,TAB_TOP_NORMAL);
-		remasterTab->setTarget(this);
-		remasterTab->setSelector(ID_ACTIONCONTROL_TAB);
-		actionControlTabOrdering[remasterTab]=actionControlTabOrder++;
-			remasterTabFrame=new FXHorizontalFrame(actionControlsFrame,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|FRAME_RAISED, 0,0,0,0, 4,4,4,4, 3,3);
 }
 
 void CMainWindow::show()
@@ -253,11 +209,52 @@ void CMainWindow::hide()
 	FXMainWindow::hide();
 }
 
-void setupButton(CActionButton *b)
+static void setupFXWindow(FXWindow *w)
 {
-	b->create();
-	b->recalc();
+	w->create();
+	w->recalc();
 }
+
+/*
+   This is the class for the reopen submenu.  It intercepts calls to FXMenuPane::popup ()
+   so it can create the menu items which can change between each popup.
+*/
+class CReopenPopup : public FXMenuPane
+{
+public:
+	CReopenPopup(FXWindow *owner) :
+		FXMenuPane(owner)
+	{
+	}
+
+	virtual ~CReopenPopup()
+	{
+	}
+
+	virtual void popup(FXWindow* grabto, FXint x, FXint y, FXint w=0, FXint h=0)
+	{
+		// clear from previous popup 
+		// I can't do this on popdown because the event won't have happened yet needing the menu item's text for the filename)
+		for(size_t t=0;t<items.size();t++)
+			delete items[t];
+		items.clear();
+
+		// create menu items
+		size_t reopenSize=gSoundFileManager->getReopenHistorySize();
+		if(reopenSize<=0)
+			return;
+		for(size_t t=0;t<reopenSize;t++)
+		{
+			FXMenuCommand *item=new FXMenuCommand(this,gSoundFileManager->getReopenHistoryItem(t).c_str(),NULL,getOwner(),CMainWindow::ID_FILE_REOPEN_MENUITEM);
+			item->create();
+			items.push_back(item);
+		}
+
+		FXMenuPane::popup(grabto,x,y,w,h);
+	}
+
+	vector<FXMenuCommand *> items;
+};
 
 // ??? perhaps this could be a function placed else where that wouldn't require a recompile of CMainWindow everytime we change a dialog
 #include "CChannelSelectDialog.h"
@@ -265,27 +262,65 @@ void setupButton(CActionButton *b)
 #include "RemasterActionDialogs.h"
 void CMainWindow::createToolbars()
 {
-	// ??? when/if I have loadable plugins that I get AAction derivations from, I could have the plugin return the name of the panel it wants to be on, then all actions work this way where some belong to "Effects" and some to "Looping", etc
+	// build the drop-down menus
+	FXMenuPane *fileMenu=new FXMenuPane(this);
+	setupFXWindow(fileMenu);
+	setupFXWindow(new FXMenuTitle(menubar,"&File",NULL,fileMenu));
+		setupFXWindow(new FXMenuCommand(fileMenu,"&New",NULL,this,ID_FILE_NEW_MENUITEM));
+		setupFXWindow(new FXMenuCommand(fileMenu,"&Open",NULL,this,ID_FILE_OPEN_MENUITEM));
+			setupFXWindow(reopenSubmenu=new CReopenPopup(this));
+		setupFXWindow(new FXMenuCascade(fileMenu,"&Reopen",NULL,reopenSubmenu));
+		setupFXWindow(new FXMenuCommand(fileMenu,"&Save",NULL,this,ID_FILE_SAVE_MENUITEM));
+		setupFXWindow(new FXMenuCommand(fileMenu,"Save &As",NULL,this,ID_FILE_SAVE_AS_MENUITEM));
+		setupFXWindow(new FXMenuCommand(fileMenu,"&Close",NULL,this,ID_FILE_CLOSE_MENUITEM));
+		setupFXWindow(new FXMenuCommand(fileMenu,"Re&vert",NULL,this,ID_FILE_REVERT_MENUITEM));
 
-	// effects
-	setupButton(new CActionButton(new CReverseEffectFactory(gChannelSelectDialog),effectsTabFrame,"rev",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
-	setupButton(new CActionButton(new CChangeAmplitudeEffectFactory(gChannelSelectDialog,new CNormalAmplitudeChangeDialog(this),new CAdvancedAmplitudeChangeDialog(this)),effectsTabFrame,"vol",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
-	setupButton(new CActionButton(new CChangeRateEffectFactory(gChannelSelectDialog,new CNormalRateChangeDialog(this),new CAdvancedRateChangeDialog(this)),effectsTabFrame,"rate",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
-	setupButton(new CActionButton(new CFlangeEffectFactory(gChannelSelectDialog,new CFlangeDialog(this)),effectsTabFrame,"flng",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
-	setupButton(new CActionButton(new CSimpleDelayEffectFactory(gChannelSelectDialog,new CSimpleDelayDialog(this)),effectsTabFrame,"dly",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
-	setupButton(new CActionButton(new CStaticReverbEffectFactory(gChannelSelectDialog),effectsTabFrame,"rvrb",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
-	setupButton(new CActionButton(new CVariedRepeatEffectFactory(gChannelSelectDialog,new CVariedRepeatDialog(this)),effectsTabFrame,"vrep",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
+		setupFXWindow(new FXMenuSeparator(fileMenu));
+		setupFXWindow(new FXMenuCommand(fileMenu,"Record",NULL,this,ID_FILE_RECORD_MENUITEM));
 
-	setupButton(new CActionButton(new CTestEffectFactory(gChannelSelectDialog),effectsTabFrame,"test",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
+		setupFXWindow(new FXMenuSeparator(fileMenu));
+		setupFXWindow(new FXMenuCommand(fileMenu,"User No&tes"/*\tUser notes about the sound (and preserved in the file if the format supports it)"*/,NULL,this,ID_NOTES_MENUITEM));
 
-	// looping
-	setupButton(new CActionButton(new CMakeSymetricActionFactory(gChannelSelectDialog),loopingTabFrame,"sym",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
+		setupFXWindow(new FXMenuSeparator(fileMenu));
+		setupFXWindow(new FXMenuCommand(fileMenu,"&About ReZound",NULL,this,ID_ABOUT_MENUITEM));
 
-	// remaster
-	setupButton(new CActionButton(new CUnclipActionFactory(gChannelSelectDialog),remasterTabFrame,"unclp",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
-	setupButton(new CActionButton(new CRemoveDCActionFactory(gChannelSelectDialog),remasterTabFrame,"-DC",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
-	setupButton(new CActionButton(new CNoiseGateActionFactory(gChannelSelectDialog,new CNoiseGateDialog(this)),remasterTabFrame,"ng",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
-	setupButton(new CActionButton(new CCompressorActionFactory(gChannelSelectDialog,new CCompressorDialog(this)),remasterTabFrame,"comp",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
+		// just for testing ???
+		setupFXWindow(new FXMenuSeparator(fileMenu));
+		setupFXWindow(new FXMenuCaption(fileMenu,"- Just for testing"));
+		setupFXWindow(new FXMenuCommand(fileMenu,"Defrag",NULL,this,ID_DEFRAG_MENUITEM));
+		setupFXWindow(new FXMenuCommand(fileMenu,"PrintSAT",NULL,this,ID_PRINT_SAT_MENUITEM));
+
+		setupFXWindow(new FXMenuSeparator(fileMenu));
+		setupFXWindow(new FXMenuCommand(fileMenu,"&Quit\tCtrl-Q",NULL,this,ID_FILE_QUIT_MENUITEM));
+
+			// ??? I might be able to get the name of the effect from the action rather than having to type it here
+
+	FXMenuPane *effectsMenu=new FXMenuPane(this);
+	setupFXWindow(effectsMenu);
+	setupFXWindow(new FXMenuTitle(menubar,"&Effects",NULL,effectsMenu));
+		setupFXWindow(new CActionMenuCommand(new CReverseEffectFactory(gChannelSelectDialog),effectsMenu,"Re&verse"));
+		setupFXWindow(new CActionMenuCommand(new CChangeAmplitudeEffectFactory(gChannelSelectDialog,new CNormalAmplitudeChangeDialog(this),new CAdvancedAmplitudeChangeDialog(this)),effectsMenu,"Change &Amplitude"));
+		setupFXWindow(new CActionMenuCommand(new CChangeRateEffectFactory(gChannelSelectDialog,new CNormalRateChangeDialog(this),new CAdvancedRateChangeDialog(this)),effectsMenu,"Change &Rate"));
+		setupFXWindow(new CActionMenuCommand(new CFlangeEffectFactory(gChannelSelectDialog,new CFlangeDialog(this)),effectsMenu,"&Flange"));
+		setupFXWindow(new CActionMenuCommand(new CSimpleDelayEffectFactory(gChannelSelectDialog,new CSimpleDelayDialog(this)),effectsMenu,"&Delay (Echo)"));
+		setupFXWindow(new CActionMenuCommand(new CStaticReverbEffectFactory(gChannelSelectDialog),effectsMenu,"Reverb"));
+		setupFXWindow(new CActionMenuCommand(new CVariedRepeatEffectFactory(gChannelSelectDialog,new CVariedRepeatDialog(this)),effectsMenu,"Variable Repeat"));
+
+		setupFXWindow(new CActionMenuCommand(new CTestEffectFactory(gChannelSelectDialog),effectsMenu,"test"));
+
+	FXMenuPane *loopingMenu=new FXMenuPane(this);
+	setupFXWindow(loopingMenu);
+	setupFXWindow(new FXMenuTitle(menubar,"&Looping",NULL,loopingMenu));
+		setupFXWindow(new CActionMenuCommand(new CMakeSymetricActionFactory(gChannelSelectDialog),loopingMenu,"Make &Symetric"));
+
+	FXMenuPane *remasterMenu=new FXMenuPane(this);
+	setupFXWindow(remasterMenu);
+	setupFXWindow(new FXMenuTitle(menubar,"&Remaster",NULL,remasterMenu));
+		setupFXWindow(new CActionMenuCommand(new CUnclipActionFactory(gChannelSelectDialog),remasterMenu,"&Unclip"));
+		setupFXWindow(new CActionMenuCommand(new CRemoveDCActionFactory(gChannelSelectDialog),remasterMenu,"Remove &DC"));
+		setupFXWindow(new CActionMenuCommand(new CNoiseGateActionFactory(gChannelSelectDialog,new CNoiseGateDialog(this)),remasterMenu,"&Noise Gate"));
+		setupFXWindow(new CActionMenuCommand(new CCompressorActionFactory(gChannelSelectDialog,new CCompressorDialog(this)),remasterMenu,"Dynamic Range &Compressor"));
+
 }
 
 
@@ -304,24 +339,6 @@ long CMainWindow::onQuit(FXObject *sender,FXSelector sel,void *ptr)
 		getApp()->exit(0);
 	}
 	return(1);
-}
-
-long CMainWindow::onActionControlTabMouseMove(FXObject *sender,FXSelector sel,void *ptr)
-{
-	// This even is invoked when the mouse is moved over one of the tabs containing
-	// action buttons.  It is used to auto raise the tab when the mouse is moved over
-	// it to save the user from having to click on it.
-
-	if(dynamic_cast<FXTabItem *>(sender)==NULL)
-		return(0);
-
-	if(mouseMoveLastTab!=sender)
-	{
-		mouseMoveLastTab=sender;
-		actionControlsFrame->setCurrent(actionControlTabOrdering[sender]);
-	}
-
-	return 1;
 }
 
 long CMainWindow::onFollowPlayPositionButton(FXObject *sender,FXSelector sel,void *ptr)
@@ -351,39 +368,43 @@ long CMainWindow::onClipboardComboBox(FXObject *sender,FXSelector sel,void *ptr)
 
 
 // file action events
-long CMainWindow::onFileButton(FXObject *sender,FXSelector sel,void *ptr)
+long CMainWindow::onFileAction(FXObject *sender,FXSelector sel,void *ptr)
 {
 	switch(SELID(sel))
 	{
-	case ID_FILE_NEW_BUTTON:
+	case ID_FILE_NEW_MENUITEM:
 		newSound(gSoundFileManager);
 		break;
 	
-	case ID_FILE_OPEN_BUTTON:
+	case ID_FILE_OPEN_MENUITEM:
 		openSound(gSoundFileManager);
 		break;
+
+	case ID_FILE_REOPEN_MENUITEM:
+		openSound(gSoundFileManager,dynamic_cast<FXMenuCommand *>(sender)->getText().text());
+		break;
 	
-	case ID_FILE_SAVE_BUTTON:
+	case ID_FILE_SAVE_MENUITEM:
 		saveSound(gSoundFileManager);
 		break;
 
-	case ID_FILE_SAVE_AS_BUTTON:
+	case ID_FILE_SAVE_AS_MENUITEM:
 		saveAsSound(gSoundFileManager);
 		break;
 
-	case ID_FILE_CLOSE_BUTTON:
+	case ID_FILE_CLOSE_MENUITEM:
 		closeSound(gSoundFileManager);
 		break;
 
-	case ID_FILE_REVERT_BUTTON:
+	case ID_FILE_REVERT_MENUITEM:
 		revertSound(gSoundFileManager);
 		break;
 
-	case ID_FILE_RECORD_BUTTON:
+	case ID_FILE_RECORD_MENUITEM:
 		recordSound(gSoundFileManager);
 		break;
 
-	case ID_ABOUT_BUTTON:
+	case ID_ABOUT_MENUITEM:
 		gAboutDialog->execute(PLACEMENT_SCREEN);
 		break;
 
@@ -391,35 +412,6 @@ long CMainWindow::onFileButton(FXObject *sender,FXSelector sel,void *ptr)
 		throw(runtime_error(string(__func__)+" -- unhandled file button selector"));
 	}
 	return 1;
-}
-
-long CMainWindow::onReopenMenuPopup(FXObject *sender,FXSelector sel,void *ptr)
-{
-	if(!fileOpenButton->underCursor())
-		return(0);
-
-	FXEvent *event=(FXEvent*)ptr;
-
-	size_t reopenSize=gSoundFileManager->getReopenHistorySize();
-	if(reopenSize<=0)
-		return(0);
-
-	FXMenuPane reopenMenu(this);
-
-	for(size_t t=0;t<reopenSize;t++)
-		new FXMenuCommand(&reopenMenu,gSoundFileManager->getReopenHistoryItem(t).c_str(),NULL,this,ID_REOPEN_MENU_SELECT);
-
-	reopenMenu.create();
-	reopenMenu.popup(NULL,event->root_x,event->root_y);
-	getApp()->runModalWhileShown(&reopenMenu);
-	return(1);
-}
-
-long CMainWindow::onReopenMenuSelect(FXObject *sender,FXSelector sel,void *ptr)
-{
-	openSound(gSoundFileManager,((FXMenuCommand *)sender)->getText().text());
-
-	return(1);
 }
 
 // play control events
@@ -571,7 +563,6 @@ long CMainWindow::onKeyboardSeek(FXObject *sender,FXSelector sel,void *ptr)
 
 	return 1;
 }
-
 
 long CMainWindow::onViewKey(FXObject *sender,FXSelector sel,void *ptr)
 {

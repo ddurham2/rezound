@@ -1,7 +1,7 @@
 
-- Action buttons (IMPORTANT) (edit buttons, effect buttons, etc):
-	- Holding SHIFT while clicking the button will generally causes a dialog to be displayed which allows the user to choose which channels to apply the action to.
-	- Using the RIGHT mouse button to click the button instead of the LEFT mouse button will cause (if available) an advanced mode of the action to be performed resulting possibly in a dialog for the action with additional, more advanced parameters (i.e. the volume and rate change dialogs have a curve instead of a constant parameter)
+- Action buttons and menu-items (IMPORTANT) (edit buttons/menu-items, effect menu-items, etc):
+	- Holding SHIFT while clicking the button or menu-item will generally causes a dialog to be displayed which allows the user to choose which channels to apply the action to.
+	- Using the RIGHT mouse button to click the button or menu-item instead of the LEFT mouse button will cause (if available) an advanced mode of the action to be performed resulting possibly in a dialog for the action with additional, more advanced parameters (i.e. the volume and rate change dialogs have a curve instead of a constant parameter)
 
 
 - On a sound window:
@@ -36,9 +36,6 @@
 		- If neither the start or stop position is visible on screen it attempts to keep the left most sample at the left edge of the waveform view
 
 
-
-- File operation buttons:
-	- RIGHT clicking the open button will display a popup menu allowing the user to select from several loaded and saved filenames from the past
 
 - Play controls:
 	- list keyboard bindings here ...

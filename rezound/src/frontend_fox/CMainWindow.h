@@ -42,8 +42,6 @@ public:
 
 	long onQuit(FXObject *sender,FXSelector sel,void *ptr);
 
-	long onActionControlTabMouseMove(FXObject *sender,FXSelector sel,void *ptr);
-
 	long onFollowPlayPositionButton(FXObject *sender,FXSelector sel,void *ptr);
 
 	long onCrossfadeEdgesComboBox(FXObject *sender,FXSelector sel,void *ptr);
@@ -52,10 +50,7 @@ public:
 	long onClipboardComboBox(FXObject *sender,FXSelector sel,void *ptr);
 
 	// file action events
-	long onFileButton(FXObject *sender,FXSelector sel,void *ptr);
-
-	long onReopenMenuPopup(FXObject *sender,FXSelector sel,void *ptr);
-	long onReopenMenuSelect(FXObject *sender,FXSelector sel,void *ptr);
+	long onFileAction(FXObject *sender,FXSelector sel,void *ptr);
 
 	// play control events
 	long onPlayControlButton(FXObject *sender,FXSelector sel,void *ptr);
@@ -78,17 +73,19 @@ public:
 
 	enum
 	{
-		ID_FILE_NEW_BUTTON=FXMainWindow::ID_LAST,
-		ID_FILE_OPEN_BUTTON,
-		ID_FILE_SAVE_BUTTON,
-		ID_FILE_SAVE_AS_BUTTON,
-		ID_FILE_CLOSE_BUTTON,
-		ID_FILE_REVERT_BUTTON,
-		ID_FILE_RECORD_BUTTON,
+		ID_FILE_NEW_MENUITEM=FXMainWindow::ID_LAST,
+		ID_FILE_OPEN_MENUITEM,
+		ID_FILE_REOPEN_MENUITEM,
+		ID_FILE_SAVE_MENUITEM,
+		ID_FILE_SAVE_AS_MENUITEM,
+		ID_FILE_CLOSE_MENUITEM,
+		ID_FILE_REVERT_MENUITEM,
+		ID_FILE_RECORD_MENUITEM,
 
-		ID_ABOUT_BUTTON,
+		ID_FILE_QUIT_MENUITEM,
 
-		ID_REOPEN_MENU_SELECT,
+		ID_ABOUT_MENUITEM,
+
 
 		ID_PLAY_ALL_ONCE_BUTTON,
 		ID_PLAY_ALL_LOOPED_BUTTON,
@@ -118,12 +115,10 @@ public:
 
 		ID_REDRAW_BUTTON,
 
-		ID_NOTES_BUTTON,
+		ID_NOTES_MENUITEM,
 
-		ID_DEFRAG_BUTTON,
-		ID_PRINT_SAT_BUTTON,
-
-		ID_ACTIONCONTROL_TAB,
+		ID_DEFRAG_MENUITEM,
+		ID_PRINT_SAT_MENUITEM,
 
 		ID_FOLLOW_PLAY_POSITION_BUTTON,
 
@@ -143,6 +138,8 @@ protected:
 
 private:
 
+	FXMenubar 		*menubar;
+		FXPopup 	*reopenSubmenu;
 	FXHorizontalFrame	*contents;		// top horizontal main frame which contains play controls and action controls
 	FXPacker   		*playControlsFrame;	// frame that contains the play control buttons
 		FXDial *shuttleDial;
@@ -150,27 +147,6 @@ private:
 		FXCheckButton	*followPlayPositionButton;
 		FXComboBox	*crossfadeEdgesComboBox;
 		FXComboBox	*clipboardComboBox; // ??? it would however make sense to put this on the edit dialog.. it's just a little wide
-	FXTabBook   		*actionControlsFrame;	// frame that is the tab layout for the other actions
-		FXTabItem 	*fileTab;	
-			FXPacker *fileTabFrame;
-				FXButton *fileNewButton;
-				FXButton *fileOpenButton;
-				FXButton *fileSaveButton;
-				FXButton *fileSaveAsButton;
-				FXButton *fileCloseButton;
-				FXButton *fileRevertButton;
-				FXButton *fileRecordButton;
-				FXButton *notesButton;
-		FXTabItem 	*effectsTab;	
-			FXPacker *effectsTabFrame;
-		FXTabItem 	*loopingTab;	
-			FXPacker *loopingTabFrame;
-		FXTabItem 	*remasterTab;	
-			FXPacker *remasterTabFrame;
-
-
-	map<void *,int> actionControlTabOrdering; // is a mapping from FXTabItem pointers to the index for FXTabBar::setCurrent() needing to give it the object created
-	void *mouseMoveLastTab; // contains the last tab for which the mouse move even was called, onActionControlTabMouseMove
 
 };
 

@@ -42,7 +42,7 @@
 // -- AActionFactory ----------------------------------------------------
 // ----------------------------------------------------------------------
 
-AActionFactory::AActionFactory(const string _actionName,const string _actionDescription,const bool _hasAdvancedMode,AActionDialog *_channelSelectDialog,AActionDialog *_normalDialog,AActionDialog *_advancedDialog,bool _willResize,bool _crossfadeEdgesIsApplicable) :
+AActionFactory::AActionFactory(const string _actionName,const string _actionDescription,const bool __hasAdvancedMode,AActionDialog *_channelSelectDialog,AActionDialog *_normalDialog,AActionDialog *_advancedDialog,bool _willResize,bool _crossfadeEdgesIsApplicable) :
 	actionName(_actionName),
 	actionDescription(_actionDescription),
 
@@ -50,7 +50,7 @@ AActionFactory::AActionFactory(const string _actionName,const string _actionDesc
 	normalDialog(_normalDialog),
 	advancedDialog(_advancedDialog),
 
-	hasAdvancedMode(_hasAdvancedMode),
+	_hasAdvancedMode(__hasAdvancedMode),
 	willResize(_willResize),
 	crossfadeEdgesIsApplicable(_crossfadeEdgesIsApplicable)
 {
@@ -75,7 +75,7 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 		// button expecting advanced mode and it doesn't have one, but does do
 		// something, then they'll always be guessing if that did anything 
 		// different than left-click
-		if(advancedMode && !hasAdvancedMode)
+		if(advancedMode && !_hasAdvancedMode)
 		{
 			Message("This action does not have an advanced mode");
 			return(false);
@@ -153,6 +153,10 @@ const string &AActionFactory::getDescription() const
 	return(actionDescription);
 }
 
+const bool AActionFactory::hasAdvancedMode() const
+{
+	return(_hasAdvancedMode);
+}
 
 
 

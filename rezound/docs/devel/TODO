@@ -23,6 +23,7 @@
 		- the silence margins on the ends should also fade in and out to/from 0
 
 	- Put in the documentation or application help somewhere a brief description about how recording works in linux (you have a recording source selected, then igain which is the recording gain of that source)
+		- mention somewhere that people will surely read that the playback on a not-so-fast computer or cheap sound card may exhibit occational clicks or pops and that this is because of the low latency requirements that ReZound has right now... This requirement may go away and it may not be a problem at all with ALSA
 
 	- When it's up on sourceforge (and ready to debut) announce to:
 		- demudi
