@@ -144,6 +144,7 @@ void CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 		const CSound::CCuePoolAccesser srcCues=loadFromFile.createPool<CSound::RCue>("Cues",false);
 		sound->cueAccesser->clear();
 		sound->cueAccesser->copyData(0,srcCues,0,srcCues.getSize(),true);
+		sound->rebuildCueIndex();
 	}
 
 
