@@ -50,8 +50,8 @@ dnl
 dnl This macro will also #define HAVE_LIBXXX where XXX is the capitalized
 dnl normalized name if arg 1
 AC_DEFUN(ajv_CXX_CHECK_LIB, dnl
-[AC_ARG_WITH($1-includes, dnl
-[  --with-$1-includes	  Specify path to $1 header files], dnl
+[AC_ARG_WITH($1-include, dnl
+[  --with-$1-include	  Specify path to $1 header files], dnl
 ajv_inc$1_path=-I$withval, ajv_inc$1_path="")] dnl
 [AC_ARG_WITH($1-path,[  --with-$1-path	  Specify path to $1 libraries], dnl
 ajv_lib$1_path=-L$withval, ajv_lib$1_path="")] dnl
@@ -126,8 +126,8 @@ dnl 	like it.
 dnl
 dnl 4. URL to download library given in abort message.
 AC_DEFUN(ajv_CHECK_LIB_ABORT, dnl
-[AC_ARG_WITH($1-includes, dnl
-[  --with-$1-includes	  Specify path to $1 header files], dnl
+[AC_ARG_WITH($1-include, dnl
+[  --with-$1-include	  Specify path to $1 header files], dnl
 ajv_inc$1_path=-I$withval, ajv_inc$1_path="")] dnl
 [AC_ARG_WITH($1-path,[  --with-$1-path	  Specify path to $1 libraries], dnl
 ajv_lib$1_path=-L$withval, ajv_lib$1_path="")] dnl

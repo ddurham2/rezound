@@ -8,8 +8,6 @@ and move it into config
 -- See if things might possibly work with -O2 set. Decide if we should be using 
 -O2 or not.
 
--Get libfrontend_fox.la to work. 
-
 --make sure this works on cf.sourceforge.net
 
 - Don't get mad at me.... :)   But, I added another directory under misc called

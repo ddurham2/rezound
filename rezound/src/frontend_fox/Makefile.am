@@ -25,17 +25,8 @@
 
 include $(top_srcdir)/config/am_include.mk
 
-
-## bin_PROGRAMS is the macro that tells automake the name of the programs to
-## install in the bin directory (/usr/local/bin) by default. By setting
-## --prefix= at configure time the user can change this (eg: ./configure
-## --prefix=/usr will install ReZound under /usr/bin/ReZound )
-bin_PROGRAMS=ReZound
-
-## for every name listed under bin_PROGRAMS, you have a prog_SOURCES. This lists
-## all the sources in the current directory that are used to build ReZound.
-ReZound_SOURCES= main.cpp \
-		 CActionButton.cpp \
+noinst_LTLIBRARIES=libfrontend.la
+libfrontend_la_SOURCES= CActionButton.cpp \
 		 CChannelSelectDialog.cpp \
 		 CConstantParamActionDialog.cpp \
 		 CCueDialog.cpp \
@@ -63,6 +54,16 @@ ReZound_SOURCES= main.cpp \
 		 rememberShow.cpp \
 		 settings.cpp 
 
+## bin_PROGRAMS is the macro that tells automake the name of the programs to
+## install in the bin directory (/usr/local/bin) by default. By setting
+## --prefix= at configure time the user can change this (eg: ./configure
+## --prefix=/usr will install ReZound under /usr/bin/ReZound )
+bin_PROGRAMS=ReZound
+
+## for every name listed under bin_PROGRAMS, you have a prog_SOURCES. This lists
+## all the sources in the current directory that are used to build ReZound.
+ReZound_SOURCES= main.cpp 
+
 ## ReZound_LDADD is a list of extras to pass at link time. All the objects
 ## created by the above ReZound_SOURCES are automatically linked in, so here I
 ## list object files from other directories as well as flags passed to the
@@ -70,7 +71,7 @@ ReZound_SOURCES= main.cpp \
 ## It's up to each subdirectory's Makefile to build it's .la library.
 ## notice we use $(top_builddir) for the modules. This allows building in a 
 ## separate directory
-ReZound_LDADD= \
+ReZound_LDADD= libfrontend.la\
 	$(top_builddir)/src/misc/cc++/libmisc.la \
 	$(top_builddir)/src/PoolFile/libPoolFile.la \
 	$(top_builddir)/src/backend/Edits/libEdits.la \
