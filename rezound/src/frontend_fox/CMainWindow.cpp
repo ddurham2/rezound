@@ -882,6 +882,7 @@ void CMainWindow::buildActionMap()
 
 	// Generate
 	addToActionMap(								new CActionMenuCommand(new CGenerateNoiseActionFactory(gChannelSelectDialog,new CGenerateNoiseDialog(this)),dummymenu,			""),																	menuItemRegistry);
+	addToActionMap(								new CActionMenuCommand(new CGenerateToneActionFactory(gChannelSelectDialog,new CGenerateToneDialog(this)),dummymenu,			""),																	menuItemRegistry);
 
 
 

@@ -37,9 +37,8 @@ static const double uninterpretValue_maxParticleVelocity(const double x,const in
 FXDEFMAP(CGenerateNoiseDialog) CGenerateNoiseDialogMap[]=
 {
         //Message_Type                  ID                                                 Message_Handler
-	
 	FXMAPFUNC(SEL_CHANGED,          CGenerateNoiseDialog::ID_NOISE_COLOR_COMBOBOX,     CGenerateNoiseDialog::onNoiseColorChange),
-		                };
+};
 		
 FXIMPLEMENT(CGenerateNoiseDialog,CActionParamDialog,CGenerateNoiseDialogMap,ARRAYNUMBER(CGenerateNoiseDialogMap)) 
 
@@ -66,7 +65,7 @@ CGenerateNoiseDialog::CGenerateNoiseDialog(FXWindow *mainWindow) :
 	//items.push_back("Blue");
 	//items.push_back("Violet");
 	//items.push_back("Binary");
-	FXComboTextParamValue *noiseColorComboBox=addComboTextEntry(p0,"Noise Color",items);
+	FXComboTextParamValue *noiseColorComboBox=addComboTextEntry(p0,N_("Noise Color"),items);
 		noiseColorComboBox->setTarget(this);
 		noiseColorComboBox->setSelector(ID_NOISE_COLOR_COMBOBOX);
 
@@ -92,4 +91,38 @@ long CGenerateNoiseDialog::onNoiseColorChange(FXObject *sender,FXSelector sel,vo
 	return 1;
 }
 
+
+// --- Generate Tone -------------------------
+
+static const double interpretValue_frequency(const double x,const int scalar) { return x*scalar; }
+static const double uninterpretValue_frequency(const double x,const int scalar) { return x/scalar; }
+
+FXDEFMAP(CGenerateToneDialog) CGenerateToneDialogMap[]=
+{
+        //Message_Type                  ID                                                 Message_Handler
+	//FXMAPFUNC(SEL_CHANGED,          CGenerateToneDialog::ID_NOISE_COLOR_COMBOBOX,     CGenerateToneDialog::onToneColorChange),
+};
+		
+FXIMPLEMENT(CGenerateToneDialog,CActionParamDialog,CGenerateToneDialogMap,ARRAYNUMBER(CGenerateToneDialogMap)) 
+
+CGenerateToneDialog::CGenerateToneDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow)
+{
+#warning make some presets
+	void *p0=newVertPanel(NULL);
+		void *p1=newHorzPanel(p0);
+			addSlider(p1,N_("Frequency"),"Hz",interpretValue_frequency,uninterpretValue_frequency,NULL,60.0,0,48000,440,false);
+			addSlider(p1,N_("Length"),"s",interpretValue_length,uninterpretValue_length,NULL,1.0,1,10000,1,false);
+			addSlider(p1,N_("Volume"),"dBFS",interpretValue_volume,uninterpretValue_volume,dB_to_scalar,-6.0,0,0,0,false);
+
+		vector<string> toneTypes;
+		toneTypes.push_back(_("Sine Wave"));
+		toneTypes.push_back(_("Square Wave"));
+		toneTypes.push_back(_("Rising Sawtooth Wave"));
+		toneTypes.push_back(_("Falling Sawtooth Wave"));
+		toneTypes.push_back(_("Triangle Wave"));
+		addComboTextEntry(p0,N_("Tone Type"),toneTypes); // these must match the order that they're defined in CGenerateToneAction::ToneTypes
+
+
+}
 

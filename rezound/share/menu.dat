@@ -39,7 +39,7 @@ default
 	}
 	Generate
 	{
-		menuitems={"Generate Noise..."};
+		menuitems={"Generate Noise...", "Generate Tone..."};
 	}
 }
 

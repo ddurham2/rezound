@@ -46,4 +46,17 @@ protected:
 	CGenerateNoiseDialog() {}
 };
 
+// --- Generate Tone --------------------
+
+class CGenerateToneDialog : public CActionParamDialog
+{
+	FXDECLARE(CGenerateToneDialog);
+public:
+	CGenerateToneDialog(FXWindow *mainWindow);
+	virtual ~CGenerateToneDialog(){}
+
+protected:
+	CGenerateToneDialog() {}
+};
+
 #endif
