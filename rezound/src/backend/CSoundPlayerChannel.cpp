@@ -833,7 +833,7 @@ const vector<int16_t> CSoundPlayerChannel::getOutputRoutes() const
 
 void CSoundPlayerChannel::updateAfterEdit(const vector<int16_t> &restoreOutputRoutes)
 {
-	if(prebufferedChunks[0]->channelCount!=sound->getChannelCount() && prebufferedChunks[0]->sampleRate!=sound->getSampleRate())
+	if(prebufferedChunks[0]->channelCount!=sound->getChannelCount() || prebufferedChunks[0]->sampleRate!=sound->getSampleRate())
 	{ // channel count or sample rate has changed
 		stop();
 		CMutexLocker l(prebufferPositionMutex); // lock so that prebufferChunk won't be running
@@ -1099,8 +1099,6 @@ void CSoundPlayerChannel::createPrebufferedChunks()
 				sin(t*freq3/sampleRate*2.0*M_PI)
 			)*MAX_SAMPLE/20.0));
 	}
-
-
 
 }
 
