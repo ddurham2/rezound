@@ -101,6 +101,7 @@ void ClibaudiofileSoundTranslator::onLoadSound(const string filename,CSound *sou
 	{
 		Warning("libaudiofile reports that "+filename+" contains "+istring(size)+" samples yet the file is not large enough to contain that many samples.\nLoading what can be loaded.");
 		//size=fileSize; not doing this because I once ran across a situation where you could read more from the file that stat said it was... even ls showed it smaller than I could actually read
+		//		??? however ^^^ on the other hand, I don't want the length to be 8 gigs worth of space...   Perhaps I should always ignore the given size, and add space in large units until I run out of file... I should apply cues last then
 		//throw(runtime_error(string(__func__)+" -- libaudiofile is not seeing this as a corrupt file -- it thinks the data length is "+istring(size)+" yet when the file is only "+istring(fileSize)+" bytes"));
 	}
 

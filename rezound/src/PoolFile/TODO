@@ -13,6 +13,8 @@
 		- for each pool, use pool accessors to copy alignment-sized buffers of data from the source to the destination.
 		- this way, I don't unnecessarily copy data that doesn't belong to any pool
 
+	- The SAT being a vector really does slow things down with VERY large files... If I didn't actually need direct indexing, then this could be changed to something more efficient to modify instead of O(n) operations
+
 
 - DONE -
 
