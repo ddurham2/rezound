@@ -35,8 +35,6 @@
 
 #include "CFOXIcons.h"
 
-#warning pluginRouting or pluginMapping .. which is it
-
 FXDEFMAP(CActionParamDialog) CActionParamDialogMap[]=
 {
 //	Message_Type			ID							Message_Handler

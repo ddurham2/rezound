@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#warning I might want to reset the range on the scalar each time an action dialog is shown so Id need a method to update the widget
+// ??? I might want to reset the range on the scalar each time an action dialog is shown so I'd need a method to update the widget
 
 #include "FXConstantParamValue.h"
 

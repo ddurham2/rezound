@@ -22,7 +22,7 @@
 
 #include <algorithm>
 
-#warning a better name might be "Normalizer"
+// ??? a better name might be "Normalizer"
 
 AActionParamMapper::AActionParamMapper(double _defaultValue,int _defaultScalar,int _minScalar,int _maxScalar) :
 	defaultValue(_defaultValue),

@@ -157,7 +157,7 @@ CLADSPAActionDialog::CLADSPAActionDialog(FXWindow *mainWindow,const LADSPA_Descr
 
 					if(LADSPA_IS_HINT_LOGARITHMIC(portRangeHintDesc))
 					{
-						#warning needs to be logrithmic
+						// may need to be logrithmic, but maybe the scalar spinner solves the problem 
 						CActionParamMapper_linear_range_scaled *m=new CActionParamMapper_linear_range_scaled(defaultValue,minValue,maxValue,(int)initialScalar,minScalar,maxScalar);
 
 						if(LADSPA_IS_HINT_INTEGER(portRangeHintDesc))
