@@ -26,13 +26,14 @@ include $(top_srcdir)/config/am_include.mk
 
 ## first we'll dive into the subs to make everything in there
 ##
-SUBDIRS=Edits  \
+SUBDIRS=\
+	Edits  \
 	Effects \
 	Remaster
 
 ## EXTRA_DIST these files don't make it into make dist by default but
 ## they are required for the build
-EXTRA_DIST= \
+noinst_HEADERS= \
 	   file.h \
 	   playcontrols.h \
 	   unit_conv.h \
@@ -61,23 +62,24 @@ EXTRA_DIST= \
 ## see PoolFile Makefile.am for explanation here out
 ## 
 noinst_LTLIBRARIES=libbackend.la
-libbackend_la_SOURCES= AAction.cpp  \
-		       ASound.cpp  \
-		       ASoundFileManager.cpp \
-		       ASoundPlayer.cpp  \
-		       ASoundRecorder.cpp \
-		       AStatusComm.cpp \
-		       CEnvelope.cpp \
-		       CGraphParamValueNode.cpp \
-		       CLoadedSound.cpp  \
-		       COSSSoundPlayer.cpp \
-		       COSSSoundRecorder.cpp \
-		       CSoundManager.cpp \
-		       CSoundManagerClient.cpp \
-		       CSoundPlayerChannel.cpp \
-		       CTrigger.cpp \
-		       ClibaudiofileSound.cpp \
-		       Cold_rezSound.cpp \
-		       CrezSound.cpp \
-		       file.cpp  \
-		       playcontrols.cpp 
+libbackend_la_SOURCES= \
+			AAction.cpp  \
+			ASound.cpp  \
+			ASoundFileManager.cpp \
+			ASoundPlayer.cpp  \
+			ASoundRecorder.cpp \
+			AStatusComm.cpp \
+			CEnvelope.cpp \
+			CGraphParamValueNode.cpp \
+			CLoadedSound.cpp  \
+			COSSSoundPlayer.cpp \
+			COSSSoundRecorder.cpp \
+			CSoundManager.cpp \
+			CSoundManagerClient.cpp \
+			CSoundPlayerChannel.cpp \
+			CTrigger.cpp \
+			ClibaudiofileSound.cpp \
+			Cold_rezSound.cpp \
+			CrezSound.cpp \
+			file.cpp  \
+			playcontrols.cpp 

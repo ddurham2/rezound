@@ -22,7 +22,8 @@
 
 include $(top_srcdir)/config/am_include.mk
 
-SUBDIRS=misc \
+SUBDIRS=\
+	misc \
 	PoolFile \
 	backend \
 	frontend_fox

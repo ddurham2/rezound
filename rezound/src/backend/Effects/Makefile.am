@@ -29,23 +29,25 @@ include $(top_srcdir)/config/am_include.mk
 ## see PoolFile Makefile.am for explanation here out
 ## 
 noinst_LTLIBRARIES=libEffects.la
-libEffects_la_SOURCES=CChangeAmplitudeEffect.cpp \
-		      CChangeRateEffect.cpp \
-		      CDelayEffect.cpp \
-		      CFlangeEffect.cpp \
-		      CReverseEffect.cpp \
-		      CStaticReverbEffect.cpp \
-		      CVariedRepeatEffect.cpp \
-		      CTestEffect.cpp 
+libEffects_la_SOURCES=\
+		CChangeAmplitudeEffect.cpp \
+		CChangeRateEffect.cpp \
+		CDelayEffect.cpp \
+		CFlangeEffect.cpp \
+		CReverseEffect.cpp \
+		CStaticReverbEffect.cpp \
+		CVariedRepeatEffect.cpp \
+		CTestEffect.cpp 
 
 
-EXTRA_DIST=CChangeAmplitudeEffect.h \
-	   CChangeRateEffect.h \
-	   CDelayEffect.h \
-	   CFlangeEffect.h \
-	   CReverseEffect.h \
-	   CStaticReverbEffect.h \
-	   CVariedRepeatEffect.h \
-	   CTestEffect.h \
-	   EffectActions.h
+noinst_HEADERS= \
+		CChangeAmplitudeEffect.h \
+		CChangeRateEffect.h \
+		CDelayEffect.h \
+		CFlangeEffect.h \
+		CReverseEffect.h \
+		CStaticReverbEffect.h \
+		CVariedRepeatEffect.h \
+		CTestEffect.h \
+		EffectActions.h
 

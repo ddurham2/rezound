@@ -26,25 +26,26 @@ include $(top_srcdir)/config/am_include.mk
 
 ## EXTRA_DIST is used to add files that aren't automatically included 
 ## in make dist
-EXTRA_DIST=CCopyCutDeleteEdit.h \
-	   CCropEdit.h \
-	   CCueAction.h \
-	   CInsertSilenceEdit.h \
-	   CMuteEdit.h \
-	   CPasteEdit.h \
-	   CRotateEdit.h \
-	   CSelectionEdit.h \
-	   EditActions.h
+noinst_HEADERS= \
+		CCopyCutDeleteEdit.h \
+		CCropEdit.h \
+		CCueAction.h \
+		CInsertSilenceEdit.h \
+		CMuteEdit.h \
+		CPasteEdit.h \
+		CRotateEdit.h \
+		CSelectionEdit.h \
+		EditActions.h
 
 ## see PoolFile Makefile.am for explanation here out
 ## 
 noinst_LTLIBRARIES=libEdits.la
-libEdits_la_SOURCES= CCopyCutDeleteEdit.cpp \
-		     CCropEdit.cpp \
-		     CCueAction.cpp \
-		     CInsertSilenceEdit.cpp \
-		     CMuteEdit.cpp \
-		     CPasteEdit.cpp \
-		     CRotateEdit.cpp \
-		     CSelectionEdit.cpp 
-
+libEdits_la_SOURCES= \
+		CCopyCutDeleteEdit.cpp \
+		CCropEdit.cpp \
+		CCueAction.cpp \
+		CInsertSilenceEdit.cpp \
+		CMuteEdit.cpp \
+		CPasteEdit.cpp \
+		CRotateEdit.cpp \
+		CSelectionEdit.cpp 

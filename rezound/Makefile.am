@@ -32,6 +32,7 @@ SUBDIRS=src
 ## such as AUTHORS, COPYING, etc the bootstrap script really shouldn't be a part
 ## of a final package, but it is useful for developers who might want to make
 ## changes to the configure scripts or makefiles.
-EXTRA_DIST=config \
-	   docs \
-	   bootstrap
+EXTRA_DIST= \
+	config \
+	docs \
+	bootstrap
