@@ -29,10 +29,12 @@ include $(top_srcdir)/config/am_include.mk
 ## 
 noinst_HEADERS= \
 		CSinglePoleFilter.h \
+		CBiquadResFilter.h \
 		FilterActions.h
 
 noinst_LTLIBRARIES=libFilters.la
 libFilters_la_SOURCES= \
-			CSinglePoleFilter.cpp 
+			CSinglePoleFilter.cpp \
+			CBiquadResFilter.cpp 
 
 
