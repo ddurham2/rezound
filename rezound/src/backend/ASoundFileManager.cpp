@@ -55,6 +55,9 @@ CLoadedSound *ASoundFileManager::prvCreateNew(bool askForLength)
 		(!askForLength && promptForNewSoundParameters(filename,channelCount,sampleRate))
 	)
 	{
+		if(isFilenameRegistered(filename))
+			throw(runtime_error(string(__func__)+" -- a file named '"+filename+"' is already opened"));
+
 		try
 		{
 				client=new CSoundManagerClient(soundManager.newSound(filename,sampleRate,channelCount,length));
@@ -253,6 +256,12 @@ void ASoundFileManager::revert()
 	{
 		const bool readOnly=loaded->client->isReadOnly();
 		string filename=loaded->getSound()->getFilename();
+
+		if(!ost::Path(filename).Exists())
+		{
+			gStatusComm->beep();
+			return;
+		}
 
 		// ??? could check isMofied(), but if it isn't, then there's no need to revert...
 		if(Question("Are you sure you want to revert to the last saved copy of '"+filename+"'",yesnoQues)!=yesAns)
