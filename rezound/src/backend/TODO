@@ -264,8 +264,6 @@
 
 	- Eventually, I need to have the frontend make use of the backend's ability for some of the actions to use different LFO implementations
 
-	- make SAMPLE_RATE and CHANNELS registry settings
-
 	- quantize would be a pretty easy effect.. it would need to have a parameter to define the number of values from 0 to 0dBFS
 		- then I could have presets for 1bit 2bit 3bit 4bit 5bit ... which would be 1 value, 2 values, ... 32678 values
 		- but I should probably pop up a notice if the bitrate they are choosing is more values than the native format which wouldn't change anything
@@ -282,4 +280,6 @@
 		- this also removes the need for endAllStatusBars()
 
 	- change CLoadedSound->sound to be public and a *const if after looking at things it could be.. then I could elimintate loadedSound->getSound() everywhere
+
+	- make SAMPLE_RATE and CHANNELS registry settings
 
