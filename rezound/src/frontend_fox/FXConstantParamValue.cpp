@@ -50,6 +50,8 @@ FXDEFMAP(FXConstantParamValue) FXConstantParamValueMap[]=
 	FXMAPFUNC(SEL_CHANGED,			FXConstantParamValue::ID_SCALAR_SPINNER,	FXConstantParamValue::onScalarSpinnerChange),
 
 	FXMAPFUNC(SEL_COMMAND,			FXConstantParamValue::ID_INVERSE_BUTTON,	FXConstantParamValue::onInverseButton),
+
+	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	FXConstantParamValue::ID_MIDDLE_LABEL,		FXConstantParamValue::onMiddleLabelClick),
 };
 
 FXIMPLEMENT(FXConstantParamValue,FXVerticalFrame,FXConstantParamValueMap,ARRAYNUMBER(FXConstantParamValueMap))
@@ -82,6 +84,9 @@ FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _unin
 
 {
 	ASSURE_HEIGHT(middleFrame,200);
+
+	halfLabel->setTarget(this);
+	halfLabel->setSelector(ID_MIDDLE_LABEL);
 
 	if(minScalar!=maxScalar)
 	{
@@ -143,6 +148,14 @@ long FXConstantParamValue::onInverseButton(FXObject *sender,FXSelector sel,void 
 {
 	slider->setValue(10000-slider->getValue());
 	return(onSliderChange(sender,sel,ptr));
+}
+
+long FXConstantParamValue::onMiddleLabelClick(FXObject *sender,FXSelector sel,void *ptr)
+{
+	FXint minv,maxv;
+	slider->getRange(minv,maxv);
+	slider->setValue(maxv/2);
+	return onSliderChange(sender,sel,ptr);
 }
 
 void FXConstantParamValue::updateNumbers()

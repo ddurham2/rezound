@@ -51,6 +51,8 @@ public:
 
 	long onInverseButton(FXObject *sender,FXSelector sel,void *ptr);
 
+	long onMiddleLabelClick(FXObject *sender,FXSelector sel,void *ptr);
+
 	// call if the tick labels, slider position, or edit box value need to be reevaluated
 	void updateNumbers();
 
@@ -84,6 +86,8 @@ public:
 		ID_SCALAR_SPINNER,
 
 		ID_INVERSE_BUTTON,
+
+		ID_MIDDLE_LABEL,
 
 		ID_LAST
 	};
