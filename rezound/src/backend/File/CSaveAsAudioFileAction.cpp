@@ -35,6 +35,7 @@ CSaveAsAudioFileAction::~CSaveAsAudioFileAction()
 
 bool CSaveAsAudioFileAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
+#warning this is a good example of why I neednt use getActive within CSoundFileManager or at least have an optional parameter to pass the sound object I want to saveAs for
 	return actionParameters->getSoundFileManager()->saveAs(actionParameters->getValue<string>("filename"),actionParameters->getValue<bool>("saveAsRaw"));
 }
 

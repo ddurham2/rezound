@@ -22,6 +22,8 @@
 
 #include "../backend/CActionParameters.h"
 #include "../backend/ASoundFileManager.h"
+#include "../backend/CLoadedSound.h"
+#include "../backend/CActionSound.h"
 #include "settings.h"
 #include "CFrontendHooks.h"
 
@@ -86,12 +88,27 @@ CSaveAsAudioFileActionDialog::CSaveAsAudioFileActionDialog(FXWindow *mainWindow)
 
 bool CSaveAsAudioFileActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
+	// find the CLoadedSound object in the ASoundFileManager object (??? would be nice if this were just passed in as some of the info)
+	ASoundFileManager *sfm=actionParameters->getSoundFileManager();
+	CLoadedSound *loaded=NULL;
+	for(size_t t=0;t<sfm->getOpenedCount();t++)
+	{
+		if(sfm->getSound(t)->sound==actionSound->sound)
+		{
+			loaded=sfm->getSound(t);
+			break;
+		}
+	}
+
 	string filename;
+	if(loaded)
+		filename=loaded->getFilename();
 	bool saveAsRaw=false;
 	if(gFrontendHooks->promptForSaveSoundFilename(filename,saveAsRaw))
 	{
 		actionParameters->setValue<string>("filename",filename);
 		actionParameters->setValue<bool>("saveAsRaw",saveAsRaw);
+		
 		return true;
 	}
 	return false;
