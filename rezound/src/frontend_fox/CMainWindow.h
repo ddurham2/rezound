@@ -145,6 +145,7 @@ public:
 		ID_ZOOM_OUT_FULL,
 
 		ID_TOGGLE_LEVEL_METERS,
+		ID_TOGGLE_STEREO_PHASE_METERS,
 		ID_TOGGLE_FREQUENCY_ANALYZER,
 
 		ID_UNDO_EDIT,
@@ -208,6 +209,7 @@ private:
 	FXCursor *playMouseCursor;
 
 	FXMenuCommand *toggleLevelMetersMenuItem;
+	FXMenuCommand *toggleStereoPhaseMetersMenuItem;
 	FXMenuCommand *toggleFrequencyAnalyzerMenuItem;
 
 	FXMenuPane *recentActionsMenu;

@@ -120,6 +120,7 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_ZOOM_OUT_FULL,			CMainWindow::onControlAction),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_TOGGLE_LEVEL_METERS,		CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_TOGGLE_STEREO_PHASE_METERS,	CMainWindow::onControlAction),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_TOGGLE_FREQUENCY_ANALYZER,	CMainWindow::onControlAction),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_UNDO_EDIT,			CMainWindow::onControlAction),
@@ -169,6 +170,7 @@ CMainWindow::CMainWindow(FXApp* a) :
 	playMouseCursor(NULL),
 
 	toggleLevelMetersMenuItem(NULL),
+	toggleStereoPhaseMetersMenuItem(NULL),
 	toggleFrequencyAnalyzerMenuItem(NULL)
 {
 					// I'm aware of these two memory leaks, but I'm not concerned
@@ -324,10 +326,13 @@ void CMainWindow::show()
 
 #if REZ_FOX_VERSION>=10119
 	dynamic_cast<FXMenuCheck *>(toggleLevelMetersMenuItem)->setCheck(gLevelMetersEnabled);
+	dynamic_cast<FXMenuCheck *>(toggleStereoPhaseMetersMenuItem)->setCheck(gStereoPhaseMetersEnabled);
 	dynamic_cast<FXMenuCheck *>(toggleFrequencyAnalyzerMenuItem)->setCheck(gFrequencyAnalyzerEnabled);
 #else // older than 1.1.19 used FXMenuCommand
 	if(gLevelMetersEnabled)
 		toggleLevelMetersMenuItem->check();
+	if(gStereoPhaseMetersEnabled)
+		toggleStereoPhaseMetersMenuItem->check();
 	if(gFrequencyAnalyzerEnabled)
 		toggleFrequencyAnalyzerMenuItem->check();
 #endif
@@ -754,9 +759,11 @@ void CMainWindow::createMenus()
 		new FXMenuSeparator(menu);
 #if REZ_FOX_VERSION>=10119
 		toggleLevelMetersMenuItem=new FXMenuCheck(menu,_("Toggle &Level Meters"),this,ID_TOGGLE_LEVEL_METERS);
+		toggleStereoPhaseMetersMenuItem=new FXMenuCheck(menu,_("Toggle &Stereo Phase Meters"),this,ID_TOGGLE_STEREO_PHASE_METERS);
 		toggleFrequencyAnalyzerMenuItem=new FXMenuCheck(menu,_("Toggle Frequency &Analyzer"),this,ID_TOGGLE_FREQUENCY_ANALYZER);
 #else // older than 1.1.19 used FXMenuCommand
 		toggleLevelMetersMenuItem=new FXMenuCommand(menu,_("Toggle &Level Meters"),NULL,this,ID_TOGGLE_LEVEL_METERS);
+		toggleStereoPhaseMetersMenuItem=new FXMenuCommand(menu,_("Toggle &Stereo Phase Meters"),NULL,this,ID_TOGGLE_STEREO_PHASE_METERS);
 		toggleFrequencyAnalyzerMenuItem=new FXMenuCommand(menu,_("Toggle Frequency &Analyzer"),NULL,this,ID_TOGGLE_FREQUENCY_ANALYZER);
 #endif
 
@@ -1092,6 +1099,18 @@ long CMainWindow::onControlAction(FXObject *sender,FXSelector sel,void *ptr)
 		else
 			dynamic_cast<FXMenuCommand *>(sender)->check();
 		metersWindow->enableLevelMeters(dynamic_cast<FXMenuCommand *>(sender)->isChecked());
+#endif
+		break;
+
+	case ID_TOGGLE_STEREO_PHASE_METERS:
+#if REZ_FOX_VERSION>=10119
+		metersWindow->enableStereoPhaseMeters(dynamic_cast<FXMenuCheck *>(sender)->getCheck());
+#else // older than 1.1.19 used FXMenuCommand
+		if(dynamic_cast<FXMenuCommand *>(sender)->isChecked())
+			dynamic_cast<FXMenuCommand *>(sender)->uncheck();
+		else
+			dynamic_cast<FXMenuCommand *>(sender)->check();
+		metersWindow->enableStereoPhaseMeters(dynamic_cast<FXMenuCommand *>(sender)->isChecked());
 #endif
 		break;
 
