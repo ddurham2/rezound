@@ -35,4 +35,6 @@ FocusMethods gFocusMethod=fmSoundWindowList;
 bool gSnapToCues=true;
 unsigned gSnapToCueDistance=5;
 
+bool gFollowPlayPosition=true;
+
 

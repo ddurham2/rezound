@@ -147,7 +147,9 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 	FXTopWindow(mainWindow,_loadedSound->getSound()->getFilename().c_str(),NULL,NULL,DECOR_ALL, 95,mainWindow->getY()+mainWindow->getDefaultHeight()+10,650,400, 0,0,0,0, 0,0),
 
 	loadedSound(_loadedSound),
+
 	timerHandle(NULL),
+	firstTimeShowing(true),
 	closing(false),
 
 	prevW(-1),
@@ -257,8 +259,7 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 	// set the ranges and initial values of the vertical and horiztonal zoom dials
 	horzZoomDial->setRange(0,100);
 	horzZoomDial->setRevolutionIncrement(100);
-		// approximately show 10 seconds of sound (apx because we haven't done layout yet)
-	setHorzZoomFactor(max(1.0, (10.0*loadedSound->getSound()->getSampleRate())/getWidth()) );
+	horzZoomDial->setValue(0);
 
 	vertZoomDial->setRange(0,100);
 	vertZoomDial->setRevolutionIncrement(100);
@@ -332,15 +333,21 @@ bool CSoundWindow::getActiveState() const
 		throw(runtime_error(string(__func__)+" -- unhandle gFocusMethod: "+istring(gFocusMethod)));
 }
 
-/*
 void CSoundWindow::show()
 {
 	FXTopWindow::show();
+	if(firstTimeShowing)
+	{
+			// approximately show 10 seconds of sound (apx because we haven't done layout yet)
+			// can't do this at construction because we don't know the max until the window's are laid out
+		setHorzZoomFactor((10.0*loadedSound->getSound()->getSampleRate())/waveView->getCanvasWidth());
+		waveView->horzScroll(0);
+		firstTimeShowing=false;
+	}
 	//setDecorations(DECOR_NONE);
 	//setDecorations(DECOR_ALL);
-	printf("show\n");
+	//printf("show\n");
 }
-*/
 
 void CSoundWindow::drawPlayPosition(bool justErasing)
 {
@@ -352,7 +359,7 @@ void CSoundWindow::drawPlayPosition(bool justErasing)
 
 	// quarter second minimum to draw the play status
 	if(length>=sampleRate || length*4/sampleRate>=1 || loadedSound->channel->isPaused())
-		waveView->drawPlayPosition(loadedSound->channel->getPosition(),justErasing,true);
+		waveView->drawPlayPosition(loadedSound->channel->getPosition(),justErasing,gFollowPlayPosition);
 	else
 		waveView->drawPlayPosition(loadedSound->channel->getPosition(),true,false);
 }
@@ -562,11 +569,17 @@ long CSoundWindow::onDrawPlayPosition(FXObject *sender,FXSelector,void*)
 
 void CSoundWindow::setHorzZoomFactor(sample_fpos_t horzZoomFactor)
 {
-	printf("%f %f\n",horzZoomFactor,waveView->getMaxHorzZoomFactor());
 	waveView->setHorzZoomFactor(horzZoomFactor);
+	horzZoomFactor=waveView->getHorzZoomFactor(); // after range check
 
-	const sample_fpos_t p=sample_fpos_pow( ((100.0*(horzZoomFactor-1.0))/(waveView->getMaxHorzZoomFactor()-1.0))*100.0*100.0, 1.0/3.0);
+
+	// this stuff is just the invese of the math in onHorzZoomDialChange
+	sample_fpos_t p= ((horzZoomFactor-1.0)/(waveView->getMaxHorzZoomFactor()-1.0));
+	p=sample_fpos_pow(p, 1.0/3.0 );
+	p=100.0-(p*100.0);
+
 	horzZoomDial->setValue((FXint)p);
+	horzZoomValueLabel->setText(("  "+istring(horzZoomDial->getValue())+"%").c_str());
 }
 
 long CSoundWindow::onHorzZoomDialChange(FXObject *sender ,FXSelector sel,void *ptr)

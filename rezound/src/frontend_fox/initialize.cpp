@@ -98,6 +98,9 @@ void initializeReZound()
 		}
 		gPromptDialogDirectory=gSettingsRegistry->getValue("promptDialogDirectory");
 
+		if(gSettingsRegistry->keyExists("followPlayPosition"))
+			gFollowPlayPosition= gSettingsRegistry->getValue("followPlayPosition")=="true";
+
 
 		// -- 2
 						// ??? this filename needs to be an application setting just as in ASound.cpp
@@ -165,6 +168,8 @@ void deinitializeReZound()
 
 	// -- 1
 	gSettingsRegistry->createKey("promptDialogDirectory",gPromptDialogDirectory);
+	gSettingsRegistry->createKey("followPlayPosition",gFollowPlayPosition ? "true" : "false");
+	gSettingsRegistry->save();
 	delete gSettingsRegistry;
 
 }

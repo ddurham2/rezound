@@ -51,7 +51,7 @@ public:
 	void setActiveState(bool isActive);
 	bool getActiveState() const;
 
-	//virtual void show();
+	virtual void show();
 
 	void drawPlayPosition(bool justErasing);
 
@@ -153,6 +153,7 @@ private:
 	friend void pauseTrigger(void *Pthis);
 
 	FXTimer *timerHandle; // used to draw play position
+	bool firstTimeShowing;
 	bool closing;
 
 	FXint prevW,prevH;

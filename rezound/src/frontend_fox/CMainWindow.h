@@ -61,6 +61,8 @@ public:
 
 	long onActionControlTabMouseMove(FXObject *sender,FXSelector sel,void *ptr);
 
+	long onFollowPlayPositionButton(FXObject *sender,FXSelector sel,void *ptr);
+
 	// file action events
 	long onFileButton(FXObject *sender,FXSelector sel,void *ptr);
 
@@ -123,6 +125,8 @@ public:
 
 		ID_ACTIONCONTROL_TAB,
 
+		ID_FOLLOW_PLAY_POSITION_BUTTON,
+
 		ID_LAST
 	};
 							  
@@ -137,6 +141,8 @@ private:
 	FXHorizontalFrame	*contents;		// top horizontal main frame which contains play controls and action controls
 	FXPacker   		*playControlsFrame;	// frame that contains the play control buttons
 		FXDial *shuttleDial;
+	FXPacker		*miscControlsFrame;	// frame that contains the undo/redo buttons, follow-play-position checkbox, etc
+		FXCheckButton *followPlayPositionButton;
 	FXTabBook   		*actionControlsFrame;	// frame that is the tab layout for the other actions
 		FXTabItem 	*fileTab;	
 			FXPacker *fileTabFrame;

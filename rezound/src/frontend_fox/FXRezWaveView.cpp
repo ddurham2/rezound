@@ -87,6 +87,7 @@ public:
 
 
 	void setHorzZoomFactor(double v,FXint keyboardState);
+	double getHorzZoomFactor();
 	double getMaxHorzZoomFactor();
 
 	void setVertZoomFactor(double v);
@@ -141,6 +142,7 @@ protected:
 private:
 
 	friend class FXWaveRuler;  // so it can read pos_x and horzZoomFactor
+	friend class FXRezWaveView;
 
 	void drawPortion(int left,int width,FXDCWindow *dc);
 
@@ -278,6 +280,16 @@ void FXRezWaveView::setHorzZoomFactor(double v,FXint keyboardState)
 	waveScrollArea->setHorzZoomFactor(v,keyboardState);
 }
 
+FXint FXRezWaveView::getCanvasWidth()
+{
+	return(waveScrollArea->getSupposedCanvasWidth());
+}
+
+double FXRezWaveView::getHorzZoomFactor()
+{
+	return(waveScrollArea->getHorzZoomFactor());
+}
+
 double FXRezWaveView::getMaxHorzZoomFactor()
 {
 	return(waveScrollArea->getMaxHorzZoomFactor());
@@ -291,6 +303,11 @@ void FXRezWaveView::setVertZoomFactor(double v)
 double FXRezWaveView::getMaxVertZoomFactor()
 {
 	return(waveScrollArea->getMaxVertZoomFactor());
+}
+
+void FXRezWaveView::horzScroll(FXint x)
+{
+	waveScrollArea->setPosition(0,waveScrollArea->pos_y);
 }
 
 void FXRezWaveView::drawPlayPosition(sample_pos_t dataPosition,bool justErasing,bool scrollToMakeVisible)
@@ -399,6 +416,11 @@ sample_pos_t FXWaveScrollArea::getSamplePosForScreenX(FXint X)
 
 void FXWaveScrollArea::setHorzZoomFactor(double v,FXint keyboardState)
 {
+	if(v<0)
+		v=1.0;
+	else if(v>getMaxHorzZoomFactor())
+		v=getMaxHorzZoomFactor();
+
 	skipDraw++; // setPosition and/or layout causes a draw, so lets skip it
 
 	sample_fpos_t startPositionScreenX=getDrawSelectStart();
@@ -443,6 +465,11 @@ void FXWaveScrollArea::setHorzZoomFactor(double v,FXint keyboardState)
 		setPosition(-(sample_pos_t)(sample_fpos_round(-((sample_fpos_t)pos_x)*old_horzZoomFactor/v)),pos_y); \
 
 	skipDraw--;
+}
+
+double FXWaveScrollArea::getHorzZoomFactor()
+{
+	return(horzZoomFactor);
 }
 
 double FXWaveScrollArea::getMaxHorzZoomFactor()
@@ -493,10 +520,10 @@ void FXWaveScrollArea::drawPlayPosition(sample_pos_t dataPosition,bool justErasi
 		{ // scroll the wave view to make the play position visible on the left most side of the screen
 
 			// if the play position is off the screen
-			if(drawPlayStatusX<0 || drawPlayStatusX>=(sample_fpos_t)getSupposedCanvasWidth())
+			if(getSupposedCanvasWidth()>25 && (drawPlayStatusX<0 || drawPlayStatusX>=(sample_fpos_t)getSupposedCanvasWidth()))
 			{
-				setPosition(-(sample_pos_t)sample_fpos_round((sample_fpos_t)dataPosition/horzZoomFactor),pos_y); \
-				drawPlayStatusX=0;
+				setPosition(-(sample_pos_t)sample_fpos_round((sample_fpos_t)dataPosition/horzZoomFactor-25),pos_y); \
+				drawPlayStatusX=25;
 			}
 		}
 

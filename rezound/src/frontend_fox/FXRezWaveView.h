@@ -43,14 +43,19 @@ public:
 	virtual ~FXRezWaveView();
 
 	void setHorzZoomFactor(double v,FXint keyboardState=0);
+	double getHorzZoomFactor();
 	double getMaxHorzZoomFactor();
 
 	void setVertZoomFactor(double v);
 	double getMaxVertZoomFactor();
 
+	void horzScroll(FXint x);
+
 	void drawPlayPosition(sample_pos_t dataPosition,bool justErasing,bool scrollToMakeVisible);
 
 	void redraw();
+
+	FXint getCanvasWidth();
 
 	enum LastChangedPosition
 	{

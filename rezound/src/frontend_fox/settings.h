@@ -64,4 +64,9 @@ extern FocusMethods gFocusMethod;
 extern bool gSnapToCues;
 extern unsigned gSnapToCueDistance;
 
+/*
+ * True if the sound windows should follow the play position
+ */
+extern bool gFollowPlayPosition;
+
 #endif

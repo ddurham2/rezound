@@ -107,6 +107,8 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 
 	FXMAPFUNC(SEL_MOTION,			CMainWindow::ID_ACTIONCONTROL_TAB,		CMainWindow::onActionControlTabMouseMove),
 
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FOLLOW_PLAY_POSITION_BUTTON,	CMainWindow::onFollowPlayPositionButton),
+
 	/*
 	FXMAPFUNC(SEL_PAINT,             CMainWindow::ID_CANVAS, CMainWindow::onPaint),
 	FXMAPFUNC(SEL_LEFTBUTTONPRESS,   CMainWindow::ID_CANVAS, CMainWindow::onMouseDown),
@@ -156,6 +158,12 @@ CMainWindow::CMainWindow(FXApp* a) :
 		shuttleDial->setRevolutionIncrement(shuttleDial->getWidth()*2-1);
 		shuttleDial->setTipText("Shuttle Seek While Playing\n(Hint: try the mouse wheel as well as dragging)");
 
+	miscControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,6,6),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 3,2);
+		new FXButton(miscControlsFrame,"&Redraw",NULL,this,ID_REDRAW_BUTTON,FRAME_RAISED);
+		new FXButton(miscControlsFrame,"&Undo",NULL,this,ID_UNDO_BUTTON,FRAME_RAISED);
+		new FXButton(miscControlsFrame,"&ClrUndo",NULL,this,ID_CLEAR_UNDO_HISTORY_BUTTON,FRAME_RAISED);
+		followPlayPositionButton=new FXCheckButton(miscControlsFrame,"Follow Play Position",this,ID_FOLLOW_PLAY_POSITION_BUTTON);
+
 	/* ??? it is not necessary to have all these data members for all the buttons */
 
 	int actionControlTabOrder=0;
@@ -164,7 +172,7 @@ CMainWindow::CMainWindow(FXApp* a) :
 		fileTab->setTarget(this);
 		fileTab->setSelector(ID_ACTIONCONTROL_TAB);
 		actionControlTabOrdering[fileTab]=actionControlTabOrder++;
-			fileTabFrame=new FXHorizontalFrame(actionControlsFrame,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|FRAME_RAISED, 0,0,0,0, 4,4,4,4, 3,1);
+			fileTabFrame=new FXHorizontalFrame(actionControlsFrame,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|FRAME_RAISED, 0,0,0,0, 4,4,4,4, 3,3);
 				fileNewButton=new FXButton(fileTabFrame,"&New",NULL,this,ID_FILE_NEW_BUTTON,FRAME_RAISED);
 				fileOpenButton=new FXButton(fileTabFrame,"&Open/\nReopen\t(Right Click for Reopen History)",NULL,this,ID_FILE_OPEN_BUTTON,FRAME_RAISED);
 				fileSaveButton=new FXButton(fileTabFrame,"&Save",NULL,this,ID_FILE_SAVE_BUTTON,FRAME_RAISED);
@@ -172,9 +180,6 @@ CMainWindow::CMainWindow(FXApp* a) :
 				fileCloseButton=new FXButton(fileTabFrame,"&Close",NULL,this,ID_FILE_CLOSE_BUTTON,FRAME_RAISED);
 				fileRevertButton=new FXButton(fileTabFrame,"Re&vert",NULL,this,ID_FILE_REVERT_BUTTON,FRAME_RAISED);
 				fileRecordButton=new FXButton(fileTabFrame,"&Record",NULL,this,ID_FILE_RECORD_BUTTON,FRAME_RAISED);
-				new FXButton(fileTabFrame,"&Redraw",NULL,this,ID_REDRAW_BUTTON,FRAME_RAISED);
-				new FXButton(fileTabFrame,"&Undo",NULL,this,ID_UNDO_BUTTON,FRAME_RAISED);
-				new FXButton(fileTabFrame,"&ClrUndo",NULL,this,ID_CLEAR_UNDO_HISTORY_BUTTON,FRAME_RAISED);
 				notesButton=new FXButton(fileTabFrame,"Notes\tUser notes about the sound (and preserved in the file if the format supports it)",NULL,this,ID_NOTES_BUTTON,FRAME_RAISED);
 
 				// just for testing
@@ -187,19 +192,19 @@ CMainWindow::CMainWindow(FXApp* a) :
 		effectsTab->setTarget(this);
 		effectsTab->setSelector(ID_ACTIONCONTROL_TAB);
 		actionControlTabOrdering[effectsTab]=actionControlTabOrder++;
-			effectsTabFrame=new FXHorizontalFrame(actionControlsFrame,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|FRAME_RAISED, 0,0,0,0, 4,4,4,4, 3,1);
+			effectsTabFrame=new FXHorizontalFrame(actionControlsFrame,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|FRAME_RAISED, 0,0,0,0, 4,4,4,4, 3,3);
 
 		loopingTab=new FXTabItem(actionControlsFrame,"&Looping",NULL,TAB_TOP_NORMAL);
 		loopingTab->setTarget(this);
 		loopingTab->setSelector(ID_ACTIONCONTROL_TAB);
 		actionControlTabOrdering[loopingTab]=actionControlTabOrder++;
-			loopingTabFrame=new FXHorizontalFrame(actionControlsFrame,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|FRAME_RAISED);
+			loopingTabFrame=new FXHorizontalFrame(actionControlsFrame,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|FRAME_RAISED, 0,0,0,0, 4,4,4,4, 3,3);
 
 		remasterTab=new FXTabItem(actionControlsFrame,"&Remaster",NULL,TAB_TOP_NORMAL);
 		remasterTab->setTarget(this);
 		remasterTab->setSelector(ID_ACTIONCONTROL_TAB);
 		actionControlTabOrdering[remasterTab]=actionControlTabOrder++;
-			remasterTabFrame=new FXHorizontalFrame(actionControlsFrame,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|FRAME_RAISED);
+			remasterTabFrame=new FXHorizontalFrame(actionControlsFrame,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|FRAME_RAISED, 0,0,0,0, 4,4,4,4, 3,3);
 }
 
 /*
@@ -216,6 +221,8 @@ void CMainWindow::show()
 	//printf("main window: %d %d\n",getX(),getY());
 	rememberShow(this);
 	FXMainWindow::show();
+
+	followPlayPositionButton->setCheck(gFollowPlayPosition);
 }
 
 void CMainWindow::hide()
@@ -290,6 +297,12 @@ long CMainWindow::onActionControlTabMouseMove(FXObject *sender,FXSelector sel,vo
 		actionControlsFrame->setCurrent(actionControlTabOrdering[sender]);
 	}
 
+	return 1;
+}
+
+long CMainWindow::onFollowPlayPositionButton(FXObject *sender,FXSelector sel,void *ptr)
+{
+	gFollowPlayPosition=followPlayPositionButton->getCheck();
 	return 1;
 }
 
