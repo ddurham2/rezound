@@ -57,10 +57,10 @@ public:
 	CDSPNoiseGate(unsigned _windowTime,sample_t _threshold,unsigned _gainAttackTime,unsigned _gainReleaseTime) :
 		windowTime(_windowTime),
 		threshold(_threshold),
-		gainAttackVelocity(1.0/(float)_gainAttackTime),
-		gainReleaseVelocity(1.0/(float)_gainReleaseTime),
+		gainAttackVelocity(1.0f/(float)_gainAttackTime),
+		gainReleaseVelocity(1.0f/(float)_gainReleaseTime),
 	
-		gain(1.0),
+		gain(1.0f),
 		levelDetector(windowTime)
 	{
 		// ??? verify parameters?
@@ -80,18 +80,18 @@ public:
 	{
 		const mix_sample_t level=levelDetector.readLevel(s);
 		
-		if(level<=threshold && gain>0.0)
-			gain= max(gain-gainAttackVelocity,(float)0.0);
-		else if(level>threshold && gain<1.0)
-			gain= min(gain+gainReleaseVelocity,(float)1.0);
+		if(level<=threshold && gain>0.0f)
+			gain= max(gain-gainAttackVelocity,0.0f);
+		else if(level>threshold && gain<1.0f)
+			gain= min(gain+gainReleaseVelocity,1.0f);
 
 			// ??? should be able to make this 3 return statements in the 2 cases+else above
-		return(gain!=1.0 ? (mix_sample_t)(s*gain) : s);
+		return(gain!=1.0f ? (mix_sample_t)(s*gain) : s);
 	}
 
 
 	// can be used to reset the internal gain if desired
-	void resetGain(const float _gain=1.0)
+	void resetGain(const float _gain=1.0f)
 	{
 		gain=_gain;
 	}

@@ -140,7 +140,7 @@ public:
 		if(level>=threshold && bouncingRatio!=compressionRatio)
 			bouncingRatio= min(bouncingRatio+attackVelocity,compressionRatio);
 		else if(level<threshold && bouncingRatio!=1.0)
-			bouncingRatio= max(bouncingRatio-releaseVelocity,(float)1.0);
+			bouncingRatio= max(bouncingRatio-releaseVelocity,1.0f);
 
 		// attempt to smooth out the way the attack sounds
 		//const float _bouncingRatio=unitRange_to_otherRange_linear(unitRange_to_unitRange_squared(otherRange_to_unitRange_linear(bouncingRatio,1.0,compressionRatio)),1.0,compressionRatio);
@@ -172,15 +172,15 @@ public:
 		// ??? I need to allow compression ratio to also be less than 1 to act as an exciter
 		if(level>=threshold && bouncingRatio!=compressionRatio)
 			bouncingRatio= min(bouncingRatio+attackVelocity,compressionRatio);
-		else if(level<threshold && bouncingRatio!=1.0)
-			bouncingRatio= max(bouncingRatio-releaseVelocity,(float)1.0);
+		else if(level<threshold && bouncingRatio!=1.0f)
+			bouncingRatio= max(bouncingRatio-releaseVelocity,1.0f);
 
-		if(bouncingRatio>1.0)
+		if(bouncingRatio>1.0f)
 		{
-			double g=pow((double)threshold/(double)level,(bouncingRatio-1.0)/bouncingRatio);
+			float g=pow((float)threshold/(float)level,(bouncingRatio-1.0f)/bouncingRatio);
 			//printf("%f=(%d/%d)**(%f/%f)\n",g,threshold,level,bouncingRatio-1.0,bouncingRatio);
-			if(g>1.0)
-				g=1.0;
+			if(g>1.0f)
+				g=1.0f;
 			for(unsigned t=0;t<frameSize;t++)
 				inputFrame[t]=(mix_sample_t)(inputFrame[t]*g);
 		}
@@ -189,7 +189,7 @@ public:
 
 	const unsigned getWindowTime() const
 	{
-		return(windowTime); // the value this was constructed with
+		return windowTime; // the value this was constructed with
 	}
 
 

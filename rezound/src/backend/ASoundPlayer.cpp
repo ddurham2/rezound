@@ -239,30 +239,30 @@ const size_t ASoundPlayer::getSamplingForStereoPhaseMeters(sample_t *buffer,size
 // ??? these need to be settings in the registry and have enforced limits
 static const float baseOctave=40;	// bottom frequency of analyzer  (actually the first band contains from 0Hz to upperFreqAtOctave(0) )
 static const size_t octaveStride=6;	// 6 bands per octave
-static const float deltaOctave=1.0/octaveStride;
+static const float deltaOctave=1.0f/octaveStride;
 
 // returns the frequency (in Hz) given the octave
 static float freqAtOctave(float octave)
 {
-	return baseOctave*pow((float)2.0,octave);
+	return baseOctave*powf(2.0f,octave);
 }
 
 // return middle of the previous band's frequency and our band's frequency
 static float lowerFreqAtOctave(float octave)
 {
-	return (freqAtOctave(octave-deltaOctave)+freqAtOctave(octave))/2.0;
+	return (freqAtOctave(octave-deltaOctave)+freqAtOctave(octave))/2.0f;
 }
 
 // return middle of the our band's frequency and the next band's frequency
 static float upperFreqAtOctave(float octave)
 {
-	return (freqAtOctave(octave)+freqAtOctave(octave+deltaOctave))/2.0;
+	return (freqAtOctave(octave)+freqAtOctave(octave+deltaOctave))/2.0f;
 }
 
 // returns the index (into an frequency domain array) given a frequency (but doesn't always return an integer, it returns what index we would wish to be there (perhaps between two elements))
 static float indexAtFreq(float freq,unsigned sampleRate)
 {
-	return (2.0*(ASP_ANALYSIS_BUFFER_SIZE/2)*freq)/(float)sampleRate;
+	return (2.0f*(ASP_ANALYSIS_BUFFER_SIZE/2)*freq)/(float)sampleRate;
 }
 
 // returns the (integer) lower index of the given band (expressed as an octave) into a frequency domain array

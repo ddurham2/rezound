@@ -424,8 +424,8 @@ public:
 
 	void setBalance(sample_t leftRMSLevel,sample_t rightRMSLevel,sample_t leftPeakLevel,sample_t rightPeakLevel)
 	{
-		RMSBalance=((float)rightRMSLevel-(float)leftRMSLevel)/(float)MAX_SAMPLE;
-		peakBalance=((float)rightPeakLevel-(float)leftPeakLevel)/(float)MAX_SAMPLE;
+		RMSBalance=((float)rightRMSLevel-(float)leftRMSLevel)/MAX_SAMPLE;
+		peakBalance=((float)rightPeakLevel-(float)leftPeakLevel)/MAX_SAMPLE;
 		canvas->update(); // flag for repainting
 	}
 
@@ -499,7 +499,7 @@ public:
 		zoomDial->setValue(100);
 		zoomDial->setRevolutionIncrement((400-100+10)*2);
 		zoomDial->setTipText(_("Adjust Zoom Factor for Stereo Phase Meter\nAll the way down means no zooming"));
-		zoom=((float)zoomDial->getValue())/100.0;
+		zoom=((float)zoomDial->getValue())/100.0f;
 
 
 		// create the font to use for numbers
@@ -517,7 +517,7 @@ public:
 
 	long CStereoPhaseMeter::onZoomDial(FXObject *sender,FXSelector sel,void *ptr)
 	{
-		zoom=((float)zoomDial->getValue())/100.0;
+		zoom=((float)zoomDial->getValue())/100.0f;
 		canvas->update(); // not really necessary since we're doing it several times a second anyway
 		return 1;
 	}
@@ -907,7 +907,7 @@ public:
 			peaks.clear();
 			for(size_t t=0;t<analysis.size();t++)
 			{
-				peaks.push_back(0.0);
+				peaks.push_back(0.0f);
 				peakFallDelayTimers.push_back(0);
 			}
 			rebuildLabels=true;
@@ -919,7 +919,7 @@ public:
 		{
 			peakFallDelayTimers[t]=max(0,peakFallDelayTimers[t]-1);
 			if(peakFallDelayTimers[t]==0) // only decrease the peak when the fall timer has reached zero
-				peaks[t]=max((float)0.0,(float)(peaks[t]-gAnalyzerPeakFallRate));
+				peaks[t]=max(0.0f,(float)(peaks[t]-gAnalyzerPeakFallRate));
 		}
 
 

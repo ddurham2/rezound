@@ -59,7 +59,7 @@ bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 
 #elif 0
 	// create the time-domain filter kernel
-	const float freq=(float)100/(float)actionSound.sound->getSampleRate(); // cutoff frequency of this low-pass filter (fraction of the sample rate 0..0.5)
+	const float freq=100.0f/(float)actionSound.sound->getSampleRate(); // cutoff frequency of this low-pass filter (fraction of the sample rate 0..0.5)
 	const sample_pos_t M=200; // length of filter kernel
 	float filter_kernel[M];
 	for(sample_pos_t i=0;i<M;i++) 

@@ -284,7 +284,7 @@ float sample_to_y(sample_t sampleValue,float vertZoomFactor,int vertOffset,float
 {
 	//           the sample value, normalized to [-1,1], scaled to MAX_WAVE_HEIGHT (max height/2 because range is -1 to +1) 
 	//                                                               then scaled by the vertical zoom factor and finally offset
-	return ( ( (-(float)sampleValue/(float)MAX_SAMPLE) * (MAX_WAVE_HEIGHT/2) ) / vertZoomFactor) + channelOffset + vertOffset;
+	return ( ( (-(float)sampleValue/MAX_SAMPLE) * (MAX_WAVE_HEIGHT/2) ) / vertZoomFactor) + channelOffset + vertOffset;
 	//          negated because up the screen represents greater sample values
 }
 
