@@ -7,11 +7,13 @@ distro tarball(eg: removing warning flags)
 1. Remove -Wall and all -W flags from CXXFLAGS -- comment out checks for
 -Wno... flags in configure.in and remove -Wall from am_include.mk CXXFLAGS
 
-2. Revise AUTHORS to give proper credit, and only list files included in final release. Might want to save separate version to keep in CVS.
+2. Revise docs/AUTHORS to give proper credit, and only list files included in final release. Might want to save separate version to keep in CVS.
 
-3. Make a cvs release tag
+3. Revise docs/NEWS use cvs2cl.pl to determine what significant things have changed since the previous release
+
+4. Make a cvs release tag
 	- cvs tag ReZound-1_2_3alpha
 
-4. Update the version number in configure.in and docs/INSTALL
+5. Update the version number in configure.in and docs/INSTALL
 	- and then do a bootstrap
 
