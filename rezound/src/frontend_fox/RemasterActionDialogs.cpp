@@ -144,7 +144,7 @@ bool CCurvedBalanceActionDialog::show(CActionSound *actionSound,CActionParameter
 static const double retconv_monoize(const double x) { return x/100.0 ; }
 
 CMonoizeActionDialog::CMonoizeActionDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,true,FXModalDialogBox::stShrinkWrap)
+	CActionParamDialog(mainWindow,true,"",FXModalDialogBox::stShrinkWrap)
 {
 		void *p0=newVertPanel(NULL);
 			void *p1=newHorzPanel(p0,false);
