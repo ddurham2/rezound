@@ -58,7 +58,7 @@ FXColor clippedWaveformColor=FXRGB(255,0,127); // pink to stand out
 
 // ??? some of these int types would need to be changed to be sample_pos_t or int64_t if >31bits zoomed-in lengths were supported
 // need to lock sound's size before calling this to be safe
-void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth,int canvasHeight,int drawSelectStart,int drawSelectStop,double horzZoomFactor,sample_pos_t hOffset,double vertZoomFactor,int vOffset,bool darkened)
+void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth,int canvasHeight,int drawSelectStart,int drawSelectStop,double horzZoomFactor,sample_pos_t hOffset,double vertZoomFactor,int vOffset,bool darkened,bool invertColors)
 {
 	try
 	{
@@ -186,17 +186,17 @@ void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth
 						const int _max_y=(int)nearbyint(max_y);
 						
 						// draw the background
-						dc->setForeground(bgc);
+						dc->setForeground(invertColors ? ~bgc : bgc);
 						dc->drawLine(x,channelTop,x,_min_y-1);
 						dc->drawLine(x,_max_y+1,x,(int)nearbyint(channelTop+channelHeight));
 
 						// draw the waveform
-						dc->setForeground(wfc);
+						dc->setForeground(invertColors ? ~wfc : wfc);
 						dc->drawLine(x,_min_y,x,_max_y);
 					}
 					else
 					{
-						dc->setForeground(backGroundColor);
+						dc->setForeground(invertColors ? ~backGroundColor : backGroundColor);
 						dc->drawLine(x,(int)nearbyint(channelTop),x,(int)nearbyint(channelTop+channelHeight));
 					}
 				}
@@ -205,7 +205,7 @@ void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth
 
 				// draw axis
 				{
-					dc->setForeground(axisColor);
+					dc->setForeground(invertColors ? ~axisColor : axisColor);
 
 					float y=nearbyint(channelOffset+vOffset);
 					if(y<channelOffset-channelHeight/2)
@@ -219,7 +219,7 @@ void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth
 				// draw -6dB lines
 				{
 					int y;
-					dc->setForeground(dBAxisColor);
+					dc->setForeground(invertColors ? ~dBAxisColor : dBAxisColor);
 
 					y=(int)nearbyint(channelOffset+vOffset+dBFS_to_amp(-6.0)/vertZoomFactor);
 					if(y>=channelOffset-channelHeight/2 && y<=channelOffset+channelHeight/2)

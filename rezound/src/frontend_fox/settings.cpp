@@ -21,3 +21,9 @@
 #include "settings.h"
 
 
+#warning need to make these read from the config file.. perhaps put them under a "FOX" scope so they wouldnt be confused with other frontends that might exist one day
+#warning move frontend specific vars into here.  I know that two frontends might have some of the same settings, but I would rather the code be separated than slightly mixed
+
+bool gDrawVerticalCuePositions=true;
+
+

@@ -379,6 +379,27 @@ void FXWaveCanvas::drawPortion(int left,int width,FXDCWindow *dc)
 
 		const int vOffset=((getVertSize()-getHeight())/2)-vertOffset;
 		::drawPortion(left,width,dc,loadedSound->sound,getWidth(),getHeight(),(int)getDrawSelectStart(),(int)getDrawSelectStop(),horzZoomFactor,horzOffset,vertZoomFactor,vOffset);
+
+		if(gDrawVerticalCuePositions)
+		{	// draw cue positions as inverted colors
+
+			// calculate the min and max times based on the left and right boundries of the drawing
+			const sample_pos_t minTime=getCueTimeFromX(max(0,left-1));
+			const sample_pos_t maxTime=getCueTimeFromX(left+width+1);
+
+			/* ??? if I iterated over the cues by increasing time, then I could be more efficient by finding the neared cue to minTime and stop when a cue is greater than maxTime */
+			const size_t cueCount=loadedSound->sound->getCueCount();
+			for(size_t t=0;t<cueCount;t++)
+			{
+				const sample_pos_t cueTime=loadedSound->sound->getCueTime(t);
+				if(cueTime>=minTime && cueTime<=maxTime)
+				{
+					const FXint x=getCueScreenX(t);
+					::drawPortion(x,1,dc,loadedSound->sound,getWidth(),getHeight(),(int)getDrawSelectStart(),(int)getDrawSelectStop(),horzZoomFactor,horzOffset,vertZoomFactor,vOffset,false,true);
+				}
+			}
+		}
+
 		loadedSound->sound->unlockSize();
 	}
 	catch(...)
@@ -489,9 +510,7 @@ const FXint FXWaveCanvas::getCueScreenX(size_t cueIndex) const
 
 const sample_pos_t FXWaveCanvas::getCueTimeFromX(FXint screenX) const
 {
-	// ??? uh this is VERY similar to getSamplePosForScreenX
-	return((sample_pos_t)(((sample_fpos_t)screenX+(sample_fpos_t)horzOffset)*horzZoomFactor));
-
+	return getSamplePosForScreenX(screenX);
 }
 
 
@@ -499,7 +518,6 @@ const sample_pos_t FXWaveCanvas::getCueTimeFromX(FXint screenX) const
 
 const sample_pos_t FXWaveCanvas::getSamplePosForScreenX(FXint X) const
 {
-	// ??? uh this is VERY similar to getCueTimeFromX
 	sample_fpos_t p=sample_fpos_floor(((sample_fpos_t)(X+horzOffset))*horzZoomFactor);
 	if(p<0)
 		p=0.0;

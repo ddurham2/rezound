@@ -30,4 +30,12 @@
 #define CUE_RADIUS 3
 #define CUE_OFF_SCREEN (-(CUE_RADIUS+1000))
 
+
+/*
+ * True if vertical cue positions should be drawn across the waveform
+ */
+extern bool gDrawVerticalCuePositions;
+
+
+
 #endif
