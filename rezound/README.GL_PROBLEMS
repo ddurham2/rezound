@@ -36,7 +36,7 @@ Unfortunatly, at this point, the FOX GUI library contains some
 OpenGL widgets and thus wants to link with the OpenGL libraries.  
 ReZound does not use any of these OpenGL widgets and so excluding 
 the libraries from the link command works around the problem.  
-(Actually, this works because the (hopefully) your linker does 
-not require a symbol referenced from a library if it was never 
-called by the applicating being linked with that library.)
+(Actually, this works because (hopefully) your linker does not
+require a symbol referenced from a library if it was never called
+by the applicating being linked with that library.)
 
