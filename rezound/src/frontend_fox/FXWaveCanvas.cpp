@@ -489,6 +489,7 @@ const FXint FXWaveCanvas::getCueScreenX(size_t cueIndex) const
 
 const sample_pos_t FXWaveCanvas::getCueTimeFromX(FXint screenX) const
 {
+	// ??? uh this is VERY similar to getSamplePosForScreenX
 	return((sample_pos_t)(((sample_fpos_t)screenX+(sample_fpos_t)horzOffset)*horzZoomFactor));
 
 }
@@ -498,6 +499,7 @@ const sample_pos_t FXWaveCanvas::getCueTimeFromX(FXint screenX) const
 
 const sample_pos_t FXWaveCanvas::getSamplePosForScreenX(FXint X) const
 {
+	// ??? uh this is VERY similar to getCueTimeFromX
 	sample_fpos_t p=sample_fpos_floor(((sample_fpos_t)(X+horzOffset))*horzZoomFactor);
 	if(p<0)
 		p=0.0;
