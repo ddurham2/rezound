@@ -76,6 +76,9 @@ string gClipboardFilenamePrefix="rezclip";
 size_t gWhichClipboard=0;
 
 
+size_t gMaxReopenHistory=16;
+
+
 bool gSnapToCues=true;
 unsigned gSnapToCueDistance=5;
 

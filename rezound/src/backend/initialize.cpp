@@ -204,14 +204,17 @@ bool initializeBackend(ASoundPlayer *&_soundPlayer,int argc,char *argv[])
 			gFallbackWorkDir= gSettingsRegistry->getValue("fallbackWorkDir");
 
 
-		if(gSettingsRegistry->keyExists("whichClipboard"))
-			gWhichClipboard= atoi(gSettingsRegistry->getValue("whichClipboard").c_str());
-
 		if(gSettingsRegistry->keyExists("clipboardDir"))
 			gClipboardDir= gSettingsRegistry->getValue("clipboardDir");
 
 		if(gSettingsRegistry->keyExists("clipboardFilenamePrefix"))
 			gClipboardFilenamePrefix= gSettingsRegistry->getValue("clipboardFilenamePrefix");
+
+		if(gSettingsRegistry->keyExists("whichClipboard"))
+			gWhichClipboard= atoi(gSettingsRegistry->getValue("whichClipboard").c_str());
+
+		if(gSettingsRegistry->keyExists(("ReopenHistory"+DOT+"maxReopenHistory").c_str()))
+			gMaxReopenHistory= atoi(gSettingsRegistry->getValue(("ReopenHistory"+DOT+"maxReopenHistory").c_str()).c_str());
 
 		if(gSettingsRegistry->keyExists("followPlayPosition"))
 			gFollowPlayPosition= gSettingsRegistry->getValue("followPlayPosition")=="true";
@@ -382,7 +385,11 @@ void deinitializeBackend()
 	gSettingsRegistry->createKey("clipboardDir",gClipboardDir);
 	gSettingsRegistry->createKey("clipboardFilenamePrefix",gClipboardFilenamePrefix);
 	gSettingsRegistry->createKey("whichClipboard",gWhichClipboard);
+
+	gSettingsRegistry->createKey(("ReopenHistory"+DOT+"maxReopenHistory").c_str(),gMaxReopenHistory);
+
 	gSettingsRegistry->createKey("followPlayPosition",gFollowPlayPosition ? "true" : "false");
+
 	gSettingsRegistry->createKey("initialLengthToShow",gInitialLengthToShow);
 
 	gSettingsRegistry->createKey(("Meters"+DOT+"meterUpdateTime").c_str(),gMeterUpdateTime);

@@ -26,6 +26,7 @@
 #include "settings.h"
 
 #include <stdexcept>
+#include <algorithm>
 #include <CPath.h>
 
 #include <CNestedDataFile/CNestedDataFile.h>
@@ -36,8 +37,6 @@
 #include "CSoundPlayerChannel.h"
 #include "ASoundTranslator.h"
 #include "AFrontendHooks.h"
-
-#define MAX_REOPEN_HISTORY 16 // needs to be a preference ???
 
 ASoundFileManager::ASoundFileManager(ASoundPlayer *_soundPlayer,CNestedDataFile *_loadedRegistryFile) :
 	soundPlayer(_soundPlayer),
@@ -560,7 +559,7 @@ void ASoundFileManager::updateReopenHistory(const string &filename)
 			reopenFilenames.push_back(h);
 	}
 
-	if(reopenFilenames.size()>=MAX_REOPEN_HISTORY)
+	if(reopenFilenames.size()>=gMaxReopenHistory)
 		reopenFilenames.erase(reopenFilenames.begin()+reopenFilenames.size()-1);
 		
 	reopenFilenames.insert(reopenFilenames.begin(),filename);
@@ -572,9 +571,9 @@ void ASoundFileManager::updateReopenHistory(const string &filename)
 const size_t ASoundFileManager::getReopenHistorySize() const
 {
 	size_t t;
-	for(t=0;gSettingsRegistry->keyExists(("ReopenHistory"+string(DOT)+"item"+istring(t)).c_str());t++);
+	for(t=0;t<gMaxReopenHistory && gSettingsRegistry->keyExists(("ReopenHistory"+string(DOT)+"item"+istring(t)).c_str());t++);
 
-	return(t);
+	return t;
 }
 
 const string ASoundFileManager::getReopenHistoryItem(const size_t index) const

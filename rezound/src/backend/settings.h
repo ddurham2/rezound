@@ -90,6 +90,10 @@ extern string gClipboardFilenamePrefix;
 extern size_t gWhichClipboard;
 
 
+// this is the max number of reopen items to keep in the reopen history
+extern size_t gMaxReopenHistory; 		// defaulted to 16
+
+
 /*
  * These are the parameters of whether or not to snap the selection positions
  * to the cue position, and if so, how far from a cue to does the position have
