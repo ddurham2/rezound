@@ -195,7 +195,8 @@ bool CRecordDialog::show(ASoundRecorder *_recorder)
 		showing=true;
 		timerHandle=getApp()->addTimeout(STATUS_UPDATE_TIME,this,CRecordDialog::ID_STATUS_UPDATE);
 
-		if(FXDialogBox::execute(PLACEMENT_CURSOR) && recorder->getRecordedLength()>0)
+		// ??? might wanna use rememberShow or some base method
+		if(execute(PLACEMENT_CURSOR) && recorder->getRecordedLength()>0)
 		{
 			showing=false;
 			cleanupMeters();

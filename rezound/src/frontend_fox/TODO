@@ -1,8 +1,7 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- need a logo icon
-		- make a large medium and small scaled version so that It can be used on the website, in the about dialog, and as the tiny icons in the decor
+	- create some useful presets for the new filter actions
 
 	- perhaps a 'view' pull-down ... possible menu items...
 		- zoom controls.. increase/decrease zoom both vert and horz
@@ -15,8 +14,6 @@
 		- it also needs a border around it
 
 	- the scalar spinner on the much used slider can be cumbersome having so many values.. perhaps I should give it a skip based on its range
-
-	- create useful presets for the new filter actions
 
 	- add some some wet/dry mix parameter to the filter actions which says -100%(original) to 0 to 100%(filtered)
 
@@ -75,10 +72,6 @@
 		- snap them to the start, stop, beginning and end positions
 		- maybe even autoscroll when a cue is near the edge if it's not terribly difficult
 
-	- perhaps I should have volume and gain as separate actions... but the same backend code would be used
-		- I could even have advanced and normal dialogs for both
-		- negative gain could also be used to invert the phase with a gain of -1
-
 	- perhaps I could have the channel select dialog default its check boxes according to the mute buttons of the sound window
 
 	- I should probably pass the factory objects to the channelSelect dialog, since I could use the NxN matrix of radio buttons for the paste edits' channel select dialog and the others could have the default one
@@ -87,11 +80,6 @@
 		- I could probably think of other things of this nature for the other actions
 		- This would probably be a useful example of implementing a flag which makes a preset mean some percentage of the input value
 			- the question is, can I get that input value? or how can I specify it?  Perhaps there would be some defined like: sound length, channel count, sample rate, selection length
-
-	- all the dialogs are based on fixed widths and heights (of the dialog itself)
-		- I would rather these widths and heights that I'm passing the dialogs, be minimums
-		- I added remember support so it wouldn't be as much of a problem, but perhaps ask the fox people how to get the dialog to make itself large enough for all the inner widgets
-		- If I tought about it long enough, I might be able to come up with the answer
 
 	- Put the name of each channel horizontally along the left of the channels so that if the sound is 5 channels you label the first 2 'left' and 'right' then the next ones 'center', 'rear left' and 'rear right' 
 	
@@ -226,4 +214,17 @@
 
 	- images.h is causing a problem because 'make dist' deletes images.h but images.cpp goes with it and when someone does make, images.cpp isn't too old so images.h isn't recreated
 		- I think this got fixed now
+
+	- need a logo icon
+		- make a large medium and small scaled version so that It can be used on the website, in the about dialog, and as the tiny icons in the decor
+
+	- perhaps I should have volume and gain as separate actions... but the same backend code would be used
+		- I could even have advanced and normal dialogs for both
+		- negative gain could also be used to invert the phase with a gain of -1
+
+	- all the dialogs are based on fixed widths and heights (of the dialog itself)
+		- I would rather these widths and heights that I'm passing the dialogs, be minimums
+		- I added remember support so it wouldn't be as much of a problem, but perhaps ask the fox people how to get the dialog to make itself large enough for all the inner widgets
+			- FOUND IT: getDefaultWidth() and getDefaultHeight()
+		- If I tought about it long enough, I might be able to come up with the answer
 

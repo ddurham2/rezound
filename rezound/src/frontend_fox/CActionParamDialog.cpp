@@ -59,8 +59,8 @@ FXIMPLEMENT(CActionParamDialog,FXModalDialogBox,CActionParamDialogMap,ARRAYNUMBE
 // work the same what.. I'll work on figuring that out and then both 
 // parameters should be unnecessary
 
-CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title,int w,int h,FXModalDialogBox::FrameTypes frameType) :
-	FXModalDialogBox(mainWindow,title,w=0,h,FXModalDialogBox::ftVertical),
+CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title,FXModalDialogBox::FrameTypes frameType) :
+	FXModalDialogBox(mainWindow,title,0,0,FXModalDialogBox::ftVertical),
 	
 	splitter(new FXSplitter(getFrame(),SPLITTER_VERTICAL|SPLITTER_REVERSED | LAYOUT_FILL_X|LAYOUT_FILL_Y)),
 		topPanel(new FXHorizontalFrame(splitter,FRAME_RAISED|FRAME_THICK, 0,0,0,0, 0,0,0,0, 0,0)),
@@ -199,7 +199,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 			((FXGraphParamValue *)parameters[t].second)->setSound(actionSound->sound,actionSound->start,actionSound->stop);
 	}
 
-	if(FXDialogBox::execute(PLACEMENT_CURSOR))
+	if(execute(PLACEMENT_CURSOR))
 	{
 		for(unsigned t=0;t<parameters.size();t++)
 		{

@@ -20,6 +20,8 @@
 
 #include "FXModalDialogBox.h"
 
+#include <algorithm>
+
 #include "images.h"
 
 #include "rememberShow.h"
@@ -38,7 +40,7 @@ FXIMPLEMENT(FXModalDialogBox,FXDialogBox,FXModalDialogBoxMap,ARRAYNUMBER(FXModal
 // ----------------------------------------
 
 FXModalDialogBox::FXModalDialogBox(FXWindow *owner,const FXString &title,int w,int h,FrameTypes frameType) :
-	FXDialogBox(owner,title,DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE, 0,0,w,h, 0,0,0,0, 0,0),
+	FXDialogBox(owner,title,DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE, 10,20,w,h, 0,0,0,0, 0,0),
 
 	contents(new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
 		upperFrame(
@@ -83,13 +85,35 @@ long FXModalDialogBox::onOkayButton(FXObject *sender,FXSelector sel,void *ptr)
 
 void FXModalDialogBox::show(FXuint placement)
 {
-	if(!rememberShow(this))
+	FXint wantedWidth=getDefaultWidth();
+	FXint wantedHeight=getDefaultHeight();
+	bool wasRemembered=rememberShow(this);
+	resize(max(getWidth(),wantedWidth),max(getHeight(),wantedHeight));
+
+	if(!wasRemembered)
 		FXDialogBox::show(placement);
 	else
 #ifdef FOX_RESTORE_WINDOW_POSITIONS
 		FXDialogBox::show();
 #else
 		FXDialogBox::show(placement/*wouldn't send placement except remember show can't reliable set the window position*/);
+#endif
+}
+
+FXuint FXModalDialogBox::execute(FXuint placement)
+{
+	FXint wantedWidth=getDefaultWidth();
+	FXint wantedHeight=getDefaultHeight();
+	bool wasRemembered=rememberShow(this);
+	resize(max(getWidth(),wantedWidth),max(getHeight(),wantedHeight));
+
+	if(!wasRemembered)
+		return FXDialogBox::execute(placement);
+	else
+#ifdef FOX_RESTORE_WINDOW_POSITIONS
+		return FXDialogBox::execute();
+#else
+		return FXDialogBox::execute(placement/*wouldn't send placement except remember show can't reliable set the window position*/);
 #endif
 }
 

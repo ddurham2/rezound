@@ -21,6 +21,7 @@
 #include "CMainWindow.h"
 
 #include <stdexcept>
+#include <algorithm>
 #include <string>
 
 #include "CActionMenuCommand.h"
@@ -125,7 +126,7 @@ FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
 #include <fox/fxkeys.h>
 
 CMainWindow::CMainWindow(FXApp* a) :
-	FXMainWindow(a,"ReZound",new FXGIFIcon(a,icon_logo_32_gif,0,IMAGE_ALPHACOLOR),new FXGIFIcon(a,icon_logo_16_gif,0,IMAGE_ALPHACOLOR),DECOR_ALL,0,0,346,145)
+	FXMainWindow(a,"ReZound",new FXGIFIcon(a,icon_logo_32_gif,0,IMAGE_ALPHACOLOR),new FXGIFIcon(a,icon_logo_16_gif,0,IMAGE_ALPHACOLOR),DECOR_ALL,10,20)
 {
 	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X);
 
@@ -175,7 +176,11 @@ CMainWindow::CMainWindow(FXApp* a) :
 
 void CMainWindow::show()
 {
+	FXint wantedWidth=getDefaultWidth();
+	FXint wantedHeight=getDefaultHeight();
 	rememberShow(this);
+	resize(max(getWidth(),wantedWidth),max(getHeight(),wantedHeight));
+
 	FXMainWindow::show();
 
 	followPlayPositionButton->setCheck(gFollowPlayPosition);

@@ -74,7 +74,7 @@ bool CCueDialog::show(CActionSound *_actionSound,CActionParameters *actionParame
 	cueTimeTextBox->setText(actionSound->sound->getTimePosition(actionParameters->getSamplePosParameter(offset+1),5,false).c_str());
 	isAnchoredCheckButton->setCheck(actionParameters->getBoolParameter(offset+2));
 
-	if(FXDialogBox::execute(PLACEMENT_CURSOR))
+	if(execute(PLACEMENT_CURSOR))
 	{
 		actionParameters->setStringParameter(offset+0,cueName);
 		actionParameters->setSamplePosParameter(offset+1,cueTime);

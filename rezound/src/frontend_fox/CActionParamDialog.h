@@ -49,7 +49,7 @@ class CActionParamDialog : public FXModalDialogBox, public AActionDialog
 public:
 	typedef const double (*f_at_x)(const double x);
 
-	CActionParamDialog(FXWindow *mainWindow,const FXString title,int w,int h,FXModalDialogBox::FrameTypes frameType=FXModalDialogBox::ftHorizontal);
+	CActionParamDialog(FXWindow *mainWindow,const FXString title,FXModalDialogBox::FrameTypes frameType=FXModalDialogBox::ftHorizontal);
 
 	void addSlider(const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton);
 	void addTextEntry(const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsHelpText="");

@@ -31,7 +31,7 @@ static const double interpretValue_noiseGate(const double x,const int s) { retur
 static const double uninterpretValue_noiseGate(const double x,const int s) { return(x/s); }
 
 CNoiseGateDialog::CNoiseGateDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Noise Gate",550,400)
+	CActionParamDialog(mainWindow,"Noise Gate")
 {
 	addSlider("Window Time","ms",interpretValue_noiseGate,uninterpretValue_noiseGate,NULL,35.0,5,1000,30,false);
 	addSlider("Threshold","%",interpretValue_noiseGate,uninterpretValue_noiseGate,NULL,3.0,5,100,20,false);
@@ -62,7 +62,7 @@ static const double interpretValue_compressGain(const double x,const int s) { re
 static const double uninterpretValue_compressGain(const double x,const int s) { return(bipolarRange_to_unitRange_exp(x,10.0)); }
 
 CCompressorDialog::CCompressorDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Compressor",650,400)
+	CActionParamDialog(mainWindow,"Compressor")
 {
 	addSlider("Window Time","ms",interpretValue_compressorWindowTime,uninterpretValue_compressorWindowTime,NULL,35.0,1,10,1,false);
 	addSlider("Threshold","dBFS",interpretValue_dBFS,uninterpretValue_dBFS,NULL,-12.0,0,0,1,false);

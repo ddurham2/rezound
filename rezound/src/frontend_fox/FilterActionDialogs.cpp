@@ -31,7 +31,7 @@ static const double uninterpretValue_filter(const double x,const int s) { return
 // --- single pole lowpass ---------------
 
 CSinglePoleLowpassFilterDialog::CSinglePoleLowpassFilterDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Single Pole Lowpass Filter",300,400)
+	CActionParamDialog(mainWindow,"Single Pole Lowpass Filter")
 {
 	addSlider("Cutoff Frequency","Hz",interpretValue_filter,uninterpretValue_filter,NULL,500.0,5,100000,5000,false);
 }
@@ -39,7 +39,7 @@ CSinglePoleLowpassFilterDialog::CSinglePoleLowpassFilterDialog(FXWindow *mainWin
 // --- single pole highpass --------------
 
 CSinglePoleHighpassFilterDialog::CSinglePoleHighpassFilterDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Single Pole Highpass Filter",300,400)
+	CActionParamDialog(mainWindow,"Single Pole Highpass Filter")
 {
 	addSlider("Cutoff Frequency","Hz",interpretValue_filter,uninterpretValue_filter,NULL,1000.0,5,100000,10000,false);
 }
@@ -47,7 +47,7 @@ CSinglePoleHighpassFilterDialog::CSinglePoleHighpassFilterDialog(FXWindow *mainW
 // --- bandpass --------------------------
 
 CBandpassFilterDialog::CBandpassFilterDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Bandpass Filter",350,400)
+	CActionParamDialog(mainWindow,"Bandpass Filter")
 {
 	addSlider("Cutoff Frequency","Hz",interpretValue_filter,uninterpretValue_filter,NULL,1000.0,5,100000,10000,false);
 	addSlider("Band Width","Hz",interpretValue_filter,uninterpretValue_filter,NULL,500.0,5,100000,1000,false);
@@ -56,7 +56,7 @@ CBandpassFilterDialog::CBandpassFilterDialog(FXWindow *mainWindow) :
 // --- notch -----------------------------
 
 CNotchFilterDialog::CNotchFilterDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Notch Filter",350,400)
+	CActionParamDialog(mainWindow,"Notch Filter")
 {
 	addSlider("Cutoff Frequency","Hz",interpretValue_filter,uninterpretValue_filter,NULL,1000.0,5,100000,10000,false);
 	addSlider("Band Width","Hz",interpretValue_filter,uninterpretValue_filter,NULL,500.0,5,100000,1000,false);

@@ -134,7 +134,7 @@ bool CPasteChannelsDialog::show(CActionSound *actionSound,CActionParameters *act
 			checkBoxes[t][t]->setCheck(TRUE);
 	}
 
-	if(FXDialogBox::execute(PLACEMENT_CURSOR))
+	if(execute(PLACEMENT_CURSOR))
 	{
 		bool ret=false; // or all the checks together, if they're all false, it's like hitting cancel
 		for(unsigned y=0;y<MAX_CHANNELS;y++)

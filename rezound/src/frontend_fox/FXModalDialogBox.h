@@ -47,6 +47,7 @@ public:
 	FXModalDialogBox(FXWindow *owner,const FXString &title,int w,int h,FrameTypes frameType=ftHorizontal);
 
 	virtual void show(FXuint placement);
+	virtual FXuint execute(FXuint placement=PLACEMENT_CURSOR);
 	virtual void hide();
 
 	void disableFrameDecor();

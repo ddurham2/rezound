@@ -53,6 +53,8 @@ FXDEFMAP(FXConstantParamValue) FXConstantParamValueMap[]=
 
 FXIMPLEMENT(FXConstantParamValue,FXVerticalFrame,FXConstantParamValueMap,ARRAYNUMBER(FXConstantParamValueMap))
 
+#define ASSURE_HEIGHT(parent,height) new FXFrame(parent,FRAME_NONE|LAYOUT_SIDE_LEFT | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT,0,0,0,height);
+
 FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _uninterpretValue,const int minScalar,const int maxScalar,const int _initScalar,bool showInverseButton,FXComposite *p,int opts,const char *title) :
 	FXVerticalFrame(p,opts|FRAME_RIDGE | /*LAYOUT_FILL_X|*/LAYOUT_FILL_Y|LAYOUT_CENTER_X,0,0,0,0, 6,6,2,4, 0,2),
 
@@ -78,6 +80,8 @@ FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _unin
 	initScalar(_initScalar)
 
 {
+	ASSURE_HEIGHT(middleFrame,200);
+
 	if(minScalar!=maxScalar)
 	{
 		scalarPanel=new FXHorizontalFrame(this,LAYOUT_BOTTOM|LAYOUT_FILL_X | JUSTIFY_CENTER_X | FRAME_SUNKEN, 0,0,0,0, 4,4,4,4, 2,2);

@@ -76,7 +76,7 @@ bool CChannelSelectDialog::show(CActionSound *actionSound,CActionParameters *act
 	for(unsigned t=0;t<actionSound->sound->getChannelCount();t++)
 		checkBoxes[t]->setCheck(actionSound->doChannel[t] ? TRUE : FALSE);
 
-	if(FXDialogBox::execute(PLACEMENT_CURSOR))
+	if(execute(PLACEMENT_CURSOR))
 	{
 		bool ret=false; // or all the checks together... if it's false, then it's like hitting cancel
 		for(unsigned t=0;t<MAX_CHANNELS;t++)

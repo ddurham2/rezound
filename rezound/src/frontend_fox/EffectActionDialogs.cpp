@@ -36,7 +36,7 @@ static const double uninterpretValue_amp(const double x,const int scalar)
 }
 
 CNormalVolumeChangeDialog::CNormalVolumeChangeDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Change Volume",180,400)
+	CActionParamDialog(mainWindow,"Change Volume")
 {
 	addSlider("Volume Change","dB",interpretValue_amp,uninterpretValue_amp,dB_to_scalar,3.0,1,50,3,true);
 }
@@ -50,13 +50,13 @@ static const double interpretValue_gain_curve(const double x,const int s) { retu
 static const double uninterpretValue_gain_curve(const double x,const int s) { return(x/s); }
 
 CNormalGainDialog::CNormalGainDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Change Gain",180,400)
+	CActionParamDialog(mainWindow,"Change Gain")
 {
 	addSlider("Gain","x",interpretValue_gain,uninterpretValue_gain,NULL,2.0,2,50,2,true);
 }
 
 CAdvancedGainDialog::CAdvancedGainDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Change Gain According to a Curve",600,400)
+	CActionParamDialog(mainWindow,"Change Gain According to a Curve")
 {
 	addGraph("Gain Curve","x",interpretValue_gain_curve,uninterpretValue_gain_curve,NULL,-10,10,2);
 }
@@ -76,7 +76,7 @@ static const double uninterpretValue_rate(const double x,const int s)
 }
 
 CNormalRateChangeDialog::CNormalRateChangeDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Change Rate",180,400)
+	CActionParamDialog(mainWindow,"Change Rate")
 {
 	addSlider("Rate Change","x",interpretValue_rate,uninterpretValue_rate,NULL,2.0,1,100,2,true);
 }
@@ -93,7 +93,7 @@ static const double uninterpretValue_rate2(const double x,const int s)
 
 
 CAdvancedRateChangeDialog::CAdvancedRateChangeDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Change Rate According to a Curve",600,400)
+	CActionParamDialog(mainWindow,"Change Rate According to a Curve")
 {
 	addGraph("Rate Curve","x",interpretValue_rate2,uninterpretValue_rate2,NULL,1,100,2);
 }
@@ -114,7 +114,7 @@ static const double interpretValue_flange_feedback(const double x,const int s) {
 static const double uninterpretValue_flange_feedback(const double x,const int s) { return(otherRange_to_unitRange_linear(x,-0.95,0.95)); }
 
 CFlangeDialog::CFlangeDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Flange",900,400)
+	CActionParamDialog(mainWindow,"Flange")
 {
 	addSlider("Delay","ms",interpretValue_flange,uninterpretValue_flange,NULL,2.0,2,10,2,false);
 	addSlider("Wet Gain","x",interpretValue_flange,uninterpretValue_flange,NULL,1.0,-5,5,1,false);
@@ -135,7 +135,7 @@ static const double interpretValue_delay(const double x,const int s) { return(x*
 static const double uninterpretValue_delay(const double x,const int s) { return(x/s); }
 
 CSimpleDelayDialog::CSimpleDelayDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Simple Delay",450,400)
+	CActionParamDialog(mainWindow,"Simple Delay")
 {
 	addSlider("Delay","ms",interpretValue_delay,uninterpretValue_delay,NULL,250.0,1,10000,1000,false);
 	addSlider("Gain","x",interpretValue_delay,uninterpretValue_delay,NULL,0.75,-5,5,1,false);
@@ -153,7 +153,7 @@ static const double interpretValue_varied_repeat_LFO_phase(const double x,const 
 static const double uninterpretValue_varied_repeat_LFO_phase(const double x,const int s) { return(otherRange_to_unitRange_linear(x,0,360)); }
 
 CVariedRepeatDialog::CVariedRepeatDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Varied Repeat",450,400)
+	CActionParamDialog(mainWindow,"Varied Repeat")
 {
 	addSlider("LFO Freq","Hz",interpretValue_varied_repeat,uninterpretValue_varied_repeat,NULL,0.1,1,20,1,false);
 	addSlider("LFO Phase","deg",interpretValue_flange_LFO_phase,uninterpretValue_flange_LFO_phase,NULL,290.0,0,0,0,true);
