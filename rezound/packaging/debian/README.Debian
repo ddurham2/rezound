@@ -1,0 +1,8 @@
+rezound for Debian
+------------------
+
+This is an unofficial Debian package, you can download it at http://rezound.sourceforge.net/
+
+If any Debian developers would like to make this an official pacakge, I would be happy to have them take over the packaging, or help me to become the package maintainer.
+
+ -- Anthony Ventimiglia <ant@mongrel.dogpound>, Wed Feb 12 13:12:53 2003
