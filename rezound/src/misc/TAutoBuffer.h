@@ -21,7 +21,6 @@
 #ifndef __TAutoBuffer_H__
 #define __TAutoBuffer_H__
 
-
 #include "../../config/common.h"
 
 // I suppose these headers would be available on all posix platforms

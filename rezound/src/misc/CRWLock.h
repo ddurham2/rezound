@@ -21,6 +21,8 @@
 #ifndef __CRWLock_H__
 #define __CRWLock_H__
 
+#include "../../config/common.h"
+
 /*
  * This is a quick and dirty rwlock wrapper. See AThread.h for more details
  */

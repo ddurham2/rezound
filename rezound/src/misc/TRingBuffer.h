@@ -38,6 +38,8 @@
 #ifndef __TRingBuffer_H__
 #define __TRingBuffer_H__
 
+#include "../../config/common.h"
+
 #include <stddef.h>	// for NULL
 #include <stdlib.h> 	// for memcpy()
 #include <algorithm>	// for min()

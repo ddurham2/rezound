@@ -21,6 +21,8 @@
 #ifndef __AThread_H__
 #define __AThread_H__
 
+#include "../../config/common.h"
+
 /*
  * This is a quick and dirty pthread wrapper that isn't very 
  * functional, but serves for my purposes.  I wrote it because 

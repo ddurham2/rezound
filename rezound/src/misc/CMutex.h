@@ -21,6 +21,8 @@
 #ifndef __CMutex_H__
 #define __CMutex_H__
 
+#include "../../config/common.h"
+
 /*
  * This is a quick and dirty mutex wrapper. See AThread.h for more details
  */

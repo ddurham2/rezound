@@ -21,6 +21,8 @@
 #ifndef __CConditionVariable_H__
 #define __CConditionVariable_H__
 
+#include "../../config/common.h"
+
 /*
  * This is a quick and dirty conditional variable wrapper. See AThread.h for more details
  */
