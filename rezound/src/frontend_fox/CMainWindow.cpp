@@ -118,6 +118,8 @@ CMainWindow::CMainWindow(FXApp* a) :
 
 	#define BUTTON_STYLE FRAME_RAISED|LAYOUT_EXPLICIT
 
+	FXPacker *t;
+
 	playControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,6,6),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
 		#define PLAY_CONTROLS_BUTTON_STYLE BUTTON_STYLE
 		new FXButton(playControlsFrame,"PAO\tPlay All Once",NULL,this,ID_PLAY_ALL_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,0,32,32);
@@ -140,11 +142,12 @@ CMainWindow::CMainWindow(FXApp* a) :
 		shuttleDial->setTipText("Shuttle Seek While Playing\n(Hint: try the mouse wheel as well as dragging)");
 
 	miscControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,6,6),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 3,2);
+		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
+			new FXButton(t,"&Undo",NULL,this,ID_UNDO_BUTTON,FRAME_RAISED);
+			new FXButton(t,"&ClrUndo",NULL,this,ID_CLEAR_UNDO_HISTORY_BUTTON,FRAME_RAISED);
 		new FXButton(miscControlsFrame,"&Redraw",NULL,this,ID_REDRAW_BUTTON,FRAME_RAISED);
-		new FXButton(miscControlsFrame,"&Undo",NULL,this,ID_UNDO_BUTTON,FRAME_RAISED);
-		new FXButton(miscControlsFrame,"&ClrUndo",NULL,this,ID_CLEAR_UNDO_HISTORY_BUTTON,FRAME_RAISED);
 		followPlayPositionButton=new FXCheckButton(miscControlsFrame,"Follow Play Position",this,ID_FOLLOW_PLAY_POSITION_BUTTON);
-		FXPacker *t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
+		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
 			crossfadeEdgesCheckbox=new FXCheckButton(t,"Crossfade Edges\tAfter Most Actions a Crossfade can be Performed at the Start and Stop \nPositions to Give a Smoother Transition in to and out of the Modified Selection",this,ID_CROSSFADE_EDGES_CHECKBOX, CHECKBUTTON_NORMAL | LAYOUT_CENTER_Y);
 			new FXButton(t,"...\tChange Crossfade Times",NULL,this,ID_CROSSFADE_EDGES_SETTINGS, BUTTON_NORMAL & ~FRAME_THICK);
 
