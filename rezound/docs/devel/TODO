@@ -158,6 +158,13 @@
 			- However, I have avoided the problem for now by change TPoolFile::closeFile to not write the meta data if the file is about to be removed.  
 			- I should test this with a later kernel in a few weeks and see if the problem is still there.  If so, I should avoid calling ftruncate so often by preallocating some space.
 
+		- I accidently recorded for 8.5 hours and when I stopped it it it segfaulted... 
+			- I'm sure that most of the problem was that I only had 32bit address space compiled in...
+			- When I add the length limit based on the address space this wouldn't have been a problem
+
+		- It segfaulted while I defragged an 800 meg file after having deleted some at the beginning and some at the end
+			- load in debugger and watch what happend.. it could have been a stack overflow.. if so, then I need to simulate the recursion instead of using real recursion
+
 
 	- FIXED - 
 		- glitches occurr at the beginning and/or end of a CChangeRateEffects... 
