@@ -69,4 +69,9 @@ extern unsigned gSnapToCueDistance;
  */
 extern bool gFollowPlayPosition;
 
+/*
+ * The initial about of audio to show on screen in a newly created sound window
+ */
+extern double gInitialLengthToShow;
+
 #endif

@@ -338,9 +338,9 @@ void CSoundWindow::show()
 	FXTopWindow::show();
 	if(firstTimeShowing)
 	{
-			// approximately show 10 seconds of sound (apx because we haven't done layout yet)
+			// approximately show 10 (setting) seconds of sound (apx because we haven't done layout yet)
 			// can't do this at construction because we don't know the max until the window's are laid out
-		setHorzZoomFactor((10.0*loadedSound->getSound()->getSampleRate())/waveView->getCanvasWidth());
+		setHorzZoomFactor(((sample_fpos_t)gInitialLengthToShow*loadedSound->getSound()->getSampleRate())/waveView->getCanvasWidth());
 		waveView->horzScroll(0);
 		firstTimeShowing=false;
 	}

@@ -24,6 +24,7 @@
 
 #include <stdint.h>
 #include <errno.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <stdexcept>
@@ -101,6 +102,9 @@ void initializeReZound()
 		if(gSettingsRegistry->keyExists("followPlayPosition"))
 			gFollowPlayPosition= gSettingsRegistry->getValue("followPlayPosition")=="true";
 
+		if(gSettingsRegistry->keyExists("initialLengthToShow"))
+			gInitialLengthToShow= atof(gSettingsRegistry->getValue("initialLengthToShow").c_str());
+
 
 		// -- 2
 						// ??? this filename needs to be an application setting just as in ASound.cpp
@@ -169,6 +173,7 @@ void deinitializeReZound()
 	// -- 1
 	gSettingsRegistry->createKey("promptDialogDirectory",gPromptDialogDirectory);
 	gSettingsRegistry->createKey("followPlayPosition",gFollowPlayPosition ? "true" : "false");
+	gSettingsRegistry->createKey("initialLengthToShow",gInitialLengthToShow);
 	gSettingsRegistry->save();
 	delete gSettingsRegistry;
 
