@@ -522,7 +522,7 @@ double FXWaveScrollArea::getMaxVertZoomFactor()
 
 void FXWaveScrollArea::drawPlayPosition(sample_pos_t dataPosition,bool justErasing,bool scrollToMakeVisible)
 {
-	FXint drawPlayStatusX;
+	FXint drawPlayStatusX=0;
 	FXDCWindow dc(canvas);
 
 	if(!justErasing)
