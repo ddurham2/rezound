@@ -77,8 +77,17 @@ static const char *REZOUND_VERSION=VERSION;
  */
 static bool compareBool(int a,int b) { return (a && b) || (!a && !b); }
 
-#ifdef ENABLE_NLS
+
+
+/* 
+ * Include this now so that it can't be included later and then the #define gettext(a)-to-nothing 
+ * below won't mutate the header file's declaration 
+ */
+#ifdef HAVE_LIBINTL_H
 	#include <libintl.h>
+#endif 
+
+#ifdef ENABLE_NLS
 	/* this avoids having gettext("") return junk instead of a simple "" */
 	#define gettext(String) ((String)==NULL ? NULL : ( (String)[0]==0 ? "" : gettext(String) ))
 	#define _(String) gettext (String)
@@ -89,8 +98,6 @@ static bool compareBool(int a,int b) { return (a && b) || (!a && !b); }
 
 // NOOP for gettext
 #define N_(String) String
-
-
 
 
 #endif /* COMMON_H */
