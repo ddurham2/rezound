@@ -123,7 +123,6 @@ template <class sample_t,class coefficient_t> class TFFTConvolver
 {
 	// ??? there are perhaps some optimizations like using memset instead of for-loops
 public:
-	/* for now, filterKernel's elements need to sum to 1 */
 	TFFTConvolver(const coefficient_t filterKernel[],size_t filterKernelSize) :
 		M(filterKernelSize),
 		W(getFFTWindowSize()),fW(W),
@@ -218,7 +217,7 @@ public:
 
 	const fftw_real readEndingSample()
 	{
-		return overlap[overlapPos++];
+		return overlap[overlapPos++]/fW;
 	}
 
 	void reset()
@@ -279,7 +278,7 @@ private:
 	
 	void prepareFilterKernel(const coefficient_t filterKernel[])
 	{
-			// ??? perhaps a parameter could be passed that would indicate what the filterKernel is.. whether it's time-domain or what
+			// ??? perhaps a parameter could be passed that would indicate what the filterKernel is.. whether it's time-domain or freq domain already
 
 		// convert the given time-domain kernel into a frequency-domain kernel
 		for(size_t t=0;t<M;t++) // copy to data
