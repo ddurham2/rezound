@@ -30,6 +30,7 @@
 
 #include "CSoundFileManager.h"
 
+#include <CNestedDataFile/CNestedDataFile.h>
 #include "settings.h"
 
 #include "CFOXIcons.h"
@@ -349,34 +350,6 @@ void CMainWindow::hide()
 {
 	rememberHide(this);
 	FXMainWindow::hide();
-}
-
-#include <CNestedDataFile/CNestedDataFile.h>
-#include <stdlib.h>
-void CMainWindow::showAbout()
-{
-	// this is called whenever the application starts
-	// I do it to make sure the user at least knows *why* this release was made for the alpha and beta stages
-	// make the about dialog show up some fixed number of times every time the version changes
-	string version=gSettingsRegistry->getValue<string>("SeenAboutDialogVersion");
-	int count=gSettingsRegistry->getValue<int>("SeenAboutDialogCount");
-	if(version!=REZOUND_VERSION)
-	{ // different version
-		gSettingsRegistry->createValue<string>("SeenAboutDialogVersion",REZOUND_VERSION);
-		gSettingsRegistry->createValue<int>("SeenAboutDialogCount",1);
-
-		// if the version has changed from the previous run, then forget all window positions/sizes and splitter positions
-		gSettingsRegistry->removeKey("SplitterPositions");
-		gSettingsRegistry->removeKey("WindowDimensions");
-	}
-	else
-	{ // same version, now check count or increment count
-		if(count>2)
-			return; // been seen 3 times already
-		else
-			gSettingsRegistry->createValue<int>("SeenAboutDialogCount",count+1);
-	}
-	gAboutDialog->execute(PLACEMENT_SCREEN);
 }
 
 void CMainWindow::rebuildSoundWindowList()

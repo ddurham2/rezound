@@ -48,8 +48,6 @@ public:
 
 	void createMenus();
 
-	void showAbout(); // temporary for the alpha and beta stages
-
 	long onQuit(FXObject *sender,FXSelector sel,void *ptr);
 
 	long onFollowPlayPositionButton(FXObject *sender,FXSelector sel,void *ptr);
