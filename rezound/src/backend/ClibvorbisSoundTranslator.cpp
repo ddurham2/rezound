@@ -521,7 +521,12 @@ bool ClibvorbisSoundTranslator::onSaveSound(const string filename,const CSound *
 						if(ogg_stream_pageout(&os,&og)==0)
 							break;
 						fwrite(og.header,1,og.header_len,f);
-						fwrite(og.body,1,og.body_len,f);
+						const size_t ret=fwrite(og.body,1,og.body_len,f);
+						if(ferror(f))
+						{
+							const int errNO=errno;
+							throw runtime_error(string(__func__)+" -- error writing to file: "+filename+" -- "+strerror(errNO));
+						}
 
 						if(ogg_page_eos(&og))
 							break;
