@@ -56,7 +56,10 @@
 	- Shuttle Play Position Control
 	- Play from Mouse Cursor (hold ctrl and use left and right mouse buttons)
 
-- Playback Audio Level Meters, Stereo Phase Meter and Frequency Analyzer
+- Playback Meters
+	- Audio Level Meters
+	- Stereo Phase Meters 
+	- Frequency Analyzer
 
 - Full Featured Editing Tools
 	- Copy
@@ -126,3 +129,4 @@
 
 - Selectable LFO Shapes for Actions that Use an LFO (more to come)
 
+- Dynamic Menu Layout (no frontend interface easy user-defining yet)
