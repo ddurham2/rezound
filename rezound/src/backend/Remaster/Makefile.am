@@ -32,6 +32,7 @@ noinst_HEADERS= \
 		CRemoveDCAction.h \
 		CUnclipAction.h \
 		CCompressorAction.h \
+		CNormalizeAction.h \
 		RemasterActions.h
 
 noinst_LTLIBRARIES=libRemaster.la
@@ -39,6 +40,7 @@ libRemaster_la_SOURCES= \
 			CNoiseGateAction.cpp \
 			CRemoveDCAction.cpp \
 			CUnclipAction.cpp \
-			CCompressorAction.cpp 
+			CCompressorAction.cpp \
+			CNormalizeAction.cpp 
 
 

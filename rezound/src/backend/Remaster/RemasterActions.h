@@ -28,5 +28,6 @@
 #include "CRemoveDCAction.h"
 #include "CNoiseGateAction.h"
 #include "CCompressorAction.h"
+#include "CNormalizeAction.h"
 
 #endif

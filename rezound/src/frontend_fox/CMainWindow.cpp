@@ -432,6 +432,7 @@ void CMainWindow::createMenus()
 		new CActionMenuCommand(new CRemoveDCActionFactory(gChannelSelectDialog),menu,"");
 		new CActionMenuCommand(new CNoiseGateActionFactory(gChannelSelectDialog,new CNoiseGateDialog(this)),menu,"");
 		new CActionMenuCommand(new CCompressorActionFactory(gChannelSelectDialog,new CCompressorDialog(this)),menu,"");
+		new CActionMenuCommand(new CNormalizeActionFactory(gChannelSelectDialog,new CNormalizeDialog(this)),menu,"");
 
 
 	create(); // re-call create for this window which will call it for all new child windows

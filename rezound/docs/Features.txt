@@ -81,4 +81,5 @@
 	- Remove DC Component
 	- Noise Gate
 	- Dynamic Range Compression
+	- Normalization
 

@@ -73,3 +73,20 @@ CCompressorDialog::CCompressorDialog(FXWindow *mainWindow) :
 	addSlider("Output Gain","x",interpretValue_compressGain,uninterpretValue_compressGain,NULL,1.0,0,0,0,true);
 }
 
+
+
+// --- normalize ---------------------------
+
+static const double interpretValue_regionCount(const double x,const int s) { return(floor(x*99.0)+1.0); }
+static const double uninterpretValue_regionCount(const double x,const int s) { return((x-1.0)/99.0); }
+
+CNormalizeDialog::CNormalizeDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Normalize")
+{
+	addSlider("Normalization Level","dBFS",interpretValue_dBFS,uninterpretValue_dBFS,NULL,-0.5,0,0,1,false);
+	addSlider("Region Count","",interpretValue_regionCount,uninterpretValue_regionCount,NULL,1,0,0,0,false);
+	addCheckBoxEntry("Lock Channels",true,"Calculate Maximum Sample Value in a Region Across All Channels");
+}
+
+
+

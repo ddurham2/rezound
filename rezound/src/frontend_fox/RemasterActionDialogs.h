@@ -47,4 +47,14 @@ public:
 
 
 
+// --- normalize -------------------------
+
+class CNormalizeDialog : public CActionParamDialog
+{
+public:
+	CNormalizeDialog(FXWindow *mainWindow);
+};
+
+
+
 #endif
