@@ -602,7 +602,7 @@ AC_SUBST(MAYBE_LADSPA_LIB)
 dnl ############################################################################
 dnl # Handle the flags for a library to to tempo/pitch changing independantly  *
 dnl ############################################################################
-AM_PATH_SOUNDTOUCH([],[],AC_MSG_WARN([***** libSoundTouch not found -- tempo and pitch changing will be disabled (http://www.sunpoint.net/~oparviai/soundtouch/) *****]))
+AM_PATH_SOUNDTOUCH([],[],AC_MSG_WARN([***** libSoundTouch not found -- tempo and pitch changing will be disabled (http://www.iki.fi/oparviai/soundtouch) *****]))
 
 
 
