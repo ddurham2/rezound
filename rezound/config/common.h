@@ -87,6 +87,8 @@ static bool compareBool(int a,int b) { return (a && b) || (!a && !b); }
 
 #ifdef ENABLE_NLS
 	#include <libintl.h>
+	/* this avoids having gettext("") return junk instead of a simple "" */
+	#define gettext(String) ((String)==NULL ? NULL : ( (String)[0]==0 ? "" : gettext(String) ))
 	#define _(String) gettext (String)
 #else
 	#define _(String) String
