@@ -21,12 +21,12 @@
 /*
  * This template implements a ring-buffer
  *
- * It is by not means thread-safe because a process could get interupted between
+ * It is by no means thread-safe because a process could get interupted between
  * saving the readPos and writePos variables at the beginning of the read/write
  * methods.  Other than that, I think they would be.
  *
  * It is also not thread-safe in the sense that there is nothing to protect from
- * two writers or two reads being active at the same time; this would cause
+ * two writers or two readers being active at the same time; this would cause
  * undefined behavior.
  *
  * memcpy is used to copy the instances of type in the read and write methods,
