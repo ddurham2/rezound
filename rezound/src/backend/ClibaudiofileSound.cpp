@@ -246,4 +246,16 @@ void ClibaudiofileSound::saveSound(const string filename)
 
 }
 
+bool ClibaudiofileSound::supportsFormat(const string filename)
+{
+	int fd=open(filename.c_str(),O_RDONLY);
+	if(fd==-1)
+		return(false);
+
+	int implemented=0;
+	int id=afIdentifyNamedFD(fd,filename.c_str(),&implemented);
+	close(fd);
+
+	return(implemented);
+}
 

@@ -30,10 +30,12 @@ class ClibaudiofileSound : public ASound
 {
 public:
 
-    ClibaudiofileSound();
+	ClibaudiofileSound();
 
-    virtual void loadSound(const string filename);
-    virtual void saveSound(const string filename);
+	virtual void loadSound(const string filename);
+	virtual void saveSound(const string filename);
+
+	static bool supportsFormat(const string filename);
 
 protected:
 
