@@ -57,12 +57,16 @@
 
 #include <CMutex.h>
 
+class CSound;
+
 class ASoundRecorder
 {
 public:
 
 	ASoundRecorder();
 	virtual ~ASoundRecorder();
+
+	static ASoundRecorder *createInitializedSoundRecorder(CSound *sound);
 
 	void setStatusTrigger(TriggerFunc triggerFunc,void *data);
 	void removeStatusTrigger(TriggerFunc triggerFunc,void *data);

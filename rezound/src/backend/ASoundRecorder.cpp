@@ -423,3 +423,62 @@ void ASoundRecorder::removeStatusTrigger(TriggerFunc triggerFunc,void *data)
 }
 
 
+
+// ------------------------
+
+// one of ENABLE_OSS, ENABLE_PORTAUDIO or ENABLE_JACK will be defined
+#include "COSSSoundRecorder.h"
+#include "CPortAudioSoundRecorder.h"
+#include "CJACKSoundRecorder.h"
+
+#include "AStatusComm.h"
+
+ASoundRecorder *ASoundRecorder::createInitializedSoundRecorder(CSound *sound)
+{
+	ASoundRecorder *soundRecorder=NULL;
+
+#if defined(ENABLE_PORTAUDIO)
+	soundRecorder=new CPortAudioSoundRecorder() ;
+#elif defined(ENABLE_JACK)
+	soundRecorder=new CJACKSoundRecorder();
+#elif defined(ENABLE_OSS)
+	soundRecorder=new COSSSoundRecorder();
+#endif
+
+	try
+	{
+		soundRecorder->initialize(sound);
+		return soundRecorder;
+	}
+	catch(exception &e)
+	{
+		delete soundRecorder;
+
+#if !defined(ENABLE_PORAUDIO) && !defined(ENABLE_JACK)
+		// OSS was the only defined method
+		throw;
+#else
+		// OSS was not the original method chosen at configure time so now fall back to using OSS if it wasn't disabled
+	#ifdef ENABLE_OSS
+		Warning(string(e.what())+"\nAttempting to fall back to using OSS for audio input.");
+
+		// try OSS
+		soundRecorder=new COSSSoundRecorder();
+		try
+		{
+			soundRecorder->initialize(sound);
+			return soundRecorder;
+		}
+		catch(exception &e)
+		{ // now really give up
+			delete soundRecorder;
+			throw;
+		}
+	#else
+		throw;
+	#endif
+#endif
+	}
+
+}
+
