@@ -88,6 +88,8 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_ALL_LOOPED,		CMainWindow::onControlAction),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_SELECTION_ONCE,		CMainWindow::onControlAction),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_SELECTION_LOOPED,		CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_SELECTION_LOOPED_SKIP_MOST,CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_SELECTION_LOOPED_GAP_BEFORE_REPEAT,CMainWindow::onControlAction),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_STOP,				CMainWindow::onControlAction),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PAUSE,				CMainWindow::onControlAction),
@@ -187,13 +189,15 @@ CMainWindow::CMainWindow(FXApp* a) :
 	// build play control buttons
 	FXPacker *playControlsFrame=new FXPacker(new FXPacker(s,LAYOUT_FILL_Y,0,0,0,0, 4,4,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
 		#define PLAY_CONTROLS_BUTTON_STYLE BUTTON_STYLE
-		new FXButton(playControlsFrame,"\tPlay All Once",FOXIcons->play_all_once,this,ID_PLAY_ALL_ONCE,PLAY_CONTROLS_BUTTON_STYLE, 0,0,32,32);
-		new FXButton(playControlsFrame,"\tPlay Selection Once",FOXIcons->play_selection_once,this,ID_PLAY_SELECTION_ONCE,PLAY_CONTROLS_BUTTON_STYLE, 32,0,32,32);
-		new FXButton(playControlsFrame,"\tPlay All Looped",FOXIcons->play_all_looped,this,ID_PLAY_ALL_LOOPED,PLAY_CONTROLS_BUTTON_STYLE, 0,32,32,32);
-		new FXButton(playControlsFrame,"\tPlay Selection Looped",FOXIcons->play_selection_looped,this,ID_PLAY_SELECTION_LOOPED,PLAY_CONTROLS_BUTTON_STYLE, 32,32,32,32);
+		new FXButton(playControlsFrame,"\tPlay All Once",FOXIcons->play_all_once,this,ID_PLAY_ALL_ONCE,PLAY_CONTROLS_BUTTON_STYLE, 32,0,32,32);
+		new FXButton(playControlsFrame,"\tPlay Selection Once",FOXIcons->play_selection_once,this,ID_PLAY_SELECTION_ONCE,PLAY_CONTROLS_BUTTON_STYLE, 32+32,0,32,32);
+		new FXButton(playControlsFrame,"\tPlay Selection Looped and Play a Gap Before Repeating",FOXIcons->play_selection_looped_gap_at_end,this,ID_PLAY_SELECTION_LOOPED_GAP_BEFORE_REPEAT,PLAY_CONTROLS_BUTTON_STYLE, 32+32+32,0,32,32);
+		new FXButton(playControlsFrame,"\tPlay All Looped",FOXIcons->play_all_looped,this,ID_PLAY_ALL_LOOPED,PLAY_CONTROLS_BUTTON_STYLE, 32,32,32,32);
+		new FXButton(playControlsFrame,"\tPlay Selection Looped",FOXIcons->play_selection_looped,this,ID_PLAY_SELECTION_LOOPED,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32,32,32);
+		new FXButton(playControlsFrame,"\tPlay Selection Looped but Skip Most of the Middle",FOXIcons->play_selection_looped_skip_most,this,ID_PLAY_SELECTION_LOOPED_SKIP_MOST,PLAY_CONTROLS_BUTTON_STYLE, 32+32+32,32,32,32);
 
-		new FXButton(playControlsFrame,"\tStop",FOXIcons->stop,this,ID_STOP,PLAY_CONTROLS_BUTTON_STYLE, 32+32,0,32,32),
-		new FXButton(playControlsFrame,"\tPause",FOXIcons->pause,this,ID_PAUSE,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32,32,32),
+		new FXButton(playControlsFrame,"\tStop",FOXIcons->stop,this,ID_STOP,PLAY_CONTROLS_BUTTON_STYLE, 0,0,32,32),
+		new FXButton(playControlsFrame,"\tPause",FOXIcons->pause,this,ID_PAUSE,PLAY_CONTROLS_BUTTON_STYLE, 0,32,32,32),
 
 		new FXButton(playControlsFrame,"\tRecord",FOXIcons->record,this,ID_RECORD,PLAY_CONTROLS_BUTTON_STYLE, 32+32+32+32,32+32,32,32),
 
@@ -729,6 +733,8 @@ void CMainWindow::createMenus()
 		new FXMenuCommand(menu,"Play All Looped",FOXIcons->small_play_all_looped,this,ID_PLAY_ALL_LOOPED);
 		new FXMenuCommand(menu,"Play Selection Once\ta",FOXIcons->small_play_selection_once,this,ID_PLAY_SELECTION_ONCE);
 		new FXMenuCommand(menu,"Play Selection Looped",FOXIcons->small_play_selection_looped,this,ID_PLAY_SELECTION_LOOPED);
+		new FXMenuCommand(menu,"Loop Selection but Skip Most of the Middle",FOXIcons->small_play_selection_looped_skip_most,this,ID_PLAY_SELECTION_LOOPED_SKIP_MOST);
+		new FXMenuCommand(menu,"Loop Selection and Play a Gap Before Repeating",FOXIcons->small_play_selection_looped_gap_at_end,this,ID_PLAY_SELECTION_LOOPED_GAP_BEFORE_REPEAT);
 		new FXMenuCommand(menu,"Stop\ts",FOXIcons->small_stop,this,ID_STOP);
 		new FXMenuCommand(menu,"Pause",FOXIcons->small_pause,this,ID_PAUSE);
 		new FXMenuCommand(menu,"Jump to Beginning",FOXIcons->small_jump_to_beginning,this,ID_JUMP_TO_BEGINNING);
@@ -987,22 +993,32 @@ long CMainWindow::onControlAction(FXObject *sender,FXSelector sel,void *ptr)
 	{
 	case ID_PLAY_ALL_ONCE:
 		metersWindow->resetGrandMaxPeakLevels();
-		play(gSoundFileManager,false,false);
+		play(gSoundFileManager,CSoundPlayerChannel::ltLoopNone,false);
 		break;
 
 	case ID_PLAY_ALL_LOOPED:
 		metersWindow->resetGrandMaxPeakLevels();
-		play(gSoundFileManager,true,false);
+		play(gSoundFileManager,CSoundPlayerChannel::ltLoopNormal,false);
 		break;
 
 	case ID_PLAY_SELECTION_ONCE:
 		metersWindow->resetGrandMaxPeakLevels();
-		play(gSoundFileManager,false,true);
+		play(gSoundFileManager,CSoundPlayerChannel::ltLoopNone,true);
 		break;
 
 	case ID_PLAY_SELECTION_LOOPED:
 		metersWindow->resetGrandMaxPeakLevels();
-		play(gSoundFileManager,true,true);
+		play(gSoundFileManager,CSoundPlayerChannel::ltLoopNormal,true);
+		break;
+
+	case ID_PLAY_SELECTION_LOOPED_SKIP_MOST:
+		metersWindow->resetGrandMaxPeakLevels();
+		play(gSoundFileManager,CSoundPlayerChannel::ltLoopSkipMost,true);
+		break;
+
+	case ID_PLAY_SELECTION_LOOPED_GAP_BEFORE_REPEAT:
+		metersWindow->resetGrandMaxPeakLevels();
+		play(gSoundFileManager,CSoundPlayerChannel::ltLoopGapBeforeRepeat,true);
 		break;
 
 	case ID_STOP:
