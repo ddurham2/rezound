@@ -58,8 +58,6 @@ CSoundPlayerChannel::CSoundPlayerChannel(const CSoundPlayerChannel &src) :
 	playSpeed(1.0)
 {
 	throw(runtime_error(string(__func__)+" -- should this ever be called???"));
-	//init();
-	//copyData(src);
 }
 
 CSoundPlayerChannel::~CSoundPlayerChannel()
@@ -75,16 +73,6 @@ ASound *CSoundPlayerChannel::getSound() const
 CSoundPlayerChannel &CSoundPlayerChannel::operator=(const CSoundPlayerChannel &src)
 {
 	throw(runtime_error(string(__func__)+" -- should this ever be called???"));
-/*
-	if(&player!=&(src.player))
-	{
-		deinit();
-		player=src.player;
-		init();
-		copyData(src);
-	}
-	return(*this);
-*/
 }
 
 void CSoundPlayerChannel::init()
@@ -108,13 +96,6 @@ void CSoundPlayerChannel::deinit()
 	kill();
 	player->removeSoundPlayerChannel(this);
 }
-
-/*
-void CSoundPlayerChannel::copyData(const CSoundPlayerChannel &src)
-{
-	// copy necessary data values only
-}
-*/
 
 void CSoundPlayerChannel::play(bool _playLooped,bool _playSelectionOnly,CEnvelope &_envelope)
 {
@@ -387,7 +368,7 @@ void CSoundPlayerChannel::calcVolumeScalars()
 /* ??? need to rewrite this to support N channels of PCM data, no l or r buffers... */
 void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * const oBuffer,const size_t oBufferLength)
 {
-	if(!playing || (paused && playSpeed==1.0))
+	if(!playing || (paused && playSpeed==1.0/*not shuttling*/))
 		return;
 
 	lock();
@@ -421,29 +402,38 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 		}
 
 		// use a local variable instead of looking up the data member each time
-		register sample_fpos_t playPosition=this->playPosition;
+		register sample_fpos_t fPlayPosition=this->playPosition;
 
 		// assure that playPosition is in range
-		if(playPosition<0.0)
-			playPosition=0.0;
-		else if(playPosition>pos2)
-			playPosition=pos2;
-
-		// ??? eventually need to use linear interpolation with the fractional sample position, but I just let it alias for now.... perhaps the hardware could support it in some way?
-		// ??? however, for now, if the sample rate is a multiple of the opened sample rate, linear interpolation will matter much less (i.e. 44100, 22050, 11025, etc)
+		if(fPlayPosition<0.0)
+			fPlayPosition=0.0;
+		else if(fPlayPosition>pos2)
+			fPlayPosition=pos2;
 
 		// heed the sampling rate of the sound also when adjusting the play position (??? only have device 0 for now)
 		const sample_fpos_t tPlaySpeed=playSpeed  *  (((sample_fpos_t)sound.getSampleRate())/((sample_fpos_t)player->devices[deviceIndex].sampleRate));
-		const sample_fpos_t origPlayPosition=playPosition;
+		const sample_fpos_t origPlayPosition=fPlayPosition;
+
+		// Right now, I only interpolate samples when the playSpeed is >0 because 
+		// doing it in reverse causes me to have to adjust the bounds checking on 
+		// both ends since the interpolation have to switch look-ahead directions 
+		// when playing in reverse.
+		// One way to fix this would be to have two separate implementations of 
+		// the MOVE_PLAY_PISITION macro and two separate sections of for-loops 
+		// which would be used depending on whether tPlaySpeed was >0 or <0
+		// And I could then separate the outer most two cases in MOVE_PLAY_POSITION
+
+		const bool doInterpolate= (tPlaySpeed>=0.0 && sample_fpos_floor(tPlaySpeed)!=tPlaySpeed); // non-integer playSpeed and playing forward
+		const int fudge= doInterpolate ? 1 : 0; // fudge factor for macro MOVE_PLAY_POSITION since we look ahead one sample
 
 		#define MOVE_PLAY_POSITION								\
 			if(tPlaySpeed>0.0)								\
 			{										\
-				playPosition+=tPlaySpeed;						\
-				if(playPosition>pos2)							\
+				fPlayPosition+=tPlaySpeed;						\
+				if(fPlayPosition>(pos2-fudge))						\
 				{									\
 					if(loop)							\
-						playPosition=pos1;					\
+						fPlayPosition=pos1;					\
 					else								\
 					{								\
 						kill();							\
@@ -453,17 +443,17 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 			}										\
 			else										\
 			{										\
-				if(playPosition>=-tPlaySpeed)						\
-					playPosition+=tPlaySpeed;					\
+				if(fPlayPosition>=-tPlaySpeed)						\
+					fPlayPosition+=tPlaySpeed;					\
 				else									\
 				{									\
-					playPosition=0;							\
+					fPlayPosition=0;						\
 					break;								\
 				}									\
 			}
 
 		#define SETUP_BUFFERS_AND_POSITIONS							\
-			playPosition=origPlayPosition;							\
+			fPlayPosition=origPlayPosition;							\
 													\
 			const bool isMuted=muted[i];							\
 													\
@@ -477,21 +467,39 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 													\
 			volatile int &volumeScalar= ((i%player->devices[deviceIndex].channelCount)==0) ? this->leftVolumeScalar : this->rightVolumeScalar; /*not used in every instance*/
 
-
-
 		if(!envelope.attacking && !envelope.releasing)
 		{    // the envelope is not active
 			if(leftVolumeScalar==MAX_VOLUME_SCALAR && rightVolumeScalar==MAX_VOLUME_SCALAR)
 			{    // don't do extra calc for volumes and pans
+
 				for(unsigned i=0;i<sound.getChannelCount();i++)
 				{
 					SETUP_BUFFERS_AND_POSITIONS
-					for(size_t t=0;t<oBufferLength;t+=nChannels)
+					if(doInterpolate)
 					{
-						if(!isMuted)
-							ooBuffer[t]=ClipSample(ooBuffer[t]+srcData[(sample_pos_t)playPosition]);
+						for(size_t t=0;t<oBufferLength;t+=nChannels)
+						{
+							if(!isMuted)
+							{
+								const sample_pos_t iPlayPosition=(sample_pos_t)fPlayPosition;
+								const float p2=fPlayPosition-iPlayPosition;
+								const float p1=1.0-p2;
+								const mix_sample_t s=(mix_sample_t)(p1*srcData[iPlayPosition]+p2*srcData[iPlayPosition+1]);
+								ooBuffer[t]=ClipSample(ooBuffer[t]+s);
+							}
 
-						MOVE_PLAY_POSITION
+							MOVE_PLAY_POSITION
+						}
+					}
+					else
+					{
+						for(size_t t=0;t<oBufferLength;t+=nChannels)
+						{
+							if(!isMuted)
+								ooBuffer[t]=ClipSample(ooBuffer[t]+srcData[(sample_pos_t)fPlayPosition]);
+
+							MOVE_PLAY_POSITION
+						}
 					}
 				}
 			}
@@ -500,12 +508,31 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 				for(unsigned i=0;i<sound.getChannelCount();i++)
 				{
 					SETUP_BUFFERS_AND_POSITIONS
-					for(size_t t=0;t<oBufferLength;t+=nChannels)
+					if(doInterpolate)
 					{
-						if(!isMuted)
-							ooBuffer[t]=ClipSample(ooBuffer[t]+(((mix_sample_t)srcData[(sample_pos_t)playPosition]*volumeScalar)/MAX_VOLUME_SCALAR_DIV) );
+						for(size_t t=0;t<oBufferLength;t+=nChannels)
+						{
+							if(!isMuted)
+							{
+								const sample_pos_t iPlayPosition=(sample_pos_t)fPlayPosition;
+								const float p2=fPlayPosition-iPlayPosition;
+								const float p1=1.0-p2;
+								const mix_sample_t s=(mix_sample_t)(p1*srcData[iPlayPosition]+p2*srcData[iPlayPosition+1]);
+								ooBuffer[t]=ClipSample(ooBuffer[t]+((s*volumeScalar)/MAX_VOLUME_SCALAR_DIV) );
+							}
 
-						MOVE_PLAY_POSITION
+							MOVE_PLAY_POSITION
+						}
+					}
+					else
+					{
+						for(size_t t=0;t<oBufferLength;t+=nChannels)
+						{
+							if(!isMuted)
+								ooBuffer[t]=ClipSample(ooBuffer[t]+(((mix_sample_t)srcData[(sample_pos_t)fPlayPosition]*volumeScalar)/MAX_VOLUME_SCALAR_DIV) );
+
+							MOVE_PLAY_POSITION
+						}
 					}
 				}
 			}
@@ -526,42 +553,105 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 				if(envelope.attacking)
 				{
 					const int attackFactor=envelope.attackFactor;
-					for(size_t t=0;t<oBufferLength;t+=nChannels)
+					if(doInterpolate)
 					{
-						if(envelopeCount>=attackFactor)
-							envelope.attacking=false;
-						else
-							envelopeCount++;
+						for(size_t t=0;t<oBufferLength;t+=nChannels)
+						{
+							if(envelopeCount>=attackFactor)
+								envelope.attacking=false;
+							else
+								envelopeCount++;
 
-						// I a >> 8 because an int*int (volumeScalar*envelopeCount) Yields a 64bit number, which means I can't have amplitude=32767 AND attackFactor>65535.  attackFactor=65535 is usually only over a second or so
-						register const int envAmplitude=(volumeScalar*(envelopeCount>>8)/attackFactor)<<8;
+							if(!isMuted)
+							{
+								// I a >> 8 because an int*int (volumeScalar*envelopeCount) Yields a 64bit number, which means I can't have amplitude=32767 AND attackFactor>65535.  attackFactor=65535 is usually only over a second or so
+								register const int envAmplitude=(volumeScalar*(envelopeCount>>8)/attackFactor)<<8;
 
-						if(!isMuted)
-							ooBuffer[t]=ClipSample(ooBuffer[t]+(((mix_sample_t)srcData[(sample_pos_t)playPosition]*envAmplitude)/MAX_VOLUME_SCALAR_DIV) );
+								const sample_pos_t iPlayPosition=(sample_pos_t)fPlayPosition;
+								const float p2=fPlayPosition-iPlayPosition;
+								const float p1=1.0-p2;
+								const mix_sample_t s=(mix_sample_t)srcData[(sample_pos_t)fPlayPosition];
 
-						MOVE_PLAY_POSITION
+								ooBuffer[t]=ClipSample(ooBuffer[t]+((s*envAmplitude)/MAX_VOLUME_SCALAR_DIV) );
+							}
+
+							MOVE_PLAY_POSITION
+						}
+					}
+					else
+					{
+						for(size_t t=0;t<oBufferLength;t+=nChannels)
+						{
+							if(envelopeCount>=attackFactor)
+								envelope.attacking=false;
+							else
+								envelopeCount++;
+
+							if(!isMuted)
+							{
+								// I a >> 8 because an int*int (volumeScalar*envelopeCount) Yields a 64bit number, which means I can't have amplitude=32767 AND attackFactor>65535.  attackFactor=65535 is usually only over a second or so
+								register const int envAmplitude=(volumeScalar*(envelopeCount>>8)/attackFactor)<<8;
+								ooBuffer[t]=ClipSample(ooBuffer[t]+(((mix_sample_t)srcData[(sample_pos_t)fPlayPosition]*envAmplitude)/MAX_VOLUME_SCALAR_DIV) );
+							}
+
+							MOVE_PLAY_POSITION
+						}
 					}
 				}
 				else // Releasing
 				{
 					const int releaseFactor=envelope.releaseFactor;
-					for(size_t t=0;t<oBufferLength;t+=nChannels)
+					if(doInterpolate)
 					{
-						if(envelopeCount<=0)
+						for(size_t t=0;t<oBufferLength;t+=nChannels)
 						{
-							envelope.releasing=false;
-							kill();
-							break;
+							if(envelopeCount<=0)
+							{
+								envelope.releasing=false;
+								kill();
+								break;
+							}
+							else
+								envelopeCount--;
+
+
+							if(!isMuted)
+							{
+								register const int envAmplitude=(volumeScalar*(envelopeCount>>8)/releaseFactor)<<8;
+
+								const sample_pos_t iPlayPosition=(sample_pos_t)fPlayPosition;
+								const float p2=fPlayPosition-iPlayPosition;
+								const float p1=1.0-p2;
+								const mix_sample_t s=(mix_sample_t)srcData[(sample_pos_t)fPlayPosition];
+
+								ooBuffer[t]=ClipSample(ooBuffer[t]+((s*envAmplitude)/MAX_VOLUME_SCALAR_DIV) );
+							}
+
+							MOVE_PLAY_POSITION
 						}
-						else
-							envelopeCount--;
+					}
+					else
+					{
+						for(size_t t=0;t<oBufferLength;t+=nChannels)
+						{
+							if(envelopeCount<=0)
+							{
+								envelope.releasing=false;
+								kill();
+								break;
+							}
+							else
+								envelopeCount--;
 
-						register const int envAmplitude=(volumeScalar*(envelopeCount>>8)/releaseFactor)<<8;
 
-						if(!isMuted)
-							ooBuffer[t]=ClipSample(ooBuffer[t]+(((mix_sample_t)srcData[(sample_pos_t)playPosition]*envAmplitude)/MAX_VOLUME_SCALAR_DIV) );
+							if(!isMuted)
+							{
+								register const int envAmplitude=(volumeScalar*(envelopeCount>>8)/releaseFactor)<<8;
+								ooBuffer[t]=ClipSample(ooBuffer[t]+(((mix_sample_t)srcData[(sample_pos_t)fPlayPosition]*envAmplitude)/MAX_VOLUME_SCALAR_DIV) );
+							}
 
-						MOVE_PLAY_POSITION
+							MOVE_PLAY_POSITION
+						}
 					}
 				}
 			}
@@ -571,7 +661,7 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 		}
 
 		// now write the the last iteration's results back to the data memeber
-		this->playPosition=(sample_pos_t)playPosition;
+		this->playPosition=fPlayPosition;
 
 		sound.unlockSize();
 		unlock();

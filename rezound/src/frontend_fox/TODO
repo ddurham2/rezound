@@ -58,6 +58,12 @@
 	- make some checkbox on the mainWindow that allows the user not to do undo incase they know they don't want it
 		 - the backend already supports this (although it hasn't been tested yet since there's been no frontend means)
 
+	- make the open file dialog have resizable borders.... 
+		- I think its up to the window manager to allow this or not
+
+	- supply icons for all the windows
+		- just new FXIcon(...) instead of passing NULL
+
 
 
 

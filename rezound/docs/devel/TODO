@@ -23,8 +23,6 @@
 		- let there be a parameter which says in milliseconds how long the blend takes
 		- if not every action, at least paste for editing
 
-	- need to use a different sound file library which can also retrieve and store arbitrary data sections in the formats that support it (namely .wav).. So I can store and load cues
-
 	- create selection edits which:
 		- grow or shrink the selection by a given duration
 			- either symetically
@@ -54,19 +52,11 @@
 
 	- need to make front and backend provisions for letting the user specify the export format parameters... some of the parameters depend on the export format... Perhaps I could have a dialog with a tabbed bar which has different parameters on each... which ever bar was activated would be the export format type... Either use the tabbar or radio buttons (real buttons) and a switcher like the switcher test that comes with fox
 
-	- I need to think thru and handle problems with the data becoming to large for whatever address space is currently active
-		- if ASound is about to change the space, if the total space is about to cross some threshhold, I shouldn't proceed to do the action
-
-	- supply icons for all the windows
-		- just new FXIcon(...) instead of passing NULL
-
-	- make the open file dialog have resizable borders.... 
-		- I think its up to the window manager to allow this or not
-
 	- write a little document in Tools/PoolFile that explains simply the layout of how PoolFileAccessors do their thing and perhaps a very simplified explination of how CPoolFile does what it does
 
 	- it is evidently invalid to call ftruncate to make a file bigger if it's on a fat32 mounted device
 		- There is a specific errno that comes back from this, I should test for it and fwrite zeros to make the file bigger
+		- this would be fixed in src/PoolFile/CMultiFile.cpp
 
 	- right now, if you copy/cut from not all the channels, (by hitting ctrl-cut/copy and deselecting some checkboxes)
 		- then when you ctrl-click to paste, the pasteChannels dialog shows up with all the channels that were cut/copied shifted down to lower channel numbers 

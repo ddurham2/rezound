@@ -125,7 +125,6 @@ private:
 
 	void deinit();
 	void init();
-	//void copyData(const CSoundPlayerChannel &src);
 
 	void createInitialOutputRoute();
 	void getOutputRouteParams(unsigned route,unsigned channel,unsigned &outputDevice,unsigned &outputDeviceChannel);

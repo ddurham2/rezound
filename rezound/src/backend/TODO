@@ -39,13 +39,16 @@
 	- When pasting data, there is no heeding of the differences in sample rate of the src data when pasting to the destination
 		- I should fix this problem when I implement a real clipboard system and I would have to supply the PCM parameters to the clipboard when I copied the data there, then pasting could do something to resolve any differances when reading from it
 
-	- Change CSoundPlayerChannel to do interpolation for sample rate conversion
-
 	- I need to eventually handle command line arguments.
 		- I should implement handling them in the backend so that I wouldn't have to reimplement parsing them for each frontend.
 		- I need to check that when I pass argv to fox's initialize function that it either does or does not remove the X arguments.
 		- --help should be detected by all processers of command line arguement and add to the stdout the arguments that they handle.
 		- I suppose I should use popt because it is packaged for most all rpm abd deb based distros.. I need to find URL of popt's homepage and refer to that on error in configure
+
+	- I need to think thru and handle problems with the data becoming to large for whatever address space is currently active
+		- if ASound is about to change the space, if the total space is about to cross some threshhold, I shouldn't proceed to do the action
+
+	- need to eventually use a different sound file library which can also retrieve and store arbitrary data sections in the formats that support it (namely .wav).. So I can store and load cues
 
 
 
@@ -55,6 +58,7 @@
 
 	- The only reason I don't prebuffer more data than I do is because the play position drawn in the front end is always a little ahead of the acutal playing sound... I could buffer a lot of data if I were to know the approximate delay time of processing to sound card I might be able to overcome the problem...
 		- One possibility is to be able to know which buffer is playing, then I could tag each buffer with a play position for the start of that buffer... then I would just render the play position on screen as the start position of the currently playing buffer
+		- Right now, if I play a bunch of sounds and run top, each time top updates it causes a break in the sound.  This shouldn't happen though if I were to prebuffer more data, I only need to over come the play position problem.  Perhaps there is a schedule that the play position could be on, each time a buffer is mixed it records a rather precise time-of-day and each time them method is called that asks for the play position it knows how much time has passed since then and returns where it should be playing... There would be a problem with positions after a loop point, but perhaps I could keep a list of times when the loop point should have been crossed and factor in those times
 
 
 	- THIS is partially complete... I could go further to do it to all actions possible (for the realtime value later)
@@ -120,4 +124,5 @@
 	- also, it may be benefitial to have a flag for each cue which says wether that cue is achored or not meaning it would move as the space changes within the sound or not
 		- these would probably be a different color and/or symbol
 
+	- Change CSoundPlayerChannel to do interpolation for sample rate conversion
 
