@@ -25,6 +25,8 @@
 #include <stdexcept>
 #include <algorithm>
 
+#include <fox/FXBackBufferedCanvas.h>
+
 #include "../backend/CSound_defs.h"
 #include "../backend/unit_conv.h"
 #include "../backend/ASoundPlayer.h"
@@ -216,7 +218,7 @@ public:
 		else
 			dc.setForeground(M_BRT_GREEN);
 		dc.fillRectangle(x-1,2,2,height-3);
-			
+
 		return 1;
 	}
 
@@ -459,9 +461,151 @@ FXIMPLEMENT(CBalanceMeter,FXHorizontalFrame,CBalanceMeterMap,ARRAYNUMBER(CBalanc
 
 
 
+// --- CStereoPhaseMeter -------------------------------------------------------------
+
+class CStereoPhaseMeter : public FXHorizontalFrame
+{
+	FXDECLARE(CStereoPhaseMeter);
+public:
+	CStereoPhaseMeter::CStereoPhaseMeter(FXComposite *parent,sample_t *_samplingBuffer,size_t _samplingNFrames,unsigned _samplingNChannels,unsigned _samplingLeftChannel,unsigned _samplingRightChannel) :
+		FXHorizontalFrame(parent,LAYOUT_RIGHT|LAYOUT_FIX_WIDTH|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0),
+		canvasFrame(new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_SUNKEN|FRAME_THICK,0,0,0,0, 2,2,2,2, 0,1)),
+			canvas(new FXBackBufferedCanvas(canvasFrame,this,ID_CANVAS,LAYOUT_FILL_X|LAYOUT_FILL_Y)),
+
+		statusFont(getApp()->getNormalFont()),
+
+		samplingBuffer(_samplingBuffer),
+		samplingNFrames(_samplingNFrames),
+		samplingNChannels(_samplingNChannels),
+		samplingLeftChannel(_samplingLeftChannel),
+		samplingRightChannel(_samplingRightChannel)
+	{
+		hide();
+		setBackColor(M_BACKGROUND);
+			canvasFrame->setBackColor(M_BACKGROUND);
+
+		// create the font to use for numbers
+		FXFontDesc d;
+		statusFont->getFontDesc(d);
+		d.size=60;
+		d.weight=FONTWEIGHT_NORMAL;
+		statusFont=new FXFont(getApp(),d);
+	}
+
+	CStereoPhaseMeter::~CStereoPhaseMeter()
+	{
+		delete statusFont;
+	}
+
+	long CStereoPhaseMeter::onResize(FXObject *sender,FXSelector sel,void *ptr)
+	{
+		// make square
+		resize(getHeight(),getHeight());
+		clearCanvas();
+		return 1;
+	}
+
+	long CStereoPhaseMeter::onCanvasPaint(FXObject *sender,FXSelector sel,void *ptr)
+	{
+		FXDC &dc=*((FXDC*)ptr); // back buffered canvases send the DC to draw onto in ptr
+
+		// the w and h that we're going to render to (minus some borders and tick marks)
+		const size_t canvasSize=canvas->getWidth();  // w==h is guarenteed in onResize()
+		
+		dc.setForeground(M_BACKGROUND);
+		dc.fillRectangle(0,0,canvasSize,canvasSize);
+		/* would like to dim the backBuffer instead of erase it, but there is no effecient way of doing that
+		dc.setForeground(FXRGBA(64,64,64,255));
+		for(size_t y=0;y<canvasSize;y++)
+		for(size_t x=0;x<canvasSize;x++)
+		{
+			//FXColor c=dc.readPixel(x,y);
+			//c=FXRGB( max(0,(int)FXREDVAL(c)-10), max(0,(int)FXGREENVAL(c)-10), max(0,(int)FXBLUEVAL(c)-10));
+			//dc.setForeground(c);
+			dc.drawPoint(x,y);
+		}
+		*/
+
+		// if the global setting is disabled, stop drawing right here
+		if(!gStereoPhaseMetersEnabled)
+		{
+			canvas->endPaint();
+			return 1;
+		}
+
+		// draw axies 
+		dc.setForeground(M_METER_OFF);
+		dc.drawLine(canvasSize/2,0,canvasSize/2,canvasSize);
+		dc.drawLine(0,canvasSize/2,canvasSize,canvasSize/2);
+
+
+		// plot the points
+		dc.setForeground(M_BRT_GREEN);
+		for(size_t t=0;t<samplingNFrames;t++)
+		{
+			// let x and y be the normalized (1.0) sample values (x:left y:right) then scaled up to the canvas width/height and centered in the square
+			const FXint x=(FXint)((mix_sample_t)samplingBuffer[t*samplingNChannels+samplingLeftChannel]*canvasSize/MAX_SAMPLE/2 + canvasSize/2);
+			const FXint y=(FXint)(-(mix_sample_t)samplingBuffer[t*samplingNChannels+samplingRightChannel]*canvasSize/MAX_SAMPLE/2 + canvasSize/2); // - because increasing values go down on the screen which is up-side-down from the Cartesian plane
+			dc.drawPoint(x,y);
+		}
+
+		canvas->endPaint();
+		return 1;
+	}
+
+	void updateCanvas()
+	{
+		canvas->update();
+	}
+
+	void clearCanvas()
+	{
+		FXDC *dc=canvas->beginPaint();
+
+		dc->setForeground(M_BACKGROUND);
+		dc->fillRectangle(0,0,canvas->getWidth(),canvas->getHeight());
+
+		canvas->endPaint();
+	}
+
+	enum
+	{
+		ID_CANVAS=FXHorizontalFrame::ID_LAST,
+	};
+
+protected:
+	CStereoPhaseMeter() { }
+
+private:
+	FXPacker *canvasFrame;
+		FXBackBufferedCanvas *canvas;
+	FXFont *statusFont;
+
+	const sample_t *samplingBuffer;
+	const size_t samplingNFrames;
+	const unsigned samplingNChannels;
+	const unsigned samplingLeftChannel;
+	const unsigned samplingRightChannel;
+};
+
+FXDEFMAP(CStereoPhaseMeter) CStereoPhaseMeterMap[]=
+{
+	//	  Message_Type			ID				Message_Handler
+	FXMAPFUNC(SEL_PAINT,			CStereoPhaseMeter::ID_CANVAS,	CStereoPhaseMeter::onCanvasPaint),
+	FXMAPFUNC(SEL_CONFIGURE,		0,				CStereoPhaseMeter::onResize),
+};
+
+FXIMPLEMENT(CStereoPhaseMeter,FXHorizontalFrame,CStereoPhaseMeterMap,ARRAYNUMBER(CStereoPhaseMeterMap))
+
+
+
+
+
+
+
+
 // --- CAnalyzer -------------------------------------------------------------
 
-#include <fox/FXBackBufferedCanvas.h>
 class CAnalyzer : public FXHorizontalFrame
 {
 	FXDECLARE(CAnalyzer);
@@ -478,6 +622,7 @@ public:
 
 		drawBarFreq(false)
 	{
+		hide();
 		setBackColor(M_BACKGROUND);
 			canvasFrame->setBackColor(M_BACKGROUND);
 			labelFrame->setBackColor(M_BACKGROUND);
@@ -523,11 +668,12 @@ public:
 		dc.setForeground(M_BACKGROUND);
 		dc.fillRectangle(0,0,canvas->getWidth(),canvas->getHeight());
 
-
 		// if the global setting is disabled, stop drawing right here
 		if(!gFrequencyAnalyzerEnabled)
+		{
+			canvas->endPaint();
 			return 1;
-
+		}
 
 		// the w and h that we're going to render to (minus some borders and tick marks)
 		const size_t canvasWidth=canvas->getWidth(); 
@@ -551,6 +697,7 @@ public:
 			size_t y=((canvasHeight-1)*t/(4-1));
 			dc.drawLine(0,y,canvasWidth,y);
 		}
+
 			
 		// draw frequency analysis bars  (or render text if fftw wasn't installed)
 		dc.setForeground(M_GREEN);
@@ -601,6 +748,7 @@ public:
 			dc.drawText(1,statusFont->getFontHeight(),f.c_str(),f.length());
 		}
 
+		canvas->endPaint();
 		return 1;
 	}
 
@@ -730,7 +878,7 @@ protected:
 
 private:
 	FXPacker *canvasFrame;
-		FXCanvas *canvas;
+		FXBackBufferedCanvas *canvas;
 		FXPacker *labelFrame;
 	FXDial *zoomDial;
 	FXFont *statusFont;
@@ -883,6 +1031,13 @@ long CMetersWindow::onUpdateMeters(FXObject *sender,FXSelector sel,void *ptr)
 			}
 		}
 
+		if(gStereoPhaseMetersEnabled)
+		{
+			soundPlayer->getSamplingForStereoPhaseMeters(samplingForStereoPhaseMeters,samplingForStereoPhaseMeters.getSize());
+			for(size_t t=0;t<stereoPhaseMeters.size();t++)
+				stereoPhaseMeters[t]->updateCanvas();
+		}
+
 		if(gFrequencyAnalyzerEnabled)
 		{
 			if(analyzer->setAnalysis(soundPlayer->getFrequencyAnalysis(),soundPlayer->getFrequencyAnalysisOctaveStride()))
@@ -934,6 +1089,21 @@ void CMetersWindow::setSoundPlayer(ASoundPlayer *_soundPlayer)
 	for(size_t t=0;t<soundPlayer->devices[0].channelCount/2;t++)
 		balanceMeters.push_back(new CBalanceMeter(balanceMetersFrame));
 
+	samplingForStereoPhaseMeters.setSize(gStereoPhaseMeterPointCount*soundPlayer->devices[0].channelCount);
+	for(size_t t=0;t<soundPlayer->devices[0].channelCount/2;t++)
+	{
+		stereoPhaseMeters.insert(stereoPhaseMeters.begin(),
+			new CStereoPhaseMeter(
+				this,
+				samplingForStereoPhaseMeters,
+				gStereoPhaseMeterPointCount,
+				soundPlayer->devices[0].channelCount,
+				t*2+0,
+				t*2+1
+			)
+		);
+	}
+
 	setHeight(
 		max(
 								// +1 for the balance meter(s)
@@ -941,6 +1111,11 @@ void CMetersWindow::setSoundPlayer(ASoundPlayer *_soundPlayer)
 			(unsigned)MIN_METERS_WINDOW_HEIGHT
 		)
 	);
+
+	// make sure the GUI initially reflects the global settings
+	enableLevelMeters(isLevelMetersEnabled());
+	enableStereoPhaseMeters(isStereoPhaseMetersEnabled());
+	enableFrequencyAnalyzer(isFrequencyAnalyzerEnabled());
 }
 
 void CMetersWindow::resetGrandMaxPeakLevels()
@@ -965,6 +1140,42 @@ void CMetersWindow::enableLevelMeters(bool enable)
 		for(size_t t=0;t<balanceMeters.size();t++)
 			balanceMeters[t]->setBalance(0,0,0,0);
 	}
+
+	/* looks stupid
+	if(enable)
+		levelMetersFrame->show();
+	else
+		levelMetersFrame->hide();
+	*/
+	showHideAll();
+}
+
+bool CMetersWindow::isStereoPhaseMetersEnabled() const
+{
+	return gStereoPhaseMetersEnabled;
+}
+
+void CMetersWindow::enableStereoPhaseMeters(bool enable)
+{
+	gStereoPhaseMetersEnabled=enable;
+	if(!enable)
+	{ 
+		// just to cause a canvas update
+		for(size_t t=0;t<stereoPhaseMeters.size();t++)
+		{
+			if(stereoPhaseMeters[t]->shown())
+				stereoPhaseMeters[t]->clearCanvas();
+		}
+	}
+
+	for(size_t t=0;t<stereoPhaseMeters.size();t++)
+	{
+		if(enable)
+			stereoPhaseMeters[t]->show();
+		else
+			stereoPhaseMeters[t]->hide();
+	}
+	showHideAll();
 }
 
 bool CMetersWindow::isFrequencyAnalyzerEnabled() const
@@ -976,6 +1187,23 @@ void CMetersWindow::enableFrequencyAnalyzer(bool enable)
 {
 	gFrequencyAnalyzerEnabled=enable;
 	if(!enable)
-		analyzer->clearCanvas();
+	{
+		if(analyzer->shown())
+			analyzer->clearCanvas();
+	}
+
+	if(enable)
+		analyzer->show();
+	else
+		analyzer->hide();
+	showHideAll();
 }
 
+void CMetersWindow::showHideAll()
+{
+	recalc();
+	if(isLevelMetersEnabled() || isStereoPhaseMetersEnabled() || isFrequencyAnalyzerEnabled())
+		show();
+	else
+		hide();
+}
