@@ -37,6 +37,8 @@
 #include <string.h>
 #include <errno.h>
 
+#include "mypopen.h"
+
 #include <signal.h>
 
 #include <typeinfo>
@@ -70,16 +72,16 @@ bool ClameSoundTranslator::checkForLame()
 {
 	// ??? this should eventually use a registry setting which comes from user preferences and would be checked first
 
-	FILE *p=popen("which lame","r");
+	FILE *p=mypopen("which lame","r");
 	if(p==NULL)
 	{
 		gPathToLame="";
 		return(false);
 	}
 
-	char buffer[4096]={0};
-	fread(buffer,1,4096,p);
-	pclose(p);
+	char buffer[4096+1]={0};
+	fgets(buffer,4096,p);
+	mypclose(p);
 
 	// remove trailing \n if it's there
 	const size_t l=strlen(buffer);
@@ -108,7 +110,7 @@ void ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 
 	fprintf(stderr,"lame command line: '%s'\n",cmdLine.c_str());
 
-	FILE *p=popen(cmdLine.c_str(),"r");
+	FILE *p=mypopen(cmdLine.c_str(),"r");
 	if(p==NULL)
 	{
 		int err=errno;
@@ -183,7 +185,7 @@ void ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 			TAutoBuffer<sample_t> buffer(BUFFER_SIZE*channelCount);
 			sample_pos_t pos=0;
 
-				// ??? in order to do a status bar I would need to be able to capture the stderr from the process (which I could do by writing my own popen)
+				// ??? in order to do a status bar I would need to be able to capture the stderr from the process (which I could do by using and modifying my own popen)
 				// ??? or I could tell peopen to redirect the ouptut to a temp file and maybe read that temp file
 			//BEGIN_PROGRESS_BAR("Loading Sound",ftell(f),count);
 			for(;;)
@@ -216,14 +218,14 @@ void ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 			delete accessers[t];
 
-		pclose(p);
+		mypclose(p);
 	}
 	catch(...)
 	{
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 			delete accessers[t];
 
-		pclose(p);
+		mypclose(p);
 	
 		throw;
 	}
@@ -288,7 +290,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 	gAbortSave=false;
 	prevSIGPIPE_Handler=signal(SIGPIPE,SIGPIPE_Handler);
 
-	FILE *p=popen(cmdLine.c_str(),"w");
+	FILE *p=mypopen(cmdLine.c_str(),"w");
 	if(p==NULL)
 	{
 		int err=errno;
@@ -382,7 +384,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 			delete accessers[t];
 
-		pclose(p);
+		mypclose(p);
 
 		if(prevSIGPIPE_Handler!=NULL && prevSIGPIPE_Handler!=SIG_ERR)
 			signal(SIGPIPE,prevSIGPIPE_Handler);
@@ -392,7 +394,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 			delete accessers[t];
 
-		pclose(p);
+		mypclose(p);
 	
 		if(prevSIGPIPE_Handler!=NULL && prevSIGPIPE_Handler!=SIG_ERR)
 			signal(SIGPIPE,prevSIGPIPE_Handler);

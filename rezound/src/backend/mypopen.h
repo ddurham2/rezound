@@ -1,8 +1,5 @@
-/* acconfig.h 
- * written by Anthony Ventimiglia
- * process this file with autoheader to create config.h.in
- *
- * Copyright (C) 2002 - Anthony Ventimiglia
+/* 
+ * Copyright (C) 2002 - David W. Durham
  * 
  * This file is part of ReZound, an audio editing application.
  * 
@@ -21,9 +18,23 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#undef HAVE_LIBOGG
+#ifndef __MYPOPEN_H__
+#define __MYPOPEN_H__
 
-#undef HAVE_LIBVORBIS
+#include "../../config/common.h"
 
-#undef LINKING_STATICALLY
+#include <stdio.h>
 
+#ifdef LINKING_STATICALLY
+
+FILE *mypopen(const char cmd[],const char type[]);
+int mypclose(FILE *p);
+
+#else
+
+#define mypopen popen
+#define mypclose pclose
+
+#endif // LINKING_STATICALLY
+
+#endif
