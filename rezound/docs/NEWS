@@ -1,4 +1,7 @@
 
+ReZound-0.1.2alpha
+	- Had a minor but important bug fix about the /usr/share/ReZound path
+
 
 ReZound-0.1.1alpha
 	- Made changes so ReZound would compile with gcc 3.x.  However, one guy
