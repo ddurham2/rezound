@@ -83,7 +83,7 @@ private:
 	FXPacker *mixTypeFrame;
 		FXComboBox *mixTypeComboBox;
 
-	pair<MixMethods, vector<vector<bool> > > pasteInfo;
+	vector<vector<bool> > pasteChannels;
 };
 
 #endif

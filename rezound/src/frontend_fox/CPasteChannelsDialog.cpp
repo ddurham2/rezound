@@ -28,6 +28,7 @@
 
 #include "../backend/AAction.h"
 #include "../backend/CActionSound.h"
+#include "../backend/CActionParameters.h"
 #include "../backend/ASoundClipboard.h"
 
 CPasteChannelsDialog *gPasteChannelsDialog=NULL;
@@ -103,9 +104,6 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 	if(clipboard->isEmpty())
 		return false;
 
-	vector<vector<bool> > &pasteChannels=pasteInfo.second;
-
-
 	// uncheck all check boxes and enable only the valid ones where data could be pasted to and from
 	for(unsigned y=0;y<MAX_CHANNELS;y++)
 	for(unsigned x=0;x<MAX_CHANNELS;x++)
@@ -124,8 +122,7 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 	{
 		pasteChannels.clear();
 
-		// funky, gcc won't let me cast directly from void* to MixMethods.. I have to go thru int
-		pasteInfo.first=(MixMethods)(int)(mixTypeComboBox->getItemData(mixTypeComboBox->getCurrentItem()));
+		actionParameters->addUnsignedParameter("MixMethod",(unsigned)(mixTypeComboBox->getItemData(mixTypeComboBox->getCurrentItem())));
 
 		bool ret=false; // or all the checks together, if they're all false, it's like hitting cancel
 		for(unsigned y=0;y<MAX_CHANNELS;y++)
@@ -146,7 +143,7 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 
 void *CPasteChannelsDialog::getUserData()
 {
-	return(&pasteInfo);
+	return(&pasteChannels);
 }
 
 
