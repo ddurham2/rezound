@@ -46,6 +46,8 @@
 
 #include "CSoundWindow.h"
 
+#include "CMetersWindow.h"
+
 #include "CUserNotesDialog.h"
 #include "CCrossfadeEdgesDialog.h"
 
@@ -75,7 +77,6 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_RECORD_MENUITEM,		CMainWindow::onFileAction),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_ABOUT_MENUITEM,			CMainWindow::onFileAction),
-
 
 		// play controls
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_ALL_ONCE_BUTTON,		CMainWindow::onPlayControlButton),
@@ -139,7 +140,8 @@ CMainWindow::CMainWindow(FXApp* a) :
 	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X);
 
 	contents=new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 1,1,0,0, 1,0);
-	
+
+	metersWindow=new CMetersWindow(contents);
 
 	FXPacker *s,*t;
 
@@ -305,6 +307,8 @@ void CMainWindow::rebuildSoundWindowList()
 			NULL,NULL,win);
 	}
 
+	soundList->forceRefresh();
+
 	CSoundWindow *active=gSoundFileManager->getActiveWindow();
 	if(active!=NULL)
 	{
@@ -318,6 +322,7 @@ void CMainWindow::rebuildSoundWindowList()
 			}
 		}
 	}
+
 }
 
 long CMainWindow::onSoundListChange(FXObject *sender,FXSelector sel,void *ptr)

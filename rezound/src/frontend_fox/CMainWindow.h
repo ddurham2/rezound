@@ -30,6 +30,7 @@
 #include <fox/fx.h>
 
 class CSoundWindow;
+class CMetersWindow;
 
 class CMainWindow : public FXMainWindow
 {
@@ -152,6 +153,8 @@ public:
 	void rebuildSoundWindowList();
 	FXComposite *getParentOfSoundWindows() { return soundWindowFrame; }
 
+	CMetersWindow *getMetersWindow() { return metersWindow; }
+
 protected:
 
 	CMainWindow() {}
@@ -162,6 +165,7 @@ private:
 	FXMenuBar 		*menubar;
 	FXPacker		*contents;		// top horizontal main frame which contains play controls and action controls
 	FXPacker 		*soundWindowFrame; 	// parent of all sound windows (only one is visible though)
+	CMetersWindow		*metersWindow;
 
 	FXFont *shuttleFont;
 	FXDial *shuttleDial;

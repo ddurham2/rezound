@@ -28,6 +28,7 @@
 DECLARE_STATIC_CPATH // to declare CPath::dirDelim
 
 #include "CMainWindow.h"
+#include "CMetersWindow.h"
 #include "CStatusComm.h"
 
 #include "CSoundFileManager.h"
@@ -89,6 +90,8 @@ int main(int argc,char *argv[])
 
 
 		gSoundFileManager=new CSoundFileManager(mainWindow,soundPlayer,gSettingsRegistry);
+
+		mainWindow->getMetersWindow()->setSoundPlayer(soundPlayer);
 
 		// create all the dialogs 
 		setupWindows(mainWindow);
