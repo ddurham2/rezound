@@ -103,15 +103,6 @@ CEditToolbar::~CEditToolbar()
 }
 
 
-/*
-void CEditToolbar::create()
-{
-	FXTopWindow::create();
-
-	show();
-}
-*/
-
 void CEditToolbar::show()
 {
 	rememberShow(this);

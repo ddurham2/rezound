@@ -98,9 +98,10 @@ void determineDecorSize(FXWindow *window)
 
 bool rememberShow(FXTopWindow *window)
 {
-return(false);
-
-	determineDecorSize(window);
+	//  - isn't reliable with all window managers behaving differently 
+	// |
+	// V
+	//determineDecorSize(window);
 
 	// using this mechanism because FXToolbarShell's position method calls show which causes infinite recursion
 	static bool inThis=false;
@@ -126,7 +127,7 @@ return(false);
 
 		//printf("window: %s X:%d Y:%d W:%d H:%d\n", title.c_str(),x,y,width,height);
 
-/*
+/* isn't reliable with all window managers behaving differently
 		window->position(
 			// make sure x,y are in visible range (-35 incase decor subtraction causes negative values)
 			min(max(-35,x),window->getRoot()->getDefaultWidth()-25),
@@ -138,7 +139,7 @@ return(false);
 		);
 */
 
-/*
+		// just restore the window's size
 		if(window->getWidth()!=width || window->getHeight()!=height)
 			window->resize( max(50,width), max(50,height) );
 		else 
@@ -146,7 +147,6 @@ return(false);
 			inThis=false;
 			return(false);
 		}
-*/
 
 	}
 	inThis=false;
@@ -155,7 +155,6 @@ return(false);
 
 void rememberHide(FXTopWindow *window)
 {
-return;
 	const string title=("WindowDimensions."+window->getTitle()).text();
 	//printf("closing window: %s %d %d\n",window->getTitle().text(),window->getX(),window->getY());
 	gSettingsRegistry->createKey((title+"_X").c_str(),istring(window->getX()-decorWidth));

@@ -194,15 +194,6 @@ CMainWindow::CMainWindow(FXApp* a) :
 			remasterTabFrame=new FXHorizontalFrame(actionControlsFrame,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|FRAME_RAISED, 0,0,0,0, 4,4,4,4, 3,3);
 }
 
-/*
-void CMainWindow::create()
-{
-	FXMainWindow::create();
-	show();
-	//onSeekTimer(NULL,0,NULL);
-}
-*/
-
 void CMainWindow::show()
 {
 	rememberShow(this);
@@ -374,28 +365,6 @@ long CMainWindow::onReopenMenuSelect(FXObject *sender,FXSelector sel,void *ptr)
 // play control events
 long CMainWindow::onPlayControlButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-
-/*
-	{
-		int origX=getX();
-		int origY=getY();
-
-		move(100,100);
-		hide();
-		show();
-		getApp()->runWhileEvents(this);
-
-		int decorWidth=getX()-100;
-		int decorHeight=getY()-100;
-
-		printf("decor size: (%d,%d)\n",decorWidth,decorHeight);
-
-		move(origX-decorWidth,origY-decorHeight);
-		hide();
-		show();
-	}
-*/
-
 	switch(SELID(sel))
 	{
 	case ID_PLAY_ALL_ONCE_BUTTON:
@@ -463,7 +432,7 @@ long CMainWindow::onUndoButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	try
 	{
-		// ??? I don't know if there is already code to do this
+		// ??? this code should actually be put in the backend if it isn't already there and become just a call to undo() in file.h
 		CLoadedSound *s=gSoundFileManager->getActive();
 		if(s!=NULL)
 		{

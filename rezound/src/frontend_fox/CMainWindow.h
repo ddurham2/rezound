@@ -34,24 +34,11 @@ public:
 
 	CMainWindow(FXApp* a);
 
-	//virtual void create();
 	virtual void show();
 	virtual void hide();
 
 	void createToolbars();
 	
-
-	/*
-	long onUpdClear(FXObject *sender,FXSelector,void*)
-	{
-		if(dirty)
-			sender->handle(this,MKUINT(FXWindow::ID_ENABLE,SEL_COMMAND),NULL);
-		else
-			sender->handle(this,MKUINT(FXWindow::ID_DISABLE,SEL_COMMAND),NULL);
-
-		return 1;
-	}
-	*/
 
 	long onQuit(FXObject *sender,FXSelector sel,void *ptr);
 

@@ -85,7 +85,7 @@ void FXModalDialogBox::show(FXuint placement)
 	if(!rememberShow(this))
 		FXDialogBox::show(placement);
 	else
-		FXDialogBox::show();
+		FXDialogBox::show(placement/*wouldn't send placement except remember show can't reliable set the window position*/);
 }
 
 void FXModalDialogBox::hide()
