@@ -34,7 +34,7 @@ FXDEFMAP(FXCheckBoxParamValue) FXCheckBoxParamValueMap[]=
 	//Message_Type				ID					Message_Handler
 
 	//FXMAPFUNC(SEL_COMMAND,			FXCheckBoxParamValue::ID_VALUE_SPINNER,	FXCheckBoxParamValue::onValueSpinnerChange),
-	//FXMAPFUNC(SEL_COMMAND,			FXCheckBoxParamValue::ID_VALUE_TEXTBOX,	FXCheckBoxParamValue::onValueTextBoxChange),
+	FXMAPFUNC(SEL_COMMAND,			FXCheckBoxParamValue::ID_CHECKBOX,	FXCheckBoxParamValue::onCheckBox),
 };
 
 FXIMPLEMENT(FXCheckBoxParamValue,FXVerticalFrame,FXCheckBoxParamValueMap,ARRAYNUMBER(FXCheckBoxParamValueMap))
@@ -44,7 +44,7 @@ FXCheckBoxParamValue::FXCheckBoxParamValue(FXComposite *p,int opts,const char *_
 
 	name(_name),
 
-	checkBox(new FXCheckButton(this,gettext(_name),NULL,0,CHECKBUTTON_NORMAL)),
+	checkBox(new FXCheckButton(this,gettext(_name),this,ID_CHECKBOX,CHECKBUTTON_NORMAL)),
 
 	textFont(getApp()->getNormalFont())
 {
@@ -62,6 +62,11 @@ FXCheckBoxParamValue::FXCheckBoxParamValue(FXComposite *p,int opts,const char *_
 FXCheckBoxParamValue::~FXCheckBoxParamValue()
 {
 	delete textFont;
+}
+
+long FXCheckBoxParamValue::onCheckBox(FXObject *sender,FXSelector sel,void *ptr)
+{
+	return target && target->handle(this,FXSEL(SEL_COMMAND,getSelector()),ptr);
 }
 
 const bool FXCheckBoxParamValue::getValue()
@@ -99,6 +104,8 @@ void FXCheckBoxParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 	}
 	else
 		setValue(false);
+
+	onCheckBox(NULL,0,NULL);
 }
 
 void FXCheckBoxParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
