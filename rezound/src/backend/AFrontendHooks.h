@@ -30,6 +30,11 @@ class AFrontendHooks;
 
 #include "CSound_defs.h"
 
+#ifdef USE_LADSPA
+	#include "AActionDialog.h"
+	#include "LADSPA/ladspa.h"
+#endif
+
 class ASoundRecorder;
 
 extern AFrontendHooks *gFrontendHooks;
@@ -155,6 +160,14 @@ public:
 	};
 	virtual bool promptForVoxParameters(VoxParameters &parameters)=0;
 
+
+	// stuff to handle frontend interfaces to LADSPA plugins
+#ifdef USE_LADSPA
+	virtual AActionDialog *getChannelSelectDialog()=0;
+	// should return a frontend dialog which can handle the given LADSPA plugin descriptor
+		// the backend will be responsible for deleteing the returned object
+	virtual AActionDialog *getLADSPAActionDialog(const LADSPA_Descriptor *desc)=0;
+#endif
 
 	// -1 can be passed for the parameters not be be changed from the previous values on the dialog
 	// if Id comes back -1, then just wait for one

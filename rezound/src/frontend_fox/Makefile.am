@@ -68,10 +68,12 @@ libfrontend_la_SOURCES= \
 			FXCheckBoxParamValue.cpp \
 			FXGraphParamValue.cpp \
 			FXLFOParamValue.cpp \
+			FXPluginRoutingParamValue.cpp \
 			FXModalDialogBox.cpp \
 			FXRezWaveView.cpp \
 			FXWaveScrollArea.cpp \
 			FXWaveCanvas.cpp \
+			CLADSPAActionDialog.cpp \
 			rememberShow.cpp \
 			settings.cpp
 
@@ -100,8 +102,11 @@ rezound_LDADD= libfrontend.la\
 	$(top_builddir)/src/backend/Looping/libLooping.la \
 	$(top_builddir)/src/backend/Remaster/libRemaster.la \
 	$(top_builddir)/src/backend/Generate/libGenerate.la \
+	@MAYBE_LADSPA_LIB@ \
 	$(top_builddir)/src/misc/CNestedDataFile/libmiscCN.la \
 	$(top_builddir)/src/PoolFile/libPoolFile.la @FOX_1_1_LIBS@ @FOX_LIBS@
+
+
 
 AM_CXXFLAGS=@FOX_1_1_CXXFLAGS@ @FOX_CXXFLAGS@
 
@@ -140,6 +145,7 @@ noinst_HEADERS=\
 	LoopingActionDialogs.h \
 	CAboutDialog.h \
 	FXConstantParamValue.h \
+	FXPluginRoutingParamValue.h \
 	FXTextParamValue.h \
 	FXDiskEntityParamValue.h \
 	FXComboTextParamValue.h \
@@ -150,6 +156,7 @@ noinst_HEADERS=\
 	FXRezWaveView.h \
 	FXWaveScrollArea.h \
 	FXWaveCanvas.h \
+	CLADSPAActionDialog.h \
 	FXPopupHint.h \
 	FXBackBufferedCanvas.h \
 	drawPortion.h \

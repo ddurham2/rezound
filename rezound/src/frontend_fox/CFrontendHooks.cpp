@@ -319,6 +319,33 @@ bool CFrontendHooks::promptForVoxParameters(VoxParameters &parameters)
 	return voxDialog->show(parameters);
 }
 
+#ifdef USE_LADSPA
+
+#include "CChannelSelectDialog.h"
+#include "CLADSPAActionDialog.h"
+AActionDialog *CFrontendHooks::getChannelSelectDialog()
+{
+	return gChannelSelectDialog;
+}
+
+AActionDialog *CFrontendHooks::getLADSPAActionDialog(const LADSPA_Descriptor *desc)
+{
+	return new CLADSPAActionDialog(mainWindow,desc);
+#if 0 // nah
+	// only return a dialog if there is at least one input control ports
+	for(unsigned t=0;t<desc->PortCount;t++)
+	{
+		const LADSPA_PortDescriptor portDesc=desc->PortDescriptors[t];
+		if(LADSPA_IS_PORT_CONTROL(portDesc) && LADSPA_IS_PORT_INPUT(portDesc))
+			return new CLADSPAActionDialog(mainWindow,desc);
+	}
+	return NULL;
+#endif
+}
+
+#endif
+
+
 bool CFrontendHooks::promptForOpenMIDISampleDump(int &sysExChannel,int &waveformId)
 {
 	return MIDIDumpSampleIdDialog->showForOpen(sysExChannel,waveformId);
