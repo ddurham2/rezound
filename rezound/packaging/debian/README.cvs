@@ -4,7 +4,27 @@ Anthony Ventimiglia.
 
 This directory is used for the debian packaging.
 
+This is basically here for my use, or to help anyone who may take over
+the debianizing process in the future. If you want to install a .deb
+package, I'd recommend checiking to see if it exists at
+http://rezound.sf.net/ before proceeding. However if you want to roll
+your own, I guess this will help you out.
+
+If you've never done this before, Don't expect any help from me, like
+I said, this is here for me, not you. But if you really must know,
+read http://www.debian.org/doc/maint-guide/ to learn the basics of the
+debianization process.
+
+As of now, any rezound .deb not packaged by me should be considered
+unofficial, and possibly unsafe. Of course being that this is GPL'd
+software, you should know that using any of this is AT YOUR OWN RISK.
+
 Here are the steps to making a debian package.
 
-1.	From the top directory run packaging/debian/deb-prep.sh
+1.	From the top directory run $sh packaging/debian/deb-prep.sh
+	The directory should now have a configure script and a
+	Makefile, and be ready for the standard autotools build
+	process. In addition, there should be a distribution tarball
+	it the next highest directory (..) .
+
 
