@@ -265,6 +265,16 @@ dnl the specific version we need we could change what class is linked.
 ajv_CXX_CHECK_LIB([FOX],FXApp,fox/fx.h,[http://fox-toolkit.org])
 dnl AC_CHECK_LIB(FOX,fxfindfox)
 
+dnl check for FXBackBufferedCanvas.h and use my implementation if not found
+AC_CHECK_HEADER(fox/FXBackBufferedCanvas.h,
+	[
+	 	rm -f $srcdir/src/misc/missing/generated/fox/FXBackBufferedCanvas.h
+	],
+	[
+		mkdir -p $srcdir/src/misc/missing/generated/fox 2>/dev/null
+		cp $srcdir/src/misc/missing/FXBackBufferedCanvas.h-missing $srcdir/src/misc/missing/generated/fox/FXBackBufferedCanvas.h
+	])
+
 
 dnl Check for FOX's reswrap program. 
 AC_PATH_PROG(RESWRAP, reswrap)
