@@ -135,6 +135,12 @@ CSoundWindow *CSoundFileManager::getActiveWindow()
 	return NULL;
 }
 
+void CSoundFileManager::setActiveSound(size_t index)
+{
+	if(index<soundWindows.size())
+		soundWindows[index]->setActiveState(true);
+}
+
 CSoundWindow *CSoundFileManager::getSoundWindow(CLoadedSound *loadedSound)
 {
 	for(size_t t=0;t<soundWindows.size();t++)

@@ -86,6 +86,9 @@ public:
 	// run the CLoadedSound pointer
 	virtual CLoadedSound *getSound(size_t index)=0;
 
+	// should be implemented to change the active sound to the one specified at the given index
+	virtual void setActiveSound(size_t index)=0;
+
 	// is called after an action is performed to update the screen or when the title
 	// bar and other status information of a loaded sound window needs to be modified
 	virtual void updateAfterEdit(CLoadedSound *sound=NULL,bool undoing=false)=0; // if NULL, then use the active one
