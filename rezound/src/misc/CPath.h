@@ -274,12 +274,33 @@ public:
 		string ret;
 		FILE *p=popen(("which '"+exeName+"' 2>/dev/null").c_str(),"r");
 
-		char buffer[1024+1];
-		if(p!=NULL && fgets(buffer,1024,p))
+		char buffer[4096+1];
+		redo:
+		buffer[0]=0;
+		if(p!=NULL && fgets(buffer,4096,p))
 		{
-			if(strlen(buffer)>0) // remove trailing \n
+			// remove \n at end
+			if(strlen(buffer)>0)
 				buffer[strlen(buffer)-1]=0;
+
+#if defined(rez_OS_LINUX)
+			// on linux which simply returns no stdout when not found
 			ret=buffer;
+#elif defined(rez_OS_BSD)
+			// on bsd which returns "XXX: Command not found." when not found
+			if(strstr(buffer,": Command not found.")==NULL)
+				ret=buffer;
+#elif defined(rez_OS_SOLARIS)
+			// on solaris if the path is really long it puts "Warning: ..." on the first line
+			if(strncmp(buffer,"Warning: ",9)==0)
+				goto redo;
+
+			// on solaris which returns "no XXX in ..." when not found
+			if(strncmp(buffer,"no ",3)!=0)
+				ret=buffer;
+#else
+			#error CPath::which needs to be implemented on this platform
+#endif
 		}
 		pclose(p);
 
