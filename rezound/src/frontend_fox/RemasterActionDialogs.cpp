@@ -19,8 +19,6 @@
  */
 
 #include "RemasterActionDialogs.h"
-#include "../backend/unit_conv.h"
-#include "interpretValue.h"
 
 #include <istring>
 
@@ -29,6 +27,8 @@
 #include "../backend/CActionSound.h"
 #include "../backend/CActionParameters.h"
 #include "../backend/CSound.h"
+
+#include "ActionParamMappers.h"
 
 
 
@@ -44,17 +44,38 @@ CSimpleBalanceActionDialog::CSimpleBalanceActionDialog(FXWindow *mainWindow) :
 		void *p1=newHorzPanel(p0,false);
 			void *p2=newVertPanel(p1,false);
 				vector<string> items;
-				addComboTextEntry(p2,N_("Channel A"),items,"");
-				addComboTextEntry(p2,N_("Channel B"),items,"");
+				addComboTextEntry(p2,
+					N_("Channel A"),
+					items,
+					""
+				);
+
+				addComboTextEntry(p2,
+					N_("Channel B"),
+					items,
+					""
+				);
 
 			
-			addSlider(p1,N_("Balance"),"%",interpretValue_bipolar_scalar,uninterpretValue_bipolar_scalar,ret_balance,0.0,100,100,100,false);
+			CActionParamMapper_linear_bipolar *m=new CActionParamMapper_linear_bipolar(0.0,100,100);
+			m->setMultiplier(-1.0);
+			addSlider(p1,
+				N_("Balance"),
+				"%",
+				m,
+				ret_balance,
+				false
+			);
 
 			vector<string> balanceTypes;
 			balanceTypes.push_back(N_("Strict Balance"));
 			balanceTypes.push_back(N_("1x Pan"));
 			balanceTypes.push_back(N_("2x Pan"));
-		addComboTextEntry(p0,N_("Balance Type"),balanceTypes,CBalanceAction::getBalanceTypeExplanation());
+		addComboTextEntry(p0,
+			N_("Balance Type"),
+			balanceTypes,
+			CBalanceAction::getBalanceTypeExplanation()
+		);
 		/* not possible
 			vector<FXIcon *> balanceTypeIcons;
 			balanceTypeIcons.push_back(FOXIcons->Falling_Sawtooth_Wave___0_1_);
@@ -98,16 +119,37 @@ CCurvedBalanceActionDialog::CCurvedBalanceActionDialog(FXWindow *mainWindow) :
 		void *p1=newHorzPanel(p0,false);
 			void *p2=newVertPanel(p1,false);
 				vector<string> items;
-				addComboTextEntry(p2,N_("Channel A"),items,"");
-				addComboTextEntry(p2,N_("Channel B"),items,"");
+				addComboTextEntry(p2,
+					N_("Channel A"),
+					items,
+					""
+				);
 
-			addGraphWithWaveform(p1,N_("Balance Curve"),N_("Balance"),"%",interpretValue_bipolar_scalar,uninterpretValue_bipolar_scalar,ret_balance,100,100,100);
+				addComboTextEntry(p2,
+					N_("Channel B"),
+					items,
+					""
+				);
+
+			CActionParamMapper_linear_bipolar *m=new CActionParamMapper_linear_bipolar(0.0,100,100);
+			m->setMultiplier(-1.0);
+			addGraphWithWaveform(p1,
+				N_("Balance Curve"),
+				N_("Balance"),
+				"%",
+				m,
+				ret_balance
+			);
 
 		vector<string> balanceTypes;
 		balanceTypes.push_back(N_("Strict Balance"));
 		balanceTypes.push_back(N_("1x Pan"));
 		balanceTypes.push_back(N_("2x Pan"));
-		addComboTextEntry(p0,N_("Balance Type"),balanceTypes,CBalanceAction::getBalanceTypeExplanation());
+		addComboTextEntry(p0,
+			N_("Balance Type"),
+			balanceTypes,
+			CBalanceAction::getBalanceTypeExplanation()
+		);
 }
 
 bool CCurvedBalanceActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
@@ -149,12 +191,23 @@ CMonoizeActionDialog::CMonoizeActionDialog(FXWindow *mainWindow) :
 		void *p0=newVertPanel(NULL);
 			void *p1=newHorzPanel(p0,false);
 			for(unsigned t=0;t<MAX_CHANNELS;t++)
-				addSlider(p1,N_("Channel ")+istring(t),"%",interpretValue_scalar,uninterpretValue_scalar,retconv_monoize,100.0,100,100,100,false);
+			{
+				addSlider(p1,
+					N_("Channel ")+istring(t),
+					"%",
+					new CActionParamMapper_linear(100.0,100),
+					retconv_monoize,
+					false
+				);
+			}
 			
 			vector<string> options;
 			options.push_back(N_("Remove All But One Channel"));
 			options.push_back(N_("Make All Channels The Same"));
-			addComboTextEntry(p0,N_("Method"),options);
+			addComboTextEntry(p0,
+				N_("Method"),
+				options
+			);
 }
 
 bool CMonoizeActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
@@ -177,10 +230,37 @@ CNoiseGateDialog::CNoiseGateDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Window Time"),"ms",interpretValue_scalar,uninterpretValue_scalar,NULL,35.0,5,1000,30,false);
-		addSlider(p,N_("Threshold"),"dBFS",interpretValue_dBFS,uninterpretValue_dBFS,NULL,-30.0,0,0,1,false);
-		addSlider(p,N_("Gain Attack Time"),"ms",interpretValue_scalar,uninterpretValue_scalar,NULL,10.0,5,1000,30,false);
-		addSlider(p,N_("Gain Release Time"),"ms",interpretValue_scalar,uninterpretValue_scalar,NULL,10.0,5,1000,30,false);
+		addSlider(p,
+			N_("Window Time"),
+			"ms",
+			new CActionParamMapper_linear(35.0,30,5,1000),
+			NULL,
+			false
+		);
+
+		addSlider(p,
+			N_("Threshold"),
+			"dBFS",
+			new CActionParamMapper_dBFS(-30.0),
+			NULL,
+			false
+		);
+
+		addSlider(p,
+			N_("Gain Attack Time"),
+			"ms",
+			new CActionParamMapper_linear(10.0,30,5,1000),
+			NULL,
+			false
+		);
+
+		addSlider(p,
+			N_("Gain Release Time"),
+			"ms",
+			new CActionParamMapper_linear(10.0,30,5,1000),
+			NULL,
+			false
+		);
 }
 
 #include "../backend/Remaster/CNoiseGateAction.h"
@@ -193,35 +273,73 @@ const string CNoiseGateDialog::getExplanation() const
 
 // --- compressor --------------------------
 
-static const double interpretValue_compressorWindowTime(const double x,const int s) { return(unitRange_to_otherRange_linear(x,.1,100)*s); }
-static const double uninterpretValue_compressorWindowTime(const double x,const int s) { return(otherRange_to_unitRange_linear(x/s,.1,100)); }
-
-static const double interpretValue_compressionRatio(const double x,const int s) { return(unitRange_to_otherRange_linear(x,1,s)); }
-static const double uninterpretValue_compressionRatio(const double x,const int s) { return(otherRange_to_unitRange_linear(x,1,s)); }
-
-static const double interpretValue_compressAttack(const double x,const int s) { return(unitRange_to_otherRange_linear(unitRange_to_unitRange_squared(x),.1,100)); }
-static const double uninterpretValue_compressAttack(const double x,const int s) { return(unitRange_to_unitRange_unsquared(otherRange_to_unitRange_linear(x,.1,100))); }
-
-static const double interpretValue_compressRelease(const double x,const int s) { return(unitRange_to_otherRange_linear(unitRange_to_unitRange_squared(x),1,1000)); }
-static const double uninterpretValue_compressRelease(const double x,const int s) { return(unitRange_to_unitRange_unsquared(otherRange_to_unitRange_linear(x,1,1000))); }
-
-static const double interpretValue_compressGain(const double x,const int s) { return(unitRange_to_recipsymRange_exp(x,10.0)); }
-static const double uninterpretValue_compressGain(const double x,const int s) { return(recipsymRange_to_unitRange_exp(x,10.0)); }
-
 CCompressorDialog::CCompressorDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p0=newVertPanel(NULL,true);
 		void *p1=newHorzPanel(p0,false);
-			addSlider(p1,N_("Window Time"),"ms",interpretValue_compressorWindowTime,uninterpretValue_compressorWindowTime,NULL,35.0,1,10,1,false);
-			addSlider(p1,N_("Threshold"),"dBFS",interpretValue_dBFS,uninterpretValue_dBFS,NULL,-12.0,0,0,1,false);
-			addSlider(p1,N_("Ratio"),":1",interpretValue_compressionRatio,uninterpretValue_compressionRatio,NULL,2.0,2,20,6,false);
-			addSlider(p1,N_("Attack Time"),"ms",interpretValue_compressAttack,uninterpretValue_compressAttack,NULL,10.0,0,0,0,false);
-			addSlider(p1,N_("Release Time"),"ms",interpretValue_compressRelease,uninterpretValue_compressRelease,NULL,50.0,0,0,0,false);
-			addSlider(p1,N_("Input Gain"),"x",interpretValue_compressGain,uninterpretValue_compressGain,NULL,1.0,0,0,0,true);
-			addSlider(p1,N_("Output Gain"),"x",interpretValue_compressGain,uninterpretValue_compressGain,NULL,1.0,0,0,0,true);
+			addSlider(p1,
+				N_("Window Time"),
+				"ms",
+				new CActionParamMapper_linear_range_scaled(35.0,.1,100,1,1,10),
+				NULL,
+				false
+			);
+
+			addSlider(p1,
+				N_("Threshold"),
+				"dBFS",
+				new CActionParamMapper_dBFS(-12.0),
+				NULL,
+				false
+			);
+
+			addSlider(p1,
+				N_("Ratio"),
+				":1",
+				new CActionParamMapper_linear_min_to_scalar(2.0,1,6,2,20),
+				NULL,
+				false
+			);
+
+			addSlider(p1,
+				N_("Attack Time"),
+				"ms",
+				new CActionParamMapper_parabola_range(10.0,0.1,100.0),
+				NULL,
+				false
+			);
+
+			addSlider(p1,
+				N_("Release Time"),
+				"ms",
+				new CActionParamMapper_parabola_range(50.0,1.0,1000.0),
+				NULL,
+				false
+			);
+
+			addSlider(p1,
+				N_("Input Gain"),
+				"x",
+				new CActionParamMapper_recipsym(1.0,10,0,0),
+				NULL,
+				true
+			);
+
+			addSlider(p1,
+				N_("Output Gain"),
+				"x",
+				new CActionParamMapper_recipsym(1.0,10,0,0),
+				NULL,
+				true
+			);
+
 		p1=newVertPanel(p0,false);
-			addCheckBoxEntry(p1,N_("Lock Channels"),true,_("This Toggles That Compression Should be Applied to Both Channels when Either Channel Needs Compression"));
+			addCheckBoxEntry(p1,
+				N_("Lock Channels"),
+				true,
+				_("This Toggles That Compression Should be Applied to Both Channels when Either Channel Needs Compression")
+			);
 }
 
 // ??? remove this before 1.0 and make sure it is up-to-standard as far as a compressor goes before 1.0
@@ -234,26 +352,39 @@ const string CCompressorDialog::getExplanation() const
 
 // --- normalize ---------------------------
 
-static const double interpretValue_regionCount(const double x,const int s) { return(floor(x*99.0)+1.0); }
-static const double uninterpretValue_regionCount(const double x,const int s) { return((x-1.0)/99.0); }
-
 CNormalizeDialog::CNormalizeDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p1=newVertPanel(NULL);
 		void *p2=newHorzPanel(p1,false);
-			addSlider(p2,N_("Normalization Level"),"dBFS",interpretValue_dBFS,uninterpretValue_dBFS,NULL,-0.5,0,0,1,false);
-			addSlider(p2,N_("Region Count"),"",interpretValue_regionCount,uninterpretValue_regionCount,NULL,1,0,0,0,false);
+			addSlider(p2,
+				N_("Normalization Level"),
+				"dBFS",
+				new CActionParamMapper_dBFS(-0.5),
+				NULL,
+				false
+			);
+
+			CActionParamMapper_linear_range *m=new CActionParamMapper_linear_range(1.0,1.0,100.0);
+			m->floorTheValue(true);
+			addSlider(p2,
+				N_("Region Count"),
+				"",
+				m,
+				NULL,
+				false
+			);
+
 		p2=newVertPanel(p1,false);
-			addCheckBoxEntry(p2,N_("Lock Channels"),true,_("Calculate Maximum Sample Value in a Region Across All Channels"));
+			addCheckBoxEntry(p2,
+				N_("Lock Channels"),
+				true,
+				_("Calculate Maximum Sample Value in a Region Across All Channels")
+			);
 }
 
 
 // --- mark quiet areas --------------------
-
-static const double interpretValue_detectorWindow(const double x,const int s) { return(unitRange_to_otherRange_linear(x,.1,100)*s); }
-static const double uninterpretValue_detectorWindow(const double x,const int s) { return(otherRange_to_unitRange_linear(x/s,.1,100)); }
-
 
 CMarkQuietAreasDialog::CMarkQuietAreasDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
@@ -261,21 +392,54 @@ CMarkQuietAreasDialog::CMarkQuietAreasDialog(FXWindow *mainWindow) :
 	FXConstantParamValue *t;
 	void *p1=newVertPanel(NULL);
 		void *p2=newHorzPanel(p1,false);
-			t=addSlider(p2,N_("Threshold for Quiet"),"dBFS",interpretValue_dBFS,uninterpretValue_dBFS,NULL,-48,0,0,1,false);
+			t=addSlider(p2,
+				N_("Threshold for Quiet"),
+				"dBFS",
+				new CActionParamMapper_dBFS(-48.0),
+				NULL,
+				false
+			);
 			t->setTipText(_("An audio level below this threshold is considered to be quiet."));
 
-			t=addSlider(p2,N_("Must Remain Quiet for"),"ms",interpretValue_scalar,uninterpretValue_scalar,NULL,500,10,10000,1000,false);
+			t=addSlider(p2,
+				N_("Must Remain Quiet for"),
+				"ms",
+				new CActionParamMapper_linear(500,1000,10,10000),
+				NULL,
+				false
+			);
 			t->setTipText(_("The audio level must remain below the threshold for this long before a beginning cue will be added."));
 
-			t=addSlider(p2,N_("Must Remain Unquiet for"),"ms",interpretValue_scalar,uninterpretValue_scalar,NULL,0,10,10000,1000,false);
+			t=addSlider(p2,
+				N_("Must Remain Unquiet for"),
+				"ms",
+				new CActionParamMapper_linear(0,1000,10,10000),
+				NULL,
+				false
+			);
 			t->setTipText(_("After the beginning of a quiet area has been detected the audio level must rise above the threshold for this long for an ending cue to be added."));
 
-			t=addSlider(p2,N_("Level Detector Window Time"),"ms",interpretValue_detectorWindow,uninterpretValue_detectorWindow,NULL,35.0,1,10,1,false);
+			t=addSlider(p2,
+				N_("Level Detector Window Time"),
+				"ms",
+				new CActionParamMapper_linear_range_scaled(35.0,.1,100,1,1,10),
+				NULL,
+				false
+			);
 			t->setTipText(_("This is the length of the window of audio to analyze for detecting the audio level."));
 
 		p2=newVertPanel(p1,false);
-			addStringTextEntry(p2,N_("Quiet Begin Cue Name"),"[",_("What to Name a Cue That Marks Beginning of a Quiet Region"));
-			addStringTextEntry(p2,N_("Quiet End Cue Name"),"]",_("What to Name a Cue That Marks End of a Quiet Region"));
+			addStringTextEntry(p2,
+				N_("Quiet Begin Cue Name"),
+				"[",
+				_("What to Name a Cue That Marks Beginning of a Quiet Region")
+			);
+
+			addStringTextEntry(p2,
+				N_("Quiet End Cue Name"),
+				"]",
+				_("What to Name a Cue That Marks End of a Quiet Region")
+			);
 }
 
 
@@ -295,7 +459,12 @@ CResampleDialog::CResampleDialog(FXWindow *mainWindow) :
 	items.push_back("96000");
 
 	void *p0=newVertPanel(NULL);
-		addComboTextEntry(p0,N_("New Sample Rate"),items,"",true);
+		addComboTextEntry(p0,
+			N_("New Sample Rate"),
+			items,
+			"",
+			true
+		);
 			getComboText("New Sample Rate")->setValue(44100);
 }
 

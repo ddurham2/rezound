@@ -29,6 +29,8 @@
 #include "../backend/CSound_defs.h"
 #include "../backend/CGraphParamValueNode.h"
 
+#include "AActionParamMapper.h"
+
 class FXGraphParamNode;
 class CNestedDataFile;
 
@@ -45,18 +47,15 @@ class FXGraphParamValue : public FXVerticalFrame
 {
 	FXDECLARE(FXGraphParamValue);
 public:
-	typedef const double (*f_at_xs)(const double x,const int s);
-
-	// minScalar and maxScalar define the min and max spinner values, if they're the same, no spinner is shown
-	FXGraphParamValue(const char *name,const int minScalar,const int maxScalar,const int initScalar,FXComposite *p,int opts,int x=0,int y=0,int w=0,int h=0);
+	FXGraphParamValue(const char *name,FXComposite *p,int opts,int x=0,int y=0,int w=0,int h=0);
 	virtual ~FXGraphParamValue();
 
 	FXint getDefaultWidth();
 	FXint getDefaultHeight();
 
 	void setSound(CSound *sound,sample_pos_t start,sample_pos_t stop);
-	void setHorzParameters(const string horzAxisLabel,const string horzUnits,f_at_xs interpretValue,f_at_xs uninterpretValue);
-	void setVertParameters(const string vertAxisLabel,const string vertUnits,f_at_xs interpretValue,f_at_xs uninterpretValue);
+	void setHorzParameters(const string horzAxisLabel,const string horzUnits,AActionParamMapper *horzValueMapper);
+	void setVertParameters(const string vertAxisLabel,const string vertUnits,AActionParamMapper *vertValueMapper);
 
 	void clearNodes();
 
@@ -85,11 +84,13 @@ public:
 	void copyFrom(const FXGraphParamValue *src);
 	void swapWith(FXGraphParamValue *src);
 
+	// ??? these necessary?
 	const int getScalar() const;
 	void setScalar(const int scalar);
 
 	const int getMinScalar() const;
 	const int getMaxScalar() const;
+	// -------- ^^^
 
 	const string getName() const;
 
@@ -125,8 +126,6 @@ private:
 	friend class CHorzRuler;
 
 	const string name;
-
-	int initScalar;
 
 	FXPacker *graphPanel;
 		FXVerticalFrame *vertDeformPanel;
@@ -181,13 +180,11 @@ private:
 
 	string horzAxisLabel;
 	string horzUnits;
-	f_at_xs horzInterpretValue;
-	f_at_xs horzUninterpretValue;
+	AActionParamMapper *horzValueMapper;
 
 	string vertAxisLabel;
 	string vertUnits;
-	f_at_xs vertInterpretValue;
-	f_at_xs vertUninterpretValue;
+	AActionParamMapper *vertValueMapper;
 
 	// we draw on this one time and blit from it anytime we need to update the canvas
 	FXImage *backBuffer;

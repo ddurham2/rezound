@@ -31,6 +31,8 @@
 #include "../backend/CActionParameters.h"
 #include "../backend/ASoundClipboard.h"
 
+#include "ActionParamMappers.h"
+
 CPasteChannelsDialog *gPasteChannelsDialog=NULL;
 
 
@@ -53,8 +55,6 @@ FXIMPLEMENT(CPasteChannelsDialog,FXModalDialogBox,CPasteChannelsDialogMap,ARRAYN
 // ??? derive this from CActionDialog if I can so that it can have presets, maybe not possible as it is
 
 #include "FXConstantParamValue.h"
-static const double interpret_repeat(const double x,const int s) { return x*s; }
-static const double uninterpret_repeat(const double x,const int s) { return x/s; }
 
 CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
 	FXModalDialogBox(mainWindow,N_("Paste Channels"),100,100,FXModalDialogBox::ftVertical,FXModalDialogBox::stShrinkWrap),
@@ -70,13 +70,21 @@ CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
 
 	repeatTypeSwitcher=new FXSwitcher(repeatFrame,LAYOUT_CENTER_X);
 
-		repeatCountSlider=new FXConstantParamValue(interpret_repeat,uninterpret_repeat,1,100,4,false,repeatTypeSwitcher,LAYOUT_CENTER_X,_("Repeat Count"));
+		repeatCountSlider=new FXConstantParamValue(
+			new CActionParamMapper_linear_bipolar(1.0,4,100),
+			false,
+			repeatTypeSwitcher,
+			LAYOUT_CENTER_X,_("Repeat Count")
+		);
 		repeatCountSlider->setUnits("x");
-		repeatCountSlider->setValue(1.0);
 
-		repeatTimeSlider=new FXConstantParamValue(interpret_repeat,uninterpret_repeat,1,3600,60,false,repeatTypeSwitcher,LAYOUT_CENTER_X,_("Repeat Time"));
+		repeatTimeSlider=new FXConstantParamValue(
+			new CActionParamMapper_linear_bipolar(10.0,60,3600),
+			false,
+			repeatTypeSwitcher,
+			LAYOUT_CENTER_X,_("Repeat Time")
+		);
 		repeatTimeSlider->setUnits("s");
-		repeatTimeSlider->setValue(10.0);
 
 		repeatTypeSwitcher->setCurrent(0);
 

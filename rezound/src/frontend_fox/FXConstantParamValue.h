@@ -28,18 +28,18 @@
 
 #include "../backend/CSound_defs.h"
 
+#include "AActionParamMapper.h"
+
 class CNestedDataFile;
 
 class FXConstantParamValue : public FXVerticalFrame
 {
 	FXDECLARE(FXConstantParamValue);
 public:
-	typedef const double (*f_at_xs)(const double x,const int scalar);
-
 	// display as a slider and a value entry (with optional scalar control)
 	// interpretValue should return the value of the slider at the given x where 0<=x<=1 and uninterpretValue should do the inverse
 	// minScalar and maxScalar are the min and max values of the scalar spinner, if they are equal, the scalar spinner will not be shown
-	FXConstantParamValue(f_at_xs interpretValue,f_at_xs uninterpretValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton,FXComposite *p,int opts,const char *name);
+	FXConstantParamValue(AActionParamMapper *valueMapper,bool showInverseButton,FXComposite *p,int opts,const char *name);
 	virtual ~FXConstantParamValue();
 
 	long onSliderChange(FXObject *sender,FXSelector sel,void *ptr);
@@ -148,15 +148,12 @@ private:
 		FXLabel *scalarLabel;
 		FXSpinner *scalarSpinner;
 
-	f_at_xs interpretValue;
-	f_at_xs uninterpretValue;
-	const int initScalar;
+	AActionParamMapper *valueMapper;
 
 	mutable double retValue;
 
 	void prvSetValue(const double value);
 	double defaultValue;
-
 
 	FXFont *textFont;
 };

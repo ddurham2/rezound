@@ -28,19 +28,7 @@
 #include "../backend/unit_conv.h"
 #include "../backend/LADSPA/utils.h"
 
-
-static const double interpretValue_linear_real(const double x,const int s) { return x*s; }
-static const double uninterpretValue_linear_real(const double x,const int s) { return x/s; }
-
-static const double interpretValue_linear_int(const double x,const int s) { return floor(x*s); }
-static const double uninterpretValue_linear_int(const double x,const int s) { return floor(x)/s; }
-
-#warning I still need to make these behave logarithmically
-static const double interpretValue_logarithmic_real(const double x,const int s) { return x*s; }
-static const double uninterpretValue_logarithmic_real(const double x,const int s) { return x/s; }
-
-static const double interpretValue_logarithmic_int(const double x,const int s) { return floor(x*s); }
-static const double uninterpretValue_logarithmic_int(const double x,const int s) { return floor(x)/s; }
+#include "ActionParamMappers.h"
 
 
 CLADSPAActionDialog::CLADSPAActionDialog(FXWindow *mainWindow,const LADSPA_Descriptor *_desc) :
@@ -146,15 +134,12 @@ CLADSPAActionDialog::CLADSPAActionDialog(FXWindow *mainWindow,const LADSPA_Descr
 					if(LADSPA_IS_HINT_BOUNDED_ABOVE(portRangeHintDesc))
 						maxValue=ceil(portRangeHint.UpperBound);
 
+					// ??? working on it
 	//??? really need to use min and max in interpret/uninterpret value since I'm using the ranges of the scalar this way
 
 	// better yet.. when the min and maxs are less than 1 (so the scalars are less 
 	// than 1) change the implementation for the interpret and uninterpret values 
 	// some how
-	//
-	// perhaps change interpret and uninterpret to function objects instead of 
-	// functions so that I can instantiate real limits and not use the scalar for 
-	// that
 
 					if(LADSPA_IS_HINT_SAMPLE_RATE(portRangeHintDesc))
 					{
@@ -178,17 +163,22 @@ CLADSPAActionDialog::CLADSPAActionDialog(FXWindow *mainWindow,const LADSPA_Descr
 
 					if(LADSPA_IS_HINT_LOGARITHMIC(portRangeHintDesc))
 					{
+						#warning needs to be logrithmic
+						CActionParamMapper_linear *m=new CActionParamMapper_linear(defaultValue,(int)initialScalar,(int)minValue,(int)maxValue);
+
 						if(LADSPA_IS_HINT_INTEGER(portRangeHintDesc))
-							addSlider(p2,pluginDesc->PortNames[t],"",interpretValue_logarithmic_int,uninterpretValue_logarithmic_int,NULL,defaultValue, (int)minValue,(int)maxValue,(int)initialScalar,false);
-						else
-							addSlider(p2,pluginDesc->PortNames[t],"",interpretValue_logarithmic_real,uninterpretValue_logarithmic_real,NULL,defaultValue, (int)minValue,(int)maxValue,(int)initialScalar,false);
+							m->floorTheValue(true);
+
+						addSlider(p2,pluginDesc->PortNames[t],"",m,NULL,false);
 					}
 					else // linear
 					{
+						CActionParamMapper_linear *m=new CActionParamMapper_linear(defaultValue,(int)initialScalar,(int)minValue,(int)maxValue);
+
 						if(LADSPA_IS_HINT_INTEGER(portRangeHintDesc))
-							addSlider(p2,pluginDesc->PortNames[t],"",interpretValue_linear_int,uninterpretValue_linear_int,NULL,defaultValue, (int)minValue,(int)maxValue,(int)initialScalar,false);
-						else
-							addSlider(p2,pluginDesc->PortNames[t],"",interpretValue_linear_real,uninterpretValue_linear_real,NULL,defaultValue, (int)minValue,(int)maxValue,(int)initialScalar,false);
+							m->floorTheValue(true);
+
+						addSlider(p2,pluginDesc->PortNames[t],"",m,NULL,false);
 					}
 				}
 			}

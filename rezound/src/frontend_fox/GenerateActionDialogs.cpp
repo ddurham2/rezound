@@ -20,7 +20,8 @@
 
 #include "GenerateActionDialogs.h"
 #include "../backend/unit_conv.h"
-#include "interpretValue.h"
+
+#include "ActionParamMappers.h"
 
 // --- Generate Noise -------------------------
 
@@ -40,10 +41,29 @@ CGenerateNoiseDialog::CGenerateNoiseDialog(FXWindow *mainWindow) :
 	void *p0=newVertPanel(NULL);
 		void *p1=newHorzPanel(p0);
 
-		addSlider(p1,N_("Length"),"s",interpretValue_scalar,uninterpretValue_scalar,NULL,1.0,1,10000,1,false);
+		addSlider(p1,
+			N_("Length"),
+			"s",
+			new CActionParamMapper_linear(1.0,1,1,10000),
+			NULL,
+			false
+		);
 
-		addSlider(p1,N_("Volume"),"dBFS",interpretValue_dBFS,uninterpretValue_dBFS,dB_to_scalar,-6.0,0,0,0,false);
-		addSlider(p1,N_("Max Particle Velocity"),"%",interpretValue_scalar,uninterpretValue_scalar,NULL,50.0,100,100,100,false);
+		addSlider(p1,
+			N_("Volume"),
+			"dBFS",
+			new CActionParamMapper_dBFS(-6.0),
+			dB_to_scalar,
+			false
+		);
+
+		addSlider(p1,
+			N_("Max Particle Velocity"),
+			"%",
+			new CActionParamMapper_linear(50.0,100),
+			NULL,
+			false
+		);
 
 	// these need to follow the order in the enum in CGenerateNoiseAction.cpp
 	items.clear();
@@ -55,7 +75,10 @@ CGenerateNoiseDialog::CGenerateNoiseDialog(FXWindow *mainWindow) :
 	//items.push_back("Blue");
 	//items.push_back("Violet");
 	//items.push_back("Binary");
-	FXComboTextParamValue *noiseColorComboBox=addComboTextEntry(p0,N_("Noise Color"),items);
+	FXComboTextParamValue *noiseColorComboBox=addComboTextEntry(p0,
+		N_("Noise Color"),
+		items
+	);
 		noiseColorComboBox->setTarget(this);
 		noiseColorComboBox->setSelector(ID_NOISE_COLOR_COMBOBOX);
 
@@ -68,7 +91,10 @@ CGenerateNoiseDialog::CGenerateNoiseDialog(FXWindow *mainWindow) :
 	items.push_back(_("Mono"));
 	items.push_back(_("Inverse Mono"));
 	//items.push_back("Spatial stereo");
-	addComboTextEntry(p0,_("Stereo Image"),items);
+	addComboTextEntry(p0,
+		_("Stereo Image"),
+		items
+	);
 		
 }
 
@@ -98,18 +124,40 @@ CGenerateToneDialog::CGenerateToneDialog(FXWindow *mainWindow) :
 #warning make some presets
 	void *p0=newVertPanel(NULL);
 		void *p1=newHorzPanel(p0);
-			addSlider(p1,N_("Frequency"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,60.0,0,48000,440,false);
-			addSlider(p1,N_("Length"),"s",interpretValue_scalar,uninterpretValue_scalar,NULL,1.0,1,10000,1,false);
-			addSlider(p1,N_("Volume"),"dBFS",interpretValue_dBFS,uninterpretValue_dBFS,dB_to_scalar,-6.0,0,0,0,false);
+			addSlider(p1,
+				N_("Frequency"),
+				"Hz",
+				new CActionParamMapper_linear(60.0,440,0,48000),
+				NULL,
+				false
+			);
+
+			addSlider(p1,
+				N_("Length"),
+				"s",
+				new CActionParamMapper_linear(1.0,1,1,10000),
+				NULL,
+				false
+			);
+
+			addSlider(p1,
+				N_("Volume"),
+				"dBFS",
+				new CActionParamMapper_dBFS(-6.0),
+				dB_to_scalar,
+				false
+			);
 
 		vector<string> toneTypes;
+			// these must match the order that they're defined in CGenerateToneAction::ToneTypes
 		toneTypes.push_back(_("Sine Wave"));
 		toneTypes.push_back(_("Square Wave"));
 		toneTypes.push_back(_("Rising Sawtooth Wave"));
 		toneTypes.push_back(_("Falling Sawtooth Wave"));
 		toneTypes.push_back(_("Triangle Wave"));
-		addComboTextEntry(p0,N_("Tone Type"),toneTypes); // these must match the order that they're defined in CGenerateToneAction::ToneTypes
-
-
+		addComboTextEntry(p0,
+			N_("Tone Type"),
+			toneTypes
+		); 
 }
 

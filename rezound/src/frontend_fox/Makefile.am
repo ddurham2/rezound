@@ -33,6 +33,7 @@ libfrontend_la_SOURCES= \
 			CChannelSelectDialog.cpp \
 			CCrossfadeEdgesDialog.cpp \
 			CActionParamDialog.cpp \
+			AActionParamMapper.cpp \
 			CCueDialog.cpp \
 			CCueListDialog.cpp \
 			CMainWindow.cpp \
@@ -117,6 +118,7 @@ noinst_HEADERS=\
 	CChannelSelectDialog.h \
 	CCrossfadeEdgesDialog.h \
 	CActionParamDialog.h \
+	AActionParamMapper.h \
 	CCueDialog.h \
 	CCueListDialog.h \
 	CMainWindow.h \
@@ -163,7 +165,7 @@ noinst_HEADERS=\
 	rememberShow.h \
 	custom_cursors.h \
 	utils.h \
-	interpretValue.h \
+	ActionParamMappers.h \
 	settings.h 
 
 EXTRA_DIST=convert_images.sh

@@ -136,13 +136,13 @@ FXPacker *CActionParamDialog::newVertPanel(void *parent,bool createBorder)
 		return new FXVerticalFrame((FXPacker *)parent,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0);
 }
 
-FXConstantParamValue *CActionParamDialog::addSlider(void *parent,const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton)
+FXConstantParamValue *CActionParamDialog::addSlider(void *parent,const string name,const string units,AActionParamMapper *valueMapper,f_at_x optRetValueConv,bool showInverseButton)
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
-	FXConstantParamValue *slider=new FXConstantParamValue(interpretValue,uninterpretValue,minScalar,maxScalar,initScalar,showInverseButton,(FXPacker *)parent,0,name.c_str());
+	FXConstantParamValue *slider=new FXConstantParamValue(valueMapper,showInverseButton,(FXPacker *)parent,0,name.c_str());
 	slider->setUnits(units.c_str());
-	slider->setValue(initialValue);
+	slider->setValue(valueMapper->getDefaultValue());
 	parameters.push_back(make_pair(ptConstant,slider));
 	retValueConvs.push_back(optRetValueConv);
 
@@ -252,25 +252,25 @@ FXCheckBoxParamValue *CActionParamDialog::getCheckBoxParam(const string name)
 	throw runtime_error(string(__func__)+" -- widget with name, "+name+", is not a checkbox");
 }
 
-FXGraphParamValue *CActionParamDialog::addGraph(void *parent,const string name,const string horzAxisLabel,const string horzUnits,FXGraphParamValue::f_at_xs horzInterpretValue,FXGraphParamValue::f_at_xs horzUninterpretValue,const string vertAxisLabel,const string vertUnits,FXGraphParamValue::f_at_xs vertInterpretValue,FXGraphParamValue::f_at_xs vertUninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar)
+FXGraphParamValue *CActionParamDialog::addGraph(void *parent,const string name,const string horzAxisLabel,const string horzUnits,AActionParamMapper *horzValueMapper,const string vertAxisLabel,const string vertUnits,AActionParamMapper *vertValueMapper,f_at_x optRetValueConv)
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
-	FXGraphParamValue *graph=new FXGraphParamValue(name.c_str(),minScalar,maxScalar,initialScalar,(FXPacker *)parent,LAYOUT_FILL_X|LAYOUT_FILL_Y);
-	graph->setHorzParameters(horzAxisLabel,horzUnits,horzInterpretValue,horzUninterpretValue);
-	graph->setVertParameters(vertAxisLabel,vertUnits,vertInterpretValue,vertUninterpretValue);
+	FXGraphParamValue *graph=new FXGraphParamValue(name.c_str(),(FXPacker *)parent,LAYOUT_FILL_X|LAYOUT_FILL_Y);
+	graph->setHorzParameters(horzAxisLabel,horzUnits,horzValueMapper);
+	graph->setVertParameters(vertAxisLabel,vertUnits,vertValueMapper);
 	parameters.push_back(make_pair(ptGraph,graph));
 	retValueConvs.push_back(optRetValueConv);
 
 	return graph;
 }
 
-FXGraphParamValue *CActionParamDialog::addGraphWithWaveform(void *parent,const string name,const string vertAxisLabel,const string vertUnits,FXGraphParamValue::f_at_xs vertInterpretValue,FXGraphParamValue::f_at_xs vertUninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar)
+FXGraphParamValue *CActionParamDialog::addGraphWithWaveform(void *parent,const string name,const string vertAxisLabel,const string vertUnits,AActionParamMapper *vertValueMapper,f_at_x optRetValueConv)
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
-	FXGraphParamValue *graph=new FXGraphParamValue(name.c_str(),minScalar,maxScalar,initialScalar,(FXPacker *)parent,LAYOUT_FILL_X|LAYOUT_FILL_Y);
-	graph->setVertParameters(vertAxisLabel,vertUnits,vertInterpretValue,vertUninterpretValue);
+	FXGraphParamValue *graph=new FXGraphParamValue(name.c_str(),(FXPacker *)parent,LAYOUT_FILL_X|LAYOUT_FILL_Y);
+	graph->setVertParameters(vertAxisLabel,vertUnits,vertValueMapper);
 	parameters.push_back(make_pair(ptGraphWithWaveform,graph));
 	retValueConvs.push_back(optRetValueConv);
 

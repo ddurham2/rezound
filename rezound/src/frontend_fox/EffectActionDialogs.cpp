@@ -19,8 +19,9 @@
  */
 
 #include "EffectActionDialogs.h"
-#include "interpretValue.h"
-#include "../backend/unit_conv.h"
+
+#include "ActionParamMappers.h"
+
 
 // --- volume ---------------------------------
 
@@ -28,7 +29,13 @@ CNormalVolumeChangeDialog::CNormalVolumeChangeDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Volume Change"),"dB",interpretValue_bipolar_scalar,uninterpretValue_bipolar_scalar,dB_to_scalar,3.0,1,100,3,true);
+		addSlider(p,
+			N_("Volume Change"),
+			"dB",
+			new CActionParamMapper_linear_bipolar(3.0,3,100),
+			dB_to_scalar,
+			true
+		);
 }
 
 
@@ -37,18 +44,28 @@ CNormalGainDialog::CNormalGainDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,2.0,2,100,2,true);
+		addSlider(p,
+			N_("Gain"),
+			"x",
+			new CActionParamMapper_recipsym(2.0,2,2,100),
+			NULL,
+			true
+		);
+
 		// ??? add a check box for negation of gain
 }
-
-static const double interpretValue_gain_curve(const double x,const int s) { return x*s; }
-static const double uninterpretValue_gain_curve(const double x,const int s) { return x/s; }
 
 CAdvancedGainDialog::CAdvancedGainDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addGraphWithWaveform(p,N_("Gain Curve"),N_("Gain"),"x",interpretValue_gain_curve,uninterpretValue_gain_curve,NULL,-10,10,2);
+		addGraphWithWaveform(p,
+			N_("Gain Curve"),
+			N_("Gain"),
+			"x",
+			new CActionParamMapper_linear(1.0,2,-10,10),
+			NULL
+		);
 }
 
 
@@ -59,14 +76,26 @@ CNormalRateChangeDialog::CNormalRateChangeDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Rate Change"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,2.0,1,100,2,true);
+		addSlider(p,
+			N_("Rate Change"),
+			"x",
+			new CActionParamMapper_recipsym(2.0,2,1,100),
+			NULL,
+			true
+		);
 }
 
 CAdvancedRateChangeDialog::CAdvancedRateChangeDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addGraphWithWaveform(p,N_("Rate Curve"),N_("Rate"),"x",interpretValue_scalar,uninterpretValue_scalar,NULL,1,100,2);
+		addGraphWithWaveform(p,
+			N_("Rate Curve"),
+			N_("Rate"),
+			"x",
+			new CActionParamMapper_linear(1.0,2,1,100),
+			NULL
+		);
 }
 
 
@@ -75,18 +104,51 @@ CAdvancedRateChangeDialog::CAdvancedRateChangeDialog(FXWindow *mainWindow) :
 
 // --- flange ------------------------------
 
-static const double interpretValue_flange_feedback(const double x,const int s) { return unitRange_to_otherRange_linear(x,-0.95,0.95); }
-static const double uninterpretValue_flange_feedback(const double x,const int s) { return otherRange_to_unitRange_linear(x,-0.95,0.95); }
-
 CFlangeDialog::CFlangeDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Delay"),"ms",interpretValue_scalar,uninterpretValue_scalar,NULL,2.0,2,10,2,false);
-		addSlider(p,N_("Wet Gain"),"x",interpretValue_scalar,uninterpretValue_scalar,NULL,1.0,-20,20,2,false);
-		addSlider(p,N_("Dry Gain"),"x",interpretValue_scalar,uninterpretValue_scalar,NULL,1.0,-20,20,2,false);
-		addLFO(p,N_("Flange LFO"),"ms",N_("LFO Depth"),20,"Hz",20,true);
-		addSlider(p,N_("Feedback"),"x",interpretValue_flange_feedback,uninterpretValue_flange_feedback,NULL,0.0,0,0,0,true);
+		addSlider(p,
+			N_("Delay"),
+			"ms",
+			new CActionParamMapper_linear(2.0,2,2,100),
+			NULL,
+			false
+		);
+
+		addSlider(p,
+			N_("Wet Gain"),
+			"x",
+			new CActionParamMapper_linear(1.0,2,-20,20),
+			NULL,
+			false
+		);
+
+		addSlider(p,
+			N_("Dry Gain"),
+			"x",
+			new CActionParamMapper_linear(1.0,2,-20,10),
+			NULL,
+			false
+		);
+
+		addLFO(p,
+			N_("Flange LFO"),
+			"ms",
+			N_("LFO Depth"),
+			20,
+			"Hz",
+			20,
+			true
+		);
+
+		addSlider(p,
+			N_("Feedback"),
+			"x",
+			new CActionParamMapper_linear_range(0.0,-0.95,0.95),
+			NULL,
+			true
+		);
 }
 
 
@@ -99,9 +161,29 @@ CSimpleDelayDialog::CSimpleDelayDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Delay"),"ms",interpretValue_scalar,uninterpretValue_scalar,NULL,250.0,1,10000,1000,false);
-		addSlider(p,N_("Gain"),"x",interpretValue_scalar,uninterpretValue_scalar,NULL,0.75,-20,20,2,false);
-		addSlider(p,N_("Feedback"),"x",interpretValue_scalar,uninterpretValue_scalar,NULL,0.35,-5,5,1,false);
+		addSlider(p,
+			N_("Delay"),
+			"ms",
+			new CActionParamMapper_linear(250.0,1000,1,10000),
+			NULL,
+			false
+		);
+
+		addSlider(p,
+			N_("Gain"),
+			"x",
+			new CActionParamMapper_linear(0.75,2,-20,20),
+			NULL,
+			false
+		);
+
+		addSlider(p,
+			N_("Feedback"),
+			"x",
+			new CActionParamMapper_linear(0.35,1,-5,5),
+			NULL,
+			false
+		);
 }
 
 
@@ -110,17 +192,36 @@ CSimpleDelayDialog::CSimpleDelayDialog(FXWindow *mainWindow) :
 
 // --- quantize ----------------------------
 
-static const double interpretValue_quantize(const double x,const int s) { return floor(max(1.0,x*s)); }
-static const double uninterpretValue_quantize(const double x,const int s) { return x/s; }
-
 CQuantizeDialog::CQuantizeDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Input Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,1.0,2,100,2,true);
-		addSlider(p,N_("Quantum Count"),"",interpretValue_quantize,uninterpretValue_quantize,NULL,8,4,1000000,32,false);
+		addSlider(p,
+			N_("Input Gain"),
+			"x",
+			new CActionParamMapper_recipsym(1.0,2,2,100),
+			NULL,
+			true
+		);
+
+		CActionParamMapper_linear_min_to_scalar *m=new CActionParamMapper_linear_min_to_scalar(8.0,1.0,32,4,1000000);
+		m->floorTheValue(true);
+		addSlider(p,
+			N_("Quantum Count"),
+			"",
+			m,
+			NULL,
+			false
+		);
 			setTipText("Quantum Count",_("The Number of Possible Sample Values Above Zero"));
-		addSlider(p,N_("Output Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,1.0,2,100,2,true);
+
+		addSlider(p,
+			N_("Output Gain"),
+			"x",
+			new CActionParamMapper_recipsym(1.0,2,2,100),
+			NULL,
+			true
+		);
 
 }
 
@@ -134,8 +235,16 @@ CDistortionDialog::CDistortionDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addGraph(p,N_("Curve"),N_("Input"),"dBFS",interpretValue_dBFS,uninterpretValue_dBFS,N_("Output"),"dBFS",interpretValue_dBFS,uninterpretValue_dBFS,NULL,0,0,0);
-
+		addGraph(p,
+			N_("Curve"),
+			N_("Input"),
+			"dBFS",
+			new CActionParamMapper_dBFS(0),
+			N_("Output"),
+			"dBFS",
+			new CActionParamMapper_dBFS(0),
+			NULL
+		);
 }
 
 
@@ -148,9 +257,24 @@ CVariedRepeatDialog::CVariedRepeatDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addLFO(p,N_("LFO"),"","",0,"Hz",200,true);
-		addSlider(p,N_("Time"),"s",interpretValue_scalar,uninterpretValue_scalar,NULL,4.0,1,100,10,false);
-			// ??? need a checkbox that enables a gain parameter to make it mix ontop of the current audio instead of inserting into it
-}
+		addLFO(p,
+			N_("LFO"),
+			"",
+			"", // no amp units (so it won't show
+			0,
+			"Hz",
+			200,
+			true
+		);
 
+		addSlider(p,
+			N_("Time"),
+			"s",
+			new CActionParamMapper_linear(4.0,10,1,100),
+			NULL,
+			false
+		);
+
+		// ??? need a checkbox that enables a gain parameter to make it mix ontop of the current audio instead of inserting into it
+}
 

@@ -39,6 +39,7 @@ public:
 
 // --- arbitrary FIR filter --------------
 
+class CActionParamMapper_arbitraryFIRFilter_freq;
 class CArbitraryFIRFilterDialog : public CActionParamDialog
 {
 	FXDECLARE(CArbitraryFIRFilterDialog);
@@ -57,6 +58,8 @@ public:
 
 protected:
 	CArbitraryFIRFilterDialog() {}
+
+	CActionParamMapper_arbitraryFIRFilter_freq *freqMapper;
 };
 
 
@@ -91,6 +94,8 @@ protected:
 	bool validateOnOkay();
 
 	const string getExplanation() const;
+
+	CActionParamMapper_arbitraryFIRFilter_freq *freqMapper;
 };
 
 

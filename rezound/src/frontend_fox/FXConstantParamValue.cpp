@@ -18,6 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
+#warning I might want to reset the range on the scalar each time an action dialog is shown so Id need a method to update the widget
+
 #include "FXConstantParamValue.h"
 
 #include <stdlib.h>
@@ -61,7 +63,7 @@ FXIMPLEMENT(FXConstantParamValue,FXVerticalFrame,FXConstantParamValueMap,ARRAYNU
 
 #include "utils.h"
 
-FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _uninterpretValue,const int minScalar,const int maxScalar,const int _initScalar,bool showInverseButton,FXComposite *p,int opts,const char *_name) :
+FXConstantParamValue::FXConstantParamValue(AActionParamMapper *_valueMapper,bool showInverseButton,FXComposite *p,int opts,const char *_name) :
 	FXVerticalFrame(p,opts|FRAME_RAISED | LAYOUT_FILL_Y|LAYOUT_CENTER_X,0,0,0,0, 4,4,2,2, 0,0),
 
 	name(_name),
@@ -84,12 +86,9 @@ FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _unin
 		scalarLabel(NULL),
 		scalarSpinner(NULL),
 
-	interpretValue(_interpretValue),
-	uninterpretValue(_uninterpretValue),
-	initScalar(_initScalar),
+	valueMapper(_valueMapper),
 
 	textFont(getApp()->getNormalFont())
-
 {
 	ASSURE_HEIGHT(middleFrame,120); // assure that the slider will be this many pixels tall
 
@@ -104,14 +103,14 @@ FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _unin
 	halfLabel->setTarget(this);
 	halfLabel->setSelector(ID_MIDDLE_LABEL);
 
-	if(minScalar!=maxScalar)
+	if(valueMapper->getMinScalar()!=valueMapper->getMaxScalar())
 	{
 		scalarPanel=new FXHorizontalFrame(this,LAYOUT_BOTTOM|LAYOUT_FILL_X | JUSTIFY_CENTER_X, 0,0,0,0, 2,2,2,2, 0,0);
 			scalarLabel=new FXLabel(scalarPanel,"Scalar",NULL, LAYOUT_CENTER_Y);
 			scalarSpinner=new FXSpinner(scalarPanel,5,this,ID_SCALAR_SPINNER,SPIN_NORMAL | LAYOUT_CENTER_Y | FRAME_SUNKEN|FRAME_THICK);
 
-		scalarSpinner->setRange(minScalar,maxScalar);
-		scalarSpinner->setValue(initScalar);
+		scalarSpinner->setRange(valueMapper->getMinScalar(),valueMapper->getMaxScalar());
+		scalarSpinner->setValue(valueMapper->getScalar());
 	}
 
 	slider->setRange(0,10000);
@@ -122,6 +121,8 @@ FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _unin
 	slider->setValue(0);
 
 	updateNumbers();
+
+	setValue(valueMapper->getDefaultValue());
 
 	setFontOfAllChildren(this,textFont);
 }
@@ -139,20 +140,24 @@ void FXConstantParamValue::setUnits(const FXString _units)
 	updateNumbers();
 }
 
-#define GET_SCALAR_VALUE ( scalarSpinner==NULL ? initScalar : scalarSpinner->getValue()  )
+#define GET_SCALAR_VALUE ( scalarSpinner==NULL ? valueMapper->getDefaultScalar() : scalarSpinner->getValue()  )
 #define SET_SCALAR_VALUE(v) { if(scalarSpinner!=NULL) scalarSpinner->setValue(v); }
 
 long FXConstantParamValue::onSliderChange(FXObject *sender,FXSelector sel,void *ptr)
 {
-	retValue=interpretValue((double)slider->getValue()/10000.0,GET_SCALAR_VALUE);
-	valueTextBox->setText((istring(retValue,7,4)).c_str());
+	retValue=valueMapper->interpretValue((double)slider->getValue()/10000.0);
+	if(retValue==floor(retValue))
+		valueTextBox->setText((istring(floor(retValue))).c_str());
+	else
+		valueTextBox->setText((istring(retValue,7,4)).c_str());
 	return 1;
 }
 
 long FXConstantParamValue::onScalarSpinnerChange(FXObject *sender,FXSelector sel,void *ptr)
 {
-	slider->setValue((int)(uninterpretValue(retValue,GET_SCALAR_VALUE)*10000.0));
-	retValue=interpretValue((double)slider->getValue()/10000.0,GET_SCALAR_VALUE);
+	valueMapper->setScalar(GET_SCALAR_VALUE);
+	slider->setValue((int)(valueMapper->uninterpretValue(retValue)*10000.0));
+	retValue=valueMapper->interpretValue((double)slider->getValue()/10000.0);
 	valueTextBox->setText((istring(retValue,7,4)).c_str());
 	updateNumbers();
 	return 1;
@@ -161,8 +166,8 @@ long FXConstantParamValue::onScalarSpinnerChange(FXObject *sender,FXSelector sel
 long FXConstantParamValue::onValueTextBoxChange(FXObject *sender,FXSelector sel,void *ptr)
 {
 		// check range if uninterpretValue does that
-	retValue=interpretValue(uninterpretValue(atof(valueTextBox->getText().text()),GET_SCALAR_VALUE),GET_SCALAR_VALUE);
-	slider->setValue((int)(uninterpretValue(retValue,GET_SCALAR_VALUE)*10000.0));
+	retValue=valueMapper->interpretValue(valueMapper->uninterpretValue(atof(valueTextBox->getText().text())));
+	slider->setValue((int)(valueMapper->uninterpretValue(retValue)*10000.0));
 
 	return 1;
 }
@@ -183,9 +188,9 @@ long FXConstantParamValue::onMiddleLabelClick(FXObject *sender,FXSelector sel,vo
 
 void FXConstantParamValue::updateNumbers()
 {
-	minLabel->setText(istring(interpretValue(0.0,GET_SCALAR_VALUE),3,2).c_str()+units);
-	halfLabel->setText(istring(interpretValue(0.5,GET_SCALAR_VALUE),3,2).c_str()+units);
-	maxLabel->setText(istring(interpretValue(1.0,GET_SCALAR_VALUE),3,2).c_str()+units);
+	minLabel->setText(istring(valueMapper->interpretValue(0.0),3,2).c_str()+units);
+	halfLabel->setText(istring(valueMapper->interpretValue(0.5),3,2).c_str()+units);
+	maxLabel->setText(istring(valueMapper->interpretValue(1.0),3,2).c_str()+units);
 
 	onSliderChange(NULL,0,NULL);
 }
@@ -204,18 +209,22 @@ void FXConstantParamValue::setValue(const double value)
 void FXConstantParamValue::prvSetValue(const double value)
 {
 	retValue=value;
-	slider->setValue((int)(uninterpretValue(value,GET_SCALAR_VALUE)*10000.0));
-	valueTextBox->setText((istring(retValue,7,4)).c_str());
+	slider->setValue((int)(valueMapper->uninterpretValue(value)*10000.0));
+	if(retValue==floor(retValue))
+		valueTextBox->setText((istring(floor(retValue))).c_str());
+	else
+		valueTextBox->setText((istring(retValue,7,4)).c_str());
 }
 
 const int FXConstantParamValue::getScalar() const
 {
-	return GET_SCALAR_VALUE;
+	return valueMapper->getScalar();
 }
 
 void FXConstantParamValue::setScalar(const int scalar)
 {
-	SET_SCALAR_VALUE(scalar);
+	valueMapper->setScalar(scalar);
+	SET_SCALAR_VALUE(valueMapper->getScalar());
 	updateNumbers();
 }
 
@@ -282,15 +291,11 @@ void FXConstantParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
 	const string key=prefix DOT getName();
 
-	const double value=f->keyExists(key DOT "value") ? f->getValue<double>(key DOT "value") : defaultValue;
-	const int scalar=f->keyExists(key DOT "scalar") ? f->getValue<int>(key DOT "scalar") : initScalar;
+	const double value=f->keyExists(key DOT "value") ? f->getValue<double>(key DOT "value") : valueMapper->getDefaultValue();
+	const int scalar=f->keyExists(key DOT "scalar") ? f->getValue<int>(key DOT "scalar") : valueMapper->getDefaultScalar();
 
-	// do it twice.. because setting one before the other may cause a range problem.. by the second time, the range shouldn't be a problem
-	prvSetValue(value);
 	setScalar(scalar);
-
 	prvSetValue(value);
-	setScalar(scalar);
 
 }
 

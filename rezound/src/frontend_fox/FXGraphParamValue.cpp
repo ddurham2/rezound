@@ -315,12 +315,10 @@ FXDEFMAP(FXGraphParamValue) FXGraphParamValueMap[]=
 
 FXIMPLEMENT(FXGraphParamValue,FXVerticalFrame,FXGraphParamValueMap,ARRAYNUMBER(FXGraphParamValueMap))
 
-FXGraphParamValue::FXGraphParamValue(const char *_name,const int minScalar,const int maxScalar,const int _initScalar,FXComposite *p,int opts,int x,int y,int w,int h) :
+FXGraphParamValue::FXGraphParamValue(const char *_name,FXComposite *p,int opts,int x,int y,int w,int h) :
 	FXVerticalFrame(p,opts|FRAME_RAISED,x,y,w,h, 0,0,0,0, 0,0),
 
 	name(_name),
-
-	initScalar(_initScalar),
 
 	graphPanel(new FXPacker(this,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
 		vertDeformPanel(new FXVerticalFrame(graphPanel,FRAME_NONE | LAYOUT_SIDE_RIGHT|LAYOUT_FILL_Y, 0,0,0,0, 2,2,0,0, 0,0)),
@@ -348,13 +346,11 @@ FXGraphParamValue::FXGraphParamValue(const char *_name,const int minScalar,const
 
 	horzAxisLabel(""),
 	horzUnits(""),
-	horzInterpretValue(NULL),
-	horzUninterpretValue(NULL),
+	horzValueMapper(NULL),
 
 	vertAxisLabel(""),
 	vertUnits(""),
-	vertInterpretValue(NULL),
-	vertUninterpretValue(NULL),
+	vertValueMapper(NULL),
 
 	backBuffer(new FXImage(getApp())),
 
@@ -384,14 +380,6 @@ FXGraphParamValue::FXGraphParamValue(const char *_name,const int minScalar,const
 	vertDeformSlider->setTipText("Vertically Deform the Nodes Toward the Top or Bottom\nRight-Click to Reset to the Middle");
 
 
-
-	if(minScalar!=maxScalar)
-	{
-		scalarLabel=new FXLabel(buttonPanel,"Scalar",NULL,LABEL_NORMAL|LAYOUT_CENTER_Y);
-		scalarSpinner=new FXSpinner(buttonPanel,5,this,ID_SCALAR_SPINNER,SPIN_NORMAL|FRAME_SUNKEN|FRAME_THICK|LAYOUT_CENTER_Y);
-		scalarSpinner->setRange(minScalar,maxScalar);
-		scalarSpinner->setValue(initScalar);
-	}
 
 	new FXButton(buttonPanel,"\tClear to Normal",FOXIcons->graph_clear,this,ID_CLEAR_BUTTON);
 	new FXButton(buttonPanel,"\tFlip Graph Horizontally",FOXIcons->graph_horz_flip,this,ID_HORZ_FLIP_BUTTON);
@@ -425,8 +413,6 @@ void FXGraphParamValue::setSound(CSound *_sound,sample_pos_t _start,sample_pos_t
 
 	horzAxisLabel="Time";
 	horzUnits="s";
-	horzInterpretValue=NULL;
-	horzUninterpretValue=NULL;
 
 	// make sure that the back buffer re-renders
 	onGraphPanelResize(NULL,0,NULL);
@@ -434,23 +420,31 @@ void FXGraphParamValue::setSound(CSound *_sound,sample_pos_t _start,sample_pos_t
 	clearStatus();
 }
 
-void FXGraphParamValue::setHorzParameters(const string horzAxisLabel,const string horzUnits,f_at_xs interpretValue,f_at_xs uninterpretValue)
+void FXGraphParamValue::setHorzParameters(const string horzAxisLabel,const string horzUnits,AActionParamMapper *_horzValueMapper)
 {
 	this->horzAxisLabel=horzAxisLabel;
 	this->horzUnits=horzUnits;
-	horzInterpretValue=interpretValue;
-	horzUninterpretValue=uninterpretValue;
+	horzValueMapper=_horzValueMapper;
 
 	clearStatus();
 	updateNumbers();
 }
 
-void FXGraphParamValue::setVertParameters(const string vertAxisLabel,const string vertUnits,f_at_xs interpretValue,f_at_xs uninterpretValue)
+void FXGraphParamValue::setVertParameters(const string vertAxisLabel,const string vertUnits,AActionParamMapper *_vertValueMapper)
 {
 	this->vertAxisLabel=vertAxisLabel;
 	this->vertUnits=vertUnits;
-	vertInterpretValue=interpretValue;
-	vertUninterpretValue=uninterpretValue;
+	vertValueMapper=_vertValueMapper;
+
+	delete scalarLabel;
+	delete scalarSpinner;
+	if(vertValueMapper->getMinScalar()!=vertValueMapper->getMaxScalar())
+	{
+		scalarLabel=new FXLabel(buttonPanel,"Scalar",NULL,LABEL_NORMAL|LAYOUT_CENTER_Y);
+		scalarSpinner=new FXSpinner(buttonPanel,5,this,ID_SCALAR_SPINNER,SPIN_NORMAL|FRAME_SUNKEN|FRAME_THICK|LAYOUT_CENTER_Y);
+		scalarSpinner->setRange(vertValueMapper->getMinScalar(),vertValueMapper->getMaxScalar());
+		scalarSpinner->setValue(vertValueMapper->getDefaultScalar());
+	}
 
 	clearStatus();
 	updateNumbers();
@@ -459,6 +453,8 @@ void FXGraphParamValue::setVertParameters(const string vertAxisLabel,const strin
 void FXGraphParamValue::clearNodes()
 {
 	nodes.clear();
+
+#warning could make use of the default values that the mapper returns for the initial nodes (use uninterpretValue here)
 
 	// add endpoints
 	CGraphParamValueNode first(0.0,0.5);
@@ -473,6 +469,8 @@ void FXGraphParamValue::clearNodes()
 
 long FXGraphParamValue::onScalarSpinnerChange(FXObject *sender,FXSelector sel,void *ptr)
 {
+	vertValueMapper->setScalar(scalarSpinner->getValue());
+	scalarSpinner->setValue(vertValueMapper->getScalar());
 	updateNumbers();
 	return 1;
 }
@@ -938,10 +936,10 @@ const CGraphParamValueNodeList &FXGraphParamValue::getNodes() const
 		retNodes[t].x=deformNodeX(retNodes[t].x,horzDeformSlider->getValue());
 		retNodes[t].y=deformNodeX(retNodes[t].y,vertDeformSlider->getValue());
 
-		if(horzInterpretValue!=NULL)
-			retNodes[t].x=horzInterpretValue(retNodes[t].x,0);
-		if(vertInterpretValue!=NULL)
-			retNodes[t].y=vertInterpretValue(retNodes[t].y,getScalar());
+		if(horzValueMapper!=NULL)
+			retNodes[t].x=horzValueMapper->interpretValue(retNodes[t].x);
+		if(vertValueMapper!=NULL)
+			retNodes[t].y=vertValueMapper->interpretValue(retNodes[t].y);
 	}
 
 	return retNodes;
@@ -1008,13 +1006,13 @@ void FXGraphParamValue::swapWith(FXGraphParamValue *src)
 
 const string FXGraphParamValue::getVertValueString(double vertValue) const
 {
-	return istring(vertInterpretValue(vertValue,getScalar()),5,3);
+	return istring(vertValueMapper->interpretValue(vertValue),5,3);
 }
 
 const string FXGraphParamValue::getHorzValueString(double horzValue) const
 {
 	if(sound==NULL)
-		return istring(horzInterpretValue(horzValue,0),5,3);
+		return istring(horzValueMapper->interpretValue(horzValue),5,3);
 	else
 		return sound->getTimePosition((sample_pos_t)((sample_fpos_t)(stop-start+1)*horzValue+start),3,false);
 }
@@ -1041,29 +1039,35 @@ void FXGraphParamValue::clearStatus()
 
 const int FXGraphParamValue::getScalar() const
 {
-	return scalarSpinner==NULL ? initScalar : scalarSpinner->getValue();
+	return scalarSpinner==NULL ? vertValueMapper->getDefaultScalar() : vertValueMapper->getScalar();
 }
 
 void FXGraphParamValue::setScalar(const int scalar)
 {
-	if(scalarSpinner!=NULL)
-		scalarSpinner->setValue(scalar);
+	vertValueMapper->setScalar(scalar);
+	if(scalarSpinner!=NULL) scalarSpinner->setValue(vertValueMapper->getScalar());
 }
 
 const int FXGraphParamValue::getMinScalar() const
 {
+	/*
 	FXint lo=0,hi=0;
 	if(scalarSpinner!=NULL)
 		scalarSpinner->getRange(lo,hi);
 	return lo;
+	*/
+	return vertValueMapper->getMinScalar();
 }
 
 const int FXGraphParamValue::getMaxScalar() const
 {
+	/*
 	FXint lo=0,hi=0;
 	if(scalarSpinner!=NULL)
 		scalarSpinner->getRange(lo,hi);
 	return hi;
+	*/
+	return vertValueMapper->getMaxScalar();
 }
 
 const string FXGraphParamValue::getName() const
@@ -1078,7 +1082,7 @@ void FXGraphParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 	if(f->keyExists(key DOT "scalar"))
 		setScalar(f->getValue<int>(key DOT "scalar"));
 	else	
-		setScalar(initScalar);
+		setScalar(vertValueMapper->getDefaultScalar());
 
 	nodes.clear();
 
@@ -1124,5 +1128,4 @@ void FXGraphParamValue::writeToFile(const string &prefix,CNestedDataFile *f) con
 	if(getMinScalar()!=getMaxScalar())
 		f->createValue<int>(key DOT "scalar",getScalar());
 }
-
 

@@ -19,12 +19,13 @@
  */
 
 #include "EditActionDialogs.h"
-#include "interpretValue.h"
 
 #include <istring>
 
 #include "../backend/CActionSound.h"
 #include "../backend/CSound.h"
+
+#include "ActionParamMappers.h"
 
 
 // --- insert silence -------------------------
@@ -234,7 +235,13 @@ CGrowOrSlideSelectionDialog::CGrowOrSlideSelectionDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newVertPanel(NULL);
-		addSlider(p,N_("Amount"),"s",interpretValue_scalar,uninterpretValue_scalar,NULL,1.0,1,3600,2,false);
+		addSlider(p,
+			N_("Amount"),
+			"s",
+			new CActionParamMapper_linear(1.0,2,1,3600),
+			NULL,
+			false
+		);
 		setTipText("Amount",_("Amount to Affect the Selection in Seconds"));
 
 		vector<string> items;

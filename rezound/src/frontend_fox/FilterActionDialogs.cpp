@@ -19,20 +19,40 @@
  */
 
 #include "FilterActionDialogs.h"
-#include "../backend/unit_conv.h"
-#include "interpretValue.h"
 
 #include "CStatusComm.h"
+
+#include "ActionParamMappers.h"
+#include "../backend/unit_conv.h"
+
+#include <vector>
 
 
 // --- convolution -----------------------
 
-static const double interpretValue_wetdry_mix(const double x,const int s) { return x*200.0-100.0; }
-static const double uninterpretValue_wetdry_mix(const double x,const int s) { return (x+100.0)/200.0; }
 
 static const double froo=log(80.0/(24.0+80.0))/log(0.5); // this is to make the middle come out 0.00dB
-static const double interpretValue_dB_gain(const double x,const int s) { return unitRange_to_otherRange_linear(pow(x,froo),-80,24); }
-static const double uninterpretValue_dB_gain(const double x,const int s) { return pow(otherRange_to_unitRange_linear(x,-80,24),1.0/froo); }
+class CActionParamMapper_dB_gain : public AActionParamMapper
+{
+public:
+	CActionParamMapper_dB_gain(double defaultValue) :
+		AActionParamMapper(defaultValue)
+	{
+	}
+
+	virtual ~CActionParamMapper_dB_gain() {}
+
+	double interpretValue(const double x)
+	{ 
+		return unitRange_to_otherRange_linear(pow(x,froo),-80,24);
+	}
+
+	double uninterpretValue(const double x)
+	{
+		return pow(otherRange_to_unitRange_linear(x,-80,24),1.0/froo);
+	}
+};
+
 
 CConvolutionFilterDialog::CConvolutionFilterDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
@@ -40,21 +60,76 @@ CConvolutionFilterDialog::CConvolutionFilterDialog(FXWindow *mainWindow) :
 	// ??? still need predelay sliders
 	void *p0=newVertPanel(NULL,true);
 			void *p1=newHorzPanel(p0,false);
-				addSlider(p1,N_("Wet/Dry Mix"),"%",interpretValue_wetdry_mix,uninterpretValue_wetdry_mix,NULL,50.0,0,0,0,true);
+				addSlider(p1,
+					N_("Wet/Dry Mix"),
+					"%",
+					new CActionParamMapper_linear_range(50,-100,100),
+					NULL,
+					true
+				);
 
-				addSlider(p1,N_("Input Lowpass"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,25000.0,5,100000,25000,false);
-				addSlider(p1,N_("Input Gain"),"dB",interpretValue_dB_gain,uninterpretValue_dB_gain,dB_to_scalar,0.0,0,0,0,false);
-				addSlider(p1,N_("Output Gain"),"dB",interpretValue_dB_gain,uninterpretValue_dB_gain,dB_to_scalar,0.0,0,0,0,false);
-				addSlider(p1,N_("Predelay"),"ms",interpretValue_scalar,uninterpretValue_scalar,NULL,50.0,1,500,100,false);
+				addSlider(p1,
+					N_("Input Lowpass"),
+					"Hz",
+					new CActionParamMapper_linear(25000.0,25000,5,100000),
+					NULL,
+					false
+				);
+
+				addSlider(p1,
+					N_("Input Gain"),
+					"dB",
+					new CActionParamMapper_dB_gain(0.0),
+					dB_to_scalar,
+					false
+				);
+
+				addSlider(p1,
+					N_("Output Gain"),
+					"dB",
+					new CActionParamMapper_dB_gain(0.0),
+					dB_to_scalar,
+					false
+				);
+
+				addSlider(p1,
+					N_("Predelay"),
+					"ms",
+					new CActionParamMapper_linear(50.0,100,1,500),
+					NULL,
+					false
+				);
+
 
 				void *p2=newVertPanel(p1,false);
 					addDiskEntityEntry(p2,N_("Filter Kernel"),"$share/impulse_hall1.wav",FXDiskEntityParamValue::detAudioFilename,_("The Audio File to Use as the Filter Kernel"));
 
 					void *p3=newHorzPanel(p2,false);
-						addSlider(p3,N_("FK Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,0.06667,1,50,30,true);
-						addSlider(p3,N_("FK Lowpass"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,25000.0,5,100000,25000,false);
+						addSlider(p3,
+							N_("FK Gain"),
+							"x",
+							new CActionParamMapper_recipsym(0.06667,30,1,50),
+							NULL,
+							true
+						);
+
+						addSlider(p3,
+							N_("FK Lowpass"),
+							"Hz",
+							new CActionParamMapper_linear(25000.0,25000,5,1000000),
+							NULL,
+							false
+						);
+
 						void *p4=newVertPanel(p3,false);
-							addSlider(p4,N_("FK Rate"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,1.0,2,10,2,true);
+							addSlider(p4,
+								N_("FK Rate"),
+								"x",
+								new CActionParamMapper_recipsym(1.0,2,2,10),
+								NULL,
+								true
+							);
+
 							addCheckBoxEntry(p4,N_("Reverse"),false);
 			p1=newHorzPanel(p0,false);
 				addCheckBoxEntry(p1,N_("Wrap Decay back to Beginning"),false);
@@ -66,28 +141,81 @@ CConvolutionFilterDialog::CConvolutionFilterDialog(FXWindow *mainWindow) :
 
 // --- arbitrary FIR filter --------------
 
-static unsigned gBaseFrequency=20; // is set dynamically at runtime in CArbitraryFIRFilterDialog::show (but would be better if these functions had user data *'s)
-static unsigned gNumberOfOctaves=11; // is set dynamically at runtime in CArbitraryFIRFilterDialog::show (but would be better if these functions had user data *'s)
-static const double interpretValue_freq(const double x,const int s) { return octave_to_freq(x*gNumberOfOctaves,gBaseFrequency); }
-static const double uninterpretValue_freq(const double x,const int s) { return freq_to_octave(x,gBaseFrequency)/gNumberOfOctaves; }
+class CActionParamMapper_arbitraryFIRFilter_freq : public AActionParamMapper
+{
+public:
+	// is set dynamically at runtime in by CArbitraryFIRFilterDialog
+	unsigned baseFrequency;
+	unsigned numberOfOctaves;
 
-// intention: 0dB change is always in the middle, and the range above/below the gets wider or narrower depending on s (but that s is really only a tenth of what it would normally be)
-static const double interpretValue_FIR_change(const double x,const int s) { return scalar_to_dB(x*2)*(s/10.0); }
-static const double uninterpretValue_FIR_change(const double x,const int s) { return dB_to_scalar(x/(s/10.0))/2; }
+	CActionParamMapper_arbitraryFIRFilter_freq() :
+		AActionParamMapper(),
+		baseFrequency(20),
+		numberOfOctaves(11)
+	{
+	}
 
-// define the interpretValue_kernelLength and uninterpretValue_kernelLength functions
+	virtual ~CActionParamMapper_arbitraryFIRFilter_freq() {}
+
+	double interpretValue(const double x)
+	{
+		return octave_to_freq(x*numberOfOctaves,baseFrequency);
+	}
+
+	double uninterpretValue(const double x)
+	{
+		return freq_to_octave(x,baseFrequency)/numberOfOctaves;
+	}
+};
+
+class CActionParamMapper_arbitraryFIRFilter_amp : public AActionParamMapper
+{
+public:
+	CActionParamMapper_arbitraryFIRFilter_amp(double defaultValue,int defaultScalar,int minScalar,int maxScalar) :
+		AActionParamMapper(defaultValue,defaultScalar,minScalar,maxScalar)
+	{
+	}
+
+	virtual ~CActionParamMapper_arbitraryFIRFilter_amp() {}
+
+	// intention: 0dB change is always in the middle, and the range above/below the gets wider or narrower depending on s (but that s is really only a tenth of what it would normally be)
+	double interpretValue(const double x)
+	{
+		return scalar_to_dB(x*2)*(getScalar()/10.0);
+	}
+
+	double uninterpretValue(const double x)
+	{
+		return dB_to_scalar(x/(getScalar()/10.0))/2;
+	}
+};
+
+#include "../backend/DSP/Convolver.h"
+class CActionParamMapper_arbitraryFIRFilter_kernelLength : public AActionParamMapper
+{
+public:
+	// is set dynamically at runtime in by CArbitraryFIRFilterDialog
+	unsigned baseFrequency;
+	unsigned numberOfOctaves;
+
+	CActionParamMapper_arbitraryFIRFilter_kernelLength(double defaultValue) :
+		AActionParamMapper(defaultValue)
+	{
+	}
+
+	virtual ~CActionParamMapper_arbitraryFIRFilter_kernelLength() {}
+
 #ifdef HAVE_LIBFFTW
-	#include "../backend/DSP/Convolver.h"
-	static vector<size_t> goodFilterKernelSizes;
-	static const double interpretValue_kernelLength(const double x,const int s) 
-	{ 
+	double interpretValue(const double x)
+	{
 		if(goodFilterKernelSizes.size()<=0) // first time
 			goodFilterKernelSizes=TFFTConvolverTimeDomainKernel<float,float>::getGoodFilterKernelSizes();
 
 			// use min and max to place reasonable limits on the kernel size
 		return min((size_t)(4*1024*1024),max((size_t)8,goodFilterKernelSizes[(size_t)ceil(x*(goodFilterKernelSizes.size()-2))])); // -2 cause I need padding in the actual convolver
 	}
-	static const double uninterpretValue_kernelLength(const double x,const int s) 
+
+	double uninterpretValue(const double x)
 	{
 		if(goodFilterKernelSizes.size()<=0) // first time
 			goodFilterKernelSizes=TFFTConvolverTimeDomainKernel<float,float>::getGoodFilterKernelSizes();
@@ -100,10 +228,15 @@ static const double uninterpretValue_FIR_change(const double x,const int s) { re
 		return 0;
 	}
 #else 
-		// just for show
-	static const double interpretValue_kernelLength(const double x,const int s) { return floor(x*1024.0); }
-	static const double uninterpretValue_kernelLength(const double x,const int s) { return x/1024.0; }
+	// just for show
+	double interpretValue(const double x) { return floor(x*1024.0); }
+	double uninterpretValue(const double x) { return x/1024.0; }
 #endif
+
+private:
+	vector<size_t> goodFilterKernelSizes;
+};
+
 
 
 FXDEFMAP(CArbitraryFIRFilterDialog) CArbitraryFIRFilterDialogMap[]=
@@ -120,26 +253,64 @@ CArbitraryFIRFilterDialog::CArbitraryFIRFilterDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	FXPacker *p0=newHorzPanel(NULL);
-		addSlider(p0,N_("Wet/Dry Mix"),"%",interpretValue_wetdry_mix,uninterpretValue_wetdry_mix,NULL,100.0,0,0,0,true);
+		addSlider(p0,
+			N_("Wet/Dry Mix"),
+			"%",
+			new CActionParamMapper_linear_range(100.0,-100,100),
+			NULL,
+			true
+		);
+
 		FXPacker *p1=newVertPanel(p0,false);
-			addGraph(p1,N_("Frequency Response"),N_("Frequency"),"Hz",interpretValue_freq,uninterpretValue_freq,N_("Change"),"dB",interpretValue_FIR_change,uninterpretValue_FIR_change,dB_to_scalar,-100,100,20);
+			addGraph(p1,
+				N_("Frequency Response"),
+				N_("Frequency"),
+				"Hz",
+				freqMapper=new CActionParamMapper_arbitraryFIRFilter_freq,
+				N_("Change"),
+				"dB",
+				new CActionParamMapper_arbitraryFIRFilter_amp(1.0,20,-100,100),
+				dB_to_scalar
+			);
+
 			FXPacker *p2=newHorzPanel(p1,false);
-				addNumericTextEntry(p2,N_("Base Frequency"),"Hz",20,10,1000,_("This Sets the Lowest Frequency Displayed on the Graph.\nThis is the Frequency of the First Octave."));
-				addNumericTextEntry(p2,N_("Number of Octaves"),"",11,1,15,_("This Sets the Number of Octaves Displayed on the Graph.\nBut Note that no Frequency Higher than Half of the Sound's Sampling Rate can be Affected Since it Cannot Contain a Frequency Higher than That."));
+				FXTextParamValue *baseFreq=addNumericTextEntry(p2,
+					N_("Base Frequency"),
+					"Hz",
+					20,
+					10,
+					1000,
+					_("This Sets the Lowest Frequency Displayed on the Graph.\nThis is the Frequency of the First Octave.")
+				);
+				baseFreq->setTarget(this);
+				baseFreq->setSelector(ID_BASE_FREQUENCY);
+
+				FXTextParamValue *numberOfOctaves=addNumericTextEntry(p2,
+					N_("Number of Octaves"),
+					"",
+					11,
+					1,
+					15,
+					_("This Sets the Number of Octaves Displayed on the Graph.\nBut Note that no Frequency Higher than Half of the Sound's Sampling Rate can be Affected Since it Cannot Contain a Frequency Higher than That.")
+				);
+				numberOfOctaves->setTarget(this);
+				numberOfOctaves->setSelector(ID_NUMBER_OF_OCTAVES);
 
 		p1=newVertPanel(p0,false);
-			addSlider(p1,N_("Kernel Length"),"",interpretValue_kernelLength,uninterpretValue_kernelLength,NULL,1024,0,0,0,false); 
+			addSlider(p1,
+				N_("Kernel Length"),
+				"",
+				new CActionParamMapper_arbitraryFIRFilter_kernelLength(1024),
+				NULL,
+				false
+			); 
 			setTipText("Kernel Length",_("This is the Size of the Filter Kernel Computed (in samples) From Your Curve to be Convolved with the Audio"));
-			addCheckBoxEntry(p1,N_("Undelay"),true,_("This Counteracts the Delay Side-Effect of Custom FIR Filters"));
 
-		// ??? I suppose if the add... methods would return the widget, then I could avoid this method call
-	FXTextParamValue *w=getTextParam("Base Frequency");
-		w->setTarget(this);
-		w->setSelector(ID_BASE_FREQUENCY);
-
-	w=getTextParam("Number of Octaves");
-		w->setTarget(this);
-		w->setSelector(ID_NUMBER_OF_OCTAVES);
+			addCheckBoxEntry(p1,
+				N_("Undelay"),
+				true,
+				_("This Counteracts the Delay Side-Effect of Custom FIR Filters")
+			);
 
 	onFrequencyRangeChange(NULL,0,NULL);
 }
@@ -151,8 +322,8 @@ long CArbitraryFIRFilterDialog::onFrequencyRangeChange(FXObject *sender,FXSelect
 	FXTextParamValue *baseFrequency=getTextParam("Base Frequency");
 	FXTextParamValue *numberOfOctaves=getTextParam("Number of Octaves");
 
-	gBaseFrequency=(unsigned)baseFrequency->getValue();
-	gNumberOfOctaves=(unsigned)numberOfOctaves->getValue();
+	freqMapper->baseFrequency=(unsigned)baseFrequency->getValue();
+	freqMapper->numberOfOctaves=(unsigned)numberOfOctaves->getValue();
 
 	g->updateNumbers();
 
@@ -185,37 +356,100 @@ CMorphingArbitraryFIRFilterDialog::CMorphingArbitraryFIRFilterDialog(FXWindow *m
 
 	p0=newVertPanel(NULL);
 		p1=newHorzPanel(p0,false);
-			addGraph(p1,N_("Frequency Response 1"),N_("Frequency"),"Hz",interpretValue_freq,uninterpretValue_freq,N_("Change"),"dB",interpretValue_FIR_change,uninterpretValue_FIR_change,dB_to_scalar,-100,100,20);
+			addGraph(p1,
+				N_("Frequency Response 1"),
+				N_("Frequency"),
+				"Hz",
+				freqMapper=new CActionParamMapper_arbitraryFIRFilter_freq,
+				N_("Change"),
+				"dB",
+				new CActionParamMapper_arbitraryFIRFilter_amp(1.0,20,-100,100),
+				dB_to_scalar
+			);
+
 			p2=new FXVerticalFrame(p1,LAYOUT_CENTER_Y, 0,0,0,0, 0,0,0,0, 0,0);
 				new FXButton(p2,FXString("->\t")+_("Copy Response 1 to Response 2"),NULL,this,ID_COPY_1_TO_2,BUTTON_NORMAL|LAYOUT_FILL_X);
 				new FXButton(p2,FXString("<>\t")+_("Swap Response 1 and Response 2"),NULL,this,ID_SWAP_1_AND_2,BUTTON_NORMAL|LAYOUT_FILL_X);
 				new FXButton(p2,FXString("<-\t")+_("Copy Response 2 to Response 1"),NULL,this,ID_COPY_2_TO_1,BUTTON_NORMAL|LAYOUT_FILL_X);
-			addGraph(p1,N_("Frequency Response 2"),N_("Frequency"),"Hz",interpretValue_freq,uninterpretValue_freq,N_("Change"),"dB",interpretValue_FIR_change,uninterpretValue_FIR_change,dB_to_scalar,-100,100,20);
+
+			addGraph(p1,
+				N_("Frequency Response 2"),
+				N_("Frequency"),
+				"Hz",
+				freqMapper,
+				N_("Change"),
+				"dB",
+				new CActionParamMapper_arbitraryFIRFilter_amp(1.0,20,-100,100),
+				dB_to_scalar
+			);
 			
 		p1=newHorzPanel(p0,false);
-			FXTextParamValue *baseFrequency=addNumericTextEntry(p1,N_("Base Frequency"),"Hz",20,10,1000,_("This Sets the Lowest Frequency Displayed on the Graph.\nThis is the Frequency of the First Octave."));
+			FXTextParamValue *baseFrequency=addNumericTextEntry(p1,
+				N_("Base Frequency"),
+				"Hz",
+				20,
+				10,
+				1000,
+				_("This Sets the Lowest Frequency Displayed on the Graph.\nThis is the Frequency of the First Octave.")
+			);
 				baseFrequency->setTarget(this);
 				baseFrequency->setSelector(ID_BASE_FREQUENCY);
-			FXTextParamValue *numberOfOctaves=addNumericTextEntry(p1,N_("Number of Octaves"),"",11,1,15,_("This Sets the Number of Octaves Displayed on the Graph.\nBut Note that no Frequency Higher than Half of the Sound's Sampling Rate can be Affected Since it Cannot Contain a Frequency Higher than That."));
+
+			FXTextParamValue *numberOfOctaves=addNumericTextEntry(p1,
+				N_("Number of Octaves"),
+				"",
+				11,
+				1,
+				15,
+				_("This Sets the Number of Octaves Displayed on the Graph.\nBut Note that no Frequency Higher than Half of the Sound's Sampling Rate can be Affected Since it Cannot Contain a Frequency Higher than That.")
+			);
 				numberOfOctaves->setTarget(this);
 				numberOfOctaves->setSelector(ID_NUMBER_OF_OCTAVES);
 
 		p1=newHorzPanel(p0,false);
 		p1->setLayoutHints(p1->getLayoutHints()&(~LAYOUT_FILL_X));
 
-			addSlider(p1,N_("Wet/Dry Mix"),"%",interpretValue_wetdry_mix,uninterpretValue_wetdry_mix,NULL,100.0,0,0,0,true);
+			addSlider(p1,
+				N_("Wet/Dry Mix"),
+				"%",
+				new CActionParamMapper_linear_range(100.0,-100,100),
+				NULL,
+				true
+			);
 
 			p2=newVertPanel(p1,false);
-				addCheckBoxEntry(p2,N_("Use LFO"),false);
-					FXCheckBoxParamValue *useLFOCheckBox=getCheckBoxParam("Use LFO");
-					useLFOCheckBox->setTarget(this);
-					useLFOCheckBox->setSelector(ID_USE_LFO_CHECKBOX);
-				addLFO(p2,N_("Sweep LFO"),"ms","",0,"Hz",20,true);
+				FXCheckBoxParamValue *useLFOCheckBox=addCheckBoxEntry(p2,
+					N_("Use LFO"),
+					false
+				);
+				useLFOCheckBox->setTarget(this);
+				useLFOCheckBox->setSelector(ID_USE_LFO_CHECKBOX);
+
+				addLFO(p2,
+					N_("Sweep LFO"),
+					"ms",
+					"",
+					0,
+					"Hz",
+					20,
+					true
+				);
 
 			p2=newVertPanel(p1,false);
-				addSlider(p2,N_("Kernel Length"),"",interpretValue_kernelLength,uninterpretValue_kernelLength,NULL,1024,0,0,0,false); 
+				addSlider(p2,
+					N_("Kernel Length"),
+					"",
+					new CActionParamMapper_arbitraryFIRFilter_kernelLength(1024),
+					NULL,
+					false
+				); 
 				setTipText("Kernel Length",_("This is the Size of the Filter Kernel Computed (in samples) From Your Curve to be Convolved with the Audio"));
-				addCheckBoxEntry(p2,N_("Undelay"),true,_("This Counteracts the Delay Side-Effect of Custom FIR Filters"));
+
+				addCheckBoxEntry(p2,
+					N_("Undelay"),
+					true,
+					_("This Counteracts the Delay Side-Effect of Custom FIR Filters")
+				);
 
 	onFrequencyRangeChange(NULL,0,NULL);
 	onUseLFOCheckBox(useLFOCheckBox,0,NULL);
@@ -229,8 +463,8 @@ long CMorphingArbitraryFIRFilterDialog::onFrequencyRangeChange(FXObject *sender,
 	FXTextParamValue *baseFrequency=getTextParam("Base Frequency");
 	FXTextParamValue *numberOfOctaves=getTextParam("Number of Octaves");
 
-	gBaseFrequency=(unsigned)baseFrequency->getValue();
-	gNumberOfOctaves=(unsigned)numberOfOctaves->getValue();
+	freqMapper->baseFrequency=(unsigned)baseFrequency->getValue();
+	freqMapper->numberOfOctaves=(unsigned)numberOfOctaves->getValue();
 
 	g1->updateNumbers();
 	g2->updateNumbers();
@@ -296,8 +530,21 @@ CSinglePoleLowpassFilterDialog::CSinglePoleLowpassFilterDialog(FXWindow *mainWin
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,1.0,2,50,2,true);
-		addSlider(p,N_("Cutoff Frequency"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,500.0,5,100000,5000,false);
+		addSlider(p,
+			N_("Gain"),
+			"x",
+			new CActionParamMapper_recipsym(1.0,2,2,50),
+			NULL,
+			true
+		);
+
+		addSlider(p,
+			N_("Cutoff Frequency"),
+			"Hz",
+			new CActionParamMapper_linear(500.0,5000,5,100000),
+			NULL,
+			false
+		);
 }
 
 // --- single pole highpass --------------
@@ -306,8 +553,21 @@ CSinglePoleHighpassFilterDialog::CSinglePoleHighpassFilterDialog(FXWindow *mainW
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,1.0,2,50,2,true);
-		addSlider(p,N_("Cutoff Frequency"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,1000.0,5,100000,10000,false);
+		addSlider(p,
+			N_("Gain"),
+			"x",
+			new CActionParamMapper_recipsym(1.0,2,2,50),
+			NULL,
+			true
+		);
+
+		addSlider(p,
+			N_("Cutoff Frequency"),
+			"Hz",
+			new CActionParamMapper_linear(1000.0,10000,5,100000),
+			NULL,
+			false
+		);
 }
 
 // --- bandpass --------------------------
@@ -316,9 +576,29 @@ CBandpassFilterDialog::CBandpassFilterDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,1.0,2,50,2,true);
-		addSlider(p,N_("Center Frequency"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,1000.0,5,100000,10000,false);
-		addSlider(p,N_("Band Width"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,500.0,5,100000,1000,false);
+		addSlider(p,
+			N_("Gain"),
+			"x",
+			new CActionParamMapper_recipsym(1.0,2,2,50),
+			NULL,
+			true
+		);
+
+		addSlider(p,
+			N_("Center Frequency"),
+			"Hz",
+			new CActionParamMapper_linear(1000.0,10000,5,100000),
+			NULL,
+			false
+		);
+
+		addSlider(p,
+			N_("Band Width"),
+			"Hz",
+			new CActionParamMapper_linear(500.0,1000,5,100000),
+			NULL,
+			false
+		);
 }
 
 // --- notch -----------------------------
@@ -327,9 +607,29 @@ CNotchFilterDialog::CNotchFilterDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,1.0,2,50,2,true);
-		addSlider(p,N_("Center Frequency"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,1000.0,5,100000,10000,false);
-		addSlider(p,N_("Band Width"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,500.0,5,100000,1000,false);
+		addSlider(p,
+			N_("Gain"),
+			"x",
+			new CActionParamMapper_recipsym(1.0,2,2,50),
+			NULL,
+			true
+		);
+
+		addSlider(p,
+			N_("Center Frequency"),
+			"Hz",
+			new CActionParamMapper_linear(1000.0,10000,5,100000),
+			NULL,
+			false
+		);
+
+		addSlider(p,
+			N_("Band Width"),
+			"Hz",
+			new CActionParamMapper_linear(500.0,1000,5,100000),
+			NULL,
+			false
+		);
 }
 
 
@@ -340,9 +640,29 @@ CBiquadResLowpassFilterDialog::CBiquadResLowpassFilterDialog(FXWindow *mainWindo
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,1.0,2,50,2,true);
-		addSlider(p,N_("Cutoff Frequency"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,500.0,5,100000,5000,false);
-		addSlider(p,N_("Resonance"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,2.0,1,20,2,true);
+		addSlider(p,
+			N_("Gain"),
+			"x",
+			new CActionParamMapper_recipsym(1.0,2,2,50),
+			NULL,
+			true
+		);
+
+		addSlider(p,
+			N_("Cutoff Frequency"),
+			"Hz",
+			new CActionParamMapper_linear(500.0,5000,5,100000),
+			NULL,
+			false
+		);
+
+		addSlider(p,
+			N_("Resonance"),
+			"x",
+			new CActionParamMapper_recipsym(2.0,2,1,20),
+			NULL,
+			true
+		);
 }
 
 // --- biquad resonant highpass ----------
@@ -351,9 +671,29 @@ CBiquadResHighpassFilterDialog::CBiquadResHighpassFilterDialog(FXWindow *mainWin
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,1.0,2,50,2,true);
-		addSlider(p,N_("Cutoff Frequency"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,500.0,5,100000,5000,false);
-		addSlider(p,N_("Resonance"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,2.0,1,20,2,true);
+		addSlider(p,
+			N_("Gain"),
+			"x",
+			new CActionParamMapper_recipsym(1.0,2,2,50),
+			NULL,
+			true
+		);
+
+		addSlider(p,
+			N_("Cutoff Frequency"),
+			"Hz",
+			new CActionParamMapper_linear(500.0,5000,5,100000),
+			NULL,
+			false
+		);
+
+		addSlider(p,
+			N_("Resonance"),
+			"x",
+			new CActionParamMapper_recipsym(2.0,2,1,20),
+			NULL,
+			true
+		);
 }
 
 // --- biquad resonant bandpass ----------
@@ -362,8 +702,28 @@ CBiquadResBandpassFilterDialog::CBiquadResBandpassFilterDialog(FXWindow *mainWin
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,1.0,2,50,2,true);
-		addSlider(p,N_("Center Frequency"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,500.0,5,100000,5000,false);
-		addSlider(p,N_("Resonance"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,2.0,1,20,2,true);
+		addSlider(p,
+			N_("Gain"),
+			"x",
+			new CActionParamMapper_recipsym(1.0,2,2,50),
+			NULL,
+			true
+		);
+
+		addSlider(p,
+			N_("Center Frequency"),
+			"Hz",
+			new CActionParamMapper_linear(500.0,5000,5,100000),
+			NULL,
+			false
+		);
+
+		addSlider(p,
+			N_("Resonance"),
+			"x",
+			new CActionParamMapper_recipsym(2.0,2,1,20),
+			NULL,
+			true
+		);
 }
 
