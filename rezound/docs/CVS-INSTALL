@@ -5,10 +5,10 @@
    In order to make the configure script you should have installed:
 
 	m4-1.4 (or higher)
-	autoconf-2.55 (or higher)
-   	automake-1.7.3 (or higher)
-	libtool-1.4.3 (or higher)
-	pkgconfig-0.15.0 (or higher)
+	autoconf-2.53 (or higher)
+   	automake-1.6.3 (or higher)
+	libtool-1.4.2 (or higher)
+	pkgconfig-0.12.0 (or higher)
 
    Then, from the top source directory, run the bootstrap script. This will create the configure script. Now you can follow the instructions in INSTALL for normal build.
 
