@@ -106,7 +106,7 @@ void ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 	if(!CPath(filename).exists())
 		throw(runtime_error(string(__func__)+" -- file not found, '"+filename+"'"));
 
-	const string cmdLine=gPathToLame+" --decode "+filename+" -";
+	const string cmdLine=gPathToLame+" --decode \""+filename+"\" -";
 
 	fprintf(stderr,"lame command line: '%s'\n",cmdLine.c_str());
 
@@ -282,7 +282,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 
 	cmdLine+=" "+parameters.additionalFlags+" ";
 
-	cmdLine+=" - "+filename;
+	cmdLine+=" - \""+filename+"\"";
 
 	fprintf(stderr,"lame command line: '%s'\n",cmdLine.c_str());
 
