@@ -55,10 +55,11 @@ FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *_name,con
 	minValue(_minValue),
 	maxValue(_maxValue),
 
-	titleLabel(new FXLabel(this,gettext(_name),NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
-	valueTextBox(new FXTextField(this,8,this,ID_VALUE_TEXTBOX, TEXTFIELD_NORMAL | LAYOUT_CENTER_Y)),
-	valueSpinner(new FXSpinner(this,0,this,ID_VALUE_SPINNER, SPIN_NORMAL|SPIN_NOTEXT | LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0)),
-	unitsLabel(new FXLabel(this,"",NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
+	panel(new FXHorizontalFrame(this,FRAME_NONE|LAYOUT_FILL_Y|LAYOUT_CENTER_X,0,0,0,0, 0,0,0,0, 0,0)),
+		titleLabel(new FXLabel(panel,gettext(_name),NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
+		valueTextBox(new FXTextField(panel,8,this,ID_VALUE_TEXTBOX, TEXTFIELD_NORMAL | LAYOUT_CENTER_Y)),
+		valueSpinner(new FXSpinner(panel,0,this,ID_VALUE_SPINNER, SPIN_NORMAL|SPIN_NOTEXT | LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0)),
+		unitsLabel(new FXLabel(panel,"",NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
 
 	textFont(getApp()->getNormalFont())
 {

@@ -81,10 +81,11 @@ private:
 
 	double minValue,maxValue;
 
-	FXLabel *titleLabel;
-	FXTextField *valueTextBox;
-	FXSpinner *valueSpinner;
-	FXLabel *unitsLabel;
+	FXHorizontalFrame *panel;
+		FXLabel *titleLabel;
+		FXTextField *valueTextBox;
+		FXSpinner *valueSpinner;
+		FXLabel *unitsLabel;
 
 	void validateRange();
 
