@@ -87,6 +87,8 @@ private:
 	void validateRange();
 
 	FXFont *textFont;
+
+	void changed();
 };
 
 #endif

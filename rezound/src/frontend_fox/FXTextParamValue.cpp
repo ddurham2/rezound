@@ -121,7 +121,9 @@ long FXTextParamValue::onValueSpinnerChange(FXObject *sender,FXSelector sel,void
 	valueTextBox->setText(istring(v).c_str());
 
 	validateRange();
-	return(1);
+	
+	changed();
+	return 1;
 }
 
 long FXTextParamValue::onValueTextBoxChange(FXObject *sender,FXSelector sel,void *ptr)
@@ -129,19 +131,21 @@ long FXTextParamValue::onValueTextBoxChange(FXObject *sender,FXSelector sel,void
 	// just verity that a value character was typed???
 	
 	validateRange();
-	return(1);
+	changed();
+	return 1;
 }
 
 const double FXTextParamValue::getValue()
 {
 	validateRange();
-	return(atof(valueTextBox->getText().text()));
+	return atof(valueTextBox->getText().text());
 }
 
 void FXTextParamValue::setValue(const double value)
 {
 	valueTextBox->setText(istring(value).c_str());
 	validateRange();
+	changed();
 }
 
 const string FXTextParamValue::getText()
@@ -154,6 +158,7 @@ void FXTextParamValue::setText(const string value)
 {
 	validateRange();
 	valueTextBox->setText(value.c_str());
+	changed();
 }
 
 void FXTextParamValue::setRange(const double _minValue,const double _maxValue)
@@ -162,6 +167,7 @@ void FXTextParamValue::setRange(const double _minValue,const double _maxValue)
 	maxValue=_maxValue;
 	valueTextBox->setNumColumns((FXint)(log10(maxValue)+1));
 	validateRange();
+	changed();
 }
 
 void FXTextParamValue::validateRange()
@@ -181,7 +187,7 @@ void FXTextParamValue::validateRange()
 
 const string FXTextParamValue::getTitle() const
 {
-	return(titleLabel->getText().text());
+	return titleLabel->getText().text();
 }
 
 void FXTextParamValue::setTipText(const FXString &text)
@@ -194,7 +200,7 @@ void FXTextParamValue::setTipText(const FXString &text)
 
 FXString FXTextParamValue::getTipText() const
 {
-	return(titleLabel->getTipText());	
+	return titleLabel->getTipText();
 }
 
 void FXTextParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
@@ -205,6 +211,7 @@ void FXTextParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 		setValue(atof(v.c_str()));
 	else
 		setText(v);
+	changed();
 }
 
 void FXTextParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
@@ -216,4 +223,9 @@ void FXTextParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 		f->createKey((key+"value").c_str(),getText());
 }
 
+void FXTextParamValue::changed()
+{
+	if(target)
+		target->handle(this,FXSEL(SEL_COMMAND,getSelector()),NULL);
+}
 
