@@ -27,6 +27,15 @@
 #include "CActionParamDialog.h"
 
 
+// --- convolution -----------------------
+
+class CConvolutionFilterDialog : public CActionParamDialog
+{
+public:
+	CConvolutionFilterDialog(FXWindow *mainWindow);
+};
+
+
 // --- single pole lowpass ---------------
 
 class CSinglePoleLowpassFilterDialog : public CActionParamDialog

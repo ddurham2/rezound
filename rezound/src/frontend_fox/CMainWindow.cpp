@@ -412,13 +412,15 @@ void CMainWindow::createMenus()
 		new CActionMenuCommand(new CFlangeEffectFactory(gChannelSelectDialog,new CFlangeDialog(this)),menu,"");
 		new CActionMenuCommand(new CSimpleDelayEffectFactory(gChannelSelectDialog,new CSimpleDelayDialog(this)),menu,"");
 		new CActionMenuCommand(new CQuantizeEffectFactory(gChannelSelectDialog,new CQuantizeDialog(this)),menu,"");
-		new CActionMenuCommand(new CStaticReverbEffectFactory(gChannelSelectDialog),menu,"");
 		new CActionMenuCommand(new CVariedRepeatEffectFactory(gChannelSelectDialog,new CVariedRepeatDialog(this)),menu,"");
 
 		new CActionMenuCommand(new CTestEffectFactory(gChannelSelectDialog),menu,"");
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&F&ilters",NULL,menu);
+		new CActionMenuCommand(new CConvolutionFilterFactory(gChannelSelectDialog,new CConvolutionFilterDialog(this)),menu,"");
+
+		new FXMenuSeparator(menu);
 		new CActionMenuCommand(new CSinglePoleLowpassFilterFactory(gChannelSelectDialog,new CSinglePoleLowpassFilterDialog(this)),menu,"");
 		new CActionMenuCommand(new CSinglePoleHighpassFilterFactory(gChannelSelectDialog,new CSinglePoleHighpassFilterDialog(this)),menu,"");
 		new CActionMenuCommand(new CBandpassFilterFactory(gChannelSelectDialog,new CBandpassFilterDialog(this)),menu,"");
