@@ -46,10 +46,10 @@
 
 	- There may be some more formats that libaudiofile supports... I just didn't see them in the docs... work with the author to include any others
 	
-	- research and create DSP blocks for filters.. it should use a delay line multiplied by some vector of coefficients
-		- which is just time-domain convolution
-
 	- implement a windowed FFT DSP block... I'm not quite sure what the interface should be
+		- I think it should be that you initialize the DSPBlock with some number of samples and then you can use a outputSample=block.processSample(inputSample) type scheme where internally it is windowing the data and doing the window-and-add method
+			- well, actually, this is probably what the interface to an FFT convolver would look like, except I wouldn't call it FFT, that would just be the implementation it used
+			- oooooo I can't wait to hear what a reverb will sound like using FFT convolution
 
 
 
@@ -234,4 +234,7 @@
 	- warn the user if he's saving an exported file format and information such as cues and user notes will not be exported (for now)
 		- implement in the derivations from ASoundTranslator
 		- in ClibaudiosoundTranslator, I should probably query the capabilities of a format
+
+	- research and create DSP blocks for filters.. it should use a delay line multiplied by some vector of coefficients
+		- which is just time-domain convolution
 
