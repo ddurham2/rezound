@@ -33,7 +33,7 @@
  *
  *	Basically a simple RC lowpass filter
  *
- *	The frist template parameter specifies the type of the input samples (and is thus 
+ *	The first template parameter specifies the type of the input samples (and is thus 
  *	the type also of the output, the return value of processSample() ).  And The second
  *	template parameter specifies the type of the coefficients used in the calculations.
  */
@@ -73,7 +73,7 @@ private:
  *
  *	Basically a simple RC highpass filter
  *
- *	The frist template parameter specifies the type of the input samples (and is thus 
+ *	The first template parameter specifies the type of the input samples (and is thus 
  *	the type also of the output, the return value of processSample() ).  And The second
  *	template parameter specifies the type of the coefficients used in the calculations.
  */
@@ -115,7 +115,7 @@ private:
  *
  *	http://www.dspguide.com/
  *
- *	The frist template parameter specifies the type of the input samples (and is thus 
+ *	The first template parameter specifies the type of the input samples (and is thus 
  *	the type also of the output, the return value of processSample() ).  And The second
  *	template parameter specifies the type of the coefficients used in the calculations.
  *
@@ -173,7 +173,7 @@ private:
  *
  *	http://www.dspguide.com/
  *
- *	The frist template parameter specifies the type of the input samples (and is thus 
+ *	The first template parameter specifies the type of the input samples (and is thus 
  *	the type also of the output, the return value of processSample() ).  And The second
  *	template parameter specifies the type of the coefficients used in the calculations.
  *
