@@ -222,8 +222,11 @@ CGraphParamValueIterator::~CGraphParamValueIterator()
 const double CGraphParamValueIterator::next()
 {
 	if(t<segmentLength)
+	{
 			// ??? this multiplication may cause problems when the values are very large
-		return segmentStartValue+(((segmentStopValueStartValueDiff)*(t++))/(segmentLengthSub1));
+		const double d=segmentStartValue+(((segmentStopValueStartValueDiff)*(t++))/(segmentLengthSub1));
+		return isnan(d) ? segmentStartValue : d;
+	}
 	else
 	{
 		if(nodeIndex>nodes.size()-2)
