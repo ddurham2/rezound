@@ -22,7 +22,6 @@
 
 #include <stdexcept>
 #include <algorithm>
-#include <map> // for sorting LADSPA plugins
 #include <string>
 
 #include <CPath.h>
@@ -584,15 +583,12 @@ public:
 #include "../backend/Remaster/RemasterActions.h"
 #include "RemasterActionDialogs.h"
 
-#include "../backend/LADSPA/LADSPAActions.h"
 
 
 void CMainWindow::createMenus()
 {
 	// build the drop-down menus
 	FXMenuPane *menu;
-
-	// NOTE: I don't think any of the constructed action factories are being deleted (and I wouldn't want them to coming from the LADSPA stuff)
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&File",NULL,menu);
@@ -724,47 +720,6 @@ void CMainWindow::createMenus()
 		new CActionMenuCommand(new CResampleActionFactory(gChannelSelectDialog,new CResampleDialog(this)),menu,"");
 
 		new CActionMenuCommand(new CUnclipActionFactory(gChannelSelectDialog),menu,"");
-
-#ifdef USE_LADSPA
-	menu=new FXMenuPane(this);
-	new FXMenuTitle(menubar,"L&ADSPA",NULL,menu);
-		const vector<CLADSPAActionFactory *> LADSPAActionFactories=getLADSPAActionFactories();
-		if(LADSPAActionFactories.size()<=0)
-		{
-			new FXMenuCaption(menu,"No LADSPA Plugins Found");
-			new FXMenuSeparator(menu);
-			new FXMenuCaption(menu,"Like PATH, set LADSPA_PATH to point");
-			new FXMenuCaption(menu,"to a directory(s) containing LADSPA");
-			new FXMenuCaption(menu,"plugin .so files");
-		}
-		else
-		{
-			if(LADSPAActionFactories.size()>20)
-			{
-				// group by the first letter
-				map<const char,map<string,CLADSPAActionFactory *> > sorted;
-				for(size_t t=0;t<LADSPAActionFactories.size();t++)
-				{
-					const char letter= *(istring(LADSPAActionFactories[t]->getName()).upper()).begin();
-					sorted[letter][LADSPAActionFactories[t]->getName()]=LADSPAActionFactories[t];
-				}
-
-				for(map<char,map<string,CLADSPAActionFactory *> >::iterator i=sorted.begin();i!=sorted.end();i++)
-				{
-					FXMenuPane *submenu=new FXMenuPane(this);
-					new FXMenuCascade(menu,string(&(i->first),1).c_str(),NULL,submenu);
-
-					for(map<string,CLADSPAActionFactory *>::iterator t=i->second.begin();t!=i->second.end();t++)
-						new CActionMenuCommand(t->second,submenu,"");
-				}
-			}
-			else
-			{
-				for(size_t t=0;t<LADSPAActionFactories.size();t++)
-					new CActionMenuCommand(LADSPAActionFactories[t],menu,"");
-			}
-		}
-#endif
 
 	create(); // re-call create for this window which will call it for all new child windows
 }
