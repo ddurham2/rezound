@@ -42,6 +42,7 @@
 	- Jump to Previous Cue
 	- Jump to Next Cue
 	- Shuttle Play Position Control
+	- Play from Mouse Cursor (hold ctrl and use left and right mouse buttons)
 
 - Full Featured Editing Tools
 	- Copy
