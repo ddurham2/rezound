@@ -144,7 +144,7 @@ void ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 
 		// verify some stuff about the output of lame
 		if(waveHeader.fmtSize!=16)
-			throw(runtime_error(string(__func__)+" -- it looks as if either there is an error in the input file -- or an error has occuring executing lame -- or your version of lame has started to output a different wave file header when decoding MPEG Layer-1,2,3 files to wave files.  Changes will have to be made to this source to handle the new wave file output -- check stderr for more information"));
+			throw(runtime_error(string(__func__)+" -- it looks as if either there is an error in the input file -- or lame was not compiled with decoding support (get latest at http://mp3dev.org) -- or an error has occuring executing lame -- or your version of lame has started to output a different wave file header when decoding MPEG Layer-1,2,3 files to wave files.  Changes will have to be made to this source to handle the new wave file output -- check stderr for more information"));
 		if(strncmp(waveHeader.RIFF_ID,"RIFF",4)!=0)
 			throw(runtime_error(string(__func__)+" -- internal error -- 'RIFF' expected in lame output"));
 		if(strncmp(waveHeader.WAVE_ID,"WAVE",4)!=0)
