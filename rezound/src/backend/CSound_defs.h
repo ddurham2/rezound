@@ -156,8 +156,8 @@ struct int24_t // int24_t -> unsigned char[3]
 //
 // ??? Some of the implementation may one day need conditional expressions to handle the 
 // possibility that the negative range is one sample value larger than the positive range
-
-template<typename from_sample_t,typename to_sample_t> static inline const to_sample_t convert_sample(const register from_sample_t sample) { sample_type_conversion_for_this_combination_unimplemented; }
+	/* just going to have to get a linker error now with gcc>=3.4 */
+template<typename from_sample_t,typename to_sample_t> static inline const to_sample_t convert_sample(const register from_sample_t sample) ;//{ sample_type_conversion_for_this_combination_unimplemented; }
 
 // int8_t -> ...
 	// int8_t -> int8_t
