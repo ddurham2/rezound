@@ -36,6 +36,7 @@ noinst_HEADERS= \
 		CUnclipAction.h \
 		CCompressorAction.h \
 		CNormalizeAction.h \
+		CAdaptiveNormalizeAction.h \
 		CResampleAction.h \
 		CChangePitchAction.h \
 		CChangeTempoAction.h \
@@ -52,6 +53,7 @@ libRemaster_la_SOURCES= \
 			CUnclipAction.cpp \
 			CCompressorAction.cpp \
 			CNormalizeAction.cpp \
+			CAdaptiveNormalizeAction.cpp \
 			CResampleAction.cpp \
 			CChangePitchAction.cpp \
 			CChangeTempoAction.cpp \

@@ -32,6 +32,7 @@
 #include "CNoiseGateAction.h"
 #include "CCompressorAction.h"
 #include "CNormalizeAction.h"
+#include "CAdaptiveNormalizeAction.h"
 #include "CResampleAction.h"
 #include "CChangePitchAction.h"
 #include "CChangeTempoAction.h"
