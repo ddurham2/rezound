@@ -68,7 +68,8 @@ noinst_HEADERS= \
 	   initialize.h \
 	   main_controls.h \
 	   settings.h \
-	   unit_conv.h 
+	   unit_conv.h \
+	   license.h 
 	   
 
 ## see PoolFile Makefile.am for explanation here out
