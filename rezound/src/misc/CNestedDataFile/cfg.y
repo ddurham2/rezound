@@ -36,7 +36,7 @@ struct RTokenPosition
 	const char *text;
 };
 #define YYLTYPE RTokenPosition
-#define YYLSP_NEEDED
+#define YYLSP_NEEDED 1
 
 stack<string> scopeStack;
 
