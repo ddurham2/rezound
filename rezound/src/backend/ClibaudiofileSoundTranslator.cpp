@@ -136,7 +136,7 @@ void ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 		{
 			string name=afGetMarkName(h,AF_DEFAULT_TRACK,markIDs[t]);
 			if(name=="")
-				name=sound->getAvailableCueName("cue"); // give it a unique name
+				name=sound->getUnusedCueName("cue"); // give it a unique name
 
 			const sample_pos_t time=afGetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[t]);
 
