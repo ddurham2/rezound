@@ -3,6 +3,8 @@ $Id$
 - might ought to verify that bootstrap is running within the toplevel directory
 and move it into config
 
+- sorta trivial I would think, but about the flags --with-FOX-includes and --with-FOX-path, wouldn't you think that ...-path should be changed to ...-libs ?  same for the other library specific flags
+
 -- See if things might possibly work with -O2 set. Decide if we should be using 
 -O2 or not.
 
