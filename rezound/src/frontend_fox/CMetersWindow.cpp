@@ -511,6 +511,7 @@ public:
 	{
 		// make square
 		resize(getHeight(),getHeight());
+		recalcRotateLookup();
 		clearCanvas();
 		return 1;
 	}
@@ -550,13 +551,48 @@ public:
 		// draw the points
 		for(size_t t=0;t<samplingNFrames;t++)
 		{
-			// let x and y be the normalized (1.0) sample values (x:left y:right) then scaled up to the canvas width/height and centered in the square
-			const FXint x= (FXint)(samplingBuffer[t*samplingNChannels+samplingLeftChannel ]*(int)canvasSize/2/MAX_SAMPLE + canvasSize/2);
-			const FXint y=(FXint)(-samplingBuffer[t*samplingNChannels+samplingRightChannel]*(int)canvasSize/2/MAX_SAMPLE + canvasSize/2); // negation because increasing values go down on the screen which is up-side-down from the Cartesian plane
+			// let x and y be the normalized (1.0) sample values (x:right y:left) then scaled up to the canvas width/height and centered in the square
+			const FXint x= (FXint)(samplingBuffer[t*samplingNChannels+samplingRightChannel]*(int)canvasSize/2/MAX_SAMPLE + canvasSize/2);
+			const FXint y=(FXint)(-samplingBuffer[t*samplingNChannels+samplingLeftChannel ]*(int)canvasSize/2/MAX_SAMPLE + canvasSize/2); // negation because increasing values go down on the screen which is up-side-down from the Cartesian plane
+
+
 			if(x>=0 && x<canvasSize && y>=0 && y<canvasSize)
-				data[y*canvasSize+x]=M_BRT_GREEN;
+			{
+				if(gStereoPhaseMeterUnrotate)
+					data[unrotateMapping[y*canvasSize+x]]=M_BRT_GREEN;
+				else
+					data[y*canvasSize+x]=M_BRT_GREEN;
+
+			}
 		}
 
+		return 0;
+	}
+
+	long onPopupMenu(FXObject *object,FXSelector sel,void *ptr)
+	{
+		FXEvent *event=(FXEvent*)ptr;
+
+		FXMenuPane popupMenu(this);
+			// ??? make sure that these get deleted when gotoMenu is deleted
+#if REZ_FOX_VERSION>=10119
+			(new FXMenuCheck(&popupMenu,"Unrotate from Natural 45 Degree Line",this, ID_UNROTATE))->setCheck(gStereoPhaseMeterUnrotate);
+#else
+#endif
+
+		popupMenu.create();
+		popupMenu.popup(NULL,event->root_x,event->root_y);
+		getApp()->runModalWhileShown(&popupMenu);
+
+		return 0;
+	}
+
+	long onUnrotateMenuItem(FXObject *object,FXSelector sel,void *ptr)
+	{
+#if REZ_FOX_VERSION>=10119
+		gStereoPhaseMeterUnrotate= ((FXMenuCheck *)object)->getCheck() ? true : false;
+#else
+#endif
 		return 0;
 	}
 
@@ -573,6 +609,7 @@ public:
 	enum
 	{
 		ID_CANVAS=FXHorizontalFrame::ID_LAST,
+		ID_UNROTATE,
 	};
 
 protected:
@@ -590,6 +627,38 @@ private:
 	const unsigned samplingRightChannel;
 
 	bool clear;
+
+	TAutoBuffer<FXint> unrotateMapping; // width*height number of pixels mapping
+
+	void recalcRotateLookup()
+	{
+		const FXint width=canvas->getWidth();
+		const FXint height=canvas->getHeight();
+
+		unrotateMapping.setSize(width*height);
+
+		const double ang=-M_PI_4; // -45 degrees
+
+		for(FXint sx=0;sx<width;sx++)
+		for(FXint sy=0;sy<height;sy++)
+		{
+			double wx=sx-width/2;
+			double wy=sy-height/2;
+
+			double rot_wx=wx*cos(ang)-wy*sin(ang);
+			double rot_wy=wx*sin(ang)+wy*cos(ang);
+
+			rot_wx+=width/2;
+			rot_wy+=height/2;
+
+			FXint offset=(FXint)(round(rot_wy)*width+round(rot_wx));
+			if(offset>=0 && offset<(width*height))
+				unrotateMapping[sy*width+sx]=offset;
+			else
+				unrotateMapping[sy*width+sx]=0;
+		}
+		
+	}
 };
 
 FXDEFMAP(CStereoPhaseMeter) CStereoPhaseMeterMap[]=
@@ -597,6 +666,8 @@ FXDEFMAP(CStereoPhaseMeter) CStereoPhaseMeterMap[]=
 	//	  Message_Type			ID				Message_Handler
 	FXMAPFUNC(SEL_PAINT,			CStereoPhaseMeter::ID_CANVAS,	CStereoPhaseMeter::onCanvasPaint),
 	FXMAPFUNC(SEL_CONFIGURE,		0,				CStereoPhaseMeter::onResize),
+	FXMAPFUNC(SEL_RIGHTBUTTONPRESS,		CStereoPhaseMeter::ID_CANVAS,	CStereoPhaseMeter::onPopupMenu),
+	FXMAPFUNC(SEL_COMMAND,			CStereoPhaseMeter::ID_UNROTATE,	CStereoPhaseMeter::onUnrotateMenuItem),
 };
 
 FXIMPLEMENT(CStereoPhaseMeter,FXHorizontalFrame,CStereoPhaseMeterMap,ARRAYNUMBER(CStereoPhaseMeterMap))

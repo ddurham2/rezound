@@ -134,6 +134,7 @@ extern double gMaxPeakFallRate;		// the fraction of the maximum sample value tha
 
 extern bool gStereoPhaseMetersEnabled;	// flag whether the stereo phase meters are enabled
 extern unsigned gStereoPhaseMeterPointCount;	// the number of stereo phase point to plot from the audio output each update
+extern bool gStereoPhaseMeterUnrotate; // flag whether to unrotate the sereo phase meter by -45 degrees
 
 extern bool gFrequencyAnalyzerEnabled;	// flag whether the frequency analyzer is enabled
 extern unsigned gAnalyzerPeakFallDelayTime;	// the number of milliseconds before the analyzer peaks should hold before falling
