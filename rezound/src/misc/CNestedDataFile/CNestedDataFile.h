@@ -41,6 +41,10 @@ public:
 	CNestedDataFile(const CNestedDataFile &src);
 	virtual ~CNestedDataFile();
 
+	// This method can be used to set a CNestedDataFile object to check for a value when it doesn't exist in this object
+	// It is only used by getValue() and keyExists(), thus the alternate file is read-only
+	// NULL can be passed to unset an alternate object
+	void setAlternateReadFile(const CNestedDataFile *_alternate) { alternate=_alternate; }
 
 	enum KeyTypes
 	{
@@ -122,6 +126,8 @@ private:
 	CVariant *root;
 	bool saveOnEachEdit;
 
+	const CNestedDataFile *alternate;
+
 	// I would have to implement this if I were to allow qualified idents in the input file which aren't always fully qualified... I would also need to have a parent * in CVariant to be able to implement this (unless I suppose I wanted to search more than Iad to.. which I would do.. okay.. ya)
 	//CVariant *upwardsScopeLookup(const string key) const;
 
@@ -160,12 +166,15 @@ template<class type> const type CNestedDataFile::getValue(const string &_key,boo
 	CVariant *value;
 	if(!findVariantNode(value,key,0,true,root))
 	{
-		if(throwIfNotExists)
-			throw runtime_error(string(__func__)+" -- key '"+key+"' does not exist from "+filename);
-		else
+		if(alternate==NULL || /*check alternate file for the value -->*/!alternate->findVariantNode(value,key,0,true,alternate->root))
 		{
-			type r;
-			return string_to_anytype("",r);
+			if(throwIfNotExists)
+				throw runtime_error(string(__func__)+" -- key '"+key+"' does not exist from "+filename);
+			else
+			{
+				type r;
+				return string_to_anytype("",r);
+			}
 		}
 	}
 

@@ -94,7 +94,8 @@ const string CNestedDataFile::stripLeadingDOTs(const string &key)
 
 CNestedDataFile::CNestedDataFile(const string _filename,bool _saveOnEachEdit) :
 	root(NULL),
-	saveOnEachEdit(_saveOnEachEdit)
+	saveOnEachEdit(_saveOnEachEdit),
+	alternate(NULL)
 {
 	clear();
 	if(_filename!="")
@@ -104,7 +105,8 @@ CNestedDataFile::CNestedDataFile(const string _filename,bool _saveOnEachEdit) :
 CNestedDataFile::CNestedDataFile(const CNestedDataFile &src) :
 	filename(src.filename),
 	root(new CVariant(*(src.root))),
-	saveOnEachEdit(src.saveOnEachEdit)
+	saveOnEachEdit(src.saveOnEachEdit),
+	alternate(src.alternate)
 {
 }
 
@@ -173,6 +175,7 @@ void CNestedDataFile::parseFile(const string _filename,bool clearExisting)
 		}
 		else
 		{
+#warning make this a flag .. otherwise throw an exception
 			// create an empty file
 			CPath(filename).touch();
 		}
@@ -202,7 +205,12 @@ CNestedDataFile::KeyTypes CNestedDataFile::keyExists(const string &_key) const
 	if(findVariantNode(value,key,0,false,root))
 		return value->type;
 	else
-		return ktNotExists;
+	{
+		if(alternate && /*search alternate too -->*/alternate->findVariantNode(value,key,0,false,alternate->root))
+			return value->type;
+		else
+			return ktNotExists;
+	}
 }
 
 const vector<string> CNestedDataFile::getChildKeys(const string &_parentKey,bool throwIfNotExists) const
