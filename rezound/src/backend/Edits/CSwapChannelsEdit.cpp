@@ -79,6 +79,6 @@ CSwapChannelsEdit *CSwapChannelsEditFactory::manufactureAction(const CActionSoun
 bool CSwapChannelsEditFactory::doPreActionSetup(CLoadedSound *loadedSound)
 {
 	// don't bother doing this action if there is not more than 1 channel
-	return(loadedSound->getSound()->getChannelCount()>1);
+	return(loadedSound->sound->getChannelCount()>1);
 }
 

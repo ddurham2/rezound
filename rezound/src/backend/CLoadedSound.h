@@ -46,12 +46,9 @@ public:
 
 	bool isReadOnly() const;
 
-	// ??? is this necessary?
-	bool operator==(const CLoadedSound &rhs) const;
-
 	CSoundPlayerChannel * const channel;
+	CSound * const sound;
 	const ASoundTranslator *translator; // can be NULL, is used to save (in contrast with save-as) the sound after an open
-	CSound *getSound() const; // just gets it through channel
 
 	// this stack is used for undoing actions (later a stack could be used for redoing actions)
 	stack<AAction *> actions;

@@ -810,13 +810,13 @@ long CMainWindow::onDebugButton(FXObject *sender,FXSelector sel,void *ptr)
 	{
 		if(SELID(sel)==ID_DEFRAG_MENUITEM)
 		{
-			s->getSound()->defragPoolFile();
+			s->sound->defragPoolFile();
 			gSoundFileManager->updateAfterEdit();
 		}
 		else if(SELID(sel)==ID_PRINT_SAT_MENUITEM)
-			s->getSound()->printSAT();
+			s->sound->printSAT();
 		else if(SELID(sel)==ID_VERIFY_SAT_MENUITEM)
-			s->getSound()->verifySAT();
+			s->sound->verifySAT();
 	}
 	else
 		getApp()->beep();

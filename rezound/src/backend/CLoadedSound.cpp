@@ -26,6 +26,7 @@
 
 CLoadedSound::CLoadedSound(const CLoadedSound &src) :
 	channel(src.channel),
+	sound(src.channel->getSound()),
 	translator(src.translator),
 	filename(src.filename),
 	_isReadOnly(src._isReadOnly)
@@ -34,6 +35,7 @@ CLoadedSound::CLoadedSound(const CLoadedSound &src) :
 
 CLoadedSound::CLoadedSound(const string _filename,CSoundPlayerChannel *_channel,bool __isReadOnly,const ASoundTranslator *_translator) :
 	channel(_channel),
+	sound(_channel->getSound()),
 	translator(_translator),
 	filename(_filename),
 	_isReadOnly(__isReadOnly)
@@ -55,11 +57,6 @@ void CLoadedSound::clearUndoHistory()
 	}
 }
 
-CSound *CLoadedSound::getSound() const
-{
-	return(channel->getSound());
-}
-
 const string CLoadedSound::getFilename() const
 {
 	return(filename);
@@ -67,14 +64,8 @@ const string CLoadedSound::getFilename() const
 
 void CLoadedSound::changeFilename(const string newFilename)
 {
-	getSound()->changeWorkingFilename(newFilename);
+	sound->changeWorkingFilename(newFilename);
 	filename=newFilename;
-}
-
-#warning I dont think this operator is necessary
-bool CLoadedSound::operator==(const CLoadedSound &rhs) const
-{
-	return(channel==rhs.channel);
 }
 
 bool CLoadedSound::isReadOnly() const

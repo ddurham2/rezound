@@ -233,7 +233,7 @@ FXWaveRuler::FXWaveRuler(FXComposite *p,FXRezWaveView *_parent,CLoadedSound *_lo
 	parent(_parent),
 
 	loadedSound(_loadedSound),
-	sound(_loadedSound->getSound()),
+	sound(_loadedSound->sound),
 
 	font(getApp()->getNormalFont())
 {

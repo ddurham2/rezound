@@ -124,9 +124,9 @@ long CCueListDialog::onAddCueButton(FXObject *sender,FXSelector sel,void *ptr)
 	{
 		size_t cueIndex=(size_t)cueList->getItemData(cueList->getCurrentItem());
 
-		actionParameters.addStringParameter("name",loadedSound->getSound()->getCueName(cueIndex));
-		actionParameters.addSamplePosParameter("position",loadedSound->getSound()->getCueTime(cueIndex));
-		actionParameters.addBoolParameter("isAnchored",loadedSound->getSound()->isCueAnchored(cueIndex));
+		actionParameters.addStringParameter("name",loadedSound->sound->getCueName(cueIndex));
+		actionParameters.addSamplePosParameter("position",loadedSound->sound->getCueTime(cueIndex));
+		actionParameters.addBoolParameter("isAnchored",loadedSound->sound->isCueAnchored(cueIndex));
 
 	}
 	else
@@ -164,9 +164,9 @@ long CCueListDialog::onEditCueButton(FXObject *sender,FXSelector sel,void *ptr)
 		size_t cueIndex=(size_t)cueList->getItemData(cueList->getCurrentItem());
 
 		actionParameters.addUnsignedParameter("index",cueIndex);
-		actionParameters.addStringParameter("name",loadedSound->getSound()->getCueName(cueIndex));
-		actionParameters.addSamplePosParameter("position",loadedSound->getSound()->getCueTime(cueIndex));
-		actionParameters.addBoolParameter("isAnchored",loadedSound->getSound()->isCueAnchored(cueIndex));
+		actionParameters.addStringParameter("name",loadedSound->sound->getCueName(cueIndex));
+		actionParameters.addSamplePosParameter("position",loadedSound->sound->getCueTime(cueIndex));
+		actionParameters.addBoolParameter("isAnchored",loadedSound->sound->isCueAnchored(cueIndex));
 
 		replaceCueActionFactory->performAction(loadedSound,&actionParameters,false,false);
 
@@ -184,8 +184,8 @@ void CCueListDialog::rebuildCueList()
 
 	// insert into a map and then extract (sorted) into the list box
 	map<string,size_t> cues;
-	CSound *sound=loadedSound->getSound();
-	for(size_t t=0;t<loadedSound->getSound()->getCueCount();t++)
+	CSound *sound=loadedSound->sound;
+	for(size_t t=0;t<loadedSound->sound->getCueCount();t++)
 	{
 		cues.insert(
 			map<string,size_t>::value_type(

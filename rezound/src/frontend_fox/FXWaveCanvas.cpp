@@ -122,7 +122,7 @@ void FXWaveCanvas::setHorzZoom(double v,HorzRecenterTypes horzRecenterType)
 		const sample_fpos_t stopPositionScreenX=getDrawSelectStop();
 
 		// how many samples are represented by one pixel when fully zoomed out (accounting for a small right side margin of unused space)
-		const sample_fpos_t maxZoomFactor=(sample_fpos_t)loadedSound->getSound()->getLength()/(sample_fpos_t)max(1,(int)(getWidth()-RIGHT_MARGIN));
+		const sample_fpos_t maxZoomFactor=(sample_fpos_t)loadedSound->sound->getLength()/(sample_fpos_t)max(1,(int)(getWidth()-RIGHT_MARGIN));
 
 		// map v:0..1 --> horzZoomFactor:maxZoomFactor..1
 		horzZoomFactor=maxZoomFactor+((1.0-maxZoomFactor)*v);
@@ -175,7 +175,7 @@ void FXWaveCanvas::setHorzZoom(double v,HorzRecenterTypes horzRecenterType)
 
 const sample_pos_t FXWaveCanvas::getHorzSize() const
 {
-	return((sample_pos_t)((sample_fpos_t)loadedSound->getSound()->getLength()/horzZoomFactor)+RIGHT_MARGIN); // accounting for the right margin of unused space
+	return((sample_pos_t)((sample_fpos_t)loadedSound->sound->getLength()/horzZoomFactor)+RIGHT_MARGIN); // accounting for the right margin of unused space
 }
 
 const double FXWaveCanvas::getHorzZoom() const
@@ -195,7 +195,7 @@ void FXWaveCanvas::setVertZoom(double v)
 	if(v!=lastVertZoom)
 	{
 		// how many sample values are represented by one pixel when fully zoomed out
-		const double maxZoomFactor=(MAX_SAMPLE*2.0)/(double)getHeight() * loadedSound->getSound()->getChannelCount();
+		const double maxZoomFactor=(MAX_SAMPLE*2.0)/(double)getHeight() * loadedSound->sound->getChannelCount();
 
 		const int oldSize=getVertSize()/2;
 
@@ -214,7 +214,7 @@ void FXWaveCanvas::setVertZoom(double v)
 
 const int FXWaveCanvas::getVertSize() const
 {
-	return((int)ceil(((MAX_SAMPLE*2)/vertZoomFactor)*loadedSound->getSound()->getChannelCount()));
+	return((int)ceil(((MAX_SAMPLE*2)/vertZoomFactor)*loadedSound->sound->getChannelCount()));
 }
 
 
@@ -356,7 +356,7 @@ void FXWaveCanvas::drawPortion(int left,int width,FXDCWindow *dc)
 	//
 	// ??? One better solution would be to arrange for a back buffer to be saved 
 	// before the action started, and I could blit from that for updates
-	if(!loadedSound->getSound()->trylockSize())
+	if(!loadedSound->sound->trylockSize())
 	{ // can't lock.. just paint with background.. whole thing first time the lock fails.. just do updated part on not-the-first time
 		dc->setForeground(backGroundColor);
 		if(lastDrawWasUnsuccessful)
@@ -375,12 +375,12 @@ void FXWaveCanvas::drawPortion(int left,int width,FXDCWindow *dc)
 		renderedStopPosition=loadedSound->channel->getStopPosition();
 
 		const int vOffset=((getVertSize()-getHeight())/2)-vertOffset;
-		::drawPortion(left,width,dc,loadedSound->getSound(),getWidth(),getHeight(),(int)getDrawSelectStart(),(int)getDrawSelectStop(),horzZoomFactor,horzOffset,vertZoomFactor,vOffset);
-		loadedSound->getSound()->unlockSize();
+		::drawPortion(left,width,dc,loadedSound->sound,getWidth(),getHeight(),(int)getDrawSelectStart(),(int)getDrawSelectStop(),horzZoomFactor,horzOffset,vertZoomFactor,vOffset);
+		loadedSound->sound->unlockSize();
 	}
 	catch(...)
 	{
-		loadedSound->getSound()->unlockSize();
+		loadedSound->sound->unlockSize();
 		throw;
 	}
 }
@@ -398,14 +398,14 @@ const sample_pos_t FXWaveCanvas::getHorzOffsetToCenterStopPos() const
 
 void FXWaveCanvas::showAmount(double seconds,sample_pos_t pos)
 {
-	if(seconds<(loadedSound->getSound()->getLength()/loadedSound->getSound()->getSampleRate()))
+	if(seconds<(loadedSound->sound->getLength()/loadedSound->sound->getSampleRate()))
 	{
-		horzZoomFactor=max((sample_fpos_t)1.0,((sample_fpos_t)seconds*loadedSound->getSound()->getSampleRate())/getWidth());
-		horzOffset=(sample_pos_t)(max((sample_pos_t)0,min(loadedSound->getSound()->getLength(),pos))/horzZoomFactor);
+		horzZoomFactor=max((sample_fpos_t)1.0,((sample_fpos_t)seconds*loadedSound->sound->getSampleRate())/getWidth());
+		horzOffset=(sample_pos_t)(max((sample_pos_t)0,min(loadedSound->sound->getLength(),pos))/horzZoomFactor);
 		prevHorzZoomFactor_horzOffset=horzZoomFactor;
 
 		// recalc the percent value so that getHorzZoom() will return the correct value
-		const sample_fpos_t maxZoomFactor=(sample_fpos_t)loadedSound->getSound()->getLength()/(sample_fpos_t)max(1,(int)(getWidth()-RIGHT_MARGIN));
+		const sample_fpos_t maxZoomFactor=(sample_fpos_t)loadedSound->sound->getLength()/(sample_fpos_t)max(1,(int)(getWidth()-RIGHT_MARGIN));
 		lastHorzZoom=(horzZoomFactor-maxZoomFactor)/(1.0-maxZoomFactor);
 	}
 	else
@@ -466,9 +466,9 @@ const sample_pos_t FXWaveCanvas::snapPositionToCue(sample_pos_t p) const
 			size_t cueIndex;
 			sample_pos_t distance;
 
-			const bool found=loadedSound->getSound()->findNearestCue(p,cueIndex,distance);
+			const bool found=loadedSound->sound->findNearestCue(p,cueIndex,distance);
 			if(found && distance<=snapToCueDistance)
-				p=loadedSound->getSound()->getCueTime(cueIndex);
+				p=loadedSound->sound->getCueTime(cueIndex);
 		}
 	}
 	return(p);
@@ -476,7 +476,7 @@ const sample_pos_t FXWaveCanvas::snapPositionToCue(sample_pos_t p) const
 
 const FXint FXWaveCanvas::getCueScreenX(size_t cueIndex) const
 {
-	sample_fpos_t X=((sample_fpos_t)loadedSound->getSound()->getCueTime(cueIndex)/horzZoomFactor-horzOffset);
+	sample_fpos_t X=((sample_fpos_t)loadedSound->sound->getCueTime(cueIndex)/horzZoomFactor-horzOffset);
 	if(X>=(-CUE_RADIUS-1) && X<(width+CUE_RADIUS+1))
 		return((FXint)sample_fpos_round(X));
 	else
@@ -498,8 +498,8 @@ const sample_pos_t FXWaveCanvas::getSamplePosForScreenX(FXint X) const
 	sample_fpos_t p=sample_fpos_floor(((sample_fpos_t)(X+horzOffset))*horzZoomFactor);
 	if(p<0)
 		p=0.0;
-	else if(p>=loadedSound->getSound()->getLength())
-		p=loadedSound->getSound()->getLength()-1;
+	else if(p>=loadedSound->sound->getLength())
+		p=loadedSound->sound->getLength()-1;
 
 	return((sample_pos_t)p);
 }
@@ -513,14 +513,14 @@ void FXWaveCanvas::setSelectStartFromScreen(FXint X)
 	// would select >= sound's length, we make newSelectStart
 	// be the sound's length - 1
 	// 							??? why X+1?			??? may beed to check >=len-1
-	if(X>=((FXint)getWidth()-1) && (sample_pos_t)((sample_fpos_t)(X+horzOffset+1)*horzZoomFactor)>=loadedSound->getSound()->getLength())
-		newSelectStart=loadedSound->getSound()->getLength()-1;
+	if(X>=((FXint)getWidth()-1) && (sample_pos_t)((sample_fpos_t)(X+horzOffset+1)*horzZoomFactor)>=loadedSound->sound->getLength())
+		newSelectStart=loadedSound->sound->getLength()-1;
 
 
 	if(newSelectStart<0)
 		newSelectStart=0;
-	else if(newSelectStart>=loadedSound->getSound()->getLength())
-		newSelectStart=loadedSound->getSound()->getLength()-1;
+	else if(newSelectStart>=loadedSound->sound->getLength())
+		newSelectStart=loadedSound->sound->getLength()-1;
 
 	lastChangedPosition=lcpStart;
 	loadedSound->channel->setStartPosition(newSelectStart);
@@ -535,13 +535,13 @@ void FXWaveCanvas::setSelectStopFromScreen(FXint X)
 	// would select >= sound's length, we make newSelectStop
 	// be the sound's length - 1
 	// 											??? may beed to check >=len-1
-	if(X>=((FXint)getWidth()-1) && (sample_pos_t)((sample_fpos_t)(X+horzOffset+1)*horzZoomFactor)>=loadedSound->getSound()->getLength())
-		newSelectStop=loadedSound->getSound()->getLength()-1;
+	if(X>=((FXint)getWidth()-1) && (sample_pos_t)((sample_fpos_t)(X+horzOffset+1)*horzZoomFactor)>=loadedSound->sound->getLength())
+		newSelectStop=loadedSound->sound->getLength()-1;
 
 	if(newSelectStop<0)
 		newSelectStop=0;
-	else if(newSelectStop>=loadedSound->getSound()->getLength())
-		newSelectStop=loadedSound->getSound()->getLength()-1;
+	else if(newSelectStop>=loadedSound->sound->getLength())
+		newSelectStop=loadedSound->sound->getLength()-1;
 
 	lastChangedPosition=lcpStop;
 	loadedSound->channel->setStopPosition(newSelectStop);

@@ -302,7 +302,7 @@ void CSoundWindow::recreateMuteButtons(bool callCreate)
 		delete muteButtons[t];
 	}
 
-	muteButtonCount=loadedSound->getSound()->getChannelCount();
+	muteButtonCount=loadedSound->sound->getChannelCount();
 	for(unsigned t=0;t<muteButtonCount;t++)
 	{
 		muteButtons[t]=new FXCheckButton(muteContents,"",this,ID_MUTE_BUTTON,CHECKBUTTON_NORMAL|LAYOUT_CENTER_Y);
@@ -403,7 +403,7 @@ void CSoundWindow::drawPlayPosition(bool justErasing)
 void CSoundWindow::updateFromEdit()
 {
 	// see if the number of channels changed
-	if(loadedSound->getSound()->getChannelCount()!=muteButtonCount)
+	if(loadedSound->sound->getChannelCount()!=muteButtonCount)
 	{
 		recreateMuteButtons(true);
 		/* ??? not necessary anymore... FXWaveViewCanvas::updateFromEdit() handles it
@@ -421,11 +421,11 @@ void CSoundWindow::updateFromEdit()
 
 void CSoundWindow::updateAllStatusInfo()
 {
-	sampleRateLabel->setText(("Rate: "+istring(loadedSound->getSound()->getSampleRate())).c_str());
-	channelCountLabel->setText(("Channels: "+istring(loadedSound->getSound()->getChannelCount())).c_str());
+	sampleRateLabel->setText(("Rate: "+istring(loadedSound->sound->getSampleRate())).c_str());
+	channelCountLabel->setText(("Channels: "+istring(loadedSound->sound->getChannelCount())).c_str());
 
-	audioDataSizeLabel->setText(("Audio Size: "+loadedSound->getSound()->getAudioDataSize()).c_str());
-	poolFileSizeLabel->setText(("Working File: "+loadedSound->getSound()->getPoolFileSize()).c_str());
+	audioDataSizeLabel->setText(("Audio Size: "+loadedSound->sound->getAudioDataSize()).c_str());
+	poolFileSizeLabel->setText(("Working File: "+loadedSound->sound->getPoolFileSize()).c_str());
 
 	// ??? this should depend on the FXRezWaveView's actual horzZoomFactor value because the FXDial doesn't represent how many samples a pixel represents
 	int places;
@@ -438,7 +438,7 @@ void CSoundWindow::updateAllStatusInfo()
 	else
 		places=2;
 
-	totalLengthLabel->setText(("Total: "+loadedSound->getSound()->getTimePosition(loadedSound->getSound()->getLength(),places)).c_str());
+	totalLengthLabel->setText(("Total: "+loadedSound->sound->getTimePosition(loadedSound->sound->getLength(),places)).c_str());
 
 	updateSelectionStatusInfo();
 	updatePlayPositionStatusInfo();
@@ -457,9 +457,9 @@ void CSoundWindow::updateSelectionStatusInfo()
 	else 
 		places=2;
 
-	selectionLengthLabel->setText(("Selection: "+loadedSound->getSound()->getTimePosition(loadedSound->channel->getStopPosition()-loadedSound->channel->getStartPosition()+1,places)).c_str());
-	selectStartLabel->setText(("Start: "+loadedSound->getSound()->getTimePosition(loadedSound->channel->getStartPosition(),places)).c_str());
-	selectStopLabel->setText(("Stop: "+loadedSound->getSound()->getTimePosition(loadedSound->channel->getStopPosition(),places)).c_str());
+	selectionLengthLabel->setText(("Selection: "+loadedSound->sound->getTimePosition(loadedSound->channel->getStopPosition()-loadedSound->channel->getStartPosition()+1,places)).c_str());
+	selectStartLabel->setText(("Start: "+loadedSound->sound->getTimePosition(loadedSound->channel->getStartPosition(),places)).c_str());
+	selectStopLabel->setText(("Stop: "+loadedSound->sound->getTimePosition(loadedSound->channel->getStopPosition(),places)).c_str());
 }
 
 void CSoundWindow::updatePlayPositionStatusInfo()
@@ -475,7 +475,7 @@ void CSoundWindow::updatePlayPositionStatusInfo()
 		places=2;
 
 	if(loadedSound->channel->isPlaying())
-		playPositionLabel->setText(("Playing: "+loadedSound->getSound()->getTimePosition(loadedSound->channel->getPosition(),places)).c_str());
+		playPositionLabel->setText(("Playing: "+loadedSound->sound->getTimePosition(loadedSound->channel->getPosition(),places)).c_str());
 	else
 		playPositionLabel->setText("");
 }
@@ -527,7 +527,7 @@ void CSoundWindow::create()
 // mute button
 long CSoundWindow::onMuteButton(FXObject *sender,FXSelector,void*)
 {
-	for(unsigned t=0;t<loadedSound->getSound()->getChannelCount();t++)
+	for(unsigned t=0;t<loadedSound->sound->getChannelCount();t++)
 		loadedSound->channel->setMute(t,muteButtons[t]->getCheck());
 
 	return 1;
@@ -537,7 +537,7 @@ long CSoundWindow::onInvertMuteButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	if(SELTYPE(sel)==SEL_COMMAND)
 	{
-		for(unsigned t=0;t<loadedSound->getSound()->getChannelCount();t++)
+		for(unsigned t=0;t<loadedSound->sound->getChannelCount();t++)
 			muteButtons[t]->setCheck(!muteButtons[t]->getCheck());
 	}
 	else
@@ -545,7 +545,7 @@ long CSoundWindow::onInvertMuteButton(FXObject *sender,FXSelector sel,void *ptr)
 		if(!invertMuteButton->underCursor())
 			return(0);
 
-		for(unsigned t=0;t<loadedSound->getSound()->getChannelCount();t++)
+		for(unsigned t=0;t<loadedSound->sound->getChannelCount();t++)
 			muteButtons[t]->setCheck(false);
 	}
 
@@ -685,7 +685,7 @@ long CSoundWindow::onBothZoomDialMinusIndClick(FXObject *sender,FXSelector sel,v
 
 long CSoundWindow::onRedrawButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-	loadedSound->getSound()->invalidateAllPeakData();
+	loadedSound->sound->invalidateAllPeakData();
 	updateFromEdit(); // to cause everything to redraw even if not necessary
 	return 1;
 }
@@ -698,8 +698,8 @@ long CSoundWindow::onSelectStartSpinnerChange(FXObject *sender,FXSelector sel,vo
 	sample_fpos_t newSelectStart=(sample_fpos_t)loadedSound->channel->getStartPosition()+selectStartSpinner->getValue();
 
 
-	if(newSelectStart>=loadedSound->getSound()->getLength()-1)
-		newSelectStart=loadedSound->getSound()->getLength()-1;
+	if(newSelectStart>=loadedSound->sound->getLength()-1)
+		newSelectStart=loadedSound->sound->getLength()-1;
 	if(newSelectStart<0)
 		newSelectStart=0;
 
@@ -713,8 +713,8 @@ long CSoundWindow::onSelectStopSpinnerChange(FXObject *sender,FXSelector sel,voi
 {
 	sample_fpos_t newSelectStop=(sample_fpos_t)loadedSound->channel->getStopPosition()+selectStopSpinner->getValue();
 
-	if(newSelectStop>=loadedSound->getSound()->getLength()-1)
-		newSelectStop=loadedSound->getSound()->getLength()-1;
+	if(newSelectStop>=loadedSound->sound->getLength()-1)
+		newSelectStop=loadedSound->sound->getLength()-1;
 	if(newSelectStop<0)
 		newSelectStop=0;
 
@@ -781,9 +781,9 @@ long CSoundWindow::onEditCue(FXObject *sender,FXSelector sel,void *ptr)
 
 	// add the parameters for the dialog to display initially
 	actionParameters.addUnsignedParameter("index",cueIndex);
-	actionParameters.addStringParameter("name",loadedSound->getSound()->getCueName(cueIndex));
-	actionParameters.addSamplePosParameter("position",loadedSound->getSound()->getCueTime(cueIndex));
-	actionParameters.addBoolParameter("isAnchored",loadedSound->getSound()->isCueAnchored(cueIndex));
+	actionParameters.addStringParameter("name",loadedSound->sound->getCueName(cueIndex));
+	actionParameters.addSamplePosParameter("position",loadedSound->sound->getCueTime(cueIndex));
+	actionParameters.addBoolParameter("isAnchored",loadedSound->sound->isCueAnchored(cueIndex));
 
 	replaceCueActionFactory->performAction(loadedSound,&actionParameters,false,false);
 	return 1;
