@@ -132,6 +132,8 @@ void CJACKSoundRecorder::initialize(CSound *sound)
 		throw(runtime_error(string(__func__)+" -- already initialized"));
 }
 
+#warning see about possibly using the same client for players and recorders... and dont close or open it until a reference count goes to zero
+
 void CJACKSoundRecorder::deinitialize()
 {
 	if(client)
