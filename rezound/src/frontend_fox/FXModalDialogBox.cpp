@@ -40,7 +40,7 @@ FXIMPLEMENT(FXModalDialogBox,FXDialogBox,FXModalDialogBoxMap,ARRAYNUMBER(FXModal
 // ----------------------------------------
 
 									// ??? I don't think these w and h parameters are necessary now that I use getDefault[Width,Height]() in the show() method
-FXModalDialogBox::FXModalDialogBox(FXWindow *owner,const FXString &title,int w,int h,FrameTypes frameType) :
+FXModalDialogBox::FXModalDialogBox(FXWindow *owner,const FXString &title,int w,int h,FrameTypes frameType,ShowTypes _showType) :
 	FXDialogBox(owner,title,DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE, 10,20,w,h, 0,0,0,0, 0,0),
 
 	contents(new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
@@ -55,7 +55,9 @@ FXModalDialogBox::FXModalDialogBox(FXWindow *owner,const FXString &title,int w,i
 		lowerFrame(new FXHorizontalFrame(contents,FRAME_RAISED|FRAME_THICK | LAYOUT_FILL_X|LAYOUT_FIX_HEIGHT, 0,0,0,65)),
 			buttonPacker(new FXHorizontalFrame(lowerFrame,LAYOUT_CENTER_X|LAYOUT_CENTER_Y, 0,0,0,0, 0,0,0,0, 12)),
 				okayButton(new FXButton(buttonPacker,"&Okay",FOXIcons->GreenCheck1,this,ID_OKAY_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2)),
-				cancelButton(new FXButton(buttonPacker,"&Cancel",FOXIcons->RedX1,this,ID_CANCEL,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2))
+				cancelButton(new FXButton(buttonPacker,"&Cancel",FOXIcons->RedX1,this,ID_CANCEL,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2)),
+
+	showType(_showType)
 {
 	getFrame()->setPadLeft(5); getFrame()->setPadRight(5); getFrame()->setPadTop(5); getFrame()->setPadBottom(5);
 	getFrame()->setHSpacing(DEFAULT_SPACING); getFrame()->setVSpacing(DEFAULT_SPACING);
@@ -90,12 +92,22 @@ long FXModalDialogBox::onOkayButton(FXObject *sender,FXSelector sel,void *ptr)
 
 void FXModalDialogBox::show(FXuint placement)
 {
+	bool wasRemembered=false;
+
 	recalc();
 
-	FXint wantedWidth=getDefaultWidth();
-	FXint wantedHeight=getDefaultHeight();
-	bool wasRemembered=rememberShow(this);
-	resize(max(getWidth(),wantedWidth),max(getHeight(),wantedHeight));
+	if(showType==stRememberSizeAndPosition)
+	{
+		FXint wantedWidth=getDefaultWidth();
+		FXint wantedHeight=getDefaultHeight();
+		wasRemembered=rememberShow(this);
+		resize(max(getWidth(),wantedWidth),max(getHeight(),wantedHeight));
+	}
+	else if(showType==stShrinkWrap)
+	{
+		resize(getDefaultWidth(),getDefaultHeight());
+	}
+	// else if(showType==stNoChange) .. do nothing
 
 	if(!wasRemembered)
 		FXDialogBox::show(placement);
@@ -109,10 +121,20 @@ void FXModalDialogBox::show(FXuint placement)
 
 FXuint FXModalDialogBox::execute(FXuint placement)
 {
-	FXint wantedWidth=getDefaultWidth();
-	FXint wantedHeight=getDefaultHeight();
-	bool wasRemembered=rememberShow(this);
-	resize(max(getWidth(),wantedWidth),max(getHeight(),wantedHeight));
+	bool wasRemembered=false;
+
+	if(showType==stRememberSizeAndPosition)
+	{
+		FXint wantedWidth=getDefaultWidth();
+		FXint wantedHeight=getDefaultHeight();
+		wasRemembered=rememberShow(this);
+		resize(max(getWidth(),wantedWidth),max(getHeight(),wantedHeight));
+	}
+	else if(showType==stShrinkWrap)
+	{
+		resize(getDefaultWidth(),getDefaultHeight());
+	}
+	// else if(showType==stNoChange) .. do nothing
 
 	if(!wasRemembered)
 		return FXDialogBox::execute(placement);
@@ -126,7 +148,8 @@ FXuint FXModalDialogBox::execute(FXuint placement)
 
 void FXModalDialogBox::hide()
 {
-	rememberHide(this);
+	if(showType==stRememberSizeAndPosition)
+		rememberHide(this);
 	FXDialogBox::hide();
 }
 

@@ -43,8 +43,9 @@ class FXModalDialogBox : public FXDialogBox
 
 public:
 	enum FrameTypes { ftHorizontal,ftVertical };
+	enum ShowTypes { stRememberSizeAndPosition,stNoChange,stShrinkWrap };
 
-	FXModalDialogBox(FXWindow *owner,const FXString &title,int w,int h,FrameTypes frameType=ftHorizontal);
+	FXModalDialogBox(FXWindow *owner,const FXString &title,int w,int h,FrameTypes frameType=ftHorizontal,ShowTypes rememberShowType=stRememberSizeAndPosition);
 	virtual ~FXModalDialogBox();
 
 	virtual void show(FXuint placement);
@@ -79,6 +80,7 @@ private:
 				FXButton *okayButton;
 				FXButton *cancelButton;
 
+	const ShowTypes showType;
 
 };
 
