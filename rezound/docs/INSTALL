@@ -1,28 +1,58 @@
 ReZound 0.1.2alpha Installation instructions 
 
 	
-REQUIRED LIBRARIES:
+REQUIRED LIBRARIES AND APPLICATIONS:
 
-Before attempting to build ReZound you'll need the following:
+Before attempting to build ReZound you will need the following:
+
 
 1. audiofile-0.2.3 (or later) -- Development was done with v0.2.3, but earlier
 versions above than v0.1.9-0.1 may work as well. audiofile is available
 on most distributions, if your version is not up to date, you can download 
 at http://oss.sgi.com/projects/audiofile/
 
-2. fox-0.99.193 (or later) -- The fox GUI toolkit, ReZound should build fine with v0.99.193, but versions earlier that 0.99.87-2 may not work. If you don't have fos or need to get a newer version go to http://www.fox-toolkit.org/
 
-3. pthreads -- This is pretty much standard on all Linux systems' glibc package now. If you don't have it already, It should be available on your distribution discs.
+2. fox-0.99.193 (or later) -- The fox GUI toolkit, ReZound should build fine 
+with v0.99.193, but versions earlier that 0.99.87-2 may not work. If you don't 
+have fox or need to get a newer version go to http://www.fox-toolkit.org/
+	- NOTE: reswrap comes with fox.  If you install from the fox tarball
+		then you should not have any problems.  If your distro's fox
+		package is split into more than 1 package, then you made need
+		to install the package containing the reswrap executable.  It
+		is only needed for fox development and shouldn't actually have
+		to run unless the files in src/images are newer than 
+		src/frontend_fox/CFOXIcons.h|cpp
 
-4. libdl -- This is also common library that is most likely present with the glibc package. As with pthreads it should be avalable on your distribution discs if it's not already installed. 
+
+3. pthreads -- This is pretty much standard on all Linux systems' glibc package 
+now. If you don't have it already, It should be available on your distribution 
+discs.
 
 
-You should also have a working c++ compiler (g++ is preferred) as well as the normal group of regular libraries and headers for compiling packages. 
+4. You should also have a working c++ compiler (g++ is preferred) as well as the 
+normal group of regular libraries and headers for compiling packages. 
+
+
+5. -- PROBLEMS WITH yacc (shipped with SuSE) -- the file, 
+src/misc/CNestedDataFile/cfg.y will have problems if you do not have bison 
+installed.  I am using some features from bison that yacc does not have.  
+Perhaps when ReZound is ported to other operatings systems I will resolve any 
+yacc related issues.   However, this whole issue may be avoided if the .cc file 
+generated from the .y file is intact.
+
+6. flex -- (free-lex) This is commonly installed, but there should be a package 
+for your distro.  I have not tried building ReZound using lex.  Like bison, 
+flex should not even have to run if the .c file created from the .l file is
+intact.
+
+
+
 
 See the end of this file for information on configure options specific to
 ReZound.
 
-If you encounter any errors in the build process and you think you have all the required libraries, please send a bug report to: 
+If you encounter any errors in the build process and you think you have all the 
+required libraries, please send a bug report to: 
 	http://sourceforge.net/tracker/?group_id=5056&atid=105056
 
 If at all possible try to send details, preferably a screen dump or script file.
@@ -31,6 +61,10 @@ The ReZound homepage is at http://rezound.sourceforge.net/
 
 
 To strip the rezound binary, use `make install-strip' as the final installation step.
+
+
+
+
 
 
 Below is the Generic GNU Installation Bit:
