@@ -120,7 +120,7 @@ void playTrigger(void *Pthis)
 // ----------------------------------------------------------
 
 CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
-	FXTopWindow(mainWindow,_loadedSound->getFilename().c_str(),NULL,NULL,DECOR_ALL, 95,mainWindow->getY()+mainWindow->getDefaultHeight()+30,650,400, 0,0,0,0, 0,0),
+	FXTopWindow(mainWindow,_loadedSound->getFilename().c_str(),NULL,NULL,DECOR_ALL, 10,mainWindow->getY()+mainWindow->getDefaultHeight()+30,750,400, 0,0,0,0, 0,0),
 
 	loadedSound(_loadedSound),
 

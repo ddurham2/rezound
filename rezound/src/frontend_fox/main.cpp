@@ -157,9 +157,11 @@ void setupWindows(CMainWindow *mainWindow)
 		// create the dialog used to set the length of the crossfade on the edges
 		gCrossfadeEdgesDialog=new CCrossfadeEdgesDialog(mainWindow);
 
+		/*
 		// create the editing toolbar and set the global gEditToolbar variable
 		gEditToolbar=new CEditToolbar(mainWindow);
 		gEditToolbar->create();
+		*/
 
 		if(gFocusMethod==fmSoundWindowList)
 		{
@@ -171,7 +173,7 @@ void setupWindows(CMainWindow *mainWindow)
 		mainWindow->createToolbars();
 
 		mainWindow->show();
-		gEditToolbar->show();
+		//gEditToolbar->show();
 }
 
 #include <fox/fxkeys.h>
@@ -195,6 +197,7 @@ void setupAccels(CMainWindow *mainWindow)
 	
 
 
+	/*
 	// edits
 	at->addAccel(MKUINT(KEY_a,CONTROLMASK) ,gEditToolbar->selectAllButton,MKUINT(CActionButton::ID_ACCEL_KEY,SEL_COMMAND));
 	
@@ -212,5 +215,6 @@ void setupAccels(CMainWindow *mainWindow)
 	at->addAccel(MKUINT(KEY_V,CONTROLMASK|SHIFTMASK), gEditToolbar->pasteInsertButton,MKUINT(CActionButton::ID_ACCEL_KEY,SEL_COMMAND));
 
 	at->addAccel(MKUINT(KEY_z,CONTROLMASK) ,gEditToolbar,MKUINT(CEditToolbar::ID_UNDO_BUTTON,SEL_COMMAND));
+	*/
 }
 

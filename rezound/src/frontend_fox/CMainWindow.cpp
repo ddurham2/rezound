@@ -19,11 +19,12 @@
  */
 
 #include "CMainWindow.h"
-#include "CActionButton.h"
-#include "CActionMenuCommand.h"
 
 #include <stdexcept>
 #include <string>
+
+#include "CActionButton.h"
+#include "CActionMenuCommand.h"
 
 #include "CSoundFileManager.h"
 
@@ -35,17 +36,11 @@
 
 #include "../backend/main_controls.h"
 
-#include "../backend/Effects/EffectActions.h"
-#include "../backend/Looping/LoopingActions.h"
-#include "../backend/Remaster/RemasterActions.h"
-
 #include "../backend/CLoadedSound.h"
 #include "../backend/AAction.h"
 #include "../backend/ASoundClipboard.h"
 
 #include "../backend/CSoundPlayerChannel.h"
-
-#include "CEditToolbar.h"
 
 #include "CSoundWindow.h"
 
@@ -113,6 +108,9 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REDRAW_BUTTON,			CMainWindow::onRedrawButton),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_NOTES_MENUITEM,			CMainWindow::onUserNotesButton),
+
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_UNDO_MENUITEM,			CMainWindow::onUndoButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CLEAR_UNDO_HISTORY_MENUITEM,	CMainWindow::onClearUndoHistoryButton),
 	
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_DEFRAG_MENUITEM,		CMainWindow::onDefragButton),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PRINT_SAT_MENUITEM,		CMainWindow::onPrintSATButton),
@@ -130,17 +128,19 @@ FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
 #include <fox/fxkeys.h>
 
 CMainWindow::CMainWindow(FXApp* a) :
-	FXMainWindow(a,"ReZound",NULL,NULL,DECOR_ALL,0,0,800,0)
+	FXMainWindow(a,"ReZound",NULL,NULL,DECOR_ALL,0,0,800,160)
 {
 	menubar=new FXMenubar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X);
 
-	contents=new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 1,1,1,1, 1,1);
+	//contents=new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 1,1,1,1, 1,1);
+	contents=new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 1,1,0,0, 1,0);
 
 	#define BUTTON_STYLE FRAME_RAISED|LAYOUT_EXPLICIT
 
 	FXPacker *t;
 
-	playControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,6,6),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
+	// build play control buttons
+	FXPacker *playControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
 		#define PLAY_CONTROLS_BUTTON_STYLE BUTTON_STYLE
 		new FXButton(playControlsFrame,"\tPlay All Once",new FXGIFIcon(getApp(),play_all_once_gif),this,ID_PLAY_ALL_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,0,32,32);
 		new FXButton(playControlsFrame,"\tPlay Selection Once",new FXGIFIcon(getApp(),play_selection_once_gif),this,ID_PLAY_SELECTION_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32,0,32,32);
@@ -161,9 +161,13 @@ CMainWindow::CMainWindow(FXApp* a) :
 		shuttleDial->setRevolutionIncrement(shuttleDial->getWidth()*2-1);
 		shuttleDial->setTipText("Shuttle Seek While Playing\n(Hint: try the mouse wheel as well as dragging)");
 
-	miscControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,6,6),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 3,2);
+	// edit buttons will be built later
+	//editFrame=new FXHorizontalFrame(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 3,2);
+
+	// build miscellaneous buttons
+	FXPacker *miscControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 3,2);
 		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
-				// ??? this and redo should probably be the top two buttons on the edit panel
+				// ??? move this to a "View" dropdown menu except I can't think of anything else to go under view right now
 		new FXButton(miscControlsFrame,"&Redraw",NULL,this,ID_REDRAW_BUTTON,FRAME_RAISED);
 		followPlayPositionButton=new FXCheckButton(miscControlsFrame,"Follow Play Position",this,ID_FOLLOW_PLAY_POSITION_BUTTON);
 		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
@@ -176,7 +180,6 @@ CMainWindow::CMainWindow(FXApp* a) :
 				crossfadeEdgesComboBox->setCurrentItem(0);
 			new FXButton(t,"...\tChange Crossfade Times",NULL,this,ID_CROSSFADE_EDGES_SETTINGS, BUTTON_NORMAL & ~FRAME_THICK);
 		clipboardComboBox=new FXComboBox(miscControlsFrame,8,8, this,ID_CLIPBOARD_COMBOBOX, FRAME_SUNKEN|FRAME_THICK | COMBOBOX_NORMAL|COMBOBOX_STATIC);
-
 }
 
 void CMainWindow::show()
@@ -207,12 +210,6 @@ void CMainWindow::hide()
 {
 	rememberHide(this);
 	FXMainWindow::hide();
-}
-
-static void setupFXWindow(FXWindow *w)
-{
-	w->create();
-	w->recalc();
 }
 
 /*
@@ -256,71 +253,166 @@ public:
 	vector<FXMenuCommand *> items;
 };
 
-// ??? perhaps this could be a function placed else where that wouldn't require a recompile of CMainWindow everytime we change a dialog
 #include "CChannelSelectDialog.h"
+#include "CPasteChannelsDialog.h"
+
+#include "EditActionDialogs.h"
+#include "../backend/Edits/EditActions.h"
+
+#include "../backend/Effects/EffectActions.h"
 #include "EffectActionDialogs.h"
+
+#include "../backend/Looping/LoopingActions.h"
+//#include "LoopingActionDialogs.h"
+
+#include "../backend/Remaster/RemasterActions.h"
 #include "RemasterActionDialogs.h"
+
+
 void CMainWindow::createToolbars()
 {
+#if 0
+	// build edit buttons 
+	{
+		FXMatrix *matrix;
+
+		#define MAKE_BUTTON_FILLER(p) new FXFrame((p),LAYOUT_FIX_WIDTH, 0,0,0,8);
+		#define MAKE_SPACER(p) new FXFrame((p),LAYOUT_FIX_WIDTH|LAYOUT_FILL_Y, 0,0,8,1);
+
+
+		// selection functions
+		matrix=new FXMatrix(editFrame,2,MATRIX_BY_COLUMNS, 0,0,0,0, 0,0,0,0, 0,0);
+		new CActionButton(new CSelectionEditFactory(sSelectAll),matrix,"sa",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+		MAKE_BUTTON_FILLER(matrix);
+		new CActionButton(new CSelectionEditFactory(sSelectToBeginning),matrix,"stb",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+		new CActionButton(new CSelectionEditFactory(sSelectToEnd),matrix,"ste",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+		new CActionButton(new CSelectionEditFactory(sFlopToBeginning),matrix,"ftb",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+		new CActionButton(new CSelectionEditFactory(sFlopToEnd),matrix,"fte",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+		new CActionButton(new CSelectionEditFactory(sSelectToSelectStart),matrix,"sp2st",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+		new CActionButton(new CSelectionEditFactory(sSelectToSelectStop),matrix,"st2sp",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+
+		MAKE_SPACER(matrix);
+
+		// edit functions that remove/copy
+		matrix=new FXMatrix(editFrame,2,MATRIX_BY_COLUMNS, 0,0,0,0, 0,0,0,0, 0,0);
+		new CActionButton(new CCopyEditFactory(gChannelSelectDialog),matrix,"copy",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+		new CActionButton(new CCutEditFactory(gChannelSelectDialog),matrix,"cut",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+		new CActionButton(new CDeleteEditFactory(gChannelSelectDialog),matrix,"del",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+		new CActionButton(new CCropEditFactory(gChannelSelectDialog),matrix,"crop",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+		new CActionButton(new CRotateLeftEditFactory(gChannelSelectDialog,new CRotateDialog(this)),matrix,"<<",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+		new CActionButton(new CRotateRightEditFactory(gChannelSelectDialog,new CRotateDialog(this)),matrix,">>",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+
+		MAKE_SPACER(matrix);
+
+		// edit functions that paste/mute
+		matrix=new FXMatrix(editFrame,2,MATRIX_BY_COLUMNS, 0,0,0,0, 0,0,0,0, 0,0);
+		new CActionButton(new CInsertPasteEditFactory(gPasteChannelsDialog),matrix,"insrt",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+		new CActionButton(new CReplacePasteEditFactory(gPasteChannelsDialog),matrix,"replc",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+		new CActionButton(new COverwritePasteEditFactory(gPasteChannelsDialog),matrix,"ovwr",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+		new CActionButton(new CLimitedOverwritePasteEditFactory(gPasteChannelsDialog),matrix,"lovr",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+		new CActionButton(new CMixPasteEditFactory(gPasteChannelsDialog),matrix,"mix",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+		new CActionButton(new CLimitedMixPasteEditFactory(gPasteChannelsDialog),matrix,"lmix",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+		new CActionButton(new CInsertSilenceEditFactory(gChannelSelectDialog,new CInsertSilenceDialog(this)),matrix,"slnc",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+		new CActionButton(new CMuteEditFactory(gChannelSelectDialog),matrix,"mute",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+	}
+#endif
+
+
 	// build the drop-down menus
-	FXMenuPane *fileMenu=new FXMenuPane(this);
-	setupFXWindow(fileMenu);
-	setupFXWindow(new FXMenuTitle(menubar,"&File",NULL,fileMenu));
-		setupFXWindow(new FXMenuCommand(fileMenu,"&New",NULL,this,ID_FILE_NEW_MENUITEM));
-		setupFXWindow(new FXMenuCommand(fileMenu,"&Open",NULL,this,ID_FILE_OPEN_MENUITEM));
-			setupFXWindow(reopenSubmenu=new CReopenPopup(this));
-		setupFXWindow(new FXMenuCascade(fileMenu,"&Reopen",NULL,reopenSubmenu));
-		setupFXWindow(new FXMenuCommand(fileMenu,"&Save",NULL,this,ID_FILE_SAVE_MENUITEM));
-		setupFXWindow(new FXMenuCommand(fileMenu,"Save &As",NULL,this,ID_FILE_SAVE_AS_MENUITEM));
-		setupFXWindow(new FXMenuCommand(fileMenu,"&Close",NULL,this,ID_FILE_CLOSE_MENUITEM));
-		setupFXWindow(new FXMenuCommand(fileMenu,"Re&vert",NULL,this,ID_FILE_REVERT_MENUITEM));
+	FXMenuPane *menu;
 
-		setupFXWindow(new FXMenuSeparator(fileMenu));
-		setupFXWindow(new FXMenuCommand(fileMenu,"Record",NULL,this,ID_FILE_RECORD_MENUITEM));
+	menu=new FXMenuPane(this);
+	new FXMenuTitle(menubar,"&File",NULL,menu);
+		new FXMenuCommand(menu,"&New",NULL,this,ID_FILE_NEW_MENUITEM);
+		new FXMenuCommand(menu,"&Open\tCtrl+O",NULL,this,ID_FILE_OPEN_MENUITEM);
+		new FXMenuCascade(menu,"&Reopen",NULL,new CReopenPopup(this));
+		new FXMenuCommand(menu,"&Save\tCtrl+S",NULL,this,ID_FILE_SAVE_MENUITEM);
+		new FXMenuCommand(menu,"Save &As",NULL,this,ID_FILE_SAVE_AS_MENUITEM);
+		new FXMenuCommand(menu,"&Close\tCtrl+W",NULL,this,ID_FILE_CLOSE_MENUITEM);
+		new FXMenuCommand(menu,"Re&vert",NULL,this,ID_FILE_REVERT_MENUITEM);
 
-		setupFXWindow(new FXMenuSeparator(fileMenu));
-		setupFXWindow(new FXMenuCommand(fileMenu,"User No&tes"/*\tUser notes about the sound (and preserved in the file if the format supports it)"*/,NULL,this,ID_NOTES_MENUITEM));
+		new FXMenuSeparator(menu);
+		new FXMenuCommand(menu,"Record",NULL,this,ID_FILE_RECORD_MENUITEM);
 
-		setupFXWindow(new FXMenuSeparator(fileMenu));
-		setupFXWindow(new FXMenuCommand(fileMenu,"&About ReZound",NULL,this,ID_ABOUT_MENUITEM));
+		new FXMenuSeparator(menu);
+		new FXMenuCommand(menu,"User No&tes"/*\tUser notes about the sound (and preserved in the file if the format supports it)"*/,NULL,this,ID_NOTES_MENUITEM);
+
+		new FXMenuSeparator(menu);
+		new FXMenuCommand(menu,"&About ReZound\tF1",NULL,this,ID_ABOUT_MENUITEM);
 
 		// just for testing ???
-		setupFXWindow(new FXMenuSeparator(fileMenu));
-		setupFXWindow(new FXMenuCaption(fileMenu,"- Just for testing"));
-		setupFXWindow(new FXMenuCommand(fileMenu,"Defrag",NULL,this,ID_DEFRAG_MENUITEM));
-		setupFXWindow(new FXMenuCommand(fileMenu,"PrintSAT",NULL,this,ID_PRINT_SAT_MENUITEM));
+		new FXMenuSeparator(menu);
+		new FXMenuCaption(menu,"- Just for testing");
+		new FXMenuCommand(menu,"Defrag",NULL,this,ID_DEFRAG_MENUITEM);
+		new FXMenuCommand(menu,"PrintSAT",NULL,this,ID_PRINT_SAT_MENUITEM);
 
-		setupFXWindow(new FXMenuSeparator(fileMenu));
-		setupFXWindow(new FXMenuCommand(fileMenu,"&Quit\tCtrl-Q",NULL,this,ID_FILE_QUIT_MENUITEM));
+		new FXMenuSeparator(menu);
+		new FXMenuCommand(menu,"&Quit\tCtrl+Q",NULL,this,ID_FILE_QUIT_MENUITEM);
 
 			// ??? I might be able to get the name of the effect from the action rather than having to type it here
 
-	FXMenuPane *effectsMenu=new FXMenuPane(this);
-	setupFXWindow(effectsMenu);
-	setupFXWindow(new FXMenuTitle(menubar,"&Effects",NULL,effectsMenu));
-		setupFXWindow(new CActionMenuCommand(new CReverseEffectFactory(gChannelSelectDialog),effectsMenu,"Re&verse"));
-		setupFXWindow(new CActionMenuCommand(new CChangeAmplitudeEffectFactory(gChannelSelectDialog,new CNormalAmplitudeChangeDialog(this),new CAdvancedAmplitudeChangeDialog(this)),effectsMenu,"Change &Amplitude"));
-		setupFXWindow(new CActionMenuCommand(new CChangeRateEffectFactory(gChannelSelectDialog,new CNormalRateChangeDialog(this),new CAdvancedRateChangeDialog(this)),effectsMenu,"Change &Rate"));
-		setupFXWindow(new CActionMenuCommand(new CFlangeEffectFactory(gChannelSelectDialog,new CFlangeDialog(this)),effectsMenu,"&Flange"));
-		setupFXWindow(new CActionMenuCommand(new CSimpleDelayEffectFactory(gChannelSelectDialog,new CSimpleDelayDialog(this)),effectsMenu,"&Delay (Echo)"));
-		setupFXWindow(new CActionMenuCommand(new CStaticReverbEffectFactory(gChannelSelectDialog),effectsMenu,"Reverb"));
-		setupFXWindow(new CActionMenuCommand(new CVariedRepeatEffectFactory(gChannelSelectDialog,new CVariedRepeatDialog(this)),effectsMenu,"Variable Repeat"));
+	menu=new FXMenuPane(this);
+	new FXMenuTitle(menubar,"&Edit",NULL,menu);
+		new FXMenuCommand(menu,"Undo\tCtrl+Z",NULL,this,ID_UNDO_MENUITEM);
+		new FXMenuCommand(menu,"Clear Undo History",NULL,this,ID_CLEAR_UNDO_HISTORY_MENUITEM);
 
-		setupFXWindow(new CActionMenuCommand(new CTestEffectFactory(gChannelSelectDialog),effectsMenu,"test"));
+		new FXMenuSeparator(menu);
+		new CActionMenuCommand(new CCopyEditFactory(gChannelSelectDialog),menu,"Copy\tCtrl+C");
+		new CActionMenuCommand(new CCutEditFactory(gChannelSelectDialog),menu,"Cut\tCtrl+X");
+		new CActionMenuCommand(new CDeleteEditFactory(gChannelSelectDialog),menu,"Delete\tDel");
+		new CActionMenuCommand(new CCropEditFactory(gChannelSelectDialog),menu,"Crop\tCtrl+R");
 
-	FXMenuPane *loopingMenu=new FXMenuPane(this);
-	setupFXWindow(loopingMenu);
-	setupFXWindow(new FXMenuTitle(menubar,"&Looping",NULL,loopingMenu));
-		setupFXWindow(new CActionMenuCommand(new CMakeSymetricActionFactory(gChannelSelectDialog),loopingMenu,"Make &Symetric"));
+		new FXMenuSeparator(menu);
+		new CActionMenuCommand(new CInsertPasteEditFactory(gPasteChannelsDialog),menu,"Paste Insert\tCtrl+V");
+		new CActionMenuCommand(new CReplacePasteEditFactory(gPasteChannelsDialog),menu,"Paste Replace");
+		new CActionMenuCommand(new COverwritePasteEditFactory(gPasteChannelsDialog),menu,"Paste Overwrite");
+		new CActionMenuCommand(new CLimitedOverwritePasteEditFactory(gPasteChannelsDialog),menu,"Paste Limited Overwrite");
+		new CActionMenuCommand(new CMixPasteEditFactory(gPasteChannelsDialog),menu,"Paste Mix");
+		new CActionMenuCommand(new CLimitedMixPasteEditFactory(gPasteChannelsDialog),menu,"Paste Limited Mix");
 
-	FXMenuPane *remasterMenu=new FXMenuPane(this);
-	setupFXWindow(remasterMenu);
-	setupFXWindow(new FXMenuTitle(menubar,"&Remaster",NULL,remasterMenu));
-		setupFXWindow(new CActionMenuCommand(new CUnclipActionFactory(gChannelSelectDialog),remasterMenu,"&Unclip"));
-		setupFXWindow(new CActionMenuCommand(new CRemoveDCActionFactory(gChannelSelectDialog),remasterMenu,"Remove &DC"));
-		setupFXWindow(new CActionMenuCommand(new CNoiseGateActionFactory(gChannelSelectDialog,new CNoiseGateDialog(this)),remasterMenu,"&Noise Gate"));
-		setupFXWindow(new CActionMenuCommand(new CCompressorActionFactory(gChannelSelectDialog,new CCompressorDialog(this)),remasterMenu,"Dynamic Range &Compressor"));
+		new FXMenuSeparator(menu);
+		new CActionMenuCommand(new CInsertSilenceEditFactory(gChannelSelectDialog,new CInsertSilenceDialog(this)),menu,"Insert Silence");
+		new CActionMenuCommand(new CMuteEditFactory(gChannelSelectDialog),menu,"Mute");
 
+		new FXMenuSeparator(menu);
+		new CActionMenuCommand(new CRotateLeftEditFactory(gChannelSelectDialog,new CRotateDialog(this)),menu,"<< Rotate Leftward");
+		new CActionMenuCommand(new CRotateRightEditFactory(gChannelSelectDialog,new CRotateDialog(this)),menu,">> Rotate Rightward");
+
+		new FXMenuSeparator(menu);
+		new CActionMenuCommand(new CSelectionEditFactory(sSelectAll),menu,"Select All\tCtrl+A");
+		new CActionMenuCommand(new CSelectionEditFactory(sSelectToBeginning),menu,"Select to Beginning");
+		new CActionMenuCommand(new CSelectionEditFactory(sSelectToEnd),menu,"Select to End");
+		new CActionMenuCommand(new CSelectionEditFactory(sFlopToBeginning),menu,"Flip to Beginning");
+		new CActionMenuCommand(new CSelectionEditFactory(sFlopToEnd),menu,"Flip to End");
+		new CActionMenuCommand(new CSelectionEditFactory(sSelectToSelectStart),menu,"Move Stop to Start Position");
+		new CActionMenuCommand(new CSelectionEditFactory(sSelectToSelectStop),menu,"Move Start to Stop Position");
+
+
+	menu=new FXMenuPane(this);
+	new FXMenuTitle(menubar,"Effec&ts",NULL,menu);
+		new CActionMenuCommand(new CReverseEffectFactory(gChannelSelectDialog),menu,"Re&verse");
+		new CActionMenuCommand(new CChangeAmplitudeEffectFactory(gChannelSelectDialog,new CNormalAmplitudeChangeDialog(this),new CAdvancedAmplitudeChangeDialog(this)),menu,"Change &Amplitude");
+		new CActionMenuCommand(new CChangeRateEffectFactory(gChannelSelectDialog,new CNormalRateChangeDialog(this),new CAdvancedRateChangeDialog(this)),menu,"Change &Rate");
+		new CActionMenuCommand(new CFlangeEffectFactory(gChannelSelectDialog,new CFlangeDialog(this)),menu,"&Flange");
+		new CActionMenuCommand(new CSimpleDelayEffectFactory(gChannelSelectDialog,new CSimpleDelayDialog(this)),menu,"&Delay (Echo)");
+		new CActionMenuCommand(new CStaticReverbEffectFactory(gChannelSelectDialog),menu,"Reverb");
+		new CActionMenuCommand(new CVariedRepeatEffectFactory(gChannelSelectDialog,new CVariedRepeatDialog(this)),menu,"Variable Repeat");
+
+		new CActionMenuCommand(new CTestEffectFactory(gChannelSelectDialog),menu,"test");
+
+	menu=new FXMenuPane(this);
+	new FXMenuTitle(menubar,"&Looping",NULL,menu);
+		new CActionMenuCommand(new CMakeSymetricActionFactory(gChannelSelectDialog),menu,"Make &Symetric");
+
+	menu=new FXMenuPane(this);
+	new FXMenuTitle(menubar,"&Remaster",NULL,menu);
+		new CActionMenuCommand(new CUnclipActionFactory(gChannelSelectDialog),menu,"&Unclip");
+		new CActionMenuCommand(new CRemoveDCActionFactory(gChannelSelectDialog),menu,"Remove &DC");
+		new CActionMenuCommand(new CNoiseGateActionFactory(gChannelSelectDialog,new CNoiseGateDialog(this)),menu,"&Noise Gate");
+		new CActionMenuCommand(new CCompressorActionFactory(gChannelSelectDialog,new CCompressorDialog(this)),menu,"Dynamic Range &Compressor");
+
+
+	create(); // re-call create for this window which will call it for all new child windows
 }
 
 
@@ -334,7 +426,6 @@ long CMainWindow::onQuit(FXObject *sender,FXSelector sel,void *ptr)
 
 	if(exitReZound(gSoundFileManager))
 	{
-		gEditToolbar->hide();
 		hide();
 		getApp()->exit(0);
 	}
@@ -494,6 +585,18 @@ long CMainWindow::onUserNotesButton(FXObject *sender,FXSelector sel,void *ptr)
 	{
 		Error(e.what());
 	}
+	return(1);
+}
+
+long CMainWindow::onUndoButton(FXObject *sender,FXSelector sel,void *ptr)
+{
+	undo(gSoundFileManager);
+	return(1);
+}
+
+long CMainWindow::onClearUndoHistoryButton(FXObject *sender,FXSelector sel,void *ptr)
+{
+	clearUndoHistory(gSoundFileManager);
 	return(1);
 }
 

@@ -59,6 +59,9 @@ public:
 
 	long onUserNotesButton(FXObject *sender,FXSelector sel,void *ptr);
 
+	long onUndoButton(FXObject *sender,FXSelector sel,void *ptr);
+	long onClearUndoHistoryButton(FXObject *sender,FXSelector sel,void *ptr);
+
 	long onShuttleReturn(FXObject *sender,FXSelector sel,void *ptr);
 	long onShuttleChange(FXObject *sender,FXSelector sel,void *ptr);
 
@@ -117,6 +120,9 @@ public:
 
 		ID_NOTES_MENUITEM,
 
+		ID_UNDO_MENUITEM,
+		ID_CLEAR_UNDO_HISTORY_MENUITEM,
+
 		ID_DEFRAG_MENUITEM,
 		ID_PRINT_SAT_MENUITEM,
 
@@ -139,14 +145,14 @@ protected:
 private:
 
 	FXMenubar 		*menubar;
-		FXPopup 	*reopenSubmenu;
 	FXHorizontalFrame	*contents;		// top horizontal main frame which contains play controls and action controls
-	FXPacker   		*playControlsFrame;	// frame that contains the play control buttons
-		FXDial *shuttleDial;
-	FXPacker		*miscControlsFrame;	// frame that contains the undo/redo buttons, follow-play-position checkbox, etc
-		FXCheckButton	*followPlayPositionButton;
-		FXComboBox	*crossfadeEdgesComboBox;
-		FXComboBox	*clipboardComboBox; // ??? it would however make sense to put this on the edit dialog.. it's just a little wide
+		FXPacker	*editFrame;		// top horizontal main frame which contains play controls and action controls
+
+	FXDial *shuttleDial;
+
+	FXCheckButton	*followPlayPositionButton;
+	FXComboBox	*crossfadeEdgesComboBox;
+	FXComboBox	*clipboardComboBox; // ??? it would however make sense to put this on the edit dialog.. it's just a little wide
 
 };
 

@@ -65,7 +65,7 @@ CEditToolbar::CEditToolbar(FXWindow *mainWindow) :
 	delete getAccelTable();
 	setAccelTable(mainWindow->getAccelTable());
 
-	#define MAKE_FILLER new FXFrame(contents,LAYOUT_FIX_HEIGHT, 0,0,0,8);
+	#define MAKE_FILLER(p) new FXFrame((p),LAYOUT_FIX_HEIGHT, 0,0,0,8);
 
 	/*
 	 * If I wanted to put "Selection:" ... "Editing:" I could group the sets of buttons in separate FXMatrix's and put the label above
@@ -75,12 +75,12 @@ CEditToolbar::CEditToolbar(FXWindow *mainWindow) :
 	new FXButton(contents,"Undo",NULL,this,ID_UNDO_BUTTON,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
 	new FXButton(contents,"ClUo",NULL,this,ID_CLEAR_UNDO_HISTORY_BUTTON,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
 
-	MAKE_FILLER;
-	MAKE_FILLER;
+	MAKE_FILLER(contents);
+	MAKE_FILLER(contents);
 
 	// selection functions
 	selectAllButton=new CActionButton(new CSelectionEditFactory(sSelectAll),contents,"sa",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-	MAKE_FILLER;
+	MAKE_FILLER(contents);
 	new CActionButton(new CSelectionEditFactory(sSelectToBeginning),contents,"stb",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
 	new CActionButton(new CSelectionEditFactory(sSelectToEnd),contents,"ste",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
 	new CActionButton(new CSelectionEditFactory(sFlopToBeginning),contents,"ftb",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
@@ -88,8 +88,8 @@ CEditToolbar::CEditToolbar(FXWindow *mainWindow) :
 	new CActionButton(new CSelectionEditFactory(sSelectToSelectStart),contents,"sp2st",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
 	new CActionButton(new CSelectionEditFactory(sSelectToSelectStop),contents,"st2sp",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
 
-	MAKE_FILLER;
-	MAKE_FILLER;
+	MAKE_FILLER(contents);
+	MAKE_FILLER(contents);
 
 	// edit functions that remove/copy
 	copyButton=new CActionButton(new CCopyEditFactory(gChannelSelectDialog),contents,"copy",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
@@ -99,8 +99,8 @@ CEditToolbar::CEditToolbar(FXWindow *mainWindow) :
 	new CActionButton(new CRotateLeftEditFactory(gChannelSelectDialog,new CRotateDialog(mainWindow)),contents,"<<",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
 	new CActionButton(new CRotateRightEditFactory(gChannelSelectDialog,new CRotateDialog(mainWindow)),contents,">>",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
 
-	MAKE_FILLER; 
-	MAKE_FILLER;
+	MAKE_FILLER(contents);
+	MAKE_FILLER(contents);
 
 	// edit functions that paste/mute
 	pasteInsertButton=new CActionButton(new CInsertPasteEditFactory(gPasteChannelsDialog),contents,"insrt",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
