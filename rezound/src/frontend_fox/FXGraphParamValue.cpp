@@ -249,7 +249,7 @@ public:
 			{ // draw and label this tick
 				dc.drawLine(getWidth()-2,renderY,getWidth()-10,renderY);
 
-				const string s=parent->getVertValueString(parent->screenToNodeVertValue(y));
+				const string s=parent->getVertValueString(parent->screenToNodeVertValue(y,false));
 		
 				int yoffset=font->getFontHeight(); // put text below the tick mark
 				int xoffset=font->getTextWidth(s.c_str(),s.length());
