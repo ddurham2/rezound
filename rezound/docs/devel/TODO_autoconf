@@ -1,4 +1,5 @@
-Add options to manually precify -I paths of -L paths for required libs and headers. That way if my test fails, overrides will work.
+Add options to manually precify -I paths of -L paths for required libs and
+headers. That way if my test fails, overrides will work.
 
 
 2. Look for other possible trouble spots such as stdint.h int32_t int16_t etc
