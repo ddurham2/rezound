@@ -22,9 +22,6 @@ sed -e 's/\(AUTOHEADER="autoheader\)/\12.13/g' bootstrap.orig |\
 make dist ;
 
 mv bootstrap.orig bootstrap
-mv rezound-*.tar.gz ..
-make maintainer-clean
-./bootstrap --clean
-rm -rf autom4te.cache rezound
+tar -zxvf rezound*.tar.gz
 
 

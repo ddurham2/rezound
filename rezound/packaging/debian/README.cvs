@@ -34,3 +34,10 @@ Here are the steps to making a debian package.
 	You must have the automake-1.5 and autoconf2.13 packages
 	installed for this to work
 
+
+
+
+2.	You should still be in the top level directory, now you can
+	run '$ dh_make -e ????@???.??? -s -f ../rezound*.tar.gz' 
+	filling	in the wild cards as necessary.
+
