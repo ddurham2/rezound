@@ -216,11 +216,11 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 2,0,0,0, 0,0);
 		// add the actual LEDs to the packer for turning the LED on and off, done by raising or lowering the first child of the packer
 		playingLED=new FXPacker(t,LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0);
-			(new FXLabel(playingLED,"Playing:",new FXGIFIcon(getApp(),GreenLED1),JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
-			(new FXLabel(playingLED,"Playing:",new FXGIFIcon(getApp(),OffLED1),JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
+			(new FXLabel(playingLED,"Playing:",new FXGIFIcon(getApp(),GreenLED1_gif),JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
+			(new FXLabel(playingLED,"Playing:",new FXGIFIcon(getApp(),OffLED1_gif),JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
 		pausedLED=new FXPacker(t,LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0);
-			(new FXLabel(pausedLED,"Paused:",new FXGIFIcon(getApp(),YellowLED1),JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
-			(new FXLabel(pausedLED,"Paused:",new FXGIFIcon(getApp(),OffLED1),JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
+			(new FXLabel(pausedLED,"Paused:",new FXGIFIcon(getApp(),YellowLED1_gif),JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
+			(new FXLabel(pausedLED,"Paused:",new FXGIFIcon(getApp(),OffLED1_gif),JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
 
 	new FXVerticalSeparator(statusPanel);
 	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 2,0,0,0, 0,0);

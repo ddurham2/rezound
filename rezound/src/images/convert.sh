@@ -4,7 +4,10 @@ echo >> images.cpp
 
 
 # reswrap should have come with the fox package
-reswrap *.gif >> images.cpp
+for i in *.gif
+do
+	reswrap -n ${i%\.gif}_gif $i >> images.cpp
+done
 
 
 echo "/* script generated source code */" > images.h

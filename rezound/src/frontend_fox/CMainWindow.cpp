@@ -28,6 +28,8 @@
 
 #include "settings.h"
 
+#include "../images/images.h"
+
 #include "../backend/file.h"
 #include "../backend/playcontrols.h"
 
@@ -186,14 +188,14 @@ CMainWindow::CMainWindow(FXApp* a) :
 		fileTab->setSelector(ID_ACTIONCONTROL_TAB);
 		actionControlTabOrdering[fileTab]=actionControlTabOrder++;
 			fileTabFrame=new FXHorizontalFrame(actionControlsFrame,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|FRAME_RAISED, 0,0,0,0, 4,4,4,4, 3,3);
-				fileNewButton=new FXButton(fileTabFrame,"&New",NULL,this,ID_FILE_NEW_BUTTON,FRAME_RAISED);
-				fileOpenButton=new FXButton(fileTabFrame,"&Open/\nReopen\t(Right Click for Reopen History)",NULL,this,ID_FILE_OPEN_BUTTON,FRAME_RAISED);
-				fileSaveButton=new FXButton(fileTabFrame,"&Save",NULL,this,ID_FILE_SAVE_BUTTON,FRAME_RAISED);
-				fileSaveAsButton=new FXButton(fileTabFrame,"Save &As",NULL,this,ID_FILE_SAVE_AS_BUTTON,FRAME_RAISED);
-				fileCloseButton=new FXButton(fileTabFrame,"&Close",NULL,this,ID_FILE_CLOSE_BUTTON,FRAME_RAISED);
-				fileRevertButton=new FXButton(fileTabFrame,"Re&vert",NULL,this,ID_FILE_REVERT_BUTTON,FRAME_RAISED);
+				fileNewButton=new FXButton(fileTabFrame,"&New",new FXGIFIcon(getApp(),new_gif),this,ID_FILE_NEW_BUTTON,FRAME_RAISED | ICON_ABOVE_TEXT);
+				fileOpenButton=new FXButton(fileTabFrame,"&Open/\nReopen\t(Right Click for Reopen History)",new FXGIFIcon(getApp(),open_gif),this,ID_FILE_OPEN_BUTTON,FRAME_RAISED | ICON_ABOVE_TEXT);
+				fileSaveButton=new FXButton(fileTabFrame,"&Save",new FXGIFIcon(getApp(),save_gif),this,ID_FILE_SAVE_BUTTON,FRAME_RAISED | ICON_ABOVE_TEXT);
+				fileSaveAsButton=new FXButton(fileTabFrame,"Save &As",new FXGIFIcon(getApp(),saveas_gif),this,ID_FILE_SAVE_AS_BUTTON,FRAME_RAISED | ICON_ABOVE_TEXT);
+				fileCloseButton=new FXButton(fileTabFrame,"&Close",new FXGIFIcon(getApp(),close_gif),this,ID_FILE_CLOSE_BUTTON,FRAME_RAISED | ICON_ABOVE_TEXT);
+				fileRevertButton=new FXButton(fileTabFrame,"Re&vert",new FXGIFIcon(getApp(),revert_gif),this,ID_FILE_REVERT_BUTTON,FRAME_RAISED | ICON_ABOVE_TEXT);
 				fileRecordButton=new FXButton(fileTabFrame,"&Record",NULL,this,ID_FILE_RECORD_BUTTON,FRAME_RAISED);
-				notesButton=new FXButton(fileTabFrame,"Notes\tUser notes about the sound (and preserved in the file if the format supports it)",NULL,this,ID_NOTES_BUTTON,FRAME_RAISED);
+				notesButton=new FXButton(fileTabFrame,"Notes\tUser notes about the sound (and preserved in the file if the format supports it)",new FXGIFIcon(getApp(),notes_gif),this,ID_NOTES_BUTTON,FRAME_RAISED | ICON_ABOVE_TEXT);
 
 				// just for testing
 				new FXFrame(fileTabFrame,FRAME_NONE);
