@@ -1,18 +1,7 @@
 
 --- TODOs (for a user to be most concerned about) ordered from most serious to least serious ---
 
-// different now ???
-- I have yet to figure out the best way to handle the idea of focus when multiple open audio files are open.  Currently, only the most recently opened audio file is controlable, and that file is closed, the others are still uncontrolable.
-	- The problem arises when a window manager has 'focus follows mouse pointer' turn on, and I don't know, say, which opened audio file to play when the play button is pressed
-
-- Yes... Icons and graphics need to be present... I'm putting a call out for an artist to create them
-	- Will says they're being worked on
-
 - I have not imeplemented 'redo' yet, but provisions are mostly in place for implementing it.
-
-- Only the native ReZound (.rez) file format can save cues.  So if you create a cue in a .wav file sound, and save it, it won't be there when you open it again
-	- I will fix this when I change to using a different sound file format library (one that can store arbitrary data sections, namely .wav)
-	- FIXED: I have patched SGI's libaudiofile to support this, but they have yet to respond whether it will make it into the release, it should
 
 - The 'Delay' effect is implemented to be much more powerful but there needs to be an advanced front end dialog to take advantage of this greater flexibility of the implementation
 
@@ -23,4 +12,8 @@
 
 - As more experienced users make suggestions, there will probably be changes to how the frontend dialogs express units and ranges of parameters to the effect and edit actions
 	- This is aimed at making the frontend controls act and feel more like professional hardware products
+
+- The author of FOX (the frontend library) says that skinning is a real possibility, and does plan to implement it sometime in the future.
+
+
 
