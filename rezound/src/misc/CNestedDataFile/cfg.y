@@ -431,6 +431,7 @@ string_expr
 		strcat($$,$3); 
 		free($3);
 	}
+	;
 
 
 
