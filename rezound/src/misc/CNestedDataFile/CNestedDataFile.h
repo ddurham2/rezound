@@ -42,7 +42,7 @@ public:
 	virtual ~CNestedDataFile();
 
 	// This method can be used to set a CNestedDataFile object to check for a value when it doesn't exist in this object
-	// It is only used by getValue() and keyExists(), thus the alternate file is read-only
+	// It is only used by getValue(), keyExists() and getChildKeys, thus the alternate file is read-only
 	// NULL can be passed to unset an alternate object
 	void setAlternateReadFile(const CNestedDataFile *_alternate) { alternate=_alternate; }
 
@@ -136,6 +136,8 @@ private:
 
 	// this could be a method of CVariant
 	void prvCreateKey(const string &key,int offset,const CVariant &value,CVariant *variant);
+
+	const vector<string> prvGetChildKeys(const string &parentKey,bool throwIfNotExists=false) const;
 
 	void verifyKey(const string &key);
 

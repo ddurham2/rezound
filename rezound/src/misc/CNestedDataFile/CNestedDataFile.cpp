@@ -213,7 +213,31 @@ CNestedDataFile::KeyTypes CNestedDataFile::keyExists(const string &_key) const
 	}
 }
 
-const vector<string> CNestedDataFile::getChildKeys(const string &_parentKey,bool throwIfNotExists) const
+const vector<string> CNestedDataFile::getChildKeys(const string &parentKey,bool throwIfNotExists) const
+{
+	if(alternate==NULL)
+		return prvGetChildKeys(parentKey,throwIfNotExists);
+
+	if(throwIfNotExists)
+	{
+		// if the key is a value in this file OR the key doesn't exist in this file, but resolves to a value in the alternate file, then throw the exception
+		if(keyExists(parentKey)==ktValue || (keyExists(parentKey)==ktNotExists && alternate->keyExists(parentKey)!=ktScope))
+			throw runtime_error(string(__func__)+" -- parent key '"+parentKey+"' did not resolve to a scope from "+filename);
+	}
+
+	// have to merge the values in the two files when both are scopes (or either one doesn't exist)
+	vector<string> keys1=prvGetChildKeys(parentKey,false);
+	sort(keys1.begin(),keys1.end());
+	vector<string> keys2=alternate->prvGetChildKeys(parentKey,false);
+	sort(keys2.begin(),keys2.end());
+
+	vector<string> keys3(keys1.size() + keys2.size());
+	set_union(keys1.begin(),keys1.end(), keys2.begin(),keys2.begin(), keys3.begin());
+
+	return keys3;
+}
+
+const vector<string> CNestedDataFile::prvGetChildKeys(const string &_parentKey,bool throwIfNotExists) const
 {
 	const string parentKey=stripLeadingDOTs(_parentKey);
 	vector<string> childKeys;
@@ -234,7 +258,7 @@ const vector<string> CNestedDataFile::getChildKeys(const string &_parentKey,bool
 		if(scope->type!=ktScope)
 		{
 			if(throwIfNotExists) // it DID actually exist, but it wasn't a scope containing more child values
-				throw runtime_error(string(__func__)+" -- parent key '"+parentKey+"' resolved to a value from "+filename);
+				throw runtime_error(string(__func__)+" -- parent key '"+parentKey+"' did not resolve to a scope from "+filename);
 			else
 				return childKeys;
 		}
