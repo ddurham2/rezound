@@ -258,6 +258,9 @@ void CMainWindow::showAbout()
 	gAboutDialog->execute(PLACEMENT_SCREEN);
 }
 
+
+extern const string escapeAmpersand(const string i); // defined in CStatusComm.cpp
+
 /*
    This is the class for the reopen submenu.  It intercepts calls to FXMenuPane::popup ()
    so it can create the menu items which can change between each popup.
@@ -288,7 +291,7 @@ public:
 			return;
 		for(size_t t=0;t<reopenSize;t++)
 		{
-			FXMenuCommand *item=new FXMenuCommand(this,gSoundFileManager->getReopenHistoryItem(t).c_str(),NULL,getOwner(),CMainWindow::ID_FILE_REOPEN_MENUITEM);
+			FXMenuCommand *item=new FXMenuCommand(this,escapeAmpersand(gSoundFileManager->getReopenHistoryItem(t)).c_str(),NULL,getOwner(),CMainWindow::ID_FILE_REOPEN_MENUITEM);
 			item->create();
 			items.push_back(item);
 		}

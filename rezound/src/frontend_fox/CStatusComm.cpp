@@ -29,6 +29,22 @@
 
 #include "CProgressDialog.h"
 
+const string escapeAmpersand(const string i)
+{
+	string o;
+
+	// escape '&' for the reopen menu
+	for(size_t t=0;t<i.size();t++)
+	{
+		const char c=i[t];
+		if(c=='&')
+			o.append("&");
+		o.append(&c,1);
+	}
+
+	return(o);
+}
+
 CStatusComm::CStatusComm(FXWindow *_mainWindow) :
 	mainWindow(_mainWindow)
 {
@@ -48,27 +64,27 @@ void CStatusComm::error(const string &message,VSeverity severity)
 	{
 	case none:
 		fprintf(stderr,"error - %s\n",message.c_str());
-		FXMessageBox::error(mainWindow,MBOX_OK,"Error",breakIntoLines(message).c_str());
+		FXMessageBox::error(mainWindow,MBOX_OK,"Error",escapeAmpersand(breakIntoLines(message)).c_str());
 		break;
 	case light:
 		fprintf(stderr,"light error - %s\n",message.c_str());
-		FXMessageBox::error(mainWindow,MBOX_OK,"Light Error",breakIntoLines(message).c_str());
+		FXMessageBox::error(mainWindow,MBOX_OK,"Light Error",escapeAmpersand(breakIntoLines(message)).c_str());
 		break;
 	case medium:
 		fprintf(stderr,"medium error - %s\n",message.c_str());
-		FXMessageBox::error(mainWindow,MBOX_OK,"Medium Error",breakIntoLines(message).c_str());
+		FXMessageBox::error(mainWindow,MBOX_OK,"Medium Error",escapeAmpersand(breakIntoLines(message)).c_str());
 		break;
 	case hard:
 		fprintf(stderr,"hard error - %s\n",message.c_str());
-		FXMessageBox::error(mainWindow,MBOX_OK,"Hard Error",breakIntoLines(message).c_str());
+		FXMessageBox::error(mainWindow,MBOX_OK,"Hard Error",escapeAmpersand(breakIntoLines(message)).c_str());
 		break;
 	case fatal:
 		fprintf(stderr,"fatal error - %s\n",message.c_str());
-		FXMessageBox::error(mainWindow,MBOX_OK,"Fatal Error!",breakIntoLines(message).c_str());
+		FXMessageBox::error(mainWindow,MBOX_OK,"Fatal Error!",escapeAmpersand(breakIntoLines(message)).c_str());
 		break;
 	default:
 		fprintf(stderr,"unknwon severity error - %s\n",message.c_str());
-		FXMessageBox::error(mainWindow,MBOX_OK,"Error -- unknown severity",breakIntoLines(message).c_str());
+		FXMessageBox::error(mainWindow,MBOX_OK,"Error -- unknown severity",escapeAmpersand(breakIntoLines(message)).c_str());
 		break;
 	}
 }
@@ -76,12 +92,12 @@ void CStatusComm::error(const string &message,VSeverity severity)
 void CStatusComm::warning(const string &message)
 {
 	fprintf(stderr,"warning -- %s\n",message.c_str());
-	FXMessageBox::warning(mainWindow,MBOX_OK,"Warning",breakIntoLines(message).c_str());
+	FXMessageBox::warning(mainWindow,MBOX_OK,"Warning",escapeAmpersand(breakIntoLines(message)).c_str());
 }
 
 void CStatusComm::message(const string &message)
 {
-	FXMessageBox::information(mainWindow,MBOX_OK,"Note",breakIntoLines(message).c_str());
+	FXMessageBox::information(mainWindow,MBOX_OK,"Note",escapeAmpersand(breakIntoLines(message)).c_str());
 }
 
 VAnswer CStatusComm::question(const string &message,VQuestion options)
@@ -96,7 +112,7 @@ VAnswer CStatusComm::question(const string &message,VQuestion options)
 	if(flags==0)
 		flags=MBOX_OK;
 
-	switch(FXMessageBox::question(mainWindow,flags,"Question",breakIntoLines(message).c_str()))
+	switch(FXMessageBox::question(mainWindow,flags,"Question",escapeAmpersand(breakIntoLines(message)).c_str()))
 	{
 	case MBOX_CLICKED_YES:
 		return(yesAns);
