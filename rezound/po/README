@@ -1,0 +1,113 @@
+
+** NOTE: 'll_CC' in the following document is your language and country 
+abbreviations.  For example, 'en_US' is english and United States.  Not every
+language needs a country.  But if you are making a translation you will probably
+be aware of this convention.
+
+
+** To create a new translation:
+	- You will need to have a fairly recent version of gettext installed 
+	  (perhaps gettext-devel on your distro).
+
+	- At a prompt:
+		$ cd rezound-...
+		$ cd po
+		$ msginit -l ll_CC -i rezound.pot
+			- Press enter if your email address is correct or 
+			  enter your email address.
+
+	- Edit LINGUAS and add your ll_CC to the end of the one and only line in
+	that file (separate with spaces).
+
+	- Now, edit the new ll_CC.po file and you can start translating.  You 
+	  should also verify that the information at the top is correct.
+
+
+** To test while creating/editing a tranlation:
+	- After editing and saving your ll_CC.po file run 'make' from the top 
+	  rezound source directory.  This will process the modified ll_CC.po
+	  file to ll_CC.gmo which is the binary version of the .po
+	
+	- Now the .gmo needs to be copied under the data directory when ReZound
+	  would be installed.  This is '/usr/local/share' unless --datadir was
+	  specified when you ran configure.  To copy the .gmo run:
+
+	  cp po/ll_CC.gmo /usr/local/share/locale/ll_CC/LC_MESSAGES/rezound.mo
+
+	- Finally, if it's not set already, the "LANGUAGE" environment variable
+	  must be set to your ll_CC before running rezound.  This can be done 
+	  with the command:
+
+	  LANGUAGE=ll_CC rezound
+
+	- I suggest writing a little script to be run for testing.  For instance,
+	  a run.sh script containing: 
+
+		#!/bin/bash
+		export LANGUAGE=ll_CC
+		make && cp po/$LANGUAGE.gmo /usr/local/share/locale/$LANGUAGE/LC_MESSAGES/rezound.mo && ./rezound
+
+	  could be run after saving the modified ll_CC.po file to do all the
+	  necessary tasks.  Of couse, you will need to make the LC_MESSAGES
+	  directory writable by the user doing the translation and make any
+	  existing rezound.mo file overwritable by that user.  
+
+
+
+Also, I discovered on Mandrake that a package named 'locales-ll_CC' has to be 
+installed before gettext will work.  Something similar may be necessary on other
+distroes, however I don't know exactly what that would be.
+
+
+
+** To translate more text in ReZound that exists in the rezound.pot file:
+	- rezound.pot is created by gettext scanning the source code for
+	  strings in the form: _("..string..")  Not all strings that need to be
+	  translated are tagged in this manner yet.  If you want to go looking
+	  trough the code for more things to translate just surround the strings
+	  by _( ... ) and then:
+	  
+	  cd to the 'po' directory
+	  run: make rezound.pot-update
+	  run: cd ..
+	  run: make
+
+	- Now your ll_CC.po file should have new entries for translating these
+	  newly tagged strings.
+
+	- When adding _( ... ) around the strings it is not always desirable to
+	  surround the entire string.  For instance: 
+
+		"Close\tCtrl+W"
+
+	  in the frontend menu should be tagged this way
+
+	  	_("Close")+FXString("\tCtrl+W")
+
+	  because the \t and hot-key doesn't need translation.  FXString is a
+	  string class included with the FOX package which has a '+' operator
+	  that can join these two resulting strings.  Use 'FXString' when/if the
+	  string is going to a FOX class and use 'string' anywhere else.  So the
+	  previous string would be tagged as:
+
+	  	_("Close")+string("\tCtrl+W")
+
+	  And if you get a compile error from the previous it is probably 
+	  because a 'char *' is expected in the expression and not a 'string' 
+	  object.  This can be fix by changing either of the following to:
+	  	
+	  	(_("Close")+FXString("\tCtrl+W")).text()
+
+	  	(_("Close")+string("\tCtrl+W")).c_str()
+	
+	  which calls the extra method which returns a 'char *'.
+
+
+Translation can get more involved than simply rewording strings.  But this is
+covered in opening chapters of the gettext manual (especially chapters 1 
+through 3) and is beyond the scope of this document.
+
+	http://www.gnu.org/manual/gettext
+
+
+

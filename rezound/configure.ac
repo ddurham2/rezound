@@ -430,7 +430,8 @@ dnl ############################################################################
 dnl # Internationalization and Localization                                    #
 dnl ############################################################################
 
-dnl LATER ??? AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.11.5])
+AM_GNU_GETTEXT([external])
 
 
 
@@ -457,6 +458,7 @@ AC_CONFIG_FILES([
 			src/backend/Looping/Makefile
 			src/backend/Remaster/Makefile
 		src/frontend_fox/Makefile
+	po/Makefile.in
 ])
 
 AC_OUTPUT

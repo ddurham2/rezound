@@ -42,8 +42,14 @@ void setupWindows(CMainWindow *mainWindow);
 void setupAccels(CMainWindow *mainWindow);
 
 
+#include <clocale> // for gettext init
+
 int main(int argc,char *argv[])
 {
+	setlocale(LC_ALL,"");
+	bindtextdomain(REZOUND_PACKAGE,DATA_DIR"/locale");
+	textdomain(REZOUND_PACKAGE);
+
 	try
 	{
 		FXApp* application=new FXApp("ReZound","NLT");

@@ -28,7 +28,8 @@ include $(top_srcdir)/config/am_include.mk
 SUBDIRS= \
 	docs \
 	share \
-	src
+	src \
+	po
 
 ## These extra files and directories will be included in the distribution. by
 ## using make-dist by default many common filenames are automatically included
@@ -54,5 +55,8 @@ dist-hook:
 	rm -rf $(distdir)/src/images/.xvpics		# created by ee I think
 	rm -rf $(distdir)/src/misc/missing/generated	# doesn't need to go with the distro
 
+
+POTFILES.in:
+	cd $(top_srcdir) && (grep "^#" po/POTFILES.in ; find src -name "*.cpp" ; find src -name "*.h") > POTFILES.in && mv -f POTFILES.in po/POTFILES.in
 
 ACLOCAL_AMFLAGS = -I config/m4
