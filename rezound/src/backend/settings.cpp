@@ -86,6 +86,10 @@ unsigned gSnapToCueDistance=5;
 bool gFollowPlayPosition=true;
 
 
+bool gLevelMetersEnabled=true;
+bool gFrequencyAnalyzerEnabled=true;
+
+
 double gInitialLengthToShow=120.0; // default 120 seconds
 
 

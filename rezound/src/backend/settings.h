@@ -110,6 +110,13 @@ extern bool gFollowPlayPosition;
 
 
 /*
+ * Flagged whether the level methods or frequency analyzer are enabled
+ */
+extern bool gLevelMetersEnabled;
+extern bool gFrequencyAnalyzerEnabled;
+
+
+/*
  * The initial about of audio to show on screen in a newly created sound window
  */
 extern double gInitialLengthToShow;
