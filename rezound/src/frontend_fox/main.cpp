@@ -95,6 +95,8 @@ int main(int argc,char *argv[])
 		deinitializeBackend();
 
 		// ??? delete CStatusComm;
+		
+		//delete application; dies while removing an accelerator while destroying an FXMenuCommand... I'm not sure why it's a problem
 	}
 	catch(exception &e)
 	{
