@@ -25,10 +25,17 @@
 
 #include "../DSP/TTempoChanger.h"
 
-CChangeTempoAction::CChangeTempoAction(const CActionSound &actionSound,const double _tempoChange) :
+CChangeTempoAction::CChangeTempoAction(const CActionSound &actionSound,const double _tempoChange,bool _useAntiAliasFilter,unsigned _antiAliasFilterLength,bool _useQuickSeek,unsigned _sequenceLength,unsigned _seekingWindowLength,unsigned _overlapLength) :
 	AAction(actionSound),
 	undoRemoveLength(0),
-	tempoChange(_tempoChange)
+	tempoChange(_tempoChange),
+
+	useAntiAliasFilter(_useAntiAliasFilter),
+	antiAliasFilterLength(_antiAliasFilterLength),
+	useQuickSeek(_useQuickSeek),
+	sequenceLength(_sequenceLength),
+	seekingWindowLength(_seekingWindowLength),
+	overlapLength(_overlapLength)
 {
 }
 
@@ -64,6 +71,15 @@ bool CChangeTempoAction::doActionSizeSafe(CActionSound &actionSound,bool prepare
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 
 			TTempoChanger<CRezPoolAccesser> stretcher(src,0,oldLength,newLength,actionSound.sound->getSampleRate(),1,0);
+
+			// these are libSoundTouch specific
+			stretcher.setSetting(SETTING_USE_AA_FILTER,useAntiAliasFilter);
+			stretcher.setSetting(SETTING_AA_FILTER_LENGTH,antiAliasFilterLength);
+			stretcher.setSetting(SETTING_USE_QUICKSEEK,useQuickSeek);
+			stretcher.setSetting(SETTING_SEQUENCE_MS,sequenceLength);
+			stretcher.setSetting(SETTING_SEEKWINDOW_MS,seekingWindowLength);
+			stretcher.setSetting(SETTING_OVERLAP_MS,overlapLength);
+
 			for(sample_pos_t t=0;t<newLength;t++)
 			{
 				dest[t+start]=stretcher.getSample();
@@ -127,6 +143,15 @@ CChangeTempoActionFactory::~CChangeTempoActionFactory()
 
 CChangeTempoAction *CChangeTempoActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
-	return new CChangeTempoAction(actionSound,actionParameters->getDoubleParameter("Tempo Change"));
+	return new CChangeTempoAction(
+		actionSound,
+		actionParameters->getDoubleParameter("Tempo Change"),
+		actionParameters->getBoolParameter("Use Anti-alias Filter"),
+		actionParameters->getUnsignedParameter("Anti-alias Filter Length"),
+		actionParameters->getBoolParameter("Use Quick Seek"),
+		actionParameters->getUnsignedParameter("Sequence Length"),
+		actionParameters->getUnsignedParameter("Seek Window Length"),
+		actionParameters->getUnsignedParameter("Overlap Length")
+	);
 }
 

@@ -26,13 +26,9 @@
 #ifdef HAVE_LIBSOUNDTOUCH
 
 /* NOTE:
- *   - The template is called TTempoChanger which used the libSoundStretch library.  And 
+ *   - The template is called TTempoChanger which used the libSoundTouch library.  And 
  *     this is not to be confused with the preexisting TSoundStretcher template which 
  *     changes the rate (speed and pitch).
- *
- *   - Currently libSoundStretch only supports a 16bit data type.  So, if float point
- *     data is passed through this DSP block fidelity may be lost.  I ought to plead
- *     with the lib's author to use float as the native format.
  */
 
 #include <algorithm>
@@ -77,9 +73,13 @@ public:
 		if(frameOffset>=frameSize)
 			throw(runtime_error(string(__func__)+" -- frameOffset is >= frameSize: "+istring(frameOffset)+">="+istring(frameSize)));
 
-		changer.setChannels(1);
+		changer.setChannels(1); // ??? need to have a way of allowing more than one channel so that phase across channels is preserved
 		changer.setSampleRate(srcSampleRate);
 		changer.setTempo((sample_fpos_t)srcLength/toLength);
+	}
+	
+	virtual ~TTempoChanger()
+	{
 	}
 
 	const sample_t getSample()
@@ -117,6 +117,12 @@ public:
 
 		// recur
 		return getSample();
+	}
+
+	// algorithm tuning (libSoundTouch specific.. see SoundTouch.h)
+	bool setSetting(uint settingId,uint value)
+	{
+		return changer.setSetting(settingId,value);
 	}
 
 private:

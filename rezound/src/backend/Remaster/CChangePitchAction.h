@@ -28,7 +28,7 @@
 class CChangePitchAction : public AAction
 {
 public:
-	CChangePitchAction(const CActionSound &actionSound,const float deltaSemitones);
+	CChangePitchAction(const CActionSound &actionSound,const float _deltaSemitones,bool useAntiAliasFilter,unsigned antiAliasFilterLength,bool useQuickSeek,unsigned sequenceLength,unsigned seekingWindowLength,unsigned overlapLength);
 	virtual ~CChangePitchAction();
 
 protected:
@@ -38,6 +38,13 @@ protected:
 
 private:
 	const float deltaSemitones;
+
+	bool useAntiAliasFilter;
+	unsigned antiAliasFilterLength;
+	bool useQuickSeek;
+	unsigned sequenceLength;
+	unsigned seekingWindowLength;
+	unsigned overlapLength;
 };
 
 

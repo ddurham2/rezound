@@ -28,7 +28,7 @@
 class CChangeTempoAction : public AAction
 {
 public:
-	CChangeTempoAction(const CActionSound &actionSound,const double tempoChange);
+	CChangeTempoAction(const CActionSound &actionSound,const double tempoChange,bool useAntiAliasFilter,unsigned antiAliasFilterLength,bool useQuickSeek,unsigned sequenceLength,unsigned seekingWindowLength,unsigned overlapLength);
 	virtual ~CChangeTempoAction();
 
 protected:
@@ -39,6 +39,13 @@ protected:
 private:
 	sample_pos_t undoRemoveLength;
 	const double tempoChange;
+
+	bool useAntiAliasFilter;
+	unsigned antiAliasFilterLength;
+	bool useQuickSeek;
+	unsigned sequenceLength;
+	unsigned seekingWindowLength;
+	unsigned overlapLength;
 };
 
 
