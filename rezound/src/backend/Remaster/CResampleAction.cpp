@@ -79,6 +79,9 @@ bool CResampleAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 		}
 	}
 
+	actionSound.stop=(sample_pos_t)((sample_fpos_t)actionSound.stop/oldSampleRate*newSampleRate);
+	actionSound.start=(sample_pos_t)((sample_fpos_t)actionSound.start/oldSampleRate*newSampleRate);
+
 	actionSound.sound->setSampleRate(newSampleRate);
 
 	if(!prepareForUndo)
