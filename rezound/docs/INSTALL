@@ -27,7 +27,8 @@ will be required for planned features
 		http://www.fftw.org
 
    lame v3.92 (or later) It is recommended that you have lame installed because
-it provides ReZound with the ability to load and save .mp3 files.
+it provides ReZound with the ability to load and save .mp3 files.  Some distros
+name the package: 'notlame'.
 		http://www.mp3dev.org/mp3
 
    libogg, libvorbis, libvorbisfile and libvorbisenc -- These are required for 
