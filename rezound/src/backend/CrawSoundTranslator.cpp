@@ -82,7 +82,6 @@ static void initSetup(AFfilesetup &setup,const AFrontendHooks::RawParameters &pa
 		throw runtime_error(string(__func__)+" -- unhandled parameters.sampleFormat: "+istring(parameters.sampleFormat));
 	}
 
-#warning this may not be correct (check it)
 	afInitByteOrder(setup,AF_DEFAULT_TRACK,(parameters.endian==AFrontendHooks::RawParameters::eBigEndian) ? AF_BYTEORDER_BIGENDIAN : AF_BYTEORDER_LITTLEENDIAN);
 
 	afInitCompression(setup,AF_DEFAULT_TRACK,AF_COMPRESSION_NONE);		// ??? should be a parameter, quite a few are supported by libaudiofile (at least it says)
