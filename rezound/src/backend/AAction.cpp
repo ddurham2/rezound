@@ -164,6 +164,8 @@ AAction::AAction(const CActionSound &_actionSound) :
 	tempAudioPoolKey(-1),
 	tempAudioPoolKey2(-1),
 
+	preactionChannelCount(_actionSound.sound->getChannelCount()),
+
 	actionSound(_actionSound),
 	willResize(false),
 	done(false),
@@ -183,7 +185,8 @@ AAction::AAction(const CActionSound &_actionSound) :
 	crossfadeStart(0),
 	crossfadeStartLength(0),
 	crossfadeStop(0),
-	crossfadeStopLength(0)
+	crossfadeStopLength(0),
+	crossfadeMoveMul(0)
 {
 }
 
@@ -551,7 +554,7 @@ void AAction::crossfadeEdgesInner(const CActionSound &actionSound)
 		// just after doAction
 		int tempPoolKey=actionSound.sound->copyDataToTemp(allChannels,actionSound.start,crossfadeStartTime);
 
-		for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+		for(unsigned i=0;i<actionSound.sound->getChannelCount() && i<preactionChannelCount;i++)
 		{	
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempCrossfadePoolKeyStart,i);
@@ -590,7 +593,7 @@ run-through on paper would help
 	{
 		int tempPoolKey=actionSound.sound->copyDataToTemp(allChannels,actionSound.stop-crossfadeStopTime+1,crossfadeStopTime);
 
-		for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+		for(unsigned i=0;i<actionSound.sound->getChannelCount() && i<preactionChannelCount;i++)
 		{	
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempCrossfadePoolKeyStop,i);
