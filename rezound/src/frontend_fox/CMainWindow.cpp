@@ -30,7 +30,7 @@
 
 #include "settings.h"
 
-#include "images.h"
+#include "CFOXIcons.h"
 
 #include "CAboutDialog.h"
 
@@ -126,7 +126,7 @@ FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
 #include <fox/fxkeys.h>
 
 CMainWindow::CMainWindow(FXApp* a) :
-	FXMainWindow(a,"ReZound",new FXGIFIcon(a,icon_logo_32_gif,0,IMAGE_ALPHACOLOR),new FXGIFIcon(a,icon_logo_16_gif,0,IMAGE_ALPHACOLOR),DECOR_ALL,10,20)
+	FXMainWindow(a,"ReZound",FOXIcons->icon_logo_32,FOXIcons->icon_logo_16,DECOR_ALL,10,20)
 {
 	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X);
 
@@ -139,19 +139,19 @@ CMainWindow::CMainWindow(FXApp* a) :
 	// build play control buttons
 	FXPacker *playControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
 		#define PLAY_CONTROLS_BUTTON_STYLE BUTTON_STYLE
-		new FXButton(playControlsFrame,"\tPlay All Once",new FXGIFIcon(getApp(),play_all_once_gif),this,ID_PLAY_ALL_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,0,32,32);
-		new FXButton(playControlsFrame,"\tPlay Selection Once",new FXGIFIcon(getApp(),play_selection_once_gif),this,ID_PLAY_SELECTION_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32,0,32,32);
-		new FXButton(playControlsFrame,"\tPlay All Looped",new FXGIFIcon(getApp(),play_all_looped_gif),this,ID_PLAY_ALL_LOOPED_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32,32,32);
-		new FXButton(playControlsFrame,"\tPlay Selection Looped",new FXGIFIcon(getApp(),play_selection_looped_gif),this,ID_PLAY_SELECTION_LOOPED_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32,32,32,32);
+		new FXButton(playControlsFrame,"\tPlay All Once",FOXIcons->play_all_once,this,ID_PLAY_ALL_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,0,32,32);
+		new FXButton(playControlsFrame,"\tPlay Selection Once",FOXIcons->play_selection_once,this,ID_PLAY_SELECTION_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32,0,32,32);
+		new FXButton(playControlsFrame,"\tPlay All Looped",FOXIcons->play_all_looped,this,ID_PLAY_ALL_LOOPED_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32,32,32);
+		new FXButton(playControlsFrame,"\tPlay Selection Looped",FOXIcons->play_selection_looped,this,ID_PLAY_SELECTION_LOOPED_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32,32,32,32);
 
-		new FXButton(playControlsFrame,"\tStop",new FXGIFIcon(getApp(),stop_gif),this,ID_STOP_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,0,32,32),
-		new FXButton(playControlsFrame,"\tPause",new FXGIFIcon(getApp(),pause_gif),this,ID_PAUSE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32,32,32),
+		new FXButton(playControlsFrame,"\tStop",FOXIcons->stop,this,ID_STOP_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,0,32,32),
+		new FXButton(playControlsFrame,"\tPause",FOXIcons->pause,this,ID_PAUSE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32,32,32),
 
-		new FXButton(playControlsFrame,"\tJump to Beginning",new FXGIFIcon(getApp(),jump_to_beginning_gif),this,ID_JUMP_TO_BEGINNING_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32+32,32+32,16);
-		new FXButton(playControlsFrame,"\tJump to Start Position",new FXGIFIcon(getApp(),jump_to_selection_gif),this,ID_JUMP_TO_START_POSITION_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32+32,32+32,16);
+		new FXButton(playControlsFrame,"\tJump to Beginning",FOXIcons->jump_to_beginning,this,ID_JUMP_TO_BEGINNING_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32+32,32+32,16);
+		new FXButton(playControlsFrame,"\tJump to Start Position",FOXIcons->jump_to_selection,this,ID_JUMP_TO_START_POSITION_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32+32,32+32,16);
 
-		new FXButton(playControlsFrame,"\tJump to Previous Cue",new FXGIFIcon(getApp(),jump_to_previous_q_gif),this,ID_JUMP_TO_PREV_CUE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32+32+16,32+32,16);
-		new FXButton(playControlsFrame,"\tJump to Next Cue",new FXGIFIcon(getApp(),jump_to_next_q_gif),this,ID_JUMP_TO_NEXT_CUE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32+32+16,32+32,16);
+		new FXButton(playControlsFrame,"\tJump to Previous Cue",FOXIcons->jump_to_previous_q,this,ID_JUMP_TO_PREV_CUE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32+32+16,32+32,16);
+		new FXButton(playControlsFrame,"\tJump to Next Cue",FOXIcons->jump_to_next_q,this,ID_JUMP_TO_NEXT_CUE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32+32+16,32+32,16);
 
 		shuttleDial=new FXDial(playControlsFrame,this,ID_SHUTTLE_DIAL,DIAL_HORIZONTAL|DIAL_HAS_NOTCH|LAYOUT_EXPLICIT, 0,32+32+16+16,32+32+32+32,20);
 		shuttleDial->setRange(-((shuttleDial->getWidth())/2),(shuttleDial->getWidth())/2);
@@ -299,19 +299,19 @@ void CMainWindow::createMenus()
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&File",NULL,menu);
-		new FXMenuCommand(menu,"&New",new FXGIFIcon(getApp(),file_new_gif),this,ID_FILE_NEW_MENUITEM);
-		new FXMenuCommand(menu,"&Open\tCtrl+O",new FXGIFIcon(getApp(),file_open_gif),this,ID_FILE_OPEN_MENUITEM);
-		new FXMenuCascade(menu,"&Reopen",new FXGIFIcon(getApp(),file_open_gif),new CReopenPopup(this));
-		new FXMenuCommand(menu,"&Save\tCtrl+S",new FXGIFIcon(getApp(),file_save_gif),this,ID_FILE_SAVE_MENUITEM);
-		new FXMenuCommand(menu,"Save &As",new FXGIFIcon(getApp(),file_save_as_gif),this,ID_FILE_SAVE_AS_MENUITEM);
-		new FXMenuCommand(menu,"&Close\tCtrl+W",new FXGIFIcon(getApp(),file_close_gif),this,ID_FILE_CLOSE_MENUITEM);
-		new FXMenuCommand(menu,"Re&vert",new FXGIFIcon(getApp(),file_revert_gif),this,ID_FILE_REVERT_MENUITEM);
+		new FXMenuCommand(menu,"&New",FOXIcons->file_new,this,ID_FILE_NEW_MENUITEM);
+		new FXMenuCommand(menu,"&Open\tCtrl+O",FOXIcons->file_open,this,ID_FILE_OPEN_MENUITEM);
+		new FXMenuCascade(menu,"&Reopen",FOXIcons->file_open,new CReopenPopup(this));
+		new FXMenuCommand(menu,"&Save\tCtrl+S",FOXIcons->file_save,this,ID_FILE_SAVE_MENUITEM);
+		new FXMenuCommand(menu,"Save &As",FOXIcons->file_save_as,this,ID_FILE_SAVE_AS_MENUITEM);
+		new FXMenuCommand(menu,"&Close\tCtrl+W",FOXIcons->file_close,this,ID_FILE_CLOSE_MENUITEM);
+		new FXMenuCommand(menu,"Re&vert",FOXIcons->file_revert,this,ID_FILE_REVERT_MENUITEM);
 
 		new FXMenuSeparator(menu);
 		new FXMenuCommand(menu,"Record",NULL,this,ID_FILE_RECORD_MENUITEM);
 
 		new FXMenuSeparator(menu);
-		new FXMenuCommand(menu,"User No&tes"/*\tUser notes about the sound (and preserved in the file if the format supports it)"*/,new FXGIFIcon(getApp(),notes_gif),this,ID_NOTES_MENUITEM);
+		new FXMenuCommand(menu,"User No&tes"/*\tUser notes about the sound (and preserved in the file if the format supports it)"*/,FOXIcons->notes,this,ID_NOTES_MENUITEM);
 
 		new FXMenuSeparator(menu);
 		new FXMenuCommand(menu,"&About ReZound\tF1",NULL,this,ID_ABOUT_MENUITEM);
@@ -332,22 +332,22 @@ void CMainWindow::createMenus()
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&Edit",NULL,menu);
-		new FXMenuCommand(menu,"Undo\tCtrl+Z",new FXGIFIcon(getApp(),edit_undo_gif),this,ID_UNDO_MENUITEM);
+		new FXMenuCommand(menu,"Undo\tCtrl+Z",FOXIcons->edit_undo,this,ID_UNDO_MENUITEM);
 		new FXMenuCommand(menu,"Clear Undo History",NULL,this,ID_CLEAR_UNDO_HISTORY_MENUITEM);
 
 		new FXMenuSeparator(menu);
-		new CActionMenuCommand(new CCopyEditFactory(gChannelSelectDialog),menu,"Ctrl+C",new FXGIFIcon(getApp(),edit_copy_gif));
-		new CActionMenuCommand(new CCutEditFactory(gChannelSelectDialog),menu,"Ctrl+X",new FXGIFIcon(getApp(),edit_cut_gif));
-		new CActionMenuCommand(new CDeleteEditFactory(gChannelSelectDialog),menu,"Ctrl+D",new FXGIFIcon(getApp(),edit_delete_gif));
-		new CActionMenuCommand(new CCropEditFactory(gChannelSelectDialog),menu,"Ctrl+R",new FXGIFIcon(getApp(),edit_crop_gif));
+		new CActionMenuCommand(new CCopyEditFactory(gChannelSelectDialog),menu,"Ctrl+C",FOXIcons->edit_copy);
+		new CActionMenuCommand(new CCutEditFactory(gChannelSelectDialog),menu,"Ctrl+X",FOXIcons->edit_cut);
+		new CActionMenuCommand(new CDeleteEditFactory(gChannelSelectDialog),menu,"Ctrl+D",FOXIcons->edit_delete);
+		new CActionMenuCommand(new CCropEditFactory(gChannelSelectDialog),menu,"Ctrl+R",FOXIcons->edit_crop);
 
 		new FXMenuSeparator(menu);
-		new CActionMenuCommand(new CInsertPasteEditFactory(gPasteChannelsDialog),menu,"Ctrl+V",new FXGIFIcon(getApp(),edit_paste_gif));
-		new CActionMenuCommand(new CReplacePasteEditFactory(gPasteChannelsDialog),menu,"",new FXGIFIcon(getApp(),edit_paste_gif));
-		new CActionMenuCommand(new COverwritePasteEditFactory(gPasteChannelsDialog),menu,"",new FXGIFIcon(getApp(),edit_paste_gif));
-		new CActionMenuCommand(new CLimitedOverwritePasteEditFactory(gPasteChannelsDialog),menu,"",new FXGIFIcon(getApp(),edit_paste_gif));
-		new CActionMenuCommand(new CMixPasteEditFactory(gPasteChannelsDialog),menu,"",new FXGIFIcon(getApp(),edit_paste_gif));
-		new CActionMenuCommand(new CLimitedMixPasteEditFactory(gPasteChannelsDialog),menu,"",new FXGIFIcon(getApp(),edit_paste_gif));
+		new CActionMenuCommand(new CInsertPasteEditFactory(gPasteChannelsDialog),menu,"Ctrl+V",FOXIcons->edit_paste);
+		new CActionMenuCommand(new CReplacePasteEditFactory(gPasteChannelsDialog),menu,"",FOXIcons->edit_paste);
+		new CActionMenuCommand(new COverwritePasteEditFactory(gPasteChannelsDialog),menu,"",FOXIcons->edit_paste);
+		new CActionMenuCommand(new CLimitedOverwritePasteEditFactory(gPasteChannelsDialog),menu,"",FOXIcons->edit_paste);
+		new CActionMenuCommand(new CMixPasteEditFactory(gPasteChannelsDialog),menu,"",FOXIcons->edit_paste);
+		new CActionMenuCommand(new CLimitedMixPasteEditFactory(gPasteChannelsDialog),menu,"",FOXIcons->edit_paste);
 
 		new FXMenuSeparator(menu);
 		new CActionMenuCommand(new CInsertSilenceEditFactory(gChannelSelectDialog,new CInsertSilenceDialog(this)),menu,"");

@@ -25,7 +25,7 @@
 #include <string>
 #include <map>
 
-#include "images.h"
+#include "CFOXIcons.h"
 
 #include "rememberShow.h"
 
@@ -68,7 +68,7 @@ CCueListDialog::CCueListDialog(FXWindow *owner) :
 				cueList(new FXList(cueListFrame,0,this,ID_CUE_LIST,LIST_BROWSESELECT | LAYOUT_FILL_X|LAYOUT_FILL_Y)),
 		lowerFrame(new FXHorizontalFrame(contents,FRAME_RAISED|FRAME_THICK | LAYOUT_FILL_X|LAYOUT_FIX_HEIGHT, 0,0,0,65)),
 			buttonPacker(new FXHorizontalFrame(lowerFrame,LAYOUT_CENTER_X|LAYOUT_CENTER_Y, 0,0,0,0, 0,0,0,0, 12)),
-				closeButton(new FXButton(buttonPacker,"&Close",new FXGIFIcon(getApp(),GreenCheck1_gif),this,ID_CLOSE_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2)),
+				closeButton(new FXButton(buttonPacker,"&Close",FOXIcons->GreenCheck1,this,ID_CLOSE_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2)),
 
 				addCueButton(new FXButton(buttonPacker,"&Add",NULL,this,ID_ADD_CUE_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT ,0,0,60,0, 2,2,2,2)),
 				removeCueButton(new FXButton(buttonPacker,"&Remove",NULL,this,ID_REMOVE_CUE_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT , 0,0,60,0, 2,2,2,2)),

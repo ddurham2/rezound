@@ -35,6 +35,8 @@ DECLARE_STATIC_CPATH // to declare CPath::dirDelim
 #include "../backend/initialize.h"
 #include "settings.h"
 
+#include "CFOXIcons.h"
+
 void setupWindows(CMainWindow *mainWindow);
 void setupAccels(CMainWindow *mainWindow);
 
@@ -45,6 +47,13 @@ int main(int argc,char *argv[])
 	{
 		FXApp* application=new FXApp("ReZound","NLT");
 		application->init(argc,argv);
+
+		FOXIcons=new CFOXIcons(application);
+
+		// these icons have a special property that they don't need a transparent color
+		FOXIcons->logo->setTransparentColor(FXRGB(0,0,0));
+		FOXIcons->icon_logo_16->setTransparentColor(FXRGB(0,0,0));
+		FOXIcons->icon_logo_32->setTransparentColor(FXRGB(0,0,0));
 
 		/*
 		// set application wide colors
@@ -95,6 +104,8 @@ int main(int argc,char *argv[])
 		deinitializeBackend();
 
 		// ??? delete CStatusComm;
+
+		delete FOXIcons;
 		
 		//delete application; dies while removing an accelerator while destroying an FXMenuCommand... I'm not sure why it's a problem
 	}

@@ -20,7 +20,7 @@
 
 #include "CAboutDialog.h"
 
-#include "images.h"
+#include "CFOXIcons.h"
 #include "../backend/license.h"
 
 CAboutDialog *gAboutDialog=NULL;
@@ -45,7 +45,7 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 	FXPacker *contents=new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 2,2,2,2, 0,0);
 
 	FXPacker *upperFrame=new FXHorizontalFrame(contents,LAYOUT_FILL_X | FRAME_RAISED|FRAME_THICK);
-		new FXLabel(upperFrame,"",new FXGIFIcon(getApp(),logo_gif,0,IMAGE_ALPHACOLOR),LABEL_NORMAL | LAYOUT_SIDE_LEFT | FRAME_RAISED|FRAME_THICK, 0,0,0,0, 0,0,0,0);
+		new FXLabel(upperFrame,"",FOXIcons->logo,LABEL_NORMAL | LAYOUT_SIDE_LEFT | FRAME_RAISED|FRAME_THICK, 0,0,0,0, 0,0,0,0);
 		new FXLabel(upperFrame,FXString(REZOUND_PACKAGE)+" v"+FXString(REZOUND_VERSION),NULL,LABEL_NORMAL|LAYOUT_CENTER_X);
 		
 	FXTabBook *tabs=new FXTabBook(contents,NULL,0,TABBOOK_NORMAL | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0);
@@ -117,7 +117,7 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 	}
 
 	FXPacker *lowerFrame=new FXHorizontalFrame(contents,FRAME_RAISED|FRAME_THICK | LAYOUT_FILL_X|LAYOUT_FIX_HEIGHT, 0,0,0,55);
-		FXButton *okayButton=new FXButton(lowerFrame,"&Close",new FXGIFIcon(getApp(),GreenCheck1_gif),this,ID_ACCEPT,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_BEFORE_TEXT | LAYOUT_CENTER_X|LAYOUT_CENTER_Y, 0,0,0,0, 10,10,5,5);
+		FXButton *okayButton=new FXButton(lowerFrame,"&Close",FOXIcons->GreenCheck1,this,ID_ACCEPT,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_BEFORE_TEXT | LAYOUT_CENTER_X|LAYOUT_CENTER_Y, 0,0,0,0, 10,10,5,5);
 }
 
 

@@ -27,7 +27,7 @@
 
 #include "../backend/CActionParameters.h"
 #include "../backend/AAction.h"
-#include "images.h"
+#include "CFOXIcons.h"
 
 FXDEFMAP(CActionMenuCommand) CActionMenuCommandMap[]=
 {
@@ -49,7 +49,7 @@ CActionMenuCommand::CActionMenuCommand(AActionFactory *_actionFactory,FXComposit
 	FXMenuCommand(
 		p,
 		(_actionFactory->getName()+"\t"+accelKeyText.text()).c_str(),
-		(ic==NULL ? new FXGIFIcon(p->getApp(),_actionFactory->hasAdvancedMode() ? advanced_action_buff_gif : normal_action_buff_gif) : ic),
+		(ic==NULL ? (_actionFactory->hasAdvancedMode() ? FOXIcons->advanced_action_buff : FOXIcons->normal_action_buff) : ic),
 		this,
 		ID_HOTKEY,
 		opts

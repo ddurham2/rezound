@@ -25,7 +25,7 @@
 #include "CSoundWindow.h"
 #include "../backend/CLoadedSound.h"
 
-#include "images.h"
+#include "CFOXIcons.h"
 
 #include "settings.h"
 
@@ -49,7 +49,7 @@ FXIMPLEMENT(CSoundListWindow,FXTopWindow,CSoundListWindowMap,ARRAYNUMBER(CSoundL
 
 
 CSoundListWindow::CSoundListWindow(FXWindow *mainWindow) :
-	FXTopWindow(mainWindow,"Opened",new FXGIFIcon(mainWindow->getApp(),icon_logo_32_gif,0,IMAGE_ALPHACOLOR),new FXGIFIcon(mainWindow->getApp(),icon_logo_16_gif,0,IMAGE_ALPHACOLOR),DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE,368,20,360,mainWindow->getHeight(), 0,0,0,0, 0,0),
+	FXTopWindow(mainWindow,"Opened",FOXIcons->icon_logo_32,FOXIcons->icon_logo_16,DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE,368,20,360,mainWindow->getHeight(), 0,0,0,0, 0,0),
 
 	contents(new FXPacker(this,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_RAISED)),
 		soundListFrame(new FXPacker(contents,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_SUNKEN|FRAME_THICK, 0,0,0,0, 0,0,0,0, 0,0)), // had to do this because FXList won't take that frame style

@@ -20,7 +20,7 @@
 
 #include "CProgressDialog.h"
 
-//#include "images.h"
+//#include "CFOXIcons.h"
 
 FXDEFMAP(CProgressDialog) CProgressDialogMap[]=
 {
@@ -40,7 +40,7 @@ CProgressDialog::CProgressDialog(FXWindow *owner,const FXString &title/*,bool sh
 
 	contents(new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_RAISED|FRAME_THICK, 0,0,0,0, 6,6,6,6, 2,2)),
 		progressBar(new FXProgressBar(contents,NULL,0,PROGRESSBAR_NORMAL | LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,250,25))//,
-		//cancelButton(!showCancelButton ? NULL : new FXButton(buttonPacker,"&Cancel",new FXGIFIcon(getApp(),RedX1_gif),this,ID_CANCEL,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2))
+		//cancelButton(!showCancelButton ? NULL : new FXButton(buttonPacker,"&Cancel",FOXIcons->RedX1,this,ID_CANCEL,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2))
 {
 	progressBar->setTotal(100);
 	progressBar->showNumber();

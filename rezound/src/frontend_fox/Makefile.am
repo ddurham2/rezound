@@ -28,7 +28,7 @@ include $(top_srcdir)/config/am_include.mk
 
 noinst_LTLIBRARIES=libfrontend.la
 libfrontend_la_SOURCES= \
-			images.cpp \
+			CFOXIcons.cpp \
 			CActionMenuCommand.cpp \
 			CChannelSelectDialog.cpp \
 			CCrossfadeEdgesDialog.cpp \
@@ -90,7 +90,7 @@ ReZound_LDADD= libfrontend.la\
 
 noinst_HEADERS=\
 	fox_compat.h \
-	images.h \
+	CFOXIcons.h \
 	CActionMenuCommand.h \
 	CChannelSelectDialog.h \
 	CCrossfadeEdgesDialog.h \
@@ -125,11 +125,11 @@ noinst_HEADERS=\
 
 EXTRA_DIST=convert_images.sh
 
-images.h: images.cpp
-images.cpp: $(top_srcdir)/src/images/*.gif
+CFOXIcons.h: CFOXIcons.cpp
+CFOXIcons.cpp: $(top_srcdir)/src/images/*.gif
 	./convert_images.sh ${RESWRAP} $(top_srcdir)/src/images
 
 
 clean-local: 
-	-rm -f images.cpp images.h
+	-rm -f CFOXIcons.cpp CFOXIcons.h
 

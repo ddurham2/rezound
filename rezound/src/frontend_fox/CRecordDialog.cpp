@@ -22,7 +22,7 @@
 
 #include "../backend/ASoundRecorder.h"
 #include "../backend/AStatusComm.h"
-#include "images.h"
+#include "CFOXIcons.h"
 
 
 #include <istring>
@@ -89,8 +89,8 @@ CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
 				//surroundWithCuesButton=new FXCheckButton(frame3,"Surround With Cues");
 			frame3=new FXHorizontalFrame(frame2,FRAME_RAISED | LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
 				recordingLED=new FXPacker(frame3,LAYOUT_CENTER_X|LAYOUT_CENTER_Y, 0,0,0,0, 0,0,0,0, 0,0);
-					new FXLabel(recordingLED,"Recording:",new FXGIFIcon(getApp(),RedLED1_gif),JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0);
-					new FXLabel(recordingLED,"Recording:",new FXGIFIcon(getApp(),OffLED1_gif),JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0);
+					new FXLabel(recordingLED,"Recording:",FOXIcons->RedLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0);
+					new FXLabel(recordingLED,"Recording:",FOXIcons->OffLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0);
 			frame3=new FXHorizontalFrame(frame2,FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_FILL_Y);
 				frame3->setHSpacing(0);
 				frame3->setVSpacing(0);
