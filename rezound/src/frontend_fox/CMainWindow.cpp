@@ -1236,7 +1236,7 @@ long CMainWindow::onControlAction(FXObject *sender,FXSelector sel,void *ptr)
 
 	case ID_PLAY_SELECTION_START_TO_END:
 		metersWindow->resetGrandMaxPeakLevels();
-		if(gSoundFileManager,gSoundFileManager->getActive())
+		if(gSoundFileManager->getActive())
 			play(gSoundFileManager,gSoundFileManager->getActive()->channel->getStartPosition());
 		break;
 
