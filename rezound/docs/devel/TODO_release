@@ -24,7 +24,9 @@ distro tarball(eg: removing warning flags)
 
 8. update the rpm spec file
 
-9. rebuild FOX with all the possible --disable flags, --with-opengl=no, and probably CPPFLAGS=-NO_XIM
+9. rebuild FOX with all the possible --disable flags, --with-opengl=no, and probably CPPFLAGS=-DNO_XIM
+	CPPFLAGS=-DNO_XIM configure --with-opengl=no --disable-jpeg --disable-png --disable-tiff --disable-zlib --disable-bz2lib
+	- Sometimes fox needs --disable-shared with gcc-3.2 on some platforms to make the rezound FOX test succeed [linking issues]
 
 10. run build_packages_for_release.sh (which is only local to me -- not in CVS)
 

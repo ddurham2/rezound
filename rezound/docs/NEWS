@@ -1,3 +1,29 @@
+rezound-0.9.0beta -- 11/7/2003
+	- Added LADSPA support (make sure LADSPA_PATH is defined before running)
+	- Added support for floating point as the interal type (use --enable-internal-sample-type= configure flag)
+	- Added support for big endian platforms [efficiently]
+	- Built/Tested on Solaris/Sun, Debian/alpha, Debian/x86, FreeBSD/x86(somewhat tested), RH9/x86, RH7.3/x86 and Mandrake 9.1/x86
+	- Added a Morphing Arbitrary FIR Filter
+	- Added a frontend for formats such as .wav and .aiff for choosing compression and sample format types
+	- Added an action to generate various tones at a given frequency
+	- Added a 'Burn to CD' action which can create tracks based on cues named '('...[')'] (requires cdrdao)
+	- Added a 'Mark Quite Areas' action that adds cues based on where quiet regious of audio are
+	- Added a 'Duplicate Channel' edit action
+	- Added a new play button that places from the selection start to the end of the sound
+	- Added brown noise to the noise generator
+	- Added square wave, positive square wave and abs(sin) LFOs
+	- Now the stereo phase meter can be rotated 45 degrees or not
+	- Added a zoom dial for the stereo phase meter
+	- Now when using "Save as Multiple Files" the same settings can be used for each
+	- Zoom and Scroll positions are now restored on undo
+	- Added a 'Remember as Default' checkbox to the new sound dialog that remembers the values
+	- Added a command line parameter, '--audio-method=...' that selects the method of audio I/O that will be tried first
+	- Added an '--enable-largefile' flag to configure for future use [when other libs get around to supporting it]
+	- More complete i18n: Russian (thanks Alexandre Prokoudine!) and German (thanks Joost Andrae!)
+	- Fixed an issue with the record duration limit causing things to hang
+	- FOX > 1.1.35 is now supported
+	- Other minor bugfixes and minor cosmetic changes
+
 rezound-0.8.3beta -- 7/14/2003
 	- Fixed a bug that broke Ogg/Vorbis
 

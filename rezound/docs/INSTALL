@@ -1,4 +1,4 @@
-ReZound 0.8.3beta Installation instructions 
+ReZound 0.9.0beta Installation instructions 
 
 If building/installing directly from the CVS repository see CVS-INSTALL
 	
@@ -50,7 +50,7 @@ Before attempting to build ReZound you will need to have (or are encouraged to h
 
 	- libpthreads -- This is pretty much standard on all Linux systems' glibc 
 	package now. If you don't have it already, It should be available on your 
-	distribution discs.
+	distribution discs. [Exceptions: freebsd uses libc_r and netbsd needs libPTL]
 
 	- vox/devox -- http://www.cis.ksu.edu/~tim/vox/ -- required if you want to load 
 	.vox files.  This seems to be a quite obscure format, so support would be for 

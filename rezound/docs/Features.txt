@@ -20,6 +20,9 @@
 	- Reopen History
 	- Save Selection As
 	- Save As Multiple Files (according to cue positions)
+	- Burn to CD
+
+- Either 16bit or 32bit floating point can be chosen as the interal sample format
 
 - Fast Editing of Large Files
 
@@ -45,6 +48,7 @@
 	- Play All Once
 	- Play All Looped
 	- Play Selection Once
+	- Play Selection to End
 	- Play Selection Looped
 	- Play Selection Looped and Skip Most of the Middle
 	- Play Selection Looped but Add a Gap Before Repeating
@@ -83,11 +87,14 @@
 	- Insert Silence
 	- Mute
 	- Add Channels
+	- Duplicate Channel
 	- Remove Channels
 	- Swap Channels
 	- Rotate Selection Left
 	- Rotate Selection Right
 	- Various Selection Tools
+
+- LADSPA Plugin Support
 
 - Various Effects/Manipulations
 	- Reverse
@@ -104,6 +111,7 @@
 	- For Various Effects Like Reverb and Applying Room Characteristics
 
 - Arbitrary FIR Filter (the user can draw their own frequency response)
+- Morphing Arbitrary FIR Filter (the user can draw two frequency responses and have it morph between them)
 
 - IIR Single Pole Filters
 	- Lowpass
@@ -124,17 +132,30 @@
 - Mastering/Remastering Tools (more to come)
 	- Balance/Pan (by constant or curve)
 	- Monoize (mix down channels or make all the channels the same)
-	- Remove DC Component
 	- Noise Gate
 	- Dynamic Range Compression
 	- Normalization
+	- Mark Quiet Areas (with cues)
 	- Resample
+	- Remove DC Component
 
 - Generate Various Colors of Noise
 - Generate Various Timbres of a frequency
 
 - Selectable LFO Shapes for Actions that Use an LFO (more to come)
 
-- Dynamic Menu Layout (no frontend interface easy user-defining yet)
+- Dynamic Menu Layout (no frontend interface for easy user-defining yet)
 
 - gettext support (i18n, internationalization)
+	- Russian
+	- German
+
+- Tested Platforms
+	Mandrake 9.1/x86
+	RH9/x86
+	RH7.3/x86
+	BSD/x86
+	Debian/alpha
+	Debian/x86
+	Solaris/Sun
+

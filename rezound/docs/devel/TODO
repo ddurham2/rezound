@@ -1,5 +1,7 @@
 --- THINGS TO DO FOR SURE ---
 
+	- Create an implementation of CRWLock (rename to CRWMutex) that doesn't use rwlock's when they're unavailable (netbsd)
+
 	- need a prefix flag for fftw libs in configure.ac
 		- or see if there's an .m4 that comes with the lib
 
