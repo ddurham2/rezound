@@ -53,6 +53,7 @@
 */
 
 #include <cc++/thread.h>
+#include <string>
 
 class ASoundRecorder
 {
@@ -63,7 +64,7 @@ public:
 
 	void setStatusTrigger(TriggerFunc triggerFunc,void *data);
 	void removeStatusTrigger(TriggerFunc triggerFunc,void *data);
-	float getLastPeakValue(unsigned channel) const;
+	float getAndResetLastPeakValue(unsigned channel);
 
 	virtual void initialize(ASound *sound);
 	virtual void deinitialize();
@@ -79,6 +80,10 @@ public:
 	size_t clipCount;
 	unsigned getChannelCount() const;
 	unsigned getSampleRate() const;
+
+	bool isStarted() const;
+	string getRecordedLength() const;
+	string getRecordedSize() const;
 
 protected:
 

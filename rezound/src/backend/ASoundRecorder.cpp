@@ -36,52 +36,58 @@ ASoundRecorder::~ASoundRecorder()
 
 void ASoundRecorder::start()
 {
-	mutex.EnterMutex();
-	try
+	if(!started)
 	{
-		prealloced=sound->getLength()-origLength;
-		writePos=origLength;
-		started=true;
+		mutex.EnterMutex();
+		try
+		{
+			//prealloced=sound->getLength()-origLength;
+			//writePos=origLength;
+			started=true;
 
-		mutex.LeaveMutex();
-	}
-	catch(...)
-	{
-		mutex.LeaveMutex();
-		throw;
+			mutex.LeaveMutex();
+		}
+		catch(...)
+		{
+			mutex.LeaveMutex();
+			throw;
+		}
 	}
 }
 
 void ASoundRecorder::stop()
 {
-	mutex.EnterMutex();
-	try
+	if(started)
 	{
-		started=false;
-
-		// remove extra prealloceded space
-		sound->lockForResize();
+		mutex.EnterMutex();
 		try
 		{
-			if(prealloced>0)
-				// remove extra space
-				sound->removeSpace(sound->getLength()-prealloced,prealloced);
-			prealloced=0;
+			started=false;
 
-			sound->unlockForResize();
+			// remove extra prealloceded space
+			sound->lockForResize();
+			try
+			{
+				if(prealloced>0)
+					// remove extra space
+					sound->removeSpace(sound->getLength()-prealloced,prealloced);
+				prealloced=0;
+
+				sound->unlockForResize();
+			}
+			catch(...)
+			{
+				sound->unlockForResize();
+				throw;
+			}
+
+			mutex.LeaveMutex();
 		}
 		catch(...)
 		{
-			sound->unlockForResize();
+			mutex.LeaveMutex();
 			throw;
 		}
-
-		mutex.LeaveMutex();
-	}
-	catch(...)
-	{
-		mutex.LeaveMutex();
-		throw;
 	}
 }
 
@@ -96,9 +102,11 @@ void ASoundRecorder::redo()
 	try
 	{
 
-		// do I want to clear out the buffers already recorded??? Cause it may cause a hiccup in the input containig some of the already buffered data
+		// in OSS, do I want to clear out the buffers already recorded??? Cause it may cause a hiccup in the input containig some of the already buffered data
+		// 	I could do non-blocking reads while info.fragments is >0 or something
 		// there may be a way to do this with OSS
 		writePos=origLength;
+		prealloced=sound->getLength()-origLength;
 
 		mutex.LeaveMutex();
 	}
@@ -171,7 +179,7 @@ void ASoundRecorder::onData(const sample_t *samples,const size_t sampleFramesRec
 		// give realtime peak data updates
 		for(unsigned i=0;i<channelCount;i++)
 		{
-			mix_sample_t maxSample=0;
+			mix_sample_t maxSample=(mix_sample_t)(lastPeakValues[i]*MAX_SAMPLE);
 			const sample_t *_samples=samples+i;
 			for(size_t t=0;t<sampleFramesRecorded;t++)
 			{
@@ -249,9 +257,35 @@ unsigned ASoundRecorder::getSampleRate() const
 	return(sound->getSampleRate());
 }
 
-float ASoundRecorder::getLastPeakValue(unsigned channel) const
+bool ASoundRecorder::isStarted() const
 {
-	return(lastPeakValues[channel]);
+	return(started);
+}
+
+string ASoundRecorder::getRecordedLength() const
+{
+	return(sound->getTimePosition(writePos-origLength));
+}
+
+string ASoundRecorder::getRecordedSize() const
+{
+	return(sound->getAudioDataSize(writePos-origLength));
+}
+
+
+
+/*
+ * The get-and-reset idea ensures that we get the peak (maximum) value since
+ * the last time we called this method.  That way if a timer is only calling
+ * this every .25 seconds and the peak is recalculated every .1 seconds the
+ * recalculation doesn't overwrite the value, it just uses the existing peak
+ * value which is reset each time we ask for it.
+ */
+float ASoundRecorder::getAndResetLastPeakValue(unsigned channel)
+{
+	float p=lastPeakValues[channel];
+	lastPeakValues[channel]=0.0;
+	return(p);
 }
 
 void ASoundRecorder::setStatusTrigger(TriggerFunc triggerFunc,void *data)
@@ -263,4 +297,5 @@ void ASoundRecorder::removeStatusTrigger(TriggerFunc triggerFunc,void *data)
 {
 	statusTrigger.unset(triggerFunc,data);
 }
+
 

@@ -79,9 +79,8 @@ private:
 
 	FXHorizontalFrame *meterFrame;
 
-	FXLabel *lengthStatusLabel;
-	FXLabel *locationStatusLabel;
-	FXLabel *sizeStatusLabel;
+	FXLabel *recordedLengthStatusLabel;
+	FXLabel *recordedSizeStatusLabel;
 
 	FXLabel *clipCountLabel;
 

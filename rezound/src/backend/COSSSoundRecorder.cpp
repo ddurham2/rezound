@@ -43,9 +43,8 @@
 #define BITS 16
 #define OSS_PCM_FORMAT AFMT_S16_LE // needs to match for what is above and type of sample_t ???
 
-#define BUFFER_COUNT 64
-#define BUFFER_SIZE_BYTES 4096						// buffer size in bytes
-#define BUFFER_SIZE_BYTES_LOG2 12					// log2(BUFFER_SIZE_BYTES) -- that is 2^this is BUFFER_SIZE_BYTES
+#define BUFFER_SIZE_BYTES 8192						// buffer size in bytes
+#define BUFFER_SIZE_BYTES_LOG2 13					// log2(BUFFER_SIZE_BYTES) -- that is 2^this is BUFFER_SIZE_BYTES
 #define BUFFER_SIZE_SAMPLES(channelCount) (BUFFER_SIZE_BYTES/(BITS/8)/channelCount) 	// in samples
 
 
@@ -123,8 +122,8 @@ void COSSSoundRecorder::initialize(ASound *sound)
 
 
 		// set the buffering parameters
-				// ??? I'm no quite sure why I have to -1 here... when I would print the info below, it just always had 1 more than I asked for
-		int arg=((BUFFER_COUNT-1)<<16)+BUFFER_SIZE_BYTES_LOG2;  // 0xMMMMSSSS; where 0xMMMM is the number of buffers and 2^0xSSSS is the buffer size
+		//0x7fff means I don't need any limit
+		int arg=(0x7fff<<16)|BUFFER_SIZE_BYTES_LOG2;  // 0xMMMMSSSS; where 0xMMMM is the number of buffers and 2^0xSSSS is the buffer size
 		int parm=arg;
 		if (ioctl(audio_fd, SNDCTL_DSP_SETFRAGMENT, &parm)==-1) 
 		{
@@ -134,7 +133,7 @@ void COSSSoundRecorder::initialize(ASound *sound)
 		else if(arg!=parm)
 		{
 			close(audio_fd);
-			throw(runtime_error(string(__func__)+" -- error setting the buffering parameters -- "+istring(BUFFER_COUNT)+" buffers, each "+istring(BUFFER_SIZE_BYTES)+" bytes long, not supported"));
+			throw(runtime_error(string(__func__)+" -- error setting the buffering parameters -- "+istring(BUFFER_SIZE_BYTES)+" bytes long, not supported"));
 		}
 
 

@@ -48,7 +48,7 @@ FXIMPLEMENT(CRecordDialog,FXModalDialogBox,CRecordDialogMap,ARRAYNUMBER(CRecordD
 // ----------------------------------------
 
 CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"Record",310,350,FXModalDialogBox::ftVertical),
+	FXModalDialogBox(mainWindow,"Record",350,300,FXModalDialogBox::ftVertical),
 
 	recorder(NULL),
 	showing(false),
@@ -61,6 +61,7 @@ CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
 	FXPacker *frame1;
 	FXPacker *frame2;
 	FXPacker *frame3;
+	FXPacker *frame4;
 
 	frame1=new FXHorizontalFrame(getFrame(),LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 1,1);
 		frame2=new FXVerticalFrame(frame1,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 1,1);
@@ -68,11 +69,17 @@ CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
 				new FXButton(frame3,"Add Cue",NULL,this,ID_ADD_CUE_BUTTON);
 				new FXButton(frame3,"Add Anchored Cue",NULL,this,ID_ADD_ANCHORED_CUE_BUTTON);
 					// but what name shall I give the cues
+					// the checkbox should indicate that cues will be placed at each time the sound is stopped and started
 				//surroundWithCuesButton=new FXCheckButton(frame3,"Surround With Cues");
-			frame3=new FXVerticalFrame(frame2,FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_FILL_Y);
-				lengthStatusLabel=new FXLabel(frame3,"Length: ",NULL);
-				locationStatusLabel=new FXLabel(frame3,"Location: ",NULL);
-				sizeStatusLabel=new FXLabel(frame3,"Size: ",NULL);
+			frame3=new FXHorizontalFrame(frame2,FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_FILL_Y);
+				frame3->setHSpacing(0);
+				frame3->setVSpacing(0);
+				frame4=new FXVerticalFrame(frame3,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
+					new FXLabel(frame4,"Rec Length: ",NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT);
+					new FXLabel(frame4,"Rec Size: ",NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT);
+				frame4=new FXVerticalFrame(frame3,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
+					recordedLengthStatusLabel=new FXLabel(frame4,"00:00.000",NULL,LAYOUT_FILL_X|JUSTIFY_LEFT);
+					recordedSizeStatusLabel=new FXLabel(frame4,"0",NULL,LAYOUT_FILL_X|JUSTIFY_LEFT);
 		frame2=new FXVerticalFrame(frame1,FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_FILL_Y);
 			frame3=new FXHorizontalFrame(frame2);
 				new FXButton(frame3,"Reset",NULL,this,ID_CLEAR_CLIP_COUNT_BUTTON);
@@ -120,7 +127,12 @@ long CRecordDialog::onStatusUpdate(FXObject *sender,FXSelector sel,void *ptr)
 		return(0);
 
 	for(unsigned i=0;i<meters.size();i++)
-		setMeterValue(i,recorder->getLastPeakValue(i));
+		setMeterValue(i,recorder->getAndResetLastPeakValue(i));
+
+	clipCountLabel->setText(("Clip Count: "+istring(recorder->clipCount)).c_str());
+
+	recordedLengthStatusLabel->setText(recorder->getRecordedLength().c_str());
+	recordedSizeStatusLabel->setText(recorder->getRecordedSize().c_str());
 
 	// schedule for the next status update
 	timerHandle=getApp()->addTimeout(STATUS_UPDATE_TIME,this,CRecordDialog::ID_STATUS_UPDATE);
@@ -141,6 +153,7 @@ bool CRecordDialog::show(ASoundRecorder *_recorder)
 	}
 	meterFrame->recalc();
 
+	onStopButton(NULL,0,NULL); // to clear status labels
 	try
 	{
 		showing=true;
@@ -175,6 +188,7 @@ long CRecordDialog::onStartButton(FXObject *sender,FXSelector sel,void *ptr)
 long CRecordDialog::onStopButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	recorder->stop();
+
 	return 1;
 }
 

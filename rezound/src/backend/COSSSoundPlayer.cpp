@@ -128,8 +128,7 @@ void COSSSoundPlayer::initialize()
 
 
 		// set the buffering parameters
-				// ??? I'm no quite sure why I have to -1 here... when I would print the info below, it just always had 1 more than I asked for
-		int arg=((BUFFER_COUNT-1)<<16)+BUFFER_SIZE_BYTES_LOG2;  // 0xMMMMSSSS; where 0xMMMM is the number of buffers and 2^0xSSSS is the buffer size
+		int arg=((BUFFER_COUNT)<<16)|BUFFER_SIZE_BYTES_LOG2;  // 0xMMMMSSSS; where 0xMMMM is the number of buffers and 2^0xSSSS is the buffer size
 		int parm=arg;
 		if (ioctl(audio_fd, SNDCTL_DSP_SETFRAGMENT, &parm)==-1) 
 		{
@@ -151,10 +150,10 @@ void COSSSoundPlayer::initialize()
 			throw(runtime_error(string(__func__)+" -- error getting the buffering parameters -- "+strerror(errno)));
 		}
 		/*
-		printf("OSS: info.fragments: %d\n",info.fragments);
-		printf("OSS: info.fragstotal: %d\n",info.fragstotal);
-		printf("OSS: info.fragsize: %d\n",info.fragsize);
-		printf("OSS: info.bytes: %d\n",info.bytes);
+		printf("OSS player: info.fragments: %d\n",info.fragments);
+		printf("OSS player: info.fragstotal: %d\n",info.fragstotal);
+		printf("OSS player: info.fragsize: %d\n",info.fragsize);
+		printf("OSS player: info.bytes: %d\n",info.bytes);
 		*/
 
 

@@ -1002,25 +1002,30 @@ const sample_pos_t ASound::getPositionFromTime(const string time,bool &wasInvali
 	return(samplePos);
 }
 
-const string ASound::getAudioDataSize() const
+const string ASound::getAudioDataSize(const sample_pos_t sampleCount) const
 {
-	sample_pos_t iAudioDataSize=isEmpty() ? 0 : getAudio(0).getSize()*sizeof(sample_t)*channelCount;
-	if(iAudioDataSize>=1024*1024*1024)
+	sample_fpos_t audioDataSize=sampleCount*sizeof(sample_t)*channelCount;
+	if(audioDataSize>=1024*1024*1024)
 	{ // return as gb
-		return(istring((sample_fpos_t)iAudioDataSize/1024.0/1024.0/1024.0,5,3)+"gb");
+		return(istring(audioDataSize/1024.0/1024.0/1024.0,5,3)+"gb");
 	}
-	else if(iAudioDataSize>=1024*1024)
+	else if(audioDataSize>=1024*1024)
 	{ // return as mb
-		return(istring((sample_fpos_t)iAudioDataSize/1024.0/1024.0,5,2)+"mb");
+		return(istring(audioDataSize/1024.0/1024.0,5,2)+"mb");
 	}
-	else if(iAudioDataSize>=1024)
+	else if(audioDataSize>=1024)
 	{ // return as kb
-		return(istring((sample_fpos_t)iAudioDataSize/1024.0,5,1)+"kb");
+		return(istring(audioDataSize/1024.0,5,1)+"kb");
 	}
 	else
 	{ // return as b
-		return(istring(iAudioDataSize)+"b");
+		return(istring((sample_pos_t)audioDataSize)+"b");
 	}
+}
+
+const string ASound::getAudioDataSize() const
+{
+	return(getAudioDataSize(isEmpty() ? 0 : getAudio(0).getSize()));
 }
 
 const string ASound::getPoolFileSize() const
@@ -1205,21 +1210,34 @@ void ASound::saveMetaInfo()
 	if(!poolFile.isOpen())
 		throw(runtime_error(string(__func__)+" -- poolFile is not opened"));
 
-	// always write the newest format
-	RFormatInfo1 r;
-	r.version=CURRENT_VERSION;
-	r.size=size;
-	r.sampleRate=sampleRate;
-	r.channelCount=channelCount;
-
-	poolFile.clearPool(metaInfoPoolID);
-	poolFile.setPoolAlignment(metaInfoPoolID,sizeof(RFormatInfo1));
-
 	CFormat1InfoPoolAccesser b=poolFile.getPoolAccesser<RFormatInfo1>(metaInfoPoolID);
-	b.append(1);
-	b[0]=r;
+	if(b.getSize()==1)
+	{
+		RFormatInfo1 &r=b[0];
 
-	flush();
+		r.size=size;
+		r.sampleRate=sampleRate;
+		r.channelCount=channelCount;
+	}
+	else
+	{
+		// always write the newest format
+		RFormatInfo1 r;
+		r.version=CURRENT_VERSION;
+		r.size=size;
+		r.sampleRate=sampleRate;
+		r.channelCount=channelCount;
+
+		poolFile.clearPool(metaInfoPoolID);
+		poolFile.setPoolAlignment(metaInfoPoolID,sizeof(RFormatInfo1));
+
+		CFormat1InfoPoolAccesser b=poolFile.getPoolAccesser<RFormatInfo1>(metaInfoPoolID);
+		b.append(1);
+		b[0]=r;
+	}
+
+	// really slows things down especially for recording 
+	// flush();
 }
 
 const string ASound::getWorkingFilename(const string originalFilename) const

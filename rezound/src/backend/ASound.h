@@ -296,6 +296,7 @@ public:
 	const string getTimePosition(sample_pos_t samplePos,int secondsDecimalPlaces=3,bool includeUnits=true) const;
 	const sample_pos_t getPositionFromTime(const string time,bool &wasInvalid) const;
 	const string getAudioDataSize() const;
+	const string getAudioDataSize(sample_pos_t sampleCount) const; // with this object's format
 	const string getPoolFileSize() const;
 
 	void setIsModified(bool v);
