@@ -1,10 +1,12 @@
 rezound-0.8.2beta -- 7/8/2003
 	This is mostly a quick bug-fix release
 	- Added a feature to the shuttle wheel to change rate by semitones (Thanks Gerhard Zintel)
+	- More complete Russian translation
 	- Fixed a compile problem on debian woody
 	- Fixed a data directory search bug causing startup failure
 	- Fixed segfault on "Add Cue"
 	- Fixed a recording sample rate issue
+	- Fixed a RH9 rpm rebuild issue
 	- FOX 1.1.30 will now work
 
 rezound-0.8.1beta -- 6/26/2003
