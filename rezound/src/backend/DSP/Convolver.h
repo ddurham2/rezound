@@ -152,7 +152,7 @@ public:
 
 		// ??? might want to check coefficient_t against fftw_real
 		
-		prepareFilterKernel(filterKernel);
+		prepareFilterKernel(filterKernel,data,xform,p,un_p);
 		//printf("chosen window size: %d\n",W);
 
 		reset();
@@ -160,6 +160,19 @@ public:
 
 	virtual ~TFFTConvolverTimeDomainKernel()
 	{
+		rfftw_destroy_plan(p);
+		rfftw_destroy_plan(un_p);
+	}
+
+	// the NEW set of coefficients MUST be the same size as the original one at construction
+	void setNewFilterKernel(const coefficient_t filterKernel[])
+	{
+		TAutoBuffer<fftw_real> data(W),xform(W+1);
+		rfftw_plan p=rfftw_create_plan_specific(W, FFTW_REAL_TO_COMPLEX, FFTW_ESTIMATE, data,1,xform,1);
+		rfftw_plan un_p=rfftw_create_plan_specific(W, FFTW_COMPLEX_TO_REAL, FFTW_ESTIMATE, xform,1,data,1);
+
+		prepareFilterKernel(filterKernel,data,xform,p,un_p);
+
 		rfftw_destroy_plan(p);
 		rfftw_destroy_plan(un_p);
 	}
@@ -295,7 +308,7 @@ private:
 		throw runtime_error(string(__func__)+" -- cannot handle a filter kernel of size "+istring(M)+" -- perhaps simply another element needs to be added to fftw_good_sizes");
 	}
 	
-	void prepareFilterKernel(const coefficient_t filterKernel[])
+	void prepareFilterKernel(const coefficient_t filterKernel[],fftw_real data[],fftw_real xform[],rfftw_plan p,rfftw_plan un_p)
 	{
 			// ??? perhaps a parameter could be passed that would indicate what the filterKernel is.. whether it's time-domain or freq domain already
 
@@ -333,6 +346,14 @@ public:
 	virtual ~TFFTConvolverFrequencyDomainKernel()
 	{
 	}
+
+	/* the responseSize must match the original responseSize at construction or results are undefined */
+	void setNewMagnitudeArray(const coefficient_t magnitude[],size_t responseSize,const coefficient_t phase[]=NULL)
+	{
+		setNewFilterKernel(convertToTimeDomain(magnitude,phase,responseSize));
+		delete [] tempKernel;
+	}
+
 
 private:
 	
