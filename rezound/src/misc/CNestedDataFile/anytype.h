@@ -136,9 +136,10 @@ template<> static const string anytype_to_string<unsigned long long>(const unsig
 
 // I've picked a rather arbitrary way of formatting floats one way or another depending on how big it is.. I wish there were a way to output the ascii in such a way as to preserve all the information in the float (without printing the hex of it or something like that)
 #include <istring>
-template<> static const string anytype_to_string<float>(const float &any)              { ostringstream ss; if(any>999999.0) {ss.setf(ios::scientific); ss.width(0); ss.precision(12); ss.fill(' '); } else {ss.setf(ios::fixed); ss.precision(6); ss.fill(' '); } ss << any; return istring(ss.str()).trim(); }
-template<> static const string anytype_to_string<double>(const double &any)             { ostringstream ss; if(any>999999.0) {ss.setf(ios::scientific); ss.width(0); ss.precision(12); ss.fill(' '); } else {ss.setf(ios::fixed); ss.precision(6); ss.fill(' '); } ss << any; return istring(ss.str()).trim(); }
-template<> static const string anytype_to_string<long double>(const long double &any)        { ostringstream ss; if(any>999999.0) {ss.setf(ios::scientific); ss.width(0); ss.precision(12); ss.fill(' '); } else {ss.setf(ios::fixed); ss.precision(6); ss.fill(' '); } ss << any; return istring(ss.str()).trim(); }
+#include <math.h> // for isnan which I hope is there (maybe fix in common.h if it's not
+template<> static const string anytype_to_string<float>(const float &any)              { if(isnan(any)) return "0"; else { ostringstream ss; if(any>999999.0) {ss.setf(ios::scientific); ss.width(0); ss.precision(12); ss.fill(' '); } else {ss.setf(ios::fixed); ss.precision(6); ss.fill(' '); } ss << any; return istring(ss.str()).trim(); } }
+template<> static const string anytype_to_string<double>(const double &any)             { if(isnan(any)) return "0"; else { ostringstream ss; if(any>999999.0) {ss.setf(ios::scientific); ss.width(0); ss.precision(12); ss.fill(' '); } else {ss.setf(ios::fixed); ss.precision(6); ss.fill(' '); } ss << any; return istring(ss.str()).trim(); } }
+template<> static const string anytype_to_string<long double>(const long double &any)        { if(isnan(any)) return "0"; else { ostringstream ss; if(any>999999.0) {ss.setf(ios::scientific); ss.width(0); ss.precision(12); ss.fill(' '); } else {ss.setf(ios::fixed); ss.precision(6); ss.fill(' '); } ss << any; return istring(ss.str()).trim(); } }
 
 
 // I really wished that I didn't have to explicitly use 'vector' in the definition, I'd have like to use any container with an iterator interface
