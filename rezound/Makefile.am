@@ -50,6 +50,7 @@ pkgdata_DATA= \
 EXTRA_DIST= \
 	config/m4 \
 	config/common.h \
+	config/platform \
 	docs \
 	share \
 	bootstrap \
