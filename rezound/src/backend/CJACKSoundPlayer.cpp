@@ -34,6 +34,10 @@
 #include "settings.h"
 #include "AFrontendHooks.h"
 
+/*
+ * Ask the mailing list about the hangup signal and I probably want to catch it and not die
+ */ 
+
 
 unsigned CJACKSoundPlayer::hack_sampleRate=44100;
 
