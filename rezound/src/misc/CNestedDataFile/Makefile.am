@@ -24,7 +24,10 @@ noinst_HEADERS=CNestedDataFile.h
 
 EXTRA_DIST= \
 	cfg.l \
-	cfg.y 
+	cfg.y \
+	anytype.h \
+	test_CNestedDataFile.cpp
+
 ##bin_PROGRAMS=test_CNestedDataFile
 ##test_CNestedDataFile_SOURCES=test_CNestedDataFile.cpp CNestedDataFile.cpp cfg.tab.cc
 
@@ -53,3 +56,4 @@ test_CNestedDataFile: test_CNestedDataFile.cpp cfg.tab.o CNestedDataFile.o anyty
 
 clean-local: 
 	-rm -f cfg.tab.cc cfg.lex.c test_CNestedDataFile test.dat2
+

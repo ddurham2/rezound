@@ -35,6 +35,11 @@ SUBDIRS=\
 	Generate \
 	Remaster
 
+# this makes makedist happy
+EXTRA_DIST= \
+	CStubAction.h \
+	CStubAction.cpp
+
 noinst_HEADERS= \
 	   AActionDialog.h \
 	   AAction.h \

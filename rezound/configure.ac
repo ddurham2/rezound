@@ -444,8 +444,6 @@ dnl ############################################################################
 
 AC_CONFIG_FILES([
 	Makefile
-	docs/Makefile
-	share/Makefile
 	src/Makefile
 		src/PoolFile/Makefile
 		src/misc/Makefile

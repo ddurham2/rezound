@@ -161,12 +161,12 @@ EXTRA_DIST=convert_images.sh
 
 $(top_srcdir)/src/frontend_fox/CFOXIcons.h: $(top_srcdir)/src/frontend_fox/CFOXIcons.cpp
 $(top_srcdir)/src/frontend_fox/CFOXIcons.cpp: $(top_srcdir)/src/images/*.gif
-	cd $(top_srcdir)/src/frontend_fox && ./convert_images.sh $(RESWRAP) $(top_srcdir)/src/images && cd $(top_srcdir)/src/frontend_fox && make CFOXIcons.o
+	cd $(top_srcdir)/src/frontend_fox && ./convert_images.sh $(RESWRAP) $(top_srcdir)/src/images && cd $(top_builddir)/src/frontend_fox && make CFOXIcons.o
 
 CFOXIcons.cpp: $(top_srcdir)/src/frontend_fox/CFOXIcons.cpp
 CFOXIcons.h: $(top_srcdir)/src/frontend_fox/CFOXIcons.h
 # without this, touching a file in images will cause CFOXIcons.o to be regenerated, but won't cause rezound to be re-linked
-$(bin_PROGRAMS): $(top_srcdir)/src/frontend_fox/CFOXIcons.o
+$(bin_PROGRAMS): $(top_builddir)/src/frontend_fox/CFOXIcons.o
 
 
 clean-local: 

@@ -24,7 +24,7 @@
 include $(top_srcdir)/config/am_include.mk
 
 noinst_HEADERS= \
-		CGenerateNoiseAction.h
+		CGenerateNoiseAction.h \
 		GenerateActions.h
 
 noinst_LTLIBRARIES=libGenerate.la
