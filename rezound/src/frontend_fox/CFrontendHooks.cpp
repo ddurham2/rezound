@@ -88,6 +88,9 @@ void CFrontendHooks::doSetupAfterBackendIsSetup()
 		FXVerticalFrame *f=new FXVerticalFrame(openDialog,LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 0,0,0,0, 0,0);
 		openDialog->childAtIndex(0)->reparent(f);
 		openAsRawCheckButton=new FXCheckButton(new FXPacker(f,0, 0,0,0,0, DEFAULT_SPACING*2,0,0),_("Open as Raw"),NULL,0,CHECKBUTTON_NORMAL);
+
+		if(!ASoundTranslator::findRawTranslator()) // hide if we can't handle it
+			f->hide();
 	}
 	if(openDialog->getDirectory()!=gPromptDialogDirectory.c_str())
 		openDialog->setDirectory(gPromptDialogDirectory.c_str());
@@ -101,6 +104,9 @@ void CFrontendHooks::doSetupAfterBackendIsSetup()
 		FXVerticalFrame *f=new FXVerticalFrame(saveDialog,LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 0,0,0,0, 0,0);
 		saveDialog->childAtIndex(0)->reparent(f);
 		saveAsRawCheckButton=new FXCheckButton(new FXPacker(f,0, 0,0,0,0, DEFAULT_SPACING*2,0,0),_("Save as Raw"),NULL,0,CHECKBUTTON_NORMAL);
+
+		if(!ASoundTranslator::findRawTranslator()) // hide if we can't handle it
+			f->hide();
 	}
 
 	newSoundDialog=new CNewSoundDialog(mainWindow);

@@ -29,6 +29,7 @@
 
 #include "CFrontendHooks.h"
 #include "../backend/AStatusComm.h"
+#include "../backend/ASoundTranslator.h"
 
 #include <CNestedDataFile/CNestedDataFile.h>
 #include "settings.h"
@@ -73,6 +74,9 @@ CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 	rememberAsDefault(new FXCheckButton(getFrame(),_("Remember as Default"),NULL,0,CHECKBUTTON_NORMAL|LAYOUT_BOTTOM|LAYOUT_CENTER_X)),
 	separator(new FXHorizontalSeparator(getFrame(),SEPARATOR_GROOVE|LAYOUT_FILL_X|LAYOUT_BOTTOM))
 {
+	if(!ASoundTranslator::findRawTranslator()) // hide if we can't handle it
+		rawFormatFrame->hide();
+
 	for(size_t t=0;t<MAX_CHANNELS;t++)
 		channelsComboBox->appendItem(istring(t+1).c_str());
 	channelsComboBox->setCurrentItem(1); // stereo

@@ -30,6 +30,7 @@
 #include "settings.h"
 
 #include <CNestedDataFile/CNestedDataFile.h>
+#include "../backend/ASoundTranslator.h"
 
 #include "utils.h"
 
@@ -64,6 +65,9 @@ FXDiskEntityParamValue::FXDiskEntityParamValue(FXComposite *p,int opts,const cha
 
 	textFont(getApp()->getNormalFont())
 {
+	if(openAsRawCheckButton && !ASoundTranslator::findRawTranslator())
+		openAsRawCheckButton->hide();
+
 	// create a smaller font to use 
         FXFontDesc d;
         textFont->getFontDesc(d);

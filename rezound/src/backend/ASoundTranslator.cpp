@@ -54,7 +54,7 @@ bool ASoundTranslator::loadSound(const string filename,CSound *sound) const
 
 		// ??? could check various other things
 		if(!sound->poolFile.isOpen())
-			throw(runtime_error(string(__func__)+" -- internal error -- no pool file was open after loading file"));
+			throw runtime_error(string(__func__)+" -- internal error -- no pool file was open after loading file");
 
 		sound->unlockForResize();
 	}
@@ -106,58 +106,67 @@ bool ASoundTranslator::saveSound(const string filename,const CSound *sound,const
 
 // --- static methods --------------------------------------------
 
-/* just a thought:
+/* just a thought: ???
 	This method could be given some abstract stream class pointer instead 
 	of a filename which could access a file or a network URL.   Then the 
 	translators would also have to be changed to read from that stream 
-	instead of the file, and libaudiofile would at this point in time have 
-	trouble doing that.
+	instead of the file, and libaudiofile et al  would at this point in 
+	time have trouble doing that.
 */
+
 #include <CPath.h>
-const ASoundTranslator *ASoundTranslator::findTranslator(const string filename,bool isRaw)
+const ASoundTranslator *ASoundTranslator::findTranslator(const string filename,bool byExtensionOnly,bool isRaw)
 {
 	if(registeredTranslators.size()<=0)
 		buildRegisteredTranslatorsVector();
 
-	if(isRaw)
+	const ASoundTranslator *rawTranslator=findRawTranslator();
+
+	if(isRaw && rawTranslator)
+		return rawTranslator;
+
+	if(!byExtensionOnly)
 	{
-		for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
-		{
-			if(ASoundTranslator::registeredTranslators[t]->handlesRaw())
-				return(ASoundTranslator::registeredTranslators[t]);
+		/* 'regular file' stuff deals with Sample Dump Standard being opened from /dev/midi */
+		/* it's not perfect.. it would be best to know if the file being opened is a midi device for sure */
+		CPath path(filename);
+		if(path.exists() && path.isRegularFile())
+		{ // try to determine from the contents of the file
+			for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
+			{
+				if(ASoundTranslator::registeredTranslators[t]->supportsFormat(filename))
+					return ASoundTranslator::registeredTranslators[t];
+			}
 		}
 	}
 
-	CPath path(filename);
-	if(path.exists() && path.isRegularFile())
-	{ // try to determine from the contents of the file
-		for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
-		{
-			if(ASoundTranslator::registeredTranslators[t]->supportsFormat(filename))
-				return(ASoundTranslator::registeredTranslators[t]);
-		}
-	}
-
-	// file doesn't exist or no supported signature, so attempt to determine the translater based on the file extension
+	// either file doesn't exist or no supportsFormat was implemented and recognized it, so attempt to determine the translater based on the file extension
 	const string extension=istring(CPath(filename).extension()).lower();
 	for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
 	{
 		if(ASoundTranslator::registeredTranslators[t]->handlesExtension(extension,filename))
-			return(ASoundTranslator::registeredTranslators[t]);
+			return ASoundTranslator::registeredTranslators[t];
 	}
 
-	// find the raw translator and ask the user if they want to use it
+	// if raw translator exists, ask the user if they want to use it
+	if(rawTranslator)
+	{
+		if(Question(_("No handler found to support the format for ")+filename+"\n"+_("Would you like to use a raw format?"),yesnoQues)==yesAns)
+			return rawTranslator;
+	}
+
+	throw runtime_error(string(__func__)+_(" -- unhandled format/extension for the filename")+" '"+filename+"'");
+}
+
+// find a translator that handles raw formats, or return NULL if none is found
+const ASoundTranslator *ASoundTranslator::findRawTranslator()
+{
 	for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
 	{
 		if(ASoundTranslator::registeredTranslators[t]->handlesRaw())
-		{
-			if(Question(_("No handler found to support the format for ")+filename+"\n"+_("Would you like to use a raw format?"),yesnoQues)==yesAns)
-				return(ASoundTranslator::registeredTranslators[t]);
-			else
-				break;
-		}
+			return ASoundTranslator::registeredTranslators[t];
 	}
-	throw(runtime_error(string(__func__)+_(" -- unhandled format/extension for the filename")+" '"+filename+"'"));
+	return NULL;
 }
 
 const vector<const ASoundTranslator *> ASoundTranslator::getTranslators()
@@ -192,6 +201,8 @@ const vector<string> ASoundTranslator::getFlatFormatList()
 	return v;
 }
 
+
+// === Register Implemented Sound Translators ===========================================
 
 #include "CrezSoundTranslator.h"
 #include "ClibvorbisSoundTranslator.h"

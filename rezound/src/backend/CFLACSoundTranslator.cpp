@@ -326,21 +326,7 @@ bool CFLACSoundTranslator::handlesExtension(const string extension,const string 
 
 bool CFLACSoundTranslator::supportsFormat(const string filename) const
 {
-#if 0
-	FILE *f=fopen(filename.c_str(),"rb");
-	if(f==NULL)
-		return false;
-	
-	OggVorbis_File vf;
-	if(ov_open(f, &vf, NULL, 0) < 0)
-	{
-		fclose(f);
-		return false;
-	}
-
-	ov_clear(&vf);
-	return true;
-#endif
+	// implementing this would not be convenient right now, I wish there were a simple function for it in the API
 	return false;
 }
 

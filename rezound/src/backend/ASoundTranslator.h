@@ -50,7 +50,7 @@ public:
 
 	// filename is passed, but that is just because sometimes at the point at which we want to let the extension determine the format, the filename might also help determine it too
 	virtual bool handlesExtension(const string extension,const string filename) const=0;
-	virtual bool supportsFormat(const string filename) const=0;
+	virtual bool supportsFormat(const string filename) const=0; // this will only get called iff the file exists and is a regular file
 	virtual bool handlesRaw() const { return(false); }	// only the raw translator implementation should override this to return true
 
 	virtual const vector<string> getFormatNames() const=0;			// return a list of format names than this derivation handles
@@ -59,8 +59,9 @@ public:
 	// returns a translator object that can handle loading the given file (detected either by the file contents or filename extention)
 	// an exception is thrown if no translator can handle it
 	// ??? perhaps I should have some enum here which indicates a desired format incase the extension is non-standard
-	static const ASoundTranslator *findTranslator(const string filename,bool isRaw);
+	static const ASoundTranslator *findTranslator(const string filename,bool byExtensionOnly,bool isRaw);
 
+	static const ASoundTranslator *findRawTranslator();
 	static const vector<const ASoundTranslator *> getTranslators();
 	static const vector<string> getFlatFormatList(); // returns a flattened list of every supported extension followed by a " [" then the format name then "]'
 

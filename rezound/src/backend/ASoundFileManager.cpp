@@ -72,7 +72,7 @@ CLoadedSound *ASoundFileManager::createNew(const string filename,unsigned channe
 		throw runtime_error(string(__func__)+" -- a file named '"+filename+"' is already opened");
 
 	// should get based on extension
-	const ASoundTranslator *translator=ASoundTranslator::findTranslator(filename,rawFormat);
+	const ASoundTranslator *translator=ASoundTranslator::findTranslator(filename,true,rawFormat);
 
 	try
 	{
@@ -149,7 +149,7 @@ void ASoundFileManager::prvOpen(const string filename,bool readOnly,bool doRegis
 			throw runtime_error(string(__func__)+" -- file does not exist: "+filename);
 
 		if(translatorToUse==NULL)
-			translatorToUse=ASoundTranslator::findTranslator(filename,asRaw);
+			translatorToUse=ASoundTranslator::findTranslator(filename,false,asRaw);
 		sound=new CSound;
 
 		if(!translatorToUse->loadSound(filename,sound))
@@ -263,7 +263,7 @@ askAgain:
 				}
 			}
 
-			const ASoundTranslator *translator=ASoundTranslator::findTranslator(filename,saveAsRaw);
+			const ASoundTranslator *translator=ASoundTranslator::findTranslator(filename,true,saveAsRaw);
 
 			if(translator->saveSound(filename,loaded->sound))
 			{
@@ -311,7 +311,7 @@ askAgain:
 			goto askAgain;
 	}
 
-	const ASoundTranslator *translator=ASoundTranslator::findTranslator(filename,saveAsRaw);
+	const ASoundTranslator *translator=ASoundTranslator::findTranslator(filename,true,saveAsRaw);
 
 	if(translator->saveSound(filename,sound,saveStart,saveLength,useLastUserPrefs))
 	{

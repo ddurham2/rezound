@@ -780,16 +780,28 @@ bool CMIDISDSSoundTranslator::handlesExtension(const string extension,const stri
 
 bool CMIDISDSSoundTranslator::supportsFormat(const string filename) const
 {
-	// shouldn't get called if filename is a device
+	printf("file: %s\n",filename.c_str());
+	bool ret=false;
 
-	// check if filename is a normal file or a link to a normal file I guess (use realpath perhaps)
+	// this won't get called from ASoundTranslator::findTranslator if filename is a device
+
+	//                      0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20  
 	// should start with  "F0 7E xx 01 xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx F7"
+	FILE *f=fopen(filename.c_str(),"r");
+	if(f!=NULL)
+	{
+		int8_t buffer[21]={0};
+		fread(buffer,21,1,f);
+		if(buffer[0]==0xf0 && buffer[1]==0x7e && buffer[3]==0x01 && buffer[20]==0xf7)
+			ret=true;
+		fclose(f);
+	}
 
-	// ??? if isDevice, then send a NAK and it will resend the data, if not a device, then we can seek
+	// perhaps if isDevice, then send a NAK and it will resend the data, if not a device, then we can seek
 	// we'd have to know the waveformId and request it or wait for something.. but if it wasn't a MIDI 
 	// then attempting to read a header would mess things up unless we could rewind some
 	
-	return false;
+	return ret;
 }
 
 const vector<string> CMIDISDSSoundTranslator::getFormatNames() const

@@ -76,7 +76,7 @@ bool CConvolutionFilter::doActionSizeSafe(CActionSound &actionSound,bool prepare
 	symlink(filename.c_str(),tempFilename.c_str());
 	try
 	{
-		const ASoundTranslator *translator=ASoundTranslator::findTranslator(tempFilename,openFilterKernelAsRaw);
+		const ASoundTranslator *translator=ASoundTranslator::findTranslator(tempFilename,false,openFilterKernelAsRaw);
 
 		CSound filterKernelFile;
 		try

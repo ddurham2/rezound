@@ -414,9 +414,10 @@ bool ClameSoundTranslator::handlesExtension(const string extension,const string 
 
 bool ClameSoundTranslator::supportsFormat(const string filename) const
 {
+	return handlesExtension(CPath(filename).extension(),filename);
 	// I've tried and only can really get lame to know the format
 	// from the extension unless I can do some analysis on it myself
-	return false;
+	//return false;
 }
 
 const vector<string> ClameSoundTranslator::getFormatNames() const
