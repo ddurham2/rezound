@@ -312,7 +312,7 @@ if(dataPos==getLength()-1)
 		if(lastChunk>peakChunkAccesser.getSize())
 			lastChunk=peakChunkAccesser.getSize();
 
-		// - we combine all the mins and maxes of the peak chunk information between firstChunk and lastChunk
+		// - we combine all the mins and maxes of the peak chunk information between [firstChunk and lastChunk)
 		// - Also, if any chunk is dirty along the way, we recalculate it
 		for(sample_pos_t t=firstChunk;t<lastChunk;t++)
 		{
