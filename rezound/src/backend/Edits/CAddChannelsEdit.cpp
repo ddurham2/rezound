@@ -71,8 +71,8 @@ CAddChannelsEdit *CAddChannelsEditFactory::manufactureAction(const CActionSound 
 	return new CAddChannelsEdit(
 		this,
 		actionSound,
-		actionParameters->getUnsignedParameter("Insert Where"),
-		actionParameters->getUnsignedParameter("Insert Count")
+		actionParameters->getValue<unsigned>("Insert Where"),
+		actionParameters->getValue<unsigned>("Insert Count")
 	);
 }
 

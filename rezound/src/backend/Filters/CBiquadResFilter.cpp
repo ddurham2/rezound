@@ -150,9 +150,9 @@ CBiquadResFilter *CBiquadResLowpassFilterFactory::manufactureAction(const CActio
 		this,
 		actionSound,
 		CBiquadResFilter::ftLowpass,
-		(float)actionParameters->getDoubleParameter("Gain"),
-		(float)actionParameters->getDoubleParameter("Cutoff Frequency"),
-		(float)actionParameters->getDoubleParameter("Resonance")
+		actionParameters->getValue<float>("Gain"),
+		actionParameters->getValue<float>("Cutoff Frequency"),
+		actionParameters->getValue<float>("Resonance")
 	));
 }
 
@@ -173,9 +173,9 @@ CBiquadResFilter *CBiquadResHighpassFilterFactory::manufactureAction(const CActi
 		this,
 		actionSound,
 		CBiquadResFilter::ftHighpass,
-		(float)actionParameters->getDoubleParameter("Gain"),
-		(float)actionParameters->getDoubleParameter("Cutoff Frequency"),
-		(float)actionParameters->getDoubleParameter("Resonance")
+		actionParameters->getValue<float>("Gain"),
+		actionParameters->getValue<float>("Cutoff Frequency"),
+		actionParameters->getValue<float>("Resonance")
 	));
 }
 
@@ -196,9 +196,9 @@ CBiquadResFilter *CBiquadResBandpassFilterFactory::manufactureAction(const CActi
 		this,
 		actionSound,
 		CBiquadResFilter::ftBandpass,
-		(float)actionParameters->getDoubleParameter("Gain"),
-		(float)actionParameters->getDoubleParameter("Center Frequency"),
-		(float)actionParameters->getDoubleParameter("Resonance")
+		actionParameters->getValue<float>("Gain"),
+		actionParameters->getValue<float>("Center Frequency"),
+		actionParameters->getValue<float>("Resonance")
 	));
 }
 

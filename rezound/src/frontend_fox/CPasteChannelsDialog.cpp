@@ -206,15 +206,15 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 	{
 		pasteChannels.clear();
 
-		actionParameters->setUnsignedParameter(_("MixMethod"),(unsigned)(mixTypeComboBox->getItemData(mixTypeComboBox->getCurrentItem())));
+		actionParameters->setValue<unsigned>(_("MixMethod"),(unsigned)(mixTypeComboBox->getItemData(mixTypeComboBox->getCurrentItem())));
 		
 		if(repeatTypeComboBox->getCurrentItem()==0)
 		{ // repeating it a given number of times
-			actionParameters->setDoubleParameter(_("Repeat Count"),repeatCountSlider->getValue());
+			actionParameters->setValue<double>(_("Repeat Count"),repeatCountSlider->getValue());
 		}
 		else
 		{ // repeating it for a given number of seconds
-			actionParameters->setDoubleParameter(_("Repeat Count"),
+			actionParameters->setValue<double>(_("Repeat Count"),
 				(double)( (sample_fpos_t)repeatTimeSlider->getValue() * actionSound->sound->getSampleRate() / clipboard->getLength(actionSound->sound->getSampleRate()) )
 			);
 		}

@@ -255,13 +255,13 @@ CMorphingArbitraryFIRFilter *CMorphingArbitraryFIRFilterFactory::manufactureActi
 	return new CMorphingArbitraryFIRFilter(
 		this,
 		actionSound,
-		actionParameters->getDoubleParameter("Wet/Dry Mix"),
-		actionParameters->getGraphParameter("Frequency Response 1"),
-		actionParameters->getGraphParameter("Frequency Response 2"),
-		actionParameters->getBoolParameter("Use LFO"),
-		actionParameters->getLFODescription("Sweep LFO"),
-		actionParameters->getUnsignedParameter("Kernel Length"),
-		actionParameters->getBoolParameter("Undelay")
+		actionParameters->getValue<float>("Wet/Dry Mix"),
+		actionParameters->getValue<CGraphParamValueNodeList>("Frequency Response 1"),
+		actionParameters->getValue<CGraphParamValueNodeList>("Frequency Response 2"),
+		actionParameters->getValue<bool>("Use LFO"),
+		actionParameters->getValue<CLFODescription>("Sweep LFO"),
+		actionParameters->getValue<unsigned>("Kernel Length"),
+		actionParameters->getValue<bool>("Undelay")
 	);
 }
 

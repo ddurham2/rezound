@@ -84,7 +84,7 @@ CRotateEdit *CRotateLeftEditFactory::manufactureAction(const CActionSound *actio
 		this,
 		actionSound,
 		CRotateEdit::rtLeft,
-		actionParameters->getDoubleParameter("Amount")
+		actionParameters->getValue<double>("Amount")
 	));
 }
 
@@ -106,6 +106,6 @@ CRotateEdit *CRotateRightEditFactory::manufactureAction(const CActionSound *acti
 		this,
 		actionSound,
 		CRotateEdit::rtRight,
-		actionParameters->getDoubleParameter("Amount")
+		actionParameters->getValue<double>("Amount")
 	));
 }

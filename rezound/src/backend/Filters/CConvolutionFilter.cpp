@@ -266,20 +266,20 @@ CConvolutionFilter *CConvolutionFilterFactory::manufactureAction(const CActionSo
 	return(new CConvolutionFilter(
 		this,
 		actionSound,
-		actionParameters->getDoubleParameter("Wet/Dry Mix"),
+		actionParameters->getValue<float>("Wet/Dry Mix"),
 
-		actionParameters->getDoubleParameter("Input Gain"),
-		actionParameters->getDoubleParameter("Output Gain"),
-		actionParameters->getDoubleParameter("Input Lowpass"),
-		actionParameters->getDoubleParameter("Predelay"),
+		actionParameters->getValue<float>("Input Gain"),
+		actionParameters->getValue<float>("Output Gain"),
+		actionParameters->getValue<float>("Input Lowpass"),
+		actionParameters->getValue<float>("Predelay"),
 
-		actionParameters->getStringParameter("Filter Kernel"),
-		actionParameters->getBoolParameter("Filter Kernel OpenAsRaw"),
-		actionParameters->getDoubleParameter("FK Gain"),
-		actionParameters->getDoubleParameter("FK Lowpass"),
-		actionParameters->getDoubleParameter("FK Rate"),
-		actionParameters->getBoolParameter("Reverse"),
-		actionParameters->getBoolParameter("Wrap Decay back to Beginning")
+		actionParameters->getValue<string>("Filter Kernel"),
+		actionParameters->getValue<bool>("Filter Kernel OpenAsRaw"),
+		actionParameters->getValue<float>("FK Gain"),
+		actionParameters->getValue<float>("FK Lowpass"),
+		actionParameters->getValue<float>("FK Rate"),
+		actionParameters->getValue<bool>("Reverse"),
+		actionParameters->getValue<bool>("Wrap Decay back to Beginning")
 	));
 }
 

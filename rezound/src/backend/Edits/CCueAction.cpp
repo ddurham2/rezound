@@ -74,9 +74,9 @@ CAddCueAction *CAddCueActionFactory::manufactureAction(const CActionSound *actio
 	return new CAddCueAction(
 		this,
 		actionSound,
-		actionParameters->getStringParameter("name"),
-		actionParameters->getSamplePosParameter("position"),
-		actionParameters->getBoolParameter("isAnchored")
+		actionParameters->getValue<string>("name"),
+		actionParameters->getValue<sample_pos_t>("position"),
+		actionParameters->getValue<bool>("isAnchored")
 	);
 }
 
@@ -127,7 +127,7 @@ CRemoveCueAction *CRemoveCueActionFactory::manufactureAction(const CActionSound 
 	return new CRemoveCueAction(
 		this,
 		actionSound,
-		actionParameters->getUnsignedParameter("index")
+		actionParameters->getValue<unsigned>("index")
 	);
 }
 
@@ -186,10 +186,10 @@ CReplaceCueAction *CReplaceCueActionFactory::manufactureAction(const CActionSoun
 	return new CReplaceCueAction(
 		this,
 		actionSound,
-		actionParameters->getUnsignedParameter("index"),
-		actionParameters->getStringParameter("name"),
-		actionParameters->getSamplePosParameter("position"),
-		actionParameters->getBoolParameter("isAnchored")
+		actionParameters->getValue<unsigned>("index"),
+		actionParameters->getValue<string>("name"),
+		actionParameters->getValue<sample_pos_t>("position"),
+		actionParameters->getValue<bool>("isAnchored")
 	);
 }
 
@@ -253,14 +253,14 @@ CMoveCueAction *CMoveCueActionFactory::manufactureAction(const CActionSound *act
 	return new CMoveCueAction(
 		this,
 		actionSound,
-		actionParameters->getUnsignedParameter("index"),
-		actionParameters->getSamplePosParameter("position"),
+		actionParameters->getValue<unsigned>("index"),
+		actionParameters->getValue<sample_pos_t>("position"),
 		
-		(actionParameters->containsParameter("restoreStartPosition") ? 
-			actionParameters->getSamplePosParameter("restoreStartPosition") : NIL_SAMPLE_POS),
+		(actionParameters->keyExists("restoreStartPosition") ? 
+			actionParameters->getValue<sample_pos_t>("restoreStartPosition") : NIL_SAMPLE_POS),
 
-		(actionParameters->containsParameter("restoreStopPosition") ? 
-			actionParameters->getSamplePosParameter("restoreStopPosition") : NIL_SAMPLE_POS)
+		(actionParameters->keyExists("restoreStopPosition") ? 
+			actionParameters->getValue<sample_pos_t>("restoreStopPosition") : NIL_SAMPLE_POS)
 	);
 }
 

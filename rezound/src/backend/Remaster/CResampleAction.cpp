@@ -123,6 +123,6 @@ CResampleActionFactory::~CResampleActionFactory()
 
 CResampleAction *CResampleActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return new CResampleAction(this,actionSound,actionParameters->getUnsignedParameter("New Sample Rate"));
+	return new CResampleAction(this,actionSound,actionParameters->getValue<unsigned>("New Sample Rate"));
 }
 

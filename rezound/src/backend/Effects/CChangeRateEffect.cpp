@@ -260,9 +260,9 @@ CCurvedChangeRateEffectFactory::~CCurvedChangeRateEffectFactory()
 
 CChangeRateEffect *CCurvedChangeRateEffectFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	if(actionParameters->getGraphParameter("Rate Curve").size()<2)
+	if(actionParameters->getValue<CGraphParamValueNodeList>("Rate Curve").size()<2)
 		throw(runtime_error(string(__func__)+" -- nodes contains less than 2 nodes"));
-	return new CChangeRateEffect(this,actionSound,actionParameters->getGraphParameter("Rate Curve"));
+	return new CChangeRateEffect(this,actionSound,actionParameters->getValue<CGraphParamValueNodeList>("Rate Curve"));
 }
 
 

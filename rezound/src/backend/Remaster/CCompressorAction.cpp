@@ -292,15 +292,15 @@ CCompressorAction *CCompressorActionFactory::manufactureAction(const CActionSoun
 	return(new CCompressorAction(
 		this,
 		actionSound,
-		actionParameters->getDoubleParameter("Window Time"),
-		actionParameters->getDoubleParameter("Threshold"),
-		actionParameters->getDoubleParameter("Ratio"),
-		actionParameters->getDoubleParameter("Attack Time"),
-		actionParameters->getDoubleParameter("Release Time"),
-		actionParameters->getDoubleParameter("Input Gain"),
-		actionParameters->getDoubleParameter("Output Gain"),
-		actionParameters->getBoolParameter("Lock Channels"),
-		actionParameters->getBoolParameter("Look Ahead For Level")
+		actionParameters->getValue<float>("Window Time"),
+		actionParameters->getValue<float>("Threshold"),
+		actionParameters->getValue<float>("Ratio"),
+		actionParameters->getValue<float>("Attack Time"),
+		actionParameters->getValue<float>("Release Time"),
+		actionParameters->getValue<float>("Input Gain"),
+		actionParameters->getValue<float>("Output Gain"),
+		actionParameters->getValue<bool>("Lock Channels"),
+		actionParameters->getValue<bool>("Look Ahead For Level")
 	));
 }
 

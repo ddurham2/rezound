@@ -167,12 +167,12 @@ CMarkQuietAreasAction *CMarkQuietAreasActionFactory::manufactureAction(const CAc
 	return new CMarkQuietAreasAction(
 		this,
 		actionSound,
-		actionParameters->getDoubleParameter("Threshold for Quiet"),
-		actionParameters->getDoubleParameter("Must Remain Quiet for"),
-		actionParameters->getDoubleParameter("Must Remain Unquiet for"),
-		actionParameters->getDoubleParameter("Level Detector Window Time"),
-		actionParameters->getStringParameter("Quiet Begin Cue Name"),
-		actionParameters->getStringParameter("Quiet End Cue Name")
+		actionParameters->getValue<float>("Threshold for Quiet"),
+		actionParameters->getValue<float>("Must Remain Quiet for"),
+		actionParameters->getValue<float>("Must Remain Unquiet for"),
+		actionParameters->getValue<float>("Level Detector Window Time"),
+		actionParameters->getValue<string>("Quiet Begin Cue Name"),
+		actionParameters->getValue<string>("Quiet End Cue Name")
 		);
 }
 

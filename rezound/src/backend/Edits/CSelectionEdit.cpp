@@ -280,7 +280,7 @@ CGrowOrSlideSelectionEditFactory::~CGrowOrSlideSelectionEditFactory()
 CSelectionEdit *CGrowOrSlideSelectionEditFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	Selections selection;
-	switch(actionParameters->getUnsignedParameter("How"))
+	switch(actionParameters->getValue<unsigned>("How"))
 	{
 	case 0:
 		selection=sGrowSelectionToTheLeft;
@@ -298,10 +298,10 @@ CSelectionEdit *CGrowOrSlideSelectionEditFactory::manufactureAction(const CActio
 		selection=sSlideSelectionToTheRight;
 		break;
 	default:
-		throw runtime_error(string(__func__)+" -- unhandled How value: "+istring(actionParameters->getUnsignedParameter("How")));
+		throw runtime_error(string(__func__)+" -- unhandled How value: "+istring(actionParameters->getValue<unsigned>("How")));
 	};
 	
-	return new CSelectionEdit(this,actionSound,selection,actionParameters->getDoubleParameter("Amount"));
+	return new CSelectionEdit(this,actionSound,selection,actionParameters->getValue<double>("Amount"));
 }
 
 

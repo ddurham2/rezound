@@ -203,16 +203,16 @@ CSimpleBalanceActionFactory::~CSimpleBalanceActionFactory()
 CBalanceAction *CSimpleBalanceActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	CGraphParamValueNodeList g;
-	g.push_back(CGraphParamValueNode(0.0,actionParameters->getValue<double>("Balance")));
-	g.push_back(CGraphParamValueNode(1.0,actionParameters->getValue<double>("Balance")));
+	g.push_back(CGraphParamValueNode(0.0,actionParameters->getValue<float>("Balance")));
+	g.push_back(CGraphParamValueNode(1.0,actionParameters->getValue<float>("Balance")));
 
 	return new CBalanceAction(
 		this,
 		actionSound,
 		g,
-		actionParameters->getUnsignedParameter("Channel A"),
-		actionParameters->getUnsignedParameter("Channel B"),
-		(CBalanceAction::BalanceTypes)actionParameters->getUnsignedParameter("Balance Type")
+		actionParameters->getValue<unsigned>("Channel A"),
+		actionParameters->getValue<unsigned>("Channel B"),
+		(CBalanceAction::BalanceTypes)actionParameters->getValue<unsigned>("Balance Type")
 	);
 }
 
@@ -232,10 +232,10 @@ CBalanceAction *CCurvedBalanceActionFactory::manufactureAction(const CActionSoun
 	return new CBalanceAction(
 		this,
 		actionSound,
-		actionParameters->getGraphParameter("Balance Curve"),
-		actionParameters->getUnsignedParameter("Channel A"),
-		actionParameters->getUnsignedParameter("Channel B"),
-		(CBalanceAction::BalanceTypes)actionParameters->getUnsignedParameter("Balance Type")
+		actionParameters->getValue<CGraphParamValueNodeList>("Balance Curve"),
+		actionParameters->getValue<unsigned>("Channel A"),
+		actionParameters->getValue<unsigned>("Channel B"),
+		(CBalanceAction::BalanceTypes)actionParameters->getValue<unsigned>("Balance Type")
 	);
 }
 

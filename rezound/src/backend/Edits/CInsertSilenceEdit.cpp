@@ -81,7 +81,7 @@ CInsertSilenceEdit *CInsertSilenceEditFactory::manufactureAction(const CActionSo
 	return(new CInsertSilenceEdit(
 		this,
 		actionSound,
-		actionParameters->getDoubleParameter("Length")
+		actionParameters->getValue<double>("Length")
 	));
 }
 

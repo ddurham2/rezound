@@ -128,9 +128,9 @@ bool ClibaudiofileSaveParametersDialog::show(AFrontendHooks::libaudiofileSavePar
 
 	if(CActionParamDialog::show(NULL,&actionParameters))
 	{
-		parameters.sampleFormat=indexTo_AF_SAMPFMT_xxx(actionParameters.getUnsignedParameter("Sample Format"));
-		parameters.sampleWidth=indexToSampleWidth(actionParameters.getUnsignedParameter("Sample Width"));
-		parameters.compressionType=parameters.supportedCompressionTypes[actionParameters.getUnsignedParameter("Compression Type")].second;
+		parameters.sampleFormat=indexTo_AF_SAMPFMT_xxx(actionParameters.getValue<unsigned>("Sample Format"));
+		parameters.sampleWidth=indexToSampleWidth(actionParameters.getValue<unsigned>("Sample Width"));
+		parameters.compressionType=parameters.supportedCompressionTypes[actionParameters.getValue<unsigned>("Compression Type")].second;
 		return true;
 	}
 	else

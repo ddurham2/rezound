@@ -450,12 +450,12 @@ static const vector<vector<bool> > getPasteChannels(AActionDialog *pasteChannels
 
 static const MixMethods getMixMethod(const CActionParameters *actionParameters)
 {
-	return actionParameters->containsParameter("MixMethod") ? (MixMethods)actionParameters->getUnsignedParameter("MixMethod") : mmAdd;
+	return actionParameters->keyExists("MixMethod") ? (MixMethods)actionParameters->getValue<unsigned>("MixMethod") : mmAdd;
 }
 
 static const double getRepeatCount(const CActionParameters *actionParameters)
 {
-	return actionParameters->containsParameter("Repeat Count") ? actionParameters->getDoubleParameter("Repeat Count") : 1.0;
+	return actionParameters->keyExists("Repeat Count") ? actionParameters->getValue<double>("Repeat Count") : 1.0;
 }
 
 

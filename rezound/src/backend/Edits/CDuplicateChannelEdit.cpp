@@ -90,9 +90,9 @@ CDuplicateChannelEdit *CDuplicateChannelEditFactory::manufactureAction(const CAc
 	return new CDuplicateChannelEdit(
 		this,
 		actionSound,
-		actionParameters->getUnsignedParameter("Which Channel"),
-		actionParameters->getUnsignedParameter("Insert Where"),
-		actionParameters->getUnsignedParameter("How Many Times")
+		actionParameters->getValue<unsigned>("Which Channel"),
+		actionParameters->getValue<unsigned>("Insert Where"),
+		actionParameters->getValue<unsigned>("How Many Times")
 	);
 }
 

@@ -556,7 +556,7 @@ reshow:
 						if(retValueConvs[t]!=NULL)
 							ret=retValueConvs[t](ret);
 
-						actionParameters->setDoubleParameter(slider->getName(),ret);
+						actionParameters->setValue<double>(slider->getName(),ret);
 						addedParameters.push_back(slider->getName());
 					}
 					break;
@@ -569,7 +569,7 @@ reshow:
 						if(retValueConvs[t]!=NULL)
 							ret=retValueConvs[t](ret);
 
-						actionParameters->setDoubleParameter(textEntry->getName(),ret);	
+						actionParameters->setValue<double>(textEntry->getName(),ret);	
 						addedParameters.push_back(textEntry->getName());
 					}
 					break;
@@ -578,7 +578,7 @@ reshow:
 					{
 						FXTextParamValue *textEntry=(FXTextParamValue *)parameters[t].second;
 						const string ret=textEntry->getText();
-						actionParameters->setStringParameter(textEntry->getName(),ret);	
+						actionParameters->setValue<string>(textEntry->getName(),ret);	
 						addedParameters.push_back(textEntry->getName());
 					}
 					break;
@@ -588,10 +588,10 @@ reshow:
 						FXDiskEntityParamValue *diskEntityEntry=(FXDiskEntityParamValue *)parameters[t].second;
 						const string ret=diskEntityEntry->getEntityName();
 
-						actionParameters->setStringParameter(diskEntityEntry->getName(),ret);	
+						actionParameters->setValue<string>(diskEntityEntry->getName(),ret);	
 
 						if(diskEntityEntry->getEntityType()==FXDiskEntityParamValue::detAudioFilename)
-							actionParameters->setBoolParameter(diskEntityEntry->getName()+" OpenAsRaw",diskEntityEntry->getOpenAsRaw());	
+							actionParameters->setValue<bool>(diskEntityEntry->getName()+" OpenAsRaw",diskEntityEntry->getOpenAsRaw());	
 						addedParameters.push_back(diskEntityEntry->getName());
 					}
 					break;
@@ -601,12 +601,12 @@ reshow:
 						FXComboTextParamValue *comboTextEntry=(FXComboTextParamValue *)parameters[t].second;
 						if(comboTextEntry->asString)
 						{ // return the text of the item selected
-							actionParameters->setStringParameter(comboTextEntry->getName(),comboTextEntry->getStringValue());
+							actionParameters->setValue<string>(comboTextEntry->getName(),comboTextEntry->getStringValue());
 						}
 						else
 						{ // return values as integer of the index that was selected
 							FXint ret=comboTextEntry->getIntegerValue();
-							actionParameters->setUnsignedParameter(comboTextEntry->getName(),(unsigned)ret);	
+							actionParameters->setValue<unsigned>(comboTextEntry->getName(),(unsigned)ret);	
 						}
 						addedParameters.push_back(comboTextEntry->getName());
 					}
@@ -617,7 +617,7 @@ reshow:
 						FXCheckBoxParamValue *checkBoxEntry=(FXCheckBoxParamValue *)parameters[t].second;
 						bool ret=checkBoxEntry->getValue();
 
-						actionParameters->setBoolParameter(checkBoxEntry->getName(),ret);	
+						actionParameters->setValue<bool>(checkBoxEntry->getName(),ret);	
 						addedParameters.push_back(checkBoxEntry->getName());
 					}
 					break;
@@ -634,7 +634,7 @@ reshow:
 								nodes[i].y=retValueConvs[t](nodes[i].y);
 						}
 
-						actionParameters->setGraphParameter(graph->getName(),nodes);
+						actionParameters->setValue<CGraphParamValueNodeList>(graph->getName(),nodes);
 						addedParameters.push_back(graph->getName());
 					}
 					break;
@@ -642,7 +642,7 @@ reshow:
 				case ptLFO:
 					{
 						FXLFOParamValue *LFOEntry=(FXLFOParamValue *)parameters[t].second;
-						actionParameters->setLFODescription(LFOEntry->getName(),LFOEntry->getValue());
+						actionParameters->setValue<CLFODescription>(LFOEntry->getName(),LFOEntry->getValue());
 						addedParameters.push_back(LFOEntry->getName());
 					}
 					break;
@@ -650,7 +650,7 @@ reshow:
 				case ptPluginRouting:
 					{
 						FXPluginRoutingParamValue *pluginRoutingEntry=(FXPluginRoutingParamValue *)parameters[t].second;
-						actionParameters->setPluginMapping(pluginRoutingEntry->getName(),pluginRoutingEntry->getValue());
+						actionParameters->setValue<CPluginMapping>(pluginRoutingEntry->getName(),pluginRoutingEntry->getValue());
 						addedParameters.push_back(pluginRoutingEntry->getName());
 					}
 					break;
@@ -667,7 +667,7 @@ reshow:
 			{
 				Message(e.what());
 				for(size_t t=0;t<addedParameters.size();t++)
-					actionParameters->removeParameter(addedParameters[t]);
+					actionParameters->removeKey(addedParameters[t]);
 				goto reshow;
 			}
 			else

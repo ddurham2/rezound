@@ -57,9 +57,9 @@ void CCrossfadeEdgesDialog::showIt()
 	setValue(2,gCrossfadeFadeMethod);
 	if(CActionParamDialog::show(NULL,&actionParameters))
 	{
-		gCrossfadeStartTime=actionParameters.getDoubleParameter("Crossfade Start Edge");
-		gCrossfadeStopTime=actionParameters.getDoubleParameter("Crossfade Stop Edge");
-		gCrossfadeFadeMethod=(CrossfadeFadeMethods)actionParameters.getUnsignedParameter("Crossfade Fade Method");
+		gCrossfadeStartTime=actionParameters.getValue<double>("Crossfade Start Edge");
+		gCrossfadeStopTime=actionParameters.getValue<double>("Crossfade Stop Edge");
+		gCrossfadeFadeMethod=(CrossfadeFadeMethods)actionParameters.getValue<unsigned>("Crossfade Fade Method");
 	}
 }
 

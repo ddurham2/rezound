@@ -84,7 +84,7 @@ bool CRezSaveParametersDialog::show(AFrontendHooks::RezSaveParameters &parameter
 
 	if(CActionParamDialog::show(NULL,&actionParameters))
 	{
-		parameters.audioEncodingType=indexToSampleFormat(actionParameters.getUnsignedParameter("Sample Format"));
+		parameters.audioEncodingType=indexToSampleFormat(actionParameters.getValue<unsigned>("Sample Format"));
 		return true;
 	}
 	else

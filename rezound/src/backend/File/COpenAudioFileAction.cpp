@@ -35,7 +35,7 @@ COpenAudioFileAction::~COpenAudioFileAction()
 
 bool COpenAudioFileAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	return actionParameters->getSoundFileManager()->open(actionParameters->getValue<vector<string > >("filenames"),actionParameters->getBoolParameter("openAsRaw"));
+	return actionParameters->getSoundFileManager()->open(actionParameters->getValue<vector<string > >("filenames"),actionParameters->getValue<bool>("openAsRaw"));
 }
 
 

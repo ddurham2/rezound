@@ -127,13 +127,13 @@ CChangePitchAction *CChangePitchActionFactory::manufactureAction(const CActionSo
 	return new CChangePitchAction(
 		this,
 		actionSound,
-		actionParameters->getDoubleParameter("Semitones"),
-		actionParameters->getBoolParameter("Use Anti-alias Filter"),
-		actionParameters->getUnsignedParameter("Anti-alias Filter Length"),
-		actionParameters->getBoolParameter("Use Quick Seek"),
-		actionParameters->getUnsignedParameter("Sequence Length"),
-		actionParameters->getUnsignedParameter("Seek Window Length"),
-		actionParameters->getUnsignedParameter("Overlap Length")
+		actionParameters->getValue<float>("Semitones"),
+		actionParameters->getValue<bool>("Use Anti-alias Filter"),
+		actionParameters->getValue<unsigned>("Anti-alias Filter Length"),
+		actionParameters->getValue<bool>("Use Quick Seek"),
+		actionParameters->getValue<unsigned>("Sequence Length"),
+		actionParameters->getValue<unsigned>("Seek Window Length"),
+		actionParameters->getValue<unsigned>("Overlap Length")
 	);
 }
 

@@ -181,19 +181,19 @@ CSaveAsMultipleFilesActionFactory::~CSaveAsMultipleFilesActionFactory()
 
 CSaveAsMultipleFilesAction *CSaveAsMultipleFilesActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	const string formatName=ASoundTranslator::getFlatFormatList()[actionParameters->getUnsignedParameter("Format")];
+	const string formatName=ASoundTranslator::getFlatFormatList()[actionParameters->getValue<unsigned>("Format")];
 	return new CSaveAsMultipleFilesAction(
 		this,
 		actionSound,
 		actionParameters->getSoundFileManager(),
-		actionParameters->getStringParameter("Save to Directory"),
-		actionParameters->getStringParameter("Filename Prefix"),
-		actionParameters->getStringParameter("Filename Suffix"),
+		actionParameters->getValue<string>("Save to Directory"),
+		actionParameters->getValue<string>("Filename Prefix"),
+		actionParameters->getValue<string>("Filename Suffix"),
 		"."+formatName.substr(0,formatName.find(" ")), // cut out only the first few chars (which is the extension
-		actionParameters->getBoolParameter("Open Saved Segments"),
-		actionParameters->getUnsignedParameter("Segment Number Start"),
-		(actionParameters->getUnsignedParameter("Applies to")==1), // 0 -> "Entire File", 1 -> "Selection Only"
-		actionParameters->getBoolParameter("Prompt Only Once for Save Parameters")
+		actionParameters->getValue<bool>("Open Saved Segments"),
+		actionParameters->getValue<unsigned>("Segment Number Start"),
+		(actionParameters->getValue<unsigned>("Applies to")==1), // 0 -> "Entire File", 1 -> "Selection Only"
+		actionParameters->getValue<bool>("Prompt Only Once for Save Parameters")
 	);
 }
 

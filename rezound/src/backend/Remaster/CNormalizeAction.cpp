@@ -262,9 +262,9 @@ CNormalizeActionFactory::~CNormalizeActionFactory()
 CNormalizeAction *CNormalizeActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CNormalizeAction(this,actionSound,
-		actionParameters->getDoubleParameter("Normalization Level"),
-		actionParameters->getUnsignedParameter("Region Count"),
-		actionParameters->getBoolParameter("Lock Channels"))
+		actionParameters->getValue<float>("Normalization Level"),
+		actionParameters->getValue<unsigned>("Region Count"),
+		actionParameters->getValue<bool>("Lock Channels"))
 	);
 }
 

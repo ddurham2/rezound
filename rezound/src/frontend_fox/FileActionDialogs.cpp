@@ -69,8 +69,8 @@ bool COpenAudioFileActionDialog::show(CActionSound *actionSound,CActionParameter
 	if(gFrontendHooks->promptForOpenSoundFilenames(filenames,readOnly,openAsRaw))
 	{
 		actionParameters->setValue<vector<string> >("filenames",filenames);
-		actionParameters->setBoolParameter("readOnly",readOnly);
-		actionParameters->setBoolParameter("openAsRaw",openAsRaw);
+		actionParameters->setValue<bool>("readOnly",readOnly);
+		actionParameters->setValue<bool>("openAsRaw",openAsRaw);
 		return true;
 	}
 	return false;
@@ -91,7 +91,7 @@ bool CSaveAsAudioFileActionDialog::show(CActionSound *actionSound,CActionParamet
 	if(gFrontendHooks->promptForSaveSoundFilename(filename,saveAsRaw))
 	{
 		actionParameters->setValue<string>("filename",filename);
-		actionParameters->setBoolParameter("saveAsRaw",saveAsRaw);
+		actionParameters->setValue<bool>("saveAsRaw",saveAsRaw);
 		return true;
 	}
 	return false;

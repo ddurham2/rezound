@@ -76,8 +76,8 @@ CSwapChannelsEdit *CSwapChannelsEditFactory::manufactureAction(const CActionSoun
 	return(new CSwapChannelsEdit(
 		this,
 		actionSound,
-		actionParameters->getUnsignedParameter("Channel A"),
-		actionParameters->getUnsignedParameter("Channel B")
+		actionParameters->getValue<unsigned>("Channel A"),
+		actionParameters->getValue<unsigned>("Channel B")
 	));
 }
 

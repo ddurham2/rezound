@@ -112,9 +112,9 @@ CQuantizeEffect *CQuantizeEffectFactory::manufactureAction(const CActionSound *a
 	return(new CQuantizeEffect(
 		this,
 		actionSound,
-		actionParameters->getUnsignedParameter("Quantum Count"),
-		actionParameters->getDoubleParameter("Input Gain"),
-		actionParameters->getDoubleParameter("Output Gain")
+		actionParameters->getValue<unsigned>("Quantum Count"),
+		actionParameters->getValue<float>("Input Gain"),
+		actionParameters->getValue<float>("Output Gain")
 	));
 }
 

@@ -105,6 +105,7 @@ bool CBurnToCDAction::doActionSizeSafe(CActionSound *actionSound,bool prepareFor
 	{
 		string msg="These are the track(s) about to be created...\n\n";
 		int counter=1;
+#warning cues on top of each other cause this to get confused
 		sample_fpos_t totalBurnLength=0;
 		for(segments_t::iterator i=segments.begin();i!=segments.end();i++)
 		{
@@ -445,14 +446,14 @@ CBurnToCDAction *CBurnToCDActionFactory::manufactureAction(const CActionSound *a
 	return new CBurnToCDAction(
 		this,
 		actionSound,
-		actionParameters->getStringParameter("Temp Space Directory"),
-		actionParameters->getStringParameter("Path to cdrdao"),
-		actionParameters->getUnsignedParameter("Burn Speed")+1, /* +1 because it's the zero-based index into a list of numbers */
-		actionParameters->getUnsignedParameter("Gap Between Tracks"),
-		actionParameters->getStringParameter("Device"),
-		actionParameters->getStringParameter("Extra cdrdao Options"),
-		(actionParameters->getUnsignedParameter("Applies to")==1), // 0 -> "Entire File", 1 -> "Selection Only"
-		actionParameters->getBoolParameter("Simulate Burn Only")
+		actionParameters->getValue<string>("Temp Space Directory"),
+		actionParameters->getValue<string>("Path to cdrdao"),
+		actionParameters->getValue<unsigned>("Burn Speed")+1, /* +1 because it's the zero-based index into a list of numbers */
+		actionParameters->getValue<unsigned>("Gap Between Tracks"),
+		actionParameters->getValue<string>("Device"),
+		actionParameters->getValue<string>("Extra cdrdao Options"),
+		(actionParameters->getValue<unsigned>("Applies to")==1), // 0 -> "Entire File", 1 -> "Selection Only"
+		actionParameters->getValue<bool>("Simulate Burn Only")
 	);
 }
 

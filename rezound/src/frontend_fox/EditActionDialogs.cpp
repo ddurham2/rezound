@@ -70,8 +70,8 @@ bool CSwapChannelsDialog::show(CActionSound *actionSound,CActionParameters *acti
 		return false;
 	else if(actionSound->sound->getChannelCount()==2)
 	{ // only one possibility of swapping the two channels
-		actionParameters->setUnsignedParameter("Channel A",0);
-		actionParameters->setUnsignedParameter("Channel B",1);
+		actionParameters->setValue<unsigned>("Channel A",0);
+		actionParameters->setValue<unsigned>("Channel B",1);
 		return true;
 	}
 	else

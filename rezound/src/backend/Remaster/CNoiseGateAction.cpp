@@ -143,10 +143,10 @@ CNoiseGateAction *CNoiseGateActionFactory::manufactureAction(const CActionSound 
 	return(new CNoiseGateAction(
 		this,
 		actionSound,
-		actionParameters->getDoubleParameter("Window Time"),
-		actionParameters->getDoubleParameter("Threshold"),
-		actionParameters->getDoubleParameter("Gain Attack Time"),
-		actionParameters->getDoubleParameter("Gain Release Time")
+		actionParameters->getValue<float>("Window Time"),
+		actionParameters->getValue<float>("Threshold"),
+		actionParameters->getValue<float>("Gain Attack Time"),
+		actionParameters->getValue<float>("Gain Release Time")
 	));
 }
 

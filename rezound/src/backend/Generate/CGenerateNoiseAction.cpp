@@ -266,11 +266,11 @@ CGenerateNoiseAction *CGenerateNoiseActionFactory::manufactureAction(const CActi
 	return new CGenerateNoiseAction(
 		this,
 		actionSound,
-		actionParameters->getDoubleParameter("Length"),
-		actionParameters->getDoubleParameter("Volume"),
-		(CGenerateNoiseAction::NoiseTypes)actionParameters->getUnsignedParameter("Noise Color"),
-		(CGenerateNoiseAction::StereoImage)actionParameters->getUnsignedParameter("Stereo Image"),
-		actionParameters->getDoubleParameter("Max Particle Velocity")
+		actionParameters->getValue<double>("Length"),
+		actionParameters->getValue<double>("Volume"),
+		(CGenerateNoiseAction::NoiseTypes)actionParameters->getValue<unsigned>("Noise Color"),
+		(CGenerateNoiseAction::StereoImage)actionParameters->getValue<unsigned>("Stereo Image"),
+		actionParameters->getValue<double>("Max Particle Velocity")
 	);
 }	
 

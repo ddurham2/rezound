@@ -188,10 +188,10 @@ CGenerateToneAction *CGenerateToneActionFactory::manufactureAction(const CAction
 	return new CGenerateToneAction(
 		this,
 		actionSound,
-		actionParameters->getDoubleParameter("Length"),
-		actionParameters->getDoubleParameter("Volume"),
-		actionParameters->getDoubleParameter("Frequency"),
-		(CGenerateToneAction::ToneTypes)actionParameters->getUnsignedParameter("Tone Type")
+		actionParameters->getValue<double>("Length"),
+		actionParameters->getValue<double>("Volume"),
+		actionParameters->getValue<double>("Frequency"),
+		(CGenerateToneAction::ToneTypes)actionParameters->getValue<unsigned>("Tone Type")
 	);
 }	
 

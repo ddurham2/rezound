@@ -101,10 +101,10 @@ CChangeVolumeEffectFactory::~CChangeVolumeEffectFactory()
 
 CChangeAmplitudeEffect *CChangeVolumeEffectFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	if(actionParameters->getGraphParameter("Volume Change").size()<2)
+	if(actionParameters->getValue<CGraphParamValueNodeList>("Volume Change").size()<2)
 		throw runtime_error(string(__func__)+" -- graph parameter 0 contains less than 2 nodes");
 
-	return new CChangeAmplitudeEffect(this,actionSound,actionParameters->getGraphParameter("Volume Change"));
+	return new CChangeAmplitudeEffect(this,actionSound,actionParameters->getValue<CGraphParamValueNodeList>("Volume Change"));
 }
 
 
@@ -140,9 +140,9 @@ CCurvedGainEffectFactory::~CCurvedGainEffectFactory()
 
 CChangeAmplitudeEffect *CCurvedGainEffectFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	if(actionParameters->getGraphParameter("Gain Curve").size()<2)
+	if(actionParameters->getValue<CGraphParamValueNodeList>("Gain Curve").size()<2)
 		throw runtime_error(string(__func__)+" -- graph parameter 0 contains less than 2 nodes");
-	return new CChangeAmplitudeEffect(this,actionSound,actionParameters->getGraphParameter("Gain Curve"));
+	return new CChangeAmplitudeEffect(this,actionSound,actionParameters->getValue<CGraphParamValueNodeList>("Gain Curve"));
 }
 
 

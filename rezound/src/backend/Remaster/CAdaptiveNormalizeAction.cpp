@@ -293,10 +293,10 @@ CAdaptiveNormalizeActionFactory::~CAdaptiveNormalizeActionFactory()
 CAdaptiveNormalizeAction *CAdaptiveNormalizeActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return new CAdaptiveNormalizeAction(this,actionSound,
-		actionParameters->getDoubleParameter("Normalization Level"),
-		actionParameters->getDoubleParameter("Window Time"),
-		actionParameters->getDoubleParameter("Maximum Gain"),
-		actionParameters->getBoolParameter("Lock Channels"))
+		actionParameters->getValue<float>("Normalization Level"),
+		actionParameters->getValue<float>("Window Time"),
+		actionParameters->getValue<float>("Maximum Gain"),
+		actionParameters->getValue<bool>("Lock Channels"))
 	;
 }
 

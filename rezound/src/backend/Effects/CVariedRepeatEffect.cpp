@@ -101,8 +101,8 @@ CVariedRepeatEffect *CVariedRepeatEffectFactory::manufactureAction(const CAction
 	return(new CVariedRepeatEffect(
 		this,
 		actionSound,
-		actionParameters->getLFODescription("LFO"),
-		actionParameters->getDoubleParameter("Time")
+		actionParameters->getValue<CLFODescription>("LFO"),
+		actionParameters->getValue<double>("Time")
 		)
 	);
 }

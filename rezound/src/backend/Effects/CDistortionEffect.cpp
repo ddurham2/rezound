@@ -94,7 +94,7 @@ CDistortionEffectFactory::~CDistortionEffectFactory()
 
 CDistortionEffect *CDistortionEffectFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return new CDistortionEffect(this,actionSound,actionParameters->getGraphParameter("Curve"));
+	return new CDistortionEffect(this,actionSound,actionParameters->getValue<CGraphParamValueNodeList>("Curve"));
 }
 
 

@@ -49,7 +49,7 @@ CLADSPAAction::CLADSPAAction(const LADSPA_Descriptor *_desc,const AActionFactory
 	AAction(factory,actionSound),
 	desc(_desc),
 	actionParameters(_actionParameters),
-	channelMapping(actionParameters.getPluginMapping("Channel Mapping")),
+	channelMapping(actionParameters.getValue<CPluginMapping>("Channel Mapping")),
 	soundFileManager(actionParameters.getSoundFileManager()),
 
 	restoreChannelsTempAudioPoolKey(-1),
@@ -139,7 +139,7 @@ bool CLADSPAAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUn
 	TAutoBuffer<LADSPA_Data> controlValues(inputControlPorts.size());
 	for(size_t t=0;t<inputControlPorts.size();t++)
 	{
-		controlValues[t]=actionParameters.getDoubleParameter(desc->PortNames[inputControlPorts[t]]);
+		controlValues[t]=actionParameters.getValue<double>(desc->PortNames[inputControlPorts[t]]);
 		//printf("parameter:\t%s\t%f\n",desc->PortNames[inputControlPorts[t]],controlValues[t]);
 		desc->connect_port(instance,inputControlPorts[t],((LADSPA_Data *)controlValues)+t);
 	}

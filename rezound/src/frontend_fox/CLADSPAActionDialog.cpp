@@ -224,9 +224,9 @@ bool CLADSPAActionDialog::show(CActionSound *actionSound,CActionParameters *acti
 		// divide values that are sample rates by the sample rate
 		for(size_t t=0;t<sampleRateMappers.size();t++)
 		{
-			actionParameters->setDoubleParameter(
+			actionParameters->setValue<double>(
 				sampleRateMappers[t].first,
-				actionParameters->getDoubleParameter(sampleRateMappers[t].first)/actionSound->sound->getSampleRate()
+				actionParameters->getValue<double>(sampleRateMappers[t].first)/actionSound->sound->getSampleRate()
 			);
 		}
 

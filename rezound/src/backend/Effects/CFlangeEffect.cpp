@@ -137,11 +137,11 @@ CFlangeEffectFactory::~CFlangeEffectFactory()
 CFlangeEffect *CFlangeEffectFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CFlangeEffect(this,actionSound,
-		(float)actionParameters->getDoubleParameter("Delay"),
-		(float)actionParameters->getDoubleParameter("Wet Gain"),
-		(float)actionParameters->getDoubleParameter("Dry Gain"),
-		actionParameters->getLFODescription("Flange LFO"),
-		(float)actionParameters->getDoubleParameter("Feedback")
+		actionParameters->getValue<float>("Delay"),
+		actionParameters->getValue<float>("Wet Gain"),
+		actionParameters->getValue<float>("Dry Gain"),
+		actionParameters->getValue<CLFODescription>("Flange LFO"),
+		actionParameters->getValue<float>("Feedback")
 	));
 }
 

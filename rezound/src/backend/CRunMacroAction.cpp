@@ -74,7 +74,7 @@ CRunMacroActionFactory::~CRunMacroActionFactory()
 
 CRunMacroAction *CRunMacroActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return new CRunMacroAction(this,actionSound,actionParameters->getSoundFileManager(),actionParameters->getStringParameter("Macro Name"));
+	return new CRunMacroAction(this,actionSound,actionParameters->getSoundFileManager(),actionParameters->getValue<string>("Macro Name"));
 }
 
 
@@ -147,6 +147,6 @@ CRanMacroActionFactory::~CRanMacroActionFactory()
 
 CRanMacroAction *CRanMacroActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return new CRanMacroAction(this,actionSound,actionParameters->getSoundFileManager(),actionParameters->getStringParameter("Macro Name"),actionParameters->getUnsignedParameter("ActionCount"));
+	return new CRanMacroAction(this,actionSound,actionParameters->getSoundFileManager(),actionParameters->getValue<string>("Macro Name"),actionParameters->getValue<unsigned>("ActionCount"));
 }
 

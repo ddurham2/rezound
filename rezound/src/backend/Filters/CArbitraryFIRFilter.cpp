@@ -214,10 +214,10 @@ CArbitraryFIRFilter *CArbitraryFIRFilterFactory::manufactureAction(const CAction
 	return(new CArbitraryFIRFilter(
 		this,
 		actionSound,
-		actionParameters->getDoubleParameter("Wet/Dry Mix"),
-		actionParameters->getGraphParameter("Frequency Response"),
-		actionParameters->getUnsignedParameter("Kernel Length"),
-		actionParameters->getBoolParameter("Undelay")
+		actionParameters->getValue<float>("Wet/Dry Mix"),
+		actionParameters->getValue<CGraphParamValueNodeList>("Frequency Response"),
+		actionParameters->getValue<unsigned>("Kernel Length"),
+		actionParameters->getValue<bool>("Undelay")
 	));
 }
 

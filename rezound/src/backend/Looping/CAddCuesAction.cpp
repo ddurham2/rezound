@@ -107,9 +107,9 @@ CAddCuesAction *CAddNCuesActionFactory::manufactureAction(const CActionSound *ac
 	return new CAddCuesAction(
 		this,
 		actionSound,
-		actionParameters->getStringParameter("Cue Name"),
-		actionParameters->getUnsignedParameter("Cue Count"),
-		actionParameters->getBoolParameter("Anchor Cues in Time")
+		actionParameters->getValue<string>("Cue Name"),
+		actionParameters->getValue<unsigned>("Cue Count"),
+		actionParameters->getValue<bool>("Anchor Cues in Time")
 		);
 }
 
@@ -130,9 +130,9 @@ CAddCuesAction *CAddTimedCuesActionFactory::manufactureAction(const CActionSound
 	return new CAddCuesAction(
 		this,
 		actionSound,
-		actionParameters->getStringParameter("Cue Name"),
-		actionParameters->getDoubleParameter("Time Interval"),
-		actionParameters->getBoolParameter("Anchor Cues in Time")
+		actionParameters->getValue<string>("Cue Name"),
+		actionParameters->getValue<double>("Time Interval"),
+		actionParameters->getValue<bool>("Anchor Cues in Time")
 		);
 }
 

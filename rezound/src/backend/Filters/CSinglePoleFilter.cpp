@@ -162,8 +162,8 @@ CSinglePoleFilter *CSinglePoleLowpassFilterFactory::manufactureAction(const CAct
 		this,
 		actionSound,
 		CSinglePoleFilter::ftLowpass,
-		(float)actionParameters->getDoubleParameter("Gain"),
-		(float)actionParameters->getDoubleParameter("Cutoff Frequency")
+		actionParameters->getValue<float>("Gain"),
+		actionParameters->getValue<float>("Cutoff Frequency")
 	));
 }
 
@@ -184,8 +184,8 @@ CSinglePoleFilter *CSinglePoleHighpassFilterFactory::manufactureAction(const CAc
 		this,
 		actionSound,
 		CSinglePoleFilter::ftHighpass,
-		(float)actionParameters->getDoubleParameter("Gain"),
-		(float)actionParameters->getDoubleParameter("Cutoff Frequency")
+		actionParameters->getValue<float>("Gain"),
+		actionParameters->getValue<float>("Cutoff Frequency")
 	));
 }
 
@@ -206,9 +206,9 @@ CSinglePoleFilter *CBandpassFilterFactory::manufactureAction(const CActionSound 
 		this,
 		actionSound,
 		CSinglePoleFilter::ftBandpass,
-		(float)actionParameters->getDoubleParameter("Gain"),
-		(float)actionParameters->getDoubleParameter("Center Frequency"),
-		(float)actionParameters->getDoubleParameter("Band Width")
+		actionParameters->getValue<float>("Gain"),
+		actionParameters->getValue<float>("Center Frequency"),
+		actionParameters->getValue<float>("Band Width")
 	));
 }
 
@@ -229,9 +229,9 @@ CSinglePoleFilter *CNotchFilterFactory::manufactureAction(const CActionSound *ac
 		this,
 		actionSound,
 		CSinglePoleFilter::ftNotch,
-		(float)actionParameters->getDoubleParameter("Gain"),
-		(float)actionParameters->getDoubleParameter("Center Frequency"),
-		(float)actionParameters->getDoubleParameter("Band Width")
+		actionParameters->getValue<float>("Gain"),
+		actionParameters->getValue<float>("Center Frequency"),
+		actionParameters->getValue<float>("Band Width")
 	));
 }
 
