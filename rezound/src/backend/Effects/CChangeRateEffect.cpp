@@ -143,6 +143,8 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 					else
 					{ // just copy the data
 						sample_pos_t copyLength=(sample_pos_t)((readStop-readStart)+1);
+						if(copyLength>0 && writePos+copyLength>=(dest.getSize()+1)) // fudge fix
+							copyLength--;
 						dest.copyData((sample_pos_t)writePos,src,(sample_pos_t)readStart,copyLength);
 						writePos+=copyLength;
 
