@@ -66,7 +66,7 @@ public:
 
 	long onShuttleReturn(FXObject *sender,FXSelector sel,void *ptr);
 	long onShuttleChange(FXObject *sender,FXSelector sel,void *ptr);
-	void positionShuttleGivenSpeed(double playSpeed,const string shuttleControlScalar,bool springBack);
+	void positionShuttleGivenSpeed(double seekSpeed,const string shuttleControlScalar,bool springBack);
 	long onShuttleDialSpringButton(FXObject *sender,FXSelector sel,void *ptr);
 	long onShuttleDialScaleButton(FXObject *sender,FXSelector sel,void *ptr);
 

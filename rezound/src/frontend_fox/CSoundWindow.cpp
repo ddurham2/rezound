@@ -298,7 +298,7 @@ CSoundWindow::~CSoundWindow()
 void CSoundWindow::setActiveState(bool isActive)
 {
 	if(isActive)
-		static_cast<CMainWindow *>(getOwner())->positionShuttleGivenSpeed(loadedSound->channel->getPlaySpeed(),shuttleControlScalar,shuttleControlSpringBack);
+		static_cast<CMainWindow *>(getOwner())->positionShuttleGivenSpeed(loadedSound->channel->getSeekSpeed(),shuttleControlScalar,shuttleControlSpringBack);
 
 	if(gFocusMethod==fmFocusButton)
 	{

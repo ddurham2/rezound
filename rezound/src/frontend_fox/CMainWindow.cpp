@@ -621,35 +621,35 @@ long CMainWindow::onShuttleChange(FXObject *sender,FXSelector sel,void *ptr)
 		shuttleDial->getRange(minValue,maxValue);
 
 		const FXint shuttlePos=shuttleDial->getValue();
-		float playSpeed;
+		float seekSpeed;
 
 
 		if(shuttlePos==0)
-			playSpeed=1.0;
+			seekSpeed=1.0;
 		else
 		{
 			const string text=shuttleDialScaleButton->getText().text();
 			if(text=="1x")
 			{ // 1x +/- (0..1]
 				if(shuttlePos>0)
-					playSpeed=(double)shuttlePos/(double)maxValue;
+					seekSpeed=(double)shuttlePos/(double)maxValue;
 				else //if(shuttlePos<0)
-					playSpeed=(double)-shuttlePos/(double)minValue;
+					seekSpeed=(double)-shuttlePos/(double)minValue;
 			}
 			else if(text=="2x")
 			{ // 2x +/- [1..2]
 				if(shuttlePos>0)
-					playSpeed=(double)shuttlePos/(double)maxValue+1.0;
+					seekSpeed=(double)shuttlePos/(double)maxValue+1.0;
 				else //if(shuttlePos<0)
-					playSpeed=(double)-shuttlePos/(double)minValue-1.0;
+					seekSpeed=(double)-shuttlePos/(double)minValue-1.0;
 			}
 			else if(text=="100x")
 			{ // 100x +/- [1..100]
 						// I square the value to give a more useful range
 				if(shuttlePos>0)
-					playSpeed=(pow((double)shuttlePos/(double)maxValue,2.0)*100.0)+1.0;
+					seekSpeed=(pow((double)shuttlePos/(double)maxValue,2.0)*100.0)+1.0;
 				else //if(shuttlePos<0)
-					playSpeed=(pow((double)shuttlePos/(double)minValue,2.0)*-100.0)-1.0;
+					seekSpeed=(pow((double)shuttlePos/(double)minValue,2.0)*-100.0)-1.0;
 			}
 			else
 				throw(runtime_error(string(__func__)+" -- internal error -- unhandled text for shuttleDialScaleButton: '"+text+"'"));
@@ -657,43 +657,43 @@ long CMainWindow::onShuttleChange(FXObject *sender,FXSelector sel,void *ptr)
 
 		w->shuttleControlScalar=shuttleDialScaleButton->getText().text();
 		w->shuttleControlSpringBack=shuttleDialSpringButton->getState();
-		s->channel->setPlaySpeed(playSpeed);
+		s->channel->setSeekSpeed(seekSpeed);
 	}
 
 	return 1;
 }
 
-void CMainWindow::positionShuttleGivenSpeed(double playSpeed,const string shuttleControlScalar,bool springBack)
+void CMainWindow::positionShuttleGivenSpeed(double seekSpeed,const string shuttleControlScalar,bool springBack)
 {
 	FXint minValue,maxValue;
 	shuttleDial->getRange(minValue,maxValue);
 
 	FXint shuttlePos;
-	if(playSpeed==1.0)
+	if(seekSpeed==1.0)
 		shuttlePos=0;
 	else
 	{
 		const string &text=shuttleControlScalar;
 		if(text=="1x")
 		{
-			if(playSpeed>0.0)
-				shuttlePos=(FXint)(playSpeed*maxValue);
-			else //if(playSpeed<0.0)
-				shuttlePos=(FXint)(-playSpeed*minValue);
+			if(seekSpeed>0.0)
+				shuttlePos=(FXint)(seekSpeed*maxValue);
+			else //if(seekSpeed<0.0)
+				shuttlePos=(FXint)(-seekSpeed*minValue);
 		}
 		else if(text=="2x")
 		{
-			if(playSpeed>0.0)
-				shuttlePos=(FXint)((playSpeed-1.0)*maxValue);
-			else //if(playSpeed<0.0)
-				shuttlePos=(FXint)(-(playSpeed+1.0)*minValue);
+			if(seekSpeed>0.0)
+				shuttlePos=(FXint)((seekSpeed-1.0)*maxValue);
+			else //if(seekSpeed<0.0)
+				shuttlePos=(FXint)(-(seekSpeed+1.0)*minValue);
 		}
 		else if(text=="100x")
 		{
-			if(playSpeed>0.0)
-				shuttlePos=(FXint)(maxValue*sqrt((playSpeed-1.0)/100.0));
-			else //if(playSpeed<0.0)
-				shuttlePos=(FXint)(minValue*sqrt((playSpeed+1.0)/-100.0));
+			if(seekSpeed>0.0)
+				shuttlePos=(FXint)(maxValue*sqrt((seekSpeed-1.0)/100.0));
+			else //if(seekSpeed<0.0)
+				shuttlePos=(FXint)(minValue*sqrt((seekSpeed+1.0)/-100.0));
 		}
 		else
 			throw(runtime_error(string(__func__)+" -- internal error -- unhandled text for shuttleDialScaleButton: '"+text+"'"));
