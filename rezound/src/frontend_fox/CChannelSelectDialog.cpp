@@ -43,7 +43,7 @@ FXIMPLEMENT(CChannelSelectDialog,FXModalDialogBox,CChannelSelectDialogMap,ARRAYN
 // ----------------------------------------
 
 CChannelSelectDialog::CChannelSelectDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"Channel Select",100,100,FXModalDialogBox::ftVertical),
+	FXModalDialogBox(mainWindow,"Channel Select",100,100,FXModalDialogBox::ftVertical,FXModalDialogBox::stShrinkWrap),
 
 	label(new FXLabel(getFrame(),"Channels to Which This Action Should Apply:",NULL,LAYOUT_CENTER_X))
 {
@@ -80,13 +80,16 @@ bool CChannelSelectDialog::show(CActionSound *actionSound,CActionParameters *act
 	{
 		checkBoxes[t]->setCheck(FALSE);
 		if(t<actionSound->sound->getChannelCount())
-			checkBoxes[t]->enable();
+			checkBoxes[t]->show();
 		else
-			checkBoxes[t]->disable();
+			checkBoxes[t]->hide();
 	}
 
 	for(unsigned t=0;t<actionSound->sound->getChannelCount();t++)
 		checkBoxes[t]->setCheck(actionSound->doChannel[t] ? TRUE : FALSE);
+
+	// when the number of shown or hidden widgets changes the frame needs to be told to recalc
+	getFrame()->recalc();
 
 	if(execute(PLACEMENT_CURSOR))
 	{
