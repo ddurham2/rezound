@@ -21,7 +21,7 @@ dnl with this program; if not, write to
 dnl the Free Software Foundation, Inc., 59 Temple
 dnl Place - Suite 330, Boston, MA  02111-1307, USA
 
-dnl ajv_CXX_CHECK_LIB(Library Name, Class, header, URL)
+dnl ajv_CXX_CHECK_LIB(Library Name, Class, header, URL, -l flags)
 dnl This is a check for a class contained in a C++ library. The test is 
 dnl performed by test linking a minimal program. 
 dnl
@@ -119,7 +119,7 @@ EOF
 fi
 )
 
-dnl ajv_CHECK_LIB_ABORT
+dnl ajv_CHECK_LIB_ABORT(Lib name, function, define, URL)
 dnl This is used to check the results of an AC_CHECK_LIB test. By running 
 dnl confdefs.h through cpp after the check we can abort if the test failed
 dnl and print a message similar to the above. First it runs AC_CHECK_LIB

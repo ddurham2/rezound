@@ -20,6 +20,7 @@ dnl You should have received a copy of the GNU General Public License along with
 dnl this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 dnl Place - Suite 330, Boston, MA  02111-1307, USA
 
+dnl ajv_CHECK_HEADER_SSTREAM
 dnl This Checks for the C++ STL sstream header which may be missing on some 
 dnl systems, (specifically Debian 2.2r4) I perform the check by trying to 
 dnl preprocess $include <sstream>. if the test passes 

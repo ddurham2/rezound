@@ -25,7 +25,7 @@ dnl it was found that 2.96 works with -Wno-unused-variable and
 dnl -Wno-unused-function while 2.95.2 does not If the flags will work, we'll
 dnl add them to our gcc CXXFLAGS
 
-dnl ajv_CXX_FLAG
+dnl ajv_CXX_FLAG(compiler flag)
 dnl Usage - Pass one argument- the Compiler flag to check for. If the falg is
 dnl found to be valid, it is included in CXXFLAGS otherwise, it's left out
 AC_DEFUN(ajv_CXX_FLAG, dnl
