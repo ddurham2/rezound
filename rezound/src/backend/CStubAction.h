@@ -1,5 +1,6 @@
 #ifndef __CStubAction_H__
 #define __CStubAction_H__
+#include "../../config/common.h"
 
 class CStubAction;
 class CStubActionFactory;

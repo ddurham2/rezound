@@ -1,5 +1,6 @@
 #ifndef __CVariedRepeatEffect_H__
 #define __CVariedRepeatEffect_H__
+#include "../../../config/common.h"
 
 class CVariedRepeatEffect;
 class CVariedRepeatEffectFactory;

@@ -20,6 +20,7 @@
 
 #ifndef __CNestedDataFile_H__
 #define __CNestedDataFile_H__
+#include "../../../config/common.h"
 
 // define this if creating a multithreaded program
 // the reason is, bison and flex create not thread-safe code, to a mutex is needed

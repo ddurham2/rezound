@@ -22,7 +22,6 @@
 #define __CRecordDialog_H__
 #include "../../config/common.h"
 
-
 class CRecordDialog;
 
 #include "FXModalDialogBox.h"

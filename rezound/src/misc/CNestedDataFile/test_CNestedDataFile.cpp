@@ -1,3 +1,5 @@
+#include "../../../config/common.h"
+
 #include <stdio.h>
 
 #include "CNestedDataFile.h"

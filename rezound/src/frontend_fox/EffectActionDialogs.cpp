@@ -21,7 +21,6 @@
 #include "EffectActionDialogs.h"
 #include "../backend/unit_conv.h"
 
-
 // --- volume ---------------------------------
 
 static const double interpretValue_amp(const double x,const int scalar)

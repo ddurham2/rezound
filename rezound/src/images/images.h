@@ -1,6 +1,7 @@
 /* script generated source code */
 #ifndef __Images_H__
 #define __Images_H__
+#include "../../config/common.h"
 
 extern const unsigned char GreenCheck1[];
 extern const unsigned char GreenLED1[];
