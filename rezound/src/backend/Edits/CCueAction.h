@@ -125,4 +125,38 @@ private:
 
 
 
+// ------------------------------------------
+
+class CMoveCueAction : public AAction
+{
+public:
+	CMoveCueAction(const CActionSound actionSound,const size_t cueIndex,const sample_pos_t cueTime);
+	virtual ~CMoveCueAction();
+
+
+protected:
+	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound &actionSound);
+	CanUndoResults canUndo(const CActionSound &actionSound) const;
+
+private:
+	const size_t cueIndex;
+	const sample_pos_t cueTime;
+};
+
+
+class CMoveCueActionFactory : public AActionFactory
+{
+public:
+	CMoveCueActionFactory();
+	virtual ~CMoveCueActionFactory();
+
+	CMoveCueAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+
+private:
+
+};
+
+
+
 #endif
