@@ -132,6 +132,7 @@ double CGenerateNoiseAction::getRandNoiseVal(const int noiseChannel)
 	}
 }
 
+#warning add status bars
 bool CGenerateNoiseAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
 	origLength=actionSound.sound->getLength();
