@@ -9,12 +9,6 @@
 		- When pasting data, there is no heeding of the differences in sample rate of the src data when pasting to the destination
 			- I should fix this problem when I implement a real clipboard system and I would have to supply the PCM parameters to the clipboard when I copied the data there, then pasting could do something to resolve any differances when reading from it
 
-	- There is something I don't care for in the crossfade edges
-		- it always makes the total length shorter...
-		- what I could do is, before the action happens save the original data inward toward the middle selection and crossfade with that instead of making the selection shorter
-		- if the selection's short length cannot support as long a crossfade as asked, just do a lesser one
-		
-
 	- need a method that can make an available cue name which isn't already used
 		- use whenever the new-cue-dialog is shown
 		- or when a button is pressed while playing (hmm.. latency of play position might matter.. maybe I could work with COSSSoundPlayer to know where the real play position is by subtracting the amount of prebuffered samples from the CSoundPlayerChannel's playPosition... looping would be an issue and so would sample rate... )
@@ -188,4 +182,10 @@
 		- this should really improve compiling the frontend dialogs speed
 		- ??? however, it looks (after doing it) that CActionParameters and CActionSound would pair well together
 			- they're almost the same thing anyway... maybe I'll combine them later??? it would seem that I could still stream CActionParameter data to and from disk, only that some of the information to the streamFromDisk method would have to be supplied, like the sound to apply the action to because it shouldn't stream
+
+	- There is something I don't care for in the crossfade edges
+		- it always makes the total length shorter...
+		- what I could do is, before the action happens save the original data inward toward the middle selection and crossfade with that instead of making the selection shorter
+		- if the selection's short length cannot support as long a crossfade as asked, just do a lesser one
+		
 
