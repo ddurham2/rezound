@@ -106,9 +106,13 @@ bool CPasteChannelsDialog::show(CActionSound *actionSound,CActionParameters *act
 	// don't show the dialog if there is only one channel in both the source and destination
 	if(actionSound->sound->getChannelCount()<=1 && isSingleClipboardChannel)
 	{
+		pasteChannels.clear();
 		for(unsigned y=0;y<MAX_CHANNELS;y++)
-		for(unsigned x=0;x<MAX_CHANNELS;x++)
-			pasteChannels[y][x]=false;
+		{
+			pasteChannels.push_back(vector<bool>());
+			for(unsigned x=0;x<MAX_CHANNELS;x++)
+				pasteChannels[y].push_back(false);
+		}
 
 		pasteChannels[0][singleClipboardChannel]=true;
 		return(true);
@@ -136,12 +140,17 @@ bool CPasteChannelsDialog::show(CActionSound *actionSound,CActionParameters *act
 
 	if(execute(PLACEMENT_CURSOR))
 	{
+		pasteChannels.clear();
+
 		bool ret=false; // or all the checks together, if they're all false, it's like hitting cancel
 		for(unsigned y=0;y<MAX_CHANNELS;y++)
-		for(unsigned x=0;x<MAX_CHANNELS;x++)
 		{
-			pasteChannels[y][x]=checkBoxes[y][x]->getCheck()==TRUE ? true : false;
-			ret|=pasteChannels[y][x];
+			pasteChannels.push_back(vector<bool>());
+			for(unsigned x=0;x<MAX_CHANNELS;x++)
+			{
+				pasteChannels[y].push_back(checkBoxes[y][x]->getCheck());
+				ret|=pasteChannels[y][x];
+			}
 		}
 
 		return(ret);
@@ -152,7 +161,7 @@ bool CPasteChannelsDialog::show(CActionSound *actionSound,CActionParameters *act
 
 void *CPasteChannelsDialog::getUserData()
 {
-	return(pasteChannels);
+	return(&pasteChannels);
 }
 
 

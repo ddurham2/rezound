@@ -304,32 +304,23 @@ bool CPasteEdit::getResultingCrossfadePoints(const CActionSound &actionSound,sam
 
 static const vector<vector<bool> > getPasteChannels(AActionDialog *pasteChannelsDialog)
 {
+	static vector<vector<bool> > pasteChannels;
+	pasteChannels.clear();
+
 	if(pasteChannelsDialog->wasShown)
 	{
-#warning FIX THIS BEFORE THE NEXT RELEASE
-throw(runtime_error(string(__func__)+" -- I have temporarily disabled this until I make the frontend use vector of bools too"));
-		static vector<vector<bool> > pasteChannels;
 
-		typedef bool PasteChannels_t[MAX_CHANNELS][MAX_CHANNELS];
-		void *p=pasteChannelsDialog->getUserData();
-		PasteChannels_t &m= *(reinterpret_cast<PasteChannels_t *>(&p));
-
+		const vector<vector<bool> > &m=*reinterpret_cast<const vector<vector<bool > > *>(pasteChannelsDialog->getUserData());
 		for(unsigned y=0;y<MAX_CHANNELS;y++)
 		{
 			pasteChannels.push_back(vector<bool>() );
 			for(unsigned x=0;x<MAX_CHANNELS;x++)
 				pasteChannels[y].push_back(m[y][x]);
 		}
-
-		return(pasteChannels);
 	}
 	else
 	{ // if the dialog was not shown for this action, then make channel1 -> channel1, channel2 -> channel2, ...
-
-
 		const ASoundClipboard *clipboard=AAction::clipboards[gWhichClipboard];
-
-		static vector<vector<bool> > pasteChannels;
 
 		for(unsigned y=0;y<MAX_CHANNELS;y++)
 		{
@@ -342,9 +333,9 @@ throw(runtime_error(string(__func__)+" -- I have temporarily disabled this until
 					pasteChannels[y].push_back(false);
 			}
 		}
-
-		return(pasteChannels);
 	}
+
+	return(pasteChannels);
 }
 
 
