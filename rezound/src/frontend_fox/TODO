@@ -17,10 +17,7 @@
 		- increment a number on "untitled#.rez" until a file doesn't exist
 		- this code should actually be in the backend so I don't have to rewrite that code for a different frontend
 
-	- need to design a record dialog that has the format selection, real-time level meters, start, redo, stop buttons, create cue buttons (one for anchored, one not), check mark to add cues at the beginning and end of the recorded section, (more useful for insert record)
-		- need to modify the ASoundRecorder public interface some, because I need the record dialog to have a start, stop, redo buttons, if you start, then stop, then start again, the second start should void the previous recorded data, but stop should just leave whats there tact
-
-	- set the horz and vert spacing of the channel select dialogs to 1, this should decrease the necessay dialog size
+	- set the horz and vert spacing of the channel select dialogs to 1, this should decrease the necessary dialog size
 
 	- the 'active' sound window is not staying raised and I don't know why (when focus method is fmActiveButton)
 
@@ -149,4 +146,7 @@
 	- doing a save as needs to update the CLoadedSoundWindow's filename
 
 	- on the record dialog, put a red-led while recording, and put a lable that says what the recording is limited to by actually asking the recorder for the limit it's using
+
+	- need to design a record dialog that has the format selection, real-time level meters, start, redo, stop buttons, create cue buttons (one for anchored, one not), check mark to add cues at the beginning and end of the recorded section, (more useful for insert record)
+		- need to modify the ASoundRecorder public interface some, because I need the record dialog to have a start, stop, redo buttons, if you start, then stop, then start again, the second start should void the previous recorded data, but stop should just leave whats there intact
 
