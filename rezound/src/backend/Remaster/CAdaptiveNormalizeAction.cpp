@@ -89,7 +89,7 @@ bool CAdaptiveNormalizeAction::doActionSizeSafe(CActionSound *actionSound,bool p
 
 				CDSPRMSLevelDetector detector(windowSize);
 				// prime the level detector
-				for(sample_pos_t t=0;t<windowSize;t++)
+				for(sample_pos_t t=0;t<windowSize && (srcPos+hWindowSize+t)<src.getSize();t++)
 					detector.updateLevel(src[srcPos+hWindowSize+t]);
 				
 				const sample_pos_t _stop=stop-hWindowSize;
@@ -157,7 +157,7 @@ bool CAdaptiveNormalizeAction::doActionSizeSafe(CActionSound *actionSound,bool p
 
 			CDSPRMSLevelDetector detector(windowSize);
 			// prime the level detector
-			for(sample_pos_t t=0;t<windowSize;t++)
+			for(sample_pos_t t=0;t<windowSize && (srcPos+hWindowSize+t)<srcs_alt[0]->getSize();t++)
 			{
 				mix_sample_t s_level=(mix_sample_t)((*(srcs_alt[0]))[srcPos+hWindowSize+t]);
 				for(unsigned i=1;i<nChannels;i++)
