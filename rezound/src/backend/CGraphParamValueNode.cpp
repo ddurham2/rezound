@@ -196,6 +196,11 @@ const CGraphParamValueNodeList smoothGraphNodes(const CGraphParamValueNodeList &
 	// maintain the same endpoint
 	tmp.push_back(nodes[nodes.size()-1]);
 
+	for(size_t t=0;t<tmp.size();t++)
+	{
+		tmp[t].y=max(min(tmp[t].y,1.0),0.0);
+	}
+
 	return tmp;
 }
 
