@@ -205,7 +205,7 @@ void ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 	}
 }
 
-void ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) const
+bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 {
 	if(gPathToLame=="")
 		throw(runtime_error(string(__func__)+" -- path to 'lame' not set"));
@@ -220,6 +220,12 @@ void ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 			int err=errno;
 			throw(runtime_error(string(__func__)+" -- error removing file, '"+filename+"' -- "+strerror(err)));
 		}
+	}
+
+	if(sound->getCueCount()>0 || sound->getUserNotes()!="")
+	{
+		if(Question("MPEG Layer-3 does not support saving user notes or cues\nDo you wish to continue?",yesnoQues)!=yesAns)
+			return(false);
 	}
 
 	// ??? need to prompt the user for compression parameters
@@ -326,6 +332,8 @@ void ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 	
 		throw;
 	}
+
+	return(true);
 }
 
 

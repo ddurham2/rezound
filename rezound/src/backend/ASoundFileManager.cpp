@@ -164,10 +164,12 @@ void ASoundFileManager::save()
 		if(filename=="" || loaded->translator==NULL)
 			throw(runtime_error(string(__func__)+" -- filename is not set or translator is NULL -- how did this happen? -- I shouldn't have this problem since even a new sound has to be given a filename"));
 		
-		loaded->translator->saveSound(filename,loaded->getSound());
-		loaded->getSound()->setIsModified(false);
-		updateAfterEdit();
-		updateReopenHistory(filename);
+		if(loaded->translator->saveSound(filename,loaded->getSound()))
+		{
+			loaded->getSound()->setIsModified(false);
+			updateAfterEdit();
+			updateReopenHistory(filename);
+		}
 	}
 }
 
@@ -198,16 +200,18 @@ askAgain:
 
 		const ASoundTranslator *translator=getTranslator(filename,/*isRaw*/false);
 
-		translator->saveSound(filename,loaded->getSound());
-		loaded->translator=translator; // make save use this translator next time
+		if(translator->saveSound(filename,loaded->getSound()))
+		{
+			loaded->translator=translator; // make save use this translator next time
 
-		unregisterFilename(loaded->getFilename());
-		loaded->changeFilename(filename);
-		registerFilename(filename);
+			unregisterFilename(loaded->getFilename());
+			loaded->changeFilename(filename);
+			registerFilename(filename);
 
-		loaded->getSound()->setIsModified(false);
-		updateAfterEdit();
-		updateReopenHistory(filename);
+			loaded->getSound()->setIsModified(false);
+			updateAfterEdit();
+			updateReopenHistory(filename);
+		}
 	}
 }
 

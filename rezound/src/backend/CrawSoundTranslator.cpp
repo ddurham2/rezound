@@ -73,7 +73,7 @@ void CrawSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 	}
 }
 
-void CrawSoundTranslator::onSaveSound(const string filename,CSound *sound) const
+bool CrawSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 {
 	throw(runtime_error(string(__func__)+" -- unimplemented"));
 }

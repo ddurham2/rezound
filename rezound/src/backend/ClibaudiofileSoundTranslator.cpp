@@ -262,7 +262,7 @@ void ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 	}
 }
 
-void ClibaudiofileSoundTranslator::onSaveSound(const string filename,CSound *sound) const
+bool ClibaudiofileSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 {
 	int fileType;
 
@@ -302,7 +302,7 @@ void ClibaudiofileSoundTranslator::onSaveSound(const string filename,CSound *sou
 		throw;
 	}
 
-	
+	return(true);
 }
 
 

@@ -304,7 +304,7 @@ void ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 #endif
 }
 
-void ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound) const
+bool ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 {
 #ifdef HAVE_LIBVORBISENC
 
@@ -524,6 +524,7 @@ void ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound)
 #else
 	throw(runtime_error(string(__func__)+" -- saving Ogg Vorbis is not enabled -- missing libvorbisenc"));
 #endif
+	return(true);
 }
 
 

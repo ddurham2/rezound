@@ -60,13 +60,14 @@ void ASoundTranslator::loadSound(const string filename,CSound *sound) const
 	}
 }
 
-void ASoundTranslator::saveSound(const string filename,CSound *sound) const
+bool ASoundTranslator::saveSound(const string filename,CSound *sound) const
 {
 	sound->lockSize();
 	try
 	{
-		onSaveSound(filename,sound);
+		bool ret=onSaveSound(filename,sound);
 		sound->unlockSize();
+		return(ret);
 	}
 	catch(...)
 	{

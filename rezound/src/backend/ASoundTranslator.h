@@ -35,7 +35,7 @@ public:
 	virtual ~ASoundTranslator();
 
 	void loadSound(const string filename,CSound *sound) const;
-	void saveSound(const string filename,CSound *sound) const;
+	bool saveSound(const string filename,CSound *sound) const;
 
 	virtual bool handlesExtension(const string extension) const=0;
 	virtual bool supportsFormat(const string filename) const=0;
@@ -50,7 +50,7 @@ public:
 protected:
 
 	virtual void onLoadSound(const string filename,CSound *sound) const=0;
-	virtual void onSaveSound(const string filename,CSound *sound) const=0;
+	virtual bool onSaveSound(const string filename,CSound *sound) const=0;
 
 private:
 
