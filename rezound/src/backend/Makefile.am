@@ -58,6 +58,7 @@ noinst_HEADERS= \
 	   ClameSoundTranslator.h \
 	   ClibaudiofileSoundTranslator.h \
 	   ClibvorbisSoundTranslator.h \
+	   CFLACSoundTranslator.h \
 	   CMIDISDSSoundTranslator.h \
 	   CLoadedSound.h \
 	   CNativeSoundClipboard.h \
@@ -103,6 +104,7 @@ libbackend_la_SOURCES= \
 			ClameSoundTranslator.cpp \
 			ClibaudiofileSoundTranslator.cpp \
 			ClibvorbisSoundTranslator.cpp \
+			CFLACSoundTranslator.cpp \
 			CMIDISDSSoundTranslator.cpp \
 			CLoadedSound.cpp  \
 			CNativeSoundClipboard.cpp \
@@ -125,7 +127,7 @@ libbackend_la_SOURCES= \
 		        mypopen.cpp \
 		        settings.cpp
 
-AM_CXXFLAGS=@AUDIOFILE_CFLAGS@ @JACK_CFLAGS@ @OGG_CFLAGS@ @VORBIS_CFLAGS@
+AM_CXXFLAGS=@AUDIOFILE_CFLAGS@ @JACK_CFLAGS@ @OGG_CFLAGS@ @VORBIS_CFLAGS@ @LIBFLACPP_CFLAGS@ @LIBFLAC_CFLAGS@
 
-libbackend_la_LIBADD=@AUDIOFILE_LIBS@ @JACK_LIBS@ @OGG_LIBS@ @VORBIS_LIBS@ @VORBISFILE_LIBS@ @VORBISENC_LIBS@
+libbackend_la_LIBADD=@LTLIBINTL@ @AUDIOFILE_LIBS@ @JACK_LIBS@ @OGG_LIBS@ @VORBIS_LIBS@ @VORBISFILE_LIBS@ @VORBISENC_LIBS@ @LIBFLACPP_LIBS@ @LIBFLAC_LIBS@
 

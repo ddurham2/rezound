@@ -195,6 +195,7 @@ const vector<string> ASoundTranslator::getFlatFormatList()
 
 #include "CrezSoundTranslator.h"
 #include "ClibvorbisSoundTranslator.h"
+#include "CFLACSoundTranslator.h"
 #include "ClibaudiofileSoundTranslator.h"
 #include "CMIDISDSSoundTranslator.h"
 #include "ClameSoundTranslator.h"
@@ -211,6 +212,11 @@ void ASoundTranslator::buildRegisteredTranslatorsVector()
 #ifdef HAVE_LIBVORBIS
 	static const ClibvorbisSoundTranslator libvorbisSoundTranslator;
 	registeredTranslators.push_back(&libvorbisSoundTranslator);
+#endif
+
+#ifdef HAVE_LIBFLACPP
+	static const CFLACSoundTranslator FLACSoundTranslator;
+	registeredTranslators.push_back(&FLACSoundTranslator);
 #endif
 
 #ifdef HAVE_LIBAUDIOFILE
