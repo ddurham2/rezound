@@ -31,9 +31,11 @@
 #include "CSound.h"
 #include "ASoundPlayer.h"
 #include "DSP/TSoundStretcher.h"
+#include "settings.h"
 
 #define PREBUFFERED_CHUNK_SIZE 1024 // in frames
-#define CHUNK_COUNT_TO_PREBUFFER 6
+				// try to prebuffer 1.5 times of data as the output device will be prebuffering itself (1.51 because I'm going to truncate the decimal and I want to make sure it's on the upper side of the int)
+#define CHUNK_COUNT_TO_PREBUFFER ((unsigned)(1.51*(gDesiredOutputBufferCount*gDesiredOutputBufferSize/PREBUFFERED_CHUNK_SIZE)))
 
 /* TODO
  * - Provisions have been made in here for supporting multiple simultaneous output devices, 
