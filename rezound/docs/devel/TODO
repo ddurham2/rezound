@@ -3,7 +3,7 @@
 	- needs some compressor action(s)
 		- need a "link-channels" toggle parameter which causes all the channels to be compressed if any channel needs to be compressed
 
-	- HMM... I've been thinking about a desicion I made a long time ago about selected regions...
+	- HMM... I've been thinking about a decision I made a long time ago about selected regions...
 		- I decided back then that I would have a start and a stop postion int stored internally
 		- However, if there's one thing C teaches you, it's that for a region, a start/length combination is better.
 		- In many places I have to have a +1, -1, max(1,...) etc.. also, the stop could wind up being less than the start
@@ -48,6 +48,8 @@
 		- also, put up on IOTD on flipcode and other announcement places like that
 		- comp.dsp
 		- freshmeat
+
+	- Make sure to have the configure script check for the minimal version of libaudiofile
 
 	- Create a little description of how to make some interesting sound from a sample I give them.. show them how to take a small piece of it.. make it loop able.. then slow it down.. filter.. etc.. 
 		- post several examples of my _alt# files
@@ -111,6 +113,8 @@
 
 
 --- POSSIBLE THINGS TO DO ---
+
+	- A simple thing that could avoid errors later... create a template class that is used (might already exist in commonc++) that locks a given mutex on construction and unlock on deconstruction... this would let me remove the try catchs that are just there to unlock the mutex and would keep me from having to remember to write code later that will unlock the mutex... just declare local variable of one of these and it will do it
 
 	- After reading more of the DSP book about filters
 		- create a data type in CActionParameters which is the filter to apply to the sound
