@@ -36,7 +36,7 @@ using namespace std;
  * the Common C++ people are going to have to fix that, because it will cause
  * problems with any automake generated package. */
 #ifdef PACKAGE
-# define REZOUND_PACKAGE	PACKAGE
+static const char *REZOUND_PACKAGE=PACKAGE;
 # undef PACKAGE
 #else
 # define REZOUND_PACKAGE "ReZound"	
@@ -45,7 +45,7 @@ using namespace std;
 
 /* do the same thing for VERSION */
 #ifdef VERSION
-# define REZOUND_VERSION 	VERSION
+static const char *REZOUND_VERSION=VERSION;
 # undef VERSION
 #else
 # define REZOUND_VERSION	"vx.xxx" /* just in case it wasn't defined. */
