@@ -13,6 +13,8 @@ fi
 
 RESWRAP=$1
 IMAGE_PATH=$2
+# patterns to match that are instantiated NOT to guess at the alpha color
+override_alpha_exceptions="logo icon_logo_32 icon_logo_16 plugin_wave"
 
 if [ ! -x $RESWRAP ] 
 then
@@ -118,7 +120,12 @@ echo "CFOXIcons::CFOXIcons(FXApp *app) :" >> $C_FILE
 	ls $IMAGE_PATH/*.gif | while read i
 	do
 		varname=`filenameToVarname "$i"`
-		echo "	${varname}(new FXGIFIcon(app,${varname}_icon))," >> $C_FILE
+		if `echo "$override_alpha_exceptions" | grep "${varname}" >/dev/null`
+		then	# don't guess at alpha color (seems to happen by default if I don't override it)
+			echo "	${varname}(new FXGIFIcon(app,${varname}_icon,FXRGB(255,0,255),IMAGE_ALPHACOLOR))," >> $C_FILE
+		else	# guess at alpha color
+			echo "	${varname}(new FXGIFIcon(app,${varname}_icon))," >> $C_FILE
+		fi
 	done
 	echo "	dummy(0)" >> $C_FILE
 
