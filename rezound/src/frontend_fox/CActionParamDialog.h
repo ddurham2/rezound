@@ -99,6 +99,8 @@ public:
 		ID_USER_PRESET_SAVE_BUTTON,
 		ID_USER_PRESET_REMOVE_BUTTON,
 
+		ID_EXPLAIN_BUTTON,
+
 		ID_LAST
 	};
 
@@ -107,11 +109,20 @@ public:
 	long onPresetSaveButton(FXObject *sender,FXSelector sel,void *ptr);
 	long onPresetRemoveButton(FXObject *sender,FXSelector sel,void *ptr);
 
+	long onExplainButton(FXObject *sender,FXSelector sel,void *ptr);
+
+	void create();
+
 protected:
 	CActionParamDialog() {}
 
+	// can be overridden to return an explaination of the action which will cause the appearance of an 'explain' button on the dialog
+	virtual const string getExplaination() const { return ""; }
+
 private:
 	const CActionSound *actionSound;
+
+	bool explainationButtonCreated;
 
 	enum ParamTypes
 	{

@@ -32,6 +32,8 @@
 #include "../backend/CActionParameters.h"
 #include "../backend/CActionSound.h"
 
+#include "CFOXIcons.h"
+
 #define DOT (CNestedDataFile::delimChar)
 
 
@@ -45,7 +47,9 @@ FXDEFMAP(CActionParamDialog) CActionParamDialogMap[]=
 	FXMAPFUNC(SEL_COMMAND,		CActionParamDialog::ID_USER_PRESET_USE_BUTTON,	CActionParamDialog::onPresetUseButton),
 	FXMAPFUNC(SEL_COMMAND,		CActionParamDialog::ID_USER_PRESET_SAVE_BUTTON,	CActionParamDialog::onPresetSaveButton),
 	FXMAPFUNC(SEL_COMMAND,		CActionParamDialog::ID_USER_PRESET_REMOVE_BUTTON,CActionParamDialog::onPresetRemoveButton),
-	FXMAPFUNC(SEL_DOUBLECLICKED,	CActionParamDialog::ID_USER_PRESET_LIST,	CActionParamDialog::onPresetUseButton),
+	FXMAPFUNC(SEL_DOUBLECLICKED,CActionParamDialog::ID_USER_PRESET_LIST,		CActionParamDialog::onPresetUseButton),
+
+	FXMAPFUNC(SEL_COMMAND,		CActionParamDialog::ID_EXPLAIN_BUTTON,			CActionParamDialog::onExplainButton),
 };
 		
 
@@ -61,6 +65,8 @@ FXIMPLEMENT(CActionParamDialog,FXModalDialogBox,CActionParamDialogMap,ARRAYNUMBE
 
 CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title,bool showPresetPanel) :
 	FXModalDialogBox(mainWindow,title,0,0,FXModalDialogBox::ftVertical),
+
+	explainationButtonCreated(false),
 	
 	splitter(new FXSplitter(getFrame(),SPLITTER_VERTICAL|SPLITTER_REVERSED | LAYOUT_FILL_X|LAYOUT_FILL_Y)),
 		topPanel(new FXHorizontalFrame(splitter,FRAME_RAISED|FRAME_THICK, 0,0,0,0, 0,0,0,0, 0,0)),
@@ -111,6 +117,21 @@ CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title
 
 CActionParamDialog::~CActionParamDialog()
 {
+}
+
+void CActionParamDialog::create()
+{
+	if(!explainationButtonCreated && getExplaination()!="")
+		new FXButton(getButtonFrame(),"Explain",FOXIcons->explain,this,ID_EXPLAIN_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2);
+	explainationButtonCreated=true;
+	
+	FXModalDialogBox::create();
+}
+
+long CActionParamDialog::onExplainButton(FXObject *sender,FXSelector sel,void *ptr)
+{
+	Message(getExplaination());
+	return 1;
 }
 
 void *CActionParamDialog::newHorzPanel(void *parent,bool createBorder)
