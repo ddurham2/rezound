@@ -1,0 +1,19 @@
+
+- This will be written more fully later - 
+
+- See the FrontendFoxFeatures.txt for some no-so-obvious features
+
+- the $REZ_SHARE_DIR environment variable, if set, can be used to override the install_dir_prefix/share/ReZound path
+	where install_dir_prefix is normally /usr or /usr/local
+
+	So if you ran configure as: `configure --prefix=/usr/local` but had later 
+	copied the ReZound installed files all into your home directory under a 
+	directory called "ReZound" (i.e. /home/ddurham/ReZound) then you can override
+	ReZound looking in /usr/local/ReZound for presets.dat by issuing:
+
+		export REZ_SHARE_DIR=/home/ddurham/ReZound
+
+	at the prompt before running ReZound.
+	
+	
+

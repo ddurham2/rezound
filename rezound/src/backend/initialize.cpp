@@ -48,6 +48,7 @@ static COSSSoundPlayer *soundPlayer=NULL;
 // for mkdir  --- possibly wouldn't port???
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <stdlib.h>	// for getenv
 
 #include <CPath.h>
 
@@ -68,9 +69,14 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 
 
 		// determine where /usr/share/ReZound has been placed (try the install-from directory first)
-		gSysDataDirectory=SOURCE_DIR"/share";
-		if(!CPath(gSysDataDirectory).exists()) 
-			gSysDataDirectory=DATA_DIR"/ReZound";
+		if(getenv("REZ_SHARE_DIR")!=NULL && CPath(getenv("REZ_SHARE_DIR")).exists())
+			gSysDataDirectory=getenv("REZ_SHARE_DIR");
+		else
+		{
+			gSysDataDirectory=SOURCE_DIR"/share";
+			if(!CPath(gSysDataDirectory).exists()) 
+				gSysDataDirectory=DATA_DIR"/ReZound";
+		}
 
 
 		gUserPresetsFile=gUserDataDirectory+istring(CPath::dirDelim)+"presets.dat";
