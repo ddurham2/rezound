@@ -31,13 +31,30 @@ string gPromptDialogDirectory="";
 string gUserDataDirectory="";
 string gSysDataDirectory="";
 
+const string encodeFilenamePresetParameter(const string _filename)
+{
+	string filename=_filename;
+	if(gSysDataDirectory!="" && filename.find(gSysDataDirectory+"/")==0)
+		filename.replace(0,gSysDataDirectory.size(),"$share");
+	return filename;
+}
+
+const string decodeFilenamePresetParameter(const string _filename)
+{
+	string filename=_filename;
+	if(gSysDataDirectory!="" && filename.find("$share/")==0)
+		filename.replace(0,6,gSysDataDirectory);
+	return filename;
+}
+
+
 string gUserPresetsFilename="";
 CNestedDataFile *gUserPresetsFile=NULL;
 
 string gSysPresetsFilename="";
 CNestedDataFile *gSysPresetsFile=NULL;
 
-
+#include <string.h>
 unsigned gDesiredOutputSampleRate=44100;
 unsigned gDesiredOutputChannelCount=2;
 

@@ -44,6 +44,11 @@ extern string gPromptDialogDirectory;
 extern string gUserDataDirectory;		// "~/.rezound"
 extern string gSysDataDirectory;		// "/usr/share/rezound" (or from whereever the --prefix was set)
 
+// if the value of gSysDataDirectory+"/" is a prefix of filename, then replace with "$share/"
+const string encodeFilenamePresetParameter(const string filename);
+// if the "$share/" is a prefix of filename, then replace with the value of gSysDataDirectory
+const string decodeFilenamePresetParameter(const string filename);
+
 
 extern string gUserPresetsFilename;		// gUserDataDirectory+"/presets.dat"
 extern CNestedDataFile *gUserPresetsFile;	// opened to gUserPresetsFilename
