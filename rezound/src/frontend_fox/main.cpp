@@ -64,9 +64,11 @@ void countWidgets(FXWindow *w)
 
 int main(int argc,char *argv[])
 {
+#ifdef ENABLE_NLS
 	setlocale(LC_ALL,"");
 	bindtextdomain(REZOUND_PACKAGE,DATA_DIR"/locale");
 	textdomain(REZOUND_PACKAGE);
+#endif
 
 	try
 	{
