@@ -23,6 +23,7 @@
 #include <string>
 
 #include <istring>
+#include <CPath.h>
 
 #include "settings.h"
 
@@ -123,6 +124,7 @@ const string CFrontendHooks::getFOXFileTypes() const
 
 bool CFrontendHooks::promptForOpenSoundFilename(string &filename,bool &readOnly)
 {
+	openDialog->setDirectory(gPromptDialogDirectory.c_str());
 	if(openDialog->execute())
 	{
 		// save directory to open the opendialog to next time
@@ -139,7 +141,10 @@ bool CFrontendHooks::promptForOpenSoundFilename(string &filename,bool &readOnly)
 bool CFrontendHooks::promptForSaveSoundFilename(string &filename)
 {
 	if(filename!="")
-		saveDialog->setFilename(filename.c_str());
+	{
+		saveDialog->setFilename(CPath(filename).baseName().c_str());
+		saveDialog->setDirectory(gPromptDialogDirectory.c_str());
+	}
 
 	if(saveDialog->execute())
 	{
