@@ -295,20 +295,99 @@ long FXGraphParamValue::onGraphPanelPaint(FXObject *sender,FXSelector sel,void *
 	// draw the whole background
 	dc.drawImage(backBuffer,0,0);
 
-	// draw the lines connecting the nodes
+	// draw the connection between the nodes
 	dc.setForeground(FXRGB(255,64,64));
-	for(size_t t=1;t<nodes.size();t++)
-	{
-		CGraphParamValueNode &n1=nodes[t-1];
-		CGraphParamValueNode &n2=nodes[t];
-		
-		const int x1=nodeToScreenX(n1);
-		const int y1=nodeToScreenY(n1);
-		const int x2=nodeToScreenX(n2);
-		const int y2=nodeToScreenY(n2);
-		
-		dc.drawLine(x1,y1,x2,y2);
+	//if(0)
+	{ // draw lines
+		for(size_t t=1;t<nodes.size();t++)
+		{
+			const CGraphParamValueNode &n1=nodes[t-1];
+			const CGraphParamValueNode &n2=nodes[t];
+			
+			const int x1=nodeToScreenX(n1);
+			const int y1=nodeToScreenY(n1);
+			const int x2=nodeToScreenX(n2);
+			const int y2=nodeToScreenY(n2);
+			
+			dc.drawLine(x1,y1,x2,y2);
+		}
 	}
+/*
+Okay, here i have coded cubic and cosine based curves to connect the dots instead of or in addition to
+the straight line segments.  However, after playing around with with them a few issues arise.
+1) Cosine always has a horizontal tangent at each node
+2) Cubic curves have a couple of problems.
+	- The top or bottom of a local maximum can extend above or below the screen
+	- It's hard to control the concavity of each direction change by adding nodes without affecting the shape
+A better overall solution may be to have a 'smooth' button for the line segments or to use bezier curves (except they
+don't pass thru the control points
+
+	else
+	{ // draw a cubic curve (http://astronomy.swin.edu.au/~pbourke/curves/interpolation/)
+		int prevX=nodeToScreenX(nodes[0]);
+		int prevY=nodeToScreenY(nodes[0]);
+		for(int t=1;t<(int)nodes.size();t++)
+		{
+			const CGraphParamValueNode &n0=nodes[max(0,t-2)];
+			const CGraphParamValueNode &n1=nodes[max(0,t-1)];
+			const CGraphParamValueNode &n2=nodes[t];
+			const CGraphParamValueNode &n3=nodes[min((int)nodes.size()-1,t+1)];
+			
+			//const int x0=nodeToScreenX(n0);
+			const int y0=nodeToScreenY(n0);
+			const int x1=nodeToScreenX(n1);
+			const int y1=nodeToScreenY(n1);
+			const int x2=nodeToScreenX(n2);
+			const int y2=nodeToScreenY(n2);
+			//const int x3=nodeToScreenX(n3);
+			const int y3=nodeToScreenY(n3);
+
+			for(int x=x1;x<x2;x++)
+			{
+				const float mu=(float)(x-x1)/(float)(x2-x1);
+				const float mu2=mu*mu;
+				const float a0=y3-y2-y0+y1;
+				const float a1=y0-y1-a0;
+				const float a2=y2-y0;
+				const float a3=y1;
+
+				const float y=a0*mu*mu2+a1*mu2+a2*mu+a3;
+
+				dc.drawLine(prevX,prevY,x,(int)y);
+				prevX=x;
+				prevY=(int)y;
+			}
+			
+		}
+	}
+	else
+	{ // draw a cosine interpolated curve (http://astronomy.swin.edu.au/~pbourke/curves/interpolation/)
+		int prevX=nodeToScreenX(nodes[0]);
+		int prevY=nodeToScreenY(nodes[0]);
+		for(size_t t=1;t<nodes.size();t++)
+		{
+			const CGraphParamValueNode &n1=nodes[t-1];
+			const CGraphParamValueNode &n2=nodes[t];
+			
+			const int x1=nodeToScreenX(n1);
+			const int y1=nodeToScreenY(n1);
+			const int x2=nodeToScreenX(n2);
+			const int y2=nodeToScreenY(n2);
+			
+			for(int x=x1;x<x2;x++)
+			{
+				const float mu=(float)(x-x1)/(float)(x2-x1);
+				const float mu2=(1.0-cos(mu*M_PI))/2.0;
+
+				const float y=y1*(1.0-mu2)+y2*mu2;
+
+				dc.drawLine(prevX,prevY,x,(int)y);
+				prevX=x;
+				prevY=(int)y;
+			}
+		}
+	}
+*/
 
 	// draw the nodes
 	for(size_t t=0;t<nodes.size();t++)
