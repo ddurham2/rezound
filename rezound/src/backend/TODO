@@ -1,9 +1,12 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- create separate CDSPLevelDetectorRMS and CDSPPeakLevelDetectorPeak dsp blocks
+
 	- use TSoundStretcher in CSoundPlayerChannel
 		- the checks in the inner loop are not necessary... I should be able to determine before hand, how many loops to do and when the loop point will be.... just use TSoundStretcher in the mean time of each loop
 		- handling the amplitudes and envelopes is still a matter of scaling the result of TSoundStretcher::getSample()
+		- I'm not sure how I would handle reverse direction
 
 		- before  do this.. check the CPU usage when playing 5 sounds... after changing it, check 5 sounds again
 

@@ -1,5 +1,8 @@
 --- THINGS TO DO FOR SURE ---
 
+	- needs some compressor action(s)
+		- need a "link-channels" toggle parameter which causes all the channels to be compressed if any channel needs to be compressed
+
 	- HMM... I've been thinking about a desicion I made a long time ago about selected regions...
 		- I decided back then that I would have a start and a stop postion int stored internally
 		- However, if there's one thing C teaches you, it's that for a region, a start/length combination is better.
@@ -104,8 +107,6 @@
 
 	- I thought of a cool way to do hints and warnings... If it's not an error where we want the user to really acknowledge the message, and it's not a question requiring feedback from the user.
 		- We could have Warning() and Note(), accept an optional MSG_ID where there would be a sound file associated with that ID, and we would play that warning message or note message out of the speakers... Temporarily, the ASoundPlayerChannel should know that if one of these is playing then it should cut the volume by 50%, by including that in the amplitude parameter
-
-	- needs some compressor action(s)
 
 	- AAction would need some more availability to ASoundFileManager, because it would be neat if I could create an action which could break a long sound into multiple tracks when there is silence for a given amount of time... Each track would be opened as a new file based on an initial filename
 
