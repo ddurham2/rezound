@@ -51,6 +51,7 @@ private:
 class CSound
 {
 public:
+	// the p_addr_t needs to agree with CSound::getAudioDataSize()'s implementation too
 	typedef TPoolFile<sample_pos_t,uint64_t> PoolFile_t;
 
 	CSound();

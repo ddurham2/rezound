@@ -1514,18 +1514,18 @@ const string CSound::getAudioDataSize() const
 
 const string CSound::getPoolFileSize() const
 {
-	sample_pos_t iPoolFileSize=poolFile.getFileSize();
+	uint64_t iPoolFileSize=poolFile.getFileSize();
 	if(iPoolFileSize>=1024*1024*1024)
 	{ // return as gb
-		return(istring((sample_fpos_t)iPoolFileSize/1024.0/1024.0/1024.0,5,3)+"gb");
+		return(istring((long double)iPoolFileSize/1024.0/1024.0/1024.0,5,3)+"gb");
 	}
 	else if(iPoolFileSize>=1024*1024)
 	{ // return as mb
-		return(istring((sample_fpos_t)iPoolFileSize/1024.0/1024.0,5,2)+"mb");
+		return(istring((long double)iPoolFileSize/1024.0/1024.0,5,2)+"mb");
 	}
 	else if(iPoolFileSize>=1024)
 	{ // return as kb
-		return(istring((sample_fpos_t)iPoolFileSize/1024.0,5,1)+"kb");
+		return(istring((long double)iPoolFileSize/1024.0,5,1)+"kb");
 	}
 	else
 	{ // return as b
