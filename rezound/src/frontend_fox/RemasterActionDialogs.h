@@ -45,6 +45,9 @@ class CCompressorDialog : public CActionParamDialog
 public:
 	CCompressorDialog(FXWindow *mainWindow);
 	virtual ~CCompressorDialog(){}
+
+protected:
+	const string getExplaination() const;
 };
 
 

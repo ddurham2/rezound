@@ -78,6 +78,11 @@ CCompressorDialog::CCompressorDialog(FXWindow *mainWindow) :
 			addCheckBoxEntry(p1,"Lock Channels",true);
 }
 
+// ??? remove this before 1.0 and make sure it is up-to-standard as far as a compressor goes before 1.0
+const string CCompressorDialog::getExplaination() const
+{
+	return "This is my first attempt at creating a compressor algorithm.  I'm not sure how it fairs with other 'professional' tools.  I really have little experience with hardware compressors myself.  If you are an experienced compressor user and can make intelligent suggestions about how to make this one better, then please contact me.  Contact information is in the about dialog under the file menu";
+}
 
 
 // --- normalize ---------------------------
