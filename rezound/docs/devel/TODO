@@ -111,6 +111,16 @@
 
 --- POSSIBLE THINGS TO DO ---
 
+	- After reading more of the DSP book about filters
+		- create a data type in CActionParameters which is the filter to apply to the sound
+		- then this filter data should be convolved with a selected region
+		- or this filter data should be applied to the data in a windowed fasion...  As far as I know, it has no name.. but say I wanted to set every 8th sample to zero to add a ringing noise... then I would create a filter window of width 8 where the first sample is 0 and the rest are 1.0... then I would apply this window to the first 8 samples [0..7], then apply it to the next 8, [8..15] and so on
+			- maybe this is possible with the convolution method
+
+	- I could create an adaptive remove-DC action which looks at a window at a time of data  (window-time given by the user) and the DC offset determined for each window would form a set of line segments to be the subtraction from the sound.
+		- This should/might remove any very long trend in the data that causes a slow shift rather than a constant offset
+		- Perhaps, I could let this window time go from 1 to the length of the sound, and some interesting effects could be produced with very small values
+
 	- create a feature on the record dialog which is only present when using the dialog which says to play some X seconds of a given CLoadedSound before starting to record all when the record button is pressed
 		- this would require low latency recording buffers and playback buffers.. OR just know that latency exactly and account for it.
 		- the controls for this feature should show up if no sound was given to play X seconds for... and this sound shouldn't be given for new recordings and probably not for paste-insert
@@ -160,12 +170,6 @@
 
 	- I think it's fine for now, but gWhichClipboard is essentially a global which specifies which clipboard to use from the time the pasteChannelSelect dialog shows, to the time the factory is constructed, to the time the action runs
 		- it would be better if this were something passed on the action parameters or action sound to make SURE it would be consitant through out each stage
-
-	- After reading more of the DSP book about filters
-		- create a data type in CActionParameters which is the filter to apply to the sound
-		- then this filter data should be convolved with a selected region
-		- or this filter data should be applied to the data in a windowed fasion...  As far as I know, it has no name.. but say I wanted to set every 8th sample to zero to add a ringing noise... then I would create a filter window of width 8 where the first sample is 0 and the rest are 1.0... then I would apply this window to the first 8 samples [0..7], then apply it to the next 8, [8..15] and so on
-			- maybe this is possible with the convolution method
 
 
 
