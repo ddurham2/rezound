@@ -203,10 +203,11 @@ CMainWindow::CMainWindow(FXApp* a) :
 
 			t=new FXVerticalFrame(t,FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0);
 				shuttleDialSpringButton=new FXToggleButton(t,"free","spring",NULL,NULL,this,ID_SHUTTLE_DIAL_SPRING_BUTTON,LAYOUT_FILL_X|JUSTIFY_NORMAL|TOGGLEBUTTON_TOOLBAR|FRAME_RAISED,0,0,0,0, 1,1,0,0);
+				shuttleDialSpringButton->setTipText("Set the Shuttle Wheel to Spring Back to the Middle or Not");
 				shuttleDialSpringButton->setState(true);
 				shuttleDialSpringButton->setFont(shuttleFont);
 
-				shuttleDialScaleButton=new FXButton(t,"100x",NULL,this,ID_SHUTTLE_DIAL_SCALE_BUTTON,LAYOUT_FILL_X|JUSTIFY_NORMAL|TOGGLEBUTTON_TOOLBAR|FRAME_RAISED,0,0,0,0, 1,1,0,0);
+				shuttleDialScaleButton=new FXButton(t,"100x\tSet the Maximum Rate Change of the Shuttle Wheel",NULL,this,ID_SHUTTLE_DIAL_SCALE_BUTTON,LAYOUT_FILL_X|JUSTIFY_NORMAL|TOGGLEBUTTON_TOOLBAR|FRAME_RAISED,0,0,0,0, 1,1,0,0);
 				shuttleDialScaleButton->setFont(shuttleFont);
 
 	new FXVerticalSeparator(s);
