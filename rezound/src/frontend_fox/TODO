@@ -1,8 +1,6 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- put a clear and reset button on CPasteChannelDialog
-
 	- create some useful presets for the new filter actions
 
 	- perhaps a 'view' pull-down ... possible menu items...
@@ -229,4 +227,6 @@
 		- I added remember support so it wouldn't be as much of a problem, but perhaps ask the fox people how to get the dialog to make itself large enough for all the inner widgets
 			- FOUND IT: getDefaultWidth() and getDefaultHeight()
 		- If I tought about it long enough, I might be able to come up with the answer
+
+	- put a clear and reset button on CPasteChannelDialog
 
