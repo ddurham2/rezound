@@ -24,6 +24,7 @@
 #include "../../config/common.h"
 
 #include <string>
+#include <vector>
 
 class CSound;
 
@@ -38,6 +39,11 @@ public:
 
 	virtual bool handlesExtension(const string extension) const=0;
 	virtual bool supportsFormat(const string filename) const=0;
+
+	virtual bool handlesRaw() const { return(false); } // only the raw translator implementation should override this to return true
+
+
+	static vector<const ASoundTranslator *> registeredTranslators;
 
 protected:
 

@@ -23,6 +23,8 @@
 
 #include <stdexcept>
 
+vector<const ASoundTranslator *> ASoundTranslator::registeredTranslators;
+
 ASoundTranslator::ASoundTranslator()
 {
 }

@@ -462,52 +462,47 @@ const string ASoundFileManager::getReopenHistoryItem(const size_t index) const
 }
 
 
-#include "CrezSoundTranslator.h"
-#include "Cold_rezSoundTranslator.h"
-#include "ClibaudiofileSoundTranslator.h"
-#include "CrawSoundTranslator.h"
 /*
-	I implemented this method the way I did so it would be a relatively simple
-	change if I wanted to just loop thru a list of registered translators and
-	ask each one if it could handle the file... Also, this method could be 
-	given some abstract stream class pointer instead of a filename which could 
-	access a file or a network URL.   Then the translators would also have to 
-	be changed to read from that stream instead of the file, and libaudiofile
-	would at this point in time have trouble doing that.
+	This method could be given some abstract stream class pointer instead 
+	of a filename which could access a file or a network URL.   Then the 
+	translators would also have to be changed to read from that stream 
+	instead of the file, and libaudiofile would at this point in time have 
+	trouble doing that.
 */
 const ASoundTranslator *ASoundFileManager::getTranslator(const string filename,bool isRaw)
 {
-	static const CrezSoundTranslator rezSoundTranslator;
-	static const Cold_rezSoundTranslator old_rezSoundTranslator;
-	static const ClibaudiofileSoundTranslator libaudiofileSoundTranslator;
-	static const CrawSoundTranslator rawSoundTranslator;
-
 	if(isRaw)
-		return(&rawSoundTranslator);
+	{
+		for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
+		{
+			if(ASoundTranslator::registeredTranslators[t]->handlesRaw())
+				return(ASoundTranslator::registeredTranslators[t]);
+		}
+	}
 
 	if(ost::Path(filename).Exists())
 	{ // try to determine from the contents of the file
-		if(rezSoundTranslator.supportsFormat(filename))
-			return(&rezSoundTranslator);
-		else if(libaudiofileSoundTranslator.supportsFormat(filename))
-			return(&libaudiofileSoundTranslator);
-		else if(old_rezSoundTranslator.supportsFormat(filename))
-			return(&old_rezSoundTranslator);
+		for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
+		{
+			if(ASoundTranslator::registeredTranslators[t]->supportsFormat(filename))
+				return(ASoundTranslator::registeredTranslators[t]);
+		}
 	}
 
-	// file doesn't exist or invalid signatures, so attempt to determine the translater based on the file extension
+	// file doesn't exist or no supported signature, so attempt to determine the translater based on the file extension
 	const string extension=istring(ost::Path(filename).Extension()).lower();
 	if(extension=="")
 		throw(runtime_error(string(__func__)+" -- cannot determine the extension on the filename: "+filename));
-
-	if(rezSoundTranslator.handlesExtension(extension))
-		return(&rezSoundTranslator);
-	else if(libaudiofileSoundTranslator.handlesExtension(extension))
-		return(&libaudiofileSoundTranslator);
-	else if(rawSoundTranslator.handlesExtension(extension))
-		return(&rawSoundTranslator);
 	else
-		throw(runtime_error(string(__func__)+" -- unhandled extension for the filename '"+filename+"'"));
+	{
+		for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
+		{
+			if(ASoundTranslator::registeredTranslators[t]->handlesExtension(extension))
+				return(ASoundTranslator::registeredTranslators[t]);
+		}
+	}
+
+	throw(runtime_error(string(__func__)+" -- unhandled format/extension for the filename '"+filename+"'"));
 }
 
 

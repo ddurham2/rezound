@@ -55,10 +55,13 @@ static COSSSoundPlayer *soundPlayer=NULL;
 
 #include <cc++/path.h>
 
+void setupSoundTranslators();
+
 void initializeBackend(ASoundPlayer *&_soundPlayer)
 {
 	try
 	{
+		setupSoundTranslators();
 
 		// make sure that ~/.rezound exists
 		gUserDataDirectory=string(getenv("HOME"))+istring(ost::Path::dirDelim)+".rezound";
@@ -189,6 +192,27 @@ void deinitializeBackend()
 	gSettingsRegistry->save();
 	delete gSettingsRegistry;
 
+}
+
+#include "CrezSoundTranslator.h"
+#include "Cold_rezSoundTranslator.h"
+#include "ClibaudiofileSoundTranslator.h"
+#include "CrawSoundTranslator.h"
+void setupSoundTranslators()
+{
+	ASoundTranslator::registeredTranslators.clear();
+
+	static const CrezSoundTranslator rezSoundTranslator;
+	ASoundTranslator::registeredTranslators.push_back(&rezSoundTranslator);
+
+	static const Cold_rezSoundTranslator old_rezSoundTranslator;
+	ASoundTranslator::registeredTranslators.push_back(&old_rezSoundTranslator);
+	
+	static const ClibaudiofileSoundTranslator libaudiofileSoundTranslator;
+	ASoundTranslator::registeredTranslators.push_back(&libaudiofileSoundTranslator);
+
+	static const CrawSoundTranslator rawSoundTranslator;
+	ASoundTranslator::registeredTranslators.push_back(&rawSoundTranslator);
 }
 
 

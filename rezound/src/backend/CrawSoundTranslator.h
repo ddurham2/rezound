@@ -34,6 +34,8 @@ public:
 	bool handlesExtension(const string extension) const;
 	bool supportsFormat(const string filename) const;
 
+	bool handlesRaw() const { return(true); }
+
 protected:
 
 	void onLoadSound(const string filename,CSound *sound) const;

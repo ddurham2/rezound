@@ -7,7 +7,7 @@
 		- should be easier now that the code has be reorganized
 		- make a dropdown box which is the type to explicitly use or its first item is 'by filename extension'
 
-	- Somehow the registered Translators need to convay a list of file extensions to the frontend.. the front end can turn that into whatever format the frontend needs to make it work for the file dialog
+	- Somehow the registered Translators need to convey a list of file extensions to the frontend.. the front end can turn that into whatever format the frontend needs to make it work for the file dialog
 		- an extension and a format name needs to be given (i.e. Wave .wav  Sun/Next .au )
 		- in the frontend create a conglomerated list called all file types that includes all the extensions as well as a *.* entry
 

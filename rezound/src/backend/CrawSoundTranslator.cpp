@@ -82,6 +82,6 @@ bool CrawSoundTranslator::handlesExtension(const string extension) const
 
 bool CrawSoundTranslator::supportsFormat(const string filename) const
 {
-	return(true); // this necessitates CrawSoundTranslator being the last translator consulted
+	return(false); // to keep it from catching all formats
 }
 
