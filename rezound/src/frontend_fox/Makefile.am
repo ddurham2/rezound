@@ -29,11 +29,9 @@ noinst_LTLIBRARIES=libfrontend.la
 libfrontend_la_SOURCES= CActionButton.cpp \
 		 CChannelSelectDialog.cpp \
 		 CActionParamDialog.cpp \
-		 CConstantParamActionDialog.cpp \
 		 CCueDialog.cpp \
 		 CCueListDialog.cpp \
 		 CEditToolbar.cpp \
-		 CGraphParamActionDialog.cpp \
 		 CMainWindow.cpp \
 		 CNewSoundDialog.cpp \
 		 CPasteChannelsDialog.cpp \
@@ -85,11 +83,9 @@ EXTRA_DIST=\
 	CActionButton.h \
 	CChannelSelectDialog.h \
 	CActionParamDialog.h \
-	CConstantParamActionDialog.h \
 	CCueDialog.h \
 	CCueListDialog.h \
 	CEditToolbar.h \
-	CGraphParamActionDialog.h \
 	CMainWindow.h \
 	CNewSoundDialog.h \
 	CPasteChannelsDialog.h \
@@ -156,25 +152,6 @@ ChannelSelectDialog.o: CChannelSelectDialog.cpp \
 	$(top_srcdir)/src/misc/istring \
 	$(top_srcdir)/src/misc/cc++/TAutoBuffer.h 
 
-CConstantParamActionDialog.o: CConstantParamActionDialog.cpp \
-	CConstantParamActionDialog.h \
-	FXConstantParamValue.h \
-	FXModalDialogBox.h \
-	$(top_srcdir)/src/backend/AAction.h \
-	$(top_srcdir)/src/backend/ASound.h \
-	$(top_srcdir)/src/backend/ASoundPlayer.h \
-	$(top_srcdir)/src/backend/AStatusComm.h \
-	$(top_srcdir)/src/backend/CEnvelope.h \
-	$(top_srcdir)/src/backend/CGraphParamValueNode.h \
-	$(top_srcdir)/src/backend/CSoundPlayerChannel.h \
-	$(top_srcdir)/src/backend/CTrigger.h \
-	$(top_srcdir)/src/misc/cc++/TAutoBuffer.h \
-	$(top_srcdir)/src/misc/istring \
-	$(top_srcdir)/src/PoolFile/CMultiFile.h \
-	$(top_srcdir)/src/PoolFile/TPoolAccesser.h \
-	$(top_srcdir)/src/PoolFile/TPoolFile.h \
-	$(top_srcdir)/src/PoolFile/TStaticPoolAccesser.h 
-
 CCueDialog.o: CCueDialog.cpp \
 	CCueDialog.h \
 	FXModalDialogBox.h \
@@ -223,8 +200,6 @@ CEditToolbar.o: CEditToolbar.cpp \
 	rememberShow.h \
 	CActionButton.h \
 	CChannelSelectDialog.h \
-	CConstantParamActionDialog.h \
-	CGraphParamActionDialog.h \
 	CPasteChannelsDialog.h \
 	EditActionDialogs.h \
 	FXConstantParamValue.h \
@@ -253,32 +228,11 @@ CEditToolbar.o: CEditToolbar.cpp \
 	$(top_srcdir)/src/PoolFile/TPoolFile.h \
 	$(top_srcdir)/src/PoolFile/TStaticPoolAccesser.h  
 
-CGraphParamActionDialog.o: CGraphParamActionDialog.cpp \
-	CGraphParamActionDialog.h \
-	FXGraphParamValue.h \
-	FXModalDialogBox.h \
-	$(top_srcdir)/src/backend/AAction.h \
-	$(top_srcdir)/src/backend/ASound.h \
-	$(top_srcdir)/src/backend/ASoundPlayer.h \
-	$(top_srcdir)/src/backend/AStatusComm.h \
-	$(top_srcdir)/src/backend/CEnvelope.h \
-	$(top_srcdir)/src/backend/CGraphParamValueNode.h \
-	$(top_srcdir)/src/backend/CSoundPlayerChannel.h \
-	$(top_srcdir)/src/backend/CTrigger.h \
-	$(top_srcdir)/src/misc/cc++/TAutoBuffer.h \
-	$(top_srcdir)/src/misc/istring \
-	$(top_srcdir)/src/PoolFile/CMultiFile.h \
-	$(top_srcdir)/src/PoolFile/TPoolAccesser.h \
-	$(top_srcdir)/src/PoolFile/TPoolFile.h \
-	$(top_srcdir)/src/PoolFile/TStaticPoolAccesser.h  
-
 CMainWindow.o: CMainWindow.cpp \
 	CMainWindow.h \
 	CActionButton.h \
 	CChannelSelectDialog.h \
-	CConstantParamActionDialog.h \
 	CEditToolbar.h \
-	CGraphParamActionDialog.h \
 	CSoundFileManager.h \
 	CUserNotesDialog.h \
 	EffectActionDialogs.h \
@@ -475,8 +429,6 @@ drawPortion.o: drawPortion.cpp \
 
 EditActionDialogs.o: EditActionDialogs.cpp \
 	EditActionDialogs.h \
-	CConstantParamActionDialog.h \
-	CGraphParamActionDialog.h \
 	FXConstantParamValue.h \
 	FXGraphParamValue.h \
 	FXModalDialogBox.h \
@@ -497,8 +449,6 @@ EditActionDialogs.o: EditActionDialogs.cpp \
 
 EffectActionDialogs.o: EffectActionDialogs.cpp \
 	EffectActionDialogs.h \
-	CConstantParamActionDialog.h \
-	CGraphParamActionDialog.h \
 	FXConstantParamValue.h \
 	FXGraphParamValue.h \
 	FXModalDialogBox.h \
@@ -629,7 +579,6 @@ main.o: main.cpp \
 
 RemasterActionDialogs.o: RemasterActionDialogs.cpp \
 	RemasterActionDialogs.h \
-	CConstantParamActionDialog.h \
 	FXModalDialogBox.h \
 	FXConstantParamValue.h \
 	$(top_srcdir)/src/backend/AAction.h \

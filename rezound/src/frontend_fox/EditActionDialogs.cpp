@@ -24,7 +24,7 @@
 // --- insert silence -------------------------
 
 CInsertSilenceDialog::CInsertSilenceDialog(FXWindow *mainWindow) :
-	CConstantParamActionDialog(mainWindow,"Insert Silence",180,140)
+	CActionParamDialog(mainWindow,"Insert Silence",180,140)
 {
 	addValueEntry("Length","seconds",1.0);
 }
@@ -34,7 +34,7 @@ CInsertSilenceDialog::CInsertSilenceDialog(FXWindow *mainWindow) :
 // --- rotate ---------------------------------
 
 CRotateDialog::CRotateDialog(FXWindow *mainWindow) :
-	CConstantParamActionDialog(mainWindow,"Rotate",180,140)
+	CActionParamDialog(mainWindow,"Rotate",180,140)
 {
 	addValueEntry("Amount","seconds",1.0);
 }

@@ -31,7 +31,7 @@ static const double interpretValue_noiseGate(const double x,const int s) { retur
 static const double uninterpretValue_noiseGate(const double x,const int s) { return(x/s); }
 
 CNoiseGateDialog::CNoiseGateDialog(FXWindow *mainWindow) :
-	CConstantParamActionDialog(mainWindow,"Noise Gate",550,400)
+	CActionParamDialog(mainWindow,"Noise Gate",550,400)
 {
 	addSlider("Window Time","ms",interpretValue_noiseGate,uninterpretValue_noiseGate,NULL,35.0,5,1000,30,false);
 	addSlider("Threshold","%",interpretValue_noiseGate,uninterpretValue_noiseGate,NULL,3.0,5,100,20,false);

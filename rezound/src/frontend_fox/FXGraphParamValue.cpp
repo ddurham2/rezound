@@ -27,6 +27,8 @@
 
 #include <istring>
 
+#include <CNestedDataFile/CNestedDataFile.h>
+
 #define NODE_RADIUS 4
 
 #define GET_SCALAR_VALUE(o) ( o->scalarSpinner==NULL ? 0 : o->scalarSpinner->getValue() )
@@ -196,8 +198,10 @@ FXDEFMAP(FXGraphParamValue) FXGraphParamValueMap[]=
 
 FXIMPLEMENT(FXGraphParamValue,FXPacker,FXGraphParamValueMap,ARRAYNUMBER(FXGraphParamValueMap))
 
-FXGraphParamValue::FXGraphParamValue(f_at_xs _interpretValue,f_at_xs _uninterpretValue,const int minScalar,const int maxScalar,const int initScalar,FXComposite *p,int opts,int x,int y,int w,int h) :
+FXGraphParamValue::FXGraphParamValue(const string _title,f_at_xs _interpretValue,f_at_xs _uninterpretValue,const int minScalar,const int maxScalar,const int initScalar,FXComposite *p,int opts,int x,int y,int w,int h) :
 	FXPacker(p,opts|FRAME_RIDGE,x,y,w,h, 2,2,2,2, 0,0),
+
+	title(_title),
 
 	sound(NULL),
 	start(0),
@@ -553,4 +557,83 @@ void FXGraphParamValue::clearStatus()
 	valueLabel->setText("Value: ");
 }
 	
+
+const int FXGraphParamValue::getScalar() const
+{
+	return(GET_SCALAR_VALUE(this));
+}
+
+void FXGraphParamValue::setScalar(const int scalar)
+{
+	if(scalarSpinner!=NULL)
+		scalarSpinner->setValue(scalar);
+}
+
+const int FXGraphParamValue::getMinScalar() const
+{
+	FXint lo=0,hi=0;
+	if(scalarSpinner!=NULL)
+		scalarSpinner->getRange(lo,hi);
+	return(lo);
+}
+
+const int FXGraphParamValue::getMaxScalar() const
+{
+	FXint lo=0,hi=0;
+	if(scalarSpinner!=NULL)
+		scalarSpinner->getRange(lo,hi);
+	return(hi);
+}
+
+const string FXGraphParamValue::getTitle() const
+{
+	return(title);
+}
+
+void FXGraphParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
+{
+	const string key=prefix+"."+getTitle()+".";
+
+	const string s=f.getValue((key+"scalar").c_str());
+	setScalar(atoi(s.c_str()));
+
+
+	nodes.clear();
+	const string k1=key+"node_positions";
+	const string k2=key+"node_values";
+	const size_t count=f.getArraySize(k1.c_str());
+	// ??? I could either save the node positions and values as [0,1], or I could use save the actual values ( <-- currently)
+	for(size_t t=0;t<count;t++)
+		nodes.push_back(CGraphParamValueNode(atof(f.getArrayValue(k1.c_str(),t).c_str()),atof(f.getArrayValue(k2.c_str(),t).c_str())));
+
+	updateNumbers();
+	update();
+	graphPanel->update();
+}
+
+void FXGraphParamValue::writeToFile(const string &prefix,CNestedDataFile &f) const
+{
+	const string key=prefix+"."+getTitle()+".";
+
+	if(getMinScalar()!=getMaxScalar())
+		f.createKey((key+"scalar").c_str(),istring(getScalar()));
+
+	//const CGraphParamValueNodeList nodes=getNodes();
+
+
+	const string k1=key+"node_positions";
+		// ??? I could implement a createArrayKey which takes a double so I wouldn't have to convert to string here
+	f.removeKey(k1.c_str());
+	for(size_t t=0;t<nodes.size();t++)
+		f.createArrayKey(k1.c_str(),t,istring(nodes[t].position).c_str());
+
+	const string k2=key+"node_values";
+	f.removeKey(k2.c_str());
+	for(size_t t=0;t<nodes.size();t++)
+		f.createArrayKey(k2.c_str(),t,istring(nodes[t].value).c_str());
+
+	if(getMinScalar()!=getMaxScalar())
+		f.createKey((key+"scalar").c_str(),istring(getScalar()));
+}
+
 

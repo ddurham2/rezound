@@ -24,13 +24,12 @@
 #include "../../config/common.h"
 
 
-#include "CConstantParamActionDialog.h"
-#include "CGraphParamActionDialog.h"
+#include "CActionParamDialog.h"
 
 
 // --- insert silence --------------------
 
-class CInsertSilenceDialog : public CConstantParamActionDialog
+class CInsertSilenceDialog : public CActionParamDialog
 {
 public:
 	CInsertSilenceDialog(FXWindow *mainWindow);
@@ -40,7 +39,7 @@ public:
 
 // --- rotate ----------------------------
 
-class CRotateDialog : public CConstantParamActionDialog
+class CRotateDialog : public CActionParamDialog
 {
 public:
 	CRotateDialog(FXWindow *mainWindow);

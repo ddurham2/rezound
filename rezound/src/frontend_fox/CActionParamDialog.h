@@ -49,7 +49,7 @@ public:
 
 	void addSlider(const FXString name,const FXString units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton);
 	void addValueEntry(const FXString name,const FXString units,const double initialValue);
-	void addGraph(const FXString name,const FXString units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initScalar);
+	void addGraph(const FXString name,const FXString units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar);
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 

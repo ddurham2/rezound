@@ -24,12 +24,12 @@
 #include "../../config/common.h"
 
 
-#include "CConstantParamActionDialog.h"
+#include "CActionParamDialog.h"
 
 
 // --- noise gate ------------------------
 
-class CNoiseGateDialog : public CConstantParamActionDialog
+class CNoiseGateDialog : public CActionParamDialog
 {
 public:
 	CNoiseGateDialog(FXWindow *mainWindow);

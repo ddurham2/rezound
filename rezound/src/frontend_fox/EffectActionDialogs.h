@@ -24,21 +24,18 @@
 #include "../../config/common.h"
 
 
-#include "CConstantParamActionDialog.h"
-#include "CGraphParamActionDialog.h"
-
 #include "CActionParamDialog.h"
 
 
 // --- volume ----------------------------
 
-class CNormalAmplitudeChangeDialog : public CConstantParamActionDialog
+class CNormalAmplitudeChangeDialog : public CActionParamDialog
 {
 public:
 	CNormalAmplitudeChangeDialog(FXWindow *mainWindow);
 };
 
-class CAdvancedAmplitudeChangeDialog : public CGraphParamActionDialog
+class CAdvancedAmplitudeChangeDialog : public CActionParamDialog
 {
 public:
 	CAdvancedAmplitudeChangeDialog(FXWindow *mainWindow);
@@ -48,13 +45,13 @@ public:
 
 // --- rate ------------------------------
 
-class CNormalRateChangeDialog : public CConstantParamActionDialog
+class CNormalRateChangeDialog : public CActionParamDialog
 {
 public:
 	CNormalRateChangeDialog(FXWindow *mainWindow);
 };
 
-class CAdvancedRateChangeDialog : public CGraphParamActionDialog
+class CAdvancedRateChangeDialog : public CActionParamDialog
 {
 public:
 	CAdvancedRateChangeDialog(FXWindow *mainWindow);
@@ -78,7 +75,7 @@ public:
 
 // --- delay -----------------------------
 
-class CSimpleDelayDialog : public CConstantParamActionDialog
+class CSimpleDelayDialog : public CActionParamDialog
 {
 public:
 	CSimpleDelayDialog(FXWindow *mainWindow);
@@ -90,7 +87,7 @@ public:
 
 // --- varied repeat ---------------------
 
-class CVariedRepeatDialog : public CConstantParamActionDialog
+class CVariedRepeatDialog : public CActionParamDialog
 {
 public:
 	CVariedRepeatDialog(FXWindow *mainWindow);

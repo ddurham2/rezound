@@ -30,6 +30,7 @@
 #include "../backend/CGraphParamValueNode.h"
 
 class FXGraphParamNode;
+class CNestedDataFile;
 
 class FXGraphParamValue : public FXPacker
 {
@@ -38,7 +39,7 @@ public:
 	typedef const double (*f_at_xs)(const double x,const int s);
 
 	// minScalar and maxScalar define the min and max spinner values, if they're the same, no spinner is shown
-	FXGraphParamValue(f_at_xs interpretValue,f_at_xs uninterpretValue,const int minScalar,const int maxScalar,const int initScalar,FXComposite *p,int opts,int x=0,int y=0,int w=0,int h=0);
+	FXGraphParamValue(const string title,f_at_xs interpretValue,f_at_xs uninterpretValue,const int minScalar,const int maxScalar,const int initScalar,FXComposite *p,int opts,int x=0,int y=0,int w=0,int h=0);
 
 	void setSound(ASound *sound,sample_pos_t start,sample_pos_t stop);
 	void clearNodes();
@@ -61,6 +62,18 @@ public:
 
 	const CGraphParamValueNodeList &getNodes() const;
 
+	const int getScalar() const;
+	void setScalar(const int scalar);
+
+	const int getMinScalar() const;
+	const int getMaxScalar() const;
+
+	const string getTitle() const;
+
+
+	void readFromFile(const string &prefix,CNestedDataFile &f);
+	void writeToFile(const string &prefix,CNestedDataFile &f) const;
+
 	enum
 	{
 		ID_GRAPH_PANEL=FXPacker::ID_LAST,
@@ -78,6 +91,8 @@ protected:
 private:
 	friend class FXGraphParamNode;
 	friend class FXValueRuler;
+
+	string title;
 
 	ASound *sound;
 	sample_pos_t start,stop;

@@ -47,6 +47,8 @@ FXDEFMAP(CActionParamDialog) CActionParamDialogMap[]=
 FXIMPLEMENT(CActionParamDialog,FXModalDialogBox,CActionParamDialogMap,ARRAYNUMBER(CActionParamDialogMap))
 
 
+//TODO use string instead of FXString where reasonable
+
 // ----------------------------------------
 
 CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title,int w,int h) :
@@ -114,8 +116,25 @@ void CActionParamDialog::addValueEntry(const FXString name,const FXString units,
 	retValueConvs.push_back(NULL);
 }
 
+
+void CActionParamDialog::addGraph(const FXString name,const FXString units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar)
+{
+		// ??? there is still a question of how quite to lay out the graph if there are graph(s) and sliders
+	FXGraphParamValue *graph=new FXGraphParamValue(name.text(),interpretValue,uninterpretValue,minScalar,maxScalar,initialScalar,controlsFrame,LAYOUT_FILL_X|LAYOUT_FILL_Y);
+	graph->setUnits(units);
+	parameters.push_back(pair<ParamTypes,void *>(ptGraph,(void *)graph));
+	retValueConvs.push_back(optRetValueConv);
+}
+
 bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
+	// initialize all the graphs to this sound
+	for(size_t t=0;t<parameters.size();t++)
+	{
+		if(parameters[t].first==ptGraph)
+			((FXGraphParamValue *)parameters[t].second)->setSound(actionSound->sound,actionSound->start,actionSound->stop);
+	}
+
 	if(FXDialogBox::execute(PLACEMENT_CURSOR))
 	{
 		for(unsigned t=0;t<parameters.size();t++)
@@ -133,12 +152,22 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 					actionParameters->addDoubleParameter(ret);	
 				}
 				break;
+
 			case ptGraph:
 				{
-					FXGraphParamValue *slider=(FXGraphParamValue *)parameters[t].second;
-					throw(runtime_error(string(__func__)+" -- unimplemented parameter type: "+istring(parameters[t].first)));
+					FXGraphParamValue *graph=(FXGraphParamValue *)parameters[t].second;
+					CGraphParamValueNodeList nodes=graph->getNodes();
+
+					if(retValueConvs[t]!=NULL)
+					{
+						for(size_t i=0;i<nodes.size();i++)
+							nodes[i].value=retValueConvs[t](nodes[i].value);
+					}
+
+					actionParameters->addGraphParameter(nodes);
 				}
 				break;
+
 			default:
 				throw(runtime_error(string(__func__)+" -- unhandled parameter type: "+istring(parameters[t].first)));
 			}
@@ -183,12 +212,11 @@ long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void 
 			case ptConstant:
 				((FXConstantParamValue *)parameters[t].second)->readFromFile(title,f);
 				break;
+
 			case ptGraph:
-				{
-					FXGraphParamValue *slider=(FXGraphParamValue *)parameters[t].second;
-					throw(runtime_error(string(__func__)+" -- unimplemented parameter type: "+istring(parameters[t].first)));
-				}
+				((FXGraphParamValue *)parameters[t].second)->readFromFile(title,f);
 				break;
+
 			default:
 				throw(runtime_error(string(__func__)+" -- unhandled parameter type: "+istring(parameters[t].first)));
 			}
@@ -238,12 +266,11 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 				case ptConstant:
 					((FXConstantParamValue *)parameters[t].second)->writeToFile(title,f);
 					break;
+
 				case ptGraph:
-					{
-						FXGraphParamValue *slider=(FXGraphParamValue *)parameters[t].second;
-						throw(runtime_error(string(__func__)+" -- unimplemented parameter type: "+istring(parameters[t].first)));
-					}
+					((FXGraphParamValue *)parameters[t].second)->writeToFile(title,f);
 					break;
+
 				default:
 					throw(runtime_error(string(__func__)+" -- unhandled parameter type: "+istring(parameters[t].first)));
 				}
