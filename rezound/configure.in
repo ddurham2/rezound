@@ -178,8 +178,6 @@ AC_OUTPUT( \
 # in the frontend interface.. If there is ever a choice
 # of frontend API, then this should become a conditional
 # statement
-#rm -f ./rezound
-#ln -s $srcdir/src/frontend_fox/ReZound ./rezound
-#
-# I commented this out since the name change makes it useless
+rm -f ./rezound
+ln -s $srcdir/src/frontend_fox/rezound ./rezound
 
