@@ -375,6 +375,8 @@ void FXGraphParamValue::setHorzParameters(const string horzAxisLabel,const strin
 	this->horzUnits=horzUnits;
 	horzInterpretValue=interpretValue;
 	horzUninterpretValue=uninterpretValue;
+
+	clearStatus();
 }
 
 void FXGraphParamValue::setVertParameters(const string vertAxisLabel,const string vertUnits,f_at_xs interpretValue,f_at_xs uninterpretValue)
@@ -383,6 +385,8 @@ void FXGraphParamValue::setVertParameters(const string vertAxisLabel,const strin
 	this->vertUnits=vertUnits;
 	vertInterpretValue=interpretValue;
 	vertUninterpretValue=uninterpretValue;
+
+	clearStatus();
 }
 
 void FXGraphParamValue::clearNodes()

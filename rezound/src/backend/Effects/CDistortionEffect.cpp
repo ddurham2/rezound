@@ -61,12 +61,12 @@ bool CDistortionEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 	// set the new selection points (only necessary if the length of the sound has changed)
 	//actionSound.stop=actionSound.start+selectionLength-1;
 
-	return(true);
+	return true;
 }
 
 AAction::CanUndoResults CDistortionEffect::canUndo(const CActionSound &actionSound) const
 {
-	return(curYes);
+	return curYes;
 }
 
 void CDistortionEffect::undoActionSizeSafe(const CActionSound &actionSound)
@@ -84,12 +84,7 @@ CDistortionEffectFactory::CDistortionEffectFactory(AActionDialog *channelSelectD
 
 CDistortionEffect *CDistortionEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	//CGraphParamValueNodeList curve;
-	//curve.push_back(CGraphParamValueNode(0.0,0.5));
-	//curve.push_back(CGraphParamValueNode(0.5,0.5));
-	//curve.push_back(CGraphParamValueNode(1.0,0.5));
-	//curve.push_back(CGraphParamValueNode(1.0,0.0));
-	return(new CDistortionEffect(actionSound,actionParameters->getGraphParameter("Curve")));
+	return new CDistortionEffect(actionSound,actionParameters->getGraphParameter("Curve"));
 }
 
 
