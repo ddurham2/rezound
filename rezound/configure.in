@@ -209,26 +209,44 @@ dnl handle other possible audio I/O system flags here
 dnl ...
 
 dnl handle the --enable-oss flag
-if [[ "$audioIOMethod" = "" ]]
-then
-	AC_ARG_ENABLE(
-		oss,
-		[  --enable-oss (default)  build ReZound to use OSS for audio I/O ],
-		[ dnl action if either enable or disable flag is given
-			if [[ "$enableval" = "yes" ]]
-			then 
-				AC_DEFINE(ENABLE_OSS)
+dnl the behavior of this is that if no other audio I/O method was specified
+dnl then OSS will be the default and the only one compiled.  If another method
+dnl was specified, then ReZound will fall back on using OSS if that method
+dnl fails to initialize at run-time.  There may be a better way to do this
+dnl such as, enable as let them enable as many methods as they want, then
+dnl choose at run-time which method to use.  Ask the first time and use that
+dnl until they choose another one through the preferences interface or the 
+dnl chosen one cannot be initialized.  I should probably do this when a 
+dnl settings interface is created ???
+AC_ARG_ENABLE(
+	oss,
+	[  --enable-oss (default)  build ReZound to use OSS for audio I/O ],
+	[ dnl action if either enable or disable flag is given
+		if [[ "$enableval" = "yes" ]]
+		then 
+			AC_DEFINE(ENABLE_OSS)
+			if [[ "$audioIOMethod" = "" ]]
+			then # no other audio I/O system specified
 				AC_MSG_RESULT([*** using OSS for audio I/O])
 				audioIOMethod="oss"
+			else
+				AC_MSG_RESULT([*** using OSS for audio I/O if $audioIOMethod fails to initialize])
 			fi
-		],
-		[ dnl action if neither enable or disable flag is given (default to OSS)
-				AC_DEFINE(ENABLE_OSS)
+		else
+			AC_MSG_RESULT([*** disabling OSS for audio I/O])
+		fi
+	],
+	[ dnl action if neither enable or disable flag is given (default to OSS)
+			AC_DEFINE(ENABLE_OSS)
+			if [[ "$audioIOMethod" = "" ]]
+			then # no other audio I/O system specified
 				AC_MSG_RESULT([*** using OSS for audio I/O])
 				audioIOMethod="oss"
-		]
-		)
-fi
+			else
+				AC_MSG_RESULT([*** using OSS for audio I/O if $audioIOMethod fails to initialize])
+			fi
+	]
+	)
 
 
 
