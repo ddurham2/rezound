@@ -261,6 +261,7 @@ void deinitializeBackend()
 }
 
 #include "CrezSoundTranslator.h"
+#include "ClibvorbisSoundTranslator.h"
 #include "ClibaudiofileSoundTranslator.h"
 #include "CrawSoundTranslator.h"
 #include "Cold_rezSoundTranslator.h"
@@ -271,11 +272,18 @@ void setupSoundTranslators()
 	static const CrezSoundTranslator rezSoundTranslator;
 	ASoundTranslator::registeredTranslators.push_back(&rezSoundTranslator);
 
+#ifdef HAVE_LIBVORBIS
+	static const ClibvorbisSoundTranslator libvorbisSoundTranslator;
+	ASoundTranslator::registeredTranslators.push_back(&libvorbisSoundTranslator);
+#endif
+
+#ifdef HAVE_LIBAUDIOFILE
 	static const ClibaudiofileSoundTranslator libaudiofileSoundTranslator;
 	ASoundTranslator::registeredTranslators.push_back(&libaudiofileSoundTranslator);
 
 	static const CrawSoundTranslator rawSoundTranslator;
 	ASoundTranslator::registeredTranslators.push_back(&rawSoundTranslator);
+#endif
 
 	static const Cold_rezSoundTranslator old_rezSoundTranslator;
 	ASoundTranslator::registeredTranslators.push_back(&old_rezSoundTranslator);

@@ -73,6 +73,7 @@ dnl Checks for libraries.|
 dnl ---------------------|
 AC_CHECK_LIB(m, sqrt)
 
+
 dnl  ??? on FreeBSD pthread isn't the right lib name... it should be 
 dnl libc_r ("-lc_r").. so I think on the action-if-not-found parameter 
 dnl to call AC_CHECK_LIB(c_r,pthread_create)  and same for the other 2
@@ -81,6 +82,7 @@ AC_CHECK_LIB(pthread, pthread_create)
 AC_CHECK_LIB(pthread, pthread_mutex_init)
 AC_CHECK_LIB(pthread, pthread_rwlock_init)
 
+
 dnl see config/cxx-lib.m4 for ajv_ macro definitions. 
 dnl
 dnl I found that afSetVirtualSampleFormat() was missing from earlier versions
@@ -88,6 +90,16 @@ dnl of audifile, so this is a little better than checking for a random
 dnl function in libaudiofile. I still have to work this so configure will
 dnl abort if the test fails.
 ajv_CHECK_LIB_ABORT(audiofile, afSetVirtualSampleFormat, AUDIOFILE,[http://oss.sgi.com/projects/audiofile/])
+
+
+dnl check for libvorbis to be installed, if it isn't then I should print
+dnl a big warning lib for fox and audiofile saying that ogg will not be
+dnl supported and where to go get it if their distro doesn't package it.
+AC_CHECK_LIB(ogg, ogg_stream_init)
+AC_CHECK_LIB(vorbis, vorbis_info_init)
+AC_CHECK_LIB(vorbisfile, ov_read)
+AC_CHECK_LIB(vorbisenc, vorbis_encode_init)
+
 
 dnl This is a check for a class in a C++ library. To pinpoint
 dnl the specific version we need we could change what class is linked.

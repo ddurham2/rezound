@@ -60,6 +60,7 @@ noinst_HEADERS= \
 	   CSound_defs.h \
 	   CTrigger.h \
 	   ClibaudiofileSoundTranslator.h \
+	   ClibvorbisSoundTranslator.h \
 	   Cold_rezSoundTranslator.h \
 	   CrawSoundTranslator.h \
 	   CrezSoundTranslator.h \
@@ -102,5 +103,6 @@ libbackend_la_SOURCES= \
 			CrezSoundTranslator.cpp \
 			Cold_rezSoundTranslator.cpp \
 			ClibaudiofileSoundTranslator.cpp \
+			ClibvorbisSoundTranslator.cpp \
 			CrawSoundTranslator.cpp \
 		        initialize.cpp
