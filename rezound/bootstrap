@@ -97,6 +97,7 @@ if test x"$1" = x"--clean"; then
 		test -f $cf && \
 		rm -v $cf
 	done
+	test -f rezound && rm -v rezound
 else
 	$LIBTOOLIZE
 	$ACLOCAL
