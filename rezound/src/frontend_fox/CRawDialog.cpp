@@ -84,7 +84,7 @@ CRawDialog::CRawDialog(FXWindow *mainWindow) :
 
 	FXComposite *t;
 
-	new FXLabel(main,"Data Offset:");
+	new FXLabel(main,"Data Start:");
 	t=new FXHorizontalFrame(main,0, 0,0,0,0, 0,0,0,0);
 		dataOffsetTextBox=new FXTextField(t,10,NULL,0,TEXTFIELD_NORMAL|TEXTFIELD_INTEGER);
 		dataOffsetTextBox->setText("0");
