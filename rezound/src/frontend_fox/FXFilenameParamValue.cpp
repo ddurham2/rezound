@@ -43,14 +43,17 @@ FXDEFMAP(FXFilenameParamValue) FXFilenameParamValueMap[]=
 	FXMAPFUNC(SEL_COMMAND,			FXFilenameParamValue::ID_BROWSE_BUTTON,		FXFilenameParamValue::onBrowseButton),
 };
 
-FXIMPLEMENT(FXFilenameParamValue,FXHorizontalFrame,FXFilenameParamValueMap,ARRAYNUMBER(FXFilenameParamValueMap))
+FXIMPLEMENT(FXFilenameParamValue,FXVerticalFrame,FXFilenameParamValueMap,ARRAYNUMBER(FXFilenameParamValueMap))
 
 FXFilenameParamValue::FXFilenameParamValue(FXComposite *p,int opts,const char *title,const string filename) :
-	FXHorizontalFrame(p,opts|FRAME_RIDGE | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 6,6,2,4, 2,0),
+	FXVerticalFrame(p,opts|FRAME_RIDGE|LAYOUT_FILL_X|LAYOUT_CENTER_Y, 0,0,0,0, 3,6,3,3, 0,0),
 
-	titleLabel(new FXLabel(this,title,NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
-	filenameTextBox(new FXTextField(this,8,this,ID_FILENAME_TEXTBOX, TEXTFIELD_NORMAL | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
-	browseButton(new FXButton(this,"&Browse",NULL,this,ID_BROWSE_BUTTON))
+	hFrame(new FXHorizontalFrame(this,LAYOUT_FILL_X,0,0,0,0, 0,0,0,0, 2,0)),
+		titleLabel(new FXLabel(hFrame,title,NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
+		filenameTextBox(new FXTextField(hFrame,8,this,ID_FILENAME_TEXTBOX, TEXTFIELD_NORMAL | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
+		browseButton(new FXButton(hFrame,"&Browse",NULL,this,ID_BROWSE_BUTTON)),
+			// ??? if this widget is ever going to be used for anything other than sound files, then I need to conditionally show this checkButton
+	openAsRawCheckButton(new FXCheckButton(this,"Open as &Raw"))
 {
 	filenameTextBox->setText(filename.c_str());
 }
@@ -65,8 +68,9 @@ long FXFilenameParamValue::onBrowseButton(FXObject *sender,FXSelector sel,void *
 {
 	string filename;
 	bool dummy=false;
-	if(gFrontendHooks->promptForOpenSoundFilename(filename,dummy))
-		setFilename(filename);
+	bool openAsRaw=false;
+	if(gFrontendHooks->promptForOpenSoundFilename(filename,dummy,openAsRaw))
+		setFilename(filename,openAsRaw);
 
 	return 1;
 }
@@ -76,9 +80,15 @@ const string FXFilenameParamValue::getFilename()
 	return decodeFilenamePresetParameter(filenameTextBox->getText().text());
 }
 
-void FXFilenameParamValue::setFilename(const string filename)
+const bool FXFilenameParamValue::getOpenAsRaw()
+{
+	return openAsRawCheckButton->getCheck();
+}
+
+void FXFilenameParamValue::setFilename(const string filename,bool openAsRaw)
 {
 	filenameTextBox->setText(filename.c_str());
+	openAsRawCheckButton->setCheck(openAsRaw);
 }
 
 const string FXFilenameParamValue::getTitle() const
@@ -103,13 +113,14 @@ void FXFilenameParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 
 	const string key=prefix+DOT+getTitle();
 	const string v=f->getValue(key.c_str());
-	setFilename(v);
+	setFilename(v,f->getValue((key+" AsRaw").c_str())=="true");
 }
 
 void FXFilenameParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 {
 	const string key=prefix+DOT+getTitle();
 	f->createKey(key.c_str(),encodeFilenamePresetParameter(filenameTextBox->getText().text()));
+	f->createKey((key+" AsRaw").c_str(),openAsRawCheckButton->getCheck() ? "true" : "false");
 }
 
 

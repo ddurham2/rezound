@@ -441,6 +441,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 					FXFilenameParamValue *filenameEntry=(FXFilenameParamValue *)parameters[t].second;
 					const string ret=filenameEntry->getFilename();
 					actionParameters->addStringParameter(filenameEntry->getTitle(),ret);	
+					actionParameters->addBoolParameter(filenameEntry->getTitle()+" OpenAsRaw",filenameEntry->getOpenAsRaw());	
 				}
 				break;
 

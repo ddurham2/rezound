@@ -30,7 +30,7 @@
 
 class CNestedDataFile;
 
-class FXFilenameParamValue : public FXHorizontalFrame
+class FXFilenameParamValue : public FXVerticalFrame
 {
 	FXDECLARE(FXFilenameParamValue);
 public:
@@ -40,7 +40,8 @@ public:
 	long onBrowseButton(FXObject *sender,FXSelector sel,void *ptr);
 
 	const string getFilename();
-	void setFilename(const string filename);
+	const bool getOpenAsRaw();
+	void setFilename(const string filename,bool openAsRaw);
 
 	const string getTitle() const;
 
@@ -52,7 +53,7 @@ public:
 
 	enum
 	{
-		ID_FILENAME_TEXTBOX=FXHorizontalFrame::ID_LAST,
+		ID_FILENAME_TEXTBOX=FXVerticalFrame::ID_LAST,
 		ID_BROWSE_BUTTON,
 		ID_LAST
 	};
@@ -62,9 +63,11 @@ protected:
 	FXFilenameParamValue() {}
 
 private:
-	FXLabel *titleLabel;
-	FXTextField *filenameTextBox;
-	FXButton *browseButton;
+	FXHorizontalFrame *hFrame;
+		FXLabel *titleLabel;
+		FXTextField *filenameTextBox;
+		FXButton *browseButton;
+	FXCheckButton *openAsRawCheckButton;
 };
 
 #endif
