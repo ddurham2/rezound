@@ -40,6 +40,8 @@ enum Selections
 
 	// --- and below no need to change gSelectionNames or gSelectiondescriptions --------------
 
+	sSetSelectionPositions,
+	
 	sGrowSelectionToTheLeft,
 	sGrowSelectionToTheRight,
 	sGrowSelectionInBothDirections,
