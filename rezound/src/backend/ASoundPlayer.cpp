@@ -40,7 +40,6 @@ void ASoundPlayer::initialize()
 
 void ASoundPlayer::deinitialize()
 {
-	// wait for out standing sound player channels to go away???
 	killAll();
 }
 

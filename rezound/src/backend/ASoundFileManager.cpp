@@ -301,43 +301,55 @@ void ASoundFileManager::recordToNew()
 	if(loaded==NULL)
 		return; // cancelled
 
-	// need to somehow choose an implementation ???
-	COSSSoundRecorder recorder;
+	soundPlayer->aboutToRecord();
 	try
 	{
-		recorder.initialize(loaded->getSound());
+
+		// need to somehow choose an implementation ???
+		COSSSoundRecorder recorder;
+		try
+		{
+			recorder.initialize(loaded->getSound());
+		}
+		catch(...)
+		{
+			close(ctSaveNone,loaded);
+			recorder.deinitialize();
+			throw;
+		}
+
+		bool ret=true;
+		try
+		{
+			ret=gFrontendHooks->promptForRecord(&recorder);
+			recorder.deinitialize();
+		}
+		catch(...)
+		{
+			recorder.deinitialize();
+			throw;
+		}
+
+		if(!ret)
+			close(ctSaveNone,loaded); // record dialog was cancelled, don't ask to save when closing
+		else
+		{
+			// ??? temporary until CSound can have zero length
+			loaded->getSound()->lockForResize(); try { loaded->getSound()->removeSpace(0,1); loaded->getSound()->unlockForResize(); } catch(...) { loaded->getSound()->unlockForResize(); throw; }
+
+			// set some kind of initial selection
+			loaded->channel->setStopPosition(loaded->getSound()->getLength()/2+loaded->getSound()->getLength()/4);
+			loaded->channel->setStartPosition(loaded->getSound()->getLength()/2-loaded->getSound()->getLength()/4);
+
+			updateAfterEdit();
+		}
+
+		soundPlayer->doneRecording();
 	}
 	catch(...)
 	{
-		close(ctSaveNone,loaded);
-		recorder.deinitialize();
+		soundPlayer->doneRecording();
 		throw;
-	}
-
-	bool ret=true;
-	try
-	{
-		ret=gFrontendHooks->promptForRecord(&recorder);
-		recorder.deinitialize();
-	}
-	catch(...)
-	{
-		recorder.deinitialize();
-		throw;
-	}
-
-	if(!ret)
-		close(ctSaveNone,loaded); // record dialog was cancelled, don't ask to save when closing
-	else
-	{
-		// ??? temporary until CSound can have zero length
-		loaded->getSound()->lockForResize(); try { loaded->getSound()->removeSpace(0,1); loaded->getSound()->unlockForResize(); } catch(...) { loaded->getSound()->unlockForResize(); throw; }
-
-		// set some kind of initial selection
-		loaded->channel->setStopPosition(loaded->getSound()->getLength()/2+loaded->getSound()->getLength()/4);
-		loaded->channel->setStartPosition(loaded->getSound()->getLength()/2-loaded->getSound()->getLength()/4);
-
-		updateAfterEdit();
 	}
 }
 

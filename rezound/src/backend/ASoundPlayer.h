@@ -25,8 +25,6 @@
 
 class ASoundPlayer;
 
-#include "CEnvelope.h"
-
 #include <set>
 
 /*
@@ -69,6 +67,25 @@ public:
 	virtual void initialize();
 	virtual void deinitialize();
 	virtual bool isInitialized() const=0;
+
+	/*
+	 * These need to be implemented to know if the output device(s)
+	 * support full duplex mode or not. If not, then when ReZound
+	 * is about to record this method should call killAll() and 
+	 * deinitialize the device(s).  When doneRecording() is called
+	 * then the device(s) should be reinitialized, but the playing
+	 * state of each channel does not have to be restored.
+	 *
+	 * It is the responsbility of the caller of aboutToRecord() to 
+	 * make sure that doneRecording() is called after recording has
+	 * ended or an error has occurred.  Otherwise, the audio output
+	 * would never be restored.
+	 *
+	 * If these are called while the sound player is not initialized
+	 * the results are undefined.
+	 */
+	virtual void aboutToRecord()=0;
+	virtual void doneRecording()=0;
 
 	void killAll();
 

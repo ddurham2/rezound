@@ -39,10 +39,13 @@ public:
 	void deinitialize();
 	bool isInitialized() const;
 
+	void aboutToRecord();
+	void doneRecording();
 private:
 
 	bool initialized;
 	int audio_fd;
+	bool supportsFullDuplex;
 
 	class CPlayThread : public AThread
 	{

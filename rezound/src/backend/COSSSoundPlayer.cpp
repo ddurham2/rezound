@@ -63,6 +63,7 @@ COSSSoundPlayer::COSSSoundPlayer() :
 
 	initialized(false),
 	audio_fd(-1),
+	supportsFullDuplex(false),
 
 	playThread(this)
 {
@@ -161,14 +162,24 @@ void COSSSoundPlayer::initialize()
 			close(audio_fd);
 			throw(runtime_error(string(__func__)+" -- error getting the buffering parameters -- "+strerror(errno)));
 		}
-		
+
+
+		// get the device's capabilities bit mask
+		int caps;
+		if(ioctl(audio_fd, SNDCTL_DSP_GETCAPS, &caps)==-1)
+			caps=0;
+
+		// determine if the device supports full duplex mode
+		// 	??? http://www.4front-tech.com/pguide/audio2.html#fulldup says that this should be checked AFTER attempting to put the card into full duplex mode... Shouldn't I be able to check the for ability before attempting to use it?
+		supportsFullDuplex= (caps&DSP_CAP_DUPLEX) ? true : false;
+
 		/*
 		printf("OSS player: info.fragments: %d\n",info.fragments);
 		printf("OSS player: info.fragstotal: %d\n",info.fragstotal);
 		printf("OSS player: info.fragsize: %d\n",info.fragsize);
 		printf("OSS player: info.bytes: %d\n",info.bytes);
+		printf("OSS player: supportsFullDuplex: %d\n",supportsFullDuplex);
 		*/
-
 
 		// start play thread
 		playThread.kill=false;
@@ -194,7 +205,21 @@ void COSSSoundPlayer::deinitialize()
 		close(audio_fd);
 
 		initialized=false;
+
+		//printf("OSS player: deinitialized\n");
 	}
+}
+
+void COSSSoundPlayer::aboutToRecord()
+{
+	if(!supportsFullDuplex)
+		deinitialize();
+}
+
+void COSSSoundPlayer::doneRecording()
+{
+	if(!initialized && !supportsFullDuplex)
+		initialize();
 }
 
 
