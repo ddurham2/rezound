@@ -5,6 +5,14 @@
 
 #define REZ_FOX_VERSION ((FOX_MAJOR*10000)+(FOX_MINOR*100)+FOX_LEVEL)
 
+#if FOX_MAJOR<1
+	// no control over ticks before 1.0
+	#define SLIDER_TICKS_LEFT 0
+	#define SLIDER_TICKS_RIGHT 0
+	#define SLIDER_TICKS_TOP 0
+	#define SLIDER_TICKS_BOTTOM 0
+#endif
+
 /*
  * FOX renamed some things at version 1.1.8 and added namespaces
  * so if the version is older then I rename them back.
