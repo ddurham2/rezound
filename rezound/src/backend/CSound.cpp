@@ -1194,14 +1194,14 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 				CStatusBar statusBar("Mixing Data (multiply) -- Channel "+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
-					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)src[srcWhere++]);
+					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)src[srcWhere++]/MAX_SAMPLE);
 					statusBar.update(t);
 				}
 			}
 			else
 			{	
 				for(sample_pos_t t=where;t<last;t++)
-					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)src[srcWhere++]);
+					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)src[srcWhere++]/MAX_SAMPLE);
 			}
 		}
 		else
@@ -1213,14 +1213,14 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 				CStatusBar statusBar("Mixing Data (multiply) -- Channel "+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
-					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)srcStretcher.getSample());
+					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)srcStretcher.getSample()/MAX_SAMPLE);
 					statusBar.update(t);
 				}
 			}
 			else
 			{
 				for(sample_pos_t t=where;t<last;t++)
-					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)srcStretcher.getSample());
+					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)srcStretcher.getSample()/MAX_SAMPLE);
 			}
 		}
 
