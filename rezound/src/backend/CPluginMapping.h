@@ -201,6 +201,7 @@ public:
 	// The plugin name is passed so default mappings can be developed for often used pluings
 	static const CPluginMapping getDefaultMapping(const string pluginName,unsigned pluginInputPorts,unsigned pluginOutputPorts,const CSound *sound);
 
+	bool somethingMappedToAnOutput() const;
 };
 
 #endif

@@ -150,6 +150,25 @@ const CPluginMapping CPluginMapping::getDefaultMapping(const string pluginName,u
 	return m;
 }
 
+bool CPluginMapping::somethingMappedToAnOutput() const
+{
+	for(size_t t=0;t<outputMappings.size();t++)
+	{
+		for(size_t i=0;i<outputMappings[t].size();i++)
+		{
+			if(outputMappings[t][i].size()>0)
+				return true;
+		}
+	}
+
+	for(size_t t=0;t<passThrus.size();t++)
+	{
+		if(passThrus[t].size()>0)
+			return true;
+	}
+	return false;
+}
+
 #include <stdio.h>
 void CPluginMapping::print() const
 {
