@@ -11,6 +11,7 @@
 	- RIGHT clicking the ruler across the top shows a popup menu for manipulating cues
 		- normally the selection positions will 'snap' to the cue positions
 		- holding SHIFT while changing the selection positions will momentarily disable the 'snap to cue' feature
+		- holding SHIFT while changing the selection positions will also momentarily disable auto scrolling when selecting near the edges
 	XXX (not until I get fox changed) - DOUBLE LEFT clicking the ruler brings up the cue list dialog
 	XXX (need to implement this) - DOUBLE LEFT clicking a cue brings up the edit dialog
 
