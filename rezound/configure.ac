@@ -35,6 +35,7 @@ AC_LANG(C++)
 
 
 
+
 dnl ############################################################################
 dnl # Checks for programs                                                      #
 dnl ############################################################################
@@ -276,20 +277,15 @@ dnl ### Ogg Vorbis Libraries ##################################################
 
 AC_LANG_PUSH(C) dnl xiph needs to include vorbisenc.h as well if C++ is going to compile the code
 
-dnl used to conditionally activate code in ClibvorbisSoundTranslator.*
 AH_TEMPLATE(HAVE_LIBOGG)
 dnl this macro detects libogg and does an AC_SUBST on OGG_CFLAGS and OGG_LIBS, so I put these variables in src/backend/Makefile.am for substitution
 XIPH_PATH_OGG(AC_DEFINE(HAVE_LIBOGG),AC_MSG_NOTICE([Ogg Vorbis website: http://www.xiph.org]))
 
-dnl used to conditionally activate code in ClibvorbisSoundTranslator
 AH_TEMPLATE(HAVE_LIBVORBIS)
 dnl this macro detects libvorbis and does an AC_SUBST on VORBIS_CFLAGS, VORBIS_LIBS, VORBISFILE_LIBS and VORBISENC_LIBS, so I put these variables in src/backend/Makefile.am for substitution
 XIPH_PATH_VORBIS(AC_DEFINE(HAVE_LIBVORBIS),AC_MSG_NOTICE([Ogg Vorbis website: http://www.xiph.org]))
 
 AC_LANG_POP(C)
-
-
-
 
 
 
@@ -340,7 +336,6 @@ AC_PATH_PROG(RESWRAP, reswrap)
 
 
 
-
 dnl ############################################################################
 dnl # Supply header files if their missing (and we have an implementation)     #
 dnl ############################################################################
@@ -384,29 +379,6 @@ fi
 
 
 
-dnl ############################################################################
-dnl # Handle link type flag                                                    #
-dnl ############################################################################
-
-dnl If the user gave --enable-standalone then add -static and -ldl to the 
-dnl linker arguments
-dnl And this check has to be after the ajv_CXX_CHECK_LIB calls because it
-dnl does not use libtool to compile so it fails as a valid flag to the compiler
-AC_ARG_ENABLE(
-	standalone,
-	[  --enable-standalone     build ReZound linked only to static libraries so it can run nearly on its own],
-	[
-		dnl the 3rd arg would not be necessary if this section didn't have to come after ajv_CXX_CHECK_LIB's
-		AC_CHECK_LIB(dl, dlopen,[LIBS="$LIBS -ldl"])
-		LDFLAGS="-static $LDFLAGS"
-	]
-	)
-
-
-
-
-
-
 
 
 dnl ############################################################################
@@ -432,6 +404,38 @@ dnl ############################################################################
 
 AM_GNU_GETTEXT_VERSION([0.11.5])
 AM_GNU_GETTEXT([external])
+
+
+
+
+dnl ############################################################################
+dnl # Handle link type flag                                                    #
+dnl ############################################################################
+
+dnl If the user gave --enable-standalone then add -all-static and -ldl to the 
+dnl linker arguments
+dnl And this check has to be after the ajv_CXX_CHECK_LIB calls because it
+dnl does not use libtool to compile so it fails as a valid flag to the compiler
+AC_ARG_ENABLE(
+	standalone,
+	[  --enable-standalone     build ReZound linked only to static libraries so it can run nearly on its own],
+	[
+		dnl the 3rd arg would not be necessary if this section didn't have to come after ajv_CXX_CHECK_LIB's
+		AC_CHECK_LIB(dl, dlopen,[LIBS="$LIBS -ldl"])
+		LDFLAGS="-all-static $LDFLAGS"
+		AC_MSG_NOTICE([*** NOTICE *** stand-alone build enabled -- now static versions of all the dependancy libraries will be required.  If final linking fails, then make sure a static version of the failed library is installed.])
+
+		dnl warn about needing static libs if using FOX and statically linking
+		if echo "$LD_FLAGS" | grep "FOX" >/dev/null
+		then
+			AC_MSG_NOTICE([*** NOTICE *** since static linking is enabled, FOX will require static versions of libjpeg, libpng, libtiff, XFree86-libs, and maybe others])
+		fi
+		
+	]
+	)
+
+
+
 
 
 
