@@ -49,8 +49,8 @@
 
 // ??? as the sample rate is lower these need to be lower so that onData is called more often and the view meters on the record dialog don't seem to lag
 
-#define BUFFER_SIZE_BYTES 4096						// buffer size in bytes
-#define BUFFER_SIZE_BYTES_LOG2 12					// log2(BUFFER_SIZE_BYTES) -- that is 2^this is BUFFER_SIZE_BYTES
+#define BUFFER_SIZE_BYTES 8192						// buffer size in bytes
+#define BUFFER_SIZE_BYTES_LOG2 13					// log2(BUFFER_SIZE_BYTES) -- that is 2^this is BUFFER_SIZE_BYTES
 
 
 COSSSoundRecorder::COSSSoundRecorder() :
@@ -136,7 +136,7 @@ void COSSSoundRecorder::initialize(CSound *sound)
 			close(audio_fd);
 			throw(runtime_error(string(__func__)+" -- error setting the buffering parameters -- "+strerror(errno)));
 		}
-		else if(arg!=parm)
+		else if((arg&0xffff)!=(parm&0xffff))
 		{
 			close(audio_fd);
 			throw(runtime_error(string(__func__)+" -- error setting the buffering parameters -- "+istring(BUFFER_SIZE_BYTES)+" bytes long, not supported"));
