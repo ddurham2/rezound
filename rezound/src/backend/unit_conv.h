@@ -87,14 +87,14 @@ static inline const double freq_to_octave(const double freq,const double baseFre
 static inline const double unitRange_to_unitRange_squared(const double x) { return  pow(x,2.0); }
 static inline const double unitRange_to_unitRange_unsquared(const double x) { return  sqrt(x); } // inverse of previous
 
-	// NOTE: this is a little different than ..._squared ??? I'm not sure if it's working right it seems to be bipolar
+	// NOTE: this is a little different than ..._squared ??? I'm not sure if it's working right it seems to be recip-sym
 // [0,1] -> [0,1] with more accuracy near 0.5 patterned after f(x)=x^3
 static inline const double unitRange_to_unitRange_cubed(const double x) { return (pow(2.0*x-1.0,3.0)+1.0)/2.0; }
 static inline const double unitRange_to_unitRange_uncubed(const double x) { return (cbrt(2.0*x-1.0)+1.0)/2.0; } // inverse of previous
 
-// [0,1] -> [1/a,a] with exponential behavior 
-static inline const double unitRange_to_bipolarRange_exp(const double x,const double a) { return pow(a,2.0*x-1.0); }
-static inline const double bipolarRange_to_unitRange_exp(const double x,const double a) { return 0.5*log(x)/log(a)+0.5; } // inverse of previous
+// [0,1] -> [1/a,a] with exponential behavior .. recipsym means reciprocally symetric as the range of the function is reciprocally symetric around 1
+static inline const double unitRange_to_recipsymRange_exp(const double x,const double a) { return pow(a,2.0*x-1.0); }
+static inline const double recipsymRange_to_unitRange_exp(const double x,const double a) { return 0.5*log(x)/log(a)+0.5; } // inverse of previous
 
 // [0,1] -> [a,b] with linear behavior
 static inline const double unitRange_to_otherRange_linear(const double x,const double a,const double b) { return a+((b-a)*x); }
