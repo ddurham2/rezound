@@ -24,8 +24,8 @@
 #include "../CActionParameters.h"
 
 
-CRemoveChannelsEdit::CRemoveChannelsEdit(const CActionSound actionSound) :
-	AAction(actionSound),
+CRemoveChannelsEdit::CRemoveChannelsEdit(const AActionFactory *factory,const CActionSound *actionSound) :
+	AAction(factory,actionSound),
 	tempAudioPoolKey(-1),
 	sound(NULL)
 {
@@ -37,19 +37,19 @@ CRemoveChannelsEdit::~CRemoveChannelsEdit()
 		sound->removeTempAudioPools(tempAudioPoolKey);
 }
 
-bool CRemoveChannelsEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CRemoveChannelsEdit::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
 	if(prepareForUndo)
 	{
-		tempAudioPoolKey=actionSound.sound->moveChannelsToTemp(actionSound.doChannel);
-		sound=actionSound.sound;
+		tempAudioPoolKey=actionSound->sound->moveChannelsToTemp(actionSound->doChannel);
+		sound=actionSound->sound;
 	}
 	else
 	{
-		for(int t=actionSound.sound->getChannelCount()-1;t>=0;t--)
+		for(int t=actionSound->sound->getChannelCount()-1;t>=0;t--)
 		{
-			if(actionSound.doChannel[t])
-				actionSound.sound->removeChannels((unsigned)t,1);
+			if(actionSound->doChannel[t])
+				actionSound->sound->removeChannels((unsigned)t,1);
 		}
 	}
 	
@@ -57,14 +57,14 @@ bool CRemoveChannelsEdit::doActionSizeSafe(CActionSound &actionSound,bool prepar
 	return true;
 }
 
-AAction::CanUndoResults CRemoveChannelsEdit::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CRemoveChannelsEdit::canUndo(const CActionSound *actionSound) const
 {
 	return curYes;
 }
 
-void CRemoveChannelsEdit::undoActionSizeSafe(const CActionSound &actionSound)
+void CRemoveChannelsEdit::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	actionSound.sound->moveChannelsFromTemp(tempAudioPoolKey,actionSound.doChannel);
+	actionSound->sound->moveChannelsFromTemp(tempAudioPoolKey,actionSound->doChannel);
 	tempAudioPoolKey=-1;
 }
 
@@ -75,14 +75,15 @@ void CRemoveChannelsEdit::undoActionSizeSafe(const CActionSound &actionSound)
 CRemoveChannelsEditFactory::CRemoveChannelsEditFactory(AActionDialog *dialog) :
 	AActionFactory(N_("Remove Channels"),_("Remove Channels of Audio"),NULL,dialog,true,false)
 {
+	selectionPositionsAreApplicable=false;
 }
 
 CRemoveChannelsEditFactory::~CRemoveChannelsEditFactory()
 {
 }
 
-CRemoveChannelsEdit *CRemoveChannelsEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CRemoveChannelsEdit *CRemoveChannelsEditFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return new CRemoveChannelsEdit(actionSound);
+	return new CRemoveChannelsEdit(this,actionSound);
 }
 

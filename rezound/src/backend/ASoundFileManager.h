@@ -49,15 +49,17 @@ public:
 	virtual ~ASoundFileManager() { }
 
 	void createNew();
-	CLoadedSound *createNew(const string filename,unsigned channelCount,unsigned sampleRate,unsigned length=1,bool rawFormat=false);
+	CLoadedSound *createNew(const string filename,unsigned channelCount,unsigned sampleRate,sample_pos_t length=1,bool rawFormat=false);
 		// returns false if a prompt for filename was cancelled or if there was an error loading
 	bool open(const string filename="",bool openAsRaw=false);
+	bool open(const vector<string> &filenames,bool openAsRaw=false);
 
+#warning do this.. I can call soundFileManager->getActive() from actions when necessary
 	// ??? should rename these to, saveActive...  or pass them a CSound * (I prefer that), perhaps optionally pass saveAs a filename which can be ""
 		// returns false if something was cancelled
 	bool save();
 		// returns false if something was cancelled
-	bool saveAs();
+	bool saveAs(const string filename="",bool saveAsRaw=false);
 		// returns false if something was cancelled
 	bool savePartial(const CSound *sound,const string filename,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs);
 

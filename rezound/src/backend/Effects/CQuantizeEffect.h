@@ -29,13 +29,13 @@
 class CQuantizeEffect : public AAction
 {
 public:
-	CQuantizeEffect(const CActionSound &actionSound,unsigned quantumCount,float inputGain,float outputGain);
+	CQuantizeEffect(const AActionFactory *factory,const CActionSound *actionSound,unsigned quantumCount,float inputGain,float outputGain);
 	virtual ~CQuantizeEffect();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const unsigned quantumCount;
@@ -48,7 +48,7 @@ public:
 	CQuantizeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CQuantizeEffectFactory();
 
-	CQuantizeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CQuantizeEffect *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

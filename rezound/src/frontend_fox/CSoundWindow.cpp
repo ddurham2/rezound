@@ -288,6 +288,7 @@ CSoundWindow::CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound) :
 
 
 	addCueActionFactory=new CAddCueActionFactory(gCueDialog);
+	gRegisteredActionFactories[addCueActionFactory->getName()]=addCueActionFactory; // we can register this, but it only records the absolute position it added the cue to... better would be to have separate action factories for add at start and add at stop positions .. then these two should be registered plus the one for "this position" for absolute positioning
 	removeCueActionFactory=new CRemoveCueActionFactory;
 	replaceCueActionFactory=new CReplaceCueActionFactory(gCueDialog);
 }
@@ -804,24 +805,24 @@ long CSoundWindow::onAddCue(FXObject *sender,FXSelector sel,void *ptr)
 		CActionParameters actionParameters(NULL);
 
 		// add the parameters for the dialog to display initially
-		actionParameters.addStringParameter("name","Cue1");
+		actionParameters.setStringParameter("name","Cue1");
 
 		switch(FXSELTYPE(sel))
 		{
 		case FXRezWaveView::SEL_ADD_CUE:
-			actionParameters.addSamplePosParameter("position",*((sample_pos_t *)ptr));
+			actionParameters.setSamplePosParameter("position",*((sample_pos_t *)ptr));
 			break;
 
 		case FXRezWaveView::SEL_ADD_CUE_AT_START_POSITION:
-			actionParameters.addSamplePosParameter("position",loadedSound->channel->getStartPosition());
+			actionParameters.setSamplePosParameter("position",loadedSound->channel->getStartPosition());
 			break;
 
 		case FXRezWaveView::SEL_ADD_CUE_AT_STOP_POSITION:
-			actionParameters.addSamplePosParameter("position",loadedSound->channel->getStopPosition());
+			actionParameters.setSamplePosParameter("position",loadedSound->channel->getStopPosition());
 			break;
 		}
 
-		actionParameters.addBoolParameter("isAnchored",false);
+		actionParameters.setBoolParameter("isAnchored",false);
 
 		addCueActionFactory->performAction(loadedSound,&actionParameters,false);
 		updateFromEdit();
@@ -837,7 +838,7 @@ long CSoundWindow::onAddCue(FXObject *sender,FXSelector sel,void *ptr)
 long CSoundWindow::onRemoveCue(FXObject *sender,FXSelector sel,void *ptr)
 {
 	CActionParameters actionParameters(NULL);
-	actionParameters.addUnsignedParameter("index",*((size_t *)ptr));
+	actionParameters.setUnsignedParameter("index",*((size_t *)ptr));
 	removeCueActionFactory->performAction(loadedSound,&actionParameters,false);
 	updateFromEdit();
 	return 1;
@@ -849,10 +850,10 @@ long CSoundWindow::onEditCue(FXObject *sender,FXSelector sel,void *ptr)
 	size_t cueIndex=*((size_t *)ptr);
 
 	// add the parameters for the dialog to display initially
-	actionParameters.addUnsignedParameter("index",cueIndex);
-	actionParameters.addStringParameter("name",loadedSound->sound->getCueName(cueIndex));
-	actionParameters.addSamplePosParameter("position",loadedSound->sound->getCueTime(cueIndex));
-	actionParameters.addBoolParameter("isAnchored",loadedSound->sound->isCueAnchored(cueIndex));
+	actionParameters.setUnsignedParameter("index",cueIndex);
+	actionParameters.setStringParameter("name",loadedSound->sound->getCueName(cueIndex));
+	actionParameters.setSamplePosParameter("position",loadedSound->sound->getCueTime(cueIndex));
+	actionParameters.setBoolParameter("isAnchored",loadedSound->sound->isCueAnchored(cueIndex));
 
 	replaceCueActionFactory->performAction(loadedSound,&actionParameters,false);
 	updateFromEdit();

@@ -24,8 +24,8 @@
 #include "../CActionParameters.h"
 
 
-CAddChannelsEdit::CAddChannelsEdit(const CActionSound actionSound,unsigned _where,unsigned _count) :
-	AAction(actionSound),
+CAddChannelsEdit::CAddChannelsEdit(const AActionFactory *factory,const CActionSound *actionSound,unsigned _where,unsigned _count) :
+	AAction(factory,actionSound),
 
 	where(_where),
 	count(_count)
@@ -36,20 +36,20 @@ CAddChannelsEdit::~CAddChannelsEdit()
 {
 }
 
-bool CAddChannelsEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CAddChannelsEdit::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	actionSound.sound->addChannels(where,count,true);
+	actionSound->sound->addChannels(where,count,true);
 	return true;
 }
 
-AAction::CanUndoResults CAddChannelsEdit::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CAddChannelsEdit::canUndo(const CActionSound *actionSound) const
 {
 	return curYes;
 }
 
-void CAddChannelsEdit::undoActionSizeSafe(const CActionSound &actionSound)
+void CAddChannelsEdit::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	actionSound.sound->removeChannels(where,count);
+	actionSound->sound->removeChannels(where,count);
 }
 
 
@@ -59,15 +59,17 @@ void CAddChannelsEdit::undoActionSizeSafe(const CActionSound &actionSound)
 CAddChannelsEditFactory::CAddChannelsEditFactory(AActionDialog *dialog) :
 	AActionFactory(N_("Add Channels"),_("Add New Channels of Audio"),NULL,dialog,true,false)
 {
+	selectionPositionsAreApplicable=false;
 }
 
 CAddChannelsEditFactory::~CAddChannelsEditFactory()
 {
 }
 
-CAddChannelsEdit *CAddChannelsEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CAddChannelsEdit *CAddChannelsEditFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return new CAddChannelsEdit(
+		this,
 		actionSound,
 		actionParameters->getUnsignedParameter("Insert Where"),
 		actionParameters->getUnsignedParameter("Insert Count")

@@ -86,43 +86,6 @@ public:
 
 
 
-
-
-// --- save as multiple filenames --------
-
-class CSaveAsMultipleFilesDialog : public CActionParamDialog
-{
-public:
-	CSaveAsMultipleFilesDialog(FXWindow *mainWindow);
-	virtual ~CSaveAsMultipleFilesDialog(){}
-
-protected:
-	const string getExplanation() const;
-};
-
-
-// --- burn to CD ------------------------
-
-class CBurnToCDDialog : public CActionParamDialog
-{
-	FXDECLARE(CBurnToCDDialog);
-public:
-	CBurnToCDDialog(FXWindow *mainWindow);
-	virtual ~CBurnToCDDialog(){}
-
-	enum {
-		ID_DETECT_DEVICE_BUTTON=CActionParamDialog::ID_LAST,
-	};
-
-	long onDetectDeviceButton(FXObject *object,FXSelector sel,void *ptr);
-
-protected:
-	CBurnToCDDialog::CBurnToCDDialog() {}
-
-	const string getExplanation() const;
-};
-
-
 // --- grow or slide selection dialog -----
 
 class CGrowOrSlideSelectionDialog : public CActionParamDialog

@@ -37,8 +37,8 @@
 
 #include "parse_segment_cues.h"
 
-CBurnToCDAction::CBurnToCDAction(const CActionSound &_actionSound,const string _tempSpaceDir,const string _pathTo_cdrdao,const unsigned _burnSpeed,const unsigned _gapBetweenTracks,const string _device,const string _extra_cdrdao_options,const bool _selectionOnly,const bool _testOnly) :
-	AAction(_actionSound),
+CBurnToCDAction::CBurnToCDAction(const AActionFactory *factory,const CActionSound *_actionSound,const string _tempSpaceDir,const string _pathTo_cdrdao,const unsigned _burnSpeed,const unsigned _gapBetweenTracks,const string _device,const string _extra_cdrdao_options,const bool _selectionOnly,const bool _testOnly) :
+	AAction(factory,_actionSound),
 	tempSpaceDir(_tempSpaceDir),
 	pathTo_cdrdao(_pathTo_cdrdao),
 	burnSpeed(_burnSpeed),
@@ -54,11 +54,11 @@ CBurnToCDAction::~CBurnToCDAction()
 {
 }
 
-bool CBurnToCDAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CBurnToCDAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	const CSound &sound=*(actionSound.sound);
-	const sample_pos_t selectionStart= selectionOnly ? actionSound.start : 0;
-	const sample_pos_t selectionLength= selectionOnly ? actionSound.selectionLength() : sound.getLength();
+	const CSound &sound=*(actionSound->sound);
+	const sample_pos_t selectionStart= selectionOnly ? actionSound->start : 0;
+	const sample_pos_t selectionLength= selectionOnly ? actionSound->selectionLength() : sound.getLength();
 	const sample_pos_t fullLength=sound.getLength();
 	const unsigned channelCount=sound.getChannelCount();
 	const unsigned sampleRate=sound.getSampleRate();
@@ -367,12 +367,12 @@ bool CBurnToCDAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 	return true;
 }
 
-AAction::CanUndoResults CBurnToCDAction::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CBurnToCDAction::canUndo(const CActionSound *actionSound) const
 {
 	return curNA;
 }
 
-void CBurnToCDAction::undoActionSizeSafe(const CActionSound &actionSound)
+void CBurnToCDAction::undoActionSizeSafe(const CActionSound *actionSound)
 {
 	// not applicable
 }
@@ -440,9 +440,10 @@ CBurnToCDActionFactory::~CBurnToCDActionFactory()
 {
 }
 
-CBurnToCDAction *CBurnToCDActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CBurnToCDAction *CBurnToCDActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return new CBurnToCDAction(
+		this,
 		actionSound,
 		actionParameters->getStringParameter("Temp Space Directory"),
 		actionParameters->getStringParameter("Path to cdrdao"),

@@ -29,13 +29,13 @@
 class CRemoveDCAction : public AAction
 {
 public:
-	CRemoveDCAction(const CActionSound actionSound);
+	CRemoveDCAction(const AActionFactory *factory,const CActionSound *actionSound);
 	virtual ~CRemoveDCAction();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 };
 
@@ -45,7 +45,7 @@ public:
 	CRemoveDCActionFactory(AActionDialog *channelSelectDialog);
 	virtual ~CRemoveDCActionFactory();
 
-	CRemoveDCAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CRemoveDCAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 
 	const string getExplanation() const;
 };

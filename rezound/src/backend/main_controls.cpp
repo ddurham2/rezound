@@ -22,12 +22,14 @@
 
 #include <exception>
 
+#include "settings.h"
 #include "CSound.h"
 #include "AStatusComm.h"
 #include "ASoundFileManager.h"
 #include "CSoundPlayerChannel.h"
 #include "CLoadedSound.h"
 #include "AAction.h"
+#include "AFrontendHooks.h"
 
 
 
@@ -121,18 +123,46 @@ void recordSound(ASoundFileManager *soundFileManager)
 	}
 }
 
+void recordMacro()
+{
+	try
+	{
+		if(AActionFactory::macroRecorder.isRecording())
+		{
+			AActionFactory::macroRecorder.stopRecording();
+		}
+		else
+		{
+			string macroName; // initialize to something that doesn't exist "untitled1".. 
+			if(gFrontendHooks->showRecordMacroDialog(macroName))
+				AActionFactory::macroRecorder.startRecording(gUserMacroStore,macroName);
+		}
+	}
+	catch(exception &e)
+	{
+		Error(e.what());
+	}
+}
+
 //---------------------------------------------------------------------------
 
 const bool exitReZound(ASoundFileManager *soundFileManager)
 {
 	try
 	{
-		if(soundFileManager->getOpenedCount()>1)
+		// make sure the user wants to quit
+			// >1 instead of >0 because it's easy to open the 1 (unsaved) file again, rather than several (because if the one is unsaved, you get a chance to cancel)
+		if(soundFileManager->getOpenedCount()>1) 
 		{
 			if(Question(_("Are you sure you want to quit?"),yesnoQues)!=yesAns)
 				return false;
 		}
 
+		// stop recording a macro if there is one
+		// we do this prior to closing files since they could cancel the quit while files are closing
+		AActionFactory::macroRecorder.stopRecording();
+
+		// close all opened files
 		while(soundFileManager->getActive()!=NULL)
 		{
 			if(!soundFileManager->close(ASoundFileManager::ctSaveYesNoStop))
@@ -368,6 +398,12 @@ void undo(ASoundFileManager *soundFileManager)
 			{
 				AAction *a=s->actions.top();
 				s->actions.pop();
+
+				// if we're recording a macro, then un-record this action being undone
+				try {
+					if(AActionFactory::macroRecorder.isRecording())
+						AActionFactory::macroRecorder.popAction(a->getFactory()->getName());
+				} catch(...) { }
 
 				a->undoAction(s->channel);
 

@@ -20,8 +20,8 @@
 
 #include "CRemoveDCAction.h"
 
-CRemoveDCAction::CRemoveDCAction(const CActionSound actionSound) :
-	AAction(actionSound)
+CRemoveDCAction::CRemoveDCAction(const AActionFactory *factory,const CActionSound *actionSound) :
+	AAction(factory,actionSound)
 {
 }
 
@@ -29,22 +29,22 @@ CRemoveDCAction::~CRemoveDCAction()
 {
 }
 
-bool CRemoveDCAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CRemoveDCAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t stop=actionSound.stop;
-	const sample_pos_t selectionLength=actionSound.selectionLength();
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t stop=actionSound->stop;
+	const sample_pos_t selectionLength=actionSound->selectionLength();
 
 	if(prepareForUndo)
-		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
+		moveSelectionToTempPools(actionSound,mmSelection,actionSound->selectionLength());
 
 	unsigned channelsDoneCount=0;
-	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+	for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 	{
-		if(actionSound.doChannel[i])
+		if(actionSound->doChannel[i])
 		{
-			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
-			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
+			const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);
+			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
 
 			const sample_pos_t srcStart=prepareForUndo ? 0 : start;
 			const sample_pos_t srcStop=prepareForUndo ? selectionLength-1 : stop;
@@ -73,7 +73,7 @@ bool CRemoveDCAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 				return false;
 			}
 
-			CStatusBar statusBar(_("Remove DC Component -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true);
+			CStatusBar statusBar(_("Remove DC Component -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),start,stop,true);
 
 			sample_pos_t srcPos=srcStart;
 			for(sample_pos_t t=start;t<=stop;t++)
@@ -85,29 +85,29 @@ bool CRemoveDCAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 					if(prepareForUndo)
 						undoActionSizeSafe(actionSound);
 					else
-						actionSound.sound->invalidatePeakData(i,start,t);
+						actionSound->sound->invalidatePeakData(i,start,t);
 					return false;
 				}
 			}
 
 			// invalid if we didn't prepare for undo (which created new and invalidated space)
 			if(!prepareForUndo)
-				actionSound.sound->invalidatePeakData(i,start,stop);
+				actionSound->sound->invalidatePeakData(i,start,stop);
 		}
 	}
 
 	return true;
 }
 
-AAction::CanUndoResults CRemoveDCAction::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CRemoveDCAction::canUndo(const CActionSound *actionSound) const
 {
 	// should check some size constraint
 	return curYes;
 }
 
-void CRemoveDCAction::undoActionSizeSafe(const CActionSound &actionSound)
+void CRemoveDCAction::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
+	restoreSelectionFromTempPools(actionSound,actionSound->start,actionSound->selectionLength());
 }
 
 
@@ -123,9 +123,9 @@ CRemoveDCActionFactory::~CRemoveDCActionFactory()
 {
 }
 
-CRemoveDCAction *CRemoveDCActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CRemoveDCAction *CRemoveDCActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return new CRemoveDCAction(actionSound);
+	return new CRemoveDCAction(this,actionSound);
 }
 
 const string CRemoveDCActionFactory::getExplanation() const

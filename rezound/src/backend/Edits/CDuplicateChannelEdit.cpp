@@ -24,8 +24,8 @@
 #include "../CActionParameters.h"
 
 
-CDuplicateChannelEdit::CDuplicateChannelEdit(const CActionSound actionSound,unsigned _whichChannel,unsigned _insertWhere,unsigned _insertCount) :
-	AAction(actionSound),
+CDuplicateChannelEdit::CDuplicateChannelEdit(const AActionFactory *factory,const CActionSound *actionSound,unsigned _whichChannel,unsigned _insertWhere,unsigned _insertCount) :
+	AAction(factory,actionSound),
 
 	whichChannel(_whichChannel),
 	insertWhere(_insertWhere),
@@ -37,38 +37,38 @@ CDuplicateChannelEdit::~CDuplicateChannelEdit()
 {
 }
 
-bool CDuplicateChannelEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CDuplicateChannelEdit::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	if(insertWhere>actionSound.sound->getChannelCount())
+	if(insertWhere>actionSound->sound->getChannelCount())
 		throw runtime_error(string(__func__)+" -- insertWhere ("+istring(insertWhere)+") is out of range");
-	if(whichChannel>=actionSound.sound->getChannelCount())
+	if(whichChannel>=actionSound->sound->getChannelCount())
 		throw runtime_error(string(__func__)+" -- whichChannel ("+istring(whichChannel)+") is out of range");
 
-	if(actionSound.sound->getChannelCount()+insertCount>MAX_CHANNELS)
-		throw EUserMessage(string(_("Inserting this many more channels will add more than the maximum allowed channels."))+"\n"+istring(actionSound.sound->getChannelCount())+"+"+istring(insertCount)+" > "+istring(MAX_CHANNELS));
+	if(actionSound->sound->getChannelCount()+insertCount>MAX_CHANNELS)
+		throw EUserMessage(string(_("Inserting this many more channels will add more than the maximum allowed channels."))+"\n"+istring(actionSound->sound->getChannelCount())+"+"+istring(insertCount)+" > "+istring(MAX_CHANNELS));
 
 	unsigned whereSrcChannelWillBe;
 	if(insertWhere>whichChannel)
 		whereSrcChannelWillBe=whichChannel;
 	else
 		whereSrcChannelWillBe=whichChannel+insertCount;
-	actionSound.sound->addChannels(insertWhere,insertCount,false);
+	actionSound->sound->addChannels(insertWhere,insertCount,false);
 
-	const CRezPoolAccesser src=actionSound.sound->getAudio(whereSrcChannelWillBe);
+	const CRezPoolAccesser src=actionSound->sound->getAudio(whereSrcChannelWillBe);
 	for(unsigned t=insertWhere;t<insertWhere+insertCount;t++)
-		actionSound.sound->mixSound(t,0,src,0,actionSound.sound->getSampleRate(),actionSound.sound->getLength(),mmOverwrite,sftNone,false,true);
+		actionSound->sound->mixSound(t,0,src,0,actionSound->sound->getSampleRate(),actionSound->sound->getLength(),mmOverwrite,sftNone,false,true);
 
 	return true;
 }
 
-AAction::CanUndoResults CDuplicateChannelEdit::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CDuplicateChannelEdit::canUndo(const CActionSound *actionSound) const
 {
 	return curYes;
 }
 
-void CDuplicateChannelEdit::undoActionSizeSafe(const CActionSound &actionSound)
+void CDuplicateChannelEdit::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	actionSound.sound->removeChannels(insertWhere,insertCount);
+	actionSound->sound->removeChannels(insertWhere,insertCount);
 }
 
 
@@ -78,15 +78,17 @@ void CDuplicateChannelEdit::undoActionSizeSafe(const CActionSound &actionSound)
 CDuplicateChannelEditFactory::CDuplicateChannelEditFactory(AActionDialog *dialog) :
 	AActionFactory(N_("Duplicate Channel"),_("Duplicate Channel"),NULL,dialog,true,false)
 {
+	selectionPositionsAreApplicable=false;
 }
 
 CDuplicateChannelEditFactory::~CDuplicateChannelEditFactory()
 {
 }
 
-CDuplicateChannelEdit *CDuplicateChannelEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CDuplicateChannelEdit *CDuplicateChannelEditFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return new CDuplicateChannelEdit(
+		this,
 		actionSound,
 		actionParameters->getUnsignedParameter("Which Channel"),
 		actionParameters->getUnsignedParameter("Insert Where"),

@@ -85,6 +85,8 @@ public:
 
 	long onAutoScroll(FXObject *object,FXSelector sel,void *ptr);
 
+	long onHMouseWheel(FXObject *object,FXSelector sel,void *ptr);
+
 	enum
 	{
 		ID_CANVAS=FXScrollArea::ID_LAST,

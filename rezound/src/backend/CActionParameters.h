@@ -33,21 +33,69 @@ class CActionParameters;
 #include "CSound_defs.h"
 #include "ALFO.h"
 #include "CPluginMapping.h"
+#include "CGraphParamValueNode.h"
 
 class ASoundFileManager;
+#include <CNestedDataFile/CNestedDataFile.h>
 
 
-/*
- * One of these is always the input to an action
- * Could could be streamed to disk to repeat actions later with the same parameters 
- */
-#include "CGraphParamValueNode.h"
-class CActionParameters
+class CActionParameters : public CNestedDataFile
 {
 public:
 	CActionParameters(ASoundFileManager *soundFileManager);
 	CActionParameters(const CActionParameters &src);
 	virtual ~CActionParameters();
+
+#warning eventually remove these convenience methods and call the base class methods directly from the calling code
+
+	const bool containsParameter(const string name) const { return keyExists(name)==ktValue; };
+	void removeParameter(const string name,bool throwIfNotExists=false) { removeKey(name,throwIfNotExists); }
+
+	const bool getBoolParameter(const string name) const				{ return getValue<bool>(name); }
+	const string getStringParameter(const string name) const			{ return getValue<string>(name); }
+	const unsigned getUnsignedParameter(const string name) const			{ return getValue<unsigned>(name); }
+	const sample_pos_t getSamplePosParameter(const string name) const		{ return getValue<sample_pos_t>(name); }
+	const double getDoubleParameter(const string name) const			{ return getValue<double>(name); }
+	const CGraphParamValueNodeList getGraphParameter(const string name) const	{ return getValue<CGraphParamValueNodeList>(name); }
+	const CLFODescription getLFODescription(const string name) const		{ return getValue<CLFODescription>(name); }
+	const CPluginMapping getPluginMapping(const string name) const			{ return getValue<CPluginMapping>(name); }
+
+	void setBoolParameter(const string name,const bool v)				{ setValue<bool>(name,v); }
+	void setStringParameter(const string name,const string v)			{ setValue<string>(name,v); }
+	void setUnsignedParameter(const string name,const unsigned v)			{ setValue<unsigned>(name,v); }
+	void setSamplePosParameter(const string name,const sample_pos_t v)		{ setValue<sample_pos_t>(name,v); }
+	void setDoubleParameter(const string name,const double v)			{ setValue<double>(name,v); }
+	void setGraphParameter(const string name,const CGraphParamValueNodeList &v)	{ setValue<CGraphParamValueNodeList>(name,v); }
+	void setLFODescription(const string name,const CLFODescription &v)		{ setValue<CLFODescription>(name,v); }
+	void setPluginMapping(const string name,const CPluginMapping &v)		{ setValue<CPluginMapping>(name,v); }
+
+	ASoundFileManager *getSoundFileManager() const;
+
+private:
+	ASoundFileManager *soundFileManager;
+
+};
+
+#if 0
+/*
+ * One of these is always the input to an action
+ * Could could be streamed to disk to repeat actions later with the same parameters 
+ */
+class CActionParameters
+{
+public:
+
+to change this to use or be a CNestedDataFile I will need to create a method in CNestedDataFile that 
+can merge it's keys with another file's so that I can call writeToFile and also tell it that the root value in the file it should write to.. basically prepend that to all keys
+also I should be able to extract .. er readFromFile starting at a given key where "" reads the whole file
+I will also need to be able to construct CNestedDataFiles with no file at all
+
+	CActionParameters(ASoundFileManager *soundFileManager);
+	CActionParameters(const CActionParameters &src);
+	virtual ~CActionParameters();
+
+	void writeToFile(CNestedDataFile *f,const string key) const;
+	void readFromFile(const CNestedDataFile *f,const string key);
 
 	void clear();
 
@@ -137,4 +185,5 @@ private:
 
 };
 
+#endif
 #endif

@@ -127,20 +127,21 @@ long CCueListDialog::onAddCueButton(FXObject *sender,FXSelector sel,void *ptr)
 	{
 		size_t cueIndex=(size_t)cueList->getItemData(cueList->getCurrentItem());
 
-		actionParameters.addStringParameter("name",loadedSound->sound->getCueName(cueIndex));
-		actionParameters.addSamplePosParameter("position",loadedSound->sound->getCueTime(cueIndex));
-		actionParameters.addBoolParameter("isAnchored",loadedSound->sound->isCueAnchored(cueIndex));
+		actionParameters.setStringParameter("name",loadedSound->sound->getCueName(cueIndex));
+		actionParameters.setSamplePosParameter("position",loadedSound->sound->getCueTime(cueIndex));
+		actionParameters.setBoolParameter("isAnchored",loadedSound->sound->isCueAnchored(cueIndex));
 
 	}
 	else
 	{	
-		actionParameters.addStringParameter("name","Cue1");
-		actionParameters.addSamplePosParameter("position",0);
-		actionParameters.addBoolParameter("isAnchored",false);
+		actionParameters.setStringParameter("name","Cue1");
+		actionParameters.setSamplePosParameter("position",0);
+		actionParameters.setBoolParameter("isAnchored",false);
 	}
 
 	addCueActionFactory->performAction(loadedSound,&actionParameters,false);
-	gSoundFileManager->updateAfterEdit(loadedSound);
+	//done in AActionFactory::performAction() now
+	//gSoundFileManager->updateAfterEdit(loadedSound);
 
 	rebuildCueList();
 
@@ -152,9 +153,10 @@ long CCueListDialog::onRemoveCueButton(FXObject *sender,FXSelector sel,void *ptr
 	if(cueList->getCurrentItem()!=-1)
 	{
 		CActionParameters actionParameters(NULL);
-		actionParameters.addUnsignedParameter("index",(size_t)cueList->getItemData(cueList->getCurrentItem()));
+		actionParameters.setUnsignedParameter("index",(size_t)cueList->getItemData(cueList->getCurrentItem()));
 		removeCueActionFactory->performAction(loadedSound,&actionParameters,false);
-		gSoundFileManager->updateAfterEdit(loadedSound);
+		//done in AActionFactory::performAction() now
+		//gSoundFileManager->updateAfterEdit(loadedSound);
 
 		rebuildCueList();
 	}
@@ -169,13 +171,14 @@ long CCueListDialog::onEditCueButton(FXObject *sender,FXSelector sel,void *ptr)
 		CActionParameters actionParameters(NULL);
 		size_t cueIndex=(size_t)cueList->getItemData(cueList->getCurrentItem());
 
-		actionParameters.addUnsignedParameter("index",cueIndex);
-		actionParameters.addStringParameter("name",loadedSound->sound->getCueName(cueIndex));
-		actionParameters.addSamplePosParameter("position",loadedSound->sound->getCueTime(cueIndex));
-		actionParameters.addBoolParameter("isAnchored",loadedSound->sound->isCueAnchored(cueIndex));
+		actionParameters.setUnsignedParameter("index",cueIndex);
+		actionParameters.setStringParameter("name",loadedSound->sound->getCueName(cueIndex));
+		actionParameters.setSamplePosParameter("position",loadedSound->sound->getCueTime(cueIndex));
+		actionParameters.setBoolParameter("isAnchored",loadedSound->sound->isCueAnchored(cueIndex));
 
 		replaceCueActionFactory->performAction(loadedSound,&actionParameters,false);
-		gSoundFileManager->updateAfterEdit(loadedSound);
+		//done in AActionFactory::performAction() now
+		//gSoundFileManager->updateAfterEdit(loadedSound);
 
 		rebuildCueList();
 	}

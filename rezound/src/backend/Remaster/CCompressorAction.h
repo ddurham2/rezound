@@ -10,15 +10,15 @@ class CCompressorActionFactory;
 class CCompressorAction : public AAction
 {
 public:
-	CCompressorAction(const CActionSound &actionSound,float windowTime,float threshold,float ratio,float attackTime,float releaseTime,float inputGain,float outputGain,bool syncChannels,bool lookAheadForLevel);
+	CCompressorAction(const AActionFactory *factory,const CActionSound *actionSound,float windowTime,float threshold,float ratio,float attackTime,float releaseTime,float inputGain,float outputGain,bool syncChannels,bool lookAheadForLevel);
 	virtual ~CCompressorAction();
 
 	static const string getExplanation();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const float windowTime;
@@ -38,7 +38,7 @@ public:
 	CCompressorActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CCompressorActionFactory();
 
-	CCompressorAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CCompressorAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

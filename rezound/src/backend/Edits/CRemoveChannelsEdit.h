@@ -29,13 +29,13 @@
 class CRemoveChannelsEdit : public AAction
 {
 public:
-	CRemoveChannelsEdit(const CActionSound actionSound);
+	CRemoveChannelsEdit(const AActionFactory *factory,const CActionSound *actionSound);
 	virtual ~CRemoveChannelsEdit();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	int tempAudioPoolKey;
@@ -49,7 +49,7 @@ public:
 	CRemoveChannelsEditFactory(AActionDialog *dialog);
 	virtual ~CRemoveChannelsEditFactory();
 
-	CRemoveChannelsEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CRemoveChannelsEdit *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

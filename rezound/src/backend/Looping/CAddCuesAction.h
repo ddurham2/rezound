@@ -31,14 +31,14 @@ class CAddCuesActionFactory;
 class CAddCuesAction : public AAction
 {
 public:
-	CAddCuesAction(const CActionSound &actionSound,const string cueName,const unsigned cueCount,const bool anchoredInTime);
-	CAddCuesAction(const CActionSound &actionSound,const string cueName,const double timeInterval,const bool anchoredInTime);
+	CAddCuesAction(const AActionFactory *factory,const CActionSound *actionSound,const string cueName,const unsigned cueCount,const bool anchoredInTime);
+	CAddCuesAction(const AActionFactory *factory,const CActionSound *actionSound,const string cueName,const double timeInterval,const bool anchoredInTime);
 	virtual ~CAddCuesAction();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const string cueName;
@@ -54,7 +54,7 @@ public:
 	CAddNCuesActionFactory(AActionDialog *channelSelectDialog);
 	virtual ~CAddNCuesActionFactory();
 
-	CAddCuesAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CAddCuesAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 class CAddTimedCuesActionFactory : public AActionFactory
@@ -63,7 +63,7 @@ public:
 	CAddTimedCuesActionFactory(AActionDialog *channelSelectDialog);
 	virtual ~CAddTimedCuesActionFactory();
 
-	CAddCuesAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CAddCuesAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

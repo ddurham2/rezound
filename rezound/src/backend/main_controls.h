@@ -45,6 +45,8 @@ void saveAsSound(ASoundFileManager *soundFileManager);
 void revertSound(ASoundFileManager *soundFileManager);
 void recordSound(ASoundFileManager *soundFileManager);
 
+void recordMacro();
+
 const bool exitReZound(ASoundFileManager *soundFileManager);
 
 

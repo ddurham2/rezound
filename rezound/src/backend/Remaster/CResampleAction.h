@@ -28,13 +28,13 @@
 class CResampleAction : public AAction
 {
 public:
-	CResampleAction(const CActionSound &actionSound,const unsigned newSampleRate);
+	CResampleAction(const AActionFactory *factory,const CActionSound *actionSound,const unsigned newSampleRate);
 	virtual ~CResampleAction();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	sample_pos_t undoRemoveLength;
@@ -49,7 +49,7 @@ public:
 	CResampleActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CResampleActionFactory();
 
-	CResampleAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CResampleAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

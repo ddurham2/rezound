@@ -45,8 +45,8 @@ static int foo() {
 static int foofoo=foo();
 */
 
-CLADSPAAction::CLADSPAAction(const LADSPA_Descriptor *_desc,const CActionSound &actionSound,const CActionParameters &_actionParameters) :
-	AAction(actionSound),
+CLADSPAAction::CLADSPAAction(const LADSPA_Descriptor *_desc,const AActionFactory *factory,const CActionSound *actionSound,const CActionParameters &_actionParameters) :
+	AAction(factory,actionSound),
 	desc(_desc),
 	actionParameters(_actionParameters),
 	channelMapping(actionParameters.getPluginMapping("Channel Mapping")),
@@ -78,8 +78,12 @@ CLADSPAAction::~CLADSPAAction()
 
 #define BUFFER_SIZE 16384
 
-bool CLADSPAAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CLADSPAAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
+	// issue this warning to the user
+	if(AActionFactory::macroRecorder.isRecording() && soundFileManager->getOpenedCount()>1)
+		Warning(_("You are recording a macro.\n\nDue to the way in which LADSPA is implemented, when the macro is played back for things to repeat as expected, the files refered to by the routing parameters (including the file being altered) must be loaded in the same positions as they currently appear in the loaded sound list window.\n\nThis is due to the fact that the saved LADSPA parameters in the macro refer to the index of the loaded file rather than the name of the file.  This could be improved later."));
+	// ??? ^^ in order to improve this, I should iterate over the routing parameters and re-write the indexes of loaded sounds before doing everything below.. then at this point I could deal with loading other files as neceesary and comparison of filenames, etc
 
 /* ... THIS IS A COMPLEX AND BLOATED METHOD ... */
 
@@ -91,17 +95,17 @@ bool CLADSPAAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 	}
 	*/
 
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t stop=actionSound.stop;
-	const sample_pos_t selectionLength=actionSound.selectionLength();
-	const unsigned origActionSoundChannelCount=actionSound.sound->getChannelCount();
-	origSound=actionSound.sound; // used only in case the destructor has to free some temp pools
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t stop=actionSound->stop;
+	const sample_pos_t selectionLength=actionSound->selectionLength();
+	const unsigned origActionSoundChannelCount=actionSound->sound->getChannelCount();
+	origSound=actionSound->sound; // used only in case the destructor has to free some temp pools
 
 	// determine the index of the actionSound
 	size_t actionSoundIndex=0;
 	for(size_t t=0;t<soundFileManager->getOpenedCount();t++)
 	{
-		if(soundFileManager->getSound(t)->sound==actionSound.sound)
+		if(soundFileManager->getSound(t)->sound==actionSound->sound)
 		{
 			actionSoundIndex=t;
 			break;
@@ -110,10 +114,10 @@ bool CLADSPAAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 
 
 	// could do: if nothing in the output maps to a channel or in the passThrus dont include it in the moveSelectionToTempPools.. tried it real quick but wasn't trivial
-	moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
+	moveSelectionToTempPools(actionSound,mmSelection,actionSound->selectionLength());
 
 	// create an instance of the plugin 
-	LADSPA_Handle instance=desc->instantiate(desc,actionSound.sound->getSampleRate());
+	LADSPA_Handle instance=desc->instantiate(desc,actionSound->sound->getSampleRate());
 
 
 
@@ -147,7 +151,7 @@ bool CLADSPAAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 
 
 	// append new channels if requested
-	actionSound.sound->addChannels(actionSound.sound->getChannelCount(),channelMapping.outputAppendCount,true);
+	actionSound->sound->addChannels(actionSound->sound->getChannelCount(),channelMapping.outputAppendCount,true);
 
 
 	// possibly call set_run_adding_gain (if run_adding is not NULL)
@@ -162,7 +166,7 @@ bool CLADSPAAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 	
 	// this keeps track if the dest channels need to be mixed onto or copied onto
 	vector<sample_pos_t> destChannelsWrittenTo;
-	for(unsigned t=0;t<actionSound.sound->getChannelCount();t++)
+	for(unsigned t=0;t<actionSound->sound->getChannelCount();t++)
 		destChannelsWrittenTo.push_back(0);
 
 	const sample_pos_t chunkCount=(sample_pos_t)sample_fpos_ceil((sample_fpos_t)selectionLength/BUFFER_SIZE);
@@ -241,7 +245,7 @@ bool CLADSPAAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 					const CRezPoolAccesser src=
 						(inputMapping[t][i].soundFileManagerIndex==actionSoundIndex && inputMapping[t][i].channel<origActionSoundChannelCount)
 							?
-							actionSound.sound->getTempAudio(tempAudioPoolKey,inputMapping[t][i].channel)
+							actionSound->sound->getTempAudio(tempAudioPoolKey,inputMapping[t][i].channel)
 							:
 							soundFileManager->getSound(inputMapping[t][i].soundFileManagerIndex)->sound->getAudio(inputMapping[t][i].channel)
 						;
@@ -322,7 +326,7 @@ bool CLADSPAAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 			sample_pos_t origDestPos=destPos;
 			for(unsigned t=0;t<outputMapping.size();t++)
 			{
-				CRezPoolAccesser dest=actionSound.sound->getAudio(t);
+				CRezPoolAccesser dest=actionSound->sound->getAudio(t);
 
 				for(unsigned i=0;i<outputMapping[t].size();i++)
 				{
@@ -381,7 +385,7 @@ bool CLADSPAAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 			const CRezPoolAccesser src=
 				(passThru[t].soundFileManagerIndex==actionSoundIndex && passThru[t].channel<origActionSoundChannelCount)
 					?
-					actionSound.sound->getTempAudio(tempAudioPoolKey,passThru[t].channel)
+					actionSound->sound->getTempAudio(tempAudioPoolKey,passThru[t].channel)
 					:
 					soundFileManager->getSound(passThru[t].soundFileManagerIndex)->sound->getAudio(passThru[t].channel)
 				;
@@ -415,13 +419,13 @@ bool CLADSPAAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 				}
 			}
 
-			CRezPoolAccesser dest=actionSound.sound->getAudio(destChannel);
+			CRezPoolAccesser dest=actionSound->sound->getAudio(destChannel);
 
 			CStatusBar statusBar(_("Pass Through ")+istring(destChannel+1)+"/"+istring(channelMapping.passThrus.size()),start,stop,true); 
 
 			if(!destChannelsWrittenTo[destChannel])
 			{ /*??? this could be an optimization where I check this flag all down below, but instead I've taken the easy way of just ALWAYS mixing below (which will mix onto silence the first time) */
-				actionSound.sound->silenceSound(destChannel,start,selectionLength,true,true);
+				actionSound->sound->silenceSound(destChannel,start,selectionLength,true,true);
 				destChannelsWrittenTo[destChannel]++;
 			}
 
@@ -480,23 +484,23 @@ bool CLADSPAAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 	for(unsigned t=0;t<destChannelsWrittenTo.size();t++)
 	{
 		if(destChannelsWrittenTo[t])
-			actionSound.sound->invalidatePeakData(t,actionSound.start,actionSound.stop);
+			actionSound->sound->invalidatePeakData(t,actionSound->start,actionSound->stop);
 		else
-			actionSound.sound->silenceSound(t,start,selectionLength,true,true);
+			actionSound->sound->silenceSound(t,start,selectionLength,true,true);
 	}
 
 	// use remove channels on end if requested
-	if(channelMapping.outputRemoveCount>0 && channelMapping.outputRemoveCount<actionSound.sound->getChannelCount())
+	if(channelMapping.outputRemoveCount>0 && channelMapping.outputRemoveCount<actionSound->sound->getChannelCount())
 	{
 		bool doChannels[MAX_CHANNELS]={0};
-		for(unsigned t=actionSound.sound->getChannelCount()-channelMapping.outputRemoveCount;t<actionSound.sound->getChannelCount();t++)
+		for(unsigned t=actionSound->sound->getChannelCount()-channelMapping.outputRemoveCount;t<actionSound->sound->getChannelCount();t++)
 			doChannels[t]=true;
-		restoreChannelsTempAudioPoolKey=actionSound.sound->moveChannelsToTemp(doChannels);
+		restoreChannelsTempAudioPoolKey=actionSound->sound->moveChannelsToTemp(doChannels);
 	}
 
 
 	// set the new selection points (only necessary if the length of the sound has changed)
-	//actionSound.stop=actionSound.start+selectionLength-1;
+	//actionSound->stop=actionSound->start+selectionLength-1;
 	
 	if(!prepareForUndo)
 		freeAllTempPools();
@@ -504,16 +508,16 @@ bool CLADSPAAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 	return true;
 }
 
-AAction::CanUndoResults CLADSPAAction::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CLADSPAAction::canUndo(const CActionSound *actionSound) const
 {
 	return curYes;
 }
 
-void CLADSPAAction::undoActionSizeSafe(const CActionSound &actionSound)
+void CLADSPAAction::undoActionSizeSafe(const CActionSound *actionSound)
 {
 	// remove append channels if we did append some
-	if(preactionChannelCount<actionSound.sound->getChannelCount())
-		actionSound.sound->removeChannels(preactionChannelCount,actionSound.sound->getChannelCount()-preactionChannelCount);
+	if(preactionChannelCount<actionSound->sound->getChannelCount())
+		actionSound->sound->removeChannels(preactionChannelCount,actionSound->sound->getChannelCount()-preactionChannelCount);
 
 	// restore removed channels if we did remove some
 	if(restoreChannelsTempAudioPoolKey!=-1)
@@ -523,11 +527,11 @@ void CLADSPAAction::undoActionSizeSafe(const CActionSound &actionSound)
 		for(unsigned t=preactionChannelCount-channelMapping.outputRemoveCount;t<preactionChannelCount;t++)
 			doChannels[t]=true;
 
-		actionSound.sound->moveChannelsFromTemp(restoreChannelsTempAudioPoolKey,doChannels);
+		actionSound->sound->moveChannelsFromTemp(restoreChannelsTempAudioPoolKey,doChannels);
 		restoreChannelsTempAudioPoolKey=-1;
 	}
 
-	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
+	restoreSelectionFromTempPools(actionSound,actionSound->start,actionSound->selectionLength());
 }
 
 
@@ -544,10 +548,11 @@ CLADSPAActionFactory::~CLADSPAActionFactory()
 	delete dialog;
 }
 
-CLADSPAAction *CLADSPAActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CLADSPAAction *CLADSPAActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return new CLADSPAAction(
 		desc,
+		this,
 		actionSound,
 		*actionParameters
 	);

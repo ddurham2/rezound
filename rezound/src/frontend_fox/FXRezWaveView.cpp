@@ -781,10 +781,10 @@ long FXWaveRuler::onLeftBtnRelease(FXObject *object,FXSelector sel,void *ptr)
 
 			// set cue to new position except use an AAction object so it goes on the undo stack
 			CActionParameters actionParameters(NULL);
-			actionParameters.addUnsignedParameter("index",cueClicked);
-			actionParameters.addSamplePosParameter("position",newCueTime);
-			actionParameters.addSamplePosParameter("restoreStartPosition",origStartPosition);
-			actionParameters.addSamplePosParameter("restoreStopPosition",origStopPosition);
+			actionParameters.setUnsignedParameter("index",cueClicked);
+			actionParameters.setSamplePosParameter("position",newCueTime);
+			actionParameters.setSamplePosParameter("restoreStartPosition",origStartPosition);
+			actionParameters.setSamplePosParameter("restoreStopPosition",origStopPosition);
 			moveCueActionFactory->performAction(loadedSound,&actionParameters,false);
 		}
 
@@ -872,7 +872,7 @@ long FXWaveRuler::onKeyPress(FXObject *object,FXSelector sel,void *ptr)
 		focusNextCue();
 
 		CActionParameters actionParameters(NULL);
-		actionParameters.addUnsignedParameter("index",removeCueIndex);
+		actionParameters.setUnsignedParameter("index",removeCueIndex);
 		removeCueActionFactory->performAction(loadedSound,&actionParameters,false);
 		if(removeCueIndex<focusedCueIndex)
 			focusedCueIndex--; // decrement since we just remove one below it

@@ -122,6 +122,15 @@ bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[])
 			Error(string("Error reading registry -- ")+e.what());
 		}
 
+		try
+		{
+			gUserMacroStore=new CNestedDataFile(gUserDataDirectory+istring(CPath::dirDelim)+"macros.dat",false);
+		}
+		catch(exception &e)
+		{
+			Error(string("Error reading user macro store -- ")+e.what());
+		}
+
 		// read backend setting variables from registry
 		readBackendSettings();
 		readFrontendSettings();
@@ -264,6 +273,9 @@ void deinitializeBackend()
 	// -- 1
 	writeFrontendSettings();
 	writeBackendSettings();
+
+	gUserMacroStore->save();
+	delete gUserMacroStore;
 
 	gSettingsRegistry->save();
 	delete gSettingsRegistry;

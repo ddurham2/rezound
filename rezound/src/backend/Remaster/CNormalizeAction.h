@@ -32,13 +32,13 @@ class CNormalizeActionFactory;
 class CNormalizeAction : public AAction
 {
 public:
-	CNormalizeAction(const CActionSound &actionSound,float normalizationLevel,unsigned regionCount,bool lockChannels);
+	CNormalizeAction(const AActionFactory *factory,const CActionSound *actionSound,float normalizationLevel,unsigned regionCount,bool lockChannels);
 	virtual ~CNormalizeAction();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	float normalizationLevel;
@@ -53,7 +53,7 @@ public:
 	CNormalizeActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CNormalizeActionFactory();
 
-	CNormalizeAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CNormalizeAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 
 	const string getExplanation() const;
 };

@@ -29,13 +29,13 @@
 class CInsertSilenceEdit : public AAction
 {
 public:
-	CInsertSilenceEdit(const CActionSound actionSound,const double silenceLength); // length in seconds
+	CInsertSilenceEdit(const AActionFactory *factory,const CActionSound *actionSound,const double silenceLength); // length in seconds
 	virtual ~CInsertSilenceEdit();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const double silenceLength; // length in seconds
@@ -49,7 +49,7 @@ public:
 	CInsertSilenceEditFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CInsertSilenceEditFactory();
 
-	CInsertSilenceEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CInsertSilenceEdit *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

@@ -591,4 +591,19 @@ ALFO *CLFORegistry::createLFO(const CLFODescription &desc,const unsigned sampleR
 	throw runtime_error(string(__func__)+" -- unhandled LFOType (index): "+istring(desc.LFOType));
 }
 
+void CLFODescription::writeToFile(CNestedDataFile *f,const string key) const
+{
+	f->setValue<float>(key DOT "amp",amp);
+	f->setValue<float>(key DOT "freq",freq);
+	f->setValue<float>(key DOT "phase",phase);
+	f->setValue<size_t>(key DOT "type",LFOType);
+}
+
+void CLFODescription::readFromFile(const CNestedDataFile *f,const string key)
+{
+	amp=f->getValue<float>(key DOT "amp");
+	freq=f->getValue<float>(key DOT "freq");
+	phase=f->getValue<float>(key DOT "phase");
+	LFOType=f->getValue<size_t>(key DOT "LFOType");
+}
 

@@ -24,8 +24,8 @@
 #include "../CActionParameters.h"
 #include "../CLoadedSound.h"
 
-CCopyCutToNewEdit::CCopyCutToNewEdit(const CActionSound actionSound,CCType _type,ASoundFileManager *_soundFileManager) :
-    AAction(actionSound),
+CCopyCutToNewEdit::CCopyCutToNewEdit(const AActionFactory *factory,const CActionSound *actionSound,CCType _type,ASoundFileManager *_soundFileManager) :
+    AAction(factory,actionSound),
 
     type(_type),
     soundFileManager(_soundFileManager)
@@ -36,28 +36,28 @@ CCopyCutToNewEdit::~CCopyCutToNewEdit()
 {
 }
 
-bool CCopyCutToNewEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CCopyCutToNewEdit::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	if(actionSound.countChannels()<=0)
+	if(actionSound->countChannels()<=0)
 		return false; // no channels to do
 
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t selectionLength=actionSound.selectionLength();
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t selectionLength=actionSound->selectionLength();
 
 	CLoadedSound *newSound=soundFileManager->createNew(
 		soundFileManager->getUntitledFilename(gPromptDialogDirectory,"rez"),
-		actionSound.countChannels(),
-		actionSound.sound->getSampleRate(),
+		actionSound->countChannels(),
+		actionSound->sound->getSampleRate(),
 		selectionLength);
 
 	newSound->sound->lockSize();
 	try
 	{
 		unsigned k=0;
-		for(unsigned t=0;t<actionSound.sound->getChannelCount();t++)
+		for(unsigned t=0;t<actionSound->sound->getChannelCount();t++)
 		{
-			if(actionSound.doChannel[t])
-				newSound->sound->mixSound(k++,0,actionSound.sound->getAudio(t),start,actionSound.sound->getSampleRate(),selectionLength,mmOverwrite,sftNone,false,true);
+			if(actionSound->doChannel[t])
+				newSound->sound->mixSound(k++,0,actionSound->sound->getAudio(t),start,actionSound->sound->getSampleRate(),selectionLength,mmOverwrite,sftNone,false,true);
 		}
 		newSound->sound->unlockSize();
 	}
@@ -72,15 +72,15 @@ bool CCopyCutToNewEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 		if(prepareForUndo)
 			moveSelectionToTempPools(actionSound,mmSelection);
 		else
-			actionSound.sound->removeSpace(actionSound.doChannel,actionSound.start,actionSound.selectionLength());
+			actionSound->sound->removeSpace(actionSound->doChannel,actionSound->start,actionSound->selectionLength());
 
-		actionSound.stop=actionSound.start=actionSound.start-1;
+		actionSound->stop=actionSound->start=actionSound->start-1;
 	}
 
 	return true;
 }
 
-AAction::CanUndoResults CCopyCutToNewEdit::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CCopyCutToNewEdit::canUndo(const CActionSound *actionSound) const
 {
 	if(type==cctCutToNew)
 		return curYes;
@@ -88,7 +88,7 @@ AAction::CanUndoResults CCopyCutToNewEdit::canUndo(const CActionSound &actionSou
 		return curNA;
 }
 
-void CCopyCutToNewEdit::undoActionSizeSafe(const CActionSound &actionSound)
+void CCopyCutToNewEdit::undoActionSizeSafe(const CActionSound *actionSound)
 {
 	restoreSelectionFromTempPools(actionSound);
 }
@@ -110,9 +110,9 @@ CCopyToNewEditFactory::~CCopyToNewEditFactory()
 {
 }
 
-CCopyCutToNewEdit *CCopyToNewEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CCopyCutToNewEdit *CCopyToNewEditFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return new CCopyCutToNewEdit(actionSound,CCopyCutToNewEdit::cctCopyToNew,actionParameters->getSoundFileManager());
+	return new CCopyCutToNewEdit(this,actionSound,CCopyCutToNewEdit::cctCopyToNew,actionParameters->getSoundFileManager());
 }
 
 
@@ -129,9 +129,9 @@ CCutToNewEditFactory::~CCutToNewEditFactory()
 {
 }
 
-CCopyCutToNewEdit *CCutToNewEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CCopyCutToNewEdit *CCutToNewEditFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return new CCopyCutToNewEdit(actionSound,CCopyCutToNewEdit::cctCutToNew,actionParameters->getSoundFileManager());
+	return new CCopyCutToNewEdit(this,actionSound,CCopyCutToNewEdit::cctCutToNew,actionParameters->getSoundFileManager());
 }
 
 

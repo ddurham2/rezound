@@ -28,13 +28,13 @@
 class CChangeTempoAction : public AAction
 {
 public:
-	CChangeTempoAction(const CActionSound &actionSound,const double tempoChange,bool useAntiAliasFilter,unsigned antiAliasFilterLength,bool useQuickSeek,unsigned sequenceLength,unsigned seekingWindowLength,unsigned overlapLength);
+	CChangeTempoAction(const AActionFactory *factory,const CActionSound *actionSound,const double tempoChange,bool useAntiAliasFilter,unsigned antiAliasFilterLength,bool useQuickSeek,unsigned sequenceLength,unsigned seekingWindowLength,unsigned overlapLength);
 	virtual ~CChangeTempoAction();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	sample_pos_t undoRemoveLength;
@@ -55,7 +55,7 @@ public:
 	CChangeTempoActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CChangeTempoActionFactory();
 
-	CChangeTempoAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CChangeTempoAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

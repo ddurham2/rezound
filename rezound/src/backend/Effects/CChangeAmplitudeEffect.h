@@ -29,13 +29,13 @@
 class CChangeAmplitudeEffect : public AAction
 {
 public:
-	CChangeAmplitudeEffect(const CActionSound &actionSound,const CGraphParamValueNodeList &volumeCurve);
+	CChangeAmplitudeEffect(const AActionFactory *factory,const CActionSound *actionSound,const CGraphParamValueNodeList &volumeCurve);
 	virtual ~CChangeAmplitudeEffect();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const CGraphParamValueNodeList volumeCurve;
@@ -48,7 +48,7 @@ public:
 	CChangeVolumeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CChangeVolumeEffectFactory();
 
-	CChangeAmplitudeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CChangeAmplitudeEffect *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 class CSimpleGainEffectFactory : public AActionFactory
@@ -57,7 +57,7 @@ public:
 	CSimpleGainEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CSimpleGainEffectFactory();
 
-	CChangeAmplitudeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CChangeAmplitudeEffect *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 class CCurvedGainEffectFactory : public AActionFactory
@@ -66,7 +66,7 @@ public:
 	CCurvedGainEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CCurvedGainEffectFactory();
 
-	CChangeAmplitudeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CChangeAmplitudeEffect *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

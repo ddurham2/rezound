@@ -25,8 +25,8 @@
 
 #include "../DSP/TSoundStretcher.h"
 
-CResampleAction::CResampleAction(const CActionSound &actionSound,const unsigned _newSampleRate) :
-	AAction(actionSound),
+CResampleAction::CResampleAction(const AActionFactory *factory,const CActionSound *actionSound,const unsigned _newSampleRate) :
+	AAction(factory,actionSound),
 	undoRemoveLength(0),
 	newSampleRate(_newSampleRate),
 	oldSampleRate(0)
@@ -39,10 +39,10 @@ CResampleAction::~CResampleAction()
 {
 }
 
-bool CResampleAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CResampleAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	const sample_pos_t oldLength=actionSound.sound->getLength();
-	oldSampleRate=actionSound.sound->getSampleRate();
+	const sample_pos_t oldLength=actionSound->sound->getLength();
+	oldSampleRate=actionSound->sound->getSampleRate();
 	const sample_pos_t newLength=(sample_pos_t)((sample_fpos_t)oldLength/oldSampleRate*newSampleRate);
 	// ??? need to make sure this doesn't put it past the max length.. should be handled by when CSound::addSpace eventually gets called
 
@@ -56,15 +56,15 @@ bool CResampleAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 	undoRemoveLength=newLength;
 
 	unsigned channelsDoneCount=0;
-	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+	for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 	{
-		if(actionSound.doChannel[i])
+		if(actionSound->doChannel[i])
 		{
-			CStatusBar statusBar(_("Changing Sample Rate -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),0,newLength,true); 
+			CStatusBar statusBar(_("Changing Sample Rate -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),0,newLength,true); 
 	
 			// here, we're using the undo data as a source from which to calculate the new data
-			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempAudioPoolKey,i);
-			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
+			const CRezPoolAccesser src=actionSound->sound->getTempAudio(tempAudioPoolKey,i);
+			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
 
 			TSoundStretcher<const CRezPoolAccesser> stretcher(src,0,oldLength,newLength,1,0,true);
 			for(sample_pos_t t=0;t<newLength;t++)
@@ -81,14 +81,14 @@ bool CResampleAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 	}
 
 	// adjust all cue positions (even anchored ones)
-	for(size_t t=0;t<actionSound.sound->getCueCount();t++)
-		actionSound.sound->setCueTime(t,(sample_pos_t)sample_fpos_round((sample_fpos_t)actionSound.sound->getCueTime(t)/oldSampleRate*newSampleRate));
+	for(size_t t=0;t<actionSound->sound->getCueCount();t++)
+		actionSound->sound->setCueTime(t,(sample_pos_t)sample_fpos_round((sample_fpos_t)actionSound->sound->getCueTime(t)/oldSampleRate*newSampleRate));
 	
 	// adjust start and stop positions
-	actionSound.stop=(sample_pos_t)sample_fpos_round((sample_fpos_t)actionSound.stop/oldSampleRate*newSampleRate);
-	actionSound.start=(sample_pos_t)sample_fpos_round((sample_fpos_t)actionSound.start/oldSampleRate*newSampleRate);
+	actionSound->stop=(sample_pos_t)sample_fpos_round((sample_fpos_t)actionSound->stop/oldSampleRate*newSampleRate);
+	actionSound->start=(sample_pos_t)sample_fpos_round((sample_fpos_t)actionSound->start/oldSampleRate*newSampleRate);
 
-	actionSound.sound->setSampleRate(newSampleRate);
+	actionSound->sound->setSampleRate(newSampleRate);
 
 	if(!prepareForUndo)
 		freeAllTempPools();
@@ -96,15 +96,15 @@ bool CResampleAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 	return true;
 }
 
-AAction::CanUndoResults CResampleAction::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CResampleAction::canUndo(const CActionSound *actionSound) const
 {
 	return curYes;
 }
 
-void CResampleAction::undoActionSizeSafe(const CActionSound &actionSound)
+void CResampleAction::undoActionSizeSafe(const CActionSound *actionSound)
 {
 	restoreSelectionFromTempPools(actionSound,0,undoRemoveLength);
-	actionSound.sound->setSampleRate(oldSampleRate);
+	actionSound->sound->setSampleRate(oldSampleRate);
 }
 
 
@@ -114,14 +114,15 @@ void CResampleAction::undoActionSizeSafe(const CActionSound &actionSound)
 CResampleActionFactory::CResampleActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
 	AActionFactory(N_("Resample"),_("Change Sample Rate"),channelSelectDialog,dialog,true,false)
 {
+	selectionPositionsAreApplicable=false;
 }
 
 CResampleActionFactory::~CResampleActionFactory()
 {
 }
 
-CResampleAction *CResampleActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CResampleAction *CResampleActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return new CResampleAction(actionSound,actionParameters->getUnsignedParameter("New Sample Rate"));
+	return new CResampleAction(this,actionSound,actionParameters->getUnsignedParameter("New Sample Rate"));
 }
 

@@ -30,8 +30,8 @@
 //??? could use a state machine or some sort of fuzzy state machine that doesnt raise the gain unless there is going to be a rise again in some minimum amount of time (actually could probably just use a delay line to do this)
 
 
-CAdaptiveNormalizeAction::CAdaptiveNormalizeAction(const CActionSound &actionSound,float _normalizationLevel,float _windowTime,float _maxGain,bool _lockChannels) :
-	AAction(actionSound),
+CAdaptiveNormalizeAction::CAdaptiveNormalizeAction(const AActionFactory *factory,const CActionSound *actionSound,float _normalizationLevel,float _windowTime,float _maxGain,bool _lockChannels) :
+	AAction(factory,actionSound),
 
 	normalizationLevel(_normalizationLevel),
 	windowTime(_windowTime),
@@ -46,46 +46,46 @@ CAdaptiveNormalizeAction::~CAdaptiveNormalizeAction()
 
 template <class type> const type my_abs(const type v) { return v<0 ? -v : v; }
 
-bool CAdaptiveNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CAdaptiveNormalizeAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t stop=actionSound.stop;
-	const sample_pos_t selectionLength=actionSound.selectionLength();
-	const unsigned channelCount=actionSound.sound->getChannelCount();
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t stop=actionSound->stop;
+	const sample_pos_t selectionLength=actionSound->selectionLength();
+	const unsigned channelCount=actionSound->sound->getChannelCount();
 
 	if(prepareForUndo)
-		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
+		moveSelectionToTempPools(actionSound,mmSelection,actionSound->selectionLength());
 
 //??? I dont know what the relationship is, but as maxGain goes down, normalizationLevel has to go up for something to be audible..
 	const mix_sample_t normalizationLevel=my_abs(dBFS_to_amp(this->normalizationLevel,MAX_SAMPLE));
 
 	const float maxGain=dB_to_scalar(this->maxGain); 
 	
-	const sample_pos_t windowSize=min(selectionLength,(sample_pos_t)ms_to_samples(windowTime,actionSound.sound->getSampleRate()));
+	const sample_pos_t windowSize=min(selectionLength,(sample_pos_t)ms_to_samples(windowTime,actionSound->sound->getSampleRate()));
 	const sample_pos_t hWindowSize=windowSize/2;
 
 
 	// ??? I suppose src in this algorithm could be another audio file
-	if(!lockChannels || actionSound.countChannels()<=1)
+	if(!lockChannels || actionSound->countChannels()<=1)
 	{
 		unsigned channelsDoneCount=0;
-		for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+		for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 		{
-			if(actionSound.doChannel[i])
+			if(actionSound->doChannel[i])
 			{
 
-				CStatusBar statusBar(_("Adaptive Normalize -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true);
+				CStatusBar statusBar(_("Adaptive Normalize -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),start,stop,true);
 
 				printf("normalization Level: %f -- windowSize: %d windowTime: %f maxGain: %f\n",normalizationLevel,windowSize,windowTime,maxGain);
 
 				sample_pos_t srcPos=prepareForUndo ? 0 : start;
-				const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
+				const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);
 				// now 'src' is an accessor either directly into the sound or into the temp pool created for undo
 				// so its range of indexes is either [start,stop] or [0,selectionLength) respectively
 
 				const CRezPoolAccesser src_alt=src; // could be improved by possibly using a delay line instead of having another src to read from
 				sample_pos_t destPos=start;
-				CRezPoolAccesser dest=actionSound.sound->getAudio(i);
+				CRezPoolAccesser dest=actionSound->sound->getAudio(i);
 
 				CDSPRMSLevelDetector detector(windowSize);
 				// prime the level detector
@@ -109,7 +109,7 @@ bool CAdaptiveNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool p
 						if(prepareForUndo)
 							undoActionSizeSafe(actionSound);
 						else
-							actionSound.sound->invalidatePeakData(i,actionSound.start,destPos);
+							actionSound->sound->invalidatePeakData(i,actionSound->start,destPos);
 						return false;
 					}
 
@@ -144,12 +144,12 @@ bool CAdaptiveNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool p
 		sample_pos_t srcPos=prepareForUndo ? 0 : start;
 		try
 		{
-			for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+			for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 			{
-				if(actionSound.doChannel[i])
+				if(actionSound->doChannel[i])
 				{
-					dests[nChannels]=new CRezPoolAccesser(actionSound.sound->getAudio(i));
-					srcs[nChannels]=new CRezPoolAccesser(prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i));
+					dests[nChannels]=new CRezPoolAccesser(actionSound->sound->getAudio(i));
+					srcs[nChannels]=new CRezPoolAccesser(prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i));
 					srcs_alt[nChannels]=new CRezPoolAccesser(*(srcs[nChannels]));
 					nChannels++;
 				}
@@ -190,10 +190,10 @@ bool CAdaptiveNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool p
 						undoActionSizeSafe(actionSound);
 					else
 					{
-						for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+						for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 						{
-							if(actionSound.doChannel[i])
-								actionSound.sound->invalidatePeakData(i,actionSound.start,destPos);
+							if(actionSound->doChannel[i])
+								actionSound->sound->invalidatePeakData(i,actionSound->start,destPos);
 						}
 					}
 
@@ -249,28 +249,28 @@ bool CAdaptiveNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool p
 
 	if(!prepareForUndo)
 	{
-		for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+		for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 		{
-			if(actionSound.doChannel[i])
-				actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
+			if(actionSound->doChannel[i])
+				actionSound->sound->invalidatePeakData(i,actionSound->start,actionSound->stop);
 		}
 	}
 
 	// set the new selection points (only necessary if the length of the sound has changed)
-	//actionSound.stop=actionSound.start+selectionLength-1;
+	//actionSound->stop=actionSound->start+selectionLength-1;
 
 
 	return true;
 }
 
-AAction::CanUndoResults CAdaptiveNormalizeAction::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CAdaptiveNormalizeAction::canUndo(const CActionSound *actionSound) const
 {
 	return curYes;
 }
 
-void CAdaptiveNormalizeAction::undoActionSizeSafe(const CActionSound &actionSound)
+void CAdaptiveNormalizeAction::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
+	restoreSelectionFromTempPools(actionSound,actionSound->start,actionSound->selectionLength());
 }
 
 const string CAdaptiveNormalizeAction::getExplanation()
@@ -290,9 +290,9 @@ CAdaptiveNormalizeActionFactory::~CAdaptiveNormalizeActionFactory()
 {
 }
 
-CAdaptiveNormalizeAction *CAdaptiveNormalizeActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CAdaptiveNormalizeAction *CAdaptiveNormalizeActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return new CAdaptiveNormalizeAction(actionSound,
+	return new CAdaptiveNormalizeAction(this,actionSound,
 		actionParameters->getDoubleParameter("Normalization Level"),
 		actionParameters->getDoubleParameter("Window Time"),
 		actionParameters->getDoubleParameter("Maximum Gain"),

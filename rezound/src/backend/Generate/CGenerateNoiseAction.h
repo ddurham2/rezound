@@ -46,13 +46,13 @@ public:
 		siSpatialStereo=3
 	};
 							    // length in seconds
-	CGenerateNoiseAction(const CActionSound actionSound,const double noiseLength,const double volume, const NoiseTypes noiseType, const StereoImage stereoImage,const double maxParticleVelocity); 
+	CGenerateNoiseAction(const AActionFactory *factory,const CActionSound *actionSound,const double noiseLength,const double volume, const NoiseTypes noiseType, const StereoImage stereoImage,const double maxParticleVelocity); 
 	virtual ~CGenerateNoiseAction();
 	
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 			#warning this should be defined by the selection, or give the user a choice
@@ -106,7 +106,7 @@ public:
 	CGenerateNoiseActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CGenerateNoiseActionFactory();
 
-	CGenerateNoiseAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CGenerateNoiseAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

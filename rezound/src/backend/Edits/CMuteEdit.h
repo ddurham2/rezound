@@ -29,13 +29,13 @@
 class CMuteEdit : public AAction
 {
 public:
-	CMuteEdit(const CActionSound actionSound);
+	CMuteEdit(const AActionFactory *factory,const CActionSound *actionSound);
 	virtual ~CMuteEdit();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 };
 
@@ -45,7 +45,7 @@ public:
 	CMuteEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CMuteEditFactory();
 
-	CMuteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CMuteEdit *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

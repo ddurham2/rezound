@@ -66,8 +66,8 @@ FXDEFMAP(FXWaveScrollArea) FXWaveViewScrollAreaMap[]=
 	FXMAPFUNC(SEL_TIMEOUT,			FXWindow::ID_AUTOSCROLL,	FXWaveScrollArea::onAutoScroll),
 
 #if FOX_MAJOR >= 1
-	// re-route the mouse wheel event to scroll horizontally instead of its default, vertically
-	FXMAPFUNC(SEL_MOUSEWHEEL,0,FXScrollArea::onHMouseWheel),
+	// re-route the mouse wheel event to scroll/zoom horizontally instead of its default, scrolling vertically
+	FXMAPFUNC(SEL_MOUSEWHEEL,0,FXWaveScrollArea::onHMouseWheel),
 #endif
 };
 
@@ -388,6 +388,10 @@ long FXWaveScrollArea::onAutoScroll(FXObject *object,FXSelector sel,void *ptr)
 	return ret;
 }
 
+long FXWaveScrollArea::onHMouseWheel(FXObject *object,FXSelector sel,void *ptr)
+{
+	return FXScrollArea::onHMouseWheel(object,sel,ptr);
+}
 
 void FXWaveScrollArea::centerStartPos()
 {

@@ -23,8 +23,8 @@
 
 #include "../CActionParameters.h"
 
-CGenerateNoiseAction::CGenerateNoiseAction(const CActionSound actionSound,const double _noiseLength,const double _volume,const NoiseTypes _noiseType,const StereoImage _stereoImage,const double _maxParticleVelocity):
-	AAction(actionSound),
+CGenerateNoiseAction::CGenerateNoiseAction(const AActionFactory *factory,const CActionSound *actionSound,const double _noiseLength,const double _volume,const NoiseTypes _noiseType,const StereoImage _stereoImage,const double _maxParticleVelocity):
+	AAction(factory,actionSound),
 	noiseLength(_noiseLength),	// seconds
 	volume(_volume),		// 0 to 1 (a multiplier)
 	noiseType(_noiseType),		// enum
@@ -133,20 +133,20 @@ double CGenerateNoiseAction::getRandNoiseVal(const int noiseChannel)
 }
 
 #warning add status bars
-bool CGenerateNoiseAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CGenerateNoiseAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	origLength=actionSound.sound->getLength();
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t sampleCount=(sample_pos_t)(noiseLength*actionSound.sound->getSampleRate());
+	origLength=actionSound->sound->getLength();
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t sampleCount=(sample_pos_t)(noiseLength*actionSound->sound->getSampleRate());
 
 	if(sampleCount==0) 
 	{
-		actionSound.stop=actionSound.start;
+		actionSound->stop=actionSound->start;
 		return true;
 	}
 	
-	actionSound.sound->addSpace(actionSound.doChannel,actionSound.start,sampleCount,true);
-	actionSound.stop=(actionSound.start+sampleCount)-1;
+	actionSound->sound->addSpace(actionSound->doChannel,actionSound->start,sampleCount,true);
+	actionSound->stop=(actionSound->start+sampleCount)-1;
 
 	// new space is made for the noise, now calculate the values.
 
@@ -177,19 +177,19 @@ bool CGenerateNoiseAction::doActionSizeSafe(CActionSound &actionSound,bool prepa
 
 	// build a vector of indexes to the only channels that should be affected
 	vector<unsigned> doChannels;
-        for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+        for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 	{
-                if(actionSound.doChannel[i]) 
+                if(actionSound->doChannel[i]) 
 			doChannels.push_back(i);
 	}
 
         for(unsigned i=0;i<doChannels.size();i++)
         {
-                CRezPoolAccesser destL=actionSound.sound->getAudio(doChannels[i]);
+                CRezPoolAccesser destL=actionSound->sound->getAudio(doChannels[i]);
 
 		if((i+1) < doChannels.size()) 
 		{	// process a pair of channels
-	        	CRezPoolAccesser destR=actionSound.sound->getAudio(doChannels[i+1]);
+	        	CRezPoolAccesser destR=actionSound->sound->getAudio(doChannels[i+1]);
 			sample_pos_t destPos=start;		
 			for(sample_pos_t t=0;t<sampleCount;t++)
 			{
@@ -236,15 +236,15 @@ bool CGenerateNoiseAction::doActionSizeSafe(CActionSound &actionSound,bool prepa
 	return true;
 }
 
-AAction::CanUndoResults CGenerateNoiseAction::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CGenerateNoiseAction::canUndo(const CActionSound *actionSound) const
 {
 	return curYes;
 }
 
-void CGenerateNoiseAction::undoActionSizeSafe(const CActionSound &actionSound)
+void CGenerateNoiseAction::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	const sample_pos_t sampleCount=(sample_pos_t)(noiseLength*actionSound.sound->getSampleRate());
-	actionSound.sound->removeSpace(actionSound.doChannel,actionSound.start,sampleCount,origLength);
+	const sample_pos_t sampleCount=(sample_pos_t)(noiseLength*actionSound->sound->getSampleRate());
+	actionSound->sound->removeSpace(actionSound->doChannel,actionSound->start,sampleCount,origLength);
 }
 
 
@@ -261,9 +261,10 @@ CGenerateNoiseActionFactory::~CGenerateNoiseActionFactory()
 }
 
 // ??? t'would be nice if I had two factories: 1 for insert noise and 1 for replace selection with noise
-CGenerateNoiseAction *CGenerateNoiseActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CGenerateNoiseAction *CGenerateNoiseActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return new CGenerateNoiseAction(
+		this,
 		actionSound,
 		actionParameters->getDoubleParameter("Length"),
 		actionParameters->getDoubleParameter("Volume"),

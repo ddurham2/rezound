@@ -18,6 +18,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
+#include <memory>
+using namespace std;
+
 #include "AAction.h"
 
 #include "CLoadedSound.h"
@@ -40,7 +43,12 @@
 // -- AActionFactory ----------------------------------------------------
 // ----------------------------------------------------------------------
 
+CMacroRecorder AActionFactory::macroRecorder;
+
 AActionFactory::AActionFactory(const string _actionName,const string _actionDescription,AActionDialog *_channelSelectDialog,AActionDialog *_dialog,bool _willResize,bool _crossfadeEdgesIsApplicable) :
+	requiresALoadedSound(true),
+	selectionPositionsAreApplicable(true),
+
 	actionName(_actionName),
 	actionDescription(_actionDescription),
 
@@ -48,7 +56,8 @@ AActionFactory::AActionFactory(const string _actionName,const string _actionDesc
 	dialog(_dialog),
 
 	willResize(_willResize),
-	crossfadeEdgesIsApplicable(_crossfadeEdgesIsApplicable)
+	crossfadeEdgesIsApplicable(_crossfadeEdgesIsApplicable),
+	lockSoundMutex(true)
 {
 }
 
@@ -56,9 +65,16 @@ AActionFactory::~AActionFactory()
 {
 }
 
+#include <CNestedDataFile/CNestedDataFile.h>
 // ??? need to pass a flag for 'allowUndo'
-bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *actionParameters,bool showChannelSelectDialog)
+bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *actionParameters,bool showChannelSelectDialog,bool actionParametersAlreadySetup,bool &wentOntoUndoStack)
 {
+	if(!requiresALoadedSound)
+		loadedSound=NULL; // don't even use it if one isn't required
+	else if(loadedSound==NULL)
+		throw runtime_error(string(__func__)+" -- a loaded sound is required but was not given");
+
+	wentOntoUndoStack=false;
 	bool ret=true;
 	try
 	{
@@ -71,58 +87,78 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 		if(!doPreActionSetup(loadedSound))
 			return false;
 
-		CActionSound actionSound(loadedSound->channel,gCrossfadeEdges);
-		if(!showChannelSelectDialog || channelSelectDialog==NULL || (channelSelectDialog->wasShown=true,channelSelectDialog->show(&actionSound,actionParameters)))
+		auto_ptr<CActionSound> actionSound(requiresALoadedSound ? new CActionSound(loadedSound->channel,gCrossfadeEdges) : NULL);
+
+		if(!actionParametersAlreadySetup)
 		{
-			AAction *action=NULL;
+			// show channelSelectDialog if we're supposed to
+			if(showChannelSelectDialog && channelSelectDialog!=NULL)
+			{
+				channelSelectDialog->wasShown=true;
+				if(!channelSelectDialog->show(actionSound.get(),actionParameters))
+					return false;
+			}
 
 			if(dialog!=NULL)
 			{
 				dialog->setTitle(getName());
 				dialog->wasShown=true;
-				if(!dialog->show(&actionSound,actionParameters))
+				if(!dialog->show(actionSound.get(),actionParameters))
 					return false;
 			}
-
-			action=manufactureAction(actionSound,actionParameters);
-
-			// save zoom factors and scroll positions so the frontend can restore this upon undo
-			if(actionParameters->getSoundFileManager()!=NULL)
-				action->positionalInfo=actionParameters->getSoundFileManager()->getPositionalInfo();
-
-			ret&=action->doAction(loadedSound->channel,true,willResize,crossfadeEdgesIsApplicable);
-
-			/*
-			if(prepareForUndo)
-			{
-			*/
-				const AAction::CanUndoResults result=action->canUndo();
-				if(result==AAction::curNA)
-					delete action;
-				else
-				{
-					if(ret && result==AAction::curYes)
-						loadedSound->actions.push(action);
-					else 
-					{
-						if(result==AAction::curNo)
-							Warning("not handling non-undoable actions currently.... should I clear the actions stack?");
-
-						delete action;
-					}
-				}
-			/*
-			}
-			*/
-
-			return ret;
 		}
 
-		return false;
+		// if we're not already running an action and we're recording a macro.. then add this action to the macro
+		if(AAction::doActionRecursionCount<=0 && macroRecorder.isRecording())
+			macroRecorder.pushAction(actionName,actionParameters,loadedSound);
+
+		AAction *action=manufactureAction(actionSound.get(),actionParameters);
+
+		// save zoom factors and scroll positions so the frontend can restore this upon undo
+		if(actionParameters->getSoundFileManager()!=NULL)
+			action->positionalInfo=actionParameters->getSoundFileManager()->getPositionalInfo();
+
+		ret&=action->doAction((requiresALoadedSound ? loadedSound->channel : NULL),true,willResize,crossfadeEdgesIsApplicable,lockSoundMutex);
+
+		if(requiresALoadedSound)
+		{
+			const AAction::CanUndoResults result=action->canUndo();
+			if(result==AAction::curNA)
+				delete action;
+			else
+			{
+				if(ret && result==AAction::curYes)
+				{
+					loadedSound->actions.push(action);
+					wentOntoUndoStack=true;
+				}
+				else 
+				{
+					if(result==AAction::curNo)
+						Warning("not handling non-undoable actions currently.... should I clear the actions stack?");
+	
+					delete action;
+				}
+			}
+		}
+
+		// un-add the action to the macro recorder if the action wasn't successful
+		if(!ret && AAction::doActionRecursionCount<=0 && macroRecorder.isRecording())
+			macroRecorder.popAction(actionName);
+
+		// update after editing
+		if(loadedSound!=NULL && actionParameters->getSoundFileManager()!=NULL)
+			actionParameters->getSoundFileManager()->updateAfterEdit(loadedSound,false);
+
+		return ret;
 	}
 	catch(exception &e)
 	{
 		Error(e.what());
+
+		// un-add the action to the macro recorder since the action wasn't successful
+		if(AAction::doActionRecursionCount<=0 && macroRecorder.isRecording())
+			macroRecorder.popAction(actionName);
 
 		if(channelSelectDialog) 
 			channelSelectDialog->hide();
@@ -131,6 +167,11 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 
 		return false;
 	}
+}
+
+void AActionFactory::setLockSoundMutex(bool _lockSoundMutex)
+{
+	lockSoundMutex=_lockSoundMutex;
 }
 
 const string &AActionFactory::getName() const
@@ -157,17 +198,22 @@ bool AActionFactory::hasDialog() const
 // ----------------------------------------------------------------------
 
 vector<ASoundClipboard *> AAction::clipboards;
+int AAction::doActionRecursionCount=0;
+int AAction::undoActionRecursionCount=0;
 
 // ??? perhaps we could hold on to a pointer to our factory to easily be able to rePEAT the action
 
-AAction::AAction(const CActionSound &_actionSound) :
+AAction::AAction(const AActionFactory *_factory,const CActionSound *_actionSound) :
 	tempAudioPoolKey(-1),
 	tempAudioPoolKey2(-1),
 
-	preactionChannelCount(_actionSound.sound->getChannelCount()),
+	preactionChannelCount(_actionSound ? _actionSound->sound->getChannelCount() : 0),
 
-	actionSound(_actionSound),
+	factory(_factory),
+
+	actionSound(_actionSound ? new CActionSound(*_actionSound) : NULL),
 	willResize(false),
+	didLockSoundMutex(false),
 	done(false),
 	oldSelectStart(NIL_SAMPLE_POS),
 	oldSelectStop(NIL_SAMPLE_POS),
@@ -188,6 +234,8 @@ AAction::AAction(const CActionSound &_actionSound) :
 	crossfadeStopLength(0),
 	crossfadeMoveMul(0)
 {
+	if(factory->requiresALoadedSound && _actionSound==NULL)
+		throw runtime_error(string(__func__)+" -- a loaded sound is required but was not given");
 }
 
 AAction::~AAction()
@@ -200,133 +248,179 @@ bool AAction::doesWarrantSaving() const
 	return true; // by default
 }
 
-bool AAction::getResultingCrossfadePoints(const CActionSound &actionSound,sample_pos_t &start,sample_pos_t &stop)
+bool AAction::getResultingCrossfadePoints(const CActionSound *actionSound,sample_pos_t &start,sample_pos_t &stop)
 {
-	start=actionSound.start;
-	stop=actionSound.stop;
+	start=actionSound->start;
+	stop=actionSound->stop;
 	return true;
 }
 
-bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _willResize,bool crossfadeEdgesIsApplicable)
+bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _willResize,bool crossfadeEdgesIsApplicable,bool lockSoundMutex)
 {
 	if(done)
 		throw runtime_error(string(__func__)+" -- action has already been done");
 
 	done=true;
 
-	origIsModified=actionSound.sound->isModified();
-	actionSound.sound->setIsModified(actionSound.sound->isModified() || doesWarrantSaving());
-
-	willResize=_willResize;
-
-	// even though the AAction derived class might not resize the sound, we will if crossfading is to be done
-	willResize|= (actionSound.doCrossfadeEdges!=cetNone && crossfadeEdgesIsApplicable);
-
-	if(willResize)
-		actionSound.sound->lockForResize();
-	else
-		actionSound.sound->lockSize();
-
-	try
+	if(factory->requiresALoadedSound)
 	{
-		// save the cues so that if they are modified by the action, then they can be restored at undo
-		if(prepareForUndo)
+		origIsModified=actionSound->sound->isModified();
+		actionSound->sound->setIsModified(actionSound->sound->isModified() || doesWarrantSaving());
+
+		willResize=_willResize;
+
+		// even though the AAction derived class might not resize the sound, we will if crossfading is to be done
+		willResize|= (actionSound->doCrossfadeEdges!=cetNone && crossfadeEdgesIsApplicable);
+
+		if(lockSoundMutex)
 		{
-			restoreCues.clear();
-			for(size_t t=0;t<actionSound.sound->getCueCount();t++)
-				restoreCues.push_back(CSound::RCue(actionSound.sound->getCueName(t).c_str(),actionSound.sound->getCueTime(t),actionSound.sound->isCueAnchored(t)));
+			if(willResize)
+				actionSound->sound->lockForResize();
+			else
+				actionSound->sound->lockSize();
+			didLockSoundMutex=true;
 		}
+		else
+			didLockSoundMutex=false;
 
-		if(channel!=NULL)
+		doActionRecursionCount++;
+		try
 		{
-			// save the selection positions
-			oldSelectStart=channel->getStartPosition();
-			oldSelectStop=channel->getStopPosition();
-
-			// save the output routing informations
+			// save the cues so that if they are modified by the action, then they can be restored at undo
 			if(prepareForUndo)
-				restoreOutputRoutes=channel->getOutputRoutes();
-		}
-
-		CActionSound _actionSound(actionSound);
-
-		if(crossfadeEdgesIsApplicable)
-			prepareForInnerCrossfade(_actionSound);
-
-	
-		bool ret=doActionSizeSafe(_actionSound,prepareForUndo && canUndo()==curYes);
-
-		// restore the original value for isModified unless we didn't prepare for undo
-		if(!ret)
-			actionSound.sound->setIsModified(origIsModified || !prepareForUndo);
-
-		// make sure that the start and stop positions are in range after the action
-		if(_actionSound.start<0)
-			_actionSound.start=0;
-		else if(_actionSound.start>=_actionSound.sound->getLength())
-			_actionSound.start=_actionSound.sound->getLength()-1;
-	
-		if(_actionSound.stop<0)
-			_actionSound.stop=0;
-		else if(_actionSound.stop>=_actionSound.sound->getLength())
-			_actionSound.stop=_actionSound.sound->getLength()-1;
-	
-		if(ret)
-		{
-			if(crossfadeEdgesIsApplicable)
 			{
-				crossfadeEdges(_actionSound);
-		
-				// again, make sure that the start and stop positions are in range after the crossfade
-				if(_actionSound.start<0)
-					_actionSound.start=0;
-				else if(_actionSound.start>=_actionSound.sound->getLength())
-					_actionSound.start=_actionSound.sound->getLength()-1;
-			
-				if(_actionSound.stop<0)
-					_actionSound.stop=0;
-				else if(_actionSound.stop>=_actionSound.sound->getLength())
-					_actionSound.stop=_actionSound.sound->getLength()-1;
+				restoreCues.clear();
+				for(size_t t=0;t<actionSound->sound->getCueCount();t++)
+					restoreCues.push_back(CSound::RCue(actionSound->sound->getCueName(t).c_str(),actionSound->sound->getCueTime(t),actionSound->sound->isCueAnchored(t)));
 			}
+
+			if(channel!=NULL)
+			{
+				// save the selection positions
+				oldSelectStart=channel->getStartPosition();
+				oldSelectStop=channel->getStopPosition();
+
+				// save the output routing informations
+				if(prepareForUndo)
+					restoreOutputRoutes=channel->getOutputRoutes();
+			}
+
+			auto_ptr<CActionSound> _actionSound(actionSound.get() ? new CActionSound(*actionSound) : NULL);
+
+			if(crossfadeEdgesIsApplicable)
+				prepareForInnerCrossfade(_actionSound.get());
+
+		
+			bool ret=doActionSizeSafe(_actionSound.get(),prepareForUndo && canUndo()==curYes);
+
+			// restore the original value for isModified unless we didn't prepare for undo
+			if(!ret)
+				actionSound->sound->setIsModified(origIsModified || !prepareForUndo);
+
+			// make sure that the start and stop positions are in range after the action
+			if(_actionSound->start<0)
+				_actionSound->start=0;
+			else if(_actionSound->start>=_actionSound->sound->getLength())
+				_actionSound->start=_actionSound->sound->getLength()-1;
+		
+			if(_actionSound->stop<0)
+				_actionSound->stop=0;
+			else if(_actionSound->stop>=_actionSound->sound->getLength())
+				_actionSound->stop=_actionSound->sound->getLength()-1;
+		
+			if(ret)
+			{
+				if(crossfadeEdgesIsApplicable)
+				{
+					crossfadeEdges(_actionSound.get());
+			
+					// again, make sure that the start and stop positions are in range after the crossfade
+					if(_actionSound->start<0)
+						_actionSound->start=0;
+					else if(_actionSound->start>=_actionSound->sound->getLength())
+						_actionSound->start=_actionSound->sound->getLength()-1;
+				
+					if(_actionSound->stop<0)
+						_actionSound->stop=0;
+					else if(_actionSound->stop>=_actionSound->sound->getLength())
+						_actionSound->stop=_actionSound->sound->getLength()-1;
+				}
+			}
+		
+			if(channel!=NULL)
+			{
+				vector<int16_t> dummy;
+				channel->updateAfterEdit(dummy);
+			}
+
+			if(lockSoundMutex)
+			{
+				if(willResize)
+					actionSound->sound->unlockForResize();
+				else
+					actionSound->sound->unlockSize();
+			}
+
+			actionSound->sound->flush();
+
+			if(channel!=NULL)
+				setSelection(_actionSound->start,_actionSound->stop,channel);
+
+			doActionRecursionCount--;
+			return ret;
 		}
-	
-		if(channel!=NULL)
+		catch(EUserMessage &e)
 		{
-			vector<int16_t> dummy;
-			channel->updateAfterEdit(dummy);
+			if(didLockSoundMutex)
+			{
+				if(willResize)
+					actionSound->sound->unlockForResize();
+				else
+					actionSound->sound->unlockSize();
+			}
+
+			if(e.what()[0])
+				Message(e.what());
+
+			doActionRecursionCount--;
+			return false;
 		}
+		catch(...)
+		{
+			if(didLockSoundMutex)
+			{
+				if(willResize)
+					actionSound->sound->unlockForResize();
+				else
+					actionSound->sound->unlockSize();
+			}
 
-		if(willResize)
-			actionSound.sound->unlockForResize();
-		else
-			actionSound.sound->unlockSize();
-
-		actionSound.sound->flush();
-
-		if(channel!=NULL)
-			setSelection(_actionSound.start,_actionSound.stop,channel);
-
-		return ret;
+			doActionRecursionCount--;
+			throw;
+		}
 	}
-	catch(EUserMessage &e)
+	else //if(!factory->requiresALoadedSound)
 	{
-		if(willResize)
-			actionSound.sound->unlockForResize();
-		else
-			actionSound.sound->unlockSize();
+		doActionRecursionCount++;
+		try
+		{
+			bool ret=doActionSizeSafe(NULL,false);
+			doActionRecursionCount--;
+			return ret;
+		}
+		catch(EUserMessage &e)
+		{
+			if(e.what()[0])
+				Message(e.what());
 
-		if(e.what()[0])
-			Message(e.what());
-		return false;
-	}
-	catch(...)
-	{
-		if(willResize)
-			actionSound.sound->unlockForResize();
-		else
-			actionSound.sound->unlockSize();
-
-		throw;
+			doActionRecursionCount--;
+			return false;
+		}
+		catch(...)
+		{
+			doActionRecursionCount--;
+			throw;
+		}
 	}
 }
 
@@ -336,13 +430,19 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 {
 	if(!done)
 		throw runtime_error(string(__func__)+" -- action has not yet been done");
+	if(!factory->requiresALoadedSound)
+		throw runtime_error(string(__func__)+" -- cannot undo an action that did not require a loaded sound");
 
-	// willResize is set from doAction, and it's needed value should be consistant with the way the action will be undo
-	if(willResize)
-		actionSound.sound->lockForResize();
-	else
-		actionSound.sound->lockSize();
+	if(didLockSoundMutex)
+	{
+		// willResize is set from doAction, and it's needed value should be consistant with the way the action will be undo
+		if(willResize)
+			actionSound->sound->lockForResize();
+		else
+			actionSound->sound->lockSize();
+	}
 
+	undoActionRecursionCount++;
 	try
 	{
 		if(canUndo()!=curYes)
@@ -350,26 +450,26 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 
 		uncrossfadeEdges();
 
-		const CActionSound _actionSound(actionSound);
+		auto_ptr<const CActionSound> _actionSound(actionSound.get() ? new CActionSound(*actionSound) : NULL);
 
-		undoActionSizeSafe(_actionSound);
+		undoActionSizeSafe(_actionSound.get());
 
 		// make sure that the start and stop positions are in range after undoing the action
-		if(_actionSound.start<0)
-			_actionSound.start=0;
-		else if(_actionSound.start>=_actionSound.sound->getLength())
-			_actionSound.start=_actionSound.sound->getLength()-1;
+		if(_actionSound->start<0)
+			_actionSound->start=0;
+		else if(_actionSound->start>=_actionSound->sound->getLength())
+			_actionSound->start=_actionSound->sound->getLength()-1;
 	
-		if(_actionSound.stop<0)
-			_actionSound.stop=0;
-		else if(_actionSound.stop>=_actionSound.sound->getLength())
-			_actionSound.stop=_actionSound.sound->getLength()-1;
+		if(_actionSound->stop<0)
+			_actionSound->stop=0;
+		else if(_actionSound->stop>=_actionSound->sound->getLength())
+			_actionSound->stop=_actionSound->sound->getLength()-1;
 	
 
 		// restore the cues
-		actionSound.sound->clearCues();
+		actionSound->sound->clearCues();
 		for(size_t t=0;t<restoreCues.size();t++)
-			actionSound.sound->addCue(restoreCues[t].name,restoreCues[t].time,restoreCues[t].isAnchored);
+			actionSound->sound->addCue(restoreCues[t].name,restoreCues[t].time,restoreCues[t].isAnchored);
 		restoreCues.clear();
 
 
@@ -378,12 +478,15 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 			channel->updateAfterEdit(restoreOutputRoutes);
 
 
-		if(willResize)
-			actionSound.sound->unlockForResize();
-		else
-			actionSound.sound->unlockSize();
+		if(didLockSoundMutex)
+		{
+			if(willResize)
+				actionSound->sound->unlockForResize();
+			else
+				actionSound->sound->unlockSize();
+		}
 
-		actionSound.sound->flush();
+		actionSound->sound->flush();
 
 		// restore the selection position
 		if(channel!=NULL)
@@ -393,36 +496,44 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 			if(oldSelectStart!=NIL_SAMPLE_POS && oldSelectStop!=NIL_SAMPLE_POS)
 				setSelection(oldSelectStart,oldSelectStop,channel);
 			else
-				setSelection(_actionSound.start,_actionSound.stop,channel);
+				setSelection(_actionSound->start,_actionSound->stop,channel);
 		}
 
 		done=false;
 	}
 	catch(EUserMessage &e)
 	{
-		if(willResize)
-			actionSound.sound->unlockForResize();
-		else
-			actionSound.sound->unlockSize();
+		if(didLockSoundMutex)
+		{
+			if(willResize)
+				actionSound->sound->unlockForResize();
+			else
+				actionSound->sound->unlockSize();
+		}
 
 		if(e.what()[0])
 			Message(e.what());
 	}
 	catch(...)
 	{
-		if(willResize)
-			actionSound.sound->unlockForResize();
-		else
-			actionSound.sound->unlockSize();
+		if(didLockSoundMutex)
+		{
+			if(willResize)
+				actionSound->sound->unlockForResize();
+			else
+				actionSound->sound->unlockSize();
+		}
 
+		undoActionRecursionCount--;
 		throw;
 	}
-	actionSound.sound->setIsModified(origIsModified);
+	undoActionRecursionCount--;
+	actionSound->sound->setIsModified(origIsModified);
 }
 
 AAction::CanUndoResults AAction::canUndo() const
 {
-	return canUndo(actionSound);
+	return canUndo(actionSound.get());
 }
 
 void AAction::setSelection(sample_pos_t start,sample_pos_t stop,CSoundPlayerChannel *channel)
@@ -443,14 +554,14 @@ void AAction::clearSavedSelectionPositions()
 	and what's just after the start and stop edges according
 	to the global crossfade time(s)
 */
-void AAction::crossfadeEdges(const CActionSound &actionSound)
+void AAction::crossfadeEdges(const CActionSound *actionSound)
 {
 	didCrossfadeEdges=cetNone;
 
 	// might have the user specify some other reasons not to do the crossfade if say, the selection length is below the crossfade times or something
-	if(actionSound.doCrossfadeEdges==cetInner)
+	if(actionSound->doCrossfadeEdges==cetInner)
 		crossfadeEdgesInner(actionSound);
-	else if(actionSound.doCrossfadeEdges==cetOuter)
+	else if(actionSound->doCrossfadeEdges==cetOuter)
 		crossfadeEdgesOuter(actionSound);
 }
 
@@ -467,9 +578,9 @@ void AAction::crossfadeEdges(const CActionSound &actionSound)
 	the selection can still be modified, but not shortened
 */
 
-void AAction::prepareForInnerCrossfade(const CActionSound &actionSound)
+void AAction::prepareForInnerCrossfade(const CActionSound *actionSound)
 {
-	if(actionSound.doCrossfadeEdges==cetInner)
+	if(actionSound->doCrossfadeEdges==cetInner)
 	{
 		bool allChannels[MAX_CHANNELS];
 		for(size_t t=0;t<MAX_CHANNELS;t++)
@@ -479,11 +590,11 @@ void AAction::prepareForInnerCrossfade(const CActionSound &actionSound)
 		if(!getResultingCrossfadePoints(actionSound,startPos,stopPos))
 			throw EUserMessage("Cannot anticipate certain information necessary to do an inner crossfade for action");
 
-		sample_pos_t crossfadeStartTime=(sample_pos_t)(gCrossfadeStartTime*actionSound.sound->getSampleRate()/1000.0);
-		sample_pos_t crossfadeStopTime=(sample_pos_t)(gCrossfadeStopTime*actionSound.sound->getSampleRate()/1000.0);
+		sample_pos_t crossfadeStartTime=(sample_pos_t)(gCrossfadeStartTime*actionSound->sound->getSampleRate()/1000.0);
+		sample_pos_t crossfadeStopTime=(sample_pos_t)(gCrossfadeStopTime*actionSound->sound->getSampleRate()/1000.0);
 
 		// don't go off the end of the sound
-		crossfadeStartTime=min(crossfadeStartTime,actionSound.sound->getLength()-startPos);
+		crossfadeStartTime=min(crossfadeStartTime,actionSound->sound->getLength()-startPos);
 
 		// don't read before the beginning of the sound
 		crossfadeStopTime=min(crossfadeStopTime,stopPos);
@@ -500,7 +611,7 @@ void AAction::prepareForInnerCrossfade(const CActionSound &actionSound)
 			// since the crossfade will be with the very first sample, just let it start and not do the crossfade
 			crossfadeStartLength=0;
 
-		tempCrossfadePoolKeyStart=actionSound.sound->copyDataToTemp(allChannels,startPos,crossfadeStartLength);
+		tempCrossfadePoolKeyStart=actionSound->sound->copyDataToTemp(allChannels,startPos,crossfadeStartLength);
 
 
 
@@ -510,13 +621,13 @@ void AAction::prepareForInnerCrossfade(const CActionSound &actionSound)
 		// backup the area to crossfade before the stop position
 		crossfadeStop=stopPos-crossfadeStopTime;
 
-		if(stopPos<actionSound.sound->getLength()-1)
+		if(stopPos<actionSound->sound->getLength()-1)
 			crossfadeStopLength=crossfadeStopTime;
 		else
 			// since the crossfade will be with the very last sample, just let it end and not do the crossfade
 			crossfadeStopLength=0;
 
-		tempCrossfadePoolKeyStop=actionSound.sound->copyDataToTemp(allChannels,stopPos-crossfadeStopTime,crossfadeStopLength);
+		tempCrossfadePoolKeyStop=actionSound->sound->copyDataToTemp(allChannels,stopPos-crossfadeStopTime,crossfadeStopLength);
 
 	}
 }
@@ -529,7 +640,7 @@ void AAction::prepareForInnerCrossfade(const CActionSound &actionSound)
  * 	channels that doChannel[] is false for).
  */
 
-void AAction::crossfadeEdgesInner(const CActionSound &actionSound)
+void AAction::crossfadeEdgesInner(const CActionSound *actionSound)
 {
 	bool allChannels[MAX_CHANNELS];
 	for(size_t t=0;t<MAX_CHANNELS;t++)
@@ -540,9 +651,9 @@ void AAction::crossfadeEdgesInner(const CActionSound &actionSound)
 	sample_pos_t crossfadeStartTime=crossfadeStartLength;
 	sample_pos_t crossfadeStopTime=crossfadeStopLength;
 
-	if(actionSound.selectionLength()<(crossfadeStartLength+crossfadeStopLength))
+	if(actionSound->selectionLength()<(crossfadeStartLength+crossfadeStopLength))
 		// crossfades would overlap.. fall back to selectionLength/2 as the start and stop crossfade times
-		crossfadeStartTime=crossfadeStopTime= actionSound.selectionLength()/2;
+		crossfadeStartTime=crossfadeStopTime= actionSound->selectionLength()/2;
 
 	crossfadeStartTime=min(crossfadeStartTime,crossfadeStartLength);
 	crossfadeStopTime=min(crossfadeStopTime,crossfadeStopLength);
@@ -550,22 +661,22 @@ void AAction::crossfadeEdgesInner(const CActionSound &actionSound)
 
 	// ??? I don't like this... it's would be better if were just correct from the normal logic
 	// special case
-	if(actionSound.start==actionSound.stop)
+	if(actionSound->start==actionSound->stop)
 		// min of what's possible and how much prepareForInnerCrossfade backed up
-		crossfadeStartTime=min(actionSound.sound->getLength()-actionSound.start,crossfadeStartLength);
+		crossfadeStartTime=min(actionSound->sound->getLength()-actionSound->start,crossfadeStartLength);
 
 	// crossfade at the start position
 	{
 
 		// save what we're about to modify because undoAction needs the data the way it was
 		// just after doAction
-		int tempPoolKey=actionSound.sound->copyDataToTemp(allChannels,actionSound.start,crossfadeStartTime);
+		int tempPoolKey=actionSound->sound->copyDataToTemp(allChannels,actionSound->start,crossfadeStartTime);
 
-		for(unsigned i=0;i<actionSound.sound->getChannelCount() && i<preactionChannelCount;i++)
+		for(unsigned i=0;i<actionSound->sound->getChannelCount() && i<preactionChannelCount;i++)
 		{	
-			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
-			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempCrossfadePoolKeyStart,i);
-			const CrossfadeFadeMethods crossfadeFadeMethod=actionSound.doChannel[i] ? gCrossfadeFadeMethod : cfmLinear; // TTT
+			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
+			const CRezPoolAccesser src=actionSound->sound->getTempAudio(tempCrossfadePoolKeyStart,i);
+			const CrossfadeFadeMethods crossfadeFadeMethod=actionSound->doChannel[i] ? gCrossfadeFadeMethod : cfmLinear; // TTT
 
 /* 
 ??? when I do careful listening on a crossfade after a 
@@ -581,7 +692,7 @@ run-through on paper would help
 
 			// crossfade with what already there and what's in the temp audio pool
 			if(crossfadeStartTime>1) // avoid divide by zero
-			for(sample_pos_t t=actionSound.start;t<actionSound.start+crossfadeStartTime;t++,srcPos++)
+			for(sample_pos_t t=actionSound->start;t<actionSound->start+crossfadeStartTime;t++,srcPos++)
 			{
 				float g1=(float)srcPos/(float)(crossfadeStartTime-1);
 				float g2=1.0-g1;
@@ -591,28 +702,28 @@ run-through on paper would help
 		}
 
 		// setup so undoCrossfade will restore the part we just modified
-		actionSound.sound->removeTempAudioPools(tempCrossfadePoolKeyStart);
+		actionSound->sound->removeTempAudioPools(tempCrossfadePoolKeyStart);
 		tempCrossfadePoolKeyStart=tempPoolKey;
-		crossfadeStart=actionSound.start;
+		crossfadeStart=actionSound->start;
 		crossfadeStartLength=crossfadeStartTime;
 	}
 		
 	// crossfade at the stop position
 	{
-		int tempPoolKey=actionSound.sound->copyDataToTemp(allChannels,actionSound.stop-crossfadeStopTime+1,crossfadeStopTime);
+		int tempPoolKey=actionSound->sound->copyDataToTemp(allChannels,actionSound->stop-crossfadeStopTime+1,crossfadeStopTime);
 
-		for(unsigned i=0;i<actionSound.sound->getChannelCount() && i<preactionChannelCount;i++)
+		for(unsigned i=0;i<actionSound->sound->getChannelCount() && i<preactionChannelCount;i++)
 		{	
-			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
-			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempCrossfadePoolKeyStop,i);
-			const CrossfadeFadeMethods crossfadeFadeMethod=actionSound.doChannel[i] ? gCrossfadeFadeMethod : cfmLinear; // TTT
+			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
+			const CRezPoolAccesser src=actionSound->sound->getTempAudio(tempCrossfadePoolKeyStop,i);
+			const CrossfadeFadeMethods crossfadeFadeMethod=actionSound->doChannel[i] ? gCrossfadeFadeMethod : cfmLinear; // TTT
 
 			sample_pos_t srcPos=0;
 			sample_pos_t srcOffset=crossfadeStopLength-crossfadeStopTime; // amount that we're not using of the stop.. so the *end* of the data will match up
 
 			// crossfade with what already there and what's in the temp audio pool
 			if(crossfadeStopTime>1) // avoid divide by zero
-			for(sample_pos_t t=actionSound.stop-crossfadeStopTime+1;t<=actionSound.stop;t++,srcPos++)
+			for(sample_pos_t t=actionSound->stop-crossfadeStopTime+1;t<=actionSound->stop;t++,srcPos++)
 			{
 				float g1=(float)srcPos/(float)(crossfadeStopTime-1);
 				float g2=1.0-g1;
@@ -622,9 +733,9 @@ run-through on paper would help
 		}
 
 		// setup so undoCrossfade will restore the part we just modified
-		actionSound.sound->removeTempAudioPools(tempCrossfadePoolKeyStop);
+		actionSound->sound->removeTempAudioPools(tempCrossfadePoolKeyStop);
 		tempCrossfadePoolKeyStop=tempPoolKey;
-		crossfadeStop=actionSound.stop-crossfadeStopTime+1;
+		crossfadeStop=actionSound->stop-crossfadeStopTime+1;
 		crossfadeStopLength=crossfadeStopTime;
 
 	}
@@ -632,7 +743,7 @@ run-through on paper would help
 	didCrossfadeEdges=cetInner;
 }
 
-void AAction::crossfadeEdgesOuter(const CActionSound &actionSound)
+void AAction::crossfadeEdgesOuter(const CActionSound *actionSound)
 {
 	bool allChannels[MAX_CHANNELS];
 	for(size_t t=0;t<MAX_CHANNELS;t++)
@@ -641,13 +752,13 @@ void AAction::crossfadeEdgesOuter(const CActionSound &actionSound)
 	crossfadeMoveMul=2;
 
 	// crossfade at the start position
-	sample_pos_t crossfadeTime=(sample_pos_t)(gCrossfadeStartTime*actionSound.sound->getSampleRate()/1000.0);
+	sample_pos_t crossfadeTime=(sample_pos_t)(gCrossfadeStartTime*actionSound->sound->getSampleRate()/1000.0);
 		// make crossfadeTime smaller if there isn't room around the start position to fully do the crossfade
-	crossfadeTime=min(crossfadeTime,min(actionSound.start,(actionSound.sound->getLength()-actionSound.start)));
+	crossfadeTime=min(crossfadeTime,min(actionSound->start,(actionSound->sound->getLength()-actionSound->start)));
 
 	if(crossfadeTime>0)
 	{
-		// we don't look at actionSound.whichChannels so that when we 
+		// we don't look at actionSound->whichChannels so that when we 
 		// make the sound slightly shorter, it keeps the channels in sync
 
 		// The two areas to be crossfaded are consecutive in the at start-crossfadeTime and spans for
@@ -655,32 +766,32 @@ void AAction::crossfadeEdgesOuter(const CActionSound &actionSound)
 		// a crossfade will be from one overlapping area to the other.  So, we need to move any cues 
 		// existing in the second half of this region leftward by the crossfade-time
 	
-		for(size_t t=0;t<actionSound.sound->getCueCount();t++)
+		for(size_t t=0;t<actionSound->sound->getCueCount();t++)
 		{
-			const sample_pos_t cueTime=actionSound.sound->getCueTime(t);
-			if(cueTime>=actionSound.start && cueTime<actionSound.start+crossfadeTime)
-				actionSound.sound->setCueTime(t,cueTime-crossfadeTime);
+			const sample_pos_t cueTime=actionSound->sound->getCueTime(t);
+			if(cueTime>=actionSound->start && cueTime<actionSound->start+crossfadeTime)
+				actionSound->sound->setCueTime(t,cueTime-crossfadeTime);
 		}
 
 		// backup the area to crossfade around the start position
-		tempCrossfadePoolKeyStart=actionSound.sound->moveDataToTempAndReplaceSpace(allChannels,actionSound.start-crossfadeTime,crossfadeTime*2,crossfadeTime);
+		tempCrossfadePoolKeyStart=actionSound->sound->moveDataToTempAndReplaceSpace(allChannels,actionSound->start-crossfadeTime,crossfadeTime*2,crossfadeTime);
 
 		// info to uncrossfadeEdges()
-		crossfadeStart=actionSound.start-crossfadeTime;
+		crossfadeStart=actionSound->start-crossfadeTime;
 		crossfadeStartLength=crossfadeTime;
 
 		// crossfade at the start position
-		for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+		for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 		{	
-			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
-			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempCrossfadePoolKeyStart,i);
-			const CrossfadeFadeMethods crossfadeFadeMethod=actionSound.doChannel[i] ? gCrossfadeFadeMethod : cfmLinear; // TTT
+			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
+			const CRezPoolAccesser src=actionSound->sound->getTempAudio(tempCrossfadePoolKeyStart,i);
+			const CrossfadeFadeMethods crossfadeFadeMethod=actionSound->doChannel[i] ? gCrossfadeFadeMethod : cfmLinear; // TTT
 
 			sample_pos_t srcPos=0;
 
 			// fade out what was before the start position
 			if(crossfadeTime>1) // avoid divide by zero
-			for(sample_pos_t t=actionSound.start-crossfadeTime;t<actionSound.start;t++,srcPos++)
+			for(sample_pos_t t=actionSound->start-crossfadeTime;t<actionSound->start;t++,srcPos++)
 			{
 				float g=1.0-((float)srcPos/(float)(crossfadeTime-1));
 				if(crossfadeFadeMethod==cfmParabolic) g*=g;
@@ -690,7 +801,7 @@ void AAction::crossfadeEdgesOuter(const CActionSound &actionSound)
 			// fade in what was after the start position 
 			// (not necesary to ClipSample since it's always a constant 1.0 gain
 			if(crossfadeTime>1) // avoid divide by zero
-			for(sample_pos_t t=actionSound.start-crossfadeTime;t<actionSound.start;t++,srcPos++)
+			for(sample_pos_t t=actionSound->start-crossfadeTime;t<actionSound->start;t++,srcPos++)
 			{
 				float g=(float)(srcPos-crossfadeTime)/(float)(crossfadeTime-1);
 				if(crossfadeFadeMethod==cfmParabolic) g*=g;
@@ -699,50 +810,50 @@ void AAction::crossfadeEdgesOuter(const CActionSound &actionSound)
 
 		}
 
-		actionSound.start-=crossfadeTime;
-		actionSound.stop-=crossfadeTime;
+		actionSound->start-=crossfadeTime;
+		actionSound->stop-=crossfadeTime;
 
 		didCrossfadeEdges=cetOuter;
 	}
 
 
-	if(actionSound.start!=actionSound.stop)
+	if(actionSound->start!=actionSound->stop)
 	{ // don't do stop crossfade if they're the same point
 	
 		// crossfade at the stop position
-		sample_pos_t crossfadeTime=(sample_pos_t)(gCrossfadeStopTime*actionSound.sound->getSampleRate()/1000.0);
+		sample_pos_t crossfadeTime=(sample_pos_t)(gCrossfadeStopTime*actionSound->sound->getSampleRate()/1000.0);
 			// make crossfadeTime smaller if there isn't room around the stop position to fully do the crossfade
-		crossfadeTime=min(crossfadeTime,min(actionSound.stop,actionSound.sound->getLength()-(actionSound.stop+1)));
+		crossfadeTime=min(crossfadeTime,min(actionSound->stop,actionSound->sound->getLength()-(actionSound->stop+1)));
 
 		if(crossfadeTime>0)
 		{
 			// move cues just as we did in the start case
-			for(size_t t=0;t<actionSound.sound->getCueCount();t++)
+			for(size_t t=0;t<actionSound->sound->getCueCount();t++)
 			{
-				const sample_pos_t cueTime=actionSound.sound->getCueTime(t);
-				if(cueTime>=actionSound.stop && cueTime<actionSound.stop+crossfadeTime)
-					actionSound.sound->setCueTime(t,cueTime-crossfadeTime);
+				const sample_pos_t cueTime=actionSound->sound->getCueTime(t);
+				if(cueTime>=actionSound->stop && cueTime<actionSound->stop+crossfadeTime)
+					actionSound->sound->setCueTime(t,cueTime-crossfadeTime);
 			}
 
 			// backup the area to crossfade around the stop position
-			tempCrossfadePoolKeyStop=actionSound.sound->moveDataToTempAndReplaceSpace(allChannels,actionSound.stop-crossfadeTime,crossfadeTime*2,crossfadeTime);
+			tempCrossfadePoolKeyStop=actionSound->sound->moveDataToTempAndReplaceSpace(allChannels,actionSound->stop-crossfadeTime,crossfadeTime*2,crossfadeTime);
 
 			// info to uncrossfadeEdges()
-			crossfadeStop=actionSound.stop-crossfadeTime;
+			crossfadeStop=actionSound->stop-crossfadeTime;
 			crossfadeStopLength=crossfadeTime;
 
 			// crossfade at the stop position
-			for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+			for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 			{	
-				CRezPoolAccesser dest=actionSound.sound->getAudio(i);
-				const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempCrossfadePoolKeyStop,i);
-				const CrossfadeFadeMethods crossfadeFadeMethod=actionSound.doChannel[i] ? gCrossfadeFadeMethod : cfmLinear; // TTT
+				CRezPoolAccesser dest=actionSound->sound->getAudio(i);
+				const CRezPoolAccesser src=actionSound->sound->getTempAudio(tempCrossfadePoolKeyStop,i);
+				const CrossfadeFadeMethods crossfadeFadeMethod=actionSound->doChannel[i] ? gCrossfadeFadeMethod : cfmLinear; // TTT
 
 				sample_pos_t srcPos=0;
 
 				// fade out what was before the stop position
 				if(crossfadeTime>1) // avoid divide by zero
-				for(sample_pos_t t=actionSound.stop-crossfadeTime;t<actionSound.stop;t++,srcPos++)
+				for(sample_pos_t t=actionSound->stop-crossfadeTime;t<actionSound->stop;t++,srcPos++)
 				{
 					float g=1.0-((float)srcPos/(float)(crossfadeTime-1));
 					if(crossfadeFadeMethod==cfmParabolic) g*=g;
@@ -752,7 +863,7 @@ void AAction::crossfadeEdgesOuter(const CActionSound &actionSound)
 				// fade in what was after the stop position 
 				// (not necesary to ClipSample since it's always a constant 1.0 gain
 				if(crossfadeTime>1) // avoid divide by zero
-				for(sample_pos_t t=actionSound.stop-crossfadeTime;t<actionSound.stop;t++,srcPos++)
+				for(sample_pos_t t=actionSound->stop-crossfadeTime;t<actionSound->stop;t++,srcPos++)
 				{
 					float g=(float)(srcPos-crossfadeTime)/(float)(crossfadeTime-1);
 					if(crossfadeFadeMethod==cfmParabolic) g*=g;
@@ -779,10 +890,10 @@ void AAction::uncrossfadeEdges()
 			allChannels[t]=true;
 
 		if(crossfadeStopLength>0)
-			actionSound.sound->removeSpaceAndMoveDataFromTemp(allChannels,crossfadeStop,crossfadeStopLength,tempCrossfadePoolKeyStop,crossfadeStop,crossfadeStopLength*crossfadeMoveMul,false);
+			actionSound->sound->removeSpaceAndMoveDataFromTemp(allChannels,crossfadeStop,crossfadeStopLength,tempCrossfadePoolKeyStop,crossfadeStop,crossfadeStopLength*crossfadeMoveMul,false);
 			
 		if(crossfadeStartLength>0)
-			actionSound.sound->removeSpaceAndMoveDataFromTemp(allChannels,crossfadeStart,crossfadeStartLength,tempCrossfadePoolKeyStart,crossfadeStart,crossfadeStartLength*crossfadeMoveMul,false);
+			actionSound->sound->removeSpaceAndMoveDataFromTemp(allChannels,crossfadeStart,crossfadeStartLength,tempCrossfadePoolKeyStart,crossfadeStart,crossfadeStartLength*crossfadeMoveMul,false);
 			
 		didCrossfadeEdges=cetNone;
 	}
@@ -796,24 +907,24 @@ void AAction::freeAllTempPools()
 		// free the temp pools possibly used by moveSelectionToTempPools
 		if(tempAudioPoolKey!=-1)
 		{
-			actionSound.sound->removeTempAudioPools(tempAudioPoolKey);
+			actionSound->sound->removeTempAudioPools(tempAudioPoolKey);
 			tempAudioPoolKey=-1;
 		}
 		if(tempAudioPoolKey2!=-1)
 		{
-			actionSound.sound->removeTempAudioPools(tempAudioPoolKey2);
+			actionSound->sound->removeTempAudioPools(tempAudioPoolKey2);
 			tempAudioPoolKey2=-1;
 		}
 
 		// free the temp pools possibly used by crossfadeEdges
 		if(tempCrossfadePoolKeyStart!=-1)
 		{
-			actionSound.sound->removeTempAudioPools(tempCrossfadePoolKeyStart);
+			actionSound->sound->removeTempAudioPools(tempCrossfadePoolKeyStart);
 			tempCrossfadePoolKeyStart=-1;
 		}
 		if(tempCrossfadePoolKeyStop!=-1)
 		{
-			actionSound.sound->removeTempAudioPools(tempCrossfadePoolKeyStop);
+			actionSound->sound->removeTempAudioPools(tempCrossfadePoolKeyStop);
 			tempCrossfadePoolKeyStop=-1;
 		}
 		
@@ -826,17 +937,17 @@ void AAction::freeAllTempPools()
 
 // fudgeFactor is used to copy a few more samples of data past the end of the moved data.  Useful for effects like CChangeRateEffect which uses the undo data as a source buffer... but needs to always read ahead a little
 // ??? if I thought it was going to be happening... I should lock the undo CPoolFile before changing its size in case 2 threads were using it at the same time
-void AAction::moveSelectionToTempPools(const CActionSound &actionSound,const MoveModes moveMode,sample_pos_t replaceLength,sample_pos_t fudgeFactor)
+void AAction::moveSelectionToTempPools(const CActionSound *actionSound,const MoveModes moveMode,sample_pos_t replaceLength,sample_pos_t fudgeFactor)
 {
 	if(tempAudioPoolKey!=-1)
 		throw runtime_error(string(__func__)+" -- selection already moved");
 
 	restoreMoveMode=moveMode;
 
-	const sample_pos_t length=actionSound.sound->getLength();
-	sample_pos_t start=actionSound.start;
-	sample_pos_t stop=actionSound.stop;
-	sample_pos_t selectionLength=actionSound.selectionLength();
+	const sample_pos_t length=actionSound->sound->getLength();
+	sample_pos_t start=actionSound->start;
+	sample_pos_t stop=actionSound->stop;
+	sample_pos_t selectionLength=actionSound->selectionLength();
 
 	restoreWhere=start;
 	restoreLength=selectionLength;
@@ -853,7 +964,7 @@ void AAction::moveSelectionToTempPools(const CActionSound &actionSound,const Mov
 	 *   restoreSelectionFromTempPools it avoids this side-effect of 30 samples of silence being there after 
 	 *   the undo.
 	 */
-	restoreTotalLength=actionSound.sound->getLength();
+	restoreTotalLength=actionSound->sound->getLength();
 
 	switch(moveMode)
 	{
@@ -861,7 +972,7 @@ void AAction::moveSelectionToTempPools(const CActionSound &actionSound,const Mov
 		// the whole channel... we just change the effective start 
 		// and stop positions and let it drop into the next case
 		start=0;
-		stop=actionSound.sound->getLength()-1;
+		stop=actionSound->sound->getLength()-1;
 		selectionLength=(stop-start)+1;
 
 		restoreWhere=start;
@@ -869,7 +980,7 @@ void AAction::moveSelectionToTempPools(const CActionSound &actionSound,const Mov
 
 	case mmSelection:
 		// whats between start and stop
-		tempAudioPoolKey=actionSound.sound->moveDataToTempAndReplaceSpace(actionSound.doChannel,start,selectionLength,replaceLength,fudgeFactor);
+		tempAudioPoolKey=actionSound->sound->moveDataToTempAndReplaceSpace(actionSound->doChannel,start,selectionLength,replaceLength,fudgeFactor);
 		break;
 
 	case mmAllButSelection:
@@ -883,8 +994,8 @@ void AAction::moveSelectionToTempPools(const CActionSound &actionSound,const Mov
 		restoreLength2=(length-stop)-1;
 
 		// on both sides outside of start and stop
-		tempAudioPoolKey=actionSound.sound->moveDataToTemp(actionSound.doChannel,0,start);
-		tempAudioPoolKey2=actionSound.sound->moveDataToTemp(actionSound.doChannel,selectionLength,(length-stop)-1);
+		tempAudioPoolKey=actionSound->sound->moveDataToTemp(actionSound->doChannel,0,start);
+		tempAudioPoolKey2=actionSound->sound->moveDataToTemp(actionSound->doChannel,selectionLength,(length-stop)-1);
 		break;
 
 	default:
@@ -892,7 +1003,7 @@ void AAction::moveSelectionToTempPools(const CActionSound &actionSound,const Mov
 	}
 }
 
-void AAction::restoreSelectionFromTempPools(const CActionSound &actionSound,sample_pos_t removeWhere,sample_pos_t removeLength)
+void AAction::restoreSelectionFromTempPools(const CActionSound *actionSound,sample_pos_t removeWhere,sample_pos_t removeLength)
 {
 	if(tempAudioPoolKey==-1)
 		return;
@@ -903,7 +1014,7 @@ void AAction::restoreSelectionFromTempPools(const CActionSound &actionSound,samp
 	{
 	case mmAll:
 	case mmSelection:
-		actionSound.sound->removeSpaceAndMoveDataFromTemp(actionSound.doChannel,removeWhere,removeLength,tempAudioPoolKey,restoreWhere,restoreLength,false,restoreTotalLength);
+		actionSound->sound->removeSpaceAndMoveDataFromTemp(actionSound->doChannel,removeWhere,removeLength,tempAudioPoolKey,restoreWhere,restoreLength,false,restoreTotalLength);
 		break;
 
 	case mmAllButSelection:
@@ -911,11 +1022,11 @@ void AAction::restoreSelectionFromTempPools(const CActionSound &actionSound,samp
 			throw runtime_error(string(__func__)+" -- cannot pass removeWhere/removeLength when moveMode was mmAllButSelection");
 
 		// on both sides outside of start and stop
-		actionSound.sound->moveDataFromTemp(actionSound.doChannel,tempAudioPoolKey,restoreWhere,restoreLength,false,restoreTotalLength);
-		if(actionSound.countChannels()==actionSound.sound->getChannelCount())
-			actionSound.sound->moveDataFromTemp(actionSound.doChannel,tempAudioPoolKey2,actionSound.sound->getLength(),restoreLength2,false,restoreTotalLength);
+		actionSound->sound->moveDataFromTemp(actionSound->doChannel,tempAudioPoolKey,restoreWhere,restoreLength,false,restoreTotalLength);
+		if(actionSound->countChannels()==actionSound->sound->getChannelCount())
+			actionSound->sound->moveDataFromTemp(actionSound->doChannel,tempAudioPoolKey2,actionSound->sound->getLength(),restoreLength2,false,restoreTotalLength);
 		else
-			actionSound.sound->removeSpaceAndMoveDataFromTemp(actionSound.doChannel,restoreLength+actionSound.selectionLength(),restoreLength2,tempAudioPoolKey2,restoreLength+actionSound.selectionLength(),restoreLength2,false,restoreTotalLength);
+			actionSound->sound->removeSpaceAndMoveDataFromTemp(actionSound->doChannel,restoreLength+actionSound->selectionLength(),restoreLength2,tempAudioPoolKey2,restoreLength+actionSound->selectionLength(),restoreLength2,false,restoreTotalLength);
 		break;
 
 	default:

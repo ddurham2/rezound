@@ -111,7 +111,7 @@ void FXCheckBoxParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 void FXCheckBoxParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 {
 	const string key=prefix DOT getName();
-	f->createValue<bool>(key DOT "value",getValue());
+	f->setValue<bool>(key DOT "value",getValue());
 }
 
 

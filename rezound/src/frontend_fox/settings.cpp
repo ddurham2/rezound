@@ -60,17 +60,17 @@ void readFrontendSettings()
 
 void writeFrontendSettings()
 {
-	gSettingsRegistry->createValue<bool>("FOX" DOT "drawVerticalCuePositions",gDrawVerticalCuePositions);
-	gSettingsRegistry->createValue<bool>("FOX" DOT "snapToCues",gSnapToCues);
-	gSettingsRegistry->createValue<unsigned>("FOX" DOT "snapToCueDistance",gSnapToCueDistance);
+	gSettingsRegistry->setValue<bool>("FOX" DOT "drawVerticalCuePositions",gDrawVerticalCuePositions);
+	gSettingsRegistry->setValue<bool>("FOX" DOT "snapToCues",gSnapToCues);
+	gSettingsRegistry->setValue<unsigned>("FOX" DOT "snapToCueDistance",gSnapToCueDistance);
 
-	gSettingsRegistry->createValue<bool>("FOX" DOT "followPlayPosition",gFollowPlayPosition);
+	gSettingsRegistry->setValue<bool>("FOX" DOT "followPlayPosition",gFollowPlayPosition);
 
-	gSettingsRegistry->createValue<bool>("FOX" DOT "renderClippingWarning",gRenderClippingWarning);
+	gSettingsRegistry->setValue<bool>("FOX" DOT "renderClippingWarning",gRenderClippingWarning);
 
-	gSettingsRegistry->createValue<double>("FOX" DOT "initialLengthToShow",gInitialLengthToShow);
+	gSettingsRegistry->setValue<double>("FOX" DOT "initialLengthToShow",gInitialLengthToShow);
 
-	gSettingsRegistry->createValue<vector<bool> >("FOX" DOT "showTimeUnits",gShowTimeUnits);
+	gSettingsRegistry->setValue<vector<bool> >("FOX" DOT "showTimeUnits",gShowTimeUnits);
 }
 
 void popupTimeUnitsSelectionMenu(FXWindow *owner,FXEvent *ev)

@@ -32,13 +32,13 @@ class CTestEffectFactory;
 class CTestEffect : public AAction
 {
 public:
-	CTestEffect(const CActionSound &actionSound);
+	CTestEffect(const AActionFactory *factory,const CActionSound *actionSound);
 	virtual ~CTestEffect();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 };
 
@@ -48,7 +48,7 @@ public:
 	CTestEffectFactory(AActionDialog *channelSelectDialog);
 	virtual ~CTestEffectFactory();
 
-	CTestEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CTestEffect *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

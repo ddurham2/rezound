@@ -20,8 +20,8 @@
 
 #include "CInvertPhaseAction.h"
 
-CInvertPhaseAction::CInvertPhaseAction(const CActionSound actionSound) :
-	AAction(actionSound),
+CInvertPhaseAction::CInvertPhaseAction(const AActionFactory *factory,const CActionSound *actionSound) :
+	AAction(factory,actionSound),
 	allowCancel(true)
 {
 }
@@ -30,19 +30,19 @@ CInvertPhaseAction::~CInvertPhaseAction()
 {
 }
 
-bool CInvertPhaseAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CInvertPhaseAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t stop=actionSound.stop;
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t stop=actionSound->stop;
 
 	unsigned channelsDoneCount=0;
-	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+	for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 	{
-		if(actionSound.doChannel[i])
+		if(actionSound->doChannel[i])
 		{
-			CStatusBar statusBar(_("Inverting Phase -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,allowCancel);
+			CStatusBar statusBar(_("Inverting Phase -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),start,stop,allowCancel);
 
-			CRezPoolAccesser audio=actionSound.sound->getAudio(i);
+			CRezPoolAccesser audio=actionSound->sound->getAudio(i);
 
 			for(sample_pos_t t=start;t<=stop;t++)
 			{
@@ -65,9 +65,9 @@ bool CInvertPhaseAction::doActionSizeSafe(CActionSound &actionSound,bool prepare
 					// undo all previously processed channels
 					for(unsigned k=0;k<i;k++)
 					{
-						if(actionSound.doChannel[k])
+						if(actionSound->doChannel[k])
 						{
-							CRezPoolAccesser audio=actionSound.sound->getAudio(k);
+							CRezPoolAccesser audio=actionSound->sound->getAudio(k);
 							CStatusBar statusBar(_("Cancelling Invert Phase -- Channel ")+istring(--channelsDoneCount),start,stop);
 							for(sample_pos_t t=start;t<=stop;t++)
 							{
@@ -80,25 +80,25 @@ bool CInvertPhaseAction::doActionSizeSafe(CActionSound &actionSound,bool prepare
 					return false;
 				}
 			}
-			actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
+			actionSound->sound->invalidatePeakData(i,actionSound->start,actionSound->stop);
 		}
 	}
 
 	return true;
 }
 
-AAction::CanUndoResults CInvertPhaseAction::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CInvertPhaseAction::canUndo(const CActionSound *actionSound) const
 {
 	return curYes;
 }
 
-void CInvertPhaseAction::undoActionSizeSafe(const CActionSound &_actionSound)
+void CInvertPhaseAction::undoActionSizeSafe(const CActionSound *_actionSound)
 {
-	CActionSound actionSound(_actionSound);
+	CActionSound actionSound(*_actionSound);
 	allowCancel=false;
 	try
 	{
-		doActionSizeSafe(actionSound,false);
+		doActionSizeSafe(&actionSound,false);
 		allowCancel=true;
 	}
 	catch(...)
@@ -121,9 +121,9 @@ CInvertPhaseActionFactory::~CInvertPhaseActionFactory()
 {
 }
 
-CInvertPhaseAction *CInvertPhaseActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CInvertPhaseAction *CInvertPhaseActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return new CInvertPhaseAction(actionSound);
+	return new CInvertPhaseAction(this,actionSound);
 }
 
 const string CInvertPhaseActionFactory::getExplanation() const

@@ -20,8 +20,8 @@
 
 #include "CMuteEdit.h"
 
-CMuteEdit::CMuteEdit(const CActionSound actionSound) :
-	AAction(actionSound)
+CMuteEdit::CMuteEdit(const AActionFactory *factory,const CActionSound *actionSound) :
+	AAction(factory,actionSound)
 {
 }
 
@@ -29,29 +29,29 @@ CMuteEdit::~CMuteEdit()
 {
 }
 
-bool CMuteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CMuteEdit::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
 	if(prepareForUndo)
-		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
+		moveSelectionToTempPools(actionSound,mmSelection,actionSound->selectionLength());
 
-	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+	for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 	{
-		if(actionSound.doChannel[i])
-			actionSound.sound->silenceSound(i,actionSound.start,actionSound.selectionLength(),true,true);
+		if(actionSound->doChannel[i])
+			actionSound->sound->silenceSound(i,actionSound->start,actionSound->selectionLength(),true,true);
 	}
 
 	return(true);
 }
 
-AAction::CanUndoResults CMuteEdit::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CMuteEdit::canUndo(const CActionSound *actionSound) const
 {
 	// should check some size constraint
 	return(curYes);
 }
 
-void CMuteEdit::undoActionSizeSafe(const CActionSound &actionSound)
+void CMuteEdit::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
+	restoreSelectionFromTempPools(actionSound,actionSound->start,actionSound->selectionLength());
 }
 
 
@@ -67,8 +67,8 @@ CMuteEditFactory::~CMuteEditFactory()
 {
 }
 
-CMuteEdit *CMuteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CMuteEdit *CMuteEditFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return(new CMuteEdit(actionSound));
+	return(new CMuteEdit(this,actionSound));
 }
 

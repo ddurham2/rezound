@@ -31,15 +31,15 @@ class ASoundFileManager;
 class CSaveAsMultipleFilesAction : public AAction
 {
 public:
-	CSaveAsMultipleFilesAction(const CActionSound &actionSound,ASoundFileManager *soundFileManager,const string directory,const string filenamePrefix,const string filenameSuffix,const string extension,bool openSavedSegments,unsigned segmentNumberOffset,bool selectionOnly,bool promptOnlyOnce);
+	CSaveAsMultipleFilesAction(const AActionFactory *factory,const CActionSound *actionSound,ASoundFileManager *soundFileManager,const string directory,const string filenamePrefix,const string filenameSuffix,const string extension,bool openSavedSegments,unsigned segmentNumberOffset,bool selectionOnly,bool promptOnlyOnce);
 	virtual ~CSaveAsMultipleFilesAction();
 
 	static const string getExplanation();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 	bool doesWarrantSaving() const;
 
@@ -63,7 +63,7 @@ public:
 	CSaveAsMultipleFilesActionFactory(AActionDialog *channelSelectDialog);
 	virtual ~CSaveAsMultipleFilesActionFactory();
 
-	CSaveAsMultipleFilesAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CSaveAsMultipleFilesAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

@@ -161,8 +161,8 @@ void CAboutDialog::showOnStartup()
 	int count=gSettingsRegistry->getValue<int>("SeenAboutDialogCount");
 	if(version!=REZOUND_VERSION)
 	{ // different version
-		gSettingsRegistry->createValue<string>("SeenAboutDialogVersion",REZOUND_VERSION);
-		gSettingsRegistry->createValue<int>("SeenAboutDialogCount",1);
+		gSettingsRegistry->setValue<string>("SeenAboutDialogVersion",REZOUND_VERSION);
+		gSettingsRegistry->setValue<int>("SeenAboutDialogCount",1);
 
 		// if the version has changed from the previous run, then forget all window positions/sizes and splitter positions
 		gSettingsRegistry->removeKey("SplitterPositions");
@@ -173,7 +173,7 @@ void CAboutDialog::showOnStartup()
 		if(count>2)
 			return; // been seen 3 times already
 		else
-			gSettingsRegistry->createValue<int>("SeenAboutDialogCount",count+1);
+			gSettingsRegistry->setValue<int>("SeenAboutDialogCount",count+1);
 	}
 	execute(PLACEMENT_SCREEN);
 }

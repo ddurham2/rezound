@@ -22,12 +22,12 @@
 
 #include "../CActionParameters.h"
 
-CRotateEdit::CRotateEdit(const CActionSound actionSound,const RotateTypes _rotateType,const double _amount) :
-	AAction(actionSound),
+CRotateEdit::CRotateEdit(const AActionFactory *factory,const CActionSound *actionSound,const RotateTypes _rotateType,const double _amount) :
+	AAction(factory,actionSound),
 	rotateType(_rotateType),
 
     		// convert seconds to samples
-    	amount((sample_pos_t)(_amount*actionSound.sound->getSampleRate()))
+    	amount((sample_pos_t)(_amount*actionSound->sound->getSampleRate()))
 {
 	if(_amount<0)
 		throw(runtime_error(string(__func__)+_(" -- amount is negative")));
@@ -37,33 +37,33 @@ CRotateEdit::~CRotateEdit()
 {
 }
 
-bool CRotateEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CRotateEdit::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
 	rotate(actionSound,rotateType,amount);
 	return(true);
 }
 
-AAction::CanUndoResults CRotateEdit::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CRotateEdit::canUndo(const CActionSound *actionSound) const
 {
 	return(curYes);
 }
 
-void CRotateEdit::undoActionSizeSafe(const CActionSound &actionSound)
+void CRotateEdit::undoActionSizeSafe(const CActionSound *actionSound)
 { 
 	// do just as doActionSizeSafe except the other direction
 	rotate(actionSound,rotateType==rtLeft ? rtRight : rtLeft,amount);
 }
 
 
-void CRotateEdit::rotate(const CActionSound &actionSound,const RotateTypes rotateType,const sample_pos_t _amount)
+void CRotateEdit::rotate(const CActionSound *actionSound,const RotateTypes rotateType,const sample_pos_t _amount)
 {
-	const sample_pos_t selectionLength=actionSound.selectionLength();
+	const sample_pos_t selectionLength=actionSound->selectionLength();
 	const sample_pos_t amount=_amount%selectionLength; // wrap the amount if its too large
 
 	if(rotateType==rtLeft)
-		actionSound.sound->rotateLeft(actionSound.doChannel,actionSound.start,actionSound.stop,amount);
+		actionSound->sound->rotateLeft(actionSound->doChannel,actionSound->start,actionSound->stop,amount);
 	else // if(rotateType==rtRight)
-		actionSound.sound->rotateRight(actionSound.doChannel,actionSound.start,actionSound.stop,amount);
+		actionSound->sound->rotateRight(actionSound->doChannel,actionSound->start,actionSound->stop,amount);
 }
 
 // ---------------------------------------------
@@ -78,9 +78,10 @@ CRotateLeftEditFactory::~CRotateLeftEditFactory()
 {
 }
 
-CRotateEdit *CRotateLeftEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CRotateEdit *CRotateLeftEditFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CRotateEdit(
+		this,
 		actionSound,
 		CRotateEdit::rtLeft,
 		actionParameters->getDoubleParameter("Amount")
@@ -99,9 +100,10 @@ CRotateRightEditFactory::~CRotateRightEditFactory()
 {
 }
 
-CRotateEdit *CRotateRightEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CRotateEdit *CRotateRightEditFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CRotateEdit(
+		this,
 		actionSound,
 		CRotateEdit::rtRight,
 		actionParameters->getDoubleParameter("Amount")

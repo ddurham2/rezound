@@ -10,7 +10,7 @@
 	- oops.. many actions don't use 'const CActionSound &actionSound', instead they're using a copy not a reference
 		- fix that
 
-	- in AActionFactory instead of having two bools in the construct and one or two overloadable methods in AAction for settings flags, I could have an ORed set of enums for setting flags like that .. a single parameter to the AActionFactory at construction
+	- in AActionFactory instead of having two bools in the constructor and one or two overloadable methods in AAction for settings flags, I could have an OR-ed set of enums for setting flags like that .. a single parameter to the AActionFactory at construction
 
 	- grep for CRezPoolAccessor and make sure that all accessors that are only used for reading are const (and const *s if new-ed)
 

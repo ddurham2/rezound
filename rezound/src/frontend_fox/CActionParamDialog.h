@@ -71,8 +71,9 @@ public:
 		FXTextParamValue *getTextParam(const string name);
 	FXDiskEntityParamValue *addDiskEntityEntry(void *parent,const string name,const string intialEntityName,FXDiskEntityParamValue::DiskEntityTypes entityType,const string tipText="");
 		FXDiskEntityParamValue *getDiskEntityParam(const string name);
+		enum ComboParamValueTypes { cpvtAsInteger/* if editable, then atoi of text, else index*/ ,cpvtAsString };
 		/* is isEditable then the value is an integer of the actual value, if isEditable is false, then the integer value is the index of the items */
-	FXComboTextParamValue *addComboTextEntry(void *parent,const string name,const vector<string> &items,const string tipText="",bool isEditable=false);
+	FXComboTextParamValue *addComboTextEntry(void *parent,const string name,const vector<string> &items,ComboParamValueTypes type,const string tipText="",bool isEditable=false);
 		FXComboTextParamValue *getComboText(const string name); // so a derived class can set the values
 	FXCheckBoxParamValue *addCheckBoxEntry(void *parent,const string name,const bool checked,const string tipText="");
 		FXCheckBoxParamValue *getCheckBoxParam(const string name);
@@ -158,7 +159,7 @@ private:
 		ptPluginRouting
 	};
 
-	// the void * points to either an FXConstantParamValue, FXTextParamValue, FXComboTextParamValue, FXCheckBoxParamValue or an FXGraphParamValue
+	// the FXWindow * points to either an FXConstantParamValue, FXTextParamValue, FXComboTextParamValue, FXCheckBoxParamValue or an FXGraphParamValue
 	vector<pair<ParamTypes,FXWindow *> > parameters;
 	vector<f_at_x> retValueConvs;
 

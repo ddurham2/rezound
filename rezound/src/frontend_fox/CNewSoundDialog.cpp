@@ -253,11 +253,11 @@ void CNewSoundDialog::saveDefault()
 	gSettingsRegistry->removeKey(keyPrefix);
 	if(rememberAsDefault->getCheck())
 	{
-		gSettingsRegistry->createValue(keyPrefix DOT "filename",filename);
-		gSettingsRegistry->createValue(keyPrefix DOT "rawFormat",rawFormat);
-		gSettingsRegistry->createValue(keyPrefix DOT "channelCount",channelCount);
-		gSettingsRegistry->createValue(keyPrefix DOT "sampleRate",sampleRate);
-		gSettingsRegistry->createValue(keyPrefix DOT "length",atof(lengthComboBox->getText().text()));
+		gSettingsRegistry->setValue(keyPrefix DOT "filename",filename);
+		gSettingsRegistry->setValue(keyPrefix DOT "rawFormat",rawFormat);
+		gSettingsRegistry->setValue(keyPrefix DOT "channelCount",channelCount);
+		gSettingsRegistry->setValue(keyPrefix DOT "sampleRate",sampleRate);
+		gSettingsRegistry->setValue(keyPrefix DOT "length",atof(lengthComboBox->getText().text()));
 	}
 }
 

@@ -30,13 +30,13 @@ class ASoundFileManager;
 class CPasteAsNewEdit : public AAction
 {
 public:
-	CPasteAsNewEdit(const CActionSound actionSound,ASoundFileManager *soundFileManager);
+	CPasteAsNewEdit(const AActionFactory *factory,const CActionSound *actionSound,ASoundFileManager *soundFileManager);
 	virtual ~CPasteAsNewEdit();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 	bool doesWarrantSaving() const;
 
@@ -51,7 +51,7 @@ public:
 	CPasteAsNewEditFactory();
 	virtual ~CPasteAsNewEditFactory();
 
-	CPasteAsNewEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CPasteAsNewEdit *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 
 	bool doPreActionSetup(CLoadedSound *loadedSound);
 };

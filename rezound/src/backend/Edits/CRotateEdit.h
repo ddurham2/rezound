@@ -31,19 +31,19 @@ class CRotateEdit : public AAction
 public:
 	enum RotateTypes { rtLeft, rtRight };
 
-	CRotateEdit(const CActionSound actionSound,const RotateTypes rotateType,const double amount);
+	CRotateEdit(const AActionFactory *factory,const CActionSound *actionSound,const RotateTypes rotateType,const double amount);
 	virtual ~CRotateEdit();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const RotateTypes rotateType;
 	const sample_pos_t amount;
 
-	static void rotate(const CActionSound &actionSound,const RotateTypes rotateType,const sample_pos_t amount);
+	static void rotate(const CActionSound *actionSound,const RotateTypes rotateType,const sample_pos_t amount);
 
 };
 
@@ -53,7 +53,7 @@ public:
 	CRotateLeftEditFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CRotateLeftEditFactory();
 
-	CRotateEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CRotateEdit *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 class CRotateRightEditFactory : public AActionFactory
@@ -62,7 +62,7 @@ public:
 	CRotateRightEditFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CRotateRightEditFactory();
 
-	CRotateEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CRotateEdit *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

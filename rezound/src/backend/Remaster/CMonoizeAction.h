@@ -36,13 +36,13 @@ public:
 		mmMakeAllChannelsTheSame=1
 	};
 
-	CMonoizeAction(const CActionSound &actionSound,const vector<float> gains,MonoizeMethods method);
+	CMonoizeAction(const AActionFactory *factory,const CActionSound *actionSound,const vector<float> gains,MonoizeMethods method);
 	virtual ~CMonoizeAction();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 	bool doPreactionSetup(CLoadedSound *loadedSound) const;
 
@@ -64,7 +64,7 @@ public:
 	CMonoizeActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CMonoizeActionFactory();
 
-	CMonoizeAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CMonoizeAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

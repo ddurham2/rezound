@@ -38,13 +38,13 @@ public:
 		ttTriangleWave=4,
 	};
 							    // length in seconds
-	CGenerateToneAction(const CActionSound actionSound,const float length,const float volume,const float frequency,const ToneTypes toneType); 
+	CGenerateToneAction(const AActionFactory *factory,const CActionSound *actionSound,const float length,const float volume,const float frequency,const ToneTypes toneType); 
 	virtual ~CGenerateToneAction();
 	
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 
@@ -62,7 +62,7 @@ public:
 	CGenerateToneActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CGenerateToneActionFactory();
 
-	CGenerateToneAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CGenerateToneAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

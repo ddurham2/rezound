@@ -25,8 +25,8 @@
 
 #include <istring>
 
-CGenerateToneAction::CGenerateToneAction(const CActionSound actionSound,const float _length,const float _volume,const float _frequency,const ToneTypes _toneType):
-	AAction(actionSound),
+CGenerateToneAction::CGenerateToneAction(const AActionFactory *factory,const CActionSound *actionSound,const float _length,const float _volume,const float _frequency,const ToneTypes _toneType):
+	AAction(factory,actionSound),
 	length(_length),	// seconds
 	volume(_volume),	// 0 to 1 (a multiplier)
 	frequency(_frequency),	// Hz
@@ -41,31 +41,31 @@ CGenerateToneAction::~CGenerateToneAction()
 {
 }
 
-bool CGenerateToneAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CGenerateToneAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	origLength=actionSound.sound->getLength();
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t sampleCount=(sample_pos_t)(length*actionSound.sound->getSampleRate());
+	origLength=actionSound->sound->getLength();
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t sampleCount=(sample_pos_t)(length*actionSound->sound->getSampleRate());
 
 	if(sampleCount==0) 
 	{
-		actionSound.stop=actionSound.start;
+		actionSound->stop=actionSound->start;
 		return true;
 	}
 	
-	actionSound.sound->addSpace(actionSound.doChannel,actionSound.start,sampleCount,true);
-	actionSound.stop=(actionSound.start+sampleCount)-1;
+	actionSound->sound->addSpace(actionSound->doChannel,actionSound->start,sampleCount,true);
+	actionSound->stop=(actionSound->start+sampleCount)-1;
 
 	// new space is made for the tone, now calculate the values.
 
 	unsigned channelsDoneCount=0;
-        for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+        for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
         {
-                if(actionSound.doChannel[i]) 
+                if(actionSound->doChannel[i]) 
 		{
-			CStatusBar statusBar(_("Generating Tone -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),0,sampleCount,true);
+			CStatusBar statusBar(_("Generating Tone -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),0,sampleCount,true);
 
-                	CRezPoolAccesser dest=actionSound.sound->getAudio(i);
+                	CRezPoolAccesser dest=actionSound->sound->getAudio(i);
 			
 			#define STATUS_UPDATE 						\
 				if(statusBar.update(t))					\
@@ -85,7 +85,7 @@ bool CGenerateToneAction::doActionSizeSafe(CActionSound &actionSound,bool prepar
 			switch(toneType)
 			{
 			case ttSineWave: {
-				const float freq=(2.0*M_PI)/(actionSound.sound->getSampleRate()/frequency);
+				const float freq=(2.0*M_PI)/(actionSound->sound->getSampleRate()/frequency);
 				for(sample_pos_t t=0;t<sampleCount;t++)
 				{
 					dest[t+start]=convert_sample<float,sample_t>(sinf(t*freq)*volume);
@@ -95,7 +95,7 @@ bool CGenerateToneAction::doActionSizeSafe(CActionSound &actionSound,bool prepar
 			}
 
 			case ttSquareWave: {
-				const float freq=(2.0*M_PI)/(actionSound.sound->getSampleRate()/frequency);
+				const float freq=(2.0*M_PI)/(actionSound->sound->getSampleRate()/frequency);
 				const sample_t s_pos=convert_sample<float,sample_t>(volume);
 				const sample_t s_neg=convert_sample<float,sample_t>(-volume);
 				for(sample_pos_t t=0;t<sampleCount;t++)
@@ -112,7 +112,7 @@ bool CGenerateToneAction::doActionSizeSafe(CActionSound &actionSound,bool prepar
 				const float c= (toneType==ttRisingSawtoothWave) ? 1.0 : -1.0;
 
 				/* ??? this may not be the best implementation since the periodLength is integer division */
-				const int periodLength=(int)(actionSound.sound->getSampleRate()/frequency);
+				const int periodLength=(int)(actionSound->sound->getSampleRate()/frequency);
 				for(sample_pos_t t=0;t<sampleCount;t++)
 				{
 					const sample_pos_t tt=t+periodLength/2; // tt must be offset to start the wave on 0
@@ -132,7 +132,7 @@ bool CGenerateToneAction::doActionSizeSafe(CActionSound &actionSound,bool prepar
 			}
 
 			case ttTriangleWave: {
-				const int periodLength=(int)(2*(actionSound.sound->getSampleRate()/frequency));
+				const int periodLength=(int)(2*(actionSound->sound->getSampleRate()/frequency));
 				for(sample_pos_t t=0;t<sampleCount;t++)
 				{
 					const sample_pos_t tt=t+periodLength/4; // tt must be offset to start the wave on 0
@@ -158,15 +158,15 @@ bool CGenerateToneAction::doActionSizeSafe(CActionSound &actionSound,bool prepar
 	return true;
 }
 
-AAction::CanUndoResults CGenerateToneAction::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CGenerateToneAction::canUndo(const CActionSound *actionSound) const
 {
 	return curYes;
 }
 
-void CGenerateToneAction::undoActionSizeSafe(const CActionSound &actionSound)
+void CGenerateToneAction::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	const sample_pos_t sampleCount=(sample_pos_t)(length*actionSound.sound->getSampleRate());
-	actionSound.sound->removeSpace(actionSound.doChannel,actionSound.start,sampleCount,origLength);
+	const sample_pos_t sampleCount=(sample_pos_t)(length*actionSound->sound->getSampleRate());
+	actionSound->sound->removeSpace(actionSound->doChannel,actionSound->start,sampleCount,origLength);
 }
 
 
@@ -183,9 +183,10 @@ CGenerateToneActionFactory::~CGenerateToneActionFactory()
 }
 
 // ??? t'would be nice if I had two factories: 1 for insert noise and 1 for replace selection with noise
-CGenerateToneAction *CGenerateToneActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CGenerateToneAction *CGenerateToneActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return new CGenerateToneAction(
+		this,
 		actionSound,
 		actionParameters->getDoubleParameter("Length"),
 		actionParameters->getDoubleParameter("Volume"),

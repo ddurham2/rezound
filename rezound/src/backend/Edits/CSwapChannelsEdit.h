@@ -29,13 +29,13 @@
 class CSwapChannelsEdit : public AAction
 {
 public:
-	CSwapChannelsEdit(const CActionSound actionSound,unsigned channelA,unsigned channelB);
+	CSwapChannelsEdit(const AActionFactory *factory,const CActionSound *actionSound,unsigned channelA,unsigned channelB);
 	virtual ~CSwapChannelsEdit();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	unsigned channelA,channelB;
@@ -48,7 +48,7 @@ public:
 	CSwapChannelsEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CSwapChannelsEditFactory();
 
-	CSwapChannelsEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CSwapChannelsEdit *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 
 protected:
 	bool doPreActionSetup(CLoadedSound *loadedSound);

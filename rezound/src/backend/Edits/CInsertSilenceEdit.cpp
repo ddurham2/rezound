@@ -22,8 +22,8 @@
 
 #include "../CActionParameters.h"
 
-CInsertSilenceEdit::CInsertSilenceEdit(const CActionSound actionSound,const double _silenceLength) :
-	AAction(actionSound),
+CInsertSilenceEdit::CInsertSilenceEdit(const AActionFactory *factory,const CActionSound *actionSound,const double _silenceLength) :
+	AAction(factory,actionSound),
 	silenceLength(_silenceLength),
 	origLength(0)
 {
@@ -35,32 +35,32 @@ CInsertSilenceEdit::~CInsertSilenceEdit()
 {
 }
 
-bool CInsertSilenceEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CInsertSilenceEdit::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	origLength=actionSound.sound->getLength();
-	const sample_pos_t sampleCount=(sample_pos_t)(silenceLength*actionSound.sound->getSampleRate());
+	origLength=actionSound->sound->getLength();
+	const sample_pos_t sampleCount=(sample_pos_t)(silenceLength*actionSound->sound->getSampleRate());
 	if(sampleCount>0)
 	{
-		if(actionSound.start==actionSound.sound->getLength()-1)
-			actionSound.start++; // FIXUP: if the start is at the end, then actually insert AFTER the last sample 
-		actionSound.sound->addSpace(actionSound.doChannel,actionSound.start,sampleCount,true);
-		actionSound.stop=(actionSound.start+sampleCount)-1;
+		if(actionSound->start==actionSound->sound->getLength()-1)
+			actionSound->start++; // FIXUP: if the start is at the end, then actually insert AFTER the last sample 
+		actionSound->sound->addSpace(actionSound->doChannel,actionSound->start,sampleCount,true);
+		actionSound->stop=(actionSound->start+sampleCount)-1;
 	}
 	else
-		actionSound.stop=actionSound.start;
+		actionSound->stop=actionSound->start;
 
 	return(true);
 }
 
-AAction::CanUndoResults CInsertSilenceEdit::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CInsertSilenceEdit::canUndo(const CActionSound *actionSound) const
 {
 	return(curYes);
 }
 
-void CInsertSilenceEdit::undoActionSizeSafe(const CActionSound &actionSound)
+void CInsertSilenceEdit::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	const sample_pos_t sampleCount=(sample_pos_t)(silenceLength*actionSound.sound->getSampleRate());
-	actionSound.sound->removeSpace(actionSound.doChannel,actionSound.start,sampleCount,origLength);
+	const sample_pos_t sampleCount=(sample_pos_t)(silenceLength*actionSound->sound->getSampleRate());
+	actionSound->sound->removeSpace(actionSound->doChannel,actionSound->start,sampleCount,origLength);
 }
 
 
@@ -76,9 +76,10 @@ CInsertSilenceEditFactory::~CInsertSilenceEditFactory()
 {
 }
 
-CInsertSilenceEdit *CInsertSilenceEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CInsertSilenceEdit *CInsertSilenceEditFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CInsertSilenceEdit(
+		this,
 		actionSound,
 		actionParameters->getDoubleParameter("Length")
 	));

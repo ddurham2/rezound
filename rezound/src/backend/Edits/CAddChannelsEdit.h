@@ -29,13 +29,13 @@
 class CAddChannelsEdit : public AAction
 {
 public:
-	CAddChannelsEdit(const CActionSound actionSound,unsigned where,unsigned count);
+	CAddChannelsEdit(const AActionFactory *factory,const CActionSound *actionSound,unsigned where,unsigned count);
 	virtual ~CAddChannelsEdit();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	unsigned where,count;
@@ -48,7 +48,7 @@ public:
 	CAddChannelsEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CAddChannelsEditFactory();
 
-	CAddChannelsEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CAddChannelsEdit *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

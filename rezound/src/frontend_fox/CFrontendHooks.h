@@ -38,6 +38,8 @@
 
 class CNewSoundDialog;
 class CRecordDialog;
+class CRecordMacroDialog;
+class CMacroActionParamsDialog;
 class CJACKPortChoiceDialog;
 class CRezSaveParametersDialog;
 class CRawDialog;
@@ -55,6 +57,8 @@ public:
 
 	void doSetupAfterBackendIsSetup();
 
+	void setWhichClipboard(size_t whichClipboard);
+
 	const string getFOXFileTypes() const; // returns a string to pass as the file types drop-down in FOX file dialogs
 
 	bool promptForOpenSoundFilename(string &filename,bool &readOnly,bool &openAsRaw);
@@ -66,6 +70,10 @@ public:
 	bool promptForDirectory(string &dirname,const string title);
 
 	bool promptForRecord(ASoundRecorder *recorder);
+
+	bool showRecordMacroDialog(string &macroName);
+
+	void showMacroActionParamsDialog(const AActionFactory *actionFactory,MacroActionParameters &macroActionParameters,CLoadedSound *loadedSound);
 
 	const string promptForJACKPort(const string message,const vector<string> portNames);
 
@@ -96,6 +104,8 @@ private:
 
 	CNewSoundDialog *newSoundDialog;
 	CRecordDialog *recordDialog;
+	CRecordMacroDialog *recordMacroDialog;
+	CMacroActionParamsDialog *macroActionParamsDialog;
 	CJACKPortChoiceDialog *JACKPortChoiceDialog;
 	CRezSaveParametersDialog *rezSaveParametersDialog;
 	CRawDialog *rawDialog;

@@ -32,13 +32,13 @@ class CReverseEffectFactory;
 class CReverseEffect : public AAction
 {
 public:
-	CReverseEffect(const CActionSound &actionSound);
+	CReverseEffect(const AActionFactory *factory,const CActionSound *actionSound);
 	virtual ~CReverseEffect();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	bool allowCancel;
@@ -51,7 +51,7 @@ public:
 	CReverseEffectFactory(AActionDialog *channelSelectDialog);
 	virtual ~CReverseEffectFactory();
 
-	CReverseEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CReverseEffect *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

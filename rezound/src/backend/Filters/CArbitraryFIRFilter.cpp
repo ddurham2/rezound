@@ -29,30 +29,30 @@
 
 #include "filters_util.h"
 
-CArbitraryFIRFilter::CArbitraryFIRFilter(const CActionSound &actionSound,const float _wetdryMix,const CGraphParamValueNodeList &_freqResponse,const unsigned _kernelLength,const bool _removeDelay) :
-	AAction(actionSound),
+CArbitraryFIRFilter::CArbitraryFIRFilter(const AActionFactory *factory,const CActionSound *actionSound,const float _wetdryMix,const CGraphParamValueNodeList &_freqResponse,const unsigned _kernelLength,const bool _removeDelay) :
+	AAction(factory,actionSound),
 
 	wetdryMix(_wetdryMix),
 	kernelLength(_kernelLength),
 	removeDelay(_removeDelay)
 {
 	// the iterator won't work unless the range of the .x components are 0 to 1, so I have to convert the frequencies (in .x) to a value from 0 to 1
-	freqResponse=normalizeFrequencyResponse(_freqResponse,actionSound.sound->getSampleRate());
+	freqResponse=normalizeFrequencyResponse(_freqResponse,actionSound->sound->getSampleRate());
 }
 
 CArbitraryFIRFilter::~CArbitraryFIRFilter()
 {
 }
 
-bool CArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CArbitraryFIRFilter::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
 #ifdef HAVE_LIBRFFTW
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t stop=actionSound.stop;
-	const sample_pos_t selectionLength=actionSound.selectionLength();
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t stop=actionSound->stop;
+	const sample_pos_t selectionLength=actionSound->selectionLength();
 
 	if(prepareForUndo)
-		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
+		moveSelectionToTempPools(actionSound,mmSelection,actionSound->selectionLength());
 
 	// given the user defined curve, now create the array of frequency component coefficients
 		/* ???
@@ -79,17 +79,17 @@ bool CArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,bool prepar
 	const float wetGain=wetdryMix/100.0;
 
 	unsigned channelsDoneCount=0;
-	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+	for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 	{
-		if(actionSound.doChannel[i])
+		if(actionSound->doChannel[i])
 		{
 			TFFTConvolverFrequencyDomainKernel<float,float> convolver(filterKernel,filterKernelLength);
 
-			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
-			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
+			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
+			const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);
 			sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 
-			CStatusBar statusBar(_("Filtering -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
+			CStatusBar statusBar(_("Filtering -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),start,stop,true); 
 
 			if(removeDelay)
 			{
@@ -142,7 +142,7 @@ bool CArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,bool prepar
 						if(prepareForUndo)
 							undoActionSizeSafe(actionSound);
 						else
-							actionSound.sound->invalidatePeakData(i,actionSound.start,destPos);
+							actionSound->sound->invalidatePeakData(i,actionSound->start,destPos);
 						return false;
 					}
 				}
@@ -171,14 +171,14 @@ bool CArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,bool prepar
 						if(prepareForUndo)
 							undoActionSizeSafe(actionSound);
 						else
-							actionSound.sound->invalidatePeakData(i,actionSound.start,destPos);
+							actionSound->sound->invalidatePeakData(i,actionSound->start,destPos);
 						return false;
 					}
 				}
 			}
 
 			if(!prepareForUndo)
-				actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
+				actionSound->sound->invalidatePeakData(i,actionSound->start,actionSound->stop);
 		}
 	}
 
@@ -187,14 +187,14 @@ bool CArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,bool prepar
 	throw(EUserMessage(string(__func__)+_(" -- feature disabled because the fftw/rfftw library was not installed or detected when configure was run")));
 }
 
-AAction::CanUndoResults CArbitraryFIRFilter::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CArbitraryFIRFilter::canUndo(const CActionSound *actionSound) const
 {
 	return(curYes);
 }
 
-void CArbitraryFIRFilter::undoActionSizeSafe(const CActionSound &actionSound)
+void CArbitraryFIRFilter::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
+	restoreSelectionFromTempPools(actionSound,actionSound->start,actionSound->selectionLength());
 }
 
 
@@ -209,9 +209,10 @@ CArbitraryFIRFilterFactory::~CArbitraryFIRFilterFactory()
 {
 }
 
-CArbitraryFIRFilter *CArbitraryFIRFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CArbitraryFIRFilter *CArbitraryFIRFilterFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CArbitraryFIRFilter(
+		this,
 		actionSound,
 		actionParameters->getDoubleParameter("Wet/Dry Mix"),
 		actionParameters->getGraphParameter("Frequency Response"),

@@ -29,13 +29,13 @@
 class CAddCueAction : public AAction
 {
 public:
-	CAddCueAction(const CActionSound actionSound,const string cueName,const sample_pos_t cueTime,const bool isAnchored);
+	CAddCueAction(const AActionFactory *factory,const CActionSound *actionSound,const string cueName,const sample_pos_t cueTime,const bool isAnchored);
 	virtual ~CAddCueAction();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const string cueName;
@@ -51,7 +51,7 @@ public:
 	CAddCueActionFactory(AActionDialog *dialog);
 	virtual ~CAddCueActionFactory();
 
-	CAddCueAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CAddCueAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 
 private:
 
@@ -63,13 +63,13 @@ private:
 class CRemoveCueAction : public AAction
 {
 public:
-	CRemoveCueAction(const CActionSound actionSound,const size_t cueIndex);
+	CRemoveCueAction(const AActionFactory *factory,const CActionSound *actionSound,const size_t cueIndex);
 	virtual ~CRemoveCueAction();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const size_t removeCueIndex;
@@ -83,7 +83,7 @@ public:
 	CRemoveCueActionFactory();
 	virtual ~CRemoveCueActionFactory();
 
-	CRemoveCueAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CRemoveCueAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 
 private:
 };
@@ -93,14 +93,14 @@ private:
 class CReplaceCueAction : public AAction
 {
 public:
-	CReplaceCueAction(const CActionSound actionSound,const size_t cueIndex,const string cueName,const sample_pos_t cueTime,const bool isAnchored);
+	CReplaceCueAction(const AActionFactory *factory,const CActionSound *actionSound,const size_t cueIndex,const string cueName,const sample_pos_t cueTime,const bool isAnchored);
 	virtual ~CReplaceCueAction();
 
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const size_t cueIndex;
@@ -117,7 +117,7 @@ public:
 	CReplaceCueActionFactory(AActionDialog *dialog);
 	virtual ~CReplaceCueActionFactory();
 
-	CReplaceCueAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CReplaceCueAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 
 private:
 
@@ -130,13 +130,13 @@ private:
 class CMoveCueAction : public AAction
 {
 public:
-	CMoveCueAction(const CActionSound actionSound,const size_t cueIndex,const sample_pos_t cueTime,const sample_pos_t restoreStartPosition,const sample_pos_t restoreStopPosition);
+	CMoveCueAction(const AActionFactory *factory,const CActionSound *actionSound,const size_t cueIndex,const sample_pos_t cueTime,const sample_pos_t restoreStartPosition,const sample_pos_t restoreStopPosition);
 	virtual ~CMoveCueAction();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const size_t cueIndex;
@@ -154,7 +154,7 @@ public:
 	CMoveCueActionFactory();
 	virtual ~CMoveCueActionFactory();
 
-	CMoveCueAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CMoveCueAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 
 private:
 

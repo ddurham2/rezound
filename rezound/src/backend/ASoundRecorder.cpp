@@ -481,7 +481,7 @@ ASoundRecorder *ASoundRecorder::createInitializedSoundRecorder(CSound *sound)
 		methods.push_back("alsa");
 		methods.push_back("jack");
 		methods.push_back("portaudio");
-		gSettingsRegistry->createValue("AudioInputMethods",methods);
+		gSettingsRegistry->setValue("AudioInputMethods",methods);
 	}
 
 

@@ -38,13 +38,13 @@ class ASoundFileManager;
 class CLADSPAAction : public AAction
 {
 public:
-	CLADSPAAction(const LADSPA_Descriptor *desc,const CActionSound &actionSound,const CActionParameters &actionParameters);
+	CLADSPAAction(const LADSPA_Descriptor *desc,const AActionFactory *factory,const CActionSound *actionSound,const CActionParameters &actionParameters);
 	virtual ~CLADSPAAction();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const LADSPA_Descriptor *desc;
@@ -67,7 +67,7 @@ public:
 	CLADSPAActionFactory(const LADSPA_Descriptor *desc,AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CLADSPAActionFactory();
 
-	CLADSPAAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CLADSPAAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 
 	const LADSPA_Descriptor *getDescriptor() const { return desc; }
 

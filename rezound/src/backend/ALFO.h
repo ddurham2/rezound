@@ -26,6 +26,7 @@
 #include "CSound_defs.h"
 
 #include <string>
+class CNestedDataFile;
 
 /* --- ALFO ---------------------
  *  - This is an abstract class used to generate an LFO value
@@ -52,6 +53,14 @@ protected:
 class CLFODescription
 {
 public:
+	CLFODescription() :
+		amp(0),
+		freq(0),
+		phase(0),
+		LFOType(0)
+	{
+	}
+
 	CLFODescription(const float _amp,const float _freq,const float _phase,const size_t _LFOType) :
 		amp(_amp),
 		freq(_freq),
@@ -79,7 +88,14 @@ public:
 
 	float amp,freq,phase;
 	size_t LFOType;
+
+	void writeToFile(CNestedDataFile *f,const string key) const;
+	void readFromFile(const CNestedDataFile *f,const string key);
 };
+
+#include <CNestedDataFile/anytype.h>
+template<> static const CLFODescription string_to_anytype<CLFODescription>(const string &str,CLFODescription &ret) { CNestedDataFile f; f.parseString(s2at::remove_surrounding_quotes(str)); ret.readFromFile(&f,""); return ret; }
+template<> static const string anytype_to_string<CLFODescription>(const CLFODescription &any) { CNestedDataFile f; any.writeToFile(&f,""); return "\""+s2at::escape_chars(istring(f.asString()).searchAndReplace("\n"," ",true))+"\""; }
 
 class CLFORegistry
 {

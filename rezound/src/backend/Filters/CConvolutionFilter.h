@@ -32,13 +32,13 @@ class CConvolutionFilterFactory;
 class CConvolutionFilter : public AAction
 {
 public:
-	CConvolutionFilter(const CActionSound &actionSound,const float wetdryMix,const float inputGain,const float outputGain,const float inputLowpassFreq,const float predelay,const string filterKernelFilename,const bool openFilterKernelAsRaw,const float filterKernelGain,const float filterKernelLowpassFreq,const float filterKernelRate,const bool reverseFilterKernel,const bool wrapDecay);
+	CConvolutionFilter(const AActionFactory *factory,const CActionSound *actionSound,const float wetdryMix,const float inputGain,const float outputGain,const float inputLowpassFreq,const float predelay,const string filterKernelFilename,const bool openFilterKernelAsRaw,const float filterKernelGain,const float filterKernelLowpassFreq,const float filterKernelRate,const bool reverseFilterKernel,const bool wrapDecay);
 	virtual ~CConvolutionFilter();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const float wetdryMix;
@@ -63,7 +63,7 @@ public:
 	CConvolutionFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CConvolutionFilterFactory();
 
-	CConvolutionFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CConvolutionFilter *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

@@ -46,12 +46,14 @@ CSimpleBalanceActionDialog::CSimpleBalanceActionDialog(FXWindow *mainWindow) :
 				addComboTextEntry(p2,
 					N_("Channel A"),
 					items,
+					CActionParamDialog::cpvtAsInteger,
 					""
 				);
 
 				addComboTextEntry(p2,
 					N_("Channel B"),
 					items,
+					CActionParamDialog::cpvtAsInteger,
 					""
 				);
 
@@ -73,6 +75,7 @@ CSimpleBalanceActionDialog::CSimpleBalanceActionDialog(FXWindow *mainWindow) :
 		addComboTextEntry(p0,
 			N_("Balance Type"),
 			balanceTypes,
+			CActionParamDialog::cpvtAsInteger,
 			CBalanceAction::getBalanceTypeExplanation()
 		);
 		/* not possible
@@ -121,12 +124,14 @@ CCurvedBalanceActionDialog::CCurvedBalanceActionDialog(FXWindow *mainWindow) :
 				addComboTextEntry(p2,
 					N_("Channel A"),
 					items,
+					CActionParamDialog::cpvtAsInteger,
 					""
 				);
 
 				addComboTextEntry(p2,
 					N_("Channel B"),
 					items,
+					CActionParamDialog::cpvtAsInteger,
 					""
 				);
 
@@ -147,6 +152,7 @@ CCurvedBalanceActionDialog::CCurvedBalanceActionDialog(FXWindow *mainWindow) :
 		addComboTextEntry(p0,
 			N_("Balance Type"),
 			balanceTypes,
+			CActionParamDialog::cpvtAsInteger,
 			CBalanceAction::getBalanceTypeExplanation()
 		);
 }
@@ -205,7 +211,8 @@ CMonoizeActionDialog::CMonoizeActionDialog(FXWindow *mainWindow) :
 			options.push_back(N_("Make All Channels The Same"));
 			addComboTextEntry(p0,
 				N_("Method"),
-				options
+				options,
+				CActionParamDialog::cpvtAsInteger
 			);
 }
 
@@ -512,10 +519,11 @@ CResampleDialog::CResampleDialog(FXWindow *mainWindow) :
 		addComboTextEntry(p0,
 			N_("New Sample Rate"),
 			items,
+			CActionParamDialog::cpvtAsInteger,
 			"",
 			true
 		);
-			getComboText("New Sample Rate")->setValue(44100);
+			getComboText("New Sample Rate")->setIntegerValue(44100);
 }
 
 

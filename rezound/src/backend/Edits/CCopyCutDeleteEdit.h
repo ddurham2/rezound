@@ -37,13 +37,13 @@ public:
 		ccdtDelete
 	};
 
-	CCopyCutDeleteEdit(const CActionSound actionSound,CCDType type);
+	CCopyCutDeleteEdit(const AActionFactory *factory,const CActionSound *actionSound,CCDType type);
 	virtual ~CCopyCutDeleteEdit();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 	bool doesWarrantSaving() const;
 
@@ -60,7 +60,7 @@ public:
 	CCopyEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CCopyEditFactory();
 
-	CCopyCutDeleteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CCopyCutDeleteEdit *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 class CCutEditFactory : public AActionFactory
@@ -69,7 +69,7 @@ public:
 	CCutEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CCutEditFactory();
 
-	CCopyCutDeleteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CCopyCutDeleteEdit *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 class CDeleteEditFactory : public AActionFactory
@@ -78,7 +78,7 @@ public:
 	CDeleteEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CDeleteEditFactory();
 
-	CCopyCutDeleteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CCopyCutDeleteEdit *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

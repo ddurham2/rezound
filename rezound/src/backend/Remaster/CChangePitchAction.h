@@ -28,13 +28,13 @@
 class CChangePitchAction : public AAction
 {
 public:
-	CChangePitchAction(const CActionSound &actionSound,const float _deltaSemitones,bool useAntiAliasFilter,unsigned antiAliasFilterLength,bool useQuickSeek,unsigned sequenceLength,unsigned seekingWindowLength,unsigned overlapLength);
+	CChangePitchAction(const AActionFactory *factory,const CActionSound *actionSound,const float _deltaSemitones,bool useAntiAliasFilter,unsigned antiAliasFilterLength,bool useQuickSeek,unsigned sequenceLength,unsigned seekingWindowLength,unsigned overlapLength);
 	virtual ~CChangePitchAction();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const float deltaSemitones;
@@ -54,7 +54,7 @@ public:
 	CChangePitchActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CChangePitchActionFactory();
 
-	CChangePitchAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CChangePitchAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

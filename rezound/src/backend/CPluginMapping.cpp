@@ -53,6 +53,155 @@ CPluginMapping::~CPluginMapping()
 {
 }
 
+#include <CNestedDataFile/CNestedDataFile.h>
+void CPluginMapping::writeToFile(CNestedDataFile *f,const string key) const
+{
+	f->setValue<unsigned>(key DOT "outputAppendCount",outputAppendCount);
+	
+	// write inputMappings
+	f->setValue<size_t>(key DOT "n_inputMappings0",inputMappings.size());
+	for(size_t a=0;a<inputMappings.size();a++)
+	{
+		const string key_a=key DOT "sub"+istring(a);
+		f->setValue<size_t>(key_a DOT "n_inputMappings1",inputMappings[a].size());
+		for(size_t b=0;b<inputMappings[a].size();b++)
+		{
+			const string key_b=key_a DOT "sub"+istring(b);
+			f->setValue<size_t>(key_b DOT "n_inputMappings2",inputMappings[a][b].size());
+			for(size_t c=0;c<inputMappings[a][b].size();c++)
+			{
+				const string key_c=key_b DOT "sub"+istring(c);
+				inputMappings[a][b][c].writeToFile(f,key_c);
+			}
+		}
+	}
+	
+	// write outputMappings
+	f->setValue<size_t>(key DOT "n_outputMappings0",outputMappings.size());
+	for(size_t a=0;a<outputMappings.size();a++)
+	{
+		const string key_a=key DOT "sub"+istring(a);
+		f->setValue<size_t>(key_a DOT "n_outputMappings1",outputMappings[a].size());
+		for(size_t b=0;b<outputMappings[a].size();b++)
+		{
+			const string key_b=key_a DOT "sub"+istring(b);
+			f->setValue<size_t>(key_b DOT "n_outputMappings2",outputMappings[a][b].size());
+			for(size_t c=0;c<outputMappings[a][b].size();c++)
+			{
+				const string key_c=key_b DOT "sub"+istring(c);
+				outputMappings[a][b][c].writeToFile(f,key_c);
+			}
+		}
+	}
+	
+	// write passThrus
+	f->setValue<size_t>(key DOT "n_passThrus0",passThrus.size());
+	for(size_t a=0;a<passThrus.size();a++)
+	{
+		const string key_a=key DOT "sub"+istring(a);
+		f->setValue<size_t>(key_a DOT "n_passThrus1",passThrus[a].size());
+		for(size_t b=0;b<passThrus[a].size();b++)
+		{
+			const string key_b=key_a DOT "sub"+istring(b);
+			passThrus[a][b].writeToFile(f,key_b);
+		}
+	}
+
+	f->setValue<unsigned>(key DOT "outputRemoveCount",outputRemoveCount);
+}
+
+void CPluginMapping::readFromFile(const CNestedDataFile *f,const string key)
+{
+	outputAppendCount=f->getValue<unsigned>(key DOT "outputAppendCount");
+	
+	// write inputMappings
+	inputMappings.clear();
+	size_t inputMappingsSize_a=f->getValue<size_t>(key DOT "n_inputMappings0");
+	for(size_t a=0;a<inputMappingsSize_a;a++)
+	{
+		vector<vector<RInputDesc> > inputMapping_a;
+
+		const string key_a=key DOT "sub"+istring(a);
+		size_t inputMappingsSize_b=f->getValue<size_t>(key_a DOT "n_inputMappings1");
+		for(size_t b=0;b<inputMappingsSize_b;b++)
+		{
+			vector<RInputDesc> inputMapping_b;
+
+			const string key_b=key_a DOT "sub"+istring(b);
+			size_t inputMappingsSize_c=f->getValue<size_t>(key_b DOT "n_inputMappings2");
+			for(size_t c=0;c<inputMappingsSize_c;c++)
+			{
+				RInputDesc inputMapping_c(0,0,(RInputDesc::WhenDataRunsOut)0,(RInputDesc::HowMuch)0,0.0);
+
+				const string key_c=key_b DOT "sub"+istring(c);
+
+				inputMapping_c.readFromFile(f,key_c);
+
+				inputMapping_b.push_back(inputMapping_c);
+			}
+			inputMapping_a.push_back(inputMapping_b);
+		}
+
+		inputMappings.push_back(inputMapping_a);
+	}
+	
+	// write outputMappings
+	outputMappings.clear();
+	size_t outputMappingsSize_a=f->getValue<size_t>(key DOT "n_outputMappings0");
+	for(size_t a=0;a<outputMappingsSize_a;a++)
+	{
+		vector<vector<ROutputDesc> > outputMapping_a;
+
+		const string key_a=key DOT "sub"+istring(a);
+		size_t outputMappingsSize_b=f->getValue<size_t>(key_a DOT "n_outputMappings1");
+		for(size_t b=0;b<outputMappingsSize_b;b++)
+		{
+			vector<ROutputDesc> outputMapping_b;
+
+			const string key_b=key_a DOT "sub"+istring(b);
+			size_t outputMappingsSize_c=f->getValue<size_t>(key_b DOT "n_outputMappings2");
+			for(size_t c=0;c<outputMappingsSize_c;c++)
+			{
+				ROutputDesc outputMapping_c(0,0.0);
+
+				const string key_c=key_b DOT "sub"+istring(c);
+
+				outputMapping_c.readFromFile(f,key_c);
+
+				outputMapping_b.push_back(outputMapping_c);
+			}
+			outputMapping_a.push_back(outputMapping_b);
+		}
+
+		outputMappings.push_back(outputMapping_a);
+	}
+	
+	// write passThrus
+	passThrus.clear();
+	size_t passThrusSize_a=f->getValue<size_t>(key DOT "n_passThrus0");
+	for(size_t a=0;a<passThrusSize_a;a++)
+	{
+		vector<RInputDesc> passThru_a;
+
+		const string key_a=key DOT "sub"+istring(a);
+		size_t passThrusSize_b=f->getValue<size_t>(key_a DOT "n_passThrus1");
+		for(size_t b=0;b<passThrusSize_b;b++)
+		{
+			RInputDesc passThru_b(0,0,(RInputDesc::WhenDataRunsOut)0,(RInputDesc::HowMuch)0,0.0);
+
+			const string key_b=key_a DOT "sub"+istring(b);
+
+			passThru_b.readFromFile(f,key_b);
+
+			passThru_a.push_back(passThru_b);
+		}
+
+		passThrus.push_back(passThru_a);
+	}
+
+	outputRemoveCount=f->getValue<unsigned>(key DOT "outputRemoveCount");
+}
+
 
 #include "CSound.h"
 const CPluginMapping CPluginMapping::getDefaultMapping(const string pluginName,unsigned pluginInputPorts,unsigned pluginOutputPorts,const CSound *sound)
@@ -216,5 +365,37 @@ void CPluginMapping::print() const
 
 	printf("outputRemoveCount: %d\n",outputRemoveCount);
 
+}
+
+// ---------------------------------------------------
+void CPluginMapping::RInputDesc::writeToFile(CNestedDataFile *f,const string key) const
+{
+		// ??? this will not work well for macros because the same file's won't necessarily be loaded in the same order .. use a filename
+	f->setValue<unsigned>(key DOT "soundFileManagerIndex",soundFileManagerIndex);
+	f->setValue<unsigned>(key DOT "channel",channel);
+	f->setValue<unsigned>(key DOT "wdro",(unsigned)wdro);
+	f->setValue<unsigned>(key DOT "howMuch",(unsigned)howMuch);
+	f->setValue<float>(key DOT "gain",gain);
+}
+
+void CPluginMapping::RInputDesc::readFromFile(const CNestedDataFile *f,const string key)
+{
+	soundFileManagerIndex=f->getValue<unsigned>(key DOT "soundFileManagerIndex");
+	channel=f->getValue<unsigned>(key DOT "channel");
+	wdro=(WhenDataRunsOut)f->getValue<unsigned>(key DOT "wdro");
+	howMuch=(HowMuch)f->getValue<unsigned>(key DOT "howMuch");
+	gain=f->getValue<float>(key DOT "gain");
+}
+
+void CPluginMapping::ROutputDesc::writeToFile(CNestedDataFile *f,const string key) const
+{
+	f->setValue<unsigned>(key DOT "channel",channel);
+	f->setValue<float>(key DOT "gain",gain);
+}
+
+void CPluginMapping::ROutputDesc::readFromFile(const CNestedDataFile *f,const string key)
+{
+	channel=f->getValue<unsigned>(key DOT "channel");
+	gain=f->getValue<float>(key DOT "gain");
 }
 

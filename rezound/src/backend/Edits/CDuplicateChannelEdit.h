@@ -29,13 +29,13 @@
 class CDuplicateChannelEdit : public AAction
 {
 public:
-	CDuplicateChannelEdit(const CActionSound actionSound,unsigned whichChannel,unsigned insertWhere,unsigned insertCount);
+	CDuplicateChannelEdit(const AActionFactory *factory,const CActionSound *actionSound,unsigned whichChannel,unsigned insertWhere,unsigned insertCount);
 	virtual ~CDuplicateChannelEdit();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const unsigned whichChannel,insertWhere,insertCount;
@@ -48,7 +48,7 @@ public:
 	CDuplicateChannelEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CDuplicateChannelEditFactory();
 
-	CDuplicateChannelEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CDuplicateChannelEdit *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

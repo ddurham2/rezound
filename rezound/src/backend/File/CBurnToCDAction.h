@@ -29,16 +29,16 @@
 class CBurnToCDAction : public AAction
 {
 public:
-	CBurnToCDAction(const CActionSound &actionSound,const string tempSpaceDir,const string pathTo_cdrdao,const unsigned burnSpeed,const unsigned gapBetweenTracks,const string device,const string extra_cdrdao_options,const bool selectionOnly,const bool testOnly);
+	CBurnToCDAction(const AActionFactory *factory,const CActionSound *actionSound,const string tempSpaceDir,const string pathTo_cdrdao,const unsigned burnSpeed,const unsigned gapBetweenTracks,const string device,const string extra_cdrdao_options,const bool selectionOnly,const bool testOnly);
 	virtual ~CBurnToCDAction();
 
 	static const string getExplanation();
 	static const string detectDevice(const string pathTo_cdrdao);
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 	bool doesWarrantSaving() const;
 
@@ -60,7 +60,7 @@ public:
 	CBurnToCDActionFactory(AActionDialog *channelSelectDialog);
 	virtual ~CBurnToCDActionFactory();
 
-	CBurnToCDAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CBurnToCDAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

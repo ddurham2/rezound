@@ -30,19 +30,19 @@
 class CChangeRateEffect : public AAction
 {
 public:
-	CChangeRateEffect(const CActionSound &actionSound,const CGraphParamValueNodeList &rateCurve);
+	CChangeRateEffect(const AActionFactory *factory,const CActionSound *actionSound,const CGraphParamValueNodeList &rateCurve);
 	virtual ~CChangeRateEffect();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	sample_pos_t undoRemoveLength;
 	CGraphParamValueNodeList rateCurve;
 
-	sample_pos_t getNewSelectionLength(const CActionSound &actionSound) const;
+	sample_pos_t getNewSelectionLength(const CActionSound *actionSound) const;
 	sample_fpos_t getWriteLength(sample_pos_t oldLength,const CGraphParamValueNode &rateNote1,const CGraphParamValueNode &rateNode2) const;
 	    
 };
@@ -54,7 +54,7 @@ public:
 	CSimpleChangeRateEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CSimpleChangeRateEffectFactory();
 
-	CChangeRateEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CChangeRateEffect *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 class CCurvedChangeRateEffectFactory : public AActionFactory
@@ -63,7 +63,7 @@ public:
 	CCurvedChangeRateEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CCurvedChangeRateEffectFactory();
 
-	CChangeRateEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CChangeRateEffect *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

@@ -25,8 +25,8 @@
 
 #include "../DSP/TPitchChanger.h"
 
-CChangePitchAction::CChangePitchAction(const CActionSound &actionSound,const float _deltaSemitones,bool _useAntiAliasFilter,unsigned _antiAliasFilterLength,bool _useQuickSeek,unsigned _sequenceLength,unsigned _seekingWindowLength,unsigned _overlapLength) :
-	AAction(actionSound),
+CChangePitchAction::CChangePitchAction(const AActionFactory *factory,const CActionSound *actionSound,const float _deltaSemitones,bool _useAntiAliasFilter,unsigned _antiAliasFilterLength,bool _useQuickSeek,unsigned _sequenceLength,unsigned _seekingWindowLength,unsigned _overlapLength) :
+	AAction(factory,actionSound),
 	deltaSemitones(_deltaSemitones),
 
 	useAntiAliasFilter(_useAntiAliasFilter),
@@ -42,32 +42,32 @@ CChangePitchAction::~CChangePitchAction()
 {
 }
 
-bool CChangePitchAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CChangePitchAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
 #ifdef AVAIL_PITCH_CHANGE
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t stop=actionSound.stop;
-	const sample_pos_t selectionLength=actionSound.selectionLength();
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t stop=actionSound->stop;
+	const sample_pos_t selectionLength=actionSound->selectionLength();
 
 	if(deltaSemitones==0.0)
 		return false;
 
 	if(prepareForUndo)
-		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
+		moveSelectionToTempPools(actionSound,mmSelection,actionSound->selectionLength());
 
 	unsigned channelsDoneCount=0;
-	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+	for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 	{
-		if(actionSound.doChannel[i])
+		if(actionSound->doChannel[i])
 		{
-			CStatusBar statusBar(_("Changing Pitch -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),0,selectionLength,true); 
+			CStatusBar statusBar(_("Changing Pitch -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),0,selectionLength,true); 
 	
 			sample_pos_t srcPos=prepareForUndo ? 0 : start;
-			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
+			const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);
 
-			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
+			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
 
-			TPitchChanger<CRezPoolAccesser> changer(src,srcPos,selectionLength,deltaSemitones,actionSound.sound->getSampleRate(),1,0);
+			TPitchChanger<CRezPoolAccesser> changer(src,srcPos,selectionLength,deltaSemitones,actionSound->sound->getSampleRate(),1,0);
 
 			// these are libSoundTouch specific
 			changer.setSetting(SETTING_USE_AA_FILTER,useAntiAliasFilter);
@@ -86,7 +86,7 @@ bool CChangePitchAction::doActionSizeSafe(CActionSound &actionSound,bool prepare
 					if(prepareForUndo)
 						undoActionSizeSafe(actionSound);
 					else
-						actionSound.sound->invalidatePeakData(i,actionSound.start,t+start);
+						actionSound->sound->invalidatePeakData(i,actionSound->start,t+start);
 					return false;
 				}
 			}
@@ -99,14 +99,14 @@ bool CChangePitchAction::doActionSizeSafe(CActionSound &actionSound,bool prepare
 #endif
 }
 
-AAction::CanUndoResults CChangePitchAction::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CChangePitchAction::canUndo(const CActionSound *actionSound) const
 {
 	return curYes;
 }
 
-void CChangePitchAction::undoActionSizeSafe(const CActionSound &actionSound)
+void CChangePitchAction::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
+	restoreSelectionFromTempPools(actionSound,actionSound->start,actionSound->selectionLength());
 }
 
 
@@ -122,9 +122,10 @@ CChangePitchActionFactory::~CChangePitchActionFactory()
 {
 }
 
-CChangePitchAction *CChangePitchActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CChangePitchAction *CChangePitchActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return new CChangePitchAction(
+		this,
 		actionSound,
 		actionParameters->getDoubleParameter("Semitones"),
 		actionParameters->getBoolParameter("Use Anti-alias Filter"),

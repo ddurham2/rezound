@@ -29,13 +29,13 @@
 class CUnclipAction : public AAction
 {
 public:
-	CUnclipAction(const CActionSound actionSound);
+	CUnclipAction(const AActionFactory *factory,const CActionSound *actionSound);
 	virtual ~CUnclipAction();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 };
 
@@ -45,7 +45,7 @@ public:
 	CUnclipActionFactory(AActionDialog *channelSelectDialog);
 	virtual ~CUnclipActionFactory();
 
-	CUnclipAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CUnclipAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

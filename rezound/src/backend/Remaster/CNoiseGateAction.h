@@ -38,15 +38,15 @@ class CNoiseGateActionFactory;
 class CNoiseGateAction : public AAction
 {
 public:
-	CNoiseGateAction(const CActionSound &actionSound,const float windowTime,const float threshold,const float gainAttackTime,const float gainReleaseTime);
+	CNoiseGateAction(const AActionFactory *factory,const CActionSound *actionSound,const float windowTime,const float threshold,const float gainAttackTime,const float gainReleaseTime);
 	virtual ~CNoiseGateAction();
 
 	static const string getExplanation();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const float windowTime;		// in ms
@@ -62,7 +62,7 @@ public:
 	CNoiseGateActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CNoiseGateActionFactory();
 
-	CNoiseGateAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CNoiseGateAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

@@ -47,7 +47,7 @@ ClibaudiofileSaveParametersDialog::ClibaudiofileSaveParametersDialog(FXWindow *m
 			sampleFormats.push_back("Unsigned");
 			sampleFormats.push_back("32bit float");
 			sampleFormats.push_back("64bit double");
-		FXComboTextParamValue *sampleFormat=addComboTextEntry(p,N_("Sample Format"),sampleFormats,"");
+		FXComboTextParamValue *sampleFormat=addComboTextEntry(p,N_("Sample Format"),sampleFormats,CActionParamDialog::cpvtAsInteger,"");
 			sampleFormat->setTarget(this);
 			sampleFormat->setSelector(ID_SAMPLE_FORMAT_COMBOBOX);
 		
@@ -59,11 +59,11 @@ ClibaudiofileSaveParametersDialog::ClibaudiofileSaveParametersDialog(FXWindow *m
 			sampleWidths.push_back("16");
 			sampleWidths.push_back("24");
 			sampleWidths.push_back("32");
-		addComboTextEntry(p,N_("Sample Width"),sampleWidths,"");
+		addComboTextEntry(p,N_("Sample Width"),sampleWidths,CActionParamDialog::cpvtAsInteger,"");
 
 		vector<string> compressionTypes;
 			// will be populated with values later
-		addComboTextEntry(p,N_("Compression Type"),compressionTypes,"");
+		addComboTextEntry(p,N_("Compression Type"),compressionTypes,CActionParamDialog::cpvtAsInteger,"");
 }
 
 #ifdef HAVE_LIBAUDIOFILE
@@ -140,7 +140,7 @@ bool ClibaudiofileSaveParametersDialog::show(AFrontendHooks::libaudiofileSavePar
 
 long ClibaudiofileSaveParametersDialog::onSampleFormatComboBox(FXObject *sender,FXSelector sel,void *ptr)
 {
-	int selected=getComboText("Sample Format")->getValue();
+	int selected=getComboText("Sample Format")->getIntegerValue();
 	if(selected==0 || selected==1)
 	{ // signed or unsigned
 		getComboText("Sample Width")->enable();

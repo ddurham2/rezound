@@ -30,13 +30,13 @@
 class CFlangeEffect : public AAction
 {
 public:
-	CFlangeEffect(const CActionSound &actionSound,float delayTime,float wetGain,float dryGain,const CLFODescription &flangeLFO,float feedback);
+	CFlangeEffect(const AActionFactory *factory,const CActionSound *actionSound,float delayTime,float wetGain,float dryGain,const CLFODescription &flangeLFO,float feedback);
 	virtual ~CFlangeEffect();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const float delayTime;
@@ -53,7 +53,7 @@ public:
 	CFlangeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CFlangeEffectFactory();
 
-	CFlangeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CFlangeEffect *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 

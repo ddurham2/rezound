@@ -46,6 +46,8 @@
 
 #include "../backend/CSoundPlayerChannel.h"
 
+#include "../backend/File/COpenAudioFileAction.h"
+
 #include "CSoundWindow.h"
 
 #include "CMetersWindow.h"
@@ -54,6 +56,8 @@
 #include "CCrossfadeEdgesDialog.h"
 
 #include "rememberShow.h"
+
+#define RECORDING_MACRO_TIMER_INTERVAL 1000
 
 /* TODO:
  * 	- it is necesary for the owner to specifically delete the FXMenuPane objects it creates
@@ -65,13 +69,12 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_CLOSE,			0,							CMainWindow::onQuit),
 
 		// file actions
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_NEW_FILE,				CMainWindow::onFileAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_OPEN_FILE,				CMainWindow::onFileAction),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REOPEN_FILE,				CMainWindow::onFileAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SAVE_FILE,				CMainWindow::onFileAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SAVE_FILE_AS,				CMainWindow::onFileAction),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CLOSE_FILE,				CMainWindow::onFileAction),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REVERT_FILE,				CMainWindow::onFileAction),
+
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_RECORD_MACRO,				CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_TIMEOUT,			CMainWindow::ID_RECORDING_MACRO_TIMER,			CMainWindow::onRecordingMacroTimer),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_EDIT_USERNOTES,				CMainWindow::onFileAction),
 
@@ -264,6 +267,11 @@ CMainWindow::CMainWindow(FXApp* a) :
 			new FXButton(t,FXString("...\t")+_("Change Crossfade Times"),NULL,this,ID_CROSSFADE_EDGES_SETTINGS_BUTTON, BUTTON_NORMAL & ~FRAME_THICK);
 		clipboardComboBox=new FXComboBox(miscControlsFrame,8,this,ID_CLIPBOARD_COMBOBOX, FRAME_SUNKEN|FRAME_THICK | COMBOBOX_NORMAL|COMBOBOX_STATIC);
 		clipboardComboBox->setNumVisible(8);
+		recordMacroButton=new FXButton(miscControlsFrame,(_("Record Macro")+string(" ")).c_str(),FOXIcons->OffLED1,this,ID_RECORD_MACRO, BUTTON_NORMAL|ICON_BEFORE_TEXT);
+			// have to 'create' both icons before using them
+			FOXIcons->OffLED1->create();
+			FOXIcons->RedLED1->create();
+
 
 	new FXVerticalSeparator(s);
 
@@ -297,6 +305,8 @@ CMainWindow::CMainWindow(FXApp* a) :
 				soundList->appendHeader(_("Path"),NULL,9999);
 
 	soundWindowFrame=new FXPacker(contents,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_RAISED|FRAME_THICK,0,0,0,0, 0,0,0,0, 0,0);
+
+	reopenActionFactory=new COpenAudioFileActionFactory(NULL);
 }
 
 CMainWindow::~CMainWindow()
@@ -305,6 +315,7 @@ CMainWindow::~CMainWindow()
 	delete shuttleFont;
 	delete soundListFont;
 	delete soundListHeaderFont;
+	delete reopenActionFactory;
 }
 
 void CMainWindow::show()
@@ -399,6 +410,25 @@ long CMainWindow::onSoundListChange(FXObject *sender,FXSelector sel,void *ptr)
 {
 	FXint index=(FXint)ptr;
 
+	if(AActionFactory::macroRecorder.isRecording())
+	{
+		// since the current item has already changed, we have to change it back now
+		CSoundWindow *asw=gSoundFileManager->getActiveWindow();
+		for(int t=0;t<soundList->getNumItems();t++)
+		{
+			if(((CSoundWindow *)soundList->getItemData(t))==asw)
+			{
+				if(index==t)
+					return 1; // it's not changing anyway
+				soundList->setCurrentItem(t);
+				break;
+			}
+		}
+
+		Message("Cannot change sound windows while recording a macro");
+		return 1;
+	}
+
 	if(index>=0 && index<soundList->getNumItems())
 		((CSoundWindow *)soundList->getItemData(index))->setActiveState(true);
 
@@ -408,6 +438,12 @@ long CMainWindow::onSoundListChange(FXObject *sender,FXSelector sel,void *ptr)
 extern CSoundWindow *previousActiveWindow;
 long CMainWindow::onSoundListHotKey(FXObject *sender,FXSelector sel,void *ptr)
 {
+	if(AActionFactory::macroRecorder.isRecording())
+	{
+		Message("Cannot change sound windows while recording a macro");
+		return 1;
+	}
+
 	FXEvent *ev=(FXEvent *)ptr;
 	
 	if(ev->code=='`')
@@ -656,11 +692,25 @@ void CMainWindow::actionMenuCommandTriggered(CActionMenuCommand *actionMenuComma
 	recentActions.insert(recentActions.begin(),actionMenuCommand);
 }
 
+void CMainWindow::setWhichClipboard(size_t whichClipboard)
+{
+	if(whichClipboard<AAction::clipboards.size())
+	{
+		clipboardComboBox->setCurrentItem(whichClipboard);
+		gWhichClipboard=whichClipboard;
+	}
+}
+
 #include "CChannelSelectDialog.h"
 #include "CPasteChannelsDialog.h"
 
-#include "EditActionDialogs.h"
+#include "../backend/CRunMacroAction.h"
+
+#include "../backend/File/FileActions.h"
+#include "FileActionDialogs.h"
+
 #include "../backend/Edits/EditActions.h"
+#include "EditActionDialogs.h"
 
 #include "../backend/Effects/EffectActions.h"
 #include "EffectActionDialogs.h"
@@ -674,10 +724,11 @@ void CMainWindow::actionMenuCommandTriggered(CActionMenuCommand *actionMenuComma
 #include "../backend/Remaster/RemasterActions.h"
 #include "RemasterActionDialogs.h"
 
-#include "../backend/LADSPA/LADSPAActions.h"
-
 #include "../backend/Generate/GenerateActions.h"
 #include "GenerateActionDialogs.h"
+
+#include "../backend/LADSPA/LADSPAActions.h"
+
 
 static const string stripAmpersand(const string str)
 {
@@ -687,11 +738,19 @@ static const string stripAmpersand(const string str)
 	return stripped;
 }
 
+static const string stripElipsis(const string str)
+{
+	if(str.rfind("...")==str.length()-3 && str.length()>3/*don't strip if that's the whole string*/)
+		return str.substr(0,str.length()-3);
+	return str;
+}
+
 
 /* the usual case -- adding a CActionMenuCommand to the menu item registry */
 static void addToActionMap(CActionMenuCommand *item,map<const string,FXMenuCaption *> &menuItemRegistry)
 {
-	const string strippedItemName=stripAmpersand(item->getUntranslatedText());
+		// I use the text right off the item because I don't want to pass a separate string to addToActionMap() just for the name
+	const string strippedItemName=stripElipsis(stripAmpersand(item->getUntranslatedText()));
 	if(menuItemRegistry.find(strippedItemName)!=menuItemRegistry.end()) // something a developer would want to know
 		printf("NOTE: duplicate item name in menu item registry '%s'\n",strippedItemName.c_str());
 	menuItemRegistry[strippedItemName]=item;
@@ -701,7 +760,8 @@ static void addToActionMap(CActionMenuCommand *item,map<const string,FXMenuCapti
 static void addToActionMap(const char *itemText,FXMenuCaption *item,map<const string,FXMenuCaption *> &menuItemRegistry)
 { 	/* because I can't get the original text of the menu item with the hotkey in it, I pass it in separately and set the menuitem's text to it (prepended to what was already there).*/
 
-	const string strippedItemName=stripAmpersand(string(itemText)+item->getText().text());
+		// I use the text right off the item because I don't want to pass a separate string to addToActionMap() just for the name
+	const string strippedItemName=stripElipsis(stripAmpersand(string(itemText)+item->getText().text()));
 	if(menuItemRegistry.find(strippedItemName)!=menuItemRegistry.end()) // something a developer would want to know
 		printf("NOTE: duplicate item name in menu item registry '%s'\n",strippedItemName.c_str());
 
@@ -719,16 +779,20 @@ void CMainWindow::buildActionMap()
 	// I know it's very wide, but it's (supposed to be) neat (tabs need to be set to 8 for it to look right)
 
 	// File 
-	addToActionMap(N_("&New"),						new FXMenuCommand(dummymenu,														"",		FOXIcons->file_new,						this,	ID_NEW_FILE),					menuItemRegistry);
-	addToActionMap(N_("&Open"),						new FXMenuCommand(dummymenu,														"\tCtrl+O",	FOXIcons->file_open,						this,	ID_OPEN_FILE),					menuItemRegistry);
+	addToActionMap(								new CActionMenuCommand(new CNewAudioFileActionFactory(new CNewAudioFileActionDialog(this)),dummymenu,					"",		FOXIcons->file_new),													menuItemRegistry);
+	addToActionMap(								new CActionMenuCommand(new COpenAudioFileActionFactory(new COpenAudioFileActionDialog(this)),dummymenu,					"\tCtrl+O",	FOXIcons->file_open),													menuItemRegistry);
 	addToActionMap(N_("&Reopen"),						new FXMenuCascade(dummymenu,														"",		FOXIcons->file_open,						new CReopenPopup(this)),				menuItemRegistry);
-	addToActionMap(N_("&Save"),						new FXMenuCommand(dummymenu,														"\tCtrl+S",	FOXIcons->file_save,						this,	ID_SAVE_FILE),					menuItemRegistry);
-	addToActionMap(N_("Save &As"),						new FXMenuCommand(dummymenu,														"...",		FOXIcons->file_save_as,						this,	ID_SAVE_FILE_AS),				menuItemRegistry);
+	addToActionMap(								new CActionMenuCommand(new CSaveAudioFileActionFactory,dummymenu,									"\tCtrl+S",	FOXIcons->file_save),													menuItemRegistry);
+	addToActionMap(								new CActionMenuCommand(new CSaveAsAudioFileActionFactory(new CSaveAsAudioFileActionDialog(this)),dummymenu,				"",		FOXIcons->file_save_as),												menuItemRegistry);
 	addToActionMap(								new CActionMenuCommand(new CSaveSelectionAsActionFactory(),dummymenu,									"",		FOXIcons->file_save_as),												menuItemRegistry);
 	addToActionMap(								new CActionMenuCommand(new CSaveAsMultipleFilesActionFactory(new CSaveAsMultipleFilesDialog(this)),dummymenu,				"",		FOXIcons->file_save_as),												menuItemRegistry);
 	addToActionMap(								new CActionMenuCommand(new CBurnToCDActionFactory(new CBurnToCDDialog(this)),dummymenu,							"",		FOXIcons->file_burn),													menuItemRegistry);
+		// not converting close or revert to AAction classes because they pull the sound object out from under the calling code in AAction
 	addToActionMap(N_("&Close"),						new FXMenuCommand(dummymenu,														"\tCtrl+W",	FOXIcons->file_close,						this,	ID_CLOSE_FILE),					menuItemRegistry);
 	addToActionMap(N_("Re&vert"),						new FXMenuCommand(dummymenu,														"",		FOXIcons->file_revert,						this,	ID_REVERT_FILE),				menuItemRegistry);
+	// -
+	addToActionMap(								new CActionMenuCommand(new CRunMacroActionFactory(new CRunMacroDialog(this)),dummymenu,							""),																	menuItemRegistry);
+	addToActionMap(N_("Record Macro..."),					new FXMenuCommand(dummymenu,														"",		FOXIcons->normal_action_buff,					this,	ID_RECORD_MACRO),				menuItemRegistry);
 	// -
 	addToActionMap(N_("User No&tes"),					new FXMenuCommand(dummymenu,														"...",		FOXIcons->notes,						this,	ID_EDIT_USERNOTES),				menuItemRegistry);
 	// -
@@ -912,6 +976,16 @@ void CMainWindow::buildActionMap()
 	N_("F&ilters");
 	N_("&Remaster");
 	N_("&Generate");
+
+	gRegisteredActionFactories.clear();
+	for(map<const string,FXMenuCaption *>::iterator i=menuItemRegistry.begin();i!=menuItemRegistry.end();i++)
+	{
+		if(dynamic_cast<CActionMenuCommand *>(i->second)!=NULL)
+		{
+			gRegisteredActionFactories[i->first]=((CActionMenuCommand *)i->second)->getActionFactory();
+		}
+	}
+		
 }
 
 void CMainWindow::buildMenu(FXMenuPane *menu,const CNestedDataFile *menuLayoutFile,const string menuKey,const string itemName)
@@ -1050,6 +1124,11 @@ void CMainWindow::createMenus()
 		}
 		else
 		{
+			// register all the LADSPA action so they can be used in macros
+			for(size_t t=0;t<LADSPAActionFactories.size();t++)
+				gRegisteredActionFactories[LADSPAActionFactories[t]->getName()]=LADSPAActionFactories[t];
+			
+
 			// determine number of FXMenuCaption will fit on the screen (msh -> menu screen height)
 			const FXuint msh=(getApp()->getRootWindow()->getHeight()/(7+getApp()->getNormalFont()->getFontHeight()))-1;
 
@@ -1183,32 +1262,50 @@ long CMainWindow::onFileAction(FXObject *sender,FXSelector sel,void *ptr)
 {
 	switch(FXSELID(sel))
 	{
-	case ID_NEW_FILE:
-		newSound(gSoundFileManager);
-		break;
-	
-	case ID_OPEN_FILE:
-		openSound(gSoundFileManager);
-		break;
-
 	case ID_REOPEN_FILE:
-		openSound(gSoundFileManager,dynamic_cast<FXMenuCommand *>(sender)->getText().text());
+	{
+		vector<string> filenames;
+		filenames.push_back(dynamic_cast<FXMenuCommand *>(sender)->getText().text());
+
+		CActionParameters actionParameters(gSoundFileManager);
+		actionParameters.setValue<vector<string> >("filenames",filenames);
+
+		reopenActionFactory->performAction(NULL,&actionParameters,false);
 		break;
+	}
 	
-	case ID_SAVE_FILE:
-		saveSound(gSoundFileManager);
-		break;
-
-	case ID_SAVE_FILE_AS:
-		saveAsSound(gSoundFileManager);
-		break;
-
 	case ID_CLOSE_FILE:
+		if(AActionFactory::macroRecorder.isRecording())
+		{
+			Message(_("Cannot close a file while recording a macro"));
+			return 1;
+		}
 		closeSound(gSoundFileManager);
 		break;
 
 	case ID_REVERT_FILE:
+		if(AActionFactory::macroRecorder.isRecording())
+		{
+			Message(_("Cannot revert a file while recording a macro"));
+			return 1;
+		}
 		revertSound(gSoundFileManager);
+		break;
+
+	case ID_RECORD_MACRO:
+		recordMacro();
+		if(AActionFactory::macroRecorder.isRecording())
+		{
+			recordMacroButton->setState(1);
+			recordMacroButton->setIcon(FOXIcons->RedLED1);
+			// start blinking LED timer
+			getApp()->addTimeout(this,CMainWindow::ID_RECORDING_MACRO_TIMER,RECORDING_MACRO_TIMER_INTERVAL);
+		}
+		else
+		{
+			recordMacroButton->setIcon(FOXIcons->OffLED1);
+			recordMacroButton->setState(0);
+		}
 		break;
 
 	case ID_SHOW_ABOUT:
@@ -1217,6 +1314,7 @@ long CMainWindow::onFileAction(FXObject *sender,FXSelector sel,void *ptr)
 
 
 	case ID_EDIT_USERNOTES:
+#warning ??? make this an action?
 		try
 		{
 			CLoadedSound *s=gSoundFileManager->getActive();
@@ -1234,6 +1332,23 @@ long CMainWindow::onFileAction(FXObject *sender,FXSelector sel,void *ptr)
 	default:
 		throw runtime_error(string(__func__)+" -- unhandled file button selector");
 	}
+	return 1;
+}
+
+long CMainWindow::onRecordingMacroTimer(FXObject *sender,FXSelector sel,void *ptr)
+{
+	static int counter=0;
+	if(AActionFactory::macroRecorder.isRecording())
+	{
+		recordMacroButton->setIcon( (counter%2) ? FOXIcons->RedLED1 : FOXIcons->OffLED1);
+		counter++;
+
+		// schedule for the next timer
+		getApp()->addTimeout(this,CMainWindow::ID_RECORDING_MACRO_TIMER,RECORDING_MACRO_TIMER_INTERVAL);
+	}
+	else 
+		counter=0; 
+
 	return 1;
 }
 
@@ -1292,6 +1407,11 @@ long CMainWindow::onControlAction(FXObject *sender,FXSelector sel,void *ptr)
 		break;
 
 	case ID_RECORD:
+		if(AActionFactory::macroRecorder.isRecording())
+		{
+			Message(_("Cannot record audio while recording a macro"));
+			return 1;
+		}
 		recordSound(gSoundFileManager);
 		break;
 

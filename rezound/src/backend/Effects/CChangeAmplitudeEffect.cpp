@@ -23,8 +23,8 @@
 #include "../CActionSound.h"
 #include "../CActionParameters.h"
 
-CChangeAmplitudeEffect::CChangeAmplitudeEffect(const CActionSound &actionSound,const CGraphParamValueNodeList &_volumeCurve) :
-	AAction(actionSound),
+CChangeAmplitudeEffect::CChangeAmplitudeEffect(const AActionFactory *factory,const CActionSound *actionSound,const CGraphParamValueNodeList &_volumeCurve) :
+	AAction(factory,actionSound),
 	volumeCurve(_volumeCurve)
 {
 }
@@ -33,26 +33,26 @@ CChangeAmplitudeEffect::~CChangeAmplitudeEffect()
 {
 }
 
-bool CChangeAmplitudeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CChangeAmplitudeEffect::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
 	if(prepareForUndo)
-		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
+		moveSelectionToTempPools(actionSound,mmSelection,actionSound->selectionLength());
 
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t selectionLength=actionSound.selectionLength();
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t selectionLength=actionSound->selectionLength();
 
 	unsigned channelsDoneCount=0;
-	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+	for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 	{
-		if(actionSound.doChannel[i])
+		if(actionSound->doChannel[i])
 		{
-			CStatusBar statusBar(N_("Changing Amplitude -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),0,selectionLength,true);
+			CStatusBar statusBar(N_("Changing Amplitude -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),0,selectionLength,true);
 
 			sample_pos_t srcPos=prepareForUndo ? 0 : start;
-			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
+			const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);
 
 			sample_pos_t destPos=start;
-			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
+			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
 		
 			CGraphParamValueIterator iter(volumeCurve,selectionLength);
 			for(sample_pos_t t=0;t<selectionLength;t++)
@@ -64,7 +64,7 @@ bool CChangeAmplitudeEffect::doActionSizeSafe(CActionSound &actionSound,bool pre
 					if(prepareForUndo)
 						undoActionSizeSafe(actionSound);
 					else
-						actionSound.sound->invalidatePeakData(i,actionSound.start,t);
+						actionSound->sound->invalidatePeakData(i,actionSound->start,t);
 					return false;
 				}
 			}
@@ -74,14 +74,14 @@ bool CChangeAmplitudeEffect::doActionSizeSafe(CActionSound &actionSound,bool pre
 	return true;
 }
 
-AAction::CanUndoResults CChangeAmplitudeEffect::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CChangeAmplitudeEffect::canUndo(const CActionSound *actionSound) const
 {
 	return curYes;
 }
 
-void CChangeAmplitudeEffect::undoActionSizeSafe(const CActionSound &actionSound)
+void CChangeAmplitudeEffect::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
+	restoreSelectionFromTempPools(actionSound,actionSound->start,actionSound->selectionLength());
 }
 
 
@@ -99,12 +99,12 @@ CChangeVolumeEffectFactory::~CChangeVolumeEffectFactory()
 {
 }
 
-CChangeAmplitudeEffect *CChangeVolumeEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CChangeAmplitudeEffect *CChangeVolumeEffectFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	if(actionParameters->getGraphParameter("Volume Change").size()<2)
 		throw runtime_error(string(__func__)+" -- graph parameter 0 contains less than 2 nodes");
 
-	return new CChangeAmplitudeEffect(actionSound,actionParameters->getGraphParameter("Volume Change"));
+	return new CChangeAmplitudeEffect(this,actionSound,actionParameters->getGraphParameter("Volume Change"));
 }
 
 
@@ -119,11 +119,12 @@ CSimpleGainEffectFactory::~CSimpleGainEffectFactory()
 {
 }
 
-CChangeAmplitudeEffect *CSimpleGainEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CChangeAmplitudeEffect *CSimpleGainEffectFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	if(actionParameters->getGraphParameter("Gain").size()<2)
-		throw runtime_error(string(__func__)+" -- graph parameter 0 contains less than 2 nodes");
-	return new CChangeAmplitudeEffect(actionSound,actionParameters->getGraphParameter("Gain"));
+	CGraphParamValueNodeList g;
+	g.push_back(CGraphParamValueNode(0.0,actionParameters->getValue<double>("Gain")));
+	g.push_back(CGraphParamValueNode(1.0,actionParameters->getValue<double>("Gain")));
+	return new CChangeAmplitudeEffect(this,actionSound,g);
 }
 
 // ---------------------------------------------
@@ -137,11 +138,11 @@ CCurvedGainEffectFactory::~CCurvedGainEffectFactory()
 {
 }
 
-CChangeAmplitudeEffect *CCurvedGainEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CChangeAmplitudeEffect *CCurvedGainEffectFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	if(actionParameters->getGraphParameter("Gain Curve").size()<2)
 		throw runtime_error(string(__func__)+" -- graph parameter 0 contains less than 2 nodes");
-	return new CChangeAmplitudeEffect(actionSound,actionParameters->getGraphParameter("Gain Curve"));
+	return new CChangeAmplitudeEffect(this,actionSound,actionParameters->getGraphParameter("Gain Curve"));
 }
 
 

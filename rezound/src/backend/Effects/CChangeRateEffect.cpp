@@ -33,8 +33,8 @@
  *
  */
 
-CChangeRateEffect::CChangeRateEffect(const CActionSound &actionSound,const CGraphParamValueNodeList &_rateCurve) :
-	AAction(actionSound),
+CChangeRateEffect::CChangeRateEffect(const AActionFactory *factory,const CActionSound *actionSound,const CGraphParamValueNodeList &_rateCurve) :
+	AAction(factory,actionSound),
 	undoRemoveLength(0),
 	rateCurve(_rateCurve)
 {
@@ -52,9 +52,9 @@ CChangeRateEffect::~CChangeRateEffect()
 }
 
 #include <stdio.h> // ??? just for the printf below
-bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CChangeRateEffect::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	const sample_pos_t oldLength=actionSound.selectionLength();
+	const sample_pos_t oldLength=actionSound->selectionLength();
 	const sample_pos_t newLength=getNewSelectionLength(actionSound);
 
 	if(newLength==NIL_SAMPLE_POS)
@@ -67,17 +67,17 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 	undoRemoveLength=newLength;
 
 	unsigned channelsDoneCount=0;
-	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+	for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 	{
-		if(actionSound.doChannel[i])
+		if(actionSound->doChannel[i])
 		{
-			CStatusBar statusBar(_("Changing Rate -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),actionSound.start,actionSound.start+newLength,true); 
+			CStatusBar statusBar(_("Changing Rate -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),actionSound->start,actionSound->start+newLength,true); 
 	
 			// here, we're using the undo data as a source from which to calculate the new data
-			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempAudioPoolKey,i);
-			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
+			const CRezPoolAccesser src=actionSound->sound->getTempAudio(tempAudioPoolKey,i);
+			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
 
-			sample_pos_t writePos=actionSound.start;
+			sample_pos_t writePos=actionSound->start;
 			for(unsigned x=0;x<rateCurve.size()-1;x++)
 			{
 					// ??? but I've fixed some boundry conditions since trying it so perhaps I should try again
@@ -122,7 +122,7 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 		
 						if(statusBar.update(writePos))
 						{ // cancelled 
-							restoreSelectionFromTempPools(actionSound,actionSound.start,undoRemoveLength);
+							restoreSelectionFromTempPools(actionSound,actionSound->start,undoRemoveLength);
 							return false;
 						}
 					}
@@ -145,7 +145,7 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 
 							if(statusBar.update(writePos))
 							{ // cancelled 
-								restoreSelectionFromTempPools(actionSound,actionSound.start,undoRemoveLength);
+								restoreSelectionFromTempPools(actionSound,actionSound->start,undoRemoveLength);
 								return false;
 							}
 						}
@@ -167,14 +167,14 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 					// ??? if writePos!=expectedWritePos
 					// ??? there's a glitch at the end... I may be able to solve it by just copying one more sample.. or repeating the very last sample
 					// ??? but I'm sure it's happening because I'm truncating always instead of using floor/ceil
-			if((writePos-actionSound.start)!=(newLength))
-				printf("****************************** CRAP %d SAMPLES OFF FROM EXPECTED\n",(sample_pos_t)(writePos-actionSound.start)-(newLength));
+			if((writePos-actionSound->start)!=(newLength))
+				printf("****************************** CRAP %d SAMPLES OFF FROM EXPECTED\n",(sample_pos_t)(writePos-actionSound->start)-(newLength));
 			else
 				printf("YEAH NO SAMPLES OFF!!!\n");
 		}
 	}
 
-	actionSound.stop=actionSound.start+newLength-1;
+	actionSound->stop=actionSound->start+newLength-1;
 
 	if(!prepareForUndo)
 		freeAllTempPools();
@@ -203,9 +203,9 @@ sample_fpos_t CChangeRateEffect::getWriteLength(sample_pos_t oldLength,const CGr
 		return(1.0/s1*(readStop-readStart));
 }
 
-sample_pos_t CChangeRateEffect::getNewSelectionLength(const CActionSound &actionSound) const
+sample_pos_t CChangeRateEffect::getNewSelectionLength(const CActionSound *actionSound) const
 {
-	sample_pos_t oldLength=actionSound.selectionLength();
+	sample_pos_t oldLength=actionSound->selectionLength();
 	sample_fpos_t tNewLength=0.0;
 	for(unsigned t=0;t<rateCurve.size()-1;t++)
 		tNewLength+=sample_fpos_round(getWriteLength(oldLength,rateCurve[t],rateCurve[t+1]));
@@ -216,14 +216,14 @@ sample_pos_t CChangeRateEffect::getNewSelectionLength(const CActionSound &action
 	return((sample_pos_t)tNewLength); // round?
 }
 
-AAction::CanUndoResults CChangeRateEffect::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CChangeRateEffect::canUndo(const CActionSound *actionSound) const
 {
 	return(curYes);
 }
 
-void CChangeRateEffect::undoActionSizeSafe(const CActionSound &actionSound)
+void CChangeRateEffect::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	restoreSelectionFromTempPools(actionSound,actionSound.start,undoRemoveLength);
+	restoreSelectionFromTempPools(actionSound,actionSound->start,undoRemoveLength);
 }
 
 
@@ -239,11 +239,12 @@ CSimpleChangeRateEffectFactory::~CSimpleChangeRateEffectFactory()
 {
 }
 
-CChangeRateEffect *CSimpleChangeRateEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CChangeRateEffect *CSimpleChangeRateEffectFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	if(actionParameters->getGraphParameter("Rate Change").size()<2)
-		throw(runtime_error(string(__func__)+" -- nodes contains less than 2 nodes"));
-	return(new CChangeRateEffect(actionSound,actionParameters->getGraphParameter("Rate Change")));
+	CGraphParamValueNodeList g;
+	g.push_back(CGraphParamValueNode(0.0,actionParameters->getValue<double>("Rate Change")));
+	g.push_back(CGraphParamValueNode(1.0,actionParameters->getValue<double>("Rate Change")));
+	return new CChangeRateEffect(this,actionSound,g);
 }
 
 // ---------------------------------------------
@@ -257,11 +258,11 @@ CCurvedChangeRateEffectFactory::~CCurvedChangeRateEffectFactory()
 {
 }
 
-CChangeRateEffect *CCurvedChangeRateEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CChangeRateEffect *CCurvedChangeRateEffectFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	if(actionParameters->getGraphParameter("Rate Curve").size()<2)
 		throw(runtime_error(string(__func__)+" -- nodes contains less than 2 nodes"));
-	return(new CChangeRateEffect(actionSound,actionParameters->getGraphParameter("Rate Curve")));
+	return new CChangeRateEffect(this,actionSound,actionParameters->getGraphParameter("Rate Curve"));
 }
 
 

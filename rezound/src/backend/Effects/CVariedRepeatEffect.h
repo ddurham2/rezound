@@ -11,13 +11,13 @@ class CVariedRepeatEffectFactory;
 class CVariedRepeatEffect : public AAction
 {
 public:
-	CVariedRepeatEffect(const CActionSound &actionSound,const CLFODescription &LFODescription,float _time);
+	CVariedRepeatEffect(const AActionFactory *factory,const CActionSound *actionSound,const CLFODescription &LFODescription,float _time);
 	virtual ~CVariedRepeatEffect();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	CLFODescription LFODescription;
@@ -33,7 +33,7 @@ public:
 	CVariedRepeatEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CVariedRepeatEffectFactory();
 
-	CVariedRepeatEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CVariedRepeatEffect *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

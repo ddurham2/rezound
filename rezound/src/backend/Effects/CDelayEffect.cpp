@@ -39,8 +39,8 @@
 
 
 // ??? I should make these vectors instead of arrays
-CDelayEffect::CDelayEffect(const CActionSound &actionSound,size_t _tapCount,float *_tapTimes,float *_tapGains,float *_tapFeedbacks) :
-	AAction(actionSound),
+CDelayEffect::CDelayEffect(const AActionFactory *factory,const CActionSound *actionSound,size_t _tapCount,float *_tapTimes,float *_tapGains,float *_tapFeedbacks) :
+	AAction(factory,actionSound),
 
 	tapCount(_tapCount),
 
@@ -58,7 +58,7 @@ CDelayEffect::CDelayEffect(const CActionSound &actionSound,size_t _tapCount,floa
 
 	for(size_t t=0;t<tapCount;t++)
 	{
-		tapTimes[t]=ms_to_samples(_tapTimes[t],actionSound.sound->getSampleRate());
+		tapTimes[t]=ms_to_samples(_tapTimes[t],actionSound->sound->getSampleRate());
 		tapGains[t]=_tapGains[t];
 		tapFeedbacks[t]=_tapFeedbacks[t];
 	}
@@ -71,23 +71,23 @@ CDelayEffect::~CDelayEffect()
 	delete [] tapFeedbacks;
 }
 
-bool CDelayEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CDelayEffect::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t stop=actionSound.stop;
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t stop=actionSound->stop;
 
 	if(prepareForUndo)
-		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
+		moveSelectionToTempPools(actionSound,mmSelection,actionSound->selectionLength());
 
 	unsigned channelsDoneCount=0;
-	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+	for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 	{
-		if(actionSound.doChannel[i])
+		if(actionSound->doChannel[i])
 		{
-			CStatusBar statusBar(_("Delay -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
+			CStatusBar statusBar(_("Delay -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),start,stop,true); 
 
-			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
-			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
+			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
+			const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);
 
 			CDSPDelayEffect delayEffect(
 				tapCount,
@@ -105,27 +105,27 @@ bool CDelayEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUnd
 					if(prepareForUndo)
 						undoActionSizeSafe(actionSound);
 					else
-						actionSound.sound->invalidatePeakData(i,actionSound.start,t);
+						actionSound->sound->invalidatePeakData(i,actionSound->start,t);
 					return false;
 				}
 			}
 
 			if(!prepareForUndo)
-				actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
+				actionSound->sound->invalidatePeakData(i,actionSound->start,actionSound->stop);
 		}
 	}
 
 	return(true);
 }
 
-AAction::CanUndoResults CDelayEffect::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CDelayEffect::canUndo(const CActionSound *actionSound) const
 {
 	return(curYes);
 }
 
-void CDelayEffect::undoActionSizeSafe(const CActionSound &actionSound)
+void CDelayEffect::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
+	restoreSelectionFromTempPools(actionSound,actionSound->start,actionSound->selectionLength());
 }
 
 
@@ -143,7 +143,7 @@ CSimpleDelayEffectFactory::~CSimpleDelayEffectFactory()
 {
 }
 
-CDelayEffect *CSimpleDelayEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CDelayEffect *CSimpleDelayEffectFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	/*
 	size_t tapCount=4;
@@ -172,7 +172,7 @@ CDelayEffect *CSimpleDelayEffectFactory::manufactureAction(const CActionSound &a
 	float b=actionParameters->getDoubleParameter("Gain");
 	float c=actionParameters->getDoubleParameter("Feedback");
 
-	return(new CDelayEffect(actionSound,
+	return(new CDelayEffect(this,actionSound,
 		1,
 		&a,
 		&b,

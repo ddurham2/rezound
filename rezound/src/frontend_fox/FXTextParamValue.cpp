@@ -231,9 +231,9 @@ void FXTextParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 {
 	const string key=prefix DOT getName();
 	if(isNumeric)
-		f->createValue<double>(key DOT "value",getValue());
+		f->setValue<double>(key DOT "value",getValue());
 	else
-		f->createValue<string>(key DOT "value",getText());
+		f->setValue<string>(key DOT "value",getText());
 }
 
 void FXTextParamValue::changed()

@@ -26,9 +26,12 @@
 #include <CPath.h>
 
 #include "settings.h"
+#include "CMainWindow.h"
 
 #include "CNewSoundDialog.h"
 #include "CRecordDialog.h"
+#include "CRecordMacroDialog.h"
+#include "CMacroActionParamsDialog.h"
 #include "CJACKPortChoiceDialog.h"
 #include "CRezSaveParametersDialog.h"
 #include "CRawDialog.h"
@@ -39,7 +42,7 @@
 #include "ClibaudiofileSaveParametersDialog.h"
 
 #include "../backend/ASoundTranslator.h"
-
+#include "../backend/AStatusComm.h"
 
 CFrontendHooks::CFrontendHooks(FXWindow *_mainWindow) :
 	mainWindow(_mainWindow),
@@ -50,6 +53,7 @@ CFrontendHooks::CFrontendHooks(FXWindow *_mainWindow) :
 
 	newSoundDialog(NULL),
 	recordDialog(NULL),
+	recordMacroDialog(NULL),
 	JACKPortChoiceDialog(NULL),
 	rezSaveParametersDialog(NULL),
 	rawDialog(NULL),
@@ -71,6 +75,7 @@ CFrontendHooks::~CFrontendHooks()
 
 	delete newSoundDialog;
 	delete recordDialog;
+	delete recordMacroDialog;
 	delete JACKPortChoiceDialog;
 	delete rezSaveParametersDialog;
 	delete rawDialog;
@@ -115,6 +120,8 @@ void CFrontendHooks::doSetupAfterBackendIsSetup()
 
 	newSoundDialog=new CNewSoundDialog(mainWindow);
 	recordDialog=new CRecordDialog(mainWindow);
+	recordMacroDialog=new CRecordMacroDialog(mainWindow);
+	macroActionParamsDialog=new CMacroActionParamsDialog(mainWindow);
 	rezSaveParametersDialog=new CRezSaveParametersDialog(mainWindow);
 	rawDialog=new CRawDialog(mainWindow);
 	oggDialog=new COggDialog(mainWindow);
@@ -122,6 +129,11 @@ void CFrontendHooks::doSetupAfterBackendIsSetup()
 	voxDialog=new CVoxDialog(mainWindow);
 	MIDIDumpSampleIdDialog=new CMIDIDumpSampleIdDialog(mainWindow);
 	libaudiofileSaveParametersDialog=new ClibaudiofileSaveParametersDialog(mainWindow);
+}
+
+void CFrontendHooks::setWhichClipboard(size_t whichClipboard)
+{
+	((CMainWindow *)mainWindow)->setWhichClipboard(whichClipboard);
 }
 
 const string CFrontendHooks::getFOXFileTypes() const
@@ -298,6 +310,23 @@ bool CFrontendHooks::promptForRecord(ASoundRecorder *recorder)
 	if(recordDialog->show(recorder))
 		return true;
 	return false;
+}
+
+bool CFrontendHooks::showRecordMacroDialog(string &macroName)
+{
+	recordMacroDialog->setMacroName(macroName);
+	if(recordMacroDialog->showIt())
+	{
+		macroName=recordMacroDialog->getMacroName();
+		return true;
+	}
+	return false;
+
+}
+
+void CFrontendHooks::showMacroActionParamsDialog(const AActionFactory *actionFactory,MacroActionParameters &macroActionParameters,CLoadedSound *loadedSound)
+{
+	macroActionParamsDialog->showIt(actionFactory,macroActionParameters,loadedSound);
 }
 
 const string CFrontendHooks::promptForJACKPort(const string message,const vector<string> portNames)

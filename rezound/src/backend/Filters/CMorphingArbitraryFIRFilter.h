@@ -51,15 +51,15 @@ class CMorphingArbitraryFIRFilterFactory;
 class CMorphingArbitraryFIRFilter : public AAction
 {
 public:
-	CMorphingArbitraryFIRFilter(const CActionSound &actionSound,const float wetdryMix,const CGraphParamValueNodeList &freqResponse1,const CGraphParamValueNodeList &freqReponse2,const bool useLFO,const CLFODescription &sweepLFODesc,const unsigned kernelLength,const bool removeDelay);
+	CMorphingArbitraryFIRFilter(const AActionFactory *factory,const CActionSound *actionSound,const float wetdryMix,const CGraphParamValueNodeList &freqResponse1,const CGraphParamValueNodeList &freqReponse2,const bool useLFO,const CLFODescription &sweepLFODesc,const unsigned kernelLength,const bool removeDelay);
 	virtual ~CMorphingArbitraryFIRFilter();
 
 	static const string getExplanation();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const float wetdryMix;
@@ -79,7 +79,7 @@ public:
 	CMorphingArbitraryFIRFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CMorphingArbitraryFIRFilterFactory();
 
-	CMorphingArbitraryFIRFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CMorphingArbitraryFIRFilter *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

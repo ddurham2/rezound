@@ -29,8 +29,8 @@
 #include "../CActionSound.h"
 
 // LFO Speed is in Hertz, LFO Depth is in ?,LFO Phase is in degrees, Delay is in milliseconds
-CFlangeEffect::CFlangeEffect(const CActionSound &actionSound,float _delayTime,float _wetGain,float _dryGain,const CLFODescription &_flangeLFO,float _feedback) :
-	AAction(actionSound),
+CFlangeEffect::CFlangeEffect(const AActionFactory *factory,const CActionSound *actionSound,float _delayTime,float _wetGain,float _dryGain,const CLFODescription &_flangeLFO,float _feedback) :
+	AAction(factory,actionSound),
 
 	// ??? perhaps I should do these conversions down in the code because I might someday be able to stream the action to disk for later use and the sampleRate would not necessarily be the same
 
@@ -53,32 +53,32 @@ CFlangeEffect::~CFlangeEffect()
 {
 }
 
-bool CFlangeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CFlangeEffect::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t stop=actionSound.stop;
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t stop=actionSound->stop;
 
 	if(prepareForUndo)
-		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
+		moveSelectionToTempPools(actionSound,mmSelection,actionSound->selectionLength());
 
 	unsigned channelsDoneCount=0;
-	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+	for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 	{
-		if(actionSound.doChannel[i])
+		if(actionSound->doChannel[i])
 		{
-			CStatusBar statusBar(_("Flange -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true);
+			CStatusBar statusBar(_("Flange -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),start,stop,true);
 
-			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
-			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
+			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
+			const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);
 
-			auto_ptr<ALFO> LFO(gLFORegistry.createLFO(flangeLFO,actionSound.sound->getSampleRate()));
+			auto_ptr<ALFO> LFO(gLFORegistry.createLFO(flangeLFO,actionSound->sound->getSampleRate()));
 
 			CDSPFlangeEffect flangeEffect(
-				ms_to_samples(delayTime,actionSound.sound->getSampleRate()),
+				ms_to_samples(delayTime,actionSound->sound->getSampleRate()),
 				wetGain,
 				dryGain,
 				LFO.get(),
-				ms_to_samples(flangeLFO.amp,actionSound.sound->getSampleRate()),
+				ms_to_samples(flangeLFO.amp,actionSound->sound->getSampleRate()),
 				feedback
 				);
 
@@ -92,7 +92,7 @@ bool CFlangeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 					if(prepareForUndo)
 						undoActionSizeSafe(actionSound);
 					else
-						actionSound.sound->invalidatePeakData(i,actionSound.start,t);
+						actionSound->sound->invalidatePeakData(i,actionSound->start,t);
 					return false;
 				}
 			}
@@ -105,21 +105,21 @@ bool CFlangeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 			}
 */
 			if(!prepareForUndo)
-				actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
+				actionSound->sound->invalidatePeakData(i,actionSound->start,actionSound->stop);
 		}
 	}
 
 	return(true);
 }
 
-AAction::CanUndoResults CFlangeEffect::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CFlangeEffect::canUndo(const CActionSound *actionSound) const
 {
 	return(curYes);
 }
 
-void CFlangeEffect::undoActionSizeSafe(const CActionSound &actionSound)
+void CFlangeEffect::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
+	restoreSelectionFromTempPools(actionSound,actionSound->start,actionSound->selectionLength());
 }
 
 
@@ -134,9 +134,9 @@ CFlangeEffectFactory::~CFlangeEffectFactory()
 {
 }
 
-CFlangeEffect *CFlangeEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CFlangeEffect *CFlangeEffectFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return(new CFlangeEffect(actionSound,
+	return(new CFlangeEffect(this,actionSound,
 		(float)actionParameters->getDoubleParameter("Delay"),
 		(float)actionParameters->getDoubleParameter("Wet Gain"),
 		(float)actionParameters->getDoubleParameter("Dry Gain"),

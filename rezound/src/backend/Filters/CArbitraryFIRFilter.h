@@ -50,13 +50,13 @@ class CArbitraryFIRFilterFactory;
 class CArbitraryFIRFilter : public AAction
 {
 public:
-	CArbitraryFIRFilter(const CActionSound &actionSound,const float wetdryMix,const CGraphParamValueNodeList &freqResponse,const unsigned kernelLength,const bool removeDelay);
+	CArbitraryFIRFilter(const AActionFactory *factory,const CActionSound *actionSound,const float wetdryMix,const CGraphParamValueNodeList &freqResponse,const unsigned kernelLength,const bool removeDelay);
 	virtual ~CArbitraryFIRFilter();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const float wetdryMix;
@@ -74,7 +74,7 @@ public:
 	CArbitraryFIRFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CArbitraryFIRFilterFactory();
 
-	CArbitraryFIRFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CArbitraryFIRFilter *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

@@ -180,10 +180,10 @@ void FXDiskEntityParamValue::readFromFile(const string &prefix,CNestedDataFile *
 void FXDiskEntityParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 {
 	const string key=prefix DOT getName();
-	f->createValue<string>(key,encodeFilenamePresetParameter(entityNameTextBox->getText().text()));
+	f->setValue<string>(key,encodeFilenamePresetParameter(entityNameTextBox->getText().text()));
 
 	if(openAsRawCheckButton!=NULL)
-		f->createValue<bool>(key+" AsRaw",openAsRawCheckButton->getCheck());
+		f->setValue<bool>(key+" AsRaw",openAsRawCheckButton->getCheck());
 }
 
 

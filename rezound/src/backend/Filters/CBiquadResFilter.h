@@ -40,13 +40,13 @@ public:
 		ftBandpass
 	};
 
-	CBiquadResFilter(const CActionSound &actionSound,FilterTypes filterType,float gain,float frequency,float bandwidth=0.0);
+	CBiquadResFilter(const AActionFactory *factory,const CActionSound *actionSound,FilterTypes filterType,float gain,float frequency,float bandwidth=0.0);
 	virtual ~CBiquadResFilter();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const FilterTypes filterType;
@@ -65,7 +65,7 @@ public:
 	CBiquadResLowpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CBiquadResLowpassFilterFactory();
 
-	CBiquadResFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CBiquadResFilter *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 class CBiquadResHighpassFilterFactory : public AActionFactory
@@ -74,7 +74,7 @@ public:
 	CBiquadResHighpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CBiquadResHighpassFilterFactory();
 
-	CBiquadResFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CBiquadResFilter *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 class CBiquadResBandpassFilterFactory : public AActionFactory
@@ -83,7 +83,7 @@ public:
 	CBiquadResBandpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CBiquadResBandpassFilterFactory();
 
-	CBiquadResFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CBiquadResFilter *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

@@ -30,8 +30,8 @@
 
 #include "filters_util.h"
 
-CMorphingArbitraryFIRFilter::CMorphingArbitraryFIRFilter(const CActionSound &actionSound,const float _wetdryMix,const CGraphParamValueNodeList &_freqResponse1,const CGraphParamValueNodeList &_freqResponse2,const bool _useLFO,const CLFODescription &_sweepLFODesc,const unsigned _kernelLength,const bool _removeDelay) :
-	AAction(actionSound),
+CMorphingArbitraryFIRFilter::CMorphingArbitraryFIRFilter(const AActionFactory *factory,const CActionSound *actionSound,const float _wetdryMix,const CGraphParamValueNodeList &_freqResponse1,const CGraphParamValueNodeList &_freqResponse2,const bool _useLFO,const CLFODescription &_sweepLFODesc,const unsigned _kernelLength,const bool _removeDelay) :
+	AAction(factory,actionSound),
 
 	wetdryMix(_wetdryMix),
 	freqResponse1(_freqResponse1),
@@ -51,15 +51,15 @@ CMorphingArbitraryFIRFilter::~CMorphingArbitraryFIRFilter()
 {
 }
 
-bool CMorphingArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CMorphingArbitraryFIRFilter::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
 #ifdef HAVE_LIBRFFTW
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t stop=actionSound.stop;
-	const sample_pos_t selectionLength=actionSound.selectionLength();
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t stop=actionSound->stop;
+	const sample_pos_t selectionLength=actionSound->selectionLength();
 
 	if(prepareForUndo)
-		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
+		moveSelectionToTempPools(actionSound,mmSelection,actionSound->selectionLength());
 
 	const float dryGain=(100.0-fabs(wetdryMix))/100.0 * (wetdryMix<0.0 ? -1.0 : 1.0);
 	const float wetGain=wetdryMix/100.0;
@@ -71,20 +71,20 @@ bool CMorphingArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,boo
 
 
 	unsigned channelsDoneCount=0;
-	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+	for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 	{
-		if(actionSound.doChannel[i])
+		if(actionSound->doChannel[i])
 		{
 										/* constructing with bogus kernel values right now */
 			TFFTConvolverFrequencyDomainKernel<float,float> convolver(filterKernel,filterKernelLength);
 
-			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
-			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
+			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
+			const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);
 			sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 
-			CStatusBar statusBar(_("Filtering -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
+			CStatusBar statusBar(_("Filtering -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),start,stop,true); 
 
-			auto_ptr<ALFO> sweepLFO(gLFORegistry.createLFO(sweepLFODesc,actionSound.sound->getSampleRate()));
+			auto_ptr<ALFO> sweepLFO(gLFORegistry.createLFO(sweepLFODesc,actionSound->sound->getSampleRate()));
 
 			// #defined because this occurs between both the removeDelay and !removeDelay code
 			#define RECALC_FILTER_KERNEL 										\
@@ -107,7 +107,7 @@ bool CMorphingArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,boo
 				} 												\
  																\
 				/* the iterator won't work unless the range of the .x components are 0 to 1, so I have to convert the frequencies (in .x) to a value from 0 to 1 */ \
-				const CGraphParamValueNodeList normFreqResponse=normalizeFrequencyResponse(freqResponse,actionSound.sound->getSampleRate()); \
+				const CGraphParamValueNodeList normFreqResponse=normalizeFrequencyResponse(freqResponse,actionSound->sound->getSampleRate()); \
  																\
 				CGraphParamValueIterator fr_i(normFreqResponse,filterKernelLength); 				\
 				for(size_t t=0;t<filterKernelLength;t++) 							\
@@ -169,7 +169,7 @@ bool CMorphingArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,boo
 						if(prepareForUndo)
 							undoActionSizeSafe(actionSound);
 						else
-							actionSound.sound->invalidatePeakData(i,actionSound.start,destPos);
+							actionSound->sound->invalidatePeakData(i,actionSound->start,destPos);
 						return false;
 					}
 				}
@@ -201,14 +201,14 @@ bool CMorphingArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,boo
 						if(prepareForUndo)
 							undoActionSizeSafe(actionSound);
 						else
-							actionSound.sound->invalidatePeakData(i,actionSound.start,destPos);
+							actionSound->sound->invalidatePeakData(i,actionSound->start,destPos);
 						return false;
 					}
 				}
 			}
 
 			if(!prepareForUndo)
-				actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
+				actionSound->sound->invalidatePeakData(i,actionSound->start,actionSound->stop);
 		}
 	}
 
@@ -217,14 +217,14 @@ bool CMorphingArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,boo
 	throw EUserMessage(string(__func__)+_(" -- feature disabled because the fftw/rfftw library was not installed or detected when configure was run"));
 }
 
-AAction::CanUndoResults CMorphingArbitraryFIRFilter::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CMorphingArbitraryFIRFilter::canUndo(const CActionSound *actionSound) const
 {
 	return curYes;
 }
 
-void CMorphingArbitraryFIRFilter::undoActionSizeSafe(const CActionSound &actionSound)
+void CMorphingArbitraryFIRFilter::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
+	restoreSelectionFromTempPools(actionSound,actionSound->start,actionSound->selectionLength());
 }
 
 const string CMorphingArbitraryFIRFilter::getExplanation()
@@ -250,9 +250,10 @@ CMorphingArbitraryFIRFilterFactory::~CMorphingArbitraryFIRFilterFactory()
 {
 }
 
-CMorphingArbitraryFIRFilter *CMorphingArbitraryFIRFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CMorphingArbitraryFIRFilter *CMorphingArbitraryFIRFilterFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return new CMorphingArbitraryFIRFilter(
+		this,
 		actionSound,
 		actionParameters->getDoubleParameter("Wet/Dry Mix"),
 		actionParameters->getGraphParameter("Frequency Response 1"),

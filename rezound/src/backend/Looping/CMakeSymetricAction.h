@@ -31,13 +31,13 @@ class CMakeSymetricActionFactory;
 class CMakeSymetricAction : public AAction
 {
 public:
-	CMakeSymetricAction(const CActionSound &actionSound);
+	CMakeSymetricAction(const AActionFactory *factory,const CActionSound *actionSound);
 	virtual ~CMakeSymetricAction();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 };
 
@@ -47,7 +47,7 @@ public:
 	CMakeSymetricActionFactory(AActionDialog *channelSelectDialog);
 	virtual ~CMakeSymetricActionFactory();
 
-	CMakeSymetricAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CMakeSymetricAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

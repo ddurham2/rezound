@@ -346,12 +346,13 @@ AC_ARG_ENABLE(
 	[ # action if either enable or disable flag is given
 		if [[ "$enableval" = "yes" ]]
 		then 
-			AC_CHECK_HEADER(
+			AM_PATH_ALSA(
 				[1.0.0],
 				[
 					AC_DEFINE(ENABLE_ALSA)
 					AC_MSG_RESULT([*** enabling ALSA for audio I/O])
-				]
+				],
+				[]
 			)
 		else
 			AC_MSG_RESULT([*** disabling ALSA for audio I/O])
@@ -723,6 +724,7 @@ AC_CONFIG_FILES([
 			src/misc/CNestedDataFile/Makefile
 		src/backend/Makefile
 			src/backend/DSP/Makefile
+			src/backend/File/Makefile
 			src/backend/Edits/Makefile
 			src/backend/Effects/Makefile
 			src/backend/Filters/Makefile

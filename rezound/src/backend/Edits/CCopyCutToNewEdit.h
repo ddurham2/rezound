@@ -37,13 +37,13 @@ public:
 		cctCutToNew,
 	};
 
-	CCopyCutToNewEdit(const CActionSound actionSound,CCType type,ASoundFileManager *soundFileManager);
+	CCopyCutToNewEdit(const AActionFactory *factory,const CActionSound *actionSound,CCType type,ASoundFileManager *soundFileManager);
 	virtual ~CCopyCutToNewEdit();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 	bool doesWarrantSaving() const;
 
@@ -61,7 +61,7 @@ public:
 	CCopyToNewEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CCopyToNewEditFactory();
 
-	CCopyCutToNewEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CCopyCutToNewEdit *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 class CCutToNewEditFactory : public AActionFactory
@@ -70,7 +70,7 @@ public:
 	CCutToNewEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CCutToNewEditFactory();
 
-	CCopyCutToNewEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CCopyCutToNewEdit *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

@@ -30,13 +30,13 @@ class CDelayEffect : public AAction
 {
 public:
 						                     // in millisecs
-	CDelayEffect(const CActionSound &actionSound,size_t _tapCount,float *tapTimes,float *tapGains,float *tapFeedbacks);
+	CDelayEffect(const AActionFactory *factory,const CActionSound *actionSound,size_t _tapCount,float *tapTimes,float *tapGains,float *tapFeedbacks);
 	virtual ~CDelayEffect();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const size_t tapCount;
@@ -52,7 +52,7 @@ public:
 	CSimpleDelayEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CSimpleDelayEffectFactory();
 
-	CDelayEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CDelayEffect *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

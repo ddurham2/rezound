@@ -58,16 +58,16 @@ public:
 		and the new positions are passed in as parameters or a predefined
 		selection.
 	*/
-	CSelectionEdit(const CActionSound actionSound,Selections selection);
-	CSelectionEdit(const CActionSound actionSound,Selections selection,const double amount);
-	CSelectionEdit(const CActionSound actionSound,sample_pos_t selectStart,sample_pos_t selectStop);
+	CSelectionEdit(const AActionFactory *factory,const CActionSound *actionSound,Selections selection);
+	CSelectionEdit(const AActionFactory *factory,const CActionSound *actionSound,Selections selection,const double amount);
+	CSelectionEdit(const AActionFactory *factory,const CActionSound *actionSound,sample_pos_t selectStart,sample_pos_t selectStop);
 	virtual ~CSelectionEdit();
 
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 	bool doesWarrantSaving() const;
 
@@ -92,7 +92,7 @@ public:
 	CSelectionEditFactory(Selections selection);
 	virtual ~CSelectionEditFactory();
 
-	CSelectionEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CSelectionEdit *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 
 private:
 	Selections selection;
@@ -108,7 +108,7 @@ public:
 	CSelectionEditPositionFactory();
 	virtual ~CSelectionEditPositionFactory();
 
-	CSelectionEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CSelectionEdit *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 
 	sample_pos_t selectStart,selectStop;
 };
@@ -120,7 +120,7 @@ public:
 	CGrowOrSlideSelectionEditFactory(AActionDialog *normalDialog); // selection will be sGrow... or sSlide
 	virtual ~CGrowOrSlideSelectionEditFactory();
 
-	CSelectionEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CSelectionEdit *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 

@@ -20,8 +20,8 @@
 
 #include "CCropEdit.h"
 
-CCropEdit::CCropEdit(const CActionSound actionSound) :
-    AAction(actionSound),
+CCropEdit::CCropEdit(const AActionFactory *factory,const CActionSound *actionSound) :
+    AAction(factory,actionSound),
 
     oldLength(0)
 {
@@ -31,33 +31,33 @@ CCropEdit::~CCropEdit()
 {
 }
 
-bool CCropEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CCropEdit::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
 	if(prepareForUndo)
 		moveSelectionToTempPools(actionSound,mmAllButSelection);
 	else
 	{
-		sample_pos_t selectionLength=actionSound.selectionLength();
-		oldLength=actionSound.sound->getLength();
+		sample_pos_t selectionLength=actionSound->selectionLength();
+		oldLength=actionSound->sound->getLength();
 
-		if(actionSound.start>0)
-			actionSound.sound->removeSpace(actionSound.doChannel,0,actionSound.start);
-		if(selectionLength<actionSound.sound->getLength())
-			actionSound.sound->removeSpace(actionSound.doChannel,selectionLength,actionSound.sound->getLength()-selectionLength);
+		if(actionSound->start>0)
+			actionSound->sound->removeSpace(actionSound->doChannel,0,actionSound->start);
+		if(selectionLength<actionSound->sound->getLength())
+			actionSound->sound->removeSpace(actionSound->doChannel,selectionLength,actionSound->sound->getLength()-selectionLength);
 	}
 	
-	actionSound.selectAll();
+	actionSound->selectAll();
 		
 	return(true);
 }
 
-AAction::CanUndoResults CCropEdit::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CCropEdit::canUndo(const CActionSound *actionSound) const
 {
 	// should check some size constraint?
 	return(curYes);
 }
 
-void CCropEdit::undoActionSizeSafe(const CActionSound &actionSound)
+void CCropEdit::undoActionSizeSafe(const CActionSound *actionSound)
 {
 	restoreSelectionFromTempPools(actionSound);
 }
@@ -75,7 +75,7 @@ CCropEditFactory::~CCropEditFactory()
 {
 }
 
-CCropEdit *CCropEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CCropEdit *CCropEditFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return(new CCropEdit(actionSound));
+	return(new CCropEdit(this,actionSound));
 }

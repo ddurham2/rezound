@@ -28,6 +28,7 @@ include $(top_srcdir)/config/am_include.mk
 ##
 SUBDIRS=\
 	DSP  \
+	File  \
 	Edits  \
 	Effects \
 	Filters \
@@ -81,6 +82,9 @@ noinst_HEADERS= \
 	   CSoundPlayerChannel.h \
 	   CTrigger.h \
 	   CPluginMapping.h \
+	   CMacroPlayer.h \
+	   CMacroRecorder.h \
+	   CRunMacroAction.h \
 	   CvoxSoundTranslator.h \
 	   initialize.h \
 	   license.h \
@@ -129,6 +133,9 @@ libbackend_la_SOURCES= \
 			CSoundPlayerChannel.cpp \
 			CTrigger.cpp \
 			CPluginMapping.cpp \
+			CMacroPlayer.cpp \
+			CMacroRecorder.cpp \
+			CRunMacroAction.cpp \
 			CvoxSoundTranslator.cpp \
 		        initialize.cpp \
 			main_controls.cpp \

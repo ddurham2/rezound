@@ -1115,7 +1115,7 @@ void FXGraphParamValue::writeToFile(const string &prefix,CNestedDataFile *f) con
 	const string key=prefix DOT getName();
 
 	if(getMinScalar()!=getMaxScalar())
-		f->createValue<int>(key DOT "scalar",getScalar());
+		f->setValue<int>(key DOT "scalar",getScalar());
 
 	vector<double> positions,values;
 	for(size_t t=0;t<nodes.size();t++)
@@ -1125,12 +1125,12 @@ void FXGraphParamValue::writeToFile(const string &prefix,CNestedDataFile *f) con
 	}
 
 	const string k1=key DOT "node_positions";
-	f->createValue<vector<double> >(k1,positions);
+	f->setValue<vector<double> >(k1,positions);
 
 	const string k2=key DOT "node_values";
-	f->createValue<vector<double> >(k2,values);
+	f->setValue<vector<double> >(k2,values);
 
 	if(getMinScalar()!=getMaxScalar())
-		f->createValue<int>(key DOT "scalar",getScalar());
+		f->setValue<int>(key DOT "scalar",getScalar());
 }
 

@@ -47,6 +47,7 @@ FXIMPLEMENT(FXComboTextParamValue,FXHorizontalFrame,FXComboTextParamValueMap,ARR
 
 FXComboTextParamValue::FXComboTextParamValue(FXComposite *p,int opts,const char *_name,const vector<string> &items,bool _isEditable) :
 	FXHorizontalFrame(p,opts|FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 2,2,4,4, 0,0),
+	asString(false),
 
 	name(_name),
 
@@ -78,7 +79,7 @@ long FXComboTextParamValue::onComboBoxChange(FXObject *object,FXSelector sel,voi
 	return target && target->handle(this,FXSEL(SEL_CHANGED,getSelector()),ptr);
 }
 
-const FXint FXComboTextParamValue::getValue()
+const FXint FXComboTextParamValue::getIntegerValue()
 {
 	if(isEditable)
 		return atoi(valueComboBox->getText().text()); // ??? I think I should just return a string.. or perhaps have a getText() method and CActionParamDialog can save both values in CActionParameters one with an altername name 
@@ -86,7 +87,12 @@ const FXint FXComboTextParamValue::getValue()
 		return valueComboBox->getCurrentItem();
 }
 
-void FXComboTextParamValue::setValue(const FXint value)
+const string FXComboTextParamValue::getStringValue()
+{
+	return valueComboBox->getText().text();
+}
+
+void FXComboTextParamValue::setIntegerValue(const FXint value)
 {
 	if(isEditable)
 		valueComboBox->setText(istring(value).c_str());
@@ -168,23 +174,42 @@ void FXComboTextParamValue::disable()
 
 void FXComboTextParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix DOT getName() DOT "index";
-	if(f->keyExists(key))
+	if(asString)
 	{
-		const int i=f->getValue<int>(key);
-		if(i>=0 && i<valueComboBox->getNumItems())
-			setValue(i);
+		throw runtime_error(string(__func__)+" -- unimplemented");
+		/*
+		const string key=prefix DOT getName() DOT "value";
+		if(f->keyExists(key))
+		{
+			const string s=f->getValue<string>(key);
+			setStringValue(s);
+		}
+		else
+			setStringValue(""); // ??? would use initialIndex if there were such a thing
+		*/
 	}
 	else
-		setValue(0); // ??? would use initialIndex if there were such a thing
-
+	{
+		const string key=prefix DOT getName() DOT "index";
+		if(f->keyExists(key))
+		{
+			const int i=f->getValue<int>(key);
+			if(i>=0 && i<valueComboBox->getNumItems())
+				setIntegerValue(i);
+		}
+		else
+			setIntegerValue(0); // ??? would use initialIndex if there were such a thing
+	}
 	onComboBoxChange(NULL,0,NULL);
 }
 
 void FXComboTextParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 {
 	const string key=prefix DOT getName();
-	f->createValue<int>(key DOT "index",getValue());
+	if(asString)
+		f->setValue<string>(key DOT "value",getStringValue());
+	else
+		f->setValue<int>(key DOT "index",getIntegerValue());
 }
 
 

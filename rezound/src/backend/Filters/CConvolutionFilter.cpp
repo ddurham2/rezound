@@ -34,8 +34,8 @@
 
 #include "../settings.h"
 
-CConvolutionFilter::CConvolutionFilter(const CActionSound &actionSound,const float _wetdryMix,const float _inputGain,const float _outputGain,const float _inputLowpassFreq,const float _predelay,const string _filterKernelFilename,const bool _openFilterKernelAsRaw,const float _filterKernelGain,const float _filterKernelLowpassFreq,const float _filterKernelRate,const bool _reverseFilterKernel,const bool _wrapDecay) :
-	AAction(actionSound),
+CConvolutionFilter::CConvolutionFilter(const AActionFactory *factory,const CActionSound *actionSound,const float _wetdryMix,const float _inputGain,const float _outputGain,const float _inputLowpassFreq,const float _predelay,const string _filterKernelFilename,const bool _openFilterKernelAsRaw,const float _filterKernelGain,const float _filterKernelLowpassFreq,const float _filterKernelRate,const bool _reverseFilterKernel,const bool _wrapDecay) :
+	AAction(factory,actionSound),
 
 	wetdryMix(_wetdryMix),
 	inputGain(_inputGain),
@@ -58,12 +58,12 @@ CConvolutionFilter::~CConvolutionFilter()
 }
 
 #include <unistd.h> // for symlink and unlink
-bool CConvolutionFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CConvolutionFilter::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
 #ifdef HAVE_LIBRFFTW
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t stop=actionSound.stop;
-	const sample_pos_t selectionLength=actionSound.selectionLength();
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t stop=actionSound->stop;
+	const sample_pos_t selectionLength=actionSound->selectionLength();
 
 	const string filename=filterKernelFilename;
 	if(!CPath(filename).exists()) // ??? need a "canRead()" method
@@ -84,22 +84,22 @@ bool CConvolutionFilter::doActionSizeSafe(CActionSound &actionSound,bool prepare
 			translator->loadSound(tempFilename,&filterKernelFile);
 
 			if(prepareForUndo)
-				moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
+				moveSelectionToTempPools(actionSound,mmSelection,actionSound->selectionLength());
 
 			// ??? see if I can use the first sample of the kernelfilter to control the dry gain so I don't have to rewind src
 			const float dryGain=(100.0-fabs(wetdryMix))/100.0 * (wetdryMix<0.0 ? -1.0 : 1.0);
 			const float wetGain=wetdryMix/100.0;
 
 			unsigned channelsDoneCount=0;
-			for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+			for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 			{
-				if(actionSound.doChannel[i])
+				if(actionSound->doChannel[i])
 				{
 					/*
 					 * read the data from filterKernelFile but also adjust the sample rate 
 					 * of the filterKernel file to match the action sound's sample rate 
 					 */
-					const sample_fpos_t rateAdjustment=(sample_fpos_t)actionSound.sound->getSampleRate()/(sample_fpos_t)filterKernelFile.getSampleRate();
+					const sample_fpos_t rateAdjustment=(sample_fpos_t)actionSound->sound->getSampleRate()/(sample_fpos_t)filterKernelFile.getSampleRate();
 
 					const CRezPoolAccesser filterKernelAccesser=filterKernelFile.getAudio(i%filterKernelFile.getChannelCount());
 
@@ -138,15 +138,15 @@ bool CConvolutionFilter::doActionSizeSafe(CActionSound &actionSound,bool prepare
 					//TSimpleConvolver<mix_sample_t,float> convolver(filterKernel,filterKernelLength-filterKernelLengthSub);
 					TFFTConvolverTimeDomainKernel<float,float> convolver(filterKernel,filterKernelLength-filterKernelLengthSub);
 
-					TDSPSinglePoleLowpassFilter<float,float> inputLowpassFilter(freq_to_fraction(inputLowpassFreq,actionSound.sound->getSampleRate()));
+					TDSPSinglePoleLowpassFilter<float,float> inputLowpassFilter(freq_to_fraction(inputLowpassFreq,actionSound->sound->getSampleRate()));
 
-					TDSPDelay<float> predelayer(ms_to_samples(predelay,actionSound.sound->getSampleRate()));
+					TDSPDelay<float> predelayer(ms_to_samples(predelay,actionSound->sound->getSampleRate()));
 
-					CRezPoolAccesser dest=actionSound.sound->getAudio(i);
-					const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
+					CRezPoolAccesser dest=actionSound->sound->getAudio(i);
+					const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);
 					sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 
-					CStatusBar statusBar(_("Convolving -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
+					CStatusBar statusBar(_("Convolving -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),start,stop,true); 
 
 					sample_pos_t srcPos=srcOffset;
 					sample_pos_t destPos=start;
@@ -183,7 +183,7 @@ bool CConvolutionFilter::doActionSizeSafe(CActionSound &actionSound,bool prepare
 							if(prepareForUndo)
 								undoActionSizeSafe(actionSound);
 							else
-								actionSound.sound->invalidatePeakData(i,actionSound.start,destPos);
+								actionSound->sound->invalidatePeakData(i,actionSound->start,destPos);
 							filterKernelFile.closeSound();
 							unlink(tempFilename.c_str());
 							return false;
@@ -215,7 +215,7 @@ bool CConvolutionFilter::doActionSizeSafe(CActionSound &actionSound,bool prepare
 					}
 
 					if(!prepareForUndo)
-						actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
+						actionSound->sound->invalidatePeakData(i,actionSound->start,actionSound->stop);
 				}
 			}
 
@@ -239,14 +239,14 @@ bool CConvolutionFilter::doActionSizeSafe(CActionSound &actionSound,bool prepare
 	throw(EUserMessage(string(__func__)+_(" -- feature disabled because the fftw/rfftw library was not installed or detected when configure was run")));
 }
 
-AAction::CanUndoResults CConvolutionFilter::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CConvolutionFilter::canUndo(const CActionSound *actionSound) const
 {
 	return(curYes);
 }
 
-void CConvolutionFilter::undoActionSizeSafe(const CActionSound &actionSound)
+void CConvolutionFilter::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
+	restoreSelectionFromTempPools(actionSound,actionSound->start,actionSound->selectionLength());
 }
 
 
@@ -261,9 +261,10 @@ CConvolutionFilterFactory::~CConvolutionFilterFactory()
 {
 }
 
-CConvolutionFilter *CConvolutionFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CConvolutionFilter *CConvolutionFilterFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CConvolutionFilter(
+		this,
 		actionSound,
 		actionParameters->getDoubleParameter("Wet/Dry Mix"),
 

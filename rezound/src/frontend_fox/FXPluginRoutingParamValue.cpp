@@ -1878,46 +1878,46 @@ void FXPluginRoutingParamValue::writeToFile(const string &prefix,CNestedDataFile
 	const string key=prefix DOT getName();
 
 	// write sources
-	f->createValue<size_t>(key DOT "sourceCount",N_sources.size());
+	f->setValue<size_t>(key DOT "sourceCount",N_sources.size());
 	for(size_t t=0;t<N_sources.size();t++)
 	{
 		const string source_key=key DOT "source"+istring(t);
 
-		f->createValue<size_t>(source_key DOT "nodeCount",N_sources[t].nodes.size());
+		f->setValue<size_t>(source_key DOT "nodeCount",N_sources[t].nodes.size());
 
 		if(gSoundFileManager->getSound(N_sources[t].nodes[0].u.source.soundFileManagerIndex)->sound==actionSound)
-			f->createValue<bool>(source_key DOT "actionSound",true);
-		f->createValue<string>(source_key DOT "filename",gSoundFileManager->getSound(N_sources[t].nodes[0].u.source.soundFileManagerIndex)->getFilename());
+			f->setValue<bool>(source_key DOT "actionSound",true);
+		f->setValue<string>(source_key DOT "filename",gSoundFileManager->getSound(N_sources[t].nodes[0].u.source.soundFileManagerIndex)->getFilename());
 		if(N_sources[t].howMuch)
-			f->createValue<int>(source_key DOT "howMuch",N_sources[t].howMuch->getCurrentItem());
+			f->setValue<int>(source_key DOT "howMuch",N_sources[t].howMuch->getCurrentItem());
 
 		for(size_t k=0;k<N_sources[t].nodes.size();k++)
 		{ // write all attributes of each node
-			f->createValue<int>(source_key DOT "wdro"+istring(k),N_sources[t].nodes[k].u.source.wdro->getCurrentItem());
+			f->setValue<int>(source_key DOT "wdro"+istring(k),N_sources[t].nodes[k].u.source.wdro->getCurrentItem());
 		}
 	}
 
 	// write instances
-	f->createValue<size_t>(key DOT "instanceCount",N_instances.size());
+	f->setValue<size_t>(key DOT "instanceCount",N_instances.size());
 
 	// write output
-	f->createValue<size_t>(key DOT "outputChannelCount",N_output.nodes.size());
+	f->setValue<size_t>(key DOT "outputChannelCount",N_output.nodes.size());
 
 	// write information about connections between nodes
 	const string connections_key=key DOT "connections";
-	f->createValue<size_t>(connections_key DOT "connectionCount",connections.size());
+	f->setValue<size_t>(connections_key DOT "connectionCount",connections.size());
 	for(size_t t=0;t<connections.size();t++)
 	{
 		const string key=connections_key DOT "c"+istring(t);
-		f->createValue<float>(key DOT "gain",connections[t].gain);
+		f->setValue<float>(key DOT "gain",connections[t].gain);
 
-		f->createValue<int>(key DOT "srcFamily",connections[t].src.family);
-		f->createValue<size_t>(key DOT "srcEntity",connections[t].src.entityIndex);
-		f->createValue<size_t>(key DOT "srcNode",connections[t].src.nodeIndex);
+		f->setValue<int>(key DOT "srcFamily",connections[t].src.family);
+		f->setValue<size_t>(key DOT "srcEntity",connections[t].src.entityIndex);
+		f->setValue<size_t>(key DOT "srcNode",connections[t].src.nodeIndex);
 
-		f->createValue<int>(key DOT "destFamily",connections[t].dest.family);
-		f->createValue<size_t>(key DOT "destEntity",connections[t].dest.entityIndex);
-		f->createValue<size_t>(key DOT "destNode",connections[t].dest.nodeIndex);
+		f->setValue<int>(key DOT "destFamily",connections[t].dest.family);
+		f->setValue<size_t>(key DOT "destEntity",connections[t].dest.entityIndex);
+		f->setValue<size_t>(key DOT "destNode",connections[t].dest.nodeIndex);
 	}
 }
 

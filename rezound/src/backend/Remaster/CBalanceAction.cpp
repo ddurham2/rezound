@@ -23,8 +23,8 @@
 #include "../CActionSound.h"
 #include "../CActionParameters.h"
 
-CBalanceAction::CBalanceAction(const CActionSound &actionSound,const CGraphParamValueNodeList &_balanceCurve,const unsigned _channelA,const unsigned _channelB,const BalanceTypes _balanceType) :
-	AAction(actionSound),
+CBalanceAction::CBalanceAction(const AActionFactory *factory,const CActionSound *actionSound,const CGraphParamValueNodeList &_balanceCurve,const unsigned _channelA,const unsigned _channelB,const BalanceTypes _balanceType) :
+	AAction(factory,actionSound),
 	balanceCurve(_balanceCurve),
 	channelA(_channelA),
 	channelB(_channelB),
@@ -38,31 +38,31 @@ CBalanceAction::~CBalanceAction()
 {
 }
 
-bool CBalanceAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CBalanceAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
 	if(channelA==channelB)
 		return true;
 
 	// set so the backup will only backup what's necessary 
-	actionSound.noChannels();
-	actionSound.doChannel[channelA]=true;
-	actionSound.doChannel[channelB]=true;
+	actionSound->noChannels();
+	actionSound->doChannel[channelA]=true;
+	actionSound->doChannel[channelB]=true;
 
 	if(prepareForUndo)
-		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
+		moveSelectionToTempPools(actionSound,mmSelection,actionSound->selectionLength());
 
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t selectionLength=actionSound.selectionLength();
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t selectionLength=actionSound->selectionLength();
 
 	CStatusBar statusBar(_("Changing Balance"),0,selectionLength,true);
 
 	sample_pos_t srcPos=prepareForUndo ? 0 : start;
-	const CRezPoolAccesser srcA=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,channelA) : actionSound.sound->getAudio(channelA);
-	const CRezPoolAccesser srcB=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,channelB) : actionSound.sound->getAudio(channelB);
+	const CRezPoolAccesser srcA=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,channelA) : actionSound->sound->getAudio(channelA);
+	const CRezPoolAccesser srcB=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,channelB) : actionSound->sound->getAudio(channelB);
 
 	sample_pos_t destPos=start;
-	CRezPoolAccesser destA=actionSound.sound->getAudio(channelA);
-	CRezPoolAccesser destB=actionSound.sound->getAudio(channelB);
+	CRezPoolAccesser destA=actionSound->sound->getAudio(channelA);
+	CRezPoolAccesser destB=actionSound->sound->getAudio(channelB);
 
 	CGraphParamValueIterator iter(balanceCurve,selectionLength);
 	if(balanceType==btStrictBalance)
@@ -95,8 +95,8 @@ bool CBalanceAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 					undoActionSizeSafe(actionSound);
 				else
 				{
-					actionSound.sound->invalidatePeakData(channelA,actionSound.start,t);
-					actionSound.sound->invalidatePeakData(channelB,actionSound.start,t);
+					actionSound->sound->invalidatePeakData(channelA,actionSound->start,t);
+					actionSound->sound->invalidatePeakData(channelB,actionSound->start,t);
 				}
 				return false;
 			}
@@ -119,8 +119,8 @@ bool CBalanceAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 					undoActionSizeSafe(actionSound);
 				else
 				{
-					actionSound.sound->invalidatePeakData(channelA,actionSound.start,t);
-					actionSound.sound->invalidatePeakData(channelB,actionSound.start,t);
+					actionSound->sound->invalidatePeakData(channelA,actionSound->start,t);
+					actionSound->sound->invalidatePeakData(channelB,actionSound->start,t);
 				}
 				return false;
 			}
@@ -143,8 +143,8 @@ bool CBalanceAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 					undoActionSizeSafe(actionSound);
 				else
 				{
-					actionSound.sound->invalidatePeakData(channelA,actionSound.start,t);
-					actionSound.sound->invalidatePeakData(channelB,actionSound.start,t);
+					actionSound->sound->invalidatePeakData(channelA,actionSound->start,t);
+					actionSound->sound->invalidatePeakData(channelB,actionSound->start,t);
 				}
 				return false;
 			}
@@ -156,24 +156,24 @@ bool CBalanceAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 	return true;
 }
 
-AAction::CanUndoResults CBalanceAction::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CBalanceAction::canUndo(const CActionSound *actionSound) const
 {
 	return curYes;
 }
 
-void CBalanceAction::undoActionSizeSafe(const CActionSound &_actionSound)
+void CBalanceAction::undoActionSizeSafe(const CActionSound *_actionSound)
 {
 	if(channelA==channelB)
 		return;
 
-	CActionSound actionSound(_actionSound);
+	CActionSound actionSound(*_actionSound);
 
 	// set so the backup will only restore what was backed up (wouldn't be necessary accept AAction passes a temporary actionSound to doActionSizeSafe so it's modifications to actionSound didn't stick)
 	actionSound.noChannels();
 	actionSound.doChannel[channelA]=true;
 	actionSound.doChannel[channelB]=true;
 
-	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
+	restoreSelectionFromTempPools(&actionSound,actionSound.start,actionSound.selectionLength());
 }
 
 const string CBalanceAction::getBalanceTypeExplanation()
@@ -200,11 +200,16 @@ CSimpleBalanceActionFactory::~CSimpleBalanceActionFactory()
 {
 }
 
-CBalanceAction *CSimpleBalanceActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CBalanceAction *CSimpleBalanceActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
+	CGraphParamValueNodeList g;
+	g.push_back(CGraphParamValueNode(0.0,actionParameters->getValue<double>("Balance")));
+	g.push_back(CGraphParamValueNode(1.0,actionParameters->getValue<double>("Balance")));
+
 	return new CBalanceAction(
+		this,
 		actionSound,
-		actionParameters->getGraphParameter("Balance"),
+		g,
 		actionParameters->getUnsignedParameter("Channel A"),
 		actionParameters->getUnsignedParameter("Channel B"),
 		(CBalanceAction::BalanceTypes)actionParameters->getUnsignedParameter("Balance Type")
@@ -222,9 +227,10 @@ CCurvedBalanceActionFactory::~CCurvedBalanceActionFactory()
 {
 }
 
-CBalanceAction *CCurvedBalanceActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CBalanceAction *CCurvedBalanceActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return new CBalanceAction(
+		this,
 		actionSound,
 		actionParameters->getGraphParameter("Balance Curve"),
 		actionParameters->getUnsignedParameter("Channel A"),

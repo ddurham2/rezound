@@ -62,7 +62,7 @@ CLoadedSound *ASoundFileManager::prvCreateNew(sample_pos_t _length,bool askForLe
 	return NULL;
 }
 
-CLoadedSound *ASoundFileManager::createNew(const string filename,unsigned channelCount,unsigned sampleRate,unsigned length,bool rawFormat)
+CLoadedSound *ASoundFileManager::createNew(const string filename,unsigned channelCount,unsigned sampleRate,sample_pos_t length,bool rawFormat)
 {
 	CSound *sound=NULL;
 	CSoundPlayerChannel *channel=NULL;
@@ -97,18 +97,22 @@ CLoadedSound *ASoundFileManager::createNew(const string filename,unsigned channe
 	return loaded;
 }
 
-bool ASoundFileManager::open(const string _filename,bool openAsRaw)
+bool ASoundFileManager::open(const string filename,bool openAsRaw)
 {
 	vector<string> filenames;
-	string filename=_filename;
+	filenames.push_back(filename);
+	return open(filenames);
+}
+
+bool ASoundFileManager::open(const vector<string> &_filenames,bool openAsRaw)
+{
+	vector<string> filenames(_filenames);
 	bool readOnly=false;
-	if(filename=="")
+	if(filenames.size()<=0)
 	{
 		if(!gFrontendHooks->promptForOpenSoundFilenames(filenames,readOnly,openAsRaw))
 			return false;
 	}
-	else
-		filenames.push_back(filename);
 
 	for(size_t t=0;t<filenames.size();t++)
 	{
@@ -228,16 +232,25 @@ bool ASoundFileManager::save()
 }
 
 
-bool ASoundFileManager::saveAs()
+bool ASoundFileManager::saveAs(const string _filename,bool _saveAsRaw)
 {
 	CLoadedSound *loaded=getActive();
 	if(loaded)
 	{
-		string filename=loaded->getFilename();
-askAgain:
+		string filename;
 		bool saveAsRaw=false;
-		if(!gFrontendHooks->promptForSaveSoundFilename(filename,saveAsRaw))
-			return false;
+
+		if(_filename=="")
+		{ // prompt user
+			filename=loaded->getFilename();
+			if(!gFrontendHooks->promptForSaveSoundFilename(filename,saveAsRaw))
+				return false;
+		}
+		else
+		{ // don't prompt user
+			saveAsRaw=_saveAsRaw;
+			filename=_filename;
+		}
 
 		bool reregisterFilenameOnError=false;
 		if(loaded->getFilename()==filename && compareBool(loaded->translator->handlesRaw(),saveAsRaw))
@@ -261,7 +274,7 @@ askAgain:
 				{
 					if(reregisterFilenameOnError)
 						registerFilename(filename);
-					goto askAgain;
+					return false;
 				}
 			}
 
@@ -534,7 +547,7 @@ void ASoundFileManager::registerFilename(const string filename)
 
 	vector<string> reg=loadedRegistryFile->getValue<vector<string> >(LOADED_REG_KEY);
 	reg.push_back(filename);
-	loadedRegistryFile->createValue<vector<string> >(LOADED_REG_KEY,reg);
+	loadedRegistryFile->setValue<vector<string> >(LOADED_REG_KEY,reg);
 }
 
 void ASoundFileManager::unregisterFilename(const string filename)
@@ -545,7 +558,7 @@ void ASoundFileManager::unregisterFilename(const string filename)
 		if(reg[t]==filename)
 		{
 			reg.erase(reg.begin()+t);
-			loadedRegistryFile->createValue<vector<string> >(LOADED_REG_KEY,reg);
+			loadedRegistryFile->setValue<vector<string> >(LOADED_REG_KEY,reg);
 			break;
 		}
 	}
@@ -580,7 +593,7 @@ void ASoundFileManager::updateReopenHistory(const string filename)
 	reopenFilenames.insert(reopenFilenames.begin(),filename);
 
 	for(size_t t=0;t<reopenFilenames.size();t++)
-		gSettingsRegistry->createValue<string>("ReopenHistory" DOT "item"+istring(t),reopenFilenames[t]);
+		gSettingsRegistry->setValue<string>("ReopenHistory" DOT "item"+istring(t),reopenFilenames[t]);
 }
 
 const size_t ASoundFileManager::getReopenHistorySize() const

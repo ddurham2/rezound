@@ -24,8 +24,8 @@
 
 #include "../DSP/Convolver.h"
 
-CTestEffect::CTestEffect(const CActionSound &actionSound) :
-	AAction(actionSound)
+CTestEffect::CTestEffect(const AActionFactory *factory,const CActionSound *actionSound) :
+	AAction(factory,actionSound)
 {
 }
 
@@ -33,11 +33,11 @@ CTestEffect::~CTestEffect()
 {
 }
 
-bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CTestEffect::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t stop=actionSound.stop;
-	const sample_pos_t selectionLength=actionSound.selectionLength();
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t stop=actionSound->stop;
+	const sample_pos_t selectionLength=actionSound->selectionLength();
 
 	// ??? since the convolution creates a signal that is N+M-1 points in length at the end, I should have a couple of options
 	// 	- 1) if the stop == getLength()-1 then add M samples of space at the end
@@ -45,7 +45,7 @@ bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 	// 		- this would require me to back up M sample more data for the saving for undo... and now.. crossfading is either not applicable at all.. or at least not at the end of the selection.. or maybe it is
 
 	if(prepareForUndo)
-		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
+		moveSelectionToTempPools(actionSound,mmSelection,actionSound->selectionLength());
 
 #if 0
 	// load impulse response of reverb
@@ -59,7 +59,7 @@ bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 
 #elif 0
 	// create the time-domain filter kernel
-	const float freq=100.0f/(float)actionSound.sound->getSampleRate(); // cutoff frequency of this low-pass filter (fraction of the sample rate 0..0.5)
+	const float freq=100.0f/(float)actionSound->sound->getSampleRate(); // cutoff frequency of this low-pass filter (fraction of the sample rate 0..0.5)
 	const sample_pos_t M=200; // length of filter kernel
 	float filter_kernel[M];
 	for(sample_pos_t i=0;i<M;i++) 
@@ -115,12 +115,12 @@ bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 #ifdef HAVE_LIBRFFTW
 	TFFTConvolverTimeDomainKernel<sample_t,float> c(filter_kernel,M);
 
-	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+	for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 	{
-		if(actionSound.doChannel[i])
+		if(actionSound->doChannel[i])
 		{
-			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
-			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
+			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
+			const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);
 			sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 
 			c.reset();
@@ -154,16 +154,16 @@ bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 
 
 			if(!prepareForUndo)
-				actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
+				actionSound->sound->invalidatePeakData(i,actionSound->start,actionSound->stop);
 		}
 	}
 #else
-	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+	for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 	{
-		if(actionSound.doChannel[i])
+		if(actionSound->doChannel[i])
 		{
-			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
-			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
+			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
+			const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);
 			sample_pos_t srcOffset=prepareForUndo ? start : 0;
 
 			TSimpleConvolver<mix_sample_t,float> convolver(filter_kernel,M);
@@ -177,7 +177,7 @@ bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 			}
 
 			if(!prepareForUndo)
-				actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
+				actionSound->sound->invalidatePeakData(i,actionSound->start,actionSound->stop);
 		}
 	}
 #endif
@@ -185,14 +185,14 @@ bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 	return(true);
 }
 
-AAction::CanUndoResults CTestEffect::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CTestEffect::canUndo(const CActionSound *actionSound) const
 {
 	return(curYes);
 }
 
-void CTestEffect::undoActionSizeSafe(const CActionSound &actionSound)
+void CTestEffect::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
+	restoreSelectionFromTempPools(actionSound,actionSound->start,actionSound->selectionLength());
 }
 
 
@@ -207,9 +207,9 @@ CTestEffectFactory::~CTestEffectFactory()
 {
 }
 
-CTestEffect *CTestEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CTestEffect *CTestEffectFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return(new CTestEffect(actionSound));
+	return(new CTestEffect(this,actionSound));
 }
 
 

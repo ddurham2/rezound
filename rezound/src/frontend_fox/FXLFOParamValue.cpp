@@ -236,7 +236,7 @@ void FXLFOParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 void FXLFOParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 {
 	const string key=prefix DOT getName();
-	f->createValue<string>(key DOT "name", gLFORegistry.getName((size_t)LFOTypeComboBox->getItemData(LFOTypeComboBox->getCurrentItem())) );
+	f->setValue<string>(key DOT "name", gLFORegistry.getName((size_t)LFOTypeComboBox->getItemData(LFOTypeComboBox->getCurrentItem())) );
 
 	if(amplitudeSlider->getName()!="")
 		amplitudeSlider->writeToFile(key,f);

@@ -26,8 +26,8 @@
 
 #include <utility>
 
-CMarkQuietAreasAction::CMarkQuietAreasAction(const CActionSound &actionSound,const float _quietThreshold,const float _quietTime,const float _unquietTime,const float _detectorWindow,const string _quietBeginCue,const string _quietEndCue) :
-	AAction(actionSound),
+CMarkQuietAreasAction::CMarkQuietAreasAction(const AActionFactory *factory,const CActionSound *actionSound,const float _quietThreshold,const float _quietTime,const float _unquietTime,const float _detectorWindow,const string _quietBeginCue,const string _quietEndCue) :
+	AAction(factory,actionSound),
 	quietThreshold(_quietThreshold),
 	quietTime(_quietTime),
 	unquietTime(_unquietTime),
@@ -41,13 +41,13 @@ CMarkQuietAreasAction::~CMarkQuietAreasAction()
 {
 }
 
-bool CMarkQuietAreasAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CMarkQuietAreasAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t stop=actionSound.stop;
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t stop=actionSound->stop;
 	const sample_t quietThreshold=dBFS_to_amp(this->quietThreshold);
-	const sample_pos_t quietTime=max((sample_pos_t)1,ms_to_samples(this->quietTime,actionSound.sound->getSampleRate()));
-	const sample_pos_t unquietTime=ms_to_samples(this->unquietTime,actionSound.sound->getSampleRate());
+	const sample_pos_t quietTime=max((sample_pos_t)1,ms_to_samples(this->quietTime,actionSound->sound->getSampleRate()));
+	const sample_pos_t unquietTime=ms_to_samples(this->unquietTime,actionSound->sound->getSampleRate());
 
 
 	/*
@@ -76,8 +76,8 @@ bool CMarkQuietAreasAction::doActionSizeSafe(CActionSound &actionSound,bool prep
 	sample_pos_t quietEndPos;
 	sample_pos_t quietCounter;
 	sample_pos_t unquietCounter;
-	CDSPRMSLevelDetector levelDetector(max((sample_pos_t)1,ms_to_samples(detectorWindow,actionSound.sound->getSampleRate())));
-	const CRezPoolAccesser src=actionSound.sound->getAudio(0); // ??? which channel to use or both?
+	CDSPRMSLevelDetector levelDetector(max((sample_pos_t)1,ms_to_samples(detectorWindow,actionSound->sound->getSampleRate())));
+	const CRezPoolAccesser src=actionSound->sound->getAudio(0); // ??? which channel to use or both? (prompt the user!)
 	for(sample_pos_t pos=start;pos<=stop;pos++)
 	{
 		const mix_sample_t l=levelDetector.readLevel(src[pos]);
@@ -102,7 +102,7 @@ bool CMarkQuietAreasAction::doActionSizeSafe(CActionSound &actionSound,bool prep
 			else if(quietCounter>=quietTime)
 			{ 	// level has now been below the threshold for long enough
 				state=2;
-				actionSound.sound->addCue(quietBeginCue,quietBeginPos,false);
+				actionSound->sound->addCue(quietBeginCue,quietBeginPos,false);
 			}
 			else
 				quietCounter++;
@@ -127,7 +127,7 @@ bool CMarkQuietAreasAction::doActionSizeSafe(CActionSound &actionSound,bool prep
 			else if(unquietCounter>=unquietTime)
 			{ // level has now been above the threshold for unquiet time samples
 				state=0;
-				actionSound.sound->addCue(quietEndCue,quietEndPos,false);
+				actionSound->sound->addCue(quietEndCue,quietEndPos,false);
 			}
 			else
 				unquietCounter++;
@@ -140,12 +140,12 @@ bool CMarkQuietAreasAction::doActionSizeSafe(CActionSound &actionSound,bool prep
 	return true;
 }
 
-AAction::CanUndoResults CMarkQuietAreasAction::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CMarkQuietAreasAction::canUndo(const CActionSound *actionSound) const
 {
 	return curYes;
 }
 
-void CMarkQuietAreasAction::undoActionSizeSafe(const CActionSound &actionSound)
+void CMarkQuietAreasAction::undoActionSizeSafe(const CActionSound *actionSound)
 {
 	// it is not necessary to do anything here because AAction handles restoring all the cues
 }
@@ -162,9 +162,10 @@ CMarkQuietAreasActionFactory::~CMarkQuietAreasActionFactory()
 {
 }
 
-CMarkQuietAreasAction *CMarkQuietAreasActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CMarkQuietAreasAction *CMarkQuietAreasActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return new CMarkQuietAreasAction(
+		this,
 		actionSound,
 		actionParameters->getDoubleParameter("Threshold for Quiet"),
 		actionParameters->getDoubleParameter("Must Remain Quiet for"),

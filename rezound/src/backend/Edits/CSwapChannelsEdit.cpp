@@ -24,8 +24,8 @@
 #include "../CActionSound.h"
 #include "../CActionParameters.h"
 
-CSwapChannelsEdit::CSwapChannelsEdit(const CActionSound actionSound,unsigned _channelA,unsigned _channelB) :
-	AAction(actionSound),
+CSwapChannelsEdit::CSwapChannelsEdit(const AActionFactory *factory,const CActionSound *actionSound,unsigned _channelA,unsigned _channelB) :
+	AAction(factory,actionSound),
 
 	channelA(_channelA),
 	channelB(_channelB)
@@ -36,26 +36,26 @@ CSwapChannelsEdit::~CSwapChannelsEdit()
 {
 }
 
-bool CSwapChannelsEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CSwapChannelsEdit::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t stop=actionSound.stop;
-	const sample_pos_t selectionLength=actionSound.selectionLength();
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t stop=actionSound->stop;
+	const sample_pos_t selectionLength=actionSound->selectionLength();
 
-	actionSound.sound->swapChannels(channelA,channelB,start,selectionLength);
+	actionSound->sound->swapChannels(channelA,channelB,start,selectionLength);
 	return(true);
 }
 
-AAction::CanUndoResults CSwapChannelsEdit::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CSwapChannelsEdit::canUndo(const CActionSound *actionSound) const
 {
 	return(curYes);
 }
 
-void CSwapChannelsEdit::undoActionSizeSafe(const CActionSound &actionSound)
+void CSwapChannelsEdit::undoActionSizeSafe(const CActionSound *actionSound)
 {
 	// undo is same as doing it in this case
-	CActionSound a(actionSound);
-	doActionSizeSafe(a,false);
+	CActionSound a(*actionSound);
+	doActionSizeSafe(&a,false);
 }
 
 
@@ -71,9 +71,10 @@ CSwapChannelsEditFactory::~CSwapChannelsEditFactory()
 {
 }
 
-CSwapChannelsEdit *CSwapChannelsEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CSwapChannelsEdit *CSwapChannelsEditFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CSwapChannelsEdit(
+		this,
 		actionSound,
 		actionParameters->getUnsignedParameter("Channel A"),
 		actionParameters->getUnsignedParameter("Channel B")

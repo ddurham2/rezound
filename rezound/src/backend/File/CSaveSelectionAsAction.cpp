@@ -23,8 +23,8 @@
 #include "../ASoundFileManager.h"
 #include "../CActionParameters.h"
 
-CSaveSelectionAsAction::CSaveSelectionAsAction(const CActionSound &actionSound,ASoundFileManager *_soundFileManager) :
-	AAction(actionSound),
+CSaveSelectionAsAction::CSaveSelectionAsAction(const AActionFactory *factory,const CActionSound *actionSound,ASoundFileManager *_soundFileManager) :
+	AAction(factory,actionSound),
 	soundFileManager(_soundFileManager)
 {
 }
@@ -33,18 +33,18 @@ CSaveSelectionAsAction::~CSaveSelectionAsAction()
 {
 }
 
-bool CSaveSelectionAsAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CSaveSelectionAsAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	soundFileManager->savePartial(actionSound.sound,"",actionSound.start,actionSound.selectionLength(),false);
+	soundFileManager->savePartial(actionSound->sound,"",actionSound->start,actionSound->selectionLength(),false);
 	return true;
 }
 
-AAction::CanUndoResults CSaveSelectionAsAction::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CSaveSelectionAsAction::canUndo(const CActionSound *actionSound) const
 {
 	return curNA;
 }
 
-void CSaveSelectionAsAction::undoActionSizeSafe(const CActionSound &actionSound)
+void CSaveSelectionAsAction::undoActionSizeSafe(const CActionSound *actionSound)
 {
 	// not applicable
 }
@@ -66,8 +66,8 @@ CSaveSelectionAsActionFactory::~CSaveSelectionAsActionFactory()
 {
 }
 
-CSaveSelectionAsAction *CSaveSelectionAsActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CSaveSelectionAsAction *CSaveSelectionAsActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return new CSaveSelectionAsAction(actionSound,actionParameters->getSoundFileManager());
+	return new CSaveSelectionAsAction(this,actionSound,actionParameters->getSoundFileManager());
 }
 

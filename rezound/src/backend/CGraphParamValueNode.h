@@ -44,6 +44,10 @@ public:
 //typedef TBasicList<CGraphParamValueNode> CGraphParamValueNodeList;
 typedef vector<CGraphParamValueNode> CGraphParamValueNodeList;
 
+#include <CNestedDataFile/anytype.h>
+template<> static const CGraphParamValueNode string_to_anytype<CGraphParamValueNode>(const string &_str,CGraphParamValueNode &ret) { const string str=s2at::remove_surrounding_quotes(_str); const size_t pos=str.find("|"); ret.x=atof(str.substr(0,pos).c_str()); ret.y=atof(str.substr(pos+1).c_str()); return ret; }
+template<> static const string anytype_to_string<CGraphParamValueNode>(const CGraphParamValueNode &any) { return "\""+anytype_to_string<double>(any.x)+"|"+anytype_to_string<double>(any.y)+"\""; }
+
 
 
 // - Simply creates a list of two nodes, (x: 0.0, y: v) and (x: 1.0, y: v)

@@ -90,12 +90,18 @@ const size_t CSoundFileManager::getOpenedCount() const
 
 CLoadedSound *CSoundFileManager::getSound(size_t index)
 {
-	return soundWindows[index]->loadedSound;
+	if(index<soundWindows.size())
+		return soundWindows[index]->loadedSound;
+	else
+		throw runtime_error(string(__func__)+" -- index out of range");
 }
 
 CSoundWindow *CSoundFileManager::getSoundWindow(size_t index)
 {
-	return soundWindows[index];
+	if(index<soundWindows.size())
+		return soundWindows[index];
+	else
+		throw runtime_error(string(__func__)+" -- index out of range");
 }
 
 CSoundWindow *previousActiveWindow=NULL; // used for alt-` meaning switch back to the previously active window

@@ -18,41 +18,37 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __CSaveSelectionAsAction_H__
-#define __CSaveSelectionAsAction_H__
-
+#ifndef __CSaveAudioFileAction_H__
+#define __CSaveAudioFileAction_H__
 
 #include "../../../config/common.h"
 
 #include "../AAction.h"
+class CActionParameters;
 
-class ASoundFileManager;
-
-class CSaveSelectionAsAction : public AAction
+class CSaveAudioFileAction : public AAction
 {
 public:
-	CSaveSelectionAsAction(const CActionSound &actionSound,ASoundFileManager *soundFileManager);
-	virtual ~CSaveSelectionAsAction();
+	CSaveAudioFileAction(const AActionFactory *factory,const CActionSound *actionSound,const CActionParameters *actionParameters);
+	virtual ~CSaveAudioFileAction();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
-
-	bool doesWarrantSaving() const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound) {}
+	CanUndoResults canUndo(const CActionSound *actionSound) const { return curNA; }
 
 private:
-	ASoundFileManager *soundFileManager;
+	const CActionParameters *actionParameters;
 
 };
 
-class CSaveSelectionAsActionFactory : public AActionFactory
+class CSaveAudioFileActionFactory : public AActionFactory
 {
 public:
-	CSaveSelectionAsActionFactory();
-	virtual ~CSaveSelectionAsActionFactory();
+	CSaveAudioFileActionFactory();
+	virtual ~CSaveAudioFileActionFactory();
 
-	CSaveSelectionAsAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CSaveAudioFileAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

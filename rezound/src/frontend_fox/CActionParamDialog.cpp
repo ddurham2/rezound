@@ -211,11 +211,15 @@ FXDiskEntityParamValue *CActionParamDialog::getDiskEntityParam(const string name
 	throw runtime_error(string(__func__)+" -- widget with name, "+name+", is not a disk entity");
 }
 
-FXComboTextParamValue *CActionParamDialog::addComboTextEntry(void *parent,const string name,const vector<string> &items,const string tipText,bool isEditable)
+FXComboTextParamValue *CActionParamDialog::addComboTextEntry(void *parent,const string name,const vector<string> &items,ComboParamValueTypes type,const string tipText,bool isEditable)
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- use CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
 	FXComboTextParamValue *comboTextEntry=new FXComboTextParamValue((FXPacker *)parent,0,name.c_str(),items,isEditable);
+	if(type==cpvtAsString)
+		comboTextEntry->asString=true;
+	else
+		comboTextEntry->asString=false;
 	comboTextEntry->setTipText(tipText.c_str());
 	parameters.push_back(make_pair(ptComboText,comboTextEntry));
 	retValueConvs.push_back(NULL);
@@ -349,7 +353,7 @@ void CActionParamDialog::setValue(size_t index,const double value)
 		break;
 
 	case ptComboText:
-		((FXComboTextParamValue *)parameters[index].second)->setValue((FXint)value);
+		((FXComboTextParamValue *)parameters[index].second)->setIntegerValue((FXint)value);
 		break;
 
 	case ptCheckBox:
@@ -552,7 +556,7 @@ reshow:
 						if(retValueConvs[t]!=NULL)
 							ret=retValueConvs[t](ret);
 
-						actionParameters->addDoubleParameter(slider->getName(),ret);
+						actionParameters->setDoubleParameter(slider->getName(),ret);
 						addedParameters.push_back(slider->getName());
 					}
 					break;
@@ -565,7 +569,7 @@ reshow:
 						if(retValueConvs[t]!=NULL)
 							ret=retValueConvs[t](ret);
 
-						actionParameters->addDoubleParameter(textEntry->getName(),ret);	
+						actionParameters->setDoubleParameter(textEntry->getName(),ret);	
 						addedParameters.push_back(textEntry->getName());
 					}
 					break;
@@ -574,7 +578,7 @@ reshow:
 					{
 						FXTextParamValue *textEntry=(FXTextParamValue *)parameters[t].second;
 						const string ret=textEntry->getText();
-						actionParameters->addStringParameter(textEntry->getName(),ret);	
+						actionParameters->setStringParameter(textEntry->getName(),ret);	
 						addedParameters.push_back(textEntry->getName());
 					}
 					break;
@@ -584,10 +588,10 @@ reshow:
 						FXDiskEntityParamValue *diskEntityEntry=(FXDiskEntityParamValue *)parameters[t].second;
 						const string ret=diskEntityEntry->getEntityName();
 
-						actionParameters->addStringParameter(diskEntityEntry->getName(),ret);	
+						actionParameters->setStringParameter(diskEntityEntry->getName(),ret);	
 
 						if(diskEntityEntry->getEntityType()==FXDiskEntityParamValue::detAudioFilename)
-							actionParameters->addBoolParameter(diskEntityEntry->getName()+" OpenAsRaw",diskEntityEntry->getOpenAsRaw());	
+							actionParameters->setBoolParameter(diskEntityEntry->getName()+" OpenAsRaw",diskEntityEntry->getOpenAsRaw());	
 						addedParameters.push_back(diskEntityEntry->getName());
 					}
 					break;
@@ -595,9 +599,15 @@ reshow:
 				case ptComboText:
 					{
 						FXComboTextParamValue *comboTextEntry=(FXComboTextParamValue *)parameters[t].second;
-						FXint ret=comboTextEntry->getValue();
-
-						actionParameters->addUnsignedParameter(comboTextEntry->getName(),(unsigned)ret);	
+						if(comboTextEntry->asString)
+						{ // return the text of the item selected
+							actionParameters->setStringParameter(comboTextEntry->getName(),comboTextEntry->getStringValue());
+						}
+						else
+						{ // return values as integer of the index that was selected
+							FXint ret=comboTextEntry->getIntegerValue();
+							actionParameters->setUnsignedParameter(comboTextEntry->getName(),(unsigned)ret);	
+						}
 						addedParameters.push_back(comboTextEntry->getName());
 					}
 					break;
@@ -607,7 +617,7 @@ reshow:
 						FXCheckBoxParamValue *checkBoxEntry=(FXCheckBoxParamValue *)parameters[t].second;
 						bool ret=checkBoxEntry->getValue();
 
-						actionParameters->addBoolParameter(checkBoxEntry->getName(),ret);	
+						actionParameters->setBoolParameter(checkBoxEntry->getName(),ret);	
 						addedParameters.push_back(checkBoxEntry->getName());
 					}
 					break;
@@ -624,7 +634,7 @@ reshow:
 								nodes[i].y=retValueConvs[t](nodes[i].y);
 						}
 
-						actionParameters->addGraphParameter(graph->getName(),nodes);
+						actionParameters->setGraphParameter(graph->getName(),nodes);
 						addedParameters.push_back(graph->getName());
 					}
 					break;
@@ -632,7 +642,7 @@ reshow:
 				case ptLFO:
 					{
 						FXLFOParamValue *LFOEntry=(FXLFOParamValue *)parameters[t].second;
-						actionParameters->addLFODescription(LFOEntry->getName(),LFOEntry->getValue());
+						actionParameters->setLFODescription(LFOEntry->getName(),LFOEntry->getValue());
 						addedParameters.push_back(LFOEntry->getName());
 					}
 					break;
@@ -640,7 +650,7 @@ reshow:
 				case ptPluginRouting:
 					{
 						FXPluginRoutingParamValue *pluginRoutingEntry=(FXPluginRoutingParamValue *)parameters[t].second;
-						actionParameters->addPluginMapping(pluginRoutingEntry->getName(),pluginRoutingEntry->getValue());
+						actionParameters->setPluginMapping(pluginRoutingEntry->getName(),pluginRoutingEntry->getValue());
 						addedParameters.push_back(pluginRoutingEntry->getName());
 					}
 					break;
@@ -669,7 +679,7 @@ reshow:
 	if(presetsFrame!=NULL)
 	{
 		FXint h2=presetsFrame->getHeight();
-		gSettingsRegistry->createValue<string>("FOX" DOT "SplitterPositions" DOT presetPrefix+getOrigTitle(),istring(h2));
+		gSettingsRegistry->setValue<string>("FOX" DOT "SplitterPositions" DOT presetPrefix+getOrigTitle(),istring(h2));
 	}
 
 	hide(); // hide now and ... 
@@ -847,7 +857,7 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 				const string key=presetPrefix+getOrigTitle() DOT "names";
 				vector<string> names=presetsFile->getValue<vector<string> >(key);
 				names.push_back(name);
-				presetsFile->createValue<vector<string> >(key,names);
+				presetsFile->setValue<vector<string> >(key,names);
 				buildPresetList(presetsFile,userPresetList);
 			}
 				
@@ -879,7 +889,7 @@ long CActionParamDialog::onPresetRemoveButton(FXObject *sender,FXSelector sel,vo
 			// remove preset's name from the names array
 			vector<string> names=presetsFile->getValue<vector<string> >(presetPrefix+getOrigTitle() DOT "names");
 			names.erase(names.begin()+userPresetList->getCurrentItem());
-			presetsFile->createValue<vector<string> >(presetPrefix+getOrigTitle() DOT "names",names);
+			presetsFile->setValue<vector<string> >(presetPrefix+getOrigTitle() DOT "names",names);
 
 			buildPresetList(presetsFile,userPresetList);
 			presetsFile->save();

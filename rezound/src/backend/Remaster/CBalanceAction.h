@@ -36,15 +36,15 @@ public:
 		bt2xPan=2
 	};
 
-	CBalanceAction(const CActionSound &actionSound,const CGraphParamValueNodeList &balanceCurve,const unsigned channelA,const unsigned channelB,const BalanceTypes balanceType);
+	CBalanceAction(const AActionFactory *factory,const CActionSound *actionSound,const CGraphParamValueNodeList &balanceCurve,const unsigned channelA,const unsigned channelB,const BalanceTypes balanceType);
 	virtual ~CBalanceAction();
 
 	static const string getBalanceTypeExplanation();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const CGraphParamValueNodeList balanceCurve;
@@ -59,7 +59,7 @@ public:
 	CSimpleBalanceActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CSimpleBalanceActionFactory();
 
-	CBalanceAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CBalanceAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 class CCurvedBalanceActionFactory : public AActionFactory
@@ -68,7 +68,7 @@ public:
 	CCurvedBalanceActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CCurvedBalanceActionFactory();
 
-	CBalanceAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CBalanceAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

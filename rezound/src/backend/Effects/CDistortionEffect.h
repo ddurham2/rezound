@@ -12,13 +12,13 @@ class CDistortionEffect : public AAction
 {
 public:
 	// curve's x's and y's should be in dBFS
-	CDistortionEffect(const CActionSound &actionSound,const CGraphParamValueNodeList &_curve);
+	CDistortionEffect(const AActionFactory *factory,const CActionSound *actionSound,const CGraphParamValueNodeList &_curve);
 	virtual ~CDistortionEffect();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	CGraphParamValueNodeList curve;
@@ -30,7 +30,7 @@ public:
 	CDistortionEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CDistortionEffectFactory();
 
-	CDistortionEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CDistortionEffect *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

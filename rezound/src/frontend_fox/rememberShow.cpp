@@ -160,9 +160,9 @@ void rememberHide(FXTopWindow *window,const string windowTitle)
 {
 	const string title="FOX" DOT "WindowDimensions" DOT windowTitle;
 	//printf("closing window: %s %d %d\n",window->getTitle().text(),window->getX(),window->getY());
-	gSettingsRegistry->createValue<int>(title+"_X",window->getX()/*-decorWidth*/);
-	gSettingsRegistry->createValue<int>(title+"_Y",window->getY()/*-decorHeight*/);
-	gSettingsRegistry->createValue<int>(title+"_W",window->getWidth());
-	gSettingsRegistry->createValue<int>(title+"_H",window->getHeight());
+	gSettingsRegistry->setValue<int>(title+"_X",window->getX()/*-decorWidth*/);
+	gSettingsRegistry->setValue<int>(title+"_Y",window->getY()/*-decorHeight*/);
+	gSettingsRegistry->setValue<int>(title+"_W",window->getWidth());
+	gSettingsRegistry->setValue<int>(title+"_H",window->getHeight());
 }
 

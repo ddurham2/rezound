@@ -35,7 +35,9 @@ class AFrontendHooks;
 	#include "LADSPA/ladspa.h"
 #endif
 
+class AActionFactory;
 class ASoundRecorder;
+class CLoadedSound;
 
 extern AFrontendHooks *gFrontendHooks;
 
@@ -45,6 +47,8 @@ public:
 
 	AFrontendHooks() { }
 	virtual ~AFrontendHooks() { }
+
+	virtual void setWhichClipboard(size_t whichClipboard)=0;
 
 	// prompt with an open file dialog (return false if the prompt was cancelled)
 	virtual bool promptForOpenSoundFilename(string &filename,bool &readOnly,bool &openAsRaw)=0;
@@ -62,6 +66,37 @@ public:
 	// prompt for recording, this function will have to be more than just an interface and do work 
 	// since it should probably show level meters and be able to insert cues while recording etc.
 	virtual bool promptForRecord(ASoundRecorder *recorder)=0;
+
+	// prompt for parameters for recording a macro
+	virtual bool showRecordMacroDialog(string &macroName)=0;
+
+	// prompt for the information needed to store with the macro after each action of the recording macro is recorded
+	struct MacroActionParameters
+	{
+		// true if at playback time the user should be prompted for the action parameters rather than it using the ones defined at record time
+	 	bool askToPromptForActionParametersAtPlayback;
+
+		enum SelectionPositioning
+		{
+			spLeaveAlone=1,
+
+			spAbsoluteTimeFromBeginning=2,
+			spAbsoluteTimeFromEnd=3,
+			spProportionateTimeFromBeginning=4,
+
+			spAbsoluteTimeFromStartPosition=5, 	// only allowed for the stopPosPositioning
+			spProportionateTimeFromStartPosition=6,	// only allowed for the stopPosPositioning
+
+			spSameCueName=7,
+		};
+
+		SelectionPositioning startPosPositioning;
+		SelectionPositioning stopPosPositioning;
+
+		string startPosCueName;
+		string stopPosCueName;
+	};
+	virtual void showMacroActionParamsDialog(const AActionFactory *actionFactory,MacroActionParameters &macroActionParams,CLoadedSound *loadedSound)=0; // loadedSound may be NULL
 
 
 #ifdef ENABLE_JACK

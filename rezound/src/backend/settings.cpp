@@ -27,6 +27,8 @@
 
 CNestedDataFile *gSettingsRegistry=NULL;
 
+CNestedDataFile *gUserMacroStore=NULL;
+
 
 string gPromptDialogDirectory="";
 
@@ -123,6 +125,9 @@ float gCrossfadeStartTime=10.0;	 // default 20ms crossfade time
 float gCrossfadeStopTime=10.0;
 CrossfadeFadeMethods gCrossfadeFadeMethod=cfmLinear;
 
+
+
+map<string,AActionFactory *> gRegisteredActionFactories;
 
 // ----------------------------------------------------------------------------
 
@@ -306,24 +311,24 @@ void readBackendSettings()
 
 void writeBackendSettings()
 {
-	gSettingsRegistry->createValue<string>("shareDirectory",gSysDataDirectory);
-	gSettingsRegistry->createValue<string>("promptDialogDirectory",gPromptDialogDirectory);
+	gSettingsRegistry->setValue<string>("shareDirectory",gSysDataDirectory);
+	gSettingsRegistry->setValue<string>("promptDialogDirectory",gPromptDialogDirectory);
 
 
-	gSettingsRegistry->createValue<unsigned>("DesiredOutputSampleRate",gDesiredOutputSampleRate);
-	gSettingsRegistry->createValue<unsigned>("DesiredOutputChannelCount",gDesiredOutputChannelCount);
-	gSettingsRegistry->createValue<int>("DesiredOutputBufferCount",gDesiredOutputBufferCount);
-	gSettingsRegistry->createValue<unsigned>("DesiredOutputBufferSize",gDesiredOutputBufferSize);
+	gSettingsRegistry->setValue<unsigned>("DesiredOutputSampleRate",gDesiredOutputSampleRate);
+	gSettingsRegistry->setValue<unsigned>("DesiredOutputChannelCount",gDesiredOutputChannelCount);
+	gSettingsRegistry->setValue<int>("DesiredOutputBufferCount",gDesiredOutputBufferCount);
+	gSettingsRegistry->setValue<unsigned>("DesiredOutputBufferSize",gDesiredOutputBufferSize);
 
 
 #ifdef ENABLE_OSS
-	gSettingsRegistry->createValue<string>("OSSOutputDevice",gOSSOutputDevice);
-	gSettingsRegistry->createValue<string>("OSSInputDevice",gOSSInputDevice);
+	gSettingsRegistry->setValue<string>("OSSOutputDevice",gOSSOutputDevice);
+	gSettingsRegistry->setValue<string>("OSSInputDevice",gOSSInputDevice);
 #endif
 
 #ifdef ENABLE_PORTAUDIO
-	gSettingsRegistry->createValue<int>("PortAudioOutputDevice",gPortAudioOutputDevice);
-	gSettingsRegistry->createValue<int>("PortAudioInputDevice",gPortAudioInputDevice);
+	gSettingsRegistry->setValue<int>("PortAudioOutputDevice",gPortAudioOutputDevice);
+	gSettingsRegistry->setValue<int>("PortAudioInputDevice",gPortAudioInputDevice);
 #endif
 
 #ifdef ENABLE_JACK
@@ -331,7 +336,7 @@ void writeBackendSettings()
 	for(unsigned t=0;t<MAX_CHANNELS;t++)
 	{
 		if(gJACKOutputPortNames[t]!="")
-			gSettingsRegistry->createValue<string>("JACKOutputPortName"+istring(t+1),gJACKOutputPortNames[t]);
+			gSettingsRegistry->setValue<string>("JACKOutputPortName"+istring(t+1),gJACKOutputPortNames[t]);
 		else
 		{
 			gSettingsRegistry->removeKey("JACKOutputPortName"+istring(t+2));
@@ -341,7 +346,7 @@ void writeBackendSettings()
 	for(unsigned t=0;t<MAX_CHANNELS;t++)
 	{
 		if(gJACKInputPortNames[t]!="")
-			gSettingsRegistry->createValue<string>("JACKInputPortName"+istring(t+1),gJACKInputPortNames[t]);
+			gSettingsRegistry->setValue<string>("JACKInputPortName"+istring(t+1),gJACKInputPortNames[t]);
 		else
 		{
 			gSettingsRegistry->removeKey("JACKInputPortName"+istring(t+2));
@@ -350,36 +355,37 @@ void writeBackendSettings()
 	}
 #endif
 
-	gSettingsRegistry->createValue<string>("LADSPA_PATH",gLADSPAPath);
+	gSettingsRegistry->setValue<string>("LADSPA_PATH",gLADSPAPath);
 
-	gSettingsRegistry->createValue<string>("fallbackWorkDir",gFallbackWorkDir);
+	gSettingsRegistry->setValue<string>("fallbackWorkDir",gFallbackWorkDir);
 
-	gSettingsRegistry->createValue<string>("clipboardDir",gClipboardDir);
-	gSettingsRegistry->createValue<string>("clipboardFilenamePrefix",gClipboardFilenamePrefix);
-	gSettingsRegistry->createValue<size_t>("whichClipboard",gWhichClipboard);
+	gSettingsRegistry->setValue<string>("clipboardDir",gClipboardDir);
+	gSettingsRegistry->setValue<string>("clipboardFilenamePrefix",gClipboardFilenamePrefix);
+	gSettingsRegistry->setValue<size_t>("whichClipboard",gWhichClipboard);
 
-	gSettingsRegistry->createValue<size_t>("ReopenHistory" DOT "maxReopenHistory",gMaxReopenHistory);
+	gSettingsRegistry->setValue<size_t>("ReopenHistory" DOT "maxReopenHistory",gMaxReopenHistory);
 
-	gSettingsRegistry->createValue<float>("skipMiddleMarginSeconds",gSkipMiddleMarginSeconds);
-	gSettingsRegistry->createValue<float>("loopGapLengthSeconds",gLoopGapLengthSeconds);
+	gSettingsRegistry->setValue<float>("skipMiddleMarginSeconds",gSkipMiddleMarginSeconds);
+	gSettingsRegistry->setValue<float>("loopGapLengthSeconds",gLoopGapLengthSeconds);
 
-	gSettingsRegistry->createValue<unsigned>("Meters" DOT "meterUpdateTime",gMeterUpdateTime);
+	gSettingsRegistry->setValue<unsigned>("Meters" DOT "meterUpdateTime",gMeterUpdateTime);
 
-	gSettingsRegistry->createValue<bool>("Meters" DOT "Level" DOT "enabled",gLevelMetersEnabled);
-	gSettingsRegistry->createValue<unsigned>("Meters" DOT "Level" DOT "RMSWindowTime",gMeterRMSWindowTime);
-	gSettingsRegistry->createValue<unsigned>("Meters" DOT "Level" DOT "maxPeakFallDelayTime",gMaxPeakFallDelayTime);
-	gSettingsRegistry->createValue<double>("Meters" DOT "Level" DOT "maxPeakFallRate",gMaxPeakFallRate);
+	gSettingsRegistry->setValue<bool>("Meters" DOT "Level" DOT "enabled",gLevelMetersEnabled);
+	gSettingsRegistry->setValue<unsigned>("Meters" DOT "Level" DOT "RMSWindowTime",gMeterRMSWindowTime);
+	gSettingsRegistry->setValue<unsigned>("Meters" DOT "Level" DOT "maxPeakFallDelayTime",gMaxPeakFallDelayTime);
+	gSettingsRegistry->setValue<double>("Meters" DOT "Level" DOT "maxPeakFallRate",gMaxPeakFallRate);
 
-	gSettingsRegistry->createValue<bool>("Meters" DOT "StereoPhase" DOT "enabled",gStereoPhaseMetersEnabled);
-	gSettingsRegistry->createValue<unsigned>("Meters" DOT "StereoPhase" DOT "pointCount",gStereoPhaseMeterPointCount);
-	gSettingsRegistry->createValue<bool>("Meters" DOT "StereoPhase" DOT "unrotate",gStereoPhaseMeterUnrotate);
+	gSettingsRegistry->setValue<bool>("Meters" DOT "StereoPhase" DOT "enabled",gStereoPhaseMetersEnabled);
+	gSettingsRegistry->setValue<unsigned>("Meters" DOT "StereoPhase" DOT "pointCount",gStereoPhaseMeterPointCount);
+	gSettingsRegistry->setValue<bool>("Meters" DOT "StereoPhase" DOT "unrotate",gStereoPhaseMeterUnrotate);
 
-	gSettingsRegistry->createValue<bool>("Meters" DOT "Analyzer" DOT "enabled",gFrequencyAnalyzerEnabled);
-	gSettingsRegistry->createValue<unsigned>("Meters" DOT "Analyzer" DOT "peakFallDelayTime",gAnalyzerPeakFallDelayTime);
-	gSettingsRegistry->createValue<double>("Meters" DOT "Analyzer" DOT "peakFallRate",gAnalyzerPeakFallRate);
+	gSettingsRegistry->setValue<bool>("Meters" DOT "Analyzer" DOT "enabled",gFrequencyAnalyzerEnabled);
+	gSettingsRegistry->setValue<unsigned>("Meters" DOT "Analyzer" DOT "peakFallDelayTime",gAnalyzerPeakFallDelayTime);
+	gSettingsRegistry->setValue<double>("Meters" DOT "Analyzer" DOT "peakFallRate",gAnalyzerPeakFallRate);
 
-	gSettingsRegistry->createValue<int>("crossfadeEdges",(int)gCrossfadeEdges);
-	gSettingsRegistry->createValue<float>("crossfadeStartTime",gCrossfadeStartTime);
-	gSettingsRegistry->createValue<float>("crossfadeStopTime",gCrossfadeStopTime);
-	gSettingsRegistry->createValue<int>("crossfadeFadeMethod",(int)gCrossfadeFadeMethod);
+	gSettingsRegistry->setValue<int>("crossfadeEdges",(int)gCrossfadeEdges);
+	gSettingsRegistry->setValue<float>("crossfadeStartTime",gCrossfadeStartTime);
+	gSettingsRegistry->setValue<float>("crossfadeStopTime",gCrossfadeStopTime);
+	gSettingsRegistry->setValue<int>("crossfadeFadeMethod",(int)gCrossfadeFadeMethod);
 }
+

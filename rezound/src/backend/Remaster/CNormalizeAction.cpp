@@ -26,8 +26,8 @@
 #include <algorithm>
 #include <vector>
 
-CNormalizeAction::CNormalizeAction(const CActionSound &actionSound,float _normalizationLevel,unsigned _regionCount,bool _lockChannels) :
-	AAction(actionSound),
+CNormalizeAction::CNormalizeAction(const AActionFactory *factory,const CActionSound *actionSound,float _normalizationLevel,unsigned _regionCount,bool _lockChannels) :
+	AAction(factory,actionSound),
 
 	normalizationLevel(_normalizationLevel),
 	regionCount(_regionCount),
@@ -41,15 +41,15 @@ CNormalizeAction::~CNormalizeAction()
 
 template <class type> const type my_abs(const type v) { return v<0 ? -v : v; }
 
-bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CNormalizeAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t stop=actionSound.stop;
-	const sample_pos_t selectionLength=actionSound.selectionLength();
-	const unsigned channelCount=actionSound.sound->getChannelCount();
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t stop=actionSound->stop;
+	const sample_pos_t selectionLength=actionSound->selectionLength();
+	const unsigned channelCount=actionSound->sound->getChannelCount();
 
 	if(prepareForUndo)
-		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
+		moveSelectionToTempPools(actionSound,mmSelection,actionSound->selectionLength());
 
 	const mix_sample_t normalizationLevel=my_abs(dBFS_to_amp(this->normalizationLevel,MAX_SAMPLE));
 	const unsigned regionCount=min((sample_pos_t)selectionLength,max((sample_pos_t)1,(sample_pos_t)this->regionCount));
@@ -63,13 +63,13 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 	unsigned channelsDoneCount=0;
 	for(unsigned i=0;i<channelCount;i++)
 	{
-		if(actionSound.doChannel[i])
+		if(actionSound->doChannel[i])
 		{
-			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
+			const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);
 			sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 			sample_pos_t posAdd=prepareForUndo ? start : 0; // add this to the positions incase src is a tempPool for undo purposes because it would start at 0 instead of start
 
-			CStatusBar statusBar(_("Analyzing -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),srcOffset,srcOffset+selectionLength,true); 
+			CStatusBar statusBar(_("Analyzing -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),srcOffset,srcOffset+selectionLength,true); 
 
 			for(unsigned t=0;t<regionCount;t++)
 			{
@@ -106,7 +106,7 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 			sample_pos_t maxValuePosition=0;
 			for(unsigned i=0;i<channelCount;i++)
 			{
-				if(actionSound.doChannel[i])
+				if(actionSound->doChannel[i])
 				{
 					if(maxValues[i][t]>maxValue)
 					{
@@ -118,7 +118,7 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 
 			for(unsigned i=0;i<channelCount;i++)
 			{
-				if(actionSound.doChannel[i])
+				if(actionSound->doChannel[i])
 				{
 					maxValues[i][t]=maxValue;
 					maxValuePositions[i][t]=maxValuePosition;
@@ -135,14 +135,14 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 		unsigned channelsDoneCount=0;
 		for(unsigned i=0;i<channelCount;i++)
 		{
-			if(actionSound.doChannel[i])
+			if(actionSound->doChannel[i])
 			{
-				CRezPoolAccesser dest=actionSound.sound->getAudio(i);
-				const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
+				CRezPoolAccesser dest=actionSound->sound->getAudio(i);
+				const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);
 				sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 				sample_pos_t destPos=start;
 
-				CStatusBar statusBar(_("Normalizing -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
+				CStatusBar statusBar(_("Normalizing -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),start,stop,true); 
 
 				const float gain=(float)normalizationLevel/(float)maxValues[i][0];
 				for(sample_pos_t j=0;j<selectionLength;j++)
@@ -154,13 +154,13 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 						if(prepareForUndo)
 							undoActionSizeSafe(actionSound);
 						else
-							actionSound.sound->invalidatePeakData(i,actionSound.start,destPos);
+							actionSound->sound->invalidatePeakData(i,actionSound->start,destPos);
 						return false;
 					}
 				}
 			
 				if(!prepareForUndo)
-					actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
+					actionSound->sound->invalidatePeakData(i,actionSound->start,actionSound->stop);
 			}
 		}
 	}
@@ -172,7 +172,7 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 		// always start at the beginning and end at the end
 		for(unsigned i=0;i<channelCount;i++)
 		{
-			if(actionSound.doChannel[i])
+			if(actionSound->doChannel[i])
 			{
 				maxValues[i].insert(maxValues[i].begin(),maxValues[i][0]);
 				maxValuePositions[i].insert(maxValuePositions[i].begin(),start);
@@ -189,14 +189,14 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 		unsigned channelsDoneCount=0;
 		for(unsigned i=0;i<channelCount;i++)
 		{
-			if(actionSound.doChannel[i])
+			if(actionSound->doChannel[i])
 			{
-				CRezPoolAccesser dest=actionSound.sound->getAudio(i);
-				const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
+				CRezPoolAccesser dest=actionSound->sound->getAudio(i);
+				const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);
 				sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 				sample_pos_t destPos=start;
 
-				CStatusBar statusBar(_("Normalizing -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
+				CStatusBar statusBar(_("Normalizing -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),start,stop,true); 
 
 				for(unsigned t=0;t<=regionCount;t++)
 				{
@@ -222,14 +222,14 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 							if(prepareForUndo)
 								undoActionSizeSafe(actionSound);
 							else
-								actionSound.sound->invalidatePeakData(i,actionSound.start,destPos);
+								actionSound->sound->invalidatePeakData(i,actionSound->start,destPos);
 							return false;
 						}
 					}
 				}
 			
 				if(!prepareForUndo)
-					actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
+					actionSound->sound->invalidatePeakData(i,actionSound->start,actionSound->stop);
 			}
 		}
 	}
@@ -237,14 +237,14 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 	return(true);
 }
 
-AAction::CanUndoResults CNormalizeAction::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CNormalizeAction::canUndo(const CActionSound *actionSound) const
 {
 	return(curYes);
 }
 
-void CNormalizeAction::undoActionSizeSafe(const CActionSound &actionSound)
+void CNormalizeAction::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
+	restoreSelectionFromTempPools(actionSound,actionSound->start,actionSound->selectionLength());
 }
 
 
@@ -259,9 +259,9 @@ CNormalizeActionFactory::~CNormalizeActionFactory()
 {
 }
 
-CNormalizeAction *CNormalizeActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CNormalizeAction *CNormalizeActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return(new CNormalizeAction(actionSound,
+	return(new CNormalizeAction(this,actionSound,
 		actionParameters->getDoubleParameter("Normalization Level"),
 		actionParameters->getUnsignedParameter("Region Count"),
 		actionParameters->getBoolParameter("Lock Channels"))

@@ -25,8 +25,8 @@
 
 #include "../unit_conv.h"
 
-CUnclipAction::CUnclipAction(const CActionSound actionSound) :
-	AAction(actionSound)
+CUnclipAction::CUnclipAction(const AActionFactory *factory,const CActionSound *actionSound) :
+	AAction(factory,actionSound)
 {
 }
 
@@ -73,32 +73,32 @@ static const XY Intersect(const XY p1,double m1,const XY p2,double m2)
 
 
 
-bool CUnclipAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CUnclipAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t stop=actionSound.stop;
-	const sample_pos_t selectionLength=actionSound.selectionLength();
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t stop=actionSound->stop;
+	const sample_pos_t selectionLength=actionSound->selectionLength();
 
 	if(prepareForUndo)
-		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
+		moveSelectionToTempPools(actionSound,mmSelection,actionSound->selectionLength());
 
 	unsigned channelsDoneCount=0;
-	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+	for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 	{
 		#warning my clipped region finding algorithm needs help.. its finding things which are not region which need to be repaired and  making up data for them
 		/* However the making up of new data is I believe on the right track.. it needs some tweaking 
 		 * in that it doesn't always create data which is continuous with the original data.
 		 */
 
-		if(actionSound.doChannel[i])
+		if(actionSound->doChannel[i])
 		{
-			CStatusBar statusBar("Unclip -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop);
+			CStatusBar statusBar("Unclip -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),start,stop);
 
-			CRezPoolAccesser a=actionSound.sound->getAudio(i);
+			CRezPoolAccesser a=actionSound->sound->getAudio(i);
 
 			if(prepareForUndo)
 				// copy from the temp pool back to the dest and just use from then on
-				a.copyData(start,actionSound.sound->getTempAudio(tempAudioPoolKey,i),0,selectionLength);
+				a.copyData(start,actionSound->sound->getTempAudio(tempAudioPoolKey,i),0,selectionLength);
 
 			const sample_t threshold=512; // some fraction of a dB I suppose
 			const sample_pos_t minFlatDuration=6; // the minimum duration which the slope remains within range of the threshold marking a clipped region
@@ -326,7 +326,7 @@ bool CUnclipAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 			// ??? could do this just for the areas where I work on the local min or maxes
 			// invalid if we didn't prepare for undo (which created new and invalidated space)
 			if(!prepareForUndo)
-				actionSound.sound->invalidatePeakData(i,start,stop);
+				actionSound->sound->invalidatePeakData(i,start,stop);
 			
 		}
 
@@ -336,15 +336,15 @@ bool CUnclipAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 	return(true);
 }
 
-AAction::CanUndoResults CUnclipAction::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CUnclipAction::canUndo(const CActionSound *actionSound) const
 {
 	// should check some size constraint
 	return(curYes);
 }
 
-void CUnclipAction::undoActionSizeSafe(const CActionSound &actionSound)
+void CUnclipAction::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
+	restoreSelectionFromTempPools(actionSound,actionSound->start,actionSound->selectionLength());
 }
 
 
@@ -360,8 +360,8 @@ CUnclipActionFactory::~CUnclipActionFactory()
 {
 }
 
-CUnclipAction *CUnclipActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CUnclipAction *CUnclipActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return(new CUnclipAction(actionSound));
+	return(new CUnclipAction(this,actionSound));
 }
 

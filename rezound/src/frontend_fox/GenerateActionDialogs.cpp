@@ -77,7 +77,8 @@ CGenerateNoiseDialog::CGenerateNoiseDialog(FXWindow *mainWindow) :
 	//items.push_back("Binary");
 	FXComboTextParamValue *noiseColorComboBox=addComboTextEntry(p0,
 		N_("Noise Color"),
-		items
+		items,
+		CActionParamDialog::cpvtAsInteger
 	);
 		noiseColorComboBox->setTarget(this);
 		noiseColorComboBox->setSelector(ID_NOISE_COLOR_COMBOBOX);
@@ -93,14 +94,15 @@ CGenerateNoiseDialog::CGenerateNoiseDialog(FXWindow *mainWindow) :
 	//items.push_back("Spatial stereo");
 	addComboTextEntry(p0,
 		_("Stereo Image"),
-		items
+		items,
+		CActionParamDialog::cpvtAsInteger
 	);
 		
 }
 
 long CGenerateNoiseDialog::onNoiseColorChange(FXObject *sender,FXSelector sel,void *ptr)
 {
-	if(((FXComboTextParamValue *)sender)->getValue()==2)
+	if(((FXComboTextParamValue *)sender)->getIntegerValue()==2)
 		getSliderParam("Max Particle Velocity")->enable();
 	else
 		getSliderParam("Max Particle Velocity")->disable();
@@ -157,7 +159,8 @@ CGenerateToneDialog::CGenerateToneDialog(FXWindow *mainWindow) :
 		toneTypes.push_back(_("Triangle Wave"));
 		addComboTextEntry(p0,
 			N_("Tone Type"),
-			toneTypes
+			toneTypes,
+			CActionParamDialog::cpvtAsInteger
 		); 
 }
 

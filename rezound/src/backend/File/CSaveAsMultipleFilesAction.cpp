@@ -30,8 +30,8 @@
 
 #include "parse_segment_cues.h"
 
-CSaveAsMultipleFilesAction::CSaveAsMultipleFilesAction(const CActionSound &actionSound,ASoundFileManager *_soundFileManager,const string _directory,const string _filenamePrefix,const string _filenameSuffix,const string _extension,bool _openSavedSegments,unsigned _segmentNumberOffset,bool _selectionOnly,bool _promptOnlyOnce) :
-	AAction(actionSound),
+CSaveAsMultipleFilesAction::CSaveAsMultipleFilesAction(const AActionFactory *factory,const CActionSound *actionSound,ASoundFileManager *_soundFileManager,const string _directory,const string _filenamePrefix,const string _filenameSuffix,const string _extension,bool _openSavedSegments,unsigned _segmentNumberOffset,bool _selectionOnly,bool _promptOnlyOnce) :
+	AAction(factory,actionSound),
 	soundFileManager(_soundFileManager),
 	directory(_directory),
 	filenamePrefix(_filenamePrefix),
@@ -48,11 +48,11 @@ CSaveAsMultipleFilesAction::~CSaveAsMultipleFilesAction()
 {
 }
 
-bool CSaveAsMultipleFilesAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CSaveAsMultipleFilesAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	const CSound &sound=*(actionSound.sound);
-	const sample_pos_t selectionStart= selectionOnly ? actionSound.start : 0;
-	const sample_pos_t selectionLength= selectionOnly ? actionSound.selectionLength() : sound.getLength();
+	const CSound &sound=*(actionSound->sound);
+	const sample_pos_t selectionStart= selectionOnly ? actionSound->start : 0;
+	const sample_pos_t selectionLength= selectionOnly ? actionSound->selectionLength() : sound.getLength();
 
 	class CBuildFilename : public FBuildFilename
 	{
@@ -126,12 +126,12 @@ bool CSaveAsMultipleFilesAction::doActionSizeSafe(CActionSound &actionSound,bool
 	return true;
 }
 
-AAction::CanUndoResults CSaveAsMultipleFilesAction::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CSaveAsMultipleFilesAction::canUndo(const CActionSound *actionSound) const
 {
 	return curNA;
 }
 
-void CSaveAsMultipleFilesAction::undoActionSizeSafe(const CActionSound &actionSound)
+void CSaveAsMultipleFilesAction::undoActionSizeSafe(const CActionSound *actionSound)
 {
 	// not applicable
 }
@@ -179,10 +179,11 @@ CSaveAsMultipleFilesActionFactory::~CSaveAsMultipleFilesActionFactory()
 {
 }
 
-CSaveAsMultipleFilesAction *CSaveAsMultipleFilesActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CSaveAsMultipleFilesAction *CSaveAsMultipleFilesActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	const string formatName=ASoundTranslator::getFlatFormatList()[actionParameters->getUnsignedParameter("Format")];
 	return new CSaveAsMultipleFilesAction(
+		this,
 		actionSound,
 		actionParameters->getSoundFileManager(),
 		actionParameters->getStringParameter("Save to Directory"),

@@ -26,8 +26,8 @@
 #include "../CLoadedSound.h"
 #include "../settings.h"
 
-CPasteAsNewEdit::CPasteAsNewEdit(const CActionSound actionSound,ASoundFileManager *_soundFileManager) :
-    AAction(actionSound),
+CPasteAsNewEdit::CPasteAsNewEdit(const AActionFactory *factory,const CActionSound *actionSound,ASoundFileManager *_soundFileManager) :
+    AAction(factory,actionSound),
     soundFileManager(_soundFileManager)
 {
 }
@@ -36,7 +36,7 @@ CPasteAsNewEdit::~CPasteAsNewEdit()
 {
 }
 
-bool CPasteAsNewEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CPasteAsNewEdit::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
 	ASoundClipboard *clipboard=clipboards[gWhichClipboard];
 	const sample_pos_t clipboardLength=clipboard->getLength(clipboard->getSampleRate());
@@ -72,12 +72,12 @@ bool CPasteAsNewEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 	return true;
 }
 
-AAction::CanUndoResults CPasteAsNewEdit::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CPasteAsNewEdit::canUndo(const CActionSound *actionSound) const
 {
 	return curNA;
 }
 
-void CPasteAsNewEdit::undoActionSizeSafe(const CActionSound &actionSound)
+void CPasteAsNewEdit::undoActionSizeSafe(const CActionSound *actionSound)
 {
 }
 
@@ -93,15 +93,16 @@ bool CPasteAsNewEdit::doesWarrantSaving() const
 CPasteAsNewEditFactory::CPasteAsNewEditFactory() :
 	AActionFactory(N_("Paste As New"),_("Paste the Clipboard's Contents into a Newly Created Sound Window"),NULL,NULL,false,false)
 {
+	selectionPositionsAreApplicable=false;
 }
 
 CPasteAsNewEditFactory::~CPasteAsNewEditFactory()
 {
 }
 
-CPasteAsNewEdit *CPasteAsNewEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CPasteAsNewEdit *CPasteAsNewEditFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return new CPasteAsNewEdit(actionSound,actionParameters->getSoundFileManager());
+	return new CPasteAsNewEdit(this,actionSound,actionParameters->getSoundFileManager());
 }
 
 bool CPasteAsNewEditFactory::doPreActionSetup(CLoadedSound *loadedSound)

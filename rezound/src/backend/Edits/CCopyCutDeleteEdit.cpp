@@ -22,8 +22,8 @@
 
 #include "../ASoundClipboard.h"
 
-CCopyCutDeleteEdit::CCopyCutDeleteEdit(const CActionSound actionSound,CCDType _type) :
-    AAction(actionSound),
+CCopyCutDeleteEdit::CCopyCutDeleteEdit(const AActionFactory *factory,const CActionSound *actionSound,CCDType _type) :
+    AAction(factory,actionSound),
 
     type(_type)
 {
@@ -33,21 +33,21 @@ CCopyCutDeleteEdit::~CCopyCutDeleteEdit()
 {
 }
 
-bool CCopyCutDeleteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CCopyCutDeleteEdit::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	if(actionSound.countChannels()<=0)
+	if(actionSound->countChannels()<=0)
 		return(false); // no channels to do
 
 	// ??? cut could be optimized if the clipboard were abstracted in such a way that I could use moveData to move to a pool in the same pool file as the sound
 	if(type==ccdtCopy || type==ccdtCut)
 	{
-		const sample_pos_t start=actionSound.start;
-		const sample_pos_t selectionLength=actionSound.selectionLength();
+		const sample_pos_t start=actionSound->start;
+		const sample_pos_t selectionLength=actionSound->selectionLength();
 
 		if(AAction::clipboards[gWhichClipboard]->isReadOnly())
 			throw(EUserMessage((_("cannot copy/cut to clipboard: ")+AAction::clipboards[gWhichClipboard]->getDescription()).c_str()));
 
-		AAction::clipboards[gWhichClipboard]->copyFrom(actionSound.sound,actionSound.doChannel,start,selectionLength);
+		AAction::clipboards[gWhichClipboard]->copyFrom(actionSound->sound,actionSound->doChannel,start,selectionLength);
 	}
 	
 	if(type==ccdtCut || type==ccdtDelete)
@@ -55,15 +55,15 @@ bool CCopyCutDeleteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepare
 		if(prepareForUndo)
 			moveSelectionToTempPools(actionSound,mmSelection);
 		else
-			actionSound.sound->removeSpace(actionSound.doChannel,actionSound.start,actionSound.selectionLength());
+			actionSound->sound->removeSpace(actionSound->doChannel,actionSound->start,actionSound->selectionLength());
 
-		actionSound.stop=actionSound.start=actionSound.start-1;
+		actionSound->stop=actionSound->start=actionSound->start-1;
 	}
 
 	return(true);
 }
 
-AAction::CanUndoResults CCopyCutDeleteEdit::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CCopyCutDeleteEdit::canUndo(const CActionSound *actionSound) const
 {
 	if(type==ccdtCut || type==ccdtDelete)
 	{
@@ -74,7 +74,7 @@ AAction::CanUndoResults CCopyCutDeleteEdit::canUndo(const CActionSound &actionSo
 		return(curNA);
 }
 
-void CCopyCutDeleteEdit::undoActionSizeSafe(const CActionSound &actionSound)
+void CCopyCutDeleteEdit::undoActionSizeSafe(const CActionSound *actionSound)
 {
 	restoreSelectionFromTempPools(actionSound);
 }
@@ -96,9 +96,9 @@ CCopyEditFactory::~CCopyEditFactory()
 {
 }
 
-CCopyCutDeleteEdit *CCopyEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CCopyCutDeleteEdit *CCopyEditFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return(new CCopyCutDeleteEdit(actionSound,CCopyCutDeleteEdit::ccdtCopy));
+	return(new CCopyCutDeleteEdit(this,actionSound,CCopyCutDeleteEdit::ccdtCopy));
 }
 
 
@@ -115,9 +115,9 @@ CCutEditFactory::~CCutEditFactory()
 {
 }
 
-CCopyCutDeleteEdit *CCutEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CCopyCutDeleteEdit *CCutEditFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return(new CCopyCutDeleteEdit(actionSound,CCopyCutDeleteEdit::ccdtCut));
+	return(new CCopyCutDeleteEdit(this,actionSound,CCopyCutDeleteEdit::ccdtCut));
 }
 
 
@@ -134,9 +134,9 @@ CDeleteEditFactory::~CDeleteEditFactory()
 {
 }
 
-CCopyCutDeleteEdit *CDeleteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CCopyCutDeleteEdit *CDeleteEditFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	return(new CCopyCutDeleteEdit(actionSound,CCopyCutDeleteEdit::ccdtDelete));
+	return(new CCopyCutDeleteEdit(this,actionSound,CCopyCutDeleteEdit::ccdtDelete));
 }
 
 

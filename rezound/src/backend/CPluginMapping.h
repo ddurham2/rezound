@@ -29,6 +29,7 @@
 #include <stdexcept>
 
 class CSound;
+class CNestedDataFile;
 
 class CPluginMapping
 {
@@ -41,6 +42,9 @@ public:
 	void print() const;
 
 	CPluginMapping &operator=(const CPluginMapping &rhs);
+
+	void writeToFile(CNestedDataFile *f,const string key) const;
+	void readFromFile(const CNestedDataFile *f,const string key);
 
 
 	// First this values should be used to modify the output channels by appending 
@@ -95,6 +99,9 @@ public:
 			gain=rhs.gain;
 			return *this;
 		}
+
+		void writeToFile(CNestedDataFile *f,const string key) const;
+		void readFromFile(const CNestedDataFile *f,const string key);
 	};
 
 	vector<
@@ -141,6 +148,9 @@ public:
 			gain=rhs.gain;
 			return *this;
 		}
+
+		void writeToFile(CNestedDataFile *f,const string key) const;
+		void readFromFile(const CNestedDataFile *f,const string key);
 	};
 
 	vector<
@@ -203,5 +213,9 @@ public:
 
 	bool somethingMappedToAnOutput() const;
 };
+
+#include <CNestedDataFile/anytype.h>
+template<> static const CPluginMapping string_to_anytype<CPluginMapping>(const string &str,CPluginMapping &ret) { CNestedDataFile f; f.parseString(s2at::remove_surrounding_quotes(str)); ret.readFromFile(&f,""); return ret; }
+template<> static const string anytype_to_string<CPluginMapping>(const CPluginMapping &any) { CNestedDataFile f; any.writeToFile(&f,""); return "\""+s2at::escape_chars(istring(f.asString()).searchAndReplace("\n"," ",true))+"\""; }
 
 #endif

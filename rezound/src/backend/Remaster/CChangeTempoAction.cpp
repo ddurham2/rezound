@@ -25,8 +25,8 @@
 
 #include "../DSP/TTempoChanger.h"
 
-CChangeTempoAction::CChangeTempoAction(const CActionSound &actionSound,const double _tempoChange,bool _useAntiAliasFilter,unsigned _antiAliasFilterLength,bool _useQuickSeek,unsigned _sequenceLength,unsigned _seekingWindowLength,unsigned _overlapLength) :
-	AAction(actionSound),
+CChangeTempoAction::CChangeTempoAction(const AActionFactory *factory,const CActionSound *actionSound,const double _tempoChange,bool _useAntiAliasFilter,unsigned _antiAliasFilterLength,bool _useQuickSeek,unsigned _sequenceLength,unsigned _seekingWindowLength,unsigned _overlapLength) :
+	AAction(factory,actionSound),
 	undoRemoveLength(0),
 	tempoChange(_tempoChange),
 
@@ -43,12 +43,12 @@ CChangeTempoAction::~CChangeTempoAction()
 {
 }
 
-bool CChangeTempoAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CChangeTempoAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
 #ifdef AVAIL_PITCH_CHANGE
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t stop=actionSound.stop;
-	const sample_pos_t oldLength=actionSound.selectionLength();
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t stop=actionSound->stop;
+	const sample_pos_t oldLength=actionSound->selectionLength();
 	const sample_pos_t newLength=(sample_pos_t)(oldLength/tempoChange);
 
 	if(tempoChange==0.0)
@@ -60,17 +60,17 @@ bool CChangeTempoAction::doActionSizeSafe(CActionSound &actionSound,bool prepare
 	undoRemoveLength=newLength;
 
 	unsigned channelsDoneCount=0;
-	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+	for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 	{
-		if(actionSound.doChannel[i])
+		if(actionSound->doChannel[i])
 		{
-			CStatusBar statusBar(_("Changing Tempo -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),0,newLength,true); 
+			CStatusBar statusBar(_("Changing Tempo -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),0,newLength,true); 
 	
 			// here, we're using the undo data as a source from which to calculate the new data
-			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempAudioPoolKey,i);
-			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
+			const CRezPoolAccesser src=actionSound->sound->getTempAudio(tempAudioPoolKey,i);
+			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
 
-			TTempoChanger<CRezPoolAccesser> stretcher(src,0,oldLength,newLength,actionSound.sound->getSampleRate(),1,0);
+			TTempoChanger<CRezPoolAccesser> stretcher(src,0,oldLength,newLength,actionSound->sound->getSampleRate(),1,0);
 
 			// these are libSoundTouch specific
 			stretcher.setSetting(SETTING_USE_AA_FILTER,useAntiAliasFilter);
@@ -86,7 +86,7 @@ bool CChangeTempoAction::doActionSizeSafe(CActionSound &actionSound,bool prepare
 
 				if(statusBar.update(t))
 				{ // cancelled
-					restoreSelectionFromTempPools(actionSound,actionSound.start,undoRemoveLength);
+					restoreSelectionFromTempPools(actionSound,actionSound->start,undoRemoveLength);
 					return false;
 				}
 			}
@@ -94,19 +94,19 @@ bool CChangeTempoAction::doActionSizeSafe(CActionSound &actionSound,bool prepare
 	}
 
 	// adjust the cue positions that were within the selection (and shift over the ones past the selection) and don't touch anchored cues
-	for(size_t t=0;t<actionSound.sound->getCueCount();t++)
+	for(size_t t=0;t<actionSound->sound->getCueCount();t++)
 	{
-		if(actionSound.sound->isCueAnchored(t) || actionSound.sound->getCueTime(t)<=start)
+		if(actionSound->sound->isCueAnchored(t) || actionSound->sound->getCueTime(t)<=start)
 			continue;
 
-		if(actionSound.sound->getCueTime(t)>=stop)
-			actionSound.sound->setCueTime(t,actionSound.sound->getCueTime(t)-oldLength+newLength);
+		if(actionSound->sound->getCueTime(t)>=stop)
+			actionSound->sound->setCueTime(t,actionSound->sound->getCueTime(t)-oldLength+newLength);
 		else
-			actionSound.sound->setCueTime(t,(sample_pos_t)sample_fpos_round((sample_fpos_t)(actionSound.sound->getCueTime(t)-start)/tempoChange)+start);
+			actionSound->sound->setCueTime(t,(sample_pos_t)sample_fpos_round((sample_fpos_t)(actionSound->sound->getCueTime(t)-start)/tempoChange)+start);
 	}
 	
 	// adjust start and stop positions
-	actionSound.stop=actionSound.start+newLength;
+	actionSound->stop=actionSound->start+newLength;
 
 	if(!prepareForUndo)
 		freeAllTempPools();
@@ -117,15 +117,15 @@ bool CChangeTempoAction::doActionSizeSafe(CActionSound &actionSound,bool prepare
 #endif
 }
 
-AAction::CanUndoResults CChangeTempoAction::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CChangeTempoAction::canUndo(const CActionSound *actionSound) const
 {
 	return curYes;
 }
 
 
-void CChangeTempoAction::undoActionSizeSafe(const CActionSound &actionSound)
+void CChangeTempoAction::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	restoreSelectionFromTempPools(actionSound,actionSound.start,undoRemoveLength);
+	restoreSelectionFromTempPools(actionSound,actionSound->start,undoRemoveLength);
 }
 
 
@@ -141,9 +141,10 @@ CChangeTempoActionFactory::~CChangeTempoActionFactory()
 {
 }
 
-CChangeTempoAction *CChangeTempoActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CChangeTempoAction *CChangeTempoActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return new CChangeTempoAction(
+		this,
 		actionSound,
 		actionParameters->getDoubleParameter("Tempo Change"),
 		actionParameters->getBoolParameter("Use Anti-alias Filter"),

@@ -41,6 +41,8 @@ libfrontend_la_SOURCES= \
 			CMainWindow.cpp \
 			CNewSoundDialog.cpp \
 			CRecordDialog.cpp \
+			CRecordMacroDialog.cpp \
+			CMacroActionParamsDialog.cpp \
 			CPasteChannelsDialog.cpp \
 			CProgressDialog.cpp \
 			CSoundFileManager.cpp \
@@ -58,6 +60,7 @@ libfrontend_la_SOURCES= \
 			CMIDIDumpSampleIdDialog.cpp \
 			ClibaudiofileSaveParametersDialog.cpp \
 			drawPortion.cpp \
+			FileActionDialogs.cpp \
 			EditActionDialogs.cpp \
 			EffectActionDialogs.cpp \
 			FilterActionDialogs.cpp \
@@ -100,6 +103,7 @@ rezound_SOURCES= main.cpp
 ## separate directory
 _rezound_LDADD= libfrontend.la\
 	$(top_builddir)/src/backend/libbackend.la \
+	$(top_builddir)/src/backend/File/libFile.la \
 	$(top_builddir)/src/backend/Edits/libEdits.la \
 	$(top_builddir)/src/backend/Effects/libEffects.la \
 	$(top_builddir)/src/backend/Filters/libFilters.la \
@@ -132,6 +136,8 @@ noinst_HEADERS=\
 	CMainWindow.h \
 	CNewSoundDialog.h \
 	CRecordDialog.h \
+	CRecordMacroDialog.h \
+	CMacroActionParamsDialog.h \
 	CPasteChannelsDialog.h \
 	CProgressDialog.h \
 	CSoundFileManager.h \
@@ -148,6 +154,7 @@ noinst_HEADERS=\
 	CJACKPortChoiceDialog.h \
 	CMIDIDumpSampleIdDialog.h \
 	ClibaudiofileSaveParametersDialog.h \
+	FileActionDialogs.h \
 	EditActionDialogs.h \
 	EffectActionDialogs.h \
 	FilterActionDialogs.h \

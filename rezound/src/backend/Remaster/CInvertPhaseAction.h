@@ -29,13 +29,13 @@
 class CInvertPhaseAction : public AAction
 {
 public:
-	CInvertPhaseAction(const CActionSound actionSound);
+	CInvertPhaseAction(const AActionFactory *factory,const CActionSound *actionSound);
 	virtual ~CInvertPhaseAction();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	bool allowCancel;
@@ -48,7 +48,7 @@ public:
 	CInvertPhaseActionFactory(AActionDialog *channelSelectDialog);
 	virtual ~CInvertPhaseActionFactory();
 
-	CInvertPhaseAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CInvertPhaseAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 
 	const string getExplanation() const;
 };

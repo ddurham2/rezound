@@ -64,6 +64,8 @@ public:
 		ID_LAST
 	};
 
+	AActionFactory *getActionFactory() { return actionFactory; }
+
 protected:
 	CActionMenuCommand() : actionFactory(NULL) {}
 

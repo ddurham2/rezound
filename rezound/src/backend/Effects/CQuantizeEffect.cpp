@@ -26,8 +26,8 @@
 #include "../DSP/Quantizer.h"
 
 
-CQuantizeEffect::CQuantizeEffect(const CActionSound &actionSound,unsigned _quantumCount,float _inputGain,float _outputGain) :
-	AAction(actionSound),
+CQuantizeEffect::CQuantizeEffect(const AActionFactory *factory,const CActionSound *actionSound,unsigned _quantumCount,float _inputGain,float _outputGain) :
+	AAction(factory,actionSound),
 
 	quantumCount(_quantumCount),
 	inputGain(_inputGain),
@@ -40,23 +40,23 @@ CQuantizeEffect::~CQuantizeEffect()
 {
 }
 
-bool CQuantizeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+bool CQuantizeEffect::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	const sample_pos_t start=actionSound.start;
-	const sample_pos_t stop=actionSound.stop;
+	const sample_pos_t start=actionSound->start;
+	const sample_pos_t stop=actionSound->stop;
 
 	if(prepareForUndo)
-		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
+		moveSelectionToTempPools(actionSound,mmSelection,actionSound->selectionLength());
 
 	unsigned channelsDoneCount=0;
-	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+	for(unsigned i=0;i<actionSound->sound->getChannelCount();i++)
 	{
-		if(actionSound.doChannel[i])
+		if(actionSound->doChannel[i])
 		{
-			CStatusBar statusBar(_("Quantize -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
+			CStatusBar statusBar(_("Quantize -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),start,stop,true); 
 
-			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
-			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
+			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
+			const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);
 
 						// ??? hmm wouldn't work well if it wasn't an integral value perhaps I should make it a parameter to the constructor
 			TDSPQuantizer<mix_sample_t,(int)MAX_SAMPLE> quantizer(quantumCount);
@@ -71,27 +71,27 @@ bool CQuantizeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 					if(prepareForUndo)
 						undoActionSizeSafe(actionSound);
 					else
-						actionSound.sound->invalidatePeakData(i,actionSound.start,t);
+						actionSound->sound->invalidatePeakData(i,actionSound->start,t);
 					return false;
 				}
 			}
 
 			if(!prepareForUndo)
-				actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
+				actionSound->sound->invalidatePeakData(i,actionSound->start,actionSound->stop);
 		}
 	}
 
 	return(true);
 }
 
-AAction::CanUndoResults CQuantizeEffect::canUndo(const CActionSound &actionSound) const
+AAction::CanUndoResults CQuantizeEffect::canUndo(const CActionSound *actionSound) const
 {
 	return(curYes);
 }
 
-void CQuantizeEffect::undoActionSizeSafe(const CActionSound &actionSound)
+void CQuantizeEffect::undoActionSizeSafe(const CActionSound *actionSound)
 {
-	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
+	restoreSelectionFromTempPools(actionSound,actionSound->start,actionSound->selectionLength());
 }
 
 
@@ -107,9 +107,10 @@ CQuantizeEffectFactory::~CQuantizeEffectFactory()
 {
 }
 
-CQuantizeEffect *CQuantizeEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CQuantizeEffect *CQuantizeEffectFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CQuantizeEffect(
+		this,
 		actionSound,
 		actionParameters->getUnsignedParameter("Quantum Count"),
 		actionParameters->getDoubleParameter("Input Gain"),

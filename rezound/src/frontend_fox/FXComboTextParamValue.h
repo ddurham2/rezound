@@ -49,8 +49,11 @@ public:
 
 	long onComboBoxChange(FXObject *object,FXSelector sel,void *ptr);
 
-	const FXint getValue(); // returns the index into the items given at construction of the selected item (or if isEditable it returns the numeric representation of the current string value in the combo box.. this needs to be changed really)
-	void setValue(const FXint value);
+	const FXint getIntegerValue(); // returns the index into the items given at construction of the selected item (or if isEditable it returns the numeric representation of the current string value in the combo box.. this needs to be changed really)
+	void setIntegerValue(const FXint value);
+
+	const string getStringValue(); // returns the text of the selected item
+	//void setStringValue(const string value);
 
 	void setItems(const vector<string> &items);
 	const vector<string> getItems() const;
@@ -70,6 +73,8 @@ public:
 
 	void readFromFile(const string &prefix,CNestedDataFile *f);
 	void writeToFile(const string &prefix,CNestedDataFile *f);
+
+	bool asString;
 
 protected:
 	FXComboTextParamValue() {}

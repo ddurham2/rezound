@@ -29,13 +29,13 @@
 class CCropEdit : public AAction
 {
 public:
-	CCropEdit(const CActionSound actionSound);
+	CCropEdit(const AActionFactory *factory,const CActionSound *actionSound);
 	virtual ~CCropEdit();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	sample_pos_t oldLength;
@@ -48,7 +48,7 @@ public:
 	CCropEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CCropEditFactory();
 
-	CCropEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CCropEdit *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

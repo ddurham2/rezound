@@ -31,13 +31,13 @@ class CMarkQuietAreasActionFactory;
 class CMarkQuietAreasAction : public AAction
 {
 public:
-	CMarkQuietAreasAction(const CActionSound &actionSound,const float quietThreshold,const float quietTime,const float unquietTime,const float detectorWindow,const string quietBeginCue,const string quietEndCue);
+	CMarkQuietAreasAction(const AActionFactory *factory,const CActionSound *actionSound,const float quietThreshold,const float quietTime,const float unquietTime,const float detectorWindow,const string quietBeginCue,const string quietEndCue);
 	virtual ~CMarkQuietAreasAction();
 
 protected:
-	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
-	void undoActionSizeSafe(const CActionSound &actionSound);
-	CanUndoResults canUndo(const CActionSound &actionSound) const;
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
 private:
 	const float quietThreshold;
@@ -55,7 +55,7 @@ public:
 	CMarkQuietAreasActionFactory(AActionDialog *normalDialog);
 	virtual ~CMarkQuietAreasActionFactory();
 
-	CMarkQuietAreasAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+	CMarkQuietAreasAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

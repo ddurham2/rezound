@@ -492,7 +492,7 @@ ASoundPlayer *ASoundPlayer::createInitializedSoundPlayer()
 		methods.push_back("alsa");
 		methods.push_back("jack");
 		methods.push_back("portaudio");
-		gSettingsRegistry->createValue("AudioOutputMethods",methods);
+		gSettingsRegistry->setValue("AudioOutputMethods",methods);
 	}
 
 
