@@ -61,7 +61,7 @@ static const double uninterpret_repeat(const double x,const int s) { return x/s;
 CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
 	FXModalDialogBox(mainWindow,"Paste Channels",100,100,FXModalDialogBox::ftVertical),
 
-	label(new FXLabel(getFrame(),"Pasting Routing Information:",NULL,LAYOUT_CENTER_X)),
+	label(new FXLabel(getFrame(),"Pasting Parameters:",NULL,LAYOUT_CENTER_X)),
 	horzSeparator(new FXHorizontalSeparator(getFrame())),
 	topFrame(new FXHorizontalFrame(getFrame())),
 		routingContents(new FXMatrix(topFrame,2,MATRIX_BY_COLUMNS | LAYOUT_FILL_X|LAYOUT_FILL_Y)),
@@ -108,7 +108,7 @@ CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
 	new FXLabel(routingContents,"");
 	sourceLabel=new FXLabel(routingContents,"Clipboard",NULL,LAYOUT_CENTER_X);
 	destinationLabel=new FXLabel(routingContents,"Destination",NULL,LAYOUT_CENTER_Y);
-	checkBoxMatrix=new FXMatrix(routingContents,MAX_CHANNELS+1,MATRIX_BY_COLUMNS | LAYOUT_FILL_X|LAYOUT_FILL_Y);
+	checkBoxMatrix=new FXMatrix(routingContents,MAX_CHANNELS+1,MATRIX_BY_COLUMNS | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0);
 
 	// put top source labels 
 	new FXLabel(checkBoxMatrix,"");
@@ -187,6 +187,23 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 	// by default check a 1:1 paste mapping
 	onDefaultButton(NULL,0,NULL);
 
+	// if there is only one checkbox, then make it checked and hide it and the labels
+	if(actionSound->sound->getChannelCount()==1 && clipboard->getChannelCount()==1)
+	{
+		((FXCheckButton *)(checkBoxMatrix->childAtRowCol(1,1)))->setCheck(true);
+		routingContents->hide();
+		vertSeparator->hide();
+	}
+	else
+	{
+		routingContents->show();
+		vertSeparator->show();
+	}
+
+	// when the number of hidden and shown widgets change, the matrix needs to be told to recalc
+	checkBoxMatrix->recalc();
+
+	routingContents->getParent()->recalc();
 
 	if(execute(PLACEMENT_CURSOR))
 	{
