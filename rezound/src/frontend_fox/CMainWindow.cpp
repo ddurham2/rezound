@@ -205,8 +205,16 @@ CMainWindow::CMainWindow(FXApp* a) :
 
 	// build sound list 
 	t=new FXPacker(s,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_RIDGE);
-		t=new FXPacker(t,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_SUNKEN|FRAME_THICK, 0,0,0,0, 0,0,0,0, 0,0); // had to do this because FXList won't take that frame style
-			soundList=new FXList(t,0,this,ID_SOUND_LIST,LIST_BROWSESELECT | LAYOUT_FILL_X|LAYOUT_FILL_Y);
+		t=new FXPacker(t,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_SUNKEN|FRAME_THICK, 0,0,0,0, 0,0,0,0, 0,0);
+			soundList=new FXIconList(t,this,ID_SOUND_LIST,ICONLIST_BROWSESELECT|LAYOUT_FILL_X|LAYOUT_FILL_Y);
+				soundList->getHeader()->setPadLeft(1);
+				soundList->getHeader()->setPadRight(1);
+				soundList->getHeader()->setPadTop(1);
+				soundList->getHeader()->setPadBottom(1);
+				// soundList->getHeader()-> make font smaller ???
+				soundList->appendHeader(" #",NULL,25);
+				soundList->appendHeader("Name",NULL,200);
+				soundList->appendHeader("Path",NULL,190);
 
 	soundWindowFrame=new FXPacker(contents,LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 0,0,0,0, 0,0);
 }
@@ -278,44 +286,36 @@ void CMainWindow::showAbout()
 	gAboutDialog->execute(PLACEMENT_SCREEN);
 }
 
-void CMainWindow::addSoundWindow(CSoundWindow *win)
+void CMainWindow::rebuildSoundWindowList()
 {
-	// add to sound window list 
-	CPath p(win->loadedSound->getFilename().c_str());
-
-	// if I could, i'd like a two column list where the basename was in the first column and path in the second???
-	soundList->appendItem((p.baseName()+"  "+p.dirName()).c_str(),NULL,win);
-	soundList->setCurrentItem(soundList->getNumItems()-1);
-	soundList->makeItemVisible(soundList->getNumItems()-1); // ??? not working?
-}
-
-void CMainWindow::removeSoundWindow(CSoundWindow *win)
-{
-	// remove from sound window list 
-	for(FXint t=0;t<soundList->getNumItems();t++)
+	soundList->clearItems();
+	for(size_t t=0;t<gSoundFileManager->getOpenedCount();t++)
 	{
-		if(soundList->getItemData(t)==win)
-		{
-			soundList->removeItem(t);
-			if(soundList->getNumItems()>0)
-			{
-				soundList->setCurrentItem(0);
-				soundList->makeItemVisible(0);
-			}
-			break;
-		}
+		CSoundWindow *win=gSoundFileManager->getSoundWindow(t);
+
+		// add to sound window list 
+		CPath p(win->loadedSound->getFilename().c_str());
+
+		soundList->appendItem(
+			(
+			istring(t+1,2,false)+"\t"+
+			p.baseName()+"\t"+
+			p.dirName()
+			).c_str(),
+			NULL,NULL,win);
 	}
-}
 
-void CMainWindow::updateSoundWindowName(CSoundWindow *win)
-{
-	for(FXint t=0;t<soundList->getNumItems();t++)
+	CSoundWindow *active=gSoundFileManager->getActiveWindow();
+	if(active!=NULL)
 	{
-		if(soundList->getItemData(t)==win)
+		for(FXint t=0;t<soundList->getNumItems();t++)
 		{
-			CPath p(win->loadedSound->getFilename().c_str());
-			soundList->setItemText(t,(p.baseName()+"  "+p.dirName()).c_str());
-			break;
+			if(soundList->getItemData(t)==(void *)active)
+			{
+				soundList->setCurrentItem(t);
+				soundList->makeItemVisible(t);
+				break;
+			}
 		}
 	}
 }

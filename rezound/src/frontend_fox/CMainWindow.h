@@ -149,9 +149,7 @@ public:
 		ID_LAST
 	};
 
-	void addSoundWindow(CSoundWindow *win);
-	void removeSoundWindow(CSoundWindow *win);
-	void updateSoundWindowName(CSoundWindow *win);
+	void rebuildSoundWindowList();
 	FXComposite *getParentOfSoundWindows() { return soundWindowFrame; }
 
 protected:
@@ -174,7 +172,8 @@ private:
 	FXComboBox	*crossfadeEdgesComboBox;
 	FXComboBox	*clipboardComboBox; // ??? it would however make sense to put this on the edit dialog.. it's just a little wide
 
-	FXList *soundList;
+	FXIconList *soundList;
+
 };
 
 

@@ -54,9 +54,9 @@ void CSoundFileManager::createWindow(CLoadedSound *loaded)
 
 	soundWindows.push_back(win);
 
-	mainWindow->addSoundWindow(win);
-
 	win->setActiveState(true);
+
+	mainWindow->rebuildSoundWindowList();
 }
 
 void CSoundFileManager::destroyWindow(CLoadedSound *loaded)
@@ -69,8 +69,6 @@ void CSoundFileManager::destroyWindow(CLoadedSound *loaded)
 
 			soundWindows.erase(soundWindows.begin()+t);
 
-			mainWindow->removeSoundWindow(win);
-
 			// make new active window (either in the same position or the last one)
 			if(!soundWindows.empty())
 			{
@@ -82,14 +80,15 @@ void CSoundFileManager::destroyWindow(CLoadedSound *loaded)
 
 			delete win;
 
-			return;
+			break;
 		}
 	}
+	mainWindow->rebuildSoundWindowList();
 }
 
 const size_t CSoundFileManager::getOpenedCount() const
 {
-	return(soundWindows.size());
+	return soundWindows.size();
 }
 
 CSoundWindow *CSoundFileManager::getSoundWindow(size_t index)
@@ -97,7 +96,6 @@ CSoundWindow *CSoundFileManager::getSoundWindow(size_t index)
 	return soundWindows[index];
 }
 
-#include "../backend/CSound.h"
 CSoundWindow *previousActiveWindow=NULL; // used for alt-` meaning switch back to the previously active window
 void CSoundFileManager::untoggleActiveForAllSoundWindows(CSoundWindow *exceptThisOne)
 {
@@ -113,9 +111,9 @@ CLoadedSound *CSoundFileManager::getActive()
 {
 	CSoundWindow *activeSoundWindow=getActiveWindow();
 	if(activeSoundWindow)
-		return(activeSoundWindow->loadedSound);
+		return activeSoundWindow->loadedSound;
 	else
-		return(NULL);
+		return NULL;
 }
 
 CSoundWindow *CSoundFileManager::getActiveWindow()
@@ -124,9 +122,9 @@ CSoundWindow *CSoundFileManager::getActiveWindow()
 	for(size_t t=0;t<soundWindows.size();t++)
 	{
 		if(soundWindows[t]->getActiveState())
-			return(soundWindows[t]);
+			return soundWindows[t];
 	}
-	return(NULL);
+	return NULL;
 }
 
 void CSoundFileManager::updateAfterEdit()
@@ -135,7 +133,7 @@ void CSoundFileManager::updateAfterEdit()
 	if(activeSoundWindow)
 	{
 		activeSoundWindow->updateFromEdit();
-		mainWindow->updateSoundWindowName(activeSoundWindow);
+		mainWindow->rebuildSoundWindowList();
 	}
 }
 
