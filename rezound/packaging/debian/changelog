@@ -1,19 +1,27 @@
+rezound (0.6.xbeta-1) unstable; urgency=low
+  
+  * This is a post 0.6.0beta release, hence the strange version number,
+    I'm mostly making it to incorporate the debian files into the CVS
+    repository. This will probably never leave my box.
+  
+ -- Anthony Ventimiglia <anthony@ventimiglia.org>  Wed, 12 Feb 2003 13:40:13 -0400
+  
 rezound (0.5.0beta-1) unstable; urgency=low
   
   * This package was built from scratch, since many of the
   * dependencies of the original rezound (0.1.0) package have changed.
 
-   -- Anthony Ventimiglia <anthony@ventimiglia.org>  Wed, 23 Oct 2002 15:29:03 -04
- 
-
+ -- Anthony Ventimiglia <anthony@ventimiglia.org>  Wed, 23 Oct 2002 15:29:03 -0400
+  
 rezound (0.3.0alpha-1) unstable; urgency=low
   
   * New upstream release
   
-  -- Anthony Ventimiglia <ant@mongrel.dogpound>  Thu,  8 Aug 2002 20:55:28 -0400   
+ -- Anthony Ventimiglia <ant@mongrel.dogpound>  Thu,  8 Aug 2002 20:55:28 -0400   
+  
   
 rezound (0.2.0alpha-1) unstable; urgency=low
 
   * Initial Release.
   
-  -- Anthony Ventimiglia <anthony@ventimiglia.org>  Tue,  2 Jul 2002 18:01:22 -04
+ -- Anthony Ventimiglia <anthony@ventimiglia.org>  Tue,  2 Jul 2002 18:01:22 -0400
