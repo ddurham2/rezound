@@ -52,6 +52,10 @@ protected:
 
 private:
 
+	FXRadioButton *qualityButton;
+	FXComposite *qualityFrame;
+		FXTextField *qualityTextBox;
+
 	FXRadioButton *CBRButton;
 	FXComposite *CBRFrame;
 		FXComboBox *bitRateComboBox;
@@ -61,10 +65,6 @@ private:
 		FXComboBox *minRateComboBox;
 		FXComboBox *normRateComboBox;
 		FXComboBox *maxRateComboBox;
-
-	FXRadioButton *qualityButton;
-	FXComposite *qualityFrame;
-		FXTextField *qualityTextBox;
 };
 
 #endif

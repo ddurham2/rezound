@@ -63,6 +63,14 @@ COggDialog::COggDialog(FXWindow *mainWindow) :
 {
 	FXComposite *main=new FXGroupBox(getFrame(),"",GROUPBOX_NORMAL|LAYOUT_FILL_X|LAYOUT_FILL_Y);
 
+	qualityButton=new FXRadioButton(main,"Quality Setting",this,ID_WHICH_BUTTON);
+		qualityFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RIDGE|LAYOUT_FILL_X);
+			new FXLabel(qualityFrame,"Quality: ");
+			qualityTextBox=new FXTextField(qualityFrame,10,NULL,0,TEXTFIELD_REAL|TEXTFIELD_NORMAL);
+			qualityTextBox->setText("0.7");
+
+	
+	new FXFrame(main,LAYOUT_FIX_HEIGHT,0,0,1,10);
 	CBRButton=new FXRadioButton(main,"Constant Bit Rate",this,ID_WHICH_BUTTON);
 		CBRFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RIDGE|LAYOUT_FILL_X);
 			new FXLabel(CBRFrame,"Bit Rate: ");
@@ -84,16 +92,8 @@ COggDialog::COggDialog(FXWindow *mainWindow) :
 			fillBitRateComboBox(maxRateComboBox);
 
 
-	new FXFrame(main,LAYOUT_FIX_HEIGHT,0,0,1,10);
-	qualityButton=new FXRadioButton(main,"Quality Setting",this,ID_WHICH_BUTTON);
-		qualityFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RIDGE|LAYOUT_FILL_X);
-			new FXLabel(qualityFrame,"Quality: ");
-			qualityTextBox=new FXTextField(qualityFrame,10,NULL,0,TEXTFIELD_REAL|TEXTFIELD_NORMAL);
-			qualityTextBox->setText("0.7");
-
-	
-	CBRButton->setCheck(TRUE);
-	onRadioButton(NULL,0,(void *)1); // to disable all but CBR
+	qualityButton->setCheck(TRUE);
+	onRadioButton(NULL,0,(void *)1); // to disable all but Quality
 	
 
 }
