@@ -128,11 +128,11 @@ FXIMPLEMENT(CArbitraryFIRFilterDialog,CActionParamDialog,CArbitraryFIRFilterDial
 CArbitraryFIRFilterDialog::CArbitraryFIRFilterDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Arbitrary FIR Filter")
 {
-	void *p0=newHorzPanel(NULL);
+	FXPacker *p0=newHorzPanel(NULL);
 		addSlider(p0,"Wet/Dry Mix","%",interpretValue_wetdry_mix,uninterpretValue_wetdry_mix,NULL,100.0,0,0,0,true);
-		void *p1=newVertPanel(p0,false);
+		FXPacker *p1=newVertPanel(p0,false);
 			addGraph(p1,"Frequency Response","Frequency","Hz",interpretValue_freq,uninterpretValue_freq,"Change","dB",interpretValue_FIR_change,uninterpretValue_FIR_change,dB_to_scalar,-100,100,20);
-			void *p2=newHorzPanel(p1,false);
+			FXPacker *p2=newHorzPanel(p1,false);
 				addNumericTextEntry(p2,"Base Frequency","Hz",20,10,1000,"This Sets the Lowest Frequency Displayed on the Graph.\nThis is the Frequency of the First Octave.");
 				addNumericTextEntry(p2,"Number of Octaves","",11,1,15,"This Sets the Number of Octaves Displayed on the Graph.\nBut Note that no Frequency Higher than Half of the Sound's Sampling Rate can be Affected Since it Cannot Contain a Frequency Higher than That.");
 
