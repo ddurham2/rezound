@@ -43,6 +43,8 @@
 	- Play All Looped
 	- Play Selection Once
 	- Play Selection Looped
+	- Play Selection Looped and Skip Most of the Middle
+	- Play Selection Looped but Add a Gap Before Repeating
 	- Stop
 	- Pause
 	- Jump to Beginning
