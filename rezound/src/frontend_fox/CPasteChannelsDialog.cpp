@@ -130,8 +130,6 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 	for(unsigned y=0;y<MAX_CHANNELS;y++)
 	for(unsigned x=0;x<MAX_CHANNELS;x++)
 	{
-		checkBoxes[y][x]->setCheck(FALSE);
-
 		if(y<actionSound->sound->getChannelCount() && clipboard->getWhichChannels()[x])
 			checkBoxes[y][x]->enable();
 		else
@@ -139,11 +137,8 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 	}
 
 	// by default enable a 1:1 paste mapping
-	for(unsigned t=0;t<actionSound->sound->getChannelCount();t++)
-	{
-		if(checkBoxes[t][t]->isEnabled())
-			checkBoxes[t][t]->setCheck(TRUE);
-	}
+	onDefaultButton(NULL,0,NULL);
+
 
 	if(execute(PLACEMENT_CURSOR))
 	{
@@ -179,7 +174,10 @@ long CPasteChannelsDialog::onDefaultButton(FXObject *sender,FXSelector sel,void 
 		checkBoxes[y][x]->setCheck(FALSE);
 
 	for(unsigned y=0;y<actionSound->sound->getChannelCount();y++)
-		checkBoxes[y][y]->setCheck(TRUE);
+	{
+		if(checkBoxes[y][y]->isEnabled())
+			checkBoxes[y][y]->setCheck(TRUE);
+	}
 
 	return 1;
 }
