@@ -212,7 +212,7 @@ bool CNewSoundDialog::validateOnOkay()
 	this->rawFormat=rawFormatCheckButton->getCheck();
 
 	int channelCount=atoi(channelsComboBox->getText().text());
-	if(channelCount<0 || channelCount>=MAX_CHANNELS)
+	if(channelCount<0 || channelCount>MAX_CHANNELS)
 	{
 		Error(_("Invalid number of channels"));
 		return false;
