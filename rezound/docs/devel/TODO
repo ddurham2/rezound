@@ -1,7 +1,5 @@
 --- THINGS TO DO FOR SURE ---
 
-	- add a "sync channels" for noise gate just like the compressor.. probably have it gate only when both channels are below the treshold or maybe a radio button for "gate when all are below threshold.. or any is below threshold"
-
 	- Possibly remove the concept of 'advanced mode' stuff for actions
 		- so far, I've only used it in two actions and don't see any reason to add it to more
 		- for gain and rate change I should just make two factories, but still use the same action code.. and I can make the procedure for adding new actions a bit more easy to understand without getting confused by the 'advanced mode' code
@@ -71,19 +69,18 @@
 		- comp.dsp
 		- freshmeat
 
-	- Make sure to have the configure script check for the minimal version of libaudiofile
-
 	- Create a little description of how to make some interesting sound from a sample I give them.. show them how to take a small piece of it.. make it loop able.. then slow it down.. filter.. etc.. 
 		- post several examples of my _alt# files
 
-	- I've said that I want to support another audio file libary in the future, but I did find that libaudiofile's API at least has support for loop points, cues, notes and arbitrary data, but it doesn't seem to even be implemented on wave save.
-		- DONE Perhaps I will work to patch libaudiofile to get this functionality working.  Because SOX's lib form is far from existing
-		- libsndfile has more formats than libaudiofile but has no API provisions for arbitrary data. AND it isn't packaged on hardly any distroes
-		- Now another possiblity for at least giving a decent effort toward being able to load and save numerous other formats could be done by making a CSOXSoundTranslator : ASoundTranslator and have it shell out and actually run the sox command.  Maybe sox can even read and write to std i/o so I could avoid intermediate copies by sending it and receiving from it raw PCM data.
-			- This would be under an explicit import/export set of buttons under the file actions because it would probably support no form of saving the cues and notes and such and the user could be warned that none of this information will be preserved.
-			- configure should test for `sox` being valid and make it a depenancy... If it's not found, then the import and export file operations will be disabled
-				- the configure script should make a big note of this on screen that import/export will be disabled
-		- But I should still use libaudiofile to load and save wav, aiff, (ogg and mp3 if/when it's available)
+	- XXX I've been in contact with the libsndfile maintainer and the library looks quite good.  He's working on a few features like cues and user notes so that I can put it in without loosing functionality
+		- I've said that I want to support another audio file libary in the future, but I did find that libaudiofile's API at least has support for loop points, cues, notes and arbitrary data, but it doesn't seem to even be implemented on wave save.
+			- DONE Perhaps I will work to patch libaudiofile to get this functionality working.  Because SOX's lib form is far from existing
+			- libsndfile has more formats than libaudiofile but has no API provisions for arbitrary data. AND it isn't packaged on hardly any distroes
+			- Now another possiblity for at least giving a decent effort toward being able to load and save numerous other formats could be done by making a CSOXSoundTranslator : ASoundTranslator and have it shell out and actually run the sox command.  Maybe sox can even read and write to std i/o so I could avoid intermediate copies by sending it and receiving from it raw PCM data.
+				- This would be under an explicit import/export set of buttons under the file actions because it would probably support no form of saving the cues and notes and such and the user could be warned that none of this information will be preserved.
+				- configure should test for `sox` being valid and make it a depenancy... If it's not found, then the import and export file operations will be disabled
+					- the configure script should make a big note of this on screen that import/export will be disabled
+			- But I should still use libaudiofile to load and save wav, aiff, (ogg and mp3 if/when it's available)
 
 	- create selection edits which:
 		- grow or shrink the selection by a given duration
@@ -122,8 +119,6 @@
 	- I want to add a gain or volume parameter for pasting data... Be able to apply that gain to the sound... 
 		- it'd probably come up when you right click on the paste buttons
 
-	- There needs to be a dialog for choosing the mix method for mix pasting
-
 
 
 --- POSSIBLE THINGS TO DO ---
@@ -141,7 +136,7 @@
 			- then I could create an action that says to cut/copy-to-new the selection as a new sound file... so the user would select the beginning, then snap to the next cue, then to the cut/copy-to-new action, then select the stop to the next cue and repeat
 				- the user is going to have to choose a name for each track anyway.. so it can never really be fully automatic.. the user in this case just has an extra mouse click and menu click before typing in each name
 
-	- add a feature which allows the user to have it save the selection to a file, runs a given or predefinied command line on that file and loads it back in and replaces the region
+	- add a feature which allows the user to have it save the selection to a file, runs a given or predefined command line on that file and loads it back in and replaces the region
 		- these could be predefined in a CNestedDataFile somewhere 
 			- potentially, the definition could include how to show and label input widgets (sliders, text entries, etc)
 			- I could predefine some to support sox functionality
@@ -185,10 +180,6 @@
 
 		- right now, I see little use for having a frequency domain view of the data... but, if after reading this DSP book I see a good reason for having it, implement it, and explain in a document the good reason for having it.
 
-	- I could create an adaptive remove-DC action which looks at a window at a time of data  (window-time given by the user) and the DC offset determined for each window would form a set of line segments to be the subtraction from the sound.
-		- This should/might remove any very long trend in the data that causes a slow shift rather than a constant offset
-		- Perhaps, I could let this window time go from 1 to the length of the sound, and some interesting effects could be produced with very small values
-
 	- create a feature on the record dialog which is only present when using the dialog which says to play some X seconds of a given CLoadedSound before starting to record all when the record button is pressed
 		- this would require low latency recording buffers and playback buffers.. OR just know that latency exactly and account for it.
 		- the controls for this feature should show up if no sound was given to play X seconds for... and this sound shouldn't be given for new recordings and probably not for paste-insert
@@ -208,9 +199,9 @@
 		- plus you have to hit stop and play to make it do something else... stop needs to be nice and big anyway
 
 	- it may be more intutive/user-friendly/athetically-pleasing to have the channel select dialog start out all unchecked so I acutally click on the channels I want to apply the action to, rather than the inverse of the channels...
-		- I should also probably add a button that selects all chanels or unselects all changes
+		DONE - I should also probably add a button that selects all channels or unselects all channels
 			- this would be stupid right now, but more useful if I support 5 channel sounds or something
-		- I should put a button on the channel select dialog (and paste channel dialog) which set it to a normal state
+		DONE - I should put a button on the channel select dialog (and paste channel dialog) which set it to a normal state
 
 	- DONE I did create this: TPoolFileAccessor::copyData -- but I haven't made it actually use memmove() yet
 		- I could create a method in TPoolFileAccessor that can copy from another TPoolFileAccessor of the same type... It could do memcpys from the cachedBuffers instead of manually having to do a for loop calling operator[] and being enefficient
@@ -221,9 +212,9 @@
 				- CCopyCutDeleteEdit::doActionSizeSafe
 
 	- when making loops, it may be cool to have a play button that loops the selection, but skips the bulk of the middle for time's sake
-	- when editing large files it would be nice ot have play selection buttons (once and looped), but it plays a few seconds before the start to a few seconds after the stop so that you don't have to play from the beginning and seek forward to or play the selection and seek backwards a little bit
+	- when editing large files it would be nice to have play selection buttons (once and looped), but it plays a few seconds before the start to a few seconds after the stop so that you don't have to play from the beginning and seek forward to or play the selection and seek backwards a little bit
 
-	- probably want to add an bool AAction::showAllDataCheckbox() so that the channel select dialog may or may not have that checkbox if it's an action like crop, or trim
+	- probably want to add a bool AAction::showAllDataCheckbox() so that the channel select dialog may or may not have that checkbox if it's an action like crop, or trim
 
 	- perhaps make pool file have a readonly mode where it won't create SAT files and modify it in any way, then even a copy wouldn't need to be made
 
@@ -234,8 +225,6 @@
 		- or I can wait until fox is themeable and this might be fixed because the theme would supply these icons
 
 	- a very nice project called 'ardour' on sourceforge.net has setup a paypal account to receive donations, perhaps I should do the same
-
-	- look at sox's code for more effect algorithms
 
 	- I think it's fine for now, but gWhichClipboard is essentially a global which specifies which clipboard to use from the time the pasteChannelSelect dialog shows, to the time the factory is constructed, to the time the action runs
 		- it would be better if this were something passed on the action parameters or action sound to make SURE it would be consitant through out each stage
@@ -508,4 +497,14 @@
 			??? - I also could make a parameter for selecting whether to use RMS or Peak-Level for the level detecting
 
 	- add a 'Resampling' action where it's basically just a rate change with a constant value, but also sets the sample rate to a new value afterwards
+
+	- add a "sync channels" for noise gate just like the compressor.. probably have it gate only when both channels are below the treshold or maybe a radio button for "gate when all are below threshold.. or any is below threshold"
+
+	- Make sure to have the configure script check for the minimal version of libaudiofile
+
+	- There needs to be a dialog for choosing the mix method for mix pasting
+
+	- I could create an adaptive remove-DC action which looks at a window at a time of data  (window-time given by the user) and the DC offset determined for each window would form a set of line segments to be the subtraction from the sound.
+		- This should/might remove any very long trend in the data that causes a slow shift rather than a constant offset
+		- Perhaps, I could let this window time go from 1 to the length of the sound, and some interesting effects could be produced with very small values
 
