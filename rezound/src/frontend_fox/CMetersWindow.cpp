@@ -374,7 +374,7 @@ public:
 		for(size_t t=0;t<peaks.size();t++)
 		{
 			const size_t peakHeight=(size_t)floor(peaks[t]*canvasHeight);
-			const FXint y=canvasHeight-peakHeight+2;
+			const FXint y=canvasHeight-peakHeight+2-1;
 			dc.drawLine(x+1,y,x+barWidth-1,y);
 			x+=barWidth;
 		}
@@ -386,6 +386,9 @@ public:
 	void setAnalysis(const vector<float> &_analysis,size_t _octaveStride)
 	{
 		analysis=_analysis;
+		for(size_t t=0;t<analysis.size();t++)
+			analysis[t]*=25.0; // should be a zoom factor I guess
+
 		octaveStride=_octaveStride;
 
 		// resize the analyzer frame if needed

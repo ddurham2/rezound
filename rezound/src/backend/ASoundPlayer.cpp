@@ -350,24 +350,18 @@ const vector<float> ASoundPlayer::getFrequencyAnalysis() const
 for(size_t t=0;t<ASP_ANALYSIS_BUFFER_SIZE;t++)
 	((fftw_real *)frequencyAnalysisBuffer)[t]=((float)(rand()*2.0)/RAND_MAX)-1.0;
 */
-/*
-int j=0;
-for(size_t t=0;t<ASP_ANALYSIS_BUFFER_SIZE;t++)
-{
-	if(frequencyAnalysisBuffer[t]<-1.0 || frequencyAnalysisBuffer[t]>1.0)
-		printf("%d %f\n",t,frequencyAnalysisBuffer[t]);
-
-	if(frequencyAnalysisBuffer[t]==0)
-		j++;
-}
-*/
-//if(j==ASP_ANALYSIS_BUFFER_SIZE)
-	//printf("buffer was all zero\n");
-
 
 	if(bandLowerIndexes.size()<=0) // calculate the index ranges for each band in the returned analysis since we haven't done it yet (I would do it on initialization, but I might not know the sampling rate at that point)
 		calculateAnalyzerBandIndexRanges();
 	
+
+/*
+for(int t=0;t<ASP_ANALYSIS_BUFFER_SIZE;t++)
+{
+	frequencyAnalysisBuffer[t]=sin(5.0*(t*M_PI*2.0/(ASP_ANALYSIS_BUFFER_SIZE)));
+	frequencyAnalysisBuffer[t]+=0.5*sin(15.0*(t*M_PI*2.0/(ASP_ANALYSIS_BUFFER_SIZE)));
+}
+*/
 
 	fftw_real data[ASP_ANALYSIS_BUFFER_SIZE];
 	rfftw_one(analyzerPlan,(fftw_real *)frequencyAnalysisBuffer,data);
@@ -383,13 +377,7 @@ for(size_t t=0;t<ASP_ANALYSIS_BUFFER_SIZE;t++)
 			const fftw_real re=data[i];
 			const fftw_real im= (i==ASP_ANALYSIS_BUFFER_SIZE/2) ? 0 : data[ASP_ANALYSIS_BUFFER_SIZE-i];
 
-// avoid the square by removing the sqrt
-			//const fftw_real power=sqrt(re*re+im*im)/52; /* only by experimentation have I found 52 to divide by to normalize the spectral analysis output */
-			const fftw_real power=sqrt(re*re+im*im)/512; /* only by experimentation have I found 822 (for 8192 buffer length) to divide by to normalize the spectral analysis output */
-					// ??> somehow 822 needs to be relased to ASP_ANALYSIS_BUFFER_SIZE
-
-			//printf("%07d\n",(int)(power*1000));
-			//printf("%f\n",power);
+			const fftw_real power=sqrt(re*re+im*im)/(ASP_ANALYSIS_BUFFER_SIZE/2); 
 
 			//sum+=power*power;
 			
@@ -400,43 +388,43 @@ for(size_t t=0;t<ASP_ANALYSIS_BUFFER_SIZE;t++)
 		//sum/=(u-l);
 		//sum=sqrt(sum);
 		//v.push_back(sum);
-		//printf("%07d\n",(int)(sum*1000));
 		
-		v.push_back(min((float)1.0,sqrt(sum)));
+		v.push_back(sum);
 	}
 
-#if 0
-	for(size_t t=1;t<=ASP_ANALYSIS_BUFFER_SIZE/2;t++)
-	{
-		const fftw_real re=data[t];
-		const fftw_real im= (t==ASP_ANALYSIS_BUFFER_SIZE/2) ? 0 : data[ASP_ANALYSIS_BUFFER_SIZE-t];
-
-		//if(re>1.0 || im>1.0)
-			//printf("%d  %f  %f\n",t,re,im);
-
-		const fftw_real power=sqrt(re*re+im*im)/52; /* only by experimentation have I found 52 (actually 51.something) to divide by to normalize the spectral analysis output */
-		//if(power>1.0)
-			//printf("%d %f\n",t,power);
-//printf("%d power: %f\n",t,power);
-
-		v.push_back((float)power);
-	}
-#endif
 #endif
 
-#if 0 // returns an average of the past 4 frames.. works rather nicely
-	static vector<float> prevV1;
-	static vector<float> prevV2;
-	static vector<float> prevV3;
+
+#if 1 
+	// this enables the returned values to be averaged with the previous NUM_AVG-1 analysies
+	#define NUM_AVG 2
+	static vector<float> prevVs[NUM_AVG];
+	static size_t currentPrevV=0;
+
+	// overwrite the oldest prev vector
+	prevVs[currentPrevV]=v;
+	
+	currentPrevV++;
+	currentPrevV%=NUM_AVG;
+
 	vector<float> temp;
-	if(prevV1.size()==v.size() && prevV2.size()==v.size() && prevV3.size()==v.size())
+
+	if(prevVs[NUM_AVG-1].size()>0)
 	{
+		// create initial values in temp
+		temp=prevVs[0];
+
+		// add all over prev vectors to temp
+		for(size_t i=1;i<NUM_AVG;i++)
+		{
+			for(size_t t=0;t<v.size();t++)
+				temp[t]+=prevVs[i][t];
+		}
+
+		// divide by number of sums for an average
 		for(size_t t=0;t<v.size();t++)
-			temp.push_back((prevV1[t]+prevV2[t]+prevV3[t]+v[t])/4.0);
+			temp[t]/=NUM_AVG;
 	}
-	prevV3=prevV2;
-	prevV2=prevV1;
-	prevV1=v;
 
 	return temp;
 #else
