@@ -33,6 +33,7 @@
 #include <stdexcept>
 #include <string>
 
+// ??? this should be called CRWMutex (shouldn't it?)
 class CRWLock
 {
 public:
@@ -122,6 +123,42 @@ private:
 	int readLockCount;
 
 };
+
+
+/* 
+ * This class simply locks the given mutex on construct and unlocks on destruction
+ * it is useful to use where a lock should be obtained, then released on return or
+ * exception... when an object of this class goes out of scope, the lock will be 
+ * released
+ */
+class CRWMutexLocker
+{
+public:
+	enum LockTypes
+	{
+		ltReader,
+		ltWriter
+	};
+
+	CRWMutexLocker(CRWLock &_m,const LockTypes lockType) :
+		m(_m)
+	{
+		if(lockType==ltReader)
+			m.readLock();
+		else
+			m.writeLock();
+	}
+
+	virtual ~CRWMutexLocker()
+	{
+		m.unlock();
+	}
+
+private:
+	CRWLock &m;
+};
+
+
 
 
 #endif
