@@ -1932,7 +1932,7 @@ template<class l_addr_t,class p_addr_t>
 		{
 dprintf("moveData -- case 1/6\n");
 			moveData(tempPoolId,0,srcPoolId,peSrcWhere,peCount);
-			printf("------------------------------------\n");
+			dprintf("------------------------------------\n");
 			moveData(destPoolId,peDestWhere,tempPoolId,0,peCount);
 			removePool(tempPoolName,false);
 		}

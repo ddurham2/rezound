@@ -397,7 +397,7 @@ bool ClibvorbisSoundTranslator::onSaveSound(const string filename,const CSound *
 			throw runtime_error(string(__func__)+" -- error initializing the Ogg Vorbis encoder engine -- "+OVstrerror(e));
 	}
 	else
-		throw runtime_error(string(__func__)+" -- internal error -- unhandle bit rate method "+istring(parameters.method));
+		throw runtime_error(string(__func__)+" -- internal error -- unhandle bit rate method "+istring((int)parameters.method));
 
 	vorbis_comment vc;
 	vorbis_comment_init(&vc);

@@ -85,11 +85,11 @@ public:
 	TDSPBiquadResLowpassFilter(const coefficient_t cutoffFreqFraction,const coefficient_t resonance) :
 		TDSPBiquadResFilter<sample_t,coefficient_t>(cutoffFreqFraction,resonance)
 	{
-		a0=0.5*(1.0-cos_omega)*scalar;
-		a1=(1.0-cos_omega)*scalar;
-		a2=a0;
-		b1=-2.0*cos_omega*scalar;
-		b2=(1.0-alpha)*scalar;
+		this->a0=0.5*(1.0-this->cos_omega)*this->scalar;
+		this->a1=(1.0-this->cos_omega)*this->scalar;
+		this->a2=this->a0;
+		this->b1=-2.0*this->cos_omega*this->scalar;
+		this->b2=(1.0-this->alpha)*this->scalar;
 	}
 
 };
@@ -102,11 +102,11 @@ public:
 	TDSPBiquadResHighpassFilter(const coefficient_t cutoffFreqFraction,const coefficient_t resonance) :
 		TDSPBiquadResFilter<sample_t,coefficient_t>(cutoffFreqFraction,resonance)
 	{
-		a0=0.5*(1.0+cos_omega)*scalar;
-		a1=-(1.0+cos_omega)*scalar;
-		a2=a0;
-		b1=-2.0*cos_omega*scalar;
-		b2=(1.0-alpha)*scalar;
+		this->a0=0.5*(1.0+this->cos_omega)*this->scalar;
+		this->a1=-(1.0+this->cos_omega)*this->scalar;
+		this->a2=this->a0;
+		this->b1=-2.0*this->cos_omega*this->scalar;
+		this->b2=(1.0-this->alpha)*this->scalar;
 	}
 
 };
@@ -119,11 +119,11 @@ public:
 	TDSPBiquadResBandpassFilter(const coefficient_t cutoffFreqFraction,const coefficient_t resonance) :
 		TDSPBiquadResFilter<sample_t,coefficient_t>(cutoffFreqFraction,resonance)
 	{
-		a0=alpha*scalar;
-		a1=0.0;
-		a2=-a0;
-		b1=-2.0*cos_omega*scalar;
-		b2=(1.0-alpha)*scalar;
+		this->a0=this->alpha*this->scalar;
+		this->a1=0.0;
+		this->a2=-this->a0;
+		this->b1=-2.0*this->cos_omega*this->scalar;
+		this->b2=(1.0-this->alpha)*this->scalar;
 	}
 
 };

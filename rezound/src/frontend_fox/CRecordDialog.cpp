@@ -24,7 +24,7 @@
 #include "../backend/AStatusComm.h"
 #include "CFOXIcons.h"
 
-#include <stdlib.h> // abs
+#include <math.h>
 
 #include <istring>
 
@@ -229,7 +229,7 @@ long CRecordDialog::onStatusUpdate(FXObject *sender,FXSelector sel,void *ptr)
 	sample_t DCOffset=recorder->getDCOffset(0);
 	for(unsigned i=1;i<channelCount;i++)
 	{
-		if(abs(DCOffset)>abs(recorder->getDCOffset(i)))
+		if(fabsf(DCOffset)>fabsf(recorder->getDCOffset(i)))
 			DCOffset=recorder->getDCOffset(i);
 	}
 	DCOffsetLabel->setText((_("DC Offset: ")+istring(amp_to_dBFS(recorder->getDCOffset(1)))+"dBFS").c_str());

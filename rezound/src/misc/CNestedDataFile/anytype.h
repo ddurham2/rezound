@@ -57,9 +57,9 @@ namespace s2at // s2at signifies string_to_anytype/anytype_to_string
  * to put the return value into (and a reference to that gets returned)
  */
 
-// or we could leave these unimplemented to get a linker error instead
-template<typename Type> static const Type string_to_anytype(const string &str,Type &ret)        { no_specialization_of_this_template_with_the_given_type; }
-template<typename Type> static const string anytype_to_string(const Type &any)                  { no_specialization_of_this_template_with_the_given_type; }
+// or we could leave these unimplemented to get a linker error instead (that's what I have to do with gcc>=3.4
+template<typename Type> static const Type string_to_anytype(const string &str,Type &ret)       ;// { no_specialization_of_this_template_with_the_given_type; }
+template<typename Type> static const string anytype_to_string(const Type &any)                 ;// { no_specialization_of_this_template_with_the_given_type; }
 
 
 

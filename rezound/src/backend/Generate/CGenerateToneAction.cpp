@@ -143,7 +143,7 @@ bool CGenerateToneAction::doActionSizeSafe(CActionSound &actionSound,bool prepar
 					// triangle(t) = | ---------- - 2 | - 1
 					//               |      p         |
 					//
-					const float s= (abs((4.0f*(float)(tt%periodLength)/periodLength)-2.0f)-1)*volume;
+					const float s= (fabsf((4.0f*(float)(tt%periodLength)/periodLength)-2.0f)-1)*volume;
 					dest[t+start]=convert_sample<float,sample_t>(-s);
 					STATUS_UPDATE
 				}

@@ -299,7 +299,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound
 			cmdLine+=" -V "+istring(parameters.quality)+" ";
 		}
 		else
-			throw runtime_error(string(__func__)+" -- internal error -- unhandle bit rate method "+istring(parameters.method));
+			throw runtime_error(string(__func__)+" -- internal error -- unhandle bit rate method "+istring((int)parameters.method));
 	}
 
 	cmdLine+=" "+parameters.additionalFlags+" ";
