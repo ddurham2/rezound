@@ -556,16 +556,21 @@ long CSoundWindow::onDrawPlayPosition(FXObject *sender,FXSelector,void*)
 
 long CSoundWindow::onHorzZoomDialChange(FXObject *sender ,FXSelector sel,void *ptr)
 {
+	FXWaveCanvas::HorzRecenterTypes horzRecenterType=FXWaveCanvas::hrtAuto;
+
 	FXint dummy;
 	FXuint keyboardModifierState;
 	horzZoomDial->getCursorPosition(dummy,dummy,keyboardModifierState);
 
-	// depend on keyboard modifier change the way it recenters while zooming
-	FXWaveCanvas::HorzRecenterTypes horzRecenterType=FXWaveCanvas::hrtAuto;
-	if(keyboardModifierState&SHIFTMASK)
-		horzRecenterType=FXWaveCanvas::hrtStart;
-	else if(keyboardModifierState&CONTROLMASK)
-		horzRecenterType=FXWaveCanvas::hrtStop;
+	// only regard the keyboard modifier keys if the mouse is bing used to drag the dial
+	if(keyboardModifierState&LEFTBUTTONMASK)
+	{
+		// depend on keyboard modifier change the way it recenters while zooming
+		if(keyboardModifierState&SHIFTMASK)
+			horzRecenterType=FXWaveCanvas::hrtStart;
+		else if(keyboardModifierState&CONTROLMASK)
+			horzRecenterType=FXWaveCanvas::hrtStop;
+	}
 		
 
 	// ??? for some reason, this does not behave quite like the original (before rewrite), but it is acceptable for now... perhaps look at it later
@@ -580,25 +585,57 @@ long CSoundWindow::onHorzZoomDialChange(FXObject *sender ,FXSelector sel,void *p
 
 long CSoundWindow::onHorzZoomDialPlusIndClick(FXObject *sender,FXSelector sel,void *ptr)
 {
-	horzZoomDial->setValue(100*ZOOM_MUL);
-	onHorzZoomDialChange(NULL,0,NULL);
+	horzZoomInFull();
 	return 1;
 }
 
 long CSoundWindow::onHorzZoomDialMinusIndClick(FXObject *sender,FXSelector sel,void *ptr)
 {
-	horzZoomDial->setValue(0);
-	onHorzZoomDialChange(NULL,0,NULL);
+	horzZoomOutFull();
 	return 1;
 }
 
 long CSoundWindow::onHorzZoomFitClick(FXObject *sender,FXSelector sel,void *ptr)
 {
+	horzZoomSelectionFit();
+	return 1;
+}
+
+void CSoundWindow::horzZoomInSome()
+{
+	FXint hi,lo;
+	horzZoomDial->getRange(hi,lo);
+	horzZoomDial->setValue((FXint)(horzZoomDial->getValue()-((hi-lo)/25.0))); // zoom in 1/25th of the full range
+	onHorzZoomDialChange(NULL,0,NULL);
+}
+
+void CSoundWindow::horzZoomOutSome()
+{
+	FXint hi,lo;
+	horzZoomDial->getRange(hi,lo);
+	horzZoomDial->setValue((FXint)(horzZoomDial->getValue()+((hi-lo)/25.0))); // zoom out 1/25th of the full range
+	onHorzZoomDialChange(NULL,0,NULL);
+}
+
+void CSoundWindow::horzZoomInFull()
+{
+	horzZoomDial->setValue(100*ZOOM_MUL);
+	onHorzZoomDialChange(NULL,0,NULL);
+}
+
+void CSoundWindow::horzZoomOutFull()
+{
+	horzZoomDial->setValue(0);
+	onHorzZoomDialChange(NULL,0,NULL);
+}
+
+void CSoundWindow::horzZoomSelectionFit()
+{
 	waveView->showAmount((sample_fpos_t)(loadedSound->channel->getStopPosition()-loadedSound->channel->getStartPosition()+1)/(sample_fpos_t)loadedSound->sound->getSampleRate(),loadedSound->channel->getStartPosition(),10);
 	horzZoomDial->setValue(zoomFactorToZoomDial(waveView->getHorzZoom()));
 	horzZoomValueLabel->setText(("  "+istring(horzZoomDial->getValue()/(double)ZOOM_MUL,3,1,true)+"%").c_str());
-	return 1;
 }
+
 
 
 // vert zoom handlers

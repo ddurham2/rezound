@@ -110,6 +110,11 @@ public:
 	long onHorzZoomDialMinusIndClick(FXObject *sender,FXSelector sel,void *ptr);
 	long onHorzZoomFitClick(FXObject *sender,FXSelector sel,void *ptr);
 
+	void horzZoomInSome();
+	void horzZoomOutSome();
+	void horzZoomInFull();
+	void horzZoomOutFull();
+	void horzZoomSelectionFit();
 
 
 	// vert zoom handlers
