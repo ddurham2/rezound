@@ -46,6 +46,7 @@ dnl These are some custom checks to see if cc accepts some extra warning flags
 dnl see config/cxx.m4 for macro definition
 ajv_CXX_FLAG(-Wno-unused-function)
 ajv_CXX_FLAG(-Wno-unused-variable)
+ajv_CXX_FLAG(-Wno-unused)
 AC_PROG_CXXCPP
 AM_PROG_LEX
 AC_PROG_YACC
