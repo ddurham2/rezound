@@ -1,5 +1,7 @@
 
 --- THINGS TO DO FOR SURE ---
+	
+	- I think I should make all the FX*ParamValue::readFromFile() methods not do anything when the value is not in the preset rather than setting itself to the initial value
 
 	- Add a button to the FXGraphParamValue which smoothes out angles by making it many nodes to approximate curve.. call it 'approximate'
 
