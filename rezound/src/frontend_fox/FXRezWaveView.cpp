@@ -812,12 +812,11 @@ long FXWaveRuler::onLeftBtnRelease(FXObject *object,FXSelector sel,void *ptr)
 			if(stopPos<startPos) // safety
 				stopPos=startPos;
 
-			// could make this a real action so that it could be undone
 			CActionParameters actionParameters(NULL);
 			selectionEditPositionFactory->selectStart=startPos;
 			selectionEditPositionFactory->selectStop=stopPos;
 			selectionEditPositionFactory->performAction(loadedSound,&actionParameters,false);
-			parent->updateFromEdit();
+			gSoundFileManager->getActiveWindow()->updateFromEdit(); // would prefer to call this for the very window that owns us, but I suppose the user couldn't have clicked it if it wasn't active
 		}
 	}
 
