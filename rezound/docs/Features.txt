@@ -72,6 +72,7 @@
 	- Flange
 	- Delay (Echo)
 	- Quantize
+	- Distortion (by a curve)
 	- Varied Repeat
 
 - Convolution
