@@ -33,6 +33,7 @@ noinst_HEADERS=\
 		CPath.h\
 		CRWLock.h\
 		TAutoBuffer.h\
+		TRingBuffer.h\
 		TMemoryPipe.h\
 		TMemoryPipe.cpp		
 
