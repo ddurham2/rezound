@@ -130,6 +130,8 @@
 
 --- POSSIBLE THINGS TO DO ---
 
+	- There is a project called 'audiere' which I might be able to use to load .s3m, .it, .mod, etc if it was found.  I couldn't save, but I could at least load.
+
 	- add a draw function so that if the user is zoomed in full, he can use the mouse to draw in the values he wants
 		- it's probably a good idea to actually add random values to what is drawn so that you don't get quanitization
 		- I could either implement this as something in FXWaveCanvas or maybe in a frontend dialog for an action, and it sends it to the backend to actually insert the data
