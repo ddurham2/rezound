@@ -22,6 +22,7 @@
 
 #include <stdexcept>
 #include <algorithm>
+#include <map> // for sorting LADSPA plugins
 #include <string>
 
 #include <CPath.h>
@@ -125,7 +126,10 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 
 	FXMAPFUNC(SEL_CHANGED,			CMainWindow::ID_SOUND_LIST,			CMainWindow::onSoundListChange),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SOUND_LIST_HOTKEY,		CMainWindow::onSoundListHotKey),
-	FXMAPFUNC(SEL_KEYPRESS,			CMainWindow::ID_SOUND_LIST,			CMainWindow::onSoundListKeyPress),
+
+	FXMAPFUNC(SEL_KEYPRESS,			CMainWindow::ID_SOUND_LIST,			CMainWindow::onHotKeyFocusFixup),
+	FXMAPFUNC(SEL_KEYPRESS,			CMainWindow::ID_CROSSFADE_EDGES_COMBOBOX,	CMainWindow::onHotKeyFocusFixup),
+	FXMAPFUNC(SEL_KEYPRESS,			CMainWindow::ID_CLIPBOARD_COMBOBOX,		CMainWindow::onHotKeyFocusFixup),
 
 	FXMAPFUNC(SEL_KEYPRESS,			0,						CMainWindow::onKeyPress),
 	FXMAPFUNC(SEL_KEYRELEASE,		0,						CMainWindow::onKeyRelease),
@@ -415,13 +419,14 @@ long CMainWindow::onSoundListHotKey(FXObject *sender,FXSelector sel,void *ptr)
 }
 
 /*
-	This handler steals the key press events from the soundList FXIconList because
-	it will take all my accelerator keys and search the list rather than pass them
-	on to be handled by the accelerators.  I do this for all keys except things like
+	This handler steals the key press events from the soundList FXIconList, clipboard 
+	FXComboBox, and the crossfade method FXComboBox because when focused they will take 
+	all my accelerator keys and search the handle them rather than pass them on to be 
+	handled by the accelerator table.  So, I steal all the keys except for keys like 
 	up, down, tab, et al.
 	
 */
-long CMainWindow::onSoundListKeyPress(FXObject *sender,FXSelector sel,void *ptr)
+long CMainWindow::onHotKeyFocusFixup(FXObject *sender,FXSelector sel,void *ptr)
 {
 	switch(((FXEvent*)ptr)->code)
 	{
@@ -446,11 +451,11 @@ long CMainWindow::onSoundListKeyPress(FXObject *sender,FXSelector sel,void *ptr)
 	}
 
 	// kill the focus (so the generated event won't pass the event back to the 
-	// sound list), then generate an key even to the main window, then set the 
-	// focus again on the sound list
-	soundList->killFocus();
+	// sender), then generate a key press event to the main window, then set 
+	// the focus again on the sender
+	dynamic_cast<FXWindow *>(sender)->killFocus();
 	this->handle(sender,FXSEL(SEL_KEYPRESS,0),ptr);
-	soundList->setFocus();
+	static_cast<FXWindow *>(sender)->setFocus();
 	return 1;
 }
 
@@ -579,11 +584,15 @@ public:
 #include "../backend/Remaster/RemasterActions.h"
 #include "RemasterActionDialogs.h"
 
+#include "../backend/LADSPA/LADSPAActions.h"
+
 
 void CMainWindow::createMenus()
 {
 	// build the drop-down menus
 	FXMenuPane *menu;
+
+	// NOTE: I don't think any of the constructed action factories are being deleted (and I wouldn't want them to coming from the LADSPA stuff)
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&File",NULL,menu);
@@ -716,6 +725,46 @@ void CMainWindow::createMenus()
 
 		new CActionMenuCommand(new CUnclipActionFactory(gChannelSelectDialog),menu,"");
 
+#ifdef USE_LADSPA
+	menu=new FXMenuPane(this);
+	new FXMenuTitle(menubar,"L&ADSPA",NULL,menu);
+		const vector<CLADSPAActionFactory *> LADSPAActionFactories=getLADSPAActionFactories();
+		if(LADSPAActionFactories.size()<=0)
+		{
+			new FXMenuCaption(menu,"No LADSPA Plugins Found");
+			new FXMenuSeparator(menu);
+			new FXMenuCaption(menu,"Like PATH, set LADSPA_PATH to point");
+			new FXMenuCaption(menu,"to a directory(s) containing LADSPA");
+			new FXMenuCaption(menu,"plugin .so files");
+		}
+		else
+		{
+			if(LADSPAActionFactories.size()>20)
+			{
+				// group by the first letter
+				map<const char,map<string,CLADSPAActionFactory *> > sorted;
+				for(size_t t=0;t<LADSPAActionFactories.size();t++)
+				{
+					const char letter= *(istring(LADSPAActionFactories[t]->getName()).upper()).begin();
+					sorted[letter][LADSPAActionFactories[t]->getName()]=LADSPAActionFactories[t];
+				}
+
+				for(map<char,map<string,CLADSPAActionFactory *> >::iterator i=sorted.begin();i!=sorted.end();i++)
+				{
+					FXMenuPane *submenu=new FXMenuPane(this);
+					new FXMenuCascade(menu,string(&(i->first),1).c_str(),NULL,submenu);
+
+					for(map<string,CLADSPAActionFactory *>::iterator t=i->second.begin();t!=i->second.end();t++)
+						new CActionMenuCommand(t->second,submenu,"");
+				}
+			}
+			else
+			{
+				for(size_t t=0;t<LADSPAActionFactories.size();t++)
+					new CActionMenuCommand(LADSPAActionFactories[t],menu,"");
+			}
+		}
+#endif
 
 	create(); // re-call create for this window which will call it for all new child windows
 }
