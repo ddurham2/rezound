@@ -19,6 +19,7 @@
  */
 
 #include "AStatusComm.h"
+#include "AFrontendHooks.h"
 #include "initialize.h"
 #include "settings.h"
 
@@ -49,6 +50,7 @@ static COSSSoundPlayer *soundPlayer=NULL;
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <stdlib.h>	// for getenv
+#include <stdio.h>	// for possible printf of REZ_SHARE_DIR
 
 #include <CPath.h>
 
@@ -66,23 +68,6 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 		const int mkdirErrno=errno;
 		if(mkdirResult!=0 && mkdirErrno!=EEXIST)
 			throw(runtime_error(string(__func__)+" -- error creating "+gUserDataDirectory+" -- "+strerror(mkdirErrno)));
-
-
-		// determine where /usr/share/rezound has been placed (try the install-from directory first)
-		if(getenv("REZ_SHARE_DIR")!=NULL && CPath(getenv("REZ_SHARE_DIR")).exists())
-			gSysDataDirectory=getenv("REZ_SHARE_DIR");
-		else
-		{
-			gSysDataDirectory=SOURCE_DIR"/share";
-			if(!CPath(gSysDataDirectory).exists()) 
-				gSysDataDirectory=DATA_DIR"/rezound";
-		}
-
-
-		gUserPresetsFile=gUserDataDirectory+istring(CPath::dirDelim)+"presets.dat";
-		gSysPresetsFile=gSysDataDirectory+istring(CPath::dirDelim)+"presets.dat";
-
-		CPath(gUserPresetsFile).touch();
 
 
 
@@ -109,6 +94,52 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 
 			Error(string("Error reading registry -- ")+e.what());
 		}
+
+
+		// determine where the share data is located
+		{
+			// first try env var
+			const char *rezShareEnvVar=getenv("REZ_SHARE_DIR");
+			if(rezShareEnvVar!=NULL && CPath(rezShareEnvVar).exists())
+			{
+				printf("using environment variable $REZ_SHARE_DIR='%s' to override normal setting for share data direcory\n",rezShareEnvVar);
+				gSysDataDirectory=rezShareEnvVar;
+			}
+			// next try the source directory where the code was built
+			else if(CPath(SOURCE_DIR"/share").exists())
+				gSysDataDirectory=SOURCE_DIR"/share";
+			// next try the registry setting
+			else if(gSettingsRegistry->keyExists("shareDirectory") && CPath(gSettingsRegistry->getValue("shareDirectory")).exists())
+				gSysDataDirectory=gSettingsRegistry->getValue("shareDirectory");
+			// finally fall back on the #define set by configure saying where ReZound will be installed
+			else
+				gSysDataDirectory=DATA_DIR"/rezound";
+
+			recheckShareDataDir:
+
+			string checkFile=gSysDataDirectory+istring(CPath::dirDelim)+"presets.dat";
+
+			// now, if the presets.dat file doesn't exist in the share data dir, ask for a setting
+			if(!CPath(checkFile).exists())
+			{
+				if(Question("presets.dat not found in share data dir, '"+gSysDataDirectory+"'.\n  Would you like to manually select the share data directory directory?",yesnoQues)==yesAns)
+				{
+					gFrontendHooks->promptForDirectory(gSysDataDirectory,"Select Share Data Directory");
+					goto recheckShareDataDir;
+				}
+			}
+
+			// fully qualify the share data directory
+			gSysDataDirectory=CPath(gSysDataDirectory).realPath();
+
+			printf("using path '%s' for share data directory\n",gSysDataDirectory.c_str());
+		}
+
+
+		gSysPresetsFile=gSysDataDirectory+istring(CPath::dirDelim)+"presets.dat";
+		gUserPresetsFile=gUserDataDirectory+istring(CPath::dirDelim)+"presets.dat";
+		CPath(gUserPresetsFile).touch();
+
 		gPromptDialogDirectory=gSettingsRegistry->getValue("promptDialogDirectory");
 
 		
@@ -190,6 +221,7 @@ void deinitializeBackend()
 
 
 	// -- 1
+	gSettingsRegistry->createKey("shareDirectory",gSysDataDirectory);
 	gSettingsRegistry->createKey("promptDialogDirectory",gPromptDialogDirectory);
 	gSettingsRegistry->createKey("whichClipboard",gWhichClipboard);
 	gSettingsRegistry->createKey("followPlayPosition",gFollowPlayPosition ? "true" : "false");

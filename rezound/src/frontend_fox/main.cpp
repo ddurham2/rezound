@@ -75,6 +75,7 @@ int main(int argc,char *argv[])
 		// created window... because there could be errors while loading
 		// ??? I could fix this by delaying the creation of buttons after the creation of the main window.. and I should do this, since if I ever support loading plugins, I need to be able to popup error dialogs while loading them
 		gStatusComm=new CStatusComm(mainWindow);
+		gFrontendHooks=new CFrontendHooks(mainWindow);
 
 		// from here on we can create error messages
 		//   ??? I suppose I could atleast print to strerr if gStatusComm was not created yet
@@ -82,7 +83,6 @@ int main(int argc,char *argv[])
 		ASoundPlayer *soundPlayer=NULL;
 		initializeBackend(soundPlayer);
 
-		gFrontendHooks=new CFrontendHooks(mainWindow);
 		gSoundFileManager=new CSoundFileManager(mainWindow,soundPlayer,gSettingsRegistry);
 
 		// create all the dialogs 
@@ -105,7 +105,8 @@ int main(int argc,char *argv[])
 
 		deinitializeBackend();
 
-		// ??? delete CStatusComm;
+		// ??? delete gFrontendHooks
+		// ??? delete gStatusComm;
 
 		delete FOXIcons;
 		

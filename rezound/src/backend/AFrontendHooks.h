@@ -51,6 +51,9 @@ public:
 	virtual bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate)=0;
 	virtual bool promptForNewSoundParameters(unsigned &channelCount,unsigned &sampleRate)=0;
 
+	// should prompt for the user to choose a directory
+	virtual bool promptForDirectory(string &dirname,const string title)=0;
+
 	// prompt for recording, this function will have to be more than just an interface and do work 
 	// since it should probably show level meters and be able to insert cues while recording etc.
 	virtual bool promptForRecord(ASoundRecorder *recorder)=0;

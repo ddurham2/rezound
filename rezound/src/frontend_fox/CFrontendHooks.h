@@ -29,8 +29,9 @@
 #ifdef FOX_NO_NAMESPACE
 	class FXWindow;
 	class FXFileDialog;
+	class FXDirDialog;
 #else
-	namespace FX { class FXWindow; class FXFileDialog; }
+	namespace FX { class FXWindow; class FXFileDialog; class FXDirDialog; }
 	using namespace FX;
 #endif
 
@@ -49,6 +50,8 @@ public:
 	bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate);
 	bool promptForNewSoundParameters(unsigned &channelCount,unsigned &sampleRate);
 
+	bool promptForDirectory(string &dirname,const string title);
+
 	bool promptForRecord(ASoundRecorder *recorder);
 
 private:
@@ -56,6 +59,7 @@ private:
 
 	FXFileDialog *openDialog;
 	FXFileDialog *saveDialog;
+	FXDirDialog *dirDialog;
 };
 
 #endif

@@ -49,6 +49,7 @@ CFrontendHooks::CFrontendHooks(FXWindow *_mainWindow) :
 	saveDialog->setCurrentPattern(0);
 	saveDialog->setDirectory(gPromptDialogDirectory.c_str());
 
+	dirDialog=new FXDirDialog(mainWindow,"Select Directory");
 }
 
 CFrontendHooks::~CFrontendHooks()
@@ -166,6 +167,17 @@ bool CFrontendHooks::promptForNewSoundParameters(unsigned &channelCount,unsigned
 	{
 		channelCount=gNewSoundDialog->getChannelCount();
 		sampleRate=gNewSoundDialog->getSampleRate();
+		return(true);
+	}
+	return(false);
+}
+
+bool CFrontendHooks::promptForDirectory(string &dirname,const string title)
+{
+	dirDialog->setTitle(title.c_str());
+	if(dirDialog->execute())
+	{
+		dirname=dirDialog->getDirectory().text();
 		return(true);
 	}
 	return(false);
