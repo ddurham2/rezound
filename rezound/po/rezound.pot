@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-07-24 12:08-0500\n"
+"POT-Creation-Date: 2003-07-24 12:12-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,21 +15,56 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/backend/CRecordSoundClipboard.cpp:70
-msgid ""
-"There is already data on this recording clipboard.  Do you want to record "
-"something new?"
+#: src/backend/ALFO.cpp:414
+msgid "Sine Wave [-1,1]"
 msgstr ""
 
-#: src/backend/ClameSoundTranslator.cpp:229
-msgid ""
-"MPEG Layer-3 does not support saving user notes or cues\n"
-"Do you wish to continue?"
+#: src/backend/ALFO.cpp:416
+msgid "Sine Wave [ 0,1]"
 msgstr ""
 
-#: src/backend/ClameSoundTranslator.cpp:322
-#: src/backend/ClibaudiofileSoundTranslator.cpp:413
-msgid "Saving Sound"
+#: src/backend/ALFO.cpp:418
+msgid "Constant"
+msgstr ""
+
+#: src/backend/ALFO.cpp:420
+msgid "Rising Sawtooth Wave [-1,1]"
+msgstr ""
+
+#: src/backend/ALFO.cpp:422
+msgid "Rising Sawtooth Wave [ 0,1]"
+msgstr ""
+
+#: src/backend/ALFO.cpp:424
+msgid "Falling Sawtooth Wave [-1,1]"
+msgstr ""
+
+#: src/backend/ALFO.cpp:426
+msgid "Falling Sawtooth Wave [ 0,1]"
+msgstr ""
+
+#: src/backend/ASoundFileManager.cpp:135
+msgid " -- file already opened"
+msgstr ""
+
+#: src/backend/ASoundFileManager.cpp:250 src/backend/ASoundFileManager.cpp:304
+msgid " -- file is currently opened"
+msgstr ""
+
+#: src/backend/ASoundFileManager.cpp:256 src/backend/ASoundFileManager.cpp:308
+msgid "Overwrite Existing File"
+msgstr ""
+
+#: src/backend/ASoundFileManager.cpp:328 src/backend/ASoundFileManager.cpp:335
+msgid "Save Modified Sound"
+msgstr ""
+
+#: src/backend/ASoundFileManager.cpp:386
+msgid "Are you sure you want to revert to the last saved copy of"
+msgstr ""
+
+#: src/backend/ASoundFileManager.cpp:493
+msgid "Load sound from previous session?"
 msgstr ""
 
 #: src/backend/ASoundPlayer.cpp:499 src/backend/ASoundPlayer.cpp:515
@@ -41,12 +76,172 @@ msgstr ""
 msgid "Error occurred after trying to fall back to OSS"
 msgstr ""
 
-#: src/backend/Edits/CRemoveChannelsEdit.cpp:76
-msgid "Remove Channels"
+#: src/backend/ASoundTranslator.cpp:154
+msgid "No handler found to support the format for "
 msgstr ""
 
-#: src/backend/Edits/CRemoveChannelsEdit.cpp:76
-msgid "Remove Channels of Audio"
+#: src/backend/ASoundTranslator.cpp:154
+msgid "Would you like to use a raw format?"
+msgstr ""
+
+#: src/backend/ASoundTranslator.cpp:160
+msgid " -- unhandled format/extension for the filename"
+msgstr ""
+
+#: src/backend/CJACKSoundPlayer.cpp:78 src/backend/CJACKSoundRecorder.cpp:65
+msgid " -- error connecting to jack server -- jackd not running?"
+msgstr ""
+
+#: src/backend/CJACKSoundPlayer.cpp:125
+msgid "Choose Port for Output Channel "
+msgstr ""
+
+#: src/backend/CJACKSoundPlayer.cpp:131 src/backend/CJACKSoundRecorder.cpp:116
+msgid "Cannot connect to JACK port, "
+msgstr ""
+
+#: src/backend/CJACKSoundPlayer.cpp:131 src/backend/CJACKSoundRecorder.cpp:116
+msgid ", please choose a different one"
+msgstr ""
+
+#: src/backend/CJACKSoundRecorder.cpp:110
+msgid "Choose Port for Input Channel "
+msgstr ""
+
+#: src/backend/CMIDISDSSoundTranslator.cpp:385
+msgid "Downloading Sample"
+msgstr ""
+
+#: src/backend/CMIDISDSSoundTranslator.cpp:478
+msgid "Keeping what was received"
+msgstr ""
+
+#: src/backend/CMIDISDSSoundTranslator.cpp:652
+msgid "Uploading Sample"
+msgstr ""
+
+#: src/backend/CMIDISDSSoundTranslator.cpp:652
+msgid "Dumping Sample"
+msgstr ""
+
+#: src/backend/CRecordSoundClipboard.cpp:70
+msgid ""
+"There is already data on this recording clipboard.  Do you want to record "
+"something new?"
+msgstr ""
+
+#: src/backend/CSound.cpp:1083
+msgid "Copying/Fitting Data -- Channel "
+msgstr ""
+
+#: src/backend/CSound.cpp:1105
+msgid "Copying Data -- Channel "
+msgstr ""
+
+#: src/backend/CSound.cpp:1135
+msgid "Mixing/Fitting Data (add) -- Channel "
+msgstr ""
+
+#: src/backend/CSound.cpp:1157 src/backend/CSound.cpp:1175
+msgid "Mixing Data (add) -- Channel "
+msgstr ""
+
+#: src/backend/CSound.cpp:1200
+msgid "Mixing/Fitting Data (subtract) -- Channel "
+msgstr ""
+
+#: src/backend/CSound.cpp:1222 src/backend/CSound.cpp:1240
+msgid "Mixing Data (subtract) -- Channel "
+msgstr ""
+
+#: src/backend/CSound.cpp:1265
+msgid "Mixing/Fitting Data (multiply) -- Channel "
+msgstr ""
+
+#: src/backend/CSound.cpp:1287 src/backend/CSound.cpp:1305
+msgid "Mixing Data (multiply) -- Channel "
+msgstr ""
+
+#: src/backend/CSound.cpp:1330
+msgid "Mixing/Fitting Data (average) -- Channel "
+msgstr ""
+
+#: src/backend/CSound.cpp:1352 src/backend/CSound.cpp:1370
+msgid "Mixing Data (average) -- Channel "
+msgstr ""
+
+#: src/backend/CSound.cpp:1676
+msgid "File: "
+msgstr ""
+
+#: src/backend/CSound.cpp:1676
+msgid ""
+"A temporary file was found indicating that this file was previously being "
+"edited when a crash occurred or the process was killed.\n"
+"\n"
+"Do you wish to attempt to recover from this temporary file (otherwise the "
+"file will be deleted)?"
+msgstr ""
+
+#: src/backend/CStubAction.cpp:26
+msgid "Stub Action -- Channel "
+msgstr ""
+
+#: src/backend/CStubAction.cpp:81
+msgid "Stub"
+msgstr ""
+
+#: src/backend/ClameSoundTranslator.cpp:229
+msgid ""
+"MPEG Layer-3 does not support saving user notes or cues\n"
+"Do you wish to continue?"
+msgstr ""
+
+#: src/backend/ClameSoundTranslator.cpp:322
+#: src/backend/ClibaudiofileSoundTranslator.cpp:413
+#: src/backend/CFLACSoundTranslator.cpp:210
+msgid "Saving Sound"
+msgstr ""
+
+#: src/backend/ClibaudiofileSoundTranslator.cpp:86
+msgid " -- error opening"
+msgstr ""
+
+#: src/backend/ClibaudiofileSoundTranslator.cpp:219
+#: src/backend/CFLACSoundTranslator.cpp:67
+msgid "Loading Sound"
+msgstr ""
+
+#: src/backend/ClibaudiofileSoundTranslator.cpp:333
+msgid "This format does not support saving cues"
+msgstr ""
+
+#: src/backend/CrezSoundTranslator.cpp:197
+msgid "Loading Channel "
+msgstr ""
+
+#: src/backend/CrezSoundTranslator.cpp:294
+msgid "Saving Channel "
+msgstr ""
+
+#: src/backend/CrezSoundTranslator.cpp:357
+msgid "Native ReZound"
+msgstr ""
+
+#: src/backend/initialize.cpp:124
+msgid "Native Clipboard "
+msgstr ""
+
+#: src/backend/initialize.cpp:137
+msgid "Record Clipboard "
+msgstr ""
+
+#: src/backend/Edits/CAddChannelsEdit.cpp:60
+msgid "Add Channels"
+msgstr ""
+
+#: src/backend/Edits/CAddChannelsEdit.cpp:60
+msgid "Add New Channels of Audio"
 msgstr ""
 
 #: src/backend/Edits/CCopyCutDeleteEdit.cpp:48
@@ -65,8 +260,24 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: src/backend/Edits/CMuteEdit.cpp:62
-msgid "Mute"
+#: src/backend/Edits/CCopyCutToNewEdit.cpp:105
+msgid "Copy to New"
+msgstr ""
+
+#: src/backend/Edits/CCopyCutToNewEdit.cpp:105
+msgid "Copy to Selection to a Newly Created Sound Window"
+msgstr ""
+
+#: src/backend/Edits/CCopyCutToNewEdit.cpp:124
+msgid "Cut to New"
+msgstr ""
+
+#: src/backend/Edits/CCopyCutToNewEdit.cpp:124
+msgid "Cut and Move the Selection to a Newly Created Sound Window"
+msgstr ""
+
+#: src/backend/Edits/CCropEdit.cpp:70
+msgid "Crop"
 msgstr ""
 
 #: src/backend/Edits/CCueAction.cpp:63 src/frontend_fox/CRecordDialog.cpp:92
@@ -85,110 +296,34 @@ msgstr ""
 msgid "Move Cue"
 msgstr ""
 
-#: src/backend/Edits/CSwapChannelsEdit.cpp:66
-msgid "Swap Channels"
+#: src/backend/Edits/CInsertSilenceEdit.cpp:31
+msgid " -- silenceLength is less than zero: "
 msgstr ""
 
-#: src/backend/Edits/CSwapChannelsEdit.cpp:66
-msgid "Swap the Audio Between Two Channels"
+#: src/backend/Edits/CInsertSilenceEdit.cpp:69
+msgid "Insert Silence"
 msgstr ""
 
-#: src/backend/Edits/CSelectionEdit.cpp:27
-msgid "Select All"
+#: src/backend/Edits/CMuteEdit.cpp:62
+msgid "Mute"
 msgstr ""
 
-#: src/backend/Edits/CSelectionEdit.cpp:28
-msgid "Select to Beginning"
+#: src/backend/Edits/CPasteAsNewEdit.cpp:94
+msgid "Paste As New"
 msgstr ""
 
-#: src/backend/Edits/CSelectionEdit.cpp:29
-msgid "Select to End"
+#: src/backend/Edits/CPasteAsNewEdit.cpp:94
+msgid "Paste the Clipboard's Contents into a Newly Created Sound Window"
 msgstr ""
 
-#: src/backend/Edits/CSelectionEdit.cpp:30
-msgid "Flip to Beginning"
-msgstr ""
-
-#: src/backend/Edits/CSelectionEdit.cpp:31
-msgid "Flip to End"
-msgstr ""
-
-#: src/backend/Edits/CSelectionEdit.cpp:32
-msgid "Move Stop to Start Position"
-msgstr ""
-
-#: src/backend/Edits/CSelectionEdit.cpp:33
-msgid "Move Start to Stop Position"
-msgstr ""
-
-#: src/backend/Edits/CSelectionEdit.cpp:39
-msgid "Move Start Position to Beginning"
-msgstr ""
-
-#: src/backend/Edits/CSelectionEdit.cpp:40
-msgid "Move Stop Position to End"
-msgstr ""
-
-#: src/backend/Edits/CSelectionEdit.cpp:41
-msgid "Move Stop Position to Beginning"
-msgstr ""
-
-#: src/backend/Edits/CSelectionEdit.cpp:42
-msgid "Move Start Position to End"
-msgstr ""
-
-#: src/backend/Edits/CSelectionEdit.cpp:43
-msgid "Move Stop Position Backward to Start Position"
-msgstr ""
-
-#: src/backend/Edits/CSelectionEdit.cpp:44
-msgid "Move Start Position Forward to Stop Position"
-msgstr ""
-
-#: src/backend/Edits/CSelectionEdit.cpp:250
-msgid "Selection Change"
-msgstr ""
-
-#: src/backend/Edits/CSelectionEdit.cpp:250
-msgid "Selection Change From Mouse"
-msgstr ""
-
-#: src/backend/Edits/CSelectionEdit.cpp:270
-msgid "Grow or Slide Selection"
-msgstr ""
-
-#: src/backend/Edits/CRotateEdit.cpp:33
-msgid " -- amount is negative"
-msgstr ""
-
-#: src/backend/Edits/CRotateEdit.cpp:73
-msgid "<< Rotate Left"
-msgstr ""
-
-#: src/backend/Edits/CRotateEdit.cpp:94
-msgid ">> Rotate Right"
-msgstr ""
-
-#: src/backend/Edits/CAddChannelsEdit.cpp:60
-msgid "Add Channels"
-msgstr ""
-
-#: src/backend/Edits/CAddChannelsEdit.cpp:60
-msgid "Add New Channels of Audio"
-msgstr ""
-
-#: src/backend/Edits/CCropEdit.cpp:70
-msgid "Crop"
+#: src/backend/Edits/CPasteAsNewEdit.cpp:114
+#: src/backend/Edits/CPasteEdit.cpp:410
+msgid "No data has been cut or copied to the selected clipboard yet."
 msgstr ""
 
 #: src/backend/Edits/CPasteEdit.cpp:281 src/backend/Edits/CPasteEdit.cpp:359
 #: src/backend/Edits/CPasteEdit.cpp:392
 msgid " -- unhandled pasteType: "
-msgstr ""
-
-#: src/backend/Edits/CPasteEdit.cpp:410
-#: src/backend/Edits/CPasteAsNewEdit.cpp:114
-msgid "No data has been cut or copied to the selected clipboard yet."
 msgstr ""
 
 #: src/backend/Edits/CPasteEdit.cpp:465
@@ -250,12 +385,24 @@ msgid ""
 "Fit Within the Selection"
 msgstr ""
 
-#: src/backend/Edits/CInsertSilenceEdit.cpp:31
-msgid " -- silenceLength is less than zero: "
+#: src/backend/Edits/CRemoveChannelsEdit.cpp:76
+msgid "Remove Channels"
 msgstr ""
 
-#: src/backend/Edits/CInsertSilenceEdit.cpp:69
-msgid "Insert Silence"
+#: src/backend/Edits/CRemoveChannelsEdit.cpp:76
+msgid "Remove Channels of Audio"
+msgstr ""
+
+#: src/backend/Edits/CRotateEdit.cpp:33
+msgid " -- amount is negative"
+msgstr ""
+
+#: src/backend/Edits/CRotateEdit.cpp:73
+msgid "<< Rotate Left"
+msgstr ""
+
+#: src/backend/Edits/CRotateEdit.cpp:94
+msgid ">> Rotate Right"
 msgstr ""
 
 #: src/backend/Edits/CSaveAsMultipleFilesAction.cpp:104
@@ -332,141 +479,106 @@ msgstr ""
 msgid "Save Selection As..."
 msgstr ""
 
-#: src/backend/Edits/CPasteAsNewEdit.cpp:94
-msgid "Paste As New"
+#: src/backend/Edits/CSelectionEdit.cpp:27
+msgid "Select All"
 msgstr ""
 
-#: src/backend/Edits/CPasteAsNewEdit.cpp:94
-msgid "Paste the Clipboard's Contents into a Newly Created Sound Window"
+#: src/backend/Edits/CSelectionEdit.cpp:28
+msgid "Select to Beginning"
 msgstr ""
 
-#: src/backend/Edits/CCopyCutToNewEdit.cpp:105
-msgid "Copy to New"
+#: src/backend/Edits/CSelectionEdit.cpp:29
+msgid "Select to End"
 msgstr ""
 
-#: src/backend/Edits/CCopyCutToNewEdit.cpp:105
-msgid "Copy to Selection to a Newly Created Sound Window"
+#: src/backend/Edits/CSelectionEdit.cpp:30
+msgid "Flip to Beginning"
 msgstr ""
 
-#: src/backend/Edits/CCopyCutToNewEdit.cpp:124
-msgid "Cut to New"
+#: src/backend/Edits/CSelectionEdit.cpp:31
+msgid "Flip to End"
 msgstr ""
 
-#: src/backend/Edits/CCopyCutToNewEdit.cpp:124
-msgid "Cut and Move the Selection to a Newly Created Sound Window"
+#: src/backend/Edits/CSelectionEdit.cpp:32
+msgid "Move Stop to Start Position"
 msgstr ""
 
-#: src/backend/CSound.cpp:1083
-msgid "Copying/Fitting Data -- Channel "
+#: src/backend/Edits/CSelectionEdit.cpp:33
+msgid "Move Start to Stop Position"
 msgstr ""
 
-#: src/backend/CSound.cpp:1105
-msgid "Copying Data -- Channel "
+#: src/backend/Edits/CSelectionEdit.cpp:39
+msgid "Move Start Position to Beginning"
 msgstr ""
 
-#: src/backend/CSound.cpp:1135
-msgid "Mixing/Fitting Data (add) -- Channel "
+#: src/backend/Edits/CSelectionEdit.cpp:40
+msgid "Move Stop Position to End"
 msgstr ""
 
-#: src/backend/CSound.cpp:1157 src/backend/CSound.cpp:1175
-msgid "Mixing Data (add) -- Channel "
+#: src/backend/Edits/CSelectionEdit.cpp:41
+msgid "Move Stop Position to Beginning"
 msgstr ""
 
-#: src/backend/CSound.cpp:1200
-msgid "Mixing/Fitting Data (subtract) -- Channel "
+#: src/backend/Edits/CSelectionEdit.cpp:42
+msgid "Move Start Position to End"
 msgstr ""
 
-#: src/backend/CSound.cpp:1222 src/backend/CSound.cpp:1240
-msgid "Mixing Data (subtract) -- Channel "
+#: src/backend/Edits/CSelectionEdit.cpp:43
+msgid "Move Stop Position Backward to Start Position"
 msgstr ""
 
-#: src/backend/CSound.cpp:1265
-msgid "Mixing/Fitting Data (multiply) -- Channel "
+#: src/backend/Edits/CSelectionEdit.cpp:44
+msgid "Move Start Position Forward to Stop Position"
 msgstr ""
 
-#: src/backend/CSound.cpp:1287 src/backend/CSound.cpp:1305
-msgid "Mixing Data (multiply) -- Channel "
+#: src/backend/Edits/CSelectionEdit.cpp:250
+msgid "Selection Change"
 msgstr ""
 
-#: src/backend/CSound.cpp:1330
-msgid "Mixing/Fitting Data (average) -- Channel "
+#: src/backend/Edits/CSelectionEdit.cpp:250
+msgid "Selection Change From Mouse"
 msgstr ""
 
-#: src/backend/CSound.cpp:1352 src/backend/CSound.cpp:1370
-msgid "Mixing Data (average) -- Channel "
+#: src/backend/Edits/CSelectionEdit.cpp:270
+msgid "Grow or Slide Selection"
 msgstr ""
 
-#: src/backend/CSound.cpp:1676
-msgid "File: "
+#: src/backend/Edits/CSwapChannelsEdit.cpp:66
+msgid "Swap Channels"
 msgstr ""
 
-#: src/backend/CSound.cpp:1676
-msgid ""
-"A temporary file was found indicating that this file was previously being "
-"edited when a crash occurred or the process was killed.\n"
-"\n"
-"Do you wish to attempt to recover from this temporary file (otherwise the "
-"file will be deleted)?"
+#: src/backend/Edits/CSwapChannelsEdit.cpp:66
+msgid "Swap the Audio Between Two Channels"
 msgstr ""
 
-#: src/backend/ALFO.cpp:414
-msgid "Sine Wave [-1,1]"
+#: src/backend/Effects/CChangeAmplitudeEffect.cpp:49
+msgid "Changing Amplitude -- Channel "
 msgstr ""
 
-#: src/backend/ALFO.cpp:416
-msgid "Sine Wave [ 0,1]"
+#: src/backend/Effects/CChangeAmplitudeEffect.cpp:94
+msgid "Change Volume"
 msgstr ""
 
-#: src/backend/ALFO.cpp:418
-msgid "Constant"
+#: src/backend/Effects/CChangeAmplitudeEffect.cpp:114
+#: src/frontend_fox/EffectActionDialogs.cpp:57
+#: src/frontend_fox/EffectActionDialogs.cpp:64
+#: src/frontend_fox/EffectActionDialogs.cpp:148
+#: src/frontend_fox/FilterActionDialogs.cpp:283
+#: src/frontend_fox/FilterActionDialogs.cpp:293
+#: src/frontend_fox/FilterActionDialogs.cpp:303
+#: src/frontend_fox/FilterActionDialogs.cpp:314
+#: src/frontend_fox/FilterActionDialogs.cpp:327
+#: src/frontend_fox/FilterActionDialogs.cpp:338
+#: src/frontend_fox/FilterActionDialogs.cpp:349
+msgid "Gain"
 msgstr ""
 
-#: src/backend/ALFO.cpp:420
-msgid "Rising Sawtooth Wave [-1,1]"
+#: src/backend/Effects/CChangeAmplitudeEffect.cpp:132
+msgid "Curved Gain"
 msgstr ""
 
-#: src/backend/ALFO.cpp:422
-msgid "Rising Sawtooth Wave [ 0,1]"
-msgstr ""
-
-#: src/backend/ALFO.cpp:424
-msgid "Falling Sawtooth Wave [-1,1]"
-msgstr ""
-
-#: src/backend/ALFO.cpp:426
-msgid "Falling Sawtooth Wave [ 0,1]"
-msgstr ""
-
-#: src/backend/CrezSoundTranslator.cpp:197
-msgid "Loading Channel "
-msgstr ""
-
-#: src/backend/CrezSoundTranslator.cpp:294
-msgid "Saving Channel "
-msgstr ""
-
-#: src/backend/CrezSoundTranslator.cpp:357
-msgid "Native ReZound"
-msgstr ""
-
-#: src/backend/CStubAction.cpp:26
-msgid "Stub Action -- Channel "
-msgstr ""
-
-#: src/backend/CStubAction.cpp:81
-msgid "Stub"
-msgstr ""
-
-#: src/backend/Effects/CVariedRepeatEffect.cpp:43
-msgid "Varied Repeat -- Channel "
-msgstr ""
-
-#: src/backend/Effects/CVariedRepeatEffect.cpp:91
-msgid "Varied Repeat"
-msgstr ""
-
-#: src/backend/Effects/CVariedRepeatEffect.cpp:91
-msgid "Repeat the Selection Variably According to an LFO"
+#: src/backend/Effects/CChangeAmplitudeEffect.cpp:132
+msgid "Change Gain According to a Curve"
 msgstr ""
 
 #: src/backend/Effects/CChangeRateEffect.cpp:61
@@ -497,54 +609,12 @@ msgstr ""
 msgid "Simple Delay (Echo)"
 msgstr ""
 
-#: src/backend/Effects/CChangeAmplitudeEffect.cpp:49
-msgid "Changing Amplitude -- Channel "
-msgstr ""
-
-#: src/backend/Effects/CChangeAmplitudeEffect.cpp:94
-msgid "Change Volume"
-msgstr ""
-
-#: src/backend/Effects/CChangeAmplitudeEffect.cpp:114
-#: src/frontend_fox/FilterActionDialogs.cpp:283
-#: src/frontend_fox/FilterActionDialogs.cpp:293
-#: src/frontend_fox/FilterActionDialogs.cpp:303
-#: src/frontend_fox/FilterActionDialogs.cpp:314
-#: src/frontend_fox/FilterActionDialogs.cpp:327
-#: src/frontend_fox/FilterActionDialogs.cpp:338
-#: src/frontend_fox/FilterActionDialogs.cpp:349
-#: src/frontend_fox/EffectActionDialogs.cpp:57
-#: src/frontend_fox/EffectActionDialogs.cpp:64
-#: src/frontend_fox/EffectActionDialogs.cpp:148
-msgid "Gain"
-msgstr ""
-
-#: src/backend/Effects/CChangeAmplitudeEffect.cpp:132
-msgid "Curved Gain"
-msgstr ""
-
-#: src/backend/Effects/CChangeAmplitudeEffect.cpp:132
-msgid "Change Gain According to a Curve"
-msgstr ""
-
 #: src/backend/Effects/CDistortionEffect.cpp:32
 msgid "Distortion -- Channel "
 msgstr ""
 
 #: src/backend/Effects/CDistortionEffect.cpp:86
 msgid "Distortion"
-msgstr ""
-
-#: src/backend/Effects/CQuantizeEffect.cpp:56
-msgid "Quantize -- Channel "
-msgstr ""
-
-#: src/backend/Effects/CQuantizeEffect.cpp:101
-msgid "Quantize"
-msgstr ""
-
-#: src/backend/Effects/CQuantizeEffect.cpp:101
-msgid "Quantize the Number of Possible Sample Levels"
 msgstr ""
 
 #: src/backend/Effects/CFlangeEffect.cpp:47
@@ -563,6 +633,18 @@ msgstr ""
 msgid "Flange"
 msgstr ""
 
+#: src/backend/Effects/CQuantizeEffect.cpp:56
+msgid "Quantize -- Channel "
+msgstr ""
+
+#: src/backend/Effects/CQuantizeEffect.cpp:101
+msgid "Quantize"
+msgstr ""
+
+#: src/backend/Effects/CQuantizeEffect.cpp:101
+msgid "Quantize the Number of Possible Sample Levels"
+msgstr ""
+
 #: src/backend/Effects/CReverseEffect.cpp:53
 msgid "Reversing -- Channel "
 msgstr ""
@@ -577,32 +659,124 @@ msgstr ""
 msgid "Reverse"
 msgstr ""
 
-#: src/backend/ClibaudiofileSoundTranslator.cpp:86
-msgid " -- error opening"
+#: src/backend/Effects/CVariedRepeatEffect.cpp:43
+msgid "Varied Repeat -- Channel "
 msgstr ""
 
-#: src/backend/ClibaudiofileSoundTranslator.cpp:219
-msgid "Loading Sound"
+#: src/backend/Effects/CVariedRepeatEffect.cpp:91
+msgid "Varied Repeat"
 msgstr ""
 
-#: src/backend/ClibaudiofileSoundTranslator.cpp:333
-msgid "This format does not support saving cues"
+#: src/backend/Effects/CVariedRepeatEffect.cpp:91
+msgid "Repeat the Selection Variably According to an LFO"
 msgstr ""
 
-#: src/backend/main_controls.cpp:131
-msgid "Are you sure you want to quit?"
+#: src/backend/Filters/CArbitraryFIRFilter.cpp:92
+#: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:84
+msgid "Filtering -- Channel "
 msgstr ""
 
-#: src/backend/Looping/CMakeSymetricAction.cpp:56
-msgid "Make Symetric -- Channel "
+#: src/backend/Filters/CArbitraryFIRFilter.cpp:187
+#: src/backend/Filters/CConvolutionFilter.cpp:239
+#: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:216
+msgid ""
+" -- feature disabled because the fftw/rfftw library was not installed or "
+"detected when configure was run"
 msgstr ""
 
-#: src/backend/Looping/CMakeSymetricAction.cpp:98
-msgid "Make Symetric"
+#: src/backend/Filters/CArbitraryFIRFilter.cpp:204
+msgid "Arbitrary FIR Filter"
 msgstr ""
 
-#: src/backend/Looping/CMakeSymetricAction.cpp:98
-msgid "Make Symetric For Noise Loops"
+#: src/backend/Filters/CArbitraryFIRFilter.cpp:204
+msgid ""
+"Finite Impulse Response Filter Given a Custom/User-Defined Frequency Response"
+msgstr ""
+
+#: src/backend/Filters/CBiquadResFilter.cpp:75
+#: src/backend/Filters/CSinglePoleFilter.cpp:75
+msgid "Lowpass Filter -- Channel "
+msgstr ""
+
+#: src/backend/Filters/CBiquadResFilter.cpp:88
+#: src/backend/Filters/CSinglePoleFilter.cpp:88
+msgid "Highpass Filter -- Channel "
+msgstr ""
+
+#: src/backend/Filters/CBiquadResFilter.cpp:101
+#: src/backend/Filters/CSinglePoleFilter.cpp:101
+msgid "Bandpass Filter -- Channel "
+msgstr ""
+
+#: src/backend/Filters/CBiquadResFilter.cpp:139
+msgid "Biquad Resonant Lowpass Filter"
+msgstr ""
+
+#: src/backend/Filters/CBiquadResFilter.cpp:161
+msgid "Biquad Resonant Highpass Filter"
+msgstr ""
+
+#: src/backend/Filters/CBiquadResFilter.cpp:183
+msgid "Biquad Resonant Bandpass Filter"
+msgstr ""
+
+#: src/backend/Filters/CConvolutionFilter.cpp:70
+msgid " -- cannot read kernel filter file '"
+msgstr ""
+
+#: src/backend/Filters/CConvolutionFilter.cpp:149
+msgid "Convolving -- Channel "
+msgstr ""
+
+#: src/backend/Filters/CConvolutionFilter.cpp:256
+msgid "Convolution Filter"
+msgstr ""
+
+#: src/backend/Filters/CConvolutionFilter.cpp:256
+msgid "Convolve One Audio File with this One"
+msgstr ""
+
+#: src/backend/Filters/CSinglePoleFilter.cpp:114
+msgid "Notch Filter -- Channel "
+msgstr ""
+
+#: src/backend/Filters/CSinglePoleFilter.cpp:151
+msgid "Single Pole Lowpass Filter"
+msgstr ""
+
+#: src/backend/Filters/CSinglePoleFilter.cpp:172
+msgid "Single Pole Highpass Filter"
+msgstr ""
+
+#: src/backend/Filters/CSinglePoleFilter.cpp:193
+msgid "Bandpass Filter"
+msgstr ""
+
+#: src/backend/Filters/CSinglePoleFilter.cpp:215
+msgid "Notch Filter"
+msgstr ""
+
+#: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:44
+msgid " -- sweepLFODesc.amp is negative"
+msgstr ""
+
+#: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:46
+msgid ""
+" -- freqResponse1 and freqResonse2 do not contain the same number of nodes"
+msgstr ""
+
+#: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:232
+msgid "explain this"
+msgstr ""
+
+#: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:238
+msgid "Morphing Arbitrary FIR Filter"
+msgstr ""
+
+#: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:238
+msgid ""
+"Animated Finite Impulse Response Filter Given two Custom/User-Defined "
+"Frequency Responses"
 msgstr ""
 
 #: src/backend/Looping/CAddCuesAction.cpp:58
@@ -631,161 +805,16 @@ msgstr ""
 msgid "Add a Cue Every X Seconds"
 msgstr ""
 
-#: src/backend/ASoundTranslator.cpp:154
-msgid "No handler found to support the format for "
+#: src/backend/Looping/CMakeSymetricAction.cpp:56
+msgid "Make Symetric -- Channel "
 msgstr ""
 
-#: src/backend/ASoundTranslator.cpp:154
-msgid "Would you like to use a raw format?"
+#: src/backend/Looping/CMakeSymetricAction.cpp:98
+msgid "Make Symetric"
 msgstr ""
 
-#: src/backend/ASoundTranslator.cpp:160
-msgid " -- unhandled format/extension for the filename"
-msgstr ""
-
-#: src/backend/Filters/CConvolutionFilter.cpp:70
-msgid " -- cannot read kernel filter file '"
-msgstr ""
-
-#: src/backend/Filters/CConvolutionFilter.cpp:149
-msgid "Convolving -- Channel "
-msgstr ""
-
-#: src/backend/Filters/CConvolutionFilter.cpp:239
-#: src/backend/Filters/CArbitraryFIRFilter.cpp:187
-msgid ""
-" -- feature disabled because the fftw/rfftw library was not installed or "
-"detected when configure was run"
-msgstr ""
-
-#: src/backend/Filters/CConvolutionFilter.cpp:256
-msgid "Convolution Filter"
-msgstr ""
-
-#: src/backend/Filters/CConvolutionFilter.cpp:256
-msgid "Convolve One Audio File with this One"
-msgstr ""
-
-#: src/backend/Filters/CSinglePoleFilter.cpp:75
-#: src/backend/Filters/CBiquadResFilter.cpp:75
-msgid "Lowpass Filter -- Channel "
-msgstr ""
-
-#: src/backend/Filters/CSinglePoleFilter.cpp:88
-#: src/backend/Filters/CBiquadResFilter.cpp:88
-msgid "Highpass Filter -- Channel "
-msgstr ""
-
-#: src/backend/Filters/CSinglePoleFilter.cpp:101
-#: src/backend/Filters/CBiquadResFilter.cpp:101
-msgid "Bandpass Filter -- Channel "
-msgstr ""
-
-#: src/backend/Filters/CSinglePoleFilter.cpp:114
-msgid "Notch Filter -- Channel "
-msgstr ""
-
-#: src/backend/Filters/CSinglePoleFilter.cpp:151
-msgid "Single Pole Lowpass Filter"
-msgstr ""
-
-#: src/backend/Filters/CSinglePoleFilter.cpp:172
-msgid "Single Pole Highpass Filter"
-msgstr ""
-
-#: src/backend/Filters/CSinglePoleFilter.cpp:193
-msgid "Bandpass Filter"
-msgstr ""
-
-#: src/backend/Filters/CSinglePoleFilter.cpp:215
-msgid "Notch Filter"
-msgstr ""
-
-#: src/backend/Filters/CBiquadResFilter.cpp:139
-msgid "Biquad Resonant Lowpass Filter"
-msgstr ""
-
-#: src/backend/Filters/CBiquadResFilter.cpp:161
-msgid "Biquad Resonant Highpass Filter"
-msgstr ""
-
-#: src/backend/Filters/CBiquadResFilter.cpp:183
-msgid "Biquad Resonant Bandpass Filter"
-msgstr ""
-
-#: src/backend/Filters/CArbitraryFIRFilter.cpp:92
-msgid "Filtering -- Channel "
-msgstr ""
-
-#: src/backend/Filters/CArbitraryFIRFilter.cpp:204
-msgid "Arbitrary FIR Filter"
-msgstr ""
-
-#: src/backend/Filters/CArbitraryFIRFilter.cpp:204
-msgid ""
-"Finite Impulse Response Filter Given a Custom/User-Defined Frequency Response"
-msgstr ""
-
-#: src/backend/Remaster/CCompressorAction.cpp:47
-msgid "Compressor -- Channel "
-msgstr ""
-
-#: src/backend/Remaster/CCompressorAction.cpp:119
-msgid "Compressor "
-msgstr ""
-
-#: src/backend/Remaster/CCompressorAction.cpp:200
-msgid "Dynamic Range Compressor"
-msgstr ""
-
-#: src/backend/Remaster/CRemoveDCAction.cpp:76
-msgid "Remove DC Component -- Channel "
-msgstr ""
-
-#: src/backend/Remaster/CRemoveDCAction.cpp:118
-msgid "Remove DC Component"
-msgstr ""
-
-#: src/backend/Remaster/CRemoveDCAction.cpp:133
-msgid "Removes a DC offset from the audio, recentering it around zero"
-msgstr ""
-
-#: src/backend/Remaster/CNormalizeAction.cpp:72
-msgid "Analyzing -- Channel "
-msgstr ""
-
-#: src/backend/Remaster/CNormalizeAction.cpp:145
-#: src/backend/Remaster/CNormalizeAction.cpp:199
-msgid "Normalizing -- Channel "
-msgstr ""
-
-#: src/backend/Remaster/CNormalizeAction.cpp:254
-msgid "Normalize"
-msgstr ""
-
-#: src/backend/Remaster/CNormalizeAction.cpp:254
-msgid "Normalize Amplitude"
-msgstr ""
-
-#: src/backend/Remaster/CNormalizeAction.cpp:273
-msgid ""
-"Normalize Amplitude (Some of this technique is experimental, please let me "
-"know if you approve or disapprove of the result's quality)"
-msgstr ""
-
-#: src/backend/Remaster/CNoiseGateAction.cpp:74
-msgid "Noise Gating -- Channel "
-msgstr ""
-
-#: src/backend/Remaster/CNoiseGateAction.cpp:126
-msgid ""
-"Applies a gain [0,1] to the sound when the level becomes less than the "
-"threshold.\n"
-"The gain changes with a velocity according to the attack and release times"
-msgstr ""
-
-#: src/backend/Remaster/CNoiseGateAction.cpp:133
-msgid "Noise Gate"
+#: src/backend/Looping/CMakeSymetricAction.cpp:98
+msgid "Make Symetric For Noise Loops"
 msgstr ""
 
 #: src/backend/Remaster/CBalanceAction.cpp:57
@@ -813,6 +842,18 @@ msgstr ""
 msgid "Curved Balance"
 msgstr ""
 
+#: src/backend/Remaster/CCompressorAction.cpp:47
+msgid "Compressor -- Channel "
+msgstr ""
+
+#: src/backend/Remaster/CCompressorAction.cpp:119
+msgid "Compressor "
+msgstr ""
+
+#: src/backend/Remaster/CCompressorAction.cpp:200
+msgid "Dynamic Range Compressor"
+msgstr ""
+
 #: src/backend/Remaster/CMonoizeAction.cpp:85
 #: src/backend/Remaster/CMonoizeAction.cpp:191
 msgid "Monoizing"
@@ -820,6 +861,56 @@ msgstr ""
 
 #: src/backend/Remaster/CMonoizeAction.cpp:289
 msgid "Monoize"
+msgstr ""
+
+#: src/backend/Remaster/CNoiseGateAction.cpp:74
+msgid "Noise Gating -- Channel "
+msgstr ""
+
+#: src/backend/Remaster/CNoiseGateAction.cpp:126
+msgid ""
+"Applies a gain [0,1] to the sound when the level becomes less than the "
+"threshold.\n"
+"The gain changes with a velocity according to the attack and release times"
+msgstr ""
+
+#: src/backend/Remaster/CNoiseGateAction.cpp:133
+msgid "Noise Gate"
+msgstr ""
+
+#: src/backend/Remaster/CNormalizeAction.cpp:72
+msgid "Analyzing -- Channel "
+msgstr ""
+
+#: src/backend/Remaster/CNormalizeAction.cpp:145
+#: src/backend/Remaster/CNormalizeAction.cpp:199
+msgid "Normalizing -- Channel "
+msgstr ""
+
+#: src/backend/Remaster/CNormalizeAction.cpp:254
+msgid "Normalize"
+msgstr ""
+
+#: src/backend/Remaster/CNormalizeAction.cpp:254
+msgid "Normalize Amplitude"
+msgstr ""
+
+#: src/backend/Remaster/CNormalizeAction.cpp:273
+msgid ""
+"Normalize Amplitude (Some of this technique is experimental, please let me "
+"know if you approve or disapprove of the result's quality)"
+msgstr ""
+
+#: src/backend/Remaster/CRemoveDCAction.cpp:76
+msgid "Remove DC Component -- Channel "
+msgstr ""
+
+#: src/backend/Remaster/CRemoveDCAction.cpp:118
+msgid "Remove DC Component"
+msgstr ""
+
+#: src/backend/Remaster/CRemoveDCAction.cpp:133
+msgid "Removes a DC offset from the audio, recentering it around zero"
 msgstr ""
 
 #: src/backend/Remaster/CResampleAction.cpp:63
@@ -834,6 +925,10 @@ msgstr ""
 msgid "Change Sample Rate"
 msgstr ""
 
+#: src/backend/main_controls.cpp:131
+msgid "Are you sure you want to quit?"
+msgstr ""
+
 #: src/backend/Generate/CGenerateNoiseAction.cpp:255
 msgid "Generate Noise"
 msgstr ""
@@ -842,76 +937,158 @@ msgstr ""
 msgid "Generate Various Colors of Noise"
 msgstr ""
 
-#: src/backend/CJACKSoundPlayer.cpp:78 src/backend/CJACKSoundRecorder.cpp:65
-msgid " -- error connecting to jack server -- jackd not running?"
+#: src/backend/Generate/CGenerateToneAction.cpp:66
+msgid "Generating Tone -- Channel "
 msgstr ""
 
-#: src/backend/CJACKSoundPlayer.cpp:125
-msgid "Choose Port for Output Channel "
+#: src/backend/Generate/CGenerateToneAction.cpp:177
+msgid "Generate Tone"
 msgstr ""
 
-#: src/backend/CJACKSoundPlayer.cpp:131 src/backend/CJACKSoundRecorder.cpp:116
-msgid "Cannot connect to JACK port, "
+#: src/backend/CFLACSoundTranslator.cpp:230
+msgid ""
+"Saving user notes or cues is unimplemented for FLAC\n"
+"Do you wish to continue?"
 msgstr ""
 
-#: src/backend/CJACKSoundPlayer.cpp:131 src/backend/CJACKSoundRecorder.cpp:116
-msgid ", please choose a different one"
+#: src/frontend_fox/CAboutDialog.cpp:43
+msgid "About ReZound"
 msgstr ""
 
-#: src/backend/CMIDISDSSoundTranslator.cpp:385
-msgid "Downloading Sample"
+#: src/frontend_fox/CAboutDialog.cpp:69
+msgid "Please Read"
 msgstr ""
 
-#: src/backend/CMIDISDSSoundTranslator.cpp:478
-msgid "Keeping what was received"
+#: src/frontend_fox/CAboutDialog.cpp:91
+msgid "About"
 msgstr ""
 
-#: src/backend/CMIDISDSSoundTranslator.cpp:652
-msgid "Uploading Sample"
+#: src/frontend_fox/CAboutDialog.cpp:95
+msgid "Author"
 msgstr ""
 
-#: src/backend/CMIDISDSSoundTranslator.cpp:652
-msgid "Dumping Sample"
+#: src/frontend_fox/CAboutDialog.cpp:96
+msgid "Original Autoconfiscation"
 msgstr ""
 
-#: src/backend/initialize.cpp:124
-msgid "Native Clipboard "
+#: src/frontend_fox/CAboutDialog.cpp:97
+msgid "Additional Programming"
 msgstr ""
 
-#: src/backend/initialize.cpp:137
-msgid "Record Clipboard "
+#: src/frontend_fox/CAboutDialog.cpp:98
+msgid "Artistic Consultant"
 msgstr ""
 
-#: src/backend/CJACKSoundRecorder.cpp:110
-msgid "Choose Port for Input Channel "
+#: src/frontend_fox/CAboutDialog.cpp:99
+msgid "Home Page"
 msgstr ""
 
-#: src/backend/ASoundFileManager.cpp:135
-msgid " -- file already opened"
+#: src/frontend_fox/CAboutDialog.cpp:100
+msgid "Mailing List"
 msgstr ""
 
-#: src/backend/ASoundFileManager.cpp:250 src/backend/ASoundFileManager.cpp:304
-msgid " -- file is currently opened"
+#: src/frontend_fox/CAboutDialog.cpp:101
+msgid "Bug Reports"
 msgstr ""
 
-#: src/backend/ASoundFileManager.cpp:256 src/backend/ASoundFileManager.cpp:308
-msgid "Overwrite Existing File"
+#: src/frontend_fox/CAboutDialog.cpp:102
+msgid "Support Requests"
 msgstr ""
 
-#: src/backend/ASoundFileManager.cpp:328 src/backend/ASoundFileManager.cpp:335
-msgid "Save Modified Sound"
+#: src/frontend_fox/CAboutDialog.cpp:103
+msgid "Feature Requests"
 msgstr ""
 
-#: src/backend/ASoundFileManager.cpp:386
-msgid "Are you sure you want to revert to the last saved copy of"
+#: src/frontend_fox/CAboutDialog.cpp:105
+msgid "Also Please Read"
 msgstr ""
 
-#: src/backend/ASoundFileManager.cpp:493
-msgid "Load sound from previous session?"
+#: src/frontend_fox/CAboutDialog.cpp:108
+msgid "Thanks To"
 msgstr ""
 
-#: src/frontend_fox/CUserNotesDialog.cpp:43
-msgid "User Notes"
+#: src/frontend_fox/CAboutDialog.cpp:112 src/frontend_fox/CAboutDialog.cpp:113
+#: src/frontend_fox/CAboutDialog.cpp:114 src/frontend_fox/CAboutDialog.cpp:115
+#: src/frontend_fox/CAboutDialog.cpp:116 src/frontend_fox/CAboutDialog.cpp:119
+msgid "Bug Finding"
+msgstr ""
+
+#: src/frontend_fox/CAboutDialog.cpp:117
+msgid "Feature Suggestions"
+msgstr ""
+
+#: src/frontend_fox/CAboutDialog.cpp:118
+msgid "Bug Finding/Fixing"
+msgstr ""
+
+#: src/frontend_fox/CAboutDialog.cpp:131
+#: src/frontend_fox/CCueListDialog.cpp:74 src/frontend_fox/CMainWindow.cpp:722
+msgid "&Close"
+msgstr ""
+
+#: src/frontend_fox/CActionParamDialog.cpp:95
+msgid "Explain"
+msgstr ""
+
+#: src/frontend_fox/CActionParamDialog.cpp:743
+msgid "Preset Name"
+msgstr ""
+
+#: src/frontend_fox/CActionParamDialog.cpp:747
+msgid "Invalid Preset Name"
+msgstr ""
+
+#: src/frontend_fox/CActionParamDialog.cpp:756
+msgid "Preset Name cannot contain"
+msgstr ""
+
+#: src/frontend_fox/CActionParamDialog.cpp:771
+msgid "Overwrite Existing Preset"
+msgstr ""
+
+#: src/frontend_fox/CActionParamDialog.cpp:839
+msgid "Remove Preset"
+msgstr ""
+
+#: src/frontend_fox/CActionParamDialog.cpp:896
+msgid "&Use\tOr Double-Click an Item in the List"
+msgstr ""
+
+#: src/frontend_fox/CActionParamDialog.cpp:897
+#: src/frontend_fox/CMainWindow.cpp:718
+msgid "&Save"
+msgstr ""
+
+#: src/frontend_fox/CActionParamDialog.cpp:898
+#: src/frontend_fox/CCueListDialog.cpp:77
+msgid "&Remove"
+msgstr ""
+
+#: src/frontend_fox/CChannelSelectDialog.cpp:58
+msgid "Channel Select"
+msgstr ""
+
+#: src/frontend_fox/CChannelSelectDialog.cpp:60
+msgid "Channels to Which This Action Should Apply:"
+msgstr ""
+
+#: src/frontend_fox/CChannelSelectDialog.cpp:67
+#: src/frontend_fox/CPasteChannelsDialog.cpp:114
+#: src/frontend_fox/CPasteChannelsDialog.cpp:119
+#: src/frontend_fox/RemasterActionDialogs.cpp:80
+#: src/frontend_fox/RemasterActionDialogs.cpp:126
+#: src/frontend_fox/RemasterActionDialogs.cpp:155
+msgid "Channel "
+msgstr ""
+
+#: src/frontend_fox/CChannelSelectDialog.cpp:70
+#: src/frontend_fox/CPasteChannelsDialog.cpp:95
+msgid "Default"
+msgstr ""
+
+#: src/frontend_fox/CChannelSelectDialog.cpp:71
+#: src/frontend_fox/CPasteChannelsDialog.cpp:96
+msgid "Clear"
 msgstr ""
 
 #: src/frontend_fox/CCrossfadeEdgesDialog.cpp:33
@@ -948,6 +1125,503 @@ msgid ""
 "Linear will maintain a constant gain of 1.0\n"
 "Parabolic sounds a bit more natural\n"
 "For very quick fades (less than 250ms) linear is recommended"
+msgstr ""
+
+#: src/frontend_fox/CCueDialog.cpp:48
+msgid "Cue Properties"
+msgstr ""
+
+#: src/frontend_fox/CCueDialog.cpp:51
+msgid "Cue Name:"
+msgstr ""
+
+#: src/frontend_fox/CCueDialog.cpp:55
+msgid " Cue Time:"
+msgstr ""
+
+#: src/frontend_fox/CCueDialog.cpp:59
+msgid ""
+"Anchored in Time\tMeaning That This Cue's Position Will Not Be Affected by "
+"Adding and Removing Space Within the Audio"
+msgstr ""
+
+#: src/frontend_fox/CCueDialog.cpp:96
+msgid "Cue Name Too Long"
+msgstr ""
+
+#: src/frontend_fox/CCueDialog.cpp:104
+msgid "Invalid Cue Time.  Format: HH:MM:SS.sssss or MM:SS.sssss"
+msgstr ""
+
+#: src/frontend_fox/CCueListDialog.cpp:66
+msgid "Cue List"
+msgstr ""
+
+#: src/frontend_fox/CCueListDialog.cpp:76
+msgid "&Add"
+msgstr ""
+
+#: src/frontend_fox/CCueListDialog.cpp:78 src/frontend_fox/CMainWindow.cpp:892
+msgid "&Edit"
+msgstr ""
+
+#: src/frontend_fox/CFrontendHooks.cpp:60
+msgid "Select Directory"
+msgstr ""
+
+#: src/frontend_fox/CFrontendHooks.cpp:81
+msgid "Open File"
+msgstr ""
+
+#: src/frontend_fox/CFrontendHooks.cpp:89
+msgid "Open as Raw"
+msgstr ""
+
+#: src/frontend_fox/CFrontendHooks.cpp:94
+msgid "Save File"
+msgstr ""
+
+#: src/frontend_fox/CFrontendHooks.cpp:102
+msgid "Save as Raw"
+msgstr ""
+
+#: src/frontend_fox/CFrontendHooks.cpp:166
+msgid "All Supported Types"
+msgstr ""
+
+#: src/frontend_fox/CFrontendHooks.cpp:166
+msgid "All Files"
+msgstr ""
+
+#: src/frontend_fox/CJACKPortChoiceDialog.cpp:40
+msgid "JACK Port Selection"
+msgstr ""
+
+#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:45
+msgid "MIDI Sample Dump"
+msgstr ""
+
+#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:49
+msgid "Wait for Dump"
+msgstr ""
+
+#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:52
+msgid "Sample ID"
+msgstr ""
+
+#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:57
+msgid "SysEx Channel"
+msgstr ""
+
+#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:62
+msgid "Loop Type"
+msgstr ""
+
+#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:102
+#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:139
+msgid "Waveform IDs must be from 0 to 16384"
+msgstr ""
+
+#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:148
+msgid "Loop type must be from 0 to 127"
+msgstr ""
+
+#: src/frontend_fox/CMetersWindow.cpp:579
+#: src/frontend_fox/CMetersWindow.cpp:581
+msgid "Unrotate from Natural 45 Degree Line"
+msgstr ""
+
+#: src/frontend_fox/CMetersWindow.cpp:725
+msgid ""
+"Adjust Zoom Factor for Analyzer\n"
+"Right-click for Default"
+msgstr ""
+
+#: src/frontend_fox/CMetersWindow.cpp:800
+msgid "Configure with FFTW"
+msgstr ""
+
+#: src/frontend_fox/CMetersWindow.cpp:801
+msgid "for Freq. Analysis"
+msgstr ""
+
+#: src/frontend_fox/CMp3Dialog.cpp:68
+msgid "mp3 Compression Parameters"
+msgstr ""
+
+#: src/frontend_fox/CMp3Dialog.cpp:75 src/frontend_fox/COggDialog.cpp:73
+msgid "Constant Bit Rate"
+msgstr ""
+
+#: src/frontend_fox/CMp3Dialog.cpp:77 src/frontend_fox/COggDialog.cpp:75
+msgid "Bit Rate: "
+msgstr ""
+
+#: src/frontend_fox/CMp3Dialog.cpp:83
+msgid "Average Bit Rate"
+msgstr ""
+
+#: src/frontend_fox/CMp3Dialog.cpp:85 src/frontend_fox/COggDialog.cpp:83
+msgid "Minimum Bit Rate: "
+msgstr ""
+
+#: src/frontend_fox/CMp3Dialog.cpp:88
+msgid "Average Bit Rate: "
+msgstr ""
+
+#: src/frontend_fox/CMp3Dialog.cpp:91 src/frontend_fox/COggDialog.cpp:89
+msgid "Maximum Bit Rate: "
+msgstr ""
+
+#: src/frontend_fox/CMp3Dialog.cpp:97
+msgid "Variable Bit Rate Quality Setting"
+msgstr ""
+
+#: src/frontend_fox/CMp3Dialog.cpp:99 src/frontend_fox/COggDialog.cpp:65
+msgid "Quality: "
+msgstr ""
+
+#: src/frontend_fox/CMp3Dialog.cpp:104
+msgid "0(Highest Quality -> 9(Lowest Quality)"
+msgstr ""
+
+#: src/frontend_fox/CMp3Dialog.cpp:109
+msgid "Use Only These Flags"
+msgstr ""
+
+#: src/frontend_fox/CMp3Dialog.cpp:113
+msgid "Additional Flags: "
+msgstr ""
+
+#: src/frontend_fox/CMp3Dialog.cpp:116
+msgid "To lame"
+msgstr ""
+
+#: src/frontend_fox/CNewSoundDialog.cpp:48
+msgid "New Sound"
+msgstr ""
+
+#: src/frontend_fox/CNewSoundDialog.cpp:51
+msgid "Filename:"
+msgstr ""
+
+#: src/frontend_fox/CNewSoundDialog.cpp:53
+msgid "&Browse"
+msgstr ""
+
+#: src/frontend_fox/CNewSoundDialog.cpp:55
+msgid "Raw Format"
+msgstr ""
+
+#: src/frontend_fox/CNewSoundDialog.cpp:58 src/frontend_fox/CRawDialog.cpp:51
+#: src/frontend_fox/CVoxDialog.cpp:47
+msgid "Channels:"
+msgstr ""
+
+#: src/frontend_fox/CNewSoundDialog.cpp:61 src/frontend_fox/CRawDialog.cpp:57
+#: src/frontend_fox/CVoxDialog.cpp:53
+msgid "Sample Rate:"
+msgstr ""
+
+#: src/frontend_fox/CNewSoundDialog.cpp:64
+msgid "Length:"
+msgstr ""
+
+#: src/frontend_fox/CNewSoundDialog.cpp:67
+msgid "second(s)"
+msgstr ""
+
+#: src/frontend_fox/CNewSoundDialog.cpp:176
+msgid "Please supply a filename"
+msgstr ""
+
+#: src/frontend_fox/CNewSoundDialog.cpp:187
+msgid ""
+"Are you sure you want to overwrite the existing file:\n"
+"   "
+msgstr ""
+
+#: src/frontend_fox/CNewSoundDialog.cpp:200
+msgid "Invalid number of channels"
+msgstr ""
+
+#: src/frontend_fox/CNewSoundDialog.cpp:209
+msgid "Invalid sample rate"
+msgstr ""
+
+#: src/frontend_fox/CNewSoundDialog.cpp:219
+msgid "Invalid length"
+msgstr ""
+
+#: src/frontend_fox/COggDialog.cpp:56
+msgid "Ogg Compression Parameters"
+msgstr ""
+
+#: src/frontend_fox/COggDialog.cpp:63
+msgid "Quality Setting"
+msgstr ""
+
+#: src/frontend_fox/COggDialog.cpp:69
+msgid "0 (lowest) to 1 (highest)"
+msgstr ""
+
+#: src/frontend_fox/COggDialog.cpp:81
+msgid "Variable Bit Rate"
+msgstr ""
+
+#: src/frontend_fox/COggDialog.cpp:86
+msgid "Normal Bit Rate: "
+msgstr ""
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:60
+msgid "Paste Channels"
+msgstr ""
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:62
+msgid "Pasting Parameters:"
+msgstr ""
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:73
+#: src/frontend_fox/CPasteChannelsDialog.cpp:203
+#: src/frontend_fox/CPasteChannelsDialog.cpp:207
+msgid "Repeat Count"
+msgstr ""
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:77
+msgid "Repeat Time"
+msgstr ""
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:84
+msgid "Repeat X Times"
+msgstr ""
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:85
+msgid "Repeat for X Seconds"
+msgstr ""
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:98
+msgid "Mix Type:"
+msgstr ""
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:100
+msgid "Add"
+msgstr ""
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:101
+msgid "Subtract"
+msgstr ""
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:102
+msgid "Multiply"
+msgstr ""
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:103
+msgid "Average"
+msgstr ""
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:107
+msgid "Clipboard"
+msgstr ""
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:108
+msgid "Destination"
+msgstr ""
+
+#: src/frontend_fox/CPasteChannelsDialog.cpp:199
+msgid "MixMethod"
+msgstr ""
+
+#: src/frontend_fox/CProgressDialog.cpp:44
+#: src/frontend_fox/FXModalDialogBox.cpp:58
+msgid "&Cancel"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:46
+msgid "Raw Parameters"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:70
+msgid "Sample Format:"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:72
+msgid "8bit Signed PCM"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:73
+msgid "8bit Unsigned PCM"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:74
+msgid "16bit Signed PCM"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:75
+msgid "16bit Unsigned PCM"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:76
+msgid "24bit Signed PCM"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:77
+msgid "24bit Unsigned PCM"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:78
+msgid "32bit Signed PCM"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:79
+msgid "32bit Unsigned PCM"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:80
+msgid "32bit Floating Point PCM"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:81
+msgid "64bit Floating Point PCM"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:84
+msgid "Byte Order:"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:85
+msgid "Little Endian (Intel)"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:85
+msgid "Big Endian (non-Intel)"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:89
+msgid "Data Start:"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:93
+msgid "in bytes"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:95
+msgid "Data Length:"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:96 src/frontend_fox/CRawDialog.cpp:100
+#: src/frontend_fox/CRawDialog.cpp:101
+msgid "normally leave this 0"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:101
+msgid "in audio frames"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:151
+msgid "invalid negative data offset"
+msgstr ""
+
+#: src/frontend_fox/CRawDialog.cpp:158
+msgid "invalid negative data length"
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:64 src/frontend_fox/CMainWindow.cpp:208
+#: src/frontend_fox/CMainWindow.cpp:748
+msgid "Record"
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:85
+msgid "   Cue Prefix:"
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:89
+msgid "Cue Number:"
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:93
+msgid "Add Anchored Cue"
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:99
+#: src/frontend_fox/CRecordDialog.cpp:100
+msgid "Recording:"
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:102
+#: src/frontend_fox/CRecordDialog.cpp:103
+msgid "Waiting for Threshold:"
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:108
+msgid "Record Length: "
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:109
+msgid "Record Size: "
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:110
+msgid "Record Limit: "
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:116
+msgid "DCOffset: "
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:117
+msgid "Reported Every 5 Seconds"
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:118
+msgid ""
+"Compensate\tSubtract out the currently reported DC Offset from any further "
+"recorded data"
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:121
+msgid "Reset"
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:122
+#: src/frontend_fox/CRecordDialog.cpp:184
+#: src/frontend_fox/CRecordDialog.cpp:361
+msgid "Clip Count: "
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:126
+msgid ""
+"Record/\n"
+"Resume"
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:127
+msgid ""
+"Stop/\n"
+"Pause"
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:128
+msgid ""
+"Redo/\n"
+"Reset"
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:131
+msgid "Limit Duration to "
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:138
+msgid "Effective on Threshold "
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:235
+msgid "DC Offset: "
+msgstr ""
+
+#: src/frontend_fox/CRecordDialog.cpp:291
+msgid ""
+"Invalid record time limit -- Should be in the form of HH:MM:SS.sss, MM:SS."
+"sss or SS.sss"
 msgstr ""
 
 #: src/frontend_fox/CSoundWindow.cpp:140
@@ -1040,314 +1714,24 @@ msgstr ""
 msgid "Playing: "
 msgstr ""
 
-#: src/frontend_fox/CAboutDialog.cpp:43
-msgid "About ReZound"
+#: src/frontend_fox/CStatusComm.cpp:95
+msgid "Warning"
 msgstr ""
 
-#: src/frontend_fox/CAboutDialog.cpp:69
-msgid "Please Read"
+#: src/frontend_fox/CStatusComm.cpp:100
+msgid "Note"
 msgstr ""
 
-#: src/frontend_fox/CAboutDialog.cpp:91
-msgid "About"
+#: src/frontend_fox/CStatusComm.cpp:115
+msgid "Question"
 msgstr ""
 
-#: src/frontend_fox/CAboutDialog.cpp:95
-msgid "Author"
+#: src/frontend_fox/CUserNotesDialog.cpp:43
+msgid "User Notes"
 msgstr ""
 
-#: src/frontend_fox/CAboutDialog.cpp:96
-msgid "Original Autoconfiscation"
-msgstr ""
-
-#: src/frontend_fox/CAboutDialog.cpp:97
-msgid "Additional Programming"
-msgstr ""
-
-#: src/frontend_fox/CAboutDialog.cpp:98
-msgid "Artistic Consultant"
-msgstr ""
-
-#: src/frontend_fox/CAboutDialog.cpp:99
-msgid "Home Page"
-msgstr ""
-
-#: src/frontend_fox/CAboutDialog.cpp:100
-msgid "Mailing List"
-msgstr ""
-
-#: src/frontend_fox/CAboutDialog.cpp:101
-msgid "Bug Reports"
-msgstr ""
-
-#: src/frontend_fox/CAboutDialog.cpp:102
-msgid "Support Requests"
-msgstr ""
-
-#: src/frontend_fox/CAboutDialog.cpp:103
-msgid "Feature Requests"
-msgstr ""
-
-#: src/frontend_fox/CAboutDialog.cpp:105
-msgid "Also Please Read"
-msgstr ""
-
-#: src/frontend_fox/CAboutDialog.cpp:108
-msgid "Thanks To"
-msgstr ""
-
-#: src/frontend_fox/CAboutDialog.cpp:112 src/frontend_fox/CAboutDialog.cpp:113
-#: src/frontend_fox/CAboutDialog.cpp:114 src/frontend_fox/CAboutDialog.cpp:115
-#: src/frontend_fox/CAboutDialog.cpp:116 src/frontend_fox/CAboutDialog.cpp:119
-msgid "Bug Finding"
-msgstr ""
-
-#: src/frontend_fox/CAboutDialog.cpp:117
-msgid "Feature Suggestions"
-msgstr ""
-
-#: src/frontend_fox/CAboutDialog.cpp:118
-msgid "Bug Finding/Fixing"
-msgstr ""
-
-#: src/frontend_fox/CAboutDialog.cpp:131
-#: src/frontend_fox/CCueListDialog.cpp:74 src/frontend_fox/CMainWindow.cpp:722
-msgid "&Close"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:53
-#: src/frontend_fox/FilterActionDialogs.cpp:133
-#: src/frontend_fox/FilterActionDialogs.cpp:209
-msgid "Wet/Dry Mix"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:55
-msgid "Input Lowpass"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:56
-#: src/frontend_fox/EffectActionDialogs.cpp:168
-#: src/frontend_fox/RemasterActionDialogs.cpp:230
-msgid "Input Gain"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:57
-#: src/frontend_fox/EffectActionDialogs.cpp:171
-#: src/frontend_fox/RemasterActionDialogs.cpp:231
-msgid "Output Gain"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:58
-msgid "Predelay"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:61
-msgid "Filter Kernel"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:61
-msgid "The Audio File to Use as the Filter Kernel"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:64
-msgid "FK Gain"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:65
-msgid "FK Lowpass"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:67
-msgid "FK Rate"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:70
-msgid "Wrap Decay back to Beginning"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:135
-msgid "Frequency Response"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:135
-#: src/frontend_fox/FilterActionDialogs.cpp:195
-#: src/frontend_fox/FilterActionDialogs.cpp:196
-#: src/frontend_fox/FXLFOParamValue.cpp:57
-#: src/frontend_fox/GenerateActionDialogs.cpp:114
-msgid "Frequency"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:135
-#: src/frontend_fox/FilterActionDialogs.cpp:195
-#: src/frontend_fox/FilterActionDialogs.cpp:196
-msgid "Change"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:137
-#: src/frontend_fox/FilterActionDialogs.cpp:199
-msgid "Base Frequency"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:137
-#: src/frontend_fox/FilterActionDialogs.cpp:199
-msgid ""
-"This Sets the Lowest Frequency Displayed on the Graph.\n"
-"This is the Frequency of the First Octave."
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:138
-#: src/frontend_fox/FilterActionDialogs.cpp:202
-msgid "Number of Octaves"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:138
-#: src/frontend_fox/FilterActionDialogs.cpp:202
-msgid ""
-"This Sets the Number of Octaves Displayed on the Graph.\n"
-"But Note that no Frequency Higher than Half of the Sound's Sampling Rate can "
-"be Affected Since it Cannot Contain a Frequency Higher than That."
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:141
-#: src/frontend_fox/FilterActionDialogs.cpp:219
-msgid "Kernel Length"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:142
-#: src/frontend_fox/FilterActionDialogs.cpp:220
-msgid ""
-"This is the Size of the Filter Kernel Computed (in samples) From Your Curve "
-"to be Convolved with the Audio"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:143
-#: src/frontend_fox/FilterActionDialogs.cpp:221
-msgid "Undelay"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:143
-#: src/frontend_fox/FilterActionDialogs.cpp:221
-msgid "This Counteracts the Delay Side-Effect of Custom FIR Filters"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:195
-msgid "Frequency Response 1"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:196
-msgid "Frequency Response 2"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:212
-msgid "Use LFO"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:216
-msgid "Sweep LFO"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:257
-msgid ""
-"Frequency Response 1 and Frequency Response 2 must contain the same number "
-"of nodes"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:284
-#: src/frontend_fox/FilterActionDialogs.cpp:294
-#: src/frontend_fox/FilterActionDialogs.cpp:328
-#: src/frontend_fox/FilterActionDialogs.cpp:339
-msgid "Cutoff Frequency"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:304
-#: src/frontend_fox/FilterActionDialogs.cpp:315
-#: src/frontend_fox/FilterActionDialogs.cpp:350
-msgid "Center Frequency"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:305
-#: src/frontend_fox/FilterActionDialogs.cpp:316
-msgid "Band Width"
-msgstr ""
-
-#: src/frontend_fox/FilterActionDialogs.cpp:329
-#: src/frontend_fox/FilterActionDialogs.cpp:340
-#: src/frontend_fox/FilterActionDialogs.cpp:351
-msgid "Resonance"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:42
-msgid "Volume Change"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:64
-msgid "Gain Curve"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:85
-msgid "Rate Change"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:103
-msgid "Rate Curve"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:103
-msgid "Rate"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:127
-#: src/frontend_fox/EffectActionDialogs.cpp:147
-msgid "Delay"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:128
-msgid "Wet Gain"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:129
-msgid "Dry Gain"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:130
-msgid "Flange LFO"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:130
-msgid "LFO Depth"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:131
-#: src/frontend_fox/EffectActionDialogs.cpp:149
-msgid "Feedback"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:169
-msgid "Quantum Count"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:170
-msgid "The Number of Possible Sample Values Above Zero"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:188
-msgid "Curve"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:188
-msgid "Input"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:188
-msgid "Output"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:210
-msgid "LFO"
-msgstr ""
-
-#: src/frontend_fox/EffectActionDialogs.cpp:211
-msgid "Time"
+#: src/frontend_fox/CVoxDialog.cpp:42
+msgid "Vox Parameters"
 msgstr ""
 
 #: src/frontend_fox/EditActionDialogs.cpp:34
@@ -1480,6 +1864,393 @@ msgstr ""
 msgid "How"
 msgstr ""
 
+#: src/frontend_fox/EffectActionDialogs.cpp:42
+msgid "Volume Change"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:64
+msgid "Gain Curve"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:85
+msgid "Rate Change"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:103
+msgid "Rate Curve"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:103
+msgid "Rate"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:127
+#: src/frontend_fox/EffectActionDialogs.cpp:147
+msgid "Delay"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:128
+msgid "Wet Gain"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:129
+msgid "Dry Gain"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:130
+msgid "Flange LFO"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:130
+msgid "LFO Depth"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:131
+#: src/frontend_fox/EffectActionDialogs.cpp:149
+msgid "Feedback"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:168
+#: src/frontend_fox/FilterActionDialogs.cpp:56
+#: src/frontend_fox/RemasterActionDialogs.cpp:230
+msgid "Input Gain"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:169
+msgid "Quantum Count"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:170
+msgid "The Number of Possible Sample Values Above Zero"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:171
+#: src/frontend_fox/FilterActionDialogs.cpp:57
+#: src/frontend_fox/RemasterActionDialogs.cpp:231
+msgid "Output Gain"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:188
+msgid "Curve"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:188
+msgid "Input"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:188
+msgid "Output"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:210
+msgid "LFO"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:211
+msgid "Time"
+msgstr ""
+
+#: src/frontend_fox/FXLFOParamValue.cpp:57
+#: src/frontend_fox/FilterActionDialogs.cpp:135
+#: src/frontend_fox/FilterActionDialogs.cpp:195
+#: src/frontend_fox/FilterActionDialogs.cpp:196
+#: src/frontend_fox/GenerateActionDialogs.cpp:114
+msgid "Frequency"
+msgstr ""
+
+#: src/frontend_fox/FXLFOParamValue.cpp:58
+msgid "Phase"
+msgstr ""
+
+#: src/frontend_fox/FXModalDialogBox.cpp:57
+msgid "&Okay"
+msgstr ""
+
+#: src/frontend_fox/FXRezWaveView.cpp:477
+#: src/frontend_fox/FXRezWaveView.cpp:482
+msgid "Set Start Position to Cue"
+msgstr ""
+
+#: src/frontend_fox/FXRezWaveView.cpp:479
+#: src/frontend_fox/FXRezWaveView.cpp:483
+msgid "Set Stop Position to Cue"
+msgstr ""
+
+#: src/frontend_fox/FXRezWaveView.cpp:487
+msgid "&Edit Cue"
+msgstr ""
+
+#: src/frontend_fox/FXRezWaveView.cpp:488
+msgid "&Remove Cue"
+msgstr ""
+
+#: src/frontend_fox/FXRezWaveView.cpp:490
+#: src/frontend_fox/FXRezWaveView.cpp:509
+msgid "Show Cues &List"
+msgstr ""
+
+#: src/frontend_fox/FXRezWaveView.cpp:502
+msgid "Center Start Position"
+msgstr ""
+
+#: src/frontend_fox/FXRezWaveView.cpp:503
+msgid "Center Stop Position"
+msgstr ""
+
+#: src/frontend_fox/FXRezWaveView.cpp:505
+msgid "Add Cue at This Position"
+msgstr ""
+
+#: src/frontend_fox/FXRezWaveView.cpp:506
+msgid "Add Cue at Start Position"
+msgstr ""
+
+#: src/frontend_fox/FXRezWaveView.cpp:507
+msgid "Add Cue at Stop Position"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:53
+#: src/frontend_fox/FilterActionDialogs.cpp:133
+#: src/frontend_fox/FilterActionDialogs.cpp:209
+msgid "Wet/Dry Mix"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:55
+msgid "Input Lowpass"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:58
+msgid "Predelay"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:61
+msgid "Filter Kernel"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:61
+msgid "The Audio File to Use as the Filter Kernel"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:64
+msgid "FK Gain"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:65
+msgid "FK Lowpass"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:67
+msgid "FK Rate"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:70
+msgid "Wrap Decay back to Beginning"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:135
+msgid "Frequency Response"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:135
+#: src/frontend_fox/FilterActionDialogs.cpp:195
+#: src/frontend_fox/FilterActionDialogs.cpp:196
+msgid "Change"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:137
+#: src/frontend_fox/FilterActionDialogs.cpp:199
+msgid "Base Frequency"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:137
+#: src/frontend_fox/FilterActionDialogs.cpp:199
+msgid ""
+"This Sets the Lowest Frequency Displayed on the Graph.\n"
+"This is the Frequency of the First Octave."
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:138
+#: src/frontend_fox/FilterActionDialogs.cpp:202
+msgid "Number of Octaves"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:138
+#: src/frontend_fox/FilterActionDialogs.cpp:202
+msgid ""
+"This Sets the Number of Octaves Displayed on the Graph.\n"
+"But Note that no Frequency Higher than Half of the Sound's Sampling Rate can "
+"be Affected Since it Cannot Contain a Frequency Higher than That."
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:141
+#: src/frontend_fox/FilterActionDialogs.cpp:219
+msgid "Kernel Length"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:142
+#: src/frontend_fox/FilterActionDialogs.cpp:220
+msgid ""
+"This is the Size of the Filter Kernel Computed (in samples) From Your Curve "
+"to be Convolved with the Audio"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:143
+#: src/frontend_fox/FilterActionDialogs.cpp:221
+msgid "Undelay"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:143
+#: src/frontend_fox/FilterActionDialogs.cpp:221
+msgid "This Counteracts the Delay Side-Effect of Custom FIR Filters"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:195
+msgid "Frequency Response 1"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:196
+msgid "Frequency Response 2"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:212
+msgid "Use LFO"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:216
+msgid "Sweep LFO"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:257
+msgid ""
+"Frequency Response 1 and Frequency Response 2 must contain the same number "
+"of nodes"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:284
+#: src/frontend_fox/FilterActionDialogs.cpp:294
+#: src/frontend_fox/FilterActionDialogs.cpp:328
+#: src/frontend_fox/FilterActionDialogs.cpp:339
+msgid "Cutoff Frequency"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:304
+#: src/frontend_fox/FilterActionDialogs.cpp:315
+#: src/frontend_fox/FilterActionDialogs.cpp:350
+msgid "Center Frequency"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:305
+#: src/frontend_fox/FilterActionDialogs.cpp:316
+msgid "Band Width"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:329
+#: src/frontend_fox/FilterActionDialogs.cpp:340
+#: src/frontend_fox/FilterActionDialogs.cpp:351
+msgid "Resonance"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:55
+#: src/frontend_fox/GenerateActionDialogs.cpp:116
+msgid "Volume"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:56
+msgid "Max Particle Velocity"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:60
+msgid "White (Equal Energy per Frequency)"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:61
+msgid "Pink (Natural, Equal Energy per Octave; response: f^(-1))"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:62
+msgid "Brown (as in Brownian Motion; response: f^(-2))"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:63
+msgid "Black :)"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:68
+msgid "Noise Color"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:77
+msgid "Independent Channels"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:78
+msgid "Mono"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:79
+msgid "Inverse Mono"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:81
+msgid "Stereo Image"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:119
+msgid "Sine Wave"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:120
+msgid "Square Wave"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:121
+msgid "Rising Sawtooth Wave"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:122
+msgid "Falling Sawtooth Wave"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:123
+msgid "Triangle Wave"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:124
+msgid "Tone Type"
+msgstr ""
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:29
+#: src/frontend_fox/LoopingActionDialogs.cpp:41
+msgid "Cue Name"
+msgstr ""
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:29
+#: src/frontend_fox/LoopingActionDialogs.cpp:41
+msgid "What to Name the New Cues"
+msgstr ""
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:30
+msgid "Cue Count"
+msgstr ""
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:30
+msgid "How Many Cues to Place Equally Spaced within the Selection"
+msgstr ""
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:31
+#: src/frontend_fox/LoopingActionDialogs.cpp:43
+msgid "Anchor Cues in Time"
+msgstr ""
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:31
+#: src/frontend_fox/LoopingActionDialogs.cpp:43
+msgid "Set the Cues to be Anchored in Time or Not"
+msgstr ""
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:42
+msgid "Time Interval"
+msgstr ""
+
 #: src/frontend_fox/RemasterActionDialogs.cpp:55
 #: src/frontend_fox/RemasterActionDialogs.cpp:108
 msgid "Strict Balance"
@@ -1498,15 +2269,6 @@ msgstr ""
 #: src/frontend_fox/RemasterActionDialogs.cpp:58
 #: src/frontend_fox/RemasterActionDialogs.cpp:111
 msgid "Balance Type"
-msgstr ""
-
-#: src/frontend_fox/RemasterActionDialogs.cpp:80
-#: src/frontend_fox/RemasterActionDialogs.cpp:126
-#: src/frontend_fox/RemasterActionDialogs.cpp:155
-#: src/frontend_fox/CPasteChannelsDialog.cpp:114
-#: src/frontend_fox/CPasteChannelsDialog.cpp:119
-#: src/frontend_fox/CChannelSelectDialog.cpp:67
-msgid "Channel "
 msgstr ""
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:105
@@ -1576,411 +2338,6 @@ msgstr ""
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:277
 msgid "New Sample Rate"
-msgstr ""
-
-#: src/frontend_fox/CProgressDialog.cpp:44
-#: src/frontend_fox/FXModalDialogBox.cpp:58
-msgid "&Cancel"
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:64 src/frontend_fox/CMainWindow.cpp:208
-#: src/frontend_fox/CMainWindow.cpp:748
-msgid "Record"
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:85
-msgid "   Cue Prefix:"
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:89
-msgid "Cue Number:"
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:93
-msgid "Add Anchored Cue"
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:99
-#: src/frontend_fox/CRecordDialog.cpp:100
-msgid "Recording:"
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:102
-#: src/frontend_fox/CRecordDialog.cpp:103
-msgid "Waiting for Threshold:"
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:108
-msgid "Record Length: "
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:109
-msgid "Record Size: "
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:110
-msgid "Record Limit: "
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:116
-msgid "DCOffset: "
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:117
-msgid "Reported Every 5 Seconds"
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:118
-msgid ""
-"Compensate\tSubtract out the currently reported DC Offset from any further "
-"recorded data"
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:121
-msgid "Reset"
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:122
-#: src/frontend_fox/CRecordDialog.cpp:184
-#: src/frontend_fox/CRecordDialog.cpp:361
-msgid "Clip Count: "
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:126
-msgid ""
-"Record/\n"
-"Resume"
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:127
-msgid ""
-"Stop/\n"
-"Pause"
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:128
-msgid ""
-"Redo/\n"
-"Reset"
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:131
-msgid "Limit Duration to "
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:138
-msgid "Effective on Threshold "
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:235
-msgid "DC Offset: "
-msgstr ""
-
-#: src/frontend_fox/CRecordDialog.cpp:291
-msgid ""
-"Invalid record time limit -- Should be in the form of HH:MM:SS.sss, MM:SS."
-"sss or SS.sss"
-msgstr ""
-
-#: src/frontend_fox/CActionParamDialog.cpp:95
-msgid "Explain"
-msgstr ""
-
-#: src/frontend_fox/CActionParamDialog.cpp:743
-msgid "Preset Name"
-msgstr ""
-
-#: src/frontend_fox/CActionParamDialog.cpp:747
-msgid "Invalid Preset Name"
-msgstr ""
-
-#: src/frontend_fox/CActionParamDialog.cpp:756
-msgid "Preset Name cannot contain"
-msgstr ""
-
-#: src/frontend_fox/CActionParamDialog.cpp:771
-msgid "Overwrite Existing Preset"
-msgstr ""
-
-#: src/frontend_fox/CActionParamDialog.cpp:839
-msgid "Remove Preset"
-msgstr ""
-
-#: src/frontend_fox/CActionParamDialog.cpp:896
-msgid "&Use\tOr Double-Click an Item in the List"
-msgstr ""
-
-#: src/frontend_fox/CActionParamDialog.cpp:897
-#: src/frontend_fox/CMainWindow.cpp:718
-msgid "&Save"
-msgstr ""
-
-#: src/frontend_fox/CActionParamDialog.cpp:898
-#: src/frontend_fox/CCueListDialog.cpp:77
-msgid "&Remove"
-msgstr ""
-
-#: src/frontend_fox/CCueDialog.cpp:48
-msgid "Cue Properties"
-msgstr ""
-
-#: src/frontend_fox/CCueDialog.cpp:51
-msgid "Cue Name:"
-msgstr ""
-
-#: src/frontend_fox/CCueDialog.cpp:55
-msgid " Cue Time:"
-msgstr ""
-
-#: src/frontend_fox/CCueDialog.cpp:59
-msgid ""
-"Anchored in Time\tMeaning That This Cue's Position Will Not Be Affected by "
-"Adding and Removing Space Within the Audio"
-msgstr ""
-
-#: src/frontend_fox/CCueDialog.cpp:96
-msgid "Cue Name Too Long"
-msgstr ""
-
-#: src/frontend_fox/CCueDialog.cpp:104
-msgid "Invalid Cue Time.  Format: HH:MM:SS.sssss or MM:SS.sssss"
-msgstr ""
-
-#: src/frontend_fox/CStatusComm.cpp:95
-msgid "Warning"
-msgstr ""
-
-#: src/frontend_fox/CStatusComm.cpp:100
-msgid "Note"
-msgstr ""
-
-#: src/frontend_fox/CStatusComm.cpp:115
-msgid "Question"
-msgstr ""
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:60
-msgid "Paste Channels"
-msgstr ""
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:62
-msgid "Pasting Parameters:"
-msgstr ""
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:73
-#: src/frontend_fox/CPasteChannelsDialog.cpp:203
-#: src/frontend_fox/CPasteChannelsDialog.cpp:207
-msgid "Repeat Count"
-msgstr ""
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:77
-msgid "Repeat Time"
-msgstr ""
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:84
-msgid "Repeat X Times"
-msgstr ""
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:85
-msgid "Repeat for X Seconds"
-msgstr ""
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:95
-#: src/frontend_fox/CChannelSelectDialog.cpp:70
-msgid "Default"
-msgstr ""
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:96
-#: src/frontend_fox/CChannelSelectDialog.cpp:71
-msgid "Clear"
-msgstr ""
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:98
-msgid "Mix Type:"
-msgstr ""
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:100
-msgid "Add"
-msgstr ""
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:101
-msgid "Subtract"
-msgstr ""
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:102
-msgid "Multiply"
-msgstr ""
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:103
-msgid "Average"
-msgstr ""
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:107
-msgid "Clipboard"
-msgstr ""
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:108
-msgid "Destination"
-msgstr ""
-
-#: src/frontend_fox/CPasteChannelsDialog.cpp:199
-msgid "MixMethod"
-msgstr ""
-
-#: src/frontend_fox/CNewSoundDialog.cpp:48
-msgid "New Sound"
-msgstr ""
-
-#: src/frontend_fox/CNewSoundDialog.cpp:51
-msgid "Filename:"
-msgstr ""
-
-#: src/frontend_fox/CNewSoundDialog.cpp:53
-msgid "&Browse"
-msgstr ""
-
-#: src/frontend_fox/CNewSoundDialog.cpp:55
-msgid "Raw Format"
-msgstr ""
-
-#: src/frontend_fox/CNewSoundDialog.cpp:58 src/frontend_fox/CRawDialog.cpp:51
-#: src/frontend_fox/CVoxDialog.cpp:47
-msgid "Channels:"
-msgstr ""
-
-#: src/frontend_fox/CNewSoundDialog.cpp:61 src/frontend_fox/CRawDialog.cpp:57
-#: src/frontend_fox/CVoxDialog.cpp:53
-msgid "Sample Rate:"
-msgstr ""
-
-#: src/frontend_fox/CNewSoundDialog.cpp:64
-msgid "Length:"
-msgstr ""
-
-#: src/frontend_fox/CNewSoundDialog.cpp:67
-msgid "second(s)"
-msgstr ""
-
-#: src/frontend_fox/CNewSoundDialog.cpp:176
-msgid "Please supply a filename"
-msgstr ""
-
-#: src/frontend_fox/CNewSoundDialog.cpp:187
-msgid ""
-"Are you sure you want to overwrite the existing file:\n"
-"   "
-msgstr ""
-
-#: src/frontend_fox/CNewSoundDialog.cpp:200
-msgid "Invalid number of channels"
-msgstr ""
-
-#: src/frontend_fox/CNewSoundDialog.cpp:209
-msgid "Invalid sample rate"
-msgstr ""
-
-#: src/frontend_fox/CNewSoundDialog.cpp:219
-msgid "Invalid length"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:46
-msgid "Raw Parameters"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:70
-msgid "Sample Format:"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:72
-msgid "8bit Signed PCM"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:73
-msgid "8bit Unsigned PCM"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:74
-msgid "16bit Signed PCM"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:75
-msgid "16bit Unsigned PCM"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:76
-msgid "24bit Signed PCM"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:77
-msgid "24bit Unsigned PCM"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:78
-msgid "32bit Signed PCM"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:79
-msgid "32bit Unsigned PCM"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:80
-msgid "32bit Floating Point PCM"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:81
-msgid "64bit Floating Point PCM"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:84
-msgid "Byte Order:"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:85
-msgid "Little Endian (Intel)"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:85
-msgid "Big Endian (non-Intel)"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:89
-msgid "Data Start:"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:93
-msgid "in bytes"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:95
-msgid "Data Length:"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:96 src/frontend_fox/CRawDialog.cpp:100
-#: src/frontend_fox/CRawDialog.cpp:101
-msgid "normally leave this 0"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:101
-msgid "in audio frames"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:151
-msgid "invalid negative data offset"
-msgstr ""
-
-#: src/frontend_fox/CRawDialog.cpp:158
-msgid "invalid negative data length"
-msgstr ""
-
-#: src/frontend_fox/CCueListDialog.cpp:66
-msgid "Cue List"
-msgstr ""
-
-#: src/frontend_fox/CCueListDialog.cpp:76
-msgid "&Add"
-msgstr ""
-
-#: src/frontend_fox/CCueListDialog.cpp:78 src/frontend_fox/CMainWindow.cpp:892
-msgid "&Edit"
 msgstr ""
 
 #: src/frontend_fox/CMainWindow.cpp:198 src/frontend_fox/CMainWindow.cpp:749
@@ -2260,320 +2617,4 @@ msgstr ""
 #: src/frontend_fox/CMainWindow.cpp:1401 src/frontend_fox/CMainWindow.cpp:1439
 #: src/frontend_fox/CMainWindow.cpp:1440
 msgid "semitones"
-msgstr ""
-
-#: src/frontend_fox/CChannelSelectDialog.cpp:58
-msgid "Channel Select"
-msgstr ""
-
-#: src/frontend_fox/CChannelSelectDialog.cpp:60
-msgid "Channels to Which This Action Should Apply:"
-msgstr ""
-
-#: src/frontend_fox/CFrontendHooks.cpp:60
-msgid "Select Directory"
-msgstr ""
-
-#: src/frontend_fox/CFrontendHooks.cpp:81
-msgid "Open File"
-msgstr ""
-
-#: src/frontend_fox/CFrontendHooks.cpp:89
-msgid "Open as Raw"
-msgstr ""
-
-#: src/frontend_fox/CFrontendHooks.cpp:94
-msgid "Save File"
-msgstr ""
-
-#: src/frontend_fox/CFrontendHooks.cpp:102
-msgid "Save as Raw"
-msgstr ""
-
-#: src/frontend_fox/CFrontendHooks.cpp:166
-msgid "All Supported Types"
-msgstr ""
-
-#: src/frontend_fox/CFrontendHooks.cpp:166
-msgid "All Files"
-msgstr ""
-
-#: src/frontend_fox/FXRezWaveView.cpp:477
-#: src/frontend_fox/FXRezWaveView.cpp:482
-msgid "Set Start Position to Cue"
-msgstr ""
-
-#: src/frontend_fox/FXRezWaveView.cpp:479
-#: src/frontend_fox/FXRezWaveView.cpp:483
-msgid "Set Stop Position to Cue"
-msgstr ""
-
-#: src/frontend_fox/FXRezWaveView.cpp:487
-msgid "&Edit Cue"
-msgstr ""
-
-#: src/frontend_fox/FXRezWaveView.cpp:488
-msgid "&Remove Cue"
-msgstr ""
-
-#: src/frontend_fox/FXRezWaveView.cpp:490
-#: src/frontend_fox/FXRezWaveView.cpp:509
-msgid "Show Cues &List"
-msgstr ""
-
-#: src/frontend_fox/FXRezWaveView.cpp:502
-msgid "Center Start Position"
-msgstr ""
-
-#: src/frontend_fox/FXRezWaveView.cpp:503
-msgid "Center Stop Position"
-msgstr ""
-
-#: src/frontend_fox/FXRezWaveView.cpp:505
-msgid "Add Cue at This Position"
-msgstr ""
-
-#: src/frontend_fox/FXRezWaveView.cpp:506
-msgid "Add Cue at Start Position"
-msgstr ""
-
-#: src/frontend_fox/FXRezWaveView.cpp:507
-msgid "Add Cue at Stop Position"
-msgstr ""
-
-#: src/frontend_fox/FXLFOParamValue.cpp:58
-msgid "Phase"
-msgstr ""
-
-#: src/frontend_fox/FXModalDialogBox.cpp:57
-msgid "&Okay"
-msgstr ""
-
-#: src/frontend_fox/CMp3Dialog.cpp:68
-msgid "mp3 Compression Parameters"
-msgstr ""
-
-#: src/frontend_fox/CMp3Dialog.cpp:75 src/frontend_fox/COggDialog.cpp:73
-msgid "Constant Bit Rate"
-msgstr ""
-
-#: src/frontend_fox/CMp3Dialog.cpp:77 src/frontend_fox/COggDialog.cpp:75
-msgid "Bit Rate: "
-msgstr ""
-
-#: src/frontend_fox/CMp3Dialog.cpp:83
-msgid "Average Bit Rate"
-msgstr ""
-
-#: src/frontend_fox/CMp3Dialog.cpp:85 src/frontend_fox/COggDialog.cpp:83
-msgid "Minimum Bit Rate: "
-msgstr ""
-
-#: src/frontend_fox/CMp3Dialog.cpp:88
-msgid "Average Bit Rate: "
-msgstr ""
-
-#: src/frontend_fox/CMp3Dialog.cpp:91 src/frontend_fox/COggDialog.cpp:89
-msgid "Maximum Bit Rate: "
-msgstr ""
-
-#: src/frontend_fox/CMp3Dialog.cpp:97
-msgid "Variable Bit Rate Quality Setting"
-msgstr ""
-
-#: src/frontend_fox/CMp3Dialog.cpp:99 src/frontend_fox/COggDialog.cpp:65
-msgid "Quality: "
-msgstr ""
-
-#: src/frontend_fox/CMp3Dialog.cpp:104
-msgid "0(Highest Quality -> 9(Lowest Quality)"
-msgstr ""
-
-#: src/frontend_fox/CMp3Dialog.cpp:109
-msgid "Use Only These Flags"
-msgstr ""
-
-#: src/frontend_fox/CMp3Dialog.cpp:113
-msgid "Additional Flags: "
-msgstr ""
-
-#: src/frontend_fox/CMp3Dialog.cpp:116
-msgid "To lame"
-msgstr ""
-
-#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:45
-msgid "MIDI Sample Dump"
-msgstr ""
-
-#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:49
-msgid "Wait for Dump"
-msgstr ""
-
-#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:52
-msgid "Sample ID"
-msgstr ""
-
-#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:57
-msgid "SysEx Channel"
-msgstr ""
-
-#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:62
-msgid "Loop Type"
-msgstr ""
-
-#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:102
-#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:139
-msgid "Waveform IDs must be from 0 to 16384"
-msgstr ""
-
-#: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:148
-msgid "Loop type must be from 0 to 127"
-msgstr ""
-
-#: src/frontend_fox/CMetersWindow.cpp:579
-#: src/frontend_fox/CMetersWindow.cpp:581
-msgid "Unrotate from Natural 45 Degree Line"
-msgstr ""
-
-#: src/frontend_fox/CMetersWindow.cpp:725
-msgid ""
-"Adjust Zoom Factor for Analyzer\n"
-"Right-click for Default"
-msgstr ""
-
-#: src/frontend_fox/CMetersWindow.cpp:800
-msgid "Configure with FFTW"
-msgstr ""
-
-#: src/frontend_fox/CMetersWindow.cpp:801
-msgid "for Freq. Analysis"
-msgstr ""
-
-#: src/frontend_fox/LoopingActionDialogs.cpp:29
-#: src/frontend_fox/LoopingActionDialogs.cpp:41
-msgid "Cue Name"
-msgstr ""
-
-#: src/frontend_fox/LoopingActionDialogs.cpp:29
-#: src/frontend_fox/LoopingActionDialogs.cpp:41
-msgid "What to Name the New Cues"
-msgstr ""
-
-#: src/frontend_fox/LoopingActionDialogs.cpp:30
-msgid "Cue Count"
-msgstr ""
-
-#: src/frontend_fox/LoopingActionDialogs.cpp:30
-msgid "How Many Cues to Place Equally Spaced within the Selection"
-msgstr ""
-
-#: src/frontend_fox/LoopingActionDialogs.cpp:31
-#: src/frontend_fox/LoopingActionDialogs.cpp:43
-msgid "Anchor Cues in Time"
-msgstr ""
-
-#: src/frontend_fox/LoopingActionDialogs.cpp:31
-#: src/frontend_fox/LoopingActionDialogs.cpp:43
-msgid "Set the Cues to be Anchored in Time or Not"
-msgstr ""
-
-#: src/frontend_fox/LoopingActionDialogs.cpp:42
-msgid "Time Interval"
-msgstr ""
-
-#: src/frontend_fox/CVoxDialog.cpp:42
-msgid "Vox Parameters"
-msgstr ""
-
-#: src/frontend_fox/COggDialog.cpp:56
-msgid "Ogg Compression Parameters"
-msgstr ""
-
-#: src/frontend_fox/COggDialog.cpp:63
-msgid "Quality Setting"
-msgstr ""
-
-#: src/frontend_fox/COggDialog.cpp:69
-msgid "0 (lowest) to 1 (highest)"
-msgstr ""
-
-#: src/frontend_fox/COggDialog.cpp:81
-msgid "Variable Bit Rate"
-msgstr ""
-
-#: src/frontend_fox/COggDialog.cpp:86
-msgid "Normal Bit Rate: "
-msgstr ""
-
-#: src/frontend_fox/CJACKPortChoiceDialog.cpp:40
-msgid "JACK Port Selection"
-msgstr ""
-
-#: src/frontend_fox/GenerateActionDialogs.cpp:55
-#: src/frontend_fox/GenerateActionDialogs.cpp:116
-msgid "Volume"
-msgstr ""
-
-#: src/frontend_fox/GenerateActionDialogs.cpp:56
-msgid "Max Particle Velocity"
-msgstr ""
-
-#: src/frontend_fox/GenerateActionDialogs.cpp:60
-msgid "White (Equal Energy per Frequency)"
-msgstr ""
-
-#: src/frontend_fox/GenerateActionDialogs.cpp:61
-msgid "Pink (Natural, Equal Energy per Octave; response: f^(-1))"
-msgstr ""
-
-#: src/frontend_fox/GenerateActionDialogs.cpp:62
-msgid "Brown (as in Brownian Motion; response: f^(-2))"
-msgstr ""
-
-#: src/frontend_fox/GenerateActionDialogs.cpp:63
-msgid "Black :)"
-msgstr ""
-
-#: src/frontend_fox/GenerateActionDialogs.cpp:68
-msgid "Noise Color"
-msgstr ""
-
-#: src/frontend_fox/GenerateActionDialogs.cpp:77
-msgid "Independent Channels"
-msgstr ""
-
-#: src/frontend_fox/GenerateActionDialogs.cpp:78
-msgid "Mono"
-msgstr ""
-
-#: src/frontend_fox/GenerateActionDialogs.cpp:79
-msgid "Inverse Mono"
-msgstr ""
-
-#: src/frontend_fox/GenerateActionDialogs.cpp:81
-msgid "Stereo Image"
-msgstr ""
-
-#: src/frontend_fox/GenerateActionDialogs.cpp:119
-msgid "Sine Wave"
-msgstr ""
-
-#: src/frontend_fox/GenerateActionDialogs.cpp:120
-msgid "Square Wave"
-msgstr ""
-
-#: src/frontend_fox/GenerateActionDialogs.cpp:121
-msgid "Rising Sawtooth Wave"
-msgstr ""
-
-#: src/frontend_fox/GenerateActionDialogs.cpp:122
-msgid "Falling Sawtooth Wave"
-msgstr ""
-
-#: src/frontend_fox/GenerateActionDialogs.cpp:123
-msgid "Triangle Wave"
-msgstr ""
-
-#: src/frontend_fox/GenerateActionDialogs.cpp:124
-msgid "Tone Type"
 msgstr ""
