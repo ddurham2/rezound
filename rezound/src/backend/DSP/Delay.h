@@ -51,8 +51,7 @@ public:
 		buffer(NULL),
 		maxDelayTime(0),
 
-		putPos(0),
-		getPos(0)
+		putPos(0)
 	{
 		setDelayTime(_maxDelayTime);
 	}
@@ -80,8 +79,7 @@ public:
 	void clear()
 	{
 		memset(buffer,0,maxDelayTime*sizeof(*buffer));
-		getPos=2*maxDelayTime; // I don't start at zero because getSample(...) subtracts from the positions
-		putPos=getPos-1;
+		putPos=2*maxDelayTime; // I don't start at zero because getSample(...) subtracts from the positions
 	}
 
 	// give an input sample, returns the sample delayed by the constructed delay time
@@ -99,7 +97,7 @@ public:
 
 	const sample_t getSample()
 	{
-		const sample_t s=buffer[(getPos++)%maxDelayTime];
+		const sample_t s=buffer[(putPos+1)%maxDelayTime];
 		return(s);
 	}
 
@@ -125,7 +123,7 @@ public:
 private:
 	sample_t *buffer;
 	unsigned maxDelayTime;
-	size_t putPos,getPos;
+	size_t putPos;
 };
 
 #endif
