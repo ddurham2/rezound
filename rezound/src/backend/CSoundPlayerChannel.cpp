@@ -386,6 +386,15 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 		return;
 	}
 
+	if(sound.getLength()<3)
+	{
+		kill();
+		this->envelope.releasing=true;
+		sound.unlockSize();
+		unlock();
+		return;
+	}
+
 	try
 	{
 		sample_pos_t pos1,pos2;
@@ -421,6 +430,8 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 			pos2=(sound.getLength()-1)-fudge;
 		}
 
+		if(pos1>pos2) // incase the fudge subtraction this not to be so
+			pos1=pos2;
 
 		// use a local variable instead of looking up the data member each time
 		register sample_fpos_t fPlayPosition=this->playPosition;
@@ -431,6 +442,8 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 			fPlayPosition=0.0;
 		else if(fPlayPosition>pos2)
 			fPlayPosition=pos2;
+
+//#warning I need to figure out how to get this to play okay when its interpolating and the seleciton is just near the end of the sound and the selection is one sample long
 
 
 		const sample_fpos_t origPlayPosition=fPlayPosition;
