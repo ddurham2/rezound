@@ -43,6 +43,7 @@ noinst_HEADERS= \
 	   CActionParameters.h \
 	   AActionDialog.h \
 	   CActionSound.h \
+	   TSoundStretcher.h \
 	   ALFO.h \
 	   CSound.h \
 	   ASoundPlayer.h \
