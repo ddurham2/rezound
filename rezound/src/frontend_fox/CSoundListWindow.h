@@ -45,7 +45,6 @@ public:
 		ID_LAST
 	};
 
-	virtual void create();
 	virtual void show();
 	virtual void hide();
 

@@ -62,13 +62,6 @@ CSoundListWindow::~CSoundListWindow()
 	setAccelTable(NULL);
 }
 
-void CSoundListWindow::create()
-{
-	FXTopWindow::create();
-
-	hide();
-}
-
 void CSoundListWindow::show()
 {
 	// put this if here because it would show just after adding items to the list
@@ -144,7 +137,7 @@ void CSoundListWindow::hideOrShow()
 {
 	if(soundList->getNumItems()>1)
 		show();
-	else
+	else if(shown())
 		hide();
 }
 
