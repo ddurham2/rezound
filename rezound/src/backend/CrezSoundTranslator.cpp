@@ -94,121 +94,134 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 	CSound::PoolFile_t loadFromFile(REZOUND_POOLFILE_BLOCKSIZE,REZOUND_POOLFILE_SIGNATURE); 
 	loadFromFile.openFile(filename,false); // we could pass a read-only flag if there was such a thing???
 
-	// read the meta data pool
+	try
 	{
-		// check version at the beginning of RFormat and perhaps handle things differently
-		uint32_t version=0xffffffff;
-		loadFromFile.readPoolRaw("Format Info",&version,sizeof(version));
-		if(version==1)
-		{
-			const CFormat1InfoPoolAccesser a=loadFromFile.getPoolAccesser<RFormatInfo1>("Format Info");
-			RFormatInfo1 r;
-			r=a[0];
 
-			if(r.size>MAX_LENGTH)
+		// read the meta data pool
+		{
+			// check version at the beginning of RFormat and perhaps handle things differently
+			uint32_t version=0xffffffff;
+			loadFromFile.readPoolRaw("Format Info",&version,sizeof(version));
+			if(version==1)
 			{
-				// ??? what should I do? truncate the sound or just error out?
-			}
+				const CFormat1InfoPoolAccesser a=loadFromFile.getPoolAccesser<RFormatInfo1>("Format Info");
+				RFormatInfo1 r;
+				r=a[0];
 
-			size=r.size;
-			sampleRate=r.sampleRate;
-			channelCount=r.channelCount;
-			PCMType=pcmSigned16BitInteger;
-		}
-		else if(version==2)
-		{
-			const CFormat2InfoPoolAccesser a=loadFromFile.getPoolAccesser<RFormatInfo2>("Format Info");
-			RFormatInfo2 r;
-			r=a[0];
-
-			if(r.size>MAX_LENGTH)
-			{
-				// ??? what should I do? truncate the sound or just error out?
-			}
-
-			size=r.size;
-			sampleRate=r.sampleRate;
-			channelCount=r.channelCount;
-			PCMType=r.PCMType;
-		}
-		else
-			throw(runtime_error(string(__func__)+" -- unhandled format version: "+istring(version)));
-
-
-		if(sampleRate<4000 || sampleRate>96000)
-			throw(runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate)+" probably indicates a corrupt file"));
-		if(channelCount<=0 || channelCount>MAX_CHANNELS) // ??? could warn the user and just ignore the extra channels
-			throw(runtime_error(string(__func__)+" -- invalid number of channels in audio file: "+istring(channelCount)+" -- you could simply increase MAX_CHANNELS in CSound.h"));
-
-		sound->createWorkingPoolFile(filename,sampleRate,channelCount,size);
-	}
-
-
-	// read the output routing information
-	// ??? need to do when I'm sure how it will be stored and there is actually a frontend to verify it
-	// ??? perhaps know if the output routing information is different on this machine than it was on the saved machine
-		// prompt the user to reset the information if it was different
-
-	// read the cues
-	{
-		const CSound::CCuePoolAccesser srcCues=loadFromFile.createPool<CSound::RCue>("Cues",false);
-		sound->cueAccesser->clear();
-		sound->cueAccesser->copyData(0,srcCues,0,srcCues.getSize(),true);
-		sound->rebuildCueIndex();
-	}
-
-
-	// read the user notes
-	{
-		const TStaticPoolAccesser<int8_t,CSound::PoolFile_t> src=loadFromFile.createPool<int8_t>("UserNotes",false);
-
-                string userNotes;
-
-		char buffer[101];
-		for(size_t t=0;t<src.getSize()/100;t++)
-		{
-			// ??? here we need to assert that char and int8_t are the same
-			src.read((int8_t *)buffer,100);
-			buffer[100]=0;
-			userNotes+=buffer;
-		}
-
-		// ??? here we need to assert that char and int8_t are the same
-		src.read((int8_t *)buffer,src.getSize()%100);
-		buffer[src.getSize()%100]=0;
-		userNotes+=buffer;
-												
-		sound->setUserNotes(userNotes);
-	}
-	
-
-	// read the audio
-	{
-		// ??? need to do convertions to the native type
-		if((PCMType==pcmSigned16BitInteger && typeid(sample_t)==typeid(int16_t)) )
-		{
-			for(unsigned i=0;i<channelCount;i++)
-			{
-				CStatusBar statusBar("Loading Channel "+istring(i),0,99,true);
-
-				CSound::CInternalRezPoolAccesser dest=sound->getAudioInternal(i);
-
-				const sample_pos_t chunkSize=size/100;
-
-				if(chunkSize>0)
+				if(r.size>MAX_LENGTH)
 				{
-					for(unsigned int t=0;t<100;t++)
-					{
-						dest.copyData(t*chunkSize,loadFromFile.getPoolAccesser<sample_t>("Channel "+istring(i+1)),t*chunkSize,chunkSize);
-						if(statusBar.update(t))
-							return false; // cancelled
-					}
+					// ??? what should I do? truncate the sound or just error out?
 				}
-				dest.copyData(100*chunkSize,loadFromFile.getPoolAccesser<sample_t>("Channel "+istring(i+1)),100*chunkSize,size%100);
+
+				size=r.size;
+				sampleRate=r.sampleRate;
+				channelCount=r.channelCount;
+				PCMType=pcmSigned16BitInteger;
 			}
+			else if(version==2)
+			{
+				const CFormat2InfoPoolAccesser a=loadFromFile.getPoolAccesser<RFormatInfo2>("Format Info");
+				RFormatInfo2 r;
+				r=a[0];
+
+				if(r.size>MAX_LENGTH)
+				{
+					// ??? what should I do? truncate the sound or just error out?
+				}
+
+				size=r.size;
+				sampleRate=r.sampleRate;
+				channelCount=r.channelCount;
+				PCMType=r.PCMType;
+			}
+			else
+				throw(runtime_error(string(__func__)+" -- unhandled format version: "+istring(version)));
+
+
+			if(sampleRate<4000 || sampleRate>96000)
+				throw(runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate)+" probably indicates a corrupt file"));
+			if(channelCount<=0 || channelCount>MAX_CHANNELS) // ??? could warn the user and just ignore the extra channels
+				throw(runtime_error(string(__func__)+" -- invalid number of channels in audio file: "+istring(channelCount)+" -- you could simply increase MAX_CHANNELS in CSound.h"));
+
+			sound->createWorkingPoolFile(filename,sampleRate,channelCount,size);
 		}
-		else
-			throw(runtime_error(string(__func__)+" -- unhandled format conversion while loading"));
+
+
+		// read the output routing information
+		// ??? need to do when I'm sure how it will be stored and there is actually a frontend to verify it
+		// ??? perhaps know if the output routing information is different on this machine than it was on the saved machine
+			// prompt the user to reset the information if it was different
+
+		// read the cues
+		{
+			const CSound::CCuePoolAccesser srcCues=loadFromFile.createPool<CSound::RCue>("Cues",false);
+			sound->cueAccesser->clear();
+			sound->cueAccesser->copyData(0,srcCues,0,srcCues.getSize(),true);
+			sound->rebuildCueIndex();
+		}
+
+
+		// read the user notes
+		{
+			const TStaticPoolAccesser<int8_t,CSound::PoolFile_t> src=loadFromFile.createPool<int8_t>("UserNotes",false);
+
+			string userNotes;
+
+			char buffer[101];
+			for(size_t t=0;t<src.getSize()/100;t++)
+			{
+				// ??? here we need to assert that char and int8_t are the same
+				src.read((int8_t *)buffer,100);
+				buffer[100]=0;
+				userNotes+=buffer;
+			}
+
+			// ??? here we need to assert that char and int8_t are the same
+			src.read((int8_t *)buffer,src.getSize()%100);
+			buffer[src.getSize()%100]=0;
+			userNotes+=buffer;
+													
+			sound->setUserNotes(userNotes);
+		}
+		
+
+		// read the audio
+		{
+			// ??? need to do convertions to the native type
+			if((PCMType==pcmSigned16BitInteger && typeid(sample_t)==typeid(int16_t)) )
+			{
+				for(unsigned i=0;i<channelCount;i++)
+				{
+					CStatusBar statusBar("Loading Channel "+istring(i),0,99,true);
+
+					CSound::CInternalRezPoolAccesser dest=sound->getAudioInternal(i);
+
+					const sample_pos_t chunkSize=size/100;
+
+					if(chunkSize>0)
+					{
+						for(unsigned int t=0;t<100;t++)
+						{
+							dest.copyData(t*chunkSize,loadFromFile.getPoolAccesser<sample_t>("Channel "+istring(i+1)),t*chunkSize,chunkSize);
+							if(statusBar.update(t))
+							{
+								loadFromFile.closeFile(false,false);
+								return false; // cancelled
+							}
+						}
+					}
+					dest.copyData(100*chunkSize,loadFromFile.getPoolAccesser<sample_t>("Channel "+istring(i+1)),100*chunkSize,size%100);
+				}
+			}
+			else
+				throw(runtime_error(string(__func__)+" -- unhandled format conversion while loading"));
+		}
+
+	}
+	catch(...)
+	{
+		loadFromFile.closeFile(false,false);
+		throw;
 	}
 
 	loadFromFile.closeFile(false,false);
