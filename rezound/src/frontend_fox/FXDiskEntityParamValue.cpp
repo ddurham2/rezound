@@ -50,7 +50,7 @@ FXDEFMAP(FXDiskEntityParamValue) FXDiskEntityParamValueMap[]=
 FXIMPLEMENT(FXDiskEntityParamValue,FXVerticalFrame,FXDiskEntityParamValueMap,ARRAYNUMBER(FXDiskEntityParamValueMap))
 
 FXDiskEntityParamValue::FXDiskEntityParamValue(FXComposite *p,int opts,const char *title,const string initialEntityName,DiskEntityTypes _entityType) :
-	FXVerticalFrame(p,opts|FRAME_RAISED |LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 2,2,2,2, 0,0),
+	FXVerticalFrame(p,opts|FRAME_RAISED |LAYOUT_FILL_X, 0,0,0,0, 2,2,2,2, 0,0),
 	
 	entityType(_entityType),
 

@@ -43,7 +43,7 @@ FXDEFMAP(FXCheckBoxParamValue) FXCheckBoxParamValueMap[]=
 FXIMPLEMENT(FXCheckBoxParamValue,FXVerticalFrame,FXCheckBoxParamValueMap,ARRAYNUMBER(FXCheckBoxParamValueMap))
 
 FXCheckBoxParamValue::FXCheckBoxParamValue(FXComposite *p,int opts,const char *title,const bool checked) :
-	FXVerticalFrame(p,opts|FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 2,2,2,2, 1,0),
+	FXVerticalFrame(p,opts|FRAME_RAISED | LAYOUT_FILL_X,0,0,0,0, 2,2,2,2, 1,0),
 
 	checkBox(new FXCheckButton(this,title,NULL,0,CHECKBUTTON_NORMAL)),
 
