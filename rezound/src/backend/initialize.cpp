@@ -263,6 +263,7 @@ void deinitializeBackend()
 #include "CrezSoundTranslator.h"
 #include "ClibvorbisSoundTranslator.h"
 #include "ClibaudiofileSoundTranslator.h"
+#include "ClameSoundTranslator.h"
 #include "CrawSoundTranslator.h"
 #include "Cold_rezSoundTranslator.h"
 void setupSoundTranslators()
@@ -284,6 +285,12 @@ void setupSoundTranslators()
 	static const CrawSoundTranslator rawSoundTranslator;
 	ASoundTranslator::registeredTranslators.push_back(&rawSoundTranslator);
 #endif
+
+	if(ClameSoundTranslator::checkForLame())
+	{
+		static const ClameSoundTranslator lameSoundTranslator;
+		ASoundTranslator::registeredTranslators.push_back(&lameSoundTranslator);
+	}
 
 	static const Cold_rezSoundTranslator old_rezSoundTranslator;
 	ASoundTranslator::registeredTranslators.push_back(&old_rezSoundTranslator);

@@ -61,6 +61,7 @@ noinst_HEADERS= \
 	   CTrigger.h \
 	   ClibaudiofileSoundTranslator.h \
 	   ClibvorbisSoundTranslator.h \
+	   ClameSoundTranslator.h \
 	   Cold_rezSoundTranslator.h \
 	   CrawSoundTranslator.h \
 	   CrezSoundTranslator.h \
@@ -104,5 +105,6 @@ libbackend_la_SOURCES= \
 			Cold_rezSoundTranslator.cpp \
 			ClibaudiofileSoundTranslator.cpp \
 			ClibvorbisSoundTranslator.cpp \
+			ClameSoundTranslator.cpp \
 			CrawSoundTranslator.cpp \
 		        initialize.cpp
