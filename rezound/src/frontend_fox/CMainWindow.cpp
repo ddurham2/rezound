@@ -143,13 +143,13 @@ CMainWindow::CMainWindow(FXApp* a) :
 
 	playControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,6,6),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
 		#define PLAY_CONTROLS_BUTTON_STYLE BUTTON_STYLE
-		new FXButton(playControlsFrame,"\tPAO\tPlay All Once",new FXGIFIcon(getApp(),play_on_gif),this,ID_PLAY_ALL_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,0,32,32);
-		new FXButton(playControlsFrame,"PSO\tPlay Selection Once",NULL,this,ID_PLAY_SELECTION_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32,0,32,32);
-		new FXButton(playControlsFrame,"PAL\tPlay All Looped",NULL,this,ID_PLAY_ALL_LOOPED_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32,32,32);
-		new FXButton(playControlsFrame,"PSL\tPlay Selection Looped",NULL,this,ID_PLAY_SELECTION_LOOPED_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32,32,32,32);
+		new FXButton(playControlsFrame,"\tPlay All Once",new FXGIFIcon(getApp(),play_all_once_gif),this,ID_PLAY_ALL_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,0,32,32);
+		new FXButton(playControlsFrame,"\tPlay Selection Once",new FXGIFIcon(getApp(),play_selection_once_gif),this,ID_PLAY_SELECTION_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32,0,32,32);
+		new FXButton(playControlsFrame,"\tPlay All Looped",new FXGIFIcon(getApp(),play_all_looped_gif),this,ID_PLAY_ALL_LOOPED_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32,32,32);
+		new FXButton(playControlsFrame,"\tPlay Selection Looped",new FXGIFIcon(getApp(),play_selection_looped_gif),this,ID_PLAY_SELECTION_LOOPED_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32,32,32,32);
 
-		new FXButton(playControlsFrame,"\tStop\tStop",new FXGIFIcon(getApp(),stop_on_gif),this,ID_STOP_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,0,32,32),
-		new FXButton(playControlsFrame,"\tPause\tPause",new FXGIFIcon(getApp(),pause_on_gif),this,ID_PAUSE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32,32,32),
+		new FXButton(playControlsFrame,"\tStop",new FXGIFIcon(getApp(),stop_gif),this,ID_STOP_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,0,32,32),
+		new FXButton(playControlsFrame,"\tPause",new FXGIFIcon(getApp(),pause_gif),this,ID_PAUSE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32,32,32),
 
 		new FXButton(playControlsFrame,"||<<\tJump to Beginning",NULL,this,ID_JUMP_TO_BEGINNING_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32+32,32+32,16);
 		new FXButton(playControlsFrame,"|<<\tJump to Start Position",NULL,this,ID_JUMP_TO_START_POSITION_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32+32,32+32,16);
