@@ -26,6 +26,7 @@
 #include "AStatusComm.h"
 #include "ASoundFileManager.h"
 #include "CSoundPlayerChannel.h"
+#include "CLoadedSound.h"
 
 void play(ASoundFileManager *soundFileManager,bool looped,bool selectionOnly)
 {

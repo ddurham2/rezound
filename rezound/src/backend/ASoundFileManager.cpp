@@ -30,15 +30,13 @@
 
 #include <CNestedDataFile/CNestedDataFile.h>
 
+#include "CLoadedSound.h"
 #include "ASoundPlayer.h"
 #include "CSoundPlayerChannel.h"
-#include "ASoundRecorder.h"
 #include "ASoundTranslator.h"
+#include "AFrontendHooks.h"
 
 #define MAX_REOPEN_HISTORY 16 // needs to be a preference ???
-
-ASoundFileManager *gSoundFileManager=NULL;
-
 
 ASoundFileManager::ASoundFileManager(ASoundPlayer *_soundPlayer,CNestedDataFile *_loadedRegistryFile) :
 	soundPlayer(_soundPlayer),
@@ -57,13 +55,13 @@ CLoadedSound *ASoundFileManager::prvCreateNew(bool askForLength)
 	CSoundPlayerChannel *channel=NULL;
 	CLoadedSound *loaded=NULL;
 
-	string filename;
+	string filename=getUntitledFilename(gPromptDialogDirectory,"rez");
 	unsigned channelCount;
 	unsigned sampleRate;
 	sample_pos_t length=1;  // 1 if askForLength is false
 	if(
-		(askForLength && promptForNewSoundParameters(filename,channelCount,sampleRate,length)) ||
-		(!askForLength && promptForNewSoundParameters(filename,channelCount,sampleRate))
+		(askForLength && gFrontendHooks->promptForNewSoundParameters(filename,channelCount,sampleRate,length)) ||
+		(!askForLength && gFrontendHooks->promptForNewSoundParameters(filename,channelCount,sampleRate))
 	)
 	{
 		if(isFilenameRegistered(filename))
@@ -104,7 +102,7 @@ void ASoundFileManager::open(const string _filename)
 	bool readOnly=false;
 	if(filename=="")
 	{
-		if(!promptForOpen(filename,readOnly))
+		if(!gFrontendHooks->promptForOpen(filename,readOnly))
 			return;
 	}
 
@@ -178,7 +176,7 @@ void ASoundFileManager::saveAs()
 	if(loaded)
 	{
 		string filename=loaded->getFilename();
-		if(!promptForSave(filename,ost::Path(loaded->getFilename()).Extension()))
+		if(!gFrontendHooks->promptForSave(filename,ost::Path(loaded->getFilename()).Extension()))
 			return;
 
 		if(loaded->getFilename()==filename)
@@ -313,7 +311,7 @@ void ASoundFileManager::recordToNew()
 	bool ret=true;
 	try
 	{
-		ret=promptForRecord(&recorder);
+		ret=gFrontendHooks->promptForRecord(&recorder);
 		recorder.deinitialize();
 	}
 	catch(...)

@@ -40,6 +40,7 @@ libfrontend_la_SOURCES= \
 			CPasteChannelsDialog.cpp \
 			CProgressDialog.cpp \
 			CSoundFileManager.cpp \
+			CFrontendHooks.cpp \
 			CSoundListWindow.cpp \
 			CSoundWindow.cpp \
 			CStatusComm.cpp \
@@ -97,6 +98,7 @@ noinst_HEADERS=\
 	CPasteChannelsDialog.h \
 	CProgressDialog.h \
 	CSoundFileManager.h \
+	CFrontendHooks.h \
 	CSoundListWindow.h \
 	CSoundWindow.h \
 	CStatusComm.h \

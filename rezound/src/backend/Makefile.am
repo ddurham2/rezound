@@ -49,6 +49,7 @@ noinst_HEADERS= \
 	   ASoundPlayer.h \
 	   ASoundRecorder.h \
 	   ASoundFileManager.h \
+	   AFrontendHooks.h \
 	   AStatusComm.h \
 	   ASoundClipboard.h \
 	   CNativeSoundClipboard.h \
@@ -78,6 +79,7 @@ libbackend_la_SOURCES= \
 			CActionSound.cpp  \
 			CSound.cpp  \
 			ASoundFileManager.cpp \
+			AFrontendHooks.cpp \
 			ASoundPlayer.cpp  \
 			ASoundRecorder.cpp \
 			AStatusComm.cpp \

@@ -28,7 +28,7 @@
 
 #include "AStatusComm.h"
 #include "COSSSoundRecorder.h"
-#include "ASoundFileManager.h"
+#include "AFrontendHooks.h"
 
 typedef TPoolAccesser<sample_t,CSound::PoolFile_t > CClipboardPoolAccesser;
 
@@ -80,7 +80,7 @@ bool CRecordSoundClipboard::prepareForCopyTo()
 
 		recorder.initialize(workingFile);
 
-		if(!gSoundFileManager->promptForRecord(&recorder))
+		if(!gFrontendHooks->promptForRecord(&recorder))
 		{
 			recorder.deinitialize();
 			delete workingFile;workingFile=NULL;

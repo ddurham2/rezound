@@ -27,6 +27,7 @@
 #include "CStatusComm.h"
 
 #include "CSoundFileManager.h"
+#include "CFrontendHooks.h"
 #include "../backend/initialize.h"
 #include "settings.h"
 
@@ -68,6 +69,7 @@ int main(int argc,char *argv[])
 		ASoundPlayer *soundPlayer=NULL;
 		initializeBackend(soundPlayer);
 
+		gFrontendHooks=new CFrontendHooks(mainWindow);
 		gSoundFileManager=new CSoundFileManager(mainWindow,soundPlayer,gSettingsRegistry);
 
 		// create all the dialogs 

@@ -23,27 +23,19 @@
 
 #include "../../config/common.h"
 
-// ??? perhaps rename this to "CLoadedSoundManager"
-
 class ASoundFileManager;
 
 #include <string>
 #include <vector>
 
-#include "CLoadedSound.h"
-
-#include "CSound_defs.h"
-
+class CLoadedSound;
 class CNestedDataFile;
 class ASoundPlayer;
-class ASoundRecorder;
 class ASoundTranslator;
 
 struct EStopClosing { };
 
 
-
-extern ASoundFileManager *gSoundFileManager;
 
 class ASoundFileManager
 {
@@ -81,30 +73,12 @@ public:
 
 protected:
 
-	// prompt with an open file dialog (return false if the prompt was cancelled)
-	virtual bool promptForOpen(string &filename,bool &readOnly)=0;
-
-	// prompt with a save file dialog (return false if the prompt was cancelled)
-	virtual bool promptForSave(string &filename,const string extension)=0;
-
-	// prompt for a new sound to be created asking for the given parameters (return false if the prompt was cancelled)
-	virtual bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length)=0;
-	virtual bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate)=0;
-
-	// prompt for recording, this function will have to be more than just an interface and do work 
-	// since it will probably show level meters and be able to insert cues while recording etc
-	virtual bool promptForRecord(ASoundRecorder *recorder)=0;
-	friend class CRecordSoundClipboard; // so it can use promptForRecord... for lack of a better way
-
-
-
 	// should create a new sound window with the given CLoadedSound object
 	virtual void createWindow(CLoadedSound *loaded)=0;
 
 	// should destroy the window which was created with the given CLoadedSound object
 	// Note: it is possible that this called with a CLoadedSound object which doesn't have a window.  If so, just ignore
 	virtual void destroyWindow(CLoadedSound *loaded)=0;
-
 
 
 	// invoked whenever a file is successfully opened, new file created, file recorded, saveAs-ed, etc

@@ -321,7 +321,7 @@ void CSoundWindow::setActiveState(bool isActive)
 
 		if(isActive)
 		{
-			dynamic_cast<CSoundFileManager *>(gSoundFileManager)->untoggleActiveForAllSoundWindows(this);
+			gSoundFileManager->untoggleActiveForAllSoundWindows(this);
 			raise();
 		}
 	}
@@ -330,7 +330,7 @@ void CSoundWindow::setActiveState(bool isActive)
 		if(isActive)
 		{
 			show();
-			dynamic_cast<CSoundFileManager *>(gSoundFileManager)->untoggleActiveForAllSoundWindows(this);
+			gSoundFileManager->untoggleActiveForAllSoundWindows(this);
 		}
 		else
 			hide();

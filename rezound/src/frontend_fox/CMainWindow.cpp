@@ -34,6 +34,7 @@
 #include "../backend/Effects/EffectActions.h"
 #include "../backend/Remaster/RemasterActions.h"
 
+#include "../backend/CLoadedSound.h"
 #include "../backend/AAction.h"
 #include "../backend/ASoundClipboard.h"
 
@@ -617,13 +618,13 @@ long CMainWindow::onViewKey(FXObject *sender,FXSelector sel,void *ptr)
 	switch(SELID(sel))
 	{
 	case ID_CENTER_START_POS:
-		if(((CSoundFileManager *)gSoundFileManager)->getActiveWindow())
-			((CSoundFileManager *)gSoundFileManager)->getActiveWindow()->centerStartPos();
+		if(gSoundFileManager->getActiveWindow())
+			gSoundFileManager->getActiveWindow()->centerStartPos();
 		break;
 
 	case ID_CENTER_STOP_POS:
-		if(((CSoundFileManager *)gSoundFileManager)->getActiveWindow())
-			((CSoundFileManager *)gSoundFileManager)->getActiveWindow()->centerStopPos();
+		if(gSoundFileManager->getActiveWindow())
+			gSoundFileManager->getActiveWindow()->centerStopPos();
 		break;
 	}
 

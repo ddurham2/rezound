@@ -34,6 +34,7 @@ class CSoundFileManager : public ASoundFileManager
 {
 public:
 	CSoundFileManager(FXWindow *mainWindow,ASoundPlayer *soundPlayer,CNestedDataFile *loadedRegistryFile);
+	virtual ~CSoundFileManager();
 
 	void untoggleActiveForAllSoundWindows(CSoundWindow *exceptThisOne);
 	
@@ -42,13 +43,6 @@ public:
 	void updateAfterEdit();
 
 protected:
-	bool promptForOpen(string &filename,bool &readOnly);
-	bool promptForSave(string &filename,const string extension);
-	bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length);
-	bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate);
-
-	bool promptForRecord(ASoundRecorder *recorder);
-
 	void createWindow(CLoadedSound *loaded);
 	void destroyWindow(CLoadedSound *loaded);
 
@@ -58,5 +52,7 @@ private:
 	vector<CSoundWindow *> soundWindows; // all the existing windows created by createWindow()
 
 };
+
+extern CSoundFileManager *gSoundFileManager;
 
 #endif
