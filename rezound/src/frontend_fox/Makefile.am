@@ -28,6 +28,7 @@ include $(top_srcdir)/config/am_include.mk
 
 noinst_LTLIBRARIES=libfrontend.la
 libfrontend_la_SOURCES= \
+			images.cpp \
 			CActionMenuCommand.cpp \
 			CChannelSelectDialog.cpp \
 			CCrossfadeEdgesDialog.cpp \
@@ -119,6 +120,5 @@ noinst_HEADERS=\
 	rememberShow.h \
 	settings.h 
 
-CActionMenuCommand.cpp: images.cpp
 images.cpp: ../images/*.gif
 	./convert_images.sh ${RESWRAP} ../images

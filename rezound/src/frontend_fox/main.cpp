@@ -32,8 +32,6 @@
 #include "../backend/initialize.h"
 #include "settings.h"
 
-#include "images.cpp"
-
 void setupWindows(CMainWindow *mainWindow);
 void setupAccels(CMainWindow *mainWindow);
 
