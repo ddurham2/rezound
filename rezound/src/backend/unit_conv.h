@@ -70,6 +70,16 @@ static inline const double radians_to_degrees(const double radians) { return(rad
 static inline const double freq_to_fraction(const double frequency,const unsigned sampleRate,bool throwOnError=false) { if(throwOnError && (frequency<0.0 || frequency>sampleRate/2)) {throw runtime_error(string(__func__)+" -- frequency out of range, "+istring(frequency)+", for sample rate of, "+istring(sampleRate)); } return max(0.0,min(0.5,frequency/(double)sampleRate)); }
 static inline const double fraction_to_freq(const double fraction,const unsigned sampleRate,bool throwOnError=false) { if(throwOnError && (fraction<0.0 || fraction>0.5)) { throw runtime_error(string(__func__)+" -- fraction out of range, "+istring(fraction)); } return max(0.0,min(sampleRate/2.0,fraction*(double)sampleRate)); }
 
+/* no longer used because I wanted to have evenly spaced octaves rather than going precisely from 0 to SR/2 
+	// given x [0,1] this returns a frequency in Hz except curved for human interface use on the frontend
+static inline const double unitRange_to_curvedFreq(const double x,const unsigned sampleRate) { return pow(x,3.0)*(sampleRate/2.0); }
+static inline const double curvedFreq_to_unitRange(const double freq,const unsigned sampleRate) { return pow(2.0*freq/sampleRate,1.0/3.0); }
+*/
+
+	// maps a given (real) octave number [0,number of octaves] to a frequency in Hz where the octave 0 returns the given baseFrequency
+static inline const double octave_to_freq(const double octave,const double baseFrequency) { return baseFrequency*pow(2.0,octave); }
+static inline const double freq_to_octave(const double freq,const double baseFrequency) { return log(freq/baseFrequency)/log(2.0); }
+
 
 // range conversions -- generally for user interface convenience
 
