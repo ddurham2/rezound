@@ -80,6 +80,11 @@
 	- Bandpass
 	- Notch
 
+- Biquad Resonant Filters
+	- Lowpass
+	- Highpass
+	- Bandpass
+
 - Looping Tools (much more to come)
 	- Make Selection Symetric
 
