@@ -139,7 +139,7 @@ void CMultiFile::open(const string _initialFilename,const bool canCreate)
 	}
 }
 
-void CMultiFile::close(bool removeFiles=false)
+void CMultiFile::close(bool removeFiles)
 {
 	for(size_t t=0;t<MAX_OPEN_FILES;t++)
 	{
@@ -372,7 +372,7 @@ void CMultiFile::writeHeaderToFiles()
 	}
 }
 
-void CMultiFile::openFile(const string &filename,RFileHeader &header,const bool openingFirstFile=false,const bool readHeader=true)
+void CMultiFile::openFile(const string &filename,RFileHeader &header,const bool openingFirstFile,const bool readHeader)
 {
 	int fileHandle=-1;
 	try
