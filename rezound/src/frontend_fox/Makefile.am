@@ -61,6 +61,8 @@ libfrontend_la_SOURCES= \
 			FXGraphParamValue.cpp \
 			FXLFOParamValue.cpp \
 			FXModalDialogBox.cpp \
+			FXWaveCanvas.cpp \
+			FXWaveScrollArea.cpp \
 			FXRezWaveView.cpp \
 			rememberShow.cpp \
 			settings.cpp
@@ -126,6 +128,8 @@ noinst_HEADERS=\
 	FXGraphParamValue.h \
 	FXLFOParamValue.h \
 	FXModalDialogBox.h \
+	FXWaveCanvas.h \
+	FXWaveScrollArea.h \
 	FXRezWaveView.h \
 	drawPortion.h \
 	rememberShow.h \
@@ -137,7 +141,7 @@ EXTRA_DIST=convert_images.sh
 
 $(top_srcdir)/src/frontend_fox/CFOXIcons.h: $(top_srcdir)/src/frontend_fox/CFOXIcons.cpp
 $(top_srcdir)/src/frontend_fox/CFOXIcons.cpp: $(top_srcdir)/src/images/*.gif
-	cd $(top_srcdir)/src/frontend_fox && ./convert_images.sh ${RESWRAP} $(top_srcdir)/src/images
+	cd $(top_srcdir)/src/frontend_fox && ./convert_images.sh $(RESWRAP) $(top_srcdir)/src/images && $(MAKE)
 
 CFOXIcons.cpp: $(top_srcdir)/src/frontend_fox/CFOXIcons.cpp
 CFOXIcons.h: $(top_srcdir)/src/frontend_fox/CFOXIcons.h
