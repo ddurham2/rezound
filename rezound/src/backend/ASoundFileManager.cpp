@@ -37,6 +37,8 @@
 
 #define MAX_REOPEN_HISTORY 16 // needs to be a preference ???
 
+ASoundFileManager *gSoundFileManager=NULL;
+
 
 ASoundFileManager::ASoundFileManager(ASoundPlayer *_soundPlayer,CNestedDataFile *_loadedRegistryFile) :
 	soundPlayer(_soundPlayer),

@@ -252,6 +252,31 @@ void CPasteEdit::undoActionSizeSafe(const CActionSound &actionSound)
 	}
 }
 
+bool CPasteEdit::getResultingCrossfadePoints(const CActionSound &actionSound,sample_pos_t &start,sample_pos_t &stop)
+{
+	const ASoundClipboard *clipboard=clipboards[gWhichClipboard];
+	const sample_pos_t clipboardLength=clipboard->getLength(actionSound.sound->getSampleRate());
+
+	start=actionSound.start;
+
+	switch(pasteType)
+	{
+	case ptInsert:
+		stop=start;
+		break;
+
+	case ptReplace:
+	case ptMix:
+	case ptLimitedMix:
+		stop=start+clipboardLength-1;
+		break;
+
+	default:
+		throw(runtime_error(string(__func__)+" -- unhandled pasteType: "+istring(pasteType)));
+	}
+	return(false);
+}
+
 
 
 // ------------------------------

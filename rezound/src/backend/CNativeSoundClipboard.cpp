@@ -77,8 +77,8 @@ void CNativeSoundClipboard::copyTo(CSound *sound,unsigned destChannel,unsigned s
 		throw(runtime_error(string(__func__)+" -- srcChannel (+"+istring(srcChannel)+") out of range ("+istring(channelCount)+")"));
 	if(!whichChannels[srcChannel])
 		throw(runtime_error(string(__func__)+" -- data does not exist in clipboard for srcChannel (+"+istring(srcChannel)+")"));
-	if(length>this->length)
-		throw(runtime_error(string(__func__)+" -- length ("+istring(length)+")is greater than the amount of data in the clipboard ("+istring(this->length)+")"));
+	if(length>getLength(sound->getSampleRate()))
+		throw(runtime_error(string(__func__)+" -- length ("+istring(length)+")is greater than the amount of data in the clipboard ("+istring(getLength(sound->getSampleRate())+")")));
 
 
 	const string poolName="Channel "+istring(srcChannel);
@@ -90,7 +90,7 @@ void CNativeSoundClipboard::copyTo(CSound *sound,unsigned destChannel,unsigned s
 
 sample_pos_t CNativeSoundClipboard::getLength(unsigned _sampleRate) const
 {
-	return((sample_pos_t)((sample_fpos_t)length*(sample_fpos_t)sampleRate/(sample_fpos_t)_sampleRate));
+	return((sample_pos_t)((sample_fpos_t)length*(sample_fpos_t)_sampleRate/(sample_fpos_t)sampleRate));
 }
 
 bool CNativeSoundClipboard::isEmpty() const

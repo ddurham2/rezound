@@ -41,6 +41,10 @@ class ASoundTranslator;
 
 struct EStopClosing { };
 
+
+
+extern ASoundFileManager *gSoundFileManager;
+
 class ASoundFileManager
 {
 public:
@@ -90,6 +94,7 @@ protected:
 	// prompt for recording, this function will have to be more than just an interface and do work 
 	// since it will probably show level meters and be able to insert cues while recording etc
 	virtual bool promptForRecord(ASoundRecorder *recorder)=0;
+	friend class CRecordSoundClipboard; // so it can use promptForRecord... for lack of a better way
 
 
 

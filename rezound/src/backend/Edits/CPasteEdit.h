@@ -45,6 +45,8 @@ protected:
 	void undoActionSizeSafe(const CActionSound &actionSound);
 	CanUndoResults canUndo(const CActionSound &actionSound) const;
 
+	bool getResultingCrossfadePoints(const CActionSound &actionSound,sample_pos_t &start,sample_pos_t &stop);
+
 private:
 	PasteTypes pasteType;
 	MixMethods mixMethod;

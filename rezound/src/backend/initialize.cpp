@@ -46,6 +46,7 @@ static COSSSoundPlayer *soundPlayer=NULL;
 
 #include "AAction.h"
 #include "CNativeSoundClipboard.h"
+#include "CRecordSoundClipboard.h"
 
 
 // for mkdir  --- possibly wouldn't port???
@@ -122,9 +123,9 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 
 
 		// -- 2
-						// ??? this filename needs to be an application setting just as in CSound.cpp
-		const string clipboardPoolFilename="/tmp/rezound.clipboard1";
-		AAction::clipboards.push_back(new CNativeSoundClipboard("Native Clipboard A",clipboardPoolFilename));
+						// ??? this base filename needs to be an application setting just as in CSound.cpp
+		AAction::clipboards.push_back(new CNativeSoundClipboard("Native Clipboard A","/tmp/rezound.clipboard.record"));
+		AAction::clipboards.push_back(new CRecordSoundClipboard("Record Clipboard","/tmp/rezound.clipboard1"));
 
 			// make sure the global clipboard selector index is in range
 		if(gWhichClipboard>=AAction::clipboards.size())

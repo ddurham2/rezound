@@ -41,8 +41,6 @@
 
 #include <fox/fx.h>
 
-CSoundFileManager *gSoundFileManager=NULL;
-
 
 CSoundFileManager::CSoundFileManager(FXWindow *_mainWindow,ASoundPlayer *_soundPlayer,CNestedDataFile *_loadedRegistryFile) :
 	ASoundFileManager(_soundPlayer,_loadedRegistryFile),

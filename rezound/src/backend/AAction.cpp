@@ -202,6 +202,13 @@ bool AAction::doesWarrantSaving() const
 	return true; // by default
 }
 
+bool AAction::getResultingCrossfadePoints(const CActionSound &actionSound,sample_pos_t &start,sample_pos_t &stop)
+{
+	start=actionSound.start;
+	stop=actionSound.stop;
+	return(true);
+}
+
 bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _willResize,bool crossfadeEdgesIsApplicable)
 {
 	if(done)
@@ -405,7 +412,7 @@ void AAction::setSelection(sample_pos_t start,sample_pos_t stop,CSoundPlayerChan
 	and what's just after the start and stop edges according
 	to the global crossfade time(s)
 */
-void AAction::crossfadeEdges(CActionSound &actionSound)
+void AAction::crossfadeEdges(const CActionSound &actionSound)
 {
 	didCrossfadeEdges=cetNone;
 
@@ -429,7 +436,7 @@ void AAction::crossfadeEdges(CActionSound &actionSound)
 	the selection can still be modified, but not shortened
 */
 
-void AAction::prepareForInnerCrossfade(CActionSound &actionSound)
+void AAction::prepareForInnerCrossfade(const CActionSound &actionSound)
 {
 	if(actionSound.doCrossfadeEdges==cetInner)
 	{
@@ -437,32 +444,46 @@ void AAction::prepareForInnerCrossfade(CActionSound &actionSound)
 		for(size_t t=0;t<MAX_CHANNELS;t++)
 			allChannels[t]=true;
 
+		sample_pos_t startPos,stopPos;
+		if(!getResultingCrossfadePoints(actionSound,startPos,stopPos))
+			throw(EUserMessage("Cannot anticipate certain information necessary to do an inner crossfade for action"));
+
 		sample_pos_t crossfadeStartTime=(sample_pos_t)(gCrossfadeStartTime*actionSound.sound->getSampleRate()/1000.0);
-		sample_pos_t wantedCrossfadeStartTime=crossfadeStartTime;
+		//sample_pos_t wantedCrossfadeStartTime=crossfadeStartTime;
 		sample_pos_t crossfadeStopTime=(sample_pos_t)(gCrossfadeStopTime*actionSound.sound->getSampleRate()/1000.0);
 
+		// don't go off the end of the sound
+		crossfadeStartTime=min(crossfadeStartTime,actionSound.sound->getLength()-startPos);
+
+		// don't read before the beginning of the sound
+		crossfadeStopTime=min(crossfadeStopTime,stopPos);
+
+		printf("backking up: %d %d -- %d %d\n",startPos,crossfadeStartTime,stopPos-crossfadeStopTime,crossfadeStopTime);
+
+/*
 		if(actionSound.selectionLength()<(crossfadeStartTime+crossfadeStopTime))
 			// crossfades would overlap.. fall back to selectionLength/2 as the start and stop crossfade times
 			crossfadeStartTime=crossfadeStopTime= actionSound.selectionLength()/2;
 
 		// special case
-		if(actionSound.start==actionSound.stop)
+		if(startPos==stopPos)
 			// min of what's possible and how much the user setting is
-			crossfadeStartTime=min(actionSound.sound->getLength()-actionSound.start,wantedCrossfadeStartTime);
+			crossfadeStartTime=min(actionSound.sound->getLength()-startPos,wantedCrossfadeStartTime);
+*/
 
 		// backup the area to crossfade after the start position
-		tempCrossfadePoolKeyStart=actionSound.sound->copyDataToTemp(allChannels,actionSound.start,crossfadeStartTime);
-		crossfadeStart=actionSound.start;
+		tempCrossfadePoolKeyStart=actionSound.sound->copyDataToTemp(allChannels,startPos,crossfadeStartTime);
+		crossfadeStart=startPos;
 		crossfadeStartLength=crossfadeStartTime;
 
 		// backup the area to crossfade before the stop position
-		tempCrossfadePoolKeyStop=actionSound.sound->copyDataToTemp(allChannels,actionSound.stop-crossfadeStopTime+1,crossfadeStopTime);
-		crossfadeStop=actionSound.stop-crossfadeStopTime;
+		tempCrossfadePoolKeyStop=actionSound.sound->copyDataToTemp(allChannels,stopPos-crossfadeStopTime,crossfadeStopTime);
+		crossfadeStop=stopPos-crossfadeStopTime;
 		crossfadeStopLength=crossfadeStopTime;
 	}
 }
 
-void AAction::crossfadeEdgesInner(CActionSound &actionSound)
+void AAction::crossfadeEdgesInner(const CActionSound &actionSound)
 {
 	bool allChannels[MAX_CHANNELS];
 	for(size_t t=0;t<MAX_CHANNELS;t++)
@@ -486,6 +507,8 @@ void AAction::crossfadeEdgesInner(CActionSound &actionSound)
 		// min of what's possible and how much prepareForInnerCrossfade backed up
 		crossfadeStartTime=min(actionSound.sound->getLength()-actionSound.start,crossfadeStartLength);
 
+	printf("blending from: %d %d -- %d %d\n",actionSound.start,crossfadeStartTime,actionSound.stop-crossfadeStopTime,crossfadeStopTime);
+	
 
 	// crossfade at the start position
 	{
@@ -511,12 +534,10 @@ run-through on paper would help
 
 			// crossfade with what already there and what's in the temp audio pool
 			for(sample_pos_t t=actionSound.start;t<actionSound.start+crossfadeStartTime;t++,srcPos++)
-				dest[t]=(sample_t)
-					(
-						(dest[t]*(float)srcPos/(float)crossfadeStartTime)
-						+
-						(src[srcPos]*(1.0-((float)srcPos/(float)crossfadeStartTime)))
-					);
+			{
+				const float g=(float)srcPos/(float)(crossfadeStartTime-1);
+				dest[t]=(sample_t)(dest[t]*g + src[srcPos]*(1.0-g));
+			}
 		}
 
 		// setup so undoCrossfade will restore the part we just modified
@@ -540,12 +561,10 @@ run-through on paper would help
 
 			// crossfade with what already there and what's in the temp audio pool
 			for(sample_pos_t t=actionSound.stop-crossfadeStopTime+1;t<=actionSound.stop;t++,srcPos++)
-				dest[t]=(sample_t)
-					(
-						(dest[t]*(1.0-((float)srcPos/(float)crossfadeStopTime)))
-						+
-						(src[srcPos+srcOffset]*(float)srcPos/(float)crossfadeStopTime)
-					);
+			{
+				const float g=(float)srcPos/(float)(crossfadeStopTime-1);
+				dest[t]=(sample_t)(dest[t]*(1.0-g) + src[srcPos]*g);
+			}
 		}
 
 		// setup so undoCrossfade will restore the part we just modified
@@ -559,7 +578,7 @@ run-through on paper would help
 	didCrossfadeEdges=cetInner;
 }
 
-void AAction::crossfadeEdgesOuter(CActionSound &actionSound)
+void AAction::crossfadeEdgesOuter(const CActionSound &actionSound)
 {
 	bool allChannels[MAX_CHANNELS];
 	for(size_t t=0;t<MAX_CHANNELS;t++)
@@ -605,12 +624,12 @@ void AAction::crossfadeEdgesOuter(CActionSound &actionSound)
 
 			// fade out what was before the start position
 			for(sample_pos_t t=actionSound.start-crossfadeTime;t<actionSound.start;t++,srcPos++)
-				dest[t]=(sample_t)(src[srcPos]*(1.0-((float)srcPos/(float)crossfadeTime)));
+				dest[t]=(sample_t)(src[srcPos]*(1.0-((float)srcPos/(float)(crossfadeTime-1))));
 
 			// fade in what was after the start position 
 			// (not necesary to ClipSample since it's always a constant 1.0 gain
 			for(sample_pos_t t=actionSound.start-crossfadeTime;t<actionSound.start;t++,srcPos++)
-				dest[t]+=(sample_t)(src[srcPos]*(((float)(srcPos-crossfadeTime)/(float)crossfadeTime)));
+				dest[t]+=(sample_t)(src[srcPos]*(((float)(srcPos-crossfadeTime)/(float)(crossfadeTime-1))));
 
 		}
 
@@ -655,12 +674,12 @@ void AAction::crossfadeEdgesOuter(CActionSound &actionSound)
 
 				// fade out what was before the stop position
 				for(sample_pos_t t=actionSound.stop-crossfadeTime;t<actionSound.stop;t++,srcPos++)
-					dest[t]=(sample_t)(src[srcPos]*(1.0-((float)srcPos/(float)crossfadeTime)));
+					dest[t]=(sample_t)(src[srcPos]*(1.0-((float)srcPos/(float)(crossfadeTime-1))));
 
 				// fade in what was after the stop position 
 				// (not necesary to ClipSample since it's always a constant 1.0 gain
 				for(sample_pos_t t=actionSound.stop-crossfadeTime;t<actionSound.stop;t++,srcPos++)
-					dest[t]+=(sample_t)(src[srcPos]*(((float)(srcPos-crossfadeTime)/(float)crossfadeTime)));
+					dest[t]+=(sample_t)(src[srcPos]*(((float)(srcPos-crossfadeTime)/(float)(crossfadeTime-1))));
 
 			}
 

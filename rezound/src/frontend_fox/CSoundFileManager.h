@@ -60,6 +60,4 @@ private:
 
 };
 
-extern CSoundFileManager *gSoundFileManager;
-
 #endif

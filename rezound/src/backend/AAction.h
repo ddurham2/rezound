@@ -93,10 +93,14 @@ public:
 
 protected:
 
+
+
 	// - hasAdvancedMode can be passed as true if something is to be done when performAction's advancedMode parameter is true
 	// - Otherwise, it will say "this action has no advanced mode" so the user doesn't think something different than normal is
 	//   happening
-	// - lockForResize can be passed as false to avoid locking the CSound object for resize if the action doesn't need that lock to, but a lockSize will be obtained anyway
+	// - willResize can be passed as false to avoid locking the CSound object for resize if the action doesn't need that lock to, but a lockSize will be obtained anyway
+	// - crossfadeIsApplicable should be false for actions like copy and selection changes
+		// ??? all these cools is getting a little clunky
 	AActionFactory(const string actionName,const string actionDescription,const bool hasAdvancedMode,AActionDialog *channelSelectDialog,AActionDialog *normalDialog,AActionDialog *advancedDialog,bool willResize=true,bool crossfadeEdgesIsApplicable=true);
 
 
@@ -187,6 +191,12 @@ protected:
 	// this method can be overloaded to return false, if the action does not warrent saving the file (i.e. the user will not be prompted)
 	virtual bool doesWarrantSaving() const;
 
+	// This can be overridden to return something other than it's default implementation.
+	// It can return false if this is not possibly known and it will tell the user than an inner crossfade cannot be done for that particular action
+	// It is necessary for an inner crossfade to know from where to backup data to be able to crossfade with the new selection after the action.
+	// By default it returns start and stop just what's in actionSound.
+	// An action, for example, insert paste would want to return the stop as actionSound.start because the inner crossfade after the insert would want to blend the new stop position with what's before the original start position.
+	virtual bool getResultingCrossfadePoints(const CActionSound &actionSound,sample_pos_t &start,sample_pos_t &stop); 
 
 	// ??? perhaps I could make a more intelligent system that saves and restores structure as well as data
 	// but take for example the CChangeRate action... we could surely backup the selection, but when we
@@ -253,10 +263,10 @@ private:
 
 	
 	// members used for crossfading and uncrossfading the edges after an action
-	void crossfadeEdges(CActionSound &actionSound);
-	void prepareForInnerCrossfade(CActionSound &actionSound);
-	void crossfadeEdgesInner(CActionSound &actionSound);
-	void crossfadeEdgesOuter(CActionSound &actionSound);
+	void crossfadeEdges(const CActionSound &actionSound);
+	void prepareForInnerCrossfade(const CActionSound &actionSound);
+	void crossfadeEdgesInner(const CActionSound &actionSound);
+	void crossfadeEdgesOuter(const CActionSound &actionSound);
 	void uncrossfadeEdges();
 	CrossfadeEdgesTypes didCrossfadeEdges;
 		// these data members are used differently depending on whether an inner or outer crossfade is done

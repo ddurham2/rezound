@@ -43,6 +43,9 @@ bool CCopyCutDeleteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepare
 		const sample_pos_t start=actionSound.start;
 		const sample_pos_t selectionLength=actionSound.selectionLength();
 
+		if(AAction::clipboards[gWhichClipboard]->isReadOnly())
+			throw(EUserMessage(("cannot copy/cut to clipboard: "+AAction::clipboards[gWhichClipboard]->getDescription()).c_str()));
+
 		AAction::clipboards[gWhichClipboard]->copyFrom(actionSound.sound,actionSound.doChannel,start,selectionLength);
 	}
 	
