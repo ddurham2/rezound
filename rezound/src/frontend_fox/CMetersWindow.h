@@ -40,11 +40,14 @@ public:
 
 	void setSoundPlayer(ASoundPlayer *soundPlayer);
 
+	void resetGrandMaxPeakLevels();
+
 	enum
 	{
 		ID_UPDATE_CHORE=FXTopWindow::ID_LAST,
 		ID_UPDATE_TIMEOUT,
 		ID_LABEL_FRAME,
+		ID_GRAND_MAX_PEAK_LEVEL_LABEL,
 
 		ID_LAST
 	};
@@ -53,6 +56,8 @@ public:
 	long onUpdateMetersSetChore(FXObject *sender,FXSelector,void*);
 
 	long onLabelFrameConfigure(FXObject *sender,FXSelector,void*);
+
+	long onResetGrandMaxPeakLevels(FXObject *sender,FXSelector,void*);
 	
 protected:
 	CMetersWindow() {}
@@ -60,7 +65,9 @@ protected:
 private:
 	FXFont *statusFont;
 	FXPacker *metersFrame;
-		FXPacker *labelFrame;
+		FXPacker *headerFrame;
+			FXPacker *labelFrame;
+			FXLabel *grandMaxPeakLevelLabel;
 
 	vector<CMeter *> meters;
 
@@ -68,7 +75,6 @@ private:
 
 	FXChore *chore;
 	FXTimer *timeout;
-
 };
 
 

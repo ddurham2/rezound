@@ -666,18 +666,22 @@ long CMainWindow::onPlayControlButton(FXObject *sender,FXSelector sel,void *ptr)
 	switch(FXSELID(sel))
 	{
 	case ID_PLAY_ALL_ONCE_BUTTON:
+		metersWindow->resetGrandMaxPeakLevels();
 		play(gSoundFileManager,false,false);
 		break;
 
 	case ID_PLAY_ALL_LOOPED_BUTTON:
+		metersWindow->resetGrandMaxPeakLevels();
 		play(gSoundFileManager,true,false);
 		break;
 
 	case ID_PLAY_SELECTION_ONCE_BUTTON:
+		metersWindow->resetGrandMaxPeakLevels();
 		play(gSoundFileManager,false,true);
 		break;
 
 	case ID_PLAY_SELECTION_LOOPED_BUTTON:
+		metersWindow->resetGrandMaxPeakLevels();
 		play(gSoundFileManager,true,true);
 		break;
 

@@ -22,17 +22,23 @@
 
 #include "CMetersWindow.h"
 
+#include <math.h>
+
+#include <stdexcept>
+
 #include "../backend/CSound_defs.h"
+#include "../backend/unit_conv.h"
 #include "../backend/ASoundPlayer.h"
 
-class CMeter : public FXPacker
+class CMeter : public FXHorizontalFrame
 {
 	FXDECLARE(CMeter);
 public:
 	CMeter::CMeter(FXComposite *parent) :
-		FXPacker(parent,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0),
+		FXHorizontalFrame(parent,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0),
+		statusFont(getApp()->getNormalFont()),
 		canvas(new FXCanvas(this,this,ID_CANVAS,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,400,0)),
-		//grandMaxPeakLevelLabel(new FXLabel(this,"0 dBFS",NULL,LABEL_NORMAL|LAYOUT_RIGHT|LAYOUT_FIX_WIDTH,0,0,25,0)),
+		grandMaxPeakLevelLabel(new FXLabel(this,"",NULL,LABEL_NORMAL|LAYOUT_RIGHT|LAYOUT_FIX_WIDTH|LAYOUT_FILL_Y,0,0,0,0, 1,1,2,2)),
 		RMSLevel(0),
 		peakLevel(0),
 		maxPeakLevel(0),
@@ -40,6 +46,21 @@ public:
 		maxPeakFallTimer(0),
 		stipplePattern(NULL)
 	{
+		// create the font to use for numbers
+		FXFontDesc d;
+		statusFont->getFontDesc(d);
+		d.size=60;
+		d.weight=FONTWEIGHT_NORMAL;
+		statusFont=new FXFont(getApp(),d);
+
+
+		grandMaxPeakLevelLabel->setTarget(this);
+		grandMaxPeakLevelLabel->setSelector(ID_GRAND_MAX_PEAK_LEVEL_LABEL);
+		grandMaxPeakLevelLabel->setFont(statusFont);
+		grandMaxPeakLevelLabel->setTextColor(FXRGB(128,128,128));
+		grandMaxPeakLevelLabel->setBackColor(FXRGB(0,0,0));
+
+
 		//static char pix[]={0x55,0x2a};
 		//stipplePattern=new FXBitmap(getApp(),pix,0,8,2);
 		
@@ -47,10 +68,17 @@ public:
 		stipplePattern=new FXBitmap(getApp(),pix,0,8,2);
 
 		stipplePattern->create();
+
 	}
 
 	CMeter::~CMeter()
 	{
+	}
+
+	void create()
+	{
+		FXHorizontalFrame::create();
+		setGrandMaxPeakLevel(0);
 	}
 
 	long CMeter::onCanvasPaint(FXObject *sender,FXSelector sel,void *ptr)
@@ -113,28 +141,25 @@ public:
 		if(x>(width*3/4))
 		{
 			dc.setForeground(FXRGB(80,255,32)); // green
-			//dc.drawLine(0,y,width/2,y);
 			dc.fillRectangle(0,y,width/2,2);
+
 			dc.setForeground(FXRGB(255,212,48)); // yellow
-			//dc.drawLine(width/2,y,width*3/4,y);
 			dc.fillRectangle(width/2,y,width/4,2);
+
 			dc.setForeground(FXRGB(255,38,0)); // red
-			//dc.drawLine(width*3/4,y,x,y);
 			dc.fillRectangle(width*3/4,y,x-(width*3/4),2);
 		}
 		else if(x>(width/2))
 		{
 			dc.setForeground(FXRGB(80,255,32)); // green
-			//dc.drawLine(0,y,width/2,y);
 			dc.fillRectangle(0,y,width/2,2);
+
 			dc.setForeground(FXRGB(255,212,48)); // yellow
-			//dc.drawLine(width/2,y,x,y);
 			dc.fillRectangle(width/2,y,x-width/2,2);
 		}
 		else
 		{
 			dc.setForeground(FXRGB(80,255,32)); // green
-			//dc.drawLine(0,y,x,y);
 			dc.fillRectangle(0,y,x,2);
 		}
 
@@ -175,15 +200,33 @@ public:
 			maxPeakFallTimer=10;
 		}
 
-		if(maxPeakLevel>grandMaxPeakLevel)
-			grandMaxPeakLevel=maxPeakLevel;
+		if(peakLevel>grandMaxPeakLevel)
+			setGrandMaxPeakLevel(peakLevel); // sets the label and everything
 
 		canvas->update(); // flag for repainting
 	}
 
+	void setGrandMaxPeakLevel(const sample_t maxPeakLevel)
+	{
+		grandMaxPeakLevel=maxPeakLevel;
+		grandMaxPeakLevelLabel->setText((istring(amp_to_dBFS(grandMaxPeakLevel),3,1,false)+" dBFS").c_str());
+
+		// and make sure grandMaxPeakLevelLabel is wide enough for the text
+		const FXint w=statusFont->getTextWidth(grandMaxPeakLevelLabel->getText().text(),grandMaxPeakLevelLabel->getText().length());
+		if(grandMaxPeakLevelLabel->getWidth()<w+2)
+			grandMaxPeakLevelLabel->setWidth(w+2);
+	}
+
+	long onResetGrandMaxPeakLevel(FXObject *sender,FXSelector,void*)
+	{
+		setGrandMaxPeakLevel(0);
+		return 1;
+	}
+
 	enum
 	{
-		ID_CANVAS=FXPacker::ID_LAST
+		ID_CANVAS=FXHorizontalFrame::ID_LAST,
+		ID_GRAND_MAX_PEAK_LEVEL_LABEL
 	};
 
 protected:
@@ -192,6 +235,7 @@ protected:
 private:
 	friend class CMetersWindow;
 
+	FXFont *statusFont;
 	FXCanvas *canvas;
 	FXLabel *grandMaxPeakLevelLabel;
 	mix_sample_t RMSLevel,peakLevel,maxPeakLevel,grandMaxPeakLevel;
@@ -204,9 +248,14 @@ FXDEFMAP(CMeter) CMeterMap[]=
 {
 	//	  Message_Type			ID					Message_Handler
 	FXMAPFUNC(SEL_PAINT,			CMeter::ID_CANVAS,			CMeter::onCanvasPaint),
+	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	CMeter::ID_GRAND_MAX_PEAK_LEVEL_LABEL,	CMeter::onResetGrandMaxPeakLevel),
 };
 
-FXIMPLEMENT(CMeter,FXPacker,CMeterMap,ARRAYNUMBER(CMeterMap))
+FXIMPLEMENT(CMeter,FXHorizontalFrame,CMeterMap,ARRAYNUMBER(CMeterMap))
+
+
+
+
 
 
 // ----------------------------------------------------------
@@ -217,12 +266,11 @@ FXDEFMAP(CMetersWindow) CMetersWindowMap[]=
 	FXMAPFUNC(SEL_CHORE,			CMetersWindow::ID_UPDATE_CHORE,			CMetersWindow::onUpdateMeters),
 	FXMAPFUNC(SEL_TIMEOUT,			CMetersWindow::ID_UPDATE_TIMEOUT,		CMetersWindow::onUpdateMetersSetChore),
 	FXMAPFUNC(SEL_CONFIGURE,		CMetersWindow::ID_LABEL_FRAME,			CMetersWindow::onLabelFrameConfigure),
+	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	CMetersWindow::ID_GRAND_MAX_PEAK_LEVEL_LABEL,	CMetersWindow::onResetGrandMaxPeakLevels),
 };
 
 FXIMPLEMENT(CMetersWindow,FXPacker,CMetersWindowMap,ARRAYNUMBER(CMetersWindowMap))
 
-
-// ----------------------------------------------------------
 
 /*
  * To update the meters often I add a timeout to be fired every x-th of a second.
@@ -233,13 +281,13 @@ FXIMPLEMENT(CMetersWindow,FXPacker,CMetersWindowMap,ARRAYNUMBER(CMetersWindowMap
  * -construction-> AAA -N ms-> BBB -chore-> CCC -N ms-> BBB -chore-> CCC -N ms-> BBB -chore-> CCC -> ...
  */
 
-
-
 CMetersWindow::CMetersWindow(FXComposite *parent) :
 	FXPacker(parent,LAYOUT_BOTTOM|LAYOUT_FILL_X|LAYOUT_FIX_HEIGHT|FRAME_RIDGE,0,0,0,55, 3,3,3,3, 0,0),
 	statusFont(getApp()->getNormalFont()),
 	metersFrame(new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_SUNKEN|FRAME_THICK,0,0,0,0, 2,2,0,2, 0,1)),
-		labelFrame(new FXPacker(metersFrame,LAYOUT_FIX_WIDTH|FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0)),
+		headerFrame(new FXHorizontalFrame(metersFrame,LAYOUT_FILL_X|FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0)),
+			labelFrame(new FXPacker(headerFrame,LAYOUT_FILL_X|LAYOUT_BOTTOM|FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0)),
+			grandMaxPeakLevelLabel(new FXLabel(headerFrame,"max",NULL,LABEL_NORMAL|LAYOUT_FIX_WIDTH|LAYOUT_RIGHT,0,0,0,0, 1,1,1,1)),
 	soundPlayer(NULL)
 {
 	// create the font to use for meters
@@ -249,23 +297,31 @@ CMetersWindow::CMetersWindow(FXComposite *parent) :
 	d.weight=FONTWEIGHT_NORMAL;
         statusFont=new FXFont(getApp(),d);
 
-		labelFrame->setTarget(this);
-		labelFrame->setSelector(ID_LABEL_FRAME);
-		labelFrame->setBackColor(FXRGB(0,0,0));
-		#define MAKE_DB_LABEL(text) { FXLabel *l=new FXLabel(labelFrame,text,NULL,LAYOUT_FIX_X|LAYOUT_FIX_Y,0,0,0,0, 0,0,0,0); l->setBackColor(FXRGB(0,0,0)); l->setTextColor(FXRGB(128,128,128)); l->setFont(statusFont); }
-		MAKE_DB_LABEL("dBFS")
-		MAKE_DB_LABEL("-20")
-		MAKE_DB_LABEL("-14")
-		MAKE_DB_LABEL("-10.5")
-		MAKE_DB_LABEL("-8")
-		MAKE_DB_LABEL("-6")
-		MAKE_DB_LABEL("-4.4")
-		MAKE_DB_LABEL("-3.1")
-		MAKE_DB_LABEL("-2")
-		MAKE_DB_LABEL("-1")
-		MAKE_DB_LABEL("0")
-
 	metersFrame->setBackColor(FXRGB(0,0,0));
+		headerFrame->setBackColor(FXRGB(0,0,0));
+
+			labelFrame->setTarget(this);
+			labelFrame->setSelector(ID_LABEL_FRAME);
+			labelFrame->setBackColor(FXRGB(0,0,0));
+			#define MAKE_DB_LABEL(text) { FXLabel *l=new FXLabel(labelFrame,text,NULL,LAYOUT_FIX_X|LAYOUT_FIX_Y,0,0,0,0, 0,0,0,0); l->setBackColor(FXRGB(0,0,0)); l->setTextColor(FXRGB(128,128,128)); l->setFont(statusFont); }
+			MAKE_DB_LABEL("dBFS")
+			MAKE_DB_LABEL("-20")
+			MAKE_DB_LABEL("-14")
+			MAKE_DB_LABEL("-10.5")
+			MAKE_DB_LABEL("-8")
+			MAKE_DB_LABEL("-6")
+			MAKE_DB_LABEL("-4.4")
+			MAKE_DB_LABEL("-3.1")
+			MAKE_DB_LABEL("-2")
+			MAKE_DB_LABEL("-1")
+			MAKE_DB_LABEL("0")
+
+			grandMaxPeakLevelLabel->setTarget(this);
+			grandMaxPeakLevelLabel->setSelector(ID_GRAND_MAX_PEAK_LEVEL_LABEL);
+			grandMaxPeakLevelLabel->setFont(statusFont);
+			grandMaxPeakLevelLabel->setTextColor(FXRGB(128,128,128));
+			grandMaxPeakLevelLabel->setBackColor(FXRGB(0,0,0));
+
 
 	// AAA
 	chore=NULL;
@@ -290,20 +346,33 @@ long CMetersWindow::onUpdateMetersSetChore(FXObject *sender,FXSelector sel,void 
 // CCC
 long CMetersWindow::onUpdateMeters(FXObject *sender,FXSelector sel,void *ptr)
 {
-	if(soundPlayer!=NULL)
+	if(soundPlayer!=NULL && meters.size()>0)
 	{
-		// ??? getPeakLevel needs to keep a max since the last time I called it and if possible do mid chunk analysis so I can even do faster meter updates than the buffers might be being processed
+		for(size_t t=0;t<meters.size();t++)
+			meters[t]->setLevel(soundPlayer->getRMSLevel(t),soundPlayer->getPeakLevel(t));
+
+		// make sure all the meters' grandMaxPeakLabels are the same width
+		int maxGrandMaxPeakLabelWidth=grandMaxPeakLevelLabel->getWidth();
+		bool resize=false;
 		for(size_t t=0;t<meters.size();t++)
 		{
-			// make sure the label frame is the same width as the meters 
-			if(t==0 && labelFrame->getWidth()!=meters[0]->canvas->getWidth())
-				labelFrame->setWidth(meters[0]->canvas->getWidth());
-
-			meters[t]->setLevel(soundPlayer->getRMSLevel(t),soundPlayer->getPeakLevel(t));
+			if(maxGrandMaxPeakLabelWidth<meters[t]->grandMaxPeakLevelLabel->getWidth())
+			{
+				maxGrandMaxPeakLabelWidth=meters[t]->grandMaxPeakLevelLabel->getWidth();
+				resize=true;
+			}
 		}
+
+		if(resize)
+		{
+			grandMaxPeakLevelLabel->setWidth(maxGrandMaxPeakLabelWidth);
+			for(size_t t=0;t<meters.size();t++)
+				meters[t]->grandMaxPeakLevelLabel->setWidth(maxGrandMaxPeakLabelWidth);
+		}
+
 	}
 
-	// don't draw again for another METER_UPDATE_RATE milliseconds
+	// schedule another update again in METER_UPDATE_RATE milliseconds
 	timeout=getApp()->addTimeout(METER_UPDATE_RATE,this,ID_UPDATE_TIMEOUT);
 	return 1;
 }
@@ -323,12 +392,25 @@ long CMetersWindow::onLabelFrameConfigure(FXObject *sender,FXSelector,void*)
 	return 1;
 }
 
+long CMetersWindow::onResetGrandMaxPeakLevels(FXObject *sender,FXSelector sel,void *ptr)
+{
+	resetGrandMaxPeakLevels();
+	return 1;
+}
+
 void CMetersWindow::setSoundPlayer(ASoundPlayer *_soundPlayer)
 {
+	if(soundPlayer!=NULL)
+		throw runtime_error(string(__func__)+" -- internal error -- sound player already set -- perhaps I need to allow this");
 	soundPlayer=_soundPlayer;
 
 	for(size_t t=0;t<soundPlayer->devices[0].channelCount;t++)
 		meters.push_back(new CMeter(metersFrame));
 }
 
+void CMetersWindow::resetGrandMaxPeakLevels()
+{
+	for(size_t t=0;t<meters.size();t++)
+		meters[t]->setGrandMaxPeakLevel(0);
+}
 
