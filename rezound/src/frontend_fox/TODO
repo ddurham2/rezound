@@ -7,9 +7,15 @@
 		- find start/stop positions (really, just to show key bindings)
 		- maybe one for the next or previous file that's loaded
 
-	- add file operation icons for all the file operations
-	
-	- improve the two icons, normal_action and advanced_action 12x12 should be a good size
+	- perhaps adjust the 10000 ticks that I put in the FXActionConstantParam to something based on the range
+	- the scalar spinner box does not update the slider's labels when you press enter or leave the edit box
+		- it also needs a border around it
+
+	- the scalar spinner on the much used slider can be cumbersome having so many values.. perhaps I should give it a skip based on its range
+
+	- create useful presets for the new filter actions
+
+	- add some some wet/dry mix parameter to the filter actions which says -100%(original) to 0 to 100%(filtered)
 
 	- Other commercial audio editors do this, and now I think I know why...
 		XXX - When loading a sound it doesn't start zoomed out to see the whole thing.. 
@@ -206,4 +212,8 @@
 
 		- Also, encourage the user to actually report bugs or request features and not to just assume someone else will
 		- make the about dialog show up on the first run
+
+	- add file operation icons for all the file operations
+	
+	- improve the two icons, normal_action and advanced_action 12x12 should be a good size
 
