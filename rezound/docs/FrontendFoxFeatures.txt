@@ -1,7 +1,7 @@
 
-- Action buttons and menu-items (IMPORTANT) (edit buttons/menu-items, effect menu-items, etc):
-	- Holding SHIFT while clicking the button or menu-item will generally causes a dialog to be displayed which allows the user to choose which channels to apply the action to.
-	- Using the RIGHT mouse button to click the button or menu-item instead of the LEFT mouse button will cause (if available) an advanced mode of the action to be performed resulting possibly in a dialog for the action with additional, more advanced parameters (i.e. the volume and rate change dialogs have a curve instead of a constant parameter)
+- Action menu-items (IMPORTANT) (edit menu-items, effect menu-items, etc):
+	- Holding SHIFT while clicking the menu-item will generally causes a dialog to be displayed which allows the user to choose which channels to apply the action to.
+	- Using the RIGHT mouse button to click the menu-item instead of the LEFT mouse button will cause (if available) an advanced mode of the action to be performed resulting possibly in a dialog for the action with additional, more advanced parameters (i.e. the gain and rate change dialogs have a curve instead of a constant parameter)
 
 
 - On a sound window:
@@ -12,8 +12,8 @@
 		- normally the selection positions will 'snap' to the cue positions
 		- holding SHIFT while changing the selection positions will momentarily disable the 'snap to cue' feature
 		- holding SHIFT while changing the selection positions will also momentarily disable auto scrolling when selecting near the edges
-	XXX (not until I get fox changed) - DOUBLE LEFT clicking the ruler brings up the cue list dialog
-	XXX (need to implement this) - DOUBLE LEFT clicking a cue brings up the edit dialog
+	- DOUBLE LEFT clicking the ruler brings up the cue list dialog
+	- DOUBLE LEFT clicking a cue brings up the edit dialog
 
 	- Holding SHIFT while changing the horizontal zoom level dial will center the start position on screen
 	- Holding CONTROL while changing the horizontal zoom level dial will center the stop position on screen
@@ -29,7 +29,7 @@
 		- RIGHT clicking the arrow buttons at the ends of the scroll bar moves the scroll position by a very small amount
 		- MIDDLE clicking the arrow buttons at the ends of the scroll bar moves the scroll position immediately to that end
 
-	- The buttons on either side of the horizontal or vertical zoom dials zoomes in or out full
+	- The buttons on either side of the horizontal or vertical zoom dials zooms in or out full
 	- The button at the bottom right corner of the waveform zooms out full horizontally and vertically
 
 	- ReZound will attempt to maintain the visibility of either the start or stop positions while changing the horizontal zoom dial depending on wether the start or stop position was last changed and one is on screen

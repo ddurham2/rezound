@@ -38,8 +38,6 @@ static FXColor playStatusColor=FXRGB(255,0,0);
 
 /* TODO:
  *
- * - I could fairly easily have a mode where if the sound is playing, then every .25 sec or so, scroll the window to that position so the play pos is always on screen
- *
  * - To make selection changes undoable, I could make an event which indicated the new and old values of the start and stop positions so that an AAction could be pushed onto the undo stack
  *     - but I should do this only on mouse up event so that all mouse movements don't create AActions
  *         - the old value is from just before the mouse down event and the new value is from the mouse up event
@@ -52,9 +50,7 @@ static FXColor playStatusColor=FXRGB(255,0,0);
  *
  * - I need to load a sound that is a square wave with complete 32767 to -32767 range to verify that it renders properly AND that the scroll bars can fully extend to the length and not further
  *
- * - need to finish rendering and jumping to cues... always have two cues, start and stop
- *
- * - draw horz dB lines that scale with the vert zoom factor
+ * - draw horz dBFS lines that scale with the vert zoom factor
  *
  * - I thought there was a problem with the way select stop is drawn, but now I don't think there is
  *   	- example: load a sound of say length 5.  Well, when start = 0 and stop = 4 (fully selected)
@@ -71,7 +67,7 @@ static FXColor playStatusColor=FXRGB(255,0,0);
  *   	- Play position could work the same way
  *   	- Do I want to go with this way of doing it an perhaps simplify the job of making sure the status panel is up to date?
  *
- *   	- Minor: when I unshade the CSoundWindow I get at least 3 full redraws of the wave form
+ *   	- Minor: when I unshade the CSoundWindow I get at least 3 full redraws of the wave form (maybe not anymore...)
  *
  */
 
@@ -196,6 +192,8 @@ public:
 
 	virtual void create();
 
+	size_t getClickedCue(FXint x,FXint y);
+
 	// events I get by message
 
 	long onPaint(FXObject *object,FXSelector sel,void *ptr);
@@ -210,6 +208,8 @@ public:
 	long onRemoveCue(FXObject *object,FXSelector sel,void *ptr);
 	long onEditCue(FXObject *object,FXSelector sel,void *ptr);
 	long onShowCueList(FXObject *object,FXSelector sel,void *ptr);
+
+	long onLeftBtnRelease(FXObject *object,FXSelector sel,void *ptr);
 
 	enum
 	{
@@ -268,7 +268,7 @@ FXIMPLEMENT(FXRezWaveView,FXPacker,FXRezWaveViewMap,ARRAYNUMBER(FXRezWaveViewMap
 FXRezWaveView::FXRezWaveView(FXComposite* p,CLoadedSound *_loadedSound) :
 	FXPacker(p,FRAME_NONE|LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0),
 
-	rulerPanel(new FXWaveRuler(this,this,_loadedSound/*,FRAME_NONE | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0,0,0,15*/)),
+	rulerPanel(new FXWaveRuler(this,this,_loadedSound)),
 	waveScrollArea(new FXWaveScrollArea(this,this,_loadedSound))
 {
 	enable();
@@ -396,8 +396,8 @@ FXWaveScrollArea::FXWaveScrollArea(FXComposite *p,FXRezWaveView *_parent,CLoaded
 
 	horzZoomFactor(1.0),vertZoomFactor(1.0),
 
-	unitType(utSamples),
-	viewType(vtNormal)
+	unitType(utSamples), // ??? unused right now
+	viewType(vtNormal) // ??? unused right now
 {
 	enable();
 
@@ -988,7 +988,10 @@ FXDEFMAP(FXWaveRuler) FXWaveRulerMap[]=
 	FXMAPFUNC(SEL_COMMAND,			FXWaveRuler::ID_EDIT_CUE,			FXWaveRuler::onEditCue),
 
 	FXMAPFUNC(SEL_COMMAND,			FXWaveRuler::ID_SHOW_CUE_LIST,			FXWaveRuler::onShowCueList),
-	// I wish this worked... change fox FXMAPFUNC(SEL_DOUBLECLICKED,		FXWaveRuler::ID_SHOW_CUE_LIST,			FXWaveRuler::onShowCueList),
+
+		// double click handler
+	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	0,						FXWaveRuler::onLeftBtnRelease),
+
 };
 
 FXIMPLEMENT(FXWaveRuler,FXComposite,FXWaveRulerMap,ARRAYNUMBER(FXWaveRulerMap))
@@ -1076,8 +1079,6 @@ long FXWaveRuler::onPaint(FXObject *object,FXSelector sel,void *ptr)
 	}
 
 	// render cues
-	//dc.setFillStyle(FILL_STIPPLED);
-	//dc.setStipple(STIPPLE_GRAY);
 	const size_t cueCount=sound->getCueCount();
 	for(size_t t=0;t<cueCount;t++)
 	{
@@ -1086,37 +1087,27 @@ long FXWaveRuler::onPaint(FXObject *object,FXSelector sel,void *ptr)
 
 		if(cueXPosition!=CUE_OFF_SCREEN)
 		{
-			if(sound->isCueAnchored(t))
-				dc.setForeground(FXRGB(0,0,255));
-			else
-				dc.setForeground(FXRGB(255,0,0));
-		
-			dc.drawLine(cueXPosition,height-1,cueXPosition,CUE_Y);
 			dc.setForeground(FXRGB(0,0,0));
-			dc.drawArc(cueXPosition-CUE_RADIUS,CUE_Y-CUE_RADIUS,CUE_RADIUS*2,CUE_RADIUS*2,0*64,360*64);
-		
 			const string cueName=sound->getCueName(t);
 			dc.drawText(cueXPosition+CUE_RADIUS+1,height-1,cueName.data(),cueName.size());
+
+			dc.drawArc(cueXPosition-CUE_RADIUS,CUE_Y-CUE_RADIUS,CUE_RADIUS*2,CUE_RADIUS*2,0*64,360*64);
+
+			dc.setForeground(sound->isCueAnchored(t) ? FXRGB(0,0,255) : FXRGB(255,0,0));
+			dc.drawLine(cueXPosition-1,height-4,cueXPosition-1,CUE_Y-1);
+			dc.drawLine(cueXPosition,height-1,cueXPosition,CUE_Y);
+			dc.drawLine(cueXPosition+1,height-4,cueXPosition+1,CUE_Y-1);
+
 		}
 	}
 
-	return(1); // QQQ
-	//return(0);
+	return(1);
 }
 
-long FXWaveRuler::onPopupMenu(FXObject *object,FXSelector sel,void *ptr)
+size_t FXWaveRuler::getClickedCue(FXint x,FXint y)
 {
-	if(!underCursor())
-		return(1);
-
-	// ??? if the parent->target is NULL, I should pop up the windows
-
-	FXEvent *event=(FXEvent*)ptr;
-
-	// see if any cue was clicked on
-
 	const size_t cueCount=sound->getCueCount();
-	cueClicked=cueCount;
+	size_t cueClicked=cueCount;
 	if(cueCount>0)
 	{
 		// go in reverse order so that the more recent one created can be removed first
@@ -1130,7 +1121,7 @@ long FXWaveRuler::onPopupMenu(FXObject *object,FXSelector sel,void *ptr)
 				FXint Y=CUE_Y;
 
 				// check distance from clicked point to the cue's position
-				if( ((event->win_x-X)*(event->win_x-X))+((event->win_y-Y)*(event->win_y-Y)) <= (CUE_RADIUS*CUE_RADIUS) )
+				if( ((x-X)*(x-X))+((y-Y)*(y-Y)) <= (CUE_RADIUS*CUE_RADIUS) )
 				{
 					cueClicked=t-1;
 					break;
@@ -1138,8 +1129,22 @@ long FXWaveRuler::onPopupMenu(FXObject *object,FXSelector sel,void *ptr)
 			}
 		}
 	}
+	return(cueClicked);
+}
 
-	if(cueClicked<cueCount)
+long FXWaveRuler::onPopupMenu(FXObject *object,FXSelector sel,void *ptr)
+{
+	if(!underCursor())
+		return(1);
+
+	// ??? if the parent->target is NULL, I should pop up the windows
+
+	FXEvent *event=(FXEvent*)ptr;
+
+	// see if any cue was clicked on
+	cueClicked=getClickedCue(event->win_x,event->win_y);
+
+	if(cueClicked<sound->getCueCount())
 	{
 		FXMenuPane cueMenu(this);
 			// ??? make sure that these get deleted when cueMenu is deleted
@@ -1266,6 +1271,24 @@ long FXWaveRuler::onShowCueList(FXObject *object,FXSelector sel,void *ptr)
 		parent->target->handle(parent,MKUINT(parent->message,FXRezWaveView::SEL_SHOW_CUE_LIST),NULL);
 	update();
 	return 1;
+}
+
+long FXWaveRuler::onLeftBtnRelease(FXObject *object,FXSelector sel,void *ptr)
+{
+	FXComposite::handle(object,sel,ptr); // if FXComposite ever starts sending SEL_DOUBLECLICKED events, then the event will happen twice because I'm doing what's below.. detect the version and remove this handler
+
+	FXEvent* event=(FXEvent*)ptr;
+	if(event->click_count==2) // <-- double click
+	{
+			// setting data member
+		cueClicked=getClickedCue(event->win_x,event->win_y);
+		if(cueClicked<sound->getCueCount())
+			return onEditCue(object,sel,(void *)cueClicked);
+		else
+			return onShowCueList(object,sel,ptr);
+	}
+	else
+		return 0;
 }
 
 FXint FXWaveRuler::getCueScreenX(size_t cueIndex) const
