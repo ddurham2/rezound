@@ -212,14 +212,13 @@ long FXWaveScrollArea::onMouseDown(FXObject*,FXSelector,void *ptr)
 	FXEvent *ev=(FXEvent*) ptr;
 	const FXint X=ev->click_x;
 
-#warning try to make the mouse cursor change when control is pressed or released
-	if(ev->state==(LEFTBUTTONMASK|CONTROLMASK)) // left button pressed while holding control
+	if(ev->click_button==LEFTBUTTON && ev->state&CONTROLMASK) // left button pressed while holding control
 	{
 		const sample_pos_t position=getSamplePosForScreenX(X);
 		play(gSoundFileManager,position);
 		return 1;
 	}
-	else if(ev->state==(RIGHTBUTTONMASK|CONTROLMASK)) // left button pressed while holding control
+	else if(ev->click_button==RIGHTBUTTON && ev->state&CONTROLMASK) // left button pressed while holding control
 	{
 		const sample_pos_t position=getSamplePosForScreenX(X);
 		play(gSoundFileManager,position);
