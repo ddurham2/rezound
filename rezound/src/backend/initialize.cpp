@@ -68,7 +68,7 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 
 
 		// determine where /usr/share/rezound has been placed (try the install-from directory first)
-		gSysDataDirectory=SOURCE_DIR"/share/rezound";
+		gSysDataDirectory=SOURCE_DIR"/share";
 		if(!CPath(gSysDataDirectory).exists()) 
 			gSysDataDirectory=DATA_DIR"/rezound";
 
