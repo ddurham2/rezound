@@ -17,8 +17,6 @@
 	- Put in the documentation or application help somewhere a brief description about how recording works in linux (you have a recording source selected, then igain which is the recording gain of that source)
 	- List in the documentation (which isn't the most obvious feature) that in the recording dialog, one can use start/stop multiple times as in pausing the recording, resuming, pausing, resuming, etc
 
-	- Need a hot key or event that keeps the play position on screen.. only do something if it's not on screen
-
 	- When it's up on sourceforge (and ready to debut) announce to:
 		- demudi
 		- demudi-users
@@ -351,4 +349,6 @@
 		- the play position seek should:
 			- on forward, go to the nearest marker forward
 			- on backward go to the nearest marker backward if the play position is more than .25 secs from it.. or 2 markers back if more
+
+	- Need a hot key or event that keeps the play position on screen.. only do something if it's not on screen
 
