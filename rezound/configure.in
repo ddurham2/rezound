@@ -54,6 +54,8 @@ dnl Checks for libraries.|
 dnl ---------------------|
 AC_CHECK_LIB(m, sqrt)
 AC_CHECK_LIB(pthread, pthread_create)
+AC_CHECK_LIB(pthread, pthread_mutex_init)
+AC_CHECK_LIB(pthread, pthread_rwlock_init)
 
 dnl see config/cxx-lib.m4 for ajv_ macro definitions. 
 dnl
