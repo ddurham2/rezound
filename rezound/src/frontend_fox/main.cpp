@@ -183,6 +183,12 @@ void setupAccels(CMainWindow *mainWindow)
 	at->addAccel(KEY_3 ,mainWindow,MKUINT(CMainWindow::ID_SEEK_RIGHT,SEL_COMMAND),MKUINT(CMainWindow::ID_SEEK_NORMAL,SEL_COMMAND));
 
 
+	// view
+	at->addAccel(KEY_z ,mainWindow,MKUINT(CMainWindow::ID_CENTER_START_POS,SEL_COMMAND));
+	at->addAccel(KEY_x ,mainWindow,MKUINT(CMainWindow::ID_CENTER_STOP_POS,SEL_COMMAND));
+	
+
+
 	// edits
 	at->addAccel(MKUINT(KEY_a,CONTROLMASK) ,gEditToolbar->selectAllButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
 	

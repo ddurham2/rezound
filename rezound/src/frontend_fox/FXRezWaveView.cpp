@@ -322,6 +322,18 @@ void FXRezWaveView::redraw()
 	waveScrollArea->redraw();
 }
 
+void FXRezWaveView::centerStartPos()
+{
+	waveScrollArea->setPosition((FXint)-sample_fpos_round((sample_fpos_t)waveScrollArea->loadedSound->channel->getStartPosition()/(sample_fpos_t)waveScrollArea->horzZoomFactor) + waveScrollArea->getSupposedCanvasWidth()/2 ,waveScrollArea->pos_y);
+	waveScrollArea->canvas->update();
+}
+
+void FXRezWaveView::centerStopPos()
+{
+	waveScrollArea->setPosition((FXint)-sample_fpos_round((sample_fpos_t)waveScrollArea->loadedSound->channel->getStopPosition()/(sample_fpos_t)waveScrollArea->horzZoomFactor) + waveScrollArea->getSupposedCanvasWidth()/2 ,waveScrollArea->pos_y);
+	waveScrollArea->canvas->update();
+}
+
 void FXRezWaveView::updateFromSelectionChange(LastChangedPosition _lastChangedPosition)
 {
 	waveScrollArea->updateWaveViewFromSelectChange(_lastChangedPosition);
@@ -555,7 +567,6 @@ void FXWaveScrollArea::redraw()
 	canvas->update();
 	parent->rulerPanel->update();
 }
-
 
 FXint FXWaveScrollArea::getContentWidth()
 {
@@ -1171,18 +1182,16 @@ long FXWaveRuler::onPopupMenu(FXObject *object,FXSelector sel,void *ptr)
 }
 
 long FXWaveRuler::onFindStartPosition(FXObject *object,FXSelector sel,void *ptr)
-{ // ??? make a hot key binding for this event
+{ 
 	FXWaveScrollArea *wsa=parent->waveScrollArea;
-	wsa->setPosition((FXint)-sample_fpos_round((sample_fpos_t)loadedSound->channel->getStartPosition()/(sample_fpos_t)wsa->horzZoomFactor) + wsa->getSupposedCanvasWidth()/2 ,wsa->pos_y);
-	wsa->canvas->update();
+	wsa->parent->centerStartPos();
 	return 1;
 }
 
 long FXWaveRuler::onFindStopPosition(FXObject *object,FXSelector sel,void *ptr)
-{ // ??? make a hot key binding for this event
+{
 	FXWaveScrollArea *wsa=parent->waveScrollArea;
-	wsa->setPosition((FXint)-sample_fpos_round((sample_fpos_t)loadedSound->channel->getStopPosition()/(sample_fpos_t)wsa->horzZoomFactor) + wsa->getSupposedCanvasWidth()/2 ,wsa->pos_y);
-	wsa->canvas->update();
+	wsa->parent->centerStopPos();
 	return 1;
 }
 

@@ -73,8 +73,11 @@ public:
 	// used to control the shuttle control with the keyboard
 	long onKeyboardSeek(FXObject *sender,FXSelector sel,void *ptr);
 
+	long onViewKey(FXObject *sender,FXSelector sel,void *ptr); // main window gets view-change key presses because the sound window changes and we can't bind a key to any particualar object pointer
+
 	long onDefragButton(FXObject *sender,FXSelector sel,void *ptr);
 	long onPrintSATButton(FXObject *sender,FXSelector sel,void *ptr);
+
 
 	enum
 	{
@@ -109,6 +112,10 @@ public:
 		ID_SEEK_LEFT,
 		ID_SEEK_MODIFY,
 		ID_SEEK_RIGHT,
+
+
+		ID_CENTER_START_POS,
+		ID_CENTER_STOP_POS,
 
 		ID_REDRAW_BUTTON,
 

@@ -38,6 +38,7 @@ public:
 	void untoggleActiveForAllSoundWindows(CSoundWindow *exceptThisOne);
 	
 	CLoadedSound *getActive();
+	CSoundWindow *getActiveWindow();
 	void updateAfterEdit();
 
 protected:
@@ -55,8 +56,6 @@ private:
 	FXWindow *mainWindow;
 
 	vector<CSoundWindow *> soundWindows; // all the existing windows created by createWindow()
-
-	CSoundWindow *getActiveWindow();
 
 };
 

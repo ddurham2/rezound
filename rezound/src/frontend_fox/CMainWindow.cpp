@@ -41,6 +41,8 @@
 
 #include "CEditToolbar.h"
 
+#include "CSoundWindow.h"
+
 #include "CUserNotesDialog.h"
 #include "CCrossfadeEdgesDialog.h"
 
@@ -96,6 +98,9 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SEEK_LEFT,			CMainWindow::onKeyboardSeek),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SEEK_MODIFY,			CMainWindow::onKeyboardSeek),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SEEK_RIGHT,			CMainWindow::onKeyboardSeek),
+
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CENTER_START_POS,		CMainWindow::onViewKey),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CENTER_STOP_POS,		CMainWindow::onViewKey),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REDRAW_BUTTON,			CMainWindow::onRedrawButton),
 
@@ -606,6 +611,25 @@ long CMainWindow::onKeyboardSeek(FXObject *sender,FXSelector sel,void *ptr)
 	return 1;
 }
 
+
+long CMainWindow::onViewKey(FXObject *sender,FXSelector sel,void *ptr)
+{
+	switch(SELID(sel))
+	{
+	case ID_CENTER_START_POS:
+		if(((CSoundFileManager *)gSoundFileManager)->getActiveWindow())
+			((CSoundFileManager *)gSoundFileManager)->getActiveWindow()->centerStartPos();
+		break;
+
+	case ID_CENTER_STOP_POS:
+		if(((CSoundFileManager *)gSoundFileManager)->getActiveWindow())
+			((CSoundFileManager *)gSoundFileManager)->getActiveWindow()->centerStopPos();
+		break;
+	}
+
+
+	return 1;
+}
 
 long CMainWindow::onDefragButton(FXObject *sender,FXSelector sel,void *ptr)
 {

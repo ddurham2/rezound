@@ -53,6 +53,9 @@ public:
 
 	void drawPlayPosition(sample_pos_t dataPosition,bool justErasing,bool scrollToMakeVisible);
 
+	void centerStartPos();
+	void centerStopPos();
+
 	void redraw();
 
 	FXint getCanvasWidth();
@@ -98,7 +101,6 @@ private:
 	friend class FXWaveRuler;
 
 	FXWindow *rulerPanel;
-		//FXMenuPane *bookmarkPopupMenu;
 
 	FXWaveScrollArea *waveScrollArea;
 

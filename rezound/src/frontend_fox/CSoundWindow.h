@@ -57,6 +57,9 @@ public:
 
 	void updateFromEdit();
 
+	void centerStartPos();
+	void centerStopPos();
+
 	enum
 	{
 		ID_HORZ_ZOOM_DIAL=FXTopWindow::ID_LAST,

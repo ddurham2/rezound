@@ -477,6 +477,16 @@ void CSoundWindow::updatePlayPositionStatusInfo()
 		playPositionLabel->setText("");
 }
 
+void CSoundWindow::centerStartPos()
+{
+	waveView->centerStartPos();
+}
+
+void CSoundWindow::centerStopPos()
+{
+	waveView->centerStopPos();
+}
+
 
 // events I get from overriding a method
 
