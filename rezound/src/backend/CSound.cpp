@@ -1635,6 +1635,17 @@ bool CSound::findNearestCue(const sample_pos_t time,size_t &index,sample_pos_t &
 	return(true);
 }
 
+const string CSound::getAvailableCueName(const string &prefix) const
+{
+	// ??? containsCue is not the most efficient, but we're not talking about huge amounts of data here
+	for(unsigned t=1;t<200;t++)
+	{
+		if(!containsCue(prefix+istring(t)))
+			return(prefix+istring(t));
+	}
+	return("");
+}
+
 void CSound::clearCues()
 {
 	cueAccesser->clear();
