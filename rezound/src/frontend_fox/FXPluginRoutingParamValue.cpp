@@ -1727,9 +1727,18 @@ void FXPluginRoutingParamValue::readFromFile(const string &prefix,CNestedDataFil
 			{
 				if(gSoundFileManager->getSound(k)->getFilename()==filename)
 				{
-					newSource(gSoundFileManager->getSound(k),k);
-					sourceCreated=true;
-					found=true;
+					if(gSoundFileManager->getSound(k)->sound==actionSound)
+					{
+						Warning(filename+string("\n\n")+_("This source referenced in the preset which was not the action sound when the preset was saved is now the action sound.  Some connections will likely be missing or wrong."));
+						found=true;
+						sourceCreated=false;
+					}
+					else
+					{
+						newSource(gSoundFileManager->getSound(k),k);
+						sourceCreated=true;
+						found=true;
+					}
 					break;
 				}
 			}
@@ -1738,7 +1747,7 @@ void FXPluginRoutingParamValue::readFromFile(const string &prefix,CNestedDataFil
 			{ // filename wasn't found loaded in the soundFileManager
 				if(CPath(filename).exists())
 				{ // file exists, so prompt to load it
-					if(Question(string(_("When this preset was saved there was a file loaded named:"))+"\n     "+filename+"\n"+_("This file is currently not loaded.\nWould you like to load it now?")+"\n"+_("If you do not, then the preset cannot not be fully selected."),yesnoQues)==yesAns)
+					if(Question(string(_("When this preset was saved there was a file loaded named:"))+"\n     "+filename+"\n"+_("This file is currently not loaded.\nWould you like to load it now?")+"\n"+_("If you do not, then the preset cannot not be fully recreated."),yesnoQues)==yesAns)
 					{ // attempt to load a file by that name
 						if(openSound(gSoundFileManager,filename))
 						{ // a new file was loaded, so use it in place of the one not found
@@ -1748,14 +1757,14 @@ void FXPluginRoutingParamValue::readFromFile(const string &prefix,CNestedDataFil
 						}
 						else
 						{
-							Message(_("The preset cannot be fully selected."));
+							Message(_("The preset cannot be fully recreated."));
 							return;
 						}
 					}
 				}
 				else
 				{
-					if(Question(string(_("When this preset was saved there was a file loaded named:"))+"\n     "+filename+"\n"+_("This file now does not exist.\nWould you like to load another file in its place?")+"\n"+_("If you do not, then the preset cannot not be fully selected."),yesnoQues)==yesAns)
+					if(Question(string(_("When this preset was saved there was a file loaded named:"))+"\n     "+filename+"\n"+_("This file now does not exist.\nWould you like to load another file in its place?")+"\n"+_("If you do not, then the preset cannot not be fully recreated."),yesnoQues)==yesAns)
 					{ // load a new file in its place
 						if(openSound(gSoundFileManager))
 						{ // a new file was loaded, so use it in place of the one not found
@@ -1765,7 +1774,7 @@ void FXPluginRoutingParamValue::readFromFile(const string &prefix,CNestedDataFil
 						}
 						else
 						{
-							Message(_("The preset cannot be fully selected."));
+							Message(_("The preset cannot be fully recreated."));
 						}
 					}
 				}
@@ -1775,7 +1784,7 @@ void FXPluginRoutingParamValue::readFromFile(const string &prefix,CNestedDataFil
 		if(sourceCreated)
 		{
 			if(N_sources[N_sources.size()-1].nodes.size()<nodeCount)
-				Warning("     "+gSoundFileManager->getSound(N_sources[N_sources.size()-1].nodes[0].u.source.soundFileManagerIndex)->getFilename()+"\n"+_("This file has fewer channels than the one used when the preset was saved.  It may not be possible to restore some of the connections."));
+				Warning(gSoundFileManager->getSound(N_sources[N_sources.size()-1].nodes[0].u.source.soundFileManagerIndex)->getFilename()+"\n\n"+_("This file has fewer channels than the one used when the preset was saved.  It may not be possible to restore some of the connections."));
 
 			// the howMuch combobox
 			if(N_sources[N_sources.size()-1].howMuch)
