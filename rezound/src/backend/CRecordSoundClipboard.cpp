@@ -98,18 +98,8 @@ bool CRecordSoundClipboard::prepareForCopyTo()
 		for(size_t t=0;t<channelCount;t++)
 			whichChannels[t]=true;
 
-		// after recording remove the manditory 1 sample from the beginning
-		workingFile->lockForResize();
-		try
-		{
-			workingFile->removeSpace(0,1);
-			workingFile->unlockForResize();
-		}
-		catch(...)
-		{
-			workingFile->unlockForResize();
-			throw;
-		}
+		// ??? temporary until CSound can have zero lenth
+		workingFile->lockForResize(); try { workingFile->removeSpace(0,1); workingFile->unlockForResize(); } catch(...) { workingFile->unlockForResize(); throw; }
 
 		recorder.deinitialize();
 	}
