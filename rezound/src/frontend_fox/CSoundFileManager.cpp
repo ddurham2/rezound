@@ -52,9 +52,9 @@ void CSoundFileManager::createWindow(CLoadedSound *loaded)
 	win->create();
 	win->show();
 
-	mainWindow->addSoundWindow(win);
-
 	soundWindows.push_back(win);
+
+	mainWindow->addSoundWindow(win);
 
 	win->setActiveState(true);
 }
@@ -67,13 +67,18 @@ void CSoundFileManager::destroyWindow(CLoadedSound *loaded)
 		{
 			CSoundWindow *win=soundWindows[t];
 
-			mainWindow->removeSoundWindow(win);
-
 			soundWindows.erase(soundWindows.begin()+t);
 
-			// make new active window
+			mainWindow->removeSoundWindow(win);
+
+			// make new active window (either in the same position or the last one)
 			if(!soundWindows.empty())
-				soundWindows[0]->setActiveState(true);
+			{
+				if(t<soundWindows.size())
+					soundWindows[t]->setActiveState(true);
+				else
+					soundWindows[soundWindows.size()-1]->setActiveState(true);
+			}
 
 			delete win;
 
@@ -85,6 +90,11 @@ void CSoundFileManager::destroyWindow(CLoadedSound *loaded)
 const size_t CSoundFileManager::getOpenedCount() const
 {
 	return(soundWindows.size());
+}
+
+CSoundWindow *CSoundFileManager::getSoundWindow(size_t index)
+{
+	return soundWindows[index];
 }
 
 #include "../backend/CSound.h"
