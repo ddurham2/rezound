@@ -61,7 +61,8 @@ public:
 	void *newVertPanel(void *parent,bool createBorder=true);
 
 	void addSlider(void *parent,const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton);
-	void addTextEntry(void *parent,const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsTipText="");
+	void addNumericTextEntry(void *parent,const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsTipText="");
+	void addStringTextEntry(void *parent,const string name,const string initialValue,const string unitsTipText="");
 	void addDiskEntityEntry(void *parent,const string name,const string intialEntityName,FXDiskEntityParamValue::DiskEntityTypes entityType,const string tipText="");
 		/* is isEditable then the value is an integer of the actual value, if isEditable is false, then the integer value is the index of the items */
 	void addComboTextEntry(void *parent,const string name,const vector<string> &items,const string tipText="",bool isEditable=false);
@@ -115,7 +116,8 @@ private:
 	enum ParamTypes
 	{
 		ptConstant,
-		ptText,
+		ptNumericText,
+		ptStringText,
 		ptDiskEntity,
 		ptComboText,
 		ptCheckBox,

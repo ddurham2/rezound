@@ -152,14 +152,24 @@ void CActionParamDialog::addSlider(void *parent,const string name,const string u
 	retValueConvs.push_back(optRetValueConv);
 }
 
-void CActionParamDialog::addTextEntry(void *parent,const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsTipText)
+void CActionParamDialog::addNumericTextEntry(void *parent,const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsTipText)
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
 	FXTextParamValue *textEntry=new FXTextParamValue((FXPacker *)parent,0,name.c_str(),minValue,maxValue);
 	textEntry->setUnits(units.c_str(),unitsTipText.c_str());
 	textEntry->setValue(initialValue);
-	parameters.push_back(pair<ParamTypes,void *>(ptText,(void *)textEntry));
+	parameters.push_back(pair<ParamTypes,void *>(ptNumericText,(void *)textEntry));
+	retValueConvs.push_back(NULL);
+}
+
+void CActionParamDialog::addStringTextEntry(void *parent,const string name,const string initialValue,const string unitsTipText)
+{
+	if(parent==NULL)
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+	FXTextParamValue *textEntry=new FXTextParamValue((FXPacker *)parent,0,name.c_str());
+	textEntry->setText(initialValue);
+	parameters.push_back(pair<ParamTypes,void *>(ptStringText,(void *)textEntry));
 	retValueConvs.push_back(NULL);
 }
 
@@ -250,8 +260,12 @@ void CActionParamDialog::setValue(size_t index,const double value)
 		((FXConstantParamValue *)parameters[index].second)->setValue(value);
 		break;
 
-	case ptText:
+	case ptNumericText:
 		((FXTextParamValue *)parameters[index].second)->setValue(value);
+		break;
+
+	case ptStringText:
+		((FXTextParamValue *)parameters[index].second)->setText(istring(value));
 		break;
 
 	case ptComboText:
@@ -289,7 +303,8 @@ void CActionParamDialog::setControlHeight(size_t index,const size_t height)
 		((FXConstantParamValue *)parameters[index].second)->setHeight(height);
 		break;
 
-	case ptText:
+	case ptNumericText:
+	case ptStringText:
 		((FXTextParamValue *)parameters[index].second)->setHeight(height);
 		break;
 
@@ -326,7 +341,8 @@ const size_t CActionParamDialog::getControlHeight(size_t index) const
 	case ptConstant:
 		return ((FXConstantParamValue *)parameters[index].second)->getHeight();
 
-	case ptText:
+	case ptNumericText:
+	case ptStringText:
 		return ((FXTextParamValue *)parameters[index].second)->getHeight();
 
 	case ptDiskEntity:
@@ -359,7 +375,8 @@ void CActionParamDialog::setTipText(size_t index,const string tipText)
 		((FXConstantParamValue *)parameters[index].second)->setTipText(tipText.c_str());
 		break;
 
-	case ptText:
+	case ptNumericText:
+	case ptStringText:
 		((FXTextParamValue *)parameters[index].second)->setTipText(tipText.c_str());
 		break;
 
@@ -428,7 +445,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 				}
 				break;
 
-			case ptText:
+			case ptNumericText:
 				{
 					FXTextParamValue *textEntry=(FXTextParamValue *)parameters[t].second;
 					double ret=textEntry->getValue();
@@ -437,6 +454,14 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 						ret=retValueConvs[t](ret);
 
 					actionParameters->addDoubleParameter(textEntry->getTitle(),ret);	
+				}
+				break;
+
+			case ptStringText:
+				{
+					FXTextParamValue *textEntry=(FXTextParamValue *)parameters[t].second;
+					const string ret=textEntry->getText();
+					actionParameters->addStringParameter(textEntry->getTitle(),ret);	
 				}
 				break;
 
@@ -550,7 +575,8 @@ long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void 
 				((FXConstantParamValue *)parameters[t].second)->readFromFile(title,presetsFile);
 				break;
 
-			case ptText:
+			case ptNumericText:
+			case ptStringText:
 				((FXTextParamValue *)parameters[t].second)->readFromFile(title,presetsFile);
 				break;
 
@@ -633,7 +659,8 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 					((FXConstantParamValue *)parameters[t].second)->writeToFile(title,presetsFile);
 					break;
 
-				case ptText:
+				case ptNumericText:
+				case ptStringText:
 					((FXTextParamValue *)parameters[t].second)->writeToFile(title,presetsFile);
 					break;
 

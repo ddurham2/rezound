@@ -45,6 +45,8 @@ FXIMPLEMENT(FXTextParamValue,FXHorizontalFrame,FXTextParamValueMap,ARRAYNUMBER(F
 FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title,const double _minValue,const double _maxValue) :
 	FXHorizontalFrame(p,opts|FRAME_RIDGE | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 6,6,2,4, 2,0),
 
+	isNumeric(true),
+
 	minValue(_minValue),
 	maxValue(_maxValue),
 
@@ -56,14 +58,29 @@ FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title,con
 	valueSpinner->setRange(-10,10);
 }
 
+FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title) :
+	FXHorizontalFrame(p,opts|FRAME_RIDGE | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 6,6,2,4, 2,0),
+
+	isNumeric(false),
+
+	titleLabel(new FXLabel(this,title,NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
+	valueTextBox(new FXTextField(this,8,this,ID_VALUE_TEXTBOX, TEXTFIELD_NORMAL | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
+	valueSpinner(NULL),
+	unitsLabel(NULL)
+{
+}
+
 FXTextParamValue::~FXTextParamValue()
 {
 }
 
 void FXTextParamValue::setUnits(const FXString units,const FXString tipText)
 {
-	unitsLabel->setText(units);
-	unitsLabel->setTipText(tipText);
+	if(isNumeric)
+	{
+		unitsLabel->setText(units);
+		unitsLabel->setTipText(tipText);
+	}
 }
 
 long FXTextParamValue::onValueSpinnerChange(FXObject *sender,FXSelector sel,void *ptr)
@@ -97,6 +114,18 @@ void FXTextParamValue::setValue(const double value)
 	validateRange();
 }
 
+const string FXTextParamValue::getText()
+{
+	validateRange();
+	return valueTextBox->getText().text();
+}
+
+void FXTextParamValue::setText(const string value)
+{
+	validateRange();
+	valueTextBox->setText(value.c_str());
+}
+
 void FXTextParamValue::setRange(const double _minValue,const double _maxValue)
 {
 	minValue=_minValue;
@@ -106,6 +135,9 @@ void FXTextParamValue::setRange(const double _minValue,const double _maxValue)
 
 void FXTextParamValue::validateRange()
 {
+	if(!isNumeric)
+		return;
+
 	double v=atof(valueTextBox->getText().text());
 
 	if(v<minValue)
@@ -125,7 +157,8 @@ void FXTextParamValue::setTipText(const FXString &text)
 {
 	titleLabel->setTipText(text);	
 	valueTextBox->setTipText(text);
-	valueSpinner->setTipText(text);
+	if(isNumeric)
+		valueSpinner->setTipText(text);
 }
 
 FXString FXTextParamValue::getTipText() const
@@ -137,13 +170,19 @@ void FXTextParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
 	const string key=prefix+DOT+getTitle()+DOT;
 	const string v=f->getValue((key+"value").c_str());
-	setValue(atof(v.c_str()));
+	if(isNumeric)
+		setValue(atof(v.c_str()));
+	else
+		setText(v);
 }
 
 void FXTextParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 {
 	const string key=prefix+DOT+getTitle()+DOT;
-	f->createKey((key+"value").c_str(),istring(getValue()));
+	if(isNumeric)
+		f->createKey((key+"value").c_str(),istring(getValue()));
+	else
+		f->createKey((key+"value").c_str(),getText());
 }
 
 
