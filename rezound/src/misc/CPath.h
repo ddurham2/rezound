@@ -21,7 +21,7 @@
 #ifndef CCXX_path_H_
 #define CCXX_path_H_
 
-#include "../../../config/common.h"
+#include "../../config/common.h"
 
 /*
 	This was first written and tested under linux, however a few provisions

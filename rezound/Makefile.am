@@ -48,5 +48,7 @@ EXTRA_DIST= \
 dist-hook:
 	rm -rf `find $(distdir) -type d -name CVS`	# remove all CVS directories
 	rm -rf `find $(distdir) -type f -name Makefile` # from including docs and share on the EXTRA_DIST line
+	echo rm -rf `find $(distdir) -type f -name \.\#\*`	# CVS revision files left around for some reason
 	rm -rf $(distdir)/src/images/WORK		# makes the tarball much smaller
+	rm -rf $(distdir)/src/misc/missing/generated	# doesn't need to go with the distro
 

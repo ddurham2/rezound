@@ -21,5 +21,3 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-/* This is defined only if the check for sstream passes */
-#undef HAVE_SSTREAM 

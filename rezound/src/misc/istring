@@ -52,13 +52,7 @@
 
 #include <string>
 
-//This uses a package sstream-missing header if sstream is not present on 
-//the native system.  Debian 2.2r4 is known to be missing sstream
-#ifndef HAVE_SSTREAM
-#include <sstream-missing>
-#else
 #include <sstream>
-#endif
 
 namespace std {
 

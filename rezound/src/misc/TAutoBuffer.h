@@ -22,7 +22,7 @@
 #define __TAutoBuffer_H__
 
 
-#include "../../../config/common.h"
+#include "../../config/common.h"
 
 // I suppose these headers would be available on all posix platforms
 #include <stddef.h>

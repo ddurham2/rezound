@@ -36,7 +36,11 @@ the executable file might be covered by the GNU General Public License. */
 #ifndef __SSTREAM__
 #define __SSTREAM__
 
-#include "../../../config/common.h"
+/* 
+   this has one more ../ that you would think because when it is actually 
+   use, it will be in in this_directory/generated
+*/
+#include "../../../../config/common.h" 
 
 
 #include <string>

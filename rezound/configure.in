@@ -64,8 +64,7 @@ dnl I found that afSetVirtualSampleFormat() was missing from earlier versions
 dnl of audifile, so this is a little better than checking for a random
 dnl function in libaudiofile. I still have to work this so configure will
 dnl abort if the test fails.
-ajv_CHECK_LIB_ABORT(audiofile, afSetVirtualSampleFormat,
-AUDIOFILE,[http://oss.sgi.com/projects/audiofile/])
+ajv_CHECK_LIB_ABORT(audiofile, afSetVirtualSampleFormat, AUDIOFILE,[http://oss.sgi.com/projects/audiofile/])
 
 dnl This is a check for a class in a C++ library. To pinpoint
 dnl the specific version we need we could change what class is linked.
@@ -84,9 +83,13 @@ dnl Checks for header files.|
 dnl ------------------------|
 AC_HEADER_STDC
 dnl This is defined in config/sstream.m4 it checks for a native sstream 
-dnl header and sets config.h so we'll use missing/sstream-missing if it's 
-dnl not found. see config sstream.m4 for definition
+dnl header and makes arrangements for missing/sstream-missing to be used 
+dnl if it's not found. see config sstream.m4 for definition
 ajv_CHECK_HEADER_SSTREAM
+dnl This is defined in config/stdint.m4 it checks for a native stdint.h 
+dnl header and makes arrangements for missing/stdint.h-missing to be used 
+dnl if it's not found. see config stdint.m4 for definition
+ajv_CHECK_HEADER_STDINT
 
 
 dnl Checks for typedefs, structures, and compiler characteristics.
@@ -110,18 +113,20 @@ fi
 dnl these macros #define some cpp macros so our install paths can be 
 dnl hard coded into the compiled program.
 AC_DEFINE_UNQUOTED(INSTALL_PREFIX, "$ajv_install_prefix",[ This is the prefix passed to configure])
+
 dnl and the top source directory for running pre-install
-ajv_source_dir="`pwd`/$srcdir"
-AC_DEFINE_UNQUOTED(SOURCE_DIR, "$ajv_source_dir",[ This is the top source directory for
-pre-installed testing])
+ajv_current_dir=`pwd`
+ajv_source_dir=`cd $srcdir && pwd`
+cd $ajv_current_dir
+AC_DEFINE_UNQUOTED(SOURCE_DIR, "$ajv_source_dir",[ This is the top source directory for pre-installed testing])
+
 
 if test x"$datadir" = x'${prefix}/share'; then
 	ajv_data_dir=$ajv_install_prefix/`echo $datadir | sed 's%${prefix}/%%'`
 else
 	ajv_data_dir=$datadir
 fi
-AC_DEFINE_UNQUOTED(DATA_DIR, "$ajv_data_dir",[ This the --datadir (share) set
-by configure ])
+AC_DEFINE_UNQUOTED(DATA_DIR, "$ajv_data_dir",[ This the --datadir (share) set by configure ])
 
 
 AC_OUTPUT( \
@@ -150,5 +155,5 @@ AC_OUTPUT( \
 # of frontend API, then this should become a conditional
 # statement
 rm -f ./rezound
-ln -s ./src/frontend_fox/ReZound ./rezound
+ln -s $srcdir/src/frontend_fox/ReZound ./rezound
 
