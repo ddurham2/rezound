@@ -108,6 +108,9 @@
 
 --- POSSIBLE THINGS TO DO ---
 
+	- create a feature on the record dialog which is only present when using the dialog for paste-replace  which says to play some X seconds of a given CLoadedSound before starting to record all when the record button is pressed
+		- this would require low latency recording buffers and playback buffers.. OR just know that latency exactly and account for it.
+
 	- make a place where people can submit a preset to be added into the main release if it's a good one
 
 	- There is a something which exists called LADSPA for writing reusable plugins for linux audio applications
