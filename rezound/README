@@ -9,7 +9,7 @@ See docs/INSTALL for installation instructions.
 
 See docs/NEWS for the latest changes.
 
-If you are installing from CVS sources read docs/CVS-INSTALL first.
+If you are building/installing from CVS sources read docs/CVS-INSTALL first.
 
 See docs/README_DOCS for document summary.
 
@@ -21,7 +21,7 @@ Potential hackers should look at the docs/devel and docs/class directories.
      feedback as possible. We would really like to get any bug reports and other 
      suggestions.  Please visit the ReZound Homepage. 
 
-ReZound Homepage:	http://rezound.sourceforge.net/
+ReZound Homepage:	http://rezound.sourceforge.net
 
 General Discussions and Help:	
 	ReZound-users mailing list 
