@@ -11,7 +11,7 @@ on most distributions, if your version is not up to date, you can download
 at http://oss.sgi.com/projects/audiofile/
 
 
-2. gnucc-1.9.4 (a.k.a. commonc++-1.9.4) - 	GNU Common C++ library,
+2. gnucc-1.9.4 (a.k.a. commonc++-1.9.4 (>1.9.1-11)) - 	GNU Common C++ library,
 develoment was done with v1.9.4 but earlier versions may be found to work. If
 you don't have libgnucc then you can download it at
 http://www.gnu.org/software/commonc++
