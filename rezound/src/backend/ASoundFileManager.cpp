@@ -52,10 +52,6 @@ void ASoundFileManager::createNew()
 
 CLoadedSound *ASoundFileManager::prvCreateNew(bool askForLength)
 {
-	CSound *sound=NULL;
-	CSoundPlayerChannel *channel=NULL;
-	CLoadedSound *loaded=NULL;
-
 	string filename=getUntitledFilename(gPromptDialogDirectory,"rez");
 	bool rawFormat=false;
 	unsigned channelCount;
@@ -66,36 +62,45 @@ CLoadedSound *ASoundFileManager::prvCreateNew(bool askForLength)
 		(!askForLength && gFrontendHooks->promptForNewSoundParameters(filename,rawFormat,channelCount,sampleRate))
 	)
 	{
-		if(isFilenameRegistered(filename))
-			throw(runtime_error(string(__func__)+" -- a file named '"+filename+"' is already opened"));
-
-		// should get based on extension
-		const ASoundTranslator *translator=getTranslator(filename,rawFormat);
-
-		try
-		{
-				sound=new CSound(filename,sampleRate,channelCount,length);
-				channel=soundPlayer->newSoundPlayerChannel(sound);
-				loaded=new CLoadedSound(filename,channel,false,translator);
-
-				createWindow(loaded);
-		}
-		catch(...)
-		{
-			if(loaded!=NULL)
-				destroyWindow(loaded);
-			delete loaded;
-			delete channel;
-			delete sound;
-			throw;
-		}
-
-		registerFilename(filename);
-
-		return(loaded);
+		return createNew(filename,channelCount,sampleRate,length,rawFormat);
 	}
 
-	return(NULL);
+	return NULL;
+}
+
+CLoadedSound *ASoundFileManager::createNew(const string filename,unsigned channelCount,unsigned sampleRate,unsigned length,bool rawFormat)
+{
+	CSound *sound=NULL;
+	CSoundPlayerChannel *channel=NULL;
+	CLoadedSound *loaded=NULL;
+
+	if(isFilenameRegistered(filename))
+		throw runtime_error(string(__func__)+" -- a file named '"+filename+"' is already opened");
+
+	// should get based on extension
+	const ASoundTranslator *translator=getTranslator(filename,rawFormat);
+
+	try
+	{
+		sound=new CSound(filename,sampleRate,channelCount,length);
+		channel=soundPlayer->newSoundPlayerChannel(sound);
+		loaded=new CLoadedSound(filename,channel,false,translator);
+
+		createWindow(loaded);
+	}
+	catch(...)
+	{
+		if(loaded!=NULL)
+			destroyWindow(loaded);
+		delete loaded;
+		delete channel;
+		delete sound;
+		throw;
+	}
+
+	registerFilename(filename);
+
+	return loaded;
 }
 
 void ASoundFileManager::open(const string _filename,bool openAsRaw)

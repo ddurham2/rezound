@@ -48,6 +48,7 @@ public:
 	virtual ~ASoundFileManager() { }
 
 	void createNew();
+	CLoadedSound *createNew(const string filename,unsigned channelCount,unsigned sampleRate,unsigned length=1,bool rawFormat=false);
 	void open(const string filename="",bool openAsRaw=false);
 	// ??? should rename these to, saveActive... 
 	void save();
