@@ -346,7 +346,7 @@ bool CBurnToCDAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 #endif
 
 	// burn the files
-	const string command="'"+pathTo_cdrdao+"' "+(testOnly ? "simulate " : "write ")+endianSwap+"--speed "+istring(burnSpeed)+" --device "+device+" '"+TOCFilename+"'";
+	const string command="'"+pathTo_cdrdao+"' "+(testOnly ? "simulate " : "write ")+endianSwap+"--speed "+istring(burnSpeed)+" --device "+device+" "+extra_cdrdao_options+" '"+TOCFilename+"'";
 	printf("about to run command: %s\n",command.c_str());
 	int status=system(command.c_str());
 	if(WEXITSTATUS(status)!=0)
