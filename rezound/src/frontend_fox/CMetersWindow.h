@@ -31,7 +31,7 @@
 class CMeter;
 class ASoundPlayer;
 
-class CMetersWindow : public FXPacker
+class CMetersWindow : public FXHorizontalFrame
 {
 	FXDECLARE(CMetersWindow)
 public:
@@ -64,10 +64,12 @@ protected:
 
 private:
 	FXFont *statusFont;
-	FXPacker *metersFrame;
+	FXPacker *levelMetersFrame;
 		FXPacker *headerFrame;
 			FXPacker *labelFrame;
 			FXLabel *grandMaxPeakLevelLabel;
+
+	FXPacker *analyzerFrame;
 
 	vector<CMeter *> meters;
 

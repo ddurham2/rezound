@@ -35,7 +35,7 @@ class CMeter : public FXHorizontalFrame
 	FXDECLARE(CMeter);
 public:
 	CMeter::CMeter(FXComposite *parent) :
-		FXHorizontalFrame(parent,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0),
+		FXHorizontalFrame(parent,LAYOUT_FILL_X|LAYOUT_FIX_HEIGHT|LAYOUT_TOP | FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0),
 		statusFont(getApp()->getNormalFont()),
 		canvas(new FXCanvas(this,this,ID_CANVAS,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,400,0)),
 		grandMaxPeakLevelLabel(new FXLabel(this,"",NULL,LABEL_NORMAL|LAYOUT_RIGHT|LAYOUT_FIX_WIDTH|LAYOUT_FILL_Y,0,0,0,0, 1,1,2,2)),
@@ -80,6 +80,7 @@ public:
 	{
 		FXHorizontalFrame::create();
 		setGrandMaxPeakLevel(0);
+		setHeight(max(statusFont->getFontHeight(),15)); // make meter only as tall as necessary with a  15 pixel minimum
 	}
 
 	long CMeter::onCanvasPaint(FXObject *sender,FXSelector sel,void *ptr)
@@ -270,7 +271,7 @@ FXDEFMAP(CMetersWindow) CMetersWindowMap[]=
 	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	CMetersWindow::ID_GRAND_MAX_PEAK_LEVEL_LABEL,	CMetersWindow::onResetGrandMaxPeakLevels),
 };
 
-FXIMPLEMENT(CMetersWindow,FXPacker,CMetersWindowMap,ARRAYNUMBER(CMetersWindowMap))
+FXIMPLEMENT(CMetersWindow,FXHorizontalFrame,CMetersWindowMap,ARRAYNUMBER(CMetersWindowMap))
 
 
 /*
@@ -283,22 +284,23 @@ FXIMPLEMENT(CMetersWindow,FXPacker,CMetersWindowMap,ARRAYNUMBER(CMetersWindowMap
  */
 
 CMetersWindow::CMetersWindow(FXComposite *parent) :
-	FXPacker(parent,LAYOUT_BOTTOM|LAYOUT_FILL_X|LAYOUT_FIX_HEIGHT|FRAME_RIDGE,0,0,0,55, 3,3,3,3, 0,0),
+	FXHorizontalFrame(parent,LAYOUT_BOTTOM|LAYOUT_FILL_X|LAYOUT_FIX_HEIGHT|FRAME_RAISED|FRAME_THICK,0,0,0,0, 3,3,3,3, 2,0),
 	statusFont(getApp()->getNormalFont()),
-	metersFrame(new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_SUNKEN|FRAME_THICK,0,0,0,0, 2,2,0,2, 0,1)),
-		headerFrame(new FXHorizontalFrame(metersFrame,LAYOUT_FILL_X|FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0)),
+	levelMetersFrame(new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_SUNKEN|FRAME_THICK,0,0,0,0, 2,2,0,2, 0,1)),
+		headerFrame(new FXHorizontalFrame(levelMetersFrame,LAYOUT_FILL_X|FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0)),
 			labelFrame(new FXPacker(headerFrame,LAYOUT_FILL_X|LAYOUT_BOTTOM|FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0)),
 			grandMaxPeakLevelLabel(new FXLabel(headerFrame,"max",NULL,LABEL_NORMAL|LAYOUT_FIX_WIDTH|LAYOUT_RIGHT,0,0,0,0, 1,1,1,1)),
+	analyzerFrame(new FXPacker(this,LAYOUT_FIX_WIDTH|LAYOUT_RIGHT|LAYOUT_FILL_Y|FRAME_SUNKEN|FRAME_THICK,0,0,200,0, 0,0,0,0, 0,0)),
 	soundPlayer(NULL)
 {
 	// create the font to use for meters
-        FXFontDesc d;
-        statusFont->getFontDesc(d);
-        d.size=60;
+	FXFontDesc d;
+	statusFont->getFontDesc(d);
+	d.size=60;
 	d.weight=FONTWEIGHT_NORMAL;
-        statusFont=new FXFont(getApp(),d);
+	statusFont=new FXFont(getApp(),d);
 
-	metersFrame->setBackColor(FXRGB(0,0,0));
+	levelMetersFrame->setBackColor(FXRGB(0,0,0));
 		headerFrame->setBackColor(FXRGB(0,0,0));
 
 			labelFrame->setTarget(this);
@@ -322,6 +324,8 @@ CMetersWindow::CMetersWindow(FXComposite *parent) :
 			grandMaxPeakLevelLabel->setFont(statusFont);
 			grandMaxPeakLevelLabel->setTextColor(FXRGB(128,128,128));
 			grandMaxPeakLevelLabel->setBackColor(FXRGB(0,0,0));
+
+	analyzerFrame->setBackColor(FXRGB(0,0,0));
 
 
 	// AAA
@@ -401,12 +405,20 @@ long CMetersWindow::onResetGrandMaxPeakLevels(FXObject *sender,FXSelector sel,vo
 
 void CMetersWindow::setSoundPlayer(ASoundPlayer *_soundPlayer)
 {
+#warning remember to eventually try this when the playback device fails to initialize
 	if(soundPlayer!=NULL)
 		throw runtime_error(string(__func__)+" -- internal error -- sound player already set -- perhaps I need to allow this");
 	soundPlayer=_soundPlayer;
 
 	for(size_t t=0;t<soundPlayer->devices[0].channelCount;t++)
-		meters.push_back(new CMeter(metersFrame));
+		meters.push_back(new CMeter(levelMetersFrame));
+
+	setHeight(
+		max(
+			grandMaxPeakLevelLabel->getHeight() + (soundPlayer->devices[0].channelCount * max(statusFont->getFontHeight(),15)),
+			(unsigned)75
+		)
+	);
 }
 
 void CMetersWindow::resetGrandMaxPeakLevels()
