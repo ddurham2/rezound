@@ -278,6 +278,21 @@ void setLocaleFont(FXApp *application)
 
 		application->setNormalFont(new FXFont(application,desc));
 	}
+	else if(lang=="es" || lang=="es_ES")
+	{ // setup ISO_8859-1 encoded font
+		FXFontDesc desc={
+			"helvetica",
+			90,
+			FONTWEIGHT_BOLD,
+			FONTSLANT_REGULAR,
+			FONTENCODING_ISO_8859_1,
+			FONTSETWIDTH_DONTCARE,
+			0
+		};
+
+		application->setNormalFont(new FXFont(application,desc));
+	}
+
 }
 #endif
 
