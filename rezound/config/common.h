@@ -86,10 +86,16 @@ static const char *REZOUND_VERSION=VERSION;
 static bool compareBool(int a,int b) { return (a && b) || (!a && !b); }
 
 #ifdef ENABLE_NLS
-#include <libintl.h>
-#define _(String) gettext (String)
+	#include <libintl.h>
+	#define _(String) gettext (String)
 #else
-#define _(String) String
+	#define _(String) String
 #endif
+
+// NOOP for gettext
+#define N_(String) String
+
+
+
 
 #endif /* COMMON_H */
