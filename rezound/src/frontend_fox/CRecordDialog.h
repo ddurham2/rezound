@@ -18,27 +18,32 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __file_H__
-#define __file_H__
-
-
+#ifndef __CRecordDialog_H__
+#define __CRecordDialog_H__
 #include "../../config/common.h"
 
-// this file is used just for the front end to simply invoke a function and not worry about it succeding or not... 
-// all exceptions will be popped up as error messages
 
-#include <string>
+class CRecordDialog;
 
-class ASoundFileManager;
+#include "FXModalDialogBox.h"
+#include "../backend/AAction.h"
 
-void openSound(ASoundFileManager *soundFileManager,const string filename="");
-void newSound(ASoundFileManager *soundFileManager);
-void closeSound(ASoundFileManager *soundFileManager);
-void saveSound(ASoundFileManager *soundFileManager);
-void saveAsSound(ASoundFileManager *soundFileManager);
-void revertSound(ASoundFileManager *soundFileManager);
-void recordSound(ASoundFileManager *soundFileManager);
+extern CRecordDialog *gRecordDialog;
 
-const bool exitReZound(ASoundFileManager *soundFileManager);
+class CRecordDialog : public FXModalDialogBox, public AActionDialog
+{
+	FXDECLARE(CRecordDialog);
+public:
+
+	CRecordDialog(FXWindow *mainWindow);
+
+	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
+
+protected:
+	CRecordDialog() {}
+
+private:
+
+};
 
 #endif

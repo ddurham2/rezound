@@ -110,6 +110,20 @@ void revertSound(ASoundFileManager *soundFileManager)
 
 //---------------------------------------------------------------------------
 
+void recordSound(ASoundFileManager *soundFileManager)
+{
+	try
+	{
+		soundFileManager->recordToNew();
+	}
+	catch(exception &e)
+	{
+		Error(e.what());
+	}
+}
+
+//---------------------------------------------------------------------------
+
 const bool exitReZound(ASoundFileManager *soundFileManager)
 {
 /*

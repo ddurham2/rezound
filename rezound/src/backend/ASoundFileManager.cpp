@@ -37,6 +37,11 @@ ASoundFileManager::ASoundFileManager(CSoundManager &_soundManager,ASoundPlayer &
 
 void ASoundFileManager::createNew()
 {
+	prvCreateNew(true);
+}
+
+CLoadedSound *ASoundFileManager::prvCreateNew(bool askForLength)
+{
 	CSoundManagerClient *client=NULL;
 	CSoundPlayerChannel *channel=NULL;
 	CLoadedSound *loaded=NULL;
@@ -44,8 +49,11 @@ void ASoundFileManager::createNew()
 	string filename;
 	unsigned channelCount;
 	unsigned sampleRate;
-	sample_pos_t length;
-	if(promptForNewSoundParameters(filename,channelCount,sampleRate,length))
+	sample_pos_t length=1;  // 1 if askForLength is false
+	if(
+		(askForLength && promptForNewSoundParameters(filename,channelCount,sampleRate,length)) ||
+		(!askForLength && promptForNewSoundParameters(filename,channelCount,sampleRate))
+	)
 	{
 		try
 		{
@@ -66,7 +74,11 @@ void ASoundFileManager::createNew()
 		}
 
 		registerFilename(filename);
+
+		return(loaded);
 	}
+
+	return(NULL);
 }
 
 void ASoundFileManager::open(const string _filename)
@@ -253,6 +265,22 @@ void ASoundFileManager::revert()
 	}
 }
 
+#include <COSSSoundRecorder.h> // ??? when porting we need to somehow choose which implementation to instantiate and use
+
+void ASoundFileManager::recordToNew()
+{
+	CLoadedSound *loaded=prvCreateNew(false);
+	if(loaded==NULL)
+		return; // cancelled
+
+	COSSSoundRecorder recorder;
+	recorder.initialize(loaded->getSound());
+	bool ret=promptForRecord(&recorder);
+	recorder.deinitialize();
+
+	if(!ret)
+		close(ctSaveNone,loaded); // record dialog was cancelled, don't ask to save when closing
+}
 
 
 

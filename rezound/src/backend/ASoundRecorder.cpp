@@ -20,6 +20,7 @@
 
 #include "ASoundRecorder.h"
 
+
 ASoundRecorder::ASoundRecorder() :
 	sound(NULL)
 {
@@ -29,62 +30,70 @@ ASoundRecorder::~ASoundRecorder()
 {
 }
 
-void ASoundRecorder::onInit(ASound *_sound,const unsigned _channelCount,const unsigned _sampleRate)
+void ASoundRecorder::onInit(ASound *_sound)
 {
+	started=false;
 	sound=_sound;
-	channelCount=_channelCount;
-	sampleRate=_sampleRate;
+	prealloced=0;
 }
 
 void ASoundRecorder::onStart()
 {
 	origLength=sound->getLength();
 	writePos=origLength;
-	prealloced=0;
+	started=true;
 }
 
 void ASoundRecorder::onData(const sample_t *samples,const size_t sampleFramesRecorded)
 {
-	// we preallocate space in the sound in 5 second chunks
-	if(prealloced<sampleFramesRecorded)
+	// need to find peak value for each channel ???
+	// and give public methods to get the most recent peak value per channel
+	peakReadTrigger.trip();
+
+	if(started)
 	{
-		sound->lockForResize();
-		try
+		// we preallocate space in the sound in 5 second chunks
+		if(prealloced<sampleFramesRecorded)
 		{
-			while(prealloced<sampleFramesRecorded)
+			sound->lockForResize();
+			try
 			{
-				sound->addSpace(sound->getLength(),5*sampleRate,false);
-				prealloced+=(5*sampleRate);
+				while(prealloced<sampleFramesRecorded)
+				{
+					sound->addSpace(sound->getLength(),5*sound->getSampleRate(),false);
+					prealloced+=(5*sound->getSampleRate());
+				}
+				sound->unlockForResize();
 			}
-			sound->unlockForResize();
+			catch(...)
+			{
+				sound->unlockForResize();
+				throw;
+			}
 		}
-		catch(...)
-		{
-			sound->unlockForResize();
-			throw;
-		}
-	}
 
-	const unsigned channelCount=this->channelCount;
-	sample_pos_t writePos=0;
-	for(unsigned i=0;i<channelCount;i++)
-	{
-		CRezPoolAccesser a=sound->getAudio(i);
-		const sample_t *_samples=samples+i;
-		writePos=this->writePos;
-		for(size_t t=0;t<sampleFramesRecorded;t++)
+		const unsigned channelCount=sound->getChannelCount();
+		sample_pos_t writePos=0;
+		for(unsigned i=0;i<channelCount;i++)
 		{
-			a[writePos++]=*_samples;
-			_samples+=channelCount;
+			CRezPoolAccesser a=sound->getAudio(i);
+			const sample_t *_samples=samples+i;
+			writePos=this->writePos;
+			for(size_t t=0;t<sampleFramesRecorded;t++)
+			{
+				a[writePos++]=*_samples;
+				_samples+=channelCount;
+			}
 		}
-	}
 
-	prealloced-=sampleFramesRecorded;
-	this->writePos=writePos;
+		prealloced-=sampleFramesRecorded;
+		this->writePos=writePos;
+	}
 }
 
 void ASoundRecorder::onStop(bool error)
 {
+	started=false;
 	sound->lockForResize();
 	try
 	{
@@ -116,5 +125,20 @@ void ASoundRecorder::onRedo()
 		sound->unlockForResize();
 		throw;
 	}
+}
+
+unsigned ASoundRecorder::getChannelCount() const
+{
+	return(sound->getChannelCount());
+}
+
+unsigned ASoundRecorder::getSampleRate() const
+{
+	return(sound->getSampleRate());
+}
+
+void ASoundRecorder::setPeakReadTrigger(TriggerFunc triggerFunc,void *data)
+{
+	peakReadTrigger.set(triggerFunc,data);
 }
 

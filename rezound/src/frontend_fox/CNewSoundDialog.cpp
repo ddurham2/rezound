@@ -109,6 +109,14 @@ long CNewSoundDialog::onBrowseButton(FXObject *sender,FXSelector sel,void *ptr)
 	return(1);
 }
 
+void CNewSoundDialog::hideLength(bool hide)
+{
+	if(hide)
+		lengthFrame->hide();
+	else
+		lengthFrame->show();
+}
+
 bool CNewSoundDialog::validateOnOkay()
 {
 	istring filename=filenameTextBox->getText().text();
@@ -149,13 +157,18 @@ bool CNewSoundDialog::validateOnOkay()
 	}
 	this->sampleRate=sampleRate;
 
-	double length=atof(lengthComboBox->getText().text());
-	if(length<0 || MAX_LENGTH/sampleRate<length)
+	if(lengthFrame->shown())
 	{
-		Error("Invalid length");
-		return(false);
-	} 
-	this->length=(int)(length*sampleRate);
+		double length=atof(lengthComboBox->getText().text());
+		if(length<0 || MAX_LENGTH/sampleRate<length)
+		{
+			Error("Invalid length");
+			return(false);
+		} 
+		this->length=(int)(length*sampleRate);
+	}
+	else
+		this->length=1;
 
 	return(true);
 }

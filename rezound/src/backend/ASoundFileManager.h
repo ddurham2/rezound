@@ -32,6 +32,7 @@ class ASoundFileManager;
 #include "CLoadedSound.h"
 
 class CNestedDataFile;
+class ASoundRecorder;
 
 struct EStopClosing { };
 
@@ -51,6 +52,7 @@ public:
 	enum CloseTypes { ctSaveYesNoStop,ctSaveYesNoCancel,ctSaveNone };
 	void close(CloseTypes closeType,CLoadedSound *closeWhichSound=NULL); // if nothing is passed for closeWhichSound, then the active sound is closed
 	void revert();
+	void recordToNew();
 
 	// return the CLoadedSound object associated with the sound window which is currently 'focused'
 	// return NULL if there is no focused window
@@ -72,7 +74,11 @@ protected:
 
 	// prompt for a new sound to be created asking for the given parameters (return false if the prompt was cancelled)
 	virtual bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length)=0;
+	virtual bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate)=0;
 
+	// prompt for recording, this function will have to be more than just an interface and do work 
+	// since it will probably show level meters and be able to insert cues while recording etc
+	virtual bool promptForRecord(ASoundRecorder *recorder)=0;
 
 	// should create a new sound window with the given CLoadedSound object
 	virtual void createWindow(CLoadedSound *loaded)=0;
@@ -97,6 +103,7 @@ private:
 	void registerFilename(const string filename);
 	void unregisterFilename(const string filename);
 	bool isFilenameRegistered(const string filename);
+	CLoadedSound *prvCreateNew(bool askForLength);
 
 };
 

@@ -34,6 +34,7 @@ libfrontend_la_SOURCES= CActionButton.cpp \
 		 CEditToolbar.cpp \
 		 CMainWindow.cpp \
 		 CNewSoundDialog.cpp \
+		 CRecordDialog.cpp \
 		 CPasteChannelsDialog.cpp \
 		 CProgressDialog.cpp \
 		 CSoundFileManager.cpp \
@@ -88,6 +89,7 @@ EXTRA_DIST=\
 	CEditToolbar.h \
 	CMainWindow.h \
 	CNewSoundDialog.h \
+	CRecordDialog.h \
 	CPasteChannelsDialog.h \
 	CProgressDialog.h \
 	CSoundFileManager.h \

@@ -3,6 +3,8 @@
 	- Not only should there be a record button that creates a new file, but I should create an action called 'insert record' that can be undone and inserts recorded data at the select start position, I suppose 'replace record' would delete the selection and insert there, and then overlay record which doesn't relace all the selection, but replaces audio until recording stops
 		- and just like the other paste methods, a short cross fade should be used when transitioning
 
+	- Need a hot key or event that keeps the play position on screen.. only do something if it's not on screen
+
 	- When it's up on sourceforge (and ready to debut) announce to:
 		- demudi
 		- demudi-users

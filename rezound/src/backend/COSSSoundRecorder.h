@@ -35,7 +35,7 @@ public:
 	COSSSoundRecorder();
 	virtual ~COSSSoundRecorder();
 
-	void initialize(ASound *sound,const unsigned channels,const unsigned sampleRate);
+	void initialize(ASound *sound);
 	void deinitialize();
 
 	void start();

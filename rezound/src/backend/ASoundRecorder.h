@@ -25,6 +25,7 @@
 #include "../../config/common.h"
 
 #include "ASound.h"
+#include "CTrigger.h"
 
 /*
  - This class should be derived from to do sound recording for a specific
@@ -51,7 +52,10 @@ public:
 	ASoundRecorder();
 	virtual ~ASoundRecorder();
 
-	virtual void initialize(ASound *sound,const unsigned channelCount,const unsigned sampleRate)=0;
+	void setPeakReadTrigger(TriggerFunc triggerFunc,void *data);
+
+	virtual void initialize(ASound *sound)=0;
+	// it should not be an error to deinitialize while not initialize
 	virtual void deinitialize()=0;
 
 	virtual void start()=0;
@@ -62,7 +66,7 @@ protected:
 	// These functions should return true on success and false on failure
 
 	// the implementation of init should call this 
-	void onInit(ASound *sound,const unsigned channelCount,const unsigned sampleRate);
+	void onInit(ASound *sound);
 
 	// This function should be called before any data will be recorded
 	void onStart();
@@ -74,14 +78,17 @@ protected:
 	// This function should be called upon redo request
 	void onRedo();
 
-	unsigned channelCount;
-	unsigned sampleRate;
+	unsigned getChannelCount() const;
+	unsigned getSampleRate() const;
 
 private:
 	ASound *sound;
+	bool started;
 	sample_pos_t prealloced;
 	sample_pos_t origLength;
 	sample_pos_t writePos;
+
+	CTrigger peakReadTrigger;
 
 };
 

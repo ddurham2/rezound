@@ -91,6 +91,7 @@ public:
 		ID_FILE_SAVE_AS_BUTTON,
 		ID_FILE_CLOSE_BUTTON,
 		ID_FILE_REVERT_BUTTON,
+		ID_FILE_RECORD_BUTTON,
 
 		ID_REOPEN_MENU_SELECT,
 
@@ -145,6 +146,7 @@ private:
 				FXButton *fileSaveAsButton;
 				FXButton *fileCloseButton;
 				FXButton *fileRevertButton;
+				FXButton *fileRecordButton;
 				FXButton *notesButton;
 		FXTabItem 	*effectsTab;	
 			FXPacker *effectsTabFrame;

@@ -35,6 +35,7 @@
 #include "CSoundListWindow.h"
 
 #include "CNewSoundDialog.h"
+#include "CRecordDialog.h"
 
 #include <fox/fx.h>
 
@@ -91,12 +92,36 @@ bool CSoundFileManager::promptForSave(string &filename,const string _extension)
 
 bool CSoundFileManager::promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length)
 {
+	gNewSoundDialog->hideLength(false);
 	if(gNewSoundDialog->execute(PLACEMENT_CURSOR))	
 	{
 		filename=gNewSoundDialog->getFilename();
 		channelCount=gNewSoundDialog->getChannelCount();
 		sampleRate=gNewSoundDialog->getSampleRate();
 		length=gNewSoundDialog->getLength();
+		return(true);
+	}
+	return(false);
+}
+
+bool CSoundFileManager::promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate)
+{
+	gNewSoundDialog->hideLength(true);
+	if(gNewSoundDialog->execute(PLACEMENT_CURSOR))	
+	{
+		filename=gNewSoundDialog->getFilename();
+		channelCount=gNewSoundDialog->getChannelCount();
+		sampleRate=gNewSoundDialog->getSampleRate();
+		return(true);
+	}
+	return(false);
+}
+
+bool CSoundFileManager::promptForRecord(ASoundRecorder *recorder)
+{
+	if(gRecordDialog->execute(PLACEMENT_CURSOR))
+	{
+
 		return(true);
 	}
 	return(false);

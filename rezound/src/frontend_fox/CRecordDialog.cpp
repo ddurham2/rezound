@@ -18,27 +18,38 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __file_H__
-#define __file_H__
+#include "CRecordDialog.h"
+
+CRecordDialog *gRecordDialog;
+
+FXDEFMAP(CRecordDialog) CRecordDialogMap[]=
+{
+//	Message_Type			ID					Message_Handler
+	//FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_OKAY_BUTTON,	CRecordDialog::onOkayButton),
+};
+		
+
+FXIMPLEMENT(CRecordDialog,FXModalDialogBox,CRecordDialogMap,ARRAYNUMBER(CRecordDialogMap))
 
 
-#include "../../config/common.h"
 
-// this file is used just for the front end to simply invoke a function and not worry about it succeding or not... 
-// all exceptions will be popped up as error messages
+// ----------------------------------------
 
-#include <string>
+CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
+	FXModalDialogBox(mainWindow,"Record",310,290,FXModalDialogBox::ftVertical)//,
 
-class ASoundFileManager;
+{
+}
 
-void openSound(ASoundFileManager *soundFileManager,const string filename="");
-void newSound(ASoundFileManager *soundFileManager);
-void closeSound(ASoundFileManager *soundFileManager);
-void saveSound(ASoundFileManager *soundFileManager);
-void saveAsSound(ASoundFileManager *soundFileManager);
-void revertSound(ASoundFileManager *soundFileManager);
-void recordSound(ASoundFileManager *soundFileManager);
+bool CRecordDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
+{
+	if(FXDialogBox::execute(PLACEMENT_CURSOR))
+	{
+		// if nothing was ever recorded, I should return false
 
-const bool exitReZound(ASoundFileManager *soundFileManager);
+		return(true);
+	}
+	return(false);
 
-#endif
+}
+

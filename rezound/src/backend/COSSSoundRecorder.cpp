@@ -64,7 +64,7 @@ COSSSoundRecorder::~COSSSoundRecorder()
 	deinitialize();
 }
 
-void COSSSoundRecorder::initialize(ASound *sound,const unsigned channelCount,const unsigned sampleRate)
+void COSSSoundRecorder::initialize(ASound *sound)
 {
 	if(!initialized)
 	{
@@ -89,7 +89,7 @@ void COSSSoundRecorder::initialize(ASound *sound,const unsigned channelCount,con
 
 
 		// set number of channels 
-		unsigned stereo=channelCount-1;     /* 0=mono, 1=stereo */
+		unsigned stereo=sound->getChannelCount()-1;     /* 0=mono, 1=stereo */
 		if (ioctl(audio_fd, SNDCTL_DSP_STEREO, &stereo)==-1)
 		{
 			close(audio_fd);
@@ -100,19 +100,19 @@ void COSSSoundRecorder::initialize(ASound *sound,const unsigned channelCount,con
 			close(audio_fd);
 			throw(runtime_error(string(__func__)+" -- error setting the number of channels -- the device does not support stereo"));
 		}
-		//printf("OSS: channel count: %d\n",channelCount);
+		//printf("OSS: channel count: %d\n",sound->getChannelCount());
 
 
 		// set the sample rate
-		unsigned speed=sampleRate;
+		unsigned speed=sound->getSampleRate();
 		if (ioctl(audio_fd, SNDCTL_DSP_SPEED, &speed)==-1) 
 		{
 			close(audio_fd);
 			throw(runtime_error(string(__func__)+" -- error setting the sample rate -- "+strerror(errno)));
 		} 
-		if (speed!=sampleRate)
+		if (speed!=sound->getSampleRate())
 		{ 
-			fprintf(stderr,("warning: OSS used a different sample rate ("+istring(speed)+") than what was asked for ("+istring(sampleRate)+")\n").c_str());
+			fprintf(stderr,("warning: OSS used a different sample rate ("+istring(speed)+") than what was asked for ("+istring(sound->getSampleRate())+")\n").c_str());
 			//close(audio_fd);
 			//throw(runtime_error(string(__func__)+" -- error setting the sample rate -- the sample rate is not supported"));
 		} 
@@ -150,7 +150,7 @@ void COSSSoundRecorder::initialize(ASound *sound,const unsigned channelCount,con
 		printf("OSS record: info.bytes: %d\n",info.bytes);
 		
 
-		onInit(sound,channelCount,sampleRate);
+		onInit(sound);
 
 		initialized=true;
 	}
@@ -208,14 +208,14 @@ void COSSSoundRecorder::CRecordThread::Run()
 {
 	try
 	{
-		sample_t buffer[BUFFER_SIZE_SAMPLES(parent->channelCount)*parent->channelCount]; 
+		sample_t buffer[BUFFER_SIZE_SAMPLES(parent->getChannelCount())*parent->getChannelCount()]; 
 		while(!kill)
 		{
 			int len;
 			if((len=read(parent->audio_fd,buffer,BUFFER_SIZE_BYTES))!=BUFFER_SIZE_BYTES)
 				fprintf(stderr,"warning: didn't read whole buffer -- only read %d of %d bytes\n",len,BUFFER_SIZE_BYTES);
 
-			parent->onData(buffer,len/(sizeof(sample_t)*parent->channelCount));
+			parent->onData(buffer,len/(sizeof(sample_t)*parent->getChannelCount()));
 		}
 	}
 	catch(exception &e)

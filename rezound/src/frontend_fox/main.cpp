@@ -29,6 +29,7 @@
 #include "CChannelSelectDialog.h"
 #include "CPasteChannelsDialog.h"
 #include "CNewSoundDialog.h"
+#include "CRecordDialog.h"
 
 #include "CCueListDialog.h"
 
@@ -50,6 +51,12 @@ int main(int argc,char *argv[])
 	{
 		FXApp* application=new FXApp("ReZound","NLT");
 		application->init(argc,argv);
+
+		/*
+		// set applicaiton wide colors
+		application->setBaseColor(FXRGB(193,163,102));
+		... there are others that could be set ...
+		*/
 
 		// create the main window and set the global gMainWindow variable
 		gMainWindow=new CMainWindow(application);
@@ -74,6 +81,9 @@ int main(int argc,char *argv[])
 
 		// create the dialog used to select parameters when the use creates a new sound
 		gNewSoundDialog=new CNewSoundDialog(gMainWindow);
+
+		// create the dialog used to record to a new sound
+		gRecordDialog=new CRecordDialog(gMainWindow);
 
 		// create the dialog used to obtain the name for a new cue
 		gCueDialog=new CCueDialog(gMainWindow);

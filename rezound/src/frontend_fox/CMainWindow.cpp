@@ -71,6 +71,7 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_SAVE_AS_BUTTON,		CMainWindow::onFileButton),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_CLOSE_BUTTON,		CMainWindow::onFileButton),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_REVERT_BUTTON,		CMainWindow::onFileButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_RECORD_BUTTON,		CMainWindow::onFileButton),
 
 	FXMAPFUNC(SEL_RIGHTBUTTONPRESS,		CMainWindow::ID_FILE_OPEN_BUTTON,		CMainWindow::onReopenMenuPopup),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REOPEN_MENU_SELECT,		CMainWindow::onReopenMenuSelect),
@@ -170,6 +171,7 @@ CMainWindow::CMainWindow(FXApp* a) :
 				fileSaveAsButton=new FXButton(fileTabFrame,"Save &As",NULL,this,ID_FILE_SAVE_AS_BUTTON,FRAME_RAISED);
 				fileCloseButton=new FXButton(fileTabFrame,"&Close",NULL,this,ID_FILE_CLOSE_BUTTON,FRAME_RAISED);
 				fileRevertButton=new FXButton(fileTabFrame,"Re&vert",NULL,this,ID_FILE_REVERT_BUTTON,FRAME_RAISED);
+				fileRecordButton=new FXButton(fileTabFrame,"&Record",NULL,this,ID_FILE_RECORD_BUTTON,FRAME_RAISED);
 				new FXButton(fileTabFrame,"&Redraw",NULL,this,ID_REDRAW_BUTTON,FRAME_RAISED);
 				new FXButton(fileTabFrame,"&Undo",NULL,this,ID_UNDO_BUTTON,FRAME_RAISED);
 				new FXButton(fileTabFrame,"&ClrUndo",NULL,this,ID_CLEAR_UNDO_HISTORY_BUTTON,FRAME_RAISED);
@@ -313,6 +315,10 @@ long CMainWindow::onFileButton(FXObject *sender,FXSelector sel,void *ptr)
 
 	case ID_FILE_REVERT_BUTTON:
 		revertSound(gSoundFileManager);
+		break;
+
+	case ID_FILE_RECORD_BUTTON:
+		recordSound(gSoundFileManager);
 		break;
 
 	default:
