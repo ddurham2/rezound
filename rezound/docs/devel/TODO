@@ -85,29 +85,6 @@
 					- the configure script should make a big note of this on screen that import/export will be disabled
 			- But I should still use libaudiofile to load and save wav, aiff, (ogg and mp3 if/when it's available)
 
-	- create selection edits which:
-		- grow or shrink the selection by a given duration
-			- either symetically
-			- by moving the start position
-			- by moving the stop position
-
-		- grow or shrink the selection by detecting with the audio level rises above or falls below a threshold
-			- either symetrically 
-			- by moving the start position
-			- by moving the stop position
-
-			- and be able to set the window width of the moving average which detects the audio level
-
-		- slide selection to the left or right by a given amount
-
-		- frontend: 
-			- grow/shrink(radio buttons)     
-			- symtetrically/start/stop(radio buttons)
-			- time duration with seconds as the unit (editable slider)
-			- threshold with percent as the unit (editable slider)
-			- window size in ms as the unit (editable slider)
-			
-
 	- always make sure that the actions accessers are const so that it's not causing the data to be written back to disk
 		- infact, grep for Accesser and make sure than any are const whenever possible to avoid writing that data back to disk
 
@@ -523,4 +500,27 @@
 	- create a "monoize" action under remaster that says: mix X% of left onto the right and X% of the right onto the left or any channel configuration for that matter
 		- the backend factory could probably make sure it's at least 2 channel sound before continuing ( override AActionFactory::doPreActionSetup() and return true or false or throw an EUserMessage )
 		- this would fall under the pan function probably
+
+	- create selection edits which:
+		- grow or shrink the selection by a given duration
+			- either symetically
+			- by moving the start position
+			- by moving the stop position
+
+		- grow or shrink the selection by detecting with the audio level rises above or falls below a threshold
+			- either symetrically 
+			- by moving the start position
+			- by moving the stop position
+
+			- and be able to set the window width of the moving average which detects the audio level
+
+		- slide selection to the left or right by a given amount
+
+		- frontend: 
+			- grow/shrink(radio buttons)     
+			- symtetrically/start/stop(radio buttons)
+			- time duration with seconds as the unit (editable slider)
+			- threshold with percent as the unit (editable slider)
+			- window size in ms as the unit (editable slider)
+			
 

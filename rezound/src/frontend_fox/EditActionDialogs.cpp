@@ -126,3 +126,29 @@ const string CSaveAsMultipleFilesDialog::getExplaination() const
 {
 	return CSaveAsMultipleFilesAction::getExplaination();
 }
+
+
+
+// --- grow or slide selection dialog ---------
+
+static const double interpretValue_alterSelection(const double x,const int s) { return(x*s); }
+static const double uninterpretValue_alterSelection(const double x,const int s) { return(x/s); }
+
+CGrowOrSlideSelectionDialog::CGrowOrSlideSelectionDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Grow or Slide Selected Region")
+{
+	void *p=newVertPanel(NULL);
+		addSlider(p,"Amount","s",interpretValue_alterSelection,uninterpretValue_alterSelection,NULL,1.0,1,3600,1,false);
+		setTipText("Amount","Amount to Affect the Selection in Seconds");
+
+		vector<string> items;
+			items.push_back("Grow Selection to the Left");
+			items.push_back("Grow Selection to the Right");
+			items.push_back("Grow Selection in Both Directions");
+			items.push_back("Slide Selection to the Left");
+			items.push_back("Slide Selection to the Right");
+		addComboTextEntry(p,"How",items);
+		getComboText("How")->setCurrentItem(1);
+}
+
+

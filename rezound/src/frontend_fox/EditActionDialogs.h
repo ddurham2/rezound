@@ -87,6 +87,16 @@ protected:
 };
 
 
+// --- grow or slide selection dialog -----
+
+class CGrowOrSlideSelectionDialog : public CActionParamDialog
+{
+public:
+	CGrowOrSlideSelectionDialog(FXWindow *mainWindow);
+	virtual ~CGrowOrSlideSelectionDialog(){}
+};
+
+
 
 
 

@@ -766,6 +766,8 @@ void CMainWindow::createMenus()
 	new FXMenuTitle(menubar,"&Edit",NULL,menu);
 		new FXMenuCommand(menu,"Undo\tCtrl+Z",FOXIcons->edit_undo,this,ID_UNDO_EDIT);
 		new FXMenuCommand(menu,"Clear Undo History",NULL,this,ID_CLEAR_UNDO_HISTORY);
+
+		new FXMenuSeparator(menu);
 		recentActionsMenu=new CRecentActionsPopup(this);
 		new FXMenuCascade(menu,"&Recent Actions",NULL,recentActionsMenu);
 
@@ -803,13 +805,17 @@ void CMainWindow::createMenus()
 		new CActionMenuCommand(new CRotateRightEditFactory(gChannelSelectDialog,new CRotateDialog(this)),menu,"");
 
 		new FXMenuSeparator(menu);
-		new CActionMenuCommand(new CSelectionEditFactory(sSelectAll),menu,"Ctrl+A");
-		new CActionMenuCommand(new CSelectionEditFactory(sSelectToBeginning),menu,"");
-		new CActionMenuCommand(new CSelectionEditFactory(sSelectToEnd),menu,"");
-		new CActionMenuCommand(new CSelectionEditFactory(sFlopToBeginning),menu,"");
-		new CActionMenuCommand(new CSelectionEditFactory(sFlopToEnd),menu,"");
-		new CActionMenuCommand(new CSelectionEditFactory(sSelectToSelectStart),menu,"");
-		new CActionMenuCommand(new CSelectionEditFactory(sSelectToSelectStop),menu,"");
+		FXMenuPane *selectionSubmenu=new FXMenuPane(this);
+		new FXMenuCascade(menu,"&Selection",NULL,selectionSubmenu);
+			new CActionMenuCommand(new CSelectionEditFactory(sSelectAll),selectionSubmenu,"Ctrl+A");
+			new CActionMenuCommand(new CGrowOrSlideSelectionEditFactory(new CGrowOrSlideSelectionDialog(this)),selectionSubmenu,"");
+			new CActionMenuCommand(new CSelectionEditFactory(sSelectToBeginning),selectionSubmenu,"");
+			new CActionMenuCommand(new CSelectionEditFactory(sSelectToEnd),selectionSubmenu,"");
+			new CActionMenuCommand(new CSelectionEditFactory(sFlopToBeginning),selectionSubmenu,"");
+			new CActionMenuCommand(new CSelectionEditFactory(sFlopToEnd),selectionSubmenu,"");
+			new CActionMenuCommand(new CSelectionEditFactory(sSelectToSelectStart),selectionSubmenu,"");
+			new CActionMenuCommand(new CSelectionEditFactory(sSelectToSelectStop),selectionSubmenu,"");
+
 
 
 	menu=new FXMenuPane(this);

@@ -24,7 +24,6 @@
 #include "../../../config/common.h"
 
 
-//#include "../CSoundPlayerChannel.h"
 #include "../AAction.h"
 
 enum Selections
@@ -36,8 +35,16 @@ enum Selections
 	sFlopToEnd=4,			// move the start position to the stop position and then the stop position to the end
 	sSelectToSelectStart=5,		// move the start position forward to the stop position
 	sSelectToSelectStop=6,		// move the stop position backward to the start position
-
 		// !!! If I add more... change gSelectionNames AND gSelectionDescriptions in CSelectionEdit.cpp !!!
+
+
+	// --- and below no need to change gSelectionNames or gSelectiondescriptions --------------
+
+	sGrowSelectionToTheLeft,
+	sGrowSelectionToTheRight,
+	sGrowSelectionInBothDirections,
+	sSlideSelectionToTheLeft,
+	sSlideSelectionToTheRight
 };
 
 
@@ -50,6 +57,7 @@ public:
 		selection.
 	*/
 	CSelectionEdit(const CActionSound actionSound,Selections selection);
+	CSelectionEdit(const CActionSound actionSound,Selections selection,const double amount);
 	CSelectionEdit(const CActionSound actionSound,sample_pos_t selectStart,sample_pos_t selectStop);
 	virtual ~CSelectionEdit();
 
@@ -64,6 +72,7 @@ protected:
 private:
 
 	Selections selection;
+	const double amount; // used if seleciton is sGrow... or sSlide...
 	sample_pos_t selectStart,selectStop;
 
 };
@@ -102,6 +111,15 @@ public:
 	sample_pos_t selectStart,selectStop;
 };
 
+
+class CGrowOrSlideSelectionEditFactory : public AActionFactory
+{
+public:
+	CGrowOrSlideSelectionEditFactory(AActionDialog *normalDialog); // selection will be sGrow... or sSlide
+	virtual ~CGrowOrSlideSelectionEditFactory();
+
+	CSelectionEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+};
 
 
 #endif
