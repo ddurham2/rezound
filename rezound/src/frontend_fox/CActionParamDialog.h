@@ -35,6 +35,7 @@ class CActionParamDialog;
 #include "FXConstantParamValue.h"
 #include "FXTextParamValue.h"
 #include "FXComboTextParamValue.h"
+#include "FXCheckBoxParamValue.h"
 #include "FXGraphParamValue.h"
 
 #include "../backend/AActionDialog.h"
@@ -54,6 +55,7 @@ public:
 	void addSlider(const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton);
 	void addTextEntry(const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsHelpText="");
 	void addComboTextEntry(const string name,const vector<string> &items,const string helpText="");
+	void addCheckBoxEntry(const string name,const bool checked,const string helpText="");
 	void addGraph(const string name,const string units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar);
 
 	// don't like this, but it will do for now... someday I've got to come up with just how to specify placement of the added wigets
@@ -97,10 +99,11 @@ private:
 		ptConstant,
 		ptText,
 		ptComboText,
+		ptCheckBox,
 		ptGraph
 	};
 
-	// the void * points to either an FXConstantParamValue, FXTextParamValue, FXComboTextParamValue or an FXGraphParamValue
+	// the void * points to either an FXConstantParamValue, FXTextParamValue, FXComboTextParamValue, FXCheckBoxParamValue or an FXGraphParamValue
 	vector<pair<ParamTypes,void *> > parameters;
 	vector<f_at_x> retValueConvs;
 
