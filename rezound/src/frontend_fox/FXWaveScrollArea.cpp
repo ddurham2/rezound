@@ -29,9 +29,12 @@
 #include "FXWaveScrollArea.h"
 
 #include "FXRezWaveView.h"
+#include "CSoundFileManager.h" // for gSoundFileManager
 
 #include "../backend/CLoadedSound.h"
 #include "../backend/CSoundPlayerChannel.h"
+#include "../backend/main_controls.h"
+
 
 /* TODO:
  *
@@ -79,7 +82,9 @@ FXWaveScrollArea::FXWaveScrollArea(FXRezWaveView *_parent,CLoadedSound *_loadedS
 
 	loadedSound(_loadedSound),
 
-	draggingSelectStart(false),draggingSelectStop(false)
+	draggingSelectStart(false),draggingSelectStop(false),
+
+	momentaryPlaying(false)
 {
 	enable();
 
@@ -207,9 +212,23 @@ long FXWaveScrollArea::onMouseDown(FXObject*,FXSelector,void *ptr)
 	FXEvent *ev=(FXEvent*) ptr;
 	const FXint X=ev->click_x;
 
+#warning try to make the mouse cursor change when control is pressed or released
+	if(ev->state==(LEFTBUTTONMASK|CONTROLMASK)) // left button pressed while holding control
+	{
+		const sample_pos_t position=getSamplePosForScreenX(X);
+		play(gSoundFileManager,position);
+		return 1;
+	}
+	else if(ev->state==(RIGHTBUTTONMASK|CONTROLMASK)) // left button pressed while holding control
+	{
+		const sample_pos_t position=getSamplePosForScreenX(X);
+		play(gSoundFileManager,position);
+		momentaryPlaying=true;
+		return 1;
+	}
+
 	if(!draggingSelectStop && !draggingSelectStart)
 	{
-
 		if(ev->click_button==LEFTBUTTON)
 		{
 			if(X<=(FXint)canvas->getDrawSelectStop())
@@ -249,6 +268,13 @@ long FXWaveScrollArea::onMouseDown(FXObject*,FXSelector,void *ptr)
 long FXWaveScrollArea::onMouseUp(FXObject*,FXSelector,void *ptr)
 {
 	FXEvent *ev=(FXEvent*) ptr;
+
+	if(ev->click_button==RIGHTBUTTON && momentaryPlaying)
+	{
+		momentaryPlaying=false;
+		stop(gSoundFileManager);
+		return 1;
+	}
 
 	if((ev->click_button==LEFTBUTTON || ev->click_button==RIGHTBUTTON) && (draggingSelectStart || draggingSelectStop))
 	{

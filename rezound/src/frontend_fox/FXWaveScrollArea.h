@@ -93,6 +93,8 @@ private:
 	CLoadedSound *loadedSound;
 	bool draggingSelectStart,draggingSelectStop;
 
+	bool momentaryPlaying;
+
 	void handleMouseMoveSelectChange(FXint X);
 };
 
