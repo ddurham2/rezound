@@ -1122,14 +1122,16 @@ long CMainWindow::onFollowPlayPositionButton(FXObject *sender,FXSelector sel,voi
 long CMainWindow::onRenderClippingWarningButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	gRenderClippingWarning=renderClippingWarningButton->getCheck();
-	gSoundFileManager->getActiveWindow()->updateFromEdit();
+	if(gSoundFileManager->getActiveWindow())
+		gSoundFileManager->getActiveWindow()->updateFromEdit();
 	return 1;
 }
 
 long CMainWindow::onDrawVerticalCuePositionsButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	gDrawVerticalCuePositions=drawVerticalCuePositionsButton->getCheck();
-	gSoundFileManager->getActiveWindow()->updateFromEdit();
+	if(gSoundFileManager->getActiveWindow())
+		gSoundFileManager->getActiveWindow()->updateFromEdit();
 	return 1;
 }
 
@@ -1234,7 +1236,8 @@ long CMainWindow::onControlAction(FXObject *sender,FXSelector sel,void *ptr)
 
 	case ID_PLAY_SELECTION_START_TO_END:
 		metersWindow->resetGrandMaxPeakLevels();
-		play(gSoundFileManager,gSoundFileManager->getActive()->channel->getStartPosition());
+		if(gSoundFileManager,gSoundFileManager->getActive())
+			play(gSoundFileManager,gSoundFileManager->getActive()->channel->getStartPosition());
 		break;
 
 	case ID_PLAY_SELECTION_LOOPED:

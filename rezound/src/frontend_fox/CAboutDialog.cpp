@@ -121,6 +121,7 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 		MAKE_TEXT(t,"Dave Phillips",_("Bug Finding/Fixing"));
 		MAKE_TEXT(t,"Pilagá",_("Bug Finding"));
 		MAKE_TEXT(t,"Gerhard Zintel","Semitones Shuttle Wheel Feature Patch");
+		MAKE_TEXT(t,"L.Andrew Somerville",_("Bug Finding"));
 	}
 
 	tab=new FXTabItem(tabs,"License",NULL,TAB_TOP_NORMAL);
