@@ -1,10 +1,10 @@
 ReZound 0.7.0beta Installation instructions 
 
+If building/installing directly from the CVS repository see CVS-INSTALL
 	
 REQUIRED OR RECOMMENDED LIBRARIES AND APPLICATIONS:
 
-Before attempting to build ReZound you will need the following:
-
+Before attempting to build ReZound you will need to have (or are encouraged to have) the following:
 
 1. Libraries: 
 
@@ -55,7 +55,7 @@ Before attempting to build ReZound you will need the following:
 	rather few people I think.  THESE ARE TWO APPLICATIONS NOT LIBRARIES
 
 
-2. You should also have a working c++ compiler (g++ is preferred) as well as the 
+2. You should also have a working C++ compiler (g++ is preferred) as well as the 
 normal group of regular libraries and headers for compiling packages. 
 
 
@@ -83,11 +83,15 @@ required libraries, please send a bug report to:
 
 If at all possible try to send details, preferably a screen dump or script file.
 
-The ReZound homepage is at http://rezound.sourceforge.net/
+The ReZound homepage is at http://rezound.sourceforge.net
 
 To strip the rezound binary, use `make install-strip' as the final installation step.
 
-To build a stand alone binary use the configure flag: --enable-standalone
+To build a stand alone binary use the configure flag: --enable-standalone.  However,
+this requires having all the static libraries that may be depended on by ReZound's 
+dependancies (i.e. FOX depends on libjpeg, libpng, libtiff, etc, so libjpeg.a, 
+libpng.a, libtiff.a, etc would be required to link.  But that is, only if FOX was not 
+configured with --disable-... flags to remove FOX's depenance on these libs.)
 
 
 
@@ -278,30 +282,5 @@ operates.
 
 `configure' also accepts some other, not widely useful, options.
 
-
-ADDITIONAL CONFIGURE FLAGS:
---------------------------------------------------------------------------------
-
---disable-audiofile-check	Skips the check for the audiofile package. 
---disable-FOX-check		Skips the check for the FOX package.
-
---with-audiofile-path		Allows you to manually pass the path to
---with-FOX-path			libraries that may not be in default linker 
-				path. Pass the path to lirary directory
-				(eg: --with-FOX-path=/usr/lib gets -L/usr/lib)
-
---with-audiofile-include	Allows you to manually pass the path to 
---with-FOX-include		header files, which may not be in a normal place
-				The headers are #included as <fox/fx.h>, so if
-				your FOX headers are in /home/ant/include/fox,
-				you would use 
-				--with-FOX-includes=/home/ant/include
-
---enable-portaudio		Specify to use portaudio istead of OSS for audio
-				I/O
-
---enable-standalone		Build ReZound to statically link with all libraries
-				possible so that the binary can almost exist on its
-				own.
-
+run `configure --help' for more build-time options
 

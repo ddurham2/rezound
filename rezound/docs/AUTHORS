@@ -7,6 +7,7 @@ $Id$
 # Package Development and Maintainence is led by David W. Durham.
 #
 # Anthony J. Ventimiglia performed the original autoconfiscation process.
+#  	David W. Durham performed the conversion from autoconf-2.1x to 2.5   
 #
 # David W. Durham <ddurham@users.sourceforge.net>
 # Anthony J. Ventimiglia <lergnom@users.sourceforge.net> 

@@ -212,7 +212,6 @@ SUBDIRS=Equalizer
 	now and find the following entry:
 
 rezound_LDADD= \
-	$(top_builddir)/src/misc/cc++/libmisc.la \
 	$(top_builddir)/src/PoolFile/libPoolFile.la \
 	$(top_builddir)/src/backend/Edits/libEdits.la \
 	$(top_builddir)/src/backend/Effects/libEffects.la \
@@ -237,10 +236,10 @@ rezound_LDADD= \
 	for every Makefile listed in configure.in. Then when configure is
 	run, it transforms all the Makefile.in's into Makefile's.
 
-	Look at the last entry in the configure.in :
+	Look at the nearly last entry in the configure.ac :
 
 
-AC_OUTPUT(Makefile src/Makefile src/misc/Makefile src/misc/cc++/Makefile src/PoolFile/Makefile src/backend/Makefile src/backend/Edits/Makefile src/backend/Effects/Makefile src/backend/Filters/Makefile src/backend/Looping/Makefile src/backend/Remaster/Makefile src/frontend_fox/Makefile) 
+AC_CONFIG_FILES(Makefile src/Makefile src/misc/Makefile src/misc/cc++/Makefile src/PoolFile/Makefile src/backend/Makefile src/backend/Edits/Makefile src/backend/Effects/Makefile src/backend/Filters/Makefile src/backend/Looping/Makefile src/backend/Remaster/Makefile src/frontend_fox/Makefile) 
 
 	It's a list of every Makefile used in the ReZound build. And if you've
 	ever watched a configure script run, you'll notice that the last thing
@@ -262,5 +261,6 @@ AC_OUTPUT(Makefile src/Makefile src/misc/Makefile src/misc/cc++/Makefile src/Poo
 	still can't get it to work, Feel free to contact us through
 	http://rezound.sourceforge.net. 
 
-	Good Luck and Happy Hacking.
+	Happy Hacking.
+
 

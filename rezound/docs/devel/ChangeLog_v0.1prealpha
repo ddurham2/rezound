@@ -1,5 +1,12 @@
 $Id$
 
+Mar 24, 2002 -- David W. Durham
+
+I've converted configure.in to configure.ac for using autoconf
+2.5x since that's where things are going.
+
+-----------------------------------------------
+
 These are the final changes I've made in preparing v0.1prealpha
 
 Wed Mar  6 13:21:17 EST 2002 -- Anthony Ventimiglia  
@@ -72,6 +79,9 @@ ready to release on my end.
 Following are CVS Log entries
 
 $Log$
+Revision 1.4  2003/03/24 08:26:28  ddurham
+updated some of the docs as a result of the switch to autoconf-2.5x
+
 Revision 1.3  2002/03/26 02:32:38  lergnom
 Wrote AUTHORS file. I looked at a few different packages and kind of copied the style of BASH's AUTHORS file.
 

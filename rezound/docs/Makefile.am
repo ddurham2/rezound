@@ -27,7 +27,7 @@ pkgdoc_DATA=\
 		AUTHORS\
 		COPYING\
 		NEWS\
-		README_DOCS\
 		README\
-		FrontendFoxFeatures.txt
+		FrontendFoxFeatures.txt\
+		Features.txt
 
