@@ -25,7 +25,9 @@ include $(top_srcdir)/config/am_include.mk
 
 ## Descend into SUBDIRS and run make. Look at the Makefile.am files in the
 ## subdirectories Start at frontend_fox/Makefile.am to see how everything works.
-SUBDIRS=src
+SUBDIRS=\
+	src\
+	share
 
 ## These extra files and directories will be included in the distribution. by
 ## using make-dist by default many common filenames are automatically included
@@ -34,6 +36,5 @@ SUBDIRS=src
 ## changes to the configure scripts or makefiles.
 EXTRA_DIST= \
 	config \
-	share \
 	docs \
 	bootstrap

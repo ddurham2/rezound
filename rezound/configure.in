@@ -22,6 +22,7 @@ dnl this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 dnl Place - Suite 330, Boston, MA  02111-1307, USA
 
 
+
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(config/common.h)
 AC_CONFIG_AUX_DIR(config)
@@ -123,6 +124,6 @@ AC_DEFINE_UNQUOTED(DATA_DIR, "$ajv_data_dir",[ This the --datadir (share) set
 by configure ])
 
 
-AC_OUTPUT(Makefile src/Makefile src/images/Makefile src/misc/Makefile src/misc/CNestedDataFile/Makefile src/PoolFile/Makefile src/backend/Makefile src/backend/Edits/Makefile src/backend/Effects/Makefile src/backend/Filters/Makefile src/backend/Looping/Makefile src/backend/Remaster/Makefile  src/frontend_fox/Makefile) 
+AC_OUTPUT(Makefile share/Makefile src/Makefile src/images/Makefile src/misc/Makefile src/misc/CNestedDataFile/Makefile src/PoolFile/Makefile src/backend/Makefile src/backend/Edits/Makefile src/backend/Effects/Makefile src/backend/Filters/Makefile src/backend/Looping/Makefile src/backend/Remaster/Makefile  src/frontend_fox/Makefile) 
 
 # vim:ts=4:sw=4
