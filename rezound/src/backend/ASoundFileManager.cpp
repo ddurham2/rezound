@@ -46,23 +46,18 @@ ASoundFileManager::ASoundFileManager(ASoundPlayer *_soundPlayer,CNestedDataFile 
 
 void ASoundFileManager::createNew()
 {
-	prvCreateNew(true);
+	prvCreateNew(0,true,0,true);
 }
 
-CLoadedSound *ASoundFileManager::prvCreateNew(bool askForLength)
+CLoadedSound *ASoundFileManager::prvCreateNew(sample_pos_t _length,bool askForLength,unsigned _sampleRate,bool askForSampleRate)
 {
 	string filename=getUntitledFilename(gPromptDialogDirectory,"rez");
 	bool rawFormat=false;
 	unsigned channelCount;
-	unsigned sampleRate;
-	sample_pos_t length=1;  // 1 if askForLength is false
-	if(
-		(askForLength && gFrontendHooks->promptForNewSoundParameters(filename,rawFormat,channelCount,sampleRate,length)) ||
-		(!askForLength && gFrontendHooks->promptForNewSoundParameters(filename,rawFormat,channelCount,sampleRate))
-	)
-	{
+	unsigned sampleRate=_sampleRate;
+	sample_pos_t length=_length;
+	if(gFrontendHooks->promptForNewSoundParameters(filename,rawFormat,false,channelCount,false,sampleRate,!askForSampleRate,length,!askForLength))
 		return createNew(filename,channelCount,sampleRate,length,rawFormat);
-	}
 
 	return NULL;
 }
@@ -395,13 +390,20 @@ void ASoundFileManager::revert()
 	}
 }
 
-// one of ENABLE_OSS, or ENABLE_PORTAUDIO will be defined
-#include "CPortAudioSoundRecorder.h"
+// one of ENABLE_OSS, ENABLE_PORTAUDIO or ENABLE_JACK will be defined
 #include "COSSSoundRecorder.h"
+#include "CPortAudioSoundRecorder.h"
+#include "CJACKSoundRecorder.h"
 
 void ASoundFileManager::recordToNew()
 {
-	CLoadedSound *loaded=prvCreateNew(false);
+#ifdef ENABLE_JACK
+	// since we can't set the sample rate for the JACK audio system, then I don't ask for a sample rate
+								// ??? device zero is the only one right now
+	CLoadedSound *loaded=prvCreateNew(1,false,soundPlayer->devices[0].sampleRate,false);
+#else
+	CLoadedSound *loaded=prvCreateNew(1,false,0,true);
+#endif
 	if(loaded==NULL)
 		return; // cancelled
 
@@ -410,10 +412,12 @@ void ASoundFileManager::recordToNew()
 	{
 
 // ??? a better system would probably be to have a function or method in some class that returns an ASoundRecorder * so that I don't have to repeat this code also in CRecordSoundClipboard.cpp
-#if defined(ENABLE_PORTAUDIO)
-		CPortAudioSoundRecorder recorder;
-#elif defined(ENABLE_OSS)
+#if defined(ENABLE_OSS)
 		COSSSoundRecorder recorder;
+#elif defined(ENABLE_PORTAUDIO)
+		CPortAudioSoundRecorder recorder;
+#elif defined(ENABLE_JACK)
+		CJACKSoundRecorder recorder;
 #endif
 		try
 		{

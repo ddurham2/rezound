@@ -105,7 +105,7 @@ private:
 	void registerFilename(const string filename);
 	void unregisterFilename(const string filename);
 	bool isFilenameRegistered(const string filename);
-	CLoadedSound *prvCreateNew(bool askForLength);
+	CLoadedSound *prvCreateNew(sample_pos_t length,bool askForLength,unsigned sampleRate,bool askForSampleRate);
 
 };
 

@@ -29,9 +29,10 @@
 #include "AStatusComm.h"
 #include "AFrontendHooks.h"
 
-// one of ENABLE_OSS, or ENABLE_PORTAUDIO will be defined
-#include "CPortAudioSoundRecorder.h"
+// one of ENABLE_OSS, ENABLE_PORTAUDIO or ENABLE_JACK will be defined
 #include "COSSSoundRecorder.h"
+#include "CPortAudioSoundRecorder.h"
+#include "CJACKSoundRecorder.h"
 
 typedef TPoolAccesser<sample_t,CSound::PoolFile_t > CClipboardPoolAccesser;
 
@@ -58,6 +59,7 @@ bool CRecordSoundClipboard::isReadOnly() const
 }
 
 
+#include "CJACKSoundPlayer.h" // just for CJACKSoundPlayer::hack_sampleRate
 
 bool CRecordSoundClipboard::prepareForCopyTo()
 {
@@ -75,17 +77,29 @@ bool CRecordSoundClipboard::prepareForCopyTo()
 	delete workingFile;workingFile=NULL;
 
 // ??? a better system would probably be to have a function or method in some class that returns an ASoundRecorder * so that I don't have to repeat this code also in ASoundFileManager.cpp
-#if defined(ENABLE_PORTAUDIO)
-	CPortAudioSoundRecorder recorder;
-#elif defined(ENABLE_OSS)
+#if defined(ENABLE_OSS)
 	COSSSoundRecorder recorder;
+#elif defined(ENABLE_PORTAUDIO)
+	CPortAudioSoundRecorder recorder;
+#elif defined(ENABLE_JACK)
+	CJACKSoundRecorder recorder;
 #endif
 	try
 	{
+		string dummyFilename="";
+		bool dummyRaw=false;
 		unsigned channelCount;
 		unsigned sampleRate;
-		if(!gFrontendHooks->promptForNewSoundParameters(channelCount,sampleRate))
+		sample_pos_t dummyLength;
+
+#ifdef ENABLE_JACK
+		sampleRate=CJACKSoundPlayer::hack_sampleRate;
+		if(!gFrontendHooks->promptForNewSoundParameters(dummyFilename,dummyRaw,true,channelCount,false,sampleRate,true,dummyLength,true))
 			return false;
+#else
+		if(!gFrontendHooks->promptForNewSoundParameters(dummyFilename,dummyRaw,true,channelCount,false,sampleRate,false,dummyLength,true))
+			return false;
+#endif
 
 		remove(workingFilename.c_str());
 		workingFile=new CSound(workingFilename,sampleRate,channelCount,1); // at least 1 sample is manditory
