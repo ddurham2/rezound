@@ -54,6 +54,7 @@
 		- Limited Overwrite
 		- Mix
 		- Limited Mix
+		- Fit Mix
 	- Insert Silence
 	- Mute
 	- Add Channels
