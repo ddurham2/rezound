@@ -58,7 +58,7 @@ AAction::CanUndoResults CAddCueAction::canUndo(const CActionSound &actionSound) 
 // -----------------------------------
 
 CAddCueActionFactory::CAddCueActionFactory(AActionDialog *normalDialog) :
-	AActionFactory("Add Cue","Add Cue",false,NULL,normalDialog,NULL,false)
+	AActionFactory("Add Cue","Add Cue",false,NULL,normalDialog,NULL,false,false)
 {
 }
 
@@ -100,7 +100,7 @@ AAction::CanUndoResults CRemoveCueAction::canUndo(const CActionSound &actionSoun
 // ----------------------------------- 
 
 CRemoveCueActionFactory::CRemoveCueActionFactory() :
-	AActionFactory("Remove Cue","Remove Cue",false,NULL,NULL,NULL,false)
+	AActionFactory("Remove Cue","Remove Cue",false,NULL,NULL,NULL,false,false)
 {
 }
 
@@ -150,7 +150,7 @@ AAction::CanUndoResults CReplaceCueAction::canUndo(const CActionSound &actionSou
 // -----------------------------------
 
 CReplaceCueActionFactory::CReplaceCueActionFactory(AActionDialog *normalDialog) :
-	AActionFactory("Replace Cue","Replace Cue",false,NULL,normalDialog,NULL,false)
+	AActionFactory("Replace Cue","Replace Cue",false,NULL,normalDialog,NULL,false,false)
 {
 }
 

@@ -37,6 +37,7 @@
 #include "CEditToolbar.h"
 
 #include "CUserNotesDialog.h"
+#include "CCrossfadeEdgesDialog.h"
 
 #include "rememberShow.h"
 
@@ -99,6 +100,8 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_MOTION,			CMainWindow::ID_ACTIONCONTROL_TAB,		CMainWindow::onActionControlTabMouseMove),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FOLLOW_PLAY_POSITION_BUTTON,	CMainWindow::onFollowPlayPositionButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CROSSFADE_EDGES_CHECKBOX,	CMainWindow::onCrossfadeEdgesCheckbox),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CROSSFADE_EDGES_SETTINGS,	CMainWindow::onCrossfadeEdgesSettings),
 };
 
 FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
@@ -141,6 +144,9 @@ CMainWindow::CMainWindow(FXApp* a) :
 		new FXButton(miscControlsFrame,"&Undo",NULL,this,ID_UNDO_BUTTON,FRAME_RAISED);
 		new FXButton(miscControlsFrame,"&ClrUndo",NULL,this,ID_CLEAR_UNDO_HISTORY_BUTTON,FRAME_RAISED);
 		followPlayPositionButton=new FXCheckButton(miscControlsFrame,"Follow Play Position",this,ID_FOLLOW_PLAY_POSITION_BUTTON);
+		FXPacker *t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
+			crossfadeEdgesCheckbox=new FXCheckButton(t,"Crossfade Edges",this,ID_CROSSFADE_EDGES_CHECKBOX);
+			new FXButton(t,"...",NULL,this,ID_CROSSFADE_EDGES_SETTINGS);
 
 	/* ??? it is not necessary to have all these data members for all the buttons */
 
@@ -200,6 +206,7 @@ void CMainWindow::show()
 	FXMainWindow::show();
 
 	followPlayPositionButton->setCheck(gFollowPlayPosition);
+	crossfadeEdgesCheckbox->setCheck(gCrossfadeEdges);
 }
 
 void CMainWindow::hide()
@@ -278,6 +285,18 @@ long CMainWindow::onActionControlTabMouseMove(FXObject *sender,FXSelector sel,vo
 long CMainWindow::onFollowPlayPositionButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	gFollowPlayPosition=followPlayPositionButton->getCheck();
+	return 1;
+}
+
+long CMainWindow::onCrossfadeEdgesCheckbox(FXObject *sender,FXSelector sel,void *ptr)
+{
+	gCrossfadeEdges=crossfadeEdgesCheckbox->getCheck();
+	return 1;
+}
+
+long CMainWindow::onCrossfadeEdgesSettings(FXObject *sender,FXSelector sel,void *ptr)
+{
+	gCrossfadeEdgesDialog->execute(PLACEMENT_CURSOR);
 	return 1;
 }
 

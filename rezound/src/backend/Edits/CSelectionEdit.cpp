@@ -141,7 +141,7 @@ void CSelectionEdit::undoActionSizeSafe(const CActionSound &actionSound)
 
 CSelectionEditFactory::CSelectionEditFactory(Selections _selection) :
 		// ??? set this name from the _selection parameter
-	AActionFactory("Selection Change",gSelectionDescriptions[_selection],false,NULL,NULL,NULL,false),
+	AActionFactory("Selection Change",gSelectionDescriptions[_selection],false,NULL,NULL,NULL,false,false),
 
 	selection(_selection)
 {
@@ -157,7 +157,7 @@ CSelectionEdit *CSelectionEditFactory::manufactureAction(const CActionSound &act
 // -----------------------------------
 
 CSelectionEditPositionFactory::CSelectionEditPositionFactory() :
-	AActionFactory("Selection Change","Selection Change From Mouse",false,NULL,NULL,NULL,false),
+	AActionFactory("Selection Change","Selection Change From Mouse",false,NULL,NULL,NULL,false,false),
 
 	selectStart(0),
 	selectStop(0)

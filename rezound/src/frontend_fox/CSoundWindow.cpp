@@ -758,7 +758,7 @@ long CSoundWindow::onAddCue(FXObject *sender,FXSelector sel,void *ptr)
 
 		actionParameters.addBoolParameter(false);
 
-		addCueActionFactory->performAction(loadedSound,&actionParameters,false);
+		addCueActionFactory->performAction(loadedSound,&actionParameters,false,false);
 	}
 	catch(exception &e)
 	{
@@ -772,7 +772,7 @@ long CSoundWindow::onRemoveCue(FXObject *sender,FXSelector sel,void *ptr)
 {
 	CActionParameters actionParameters;
 	actionParameters.addUnsignedParameter(*((size_t *)ptr));
-	removeCueActionFactory->performAction(loadedSound,&actionParameters);
+	removeCueActionFactory->performAction(loadedSound,&actionParameters,false,false);
 	return 1;
 }
 
@@ -787,7 +787,7 @@ long CSoundWindow::onEditCue(FXObject *sender,FXSelector sel,void *ptr)
 	actionParameters.addSamplePosParameter(loadedSound->getSound()->getCueTime(cueIndex));
 	actionParameters.addBoolParameter(loadedSound->getSound()->isCueAnchored(cueIndex));
 
-	replaceCueActionFactory->performAction(loadedSound,&actionParameters);
+	replaceCueActionFactory->performAction(loadedSound,&actionParameters,false,false);
 	return 1;
 }
 

@@ -51,12 +51,14 @@ class CActionSound
 public:
 	CSound *sound;
 	bool doChannel[MAX_CHANNELS];
+	bool doCrossfadeEdges;
 
 	// the start and stop data-members are used to set the
 	// selectStart and selectStop positions after doing the action
 	mutable sample_pos_t start,stop;
 
-	CActionSound(CSoundPlayerChannel *channel); // default method of doing an action (all channels, apply just to selection)
+	// default method of doing an action (all channels, apply just to selection)
+	CActionSound(CSoundPlayerChannel *channel,bool doCrossfadeEdges);
 	CActionSound(const CActionSound &src);
 
 	unsigned countChannels() const;
@@ -171,7 +173,7 @@ public:
 	//
 	// performAction returns true if the action was performed or false if they cancelled any of the dialog windows
 	//
-	bool performAction(CLoadedSound *loadedSound,CActionParameters *actionParameters,bool showChannelSelectDialog=false,bool advancedMode=false);
+	bool performAction(CLoadedSound *loadedSound,CActionParameters *actionParameters,bool showChannelSelectDialog,bool advancedMode);
 
 	const string &getName() const;
 	const string &getDescription() const;
@@ -198,7 +200,7 @@ protected:
 	// - Otherwise, it will say "this action has no advanced mode" so the user doesn't think something different than normal is
 	//   happening
 	// - lockForResize can be passed as false to avoid locking the CSound object for resize if the action doesn't need that lock to, but a lockSize will be obtained anyway
-	AActionFactory(const string actionName,const string actionDescription,const bool hasAdvancedMode,AActionDialog *channelSelectDialog,AActionDialog *normalDialog,AActionDialog *advancedDialog,bool willResize=true);
+	AActionFactory(const string actionName,const string actionDescription,const bool hasAdvancedMode,AActionDialog *channelSelectDialog,AActionDialog *normalDialog,AActionDialog *advancedDialog,bool willResize=true,bool crossfadeEdgesIsApplicable=true);
 
 
 	// this method can be overridden to do and setup before any dialog is shown for doing the action
@@ -225,6 +227,7 @@ protected:
 private: 
 	const bool hasAdvancedMode;
 	const bool willResize;
+	const bool crossfadeEdgesIsApplicable;
 
 };
 
@@ -335,7 +338,7 @@ private:
 	// - if prepareForUndo is false, then the derivation shouldn't make provisions to be able to undo the action
 	// - sets the selection of the channel to the selection of the resulting actionSound when done
 	// - note, willResize includes not only changing the length of the data, but also moving data into undo pools and such
-	bool doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool willResize);
+	bool doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool willResize,bool crossfadeEdgesIsApplicable);
 
 	CanUndoResults canUndo() const;
 
@@ -362,6 +365,20 @@ private:
 	sample_pos_t restoreTotalLength;
 	//CActionSound restoreActionSound;	// the CActionSound passed to backupUndoSelection
 	vector<CSound::RCue> restoreCues;
+
+	
+	// members used for crossfading and uncrossfading the edges after an action
+	void crossfadeEdges(CActionSound &actionSound);
+	void uncrossfadeEdges();
+	bool didCrossfadeEdges;
+	int tempCrossfadePoolKeyStart;
+	int tempCrossfadePoolKeyStop;
+	sample_pos_t crossfadeStart;
+	sample_pos_t crossfadeStartLength;
+	sample_pos_t crossfadeStop;
+	sample_pos_t crossfadeStopLength;
+	
+	
 
 	/*
 	// used to get unique pool names for the global undo CPoolFile across all actions

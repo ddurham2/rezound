@@ -59,6 +59,9 @@ public:
 
 	long onFollowPlayPositionButton(FXObject *sender,FXSelector sel,void *ptr);
 
+	long onCrossfadeEdgesCheckbox(FXObject *sender,FXSelector sel,void *ptr);
+	long onCrossfadeEdgesSettings(FXObject *sender,FXSelector sel,void *ptr);
+
 	// file action events
 	long onFileButton(FXObject *sender,FXSelector sel,void *ptr);
 
@@ -123,6 +126,9 @@ public:
 
 		ID_FOLLOW_PLAY_POSITION_BUTTON,
 
+		ID_CROSSFADE_EDGES_CHECKBOX,
+		ID_CROSSFADE_EDGES_SETTINGS,
+
 		ID_LAST
 	};
 							  
@@ -138,7 +144,8 @@ private:
 	FXPacker   		*playControlsFrame;	// frame that contains the play control buttons
 		FXDial *shuttleDial;
 	FXPacker		*miscControlsFrame;	// frame that contains the undo/redo buttons, follow-play-position checkbox, etc
-		FXCheckButton *followPlayPositionButton;
+		FXCheckButton	*followPlayPositionButton;
+		FXCheckButton	*crossfadeEdgesCheckbox;
 	FXTabBook   		*actionControlsFrame;	// frame that is the tab layout for the other actions
 		FXTabItem 	*fileTab;	
 			FXPacker *fileTabFrame;

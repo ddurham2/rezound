@@ -106,6 +106,13 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 		if(gSettingsRegistry->keyExists("initialLengthToShow"))
 			gInitialLengthToShow= atof(gSettingsRegistry->getValue("initialLengthToShow").c_str());
 
+		if(gSettingsRegistry->keyExists("crossfadeEdges"))
+		{
+			gCrossfadeEdges= gSettingsRegistry->getValue("crossfadeEdges")=="true";
+			gCrossfadeStartTime= atof(gSettingsRegistry->getValue("crossfadeStartTime").c_str());
+			gCrossfadeStopTime= atof(gSettingsRegistry->getValue("crossfadeStopTime").c_str());
+		}
+
 
 		// -- 2
 						// ??? this filename needs to be an application setting just as in CSound.cpp
@@ -159,6 +166,11 @@ void deinitializeBackend()
 	gSettingsRegistry->createKey("promptDialogDirectory",gPromptDialogDirectory);
 	gSettingsRegistry->createKey("followPlayPosition",gFollowPlayPosition ? "true" : "false");
 	gSettingsRegistry->createKey("initialLengthToShow",gInitialLengthToShow);
+	gSettingsRegistry->createKey("crossfadeEdges",gCrossfadeEdges ? "true" : "false");
+		gSettingsRegistry->createKey("crossfadeStartTime",gCrossfadeStartTime);
+		gSettingsRegistry->createKey("crossfadeStopTime",gCrossfadeStopTime);
+
+
 	gSettingsRegistry->save();
 	delete gSettingsRegistry;
 

@@ -1,10 +1,6 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- Need to make all actions have the ability to blend the edges of the affected audio with the existing audio
-		- let there be a parameter which says in milliseconds how long the blend takes
-		- if not every action, at least paste for editing
-
 	- the clip board that the edit actions use is not set up to allow it to paste and copy from other applications
 		- when/if I want to allow that, I should create a base class clipboard which has the platform specific
 		  implementation that reads from the system clipboard.
@@ -161,4 +157,8 @@
 		- do this AFTER backupSAT is faster
 
 	- move the typedefs at the top of CSound.h to its own file so we don't have to include it in so many places
+
+	- Need to make all actions have the ability to blend the edges of the affected audio with the existing audio
+		- let there be a parameter which says in milliseconds how long the blend takes
+		- if not every action, at least paste for editing
 

@@ -30,6 +30,7 @@
 class CNestedDataFile;
 extern CNestedDataFile *gSettingsRegistry;
 
+
 /*
  * This is the directory that a open/save dialog should open to
  */
@@ -55,14 +56,25 @@ extern string gSysPresetsFile;		// "/usr/share/rezound/presets.dat"
 extern bool gSnapToCues;
 extern unsigned gSnapToCueDistance;
 
+
 /*
  * True if the sound windows should follow the play position
  */
 extern bool gFollowPlayPosition;
 
+
 /*
  * The initial about of audio to show on screen in a newly created sound window
  */
 extern double gInitialLengthToShow;
+
+
+/*
+ * Setting for how to cross fade the edges
+ */
+extern bool gCrossfadeEdges;
+extern float gCrossfadeStartTime;
+extern float gCrossfadeStopTime;
+
 
 #endif

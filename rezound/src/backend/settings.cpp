@@ -27,17 +27,27 @@ CNestedDataFile *gSettingsRegistry=NULL;
 
 string gPromptDialogDirectory="";
 
+
 string gUserDataDirectory="";
 string gSysDataDirectory="";
+
 
 string gUserPresetsFile="";
 string gSysPresetsFile="";
 
+
 bool gSnapToCues=true;
 unsigned gSnapToCueDistance=5;
 
+
 bool gFollowPlayPosition=true;
 
-double gInitialLengthToShow=10.0;
+
+double gInitialLengthToShow=10.0; // default 10 seconds
+
+
+bool gCrossfadeEdges=true;
+float gCrossfadeStartTime=10.0;	 // default 20ms crossfade time
+float gCrossfadeStopTime=10.0;
 
 

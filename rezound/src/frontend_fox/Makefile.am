@@ -29,6 +29,7 @@ noinst_LTLIBRARIES=libfrontend.la
 libfrontend_la_SOURCES= \
 			CActionButton.cpp \
 			CChannelSelectDialog.cpp \
+			CCrossfadeEdgesDialog.cpp \
 			CActionParamDialog.cpp \
 			CCueDialog.cpp \
 			CCueListDialog.cpp \
@@ -83,6 +84,7 @@ ReZound_LDADD= libfrontend.la\
 noinst_HEADERS=\
 	CActionButton.h \
 	CChannelSelectDialog.h \
+	CCrossfadeEdgesDialog.h \
 	CActionParamDialog.h \
 	CCueDialog.h \
 	CCueListDialog.h \

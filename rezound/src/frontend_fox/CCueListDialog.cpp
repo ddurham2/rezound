@@ -135,7 +135,7 @@ long CCueListDialog::onAddCueButton(FXObject *sender,FXSelector sel,void *ptr)
 		actionParameters.addBoolParameter(false);
 	}
 
-	addCueActionFactory->performAction(loadedSound,&actionParameters);
+	addCueActionFactory->performAction(loadedSound,&actionParameters,false,false);
 	rebuildCueList();
 
 	return(1);
@@ -147,7 +147,7 @@ long CCueListDialog::onRemoveCueButton(FXObject *sender,FXSelector sel,void *ptr
 	{
 		CActionParameters actionParameters;
 		actionParameters.addUnsignedParameter((size_t)cueList->getItemData(cueList->getCurrentItem()));
-		removeCueActionFactory->performAction(loadedSound,&actionParameters);
+		removeCueActionFactory->performAction(loadedSound,&actionParameters,false,false);
 
 		rebuildCueList();
 	}
@@ -167,7 +167,7 @@ long CCueListDialog::onEditCueButton(FXObject *sender,FXSelector sel,void *ptr)
 		actionParameters.addSamplePosParameter(loadedSound->getSound()->getCueTime(cueIndex));
 		actionParameters.addBoolParameter(loadedSound->getSound()->isCueAnchored(cueIndex));
 
-		replaceCueActionFactory->performAction(loadedSound,&actionParameters);
+		replaceCueActionFactory->performAction(loadedSound,&actionParameters,false,false);
 
 		rebuildCueList();
 	}

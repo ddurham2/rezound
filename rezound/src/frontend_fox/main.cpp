@@ -115,6 +115,7 @@ int main(int argc,char *argv[])
 #include "CCueDialog.h"
 #include "CCueListDialog.h"
 #include "CUserNotesDialog.h"
+#include "CCrossfadeEdgesDialog.h"
 #include "CEditToolbar.h"
 #include "CSoundListWindow.h"
 
@@ -140,6 +141,9 @@ void setupWindows(CMainWindow *mainWindow)
 
 		// create the dialog used to make user notes saved with the sound
 		gUserNotesDialog=new CUserNotesDialog(mainWindow);
+
+		// create the dialog used to set the length of the crossfade on the edges
+		gCrossfadeEdgesDialog=new CCrossfadeEdgesDialog(mainWindow);
 
 		// create the editing toolbar and set the global gEditToolbar variable
 		gEditToolbar=new CEditToolbar(mainWindow);
