@@ -93,12 +93,12 @@ public:
 
 	const float nextValue()
 	{
-		return(1.0);
+		return 1.0;
 	}
 
 	const float getValue(const sample_pos_t time) const
 	{
-		return(1.0);
+		return 1.0;
 	}
 };
 
@@ -131,12 +131,12 @@ public:
 
 	const float nextValue()
 	{
-		return(sinf((counter++)*frequency));
+		return sinf((counter++)*frequency);
 	}
 
 	const float getValue(const sample_pos_t time) const
 	{
-		return(sinf((time+initial)*frequency));
+		return sinf((time+initial)*frequency);
 	}
 
 protected:
@@ -166,12 +166,12 @@ public:
 
 	const float nextValue()
 	{
-		return((sinf((counter++)*frequency)+1.0)/2.0);
+		return (sinf((counter++)*frequency)+1.0)/2.0;
 	}
 
 	const float getValue(const sample_pos_t time) const
 	{
-		return((sinf((time+initial)*frequency)+1.0)/2.0);
+		return (sinf((time+initial)*frequency)+1.0)/2.0;
 	}
 };
 
@@ -355,12 +355,12 @@ public:
 
 	const float nextValue()
 	{
-		return(sinf((counter++)*frequency));
+		return sinf((counter++)*frequency);
 	}
 
 	const float getValue(const sample_pos_t time) const
 	{
-		return(sinf((time+initial)*frequency));
+		return sinf((time+initial)*frequency);
 	}
 
 protected:
@@ -403,7 +403,7 @@ CLFORegistry::~CLFORegistry()
 
 const size_t CLFORegistry::getCount() const
 {
-	return(7);
+	return 7;
 }
 
 const string CLFORegistry::getName(const size_t index) const
@@ -411,21 +411,21 @@ const string CLFORegistry::getName(const size_t index) const
 	switch(index)
 	{
 	case 0:
-		return("Sine Wave [-1,1]");
+		return N_("Sine Wave [-1,1]");
 	case 1:
-		return("Sine Wave [ 0,1]");
+		return N_("Sine Wave [ 0,1]");
 	case 2:
-		return("Constant");
+		return N_("Constant");
 	case 3:
-		return("Rising Sawtooth Wave [-1,1]");
+		return N_("Rising Sawtooth Wave [-1,1]");
 	case 4:
-		return("Rising Sawtooth Wave [ 0,1]");
+		return N_("Rising Sawtooth Wave [ 0,1]");
 	case 5:
-		return("Falling Sawtooth Wave [-1,1]");
+		return N_("Falling Sawtooth Wave [-1,1]");
 	case 6:
-		return("Falling Sawtooth Wave [ 0,1]");
+		return N_("Falling Sawtooth Wave [ 0,1]");
 	}
-	throw(runtime_error(string(__func__)+" -- unhandled index: "+istring(index)));
+	throw runtime_error(string(__func__)+" -- unhandled index: "+istring(index));
 }
 
 const bool CLFORegistry::isBipolar(const size_t index) const
@@ -433,41 +433,41 @@ const bool CLFORegistry::isBipolar(const size_t index) const
 	switch(index)
 	{
 	case 0:
-		return(true);
+		return true;
 	case 1:
-		return(false);
+		return false;
 	case 2:
-		return(false);
+		return false;
 	case 3:
-		return(true);
+		return true;
 	case 4:
-		return(false);
+		return false;
 	case 5:
-		return(true);
+		return true;
 	case 6:
-		return(false);
+		return false;
 	}
-	throw(runtime_error(string(__func__)+" -- unhandled index: "+istring(index)));
+	throw runtime_error(string(__func__)+" -- unhandled index: "+istring(index));
 }
 
 const size_t CLFORegistry::getIndexByName(const string name) const
 {
 	if(name=="Sine Wave [-1,1]")
-		return(0);
+		return 0;
 	else if(name=="Sine Wave [ 0,1]")
-		return(1);
+		return 1;
 	else if(name=="Constant")
-		return(2);
+		return 2;
 	else if(name=="Rising Sawtooth Wave [-1,1]")
-		return(3);
+		return 3;
 	else if(name=="Rising Sawtooth Wave [ 0,1]")
-		return(4);
+		return 4;
 	else if(name=="Falling Sawtooth Wave [-1,1]")
-		return(5);
+		return 5;
 	else if(name=="Falling Sawtooth Wave [ 0,1]")
-		return(6);
+		return 6;
 	else
-		throw(runtime_error(string(__func__)+" -- unhandled name: '"+name+"'"));
+		throw runtime_error(string(__func__)+" -- unhandled name: '"+name+"'");
 }
 
 ALFO *CLFORegistry::createLFO(const CLFODescription &desc,const unsigned sampleRate) const
@@ -475,21 +475,21 @@ ALFO *CLFORegistry::createLFO(const CLFODescription &desc,const unsigned sampleR
 	switch(desc.LFOType)
 	{
 	case 0:
-		return(new CSinLFO(desc.freq,desc.phase,sampleRate));
+		return new CSinLFO(desc.freq,desc.phase,sampleRate);
 	case 1:
-		return(new CPosSinLFO(desc.freq,desc.phase,sampleRate));
+		return new CPosSinLFO(desc.freq,desc.phase,sampleRate);
 	case 2:
-		return(new CConstantLFO);
+		return new CConstantLFO;
 	case 3:
-		return(new CRisingSawtoothLFO(desc.freq,desc.phase,sampleRate));
+		return new CRisingSawtoothLFO(desc.freq,desc.phase,sampleRate);
 	case 4:
-		return(new CPosRisingSawtoothLFO(desc.freq,desc.phase,sampleRate));
+		return new CPosRisingSawtoothLFO(desc.freq,desc.phase,sampleRate);
 	case 5:
-		return(new CFallingSawtoothLFO(desc.freq,desc.phase,sampleRate));
+		return new CFallingSawtoothLFO(desc.freq,desc.phase,sampleRate);
 	case 6:
-		return(new CPosFallingSawtoothLFO(desc.freq,desc.phase,sampleRate));
+		return new CPosFallingSawtoothLFO(desc.freq,desc.phase,sampleRate);
 	}
-	throw(runtime_error(string(__func__)+" -- unhandled LFOType (index): "+istring(desc.LFOType)));
+	throw runtime_error(string(__func__)+" -- unhandled LFOType (index): "+istring(desc.LFOType));
 }
 
 

@@ -53,9 +53,9 @@ FXLFOParamValue::FXLFOParamValue(FXComposite *p,int opts,const char *_name,const
 
 	titleLabel(new FXLabel(this,gettext(_name),NULL,LABEL_NORMAL|LAYOUT_CENTER_X)),
 	sliders(new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
-		amplitudeSlider(new FXConstantParamValue(interpretValue,uninterpretValue,min((int)maxAmp,1),(int)maxAmp,min((int)maxAmp,1),false,sliders,LAYOUT_CENTER_X,ampTitle.c_str())),
-		frequencySlider(new FXConstantParamValue(interpretValue,uninterpretValue,min((int)maxFreq,1),(int)maxFreq,min((int)maxFreq,1),false,sliders,LAYOUT_CENTER_X,"Frequency")),
-		phaseSlider(new FXConstantParamValue(interpretValue,uninterpretValue,360,360,360,true,sliders,LAYOUT_CENTER_X,"Phase")),
+		amplitudeSlider(new FXConstantParamValue(interpretValue,uninterpretValue,min((int)maxAmp,1),(int)maxAmp,min((int)maxAmp,1),false,sliders,LAYOUT_CENTER_X,gettext(ampTitle.c_str()))),
+		frequencySlider(new FXConstantParamValue(interpretValue,uninterpretValue,min((int)maxFreq,1),(int)maxFreq,min((int)maxFreq,1),false,sliders,LAYOUT_CENTER_X,N_("Frequency"))),
+		phaseSlider(new FXConstantParamValue(interpretValue,uninterpretValue,360,360,360,true,sliders,LAYOUT_CENTER_X,N_("Phase"))),
 	LFOTypeComboBox(new FXListBox(this,16,this,ID_LFO_TYPE_COMBOBOX,FRAME_SUNKEN|FRAME_THICK|LISTBOX_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,180,0)),
 
 	textFont(getApp()->getNormalFont())
@@ -84,7 +84,7 @@ FXLFOParamValue::FXLFOParamValue(FXComposite *p,int opts,const char *_name,const
 	{
 		if(!hideBipolarLFOs || !gLFORegistry.isBipolar(t))
 		{
-			LFOTypeComboBox->appendItem(gLFORegistry.getName(t).c_str(),FOXIcons->getByName(gLFORegistry.getName(t).c_str()),(void *)t);
+			LFOTypeComboBox->appendItem(gettext(gLFORegistry.getName(t).c_str()),FOXIcons->getByName(gLFORegistry.getName(t).c_str()),(void *)t);
 		}
 	}
 	LFOTypeComboBox->setCurrentItem(0);
@@ -123,9 +123,8 @@ const CLFODescription FXLFOParamValue::getValue()
 		amplitudeSlider->getValue(),
 		frequencySlider->getValue(),
 		phaseSlider->getValue(),
-		gLFORegistry.getIndexByName(LFOTypeComboBox->getItemText(LFOTypeComboBox->getCurrentItem()).text())
+		((size_t)LFOTypeComboBox->getItemData(LFOTypeComboBox->getCurrentItem()))
 	);
-
 }
 
 const string FXLFOParamValue::getName() const
@@ -169,7 +168,8 @@ void FXLFOParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 	}
 	onLFOTypeChange(NULL,0,NULL);
 
-	amplitudeSlider->readFromFile(key,f);
+	if(amplitudeSlider->getName()!="")
+		amplitudeSlider->readFromFile(key,f);
 	frequencySlider->readFromFile(key,f);
 	phaseSlider->readFromFile(key,f);
 }
@@ -177,9 +177,10 @@ void FXLFOParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 void FXLFOParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 {
 	const string key=prefix DOT getName();
-	f->createValue<string>(key DOT "name",LFOTypeComboBox->getItemText(LFOTypeComboBox->getCurrentItem()).text());
+	f->createValue<string>(key DOT "name", gLFORegistry.getName((size_t)LFOTypeComboBox->getItemData(LFOTypeComboBox->getCurrentItem())) );
 
-	amplitudeSlider->writeToFile(key,f);
+	if(amplitudeSlider->getName()!="")
+		amplitudeSlider->writeToFile(key,f);
 	frequencySlider->writeToFile(key,f);
 	phaseSlider->writeToFile(key,f);
 }
