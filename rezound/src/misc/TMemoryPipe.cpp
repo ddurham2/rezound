@@ -29,17 +29,13 @@
 
 #include <istring>
 
-template <class type> TMemoryPipe<type>::TMemoryPipe(int _pipeSize) :
+template <class type> TMemoryPipe<type>::TMemoryPipe(int pipeSize) :
 	readOpened(false),
 	writeOpened(false),
-	buffer(NULL)
+	buffer(NULL),
+	bufferSize(0)
 {
-	if(_pipeSize<=0)
-		throw runtime_error(string(__func__)+" -- invalid pipeSize: "+istring(_pipeSize));
-	
-	bufferSize=_pipeSize+1;
-	buffer=new type[bufferSize];
-
+	setSize(pipeSize);
 	open();
 }
 
@@ -48,6 +44,24 @@ template <class type> TMemoryPipe<type>::~TMemoryPipe()
 	closeRead();
 	closeWrite();
 	delete [] buffer;
+}
+
+template <class type> void TMemoryPipe<type>::setSize(int pipeSize)
+{
+	if(isReadOpened())
+		throw runtime_error(string(__func__)+" -- read end is opened");
+	if(isWriteOpened())
+		throw runtime_error(string(__func__)+" -- write end is opened");
+
+	if(pipeSize<=0)
+		throw runtime_error(string(__func__)+" -- invalid pipeSize: "+istring(pipeSize));
+
+#warning need to do something to prevent this data from getting swapped to disk
+	type *temp=new type[pipeSize+1];
+	delete [] buffer;
+	buffer=temp;
+
+	bufferSize=pipeSize+1;
 }
 
 template <class type> void TMemoryPipe<type>::open()
@@ -68,7 +82,10 @@ template <class type> int TMemoryPipe<type>::read(type *dest,int size,bool block
 	if(size<=0)
 		return 0;
 
-	CMutexLocker l(readerMutex); // protect from more than one reader
+	CMutexLocker l(readerMutex,block); // protect from more than one reader
+	if(! l.didLock())
+		return 0;
+
 	CMutexLocker wsl(waitStateMutex);
 
 	int _writePos;
@@ -194,7 +211,10 @@ template <class type> int TMemoryPipe<type>::peek(type *dest,int size,bool block
 	if(size<=0)
 		return 0;
 
-	CMutexLocker l(readerMutex); // protect from more than one reader
+	CMutexLocker l(readerMutex,block); // protect from more than one reader
+	if(! l.didLock())
+		return 0;
+
 	CMutexLocker wsl(waitStateMutex);
 
 	int _writePos;
@@ -313,7 +333,10 @@ template <class type> int TMemoryPipe<type>::skip(int size,bool block)
 	if(size<=0)
 		return 0;
 
-	CMutexLocker l(readerMutex); // protect from more than one reader
+	CMutexLocker l(readerMutex,block); // protect from more than one reader
+	if(! l.didLock())
+		return 0;
+
 	CMutexLocker wsl(waitStateMutex);
 
 	int _writePos;
@@ -563,12 +586,13 @@ template <class type> int TMemoryPipe<type>::getSize() const
 		return diff;
 }
 
-template <class type> void TMemoryPipe<type>::clear()
+template <class type> int TMemoryPipe<type>::clear()
 {
-	//skip(bufferSize,false);
 	CMutexLocker l(readerMutex);
 	CMutexLocker l2(waitStateMutex);
+	const int len=getSize();
 	readPos=writePos=0;
 	fullCond.signal();
+	return len;
 }
 

@@ -34,7 +34,7 @@
  * This is a queue of memory which will do blocked reads and writes
  * I would prefer to use a the pipe() system call, but I need a specific
  * pipe size.  It is meant to be used by 2 threads, one reading from and
- * one writing to the pipe.  All the pertainent methods are thread-safe
+ * one writing to the pipe.  All the pertinent methods are thread-safe
  *
  * The type template parameters must be a type who's instantiations can
  * be safely memcpy-ed
@@ -67,8 +67,9 @@ public:
 	bool isReadOpened() const;
 	bool isWriteOpened() const;
 
+	void setSize(int pipeSize); // set the amount of compacity, this can only be done when both ends of the pipe are closed
 	int getSize() const; // get available read space
-	void clear(); // remove all data currently in pipe
+	int clear(); // remove all data currently in pipe, returns the number of elements cleared
 
 	class EPipeClosed : public runtime_error { public: EPipeClosed(const string msg) : runtime_error(msg) { } };
 
