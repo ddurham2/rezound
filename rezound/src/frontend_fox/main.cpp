@@ -99,8 +99,6 @@ int main(int argc,char *argv[])
 
 		gMainWindow->show();
 		gEditToolbar->show();
-		if(gSoundListWindow!=NULL) gSoundListWindow->show();
-
 
 
 		// load any sounds that were from the previous session

@@ -27,6 +27,8 @@
 
 #include "settings.h"
 
+#include <cc++/path.h>
+
 CSoundListWindow *gSoundListWindow=NULL;
 
 /* TODO:
@@ -53,19 +55,21 @@ CSoundListWindow::CSoundListWindow(FXWindow *mainWindow) :
 	setTitle("Opened");
 }
 
-/*
 void CSoundListWindow::create()
 {
 	FXToolbarShell::create();
 
-	show();
+	hide();
 }
-*/
 
 void CSoundListWindow::show()
 {
-	rememberShow(this);
-	FXToolbarShell::show();
+	// put this if here because it would show just after adding items to the list
+	if(soundList->getNumItems()>1)
+	{
+		rememberShow(this);
+		FXToolbarShell::show();
+	}
 }
 
 void CSoundListWindow::hide()
@@ -86,10 +90,14 @@ long CSoundListWindow::onSoundListChange(FXObject *sender,FXSelector sel,void *p
 
 void CSoundListWindow::addSoundWindow(CSoundWindow *window)
 {
-						// ??? I want to put the basename first and then the path name so that the most likely looked at text would be first from left to right
-	soundList->appendItem(window->loadedSound->getSound()->getFilename().c_str(),NULL,window);
+	ost::Path p(window->loadedSound->getSound()->getFilename().c_str());
+
+	// if I could, i'd like a two column list where the basename was in the first column and path in the second???
+	soundList->appendItem((p.BaseName()+"  "+p.DirName()).c_str(),NULL,window);
 	soundList->setCurrentItem(soundList->getNumItems()-1);
 	soundList->makeItemVisible(soundList->getNumItems()-1);
+
+	hideOrShow();
 }
 
 void CSoundListWindow::removeSoundWindow(CSoundWindow *window)
@@ -107,5 +115,16 @@ void CSoundListWindow::removeSoundWindow(CSoundWindow *window)
 			break;
 		}
 	}
+
+	hideOrShow();
 }
+
+void CSoundListWindow::hideOrShow()
+{
+	if(soundList->getNumItems()>1)
+		show();
+	else
+		hide();
+}
+
 

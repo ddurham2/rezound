@@ -44,7 +44,7 @@ public:
 		ID_LAST
 	};
 
-	//virtual void create();
+	virtual void create();
 	virtual void show();
 	virtual void hide();
 
@@ -61,6 +61,8 @@ private:
 	FXPacker *contents;
 		FXComposite *soundListFrame;
 			FXList *soundList;
+
+	void hideOrShow();
 };
 
 #endif
