@@ -25,6 +25,7 @@
 - Recording
 	- Realtime Level Meters (display also when not recording)
 	- Record Time Limit Setting
+	- Record can Actually Start when a Given Audio Threshold is Met
 	- Start and Pause Recording
 	- Can Reset the Record Position to the Beginning While Recording
 	- Add Cue Positions While Recording
