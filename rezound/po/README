@@ -58,6 +58,9 @@ Also, I discovered on Mandrake that a package named 'locales-ll_CC' has to be
 installed before gettext will work.  Something similar may be necessary on other
 distroes, however I don't know exactly what that would be.
 
+If you type 'locale -a' I think it is necessary that the language you're working 
+with show up in that list of installed locales.
+
 
 
 ** To translate more text in ReZound that exists in the rezound.pot file:
