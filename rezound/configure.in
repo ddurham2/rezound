@@ -150,5 +150,5 @@ AC_OUTPUT( \
 # of frontend API, then this should become a conditional
 # statement
 rm -f ./rezound
-ln -s ./src/frontend_fox/rezound ./rezound
+ln -s ./src/frontend_fox/ReZound ./rezound
 
