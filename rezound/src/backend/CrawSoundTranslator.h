@@ -23,6 +23,8 @@
 
 #include "../../config/common.h"
 
+#ifdef HAVE_LIBAUDIOFILE
+
 #include "ClibaudiofileSoundTranslator.h"
 
 class CrawSoundTranslator : public ClibaudiofileSoundTranslator
@@ -46,5 +48,7 @@ protected:
 private:
 
 };
+
+#endif // HAVE_LIBAUDIOFILE
 
 #endif

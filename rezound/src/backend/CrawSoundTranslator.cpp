@@ -19,6 +19,9 @@
  */
 
 #include "CrawSoundTranslator.h"
+
+#ifdef HAVE_LIBAUDIOFILE
+
 #include "CSound.h"
 
 #include <stdexcept>
@@ -105,3 +108,5 @@ const vector<vector<string> > CrawSoundTranslator::getFormatExtensions() const
 
 	return(list);
 }
+
+#endif // HAVE_LIBAUDIOFILE
