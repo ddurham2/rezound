@@ -400,6 +400,11 @@ void cfg_init()
 
 	started=false;
 
+	if(YY_CURRENT_BUFFER)
+	{
+		yy_delete_buffer(YY_CURRENT_BUFFER);
+		YY_CURRENT_BUFFER=NULL;
+	}
 	cfg_includeFile(CNestedDataFile::initialFilename);
 
 	started=true;
@@ -432,7 +437,7 @@ void cfg_includeFile(const char *filename)
 	
 	fclose(f);
 
-	if(started)
+	if(started && YY_CURRENT_BUFFER!=NULL)
 	{
 		filenameStack.push(currentFilename);
 		linenoStack.push(yylineno);
@@ -449,6 +454,12 @@ void cfg_includeFile(const char *filename)
 
 int yywrap(void)
 {
+	if(YY_CURRENT_BUFFER)
+	{
+		yy_delete_buffer(YY_CURRENT_BUFFER);
+		YY_CURRENT_BUFFER=NULL;
+	}
+
 	if(inputBufferStack.empty())
 		return(true);
 	else
