@@ -66,6 +66,7 @@
 
 	- decide on exactly what keys to finally bind to by default for play controls
 		- all bindings should (at some point in development) be configurable
+		- list the default bindings in the FrontendFoxFeatures.txt file and it's copy on the www site
 
 	- the frontend needs a way to tell COSSSoundPlayer and COSSSoundRecorder which device to use
 		- I should be able to test this at home since I have 2 sound cards installed
