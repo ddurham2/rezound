@@ -95,7 +95,7 @@ rezound_SOURCES= main.cpp
 ## It's up to each subdirectory's Makefile to build it's .la library.
 ## notice we use $(top_builddir) for the modules. This allows building in a 
 ## separate directory
-rezound_LDADD= libfrontend.la\
+_rezound_LDADD= libfrontend.la\
 	$(top_builddir)/src/backend/libbackend.la \
 	$(top_builddir)/src/backend/Edits/libEdits.la \
 	$(top_builddir)/src/backend/Effects/libEffects.la \
@@ -105,8 +105,13 @@ rezound_LDADD= libfrontend.la\
 	$(top_builddir)/src/backend/Generate/libGenerate.la \
 	@MAYBE_LADSPA_LIB@ \
 	$(top_builddir)/src/misc/CNestedDataFile/libmiscCN.la \
-	$(top_builddir)/src/PoolFile/libPoolFile.la @FOX_1_1_LIBS@ @FOX_LIBS@
+	$(top_builddir)/src/PoolFile/libPoolFile.la
 
+rezound_LDADD=$(_rezound_LDADD) @FOX_1_1_LIBS@ @FOX_LIBS@
+
+## if I don't do this, automake leaves out @abc@ vars when creating the rezound_DEPENDENCES value
+## so changes to the LADSPA lib (that may or may not be built) don't cause a re-link
+rezound_DEPENDENCIES=$(_rezound_LDADD)
 
 
 AM_CXXFLAGS=@FOX_1_1_CXXFLAGS@ @FOX_CXXFLAGS@
