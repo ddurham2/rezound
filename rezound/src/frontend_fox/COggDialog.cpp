@@ -91,8 +91,7 @@ COggDialog::COggDialog(FXWindow *mainWindow) :
 			fillBitRateComboBox(maxRateComboBox);
 
 
-	qualityButton->setCheck(TRUE);
-	onRadioButton(NULL,0,(void *)1); // to disable all but Quality
+	onRadioButton(qualityButton,0,(void *)1); // to disable all but Quality
 	
 
 }
@@ -140,16 +139,32 @@ long COggDialog::onRadioButton(FXObject *sender,FXSelector sel,void *ptr)
 	if((int)ptr==0) // only act when ptr==1 when it's getting checked
 		return 1;
 
+	// turn off all buttons
+	CBRButton->setCheck(FALSE);
 	setEnable((FXWindow *)CBRFrame,false);
+
+	VBRButton->setCheck(FALSE);
 	setEnable((FXWindow *)VBRFrame,false);
+
+	qualityButton->setCheck(FALSE);
 	setEnable((FXWindow *)qualityFrame,false);
 
-	if(CBRButton->getCheck()==TRUE)
+	// enable button that was clicked
+	if(sender==CBRButton)
+	{
+	       	CBRButton->setCheck(TRUE);
 		setEnable((FXWindow *)CBRFrame,true);
-	else if(VBRButton->getCheck()==TRUE)
+	}
+	else if(sender==VBRButton)
+	{
+		VBRButton->setCheck(TRUE);
 		setEnable((FXWindow *)VBRFrame,true);
-	else if(qualityButton->getCheck()==TRUE)
+	}
+	else if(sender==qualityButton)
+	{
+		qualityButton->setCheck(TRUE);
 		setEnable((FXWindow *)qualityFrame,true);
+	}
 
-	return 1;
+	return 0;
 }
