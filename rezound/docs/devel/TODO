@@ -95,9 +95,6 @@
 		- AAction::backup/restoreUndoSelection
 		- CCopyCutDeleteEdit::doActionSizeSafe
 
-- make sure you can't open the same file twice
-	- what about hardlinks?
-
 - supply icons for all the windows
 	- just new FXIcon(...) instead of passing NULL
 
@@ -134,7 +131,6 @@
 	- perhaps I could create pools but not put data into them, for the un-included copy/cut channels, but know to disable the check boxes in the GUI if the pool is zero length
 
 - perhaps actions that change the length of the sound could possibly know how much to change the play position if it's playing just so when the action returns it continues at roughly the same place
-
 
 - a very nice project called 'ardour' on sourceforge.net has setup a paypal account to receive donations, perhaps I should do the same
 
@@ -317,4 +313,7 @@
 	- start pos, stop pos, start, end, AND play pos
 	- and perhaps all the markers too
 
+
+- make sure you can't open the same file twice
+	- what about hardlinks?
 
