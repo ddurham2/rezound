@@ -20,6 +20,8 @@
 
 #include "ClibaudiofileSoundTranslator.h"
 
+#ifdef HAVE_LIBAUDIOFILE
+
 #include <unistd.h> // for unlink
 
 #include <stdexcept>
@@ -505,4 +507,4 @@ const vector<vector<string> > ClibaudiofileSoundTranslator::getFormatExtensions(
 	return(list);
 }
 
-
+#endif // HAVE_LIBAUDIOFILE

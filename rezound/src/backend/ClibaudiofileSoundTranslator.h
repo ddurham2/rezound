@@ -23,6 +23,8 @@
 
 #include "../../config/common.h"
 
+#ifdef HAVE_LIBAUDIOFILE
+
 #include "ASoundTranslator.h"
 
 #include <audiofile.h>
@@ -50,5 +52,7 @@ protected:
 private:
 
 };
+
+#endif // HAVE_LIBAUDIOFILE
 
 #endif
