@@ -1,0 +1,42 @@
+
+- In order to make a smoother sounding edge after an edit where a transition is 
+  made from the non-edited region to the edited region and back again to the 
+  non-edited after the selection I have implemented the ability ReZound to do a 
+  quick crossfade on the edges after an edit.
+
+
+- There are 2 types of crossfades, inner and outer.
+
+	- The inner crossfade, before the action, backs up the data just after the 
+	  soon-to-be new start position and just before the soon-to-be new stop position.  
+	  Then after the action has been performed on the selection there will probably 
+	  be discontinuous edges at the new start and stop positions.  So, after the edit, 
+	  I use that backed up data to do a crossfade from the backed-up data and the new 
+	  data at the respective edge created by the action.
+
+	- The outer crossfade, just after the action has taken place, at the start 
+	  position, data from within the selection is pulled leftward by the crossfade 
+	  time and a crosfade is done between the two now overlapping areas.  Then data 
+	  after the stop edge is pull leftward to overlap the selection and a crossfade is 
+	  again performed on these two overlapping areas.  This does result in making the 
+	  sound short by the start and stop crossfade lengths.
+
+	- I should make mention that whenever data to crossfade is not available because 
+	  it would run off the beginning or end of the sound, the crossfade is shorted by 
+	  the amount that would cause this not to be a problem.
+
+
+- The user has a choice of how long the crossfade will be independantly at the start and stop 
+  positions.
+
+
+- The user also has a choice of whether to use a linear gain of 0<g<1 or a parabolic one (still 
+  0<g<1) when doing the crossfade.
+	- A linear crossfade always keeps the sum of the 2 gains at a constant of 1.0, but does
+
+	  not sound natural for crossfades of significant lengths (i.e. >250ms)
+
+	- A parabolic crossfade seems to sound a bit more natural with longer lengths, but causes 
+	  a brief lowering of the overall amplitude because the total gain is not always 1.0.
+
+
