@@ -53,7 +53,7 @@ FXComboTextParamValue::FXComboTextParamValue(FXComposite *p,int opts,const char 
 	isEditable(_isEditable),
 
 	titleLabel(new FXLabel(this,gettext(_name),NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
-	valueComboBox(new FXComboBox(this,8,min((size_t)items.size(),(size_t)8),this,ID_COMBOBOX, COMBOBOX_NORMAL|(!isEditable ? COMBOBOX_STATIC : 0) | FRAME_SUNKEN|FRAME_THICK | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
+	valueComboBox(new FXComboBox(this,8,this,ID_COMBOBOX, COMBOBOX_NORMAL|(!isEditable ? COMBOBOX_STATIC : 0) | FRAME_SUNKEN|FRAME_THICK | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
 
 	textFont(getApp()->getNormalFont())
 {

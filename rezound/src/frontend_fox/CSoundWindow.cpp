@@ -19,6 +19,7 @@
  */
 
 static void playTrigger(void *Pthis);
+#warning using the "fit" button doesnt refresh the ruler (cues stick in their position) 
 
 /*
  * TODO

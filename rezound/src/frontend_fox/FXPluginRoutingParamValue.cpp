@@ -199,7 +199,8 @@ FXPluginRoutingParamValue::FXPluginRoutingParamValue(FXComposite *p,int opts,con
 				new FXButton(p2,_("Clear"),NULL,this,ID_RESET_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
 			p2=new FXPacker(p1,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y);
 				p3=new FXPacker(p2,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_SUNKEN|FRAME_THICK, 0,0,0,0, 0,0,0,0, 0,0);
-					soundList=new FXList(p3,5,NULL,0,LIST_NORMAL|LIST_SINGLESELECT | LAYOUT_FILL_Y|LAYOUT_FILL_X);
+					soundList=new FXList(p3,NULL,0,LIST_NORMAL|LIST_SINGLESELECT | LAYOUT_FILL_Y|LAYOUT_FILL_X);
+					soundList->setNumVisible(5);
 	}
 
 	canvasParent->setBackColor(COL_BACKGROUND);
@@ -1064,8 +1065,9 @@ void FXPluginRoutingParamValue::newSource(CLoadedSound *loaded,size_t soundFileM
 			FXPacker *p=new FXHorizontalFrame(source,FRAME_NONE|LAYOUT_FILL_X, 0,0,0,0, 2,2,0,0, 0,0);
 			(new FXLabel(p,_("Use ")))->setFont(textFont);
 
-			FXComboBox *c=new FXComboBox(p,0,2,NULL,0,COMBOBOX_NORMAL|COMBOBOX_STATIC | FRAME_SUNKEN | LAYOUT_FILL_X);
+			FXComboBox *c=new FXComboBox(p,0,NULL,0,COMBOBOX_NORMAL|COMBOBOX_STATIC | FRAME_SUNKEN | LAYOUT_FILL_X);
 				// these have to maintain the order in CPluginMapping::RInputDesc::WhenDataRunsOut because the index ends up being the value of that enum
+			c->setNumVisible(2);
 			c->appendItem(_("Selection"));
 			c->appendItem(_("All"));
 			c->setFont(textFont);
@@ -1076,7 +1078,8 @@ void FXPluginRoutingParamValue::newSource(CLoadedSound *loaded,size_t soundFileM
 		{
 			FXHorizontalFrame *nodeParent=new FXHorizontalFrame(source,FRAME_NONE|LAYOUT_FILL_X, 0,0,0,0, 2,2,0,0, 0,0);
 
-			FXComboBox *wdroControl=new FXComboBox(nodeParent,8,2,NULL,0,COMBOBOX_NORMAL|COMBOBOX_STATIC | FRAME_SUNKEN);
+			FXComboBox *wdroControl=new FXComboBox(nodeParent,8,NULL,0,COMBOBOX_NORMAL|COMBOBOX_STATIC | FRAME_SUNKEN);
+			wdroControl->setNumVisible(2);
 			wdroControl->setFont(textFont);
 			wdroControl->setTipText(_("When Data Runs Out ..."));
 				// these have to maintain the order in CPluginMapping::RInputDesc::WhenDataRunsOut because the index ends up being the value of that enum

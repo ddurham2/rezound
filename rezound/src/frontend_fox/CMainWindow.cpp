@@ -252,14 +252,16 @@ CMainWindow::CMainWindow(FXApp* a) :
 		drawVerticalCuePositionsButton=new FXCheckButton(miscControlsFrame,_("Draw Vertical Cue Positions"),this,ID_DRAW_VERTICAL_CUE_POSITIONS_TOGGLE);
 		drawVerticalCuePositionsButton->setPadLeft(0); drawVerticalCuePositionsButton->setPadRight(0); drawVerticalCuePositionsButton->setPadTop(0); drawVerticalCuePositionsButton->setPadBottom(0);
 		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
-			crossfadeEdgesComboBox=new FXComboBox(t,8,3, this,ID_CROSSFADE_EDGES_COMBOBOX, FRAME_SUNKEN|FRAME_THICK | COMBOBOX_NORMAL|COMBOBOX_STATIC | LAYOUT_CENTER_Y);
+			crossfadeEdgesComboBox=new FXComboBox(t,8,this,ID_CROSSFADE_EDGES_COMBOBOX, FRAME_SUNKEN|FRAME_THICK | COMBOBOX_NORMAL|COMBOBOX_STATIC | LAYOUT_CENTER_Y);
+				crossfadeEdgesComboBox->setNumVisible(3);
 				crossfadeEdgesComboBox->setTipText(_("After Most Actions a Crossfade can be Performed at the Start and Stop \nPositions to Give a Smoother Transition in to and out of the Modified Selection"));
 				crossfadeEdgesComboBox->appendItem(_("No Crossfade"));
 				crossfadeEdgesComboBox->appendItem(_("Crossfade Inner Edges"));
 				crossfadeEdgesComboBox->appendItem(_("Crossfade Outer Edges"));
 				crossfadeEdgesComboBox->setCurrentItem(0);
 			new FXButton(t,FXString("...\t")+_("Change Crossfade Times"),NULL,this,ID_CROSSFADE_EDGES_SETTINGS_BUTTON, BUTTON_NORMAL & ~FRAME_THICK);
-		clipboardComboBox=new FXComboBox(miscControlsFrame,8,8, this,ID_CLIPBOARD_COMBOBOX, FRAME_SUNKEN|FRAME_THICK | COMBOBOX_NORMAL|COMBOBOX_STATIC);
+		clipboardComboBox=new FXComboBox(miscControlsFrame,8,this,ID_CLIPBOARD_COMBOBOX, FRAME_SUNKEN|FRAME_THICK | COMBOBOX_NORMAL|COMBOBOX_STATIC);
+		clipboardComboBox->setNumVisible(8);
 
 	new FXVerticalSeparator(s);
 
@@ -1457,7 +1459,6 @@ long CMainWindow::onShuttleChange(FXObject *sender,FXSelector sel,void *ptr)
 			else if(text==_("semitones"))
 			{ // semitone + [0.5..2]
 				float semitones = round((double)shuttlePos/(double)maxValue*12); // +/- 12 semitones
-				labelString = (semitones>=0 ? "+" : "") + istring((int)semitones,2,false);
 				if(shuttlePos>0) 
 				{
 					semitones = round((double)shuttlePos/(double)maxValue*12);
@@ -1468,6 +1469,7 @@ long CMainWindow::onShuttleChange(FXObject *sender,FXSelector sel,void *ptr)
 					semitones = round((double)shuttlePos/(double)minValue*12);
 					seekSpeed=pow(0.5,semitones/12.0);
 				}
+				labelString = (semitones>=0 ? "+" : "") + istring((int)semitones,2,false) + " ("+istring(seekSpeed,3,2)+"x)";
 			}
 			else
 				throw runtime_error(string(__func__)+" -- internal error -- unhandled text for shuttleDialScaleButton: '"+text+"'");

@@ -40,7 +40,8 @@ CJACKPortChoiceDialog::CJACKPortChoiceDialog(FXWindow *mainWindow) :
 	FXModalDialogBox(mainWindow,N_("JACK Port Selection"),0,0,FXModalDialogBox::ftVertical)
 {
 	messageLabel=new FXLabel(getFrame(),"",NULL,LAYOUT_CENTER_X);
-	portNamesComboBox=new FXComboBox(getFrame(),10,8,NULL,0,COMBOBOX_NORMAL|LAYOUT_CENTER_X|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
+	portNamesComboBox=new FXComboBox(getFrame(),10,NULL,0,COMBOBOX_NORMAL|LAYOUT_CENTER_X|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
+	portNamesComboBox->setNumVisible(8);
 }
 
 CJACKPortChoiceDialog::~CJACKPortChoiceDialog()

@@ -60,14 +60,14 @@ CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 	matrix(new FXMatrix(getFrame(),2,MATRIX_BY_COLUMNS|LAYOUT_CENTER_X)),
 
 		channelsLabel(new FXLabel(matrix,_("Channels:"),NULL,LABEL_NORMAL|LAYOUT_RIGHT)),
-		channelsComboBox(new FXComboBox(matrix,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC)),
+		channelsComboBox(new FXComboBox(matrix,10,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC)),
 
 		sampleRateLabel(new FXLabel(matrix,_("Sample Rate:"),NULL,LABEL_NORMAL|LAYOUT_RIGHT)),
-		sampleRateComboBox(new FXComboBox(matrix,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK)),
+		sampleRateComboBox(new FXComboBox(matrix,10,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK)),
 
 		lengthLabel(new FXLabel(matrix,_("Length:"),NULL,LABEL_NORMAL|LAYOUT_RIGHT)),
 		lengthFrame(new FXHorizontalFrame(matrix,LAYOUT_CENTER_X,0,0,0,0, 0,0,0,0, 0,0)),
-			lengthComboBox(new FXComboBox(lengthFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK)),
+			lengthComboBox(new FXComboBox(lengthFrame,10,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK)),
 			lengthUnitsLabel(new FXLabel(lengthFrame,_("second(s)"))),
 
 
@@ -77,10 +77,12 @@ CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 	if(!ASoundTranslator::findRawTranslator()) // hide if we can't handle it
 		rawFormatFrame->hide();
 
+	channelsComboBox->setNumVisible(8);
 	for(size_t t=0;t<MAX_CHANNELS;t++)
 		channelsComboBox->appendItem(istring(t+1).c_str());
 	channelsComboBox->setCurrentItem(1); // stereo
 
+	sampleRateComboBox->setNumVisible(8);
 	sampleRateComboBox->appendItem("4000");
 	sampleRateComboBox->appendItem("8000");
 	sampleRateComboBox->appendItem("11025");
@@ -92,6 +94,7 @@ CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 	sampleRateComboBox->setCurrentItem(4);
 
 
+	lengthComboBox->setNumVisible(8);
 	lengthComboBox->appendItem(_("0.25"));
 	lengthComboBox->appendItem(_("0.5"));
 	lengthComboBox->appendItem(_("0.75"));

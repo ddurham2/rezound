@@ -69,6 +69,16 @@
 	#define addTimeout(tgt,sel,ms) addTimeout(ms,tgt,sel)
 #endif
 
+#if REZ_FOX_VERSION<10146
+	// 1.1.46 removed the nvis parameter, so I have to supply a zero if fox is older
+	// I always call setNumVisible() now after construction 
+	#define FXList(p,tgt,sel,opts) FXList((p),0,(tgt),(sel),(opts))
+	// ditto (but wasn't mentioned in the News about 1.1.46)
+	#define FXComboBox(p,cols,tgt,sel,opts) FXComboBox((p),(cols),0,(tgt),(sel),(opts))
+	// ditto (but wasn't mentioned in the News about 1.1.46)
+	#define FXListBox(p,tgt,sel,opts) FXListBox((p),0,(tgt),(sel),(opts))
+#endif
+
 
 
 #endif

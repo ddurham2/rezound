@@ -45,13 +45,15 @@ CVoxDialog::CVoxDialog(FXWindow *mainWindow) :
 	FXComboBox *combo;
 
 	new FXLabel(main,_("Channels:"));
-	combo=channelsCountComboBox=new FXComboBox(main,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK);
+	combo=channelsCountComboBox=new FXComboBox(main,10,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK);
+		combo->setNumVisible(8);
 		for(unsigned t=1;t<=MAX_CHANNELS;t++)
 			combo->appendItem(istring(t).c_str());
 		combo->setCurrentItem(1); // stereo
 
 	new FXLabel(main,_("Sample Rate:"));
-	combo=sampleRateComboBox=new FXComboBox(main,10,9,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK);
+	combo=sampleRateComboBox=new FXComboBox(main,10,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK);
+		combo->setNumVisible(9);
 		combo->appendItem("4000");
 		combo->appendItem("8000");
 		combo->appendItem("11025");
