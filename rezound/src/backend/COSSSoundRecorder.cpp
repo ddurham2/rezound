@@ -40,12 +40,10 @@
 #include <istring>
 
 // ??? edit this to be able to detect necessary parameters from the typeof sample_t
-#define BITS 16
 #define OSS_PCM_FORMAT AFMT_S16_LE // needs to match for what is above and type of sample_t ???
 
 #define BUFFER_SIZE_BYTES 8192						// buffer size in bytes
 #define BUFFER_SIZE_BYTES_LOG2 13					// log2(BUFFER_SIZE_BYTES) -- that is 2^this is BUFFER_SIZE_BYTES
-#define BUFFER_SIZE_SAMPLES(channelCount) (BUFFER_SIZE_BYTES/(BITS/8)/channelCount) 	// in samples
 
 
 COSSSoundRecorder::COSSSoundRecorder() :
@@ -84,7 +82,7 @@ void COSSSoundRecorder::initialize(ASound *sound)
 		else if(format!=OSS_PCM_FORMAT)
 		{
 			close(audio_fd);
-			throw(runtime_error(string(__func__)+" -- error setting the bit rate -- the device does not support "+istring(BITS)+" bit little endian data"));
+			throw(runtime_error(string(__func__)+" -- error setting the format -- the device does not support OSS_PCM_FORMAT format data"));
 		}
 		//printf("OSS: format: %d\n",format);
 
@@ -193,7 +191,7 @@ void COSSSoundRecorder::CRecordThread::Run()
 {
 	try
 	{
-		sample_t buffer[BUFFER_SIZE_SAMPLES(parent->getChannelCount())*parent->getChannelCount()]; 
+		sample_t buffer[BUFFER_SIZE_BYTES/sizeof(sample_t)]; 
 		while(!kill)
 		{
 			int len;
