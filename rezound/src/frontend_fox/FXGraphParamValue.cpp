@@ -369,12 +369,16 @@ FXGraphParamValue::FXGraphParamValue(const char *_name,const int minScalar,const
 	const int deformSliderRange=4000;
 
 	horzDeformSlider->setRange(-deformSliderRange,deformSliderRange); // symmetry is assumed when the slider is used (and horz and very should be the same
+#if FOX_MAJOR>=1
 	horzDeformSlider->setTickDelta((deformSliderRange*2+1)/(11-1)); // 11 tick marks
+#endif
 	horzDeformSlider->setValue(0);
 	horzDeformSlider->setTipText("Horizontally Deform the Nodes Toward One Side or the Other\nRight-Click to Reset to the Middle");
 
 	vertDeformSlider->setRange(-deformSliderRange,deformSliderRange); // symmetry is assumed when the slider is used (and horz and very should be the same
+#if FOX_MAJOR>=1
 	vertDeformSlider->setTickDelta((deformSliderRange*2+1)/(11-1)); // 11 tick marks
+#endif
 	vertDeformSlider->setValue(0);
 	vertDeformSlider->setTipText("Vertically Deform the Nodes Toward the Top or Bottom\nRight-Click to Reset to the Middle");
 
