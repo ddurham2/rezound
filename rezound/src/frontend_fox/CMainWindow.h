@@ -53,6 +53,8 @@ public:
 
 	long onFollowPlayPositionButton(FXObject *sender,FXSelector sel,void *ptr);
 
+	long onRenderClippingWarningButton(FXObject *sender,FXSelector sel,void *ptr);
+
 	long onCrossfadeEdgesComboBox(FXObject *sender,FXSelector sel,void *ptr);
 	long onCrossfadeEdgesSettings(FXObject *sender,FXSelector sel,void *ptr);
 
@@ -156,6 +158,8 @@ public:
 
 		ID_FOLLOW_PLAY_POSITION_TOGGLE,
 
+		ID_RENDER_CLIPPING_WARNING_TOGGLE,
+
 		ID_CROSSFADE_EDGES_COMBOBOX,
 		ID_CROSSFADE_EDGES_SETTINGS_BUTTON,
 
@@ -195,6 +199,7 @@ private:
 	FXButton *shuttleDialScaleButton;
 
 	FXCheckButton	*followPlayPositionButton;
+	FXCheckButton	*renderClippingWarningButton;
 	FXComboBox	*crossfadeEdgesComboBox;
 	FXComboBox	*clipboardComboBox; // ??? it would however make sense to put this on the edit dialog.. it's just a little wide
 

@@ -25,6 +25,7 @@
 #include <exception>
 #include <algorithm>
 
+#include "settings.h"
 
 #include "../backend/CSound.h"
 #include "../backend/unit_conv.h"
@@ -165,7 +166,7 @@ void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth
 						}
 
 						// but if sample was clipped, make it stand out
-						if(r.min<=MIN_SAMPLE || r.max>=MAX_SAMPLE)
+						if(gRenderClippingWarning && (r.min<=MIN_SAMPLE || r.max>=MAX_SAMPLE))
 						{
 							// make sure we draw the pink line to or thru the axis
 							if(r.min<=MIN_SAMPLE && r.max<0)

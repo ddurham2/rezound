@@ -92,6 +92,7 @@ unsigned gSnapToCueDistance=5;
 
 bool gFollowPlayPosition=true;
 
+bool gRenderClippingWarning=true;
 
 float gSkipMiddleMarginSeconds=2.0;
 float gLoopGapLengthSeconds=0.75;

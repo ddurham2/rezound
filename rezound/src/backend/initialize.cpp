@@ -247,6 +247,9 @@ bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[])
 		if(gSettingsRegistry->keyExists("followPlayPosition"))
 			gFollowPlayPosition= gSettingsRegistry->getValue("followPlayPosition")=="true";
 
+		if(gSettingsRegistry->keyExists("renderClippingWarning"))
+			gRenderClippingWarning= gSettingsRegistry->getValue("renderClippingWarning")=="true";
+
 		if(gSettingsRegistry->keyExists("skipMiddleMarginSeconds"))
 			gSkipMiddleMarginSeconds= atof(gSettingsRegistry->getValue("skipMiddleMarginSeconds").c_str());
 
@@ -461,6 +464,8 @@ void deinitializeBackend()
 	gSettingsRegistry->createKey(("ReopenHistory"+DOT+"maxReopenHistory").c_str(),gMaxReopenHistory);
 
 	gSettingsRegistry->createKey("followPlayPosition",gFollowPlayPosition ? "true" : "false");
+
+	gSettingsRegistry->createKey("renderClippingWarning",gRenderClippingWarning ? "true" : "false");
 
 	gSettingsRegistry->createKey("skipMiddleMarginSeconds",gSkipMiddleMarginSeconds);
 	gSettingsRegistry->createKey("loopGapLengthSeconds",gLoopGapLengthSeconds);

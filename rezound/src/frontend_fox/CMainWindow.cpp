@@ -133,6 +133,8 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FOLLOW_PLAY_POSITION_TOGGLE,	CMainWindow::onFollowPlayPositionButton),
 
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_RENDER_CLIPPING_WARNING_TOGGLE,	CMainWindow::onRenderClippingWarningButton),
+
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CROSSFADE_EDGES_COMBOBOX,	CMainWindow::onCrossfadeEdgesComboBox),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CROSSFADE_EDGES_SETTINGS_BUTTON,CMainWindow::onCrossfadeEdgesSettings),
 
@@ -234,11 +236,12 @@ CMainWindow::CMainWindow(FXApp* a) :
 
 	// build miscellaneous buttons
 	FXPacker *miscControlsFrame=new FXPacker(new FXPacker(s,LAYOUT_FILL_Y,0,0,0,0, 4,4,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 3,2);
-		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
+		//t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
 		followPlayPositionButton=new FXCheckButton(miscControlsFrame,"Follow Play Position",this,ID_FOLLOW_PLAY_POSITION_TOGGLE);
 		followPlayPositionButton->setPadLeft(0); followPlayPositionButton->setPadRight(0); followPlayPositionButton->setPadTop(0); followPlayPositionButton->setPadBottom(0);
+		renderClippingWarningButton=new FXCheckButton(miscControlsFrame,"Clipping Warning",this,ID_RENDER_CLIPPING_WARNING_TOGGLE);
+		//followPlayPositionButton->setPadLeft(0); followPlayPositionButton->setPadRight(0); followPlayPositionButton->setPadTop(0); followPlayPositionButton->setPadBottom(0);
 		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
-			//new FXLabel(t,"Crossfade Edges: ");
 			crossfadeEdgesComboBox=new FXComboBox(t,8,3, this,ID_CROSSFADE_EDGES_COMBOBOX, FRAME_SUNKEN|FRAME_THICK | COMBOBOX_NORMAL|COMBOBOX_STATIC | LAYOUT_CENTER_Y);
 				crossfadeEdgesComboBox->setTipText("After Most Actions a Crossfade can be Performed at the Start and Stop \nPositions to Give a Smoother Transition in to and out of the Modified Selection");
 				crossfadeEdgesComboBox->appendItem("No Crossfade");
@@ -300,6 +303,8 @@ void CMainWindow::show()
 	FXMainWindow::show();
 
 	followPlayPositionButton->setCheck(gFollowPlayPosition);
+
+	renderClippingWarningButton->setCheck(gRenderClippingWarning);
 
 	if(gCrossfadeEdges>=cetNone && gCrossfadeEdges<=cetOuter)
 		crossfadeEdgesComboBox->setCurrentItem((FXint)gCrossfadeEdges);
@@ -904,6 +909,13 @@ long CMainWindow::onQuit(FXObject *sender,FXSelector sel,void *ptr)
 long CMainWindow::onFollowPlayPositionButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	gFollowPlayPosition=followPlayPositionButton->getCheck();
+	return 1;
+}
+
+long CMainWindow::onRenderClippingWarningButton(FXObject *sender,FXSelector sel,void *ptr)
+{
+	gRenderClippingWarning=renderClippingWarningButton->getCheck();
+	gSoundFileManager->getActiveWindow()->updateFromEdit();
 	return 1;
 }
 

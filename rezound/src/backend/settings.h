@@ -122,6 +122,12 @@ extern bool gFollowPlayPosition;
 
 
 /*
+ * True if the wave view rendering should color max-valued samples brightly
+ */
+extern bool gRenderClippingWarning;
+
+
+/*
  * dealing when loopType is ltLoopSkipMost
  * Specifies how much time should be played before skipping past the middle to (this much also before) the loop point
  */
