@@ -47,7 +47,7 @@ ApipedSoundTranslator::~ApipedSoundTranslator()
 const string ApipedSoundTranslator::findAppOnPath(const string appName)
 {
 	// ??? this should eventually use a registry setting which comes from user preferences and would be checked first
-	FILE *p=mypopen(("which "+appName).c_str(),"r");
+	FILE *p=mypopen(("which "+appName+" 2>/dev/null").c_str(),"r");
 	if(p==NULL)
 		return "";
 
