@@ -1,6 +1,9 @@
 
 --- THINGS TO DO FOR SURE ---
 	
+	- use #ifdefs to avoid compiling and implementing certain methods depending on vorbis existing or not, or JACK being used or not and others if they exist
+		 - be sure to test compile with the lib in and out
+	
 	- I think I should make all the FX*ParamValue::readFromFile() methods not do anything when the value is not in the preset rather than setting itself to the initial value
 
 	- Add a button to the FXGraphParamValue which smoothes out angles by making it many nodes to approximate curve.. call it 'approximate'
