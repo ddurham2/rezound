@@ -27,7 +27,7 @@ dnl Process this file with autoconf to produce a configure script.
 AC_INIT(config/common.h)
 AC_CONFIG_AUX_DIR(config)
 AM_CONFIG_HEADER(config/config.h)
-AM_INIT_AUTOMAKE(rezound, 0.2.1alpha)
+AM_INIT_AUTOMAKE(rezound, 0.3.0alpha)
 AC_DISABLE_SHARED   dnl This only builds static libs 
 
 dnl --------------------|

@@ -12,7 +12,7 @@
 
 - Undo
 
-- Cue Positions
+- Labeled Cue Positions
 
 - Automatic Crossfading of Selection Edges on All Applicable Actions to Create Smooth Transitions
 
@@ -52,6 +52,9 @@
 		- Limited Mix
 	- Insert Silence
 	- Mute
+	- Add Channels
+	- Remove Channels
+	- Swap Channels
 	- Rotate Selection Left
 	- Rotate Selection Right
 	- Various Selection Tools

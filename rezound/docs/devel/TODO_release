@@ -13,13 +13,14 @@ distro tarball(eg: removing warning flags)
 
 4. Update the version number in configure.in and docs/INSTALL
 	- and then do a bootstrap ; configure
-	- check these two in
 
-5. 'make distcheck'
-6. rebuild FOX with all the --disable flags then 'make_standalone.sh'
+5. check any modified files in (docs/AUTHORS, docs/NEWS, docs/Features.txt, configure.in, docs/INSTALL, etc)
 
-7. Make a cvs release tag
+6. 'make distcheck'
+7. rebuild FOX with all the --disable flags then 'make_standalone.sh'
+
+8. Make a cvs release tag
 	- cvs tag rezound-1_2_3alpha
 
-8. make release on sourceforge.net, add a news blurb in the news section, and announce on freshmeat.net
+9. make release on sourceforge.net, add a news blurb in the news section, and announce on freshmeat.net
 

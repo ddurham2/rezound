@@ -1,3 +1,20 @@
+rezound-0.3.0alpha
+	This is a new-feature and bug-fix release -- As some totally new code now exists
+	I ask that you please report and bugs or crashes that you may have.  Please try
+	to determine under what circumstances the crash or bug appeared in.  If all goes
+	well in this release, I think I will bump it to a beta stage.
+	- Added new edit actions: "Swap Channels", "Add Channels" and "Remove Channels"
+	- Rewrote the output routing code so that a mono file can play in both speakers; still lacking a frontend for output routes
+	- Rewrote audio output buffering code which should make playback smoother under loaded systems
+	- Fixed a bug where recording would not work with half-duplex sound cards
+	- Fixed some bugs with opening/saving mp3 filenames with irregular characters
+	- Added various registry settings at least in the file; still no frontend to change them
+	- Now ReZound does not always use /tmp for a working space
+	- Added some new features to the shuttle wheel allowing it to hang free and allow it to control slower speeds
+	- Fixed the popen bug by writing my own popen which gives me potientially more control
+	- Various other error message changes, bug fixes and enhancements
+
+
 rezound-0.2.0alpha
 	- Added Ogg/Vorbis and MP3 file format support
 	- Added gain parameters to the single pole filters
