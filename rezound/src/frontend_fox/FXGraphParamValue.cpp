@@ -1041,7 +1041,7 @@ void FXGraphParamValue::clearStatus()
 
 const int FXGraphParamValue::getScalar() const
 {
-	return scalarSpinner==NULL ? 0 : scalarSpinner->getValue();
+	return scalarSpinner==NULL ? initScalar : scalarSpinner->getValue();
 }
 
 void FXGraphParamValue::setScalar(const int scalar)

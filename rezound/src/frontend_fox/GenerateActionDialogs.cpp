@@ -20,19 +20,9 @@
 
 #include "GenerateActionDialogs.h"
 #include "../backend/unit_conv.h"
+#include "interpretValue.h"
 
 // --- Generate Noise -------------------------
-
-	// x is 0 to 1 and should return the range of the units of this function's intented parameter
-static const double interpretValue_length(const double x,const int scalar) { return x*scalar; }
-	// inverse of interpretValue_length
-static const double uninterpretValue_length(const double x,const int scalar) { return x/scalar; }
-
-static const double interpretValue_volume(const double x,const int scalar) { return scalar_to_dB(x); }
-static const double uninterpretValue_volume(const double x,const int scalar) { return dB_to_scalar(x); }
-
-static const double interpretValue_maxParticleVelocity(const double x,const int scalar) { return x*100.0; }
-static const double uninterpretValue_maxParticleVelocity(const double x,const int scalar) { return x/100.0; }
 
 FXDEFMAP(CGenerateNoiseDialog) CGenerateNoiseDialogMap[]=
 {
@@ -50,10 +40,10 @@ CGenerateNoiseDialog::CGenerateNoiseDialog(FXWindow *mainWindow) :
 	void *p0=newVertPanel(NULL);
 		void *p1=newHorzPanel(p0);
 
-		addSlider(p1,N_("Length"),"s",interpretValue_length,uninterpretValue_length,NULL,1.0,1,10000,1,false);
+		addSlider(p1,N_("Length"),"s",interpretValue_scalar,uninterpretValue_scalar,NULL,1.0,1,10000,1,false);
 
-		addSlider(p1,N_("Volume"),"dBFS",interpretValue_volume,uninterpretValue_volume,dB_to_scalar,-6.0,0,0,0,false);
-		addSlider(p1,N_("Max Particle Velocity"),"%",interpretValue_maxParticleVelocity,uninterpretValue_maxParticleVelocity,NULL,50.0,0,0,0,false);
+		addSlider(p1,N_("Volume"),"dBFS",interpretValue_dBFS,uninterpretValue_dBFS,dB_to_scalar,-6.0,0,0,0,false);
+		addSlider(p1,N_("Max Particle Velocity"),"%",interpretValue_scalar,uninterpretValue_scalar,NULL,50.0,100,100,100,false);
 
 	// these need to follow the order in the enum in CGenerateNoiseAction.cpp
 	items.clear();
@@ -94,9 +84,6 @@ long CGenerateNoiseDialog::onNoiseColorChange(FXObject *sender,FXSelector sel,vo
 
 // --- Generate Tone -------------------------
 
-static const double interpretValue_frequency(const double x,const int scalar) { return x*scalar; }
-static const double uninterpretValue_frequency(const double x,const int scalar) { return x/scalar; }
-
 FXDEFMAP(CGenerateToneDialog) CGenerateToneDialogMap[]=
 {
         //Message_Type                  ID                                                 Message_Handler
@@ -111,9 +98,9 @@ CGenerateToneDialog::CGenerateToneDialog(FXWindow *mainWindow) :
 #warning make some presets
 	void *p0=newVertPanel(NULL);
 		void *p1=newHorzPanel(p0);
-			addSlider(p1,N_("Frequency"),"Hz",interpretValue_frequency,uninterpretValue_frequency,NULL,60.0,0,48000,440,false);
-			addSlider(p1,N_("Length"),"s",interpretValue_length,uninterpretValue_length,NULL,1.0,1,10000,1,false);
-			addSlider(p1,N_("Volume"),"dBFS",interpretValue_volume,uninterpretValue_volume,dB_to_scalar,-6.0,0,0,0,false);
+			addSlider(p1,N_("Frequency"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,60.0,0,48000,440,false);
+			addSlider(p1,N_("Length"),"s",interpretValue_scalar,uninterpretValue_scalar,NULL,1.0,1,10000,1,false);
+			addSlider(p1,N_("Volume"),"dBFS",interpretValue_dBFS,uninterpretValue_dBFS,dB_to_scalar,-6.0,0,0,0,false);
 
 		vector<string> toneTypes;
 		toneTypes.push_back(_("Sine Wave"));

@@ -20,29 +20,19 @@
 
 #include "FilterActionDialogs.h"
 #include "../backend/unit_conv.h"
+#include "interpretValue.h"
 
 #include "CStatusComm.h"
 
 
-static const double interpretValue_filter(const double x,const int s) { return(x*s); }
-static const double uninterpretValue_filter(const double x,const int s) { return(x/s); }
-
-static const double interpretValue_gain(const double x,const int s) { return(unitRange_to_bipolarRange_exp(x,s)); }
-static const double uninterpretValue_gain(const double x,const int s) { return(bipolarRange_to_unitRange_exp(x,s)); }
-
-
-
 // --- convolution -----------------------
 
-static const double interpretValue_wetdry_mix(const double x,const int s) { return(x*200.0-100.0); }
-static const double uninterpretValue_wetdry_mix(const double x,const int s) { return((x+100.0)/200.0); }
+static const double interpretValue_wetdry_mix(const double x,const int s) { return x*200.0-100.0; }
+static const double uninterpretValue_wetdry_mix(const double x,const int s) { return (x+100.0)/200.0; }
 
 static const double froo=log(80.0/(24.0+80.0))/log(0.5); // this is to make the middle come out 0.00dB
-static const double interpretValue_dB_gain(const double x,const int s) { return(unitRange_to_otherRange_linear(pow(x,froo),-80,24)); }
-static const double uninterpretValue_dB_gain(const double x,const int s) { return(pow(otherRange_to_unitRange_linear(x,-80,24),1.0/froo)); }
-
-static const double interpretValue_delayTime(const double x,const int s) { return(x*s); }
-static const double uninterpretValue_delayTime(const double x,const int s) { return(x/s); }
+static const double interpretValue_dB_gain(const double x,const int s) { return unitRange_to_otherRange_linear(pow(x,froo),-80,24); }
+static const double uninterpretValue_dB_gain(const double x,const int s) { return pow(otherRange_to_unitRange_linear(x,-80,24),1.0/froo); }
 
 CConvolutionFilterDialog::CConvolutionFilterDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
@@ -52,19 +42,19 @@ CConvolutionFilterDialog::CConvolutionFilterDialog(FXWindow *mainWindow) :
 			void *p1=newHorzPanel(p0,false);
 				addSlider(p1,N_("Wet/Dry Mix"),"%",interpretValue_wetdry_mix,uninterpretValue_wetdry_mix,NULL,50.0,0,0,0,true);
 
-				addSlider(p1,N_("Input Lowpass"),"Hz",interpretValue_filter,uninterpretValue_filter,NULL,25000.0,5,100000,25000,false);
+				addSlider(p1,N_("Input Lowpass"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,25000.0,5,100000,25000,false);
 				addSlider(p1,N_("Input Gain"),"dB",interpretValue_dB_gain,uninterpretValue_dB_gain,dB_to_scalar,0.0,0,0,0,false);
 				addSlider(p1,N_("Output Gain"),"dB",interpretValue_dB_gain,uninterpretValue_dB_gain,dB_to_scalar,0.0,0,0,0,false);
-				addSlider(p1,N_("Predelay"),"ms",interpretValue_delayTime,uninterpretValue_delayTime,NULL,50.0,1,500,100,false);
+				addSlider(p1,N_("Predelay"),"ms",interpretValue_scalar,uninterpretValue_scalar,NULL,50.0,1,500,100,false);
 
 				void *p2=newVertPanel(p1,false);
 					addDiskEntityEntry(p2,N_("Filter Kernel"),"$share/impulse_hall1.wav",FXDiskEntityParamValue::detAudioFilename,_("The Audio File to Use as the Filter Kernel"));
 
 					void *p3=newHorzPanel(p2,false);
-						addSlider(p3,N_("FK Gain"),"x",interpretValue_gain,uninterpretValue_gain,NULL,0.06667,1,50,30,true);
-						addSlider(p3,N_("FK Lowpass"),"Hz",interpretValue_filter,uninterpretValue_filter,NULL,25000.0,5,100000,25000,false);
+						addSlider(p3,N_("FK Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,0.06667,1,50,30,true);
+						addSlider(p3,N_("FK Lowpass"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,25000.0,5,100000,25000,false);
 						void *p4=newVertPanel(p3,false);
-							addSlider(p4,N_("FK Rate"),"x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,10,2,true);
+							addSlider(p4,N_("FK Rate"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,1.0,2,10,2,true);
 							addCheckBoxEntry(p4,N_("Reverse"),false);
 			p1=newHorzPanel(p0,false);
 				addCheckBoxEntry(p1,N_("Wrap Decay back to Beginning"),false);
@@ -306,8 +296,8 @@ CSinglePoleLowpassFilterDialog::CSinglePoleLowpassFilterDialog(FXWindow *mainWin
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Gain"),"x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
-		addSlider(p,N_("Cutoff Frequency"),"Hz",interpretValue_filter,uninterpretValue_filter,NULL,500.0,5,100000,5000,false);
+		addSlider(p,N_("Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,1.0,2,50,2,true);
+		addSlider(p,N_("Cutoff Frequency"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,500.0,5,100000,5000,false);
 }
 
 // --- single pole highpass --------------
@@ -316,8 +306,8 @@ CSinglePoleHighpassFilterDialog::CSinglePoleHighpassFilterDialog(FXWindow *mainW
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Gain"),"x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
-		addSlider(p,N_("Cutoff Frequency"),"Hz",interpretValue_filter,uninterpretValue_filter,NULL,1000.0,5,100000,10000,false);
+		addSlider(p,N_("Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,1.0,2,50,2,true);
+		addSlider(p,N_("Cutoff Frequency"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,1000.0,5,100000,10000,false);
 }
 
 // --- bandpass --------------------------
@@ -326,9 +316,9 @@ CBandpassFilterDialog::CBandpassFilterDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Gain"),"x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
-		addSlider(p,N_("Center Frequency"),"Hz",interpretValue_filter,uninterpretValue_filter,NULL,1000.0,5,100000,10000,false);
-		addSlider(p,N_("Band Width"),"Hz",interpretValue_filter,uninterpretValue_filter,NULL,500.0,5,100000,1000,false);
+		addSlider(p,N_("Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,1.0,2,50,2,true);
+		addSlider(p,N_("Center Frequency"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,1000.0,5,100000,10000,false);
+		addSlider(p,N_("Band Width"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,500.0,5,100000,1000,false);
 }
 
 // --- notch -----------------------------
@@ -337,9 +327,9 @@ CNotchFilterDialog::CNotchFilterDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Gain"),"x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
-		addSlider(p,N_("Center Frequency"),"Hz",interpretValue_filter,uninterpretValue_filter,NULL,1000.0,5,100000,10000,false);
-		addSlider(p,N_("Band Width"),"Hz",interpretValue_filter,uninterpretValue_filter,NULL,500.0,5,100000,1000,false);
+		addSlider(p,N_("Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,1.0,2,50,2,true);
+		addSlider(p,N_("Center Frequency"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,1000.0,5,100000,10000,false);
+		addSlider(p,N_("Band Width"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,500.0,5,100000,1000,false);
 }
 
 
@@ -350,9 +340,9 @@ CBiquadResLowpassFilterDialog::CBiquadResLowpassFilterDialog(FXWindow *mainWindo
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Gain"),"x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
-		addSlider(p,N_("Cutoff Frequency"),"Hz",interpretValue_filter,uninterpretValue_filter,NULL,500.0,5,100000,5000,false);
-		addSlider(p,N_("Resonance"),"x",interpretValue_gain,uninterpretValue_gain,NULL,2.0,1,20,2,true);
+		addSlider(p,N_("Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,1.0,2,50,2,true);
+		addSlider(p,N_("Cutoff Frequency"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,500.0,5,100000,5000,false);
+		addSlider(p,N_("Resonance"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,2.0,1,20,2,true);
 }
 
 // --- biquad resonant highpass ----------
@@ -361,9 +351,9 @@ CBiquadResHighpassFilterDialog::CBiquadResHighpassFilterDialog(FXWindow *mainWin
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Gain"),"x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
-		addSlider(p,N_("Cutoff Frequency"),"Hz",interpretValue_filter,uninterpretValue_filter,NULL,500.0,5,100000,5000,false);
-		addSlider(p,N_("Resonance"),"x",interpretValue_gain,uninterpretValue_gain,NULL,2.0,1,20,2,true);
+		addSlider(p,N_("Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,1.0,2,50,2,true);
+		addSlider(p,N_("Cutoff Frequency"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,500.0,5,100000,5000,false);
+		addSlider(p,N_("Resonance"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,2.0,1,20,2,true);
 }
 
 // --- biquad resonant bandpass ----------
@@ -372,8 +362,8 @@ CBiquadResBandpassFilterDialog::CBiquadResBandpassFilterDialog(FXWindow *mainWin
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Gain"),"x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
-		addSlider(p,N_("Center Frequency"),"Hz",interpretValue_filter,uninterpretValue_filter,NULL,500.0,5,100000,5000,false);
-		addSlider(p,N_("Resonance"),"x",interpretValue_gain,uninterpretValue_gain,NULL,2.0,1,20,2,true);
+		addSlider(p,N_("Gain"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,1.0,2,50,2,true);
+		addSlider(p,N_("Center Frequency"),"Hz",interpretValue_scalar,uninterpretValue_scalar,NULL,500.0,5,100000,5000,false);
+		addSlider(p,N_("Resonance"),"x",interpretValue_recipsym_scalar,uninterpretValue_recipsym_scalar,NULL,2.0,1,20,2,true);
 }
 

@@ -19,6 +19,7 @@
  */
 
 #include "LoopingActionDialogs.h"
+#include "interpretValue.h"
 
 // --- add cues -------------------------------
 
@@ -31,15 +32,12 @@ CAddNCuesDialog::CAddNCuesDialog(FXWindow *mainWindow) :
 		addCheckBoxEntry(p,N_("Anchor Cues in Time"),false,_("Set the Cues to be Anchored in Time or Not"));
 }
 
-static const double interpretValue_addTimedCues(const double x,const int s) { return x*s; }
-static const double uninterpretValue_addTimedCues(const double x,const int s) { return x/s; }
-
 CAddTimedCuesDialog::CAddTimedCuesDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newVertPanel(NULL);
 		addStringTextEntry(p,N_("Cue Name"),"(",_("What to Name the New Cues"));
-		addSlider(p,N_("Time Interval"),"s",interpretValue_addTimedCues,uninterpretValue_addTimedCues,NULL,10,1,3600,60,false);
+		addSlider(p,N_("Time Interval"),"s",interpretValue_scalar,uninterpretValue_scalar,NULL,10,1,3600,60,false);
 		addCheckBoxEntry(p,N_("Anchor Cues in Time"),false,_("Set the Cues to be Anchored in Time or Not"));
 }
 

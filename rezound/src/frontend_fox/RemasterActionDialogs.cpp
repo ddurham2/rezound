@@ -20,6 +20,7 @@
 
 #include "RemasterActionDialogs.h"
 #include "../backend/unit_conv.h"
+#include "interpretValue.h"
 
 #include <istring>
 
@@ -34,8 +35,6 @@
 // --- balance ------------------------
 
 #include "../backend/Remaster/CBalanceAction.h"
-static const double interpretValue_balance(const double x,const int s) { return unitRange_to_otherRange_linear(x,100,-100); }
-static const double uninterpretValue_balance(const double x,const int s) { return otherRange_to_unitRange_linear(x,100,-100); }
 static const double ret_balance(const double x) { return x/100.0; }
 
 CSimpleBalanceActionDialog::CSimpleBalanceActionDialog(FXWindow *mainWindow) :
@@ -49,7 +48,7 @@ CSimpleBalanceActionDialog::CSimpleBalanceActionDialog(FXWindow *mainWindow) :
 				addComboTextEntry(p2,N_("Channel B"),items,"");
 
 			
-			addSlider(p1,N_("Balance"),"%",interpretValue_balance,uninterpretValue_balance,ret_balance,0.0,0,0,0,false);
+			addSlider(p1,N_("Balance"),"%",interpretValue_bipolar_scalar,uninterpretValue_bipolar_scalar,ret_balance,0.0,100,100,100,false);
 
 			vector<string> balanceTypes;
 			balanceTypes.push_back(N_("Strict Balance"));
@@ -102,7 +101,7 @@ CCurvedBalanceActionDialog::CCurvedBalanceActionDialog(FXWindow *mainWindow) :
 				addComboTextEntry(p2,N_("Channel A"),items,"");
 				addComboTextEntry(p2,N_("Channel B"),items,"");
 
-			addGraphWithWaveform(p1,N_("Balance Curve"),N_("Balance"),"%",interpretValue_balance,uninterpretValue_balance,ret_balance,0,0,0);
+			addGraphWithWaveform(p1,N_("Balance Curve"),N_("Balance"),"%",interpretValue_bipolar_scalar,uninterpretValue_bipolar_scalar,ret_balance,100,100,100);
 
 		vector<string> balanceTypes;
 		balanceTypes.push_back(N_("Strict Balance"));
@@ -142,8 +141,6 @@ bool CCurvedBalanceActionDialog::show(CActionSound *actionSound,CActionParameter
 
 // --- monoize -----------------------------
 
-static const double interpretValue_monoize(const double x,const int s) { return x*100.0; }
-static const double uninterpretValue_monoize(const double x,const int s) { return x/100.0; }
 static const double retconv_monoize(const double x) { return x/100.0 ; }
 
 CMonoizeActionDialog::CMonoizeActionDialog(FXWindow *mainWindow) :
@@ -152,7 +149,7 @@ CMonoizeActionDialog::CMonoizeActionDialog(FXWindow *mainWindow) :
 		void *p0=newVertPanel(NULL);
 			void *p1=newHorzPanel(p0,false);
 			for(unsigned t=0;t<MAX_CHANNELS;t++)
-				addSlider(p1,N_("Channel ")+istring(t),"%",interpretValue_monoize,uninterpretValue_monoize,retconv_monoize,100.0,0,0,0,false);
+				addSlider(p1,N_("Channel ")+istring(t),"%",interpretValue_scalar,uninterpretValue_scalar,retconv_monoize,100.0,100,100,100,false);
 			
 			vector<string> options;
 			options.push_back(N_("Remove All But One Channel"));
@@ -176,20 +173,14 @@ bool CMonoizeActionDialog::show(CActionSound *actionSound,CActionParameters *act
 
 // --- noise gate --------------------------
 
-static const double interpretValue_dBFS(const double x,const int s) { return(amp_to_dBFS(x,1.0)); }
-static const double uninterpretValue_dBFS(const double x,const int s) { return(dBFS_to_amp(x,1.0)); }
-
-static const double interpretValue_noiseGate(const double x,const int s) { return(x*s); }
-static const double uninterpretValue_noiseGate(const double x,const int s) { return(x/s); }
-
 CNoiseGateDialog::CNoiseGateDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addSlider(p,N_("Window Time"),"ms",interpretValue_noiseGate,uninterpretValue_noiseGate,NULL,35.0,5,1000,30,false);
+		addSlider(p,N_("Window Time"),"ms",interpretValue_scalar,uninterpretValue_scalar,NULL,35.0,5,1000,30,false);
 		addSlider(p,N_("Threshold"),"dBFS",interpretValue_dBFS,uninterpretValue_dBFS,NULL,-30.0,0,0,1,false);
-		addSlider(p,N_("Gain Attack Time"),"ms",interpretValue_noiseGate,uninterpretValue_noiseGate,NULL,10.0,5,1000,30,false);
-		addSlider(p,N_("Gain Release Time"),"ms",interpretValue_noiseGate,uninterpretValue_noiseGate,NULL,10.0,5,1000,30,false);
+		addSlider(p,N_("Gain Attack Time"),"ms",interpretValue_scalar,uninterpretValue_scalar,NULL,10.0,5,1000,30,false);
+		addSlider(p,N_("Gain Release Time"),"ms",interpretValue_scalar,uninterpretValue_scalar,NULL,10.0,5,1000,30,false);
 }
 
 #include "../backend/Remaster/CNoiseGateAction.h"
@@ -213,9 +204,9 @@ static const double uninterpretValue_compressAttack(const double x,const int s) 
 
 static const double interpretValue_compressRelease(const double x,const int s) { return(unitRange_to_otherRange_linear(unitRange_to_unitRange_squared(x),1,1000)); }
 static const double uninterpretValue_compressRelease(const double x,const int s) { return(unitRange_to_unitRange_unsquared(otherRange_to_unitRange_linear(x,1,1000))); }
-											// ??? I really need to rename this "bipolar" it's really a misleading name...
-static const double interpretValue_compressGain(const double x,const int s) { return(unitRange_to_bipolarRange_exp(x,10.0)); }
-static const double uninterpretValue_compressGain(const double x,const int s) { return(bipolarRange_to_unitRange_exp(x,10.0)); }
+
+static const double interpretValue_compressGain(const double x,const int s) { return(unitRange_to_recipsymRange_exp(x,10.0)); }
+static const double uninterpretValue_compressGain(const double x,const int s) { return(recipsymRange_to_unitRange_exp(x,10.0)); }
 
 CCompressorDialog::CCompressorDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
@@ -260,9 +251,6 @@ CNormalizeDialog::CNormalizeDialog(FXWindow *mainWindow) :
 
 // --- mark quiet areas --------------------
 
-static const double interpretValue_quietTime(const double x,const int s) { return x*s; }
-static const double uninterpretValue_quietTime(const double x,const int s) { return x/s; }
-
 static const double interpretValue_detectorWindow(const double x,const int s) { return(unitRange_to_otherRange_linear(x,.1,100)*s); }
 static const double uninterpretValue_detectorWindow(const double x,const int s) { return(otherRange_to_unitRange_linear(x/s,.1,100)); }
 
@@ -276,10 +264,10 @@ CMarkQuietAreasDialog::CMarkQuietAreasDialog(FXWindow *mainWindow) :
 			t=addSlider(p2,N_("Threshold for Quiet"),"dBFS",interpretValue_dBFS,uninterpretValue_dBFS,NULL,-48,0,0,1,false);
 			t->setTipText(_("An audio level below this threshold is considered to be quiet."));
 
-			t=addSlider(p2,N_("Must Remain Quiet for"),"ms",interpretValue_quietTime,uninterpretValue_quietTime,NULL,500,10,10000,1000,false);
+			t=addSlider(p2,N_("Must Remain Quiet for"),"ms",interpretValue_scalar,uninterpretValue_scalar,NULL,500,10,10000,1000,false);
 			t->setTipText(_("The audio level must remain below the threshold for this long before a beginning cue will be added."));
 
-			t=addSlider(p2,N_("Must Remain Unquiet for"),"ms",interpretValue_quietTime,uninterpretValue_quietTime,NULL,0,10,10000,1000,false);
+			t=addSlider(p2,N_("Must Remain Unquiet for"),"ms",interpretValue_scalar,uninterpretValue_scalar,NULL,0,10,10000,1000,false);
 			t->setTipText(_("After the beginning of a quiet area has been detected the audio level must rise above the threshold for this long for an ending cue to be added."));
 
 			t=addSlider(p2,N_("Level Detector Window Time"),"ms",interpretValue_detectorWindow,uninterpretValue_detectorWindow,NULL,35.0,1,10,1,false);

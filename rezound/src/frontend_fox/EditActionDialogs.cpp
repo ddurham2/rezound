@@ -19,6 +19,7 @@
  */
 
 #include "EditActionDialogs.h"
+#include "interpretValue.h"
 
 #include <istring>
 
@@ -229,14 +230,11 @@ const string CBurnToCDDialog::getExplanation() const
 
 // --- grow or slide selection dialog ---------
 
-static const double interpretValue_alterSelection(const double x,const int s) { return x*s; }
-static const double uninterpretValue_alterSelection(const double x,const int s) { return x/s; }
-
 CGrowOrSlideSelectionDialog::CGrowOrSlideSelectionDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newVertPanel(NULL);
-		addSlider(p,N_("Amount"),"s",interpretValue_alterSelection,uninterpretValue_alterSelection,NULL,1.0,1,3600,2,false);
+		addSlider(p,N_("Amount"),"s",interpretValue_scalar,uninterpretValue_scalar,NULL,1.0,1,3600,2,false);
 		setTipText("Amount",_("Amount to Affect the Selection in Seconds"));
 
 		vector<string> items;

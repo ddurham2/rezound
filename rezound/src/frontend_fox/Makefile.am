@@ -153,6 +153,7 @@ noinst_HEADERS=\
 	rememberShow.h \
 	custom_cursors.h \
 	utils.h \
+	interpretValue.h \
 	settings.h 
 
 EXTRA_DIST=convert_images.sh
