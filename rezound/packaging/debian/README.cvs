@@ -21,6 +21,8 @@ As of now, any rezound .deb not packaged by me should be considered
 unofficial, and possibly unsafe. Of course being that this is GPL'd
 software, you should know that using any of this is AT YOUR OWN RISK.
 
+These steps work on Debian sarge, so it may not work on Woody or Sid.
+
 Here are the steps to making a debian package.
 
 1.	From the top directory run '$sh packaging/debian/deb-prep.sh'

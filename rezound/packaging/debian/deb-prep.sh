@@ -9,6 +9,12 @@
 #
 # For more info read packaging/debian/README.cvs
 
-test -f configure || ./bootstrap ;
-test -f Makefile || ./configure ;
+if [ test ! -f configure] ; then
+    cp bootstrap bootstrap.orig
+    # The new autoheader doesn't need -l and causes an error
+    sed 's/\(autoheader\) -l config/\1/g' < bootstrap.orig > bootstrap
+    rm bootstrap.orig ;
+    ./bootstrap ;
+    ./configure ;
+fi
 make dist ;
