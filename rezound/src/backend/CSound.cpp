@@ -29,6 +29,8 @@
 
 #include <istring>
 
+#include "settings.h"
+
 
 /* TODO:
 	- add try and catch around space modifier methods that call matchUpChannelLengths even upon exception
@@ -69,6 +71,7 @@
 #define CUES_POOL_NAME "Cues"
 #define NOTES_POOL_NAME "UserNotes"
 
+#define GET_WORKING_FILENAME(workDir,filename) (workDir+CPath::dirDelim+CPath(filename).baseName()+".pf$")
 
 CSound::CSound() :
 	poolFile(REZOUND_POOLFILE_BLOCKSIZE,REZOUND_WORKING_POOLFILE_SIGNATURE),
@@ -87,7 +90,6 @@ CSound::CSound() :
 {
 	for(unsigned t=0;t<MAX_CHANNELS;t++)
 		peakChunkAccessers[t]=NULL;
-
 }
 
 CSound::CSound(const string &_filename,const unsigned _sampleRate,const unsigned _channelCount,const sample_pos_t _size) :
@@ -120,7 +122,6 @@ CSound::CSound(const string &_filename,const unsigned _sampleRate,const unsigned
 		} catch(...) {}
 		throw;
 	}
-
 }
 
 CSound::~CSound()
@@ -145,7 +146,8 @@ CSound::~CSound()
 
 void CSound::changeWorkingFilename(const string newOriginalFilename)
 {
-	poolFile.rename(getWorkingFilename(newOriginalFilename));
+	const string workDir=CPath(poolFile.getFilename()).dirName();
+	poolFile.rename(GET_WORKING_FILENAME(workDir,newOriginalFilename));
 }
 
 void CSound::closeSound()
@@ -1175,15 +1177,64 @@ void CSound::verifySAT()
 }
 
 
-
 void CSound::flush()
 {
 	poolFile.flushData();
 }
 
+
 /*
-	By the time this is called, all the protected data members about format info have be set
+	Finds a working directory for a working file
+	for the given filename.  A suitable working 
+	directory should be writable and have free 
+	space of 110% of the given file's size
 */
+#include <sys/vfs.h>
+#include <string.h>
+#include <errno.h>
+const string findWorkDir(const string filename)
+{
+	vector<string> workingDirs;
+		workingDirs.push_back(CPath(filename).dirName()); // first try the dirname of the given filename
+		workingDirs.push_back(gFallbackWorkDir); // next try to fallback working dir (in the future, this may be a list)
+
+	for(size_t t=0;t<workingDirs.size();t++)
+	{ 
+		const string workDir=workingDirs[t];
+		FILE *f=fopen((workDir+CPath::dirDelim+"rezrez842rezrez").c_str(),"wb");
+		if(f!=NULL)
+		{ // directry is writable
+			fclose(f);
+
+			struct statfs s;
+			if(statfs(workDir.c_str(),&s)!=0)
+			{
+				int e=errno;
+				fprintf(stderr,"error getting free space on working directory candidate: %s -- %s\n",workDir.c_str(),strerror(e));
+				continue; // couldn't stat the fs for some reason
+			}
+
+			const int64_t fsSize= (int64_t)s.f_bsize * (int64_t)s.f_bfree;
+			const int64_t fileSize=CPath(filename).getSize();
+
+			if(fsSize<(fileSize+(fileSize/10)))
+			{
+				fprintf(stderr,"insufficient free space in working directory candidate: %s\n",workDir.c_str());
+				continue; // not enough free space on that partition
+			}
+
+			return(workDir);
+		}
+		else
+		{
+			int e=errno;
+			fprintf(stderr,"cannot write to working directory candidate: %s -- %s\n",workDir.c_str(),strerror(e));
+		}
+	}
+
+	throw(runtime_error(string(__func__)+" -- no suitable working directory available to load the file: "+filename));
+}
+
 void CSound::createWorkingPoolFile(const string originalFilename,const unsigned _sampleRate,const unsigned _channelCount,const sample_pos_t _size)
 {
 	if(poolFile.isOpen())
@@ -1196,9 +1247,12 @@ void CSound::createWorkingPoolFile(const string originalFilename,const unsigned 
 	sampleRate=_sampleRate;
 	size=_size;
 
-	const string filename=getWorkingFilename(originalFilename);
-	remove(filename.c_str());
-	poolFile.openFile(filename,true);
+	// determine a suitable place for the working file
+	const string workDir=findWorkDir(originalFilename);
+
+	const string workingFilename=GET_WORKING_FILENAME(workDir,originalFilename);
+	PoolFile_t::removeFile(workingFilename);
+	poolFile.openFile(workingFilename,true);
 	removeAllTempAudioPools();
 
 	CFormatInfoPoolAccesser a=poolFile.createPool<RFormatInfo>(FORMAT_INFO_POOL_NAME);
@@ -1231,23 +1285,39 @@ bool CSound::createFromWorkingPoolFileIfExists(const string originalFilename,boo
 
 	try
 	{
-		if(promptIfFound)
+
+		vector<string> workingDirs;
+			workingDirs.push_back(CPath(originalFilename).dirName());
+			workingDirs.push_back(gFallbackWorkDir);
+
+		// look in all possible working spaces 
+		string workingFilename="";
+		for(size_t t=0;t<workingDirs.size();t++)
 		{
-			if(CPath(getWorkingFilename(originalFilename)).exists())
+			const string f=GET_WORKING_FILENAME(workingDirs[t],originalFilename);
+				// ??? and we need to know that if this file is being used by any other loaded file.. then this is not the file and we need to alter the working filename at that point some how.. or just refuse to load the file at all
+			if(CPath(f).exists())
 			{
-				// ??? probably have a cancel button to avoid loaded the sound at all.. probably throw an exception of a different type which is an ESkipLoadingFile
-				if(Question("File: "+getWorkingFilename(originalFilename)+"\n\nA temporary file was found indicating that this file was previously being edited when a crash occurred or the process was killed.\n\nDo you wish to attempt to recover from this temporary file (otherwise the file will be deleted)?",yesnoQues)==noAns)
-				{
-						// ??? doesn't remove other file sin the set if it was a multi file set >2gb
-					remove(getWorkingFilename(originalFilename).c_str());
-					return(false);
-				}
+				workingFilename=f;
+				break;
 			}
-			else
-				return(false);
 		}
 
-		poolFile.openFile(getWorkingFilename(originalFilename),false);
+		if(workingFilename=="")
+			return(false); // wasn't found
+
+		if(promptIfFound)
+		{
+			// ??? probably have a cancel button to avoid loaded the sound at all.. probably throw an exception of a different type which is an ESkipLoadingFile
+			if(Question("File: "+workingFilename+"\n\nA temporary file was found indicating that this file was previously being edited when a crash occurred or the process was killed.\n\nDo you wish to attempt to recover from this temporary file (otherwise the file will be deleted)?",yesnoQues)==noAns)
+			{
+				// ??? doesn't remove other files in the set of files if it was a multi file set >2gb
+				PoolFile_t::removeFile(workingFilename);
+				return(false);
+			}
+		}
+
+		poolFile.openFile(workingFilename,false);
 		_isModified=true;
 
 		removeAllTempAudioPools();
@@ -1280,14 +1350,14 @@ bool CSound::createFromWorkingPoolFileIfExists(const string originalFilename,boo
 			channelCount=r.channelCount;
 		}
 		else
-			throw(runtime_error(string(__func__)+" -- unhandled format version: "+istring(version)));
+			throw(runtime_error(string(__func__)+" -- unhandled format version: "+istring(version)+" in found working file: "+workingFilename));
 
 		if(channelCount<0 || channelCount>MAX_CHANNELS)
 		{
 			deletePeakChunkAccessers();
 			deleteCueAccesser();
 			poolFile.closeFile(false,false);
-			throw(runtime_error(string(__func__)+" -- invalid number of channels: "+istring(channelCount)));
+			throw(runtime_error(string(__func__)+" -- invalid number of channels: "+istring(channelCount)+" in found working file: "+workingFilename));
 		}
 
 		for(unsigned t=0;t<channelCount;t++)
@@ -1352,12 +1422,6 @@ void CSound::saveMetaInfo()
 
 	// really slows things down especially for recording 
 	// flush();
-}
-
-const string CSound::getWorkingFilename(const string originalFilename)
-{
-	// ??? this directory needs to be a setting.. and perhaps in the home directory too ~/.ReZound or some other configured temp sapce directory
- 	return("/tmp/"+CPath(originalFilename).baseName()+".pf$");
 }
 
 void CSound::createPeakChunkAccessers()

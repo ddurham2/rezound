@@ -65,8 +65,6 @@ public:
 	// attempts to open a poolFile with the given name and if it succeeds then it populates the data-members with the format-info
 	bool createFromWorkingPoolFileIfExists(const string originalFilename,bool promptIfFound=true);
 
-	static const string getWorkingFilename(const string originalFilename);
-
 
 
 	void closeSound();
@@ -328,7 +326,11 @@ public:
 	void printSAT(); // temporary for debugging ???
 	void verifySAT(); // temporary for debugging ???
 
-protected:
+private:
+	friend class ASoundTranslator; // so it can verify some things
+	friend class CrezSoundTranslator;
+	friend class ASoundRecorder; // so it can backupSAT() on the pool file when recording is done
+
 
 	typedef TPoolAccesser<sample_t,PoolFile_t > CInternalRezPoolAccesser;
 
@@ -345,11 +347,6 @@ protected:
 	// and pass NIL_SAMPLE_POS as the maxLength parameter to match to the longest channel
 	void matchUpChannelLengths(sample_pos_t maxLength);
 
-private:
-
-	friend class ASoundTranslator; // so it can verify some things
-	friend class CrezSoundTranslator;
-	friend class ASoundRecorder; // so it can backupSAT() on the pool file when recording is done
 
 	void addSpaceToChannel(unsigned channel,sample_pos_t where,sample_pos_t length,bool doZeroData);
 	void removeSpaceFromChannel(unsigned channel,sample_pos_t where,sample_pos_t length);

@@ -29,7 +29,7 @@
 	- I need to think thru and handle problems with the data becoming too large for whatever address space is currently active
 		- if CSound is about to change the space, if the total space is about to cross some threshhold, I shouldn't proceed to do the action
 
-	- use a registry setting for knowing where to put working files and the clipboard instead of always /tmp
+	- use a registry setting for knowing where to put the clipboard instead of always /tmp
 
 	- Need to handle duplicate named cues when loading a file.. I don't allow them, but a file format might
 

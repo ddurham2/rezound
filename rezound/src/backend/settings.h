@@ -54,6 +54,12 @@ extern CNestedDataFile *gSysPresetsFile;	// opened to gSysPresetsFilename
 
 
 
+// This specifies the directory to fall back to if we cannot write
+// to the directory where we're loading a file from, or if it's 
+// a nearly full file system
+extern string gFallbackWorkDir;			// default to /tmp
+
+
 // specifies an index into AAction::clipboards which specifies which clipboard 
 // should be used for the subsequent edit operations which use a clipboard
 extern size_t gWhichClipboard;
