@@ -339,6 +339,12 @@ CCompressorDialog::CCompressorDialog(FXWindow *mainWindow) :
 				true,
 				_("This Toggles That Compression Should be Applied to Both Channels when Either Channel Needs Compression")
 			);
+
+			addCheckBoxEntry(p1,
+				N_("Look Ahead For Level"),
+				true,
+				_("This Toggles That the Compressor Should Look Ahead (by Half the Window Time Amount) in the Input Signal When Calculating the Level of the Input Signal")
+			);
 }
 
 // ??? remove this before 1.0 and make sure it is up-to-standard as far as a compressor goes before 1.0

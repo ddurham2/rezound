@@ -7,7 +7,7 @@
 
 #include "../CActionParameters.h"
 
-CCompressorAction::CCompressorAction(const CActionSound &actionSound,float _windowTime,float _threshold,float _ratio,float _attackTime,float _releaseTime,float _inputGain,float _outputGain,bool _syncChannels) :
+CCompressorAction::CCompressorAction(const CActionSound &actionSound,float _windowTime,float _threshold,float _ratio,float _attackTime,float _releaseTime,float _inputGain,float _outputGain,bool _syncChannels,bool _lookAheadForLevel) :
 	AAction(actionSound),
 
 	windowTime(_windowTime),
@@ -17,7 +17,8 @@ CCompressorAction::CCompressorAction(const CActionSound &actionSound,float _wind
 	releaseTime(_releaseTime),
 	inputGain(_inputGain),
 	outputGain(_outputGain),
-	syncChannels(_syncChannels)
+	syncChannels(_syncChannels),
+	lookAheadForLevel(_lookAheadForLevel)
 {
 }
 
@@ -32,12 +33,15 @@ bool CCompressorAction::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 	const sample_pos_t selectionLength=actionSound.selectionLength();
 
 	// ??? boy... if AAction had it abstracted out better so that I could make as many backups of sections as I wanted, I could essientially backup only the sections that need to be ... except then I would need feedback from the compressor DSP block to know when compression started and stopped... and it wouldn't be for all channels... and... I'd have to 
-	// well.. then I would have to look ahead at the treshold crossings... it would be harder than I think to do undo efficently ... but it would be interesting.. maybe I could make two passes thru the data
+	// well.. then I would have to look ahead at the threshold crossings... it would be harder than I think to do undo efficently ... but it would be interesting.. maybe I could make two passes thru the data
 
 	if(prepareForUndo)
 		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
 
-	if(!syncChannels)
+	const sample_pos_t windowSize=ms_to_samples(windowTime,actionSound.sound->getSampleRate());
+	const sample_pos_t hWindowSize=windowSize/2;
+
+	if(!syncChannels || actionSound.sound->getChannelCount()==1)
 	{
 		unsigned channelsDoneCount=0;
 		for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
@@ -53,7 +57,7 @@ bool CCompressorAction::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 				CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 
 				CDSPCompressor compressor(
-					ms_to_samples(windowTime,actionSound.sound->getSampleRate()),
+					windowSize,
 					dBFS_to_amp(threshold),
 					ratio,
 					ms_to_samples(attackTime,actionSound.sound->getSampleRate()),
@@ -64,22 +68,50 @@ bool CCompressorAction::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 				//while((destPos++)<min(stop,4000))
 					//compressor.initSample(src[srcPos++]);
 
-				while(destPos<=stop)
+				if(lookAheadForLevel && stop>hWindowSize)
 				{
-					
-					const mix_sample_t s=(mix_sample_t)(src[srcPos++]*inputGain);
-					dest[destPos]=ClipSample(compressor.processSample(s,s)*outputGain);
+					const CRezPoolAccesser src_alt=src;
+					const sample_pos_t _stop=stop-hWindowSize;
+					while(destPos<=_stop)
+					{
+						const mix_sample_t s_level=(mix_sample_t)(src_alt[srcPos+hWindowSize]*inputGain);
+						const mix_sample_t s_input=(mix_sample_t)(src[srcPos++]*inputGain);
+						dest[destPos]=ClipSample(compressor.processSample(s_input,s_level)*outputGain);
 
-					if(statusBar.update(destPos))
-					{ // cancelled
-						if(prepareForUndo)
-							undoActionSizeSafe(actionSound);
-						else
-							actionSound.sound->invalidatePeakData(i,actionSound.start,destPos);
-						return false;
+						if(statusBar.update(destPos))
+						{ // cancelled
+							if(prepareForUndo)
+								undoActionSizeSafe(actionSound);
+							else
+								actionSound.sound->invalidatePeakData(i,actionSound.start,destPos);
+							return false;
+						}
+
+						destPos++;
 					}
+					// copy remainder that we couldn't look ahead for
+					while(destPos<=stop)
+						dest[destPos++]=src[srcPos++];
+				}
+				else
+				{
+					while(destPos<=stop)
+					{
+						
+						const mix_sample_t s=(mix_sample_t)(src[srcPos++]*inputGain);
+						dest[destPos]=ClipSample(compressor.processSample(s,s)*outputGain);
 
-					destPos++;
+						if(statusBar.update(destPos))
+						{ // cancelled
+							if(prepareForUndo)
+								undoActionSizeSafe(actionSound);
+							else
+								actionSound.sound->invalidatePeakData(i,actionSound.start,destPos);
+							return false;
+						}
+
+						destPos++;
+					}
 				}
 
 				if(!prepareForUndo)
@@ -99,6 +131,7 @@ bool CCompressorAction::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 
 		sample_pos_t srcPos=prepareForUndo ? 0 : start;
 		const CRezPoolAccesser *srces[MAX_CHANNELS]; // ??? I could be more efficient by being able to call operator= for elements of an existing array of accessors so I didn't have to do the extra dereference
+		const CRezPoolAccesser *alt_srces[MAX_CHANNELS]; // ??? I could be more efficient by being able to call operator= for elements of an existing array of accessors so I didn't have to do the extra dereference
 
 		sample_pos_t destPos=start;
 		CRezPoolAccesser *dests[MAX_CHANNELS]; // ??? I could be more efficient by being able to call operator= for elements of an existing array of accessors so I didn't have to do the extra dereference
@@ -109,6 +142,7 @@ bool CCompressorAction::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 			if(actionSound.doChannel[i])
 			{
 				srces[channelCount]=new CRezPoolAccesser(prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i));
+				alt_srces[channelCount]=new CRezPoolAccesser(prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i));
 				dests[channelCount]=new CRezPoolAccesser(actionSound.sound->getAudio(i));
 				channelCount++;
 			}
@@ -122,35 +156,83 @@ bool CCompressorAction::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 			//while((destPos++)<min(stop,4000))
 				//compressor.initSample(src[srcPos++]);
 
+			mix_sample_t levelInputFrame[MAX_CHANNELS];
 			mix_sample_t inputFrame[MAX_CHANNELS];
-			while(destPos<=stop)
+			if(lookAheadForLevel && stop>hWindowSize)
 			{
-				for(unsigned t=0;t<channelCount;t++)
-					inputFrame[t]=(mix_sample_t)((*(srces[t]))[srcPos]*inputGain);
-				srcPos++;
-
-				compressor.processSampleFrame(inputFrame,channelCount);
-
-				for(unsigned t=0;t<channelCount;t++)
-					(*(dests[t]))[destPos]=ClipSample(inputFrame[t]*outputGain);
-		
-				if(statusBar.update(destPos))
-				{ // cancelled
-					if(prepareForUndo)
-						undoActionSizeSafe(actionSound);
-					// cleanup
-					for(size_t t=0;t<channelCount;t++)
+				const sample_pos_t _stop=stop-hWindowSize;
+				while(destPos<=_stop)
+				{
+					for(unsigned t=0;t<channelCount;t++)
 					{
-						if(!prepareForUndo)
-							actionSound.sound->invalidatePeakData(t,actionSound.start,destPos);
-
-						delete srces[t];
-						delete dests[t];
+						levelInputFrame[t]=(mix_sample_t)((*(alt_srces[t]))[srcPos+hWindowSize]*inputGain);
+						inputFrame[t]=(mix_sample_t)((*(srces[t]))[srcPos]*inputGain);
 					}
-					return false;
-				}
+					srcPos++;
 
-				destPos++;
+					compressor.processSampleFrame(inputFrame,levelInputFrame,channelCount);
+
+					for(unsigned t=0;t<channelCount;t++)
+						(*(dests[t]))[destPos]=ClipSample(inputFrame[t]*outputGain);
+			
+					if(statusBar.update(destPos))
+					{ // cancelled
+						if(prepareForUndo)
+							undoActionSizeSafe(actionSound);
+						// cleanup
+						for(size_t t=0;t<channelCount;t++)
+						{
+							if(!prepareForUndo)
+								actionSound.sound->invalidatePeakData(t,actionSound.start,destPos);
+
+							delete srces[t];
+							delete dests[t];
+						}
+						return false;
+					}
+
+					destPos++;
+				}
+				// copy remainder that we couldn't look ahead for
+				while(destPos<=stop)
+				{
+					for(unsigned t=0;t<channelCount;t++)
+						(*(dests[t]))[destPos]=(*(srces[t]))[srcPos];
+					srcPos++;
+					destPos++;
+				}
+			}
+			else
+			{
+				while(destPos<=stop)
+				{
+					for(unsigned t=0;t<channelCount;t++)
+						inputFrame[t]=(mix_sample_t)((*(srces[t]))[srcPos]*inputGain);
+					srcPos++;
+
+					compressor.processSampleFrame(inputFrame,inputFrame,channelCount);
+
+					for(unsigned t=0;t<channelCount;t++)
+						(*(dests[t]))[destPos]=ClipSample(inputFrame[t]*outputGain);
+			
+					if(statusBar.update(destPos))
+					{ // cancelled
+						if(prepareForUndo)
+							undoActionSizeSafe(actionSound);
+						// cleanup
+						for(size_t t=0;t<channelCount;t++)
+						{
+							if(!prepareForUndo)
+								actionSound.sound->invalidatePeakData(t,actionSound.start,destPos);
+
+							delete srces[t];
+							delete dests[t];
+						}
+						return false;
+					}
+
+					destPos++;
+				}
 			}
 
 			for(size_t t=0;t<channelCount;t++)
@@ -216,7 +298,8 @@ CCompressorAction *CCompressorActionFactory::manufactureAction(const CActionSoun
 		actionParameters->getDoubleParameter("Release Time"),
 		actionParameters->getDoubleParameter("Input Gain"),
 		actionParameters->getDoubleParameter("Output Gain"),
-		actionParameters->getBoolParameter("Lock Channels")
+		actionParameters->getBoolParameter("Lock Channels"),
+		actionParameters->getBoolParameter("Look Ahead For Level")
 	));
 }
 

@@ -43,7 +43,8 @@
  * - To use simply construct the block with the desired parameters and repeatedly call 
  *   processSample() which returns the 'inputSample' that was given but adjusted by the 
  *   calculated gain which acts according to the changes in level for successive 
- *   'levelSample' values.
+ *   'levelSample' values.  These two different values allows one to create a cross-
+ *   compressor having one signal adjusted by the level of another
  *
  * - Note: it may be desirable to initialize the level detector within the algorithm
  *   by calling initSample() for 'windowTime' samples before calling processSample() 
@@ -153,16 +154,16 @@ public:
 		
 	}
 
-	// this works like processSample except that it uses all the channels in the frame to determine the signal level and adjust all the samples in the frame according to that singular calculated level
+	// this works like processSample except that it uses all the channels in levelInputFrame to determine the signal level and adjust all the samples in the frame according to that singular calculated level
 	// its output is a modification of the inputFrame parameter
-	void processSampleFrame(mix_sample_t *inputFrame,const unsigned frameSize)
+	void processSampleFrame(mix_sample_t *inputFrame,mix_sample_t *levelInputFrame,const unsigned frameSize)
 	{
 		// determine the maximum sample value in the frame to use as the level detector's input
-		mix_sample_t levelSample=inputFrame[0];
+		mix_sample_t levelSample=levelInputFrame[0];
 		if(levelSample<0) levelSample=-levelSample;
 		for(unsigned t=1;t<frameSize;t++)
 		{
-			mix_sample_t l=inputFrame[t];
+			mix_sample_t l=levelInputFrame[t];
 			if(l<0) l=-l;
 			levelSample=max(levelSample,l);
 		}

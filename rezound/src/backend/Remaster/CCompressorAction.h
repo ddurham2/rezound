@@ -10,7 +10,7 @@ class CCompressorActionFactory;
 class CCompressorAction : public AAction
 {
 public:
-	CCompressorAction(const CActionSound &actionSound,float windowTime,float threshold,float ratio,float attackTime,float releaseTime,float inputGain,float outputGain,bool syncChannels);
+	CCompressorAction(const CActionSound &actionSound,float windowTime,float threshold,float ratio,float attackTime,float releaseTime,float inputGain,float outputGain,bool syncChannels,bool lookAheadForLevel);
 	virtual ~CCompressorAction();
 
 	static const string getExplanation();
@@ -29,6 +29,7 @@ private:
 	const float inputGain;
 	const float outputGain;
 	const bool syncChannels;
+	const bool lookAheadForLevel;
 };
 
 class CCompressorActionFactory : public AActionFactory
