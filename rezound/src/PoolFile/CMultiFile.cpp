@@ -199,13 +199,13 @@ void CMultiFile::read(void *buffer,const l_addr_t count,RHandle &handle)
 		throw runtime_error(string(__func__)+" -- attempting to read beyond the end of the file size; position: "+istring(handle.position)+" count: "+istring(count));
 
 	size_t whichFile=handle.position/LOGICAL_MAX_FILE_SIZE;
-	f_addr_t whereFile=(handle.position%LOGICAL_MAX_FILE_SIZE)+HEADER_SIZE;
+	f_addr_t whereFile=handle.position%LOGICAL_MAX_FILE_SIZE;
 
 	l_addr_t lengthToRead=count;
 	while(lengthToRead>0)
 	{
 
-		const f_addr_t seekRet=lseek(openFiles[whichFile],whereFile,SEEK_SET);
+		const f_addr_t seekRet=lseek(openFiles[whichFile],whereFile+HEADER_SIZE,SEEK_SET);
 		if(seekRet==((f_addr_t)-1))
 		{
 			int errNO=errno;
@@ -217,18 +217,18 @@ void CMultiFile::read(void *buffer,const l_addr_t count,RHandle &handle)
 		if(lengthRead<0)
 		{
 			int errNO=errno;
-			throw runtime_error(string(__func__)+" -- error reading from file: "+buildFilename(whichFile)+" -- strerror: "+strerror(errNO));
+			throw runtime_error(string(__func__)+" -- error reading from file: "+buildFilename(whichFile)+" -- where: "+istring(whereFile)+"+"+istring(HEADER_SIZE)+" lengthRead/stripRead: "+istring(lengthRead)+"/"+istring(stripRead)+" strerror: "+strerror(errNO));
 		}
 		else if((size_t)lengthRead!=stripRead)
 		{
-			throw runtime_error(string(__func__)+" -- error reading from file: "+buildFilename(whichFile)+" -- lengthRead/stripRead: "+istring(lengthRead)+"/"+istring(stripRead));
+			throw runtime_error(string(__func__)+" -- error reading from file: "+buildFilename(whichFile)+" -- where: "+istring(whereFile)+"+"+istring(HEADER_SIZE)+" lengthRead/stripRead: "+istring(lengthRead)+"/"+istring(stripRead));
 		}
 
 		lengthToRead-=stripRead;
 		handle.position+=stripRead;
 
-		whichFile++;		// read from the next file next go around
-		whereFile=HEADER_SIZE;	// each additional file to read from should start at 0 now
+		whichFile++;	// read from the next file next go around
+		whereFile=0;	// each additional file to read from should start at 0 now
 	}
 }
 
@@ -251,17 +251,17 @@ void CMultiFile::write(const void *buffer,const l_addr_t count,RHandle &handle)
 		prvSetSize(handle.position+count,count);
 
 	size_t whichFile=handle.position/LOGICAL_MAX_FILE_SIZE;
-	f_addr_t whereFile=(handle.position%LOGICAL_MAX_FILE_SIZE)+HEADER_SIZE;
+	f_addr_t whereFile=(handle.position%LOGICAL_MAX_FILE_SIZE);
 
 	l_addr_t lengthToWrite=count;
 	while(lengthToWrite>0)
 	{
 
-		const f_addr_t seekRet=lseek(openFiles[whichFile],whereFile,SEEK_SET);
+		const f_addr_t seekRet=lseek(openFiles[whichFile],whereFile+HEADER_SIZE,SEEK_SET);
 		if(seekRet==((f_addr_t)-1))
 		{
 			int errNO=errno;
-			throw runtime_error(string(__func__)+" -- error seeking in file: "+buildFilename(whichFile)+" -- strerror: "+strerror(errNO));
+			throw runtime_error(string(__func__)+" -- error seeking in file: "+buildFilename(whichFile)+" -- where: "+istring(whereFile)+"+"+istring(HEADER_SIZE)+" strerror: "+strerror(errNO));
 		}
 
 		const size_t stripWrite=min(lengthToWrite,LOGICAL_MAX_FILE_SIZE-whereFile);
@@ -269,18 +269,18 @@ void CMultiFile::write(const void *buffer,const l_addr_t count,RHandle &handle)
 		if(lengthWritten<0)
 		{
 			int errNO=errno;
-			throw runtime_error(string(__func__)+" -- error writing to file: "+buildFilename(whichFile)+" -- strerror: "+strerror(errNO));
+			throw runtime_error(string(__func__)+" -- error writing to file: "+buildFilename(whichFile)+" -- where: "+istring(whereFile)+"+"+istring(HEADER_SIZE)+" lengthWritten/stripWrite: "+istring(lengthWritten)+"/"+istring(stripWrite)+" strerror: "+strerror(errNO));
 		}
 		else if((size_t)lengthWritten!=stripWrite)
 		{
-			throw runtime_error(string(__func__)+" -- error writing to file: "+buildFilename(whichFile)+" -- lengthWritten/stripWrite: "+istring(lengthWritten)+"/"+istring(stripWrite)+" -- perhaps the disk is full");
+			throw runtime_error(string(__func__)+" -- error writing to file: "+buildFilename(whichFile)+" -- where: "+istring(whereFile)+"+"+istring(HEADER_SIZE)+" lengthWritten/stripWrite: "+istring(lengthWritten)+"/"+istring(stripWrite)+" -- perhaps the disk is full");
 		}
 
 		lengthToWrite-=lengthWritten;
 		handle.position+=lengthWritten;
 
-		whichFile++;		// write to the next file next go around
-		whereFile=HEADER_SIZE;	// each additional file to write to should start at 0 now
+		whichFile++;	// write to the next file next go around
+		whereFile=0;	// each additional file to write to should start at 0 now
 	}
 }
 
@@ -393,7 +393,6 @@ void CMultiFile::writeHeaderToFiles()
 	for(size_t t=0;t<openFileCount;t++)
 	{
 		lseek(openFiles[t],0,SEEK_SET);
-	/*	const ssize_t wroteLength=::write(openFiles[t],&header,sizeof(header)); */
 		const ssize_t wroteLength=header.write(openFiles[t]);
 		if(wroteLength<0)
 		{
@@ -427,7 +426,6 @@ void CMultiFile::openFile(const string &filename,RFileHeader &header,const bool 
 		if(readHeader)
 		{
 			// read info which ties this file to other files
-	/*		if(::read(fileHandle,&header,sizeof(header))==sizeof(header) && header.decodeEndianAfterRead(),header.signature==CMULTIFILE_SIGNATURE)*/
 			if(header.read(fileHandle)==HEADER_SIZE && header.signature==CMULTIFILE_SIGNATURE)
 			{ // HEADER_SIZE bytes were read and signature matched
 
