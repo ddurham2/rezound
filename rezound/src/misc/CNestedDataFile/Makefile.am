@@ -21,15 +21,18 @@
 ## Place - Suite 330, Boston, MA  02111-1307, USA
 include $(top_srcdir)/config/am_include.mk
 
-EXTRA_DIST=CNestedDataFile.h \
-		cfg.l \
-		cfg.y 
+noinst_HEADERS=CNestedDataFile.h
+
+EXTRA_DIST= \
+	cfg.l \
+	cfg.y 
 ##bin_PROGRAMS=test_CNestedDataFile
 ##test_CNestedDataFile_SOURCES=test_CNestedDataFile.cpp CNestedDataFile.cpp cfg.tab.cc
 
 noinst_LTLIBRARIES=libmiscCN.la 
-libmiscCN_la_SOURCES=CNestedDataFile.cpp \
-		     cfg.tab.cc
+libmiscCN_la_SOURCES= \
+		CNestedDataFile.cpp \
+		cfg.tab.cc
 
 CFG_L=$(top_srcdir)/src/misc/CNestedDataFile/cfg.l
 CFG_Y=$(top_srcdir)/src/misc/CNestedDataFile/cfg.y

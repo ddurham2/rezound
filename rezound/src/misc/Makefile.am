@@ -23,7 +23,10 @@
 
 include $(top_srcdir)/config/am_include.mk
 
-SUBDIRS=cc++ CNestedDataFile
+SUBDIRS= \
+	cc++ \
+	CNestedDataFile
 
-EXTRA_DIST=missing \
-	   istring
+EXTRA_DIST= \
+	istring \
+	missing

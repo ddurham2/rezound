@@ -23,8 +23,9 @@
 
 include $(top_srcdir)/config/am_include.mk
 
-EXTRA_DIST=path.h \
-	TAutoBuffer.h
+noinst_HEADERS= \
+		path.h \
+		TAutoBuffer.h
 
 ## see PoolFile Makefile.am for explanation here out
 ## 

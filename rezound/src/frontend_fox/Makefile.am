@@ -26,33 +26,34 @@
 include $(top_srcdir)/config/am_include.mk
 
 noinst_LTLIBRARIES=libfrontend.la
-libfrontend_la_SOURCES= CActionButton.cpp \
-		 CChannelSelectDialog.cpp \
-		 CActionParamDialog.cpp \
-		 CCueDialog.cpp \
-		 CCueListDialog.cpp \
-		 CEditToolbar.cpp \
-		 CMainWindow.cpp \
-		 CNewSoundDialog.cpp \
-		 CRecordDialog.cpp \
-		 CPasteChannelsDialog.cpp \
-		 CProgressDialog.cpp \
-		 CSoundFileManager.cpp \
-		 CSoundListWindow.cpp \
-		 CSoundWindow.cpp \
-		 CStatusComm.cpp \
-		 CUserNotesDialog.cpp \
-		 drawPortion.cpp \
-		 EditActionDialogs.cpp \
-		 EffectActionDialogs.cpp \
-		 FXConstantParamValue.cpp \
-		 FXGraphParamValue.cpp \
-		 FXModalDialogBox.cpp \
-		 FXRezWaveView.cpp \
-		 initialize.cpp \
-		 RemasterActionDialogs.cpp \
-		 rememberShow.cpp \
-		 settings.cpp 
+libfrontend_la_SOURCES= \
+			CActionButton.cpp \
+			CChannelSelectDialog.cpp \
+			CActionParamDialog.cpp \
+			CCueDialog.cpp \
+			CCueListDialog.cpp \
+			CEditToolbar.cpp \
+			CMainWindow.cpp \
+			CNewSoundDialog.cpp \
+			CRecordDialog.cpp \
+			CPasteChannelsDialog.cpp \
+			CProgressDialog.cpp \
+			CSoundFileManager.cpp \
+			CSoundListWindow.cpp \
+			CSoundWindow.cpp \
+			CStatusComm.cpp \
+			CUserNotesDialog.cpp \
+			drawPortion.cpp \
+			EditActionDialogs.cpp \
+			EffectActionDialogs.cpp \
+			FXConstantParamValue.cpp \
+			FXGraphParamValue.cpp \
+			FXModalDialogBox.cpp \
+			FXRezWaveView.cpp \
+			initialize.cpp \
+			RemasterActionDialogs.cpp \
+			rememberShow.cpp \
+			settings.cpp 
 
 ## bin_PROGRAMS is the macro that tells automake the name of the programs to
 ## install in the bin directory (/usr/local/bin) by default. By setting
@@ -80,7 +81,7 @@ ReZound_LDADD= libfrontend.la\
 	$(top_builddir)/src/backend/Remaster/libRemaster.la \
 	$(top_builddir)/src/backend/libbackend.la
 
-EXTRA_DIST=\
+noinst_HEADERS=\
 	CActionButton.h \
 	CChannelSelectDialog.h \
 	CActionParamDialog.h \
