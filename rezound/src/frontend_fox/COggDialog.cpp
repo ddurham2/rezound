@@ -68,6 +68,8 @@ COggDialog::COggDialog(FXWindow *mainWindow) :
 			new FXLabel(qualityFrame,"Quality: ");
 			qualityTextBox=new FXTextField(qualityFrame,10,NULL,0,TEXTFIELD_REAL|TEXTFIELD_NORMAL);
 			qualityTextBox->setText("0.7");
+			new FXLabel(qualityFrame,"");
+			new FXLabel(qualityFrame,"0 (lowest) to 1 (highest)");
 
 	
 	new FXFrame(main,LAYOUT_FIX_HEIGHT,0,0,1,10);
