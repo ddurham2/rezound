@@ -39,7 +39,7 @@ AUTOHEADER_FILES="config.h.in"
 AUTOMAKE_FILES="config.guess config.sub install-sh ltmain.sh missing mkinstalldirs stamp-h.in"
 AUTOCONF_FILES="configure"
 CONFIG_HEADER="config/config.h"
-SUBDIRS=". src src/misc src/misc/cc++ src/misc/CNestedDataFile src/PoolFile src/backend src/backend/Edits src/backend/Effects src/backend/Remaster . src/frontend_fox "
+SUBDIRS=". src src/misc src/misc/cc++ src/misc/CNestedDataFile src/PoolFile src/backend src/backend/Edits src/backend/Effects src/backend/Filters src/backend/Looping src/backend/Remaster . src/frontend_fox "
 
 LIBTOOLIZE="/usr/bin/libtoolize -f"
 ACLOCAL="aclocal -I config/m4"

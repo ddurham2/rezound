@@ -37,6 +37,8 @@ TOP_DIRECTORY/make
 		  |		|
 		  |		backend/Effects/make -- libEffects.la
 		  |		|
+		  |		backend/Filters/make -- libFilters.la
+		  |		|
 		  |		backend/Looping/make -- libLooping.la
 		  |		|
 		  |		backend/Remaster/make -- libRemaster.la
@@ -49,6 +51,8 @@ TOP_DIRECTORY/make
 		  			libPoolFile.la	--------|
 		 			libEdits.la	--------|
 					libEffects.la	--------|
+					libFilters.la	--------|
+					libLooping.la	--------|
 					libRemaster.la	--------|
 					libbackend.la	--------|
 					libfrontend_fox.la  ----|
@@ -210,6 +214,8 @@ ReZound_LDADD= \
 	$(top_builddir)/src/PoolFile/libPoolFile.la \
 	$(top_builddir)/src/backend/Edits/libEdits.la \
 	$(top_builddir)/src/backend/Effects/libEffects.la \
+	$(top_builddir)/src/backend/Filters/libFilters.la \
+	$(top_builddir)/src/backend/Looping/libLooping.la \
 	$(top_builddir)/src/backend/Remaster/libRemaster.la \
 	$(top_builddir)/src/backend/libbackend.la \
 	libfrontend_fox.la
@@ -232,7 +238,7 @@ ReZound_LDADD= \
 	Look at the last entry in the configure.in :
 
 
-AC_OUTPUT(Makefile src/Makefile src/misc/Makefile src/misc/cc++/Makefile src/PoolFile/Makefile src/backend/Makefile src/backend/Edits/Makefile src/backend/Effects/Makefile src/backend/Remaster/Makefile  src/frontend_fox/Makefile) 
+AC_OUTPUT(Makefile src/Makefile src/misc/Makefile src/misc/cc++/Makefile src/PoolFile/Makefile src/backend/Makefile src/backend/Edits/Makefile src/backend/Effects/Makefile src/backend/Filters/Makefile src/backend/Looping/Makefile src/backend/Remaster/Makefile src/frontend_fox/Makefile) 
 
 	It's a list of every Makefile used in the ReZound build. And if you've
 	ever watched a configure script run, you'll notice that the last thing
