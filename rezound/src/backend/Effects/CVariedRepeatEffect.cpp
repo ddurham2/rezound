@@ -36,11 +36,12 @@ bool CVariedRepeatEffect::doActionSizeSafe(CActionSound &actionSound,bool prepar
 
 	moveSelectionToTempPools(actionSound,mmSelection,lTime);
 
+	unsigned channelsDoneCount=0;
 	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 	{
 		if(actionSound.doChannel[i])
 		{
-			CStatusBar statusBar("Varied Repeat -- Channel "+istring(i),0,lTime,true); 
+			CStatusBar statusBar("Varied Repeat -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),0,lTime,true); 
 
 			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempAudioPoolKey,i);
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);

@@ -70,11 +70,12 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 
 	undoRemoveLength=newLength;
 
+	unsigned channelsDoneCount=0;
 	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 	{
 		if(actionSound.doChannel[i])
 		{
-			CStatusBar statusBar("Changing Rate -- Channel "+istring(i),actionSound.start,actionSound.start+newLength,true); 
+			CStatusBar statusBar("Changing Rate -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),actionSound.start,actionSound.start+newLength,true); 
 	
 			// here, we're using the undo data as a source from which to calculate the new data
 			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempAudioPoolKey,i);
@@ -173,7 +174,6 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 				printf("****************************** CRAP %d SAMPLES OFF FROM EXPECTED\n",(sample_pos_t)(writePos-actionSound.start)-(newLength));
 			else
 				printf("YEAH NO SAMPLES OFF!!!\n");
-
 		}
 	}
 

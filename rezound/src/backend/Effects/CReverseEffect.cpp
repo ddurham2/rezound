@@ -32,6 +32,7 @@ CReverseEffect::~CReverseEffect()
 
 bool CReverseEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
+	unsigned channelsDoneCount=0;
 	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 	{
 		if(actionSound.doChannel[i])
@@ -49,7 +50,7 @@ bool CReverseEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 			sample_pos_t p2=actionSound.stop;
 			sample_pos_t d=actionSound.selectionLength()/2;
 
-			CStatusBar statusBar("Reversing -- Channel "+istring(i),0,d,allowCancel);
+			CStatusBar statusBar("Reversing -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),0,d,allowCancel);
 
 			for(sample_pos_t t=0;t<d;t++)
 			{
@@ -67,7 +68,7 @@ bool CReverseEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 
 					// undo what we've done so-far for this channel
 					{
-						CStatusBar statusBar("Cancelling Reverse -- Channel"+istring(i),0,t);
+						CStatusBar statusBar("Cancelling Reverse -- Channel "+istring(channelsDoneCount),0,t);
 
 						for(sample_pos_t j=0;j<=t;j++)
 						{
@@ -82,21 +83,24 @@ bool CReverseEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 					// undo all previously processed channels
 					for(unsigned k=0;k<i;k++)
 					{
-						CRezPoolAccesser a=actionSound.sound->getAudio(k);
-						CRezPoolAccesser b=actionSound.sound->getAudio(k);
-
-						sample_pos_t p1=actionSound.start;
-						sample_pos_t p2=actionSound.stop;
-
-						CStatusBar statusBar("Cancelling Reverse -- Channel"+istring(k),0,d);
-
-						for(sample_pos_t t=0;t<d;t++)
+						if(actionSound.doChannel[k])
 						{
-							const sample_t temp=a[p1];
-							a[p1++]=b[p2];
-							b[p2--]=temp;
-
-							statusBar.update(t);
+							CRezPoolAccesser a=actionSound.sound->getAudio(k);
+							CRezPoolAccesser b=actionSound.sound->getAudio(k);
+	
+							sample_pos_t p1=actionSound.start;
+							sample_pos_t p2=actionSound.stop;
+	
+							CStatusBar statusBar("Cancelling Reverse -- Channel "+istring(--channelsDoneCount),0,d);
+	
+							for(sample_pos_t t=0;t<d;t++)
+							{
+								const sample_t temp=a[p1];
+								a[p1++]=b[p2];
+								b[p2--]=temp;
+	
+								statusBar.update(t);
+							}
 						}
 					}
 
