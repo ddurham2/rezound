@@ -57,6 +57,7 @@ public:
 	const sample_pos_t getLength() const { return length; }
 
 	void hideFilename(bool hide);
+	void hideSampleRate(bool hide);
 	void hideLength(bool hide);
 
 protected:

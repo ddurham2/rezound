@@ -38,6 +38,7 @@
 
 class CNewSoundDialog;
 class CRecordDialog;
+class CJACKPortChoiceDialog;
 class CRawDialog;
 class COggDialog;
 class CMp3Dialog;
@@ -57,13 +58,13 @@ public:
 	bool promptForOpenSoundFilenames(vector<string> &filenames,bool &readOnly,bool &openAsRaw);
 	bool promptForSaveSoundFilename(string &filename,bool &saveAsRaw);
 
-	bool promptForNewSoundParameters(string &filename,bool &rawFormat,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length);
-	bool promptForNewSoundParameters(string &filename,bool &rawFormat,unsigned &channelCount,unsigned &sampleRate);
-	bool promptForNewSoundParameters(unsigned &channelCount,unsigned &sampleRate);
+	bool promptForNewSoundParameters(string &filename,bool &rawFormat,bool hideFilename,unsigned &channelCount,bool hideChannelCount,unsigned &sampleRate,bool hideSampleRate,sample_pos_t &length,bool hideLength);
 
 	bool promptForDirectory(string &dirname,const string title);
 
 	bool promptForRecord(ASoundRecorder *recorder);
+
+	const string promptForJACKPort(const string message,const vector<string> portNames);
 
 	bool promptForRawParameters(RawParameters &parameters,bool showOffsetAndLengthParameters);
 	bool promptForOggCompressionParameters(OggCompressionParameters &parameters);
@@ -81,6 +82,7 @@ private:
 
 	CNewSoundDialog *newSoundDialog;
 	CRecordDialog *recordDialog;
+	CJACKPortChoiceDialog *JACKPortChoiceDialog;
 	CRawDialog *rawDialog;
 	COggDialog *oggDialog;
 	CMp3Dialog *mp3Dialog;

@@ -149,6 +149,21 @@ void CNewSoundDialog::hideLength(bool hide)
 	recalc();
 }
 
+void CNewSoundDialog::hideSampleRate(bool hide)
+{
+	if(hide)
+	{
+		sampleRateLabel->hide();
+		sampleRateComboBox->hide();
+	}
+	else
+	{
+		sampleRateLabel->show();
+		sampleRateComboBox->show();
+	}
+	recalc();
+}
+
 bool CNewSoundDialog::validateOnOkay()
 {
 	if(filenameFrame->shown())

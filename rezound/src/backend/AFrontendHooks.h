@@ -49,9 +49,7 @@ public:
 	virtual bool promptForSaveSoundFilename(string &filename,bool &saveAsRaw)=0;
 
 	// prompt for a new sound to be created asking for the given parameters (return false if the prompt was cancelled)
-	virtual bool promptForNewSoundParameters(string &filename,bool &rawFormat,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length)=0;
-	virtual bool promptForNewSoundParameters(string &filename,bool &rawFormat,unsigned &channelCount,unsigned &sampleRate)=0;
-	virtual bool promptForNewSoundParameters(unsigned &channelCount,unsigned &sampleRate)=0;
+	virtual bool promptForNewSoundParameters(string &filename,bool &rawFormat,bool hideFilename,unsigned &channelCount,bool hideChannelCount,unsigned &sampleRate,bool hideSampleRate,sample_pos_t &length,bool hideLength)=0;
 
 	// should prompt for the user to choose a directory
 	virtual bool promptForDirectory(string &dirname,const string title)=0;
@@ -59,6 +57,13 @@ public:
 	// prompt for recording, this function will have to be more than just an interface and do work 
 	// since it should probably show level meters and be able to insert cues while recording etc.
 	virtual bool promptForRecord(ASoundRecorder *recorder)=0;
+
+
+#ifdef ENABLE_JACK
+	// prompt for JACK port names (only used whenever JACK is the audio I/O subsystem
+	// 	??? this could be a generalized promptWithCombo and given it a message, but I've never needed it until now
+	virtual const string promptForJACKPort(const string message,const vector<string> portNames)=0;
+#endif
 
 
 	// called when the user is loading a raw file and format parameters are needed

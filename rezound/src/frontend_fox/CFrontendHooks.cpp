@@ -29,6 +29,7 @@
 
 #include "CNewSoundDialog.h"
 #include "CRecordDialog.h"
+#include "CJACKPortChoiceDialog.h"
 #include "CRawDialog.h"
 #include "COggDialog.h"
 #include "CMp3Dialog.h"
@@ -44,12 +45,19 @@ CFrontendHooks::CFrontendHooks(FXWindow *_mainWindow) :
 
 	openDialog(NULL),
 	saveDialog(NULL),
+	dirDialog(NULL),
 
 	newSoundDialog(NULL),
 	recordDialog(NULL),
-	oggDialog(NULL)
+	JACKPortChoiceDialog(NULL),
+	rawDialog(NULL),
+	oggDialog(NULL),
+	mp3Dialog(NULL),
+	voxDialog(NULL)
 {
 	dirDialog=new FXDirDialog(mainWindow,"Select Directory");
+
+	JACKPortChoiceDialog=new CJACKPortChoiceDialog(mainWindow);
 }
 
 CFrontendHooks::~CFrontendHooks()
@@ -59,6 +67,7 @@ CFrontendHooks::~CFrontendHooks()
 
 	delete newSoundDialog;
 	delete recordDialog;
+	delete JACKPortChoiceDialog;
 	delete oggDialog;
 	delete mp3Dialog;
 	delete voxDialog;
@@ -224,50 +233,37 @@ bool CFrontendHooks::promptForSaveSoundFilename(string &filename,bool &saveAsRaw
 	return(false);
 }
 
-bool CFrontendHooks::promptForNewSoundParameters(string &filename,bool &rawFormat,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length)
+bool CFrontendHooks::promptForNewSoundParameters(string &filename,bool &rawFormat,bool hideFilename,unsigned &channelCount,bool hideChannelCount,unsigned &sampleRate,bool hideSampleRate,sample_pos_t &length,bool hideLength)
 {
-	newSoundDialog->hideFilename(false);
-	newSoundDialog->hideLength(false);
-	newSoundDialog->setFilename(filename,rawFormat);
-	if(newSoundDialog->execute(PLACEMENT_CURSOR))	
-	{
-		filename=newSoundDialog->getFilename();
-		rawFormat=newSoundDialog->getRawFormat();
-		channelCount=newSoundDialog->getChannelCount();
-		sampleRate=newSoundDialog->getSampleRate();
-		length=newSoundDialog->getLength();
-		return(true);
-	}
-	return(false);
-}
+	newSoundDialog->hideFilename(hideFilename);
+	if(hideChannelCount)
+		throw runtime_error(string(__func__)+" -- unimeplemented: hideChannelCount");
+	newSoundDialog->hideSampleRate(hideSampleRate);
+	newSoundDialog->hideLength(hideLength);
 
-bool CFrontendHooks::promptForNewSoundParameters(string &filename,bool &rawFormat,unsigned &channelCount,unsigned &sampleRate)
-{
-	newSoundDialog->hideFilename(false);
-	newSoundDialog->hideLength(true);
-	newSoundDialog->setFilename(filename,rawFormat);
-	if(newSoundDialog->execute(PLACEMENT_CURSOR))	
-	{
-		filename=newSoundDialog->getFilename();
-		rawFormat=newSoundDialog->getRawFormat();
-		channelCount=newSoundDialog->getChannelCount();
-		sampleRate=newSoundDialog->getSampleRate();
-		return(true);
-	}
-	return(false);
-}
+	if(!hideFilename)
+		newSoundDialog->setFilename(filename,rawFormat);
 
-bool CFrontendHooks::promptForNewSoundParameters(unsigned &channelCount,unsigned &sampleRate)
-{
-	newSoundDialog->hideFilename(true);
-	newSoundDialog->hideLength(true);
 	if(newSoundDialog->execute(PLACEMENT_CURSOR))	
 	{
-		channelCount=newSoundDialog->getChannelCount();
-		sampleRate=newSoundDialog->getSampleRate();
-		return(true);
+		if(!hideFilename)
+		{
+			filename=newSoundDialog->getFilename();
+			rawFormat=newSoundDialog->getRawFormat();
+		}
+
+		if(!hideChannelCount)
+			channelCount=newSoundDialog->getChannelCount();
+
+		if(!hideSampleRate)
+			sampleRate=newSoundDialog->getSampleRate();
+
+		if(!hideLength)
+			length=newSoundDialog->getLength();
+
+		return true;
 	}
-	return(false);
+	return false;
 }
 
 bool CFrontendHooks::promptForDirectory(string &dirname,const string title)
@@ -286,6 +282,14 @@ bool CFrontendHooks::promptForRecord(ASoundRecorder *recorder)
 	if(recordDialog->show(recorder))
 		return(true);
 	return(false);
+}
+
+const string CFrontendHooks::promptForJACKPort(const string message,const vector<string> portNames)
+{
+	if(JACKPortChoiceDialog->show(message,portNames))
+		return JACKPortChoiceDialog->getPortName();
+	else
+		throw runtime_error(string(__func__)+" -- choice aborted");
 }
 
 bool CFrontendHooks::promptForRawParameters(RawParameters &parameters,bool showOffsetAndLengthParameters)
