@@ -65,6 +65,8 @@ CLADSPAAction::CLADSPAAction(const LADSPA_Descriptor *_desc,const CActionSound &
 			outputAudioPorts.push_back(t);
 		else if(LADSPA_IS_PORT_INPUT(pd) && LADSPA_IS_PORT_CONTROL(pd))
 			inputControlPorts.push_back(t);
+		else if(LADSPA_IS_PORT_OUTPUT(pd) && LADSPA_IS_PORT_CONTROL(pd))
+			outputControlPorts.push_back(t);
 	}
 }
 
@@ -137,6 +139,11 @@ bool CLADSPAAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 		//printf("parameter:\t%s\t%f\n",desc->PortNames[inputControlPorts[t]],controlValues[t]);
 		desc->connect_port(instance,inputControlPorts[t],((LADSPA_Data *)controlValues)+t);
 	}
+
+	// I bind to these because some plugins don't check that they haven't been bound to
+	TAutoBuffer<LADSPA_Data> unusedOutputValues(outputControlPorts.size());
+	for(size_t t=0;t<outputControlPorts.size();t++)
+		desc->connect_port(instance,outputControlPorts[t],((LADSPA_Data *)unusedOutputValues)+t);
 
 
 	// append new channels if requested

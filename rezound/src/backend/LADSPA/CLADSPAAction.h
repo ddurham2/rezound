@@ -55,6 +55,7 @@ private:
 	vector<unsigned> inputAudioPorts;
 	vector<unsigned> outputAudioPorts;
 	vector<unsigned> inputControlPorts;
+	vector<unsigned> outputControlPorts; // I don't use these, but I have to bind to them to prevent segfaults in some plugins that assume I've connected to them
 
 	int restoreChannelsTempAudioPoolKey; // used if needing to restore removed channels
 	CSound *origSound;
