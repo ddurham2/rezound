@@ -135,7 +135,7 @@ bool ASoundFileManager::open(const vector<string> &_filenames,bool openAsRaw)
  * when we are loading the registered files from a previous sessions, so they would already be
  * in the registry
  */
-void ASoundFileManager::prvOpen(const string filename,bool readOnly,bool doRegisterFilename,bool asRaw,const ASoundTranslator *translatorToUse)
+bool ASoundFileManager::prvOpen(const string filename,bool readOnly,bool doRegisterFilename,bool asRaw,const ASoundTranslator *translatorToUse)
 {
 	if(doRegisterFilename && isFilenameRegistered(filename))
 		throw(runtime_error(string(__func__)+_(_(" -- file already opened"))));
@@ -159,7 +159,7 @@ void ASoundFileManager::prvOpen(const string filename,bool readOnly,bool doRegis
 		if(!translatorToUse->loadSound(filename,sound))
 		{ // cancelled
 			delete sound;
-			return;
+			return false;
 		}
 
 		channel=soundPlayer->newSoundPlayerChannel(sound);
@@ -180,6 +180,7 @@ void ASoundFileManager::prvOpen(const string filename,bool readOnly,bool doRegis
 	if(doRegisterFilename)
 		registerFilename(filename);
 
+	return true;
 }
 
 /*
@@ -524,7 +525,8 @@ const vector<string> ASoundFileManager::loadFilesInRegistry()
 			if(Question(_("Load sound from previous session?")+string("\n   ")+filename,yesnoQues)==yesAns)
 			{
 						// ??? readOnly and asRaw really need to be whatever the last value was, when it was originally loaded
-				prvOpen(filename,false,false,false);
+				if(!prvOpen(filename,false,false,false))
+					unregisterFilename(filename);
 			}
 			else
 				unregisterFilename(filename);

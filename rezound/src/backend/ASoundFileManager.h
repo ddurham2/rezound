@@ -50,7 +50,7 @@ public:
 
 	void createNew();
 	CLoadedSound *createNew(const string filename,unsigned channelCount,unsigned sampleRate,sample_pos_t length=1,bool rawFormat=false);
-		// returns false if a prompt for filename was cancelled or if there was an error loading
+		// returns false if a prompt for filename was cancelled, or if there was an error loading
 	bool open(const string filename="",bool openAsRaw=false);
 	bool open(const vector<string> &filenames,bool openAsRaw=false);
 
@@ -121,7 +121,9 @@ private:
 
 	CNestedDataFile *loadedRegistryFile;
 
-	void prvOpen(const string filename,bool readOnly,bool registerFilename,bool asRaw=false,const ASoundTranslator *translatorToUse=NULL);
+	// returns false if cancelled
+	bool prvOpen(const string filename,bool readOnly,bool registerFilename,bool asRaw=false,const ASoundTranslator *translatorToUse=NULL);
+
 	void registerFilename(const string filename);
 	void unregisterFilename(const string filename);
 	bool isFilenameRegistered(const string filename);
