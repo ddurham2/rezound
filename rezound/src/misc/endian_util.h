@@ -62,6 +62,10 @@
  * endian of the given value, or swap the endian of the value at the given pointer.  Again,
  * the parameter type determines the correct implmenation.
  *
+ * There are also xxx_many() version of these macros which should accept a pointer to many
+ * values and secondly a count of how many values the pointer points to.  Each value will 
+ * have the endian swapped if necessary.
+ *
  */
 
 
@@ -70,9 +74,15 @@
 #ifdef WORDS_BIGENDIAN
 	#define lethe(value) swap_endian(value)
 	#define hetle(value) swap_endian(value)
+
+	#define lethe_many(value,count) swap_endian_many((value),(count))
+	#define hetle_many(value,count) swap_endian_many((value),(count))
 #else // assuming now a little-endian platform
 	#define lethe(value) (value)
 	#define hetle(value) (value)
+
+	#define lethe_many(value,count) (value)
+	#define hetle_many(value,count) (value)
 #endif
 
 /* 'bethe' means big-endian to host-endian */
@@ -80,9 +90,16 @@
 #ifdef WORDS_BIGENDIAN
 	#define bethe(value) (value)
 	#define hetbe(value) (value)
+
+	#define bethe_many(value,count) (value)
+	#define hetbe_many(value,count) (value)
+
 #else // assuming now a little-endian platform
 	#define bethe(value) swap_endian(value)
 	#define hetbe(value) swap_endian(value)
+
+	#define bethe_many(value,count) swap_endian_many((value),(count))
+	#define hetbe_many(value,count) swap_endian_many((value),(count))
 #endif
 
 #ifndef __cplusplus
@@ -96,8 +113,12 @@
 #include <stdint.h>
 namespace endian_util
 {
+	/*
+	 * Implementations that swap the endian of a value at a memory location 
+	 */
+
 	// --- generic implementation
-	template<unsigned Size> inline static void really_swap_endian(void *_value,unsigned size)
+	template<unsigned Size> inline static void really_swap_endian_ptr(void *_value,unsigned size)
 	{
 		uint8_t * const value=(uint8_t *)_value;
 		register int k=(size+1)/2;
@@ -110,13 +131,13 @@ namespace endian_util
 	}
 
 	// --- implementation for 1 byte quantities (nothing)
-	template<> inline static void really_swap_endian<1>(void *value,unsigned size)
+	template<> inline static void really_swap_endian_ptr<1>(void *value,unsigned size)
 	{
 		// nothing to do
 	}
 
 	// --- implementation for 2 byte quantities
-	template<> inline static void really_swap_endian<2>(void *value,unsigned size)
+	template<> inline static void really_swap_endian_ptr<2>(void *value,unsigned size)
 	{
 		const register uint16_t v=((uint16_t *)value)[0];
 		((uint16_t *)value)[0]=
@@ -126,7 +147,7 @@ namespace endian_util
 	}
 
 	// --- implementation for 4 byte quantities
-	template<> inline static void really_swap_endian<4>(void *value,unsigned size)
+	template<> inline static void really_swap_endian_ptr<4>(void *value,unsigned size)
 	{
 		const register uint32_t v=((uint32_t *)value)[0];
 		((uint32_t *)value)[0]=
@@ -136,15 +157,15 @@ namespace endian_util
 	}
 
 	// --- implementation for 8 byte quantities
-	template<> inline static void really_swap_endian<8>(void *value,unsigned size)
+	template<> inline static void really_swap_endian_ptr<8>(void *value,unsigned size)
 	{
 		const register uint64_t v=((uint64_t *)value)[0];
 		// of 8, swap upper most and lower most octets then the next two inward, and so on ..
 		((uint64_t *)value)[0]=
-		   ((v>>56)&0x00000000000000ff) | ((v<<56)&0xff00000000000000) | 
-		   ((v>>40)&0x000000000000ff00) | ((v<<40)&0x00ff000000000000) |
-		   ((v>>24)&0x0000000000ff0000) | ((v<<24)&0x0000ff0000000000) |
-		   ((v>> 8)&0x00000000ff000000) | ((v<< 8)&0x000000ff00000000);
+		   ((v>>56)&0x00000000000000ffLL) | ((v<<56)&0xff00000000000000LL) | 
+		   ((v>>40)&0x000000000000ff00LL) | ((v<<40)&0x00ff000000000000LL) |
+		   ((v>>24)&0x0000000000ff0000LL) | ((v<<24)&0x0000ff0000000000LL) |
+		   ((v>> 8)&0x00000000ff000000LL) | ((v<< 8)&0x000000ff00000000LL);
 	}
 
 }; // namespace endian_util
@@ -155,15 +176,61 @@ namespace endian_util
  * you're pointing to but if you pass it a value, then it returns the modified value 
  */
 
+template<typename Type> inline static void swap_endian(Type *value)
+{
+	endian_util::really_swap_endian_ptr<sizeof(Type)>(value,sizeof(Type));
+}
+
+#include <stdint.h>
+template<typename Type> inline static const Type swap_endian(uint8_t value)
+{
+	return value;
+}
+template<typename Type> inline static const Type swap_endian(int8_t value) { return swap_endian((uint8_t)value); }
+
+template<typename Type> inline static const Type swap_endian(uint16_t value)
+{
+	return 
+		((value>>8)&0x00ff) | ((value<<8)&0xff00);
+}
+template<typename Type> inline static const Type swap_endian(int16_t value) { return swap_endian((uint16_t)value); }
+
+template<typename Type> inline static const Type swap_endian(uint32_t value)
+{
+	return 
+	// of 4, swap upper most and lower most octets then swap two middle octets
+	   ((value>>24)&0x000000ff) | ((value<<24)&0xff000000) | 
+	   ((value>> 8)&0x0000ff00) | ((value<< 8)&0x00ff0000);
+}
+template<typename Type> inline static const Type swap_endian(int32_t value) { return swap_endian((uint32_t)value); }
+template<typename Type> inline static const Type swap_endian(float value) { return swap_endian(*reinterpret_cast<uint32_t *>(&value)); }
+
+template<typename Type> inline static const Type swap_endian(uint64_t value)
+{
+	return
+	   ((value>>56)&0x00000000000000ffLL) | ((value<<56)&0xff00000000000000LL) | 
+	   ((value>>40)&0x000000000000ff00LL) | ((value<<40)&0x00ff000000000000LL) |
+	   ((value>>24)&0x0000000000ff0000LL) | ((value<<24)&0x0000ff0000000000LL) |
+	   ((value>> 8)&0x00000000ff000000LL) | ((value<< 8)&0x000000ff00000000LL);
+}
+template<typename Type> inline static const Type swap_endian(int64_t value) { return swap_endian((uint64_t)value); }
+template<typename Type> inline static const Type swap_endian(double value) { return swap_endian(*reinterpret_cast<uint64_t *>(&value)); }
+
+
+/* generic value implementation which just uses the ptr version (which is slower) */
 template<typename Type> inline static const Type swap_endian(Type value)
 {
-	endian_util::really_swap_endian<sizeof(Type)>(&value,sizeof(Type));
+	endian_util::really_swap_endian_ptr<sizeof(Type)>(&value,sizeof(Type));
 	return value;
 }
 
-template<typename Type> inline static void swap_endian(Type *value)
+
+/* this implementation takes a pointer to an array of values, the size is also given as a parameter */
+template<typename Type> inline static void swap_endian_many(Type *values,const size_t count)
 {
-	endian_util::really_swap_endian<sizeof(Type)>(value,sizeof(Type));
+	for(size_t t=0;t<count;t++)
+		endian_util::really_swap_endian_ptr<sizeof(Type)>(values+t,sizeof(Type));
 }
+
 
 #endif
