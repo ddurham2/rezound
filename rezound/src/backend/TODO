@@ -69,6 +69,9 @@ or sample values to follow
 
 --- POSSIBLE THINGS TO DO ---
 
+	- consider moving the cue oriented actions to a Cue directory or something
+	- if no more looping actions get created, consider moving the make symetric action under effects
+
 	- play with morphing from one filter kernel to another filter kernel when doing convolution for reverb, could invent some interesting new effects
 
 	- The ASoundClipboard::temporarilyShortenLength() method could be removed (and it's a significant implemenation) if CSound::mixSound() had a srcLength parameter telling it how much of the src to regard instead of my having to use the method of the clipboard in fit mix paste when there is a non-integer repeat count
