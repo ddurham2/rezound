@@ -1,6 +1,8 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- possibly rename ClibvorbisSoundTranslator.* to COggVorbisSoundTranslator.*
+
 	- I should make an f(x) feature for CGraphParamValueNodes which will return y given x and it should be implemented for line segments, cos, or bicubic interpretation of the nodes
 		- I should reimplement the Distortion module to use this
 		- But I don't guess I should implement f(x) unless anything else were already going to use it
