@@ -13,6 +13,12 @@ fi
 RESWRAP=$1
 IMAGE_PATH=$2
 
+if [ ! -x $RESWRAP ] 
+then
+	echo "$0: $RESWRAP either does not exist or is not executable -- perhaps delete config.cache and rerun configure"
+	exit 1
+fi
+
 H_FILE=CFOXIcons.h.tmp
 C_FILE=CFOXIcons.cpp
 
