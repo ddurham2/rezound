@@ -60,12 +60,12 @@ bool CStubAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 	// set the new selection points (only necessary if the length of the sound has changed)
 	//actionSound.stop=actionSound.start+selectionLength-1;
 
-	return(true);
+	return true;
 }
 
 AAction::CanUndoResults CStubAction::canUndo(const CActionSound &actionSound) const
 {
-	return(curYes);
+	return curYes;
 }
 
 void CStubAction::undoActionSizeSafe(const CActionSound &actionSound)
@@ -87,7 +87,7 @@ CStubActionFactory::~CStubActionFactory()
 
 CStubAction *CStubActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CStubAction(actionSound));
+	return new CStubAction(actionSound);
 }
 
 
