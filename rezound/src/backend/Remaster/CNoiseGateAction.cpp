@@ -66,7 +66,7 @@ bool CNoiseGateAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 			if(prepareForUndo)
 				a.copyData(start,actionSound.sound->getTempAudio(tempAudioPoolKey,i),0,selectionLength);
 
-			CStatusBar statusBar("Noise Gating -- Channel "+istring(i),start,stop);
+			CStatusBar statusBar("Noise Gating -- Channel "+istring(i),start,stop,true);
 
 			CDSPNoiseGate gate(
 				ms_to_samples(windowTime,actionSound.sound->getSampleRate()),
@@ -89,7 +89,14 @@ bool CNoiseGateAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 				if(s1!=s2) // avoid writing the sample to disk if it didn't change
 					a[t]=s2;
 
-				statusBar.update(t);
+				if(statusBar.update(t))
+				{ // cancelled
+					if(prepareForUndo)
+						undoActionSizeSafe(actionSound);
+					else
+						actionSound.sound->invalidatePeakData(i,actionSound.start,t);
+					return false;
+				}
 			}
 
 			actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
