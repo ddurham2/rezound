@@ -53,6 +53,8 @@ public:
 	long onUndoButton(FXObject *sender,FXSelector sel,void *ptr);
 	long onClearUndoHistoryButton(FXObject *sender,FXSelector sel,void *ptr);
 
+	long onCloseWindow(FXObject *sender,FXSelector sel,void *ptr);
+
 	enum
 	{
 		ID_UNDO_BUTTON=FXTopWindow::ID_LAST,

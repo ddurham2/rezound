@@ -49,6 +49,8 @@ FXDEFMAP(CEditToolbar) CEditToolbarMap[]=
 	FXMAPFUNC(SEL_COMMAND,			CEditToolbar::ID_UNDO_BUTTON,			CEditToolbar::onUndoButton),
 	FXMAPFUNC(SEL_COMMAND,			CEditToolbar::ID_CLEAR_UNDO_HISTORY_BUTTON,	CEditToolbar::onClearUndoHistoryButton),
 
+	FXMAPFUNC(SEL_CLOSE,			0,						CEditToolbar::onCloseWindow),
+
 };
 
 FXIMPLEMENT(CEditToolbar,FXTopWindow,CEditToolbarMap,ARRAYNUMBER(CEditToolbarMap))
@@ -141,4 +143,8 @@ long CEditToolbar::onClearUndoHistoryButton(FXObject *sender,FXSelector sel,void
 	return(1);
 }
 
+long CEditToolbar::onCloseWindow(FXObject *sender,FXSelector sel,void *ptr)
+{
+	return 1;
+}
 

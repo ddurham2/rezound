@@ -31,7 +31,7 @@ extern CSoundListWindow *gSoundListWindow;
 
 class CSoundWindow;
 
-class CSoundListWindow : public FXToolbarShell
+class CSoundListWindow : public FXTopWindow
 {
 	FXDECLARE(CSoundListWindow);
 public:
@@ -41,7 +41,7 @@ public:
 
 	enum 
 	{
-		ID_SOUND_LIST=FXToolbarShell::ID_LAST,
+		ID_SOUND_LIST=FXTopWindow::ID_LAST,
 		ID_LAST
 	};
 
@@ -50,6 +50,8 @@ public:
 	virtual void hide();
 
 	long onSoundListChange(FXObject *sender,FXSelector sel,void *ptr);
+
+	long onCloseWindow(FXObject *sender,FXSelector sel,void *ptr);
 
 	void addSoundWindow(CSoundWindow *window);
 	void removeSoundWindow(CSoundWindow *window);

@@ -39,23 +39,21 @@ FXDEFMAP(CSoundListWindow) CSoundListWindowMap[]=
 {
 	//	  Message_Type			ID					Message_Handler
 	FXMAPFUNC(SEL_CHANGED,			CSoundListWindow::ID_SOUND_LIST,	CSoundListWindow::onSoundListChange),
+
+	FXMAPFUNC(SEL_CLOSE,			0,					CSoundListWindow::onCloseWindow),
 };
 
-FXIMPLEMENT(CSoundListWindow,FXToolbarShell,CSoundListWindowMap,ARRAYNUMBER(CSoundListWindowMap))
+FXIMPLEMENT(CSoundListWindow,FXTopWindow,CSoundListWindowMap,ARRAYNUMBER(CSoundListWindowMap))
 
 
 CSoundListWindow::CSoundListWindow(FXWindow *mainWindow) :
-	FXToolbarShell(mainWindow,/*FRAME_RAISED|FRAME_THICK*/DECOR_BORDER|DECOR_TITLE|DECOR_BORDER,mainWindow->getX()+30,mainWindow->getY()+mainWindow->getDefaultHeight()+300,300,200),
+	FXTopWindow(mainWindow,"Opened",NULL,NULL,DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE,mainWindow->getX()+30,mainWindow->getY()+mainWindow->getDefaultHeight()+300,300,200, 0,0,0,0, 0,0),
 
 	contents(new FXPacker(this,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_RAISED)),
 		soundListFrame(new FXPacker(contents,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_SUNKEN|FRAME_THICK, 0,0,0,0, 0,0,0,0, 0,0)), // had to do this because FXList won't take that frame style
 			soundList(new FXList(soundListFrame,0,this,ID_SOUND_LIST,LIST_BROWSESELECT | LAYOUT_FILL_X|LAYOUT_FILL_Y))
 {
 	delete getAccelTable();
-	setAccelTable(mainWindow->getAccelTable());
-
-	setTitle("Opened");
-
 	setAccelTable(mainWindow->getAccelTable());
 }
 
@@ -66,7 +64,7 @@ CSoundListWindow::~CSoundListWindow()
 
 void CSoundListWindow::create()
 {
-	FXToolbarShell::create();
+	FXTopWindow::create();
 
 	hide();
 }
@@ -77,14 +75,14 @@ void CSoundListWindow::show()
 	if(soundList->getNumItems()>1)
 	{
 		rememberShow(this);
-		FXToolbarShell::show();
+		FXTopWindow::show();
 	}
 }
 
 void CSoundListWindow::hide()
 {
 	rememberHide(this);
-	FXToolbarShell::hide();
+	FXTopWindow::hide();
 }
 
 long CSoundListWindow::onSoundListChange(FXObject *sender,FXSelector sel,void *ptr)
@@ -148,6 +146,11 @@ void CSoundListWindow::hideOrShow()
 		show();
 	else
 		hide();
+}
+
+long CSoundListWindow::onCloseWindow(FXObject *sender,FXSelector sel,void *ptr)
+{
+	return 1;
 }
 
 
