@@ -116,6 +116,12 @@
 		- then this filter data should be convolved with a selected region
 		- or this filter data should be applied to the data in a windowed fasion...  As far as I know, it has no name.. but say I wanted to set every 8th sample to zero to add a ringing noise... then I would create a filter window of width 8 where the first sample is 0 and the rest are 1.0... then I would apply this window to the first 8 samples [0..7], then apply it to the next 8, [8..15] and so on
 			- maybe this is possible with the convolution method
+		- see what it sounds like to apply a lowpass or highpass filter on the frequency domain's magnitude and/or phase buffers
+
+		- could static noise reduction be achieved by subtracting a constant value from the frequency magnitude graph?
+			- perhaps by finding the average of the frequency spectrum of all frequencies greater than something near 0 and with values less than some threshold
+
+		- right now, I see little use for having a frequency domain view of the data... but, if after reading this DSP book I see a good reason for having it, implement it, and explain in a document the good reason for having it.
 
 	- I could create an adaptive remove-DC action which looks at a window at a time of data  (window-time given by the user) and the DC offset determined for each window would form a set of line segments to be the subtraction from the sound.
 		- This should/might remove any very long trend in the data that causes a slow shift rather than a constant offset
