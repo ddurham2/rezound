@@ -635,7 +635,9 @@ void CMainWindow::createMenus()
 		// a few things to think about:  the order of the registered list (when each action specifies it's menu path) and the visual menu separators as well as how the frontend code gets bound to the right backend code
 		new FXMenuSeparator(menu);
 		new CActionMenuCommand(new CCopyEditFactory(gChannelSelectDialog),menu,"Ctrl+C",FOXIcons->edit_copy);
+		new CActionMenuCommand(new CCopyToNewEditFactory(gChannelSelectDialog),menu,"",FOXIcons->edit_copy);
 		new CActionMenuCommand(new CCutEditFactory(gChannelSelectDialog),menu,"Ctrl+X",FOXIcons->edit_cut);
+		new CActionMenuCommand(new CCutToNewEditFactory(gChannelSelectDialog),menu,"",FOXIcons->edit_cut);
 		new CActionMenuCommand(new CDeleteEditFactory(gChannelSelectDialog),menu,"Ctrl+D",FOXIcons->edit_delete);
 		new CActionMenuCommand(new CCropEditFactory(gChannelSelectDialog),menu,"Ctrl+R",FOXIcons->edit_crop);
 
