@@ -33,6 +33,7 @@
 #include "../backend/CSound.h"
 #include "../backend/AStatusComm.h"
 #include "../backend/main_controls.h"
+#include "../backend/AAction.h" // for EUserMessage
 
 #include "../backend/LADSPA/ladspa.h" /* ??? eventually don't want LADSPA specific code in here */
 #include "../backend/LADSPA/utils.h"
@@ -195,7 +196,7 @@ FXPluginRoutingParamValue::FXPluginRoutingParamValue(FXComposite *p,int opts,con
 				new FXButton(p2,_("Use Sound ->\tAdd the Selected Sound as a Source Above"),NULL,this,ID_ADD_SOURCE_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
 				new FXButton(p2,_("New Instance\tCreate a New Instance of the Plugin"),NULL,this,ID_NEW_INSTANCE_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
 				new FXButton(p2,_("Default\tGuess at the Desired Routing"),NULL,this,ID_DEFAULT_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
-				new FXButton(p2,_("Reset"),NULL,this,ID_RESET_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
+				new FXButton(p2,_("Clear"),NULL,this,ID_RESET_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
 			p2=new FXPacker(p1,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y);
 				p3=new FXPacker(p2,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_SUNKEN|FRAME_THICK, 0,0,0,0, 0,0,0,0, 0,0);
 					soundList=new FXList(p3,5,NULL,0,LIST_NORMAL|LIST_SINGLESELECT | LAYOUT_FILL_Y|LAYOUT_FILL_X);
@@ -698,7 +699,6 @@ long FXPluginRoutingParamValue::onConfigure(FXObject *sender,FXSelector sel,void
 
 const CPluginMapping FXPluginRoutingParamValue::getValue() const
 {
-#warning need to warn if nothing was mapped to any output
 	CPluginMapping ret;
 
 	ret.outputAppendCount=0;
@@ -810,6 +810,11 @@ const CPluginMapping FXPluginRoutingParamValue::getValue() const
 	ret.outputRemoveCount=0;
 	if(N_output.nodes.size()<actionSound->getChannelCount())
 		ret.outputRemoveCount=actionSound->getChannelCount()-N_output.nodes.size();
+
+	// now make sure at least *some*thing got mapped to an output
+	if(!ret.somethingMappedToAnOutput())
+		throw EUserMessage(_("Nothing mapped to an output; check the routing"));
+
 
 	return ret;
 }
@@ -1555,7 +1560,7 @@ long FXPluginRoutingParamValue::onRemoveLastOutputChannel(FXObject *sender,FXSel
 
 long FXPluginRoutingParamValue::onResetButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-	if(connections.size()!=0 && Question(_("Are you sure you want to reset the routing?"),yesnoQues)!=yesAns)
+	if(connections.size()!=0 && Question(_("Are you sure you want to clear the routing?"),yesnoQues)!=yesAns)
 		return 0;
 	RESET_WIRE_COLOR
 	prvSetSound(actionSound);
