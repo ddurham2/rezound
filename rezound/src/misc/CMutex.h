@@ -116,5 +116,37 @@ private:
 };
 
 
+/*
+ * This class does a try-lock on the mutex at construction.  It is then necessary
+ * to check the didLock() method's return value and continue if it's true else
+ * do not continue into the critical section.  If a lock was obtained then it 
+ * will release the lock when the object destructs.
+ */
+class CMutexTryLocker
+{
+public:
+	CMutexTryLocker(CMutex &_m) :
+		m(_m),
+		locked(m.trylock())
+	{
+	}
+
+	virtual ~CMutexTryLocker()
+	{
+		if(locked)
+			m.unlock();
+	}
+
+	bool didLock() const
+	{
+		return locked;
+	}
+
+private:
+	CMutex &m;
+	const bool locked;
+};
+
+
 #endif
 
