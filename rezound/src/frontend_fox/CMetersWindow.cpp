@@ -285,8 +285,7 @@ FXIMPLEMENT(CMeter,FXHorizontalFrame,CMeterMap,ARRAYNUMBER(CMeterMap))
 FXDEFMAP(CMetersWindow) CMetersWindowMap[]=
 {
 	//	  Message_Type			ID						Message_Handler
-	FXMAPFUNC(SEL_CHORE,			CMetersWindow::ID_UPDATE_CHORE,			CMetersWindow::onUpdateMeters),
-	FXMAPFUNC(SEL_TIMEOUT,			CMetersWindow::ID_UPDATE_TIMEOUT,		CMetersWindow::onUpdateMetersSetChore),
+	FXMAPFUNC(SEL_TIMEOUT,			CMetersWindow::ID_UPDATE_TIMEOUT,		CMetersWindow::onUpdateMeters),
 	FXMAPFUNC(SEL_CONFIGURE,		CMetersWindow::ID_LABEL_FRAME,			CMetersWindow::onLabelFrameConfigure),
 	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	CMetersWindow::ID_GRAND_MAX_PEAK_LEVEL_LABEL,	CMetersWindow::onResetGrandMaxPeakLevels),
 };
@@ -296,11 +295,6 @@ FXIMPLEMENT(CMetersWindow,FXHorizontalFrame,CMetersWindowMap,ARRAYNUMBER(CMeters
 
 /*
  * To update the meters often I add a timeout to be fired every x-th of a second.
- * When I receive that message I add a chore which gets processed when all other
- * messages have been processed and at the end of the chore I set up the timeout 
- * again.
- * the cycle is
- * -construction-> AAA -N ms-> BBB -chore-> CCC -N ms-> BBB -chore-> CCC -N ms-> BBB -chore-> CCC -> ...
  */
 
 CMetersWindow::CMetersWindow(FXComposite *parent) :
@@ -349,30 +343,18 @@ CMetersWindow::CMetersWindow(FXComposite *parent) :
 	analyzerFrame->setBackColor(M_BACKGROUND);
 
 
-	// AAA
-	chore=NULL;
 	// schedule the first update meters event
 	timeout=getApp()->addTimeout(gMeterUpdateTime,this,ID_UPDATE_TIMEOUT);
 }
 
 CMetersWindow::~CMetersWindow()
 {
-	getApp()->removeChore(chore);
 	getApp()->removeTimeout(timeout);
 }
 
-// BBB
-long CMetersWindow::onUpdateMetersSetChore(FXObject *sender,FXSelector sel,void *ptr)
-{
-	// now schedule an event to update the meters when everything else is finished
-	chore=getApp()->addChore(this,ID_UPDATE_CHORE);
-	return 1;
-}
-
-// CCC
 long CMetersWindow::onUpdateMeters(FXObject *sender,FXSelector sel,void *ptr)
 {
-	if(soundPlayer!=NULL && meters.size()>0)
+	if(soundPlayer!=NULL && meters.size()>0 && soundPlayer->isInitialized())
 	{
 		for(size_t t=0;t<meters.size();t++)
 			meters[t]->setLevel(soundPlayer->getRMSLevel(t),soundPlayer->getPeakLevel(t));
@@ -475,7 +457,7 @@ void CMetersWindow::renderFrequencyAnalysis()
 	{
 		// resize the analyzer frame if needed
 		{
-			const FXint desiredWidth=(v.size()*7)+2/*on left*/+2/*on right*/+2/*for ticks*/+4/*for sunken frame*/;
+			const FXint desiredWidth=(v.size()*5)+2/*on left*/+2/*on right*/+2/*for ticks*/+4/*for sunken frame*/;
 			if(analyzerFrame->getWidth()!=desiredWidth)
 				analyzerFrame->setWidth(desiredWidth);
 		}

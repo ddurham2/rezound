@@ -53,7 +53,6 @@ public:
 	};
 
 	long onUpdateMeters(FXObject *sender,FXSelector,void*);
-	long onUpdateMetersSetChore(FXObject *sender,FXSelector,void*);
 
 	long onLabelFrameConfigure(FXObject *sender,FXSelector,void*);
 
@@ -76,7 +75,6 @@ private:
 
 	ASoundPlayer *soundPlayer;
 
-	FXChore *chore;
 	FXTimer *timeout;
 
 	void renderFrequencyAnalysis();
