@@ -79,5 +79,10 @@ static const char *REZOUND_VERSION=VERSION;
 #define round rintf
 #endif
 
+/*
+ * It is not good to simply use bool==bool because anything non-zero is seen as true
+ * which wouldn't equate.  This returns true iff both are non-zero or both are zero
+ */
+static bool compareBool(int a,int b) { return (a && b) || (!a && !b); }
 
 #endif /* COMMON_H */
