@@ -138,7 +138,7 @@ CSoundWindow::CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound) :
 	waveViewPanel(new FXPacker(this,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
 		horzZoomPanel(new FXPacker(waveViewPanel,LAYOUT_SIDE_BOTTOM | FRAME_NONE | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0,0,0,22, 4,4,2,2, 2,2)),
 			horzZoomFitButton(new FXButton(horzZoomPanel,_("Fit\tZoom to Fit Selection"),NULL,this,ID_HORZ_ZOOM_FIT,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
-			horzZoomMinusInd(new FXButton(horzZoomPanel,FXString(" - ")+_("Zoom Out Full"),NULL,this,ID_HORZ_ZOOM_DIAL_MINUS,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
+			horzZoomMinusInd(new FXButton(horzZoomPanel,FXString(" - \t")+_("Zoom Out Full"),NULL,this,ID_HORZ_ZOOM_DIAL_MINUS,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
 			horzZoomDial(new FXDial(horzZoomPanel,this,ID_HORZ_ZOOM_DIAL,LAYOUT_SIDE_LEFT | DIAL_HORIZONTAL|DIAL_HAS_NOTCH | LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0,0,200,0, 0,0,0,0)),
 			horzZoomPlusInd(new FXButton(horzZoomPanel,FXString(" + \t")+_("Zoom In Full"),NULL,this,ID_HORZ_ZOOM_DIAL_PLUS,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
 			horzZoomValueLabel(new FXLabel(horzZoomPanel,"",NULL,LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
