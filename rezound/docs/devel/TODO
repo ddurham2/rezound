@@ -1,16 +1,5 @@
 --- THINGS TO DO FOR SURE ---
 
-	- Not only should there be a record button that creates a new file, but I should create an action called 'insert record' that can be undone and inserts recorded data at the select start position, I suppose 'replace record' would delete the selection and insert there, and then overlay record which doesn't relace all the selection, but replaces audio until recording stops
-		DONE - and just like the other paste methods, a short cross fade should be used when transitioning
-		- to do this, I should go ahead and abstract clipboard into a base class and have the paste methods use this base class
-			- I would then create several derivations:
-				- system clipboard
-				- application clipboard (of which I would probably have 3, A B C) or something
-				- record clipboard --  when it got asked for data (or asked to put the data to some where(explained below)) it would pop up the record dialog, record, then would supply that data to read from
-					- it would be invalid to copy into the record clipboard, just throw an exception
-					- for efficiency's sake, perhaps let a clipboard have a method which copies the data for the user of the clipboard (given an ASound and location and length).  Then for record, we could speed things up by having recorded into the same pool file and then just do a move data method on the pool file.
-						- the other implementations would just behave as normal.
-
 	- Is there any way while recording we could know if data was dropped?
 		- perhaps OSS can give a sequence number?  Then if one's missing it dropped something?
 
@@ -356,4 +345,15 @@
 	- I could probably move most of initializeReZound into the backend
 
 	- I need to profile to look into pool file's performance and figure out why a 300 meg file loaded takes even as long as it does to delete or insert data... roughly 4000 modifications to the SAT wouldn't seem like a lot
+
+	- Not only should there be a record button that creates a new file, but I should create an action called 'insert record' that can be undone and inserts recorded data at the select start position, I suppose 'replace record' would delete the selection and insert there, and then overlay record which doesn't relace all the selection, but replaces audio until recording stops
+		DONE - and just like the other paste methods, a short cross fade should be used when transitioning
+		- to do this, I should go ahead and abstract clipboard into a base class and have the paste methods use this base class
+			- I would then create several derivations:
+				- system clipboard
+				- application clipboard (of which I would probably have 3, A B C) or something
+				- record clipboard --  when it got asked for data (or asked to put the data to some where(explained below)) it would pop up the record dialog, record, then would supply that data to read from
+					- it would be invalid to copy into the record clipboard, just throw an exception
+					- for efficiency's sake, perhaps let a clipboard have a method which copies the data for the user of the clipboard (given an ASound and location and length).  Then for record, we could speed things up by having recorded into the same pool file and then just do a move data method on the pool file.
+						- the other implementations would just behave as normal.
 

@@ -119,6 +119,7 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 			gCrossfadeEdges= (CrossfadeEdgesTypes)atof(gSettingsRegistry->getValue("crossfadeEdges").c_str());
 			gCrossfadeStartTime= atof(gSettingsRegistry->getValue("crossfadeStartTime").c_str());
 			gCrossfadeStopTime= atof(gSettingsRegistry->getValue("crossfadeStopTime").c_str());
+			gCrossfadeFadeMethod= (CrossfadeFadeMethods)atof(gSettingsRegistry->getValue("crossfadeFadeMethod").c_str());
 		}
 
 
@@ -178,6 +179,7 @@ void deinitializeBackend()
 	gSettingsRegistry->createKey("crossfadeEdges",(float)gCrossfadeEdges);
 		gSettingsRegistry->createKey("crossfadeStartTime",gCrossfadeStartTime);
 		gSettingsRegistry->createKey("crossfadeStopTime",gCrossfadeStopTime);
+		gSettingsRegistry->createKey("crossfadeFadeMethod",(float)gCrossfadeFadeMethod);
 
 
 	gSettingsRegistry->save();

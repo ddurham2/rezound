@@ -20,6 +20,8 @@
 
 #include "AAction.h"
 
+#include <math.h>
+
 #include <stdexcept>
 
 #include <istring>
@@ -540,8 +542,10 @@ run-through on paper would help
 			// crossfade with what already there and what's in the temp audio pool
 			for(sample_pos_t t=actionSound.start;t<actionSound.start+crossfadeStartTime;t++,srcPos++)
 			{
-				const float g=(float)srcPos/(float)(crossfadeStartTime-1);
-				dest[t]=(sample_t)(dest[t]*g + src[srcPos]*(1.0-g));
+				float g1=(float)srcPos/(float)(crossfadeStartTime-1);
+				float g2=1.0-g1;
+				if(gCrossfadeFadeMethod==cfmParabolic) { g1*=g1; g2*=g2; }
+				dest[t]=(sample_t)(dest[t]*g1 + src[srcPos]*g2);
 			}
 		}
 
@@ -567,8 +571,10 @@ run-through on paper would help
 			// crossfade with what already there and what's in the temp audio pool
 			for(sample_pos_t t=actionSound.stop-crossfadeStopTime+1;t<=actionSound.stop;t++,srcPos++)
 			{
-				const float g=(float)srcPos/(float)(crossfadeStopTime-1);
-				dest[t]=(sample_t)(dest[t]*(1.0-g) + src[srcPos]*g);
+				float g1=(float)srcPos/(float)(crossfadeStopTime-1);
+				float g2=1.0-g1;
+				if(gCrossfadeFadeMethod==cfmParabolic) { g1*=g1; g2*=g2; }
+				dest[t]=(sample_t)(dest[t]*g2 + src[srcPos]*g1);
 			}
 		}
 
@@ -629,12 +635,20 @@ void AAction::crossfadeEdgesOuter(const CActionSound &actionSound)
 
 			// fade out what was before the start position
 			for(sample_pos_t t=actionSound.start-crossfadeTime;t<actionSound.start;t++,srcPos++)
-				dest[t]=(sample_t)(src[srcPos]*(1.0-((float)srcPos/(float)(crossfadeTime-1))));
+			{
+				float g=1.0-((float)srcPos/(float)(crossfadeTime-1));
+				if(gCrossfadeFadeMethod==cfmParabolic) g*=g;
+				dest[t]=(sample_t)(src[srcPos]*g);
+			}
 
 			// fade in what was after the start position 
 			// (not necesary to ClipSample since it's always a constant 1.0 gain
 			for(sample_pos_t t=actionSound.start-crossfadeTime;t<actionSound.start;t++,srcPos++)
-				dest[t]+=(sample_t)(src[srcPos]*(((float)(srcPos-crossfadeTime)/(float)(crossfadeTime-1))));
+			{
+				float g=(float)(srcPos-crossfadeTime)/(float)(crossfadeTime-1);
+				if(gCrossfadeFadeMethod==cfmParabolic) g*=g;
+				dest[t]+=(sample_t)(src[srcPos]*g);
+			}
 
 		}
 
@@ -679,12 +693,20 @@ void AAction::crossfadeEdgesOuter(const CActionSound &actionSound)
 
 				// fade out what was before the stop position
 				for(sample_pos_t t=actionSound.stop-crossfadeTime;t<actionSound.stop;t++,srcPos++)
-					dest[t]=(sample_t)(src[srcPos]*(1.0-((float)srcPos/(float)(crossfadeTime-1))));
+				{
+					float g=1.0-((float)srcPos/(float)(crossfadeTime-1));
+					if(gCrossfadeFadeMethod==cfmParabolic) g*=g;
+					dest[t]=(sample_t)(src[srcPos]*g);
+				}
 
 				// fade in what was after the stop position 
 				// (not necesary to ClipSample since it's always a constant 1.0 gain
 				for(sample_pos_t t=actionSound.stop-crossfadeTime;t<actionSound.stop;t++,srcPos++)
-					dest[t]+=(sample_t)(src[srcPos]*(((float)(srcPos-crossfadeTime)/(float)(crossfadeTime-1))));
+				{
+					float g=(float)(srcPos-crossfadeTime)/(float)(crossfadeTime-1);
+					if(gCrossfadeFadeMethod==cfmParabolic) g*=g;
+					dest[t]+=(sample_t)(src[srcPos]*g);
+				}
 
 			}
 

@@ -52,5 +52,6 @@ double gInitialLengthToShow=10.0; // default 10 seconds
 CrossfadeEdgesTypes gCrossfadeEdges=cetInner;
 float gCrossfadeStartTime=10.0;	 // default 20ms crossfade time
 float gCrossfadeStopTime=10.0;
+CrossfadeFadeMethods gCrossfadeFadeMethod=cfmLinear;
 
 

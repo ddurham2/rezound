@@ -1,15 +1,11 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- the clip board that the edit actions use is not set up to allow it to paste and copy from other applications
-		- when/if I want to allow that, I should create a base class clipboard which has the platform specific
-		  implementation that reads from the system clipboard.
-		- this base class would probably have some sort of accesser class with a operator[] defined because I need
-		  to support all the mixing methods when pasting...
-		- When pasting data, there is no heeding of the differences in sample rate of the src data when pasting to the destination
-			- I should fix this problem when I implement a real clipboard system and I would have to supply the PCM parameters to the clipboard when I copied the data there, then pasting could do something to resolve any differances when reading from it
+	- enhance TSoundStretcher to do interpolation
 
-	- make CSound::mixSound convert sample rates
+	- need to implement a CFileClipboard which can paste to/from a file
+
+	- have CRecordClipboard ask for recording parameters
 
 	- figure out what to do with the 4 bogus cues that appear in an aiff file when the file had no cues in it, itself
 
@@ -43,6 +39,10 @@
 
 	- use a registry setting for knowing where to put working files and the clipboard instead of always /tmp
 
+	- need to do a better job than CRecordClipboard just calling ASoundFileManager for prompting for recording parameters and the recording dialog
+		- perhaps have a backend abstract class which has virtual methods for all that the frontend will actually be responsible for doing.
+		- all prompting functions would be pure virtual and one of these would be constructed by the frontend
+
 	- Need to handle duplicate named cues when loading a file.. I don't allow them, but a file format might
 
 	- Warn the user if saving to a file format that doesn't save more than 31bits worth of sound and the sound file is longer than that
@@ -59,6 +59,8 @@
 
 
 --- POSSIBLE THINGS TO DO ---
+
+	- I could remember native clipboards between runs by not deleting removing the pool file's file
 
 	- To speed up initial work upon loading a large file (>100mb) I could have the loading functions calculate the peak chunk info instead of loading then calcing the peak chunk on the first draw which causes it to have to read and write the data twice instead of once
 		- or use the background fage as I'm leaning toward
@@ -192,4 +194,14 @@
 		- what I could do is, before the action happens save the original data inward toward the middle selection and crossfade with that instead of making the selection shorter
 		- if the selection's short length cannot support as long a crossfade as asked, just do a lesser one
 		
+	- the clip board that the edit actions use is not set up to allow it to paste and copy from other applications
+		- when/if I want to allow that, I should create a base class clipboard which has the platform specific
+		  implementation that reads from the system clipboard.
+		- this base class would probably have some sort of accesser class with a operator[] defined because I need
+		  to support all the mixing methods when pasting...
+		- When pasting data, there is no heeding of the differences in sample rate of the src data when pasting to the destination
+			- I should fix this problem when I implement a real clipboard system and I would have to supply the PCM parameters to the clipboard when I copied the data there, then pasting could do something to resolve any differances when reading from it
+
+		- make CSound::mixSound convert sample rates
+
 

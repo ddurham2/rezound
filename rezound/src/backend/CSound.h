@@ -211,7 +211,13 @@ public:
 
 
 	void silenceSound(unsigned channel,sample_pos_t where,sample_pos_t length,bool doInvalidatePeakData=true,bool showProgressBar=true);
-	void mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser src,sample_pos_t srcWhere,sample_pos_t length,MixMethods mixMethod,bool doInvalidatePeakData=true,bool showProgressBar=true);
+
+	/*
+	 * - mixes audio from src onto channel 'channel' starting at 'where' in this sound for 'length' samples (in this sound's sampleRate)
+	 * - srcSampleRate specifies what sample rate src is in so that when it reads from src it will convert to this sound's sample rate
+	 * - mixMethod specifies how to mix the data
+	 */
+	void mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser src,sample_pos_t srcWhere,unsigned srcSampleRate,sample_pos_t length,MixMethods mixMethod,bool doInvalidatePeakData=true,bool showProgressBar=true);
 
 
 	const string getTimePosition(sample_pos_t samplePos,int secondsDecimalPlaces=3,bool includeUnits=true) const;

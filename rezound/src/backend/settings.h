@@ -101,6 +101,7 @@ enum CrossfadeEdgesTypes
 extern CrossfadeEdgesTypes gCrossfadeEdges;
 extern float gCrossfadeStartTime;
 extern float gCrossfadeStopTime;
-
+enum CrossfadeFadeMethods { cfmLinear=0, cfmParabolic=1 };
+extern CrossfadeFadeMethods gCrossfadeFadeMethod;
 
 #endif

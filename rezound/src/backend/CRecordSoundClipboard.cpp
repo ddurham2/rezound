@@ -76,6 +76,7 @@ bool CRecordSoundClipboard::prepareForCopyTo()
 
 		remove(workingFilename.c_str());
 		workingFile=new CSound(workingFilename,44100,CHANNELS,1); // at least 1 sample is manditory
+		this->sampleRate=44100;
 
 		recorder.initialize(workingFile);
 
@@ -135,7 +136,7 @@ void CRecordSoundClipboard::copyTo(CSound *sound,unsigned destChannel,unsigned s
 	const CRezPoolAccesser src=workingFile->getAudio(srcChannel);
 
 	// ??? would need to handle sampleRate conversion... SHOULD: put this functionality in mixSound so everyone could benefit from it
-	sound->mixSound(destChannel,start,src,0,length,mixMethod,invalidatePeakData);
+	sound->mixSound(destChannel,start,src,0,sampleRate,length,mixMethod,invalidatePeakData);
 }
 
 sample_pos_t CRecordSoundClipboard::getLength(unsigned _sampleRate) const
@@ -143,6 +144,7 @@ sample_pos_t CRecordSoundClipboard::getLength(unsigned _sampleRate) const
 	if(workingFile==NULL || workingFile->getLength()<=1)
 		return(0);
 	else
+			// ??? probably want to divide first
 		return((sample_pos_t)((sample_fpos_t)workingFile->getLength()*(sample_fpos_t)_sampleRate/(sample_fpos_t)workingFile->getSampleRate()));
 }
 

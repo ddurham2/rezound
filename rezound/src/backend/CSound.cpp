@@ -844,90 +844,184 @@ void CSound::silenceSound(unsigned channel,sample_pos_t where,sample_pos_t lengt
 		invalidatePeakData(channel,where,where+length);
 }
 
-void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser src,sample_pos_t srcWhere,sample_pos_t length,MixMethods mixMethod,bool doInvalidatePeakData,bool showProgressBar)
+#include "TSoundStretcher.h"
+
+void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser src,sample_pos_t srcWhere,unsigned srcSampleRate,sample_pos_t length,MixMethods mixMethod,bool doInvalidatePeakData,bool showProgressBar)
 {
 	ASSERT_SIZE_LOCK
 
-	CRezPoolAccesser dest=getAudio(channel);
+	if(srcSampleRate==0)
+		throw(runtime_error(string(__func__)+" -- srcSampleRate is 0"));
 
+	if(length==0)
+		return;
+
+	CRezPoolAccesser dest=getAudio(channel);
 	const sample_pos_t destOffset=where;
+	const unsigned destSampleRate=getSampleRate();
 
 	switch(mixMethod)
 	{
 	case mmOverwrite:
-		// ??? need a progress bar
-		dest.copyData(destOffset,src,srcWhere,length);
-		break;
-	
-	case mmAdd:
+		if(srcSampleRate==destSampleRate)
 		{
-		const sample_pos_t last=where+length;
-		//sample_pos_t srcPos=srcWhere;
-		if(showProgressBar)
-		{
-			BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
-			for(sample_pos_t t=where;t<last;t++)
-			{
-				dest[t]=ClipSample((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++]);
-
-				UPDATE_PROGRESS_BAR(t);
-			}
-			END_PROGRESS_BAR();
+			// ??? need a progress bar
+			dest.copyData(destOffset,src,srcWhere,length);
 		}
 		else
-		{
-			for(sample_pos_t t=where;t<last;t++)
-				dest[t]=ClipSample((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++]);
+		{ // do sample rate conversion
+			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)length/destSampleRate*srcSampleRate),length);
+			const sample_pos_t last=where+length;
+			if(showProgressBar)
+			{
+				BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
+				for(sample_pos_t t=where;t<last;t++)
+				{
+					dest[t]=srcStretcher.getSample();
+					UPDATE_PROGRESS_BAR(t);
+				}
+				END_PROGRESS_BAR();
+			}
+			else
+			{
+				for(sample_pos_t t=where;t<last;t++)
+					dest[t]=srcStretcher.getSample();
+			}
 		}
 
 		break;
+
+	case mmAdd:
+		if(srcSampleRate==destSampleRate)
+		{
+			const sample_pos_t last=where+length;
+			if(showProgressBar)
+			{
+				BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
+				for(sample_pos_t t=where;t<last;t++)
+				{
+					dest[t]=ClipSample((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++]);
+
+					UPDATE_PROGRESS_BAR(t);
+				}
+				END_PROGRESS_BAR();
+			}
+			else
+			{
+				for(sample_pos_t t=where;t<last;t++)
+					dest[t]=ClipSample((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++]);
+			}
+		} 
+		else 
+		{ // do sample rate conversion
+			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)length/destSampleRate*srcSampleRate),length);
+			const sample_pos_t last=where+length;
+			if(showProgressBar)
+			{
+				BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
+				for(sample_pos_t t=where;t<last;t++)
+				{
+					dest[t]=ClipSample((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample());
+					UPDATE_PROGRESS_BAR(t);
+				}
+				END_PROGRESS_BAR();
+			}
+			else
+			{
+				for(sample_pos_t t=where;t<last;t++)
+					dest[t]=ClipSample((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample());
+			}
 		}
+
+		break;
 
 	case mmMultiply:
+		if(srcSampleRate==destSampleRate)
 		{
-		const sample_pos_t last=where+length;
-		//sample_pos_t srcPos=srcWhere;
-		if(showProgressBar)
-		{
-			BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
-			for(sample_pos_t t=where;t<last;t++)
+			const sample_pos_t last=where+length;
+			if(showProgressBar)
 			{
-				dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)src[srcWhere++]);
+				BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
+				for(sample_pos_t t=where;t<last;t++)
+				{
+					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)src[srcWhere++]);
 
-				UPDATE_PROGRESS_BAR(t);
+					UPDATE_PROGRESS_BAR(t);
+				}
+				END_PROGRESS_BAR();
 			}
-			END_PROGRESS_BAR();
+			else
+			{	
+				for(sample_pos_t t=where;t<last;t++)
+					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)src[srcWhere++]);
+			}
 		}
 		else
-		{	
-			for(sample_pos_t t=where;t<last;t++)
-				dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)src[srcWhere++]);
+		{ // do sample rate conversion
+			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)length/destSampleRate*srcSampleRate),length);
+			const sample_pos_t last=where+length;
+			if(showProgressBar)
+			{
+				BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
+				for(sample_pos_t t=where;t<last;t++)
+				{
+					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)srcStretcher.getSample());
+					UPDATE_PROGRESS_BAR(t);
+				}
+				END_PROGRESS_BAR();
+			}
+			else
+			{
+				for(sample_pos_t t=where;t<last;t++)
+					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)srcStretcher.getSample());
+			}
 		}
+
 		break;
-		}
 
 	case mmAverage:
+		if(srcSampleRate==destSampleRate)
 		{
-		const sample_pos_t last=where+length;
-		//sample_pos_t srcPos=srcWhere;
-		if(showProgressBar)
-		{
-			BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
-			for(sample_pos_t t=where;t<last;t++)
+			const sample_pos_t last=where+length;
+			if(showProgressBar)
 			{
-				dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++])/2;
+				BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
+				for(sample_pos_t t=where;t<last;t++)
+				{
+					dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++])/2;
 
-				UPDATE_PROGRESS_BAR(t);
+					UPDATE_PROGRESS_BAR(t);
+				}
+				END_PROGRESS_BAR();
 			}
-			END_PROGRESS_BAR();
+			else
+			{
+				for(sample_pos_t t=where;t<last;t++)
+					dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++])/2;
+			}
 		}
 		else
-		{
-			for(sample_pos_t t=where;t<last;t++)
-				dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++])/2;
+		{ // do sample rate conversion
+			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)length/destSampleRate*srcSampleRate),length);
+			const sample_pos_t last=where+length;
+			if(showProgressBar)
+			{
+				BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
+				for(sample_pos_t t=where;t<last;t++)
+				{
+					dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample())/2;
+					UPDATE_PROGRESS_BAR(t);
+				}
+				END_PROGRESS_BAR();
+			}
+			else
+			{
+				for(sample_pos_t t=where;t<last;t++)
+					dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample())/2;
+			}
 		}
+
 		break;
-		}
 
 	default:
 		throw(runtime_error(string(__func__)+" -- unhandled mixMethod: "+istring(mixMethod)));

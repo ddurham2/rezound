@@ -85,11 +85,12 @@ void CNativeSoundClipboard::copyTo(CSound *sound,unsigned destChannel,unsigned s
 	const CRezPoolAccesser src=workingFile.getPoolAccesser<sample_t>(poolName);
 
 	// ??? would need to handle sampleRate conversion... SHOULD: put this functionality in mixSound so everyone could benefit from it
-	sound->mixSound(destChannel,start,src,0,length,mixMethod,invalidatePeakData);
+	sound->mixSound(destChannel,start,src,0,sampleRate,length,mixMethod,invalidatePeakData);
 }
 
 sample_pos_t CNativeSoundClipboard::getLength(unsigned _sampleRate) const
 {
+			// ??? probably want to divide first
 	return((sample_pos_t)((sample_fpos_t)length*(sample_fpos_t)_sampleRate/(sample_fpos_t)sampleRate));
 }
 

@@ -44,6 +44,7 @@ public:
 
 private:
 	const string workingFilename;
+	unsigned sampleRate;
 
 	CSound *workingFile;
 };
