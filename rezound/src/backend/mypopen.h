@@ -25,16 +25,7 @@
 
 #include <stdio.h>
 
-#ifdef LINKING_STATICALLY
-
 FILE *mypopen(const char cmd[],const char type[]);
 int mypclose(FILE *p);
-
-#else
-
-#define mypopen popen
-#define mypclose pclose
-
-#endif // LINKING_STATICALLY
 
 #endif

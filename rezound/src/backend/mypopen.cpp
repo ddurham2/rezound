@@ -56,8 +56,6 @@
 
 #include "mypopen.h"
 
-#ifdef LINKING_STATICALLY
-
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -190,4 +188,3 @@ int mypclose(FILE *p)
 	return(0);
 }
 
-#endif // LINKING_STATICALLY
