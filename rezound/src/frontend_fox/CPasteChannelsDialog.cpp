@@ -92,7 +92,7 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 
 	// determine if and which channel is the only channel available in the clipbaord
 	bool isSingleClipboardChannel=false;
-	size_t singleClipboardChannel;
+	size_t singleClipboardChannel=0;
 	for(size_t t=0;t<MAX_CHANNELS;t++)
 	{
 		if(clipboard->getWhichChannels()[t])
