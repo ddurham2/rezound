@@ -493,19 +493,13 @@ const vector<string> ASoundFileManager::loadFilesInRegistry()
 				prvOpen(filename,false,false,false);
 			}
 			else
-			{
 				unregisterFilename(filename);
-				t--;
-			}
 
 		}
 		catch(exception &e)
 		{	
 			if(filename!="")
-			{
 				unregisterFilename(filename);
-				t--;
-			}
 			errors.push_back(e.what());
 		}
 	}
