@@ -25,6 +25,8 @@
 
 #include "../CSound_defs.h"
 
+#include <math.h>
+
 template<class src_type> class TSoundStretcher
 {
 public:
