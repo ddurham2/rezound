@@ -48,6 +48,9 @@
 	- Double clicking a cue brings up the edit cue dialog
 
 - Graph Parameter Widget:
-	- Holding shift or control while dragging a node will lock either the horizontal or vertical movement when only needed to change the node in one direction.
+	- LEFT clicking where there is not a node will create a node.
+	- LEFT dragging on an existing node will move it around.
+	- RIGHT clicking on an existing node will remove it.
+	- Holding SHIFT or CONTROL while dragging a node will lock either the horizontal or vertical movement when only needed to move the node in one direction.
 
 
