@@ -62,7 +62,7 @@ bool CSaveAsMultipleFilesAction::doActionSizeSafe(CActionSound &actionSound,bool
 		{
 			const sample_pos_t cueTime=actionSound.sound->getCueTime(t);
 			if(cueTime>=selectionStart && (cueTime-selectionStart)<selectionLength)
-				timeOrderedCueIndex.insert(pair<sample_pos_t,size_t>(cueTime,t));
+				timeOrderedCueIndex.insert(make_pair(cueTime,t));
 		}
 	}
 
@@ -139,7 +139,7 @@ bool CSaveAsMultipleFilesAction::doActionSizeSafe(CActionSound &actionSound,bool
 
 	// if a (... was encourtered without a closing ) then we assume to save to the end of file
 	if(filename!="" && start!=selectionStart)
-		segments.push_back(pair<string,pair<sample_pos_t,sample_pos_t> >(filename,pair<sample_pos_t,sample_pos_t>(start, (selectionOnly ? selectionStart+selectionLength-1 : actionSound.sound->getLength()-1) )));
+		segments.push_back(make_pair(filename,make_pair(start, (selectionOnly ? selectionStart+selectionLength-1 : actionSound.sound->getLength()-1) )));
 
 	
 	// remove segments with the same start and stop
