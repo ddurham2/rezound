@@ -602,11 +602,6 @@ inline bool CrezSoundTranslator::save_samples__sample_t(unsigned i,CSound::PoolF
 
 bool CrezSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs) const
 {
-	remove(filename.c_str()); // remove file in case it exists
-	CSound::PoolFile_t saveToFile(REZOUND_POOLFILE_BLOCKSIZE,REZOUND_POOLFILE_SIGNATURE);
-	saveToFile.openFile(filename,true);
-	saveToFile.clear();
-
 	// get user preferences for saving the rez
 	static bool parametersGotten=false;
 	static AFrontendHooks::RezSaveParameters parameters;
@@ -625,6 +620,11 @@ bool CrezSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 			return false;
 		parametersGotten=true;
 	}
+
+	remove(filename.c_str()); // remove file in case it exists
+	CSound::PoolFile_t saveToFile(REZOUND_POOLFILE_BLOCKSIZE,REZOUND_POOLFILE_SIGNATURE);
+	saveToFile.openFile(filename,true);
+	saveToFile.clear();
 
 	// write the meta data pool
 	{
