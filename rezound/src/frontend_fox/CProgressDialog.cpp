@@ -67,7 +67,7 @@ void CProgressDialog::setProgress(int progress)
 {
 	progressBar->setProgress(progress);
 	if(cancelButton)
-		getApp()->runWhileEvents(cancelButton); // give cancel button an oppertunity to be clicked
+		getApp()->runModalWhileEvents(cancelButton); // give cancel button an oppertunity to be clicked
 }
 
 void CProgressDialog::show(FXuint placement)

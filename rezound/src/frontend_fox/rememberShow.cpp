@@ -83,12 +83,12 @@ void determineDecorSize(FXWindow *window)
 	new FXLabel(testWindow,"Testing 1 2 3...");
 	testWindow->create();
 	testWindow->show();
-	testWindow->getApp()->runWhileEvents(testWindow); // wait for it to show
+	testWindow->getApp()->runModalWhileEvents(testWindow); // wait for it to show
 
 	testWindow->move(100,100);
 	testWindow->hide();
 	testWindow->show();
-	testWindow->getApp()->runWhileEvents(testWindow); // wait for it to show again
+	testWindow->getApp()->runModalWhileEvents(testWindow); // wait for it to show again
 
 	decorWidth=testWindow->getX()-100;
 	decorHeight=testWindow->getY()-100;

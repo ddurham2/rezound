@@ -24,6 +24,11 @@
 	#define SLIDER_TICKS_BOTTOM 0
 #endif
 
+/* fox-1.1.39 change FXApp::runWhileEvents to FXApp::runModalWhileEvents */
+#if REZ_FOX_VERSION<10139
+	#define runModalWhileEvents runWhileEvents
+#endif
+
 /*
  * FOX renamed some things at version 1.1.8 and added namespaces
  * so if the version is older then I rename them back.
