@@ -117,6 +117,8 @@ private:
 	size_t cueClicked; // the index of the cue clicked on holding the value between the click event and the menu item event
 	int cueClickedOffset; // used when dragging cues to know how far from the middle a cue was clicked
 	sample_pos_t origCueClickedTime;
+	sample_pos_t origStartPosition; // start position before drag cue start (for undo purposes)
+	sample_pos_t origStopPosition; // stop position before drag cue start (for undo purposes)
 	sample_pos_t addCueTime; // the time in the audio where the mouse was clicked to add a cue if that's what they choose
 
 	size_t focusedCueIndex; // 0xffff,ffff if none focused
@@ -606,6 +608,9 @@ long FXWaveRuler::onLeftBtnPress(FXObject *object,FXSelector sel,void *ptr)
 		{
 			origCueClickedTime=sound->getCueTime(cueClicked);
 
+			origStartPosition=loadedSound->channel->getStartPosition();
+			origStopPosition=loadedSound->channel->getStopPosition();
+
 			draggingSelectionToo=
 				!(event->state&SHIFTMASK) && 
 				(origCueClickedTime==loadedSound->channel->getStartPosition() || 
@@ -745,6 +750,8 @@ long FXWaveRuler::onLeftBtnRelease(FXObject *object,FXSelector sel,void *ptr)
 			CActionParameters actionParameters(NULL);
 			actionParameters.addUnsignedParameter("index",cueClicked);
 			actionParameters.addSamplePosParameter("position",newCueTime);
+			actionParameters.addSamplePosParameter("restoreStartPosition",origStartPosition);
+			actionParameters.addSamplePosParameter("restoreStopPosition",origStopPosition);
 			moveCueActionFactory->performAction(loadedSound,&actionParameters,false);
 		}
 
