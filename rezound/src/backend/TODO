@@ -8,18 +8,11 @@
 
 	- distortion would be an easy effect
 
-	- use TSoundStretcher in CSoundPlayerChannel
-		- the checks in the inner loop are not necessary... I should be able to determine before hand, how many loops to do and when the loop point will be.... just use TSoundStretcher in the mean time of each loop
-		- handling the amplitudes and envelopes is still a matter of scaling the result of TSoundStretcher::getSample()
-		- I'm not sure how I would handle reverse direction
-
-		- before  do this.. check the CPU usage when playing 5 sounds... after changing it, check 5 sounds again
-
-
-
 	- figure out what to do with the 4 bogus cues that appear in an aiff file when the file had no cues in it, itself
+		- libaudiofile is doing this and the author insists that it's correct for some reason
+		- just check for them (4 unnamed at zero) and remove them I guess?
 
-	- Add a feature to ASoundRecorder that tells it to start when a certain threshold is hit in percent
+	- Add a feature to ASoundRecorder that tells it to start when a certain threshold is hit in percent or dBFS
 
 	- need to make 'add channel' and remove channel actions so I can test more than stereo number of channels... 
 		- DONE (but no frontend control yet): when I do implement the more than 2 channels, I need to have a way to route the multiple channels of a sound to the 2 (or more) channels of sound card output
@@ -35,10 +28,6 @@
 
 	- I need to think thru and handle problems with the data becoming too large for whatever address space is currently active
 		- if CSound is about to change the space, if the total space is about to cross some threshhold, I shouldn't proceed to do the action
-
-	- warn the user if he's saving an exported file format and information such as cues and user notes will not be exported (for now)
-		- implement in the derivations from ASoundTranslator
-		- in ClibaudiosoundTranslator, I should probably query the capabilities of a format
 
 	- use a registry setting for knowing where to put working files and the clipboard instead of always /tmp
 
@@ -58,6 +47,7 @@
 	- There may be some more formats that libaudiofile supports... I just didn't see them in the docs... work with the author to include any others
 	
 	- research and create DSP blocks for filters.. it should use a delay line multiplied by some vector of coefficients
+		- which is just time-domain convolution
 
 	- implement a windowed FFT DSP block... I'm not quite sure what the interface should be
 
@@ -65,6 +55,13 @@
 
 
 --- POSSIBLE THINGS TO DO ---
+
+	- use TSoundStretcher in CSoundPlayerChannel
+		- the checks in the inner loop are not necessary... I should be able to determine before hand, how many loops to do and when the loop point will be.... just use TSoundStretcher in the mean time of each loop
+		- handling the amplitudes and envelopes is still a matter of scaling the result of TSoundStretcher::getSample()
+		- I'm not sure how I would handle reverse direction
+
+		- before  do this.. check the CPU usage when playing 5 sounds... after changing it, check 5 sounds again
 
 
 	- I could easily remember native clipboards between runs by not deleting removing the pool file's file
@@ -233,3 +230,8 @@
 	- in CrezSoundTranslator::onSaveSound, copyToFile unnecessarily copies any temp pools and peak chunk pools...  thus making the saved file way too big
 		- so I should manually copy the pools... TPoolAccessor should have a method for copying pool efficiently
 		- PoolFile::copyToFile is still without a progress bar, this is used when loading native .rez files
+
+	- warn the user if he's saving an exported file format and information such as cues and user notes will not be exported (for now)
+		- implement in the derivations from ASoundTranslator
+		- in ClibaudiosoundTranslator, I should probably query the capabilities of a format
+
