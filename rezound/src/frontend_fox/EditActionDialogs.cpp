@@ -138,7 +138,7 @@ CGrowOrSlideSelectionDialog::CGrowOrSlideSelectionDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Grow or Slide Selected Region")
 {
 	void *p=newVertPanel(NULL);
-		addSlider(p,"Amount","s",interpretValue_alterSelection,uninterpretValue_alterSelection,NULL,1.0,1,3600,1,false);
+		addSlider(p,"Amount","s",interpretValue_alterSelection,uninterpretValue_alterSelection,NULL,1.0,1,3600,2,false);
 		setTipText("Amount","Amount to Affect the Selection in Seconds");
 
 		vector<string> items;
