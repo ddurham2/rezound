@@ -647,7 +647,7 @@ public:
 	};
 
 protected:
-	CStereoPhaseMeter() { }
+	CStereoPhaseMeter() : samplingNFrames(0), samplingNChannels(0),samplingLeftChannel(0), samplingRightChannel(0) { }
 
 private:
 	FXPacker *canvasFrame;
