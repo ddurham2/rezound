@@ -318,6 +318,7 @@ CMainWindow::CMainWindow(FXApp* a) :
 				soundList->getHeader()->setPadBottom(0);
 
 				soundList->appendHeader(" #",NULL,25);
+				soundList->appendHeader("M",NULL,20);
 				soundList->appendHeader(_("Name"),NULL,200);
 				soundList->appendHeader(_("Path"),NULL,9999);
 
@@ -388,6 +389,9 @@ void CMainWindow::hide()
 
 void CMainWindow::rebuildSoundWindowList()
 {
+	FXint xpos,ypos;
+	soundList->getPosition(xpos,ypos);
+
 	soundList->clearItems();
 	for(size_t t=0;t<gSoundFileManager->getOpenedCount();t++)
 	{
@@ -399,6 +403,7 @@ void CMainWindow::rebuildSoundWindowList()
 		soundList->appendItem(
 			(
 			istring(t+1,2,false)+"\t"+
+			(win->loadedSound->sound->isModified() ? "*" : "")+"\t"+
 			p.baseName()+"\t"+
 			p.dirName()
 			).c_str(),
@@ -407,6 +412,9 @@ void CMainWindow::rebuildSoundWindowList()
 
 	soundList->forceRefresh();
 
+	soundList->setPosition(xpos,ypos); // scroll to the same position we were at before
+
+	// if it isn't visible make the active sound visible in the sound list
 	CSoundWindow *active=gSoundFileManager->getActiveWindow();
 	if(active!=NULL)
 	{

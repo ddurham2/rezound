@@ -65,6 +65,8 @@ public:
 
 	CMainWindow *getMainWindow() const { return mainWindow; }
 
+	void updateModifiedStatusIndicators();
+
 protected:
 	void createWindow(CLoadedSound *loaded);
 	void destroyWindow(CLoadedSound *loaded);

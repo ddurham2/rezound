@@ -207,3 +207,7 @@ bool CSoundFileManager::isValidLoadedSound(const CLoadedSound *sound) const
 	return false;
 }
 
+void CSoundFileManager::updateModifiedStatusIndicators()
+{
+	mainWindow->rebuildSoundWindowList();
+}

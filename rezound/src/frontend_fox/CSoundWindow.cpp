@@ -429,6 +429,7 @@ void CSoundWindow::updateFromEdit(bool undoing)
 
 	waveView->updateFromEdit(undoing);
 	updateAllStatusInfo();
+	gSoundFileManager->updateModifiedStatusIndicators();
 }
 
 static const string commifyNumber(const string s)
