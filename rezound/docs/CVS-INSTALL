@@ -1,4 +1,5 @@
 
+In addition to what's listed in the INSTALL doc...
 
    The CVS sources do not come with a configure script, but all the requirements to make configure are contained in the sources. 
 
@@ -13,10 +14,13 @@
 
    Then, from the top source directory, run the bootstrap script. This will create the configure script. Now you can follow the instructions in INSTALL for normal build.
 
-   When running bootstrap if aclocal complains that one or more macros are not defined in the library, then it may be necessary to modify or create a dirlist file for aclocal to know where to look for .m4 files
+   When running bootstrap IF aclocal complains that one or more macros are not defined in the library, then it may be necessary to modify or create a dirlist file for aclocal to know where to look for .m4 files
    	- run 'aclocal --print-ac-dir'
 	- then create or edit a file called 'dirlist' in that directory
 	- add a line containing the path to the directory that contains the .m4 file that does have the macro definition for the undefined macro that aclocal complained about
    This gives other paths to the .m4 files that contain any macro definitions that need to be found by aclocal
+
+
+   bison and flex will also be necessary if compiling from CVS
 
 
