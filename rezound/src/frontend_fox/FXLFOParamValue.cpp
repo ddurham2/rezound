@@ -102,7 +102,7 @@ FXLFOParamValue::~FXLFOParamValue()
 
 long FXLFOParamValue::onLFOTypeChange(FXObject *sender,FXSelector sel,void *ptr)
 {
-	if((size_t)(LFOTypeComboBox->getItemData(LFOTypeComboBox->getCurrentItem()))==0)
+	if((size_t)(LFOTypeComboBox->getItemData(LFOTypeComboBox->getCurrentItem()))==3)
 	{ // constant needs only to have an amplitude setting
 		amplitudeSlider->enable();
 		frequencySlider->disable();

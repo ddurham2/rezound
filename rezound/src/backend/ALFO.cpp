@@ -546,7 +546,7 @@ const size_t CLFORegistry::getIndexByName(const string name) const
 	else if(name=="ABS Sine Wave [ 0,1]")
 		return 2;
 	else if(name=="Constant")
-		return 3;
+		return 3; // ??? the frontend relies on this being 3
 	else if(name=="Rising Sawtooth Wave [-1,1]")
 		return 4;
 	else if(name=="Rising Sawtooth Wave [ 0,1]")
@@ -574,7 +574,7 @@ ALFO *CLFORegistry::createLFO(const CLFODescription &desc,const unsigned sampleR
 	case 2:
 		return new CABSSinLFO(desc.freq,desc.phase,sampleRate);
 	case 3:
-		return new CConstantLFO;
+		return new CConstantLFO; // ??? the frontend relies on this being 3
 	case 4:
 		return new CRisingSawtoothLFO(desc.freq,desc.phase,sampleRate);
 	case 5:
