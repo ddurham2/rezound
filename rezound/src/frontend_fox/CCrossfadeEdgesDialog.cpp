@@ -22,6 +22,8 @@
 
 #include "settings.h"
 
+#include "../backend/CActionParameters.h"
+
 CCrossfadeEdgesDialog *gCrossfadeEdgesDialog=NULL;
 
 

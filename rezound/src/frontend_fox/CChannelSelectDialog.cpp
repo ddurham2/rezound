@@ -22,6 +22,9 @@
 
 #include <istring>
 
+#include "../backend/CSound.h"
+
+
 CChannelSelectDialog *gChannelSelectDialog=NULL;
 
 

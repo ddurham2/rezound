@@ -27,7 +27,10 @@
 class CPasteChannelsDialog;
 
 #include "FXModalDialogBox.h"
-#include "../backend/AAction.h"
+
+#include "../backend/AActionDialog.h"
+#include "../backend/CSound_defs.h"
+
 
 extern CPasteChannelsDialog *gPasteChannelsDialog;
 

@@ -20,10 +20,14 @@
 
 #include "CActionButton.h"
 
-#include "CSoundFileManager.h"
-
 #include <stdexcept>
 #include <string>
+
+#include "CSoundFileManager.h"
+
+#include "../backend/CActionParameters.h"
+#include "../backend/AAction.h"
+
 
 FXDEFMAP(CActionButton) CActionButtonMap[]=
 {

@@ -23,8 +23,9 @@
 
 #include "../../../config/common.h"
 
-
 #include "../AAction.h"
+
+#include "../CGraphParamValueNode.h"
 
 class CChangeRateEffect : public AAction
 {

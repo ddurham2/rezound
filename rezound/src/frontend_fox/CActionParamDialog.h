@@ -35,7 +35,7 @@ class CActionParamDialog;
 #include "FXTextParamValue.h"
 #include "FXGraphParamValue.h"
 
-#include "../backend/AAction.h"
+#include "../backend/AActionDialog.h"
 #include "../backend/CGraphParamValueNode.h"
 
 

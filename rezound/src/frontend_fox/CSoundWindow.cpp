@@ -43,6 +43,8 @@ static void pauseTrigger(void *Pthis);
 #include <istring>
 
 #include "../backend/CLoadedSound.h"
+#include "../backend/CSoundPlayerChannel.h"
+#include "../backend/CActionParameters.h"
 
 #include "../backend/Edits/CCueAction.h"
 #include "CCueDialog.h"
@@ -52,7 +54,7 @@ static void pauseTrigger(void *Pthis);
 
 #include "settings.h"
 
-#define DRAW_PLAY_POSITION_TIME 75
+#define DRAW_PLAY_POSITION_TIME 75	// 75 ms
 
 
 FXDEFMAP(CSoundWindow) CSoundWindowMap[]=

@@ -1,12 +1,6 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- split AAction.* into separate files for each class
-		- and go thru every file that includes AAction.h and see if it could avoid including it for one of the split-offs
-		- probably leave AAction and AActionFactory in the same AAction.h
-		- need definiately: CActionParameter.h AActionDialog.h CActionSound.h (and make sure CActionSound.h doesn't include CSound.h)
-		- this should really improve compiling the frontend dialogs speed
-
 	- the clip board that the edit actions use is not set up to allow it to paste and copy from other applications
 		- when/if I want to allow that, I should create a base class clipboard which has the platform specific
 		  implementation that reads from the system clipboard.
@@ -81,6 +75,8 @@
 		- However, the reason I didn't do this right away, was because I thought that someday I might want to stream CActionParameters to disk and be able to recall it in the future to 
 		  to do the action again with the same parameters.  But, the sound, stop and start positions, and doChannels of CActionSound would not be the same later, so I figured I should have one part of the parameters parameters that was fixed (CActionParameters) and one part that changes later (CActionSound)
 		- Now, granted, there may be some parameters to actions within CActionParameters which don't necessarily work later on a different sound, namely any values which indicate positions within the sound or channel numbers within the sound... For these situations, I either should disallow this saving functionality make the parameters more relative to the sound not absolute
+
+	- When moving data to temp pools, I could send the peak chunk data too, and avoid recalculating it except maybe the very edges when/if that data is restored to its original location
 
 	- Truthfully, a good implementation of the action should also adjust the cues if it is change the size of a selection, if a cue is tied to a particular sample, then that cue should go with that sample's new position
 		- reverse would reverse the cues in the selection, changing the rate would adjust their positions, etc.. Most actions wouldn't really have to worry about it, but it would seem that it should follow that the cues should change as the audio changes
@@ -170,4 +166,12 @@
 	- Need to make all actions have the ability to blend the edges of the affected audio with the existing audio
 		- let there be a parameter which says in milliseconds how long the blend takes
 		- if not every action, at least paste for editing
+
+	- split AAction.* into separate files for each class
+		- and go thru every file that includes AAction.h and see if it could avoid including it for one of the split-offs
+		- probably leave AAction and AActionFactory in the same AAction.h
+		- need definiately: CActionParameter.h AActionDialog.h CActionSound.h (and make sure CActionSound.h doesn't include CSound.h)
+		- this should really improve compiling the frontend dialogs speed
+		- ??? however, it looks (after doing it) that CActionParameters and CActionSound would pair well together
+			- they're almost the same thing anyway... maybe I'll combine them later??? it would seem that I could still stream CActionParameter data to and from disk, only that some of the information to the streamFromDisk method would have to be supplied, like the sound to apply the action to because it shouldn't stream
 

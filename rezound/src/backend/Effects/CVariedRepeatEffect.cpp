@@ -2,8 +2,12 @@
 
 #include <stdexcept>
 
+//#include "../CActionSound.h"
+#include "../CActionParameters.h"
+
 #include "../unit_conv.h"
 #include "../ALFO.h"
+
 
 CVariedRepeatEffect::CVariedRepeatEffect(const CActionSound &actionSound,float _LFOFreq,float _LFOPhase,float _time) :
 	AAction(actionSound),

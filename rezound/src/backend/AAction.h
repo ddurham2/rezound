@@ -23,9 +23,6 @@
 
 #include "../../config/common.h"
 
-class CActionSound;
-class CActionParameters;
-class AActionDialog;
 class AActionFactory;
 class AAction;
 
@@ -34,118 +31,20 @@ class AAction;
 #include <string>
 #include <vector>
 
-#include "CSoundPlayerChannel.h"
-#include "CSound.h"
+#include "CActionSound.h"
 #include "AStatusComm.h"
 
 class CLoadedSound;
+class CSoundPlayerChannel;
+class AActionDialog;
+
+class CActionParameters;
+
+
+#include "CSound.h" // really only necesary because of CSound::RCue
 
 typedef TPoolAccesser<sample_t,CSound::PoolFile_t > CRezClipboardPoolAccesser;
 
-/*
-    This class specifies which sound, which channels in that sound
-    and from where and to where to do the action to that sound.
-*/
-class CActionSound
-{
-public:
-	CSound *sound;
-	bool doChannel[MAX_CHANNELS];
-	bool doCrossfadeEdges;
-
-	// the start and stop data-members are used to set the
-	// selectStart and selectStop positions after doing the action
-	mutable sample_pos_t start,stop;
-
-	// default method of doing an action (all channels, apply just to selection)
-	CActionSound(CSoundPlayerChannel *channel,bool doCrossfadeEdges);
-	CActionSound(const CActionSound &src);
-
-	unsigned countChannels() const;
-	void allChannels();
-	void noChannels();
-
-	sample_pos_t selectionLength() const;
-	void selectAll() const;
-	void selectNone() const;
-
-	CActionSound &operator=(const CActionSound &rhs);
-};
-
-
-/*
- * One of these is always the input to an action
- * Could could be streamed to disk to repeat actions later with the same parameters 
- */
-#include "CGraphParamValueNode.h"
-class CActionParameters
-{
-public:
-	CActionParameters();
-	CActionParameters(const CActionParameters &src);
-	virtual ~CActionParameters();
-
-	void clear();
-
-	unsigned getParameterCount() const;
-
-	// I would avoid implementing all these different types by using a template method
-	// but I need to be able to copy construct the values in the copy constructor,
-	// so I don't think I can do this
-
-	void addBoolParameter(const bool v);
-	void addStringParameter(const string v);
-	void addUnsignedParameter(const unsigned v);
-	void addSamplePosParameter(const sample_pos_t v);
-	void addDoubleParameter(const double v);
-	void addGraphParameter(const CGraphParamValueNodeList &v);
-
-	const bool getBoolParameter(const unsigned i) const;
-	const string getStringParameter(const unsigned i) const;
-	const unsigned getUnsignedParameter(const unsigned i) const;
-	const sample_pos_t getSamplePosParameter(const unsigned i) const;
-	const double getDoubleParameter(const unsigned i) const;
-	const CGraphParamValueNodeList getGraphParameter(const unsigned i) const;
-
-	void setBoolParameter(const unsigned i,const bool v) const;
-	void setStringParameter(const unsigned i,const string v) const;
-	void setUnsignedParameter(const unsigned i,const unsigned v) const;
-	void setSamplePosParameter(const unsigned i,const sample_pos_t v) const;
-	void setDoubleParameter(const unsigned i,const double v) const;
-	void setGraphParameter(const unsigned i,const CGraphParamValueNodeList &v) const;
-
-private:
-	enum ParameterTypes { ptBool,ptString,ptUnsigned,ptSamplePos,ptDouble,ptGraph };
-
-	// these two vectors are parallel
-	vector<ParameterTypes> parameterTypes;
-	vector<void *> parameters;
-
-};
-
-/*
- * Any dialog shown to the user for an action to be performed should derived from 
- * this class so that the backend can show the dialog independant of the frontend
- * implementation.
- *
- * The show method should return true if the action is to be performed or false if 
- * the users press say a cancel button, it should also fill actionParameters with
- * the values for the action to use.  The order and type of those parameters should 
- * be agreed upon by the action implementation and the dialog implementation.
- */
-class AActionDialog
-{
-public:
-	virtual bool show(CActionSound *actionSound,CActionParameters *actionParameters)=0;
-
-	// can be implemented to get data from the dialog which does not fit the normal model of passing parameters to actions
-	// 	namely, right now, the matrix of bools that indicates how to paste data is obtained through this method
-	// 	I wouldn't need to necessarily use this method if actionParameters had perhaps a 2dim bool array type or something
-	virtual void *getUserData() { return(NULL); }
-
-	// performAction sets this to true if a dialog was shown else false
-	bool wasShown;
-};
 
 
 /*

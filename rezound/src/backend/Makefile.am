@@ -40,6 +40,9 @@ noinst_HEADERS= \
 	   settings.h \
 	   unit_conv.h \
 	   AAction.h \
+	   CActionParameters.h \
+	   AActionDialog.h \
+	   CActionSound.h \
 	   ALFO.h \
 	   CSound.h \
 	   ASoundPlayer.h \
@@ -66,6 +69,9 @@ noinst_HEADERS= \
 noinst_LTLIBRARIES=libbackend.la
 libbackend_la_SOURCES= \
 			AAction.cpp  \
+			CActionParameters.cpp  \
+			AActionDialog.cpp  \
+			CActionSound.cpp  \
 			CSound.cpp  \
 			ASoundFileManager.cpp \
 			ASoundPlayer.cpp  \

@@ -20,6 +20,9 @@
 
 #include "CNoiseGateAction.h"
 
+#include "../CActionSound.h"
+#include "../CActionParameters.h"
+
 #include "../DSPBlocks.h"
 #include "../unit_conv.h"
 

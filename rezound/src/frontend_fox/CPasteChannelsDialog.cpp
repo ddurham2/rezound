@@ -24,6 +24,10 @@
 
 #include <istring>
 
+#include "../backend/AAction.h"
+#include "../backend/CActionSound.h"
+#include "../backend/CSound.h"
+
 CPasteChannelsDialog *gPasteChannelsDialog=NULL;
 
 

@@ -24,8 +24,12 @@
 
 #include <istring>
 
+#include "../CActionParameters.h"
+#include "../CActionSound.h"
+
 #include "../DSPBlocks.h"
 #include "../unit_conv.h"
+
 
 
 /*TODO
@@ -39,7 +43,7 @@
 
 
 // ??? I should make these vectors instead of arrays
-CDelayEffect::CDelayEffect(const CActionSound actionSound,size_t _tapCount,float *_tapTimes,float *_tapGains,float *_tapFeedbacks) :
+CDelayEffect::CDelayEffect(const CActionSound &actionSound,size_t _tapCount,float *_tapTimes,float *_tapGains,float *_tapFeedbacks) :
 	AAction(actionSound),
 
 	tapCount(_tapCount),

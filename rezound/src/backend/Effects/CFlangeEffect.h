@@ -29,7 +29,7 @@
 class CFlangeEffect : public AAction
 {
 public:
-	CFlangeEffect(const CActionSound actionSound,float delayTime,float wetGain,float dryGain,float LFOFreq,float LFODepth,float LFOPhase,float feedback);
+	CFlangeEffect(const CActionSound &actionSound,float delayTime,float wetGain,float dryGain,float LFOFreq,float LFODepth,float LFOPhase,float feedback);
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);

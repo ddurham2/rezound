@@ -19,11 +19,18 @@
  */
 
 #include "CActionParamDialog.h"
-#include "../backend/AStatusComm.h"
+
+#include <stdexcept>
+
+#include <istring>
 
 #include <CNestedDataFile/CNestedDataFile.h>
 
+#include "CStatusComm.h"
 #include "settings.h"
+
+#include "../backend/CActionParameters.h"
+#include "../backend/CActionSound.h"
 
 
 FXDEFMAP(CActionParamDialog) CActionParamDialogMap[]=

@@ -25,6 +25,8 @@
 
 #include <istring>
 
+#include "../AActionDialog.h"
+
 
 /* TODO
  * Still have to implement several of the paste methods

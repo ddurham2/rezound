@@ -24,6 +24,9 @@
 
 #include <stdexcept>
 
+#include "../CActionSound.h"
+#include "../CActionParameters.h"
+
 /* TODO:
  * - There is still just the slightest clicky stuff if I do a pure sinewave and also adjust the rate by drawing a sine wave by hand in the advanced dialog
  *   	- I'm guessing it's caused by discontinuity between segments... When I read ahead by one sample to do the interpolation, that sample I'm reading ahead should be according to the next segment's rate if I'm doing the last sample of the current segment

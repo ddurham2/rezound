@@ -31,6 +31,7 @@
 
 #include "../backend/CLoadedSound.h"
 #include "../backend/Edits/CCueAction.h"
+#include "../backend/CActionParameters.h"
 
 #include "CCueDialog.h" // ??? this is going to have to rename to CCueDialog.h
 

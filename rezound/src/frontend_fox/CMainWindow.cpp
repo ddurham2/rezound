@@ -34,6 +34,8 @@
 #include "../backend/Effects/EffectActions.h"
 #include "../backend/Remaster/RemasterActions.h"
 
+#include "../backend/CSoundPlayerChannel.h"
+
 #include "CEditToolbar.h"
 
 #include "CUserNotesDialog.h"

@@ -22,6 +22,12 @@
 
 #include <istring>
 
+#include "CStatusComm.h"
+
+#include "../backend/CActionParameters.h"
+#include "../backend/CActionSound.h"
+#include "../backend/CSound.h"
+
 CCueDialog *gCueDialog=NULL;
 
 

@@ -26,7 +26,8 @@
 class CChannelSelectDialog;
 
 #include "FXModalDialogBox.h"
-#include "../backend/AAction.h"
+#include "../backend/AActionDialog.h"
+#include "../backend/CActionSound.h"
 
 extern CChannelSelectDialog *gChannelSelectDialog;
 

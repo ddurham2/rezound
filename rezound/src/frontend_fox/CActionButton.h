@@ -37,7 +37,7 @@
  * 
  */
 
-#include "../backend/AAction.h"
+class AActionFactory;
 
 class CActionButton : public FXButton
 {

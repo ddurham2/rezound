@@ -28,7 +28,10 @@ class CCueDialog;
 
 #include "FXModalDialogBox.h"
 
-#include "../backend/AAction.h"
+#include <string>
+
+#include "../backend/AActionDialog.h"
+#include "../backend/CSound_defs.h"
 
 extern CCueDialog *gCueDialog;
 

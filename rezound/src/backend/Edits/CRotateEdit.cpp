@@ -20,6 +20,8 @@
 
 #include "CRotateEdit.h"
 
+#include "../CActionParameters.h"
+
 CRotateEdit::CRotateEdit(const CActionSound actionSound,const RotateTypes _rotateType,const double _amount) :
 	AAction(actionSound),
 	rotateType(_rotateType),

@@ -30,7 +30,7 @@ class CDelayEffect : public AAction
 {
 public:
 						                     // in millisecs
-	CDelayEffect(const CActionSound actionSound,size_t _tapCount,float *tapTimes,float *tapGains,float *tapFeedbacks);
+	CDelayEffect(const CActionSound &actionSound,size_t _tapCount,float *tapTimes,float *tapGains,float *tapFeedbacks);
 	virtual ~CDelayEffect();
 
 protected:

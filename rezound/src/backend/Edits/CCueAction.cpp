@@ -20,6 +20,8 @@
 
 #include "CCueAction.h"
 
+#include "../CActionParameters.h"
+
 
 
 // -----------------------------------

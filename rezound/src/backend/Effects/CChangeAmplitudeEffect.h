@@ -23,13 +23,13 @@
 
 #include "../../../config/common.h"
 
-
 #include "../AAction.h"
+#include "../CGraphParamValueNode.h"
 
 class CChangeAmplitudeEffect : public AAction
 {
 public:
-	CChangeAmplitudeEffect(const CActionSound actionSound,const CGraphParamValueNodeList &volumeCurve);
+	CChangeAmplitudeEffect(const CActionSound &actionSound,const CGraphParamValueNodeList &volumeCurve);
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);

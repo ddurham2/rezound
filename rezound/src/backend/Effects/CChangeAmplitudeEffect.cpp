@@ -22,7 +22,10 @@
 
 #include <stdexcept>
 
-CChangeAmplitudeEffect::CChangeAmplitudeEffect(const CActionSound actionSound,const CGraphParamValueNodeList &_volumeCurve) :
+#include "../CActionSound.h"
+#include "../CActionParameters.h"
+
+CChangeAmplitudeEffect::CChangeAmplitudeEffect(const CActionSound &actionSound,const CGraphParamValueNodeList &_volumeCurve) :
 	AAction(actionSound),
 	volumeCurve(_volumeCurve)
 {

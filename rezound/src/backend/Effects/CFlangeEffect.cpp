@@ -25,8 +25,11 @@
 #include "../DSPBlocks.h"
 #include "../unit_conv.h"
 
+#include "../CActionParameters.h"
+#include "../CActionSound.h"
+
 // LFO Speed is in Hertz, LFO Depth is in ?,LFO Phase is in degrees, Delay is in milliseconds
-CFlangeEffect::CFlangeEffect(const CActionSound actionSound,float _delayTime,float _wetGain,float _dryGain,float _LFOFreq,float _LFODepth,float _LFOPhase,float _feedback) :
+CFlangeEffect::CFlangeEffect(const CActionSound &actionSound,float _delayTime,float _wetGain,float _dryGain,float _LFOFreq,float _LFODepth,float _LFOPhase,float _feedback) :
 	AAction(actionSound),
 
 	// ??? perhaps I should do these conversions down in the code because I might someday be able to stream the action to disk for later use and the sampleRate would not necessarily be the same
