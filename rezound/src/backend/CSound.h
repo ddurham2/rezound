@@ -237,8 +237,9 @@ public:
 	 * - mixes audio from src onto channel 'channel' starting at 'where' in this sound for 'length' samples (in this sound's sampleRate)
 	 * - srcSampleRate specifies what sample rate src is in so that when it reads from src it will convert to this sound's sample rate
 	 * - mixMethod specifies how to mix the data
+	 * - if srcFit is no sftNone then src.getSize() samples from source will be squeezed into the [where,where+length) region in this sound using the specifed method to fit
 	 */
-	void mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser src,sample_pos_t srcWhere,unsigned srcSampleRate,sample_pos_t length,MixMethods mixMethod,bool doInvalidatePeakData=true,bool showProgressBar=true);
+	void mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser src,sample_pos_t srcWhere,unsigned srcSampleRate,sample_pos_t length,MixMethods mixMethod,SourceFitTypes fitSrc,bool doInvalidatePeakData,bool showProgressBar);
 
 
 	const string getTimePosition(sample_pos_t samplePos,int secondsDecimalPlaces=3,bool includeUnits=true) const;

@@ -1053,8 +1053,9 @@ void CSound::silenceSound(unsigned channel,sample_pos_t where,sample_pos_t lengt
 }
 
 #include "DSP/TSoundStretcher.h"
+#include <stdio.h> // ??? just for test printfs
 
-void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser src,sample_pos_t srcWhere,unsigned srcSampleRate,sample_pos_t length,MixMethods mixMethod,bool doInvalidatePeakData,bool showProgressBar)
+void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser src,sample_pos_t srcWhere,unsigned srcSampleRate,sample_pos_t length,MixMethods mixMethod,SourceFitTypes fitSrc,bool doInvalidatePeakData,bool showProgressBar)
 {
 	ASSERT_SIZE_LOCK
 
@@ -1068,17 +1069,19 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 	const sample_pos_t destOffset=where;
 	const unsigned destSampleRate=getSampleRate();
 
+	const sample_pos_t srcLength=(fitSrc==sftNone) ? length : (src.getSize()-srcWhere) ;
+
 	switch(mixMethod)
 	{
 	case mmOverwrite:
-		if(srcSampleRate==destSampleRate)
+		if(srcSampleRate==destSampleRate && fitSrc==sftNone)
 		{
 			// ??? need a progress bar
 			dest.copyData(destOffset,src,srcWhere,length);
 		}
 		else
 		{ // do sample rate conversion
-			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)length/destSampleRate*srcSampleRate),length);
+			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)srcLength/destSampleRate*srcSampleRate),length);
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
@@ -1099,7 +1102,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 		break;
 
 	case mmAdd:
-		if(srcSampleRate==destSampleRate)
+		if(srcSampleRate==destSampleRate && fitSrc==sftNone)
 		{
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
@@ -1120,7 +1123,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 		} 
 		else 
 		{ // do sample rate conversion
-			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)length/destSampleRate*srcSampleRate),length);
+			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)srcLength/destSampleRate*srcSampleRate),length);
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
@@ -1141,7 +1144,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 		break;
 
 	case mmMultiply:
-		if(srcSampleRate==destSampleRate)
+		if(srcSampleRate==destSampleRate && fitSrc==sftNone)
 		{
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
@@ -1161,7 +1164,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 		}
 		else
 		{ // do sample rate conversion
-			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)length/destSampleRate*srcSampleRate),length);
+			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)srcLength/destSampleRate*srcSampleRate),length);
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
@@ -1182,7 +1185,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 		break;
 
 	case mmAverage:
-		if(srcSampleRate==destSampleRate)
+		if(srcSampleRate==destSampleRate && fitSrc==sftNone)
 		{
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
@@ -1202,7 +1205,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 		}
 		else
 		{ // do sample rate conversion
-			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)length/destSampleRate*srcSampleRate),length);
+			TSoundStretcher<CRezPoolAccesser> srcStretcher(src,srcWhere,(sample_pos_t)((sample_fpos_t)srcLength/destSampleRate*srcSampleRate),length);
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
