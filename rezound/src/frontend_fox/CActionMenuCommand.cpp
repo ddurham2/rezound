@@ -21,7 +21,6 @@
 #include "CActionMenuCommand.h"
 
 #include <stdexcept>
-#include <string>
 
 #include "CSoundFileManager.h"
 
@@ -49,7 +48,7 @@ FXIMPLEMENT(CActionMenuCommand,FXMenuCommand,CActionMenuCommandMap,ARRAYNUMBER(C
 CActionMenuCommand::CActionMenuCommand(AActionFactory *_actionFactory,FXComposite* p, const FXString& accelKeyText, FXIcon* ic, FXuint opts) :
 	FXMenuCommand(
 		p,
-		(_actionFactory->getName()+(_actionFactory->hasDialog() ? "..." : "")+"\t"+accelKeyText.text()).c_str(),
+		(string(gettext(_actionFactory->getName().c_str()))+(_actionFactory->hasDialog() ? "..." : "")+"\t"+accelKeyText.text()).c_str(),
 		(ic==NULL ? FOXIcons->normal_action_buff : ic),
 		this,
 		ID_HOTKEY,
@@ -67,7 +66,7 @@ CActionMenuCommand::CActionMenuCommand(AActionFactory *_actionFactory,FXComposit
 CActionMenuCommand::CActionMenuCommand(FXComposite *p,const CActionMenuCommand &src) :
 	FXMenuCommand(
 		p,
-		(src.actionFactory->getName()+(src.actionFactory->hasDialog() ? "..." : "")).c_str(),
+		src.getText(),
 		src.getIcon(),
 		this,
 		src.getSelector(),
@@ -81,6 +80,11 @@ CActionMenuCommand::CActionMenuCommand(FXComposite *p,const CActionMenuCommand &
 
 CActionMenuCommand::~CActionMenuCommand()
 {
+}
+
+const string CActionMenuCommand::getUntranslatedText() const
+{
+	return actionFactory->getName()+(actionFactory->hasDialog() ? "..." : "");
 }
 
 long CActionMenuCommand::onMouseClick(FXObject *sender,FXSelector sel,void *ptr)

@@ -38,6 +38,8 @@
  * 
  */
 
+#include <string>
+
 class AActionFactory;
 
 class CActionMenuCommand : public FXMenuCommand
@@ -48,6 +50,8 @@ public:
 	CActionMenuCommand(FXComposite *p,const CActionMenuCommand &src);
 
 	virtual ~CActionMenuCommand();
+
+	const string getUntranslatedText() const;
 
 	long onMouseClick(FXObject *sender,FXSelector sel,void *ptr);
 	long onKeyClick(FXObject *sender,FXSelector sel,void *ptr);

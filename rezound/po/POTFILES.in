@@ -284,4 +284,3 @@ src/frontend_fox/utils.h
 src/frontend_fox/FXDiskEntityParamValue.h
 src/frontend_fox/custom_cursors.h
 src/misc/CNestedDataFile/cfg.y
-src/misc/CNestedDataFile/cfg.l

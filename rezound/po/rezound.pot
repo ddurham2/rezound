@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-04-04 15:27-0600\n"
+"POT-Creation-Date: 2003-05-28 00:30-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,13 +15,13 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/backend/Edits/CSaveAsMultipleFilesAction.cpp:242
+#: src/backend/Edits/CSaveAsMultipleFilesAction.cpp:239
 #: src/frontend_fox/EditActionDialogs.cpp:110
 msgid "Save As Multiple Files"
 msgstr ""
 
 #: src/backend/Edits/CSaveSelectionAsAction.cpp:61
-msgid "Save Selection As"
+msgid "Save Selection As..."
 msgstr ""
 
 #: src/frontend_fox/CCrossfadeEdgesDialog.cpp:31
@@ -76,49 +76,57 @@ msgstr ""
 msgid "Author"
 msgstr ""
 
+#: src/frontend_fox/CAboutDialog.cpp:96
+msgid "Original Autoconfiscation"
+msgstr ""
+
 #: src/frontend_fox/CAboutDialog.cpp:97
-msgid "Artistic Consultant"
+msgid "Additional Programming"
 msgstr ""
 
 #: src/frontend_fox/CAboutDialog.cpp:98
-msgid "Home Page"
+msgid "Artistic Consultant"
 msgstr ""
 
 #: src/frontend_fox/CAboutDialog.cpp:99
-msgid "Mailing List"
+msgid "Home Page"
 msgstr ""
 
 #: src/frontend_fox/CAboutDialog.cpp:100
-msgid "Bug Reports"
+msgid "Mailing List"
 msgstr ""
 
 #: src/frontend_fox/CAboutDialog.cpp:101
-msgid "Support Requests"
+msgid "Bug Reports"
 msgstr ""
 
 #: src/frontend_fox/CAboutDialog.cpp:102
+msgid "Support Requests"
+msgstr ""
+
+#: src/frontend_fox/CAboutDialog.cpp:103
 msgid "Feature Requests"
 msgstr ""
 
-#: src/frontend_fox/CAboutDialog.cpp:104
+#: src/frontend_fox/CAboutDialog.cpp:105
 msgid "Also Please Read"
 msgstr ""
 
-#: src/frontend_fox/CAboutDialog.cpp:107
+#: src/frontend_fox/CAboutDialog.cpp:108
 msgid "Thanks To"
 msgstr ""
 
-#: src/frontend_fox/CAboutDialog.cpp:111 src/frontend_fox/CAboutDialog.cpp:112
-#: src/frontend_fox/CAboutDialog.cpp:113 src/frontend_fox/CAboutDialog.cpp:114
-#: src/frontend_fox/CAboutDialog.cpp:115
+#: src/frontend_fox/CAboutDialog.cpp:112 src/frontend_fox/CAboutDialog.cpp:113
+#: src/frontend_fox/CAboutDialog.cpp:114 src/frontend_fox/CAboutDialog.cpp:115
+#: src/frontend_fox/CAboutDialog.cpp:116
 msgid "Bug Finding"
 msgstr ""
 
-#: src/frontend_fox/CAboutDialog.cpp:116
+#: src/frontend_fox/CAboutDialog.cpp:117
 msgid "Feature Suggestions"
 msgstr ""
 
-#: src/frontend_fox/CAboutDialog.cpp:127 src/frontend_fox/CMainWindow.cpp:702
+#: src/frontend_fox/CAboutDialog.cpp:128 src/frontend_fox/CMainWindow.cpp:742
 msgid "&Close"
 msgstr ""
 
@@ -137,13 +145,13 @@ msgstr ""
 
 #: src/frontend_fox/FilterActionDialogs.cpp:55
 #: src/frontend_fox/EffectActionDialogs.cpp:168
-#: src/frontend_fox/RemasterActionDialogs.cpp:222
+#: src/frontend_fox/RemasterActionDialogs.cpp:224
 msgid "Input Gain"
 msgstr ""
 
 #: src/frontend_fox/FilterActionDialogs.cpp:56
 #: src/frontend_fox/EffectActionDialogs.cpp:171
-#: src/frontend_fox/RemasterActionDialogs.cpp:223
+#: src/frontend_fox/RemasterActionDialogs.cpp:225
 msgid "Output Gain"
 msgstr ""
 
@@ -440,14 +448,14 @@ msgid "Swap Channels A & B"
 msgstr ""
 
 #: src/frontend_fox/EditActionDialogs.cpp:57
-#: src/frontend_fox/RemasterActionDialogs.cpp:46
-#: src/frontend_fox/RemasterActionDialogs.cpp:100
+#: src/frontend_fox/RemasterActionDialogs.cpp:48
+#: src/frontend_fox/RemasterActionDialogs.cpp:102
 msgid "Channel A"
 msgstr ""
 
 #: src/frontend_fox/EditActionDialogs.cpp:58
-#: src/frontend_fox/RemasterActionDialogs.cpp:47
-#: src/frontend_fox/RemasterActionDialogs.cpp:101
+#: src/frontend_fox/RemasterActionDialogs.cpp:49
+#: src/frontend_fox/RemasterActionDialogs.cpp:103
 msgid "Channel B"
 msgstr ""
 
@@ -561,132 +569,132 @@ msgstr ""
 msgid "How"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:40
+#: src/frontend_fox/RemasterActionDialogs.cpp:42
 msgid "Simple Balance Change"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:50
-#: src/frontend_fox/RemasterActionDialogs.cpp:103
+#: src/frontend_fox/RemasterActionDialogs.cpp:52
+#: src/frontend_fox/RemasterActionDialogs.cpp:105
 msgid "Balance"
-msgstr ""
-
-#: src/frontend_fox/RemasterActionDialogs.cpp:53
-#: src/frontend_fox/RemasterActionDialogs.cpp:106
-msgid "Strict Balance"
-msgstr ""
-
-#: src/frontend_fox/RemasterActionDialogs.cpp:54
-#: src/frontend_fox/RemasterActionDialogs.cpp:107
-msgid "1x Pan"
 msgstr ""
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:55
 #: src/frontend_fox/RemasterActionDialogs.cpp:108
-msgid "2x Pan"
+msgid "Strict Balance"
 msgstr ""
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:56
 #: src/frontend_fox/RemasterActionDialogs.cpp:109
+msgid "1x Pan"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:57
+#: src/frontend_fox/RemasterActionDialogs.cpp:110
+msgid "2x Pan"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:58
+#: src/frontend_fox/RemasterActionDialogs.cpp:111
 msgid "Balance Type"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:78
-#: src/frontend_fox/RemasterActionDialogs.cpp:124
-#: src/frontend_fox/RemasterActionDialogs.cpp:153
+#: src/frontend_fox/RemasterActionDialogs.cpp:80
+#: src/frontend_fox/RemasterActionDialogs.cpp:126
+#: src/frontend_fox/RemasterActionDialogs.cpp:155
 #: src/frontend_fox/CChannelSelectDialog.cpp:65
 msgid "Channel "
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:94
+#: src/frontend_fox/RemasterActionDialogs.cpp:96
 msgid "Curved Balance Change"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:103
+#: src/frontend_fox/RemasterActionDialogs.cpp:105
 msgid "Balance Curve"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:148
+#: src/frontend_fox/RemasterActionDialogs.cpp:150
 msgid "Monoize"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:156
+#: src/frontend_fox/RemasterActionDialogs.cpp:158
 msgid "Remove All But One Channel"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:157
+#: src/frontend_fox/RemasterActionDialogs.cpp:159
 msgid "Make All Channels The Same"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:158
+#: src/frontend_fox/RemasterActionDialogs.cpp:160
 msgid "Method"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:181
+#: src/frontend_fox/RemasterActionDialogs.cpp:183
 msgid "Noise Gate"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:184
-#: src/frontend_fox/RemasterActionDialogs.cpp:217
+#: src/frontend_fox/RemasterActionDialogs.cpp:186
+#: src/frontend_fox/RemasterActionDialogs.cpp:219
 msgid "Window Time"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:185
-#: src/frontend_fox/RemasterActionDialogs.cpp:218
+#: src/frontend_fox/RemasterActionDialogs.cpp:187
+#: src/frontend_fox/RemasterActionDialogs.cpp:220
 msgid "Threshold"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:186
+#: src/frontend_fox/RemasterActionDialogs.cpp:188
 msgid "Gain Attack Time"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:187
+#: src/frontend_fox/RemasterActionDialogs.cpp:189
 msgid "Gain Release Time"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:213
+#: src/frontend_fox/RemasterActionDialogs.cpp:215
 msgid "Compressor"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:219
+#: src/frontend_fox/RemasterActionDialogs.cpp:221
 msgid "Ratio"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:220
+#: src/frontend_fox/RemasterActionDialogs.cpp:222
 msgid "Attack Time"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:221
+#: src/frontend_fox/RemasterActionDialogs.cpp:223
 msgid "Release Time"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:225
-#: src/frontend_fox/RemasterActionDialogs.cpp:248
+#: src/frontend_fox/RemasterActionDialogs.cpp:227
+#: src/frontend_fox/RemasterActionDialogs.cpp:250
 msgid "Lock Channels"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:225
+#: src/frontend_fox/RemasterActionDialogs.cpp:227
 msgid ""
 "This Toggles That Compression Should be Applied to Both Channels when Either "
 "Channel Needs Compression"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:241
+#: src/frontend_fox/RemasterActionDialogs.cpp:243
 msgid "Normalize"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:245
+#: src/frontend_fox/RemasterActionDialogs.cpp:247
 msgid "Normalization Level"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:246
+#: src/frontend_fox/RemasterActionDialogs.cpp:248
 msgid "Region Count"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:255
+#: src/frontend_fox/RemasterActionDialogs.cpp:257
 msgid "Resample"
 msgstr ""
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:268
+#: src/frontend_fox/RemasterActionDialogs.cpp:270
 msgid "New Sample Rate"
 msgstr ""
 
@@ -706,305 +714,277 @@ msgstr ""
 msgid "Clear"
 msgstr ""
 
-#: src/frontend_fox/CFrontendHooks.cpp:58
+#: src/frontend_fox/CFrontendHooks.cpp:60
 msgid "Select Directory"
 msgstr ""
 
-#: src/frontend_fox/CFrontendHooks.cpp:78
+#: src/frontend_fox/CFrontendHooks.cpp:81
 msgid "Open File"
 msgstr ""
 
-#: src/frontend_fox/CFrontendHooks.cpp:86
+#: src/frontend_fox/CFrontendHooks.cpp:89
 msgid "Open as Raw"
 msgstr ""
 
-#: src/frontend_fox/CFrontendHooks.cpp:91
+#: src/frontend_fox/CFrontendHooks.cpp:94
 msgid "Save File"
 msgstr ""
 
-#: src/frontend_fox/CFrontendHooks.cpp:99
+#: src/frontend_fox/CFrontendHooks.cpp:102
 msgid "Save as Raw"
 msgstr ""
 
-#: src/frontend_fox/CFrontendHooks.cpp:163
+#: src/frontend_fox/CFrontendHooks.cpp:166
 msgid "All Supported Types"
 msgstr ""
 
-#: src/frontend_fox/CFrontendHooks.cpp:163
+#: src/frontend_fox/CFrontendHooks.cpp:166
 msgid "All Files"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:194 src/frontend_fox/CMainWindow.cpp:738
+#: src/frontend_fox/CMainWindow.cpp:197 src/frontend_fox/CMainWindow.cpp:769
 msgid "Play All Once"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:195 src/frontend_fox/CMainWindow.cpp:740
+#: src/frontend_fox/CMainWindow.cpp:198 src/frontend_fox/CMainWindow.cpp:771
 msgid "Play Selection Once"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:196
+#: src/frontend_fox/CMainWindow.cpp:199
 msgid "Play Selection Looped and Play a Gap Before Repeating"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:197 src/frontend_fox/CMainWindow.cpp:739
+#: src/frontend_fox/CMainWindow.cpp:200 src/frontend_fox/CMainWindow.cpp:770
 msgid "Play All Looped"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:198 src/frontend_fox/CMainWindow.cpp:741
+#: src/frontend_fox/CMainWindow.cpp:201 src/frontend_fox/CMainWindow.cpp:772
 msgid "Play Selection Looped"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:199
+#: src/frontend_fox/CMainWindow.cpp:202
 msgid "Play Selection Looped but Skip Most of the Middle"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:201 src/frontend_fox/CMainWindow.cpp:744
+#: src/frontend_fox/CMainWindow.cpp:204 src/frontend_fox/CMainWindow.cpp:775
 msgid "Stop"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:202 src/frontend_fox/CMainWindow.cpp:745
+#: src/frontend_fox/CMainWindow.cpp:205 src/frontend_fox/CMainWindow.cpp:776
 msgid "Pause"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:204 src/frontend_fox/CMainWindow.cpp:737
+#: src/frontend_fox/CMainWindow.cpp:207 src/frontend_fox/CMainWindow.cpp:768
 msgid "Record"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:206 src/frontend_fox/CMainWindow.cpp:746
+#: src/frontend_fox/CMainWindow.cpp:209 src/frontend_fox/CMainWindow.cpp:777
 msgid "Jump to Beginning"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:207
+#: src/frontend_fox/CMainWindow.cpp:210
 msgid "Jump to Start Position"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:209 src/frontend_fox/CMainWindow.cpp:748
+#: src/frontend_fox/CMainWindow.cpp:212 src/frontend_fox/CMainWindow.cpp:779
 msgid "Jump to Previous Cue"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:210 src/frontend_fox/CMainWindow.cpp:749
+#: src/frontend_fox/CMainWindow.cpp:213 src/frontend_fox/CMainWindow.cpp:780
 msgid "Jump to Next Cue"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:224
+#: src/frontend_fox/CMainWindow.cpp:227
 msgid ""
 "Shuttle Seek While Playing\n"
 "(right-click to return to middle)"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:227
+#: src/frontend_fox/CMainWindow.cpp:230
 msgid "free"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:227
+#: src/frontend_fox/CMainWindow.cpp:230
 msgid "spring"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:228
+#: src/frontend_fox/CMainWindow.cpp:231
 msgid "Set the Shuttle Wheel to Spring Back to the Middle or Not"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:232
+#: src/frontend_fox/CMainWindow.cpp:235
 msgid "Set the Maximum Rate Change of the Shuttle Wheel"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:240
+#: src/frontend_fox/CMainWindow.cpp:243
 msgid "Follow Play Position"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:242
+#: src/frontend_fox/CMainWindow.cpp:245
 msgid "Clipping Warning"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:247
+#: src/frontend_fox/CMainWindow.cpp:250
 msgid ""
 "After Most Actions a Crossfade can be Performed at the Start and Stop \n"
 "Positions to Give a Smoother Transition in to and out of the Modified "
 "Selection"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:248
+#: src/frontend_fox/CMainWindow.cpp:251
 msgid "No Crossfade"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:249
+#: src/frontend_fox/CMainWindow.cpp:252
 msgid "Crossfade Inner Edges"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:250
+#: src/frontend_fox/CMainWindow.cpp:253
 msgid "Crossfade Outer Edges"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:252
+#: src/frontend_fox/CMainWindow.cpp:255
 msgid "Change Crossfade Times"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:283
+#: src/frontend_fox/CMainWindow.cpp:286
 msgid "Name"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:284
+#: src/frontend_fox/CMainWindow.cpp:287
 msgid "Path"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:694
-msgid "&File"
-msgstr ""
-
-#: src/frontend_fox/CMainWindow.cpp:695
+#: src/frontend_fox/CMainWindow.cpp:735
 msgid "&New"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:696
+#: src/frontend_fox/CMainWindow.cpp:736
 msgid "&Open"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:697
+#: src/frontend_fox/CMainWindow.cpp:737
 msgid "&Reopen"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:698
+#: src/frontend_fox/CMainWindow.cpp:738
 msgid "&Save"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:699
+#: src/frontend_fox/CMainWindow.cpp:739
 msgid "Save &As"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:703
+#: src/frontend_fox/CMainWindow.cpp:743
 msgid "Re&vert"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:706
+#: src/frontend_fox/CMainWindow.cpp:745
 msgid "User No&tes"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:709
+#: src/frontend_fox/CMainWindow.cpp:747
 msgid "&About ReZound"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:719
+#: src/frontend_fox/CMainWindow.cpp:754
 msgid "&Quit"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:723
-msgid "&Control"
-msgstr ""
-
-#: src/frontend_fox/CMainWindow.cpp:724
+#: src/frontend_fox/CMainWindow.cpp:758
 msgid "Zoom Out F&ull"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:725
+#: src/frontend_fox/CMainWindow.cpp:759
 msgid "Zoom &Out"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:726
+#: src/frontend_fox/CMainWindow.cpp:760
 msgid "Zoom &In"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:727
+#: src/frontend_fox/CMainWindow.cpp:761
 msgid "Zoom &Fit Selection"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:730
+#: src/frontend_fox/CMainWindow.cpp:763
 msgid "Find &Start Position"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:731
+#: src/frontend_fox/CMainWindow.cpp:764
 msgid "Find Sto&p Position"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:734
+#: src/frontend_fox/CMainWindow.cpp:766
 msgid "&Redraw"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:742
+#: src/frontend_fox/CMainWindow.cpp:773
 msgid "Loop Selection but Skip Most of the Middle"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:743
+#: src/frontend_fox/CMainWindow.cpp:774
 msgid "Loop Selection and Play a Gap Before Repeating"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:747
+#: src/frontend_fox/CMainWindow.cpp:778
 msgid "Jump to Selection Start"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:750
+#: src/frontend_fox/CMainWindow.cpp:781
 msgid "Shuttle Rewind"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:751
+#: src/frontend_fox/CMainWindow.cpp:782
 msgid "Shuttle Amount"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:752
+#: src/frontend_fox/CMainWindow.cpp:783
 msgid "Shuttle Forward"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:756 src/frontend_fox/CMainWindow.cpp:759
+#: src/frontend_fox/CMainWindow.cpp:786 src/frontend_fox/CMainWindow.cpp:790
 msgid "Toggle &Level Meters"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:757 src/frontend_fox/CMainWindow.cpp:760
+#: src/frontend_fox/CMainWindow.cpp:787 src/frontend_fox/CMainWindow.cpp:791
+msgid "Toggle &Stereo Phase Meters"
+msgstr ""
+
+#: src/frontend_fox/CMainWindow.cpp:788 src/frontend_fox/CMainWindow.cpp:792
 msgid "Toggle Frequency &Analyzer"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:764
+#: src/frontend_fox/CMainWindow.cpp:796
 msgid "View Loaded File 1"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:765
+#: src/frontend_fox/CMainWindow.cpp:797
 msgid "View Loaded File 2"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:767
+#: src/frontend_fox/CMainWindow.cpp:799
 msgid "View Loaded File 9"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:768
+#: src/frontend_fox/CMainWindow.cpp:800
 msgid "View Loaded File 10"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:769
+#: src/frontend_fox/CMainWindow.cpp:801
 msgid "Previously Viewed File"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:778
-msgid "&Edit"
-msgstr ""
-
-#: src/frontend_fox/CMainWindow.cpp:779
+#: src/frontend_fox/CMainWindow.cpp:805
 msgid "Undo"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:780
+#: src/frontend_fox/CMainWindow.cpp:806
 msgid "Clear Undo History"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:784
+#: src/frontend_fox/CMainWindow.cpp:808
 msgid "&Recent Actions"
-msgstr ""
-
-#: src/frontend_fox/CMainWindow.cpp:821
-msgid "&Selection"
-msgstr ""
-
-#: src/frontend_fox/CMainWindow.cpp:834
-msgid "Effec&ts"
-msgstr ""
-
-#: src/frontend_fox/CMainWindow.cpp:853
-msgid "F&ilters"
-msgstr ""
-
-#: src/frontend_fox/CMainWindow.cpp:869
-msgid "&Looping"
-msgstr ""
-
-#: src/frontend_fox/CMainWindow.cpp:875
-msgid "&Remaster"
 msgstr ""
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:26

@@ -90,6 +90,7 @@ static bool compareBool(int a,int b) { return (a && b) || (!a && !b); }
 	#define _(String) gettext (String)
 #else
 	#define _(String) String
+	#define gettext(String) String
 #endif
 
 // NOOP for gettext

@@ -236,7 +236,7 @@ The \"Applies to\" parameter indicates if the action should regard only the curr
 // ------------------------------
 
 CSaveAsMultipleFilesActionFactory::CSaveAsMultipleFilesActionFactory(AActionDialog *dialog) :
-	AActionFactory(_("Save As Multiple Files"),_("Save As Multiple Files"),NULL,dialog,false,false)
+	AActionFactory(N_("Save As Multiple Files"),N_("Save As Multiple Files"),NULL,dialog,false,false)
 {
 }
 
