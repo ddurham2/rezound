@@ -18,9 +18,6 @@
 	- set any "stay on top" flags that need to be for dialogs 
 		- I don't see anything in the DECOR flags, ask the fox user list about there being any "stay on top" flags
 
-	- I need to display the sample rate (and perhaps the number of channels) in the status info of CSoundWindow
-	- I could also, put the name of each channel horizontally along the left of the channels so that if the sound is 5 channels you label the first 2 'left' and 'right' then the next ones 'center', 'rear left' and 'rear right' 
-
 	- if the sound is playing and a certain button is pressed (or key also bound to that button) I should place a marker with a given name "cue #" where the number is an integer being kept up with
 
 	- before the first public release, I should create an about dialog:
@@ -103,6 +100,8 @@
 		- I added remember support so it wouldn't be as much of a problem, but perhaps ask the fox people how to get the dialog to make itself large enough for all the inner widgets
 		- If I tought about it long enough, I might be able to come up with the answer
 
+	- Put the name of each channel horizontally along the left of the channels so that if the sound is 5 channels you label the first 2 'left' and 'right' then the next ones 'center', 'rear left' and 'rear right' 
+
 
 
 
@@ -157,4 +156,6 @@
 		- this code should actually be in the backend so I don't have to rewrite that code for a different frontend
 
 	- I should probably put whatever code in the frontend (i.e. button handlers in CMainWindow) that could be put in the backend (i.e. would be done by any frontend) into the backend like the file operations already are
+
+	- I need to display the sample rate (and perhaps the number of channels) in the status info of CSoundWindow
 

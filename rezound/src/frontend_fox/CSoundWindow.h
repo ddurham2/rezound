@@ -185,6 +185,9 @@ private:
 		FXPacker *playingLED; // there are actually two FXLabels in this packer occupying the same positions that I just use raise() on them to turn the LED on or off
 		FXPacker *pausedLED;
 
+		FXLabel *sampleRateLabel;
+		FXLabel *channelCountLabel;
+
 		FXLabel *audioDataSizeLabel;
 		FXLabel *poolFileSizeLabel;
 

@@ -157,10 +157,10 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 
 	activeToggleButton(gFocusMethod==fmFocusButton ? new FXToggleButton(this,"Not Active","Active",NULL,NULL,this,ID_ACTIVE_TOGGLE_BUTTON,TOGGLEBUTTON_NORMAL | LAYOUT_FILL_X|LAYOUT_SIDE_TOP, 0,0,0,0, 1,1,1,1) : NULL),
 
-	statusPanel(new FXHorizontalFrame(this,FRAME_RIDGE | LAYOUT_SIDE_BOTTOM | LAYOUT_FILL_X, 0,0,0,0, 2,2,3,3, 0,0)),
+	statusPanel(new FXHorizontalFrame(this,FRAME_RIDGE | LAYOUT_SIDE_BOTTOM | LAYOUT_FILL_X, 0,0,0,0, 2,2,3,3, 1,0)),
 
 	waveViewPanel(new FXPacker(this,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
-		horzZoomPanel(new FXPacker(waveViewPanel,LAYOUT_SIDE_BOTTOM | FRAME_RAISED | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0,0,0,17, 1,1,1,1, 1,1)),
+		horzZoomPanel(new FXPacker(waveViewPanel,LAYOUT_SIDE_BOTTOM | FRAME_RAISED | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0,0,0,20, 1,1,1,1, 1,1)),
 			horzZoomMinusInd(new FXButton(horzZoomPanel," - \tZoom Out Full",NULL,this,ID_HORZ_ZOOM_DIAL_MINUS,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
 			horzZoomDial(new FXDial(horzZoomPanel,this,ID_HORZ_ZOOM_DIAL,LAYOUT_SIDE_LEFT | DIAL_HORIZONTAL|DIAL_HAS_NOTCH | LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0,0,150,0, 0,0,0,0)),
 			horzZoomPlusInd(new FXButton(horzZoomPanel," + \tZoom In Full",NULL,this,ID_HORZ_ZOOM_DIAL_PLUS,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
@@ -208,47 +208,54 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 	// ??? If I really wanted to make sure there was a min width to each section (and I may want to) I could put an FXFrame with zero height or 1 height in each on with a fixed width.. then things can get bigger as needed... but there would be a minimum size
 	FXVerticalFrame *t;
 
-	t=new FXVerticalFrame(statusPanel,FRAME_NONE, 0,0,0,0, 0,8,0,0, 0,0);
+	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 2,0,0,0, 0,0);
 		// add the actual LEDs to the packer for turning the LED on and off, done by raising or lowering the first child of the packer
-		playingLED=new FXPacker(t,0, 0,0,0,0, 0,0,0,0);
+		playingLED=new FXPacker(t,LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0);
 			(new FXLabel(playingLED,"Playing:",new FXGIFIcon(getApp(),GreenLED1),JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
 			(new FXLabel(playingLED,"Playing:",new FXGIFIcon(getApp(),OffLED1),JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
-		pausedLED=new FXPacker(t,0, 0,0,0,0, 0,0,0,0);
+		pausedLED=new FXPacker(t,LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0);
 			(new FXLabel(pausedLED,"Paused:",new FXGIFIcon(getApp(),YellowLED1),JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
 			(new FXLabel(pausedLED,"Paused:",new FXGIFIcon(getApp(),OffLED1),JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
 
 	new FXVerticalSeparator(statusPanel);
-	t=new FXVerticalFrame(statusPanel,FRAME_NONE, 0,0,200,0, 0,8,0,0, 0,0);
-		audioDataSizeLabel=new FXLabel(t,"Audio Size; ",NULL,LAYOUT_RIGHT);
+	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 2,0,0,0, 0,0);
+		sampleRateLabel=new FXLabel(t,"Sample Rate; ",NULL,LAYOUT_LEFT|LAYOUT_FILL_Y);
+		sampleRateLabel->setFont(statusFont);
+		channelCountLabel=new FXLabel(t,"Channel Count: ",NULL,LAYOUT_LEFT|LAYOUT_FILL_Y);
+		channelCountLabel->setFont(statusFont);
+
+	new FXVerticalSeparator(statusPanel);
+	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 2,0,0,0, 0,0);
+		audioDataSizeLabel=new FXLabel(t,"Audio Size; ",NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
 		audioDataSizeLabel->setFont(statusFont);
-		poolFileSizeLabel=new FXLabel(t,"Working File: ",NULL,LAYOUT_RIGHT);
+		poolFileSizeLabel=new FXLabel(t,"Working File: ",NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
 		poolFileSizeLabel->setFont(statusFont);
 
 	new FXVerticalSeparator(statusPanel);
-	t=new FXVerticalFrame(statusPanel,FRAME_NONE, 0,0,200,0, 0,8,0,0, 0,0);
-		totalLengthLabel=new FXLabel(t,"Total: ",NULL,LAYOUT_RIGHT);
+	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 2,0,0,0, 0,0);
+		totalLengthLabel=new FXLabel(t,"Total: ",NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
 		totalLengthLabel->setFont(statusFont);
-		selectionLengthLabel=new FXLabel(t,"Selection: ",NULL,LAYOUT_RIGHT);
+		selectionLengthLabel=new FXLabel(t,"Selection: ",NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
 		selectionLengthLabel->setFont(statusFont);
 		
 	new FXVerticalSeparator(statusPanel);
-	t=new FXVerticalFrame(statusPanel,FRAME_NONE, 0,0,0,0, 2,0,0,0, 0,0);
-		selectStartSpinner=new FXSpinner(t,0,this,ID_SELECT_START_SPINNER, SPIN_NOTEXT);
+	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 2,0,0,0, 0,0);
+		selectStartSpinner=new FXSpinner(t,0,this,ID_SELECT_START_SPINNER, SPIN_NOTEXT|LAYOUT_FILL_Y);
 		selectStartSpinner->setRange(-10,10);
 		selectStartSpinner->setTipText("Increase/Decrease Start Position by One Sample");
-		selectStopSpinner=new FXSpinner(t,0,this,ID_SELECT_STOP_SPINNER, SPIN_NOTEXT);
+		selectStopSpinner=new FXSpinner(t,0,this,ID_SELECT_STOP_SPINNER, SPIN_NOTEXT|LAYOUT_FILL_Y);
 		selectStopSpinner->setRange(-10,10);
 		selectStopSpinner->setTipText("Increase/Decrease Stop Position by One Sample");
 		
-	t=new FXVerticalFrame(statusPanel,FRAME_NONE, 0,0,0,0, 0,8,0,0, 0,0);
-		selectStartLabel=new FXLabel(t,"Start: ",NULL,LAYOUT_RIGHT);
+	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0);
+		selectStartLabel=new FXLabel(t,"Start: ",NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
 		selectStartLabel->setFont(statusFont);
-		selectStopLabel=new FXLabel(t,"Stop: ",NULL,LAYOUT_RIGHT);
+		selectStopLabel=new FXLabel(t,"Stop: ",NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
 		selectStopLabel->setFont(statusFont);
 
 	new FXVerticalSeparator(statusPanel);
-	t=new FXVerticalFrame(statusPanel,FRAME_NONE, 0,0,0,0, 2,0,0,0, 0,0);
-		playPositionLabel=new FXLabel(t,"Playing: ",NULL,LAYOUT_LEFT);
+	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 2,0,0,0, 0,0);
+		playPositionLabel=new FXLabel(t,"Playing: ",NULL,LAYOUT_LEFT|LAYOUT_FILL_Y);
 		playPositionLabel->setFont(statusFont);
 
 	// register to know when the sound start/stops and pauses/unpauses playing
@@ -386,6 +393,9 @@ void CSoundWindow::updateFromEdit()
 
 void CSoundWindow::updateAllStatusInfo()
 {
+	sampleRateLabel->setText(("Rate: "+istring(loadedSound->getSound()->getSampleRate())).c_str());
+	channelCountLabel->setText(("Channels: "+istring(loadedSound->getSound()->getChannelCount())).c_str());
+
 	audioDataSizeLabel->setText(("Audio Size: "+loadedSound->getSound()->getAudioDataSize()).c_str());
 	poolFileSizeLabel->setText(("Working File: "+loadedSound->getSound()->getPoolFileSize()).c_str());
 
