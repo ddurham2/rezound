@@ -62,28 +62,28 @@ private:
 class CBiquadResLowpassFilterFactory : public AActionFactory
 {
 public:
-	CBiquadResLowpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	CBiquadResLowpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CBiquadResLowpassFilterFactory();
 
-	CBiquadResFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CBiquadResFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 class CBiquadResHighpassFilterFactory : public AActionFactory
 {
 public:
-	CBiquadResHighpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	CBiquadResHighpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CBiquadResHighpassFilterFactory();
 
-	CBiquadResFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CBiquadResFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 class CBiquadResBandpassFilterFactory : public AActionFactory
 {
 public:
-	CBiquadResBandpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	CBiquadResBandpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CBiquadResBandpassFilterFactory();
 
-	CBiquadResFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CBiquadResFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

@@ -57,10 +57,10 @@ private:
 class CNoiseGateActionFactory : public AActionFactory
 {
 public:
-	CNoiseGateActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	CNoiseGateActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CNoiseGateActionFactory();
 
-	CNoiseGateAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CNoiseGateAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

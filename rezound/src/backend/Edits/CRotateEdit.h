@@ -50,19 +50,19 @@ private:
 class CRotateLeftEditFactory : public AActionFactory
 {
 public:
-	CRotateLeftEditFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	CRotateLeftEditFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CRotateLeftEditFactory();
 
-	CRotateEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CRotateEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 class CRotateRightEditFactory : public AActionFactory
 {
 public:
-	CRotateRightEditFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	CRotateRightEditFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CRotateRightEditFactory();
 
-	CRotateEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CRotateEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

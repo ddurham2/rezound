@@ -90,7 +90,7 @@ bool CCopyCutDeleteEdit::doesWarrantSaving() const
 // ---------------------------------------------
 
 CCopyEditFactory::CCopyEditFactory(AActionDialog *channelSelectDialog) :
-	AActionFactory("Copy","Copy",false,channelSelectDialog,NULL,NULL,false,false)
+	AActionFactory("Copy","Copy",channelSelectDialog,NULL,false,false)
 {
 }
 
@@ -98,7 +98,7 @@ CCopyEditFactory::~CCopyEditFactory()
 {
 }
 
-CCopyCutDeleteEdit *CCopyEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CCopyCutDeleteEdit *CCopyEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CCopyCutDeleteEdit(actionSound,CCopyCutDeleteEdit::ccdtCopy));
 }
@@ -109,7 +109,7 @@ CCopyCutDeleteEdit *CCopyEditFactory::manufactureAction(const CActionSound &acti
 
 
 CCutEditFactory::CCutEditFactory(AActionDialog *channelSelectDialog) :
-	AActionFactory("Cut","Cut",false,channelSelectDialog,NULL,NULL)
+	AActionFactory("Cut","Cut",channelSelectDialog,NULL)
 {
 }
 
@@ -117,7 +117,7 @@ CCutEditFactory::~CCutEditFactory()
 {
 }
 
-CCopyCutDeleteEdit *CCutEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CCopyCutDeleteEdit *CCutEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CCopyCutDeleteEdit(actionSound,CCopyCutDeleteEdit::ccdtCut));
 }
@@ -128,7 +128,7 @@ CCopyCutDeleteEdit *CCutEditFactory::manufactureAction(const CActionSound &actio
 
 
 CDeleteEditFactory::CDeleteEditFactory(AActionDialog *channelSelectDialog) :
-	AActionFactory("Delete","Delete",false,channelSelectDialog,NULL,NULL)
+	AActionFactory("Delete","Delete",channelSelectDialog,NULL)
 {
 }
 
@@ -136,7 +136,7 @@ CDeleteEditFactory::~CDeleteEditFactory()
 {
 }
 
-CCopyCutDeleteEdit *CDeleteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CCopyCutDeleteEdit *CDeleteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CCopyCutDeleteEdit(actionSound,CCopyCutDeleteEdit::ccdtDelete));
 }

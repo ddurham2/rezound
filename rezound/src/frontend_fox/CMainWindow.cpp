@@ -626,7 +626,7 @@ void CMainWindow::createMenus()
 		new FXMenuCommand(menu,"Undo\tCtrl+Z",FOXIcons->edit_undo,this,ID_UNDO_MENUITEM);
 		new FXMenuCommand(menu,"Clear Undo History",NULL,this,ID_CLEAR_UNDO_HISTORY_MENUITEM);
 
-		// ??? perhaps I could avoid hard coding all of this by having a list of registered action factories which define the menu path, and hot keys are user definable anyway.. but then the frontend would have to be more abstracted or done more the way that Frontend Hooks are done.. the advanced and normal dialog stuff should already be gone before doing this tho
+		// ??? perhaps I could avoid hard coding all of this by having a list of registered action factories which define the menu path, and hot keys are user definable anyway.. but then the frontend would have to be more abstracted or done more the way that Frontend Hooks are done
 		// a few things to think about:  the order of the registered list (when each action specifies it's menu path) and the visual menu separators as well as how the frontend code gets bound to the right backend code
 		new FXMenuSeparator(menu);
 		new CActionMenuCommand(new CCopyEditFactory(gChannelSelectDialog),menu,"Ctrl+C",FOXIcons->edit_copy);
@@ -669,9 +669,14 @@ void CMainWindow::createMenus()
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"Effec&ts",NULL,menu);
 		new CActionMenuCommand(new CReverseEffectFactory(gChannelSelectDialog),menu,"");
+		new FXMenuSeparator(menu);
 		new CActionMenuCommand(new CChangeVolumeEffectFactory(gChannelSelectDialog,new CNormalVolumeChangeDialog(this)),menu,"");
-		new CActionMenuCommand(new CGainEffectFactory(gChannelSelectDialog,new CNormalGainDialog(this),new CAdvancedGainDialog(this)),menu,"");
-		new CActionMenuCommand(new CChangeRateEffectFactory(gChannelSelectDialog,new CNormalRateChangeDialog(this),new CAdvancedRateChangeDialog(this)),menu,"");
+		new CActionMenuCommand(new CSimpleGainEffectFactory(gChannelSelectDialog,new CNormalGainDialog(this)),menu,"");
+		new CActionMenuCommand(new CCurvedGainEffectFactory(gChannelSelectDialog,new CAdvancedGainDialog(this)),menu,"");
+		new FXMenuSeparator(menu);
+		new CActionMenuCommand(new CSimpleChangeRateEffectFactory(gChannelSelectDialog,new CNormalRateChangeDialog(this)),menu,"");
+		new CActionMenuCommand(new CCurvedChangeRateEffectFactory(gChannelSelectDialog,new CAdvancedRateChangeDialog(this)),menu,"");
+		new FXMenuSeparator(menu);
 		new CActionMenuCommand(new CFlangeEffectFactory(gChannelSelectDialog,new CFlangeDialog(this)),menu,"");
 		new CActionMenuCommand(new CSimpleDelayEffectFactory(gChannelSelectDialog,new CSimpleDelayDialog(this)),menu,"");
 		new CActionMenuCommand(new CQuantizeEffectFactory(gChannelSelectDialog,new CQuantizeDialog(this)),menu,"");

@@ -100,8 +100,8 @@ void CQuantizeEffect::undoActionSizeSafe(const CActionSound &actionSound)
 
 // ---------------------------------------------
 
-CQuantizeEffectFactory::CQuantizeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Quantize","Quantize the Number of Possible Sample Levels",false,channelSelectDialog,normalDialog,NULL)
+CQuantizeEffectFactory::CQuantizeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Quantize","Quantize the Number of Possible Sample Levels",channelSelectDialog,dialog)
 {
 }
 
@@ -109,7 +109,7 @@ CQuantizeEffectFactory::~CQuantizeEffectFactory()
 {
 }
 
-CQuantizeEffect *CQuantizeEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CQuantizeEffect *CQuantizeEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CQuantizeEffect(
 		actionSound,

@@ -59,8 +59,8 @@ void CRemoveChannelsEdit::undoActionSizeSafe(const CActionSound &actionSound)
 
 // ------------------------------
 
-CRemoveChannelsEditFactory::CRemoveChannelsEditFactory(AActionDialog *normalDialog) :
-	AActionFactory("Remove Channels","Remove Channels of Audio",false,NULL,normalDialog,NULL,true,false)
+CRemoveChannelsEditFactory::CRemoveChannelsEditFactory(AActionDialog *dialog) :
+	AActionFactory("Remove Channels","Remove Channels of Audio",NULL,dialog,true,false)
 {
 }
 
@@ -68,7 +68,7 @@ CRemoveChannelsEditFactory::~CRemoveChannelsEditFactory()
 {
 }
 
-CRemoveChannelsEdit *CRemoveChannelsEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CRemoveChannelsEdit *CRemoveChannelsEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CRemoveChannelsEdit(actionSound));
 }

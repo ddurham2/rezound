@@ -238,8 +238,8 @@ The \"Applies to\" parameter indicates if the action should regard only the curr
 
 // ------------------------------
 
-CSaveAsMultipleFilesActionFactory::CSaveAsMultipleFilesActionFactory(AActionDialog *normalDialog) :
-	AActionFactory("Save As Multiple Files","Save As Multiple Files",false,NULL,normalDialog,NULL,false,false)
+CSaveAsMultipleFilesActionFactory::CSaveAsMultipleFilesActionFactory(AActionDialog *dialog) :
+	AActionFactory("Save As Multiple Files","Save As Multiple Files",NULL,dialog,false,false)
 {
 }
 
@@ -247,7 +247,7 @@ CSaveAsMultipleFilesActionFactory::~CSaveAsMultipleFilesActionFactory()
 {
 }
 
-CSaveAsMultipleFilesAction *CSaveAsMultipleFilesActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CSaveAsMultipleFilesAction *CSaveAsMultipleFilesActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	const string formatName=ASoundTranslator::getFlatFormatList()[actionParameters->getUnsignedParameter("Format")];
 	return new CSaveAsMultipleFilesAction(

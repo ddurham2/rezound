@@ -67,8 +67,8 @@ void CInsertSilenceEdit::undoActionSizeSafe(const CActionSound &actionSound)
 
 // ------------------------------
 
-CInsertSilenceEditFactory::CInsertSilenceEditFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Insert Silence","Insert Silence",false,channelSelectDialog,normalDialog,NULL)
+CInsertSilenceEditFactory::CInsertSilenceEditFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Insert Silence","Insert Silence",channelSelectDialog,dialog)
 {
 }
 
@@ -76,7 +76,7 @@ CInsertSilenceEditFactory::~CInsertSilenceEditFactory()
 {
 }
 
-CInsertSilenceEdit *CInsertSilenceEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CInsertSilenceEdit *CInsertSilenceEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CInsertSilenceEdit(
 		actionSound,

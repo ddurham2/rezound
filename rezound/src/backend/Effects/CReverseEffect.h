@@ -51,7 +51,7 @@ public:
 	CReverseEffectFactory(AActionDialog *channelSelectDialog);
 	virtual ~CReverseEffectFactory();
 
-	CReverseEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CReverseEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

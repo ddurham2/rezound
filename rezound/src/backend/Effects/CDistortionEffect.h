@@ -27,10 +27,10 @@ private:
 class CDistortionEffectFactory : public AActionFactory
 {
 public:
-	CDistortionEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	CDistortionEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CDistortionEffectFactory();
 
-	CDistortionEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CDistortionEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

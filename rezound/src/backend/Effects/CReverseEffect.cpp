@@ -137,7 +137,7 @@ void CReverseEffect::undoActionSizeSafe(const CActionSound &actionSound)
 // --------------------------------------------------
 
 CReverseEffectFactory::CReverseEffectFactory(AActionDialog *channelSelectDialog) :
-	AActionFactory("Reverse","Reverse",false,channelSelectDialog,NULL,NULL,false)
+	AActionFactory("Reverse","Reverse",channelSelectDialog,NULL,false)
 {
 }
 
@@ -145,7 +145,7 @@ CReverseEffectFactory::~CReverseEffectFactory()
 {
 }
 
-CReverseEffect *CReverseEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CReverseEffect *CReverseEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CReverseEffect(actionSound));
 }

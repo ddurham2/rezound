@@ -87,8 +87,8 @@ void CVariedRepeatEffect::undoActionSizeSafe(const CActionSound &actionSound)
 
 // --------------------------------------------------
 
-CVariedRepeatEffectFactory::CVariedRepeatEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Varied Repeat","Varied Repeat",false,channelSelectDialog,normalDialog,NULL)
+CVariedRepeatEffectFactory::CVariedRepeatEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Varied Repeat","Varied Repeat",channelSelectDialog,dialog)
 {
 }
 
@@ -96,7 +96,7 @@ CVariedRepeatEffectFactory::~CVariedRepeatEffectFactory()
 {
 }
 
-CVariedRepeatEffect *CVariedRepeatEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CVariedRepeatEffect *CVariedRepeatEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CVariedRepeatEffect(
 		actionSound,

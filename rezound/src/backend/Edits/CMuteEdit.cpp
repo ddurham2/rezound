@@ -59,7 +59,7 @@ void CMuteEdit::undoActionSizeSafe(const CActionSound &actionSound)
 // ------------------------------
 
 CMuteEditFactory::CMuteEditFactory(AActionDialog *channelSelectDialog) :
-	AActionFactory("Mute","Mute",false,channelSelectDialog,NULL,NULL)
+	AActionFactory("Mute","Mute",channelSelectDialog,NULL)
 {
 }
 
@@ -67,7 +67,7 @@ CMuteEditFactory::~CMuteEditFactory()
 {
 }
 
-CMuteEdit *CMuteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CMuteEdit *CMuteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CMuteEdit(actionSound));
 }

@@ -51,7 +51,7 @@ public:
 	CAddCuesActionFactory(AActionDialog *channelSelectDialog);
 	virtual ~CAddCuesActionFactory();
 
-	CAddCuesAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CAddCuesAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

@@ -48,7 +48,7 @@ public:
 	CTestEffectFactory(AActionDialog *channelSelectDialog);
 	virtual ~CTestEffectFactory();
 
-	CTestEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CTestEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

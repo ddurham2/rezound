@@ -52,7 +52,7 @@ public:
 	CSaveSelectionAsActionFactory();
 	virtual ~CSaveSelectionAsActionFactory();
 
-	CSaveSelectionAsAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CSaveSelectionAsAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

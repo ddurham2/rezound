@@ -254,8 +254,8 @@ void CConvolutionFilter::undoActionSizeSafe(const CActionSound &actionSound)
 
 // --------------------------------------------------
 
-CConvolutionFilterFactory::CConvolutionFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Convolution Filter","Convolve One Audio File with this One",false,channelSelectDialog,normalDialog,NULL)
+CConvolutionFilterFactory::CConvolutionFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Convolution Filter","Convolve One Audio File with this One",channelSelectDialog,dialog)
 {
 }
 
@@ -263,7 +263,7 @@ CConvolutionFilterFactory::~CConvolutionFilterFactory()
 {
 }
 
-CConvolutionFilter *CConvolutionFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CConvolutionFilter *CConvolutionFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CConvolutionFilter(
 		actionSound,

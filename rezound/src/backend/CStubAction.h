@@ -26,7 +26,7 @@ public:
 	CStubActionFactory(AActionDialog *channelSelectDialog);
 	virtual ~CStubActionFactory();
 
-	CStubAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CStubAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

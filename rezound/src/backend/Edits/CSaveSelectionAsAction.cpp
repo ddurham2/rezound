@@ -58,7 +58,7 @@ bool CSaveSelectionAsAction::doesWarrantSaving() const
 // ------------------------------
 
 CSaveSelectionAsActionFactory::CSaveSelectionAsActionFactory() :
-	AActionFactory("Save Selection As","Save Selection As",false,NULL,NULL,NULL,false,false)
+	AActionFactory("Save Selection As","Save Selection As",NULL,NULL,false,false)
 {
 }
 
@@ -66,7 +66,7 @@ CSaveSelectionAsActionFactory::~CSaveSelectionAsActionFactory()
 {
 }
 
-CSaveSelectionAsAction *CSaveSelectionAsActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CSaveSelectionAsAction *CSaveSelectionAsActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return new CSaveSelectionAsAction(actionSound,actionParameters->getSoundFileManager());
 }

@@ -46,10 +46,10 @@ private:
 class CResampleActionFactory : public AActionFactory
 {
 public:
-	CResampleActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	CResampleActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CResampleActionFactory();
 
-	CResampleAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CResampleAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

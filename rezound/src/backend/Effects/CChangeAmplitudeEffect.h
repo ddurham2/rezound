@@ -45,19 +45,28 @@ private:
 class CChangeVolumeEffectFactory : public AActionFactory
 {
 public:
-	CChangeVolumeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	CChangeVolumeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CChangeVolumeEffectFactory();
 
-	CChangeAmplitudeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CChangeAmplitudeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
-class CGainEffectFactory : public AActionFactory
+class CSimpleGainEffectFactory : public AActionFactory
 {
 public:
-	CGainEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog,AActionDialog *advancedDialog);
-	virtual ~CGainEffectFactory();
+	CSimpleGainEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
+	virtual ~CSimpleGainEffectFactory();
 
-	CChangeAmplitudeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CChangeAmplitudeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+};
+
+class CCurvedGainEffectFactory : public AActionFactory
+{
+public:
+	CCurvedGainEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
+	virtual ~CCurvedGainEffectFactory();
+
+	CChangeAmplitudeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

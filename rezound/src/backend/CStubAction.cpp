@@ -77,7 +77,7 @@ void CStubAction::undoActionSizeSafe(const CActionSound &actionSound)
 // --------------------------------------------------
 
 CStubActionFactory::CStubActionFactory(AActionDialog *channelSelectDialog) :
-	AActionFactory("Stub","Stub",false,channelSelectDialog,NULL,NULL)
+	AActionFactory("Stub","Stub",channelSelectDialog,NULL)
 {
 }
 
@@ -85,7 +85,7 @@ CStubActionFactory::~CStubActionFactory()
 {
 }
 
-CStubAction *CStubActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CStubAction *CStubActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return new CStubAction(actionSound);
 }

@@ -151,7 +151,7 @@ void CSelectionEdit::undoActionSizeSafe(const CActionSound &actionSound)
 // -----------------------------------
 
 CSelectionEditFactory::CSelectionEditFactory(Selections _selection) :
-	AActionFactory(gSelectionNames[_selection],gSelectionDescriptions[_selection],false,NULL,NULL,NULL,false,false),
+	AActionFactory(gSelectionNames[_selection],gSelectionDescriptions[_selection],NULL,NULL,false,false),
 
 	selection(_selection)
 {
@@ -161,7 +161,7 @@ CSelectionEditFactory::~CSelectionEditFactory()
 {
 }
 
-CSelectionEdit *CSelectionEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CSelectionEdit *CSelectionEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CSelectionEdit(actionSound,selection));
 }
@@ -171,7 +171,7 @@ CSelectionEdit *CSelectionEditFactory::manufactureAction(const CActionSound &act
 // -----------------------------------
 
 CSelectionEditPositionFactory::CSelectionEditPositionFactory() :
-	AActionFactory("Selection Change","Selection Change From Mouse",false,NULL,NULL,NULL,false,false),
+	AActionFactory("Selection Change","Selection Change From Mouse",NULL,NULL,false,false),
 
 	selectStart(0),
 	selectStop(0)
@@ -182,7 +182,7 @@ CSelectionEditPositionFactory::~CSelectionEditPositionFactory()
 {
 }
 
-CSelectionEdit *CSelectionEditPositionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CSelectionEdit *CSelectionEditPositionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CSelectionEdit(actionSound,selectStart,selectStop));
 }

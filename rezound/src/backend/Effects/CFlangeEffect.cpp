@@ -125,8 +125,8 @@ void CFlangeEffect::undoActionSizeSafe(const CActionSound &actionSound)
 
 // ---------------------------------------------
 
-CFlangeEffectFactory::CFlangeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Flange","Flange Effect",false,channelSelectDialog,normalDialog,NULL)
+CFlangeEffectFactory::CFlangeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Flange","Flange Effect",channelSelectDialog,dialog)
 {
 }
 
@@ -134,7 +134,7 @@ CFlangeEffectFactory::~CFlangeEffectFactory()
 {
 }
 
-CFlangeEffect *CFlangeEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CFlangeEffect *CFlangeEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CFlangeEffect(actionSound,
 		(float)actionParameters->getDoubleParameter("Delay"),

@@ -63,7 +63,7 @@ void CAddCuesAction::undoActionSizeSafe(const CActionSound &actionSound)
 // --------------------------------------------------
 //
 CAddCuesActionFactory::CAddCuesActionFactory(AActionDialog *normalDialog) :
-	AActionFactory("Add Cues","Add Cues at Evenly Spaced Intervals",false,NULL,normalDialog,NULL)
+	AActionFactory("Add Cues","Add Cues at Evenly Spaced Intervals",NULL,normalDialog)
 {
 }
 
@@ -71,7 +71,7 @@ CAddCuesActionFactory::~CAddCuesActionFactory()
 {
 }
 
-CAddCuesAction *CAddCuesActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CAddCuesAction *CAddCuesActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return new CAddCuesAction(
 		actionSound,

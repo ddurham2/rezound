@@ -69,8 +69,8 @@ void CRotateEdit::rotate(const CActionSound &actionSound,const RotateTypes rotat
 // ---------------------------------------------
 
 
-CRotateLeftEditFactory::CRotateLeftEditFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("<< Rotate Left","Rotate Left",false,channelSelectDialog,normalDialog,NULL)
+CRotateLeftEditFactory::CRotateLeftEditFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("<< Rotate Left","Rotate Left",channelSelectDialog,dialog)
 {
 }
 
@@ -78,7 +78,7 @@ CRotateLeftEditFactory::~CRotateLeftEditFactory()
 {
 }
 
-CRotateEdit *CRotateLeftEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CRotateEdit *CRotateLeftEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CRotateEdit(
 		actionSound,
@@ -90,8 +90,8 @@ CRotateEdit *CRotateLeftEditFactory::manufactureAction(const CActionSound &actio
 // ---------------------------------------------
 
 
-CRotateRightEditFactory::CRotateRightEditFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory(">> Rotate Right","Rotate Right",false,channelSelectDialog,normalDialog,NULL)
+CRotateRightEditFactory::CRotateRightEditFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory(">> Rotate Right","Rotate Right",channelSelectDialog,dialog)
 {
 }
 
@@ -99,7 +99,7 @@ CRotateRightEditFactory::~CRotateRightEditFactory()
 {
 }
 
-CRotateEdit *CRotateRightEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CRotateEdit *CRotateRightEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CRotateEdit(
 		actionSound,

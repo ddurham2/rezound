@@ -48,7 +48,7 @@ public:
 	CSwapChannelsEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CSwapChannelsEditFactory();
 
-	CSwapChannelsEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CSwapChannelsEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 
 protected:
 	bool doPreActionSetup(CLoadedSound *loadedSound);

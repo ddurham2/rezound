@@ -56,8 +56,8 @@ void CAddChannelsEdit::undoActionSizeSafe(const CActionSound &actionSound)
 
 // ------------------------------
 
-CAddChannelsEditFactory::CAddChannelsEditFactory(AActionDialog *normalDialog) :
-	AActionFactory("Add Channels","Add New Channels of Audio",false,NULL,normalDialog,NULL,true,false)
+CAddChannelsEditFactory::CAddChannelsEditFactory(AActionDialog *dialog) :
+	AActionFactory("Add Channels","Add New Channels of Audio",NULL,dialog,true,false)
 {
 }
 
@@ -65,7 +65,7 @@ CAddChannelsEditFactory::~CAddChannelsEditFactory()
 {
 }
 
-CAddChannelsEdit *CAddChannelsEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CAddChannelsEdit *CAddChannelsEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CAddChannelsEdit(
 		actionSound,

@@ -116,7 +116,7 @@ void CRemoveDCAction::undoActionSizeSafe(const CActionSound &actionSound)
 // ------------------------------
 
 CRemoveDCActionFactory::CRemoveDCActionFactory(AActionDialog *channelSelectDialog) :
-	AActionFactory("Remove DC Component","Removes a DC offset from the audio, recentering it around zero",false,channelSelectDialog,NULL,NULL)
+	AActionFactory("Remove DC Component","Removes a DC offset from the audio, recentering it around zero",channelSelectDialog,NULL)
 {
 }
 
@@ -124,7 +124,7 @@ CRemoveDCActionFactory::~CRemoveDCActionFactory()
 {
 }
 
-CRemoveDCAction *CRemoveDCActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CRemoveDCAction *CRemoveDCActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CRemoveDCAction(actionSound));
 }

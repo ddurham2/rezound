@@ -137,8 +137,8 @@ void CDelayEffect::undoActionSizeSafe(const CActionSound &actionSound)
 
 // ??? else it will be a "Tapped Delay"
 
-CSimpleDelayEffectFactory::CSimpleDelayEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Simple Delay (Echo)","Simple Delay Effect",false,channelSelectDialog,normalDialog,NULL)
+CSimpleDelayEffectFactory::CSimpleDelayEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Simple Delay (Echo)","Simple Delay Effect",channelSelectDialog,dialog)
 {
 }
 
@@ -146,7 +146,7 @@ CSimpleDelayEffectFactory::~CSimpleDelayEffectFactory()
 {
 }
 
-CDelayEffect *CSimpleDelayEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CDelayEffect *CSimpleDelayEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	/*
 	size_t tapCount=4;

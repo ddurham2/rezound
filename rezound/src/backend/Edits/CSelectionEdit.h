@@ -81,7 +81,7 @@ public:
 	CSelectionEditFactory(Selections selection);
 	virtual ~CSelectionEditFactory();
 
-	CSelectionEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CSelectionEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 
 private:
 	Selections selection;
@@ -97,7 +97,7 @@ public:
 	CSelectionEditPositionFactory();
 	virtual ~CSelectionEditPositionFactory();
 
-	CSelectionEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CSelectionEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 
 	sample_pos_t selectStart,selectStop;
 };

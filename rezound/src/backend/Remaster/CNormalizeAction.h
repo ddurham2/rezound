@@ -50,10 +50,10 @@ private:
 class CNormalizeActionFactory : public AActionFactory
 {
 public:
-	CNormalizeActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	CNormalizeActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CNormalizeActionFactory();
 
-	CNormalizeAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CNormalizeAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

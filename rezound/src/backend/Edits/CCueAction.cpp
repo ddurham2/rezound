@@ -59,8 +59,8 @@ AAction::CanUndoResults CAddCueAction::canUndo(const CActionSound &actionSound) 
 
 // -----------------------------------
 
-CAddCueActionFactory::CAddCueActionFactory(AActionDialog *normalDialog) :
-	AActionFactory("Add Cue","Add Cue",false,NULL,normalDialog,NULL,false,false)
+CAddCueActionFactory::CAddCueActionFactory(AActionDialog *dialog) :
+	AActionFactory("Add Cue","Add Cue",NULL,dialog,false,false)
 {
 }
 
@@ -68,7 +68,7 @@ CAddCueActionFactory::~CAddCueActionFactory()
 {
 }
 
-CAddCueAction *CAddCueActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CAddCueAction *CAddCueActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CAddCueAction(
 		actionSound,
@@ -111,7 +111,7 @@ AAction::CanUndoResults CRemoveCueAction::canUndo(const CActionSound &actionSoun
 // ----------------------------------- 
 
 CRemoveCueActionFactory::CRemoveCueActionFactory() :
-	AActionFactory("Remove Cue","Remove Cue",false,NULL,NULL,NULL,false,false)
+	AActionFactory("Remove Cue","Remove Cue",NULL,NULL,false,false)
 {
 }
 
@@ -119,7 +119,7 @@ CRemoveCueActionFactory::~CRemoveCueActionFactory()
 {
 }
 
-CRemoveCueAction *CRemoveCueActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CRemoveCueAction *CRemoveCueActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CRemoveCueAction(
 		actionSound,
@@ -167,8 +167,8 @@ AAction::CanUndoResults CReplaceCueAction::canUndo(const CActionSound &actionSou
 
 // -----------------------------------
 
-CReplaceCueActionFactory::CReplaceCueActionFactory(AActionDialog *normalDialog) :
-	AActionFactory("Replace Cue","Replace Cue",false,NULL,normalDialog,NULL,false,false)
+CReplaceCueActionFactory::CReplaceCueActionFactory(AActionDialog *dialog) :
+	AActionFactory("Replace Cue","Replace Cue",NULL,dialog,false,false)
 {
 }
 
@@ -176,7 +176,7 @@ CReplaceCueActionFactory::~CReplaceCueActionFactory()
 {
 }
 
-CReplaceCueAction *CReplaceCueActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CReplaceCueAction *CReplaceCueActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CReplaceCueAction(
 		actionSound,

@@ -81,8 +81,8 @@ void CDistortionEffect::undoActionSizeSafe(const CActionSound &actionSound)
 
 // --------------------------------------------------
 
-CDistortionEffectFactory::CDistortionEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Distortion","Distortion",false,channelSelectDialog,normalDialog,NULL)
+CDistortionEffectFactory::CDistortionEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Distortion","Distortion",channelSelectDialog,dialog)
 {
 }
 
@@ -90,7 +90,7 @@ CDistortionEffectFactory::~CDistortionEffectFactory()
 {
 }
 
-CDistortionEffect *CDistortionEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CDistortionEffect *CDistortionEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return new CDistortionEffect(actionSound,actionParameters->getGraphParameter("Curve"));
 }

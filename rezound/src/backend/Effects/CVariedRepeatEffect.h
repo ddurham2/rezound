@@ -30,10 +30,10 @@ private:
 class CVariedRepeatEffectFactory : public AActionFactory
 {
 public:
-	CVariedRepeatEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	CVariedRepeatEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CVariedRepeatEffectFactory();
 
-	CVariedRepeatEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CVariedRepeatEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

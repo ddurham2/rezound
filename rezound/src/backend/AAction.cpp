@@ -42,15 +42,13 @@
 // -- AActionFactory ----------------------------------------------------
 // ----------------------------------------------------------------------
 
-AActionFactory::AActionFactory(const string _actionName,const string _actionDescription,const bool __hasAdvancedMode,AActionDialog *_channelSelectDialog,AActionDialog *_normalDialog,AActionDialog *_advancedDialog,bool _willResize,bool _crossfadeEdgesIsApplicable) :
+AActionFactory::AActionFactory(const string _actionName,const string _actionDescription,AActionDialog *_channelSelectDialog,AActionDialog *_dialog,bool _willResize,bool _crossfadeEdgesIsApplicable) :
 	actionName(_actionName),
 	actionDescription(_actionDescription),
 
 	channelSelectDialog(_channelSelectDialog),
-	normalDialog(_normalDialog),
-	advancedDialog(_advancedDialog),
+	dialog(_dialog),
 
-	_hasAdvancedMode(__hasAdvancedMode),
 	willResize(_willResize),
 	crossfadeEdgesIsApplicable(_crossfadeEdgesIsApplicable)
 {
@@ -61,7 +59,7 @@ AActionFactory::~AActionFactory()
 }
 
 // ??? need to pass a flag for 'allowUndo'
-bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *actionParameters,bool showChannelSelectDialog,bool advancedMode)
+bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *actionParameters,bool showChannelSelectDialog)
 {
 	bool ret=true;
 	try
@@ -69,21 +67,8 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 		// set wasShown to false for all dialogs
 		if(channelSelectDialog!=NULL)
 			channelSelectDialog->wasShown=false;
-		if(normalDialog!=NULL)
-			normalDialog->wasShown=false;
-		if(advancedDialog!=NULL)
-			advancedDialog->wasShown=false;
-
-		// if this action doesn't have an advanced mode, we don't do anything
-		// this is mainly an interface issue... If the user say right-clicks a
-		// button expecting advanced mode and it doesn't have one, but does do
-		// something, then they'll always be guessing if that did anything 
-		// different than left-click
-		if(advancedMode && !_hasAdvancedMode)
-		{
-			Message("This action does not have an advanced mode");
-			return(false);
-		}
+		if(dialog!=NULL)
+			dialog->wasShown=false;
 
 		if(!doPreActionSetup(loadedSound))
 			return(false);
@@ -93,29 +78,14 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 		{
 			AAction *action=NULL;
 
-			if(advancedMode)
+			if(dialog!=NULL)
 			{
-
-				if(advancedDialog!=NULL)
-				{
-					if(!(advancedDialog->wasShown=true,advancedDialog->show(&actionSound,actionParameters)))
-						return(false);
-				}
-
-				action=manufactureAction(actionSound,actionParameters,true);
-				ret&=action->doAction(loadedSound->channel,true,willResize,crossfadeEdgesIsApplicable);
+				if(!(dialog->wasShown=true,dialog->show(&actionSound,actionParameters)))
+					return(false);
 			}
-			else
-			{
-				if(normalDialog!=NULL)
-				{
-					if(!(normalDialog->wasShown=true,normalDialog->show(&actionSound,actionParameters)))
-						return(false);
-				}
 
-				action=manufactureAction(actionSound,actionParameters,false);
-				ret&=action->doAction(loadedSound->channel,true,willResize,crossfadeEdgesIsApplicable);
-			}
+			action=manufactureAction(actionSound,actionParameters);
+			ret&=action->doAction(loadedSound->channel,true,willResize,crossfadeEdgesIsApplicable);
 
 			/*
 			if(prepareForUndo)
@@ -156,12 +126,6 @@ const string &AActionFactory::getDescription() const
 {
 	return(actionDescription);
 }
-
-const bool AActionFactory::hasAdvancedMode() const
-{
-	return(_hasAdvancedMode);
-}
-
 
 
 

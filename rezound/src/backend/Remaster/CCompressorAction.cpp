@@ -191,8 +191,8 @@ void CCompressorAction::undoActionSizeSafe(const CActionSound &actionSound)
 
 // --------------------------------------------------
 
-CCompressorActionFactory::CCompressorActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Dynamic Range Compressor","Dynamic Range Compressor",false,channelSelectDialog,normalDialog,NULL)
+CCompressorActionFactory::CCompressorActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Dynamic Range Compressor","Dynamic Range Compressor",channelSelectDialog,dialog)
 {
 }
 
@@ -200,7 +200,7 @@ CCompressorActionFactory::~CCompressorActionFactory()
 {
 }
 
-CCompressorAction *CCompressorActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CCompressorAction *CCompressorActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CCompressorAction(
 		actionSound,

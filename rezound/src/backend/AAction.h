@@ -65,16 +65,13 @@ public:
 	// - if showChannelSelect is true, then the dialog will be shown that allows the user to choose which channels the action to
 	// 	(Note: additionally it could allow the user to check, 'all data' or 'selected data' to apply the action to but would
 	// 	  need to modifie the given action sound's start and stop positions)
-	// - if advancedMode is true, then the alternate advancedDialog will be shown to the user.  But if the hasAdvancedMode()
-	//      returns false, then no action will be taken
 	//
 	// performAction returns true if the action was performed or false if they cancelled any of the dialog windows
 	//
-	bool performAction(CLoadedSound *loadedSound,CActionParameters *actionParameters,bool showChannelSelectDialog,bool advancedMode);
+	bool performAction(CLoadedSound *loadedSound,CActionParameters *actionParameters,bool showChannelSelectDialog);
 
 	const string &getName() const;
 	const string &getDescription() const;
-	const bool hasAdvancedMode() const;
 
 	/*
 	 * The showChannelSelectDialog parameter:
@@ -94,13 +91,10 @@ public:
 
 protected:
 
-	// - hasAdvancedMode can be passed as true if something is to be done when performAction's advancedMode parameter is true
-	// - Otherwise, it will say "this action has no advanced mode" so the user doesn't think something different than normal is
-	//   happening
 	// - willResize can be passed as false to avoid locking the CSound object for resize if the action doesn't need that lock to, but a lockSize will be obtained anyway
 	// - crossfadeIsApplicable should be false for actions like copy and selection changes
 		// ??? all these cools is getting a little clunky
-	AActionFactory(const string actionName,const string actionDescription,const bool hasAdvancedMode,AActionDialog *channelSelectDialog,AActionDialog *normalDialog,AActionDialog *advancedDialog,bool willResize=true,bool crossfadeEdgesIsApplicable=true);
+	AActionFactory(const string actionName,const string actionDescription,AActionDialog *channelSelectDialog,AActionDialog *dialog,bool willResize=true,bool crossfadeEdgesIsApplicable=true);
 
 
 	// this method can be overridden to do and setup before any dialog is shown for doing the action
@@ -111,21 +105,17 @@ protected:
 	 *   with the given parameters.  The frontend dialog and backend code will just have to agree on how
 	 *   to use this void * to pass data... I sugguest a struct which is nested within the AAction derivation
 	 *   which the dialog will declare and object of
-	 * - The advancedMode parameter just indicates whether the advancedMode parameter was true to the performAction() method
 	 */
-			// ??? shouldn't I pass whether advancedMode should be used?... because we can have advancedMode without an advancedDialog... if so, how would i know when to use it
-	virtual AAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const=0;
+	virtual AAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const=0;
 
 protected:
 	const string actionName;
 	const string actionDescription;
 
 	AActionDialog * const channelSelectDialog;
-	AActionDialog * const normalDialog;
-	AActionDialog * const advancedDialog;
+	AActionDialog * const dialog;
 
 private: 
-	const bool _hasAdvancedMode;
 	const bool willResize;
 	const bool crossfadeEdgesIsApplicable;
 

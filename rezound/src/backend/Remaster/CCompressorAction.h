@@ -32,10 +32,10 @@ private:
 class CCompressorActionFactory : public AActionFactory
 {
 public:
-	CCompressorActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	CCompressorActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CCompressorActionFactory();
 
-	CCompressorAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CCompressorAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

@@ -67,7 +67,7 @@ void CCropEdit::undoActionSizeSafe(const CActionSound &actionSound)
 // ---------------------------------------------
 
 CCropEditFactory::CCropEditFactory(AActionDialog *channelSelectDialog) :
-	AActionFactory("Crop","Crop",false,channelSelectDialog,NULL,NULL)
+	AActionFactory("Crop","Crop",channelSelectDialog,NULL)
 {
 }
 
@@ -75,7 +75,7 @@ CCropEditFactory::~CCropEditFactory()
 {
 }
 
-CCropEdit *CCropEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CCropEdit *CCropEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CCropEdit(actionSound));
 }

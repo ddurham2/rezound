@@ -123,8 +123,8 @@ void CNoiseGateAction::undoActionSizeSafe(const CActionSound &actionSound)
 
 // --------------------------------------------------
 
-CNoiseGateActionFactory::CNoiseGateActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Noise Gate","Applies a gain [0,1] to the sound when the level becomes less than the threshold.\nThe gain changes with a velocity according to the attack and release times",false,channelSelectDialog,normalDialog,NULL)
+CNoiseGateActionFactory::CNoiseGateActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Noise Gate","Applies a gain [0,1] to the sound when the level becomes less than the threshold.\nThe gain changes with a velocity according to the attack and release times",channelSelectDialog,dialog)
 {
 }
 
@@ -132,7 +132,7 @@ CNoiseGateActionFactory::~CNoiseGateActionFactory()
 {
 }
 
-CNoiseGateAction *CNoiseGateActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CNoiseGateAction *CNoiseGateActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CNoiseGateAction(
 		actionSound,

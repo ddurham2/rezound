@@ -28,7 +28,7 @@
 #include "../CActionParameters.h"
 
 /* TODO:
- * - There is still just the slightest clicky stuff if I do a pure sinewave and also adjust the rate by drawing a sine wave by hand in the advanced dialog
+ * - There is still just the slightest clicky stuff if I do a pure sinewave and also adjust the rate by drawing a sine wave by hand in the advanced curved dialog
  *   	- I'm guessing it's caused by discontinuity between segments... When I read ahead by one sample to do the interpolation, that sample I'm reading ahead should be according to the next segment's rate if I'm doing the last sample of the current segment
  *
  * - I could check if the rate is an integer we could easily do integer math to make it faster
@@ -233,27 +233,38 @@ void CChangeRateEffect::undoActionSizeSafe(const CActionSound &actionSound)
 
 // ---------------------------------------------
 
-CChangeRateEffectFactory::CChangeRateEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog,AActionDialog *advancedDialog) :
-	AActionFactory("Change Rate","Change Rate",true,channelSelectDialog,normalDialog,advancedDialog)
+CSimpleChangeRateEffectFactory::CSimpleChangeRateEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Change Rate","Change Rate",channelSelectDialog,dialog)
 {
 }
 
-CChangeRateEffectFactory::~CChangeRateEffectFactory()
+CSimpleChangeRateEffectFactory::~CSimpleChangeRateEffectFactory()
 {
 }
 
-CChangeRateEffect *CChangeRateEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CChangeRateEffect *CSimpleChangeRateEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
-	string parameterName;
-	if(actionParameters->containsParameter("Rate Change")) // it's just that the frontend uses two different names for the same parameter because the dialog is different
-		parameterName="Rate Change";
-	else
-		parameterName="Rate Curve";
-
-	if(actionParameters->getGraphParameter(parameterName).size()<2)
+	if(actionParameters->getGraphParameter("Rate Change").size()<2)
 		throw(runtime_error(string(__func__)+" -- nodes contains less than 2 nodes"));
+	return(new CChangeRateEffect(actionSound,actionParameters->getGraphParameter("Rate Change")));
+}
 
-	return(new CChangeRateEffect(actionSound,actionParameters->getGraphParameter(parameterName)));
+// ---------------------------------------------
+
+CCurvedChangeRateEffectFactory::CCurvedChangeRateEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Curved Change Rate","Curved Change Rate",channelSelectDialog,dialog)
+{
+}
+
+CCurvedChangeRateEffectFactory::~CCurvedChangeRateEffectFactory()
+{
+}
+
+CChangeRateEffect *CCurvedChangeRateEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+{
+	if(actionParameters->getGraphParameter("Rate Curve").size()<2)
+		throw(runtime_error(string(__func__)+" -- nodes contains less than 2 nodes"));
+	return(new CChangeRateEffect(actionSound,actionParameters->getGraphParameter("Rate Curve")));
 }
 
 

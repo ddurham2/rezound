@@ -136,8 +136,8 @@ void CBiquadResFilter::undoActionSizeSafe(const CActionSound &actionSound)
 
 // --------------------------------------------------
 
-CBiquadResLowpassFilterFactory::CBiquadResLowpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Biquad Resonant Lowpass Filter","Single Pole Lowpass Filter",false,channelSelectDialog,normalDialog,NULL)
+CBiquadResLowpassFilterFactory::CBiquadResLowpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Biquad Resonant Lowpass Filter","Single Pole Lowpass Filter",channelSelectDialog,dialog)
 {
 }
 
@@ -145,7 +145,7 @@ CBiquadResLowpassFilterFactory::~CBiquadResLowpassFilterFactory()
 {
 }
 
-CBiquadResFilter *CBiquadResLowpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CBiquadResFilter *CBiquadResLowpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CBiquadResFilter(
 		actionSound,
@@ -158,8 +158,8 @@ CBiquadResFilter *CBiquadResLowpassFilterFactory::manufactureAction(const CActio
 
 // --------------------------------------------------
 
-CBiquadResHighpassFilterFactory::CBiquadResHighpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Biquad Resonant Highpass Filter","Single Pole Highpass Filter",false,channelSelectDialog,normalDialog,NULL)
+CBiquadResHighpassFilterFactory::CBiquadResHighpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Biquad Resonant Highpass Filter","Single Pole Highpass Filter",channelSelectDialog,dialog)
 {
 }
 
@@ -167,7 +167,7 @@ CBiquadResHighpassFilterFactory::~CBiquadResHighpassFilterFactory()
 {
 }
 
-CBiquadResFilter *CBiquadResHighpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CBiquadResFilter *CBiquadResHighpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CBiquadResFilter(
 		actionSound,
@@ -180,8 +180,8 @@ CBiquadResFilter *CBiquadResHighpassFilterFactory::manufactureAction(const CActi
 
 // --------------------------------------------------
 
-CBiquadResBandpassFilterFactory::CBiquadResBandpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Biquad Resonant Bandpass Filter","Bandpass Filter",false,channelSelectDialog,normalDialog,NULL)
+CBiquadResBandpassFilterFactory::CBiquadResBandpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Biquad Resonant Bandpass Filter","Bandpass Filter",channelSelectDialog,dialog)
 {
 }
 
@@ -189,7 +189,7 @@ CBiquadResBandpassFilterFactory::~CBiquadResBandpassFilterFactory()
 {
 }
 
-CBiquadResFilter *CBiquadResBandpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CBiquadResFilter *CBiquadResBandpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CBiquadResFilter(
 		actionSound,

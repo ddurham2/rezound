@@ -65,19 +65,19 @@ private:
 class CSinglePoleLowpassFilterFactory : public AActionFactory
 {
 public:
-	CSinglePoleLowpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	CSinglePoleLowpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CSinglePoleLowpassFilterFactory();
 
-	CSinglePoleFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CSinglePoleFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 class CSinglePoleHighpassFilterFactory : public AActionFactory
 {
 public:
-	CSinglePoleHighpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	CSinglePoleHighpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CSinglePoleHighpassFilterFactory();
 
-	CSinglePoleFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CSinglePoleFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 // ??? Technically, I don't know if "single-pole" is applicable terminology for bandpass and notch filters
@@ -85,19 +85,19 @@ public:
 class CBandpassFilterFactory : public AActionFactory
 {
 public:
-	CBandpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	CBandpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CBandpassFilterFactory();
 
-	CSinglePoleFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CSinglePoleFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 class CNotchFilterFactory : public AActionFactory
 {
 public:
-	CNotchFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	CNotchFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CNotchFilterFactory();
 
-	CSinglePoleFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CSinglePoleFilter *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

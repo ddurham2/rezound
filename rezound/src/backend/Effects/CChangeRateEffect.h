@@ -48,13 +48,22 @@ private:
 };
 
 
-class CChangeRateEffectFactory : public AActionFactory
+class CSimpleChangeRateEffectFactory : public AActionFactory
 {
 public:
-	CChangeRateEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog,AActionDialog *advancedDialog);
-	virtual ~CChangeRateEffectFactory();
+	CSimpleChangeRateEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
+	virtual ~CSimpleChangeRateEffectFactory();
 
-	CChangeRateEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CChangeRateEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+};
+
+class CCurvedChangeRateEffectFactory : public AActionFactory
+{
+public:
+	CCurvedChangeRateEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
+	virtual ~CCurvedChangeRateEffectFactory();
+
+	CChangeRateEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

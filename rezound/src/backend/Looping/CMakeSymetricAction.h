@@ -47,7 +47,7 @@ public:
 	CMakeSymetricActionFactory(AActionDialog *channelSelectDialog);
 	virtual ~CMakeSymetricActionFactory();
 
-	CMakeSymetricAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CMakeSymetricAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

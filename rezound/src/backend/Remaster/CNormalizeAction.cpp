@@ -247,8 +247,8 @@ void CNormalizeAction::undoActionSizeSafe(const CActionSound &actionSound)
 
 // --------------------------------------------------
 
-CNormalizeActionFactory::CNormalizeActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Normalize","Normalize Amplitude (Some of this technique is experimental, please let me know if you approve or disapprove of the result's quality)",false,channelSelectDialog,normalDialog,NULL)
+CNormalizeActionFactory::CNormalizeActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Normalize","Normalize Amplitude (Some of this technique is experimental, please let me know if you approve or disapprove of the result's quality)",channelSelectDialog,dialog)
 {
 }
 
@@ -256,7 +256,7 @@ CNormalizeActionFactory::~CNormalizeActionFactory()
 {
 }
 
-CNormalizeAction *CNormalizeActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CNormalizeAction *CNormalizeActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CNormalizeAction(actionSound,actionParameters->getDoubleParameter("Normalization Level"),actionParameters->getUnsignedParameter("Region Count"),actionParameters->getBoolParameter("Lock Channels")));
 }

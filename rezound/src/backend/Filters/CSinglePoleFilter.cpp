@@ -148,8 +148,8 @@ void CSinglePoleFilter::undoActionSizeSafe(const CActionSound &actionSound)
 
 // --------------------------------------------------
 
-CSinglePoleLowpassFilterFactory::CSinglePoleLowpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Single Pole Lowpass Filter","Single Pole Lowpass Filter",false,channelSelectDialog,normalDialog,NULL)
+CSinglePoleLowpassFilterFactory::CSinglePoleLowpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Single Pole Lowpass Filter","Single Pole Lowpass Filter",channelSelectDialog,dialog)
 {
 }
 
@@ -157,7 +157,7 @@ CSinglePoleLowpassFilterFactory::~CSinglePoleLowpassFilterFactory()
 {
 }
 
-CSinglePoleFilter *CSinglePoleLowpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CSinglePoleFilter *CSinglePoleLowpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CSinglePoleFilter(
 		actionSound,
@@ -169,8 +169,8 @@ CSinglePoleFilter *CSinglePoleLowpassFilterFactory::manufactureAction(const CAct
 
 // --------------------------------------------------
 
-CSinglePoleHighpassFilterFactory::CSinglePoleHighpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Single Pole Highpass Filter","Single Pole Highpass Filter",false,channelSelectDialog,normalDialog,NULL)
+CSinglePoleHighpassFilterFactory::CSinglePoleHighpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Single Pole Highpass Filter","Single Pole Highpass Filter",channelSelectDialog,dialog)
 {
 }
 
@@ -178,7 +178,7 @@ CSinglePoleHighpassFilterFactory::~CSinglePoleHighpassFilterFactory()
 {
 }
 
-CSinglePoleFilter *CSinglePoleHighpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CSinglePoleFilter *CSinglePoleHighpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CSinglePoleFilter(
 		actionSound,
@@ -190,8 +190,8 @@ CSinglePoleFilter *CSinglePoleHighpassFilterFactory::manufactureAction(const CAc
 
 // --------------------------------------------------
 
-CBandpassFilterFactory::CBandpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Bandpass Filter","Bandpass Filter",false,channelSelectDialog,normalDialog,NULL)
+CBandpassFilterFactory::CBandpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Bandpass Filter","Bandpass Filter",channelSelectDialog,dialog)
 {
 }
 
@@ -199,7 +199,7 @@ CBandpassFilterFactory::~CBandpassFilterFactory()
 {
 }
 
-CSinglePoleFilter *CBandpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CSinglePoleFilter *CBandpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CSinglePoleFilter(
 		actionSound,
@@ -212,8 +212,8 @@ CSinglePoleFilter *CBandpassFilterFactory::manufactureAction(const CActionSound 
 
 // --------------------------------------------------
 
-CNotchFilterFactory::CNotchFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Notch Filter","Notch Filter",false,channelSelectDialog,normalDialog,NULL)
+CNotchFilterFactory::CNotchFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Notch Filter","Notch Filter",channelSelectDialog,dialog)
 {
 }
 
@@ -221,7 +221,7 @@ CNotchFilterFactory::~CNotchFilterFactory()
 {
 }
 
-CSinglePoleFilter *CNotchFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CSinglePoleFilter *CNotchFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return(new CSinglePoleFilter(
 		actionSound,

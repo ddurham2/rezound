@@ -50,10 +50,10 @@ private:
 class CFlangeEffectFactory : public AActionFactory
 {
 public:
-	CFlangeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	CFlangeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog);
 	virtual ~CFlangeEffectFactory();
 
-	CFlangeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CFlangeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 

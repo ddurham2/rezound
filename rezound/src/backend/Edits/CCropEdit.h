@@ -48,7 +48,7 @@ public:
 	CCropEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CCropEditFactory();
 
-	CCropEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CCropEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

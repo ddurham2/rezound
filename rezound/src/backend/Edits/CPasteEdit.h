@@ -73,7 +73,7 @@ public:
 	CInsertPasteEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CInsertPasteEditFactory();
 
-	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 
 	bool doPreActionSetup(CLoadedSound *loadedSound);
 };
@@ -84,7 +84,7 @@ public:
 	CReplacePasteEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CReplacePasteEditFactory();
 
-	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 
 	bool doPreActionSetup(CLoadedSound *loadedSound);
 };
@@ -95,7 +95,7 @@ public:
 	COverwritePasteEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~COverwritePasteEditFactory();
 
-	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 
 	bool doPreActionSetup(CLoadedSound *loadedSound);
 };
@@ -106,7 +106,7 @@ public:
 	CLimitedOverwritePasteEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CLimitedOverwritePasteEditFactory();
 
-	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 
 	bool doPreActionSetup(CLoadedSound *loadedSound);
 };
@@ -117,7 +117,7 @@ public:
 	CMixPasteEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CMixPasteEditFactory();
 
-	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 
 	bool doPreActionSetup(CLoadedSound *loadedSound);
 };
@@ -128,7 +128,7 @@ public:
 	CLimitedMixPasteEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CLimitedMixPasteEditFactory();
 
-	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 
 	bool doPreActionSetup(CLoadedSound *loadedSound);
 };
@@ -139,7 +139,7 @@ public:
 	CFitMixPasteEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CFitMixPasteEditFactory();
 
-	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 
 	bool doPreActionSetup(CLoadedSound *loadedSound);
 };

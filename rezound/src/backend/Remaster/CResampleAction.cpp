@@ -109,8 +109,8 @@ void CResampleAction::undoActionSizeSafe(const CActionSound &actionSound)
 
 // ---------------------------------------------
 
-CResampleActionFactory::CResampleActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Resample","Change Sample Rate",false,channelSelectDialog,normalDialog,NULL,true,false)
+CResampleActionFactory::CResampleActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Resample","Change Sample Rate",channelSelectDialog,dialog,true,false)
 {
 }
 
@@ -118,7 +118,7 @@ CResampleActionFactory::~CResampleActionFactory()
 {
 }
 
-CResampleAction *CResampleActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CResampleAction *CResampleActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return new CResampleAction(actionSound,actionParameters->getUnsignedParameter("New Sample Rate"));
 }

@@ -46,10 +46,10 @@ private:
 class CRemoveChannelsEditFactory : public AActionFactory
 {
 public:
-	CRemoveChannelsEditFactory(AActionDialog *normalDialog);
+	CRemoveChannelsEditFactory(AActionDialog *dialog);
 	virtual ~CRemoveChannelsEditFactory();
 
-	CRemoveChannelsEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CRemoveChannelsEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 
 protected:
 	bool doPreActionSetup(CLoadedSound *loadedSound);

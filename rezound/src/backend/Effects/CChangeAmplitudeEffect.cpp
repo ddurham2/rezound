@@ -91,8 +91,8 @@ void CChangeAmplitudeEffect::undoActionSizeSafe(const CActionSound &actionSound)
 
 // ---------------------------------------------
 
-CChangeVolumeEffectFactory::CChangeVolumeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Change Volume","Change Volume",false,channelSelectDialog,normalDialog,NULL)
+CChangeVolumeEffectFactory::CChangeVolumeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Change Volume","Change Volume",channelSelectDialog,dialog)
 {
 }
 
@@ -100,7 +100,7 @@ CChangeVolumeEffectFactory::~CChangeVolumeEffectFactory()
 {
 }
 
-CChangeAmplitudeEffect *CChangeVolumeEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CChangeAmplitudeEffect *CChangeVolumeEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	if(actionParameters->getGraphParameter("Volume Change").size()<2)
 		throw runtime_error(string(__func__)+" -- graph parameter 0 contains less than 2 nodes");
@@ -111,27 +111,38 @@ CChangeAmplitudeEffect *CChangeVolumeEffectFactory::manufactureAction(const CAct
 
 // ---------------------------------------------
 
-CGainEffectFactory::CGainEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog,AActionDialog *advancedDialog) :
-	AActionFactory("Gain","Gain",true,channelSelectDialog,normalDialog,advancedDialog)
+CSimpleGainEffectFactory::CSimpleGainEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Gain","Gain",channelSelectDialog,dialog)
 {
 }
 
-CGainEffectFactory::~CGainEffectFactory()
+CSimpleGainEffectFactory::~CSimpleGainEffectFactory()
 {
 }
 
-CChangeAmplitudeEffect *CGainEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CChangeAmplitudeEffect *CSimpleGainEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
-	string parameterName;
-	if(actionParameters->containsParameter("Gain")) // it's just that the frontend uses two different names for the same parameter because the dialog is different
-		parameterName="Gain";
-	else
-		parameterName="Gain Curve";
-
-	if(actionParameters->getGraphParameter(parameterName).size()<2)
+	if(actionParameters->getGraphParameter("Gain").size()<2)
 		throw runtime_error(string(__func__)+" -- graph parameter 0 contains less than 2 nodes");
+	return new CChangeAmplitudeEffect(actionSound,actionParameters->getGraphParameter("Gain"));
+}
 
-	return new CChangeAmplitudeEffect(actionSound,actionParameters->getGraphParameter(parameterName));
+// ---------------------------------------------
+
+CCurvedGainEffectFactory::CCurvedGainEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
+	AActionFactory("Curved Gain","Curved Gain",channelSelectDialog,dialog)
+{
+}
+
+CCurvedGainEffectFactory::~CCurvedGainEffectFactory()
+{
+}
+
+CChangeAmplitudeEffect *CCurvedGainEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+{
+	if(actionParameters->getGraphParameter("Gain Curve").size()<2)
+		throw runtime_error(string(__func__)+" -- graph parameter 0 contains less than 2 nodes");
+	return new CChangeAmplitudeEffect(actionSound,actionParameters->getGraphParameter("Gain Curve"));
 }
 
 

@@ -45,7 +45,7 @@ public:
 	CUnclipActionFactory(AActionDialog *channelSelectDialog);
 	virtual ~CUnclipActionFactory();
 
-	CUnclipAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CUnclipAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif

@@ -48,10 +48,10 @@ private:
 class CAddCueActionFactory : public AActionFactory
 {
 public:
-	CAddCueActionFactory(AActionDialog *normalDialog);
+	CAddCueActionFactory(AActionDialog *dialog);
 	virtual ~CAddCueActionFactory();
 
-	CAddCueAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CAddCueAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 
 private:
 
@@ -83,7 +83,7 @@ public:
 	CRemoveCueActionFactory();
 	virtual ~CRemoveCueActionFactory();
 
-	CRemoveCueAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CRemoveCueAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 
 private:
 };
@@ -114,10 +114,10 @@ private:
 class CReplaceCueActionFactory : public AActionFactory
 {
 public:
-	CReplaceCueActionFactory(AActionDialog *normalDialog);
+	CReplaceCueActionFactory(AActionDialog *dialog);
 	virtual ~CReplaceCueActionFactory();
 
-	CReplaceCueAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CReplaceCueAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 
 private:
 

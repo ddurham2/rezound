@@ -45,7 +45,7 @@ public:
 	CMuteEditFactory(AActionDialog *channelSelectDialog);
 	virtual ~CMuteEditFactory();
 
-	CMuteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+	CMuteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };
 
 #endif
