@@ -352,11 +352,11 @@ FXIMPLEMENT(CMorphingArbitraryFIRFilterDialog,CActionParamDialog,CMorphingArbitr
 CMorphingArbitraryFIRFilterDialog::CMorphingArbitraryFIRFilterDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
-	FXPacker *p0,*p1,*p2;
+	FXPacker *p0,*p1,*p2,*p3;
 
 	p0=newVertPanel(NULL);
 		p1=newHorzPanel(p0,false);
-			addGraph(p1,
+			FXGraphParamValue *g1=addGraph(p1,
 				N_("Frequency Response 1"),
 				N_("Frequency"),
 				"Hz",
@@ -366,13 +366,14 @@ CMorphingArbitraryFIRFilterDialog::CMorphingArbitraryFIRFilterDialog(FXWindow *m
 				new CActionParamMapper_arbitraryFIRFilter_amp(0.0,20,-100,100),
 				dB_to_scalar
 			);
+			g1->setMinSize(450,280);
 
 			p2=new FXVerticalFrame(p1,LAYOUT_CENTER_Y, 0,0,0,0, 0,0,0,0, 0,0);
 				new FXButton(p2,FXString("->\t")+_("Copy Response 1 to Response 2"),NULL,this,ID_COPY_1_TO_2,BUTTON_NORMAL|LAYOUT_FILL_X);
 				new FXButton(p2,FXString("<>\t")+_("Swap Response 1 and Response 2"),NULL,this,ID_SWAP_1_AND_2,BUTTON_NORMAL|LAYOUT_FILL_X);
 				new FXButton(p2,FXString("<-\t")+_("Copy Response 2 to Response 1"),NULL,this,ID_COPY_2_TO_1,BUTTON_NORMAL|LAYOUT_FILL_X);
 
-			addGraph(p1,
+			FXGraphParamValue *g2=addGraph(p1,
 				N_("Frequency Response 2"),
 				N_("Frequency"),
 				"Hz",
@@ -382,74 +383,82 @@ CMorphingArbitraryFIRFilterDialog::CMorphingArbitraryFIRFilterDialog(FXWindow *m
 				new CActionParamMapper_arbitraryFIRFilter_amp(0.0,20,-100,100),
 				dB_to_scalar
 			);
+			g2->setMinSize(450,280);
 			
 		p1=newHorzPanel(p0,false);
-			FXTextParamValue *baseFrequency=addNumericTextEntry(p1,
-				N_("Base Frequency"),
-				"Hz",
-				20,
-				10,
-				1000,
-				_("This Sets the Lowest Frequency Displayed on the Graph.\nThis is the Frequency of the First Octave.")
-			);
-				baseFrequency->setTarget(this);
-				baseFrequency->setSelector(ID_BASE_FREQUENCY);
+			p2=newHorzPanel(p1,false);
+			p2->setLayoutHints(p2->getLayoutHints()&(~LAYOUT_FILL_X));
 
-			FXTextParamValue *numberOfOctaves=addNumericTextEntry(p1,
-				N_("Number of Octaves"),
-				"",
-				11,
-				1,
-				15,
-				_("This Sets the Number of Octaves Displayed on the Graph.\nBut Note that no Frequency Higher than Half of the Sound's Sampling Rate can be Affected Since it Cannot Contain a Frequency Higher than That.")
-			);
-				numberOfOctaves->setTarget(this);
-				numberOfOctaves->setSelector(ID_NUMBER_OF_OCTAVES);
-
-		p1=newHorzPanel(p0,false);
-		p1->setLayoutHints(p1->getLayoutHints()&(~LAYOUT_FILL_X));
-
-			addSlider(p1,
-				N_("Wet/Dry Mix"),
-				"%",
-				new CActionParamMapper_linear_range(100.0,-100,100),
-				NULL,
-				true
-			);
-
-			p2=newVertPanel(p1,false);
-				FXCheckBoxParamValue *useLFOCheckBox=addCheckBoxEntry(p2,
-					N_("Use LFO"),
-					false
-				);
-				useLFOCheckBox->setTarget(this);
-				useLFOCheckBox->setSelector(ID_USE_LFO_CHECKBOX);
-
-				addLFO(p2,
-					N_("Sweep LFO"),
-					"ms",
-					"",
-					0,
-					"Hz",
-					20,
+				FXConstantParamValue *wetdryMix=addSlider(p2,
+					N_("Wet/Dry Mix"),
+					"%",
+					new CActionParamMapper_linear_range(100.0,-100,100),
+					NULL,
 					true
 				);
+				wetdryMix->setMinSize(0,150);
+
+				p3=newVertPanel(p2,false);
+					FXCheckBoxParamValue *useLFOCheckBox=addCheckBoxEntry(p3,
+						N_("Use LFO"),
+						false
+					);
+					useLFOCheckBox->setTarget(this);
+					useLFOCheckBox->setSelector(ID_USE_LFO_CHECKBOX);
+
+					FXLFOParamValue *lfo=addLFO(p3,
+						N_("Sweep LFO"),
+						"ms",
+						"",
+						0,
+						"Hz",
+						20,
+						true
+					);
+					lfo->setMinSize(0,170);
+
+				p3=newVertPanel(p2,false);
+					FXConstantParamValue *kernelLength=addSlider(p3,
+						N_("Kernel Length"),
+						"",
+						new CActionParamMapper_arbitraryFIRFilter_kernelLength(1024),
+						NULL,
+						false
+					); 
+					setTipText("Kernel Length",_("This is the Size of the Filter Kernel Computed (in samples) From Your Curve to be Convolved with the Audio"));
+					kernelLength->setMinSize(0,150);
+
+					addCheckBoxEntry(p3,
+						N_("Undelay"),
+						true,
+						_("This Counteracts the Delay Side-Effect of Custom FIR Filters")
+					);
 
 			p2=newVertPanel(p1,false);
-				addSlider(p2,
-					N_("Kernel Length"),
-					"",
-					new CActionParamMapper_arbitraryFIRFilter_kernelLength(1024),
-					NULL,
-					false
-				); 
-				setTipText("Kernel Length",_("This is the Size of the Filter Kernel Computed (in samples) From Your Curve to be Convolved with the Audio"));
-
-				addCheckBoxEntry(p2,
-					N_("Undelay"),
-					true,
-					_("This Counteracts the Delay Side-Effect of Custom FIR Filters")
+			p2->setLayoutHints(p2->getLayoutHints()&(~LAYOUT_FILL_Y));
+			p2->setLayoutHints(p2->getLayoutHints()&(~LAYOUT_FILL_X));
+				FXTextParamValue *baseFrequency=addNumericTextEntry(p2,
+					N_("Base Frequency"),
+					"Hz",
+					20,
+					10,
+					1000,
+					_("This Sets the Lowest Frequency Displayed on the Graph.\nThis is the Frequency of the First Octave.")
 				);
+					baseFrequency->setTarget(this);
+					baseFrequency->setSelector(ID_BASE_FREQUENCY);
+	
+				FXTextParamValue *numberOfOctaves=addNumericTextEntry(p2,
+					N_("Number of Octaves"),
+					"",
+					11,
+					1,
+					15,
+					_("This Sets the Number of Octaves Displayed on the Graph.\nBut Note that no Frequency Higher than Half of the Sound's Sampling Rate can be Affected Since it Cannot Contain a Frequency Higher than That.")
+				);
+					numberOfOctaves->setTarget(this);
+					numberOfOctaves->setSelector(ID_NUMBER_OF_OCTAVES);
+	
 
 	onFrequencyRangeChange(NULL,0,NULL);
 	onUseLFOCheckBox(useLFOCheckBox,0,NULL);
