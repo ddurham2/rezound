@@ -1100,12 +1100,20 @@ CMetersWindow::CMetersWindow(FXComposite *parent) :
 
 
 	// schedule the first update meters event
+#if REZ_FOX_VERSION<10322
 	timeout=getApp()->addTimeout(this,ID_UPDATE_TIMEOUT,gMeterUpdateTime);
+#else
+	getApp()->addTimeout(this,ID_UPDATE_TIMEOUT,gMeterUpdateTime);
+#endif
 }
 
 CMetersWindow::~CMetersWindow()
 {
+#if REZ_FOX_VERSION<10322
 	getApp()->removeTimeout(timeout);
+#else
+	getApp()->removeTimeout(this,ID_UPDATE_TIMEOUT);
+#endif
 }
 
 long CMetersWindow::onUpdateMeters(FXObject *sender,FXSelector sel,void *ptr)
@@ -1166,7 +1174,11 @@ long CMetersWindow::onUpdateMeters(FXObject *sender,FXSelector sel,void *ptr)
 	}
 
 	// schedule another update again in METER_UPDATE_RATE milliseconds
+#if REZ_FOX_VERSION<10322
 	timeout=getApp()->addTimeout(this,ID_UPDATE_TIMEOUT,gMeterUpdateTime);
+#else
+	getApp()->addTimeout(this,ID_UPDATE_TIMEOUT,gMeterUpdateTime);
+#endif
 	return 0; // returning 0 because 1 makes it use a ton of CPU (because returning 1 causes FXApp::refresh() to be called)
 }
 

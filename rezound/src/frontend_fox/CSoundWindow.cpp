@@ -119,8 +119,13 @@ void playTrigger(void *Pthis)
 {
 	CSoundWindow *that=(CSoundWindow *)Pthis;
 	// ??? this is called from another thread.. I don't know if it will cause a problem in FOX
+#if REZ_FOX_VERSION<10322
 	if(that->timerHandle==NULL)
 		that->timerHandle=that->getApp()->addTimeout(that,CSoundWindow::ID_DRAW_PLAY_POSITION,DRAW_PLAY_POSITION_TIME);
+#else
+	if(!that->getApp()->hasTimeout(that,CSoundWindow::ID_DRAW_PLAY_POSITION))
+		that->getApp()->addTimeout(that,CSoundWindow::ID_DRAW_PLAY_POSITION,DRAW_PLAY_POSITION_TIME);
+#endif
 }
 
 // ----------------------------------------------------------
@@ -133,7 +138,6 @@ CSoundWindow::CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound) :
 
 	loadedSound(_loadedSound),
 
-	timerHandle(NULL),
 	firstTimeShowing(true),
 	closing(false),
 
@@ -290,19 +294,16 @@ CSoundWindow::CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound) :
 
 CSoundWindow::~CSoundWindow()
 {
+#if REZ_FOX_VERSION<10322
 	if(timerHandle!=NULL)
 		getApp()->removeTimeout(timerHandle);
+#else
+	getApp()->removeTimeout(this,CSoundWindow::ID_DRAW_PLAY_POSITION);
+#endif
 
 	loadedSound->channel->removeOnPlayTrigger(playTrigger,this);
 
 	closing=true;
-/*
-	while(timerHandle!=NULL)
-	{
-		printf("waiting on timerHandle to fire\n");
-		fxsleep(1000); // sleep for 1 millisecond
-	}
-*/
 
 	delete addCueActionFactory;
 	delete removeCueActionFactory;
@@ -570,9 +571,6 @@ long CSoundWindow::onResize(FXObject *sender,FXSelector sel,void *ptr)
 // little red play position bar draw event ... this method is called on a timer every fraction of a sec
 long CSoundWindow::onDrawPlayPosition(FXObject *sender,FXSelector,void*)
 {
-	// timer has fired
-	timerHandle=NULL;
-
 	if(closing) // destructor is waiting on this event
 		return 1;
 
@@ -608,7 +606,11 @@ long CSoundWindow::onDrawPlayPosition(FXObject *sender,FXSelector,void*)
 		// ??? I could make the calculation of the next event more intelligent
 		// 	- if the onscreen data is smaller I could register to get the timer faster 
 		// reregister to get this event again
+#if REZ_FOX_VERSION<10322
 		timerHandle=getApp()->addTimeout(this,ID_DRAW_PLAY_POSITION,DRAW_PLAY_POSITION_TIME);
+#else
+		getApp()->addTimeout(this,ID_DRAW_PLAY_POSITION,DRAW_PLAY_POSITION_TIME);
+#endif
 	}
 	else
 	{

@@ -168,7 +168,9 @@ private:
 
 	friend void playTrigger(void *Pthis);
 
+#if REZ_FOX_VERSION<10322
 	FXTimer *timerHandle; // used to draw play position
+#endif
 	bool firstTimeShowing;
 	bool closing;
 
