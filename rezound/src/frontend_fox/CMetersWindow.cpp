@@ -414,7 +414,11 @@ public:
 			dc.setForeground(M_METER_OFF);
 			dc.fillRectangle(0,0,w+3,statusFont->getFontHeight()+2);
 			dc.setForeground(M_TEXT_COLOR);
+#if REZ_FOX_VERSION<10117
+			dc.setTextFont(statusFont);
+#else
 			dc.setFont(statusFont);
+#endif
 			dc.drawText(1,statusFont->getFontHeight(),f.c_str(),f.length());
 		}
 
