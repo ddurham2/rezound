@@ -114,6 +114,7 @@ CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
 					recordLimitLabel=new FXLabel(frame4,"",NULL,LAYOUT_FILL_X|JUSTIFY_LEFT);
 			frame3=new FXVerticalFrame(frame2,FRAME_RAISED | LAYOUT_FILL_X);
 				DCOffsetLabel=new FXLabel(frame3,"DCOffset: ",NULL,LAYOUT_CENTER_Y);
+				DCOffsetLabel->setTipText("Reported Every 5 Seconds");
 				new FXButton(frame3,"Compensate\tSubtract out the currently reported DC Offset from any further recorded data",NULL,this,ID_DC_OFFSET_COMPENSATE_BUTTON,BUTTON_NORMAL|LAYOUT_CENTER_Y);
 		frame2=new FXVerticalFrame(frame1,FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_FILL_Y);
 			frame3=new FXHorizontalFrame(frame2,0,0,0,0, 0,0,0,0, 0,0);
