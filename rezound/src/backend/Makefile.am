@@ -29,6 +29,7 @@ include $(top_srcdir)/config/am_include.mk
 SUBDIRS=\
 	Edits  \
 	Effects \
+	Filters \
 	Looping \
 	Remaster
 
