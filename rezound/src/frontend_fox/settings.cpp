@@ -21,7 +21,6 @@
 #include "settings.h"
 
 #include <stddef.h>
-#include <stdlib.h>
 
 CStringDiskTable *gSettingsRegistry=NULL;
 
