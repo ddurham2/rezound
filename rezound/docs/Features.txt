@@ -74,6 +74,10 @@
 	- Quantize
 	- Varied Repeat
 
+- Convolution
+	- For Various Effects Like Reverb and Applying Room Characteristics
+	- Custom Filters
+
 - IIR Single Pole Filters
 	- Lowpass
 	- Highpass
