@@ -7,10 +7,8 @@
 
 	- I really need to play with very large files (>500meg) and make them faster if at all possible
 
-	- make TPoolFile::accessers (and others) sets (instead of vectors?) direct indexing isn't necessary when searching and inserting would become faster
-
 	- I have taken the call to backupSAT() out of TPoolFile::insertSpace because it is just too slow in the real-time situation of recording.
-		- perhaps I could have a more efficient way of storing the SAT or backing it up more effiently
+		- perhaps I could have a more efficient way of storing the SAT or backing it up more efficiently
 			- do now have that, but still don't think I want to call it while recording
 			- ???  I got it... have a bool flag in TPoolFile which says to turn on or off crash recovery and then do or don't call backupSAT while it's off
 	
@@ -50,7 +48,7 @@
 			- 2) go thru the code and everywhere that a pool ids could be modified, alter all outstanding accessors
 				- but this wouldn't help for objects just storing the poolId obtained from the class.
 
-
+	- make TPoolFile::accessers (and others) sets (instead of vectors?) direct indexing isn't necessary when searching and inserting would become faster
 
 
 
