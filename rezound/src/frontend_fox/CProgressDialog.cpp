@@ -37,7 +37,7 @@ FXIMPLEMENT(CProgressDialog,FXDialogBox,CProgressDialogMap,ARRAYNUMBER(CProgress
 // ----------------------------------------
 
 CProgressDialog::CProgressDialog(FXWindow *owner,const FXString &title,bool showCancelButton) :
-	FXDialogBox(owner,title,DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE, 0,0,250+6*2,25+6*2, 0,0,0,0, 0,0),
+	FXDialogBox(owner,title,DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE, 0,0,270+6*2,25+6*2, 0,0,0,0, 0,0),
 	isCancelled(false),
 	contents(new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_RAISED|FRAME_THICK, 0,0,0,0, 6,6,6,6, 6,2)),
 		progressBar(new FXProgressBar(contents,NULL,0,PROGRESSBAR_NORMAL | LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,250,26)),
