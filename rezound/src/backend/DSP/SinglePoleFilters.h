@@ -29,7 +29,7 @@
  *	Based on designs in Chapter 19 of "The Scientist 
  *	and Engineer's Guide to Digital Signal Processing"
  *
- *	http://www.dspguide.com/
+ *	http://www.dspguide.com
  *
  *	Basically a simple RC lowpass filter
  *
