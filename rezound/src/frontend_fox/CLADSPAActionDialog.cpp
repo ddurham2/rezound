@@ -33,14 +33,14 @@ static const double interpretValue_linear_real(const double x,const int s) { ret
 static const double uninterpretValue_linear_real(const double x,const int s) { return x/s; }
 
 static const double interpretValue_linear_int(const double x,const int s) { return floor(x*s); }
-static const double uninterpretValue_linear_int(const double x,const int s) { return floor(x/s); }
+static const double uninterpretValue_linear_int(const double x,const int s) { return floor(x)/s; }
 
 #warning I still need to make these behave logarithmically
 static const double interpretValue_logarithmic_real(const double x,const int s) { return x*s; }
 static const double uninterpretValue_logarithmic_real(const double x,const int s) { return x/s; }
 
 static const double interpretValue_logarithmic_int(const double x,const int s) { return floor(x*s); }
-static const double uninterpretValue_logarithmic_int(const double x,const int s) { return floor(x/s); }
+static const double uninterpretValue_logarithmic_int(const double x,const int s) { return floor(x)/s; }
 
 
 CLADSPAActionDialog::CLADSPAActionDialog(FXWindow *mainWindow,const LADSPA_Descriptor *_desc) :
@@ -96,14 +96,8 @@ CLADSPAActionDialog::CLADSPAActionDialog(FXWindow *mainWindow,const LADSPA_Descr
 		new FXTabItem((FXTabBook *)p1,_("Controls"),NULL,TAB_TOP_NORMAL);
 
 		FXPacker *scrollWindowParent=new FXPacker(p1,FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_FILL_Y);
-		FXScrollWindow *scrollWindow=new FXScrollWindow(scrollWindowParent,LAYOUT_FILL_X|LAYOUT_FILL_Y); /* ??? perhaps all CActionParamValue panels could do this if asked for */
+		FXScrollWindow *scrollWindow=new FXScrollWindow(scrollWindowParent,LAYOUT_FILL_X|LAYOUT_FILL_Y); /* ??? perhaps all CActionParamValue panels could scroll like this if requested */
 			FXPacker *p2=newHorzPanel(scrollWindow,false);
-
-		// ??? I need a way of having two opened sound files go to the action (I'm planning this), and then
-		// these two sounds might need to go to two inputs on the plugin.  For instance, the vocoder plugin
-		// has two inputs the first is the formant and the second is the carrier to use... Right now that would
-		// mean that the left channel was the first and the right channel was the second.  Perhaps some dialog
-		// could be shown (when I knew to show it) how to route the channels into the plugin
 
 		for(unsigned t=0;t<pluginDesc->PortCount;t++)
 		{
