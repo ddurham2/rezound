@@ -126,6 +126,10 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_CHANGED,			CMainWindow::ID_SOUND_LIST,			CMainWindow::onSoundListChange),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SOUND_LIST_HOTKEY,		CMainWindow::onSoundListHotKey),
 	FXMAPFUNC(SEL_KEYPRESS,			CMainWindow::ID_SOUND_LIST,			CMainWindow::onSoundListKeyPress),
+
+	FXMAPFUNC(SEL_KEYPRESS,			0,						CMainWindow::onKeyPress),
+	FXMAPFUNC(SEL_KEYRELEASE,		0,						CMainWindow::onKeyRelease),
+	FXMAPFUNC(SEL_ENTER,			0,						CMainWindow::onMouseEnter),
 };
 
 FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
@@ -134,12 +138,20 @@ FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
 
 #include "drawPortion.h" // for backgroundColor
 
+#include "custom_cursors.h"
+
 CMainWindow::CMainWindow(FXApp* a) :
 	FXMainWindow(a,"ReZound",FOXIcons->icon_logo_32,FOXIcons->icon_logo_16,DECOR_ALL,10,20,800,600, 0,0,0,0, 0,0),
 	shuttleFont(NULL),
 	soundListFont(NULL),
-	soundListHeaderFont(NULL)
+	soundListHeaderFont(NULL),
+
+	playMouseCursor(NULL)
 {
+					// I'm aware of these two memory leaks, but I'm not concerned
+	playMouseCursor=new FXCursor(a,bytesToBits(playMouseCursorSource,16*16),bytesToBits(playMouseCursorMask,16*16),16,16,14,8);
+	playMouseCursor->create();
+
 	FXFontDesc d;
 
 	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|FRAME_RAISED|FRAME_THICK,0,0,0,0, 0,0,0,0);
@@ -246,6 +258,7 @@ CMainWindow::CMainWindow(FXApp* a) :
 
 CMainWindow::~CMainWindow()
 {
+	delete playMouseCursor;
 	delete shuttleFont;
 	delete soundListFont;
 	delete soundListHeaderFont;
@@ -440,6 +453,70 @@ long CMainWindow::onSoundListKeyPress(FXObject *sender,FXSelector sel,void *ptr)
 	soundList->setFocus();
 	return 1;
 }
+
+
+
+
+
+
+// --- stuff for handling that pressing ctrl should cause a play cursor to show on the wave canvas ---------------
+
+// goofy.. I don't like this, but it's the easiest thing I can think to do right now.. any other way seems to be graceless or rediculus
+#include "FXWaveCanvas.h"
+void setMouseCursorForFXWaveCanvas(FXWindow *p,FXCursor *cursor)
+{
+	if(dynamic_cast<FXWaveCanvas *>(p)!=NULL)
+	{
+		static_cast<FXWaveCanvas *>(p)->setDefaultCursor(cursor);
+		static_cast<FXWaveCanvas *>(p)->setDragCursor(cursor);
+	}
+	else
+	{
+		for(int t=0;t<p->numChildren();t++)
+			setMouseCursorForFXWaveCanvas(p->childAtIndex(t),cursor);
+	}
+}
+
+long CMainWindow::onKeyPress(FXObject *sender,FXSelector sel,void *ptr)
+{
+	if(((FXEvent *)ptr)->code==KEY_Control_L || ((FXEvent *)ptr)->code==KEY_Control_R)
+		// set play cursor
+		setMouseCursorForFXWaveCanvas(soundWindowFrame,playMouseCursor);
+
+	return FXMainWindow::handle(sender,sel,ptr); // behave as normal, just intercept ctrl presses
+}
+
+long CMainWindow::onKeyRelease(FXObject *sender,FXSelector sel,void *ptr)
+{
+	if(((FXEvent *)ptr)->code==KEY_Control_L || ((FXEvent *)ptr)->code==KEY_Control_R)
+		// unset play cursor
+		setMouseCursorForFXWaveCanvas(soundWindowFrame,getApp()->getDefaultCursor(DEF_ARROW_CURSOR));
+
+	return FXMainWindow::handle(sender,sel,ptr); // behave as normal, just intercept ctrl releases
+}
+
+long CMainWindow::onMouseEnter(FXObject *sender,FXSelector sel,void *ptr)
+{
+	FXint dummy;
+	FXuint keyboardModifierState;
+	getCursorPosition(dummy,dummy,keyboardModifierState);
+
+	if(keyboardModifierState&CONTROLMASK)
+		// set play cursor
+		setMouseCursorForFXWaveCanvas(soundWindowFrame,playMouseCursor);
+	else
+		// unset play cursor
+		setMouseCursorForFXWaveCanvas(soundWindowFrame,getApp()->getDefaultCursor(DEF_ARROW_CURSOR));
+
+	return 1;
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+
+
+
+
+
 
 extern const string escapeAmpersand(const string i); // defined in CStatusComm.cpp
 

@@ -82,6 +82,10 @@ public:
 
 	long onViewKey(FXObject *sender,FXSelector sel,void *ptr); // main window gets view-change key presses because the sound window changes and we can't bind a key to any particualar object pointer
 
+	long onKeyPress(FXObject *sender,FXSelector sel,void *ptr);
+	long onKeyRelease(FXObject *sender,FXSelector sel,void *ptr);
+	long onMouseEnter(FXObject *sender,FXSelector sel,void *ptr);
+
 	long onDebugButton(FXObject *sender,FXSelector sel,void *ptr);
 
 
@@ -181,6 +185,8 @@ private:
 	FXComboBox	*clipboardComboBox; // ??? it would however make sense to put this on the edit dialog.. it's just a little wide
 
 	FXIconList *soundList;
+
+	FXCursor *playMouseCursor;
 
 };
 
