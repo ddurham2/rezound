@@ -37,7 +37,7 @@
 	- Start and Pause Recording
 	- Can Reset the Record Position to the Beginning While Recording
 	- Add Cue Positions While Recording
-	- Compensation for DC Offset in recording hardware
+	- Compensation for DC Offset in Recording Hardware
 
 - Play Controls
 	- Play All Once
