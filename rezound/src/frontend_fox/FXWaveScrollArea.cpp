@@ -71,7 +71,7 @@ FXDEFMAP(FXWaveScrollArea) FXWaveViewScrollAreaMap[]=
 FXIMPLEMENT(FXWaveScrollArea,FXScrollArea,FXWaveViewScrollAreaMap,ARRAYNUMBER(FXWaveViewScrollAreaMap))
 
 FXWaveScrollArea::FXWaveScrollArea(FXRezWaveView *_parent,CLoadedSound *_loadedSound) :
-	FXScrollArea(_parent,FRAME_RIDGE|LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0),
+	FXScrollArea(_parent,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0),
 
 	parent(_parent),
 
