@@ -118,6 +118,8 @@ CrossfadeFadeMethods gCrossfadeFadeMethod=cfmLinear;
 #include "AFrontendHooks.h"
 #include "CSound_defs.h"
 
+#include <stdio.h>
+
 #include <stdexcept>
 
 #include <CPath.h>
