@@ -27,6 +27,15 @@ class ASoundPlayer;
 
 #include <set>
 
+#ifdef HAVE_LIBRFFTW
+#include <vector>
+#include <map>
+#include <rfftw.h>
+#include <CMutex.h>
+#include <TAutoBuffer.h>
+#endif
+
+
 /*
  - This class should be derived from to create the actual player for a given
    operating system platform.
@@ -53,7 +62,7 @@ class ASoundPlayer;
 class CSoundPlayerChannel;
 
 #include "DSP/LevelDetector.h"
-
+	
 #define MAX_OUTPUT_DEVICES 16
 class ASoundPlayer
 {
@@ -101,6 +110,22 @@ public:
 	// gets the maximum peak level since the last call to this method for the same channel (hence two sub-systems could not currently use this method at the same time since they would interfere with each other's last-time-this-method-was-called)
 	const sample_t getPeakLevel(unsigned channel) const;
 
+	// Returns the frequency analysis of the most recent buffer played (if ReZound was configured and found fftw installed)
+	// It returns a result that is not useful for careful analysis because for 
+	// the CPU's sake it only does analysis on part of the buffer and doesn't 
+	// make any effort to track results from buffers that were processed between 
+	// calls to this function.  
+	// The result is a vector of float with values 0 to 1 
+	// The frequency band of each element is:
+	//     f(i)=20*2^(i/2)
+	// which gives each octave at i=0,2,4,6,8... and an band within the octave at 1,3,5,7...
+	// So the elements would measure 20Hz, ~30Hz, 40Hz, ~60Hz, 80Hz, ~120Hz, 160Hz, ~240Hz, 320Hz, ~480Hz, 640Hz, ...
+	// The number of elements will be according to the sample rate of the output device since the 
+	// higher the sample rate the higher the frequency that can be represented in the data.  The elements
+	// will represent as many bands as will fit from 20Hz up to half the sample rate, not going over.
+// ??? figure out and explain how the frequency band label corrisonds to the band, is the the middle frequency or the lower or upper bound of the band?
+	const vector<float> getFrequencyAnalysis() const;
+
 protected:
 
 	ASoundPlayer();
@@ -124,6 +149,21 @@ private:
 
 	mutable sample_t peakLevels[MAX_CHANNELS];
 	mutable bool resetPeakLevels[MAX_CHANNELS]; // a bool that is flagged if the next buffer processed should start with a new max or max with the current one (since it hasn't been obtained from the get method yet)
+
+#ifdef HAVE_LIBRFFTW
+	#define ASP_ANALYSIS_BUFFER_SIZE 1024
+	mutable CMutex frequencyAnalysisBufferMutex;
+	mutable bool frequencyAnalysisBufferPrepared;
+	mutable fftw_real frequencyAnalysisBuffer[ASP_ANALYSIS_BUFFER_SIZE];
+	size_t frequencyAnalysisBufferLength; // the amount of data that mixSoundPlayerChannels copied into the buffer
+	mutable map<size_t,TAutoBuffer<fftw_real> *> hammingWindows; // create and save Hamming windows for any length needed
+	rfftw_plan analyzerPlan;
+	mutable vector<size_t> bandLowerIndexes; // mutable because calculateAnalyzerBandIndexRanges is called from getFrequencyAnalysis
+	mutable vector<size_t> bandUpperIndexes;
+
+	void calculateAnalyzerBandIndexRanges() const; // const because it is called from getFrequencyAnalysis
+	static TAutoBuffer<fftw_real> *createHammingWindow(size_t windowSize);
+#endif
 };
 
 
