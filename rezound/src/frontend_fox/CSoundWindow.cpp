@@ -159,6 +159,7 @@ CSoundWindow::CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound) :
 
 	addCueActionFactory(NULL),
 	removeCueActionFactory(NULL),
+	replaceCueActionFactory(NULL),
 
 	playingLEDOn(false),
 	pausedLEDOn(false)
@@ -360,6 +361,22 @@ void CSoundWindow::drawPlayPosition(bool justErasing)
 		waveView->drawPlayPosition(position,true,false);
 }
 
+int CSoundWindow::getZoomDecimalPlaces() const
+{
+	// ??? this should depend on the FXRezWaveView's actual horzZoomFactor value because the FXDial doesn't represent how many samples a pixel represents
+	int places;
+	if(horzZoomDial->getValue()>75*ZOOM_MUL)
+		places=5;
+	else if(horzZoomDial->getValue()>60*ZOOM_MUL)
+		places=4;
+	else if(horzZoomDial->getValue()>40*ZOOM_MUL)
+		places=3;
+	else
+		places=2;
+
+	return places;
+}
+
 void CSoundWindow::updateFromEdit()
 {
 	// see if the number of channels changed
@@ -378,18 +395,7 @@ void CSoundWindow::updateAllStatusInfo()
 	audioDataSizeLabel->setText(("Audio Size: "+loadedSound->sound->getAudioDataSize()).c_str());
 	poolFileSizeLabel->setText(("Working File: "+loadedSound->sound->getPoolFileSize()).c_str());
 
-	// ??? this should depend on the FXRezWaveView's actual horzZoomFactor value because the FXDial doesn't represent how many samples a pixel represents
-	int places;
-	if(horzZoomDial->getValue()>75*ZOOM_MUL)
-		places=5;
-	else if(horzZoomDial->getValue()>60*ZOOM_MUL)
-		places=4;
-	else if(horzZoomDial->getValue()>40*ZOOM_MUL)
-		places=3;
-	else
-		places=2;
-
-	totalLengthLabel->setText(("Total: "+loadedSound->sound->getTimePosition(loadedSound->sound->getLength(),places)).c_str());
+	totalLengthLabel->setText(("Total: "+loadedSound->sound->getTimePosition(loadedSound->sound->getLength(),getZoomDecimalPlaces())).c_str());
 
 	updateSelectionStatusInfo();
 	updatePlayPositionStatusInfo();
@@ -397,16 +403,7 @@ void CSoundWindow::updateAllStatusInfo()
 
 void CSoundWindow::updateSelectionStatusInfo()
 {
-	// ??? this should depend on the FXRezWaveView's actual horzZoomFactor value because the FXDial doesn't represent how many samples a pixel represents
-	int places;
-	if(horzZoomDial->getValue()>75*ZOOM_MUL)
-		places=5;
-	else if(horzZoomDial->getValue()>60*ZOOM_MUL)
-		places=4;
-	else if(horzZoomDial->getValue()>40*ZOOM_MUL)
-		places=3;
-	else 
-		places=2;
+	const int places=getZoomDecimalPlaces();
 
 	selectionLengthLabel->setText(("Selection: "+loadedSound->sound->getTimePosition(loadedSound->channel->getStopPosition()-loadedSound->channel->getStartPosition()+1,places)).c_str());
 	selectStartLabel->setText(("Start: "+loadedSound->sound->getTimePosition(loadedSound->channel->getStartPosition(),places)).c_str());
@@ -426,15 +423,7 @@ void CSoundWindow::updatePlayPositionStatusInfo()
 
 	if(loadedSound->channel->isPlaying())
 	{ // draw new play position
-		int places;
-		if(horzZoomDial->getValue()>75*ZOOM_MUL)
-			places=5;
-		else if(horzZoomDial->getValue()>60*ZOOM_MUL)
-			places=4;
-		else if(horzZoomDial->getValue()>40*ZOOM_MUL)
-			places=3;
-		else
-			places=2;
+		const int places=getZoomDecimalPlaces();
 
 		const string label="Playing: "+loadedSound->sound->getTimePosition(loadedSound->channel->getPosition(),places);
 
