@@ -24,7 +24,9 @@
 #include <fox/fx.h>
 
 #include <stdexcept>
+#ifdef ENABLE_NLS
 #include <clocale> // for gettext init
+#endif
 
 #include <CPath.h>
 DECLARE_STATIC_CPATH // to declare CPath::dirDelim
