@@ -14,9 +14,6 @@
 	- I will fix this when I change to using a different sound file format library (one that can store arbitrary data sections, namely .wav)
 	- FIXED: I have patched SGI's libaudiofile to support this, but they have yet to respond whether it will make it into the release, it should
 
-// ??? this will be fixed very soon
-- When pasting data, there is no aknowledgment of the differences in sample rate of the src data when pasting to the destination.  So if you cut from a 22.5khz sound and paste to a 44.1khz sound it will play the data twice as fast
-
 - The 'Delay' effect is implemented to be much more powerful but there needs to be an advanced front end dialog to take advantage of this greater flexibility of the implementation
 
 - There is a slight drawing bug in which the the area on screen which is selected is drawn shifted to the left just slightly
