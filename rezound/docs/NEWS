@@ -1,4 +1,4 @@
-ReZound-0.2.0alpha
+rezound-0.2.0alpha
 	- Added Ogg/Vorbis and MP3 file format support
 	- Added gain parameters to the single pole filters
 	- Improved the startup speed
