@@ -312,9 +312,11 @@ public:
 
 	static size_t __default_cue_index;
 	bool containsCue(const string &name,size_t &index=__default_cue_index) const;
+		// these following find methods return true if something is found else false
 	bool findCue(const sample_pos_t time,size_t &index) const;
-		// finds the cue nearest to the given time
-	bool findNearestCue(const sample_pos_t time,size_t &index,sample_pos_t &distance) const;
+	bool findNearestCue(const sample_pos_t time,size_t &index,sample_pos_t &distance) const; // finds the cue nearest to the given time
+	bool findPrevCue(const sample_pos_t time,size_t &index) const; // finds the previous cue in time at the given time
+	bool findNextCue(const sample_pos_t time,size_t &index) const; // finds the following cue in time at the given time
 
 	const string getUnusedCueName(const string &prefix="noname") const;
 

@@ -2009,10 +2009,10 @@ bool CSound::containsCue(const string &name,size_t &index) const
 		if(strncmp((*cueAccesser)[t].name,name.c_str(),MAX_SOUND_CUE_NAME_LENGTH)==0)
 		{
 			index=t;
-			return(true);
+			return true;
 		}
 	}
-	return(false);
+	return false;
 }
 
 bool CSound::findCue(const sample_pos_t time,size_t &index) const
@@ -2022,16 +2022,16 @@ bool CSound::findCue(const sample_pos_t time,size_t &index) const
 	if(i!=cueIndex.end())
 	{
 		index=i->second;
-		return(true);
+		return true;
 	}
 	else
-		return(false);
+		return false;
 }
 
 bool CSound::findNearestCue(const sample_pos_t time,size_t &index,sample_pos_t &distance) const
 {
 	if(cueIndex.empty())
-		return(false);
+		return false;
 
 	map<sample_pos_t,size_t>::const_iterator i=cueIndex.lower_bound(time);
 
@@ -2069,7 +2069,32 @@ bool CSound::findNearestCue(const sample_pos_t time,size_t &index,sample_pos_t &
 		distance=(sample_pos_t)sample_fpos_fabs((sample_fpos_t)time-(sample_fpos_t)i->first);
 	}
 
-	return(true);
+	return true;
+}
+
+bool CSound::findPrevCue(const sample_pos_t time,size_t &index) const
+{
+	map<sample_pos_t,size_t>::const_iterator i=cueIndex.find(time);
+	if(i==cueIndex.end())
+		return false;
+
+	if(i!=cueIndex.begin())
+		i--;
+	index=i->second;
+	return true;
+}
+
+bool CSound::findNextCue(const sample_pos_t time,size_t &index) const
+{
+	map<sample_pos_t,size_t>::const_iterator i=cueIndex.find(time);
+	if(i==cueIndex.end())
+		return false;
+
+	i++;
+	if(i==cueIndex.end())
+		return false;
+	index=i->second;
+	return true;
 }
 
 const string CSound::getUnusedCueName(const string &prefix) const
@@ -2078,9 +2103,9 @@ const string CSound::getUnusedCueName(const string &prefix) const
 	for(unsigned t=1;t<200;t++)
 	{
 		if(!containsCue(prefix+istring(t)))
-			return(prefix+istring(t));
+			return prefix+istring(t);
 	}
-	return("");
+	return "";
 }
 
 void CSound::clearCues()
