@@ -129,6 +129,8 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 
 	FXPacker *lowerFrame=new FXHorizontalFrame(contents,FRAME_RAISED|FRAME_THICK | LAYOUT_FILL_X|LAYOUT_FIX_HEIGHT, 0,0,0,55);
 		FXButton *okayButton=new FXButton(lowerFrame,_("&Close"),FOXIcons->GreenCheck1,this,ID_ACCEPT,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_BEFORE_TEXT | LAYOUT_CENTER_X|LAYOUT_CENTER_Y, 0,0,0,0, 10,10,5,5);
+
+	FOXIcons->logo->setTransparentColor(FXRGB(255,0,255));
 }
 
 CAboutDialog::~CAboutDialog()
