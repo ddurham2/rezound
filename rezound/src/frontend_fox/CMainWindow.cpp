@@ -1303,7 +1303,7 @@ long CMainWindow::onShuttleChange(FXObject *sender,FXSelector sel,void *ptr)
 		if(shuttlePos==0)
 		{
 			if(text==_("semitones"))
-				labelString="+0";
+				labelString="+ 0";
 			else
 				labelString="1x";
 
