@@ -497,7 +497,6 @@ long FXGraphParamValue::onPatternButton(FXObject *sender,FXSelector sel,void *pt
 		break;
 
 	case ID_SMOOTH_BUTTON:
-		vertDeformSlider->setValue(-vertDeformSlider->getValue());
 		nodes=smoothGraphNodes(nodes);
 		break;
 
