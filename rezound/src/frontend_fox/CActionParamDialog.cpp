@@ -125,6 +125,8 @@ void CActionParamDialog::addGraph(const string name,const string units,FXGraphPa
 
 bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
+	bool retval=false;
+
 	// restore the splitter's position
 	const FXint h=atoi(gSettingsRegistry->getValue((getTitle()+"_SplitterPos").text()).c_str());
 	presetsFrame->setHeight(h);
@@ -175,14 +177,14 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 			}
 		}
 
-
-		// save the splitter's position
-		FXint h=presetsFrame->getHeight();
-		gSettingsRegistry->createKey((getTitle()+"_SplitterPos").text(),istring(h));
-
-		return(true);
+		retval=true;
 	}
-	return(false);
+
+	// save the splitter's position
+	FXint h2=presetsFrame->getHeight();
+	gSettingsRegistry->createKey((getTitle()+"_SplitterPos").text(),istring(h2));
+
+	return(retval);
 }
 
 long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void *ptr)
