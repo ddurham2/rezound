@@ -41,8 +41,7 @@ INCLUDES=\
 	 -I$(top_srcdir)/src/misc \
 	 -I$(top_srcdir)/src/misc/cc++ \
 	 -I$(top_srcdir)/src/misc/missing/generated \
-	 -I$(top_srcdir)/src/PoolFile \
-	 -I$(top_srcdir)/src/PoolFile/DiskTable
+	 -I$(top_srcdir)/src/PoolFile
 
 ## CXXFLAGS is also automatically added to the $(CXX) macro at compile time, and
 ## is passed down to the children as well
