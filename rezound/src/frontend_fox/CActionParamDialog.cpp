@@ -139,7 +139,7 @@ FXPacker *CActionParamDialog::newVertPanel(void *parent,bool createBorder)
 FXConstantParamValue *CActionParamDialog::addSlider(void *parent,const string name,const string units,AActionParamMapper *valueMapper,f_at_x optRetValueConv,bool showInverseButton)
 {
 	if(parent==NULL)
-		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- use CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
 	FXConstantParamValue *slider=new FXConstantParamValue(valueMapper,showInverseButton,(FXPacker *)parent,0,name.c_str());
 	slider->setUnits(units.c_str());
 	slider->setValue(valueMapper->getDefaultValue());
@@ -160,7 +160,7 @@ FXConstantParamValue *CActionParamDialog::getSliderParam(const string name)
 FXTextParamValue *CActionParamDialog::addNumericTextEntry(void *parent,const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsTipText)
 {
 	if(parent==NULL)
-		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- use CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
 	FXTextParamValue *textEntry=new FXTextParamValue((FXPacker *)parent,0,name.c_str(),initialValue,minValue,maxValue);
 	textEntry->setUnits(units.c_str(),unitsTipText.c_str());
 	parameters.push_back(make_pair(ptNumericText,textEntry));
@@ -172,7 +172,7 @@ FXTextParamValue *CActionParamDialog::addNumericTextEntry(void *parent,const str
 FXTextParamValue *CActionParamDialog::addStringTextEntry(void *parent,const string name,const string initialValue,const string tipText)
 {
 	if(parent==NULL)
-		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- use CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
 	FXTextParamValue *textEntry=new FXTextParamValue((FXPacker *)parent,0,name.c_str(),initialValue);
 	textEntry->setTipText(tipText.c_str());
 	parameters.push_back(make_pair(ptStringText,textEntry));
@@ -194,7 +194,7 @@ FXTextParamValue *CActionParamDialog::getTextParam(const string name)
 FXDiskEntityParamValue *CActionParamDialog::addDiskEntityEntry(void *parent,const string name,const string initialEntityName,FXDiskEntityParamValue::DiskEntityTypes entityType,const string tipText)
 {
 	if(parent==NULL)
-		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- use CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
 	FXDiskEntityParamValue *diskEntityEntry=new FXDiskEntityParamValue((FXPacker *)parent,0,name.c_str(),initialEntityName,entityType);
 	diskEntityEntry->setTipText(tipText.c_str());
 	parameters.push_back(make_pair(ptDiskEntity,diskEntityEntry));
@@ -214,7 +214,7 @@ FXDiskEntityParamValue *CActionParamDialog::getDiskEntityParam(const string name
 FXComboTextParamValue *CActionParamDialog::addComboTextEntry(void *parent,const string name,const vector<string> &items,const string tipText,bool isEditable)
 {
 	if(parent==NULL)
-		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- use CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
 	FXComboTextParamValue *comboTextEntry=new FXComboTextParamValue((FXPacker *)parent,0,name.c_str(),items,isEditable);
 	comboTextEntry->setTipText(tipText.c_str());
 	parameters.push_back(make_pair(ptComboText,comboTextEntry));
@@ -235,7 +235,7 @@ FXComboTextParamValue *CActionParamDialog::getComboText(const string name)
 FXCheckBoxParamValue *CActionParamDialog::addCheckBoxEntry(void *parent,const string name,const bool checked,const string tipText)
 {
 	if(parent==NULL)
-		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- use CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
 	FXCheckBoxParamValue *checkBoxEntry=new FXCheckBoxParamValue((FXPacker *)parent,0,name.c_str(),checked);
 	checkBoxEntry->setTipText(tipText.c_str());
 	parameters.push_back(make_pair(ptCheckBox,checkBoxEntry));
@@ -255,7 +255,7 @@ FXCheckBoxParamValue *CActionParamDialog::getCheckBoxParam(const string name)
 FXGraphParamValue *CActionParamDialog::addGraph(void *parent,const string name,const string horzAxisLabel,const string horzUnits,AActionParamMapper *horzValueMapper,const string vertAxisLabel,const string vertUnits,AActionParamMapper *vertValueMapper,f_at_x optRetValueConv)
 {
 	if(parent==NULL)
-		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- use CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
 	FXGraphParamValue *graph=new FXGraphParamValue(name.c_str(),(FXPacker *)parent,LAYOUT_FILL_X|LAYOUT_FILL_Y);
 	graph->setHorzParameters(horzAxisLabel,horzUnits,horzValueMapper);
 	graph->setVertParameters(vertAxisLabel,vertUnits,vertValueMapper);
@@ -268,7 +268,7 @@ FXGraphParamValue *CActionParamDialog::addGraph(void *parent,const string name,c
 FXGraphParamValue *CActionParamDialog::addGraphWithWaveform(void *parent,const string name,const string vertAxisLabel,const string vertUnits,AActionParamMapper *vertValueMapper,f_at_x optRetValueConv)
 {
 	if(parent==NULL)
-		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- use CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
 	FXGraphParamValue *graph=new FXGraphParamValue(name.c_str(),(FXPacker *)parent,LAYOUT_FILL_X|LAYOUT_FILL_Y);
 	graph->setVertParameters(vertAxisLabel,vertUnits,vertValueMapper);
 	parameters.push_back(make_pair(ptGraphWithWaveform,graph));
@@ -290,7 +290,7 @@ FXGraphParamValue *CActionParamDialog::getGraphParam(const string name)
 FXLFOParamValue *CActionParamDialog::addLFO(void *parent,const string name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs)
 {
 	if(parent==NULL)
-		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- use CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
 	FXLFOParamValue *LFOEntry=new FXLFOParamValue((FXPacker *)parent,0,name.c_str(),ampUnits,ampTitle,maxAmp,freqUnits,maxFreq,hideBipolarLFOs);
 	//LFOEntry->setTipText(tipText.c_str());
 	parameters.push_back(make_pair(ptLFO,LFOEntry));
@@ -310,7 +310,7 @@ FXLFOParamValue *CActionParamDialog::getLFOParam(const string name)
 FXPluginRoutingParamValue *CActionParamDialog::addPluginRoutingParam(void *parent,const string name,const LADSPA_Descriptor *desc)
 {
 	if(parent==NULL)
-		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- use CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
 	FXPluginRoutingParamValue *pluginRoutingEntry=new FXPluginRoutingParamValue((FXPacker *)parent,0,name.c_str(),desc);
 	parameters.push_back(make_pair(ptPluginRouting,pluginRoutingEntry));
 	retValueConvs.push_back(NULL);
