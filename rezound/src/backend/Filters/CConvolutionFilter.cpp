@@ -20,8 +20,6 @@
 
 #include "CConvolutionFilter.h"
 
-#include <math.h>
-
 #include <CPath.h>
 
 #include "../DSP/Convolver.h"

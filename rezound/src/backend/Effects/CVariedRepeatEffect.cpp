@@ -1,6 +1,5 @@
 #include "CVariedRepeatEffect.h"
 
-#include <stdexcept>
 #include <memory>
 
 #include "../CActionParameters.h"

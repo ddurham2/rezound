@@ -27,8 +27,6 @@
 #include <stdexcept>
 #include <typeinfo>
 
-#include <istring>
-
 #include "settings.h"
 
 

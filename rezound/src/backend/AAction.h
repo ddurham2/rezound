@@ -31,6 +31,11 @@ class AAction;
 #include <string>
 #include <vector>
 
+// I figure most actions will need 2 or 3 of these, so I'll include them here
+#include <math.h>
+#include <istring>
+#include <stdexcept>
+
 #include "settings.h"
 #include "CActionSound.h"
 #include "AStatusComm.h"

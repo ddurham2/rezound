@@ -20,13 +20,8 @@
 
 #include "CPasteEdit.h"
 
-#include <math.h>
-
-#include <stdexcept>
 #include <algorithm>
 #include <utility>
-
-#include <istring>
 
 #include "../AActionDialog.h"
 #include "../ASoundClipboard.h"

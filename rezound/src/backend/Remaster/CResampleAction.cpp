@@ -20,10 +20,6 @@
 
 #include "CResampleAction.h"
 
-#include <stdexcept>
-
-#include <istring>
-
 #include "../CActionSound.h"
 #include "../CActionParameters.h"
 

@@ -20,8 +20,6 @@
 
 #include "CRemoveDCAction.h"
 
-#include <math.h>
-
 CRemoveDCAction::CRemoveDCAction(const CActionSound actionSound) :
 	AAction(actionSound)
 {

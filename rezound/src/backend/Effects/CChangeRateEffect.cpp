@@ -20,10 +20,6 @@
 
 #include "CChangeRateEffect.h"
 
-#include <math.h>
-
-#include <stdexcept>
-
 #include "../CActionSound.h"
 #include "../CActionParameters.h"
 

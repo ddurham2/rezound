@@ -20,8 +20,6 @@
 
 #include "CCopyCutDeleteEdit.h"
 
-#include <istring>
-
 #include "../ASoundClipboard.h"
 
 CCopyCutDeleteEdit::CCopyCutDeleteEdit(const CActionSound actionSound,CCDType _type) :

@@ -21,8 +21,6 @@
 
 #include "CGenerateNoiseAction.h"
 
-#include <istring>
-
 #include "../CActionParameters.h"
 
 CGenerateNoiseAction::CGenerateNoiseAction(const CActionSound actionSound,const double _noiseLength,const double _volume,const NoiseTypes _noiseType,const StereoImage _stereoImage):

@@ -20,8 +20,6 @@
 
 #include "CInsertSilenceEdit.h"
 
-#include <istring>
-
 #include "../CActionParameters.h"
 
 CInsertSilenceEdit::CInsertSilenceEdit(const CActionSound actionSound,const double _silenceLength) :

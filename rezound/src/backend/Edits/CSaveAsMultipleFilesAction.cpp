@@ -20,11 +20,8 @@
 
 #include "CSaveAsMultipleFilesAction.h"
 
-#include <math.h>
-
 #include <map>
 #include <CPath.h>
-
 
 #include "../CActionParameters.h"
 #include "../AStatusComm.h"

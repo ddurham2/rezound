@@ -20,10 +20,6 @@
 
 #include "CDelayEffect.h"
 
-#include <stdexcept>
-
-#include <istring>
-
 #include "../CActionParameters.h"
 #include "../CActionSound.h"
 

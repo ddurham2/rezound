@@ -20,12 +20,6 @@
 
 #include "AAction.h"
 
-#include <math.h>
-
-#include <stdexcept>
-
-#include <istring>
-
 #include "CLoadedSound.h"
 #include "AStatusComm.h"
 #include "CSoundPlayerChannel.h"

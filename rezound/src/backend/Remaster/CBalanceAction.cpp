@@ -20,8 +20,6 @@
 
 #include "CBalanceAction.h"
 
-#include <stdexcept>
-
 #include "../CActionSound.h"
 #include "../CActionParameters.h"
 

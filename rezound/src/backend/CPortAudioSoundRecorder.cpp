@@ -25,8 +25,6 @@
 #include <stdexcept>
 #include <typeinfo>
 
-#include <istring>
-
 #include "settings.h"
 
 // ??? as the sample rate is lower these need to be lower so that onData is called more often and the view meters on the record dialog don't seem to lag

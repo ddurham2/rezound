@@ -24,6 +24,7 @@
 
 #include "CSound.h"
 
+#include <istring>
 #include <stdexcept>
 
 #include "AFrontendHooks.h"

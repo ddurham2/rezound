@@ -22,7 +22,6 @@
 
 #include <TAutoBuffer.h>
 
-#include <math.h>
 #include "../DSP/Convolver.h"
 
 CTestEffect::CTestEffect(const CActionSound &actionSound) :

@@ -20,7 +20,6 @@
 
 #include "CFlangeEffect.h"
 
-#include <stdexcept>
 #include <memory>
 
 #include "../DSP/FlangeEffect.h"

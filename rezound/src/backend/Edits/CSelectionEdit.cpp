@@ -22,10 +22,6 @@
 
 #include "../CActionParameters.h"
 
-#include <stdexcept>
-
-#include <istring>
-
 static const char *gSelectionNames[]=
 {
 	"Select All",
