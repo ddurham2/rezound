@@ -9,6 +9,7 @@
    	automake-1.6.3 (or higher)
 	libtool-1.4.2 (or higher)
 	pkgconfig-0.12.0 (or higher)
+	gettext-0.11.5 (or higher)
 
    Then, from the top source directory, run the bootstrap script. This will create the configure script. Now you can follow the instructions in INSTALL for normal build.
 
