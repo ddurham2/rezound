@@ -427,7 +427,7 @@ AC_ARG_ENABLE(
 
 		dnl warn about needing static libs if using FOX and statically linking
 		if ! test -z "$FOX_LIBS"; then
-			AC_MSG_NOTICE([*** NOTICE *** since static linking is enabled, FOX will require static versions of libjpeg, libpng, libtiff, XFree86-libs, and maybe others])
+			AC_MSG_NOTICE([*** NOTICE *** since static linking is enabled, FOX will require static versions of libjpeg, libpng, libtiff, XFree86-libs, and maybe others (Also, I have found it necessary to configure FOX as: "CPPFLAGS=-DNO_XIM configure --with-opengl=no" when statically linking)])
 		fi
 		
 	]
