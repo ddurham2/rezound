@@ -405,7 +405,6 @@ long CMetersWindow::onResetGrandMaxPeakLevels(FXObject *sender,FXSelector sel,vo
 
 void CMetersWindow::setSoundPlayer(ASoundPlayer *_soundPlayer)
 {
-#warning remember to eventually try this when the playback device fails to initialize
 	if(soundPlayer!=NULL)
 		throw runtime_error(string(__func__)+" -- internal error -- sound player already set -- perhaps I need to allow this");
 	soundPlayer=_soundPlayer;
