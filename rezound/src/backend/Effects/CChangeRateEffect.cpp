@@ -70,7 +70,7 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 	{
 		if(actionSound.doChannel[i])
 		{
-			CStatusBar statusBar("Changing Rate -- Channel "+istring(i),actionSound.start,actionSound.start+newLength); 
+			CStatusBar statusBar("Changing Rate -- Channel "+istring(i),actionSound.start,actionSound.start+newLength,true); 
 	
 			// here, we're using the undo data as a source from which to calculate the new data
 			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempAudioPoolKey,i);
@@ -119,7 +119,11 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 						// here the fudgeFactor is used with iReadPos+1 when we made the undo backup
 						dest[writePos++]=(sample_t)(p1*src[iReadPos]+p2*src[iReadPos+1]);
 		
-						statusBar.update(writePos);
+						if(statusBar.update(writePos))
+						{ // cancelled 
+							restoreSelectionFromTempPools(actionSound,actionSound.start,undoRemoveLength);
+							return false;
+						}
 					}
 				}
 				else
@@ -137,7 +141,11 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 							// here the fudgeFactor is used with iReadPos+1 when we made the undo backup
 							dest[writePos++]=(sample_t)(p1*src[iReadPos]+p2*src[iReadPos+1]);
 
-							statusBar.update(writePos);
+							if(statusBar.update(writePos))
+							{ // cancelled 
+								restoreSelectionFromTempPools(actionSound,actionSound.start,undoRemoveLength);
+								return false;
+							}
 						}
 					}
 					else
@@ -145,10 +153,11 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 						sample_pos_t copyLength=(sample_pos_t)((readStop-readStart)+1);
 						if(copyLength>0 && writePos+copyLength>=(dest.getSize()+1)) // fudge fix
 							copyLength--;
+						// whup, can't do status bar ??? unless I were to call copyData in 100 chunks perhaps
+						// 	 ??? need to do
 						dest.copyData((sample_pos_t)writePos,src,(sample_pos_t)readStart,copyLength);
 						writePos+=copyLength;
 
-						// whup, can't do status bar ??? unless I were to call copyData in 100 chunks perhaps
 					}
 				}
 			}
