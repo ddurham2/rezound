@@ -176,6 +176,7 @@ void ASoundFileManager::saveAs()
 	if(loaded)
 	{
 		string filename=loaded->getFilename();
+askAgain:
 		if(!gFrontendHooks->promptForSaveSoundFilename(filename))
 			return;
 
@@ -191,7 +192,7 @@ void ASoundFileManager::saveAs()
 		if(ost::Path(filename).Exists())
 		{
 			if(Question("Overwrite Existing File:\n"+filename,yesnoQues)!=yesAns)
-				return;
+				goto askAgain;
 		}
 
 		const ASoundTranslator *translator=getTranslator(filename,/*isRaw*/false);
