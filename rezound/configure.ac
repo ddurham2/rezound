@@ -244,15 +244,28 @@ AC_ARG_ENABLE(
 	[ # action if either enable or disable flag is given
 		if [[ "$enableval" = "yes" ]]
 		then 
-			AC_DEFINE(ENABLE_OSS)
-			AC_MSG_RESULT([*** enabling OSS for audio I/O])
+			AC_CHECK_HEADER(
+				sys/soundcard.h,
+				[
+					AC_DEFINE(ENABLE_OSS)
+					AC_MSG_RESULT([*** enabling OSS for audio I/O])
+				],
+				[
+					AC_MSG_ERROR([***** sys/soundcard.h header file not found.  This is required for OSS audio I/O support. *****])
+				]
+			)
 		else
 			AC_MSG_RESULT([*** disabling OSS for audio I/O])
 		fi
 	],
 	[ # action if neither enable or disable flag is given
-			AC_DEFINE(ENABLE_OSS)
-			AC_MSG_RESULT([*** enabling OSS for audio I/O])
+		AC_CHECK_HEADER(
+			sys/soundcard.h,
+			[
+				AC_DEFINE(ENABLE_OSS)
+				AC_MSG_RESULT([*** enabling OSS for audio I/O])
+			]
+		)
 	]
 )
 
