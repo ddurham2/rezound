@@ -5,6 +5,10 @@ CStubAction::CStubAction(const CActionSound &actionSound) :
 {
 }
 
+CStubAction::~CStubAction()
+{
+}
+
 bool CStubAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
 	const sample_pos_t start=actionSound.start;
@@ -71,9 +75,13 @@ void CStubAction::undoActionSizeSafe(const CActionSound &actionSound)
 
 
 // --------------------------------------------------
-//
+
 CStubActionFactory::CStubActionFactory(AActionDialog *channelSelectDialog) :
 	AActionFactory("Stub","Stub",false,channelSelectDialog,NULL,NULL)
+{
+}
+
+CStubActionFactory::~CStubActionFactory()
 {
 }
 
