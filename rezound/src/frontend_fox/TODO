@@ -86,6 +86,14 @@
 	- if the frontend gets too slow about saving user presets, I could create a gUserPresetFile which stays allocated and doesn't have to reparse the file every time like it does now.
 
 
+--- PREFERENCES when I make a preferences dialog --
+	- "auto-play after load" feature 
+	- clipboard basename
+	- clipboard directory
+	- working directory space(s)
+		- maybe a checkmark that says never open where it was loaded from
+	- reopen history size
+
 
 
 --- TRIED ---
