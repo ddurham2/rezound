@@ -117,8 +117,7 @@ CMp3Dialog::CMp3Dialog(FXWindow *mainWindow) :
 			new FXLabel(flagsFrame,_("To lame"));
 
 	
-	CBRButton->setCheck(TRUE);
-	onRadioButton(NULL,0,(void *)1); // to disable all but CBR
+	onRadioButton(CBRButton,0,(void *)1); // to disable all but CBR
 	
 
 }
@@ -174,16 +173,31 @@ long CMp3Dialog::onRadioButton(FXObject *sender,FXSelector sel,void *ptr)
 	if((int)ptr==0) // only act when ptr==1 when it's getting checked
 		return 1;
 
+	// turn off all buttons
+	CBRButton->setCheck(FALSE);
 	setEnable((FXWindow *)CBRFrame,false);
+
+	ABRButton->setCheck(FALSE);
 	setEnable((FXWindow *)ABRFrame,false);
+
+	qualityButton->setCheck(FALSE);
 	setEnable((FXWindow *)qualityFrame,false);
 
-	if(CBRButton->getCheck()==TRUE)
+	if(sender==CBRButton)
+	{
+		CBRButton->setCheck(TRUE);
 		setEnable((FXWindow *)CBRFrame,true);
-	else if(ABRButton->getCheck()==TRUE)
+	}
+	else if(sender==ABRButton)
+	{
+		ABRButton->setCheck(TRUE);
 		setEnable((FXWindow *)ABRFrame,true);
-	else if(qualityButton->getCheck()==TRUE)
+	}
+	else if(sender==qualityButton)
+	{
+		qualityButton->setCheck(TRUE);
 		setEnable((FXWindow *)qualityFrame,true);
+	}
 
 	return 1;
 }
