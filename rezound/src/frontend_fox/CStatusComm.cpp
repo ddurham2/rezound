@@ -175,6 +175,7 @@ bool CStatusComm::updateProgressBar(int handle,int progress)
 			fprintf(stderr,"exception caught in %s -- %s\n",__func__,e.what());
 		}
 	}
+	return false;
 }
 
 void CStatusComm::endProgressBar(int handle)
