@@ -92,7 +92,7 @@ const string CFrontendHooks::getFOXFileTypes() const
 		}
 	}
 	
-	types="All Supported Types ("+allTypes+")\nAll Files(*)"+types;
+	types="All Supported Types ("+allTypes+")\nAll Files(*)\n"+types;
 
 	return(types);
 }
