@@ -52,7 +52,7 @@ class CActionParamDialog : public FXModalDialogBox, public AActionDialog
 public:
 	typedef const double (*f_at_x)(const double x);
 
-	CActionParamDialog(FXWindow *mainWindow,const FXString title,bool showPresetPanel=true);
+	CActionParamDialog(FXWindow *mainWindow,const FXString title,bool showPresetPanel=true,FXModalDialogBox::ShowTypes showType=FXModalDialogBox::stRememberSizeAndPosition);
 	virtual ~CActionParamDialog();
 
 	// these are used to create new parents for the controls
@@ -144,7 +144,7 @@ private:
 	};
 
 	// the void * points to either an FXConstantParamValue, FXTextParamValue, FXComboTextParamValue, FXCheckBoxParamValue or an FXGraphParamValue
-	vector<pair<ParamTypes,void *> > parameters;
+	vector<pair<ParamTypes,FXWindow *> > parameters;
 	vector<f_at_x> retValueConvs;
 
 	FXSplitter *splitter;
