@@ -143,7 +143,7 @@ bool CConvolutionFilter::doActionSizeSafe(CActionSound &actionSound,bool prepare
 					const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
 					sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 
-					CStatusBar statusBar("Convolving -- Channel "+istring(i),start,stop); 
+					CStatusBar statusBar("Convolving -- Channel "+istring(i),start,stop,true); 
 
 					sample_pos_t srcPos=srcOffset;
 					sample_pos_t destPos=start;
@@ -175,7 +175,16 @@ bool CConvolutionFilter::doActionSizeSafe(CActionSound &actionSound,bool prepare
 						// (if TSimpleConvolver were used)
 						//dest[destPos++]=ClipSample(convolver.processSample(src[srcPos++]));
 
-						statusBar.update(destPos);
+						if(statusBar.update(destPos))
+						{
+							if(prepareForUndo)
+								undoActionSizeSafe(actionSound);
+							else
+								actionSound.sound->invalidatePeakData(i,actionSound.start,destPos);
+							filterKernelFile.closeSound();
+							unlink(tempFilename.c_str());
+							return false;
+						}
 					}
 
 					if(wrapDecay)

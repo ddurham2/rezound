@@ -55,43 +55,53 @@ bool CBiquadResFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 			sample_pos_t srcOffset=prepareForUndo ? start : 0;
 			const register float gain=this->gain;
 
+			#define STATUS_BAR_UPDATE(t) \
+				if(statusBar.update(t)) \
+				{ /* cancelled */ \
+					if(prepareForUndo) \
+						undoActionSizeSafe(actionSound); \
+					else \
+						actionSound.sound->invalidatePeakData(i,actionSound.start,t); \
+					return false; \
+				}
+
 			switch(filterType)
 			{
 			case ftLowpass:
 			{
-				CStatusBar statusBar("Lowpass Filter -- Channel "+istring(i),start,stop); 
+				CStatusBar statusBar("Lowpass Filter -- Channel "+istring(i),start,stop,true);
 
 				TDSPBiquadResLowpassFilter<mix_sample_t> filter(freq_to_fraction(frequency,actionSound.sound->getSampleRate()),resonance);
 				for(sample_pos_t t=start;t<=stop;t++)
 				{
 					dest[t]=ClipSample(filter.processSample((mix_sample_t)(gain*src[t-srcOffset])));
-					statusBar.update(t);
+					STATUS_BAR_UPDATE(t)
 				}
 			break;
 			}
 
 			case ftHighpass:
 			{
-				CStatusBar statusBar("Highpass Filter -- Channel "+istring(i),start,stop); 
+				CStatusBar statusBar("Highpass Filter -- Channel "+istring(i),start,stop,true);
 
 				TDSPBiquadResHighpassFilter<mix_sample_t> filter(freq_to_fraction(frequency,actionSound.sound->getSampleRate()),resonance);
 				for(sample_pos_t t=start;t<=stop;t++)
 				{
 					dest[t]=ClipSample(filter.processSample((mix_sample_t)(gain*src[t-srcOffset])));
-					statusBar.update(t);
+					STATUS_BAR_UPDATE(t)
 				}
 			break;
 			}
 
 			case ftBandpass:
 			{
-				CStatusBar statusBar("Bandpass Filter -- Channel "+istring(i),start,stop); 
+				CStatusBar statusBar("Bandpass Filter -- Channel "+istring(i),start,stop,true); 
 
 				TDSPBiquadResBandpassFilter<mix_sample_t> filter(freq_to_fraction(frequency,actionSound.sound->getSampleRate()),resonance);
 				for(sample_pos_t t=start;t<=stop;t++)
 				{
 					dest[t]=ClipSample(filter.processSample((mix_sample_t)(gain*src[t-srcOffset])));
-					statusBar.update(t);
+					STATUS_BAR_UPDATE(t)
 				}
 			break;
 			}
