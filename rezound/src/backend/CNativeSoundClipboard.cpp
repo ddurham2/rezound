@@ -73,7 +73,7 @@ bool CNativeSoundClipboard::isReadOnly() const
 
 
 
-void CNativeSoundClipboard::copyTo(CSound *sound,unsigned destChannel,unsigned srcChannel,sample_pos_t start,sample_pos_t length,MixMethods mixMethod,bool invalidatePeakData)
+void CNativeSoundClipboard::copyTo(CSound *sound,unsigned destChannel,unsigned srcChannel,sample_pos_t start,sample_pos_t length,MixMethods mixMethod,SourceFitTypes fitSrc,bool invalidatePeakData)
 {
 	if(destChannel>sound->getChannelCount())
 		throw(runtime_error(string(__func__)+" -- destChannel (+"+istring(destChannel)+") out of range ("+istring(sound->getChannelCount())+")"));
@@ -81,15 +81,14 @@ void CNativeSoundClipboard::copyTo(CSound *sound,unsigned destChannel,unsigned s
 		throw(runtime_error(string(__func__)+" -- srcChannel (+"+istring(srcChannel)+") out of range ("+istring(channelCount)+")"));
 	if(!whichChannels[srcChannel])
 		throw(runtime_error(string(__func__)+" -- data does not exist in clipboard for srcChannel (+"+istring(srcChannel)+")"));
-	if(length>getLength(sound->getSampleRate()))
+	if(length>getLength(sound->getSampleRate()) && fitSrc==sftNone)
 		throw(runtime_error(string(__func__)+" -- length ("+istring(length)+")is greater than the amount of data in the clipboard ("+istring(getLength(sound->getSampleRate())+")")));
 
 
 	const string poolName="Channel "+istring(srcChannel);
 	const CRezPoolAccesser src=workingFile.getPoolAccesser<sample_t>(poolName);
 
-	// ??? would need to handle sampleRate conversion... SHOULD: put this functionality in mixSound so everyone could benefit from it
-	sound->mixSound(destChannel,start,src,0,sampleRate,length,mixMethod,invalidatePeakData);
+	sound->mixSound(destChannel,start,src,0,sampleRate,length,mixMethod,fitSrc,invalidatePeakData,true);
 }
 
 sample_pos_t CNativeSoundClipboard::getLength(unsigned _sampleRate) const

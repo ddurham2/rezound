@@ -37,7 +37,7 @@ public:
 	void copyFrom(const CSound *sound,const bool whichChannels[MAX_CHANNELS],sample_pos_t start,sample_pos_t length);
 	bool isReadOnly() const;
 
-	void copyTo(CSound *sound,unsigned destChannel,unsigned srcChannel,sample_pos_t start,sample_pos_t length,MixMethods mixMethod,bool invalidatePeakData=true);
+	void copyTo(CSound *sound,unsigned destChannel,unsigned srcChannel,sample_pos_t start,sample_pos_t length,MixMethods mixMethod,SourceFitTypes fitSrc,bool invalidatePeakData);
 	sample_pos_t getLength(unsigned sampleRate) const;
 	bool isEmpty() const;
 

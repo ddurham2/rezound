@@ -51,7 +51,7 @@ public:
 
 		// write data in to the CSound object from existing clipboard data
 		// from the srcChannel in the clipboard to the destChannel in the given sound
-	virtual void copyTo(CSound *sound,unsigned destChannel,unsigned srcChannel,sample_pos_t start,sample_pos_t length,MixMethods mixMethod,bool invalidatePeakData=true)=0;
+	virtual void copyTo(CSound *sound,unsigned destChannel,unsigned srcChannel,sample_pos_t start,sample_pos_t length,MixMethods mixMethod,SourceFitTypes fitSrc,bool invalidatePeakData)=0;
 
 		// returns the amount of audio on the clipboard when resamled at the given sampleRate
 	virtual sample_pos_t getLength(unsigned sampleRate) const=0;
