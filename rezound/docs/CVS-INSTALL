@@ -12,6 +12,8 @@ In addition to what's listed in the INSTALL doc...
 	pkgconfig-0.12.0 (or higher)
 	gettext-0.11.5 (or higher)
 
+	(These minimum version numbers may not be exactly right.  The version numbers listed have worked for me and a few others on particular distros.  Even though it should not be the case, I have come across users with different distros where they had to have higher versions than the minumums listed here.)
+
    Then, from the top source directory, run the bootstrap script. This will create the configure script. Now you can follow the instructions in INSTALL for normal build.
 
    When running bootstrap IF aclocal complains that one or more macros are not defined in the library, then it may be necessary to modify or create a dirlist file for aclocal to know where to look for .m4 files
