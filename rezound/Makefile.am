@@ -47,7 +47,6 @@ pkgdata_DATA= \
 ## such as AUTHORS, COPYING, etc the bootstrap script really shouldn't be a part
 ## of a final package, but it is useful for developers who might want to make
 ## changes to the configure scripts or makefiles.
-	## dnl since some of this is in SUBDIRS see if this is not necessary
 EXTRA_DIST= \
 	config/m4 \
 	config/common.h \
@@ -65,7 +64,6 @@ dist-hook:
 	rm -rf $(distdir)/src/images/WORK		# makes the tarball much smaller
 	rm -rf $(distdir)/src/images/.xvpics		# created by ee I think
 	rm -rf $(distdir)/src/misc/missing/generated	# doesn't need to go with the distro
-#??? remove rm -rf `find $(distdir) -type f -name Makefile` # from including docs and share on the EXTRA_DIST line
 
 distcleancheck:
 	rm -rf $(top_builddir)/rezound $(top_builddir)/src/misc/missing/generated
