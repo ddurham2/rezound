@@ -20,17 +20,23 @@ bool CStubAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 		{
 			BEGIN_PROGRESS_BAR("Stub Action -- Channel "+istring(i),start,stop); 
 
-			CRezPoolAccesser a=actionSound.sound->getAudio(i);
+			sample_pos_t srcPos=prepareForUndo ? 0 : start;
+			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
+			// now 'src' is an accessor either directly into the sound or into the temp pool created for undo
+			// so it's range of indexes is either [start,stop] or [0,selectionLength) respectively
 
-			if(prepareForUndo)
-				a.copyData(start,actionSound.sound->getTempAudio(tempAudioPoolKey,i),0,selectionLength);
+			sample_pos_t destPos=start;
+			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
+			
 
 
 // --- Insert your test effect here -- BEGIN --------------------------------------------
+			while(destPos<=stop)
+			{
 
-
-						UPDATE_PROGRESS_BAR(t);
-
+				UPDATE_PROGRESS_BAR(destPos);
+				destPos++;
+			}
 // --- Insert your test effect here -- END ----------------------------------------------
 
 
