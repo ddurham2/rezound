@@ -178,14 +178,14 @@ CQuantizeDialog::CQuantizeDialog(FXWindow *mainWindow) :
 
 // --- distortion --------------------------
 
-static const double interpretValue_distortion(const double x,const int s) { return(x); }
-static const double uninterpretValue_distortion(const double x,const int s) { return(x); }
+static const double interpretValue_distortion(const double x,const int s) { return scalar_to_dB(x); }
+static const double uninterpretValue_distortion(const double x,const int s) { return dB_to_scalar(x); }
 
 CDistortionDialog::CDistortionDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Distortion")
 {
 	void *p=newHorzPanel(NULL);
-		addGraph(p,"Curve","Input","%",interpretValue_distortion,uninterpretValue_distortion,"Output","%",interpretValue_distortion,uninterpretValue_distortion,NULL,0,0,0);
+		addGraph(p,"Curve","Input","dBFS",interpretValue_distortion,uninterpretValue_distortion,"Output","dBFS",interpretValue_distortion,uninterpretValue_distortion,NULL,0,0,0);
 
 }
 

@@ -11,6 +11,7 @@ class CDistortionEffectFactory;
 class CDistortionEffect : public AAction
 {
 public:
+	// curve's x's and y's should be in dBFS
 	CDistortionEffect(const CActionSound &actionSound,const CGraphParamValueNodeList &_curve);
 	virtual ~CDistortionEffect();
 
@@ -20,7 +21,7 @@ protected:
 	CanUndoResults canUndo(const CActionSound &actionSound) const;
 
 private:
-	const CGraphParamValueNodeList curve;
+	CGraphParamValueNodeList curve;
 };
 
 class CDistortionEffectFactory : public AActionFactory
