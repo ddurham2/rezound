@@ -23,7 +23,6 @@
 #include "CMultiFile.h"
 
 #include <limits.h>
-#include <errno.h>
 #include <string.h>
 #include <errno.h>
 #include <stdio.h> // for rename
@@ -209,10 +208,14 @@ void CMultiFile::read(void *buffer,const l_addr_t count,RHandle &handle)
 
 		const size_t stripRead=min(lengthToRead,LOGICAL_MAX_FILE_SIZE-whereFile);
 		const ssize_t lengthRead=::read(openFiles[whichFile],(uint8_t *)buffer+(count-lengthToRead),stripRead);
-		if(lengthRead<0 || (size_t)lengthRead!=stripRead)
+		if(lengthRead<0)
 		{
 			int errNO=errno;
-			throw runtime_error(string(__func__)+" -- error reading from file: "+buildFilename(whichFile)+" -- lengthRead/stripRead: "+istring(lengthRead)+"/"+istring(stripRead)+" -- strerror: "+strerror(errNO));
+			throw runtime_error(string(__func__)+" -- error reading from file: "+buildFilename(whichFile)+" -- strerror: "+strerror(errNO));
+		}
+		else if((size_t)lengthRead!=stripRead)
+		{
+			throw runtime_error(string(__func__)+" -- error reading from file: "+buildFilename(whichFile)+" -- lengthRead/stripRead: "+istring(lengthRead)+"/"+istring(stripRead));
 		}
 
 		lengthToRead-=stripRead;
@@ -257,10 +260,14 @@ void CMultiFile::write(const void *buffer,const l_addr_t count,RHandle &handle)
 
 		const size_t stripWrite=min(lengthToWrite,LOGICAL_MAX_FILE_SIZE-whereFile);
 		const ssize_t lengthWritten=::write(openFiles[whichFile],(uint8_t *)buffer+(count-lengthToWrite),stripWrite);
-		if(lengthWritten<0 || (size_t)lengthWritten!=stripWrite)
+		if(lengthWritten<0)
 		{
 			int errNO=errno;
-			throw runtime_error(string(__func__)+" -- error writing to file: "+buildFilename(whichFile)+" -- lengthWritten/stripWrite: "+istring(lengthWritten)+"/"+istring(stripWrite)+" -- strerror: "+strerror(errNO));
+			throw runtime_error(string(__func__)+" -- error writing to file: "+buildFilename(whichFile)+" -- strerror: "+strerror(errNO));
+		}
+		else if((size_t)lengthWritten!=stripWrite)
+		{
+			throw runtime_error(string(__func__)+" -- error writing to file: "+buildFilename(whichFile)+" -- lengthWritten/stripWrite: "+istring(lengthWritten)+"/"+istring(stripWrite)+" -- perhaps the disk is full");
 		}
 
 		lengthToWrite-=lengthWritten;
@@ -381,10 +388,14 @@ void CMultiFile::writeHeaderToFiles()
 	{
 		lseek(openFiles[t],0,SEEK_SET);
 		const ssize_t wroteLength=::write(openFiles[t],&header,sizeof(header));
-		if(wroteLength<0 || (size_t)wroteLength!=sizeof(header))
+		if(wroteLength<0)
 		{
 			int errNO=errno;
-			throw runtime_error(string(__func__)+" -- error writing header to file -- wroteLength/sizeof(header): "+istring(wroteLength)+"/"+istring(sizeof(header))+" -- strerror: "+strerror(errNO));
+			throw runtime_error(string(__func__)+" -- error writing header to file -- strerror: "+strerror(errNO));
+		}
+		else if((size_t)wroteLength!=sizeof(header))
+		{
+			throw runtime_error(string(__func__)+" -- error writing header to file -- wroteLength/sizeof(header): "+istring(wroteLength)+"/"+istring(sizeof(header)));
 		}
 	}
 }
@@ -401,7 +412,10 @@ void CMultiFile::openFile(const string &filename,RFileHeader &header,const bool 
 		fileHandle=::open(filename.c_str(),O_RDWR);
 #endif
 		if(fileHandle<0)
-			throw runtime_error(string(__func__)+" -- expected file not found: "+filename+" -- "+strerror(errno));
+		{
+			int errNO=errno;
+			throw runtime_error(string(__func__)+" -- expected file not found: "+filename+" -- "+strerror(errNO));
+		}
 
 		if(readHeader)
 		{
