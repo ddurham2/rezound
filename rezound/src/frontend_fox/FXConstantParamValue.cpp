@@ -91,7 +91,7 @@ FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _unin
 	textFont(getApp()->getNormalFont())
 
 {
-	ASSURE_HEIGHT(middleFrame,100); // assure that the slider will be this many pixels tall
+	ASSURE_HEIGHT(middleFrame,120); // assure that the slider will be this many pixels tall
 
 	// create a smaller font to use 
         FXFontDesc d;
