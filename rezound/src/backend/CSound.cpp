@@ -1632,6 +1632,12 @@ bool CSound::createFromWorkingPoolFileIfExists(const string originalFilename,boo
 	}
 }
 
+void CSound::setSampleRate(unsigned newSampleRate)
+{
+	sampleRate=newSampleRate;
+	saveMetaInfo();
+}
+
 void CSound::saveMetaInfo()
 {
 	if(!poolFile.isOpen())

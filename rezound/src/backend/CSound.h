@@ -112,6 +112,7 @@ public:
 	sample_pos_t getLength() const		{ return(size); }
 	unsigned getChannelCount() const	{ return(channelCount); }
 	unsigned getSampleRate() const		{ return(sampleRate); }
+	void setSampleRate(unsigned newSampleRate);
 	bool isEmpty() const			{ return(size==0 || channelCount==0); }
 
 	/*
