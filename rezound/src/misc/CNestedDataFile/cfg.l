@@ -82,11 +82,20 @@ string currentFilename;
 			return(TRUE);
 		else if(strcmp(yytext,"false")==0)
 			return(FALSE);
-		else if(strcmp(yytext,":")==0)
-			return(':');
 		else
 		{
 			yylval.stringValue=strdup(yytext); 
+
+			// parse error if it contains CNestedDataFile::delimChar
+			for(size_t t=0;t<strlen(yylval.stringValue);t++)
+			{
+				if(yylval.stringValue[t]==(*CNestedDataFile::delimChar))
+				{
+					cfg_error(yylloc,("key name contains '"+string(CNestedDataFile::delimChar)+"'").c_str());
+					return(0);
+				}
+			}
+			
 
 			// convert remove the '\' from '\char'
 			for(size_t t=0;t<strlen(yylval.stringValue);t++)
@@ -111,36 +120,14 @@ string currentFilename;
 
 [\ \n\t\v\b\r\f\a]+			{ /* Eat White Space */ }
 
-";"					{ return(*yytext); }
-
-"."					{ return(*yytext); }
-
-"["					{ return(*yytext); }
-"]"					{ return(*yytext); }
-
-"("					{ return(*yytext); }
-")"					{ return(*yytext); }
-
-"="					{ return(ASSIGN); }
-"+"					{ return(ADD); }
-"-"					{ return(SUB); }
-"*"					{ return(MUL); }
-"/"					{ return(DIV); }
-"%"					{ return(MOD); }
-
-"!"					{ return(NOT); }
 "!="					{ return(NE); }
 "=="					{ return(EQ); }
-">"					{ return(GT); }
-"<"					{ return(LT); }
 ">="					{ return(GE); }
-"<="					{ return(LT); }
+"<="					{ return(LE); }
 "||"					{ return(OR); }
 "&&"					{ return(AND); }
 
-"?"					{ return(*yytext); }
-
-. 					{ /* this rule matches any unexpected chars */ return(*yytext); }
+. 					{ return(*yytext); }
 
 
 

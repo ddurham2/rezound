@@ -44,6 +44,10 @@ extern int cfg_parse();
 CNestedDataFile *CNestedDataFile::parseTree;
 const char *CNestedDataFile::initialFilename;
 
+// changed from "." because this is more likely not needed in a 
+// preset's name, where "." might be quite useful in a preset name
+const char *CNestedDataFile::delimChar="|"; // !!!NOTE!!! Change the qualified_ident rule in cfg.y also!!!
+
 CNestedDataFile::CNestedDataFile(const string _filename,bool _saveOnEachEdit) :
 	root(NULL),
 	saveOnEachEdit(_saveOnEachEdit)
@@ -246,7 +250,7 @@ bool CNestedDataFile::findVariantNode(CVariant *&retValue,const char *key,int of
 	}
 
 	// look for a dot in the key
-	int pos=strchr(key+offset,'.')-(key+offset);
+	int pos=strchr(key+offset,*delimChar)-(key+offset);
 	if(pos<0)
 	{ // no dot found, then we must be now asking for a value
 		map<string,CVariant>::const_iterator i=variant->members.find(string(key+offset));
@@ -372,7 +376,7 @@ void CNestedDataFile::removeKey(const char *key,bool throwOnError)
 
 	string parentKey;
 	string childKey;
-	size_t lastDot=string(key).rfind('.');
+	size_t lastDot=string(key).rfind(*delimChar);
 	if(lastDot==string::npos)
 	{
 		parent=root;
@@ -436,7 +440,7 @@ void CNestedDataFile::prvCreateKey(const char *key,int offset,CVariant &value,CV
 		verifyKey(key);
 
 	// look for a dot in the key
-	int pos=strchr(key+offset,'.')-(key+offset);
+	int pos=strchr(key+offset,*delimChar)-(key+offset);
 	if(pos<0)
 	{ // no dot found, then we must be now creating a value
 		//printf("creating new value: %s\n",string(key+offset).c_str());
@@ -478,6 +482,9 @@ void CNestedDataFile::writeFile(const string filename) const
 	FILE *f=fopen(filename.c_str(),"wt");
 	if(f==NULL)
 		throw(runtime_error(string(__func__)+" -- error opening file for write: "+filename));
+
+	fprintf(f,"// ReZound program generated data; be careful if modifying\n\n");
+
 	try
 	{
 		prvWriteData(f,-1,root);
@@ -521,6 +528,7 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant) 
 		break;
 
 	case ktScope:
+	{
 		if(indent>=0) // not root scope
 		{
 			fprintf(f,"%s\n",name.c_str());
@@ -530,16 +538,35 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant) 
 			fprintf(f,"{\n");
 		}
 
+		// write non scopes for (just to look nicer)
+		bool more=false;
 		for(map<string,CVariant>::const_iterator i=variant->members.begin();i!=variant->members.end();i++)
-			prvWriteData(f,indent+1,&i->second);
+		{
+			if(i->second.type!=ktScope)
+				prvWriteData(f,indent+1,&i->second);
+			else
+				more=true;
+		}
+		if(more) // there will be scopes written
+			fprintf(f,"\n");
+
+		// write scopes after non-scopes
+		for(map<string,CVariant>::const_iterator i=variant->members.begin();i!=variant->members.end();i++)
+		{
+			if(i->second.type==ktScope)
+				prvWriteData(f,indent+1,&i->second);
+		}
 
 		if(indent>=0) // not root scope
 		{
 			for(int t=0;t<indent;t++)
 				fprintf(f,"\t");
 			fprintf(f,"}\n");
+			if(indent==0)
+				fprintf(f,"\n");
 		}
 		break;
+	}
 
 	case ktArray:
 		fprintf(f,"%s[]={",name.c_str());

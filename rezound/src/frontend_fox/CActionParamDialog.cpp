@@ -32,6 +32,8 @@
 #include "../backend/CActionParameters.h"
 #include "../backend/CActionSound.h"
 
+#define DOT (CNestedDataFile::delimChar)
+
 
 FXDEFMAP(CActionParamDialog) CActionParamDialogMap[]=
 {
@@ -81,7 +83,7 @@ CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title
 
 	try
 	{
-		if(CNestedDataFile(gSysPresetsFile).getArraySize((getTitle()+".names").text())>0)
+		if(CNestedDataFile(gSysPresetsFile).getArraySize((getTitle()+DOT+"names").text())>0)
 		{
 			// native preset stuff
 			FXPacker *listFrame=new FXPacker(presetsFrame,FRAME_SUNKEN|FRAME_THICK|LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y, 0,0,200,0, 0,0,0,0, 0,0); // had to do this because FXList won't take that frame style
@@ -186,7 +188,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 	bool retval=false;
 
 	// restore the splitter's position
-	const FXint h=atoi(gSettingsRegistry->getValue(("SplitterPositions."+getTitle()).text()).c_str());
+	const FXint h=atoi(gSettingsRegistry->getValue((FXString("SplitterPositions")+DOT+getTitle()).text()).c_str());
 	presetsFrame->setHeight(h);
 
 
@@ -261,7 +263,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 
 	// save the splitter's position
 	FXint h2=presetsFrame->getHeight();
-	gSettingsRegistry->createKey(("SplitterPositions."+getTitle()).text(),istring(h2));
+	gSettingsRegistry->createKey((FXString("SplitterPositions")+DOT+getTitle()).text(),istring(h2));
 
 	return(retval);
 }
@@ -292,7 +294,7 @@ long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void 
 		}
 		
 		const string name=string(listBox->getItemText(listBox->getCurrentItem()).text()).substr(4);
-		const string title=string(getTitle().text())+"."+name;
+		const string title=string(getTitle().text())+DOT+name;
 
 		for(unsigned t=0;t<parameters.size();t++)
 		{
@@ -341,12 +343,20 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 		}
 
 		string name=_name.text();
+
+		// make sure it doesn't contain DOT
+		if(name.find(*DOT)!=string::npos)
+		{
+			Error("Preset Name cannot contain '"+string(DOT)+"'");
+			goto askAgain;
+		}
+
 		try
 		{
 			CNestedDataFile f(gUserPresetsFile);
 
 
-			const string title=string(getTitle().text())+"."+name;
+			const string title=string(getTitle().text())+DOT+name;
 
 			bool alreadyExists=false;
 			if(f.keyExists(title.c_str()))
@@ -383,7 +393,7 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 
 			if(!alreadyExists)
 			{
-				const string key=(getTitle()+".names").text();
+				const string key=(getTitle()+DOT+"names").text();
 				f.createArrayKey(key.c_str(),f.getArraySize(key.c_str()),name);
 				buildPresetList(f,userPresetList);
 			}
@@ -409,10 +419,10 @@ long CActionParamDialog::onPresetRemoveButton(FXObject *sender,FXSelector sel,vo
 		{
 			CNestedDataFile f(gUserPresetsFile);
 
-			const string key=string(getTitle().text())+"."+name;
+			const string key=string(getTitle().text())+DOT+name;
 
 			f.removeKey(key.c_str());
-			f.removeArrayKey((getTitle()+".names").text(),userPresetList->getCurrentItem());
+			f.removeArrayKey((getTitle()+DOT+"names").text(),userPresetList->getCurrentItem());
 
 			buildPresetList(f,userPresetList);
 			f.save();
@@ -455,11 +465,11 @@ void CActionParamDialog::buildPresetLists()
 
 void CActionParamDialog::buildPresetList(CNestedDataFile &f,FXList *list)
 {
-	const size_t presetCount=f.getArraySize((getTitle()+".names").text());
+	const size_t presetCount=f.getArraySize((getTitle()+DOT+"names").text());
 	list->clearItems();
 	for(size_t t=0;t<presetCount;t++)
 	{
-		const string name=f.getArrayValue((getTitle()+".names").text(),t);
+		const string name=f.getArrayValue((getTitle()+DOT+"names").text(),t);
 		list->appendItem((istring(t,3,true)+" "+name).c_str());
 	}
 }

@@ -25,6 +25,7 @@
 #include <istring>
 
 #include <CNestedDataFile/CNestedDataFile.h>
+#define DOT (CNestedDataFile::delimChar)
 
 /*
 	- This is the slider widget used over and over by ReZound on action dialogs
@@ -227,7 +228,7 @@ FXString FXConstantParamValue::getHelpText() const
 
 void FXConstantParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
 {
-	const string key=prefix+"."+getTitle()+".";
+	const string key=prefix+DOT+getTitle()+DOT;
 
 	if(f.keyExists((key+"value").c_str()))
 		prvSetValue(atof(f.getValue((key+"value").c_str()).c_str()));
@@ -243,7 +244,7 @@ void FXConstantParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
 
 void FXConstantParamValue::writeToFile(const string &prefix,CNestedDataFile &f) const
 {
-	const string key=prefix+"."+getTitle()+".";
+	const string key=prefix+DOT+getTitle()+DOT;
 
 	f.createKey((key+"value").c_str(),istring(getValue()));
 	if(getMinScalar()!=getMaxScalar())

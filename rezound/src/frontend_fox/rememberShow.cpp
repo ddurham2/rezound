@@ -109,7 +109,7 @@ bool rememberShow(FXTopWindow *window)
 		return(false);
 	inThis=true;
 
-	const string title=("WindowDimensions."+window->getTitle()).text();
+	const string title=("WindowDimensions"+FXString(CNestedDataFile::delimChar)+window->getTitle()).text();
 	if(!gSettingsRegistry->keyExists((title+"_X").c_str()))
 	{
 		inThis=false;
@@ -155,7 +155,7 @@ bool rememberShow(FXTopWindow *window)
 
 void rememberHide(FXTopWindow *window)
 {
-	const string title=("WindowDimensions."+window->getTitle()).text();
+	const string title=("WindowDimensions"+FXString(CNestedDataFile::delimChar)+window->getTitle()).text();
 	//printf("closing window: %s %d %d\n",window->getTitle().text(),window->getX(),window->getY());
 	gSettingsRegistry->createKey((title+"_X").c_str(),istring(window->getX()/*-decorWidth*/));
 	gSettingsRegistry->createKey((title+"_Y").c_str(),istring(window->getY()/*-decorHeight*/));

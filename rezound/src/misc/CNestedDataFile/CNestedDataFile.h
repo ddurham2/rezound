@@ -40,6 +40,8 @@ extern void cfg_init(void);
 class CNestedDataFile
 {
 public:
+	static const char *delimChar; // the scope separator character so it can be changed easily
+
 	enum KeyTypes
 	{
 		ktNotExists=0,

@@ -90,18 +90,8 @@ int myyynerrs=0;
 %token			FALSE
 %token			INCLUDE
 
-%token			ASSIGN
-%token			ADD
-%token			SUB
-%token			MUL
-%token			DIV
-%token			MOD
-
-%token			NOT
 %token			NE
 %token			EQ
-%token			GT
-%token			LT
 %token			GE
 %token			LE
 %token			OR
@@ -177,7 +167,7 @@ scope_body
 scope_body_item
 	: scope
 
-	| IDENT ASSIGN expr ';'
+	| IDENT '=' expr ';'
 	{
 		checkForDupMember(@1.first_line,$1);
 		if($3->type==CNestedDataFile::ktFloat)
@@ -190,7 +180,7 @@ scope_body_item
 		delete $3;
 		free($1);
 	}
-	| IDENT '[' ']' ASSIGN '{' array_body '}'
+	| IDENT '[' ']' '=' '{' array_body '}'
 	{
 		checkForDupMember(@1.first_line,$1);
 		CNestedDataFile::parseTree->createKey((getCurrentScope()+$1).c_str(),*$6);
@@ -334,9 +324,9 @@ unary_expr
 		if($2->type!=CNestedDataFile::ktFloat)
 			cfg_error(@2,"invalid operand");
 		$$=$2;
-		if($1==ADD)
+		if($1=='+')
 			$$->floatValue=+$$->floatValue;
-		else if($1==SUB)
+		else if($1=='-')
 			$$->floatValue=-$$->floatValue;
 		else
 			throw(runtime_error("cfg_parse -- internal error parsing unary_expr"));
@@ -344,21 +334,21 @@ unary_expr
 	;
 
 unary_op
-	: ADD { $$=ADD; }
-	| SUB { $$=SUB; }
+	: '+' { $$='+'; }
+	| '-' { $$='-'; }
 	;
 
 multiplicative_expr
 	: unary_expr { $$=$1; }
-	| multiplicative_expr MUL unary_expr { BINARY_EXPR($$,@1,$1,@3,$3,*) }
-	| multiplicative_expr DIV unary_expr { BINARY_EXPR($$,@1,$1,@3,$3,/) }
-	| multiplicative_expr MOD unary_expr { VERIFY_TYPE(@1,$1) VERIFY_TYPE(@3,$3) $$=$1; $$->floatValue=fmod($$->floatValue,$3->floatValue); delete $3; }
+	| multiplicative_expr '*' unary_expr { BINARY_EXPR($$,@1,$1,@3,$3,*) }
+	| multiplicative_expr '/' unary_expr { BINARY_EXPR($$,@1,$1,@3,$3,/) }
+	| multiplicative_expr '%' unary_expr { VERIFY_TYPE(@1,$1) VERIFY_TYPE(@3,$3) $$=$1; $$->floatValue=fmod($$->floatValue,$3->floatValue); delete $3; }
 	;
 
 
 additive_expr
 	: multiplicative_expr { $$=$1; }
-	| additive_expr ADD multiplicative_expr 
+	| additive_expr '+' multiplicative_expr 
 	{ 
 		if($1->type==CNestedDataFile::ktFloat)
 		{
@@ -379,7 +369,7 @@ additive_expr
 			delete $3;
 		}
 	}
-	| additive_expr SUB multiplicative_expr { BINARY_EXPR($$,@1,$1,@3,$3,-) }
+	| additive_expr '-' multiplicative_expr { BINARY_EXPR($$,@1,$1,@3,$3,-) }
 	;
 
 
@@ -387,8 +377,8 @@ relational_expr
 	: additive_expr { $$=$1; }
 	| relational_expr LE additive_expr { BINARY_EXPR($$,@1,$1,@3,$3,<=) }
 	| relational_expr GE additive_expr { BINARY_EXPR($$,@1,$1,@3,$3,>=) }
-	| relational_expr LT additive_expr { BINARY_EXPR($$,@1,$1,@3,$3,<) }
-	| relational_expr GT additive_expr { BINARY_EXPR($$,@1,$1,@3,$3,>) }
+	| relational_expr '<' additive_expr { BINARY_EXPR($$,@1,$1,@3,$3,<) }
+	| relational_expr '>' additive_expr { BINARY_EXPR($$,@1,$1,@3,$3,>) }
 	;
 
 equality_expr
@@ -425,10 +415,10 @@ qualified_ident
 	{
 		$$=$1;
 	}
-	| qualified_ident '.' IDENT
+	| qualified_ident '|' IDENT
 	{
 		$$=(char *)realloc($$,strlen($$)+1+strlen($3)+1);
-		strcat($$,".");
+		strcat($$,CNestedDataFile::delimChar);
 		strcat($$,$3);
 
 		free($3);
@@ -475,12 +465,12 @@ static const string getCurrentScope()
 	while(!copy.empty())
 	{
 		s=copy.top()+s;
-		s="."+s;
+		s=CNestedDataFile::delimChar+s;
 
 		copy.pop();
 	}
 
-	s+=".";
+	s+=CNestedDataFile::delimChar;
 
 	s.erase(0,1);
 

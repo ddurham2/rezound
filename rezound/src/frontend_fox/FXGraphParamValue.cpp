@@ -28,6 +28,7 @@
 #include <istring>
 
 #include <CNestedDataFile/CNestedDataFile.h>
+#define DOT (CNestedDataFile::delimChar)
 
 #include "../backend/CSound.h"
 
@@ -596,7 +597,7 @@ const string FXGraphParamValue::getTitle() const
 
 void FXGraphParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
 {
-	const string key=prefix+"."+getTitle()+".";
+	const string key=prefix+DOT+getTitle()+DOT;
 
 	if(f.keyExists((key+"scalar").c_str()))
 	{
@@ -628,7 +629,7 @@ void FXGraphParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
 
 void FXGraphParamValue::writeToFile(const string &prefix,CNestedDataFile &f) const
 {
-	const string key=prefix+"."+getTitle()+".";
+	const string key=prefix+DOT+getTitle()+DOT;
 
 	if(getMinScalar()!=getMaxScalar())
 		f.createKey((key+"scalar").c_str(),istring(getScalar()));

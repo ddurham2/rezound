@@ -25,6 +25,7 @@
 #include <istring>
 
 #include <CNestedDataFile/CNestedDataFile.h>
+#define DOT (CNestedDataFile::delimChar)
 
 /*
 	- This is the text entry widget used over and over by ReZound on action dialogs
@@ -130,14 +131,14 @@ FXString FXTextParamValue::getHelpText() const
 
 void FXTextParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
 {
-	const string key=prefix+"."+getTitle()+".";
+	const string key=prefix+DOT+getTitle()+DOT;
 	const string v=f.getValue((key+"value").c_str());
 	setValue(atof(v.c_str()));
 }
 
 void FXTextParamValue::writeToFile(const string &prefix,CNestedDataFile &f)
 {
-	const string key=prefix+"."+getTitle()+".";
+	const string key=prefix+DOT+getTitle()+DOT;
 	f.createKey((key+"value").c_str(),istring(getValue()));
 }
 

@@ -29,6 +29,7 @@
 #include <CPath.h>
 
 #include <CNestedDataFile/CNestedDataFile.h>
+#define DOT (CNestedDataFile::delimChar)
 
 #include "CLoadedSound.h"
 #include "ASoundPlayer.h"
@@ -346,9 +347,9 @@ const string ASoundFileManager::getUntitledFilename(const string directory,const
 		const string filename=directory+CPath::dirDelim+prefixes[i];
 		for(size_t t=0;t<100;t++)
 		{
-			const string temp=filename+istring(t)+"."+extension;
+			const string temp=filename+istring(t)+DOT+extension;
 			if(!CPath(temp).exists() && !isFilenameRegistered(temp))
-				return(filename+istring(t)+"."+extension);
+				return(filename+istring(t)+DOT+extension);
 		}
 	}
 	return("");
@@ -428,9 +429,9 @@ void ASoundFileManager::updateReopenHistory(const string &filename)
 	// rewrite the reopen history to the gSettingsRegistry
 	vector<string> reopenFilenames;
 	
-	for(size_t t=0;gSettingsRegistry->keyExists(("ReopenHistory.item"+istring(t)).c_str());t++)
+	for(size_t t=0;gSettingsRegistry->keyExists(("ReopenHistory"+string(DOT)+"item"+istring(t)).c_str());t++)
 	{
-		const string h=gSettingsRegistry->getValue(("ReopenHistory.item"+istring(t)).c_str());
+		const string h=gSettingsRegistry->getValue(("ReopenHistory"+string(DOT)+"item"+istring(t)).c_str());
 		if(h!=filename)
 			reopenFilenames.push_back(h);
 	}
@@ -441,20 +442,20 @@ void ASoundFileManager::updateReopenHistory(const string &filename)
 	reopenFilenames.insert(reopenFilenames.begin(),filename);
 
 	for(size_t t=0;t<reopenFilenames.size();t++)
-		gSettingsRegistry->createKey(("ReopenHistory.item"+istring(t)).c_str(),reopenFilenames[t]);
+		gSettingsRegistry->createKey(("ReopenHistory"+string(DOT)+"item"+istring(t)).c_str(),reopenFilenames[t]);
 }
 
 const size_t ASoundFileManager::getReopenHistorySize() const
 {
 	size_t t;
-	for(t=0;gSettingsRegistry->keyExists(("ReopenHistory.item"+istring(t)).c_str());t++);
+	for(t=0;gSettingsRegistry->keyExists(("ReopenHistory"+string(DOT)+"item"+istring(t)).c_str());t++);
 
 	return(t);
 }
 
 const string ASoundFileManager::getReopenHistoryItem(const size_t index) const
 {
-	const string key="ReopenHistory.item"+istring(index);
+	const string key="ReopenHistory"+string(DOT)+"item"+istring(index);
 	if(gSettingsRegistry->keyExists(key.c_str()))
 		return(gSettingsRegistry->getValue(key.c_str()));
 	else
