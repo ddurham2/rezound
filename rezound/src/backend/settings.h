@@ -60,6 +60,8 @@ extern CNestedDataFile *gSysPresetsFile;	// opened to gSysPresetsFilename
 // the desired output device parameters to try to open with
 extern unsigned gDesiredOutputSampleRate;	// defaulted to 44100
 extern unsigned gDesiredOutputChannelCount;	// defaulted to 2
+extern int gDesiredOutputBufferCount;		// defaulted to 2
+extern unsigned gDesiredOutputBufferSize;	// defaulted to 2048 (in frames)
 
 
 #ifdef HAVE_LIBPORTAUDIO

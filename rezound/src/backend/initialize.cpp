@@ -88,9 +88,9 @@ bool initializeBackend(ASoundPlayer *&_soundPlayer,int argc,char *argv[])
 			// they may beable to recover the last edits if they go load
 			// the files that were being edited (since the pool files will
 			// still exist for all previously open files)
+		const string registryFilename=gUserDataDirectory+istring(CPath::dirDelim)+"registry.dat";
 		try
 		{
-			const string registryFilename=gUserDataDirectory+istring(CPath::dirDelim)+"registry.dat";
 			CPath(registryFilename).touch();
 			gSettingsRegistry=new CNestedDataFile(registryFilename,true);
 		}
@@ -181,6 +181,15 @@ bool initializeBackend(ASoundPlayer *&_soundPlayer,int argc,char *argv[])
 
 		if(gSettingsRegistry->keyExists("DesiredOutputChannelCount"))
 			gDesiredOutputChannelCount= atoi(gSettingsRegistry->getValue("DesiredOutputChannelCount").c_str());
+
+		if(gSettingsRegistry->keyExists("DesiredOutputBufferCount"))
+			gDesiredOutputBufferCount= atoi(gSettingsRegistry->getValue("DesiredOutputBufferCount").c_str());
+		gDesiredOutputBufferCount=max(2,gDesiredOutputBufferCount);
+
+		if(gSettingsRegistry->keyExists("DesiredOutputBufferSize"))
+			gDesiredOutputBufferSize= atoi(gSettingsRegistry->getValue("DesiredOutputBufferSize").c_str());
+		if(gDesiredOutputBufferSize<256 || log((double)gDesiredOutputBufferSize)/log(2.0)!=floor(log((double)gDesiredOutputBufferSize)/log(2.0)))
+			throw runtime_error(string(__func__)+" -- DesiredOutputBufferSize in "+registryFilename+" must be a power of 2 and >= than 256");
 
 
 #ifdef HAVE_LIBPORTAUDIO
@@ -376,6 +385,8 @@ void deinitializeBackend()
 
 	gSettingsRegistry->createKey("DesiredOutputSampleRate",gDesiredOutputSampleRate);
 	gSettingsRegistry->createKey("DesiredOutputChannelCount",gDesiredOutputChannelCount);
+	gSettingsRegistry->createKey("DesiredOutputBufferCount",gDesiredOutputBufferCount);
+	gSettingsRegistry->createKey("DesiredOutputBufferSize",gDesiredOutputBufferSize);
 
 
 #ifdef HAVE_LIBPORTAUDIO
