@@ -39,26 +39,12 @@ class CSound;
  * audio size specifications
  *
  *    sample_pos_t should always be unsigned since I use this assumption and never check for < 0 in the code
- *    sample_fpos_t should abe floating point, but big enough to hold all values of sample_pos_t
+ *    sample_fpos_t should be floating point, but big enough to hold all values of sample_pos_t
  */
-#if 1 // 32 bit
-	typedef uint32_t 	sample_pos_t;	// integral sample count
-	typedef double		sample_fpos_t;	// floating-point sample count
+#ifdef ENABLE_LARGEFILE
 
-	#define MAX_LENGTH (0x7fffffff-(1024*1024))
-
-	#include <math.h>
-	#define sample_fpos_floor(a)	(floor(a))
-	#define sample_fpos_ceil(a)	(ceil(a))
-	#define sample_fpos_round(a)	(nearbyint(a))
-	#define sample_fpos_log(a)	(log(a))
-	#define sample_fpos_exp(a)	(exp(a))
-	#define sample_fpos_fabs(a)	(fabs(a))
-	#define sample_fpos_sin(a)	(sin(a))
-	#define sample_fpos_pow(a,b)	(pow(a,b))
-
-#elif 0 // 64 bit
-	typedef uint64_t 	sample_pos_t;	// integral sample position
+	// 64 bit
+	typedef uint64_t 	sample_pos_t;	// integer sample position
 	typedef long double 	sample_fpos_t;	// floating-point sample position
 
 	#define MAX_LENGTH (0x7fffffffffffffffLL-(1024LL*1024LL))
@@ -74,16 +60,26 @@ class CSound;
 	#define sample_fpos_pow(a,b)	(powl(a,b))
 
 #else
-	#error please enable one section above
+
+	// 32 bit
+	typedef uint32_t 	sample_pos_t;	// integer sample count
+	typedef double		sample_fpos_t;	// floating-point sample count
+
+	#define MAX_LENGTH (0x7fffffff-(1024*1024))
+
+	#include <math.h>
+	#define sample_fpos_floor(a)	(floor(a))
+	#define sample_fpos_ceil(a)	(ceil(a))
+	#define sample_fpos_round(a)	(nearbyint(a))
+	#define sample_fpos_log(a)	(log(a))
+	#define sample_fpos_exp(a)	(exp(a))
+	#define sample_fpos_fabs(a)	(fabs(a))
+	#define sample_fpos_sin(a)	(sin(a))
+	#define sample_fpos_pow(a,b)	(pow(a,b))
+
 #endif
 
 static const sample_pos_t NIL_SAMPLE_POS=~((sample_pos_t)0);
-
-
-
-// ??? probably should add conversion macros which convert to and from several types of formats to and from the native format 
-//	- this would help in importing and exporting audio data
-//	- might deal with endian-ness to
 
 
 // audio type specifications

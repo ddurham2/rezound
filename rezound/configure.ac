@@ -31,6 +31,7 @@ AC_DISABLE_SHARED	# This makes libtool only build static libs
 AC_GNU_SOURCE 		# enable posix extensions in glibc
 
 ### handle --enable-largefile flag
+AH_TEMPLATE(ENABLE_LARGEFILE)
 AC_ARG_ENABLE(
 	largefile,
 	AC_HELP_STRING([--enable-largefile],[enable 64bit file I/O support; NOTE: all dependancies file I/O libraries will also need to have largefile support enabled]),
@@ -38,6 +39,7 @@ AC_ARG_ENABLE(
 		if [[ "$enableval" = "yes" ]]
 		then 
 			AC_SYS_LARGEFILE
+			AC_DEFINE(ENABLE_LARGEFILE)
 		fi
 	]
 )
