@@ -1,4 +1,6 @@
+-*- auto-fill -*-
 $Id$
+
 
 Anthony Ventimiglia.
 
@@ -21,7 +23,7 @@ software, you should know that using any of this is AT YOUR OWN RISK.
 
 Here are the steps to making a debian package.
 
-1.	From the top directory run $sh packaging/debian/deb-prep.sh
+1.	From the top directory run '$sh packaging/debian/deb-prep.sh'
 	The directory should now have a configure script and a
 	Makefile, and be ready for the standard autotools build
 	process. In addition, there should be a distribution tarball
