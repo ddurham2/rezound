@@ -38,6 +38,7 @@ bool CMakeSymetricAction::doActionSizeSafe(CActionSound &actionSound,bool prepar
 	if(prepareForUndo)
 		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
 
+	unsigned channelsDoneCount=0;
 	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 	{
 		if(actionSound.doChannel[i])
@@ -52,7 +53,7 @@ bool CMakeSymetricAction::doActionSizeSafe(CActionSound &actionSound,bool prepar
 			const sample_pos_t selectionLengthDiv2=selectionLength/2;
 			const sample_pos_t selectionLengthSub1=selectionLength-1;
 
-			CStatusBar statusBar("Make Symetric -- Channel "+istring(i),0,selectionLengthDiv2,true);
+			CStatusBar statusBar("Make Symetric -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),0,selectionLengthDiv2,true);
 
 			for(sample_pos_t t=0;t<=selectionLengthDiv2;t++)
 			{
