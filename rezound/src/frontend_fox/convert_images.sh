@@ -51,12 +51,17 @@ echo "#endif" >> $H_FILE
 
 
 # only overwrite the h file if it needs to be so it won't cause a whole bunch of things to unnecessarily recompile
-diff $H_FILE ${H_FILE%\.tmp} >/dev/null
-if [ $? -ne 0 ]
+if [ -a ${H_FILE%\.tmp} ]
 then
-	mv $H_FILE ${H_FILE%\.tmp}
+	diff $H_FILE ${H_FILE%\.tmp} >/dev/null
+	if [ $? -ne 0 ]
+	then
+		mv $H_FILE ${H_FILE%\.tmp}
+	else
+		rm $H_FILE
+	fi
 else
-	rm $H_FILE
+	mv $H_FILE ${H_FILE%\.tmp}
 fi
 
 
