@@ -91,6 +91,18 @@ public:
 
 
 
+// --- quantize --------------------------
+
+class CQuantizeDialog : public CActionParamDialog
+{
+public:
+	CQuantizeDialog(FXWindow *mainWindow);
+};
+
+
+
+
+
 // --- varied repeat ---------------------
 
 class CVariedRepeatDialog : public CActionParamDialog

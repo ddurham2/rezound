@@ -18,21 +18,36 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __EffectActions_H__
-#define __EffectActions_H__
+#ifndef __CQuantizeEffect_H__
+#define __CQuantizeEffect_H__
 
 #include "../../../config/common.h"
 
 
-#include "CChangeAmplitudeEffect.h"
-#include "CChangeRateEffect.h"
-#include "CDelayEffect.h"
-#include "CFlangeEffect.h"
-#include "CReverseEffect.h"
-#include "CStaticReverbEffect.h"
-#include "CVariedRepeatEffect.h"
-#include "CQuantizeEffect.h"
+#include "../AAction.h"
 
-#include "CTestEffect.h"
+class CQuantizeEffect : public AAction
+{
+public:
+	CQuantizeEffect(const CActionSound &actionSound,unsigned quantumCount,float inputGain,float outputGain);
+	virtual ~CQuantizeEffect();
+
+protected:
+	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound &actionSound);
+	CanUndoResults canUndo(const CActionSound &actionSound) const;
+
+private:
+	const unsigned quantumCount;
+	const float inputGain,outputGain;
+};
+
+class CQuantizeEffectFactory : public AActionFactory
+{
+public:
+	CQuantizeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+
+	CQuantizeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+};
 
 #endif

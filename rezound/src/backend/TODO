@@ -1,12 +1,10 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- make SAMPLE_RATE and CHANNELS registry settings
-
 	- change CLoadedSound->sound to be public and a *const if after looking at things it could be.. then I could elimintate loadedSound->getSound() everywhere
 
 	- change ASoundFileManager to cancel closing if the close asks to save an mp3 file.. then it asks for the save parameters, then they hit cancel on the mp3 parameters dialog... just return the bool value back up.. this should also top a close all on exit and stop the exit
-
+	
 	- create separate CDSPLevelDetectorRMS and CDSPPeakLevelDetectorPeak dsp blocks
 
 	- create a template method in DSPBlocks which is a mean finder given an accessor and a range to find the mean for removing DC
@@ -48,10 +46,15 @@
 			- well, actually, this is probably what the interface to an FFT convolver would look like, except I wouldn't call it FFT, that would just be the implementation it used
 			- oooooo I can't wait to hear what a reverb will sound like using FFT convolution
 
+	- add   PCM to PWM  and  PWM to PCM  actions... I'm not sure if they would really fall under Effects... Maybe a new category should be created.  If a new one, then plan other new actions related to these.
+
 
 
 
 --- POSSIBLE THINGS TO DO ---
+
+	- add a "antialias" check button to the gain or volume change effects
+		- this would just make it add random noise to the sound when making the sound louder
 
 	- could warn the user if they are saving a file that was loaded from a lossy format then saving again to a lossy format that the loss will start to build up and become quite audible rather quickly
 
@@ -269,3 +272,6 @@
 
 	- Eventually, I need to have the frontend make use of the backend's ability for some of the actions to use different LFO implementations
 
+	- make SAMPLE_RATE and CHANNELS registry settings
+
+	- add a quantize effect

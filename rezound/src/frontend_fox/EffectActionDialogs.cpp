@@ -145,6 +145,29 @@ CSimpleDelayDialog::CSimpleDelayDialog(FXWindow *mainWindow) :
 
 
 
+
+// --- quantize ----------------------------
+
+static const double interpretValue_quantize(const double x,const int s) { return(floor(max(1.0,x*s))); }
+static const double uninterpretValue_quantize(const double x,const int s) { return(x/s); }
+
+static const double interpretValue_quantizeGain(const double x,const int s) { return(unitRange_to_bipolarRange_exp(x,s)); }
+static const double uninterpretValue_quantizeGain(const double x,const int s) { return(bipolarRange_to_unitRange_exp(x,s)); }
+
+CQuantizeDialog::CQuantizeDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Quantize the Number of Possible Sample Values")
+{
+	addSlider("Input Gain","x",interpretValue_quantizeGain,uninterpretValue_quantizeGain,NULL,1.0,2,100,2,true);
+	addSlider("Quantum Count","",interpretValue_quantize,uninterpretValue_quantize,NULL,8,4,1000000,32,false);
+		setTipText(1,"The Number of Possible Sample Values Above Zero");
+	addSlider("Output Gain","x",interpretValue_quantizeGain,uninterpretValue_quantizeGain,NULL,1.0,2,100,2,true);
+
+}
+
+
+
+
+
 // --- varied repeat -----------------------
 
 static const double interpretValue_varied_repeat(const double x,const int s) { return(x*s); }
