@@ -149,7 +149,7 @@ CChangeAmplitudeEffect *CGainEffectFactory::manufactureAction(const CActionSound
 	if(actionParameters->getGraphParameter(parameterName).size()<2)
 		throw(runtime_error(string(__func__)+" -- graph parameter 0 contains less than 2 nodes"));
 
-		return(new CChangeAmplitudeEffect(actionSound,actionParameters->getGraphParameter(parameterName)));
+	return(new CChangeAmplitudeEffect(actionSound,actionParameters->getGraphParameter(parameterName)));
 }
 
 
