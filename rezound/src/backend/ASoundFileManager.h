@@ -64,6 +64,9 @@ public:
 	// return NULL if there is no focused window
 	virtual CLoadedSound *getActive()=0;
 
+	// should be implemented to return the number of currently opened sound files
+	virtual const size_t getOpenedCount() const=0;
+
 	// is called after an action is performed to update the screen or when the title
 	// bar and other status information of a loaded sound window needs to be modified
 	virtual void updateAfterEdit()=0;

@@ -83,6 +83,11 @@ void CSoundFileManager::destroyWindow(CLoadedSound *loaded)
 	}
 }
 
+const size_t CSoundFileManager::getOpenedCount() const
+{
+	return(soundWindows.size());
+}
+
 void CSoundFileManager::untoggleActiveForAllSoundWindows(CSoundWindow *exceptThisOne)
 {
 	for(size_t t=0;t<soundWindows.size();t++)

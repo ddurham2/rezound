@@ -46,6 +46,8 @@ public:
 
 	void untoggleActiveForAllSoundWindows(CSoundWindow *exceptThisOne);
 	
+	const size_t getOpenedCount() const;
+
 	CLoadedSound *getActive();
 	CSoundWindow *getActiveWindow();
 	void updateAfterEdit();

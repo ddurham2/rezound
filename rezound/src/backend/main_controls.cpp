@@ -126,6 +126,12 @@ const bool exitReZound(ASoundFileManager *soundFileManager)
 {
 	try
 	{
+		if(soundFileManager->getOpenedCount()>1)
+		{
+			if(Question("Are you sure you want to quit?",yesnoQues)!=yesAns)
+				return(false);
+		}
+
 		while(soundFileManager->getActive()!=NULL)
 			soundFileManager->close(ASoundFileManager::ctSaveYesNoStop);
 		return(true);
