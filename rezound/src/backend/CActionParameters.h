@@ -33,6 +33,8 @@ class CActionParameters;
 #include "CSound_defs.h"
 #include "ALFO.h"
 
+class ASoundFileManager;
+
 /*
  * One of these is always the input to an action
  * Could could be streamed to disk to repeat actions later with the same parameters 
@@ -41,7 +43,7 @@ class CActionParameters;
 class CActionParameters
 {
 public:
-	CActionParameters();
+	CActionParameters(ASoundFileManager *soundFileManager);
 	CActionParameters(const CActionParameters &src);
 	virtual ~CActionParameters();
 
@@ -77,6 +79,8 @@ public:
 	void setGraphParameter(const string name,const CGraphParamValueNodeList &v);
 	void setLFODescription(const string name,const CLFODescription &v);
 
+	ASoundFileManager *getSoundFileManager() const;
+
 private:
 
 	// These used to be the public methods for accessing parameters until I went to 
@@ -103,6 +107,7 @@ private:
 
 
 
+	ASoundFileManager *soundFileManager;
 
 	enum ParameterTypes { ptBool,ptString,ptUnsigned,ptSamplePos,ptDouble,ptGraph,ptLFODescription };
 

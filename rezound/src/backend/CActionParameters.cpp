@@ -25,7 +25,8 @@
 #include <istring>
 
 
-CActionParameters::CActionParameters()
+CActionParameters::CActionParameters(ASoundFileManager *_soundFileManager) :
+	soundFileManager(_soundFileManager)
 {
 }
 
@@ -72,6 +73,11 @@ CActionParameters::CActionParameters(const CActionParameters &src)
 CActionParameters::~CActionParameters()
 {
 	clear();
+}
+
+ASoundFileManager *CActionParameters::getSoundFileManager() const
+{
+	return soundFileManager;
 }
 
 void CActionParameters::clear()
@@ -448,5 +454,4 @@ void CActionParameters::setLFODescription(const unsigned i,const CLFODescription
 	else
 		(*((CLFODescription *)parameters[i].second))=v;
 }
-
 
