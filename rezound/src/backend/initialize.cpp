@@ -27,6 +27,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 
 #include <stdexcept>
 #include <string>
@@ -69,6 +70,15 @@ bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[])
 {
 	try
 	{
+		// mask out SIGFPE (Floating-Point exception) signals
+		{
+			sigset_t sig_set;
+			sigemptyset(&sig_set);
+			sigaddset(&sig_set,SIGFPE);
+			sigprocmask(SIG_BLOCK,&sig_set,NULL);
+		}
+
+
 		if(checkForHelpFlag(argc,argv))
 			return false;
 		if(checkForVersionFlag(argc,argv))
