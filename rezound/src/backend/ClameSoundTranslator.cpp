@@ -320,8 +320,8 @@ bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound
 
 		#define BITS 16 // has to go along with how we're writing it to the pipe below
 
-		if(saveLength>((0x7fffffff-4096)/((BITS/2)*channelCount)))
-			throw runtime_error(string(__func__)+" -- audio data is too large to be converted to mp3 (more than 2gigs of "+istring(BITS)+"bit/"+istring(channelCount)+"channels");
+		if(saveLength>((0x7fffffff-4096)/((BITS/8)*channelCount)))
+			throw runtime_error(string(__func__)+" -- audio data is too large to be converted to mp3 (more than 2gigs of "+istring(BITS)+"bit/"+istring(channelCount)+"channels)");
 
 		RWaveHeader waveHeader; 
 		strncpy(waveHeader.RIFF_ID,"RIFF",4);
