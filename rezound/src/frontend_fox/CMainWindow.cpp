@@ -271,19 +271,19 @@ void CMainWindow::createMenus()
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&File",NULL,menu);
-		new FXMenuCommand(menu,"&New",NULL,this,ID_FILE_NEW_MENUITEM);
-		new FXMenuCommand(menu,"&Open\tCtrl+O",NULL,this,ID_FILE_OPEN_MENUITEM);
-		new FXMenuCascade(menu,"&Reopen",NULL,new CReopenPopup(this));
-		new FXMenuCommand(menu,"&Save\tCtrl+S",NULL,this,ID_FILE_SAVE_MENUITEM);
-		new FXMenuCommand(menu,"Save &As",NULL,this,ID_FILE_SAVE_AS_MENUITEM);
-		new FXMenuCommand(menu,"&Close\tCtrl+W",NULL,this,ID_FILE_CLOSE_MENUITEM);
-		new FXMenuCommand(menu,"Re&vert",NULL,this,ID_FILE_REVERT_MENUITEM);
+		new FXMenuCommand(menu,"&New",new FXGIFIcon(getApp(),file_new_gif),this,ID_FILE_NEW_MENUITEM);
+		new FXMenuCommand(menu,"&Open\tCtrl+O",new FXGIFIcon(getApp(),file_open_gif),this,ID_FILE_OPEN_MENUITEM);
+		new FXMenuCascade(menu,"&Reopen",new FXGIFIcon(getApp(),file_open_gif),new CReopenPopup(this));
+		new FXMenuCommand(menu,"&Save\tCtrl+S",new FXGIFIcon(getApp(),file_save_gif),this,ID_FILE_SAVE_MENUITEM);
+		new FXMenuCommand(menu,"Save &As",new FXGIFIcon(getApp(),file_save_as_gif),this,ID_FILE_SAVE_AS_MENUITEM);
+		new FXMenuCommand(menu,"&Close\tCtrl+W",new FXGIFIcon(getApp(),file_close_gif),this,ID_FILE_CLOSE_MENUITEM);
+		new FXMenuCommand(menu,"Re&vert",new FXGIFIcon(getApp(),file_revert_gif),this,ID_FILE_REVERT_MENUITEM);
 
 		new FXMenuSeparator(menu);
 		new FXMenuCommand(menu,"Record",NULL,this,ID_FILE_RECORD_MENUITEM);
 
 		new FXMenuSeparator(menu);
-		new FXMenuCommand(menu,"User No&tes"/*\tUser notes about the sound (and preserved in the file if the format supports it)"*/,NULL,this,ID_NOTES_MENUITEM);
+		new FXMenuCommand(menu,"User No&tes"/*\tUser notes about the sound (and preserved in the file if the format supports it)"*/,new FXGIFIcon(getApp(),notes_gif),this,ID_NOTES_MENUITEM);
 
 		new FXMenuSeparator(menu);
 		new FXMenuCommand(menu,"&About ReZound\tF1",NULL,this,ID_ABOUT_MENUITEM);
@@ -304,22 +304,22 @@ void CMainWindow::createMenus()
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&Edit",NULL,menu);
-		new FXMenuCommand(menu,"Undo\tCtrl+Z",NULL,this,ID_UNDO_MENUITEM);
+		new FXMenuCommand(menu,"Undo\tCtrl+Z",new FXGIFIcon(getApp(),edit_undo_gif),this,ID_UNDO_MENUITEM);
 		new FXMenuCommand(menu,"Clear Undo History",NULL,this,ID_CLEAR_UNDO_HISTORY_MENUITEM);
 
 		new FXMenuSeparator(menu);
-		new CActionMenuCommand(new CCopyEditFactory(gChannelSelectDialog),menu,"Ctrl+C");
-		new CActionMenuCommand(new CCutEditFactory(gChannelSelectDialog),menu,"Ctrl+X");
+		new CActionMenuCommand(new CCopyEditFactory(gChannelSelectDialog),menu,"Ctrl+C",new FXGIFIcon(getApp(),edit_copy_gif));
+		new CActionMenuCommand(new CCutEditFactory(gChannelSelectDialog),menu,"Ctrl+X",new FXGIFIcon(getApp(),edit_cut_gif));
 		new CActionMenuCommand(new CDeleteEditFactory(gChannelSelectDialog),menu,"Ctrl+D");
 		new CActionMenuCommand(new CCropEditFactory(gChannelSelectDialog),menu,"Ctrl+R");
 
 		new FXMenuSeparator(menu);
-		new CActionMenuCommand(new CInsertPasteEditFactory(gPasteChannelsDialog),menu,"Ctrl+V");
-		new CActionMenuCommand(new CReplacePasteEditFactory(gPasteChannelsDialog),menu,"");
-		new CActionMenuCommand(new COverwritePasteEditFactory(gPasteChannelsDialog),menu,"");
-		new CActionMenuCommand(new CLimitedOverwritePasteEditFactory(gPasteChannelsDialog),menu,"");
-		new CActionMenuCommand(new CMixPasteEditFactory(gPasteChannelsDialog),menu,"");
-		new CActionMenuCommand(new CLimitedMixPasteEditFactory(gPasteChannelsDialog),menu,"");
+		new CActionMenuCommand(new CInsertPasteEditFactory(gPasteChannelsDialog),menu,"Ctrl+V",new FXGIFIcon(getApp(),edit_paste_gif));
+		new CActionMenuCommand(new CReplacePasteEditFactory(gPasteChannelsDialog),menu,"",new FXGIFIcon(getApp(),edit_paste_gif));
+		new CActionMenuCommand(new COverwritePasteEditFactory(gPasteChannelsDialog),menu,"",new FXGIFIcon(getApp(),edit_paste_gif));
+		new CActionMenuCommand(new CLimitedOverwritePasteEditFactory(gPasteChannelsDialog),menu,"",new FXGIFIcon(getApp(),edit_paste_gif));
+		new CActionMenuCommand(new CMixPasteEditFactory(gPasteChannelsDialog),menu,"",new FXGIFIcon(getApp(),edit_paste_gif));
+		new CActionMenuCommand(new CLimitedMixPasteEditFactory(gPasteChannelsDialog),menu,"",new FXGIFIcon(getApp(),edit_paste_gif));
 
 		new FXMenuSeparator(menu);
 		new CActionMenuCommand(new CInsertSilenceEditFactory(gChannelSelectDialog,new CInsertSilenceDialog(this)),menu,"");
