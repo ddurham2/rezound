@@ -1,6 +1,8 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- The CGarphParamValue widget should darken even more the channels that aren't being affected by the action
+
 	- Would be nice to get the Title of Action Dialogs from the ActionFactory (optionally)
 
 	- put a menu at the top of the LADSPA dropdown for "Recent" which would work like the reopen menu, but for recently used LADSPA plugings.. this would be helpful since there's so many
