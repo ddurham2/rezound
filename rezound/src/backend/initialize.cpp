@@ -89,7 +89,9 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 			// still exist for all previously open files)
 		try
 		{
-			gSettingsRegistry=new CNestedDataFile(gUserDataDirectory+istring(ost::Path::dirDelim)+"registry.dat",true);
+			const string registryFilename=gUserDataDirectory+istring(ost::Path::dirDelim)+"registry.dat";
+			ost::Path(registryFilename).Touch();
+			gSettingsRegistry=new CNestedDataFile(registryFilename,true);
 		}
 		catch(exception &e)
 		{
