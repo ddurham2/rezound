@@ -75,7 +75,7 @@ public:
 
 	enum
 	{
-		ID_SLIDER=FXPacker::ID_LAST,
+		ID_SLIDER=FXVerticalFrame::ID_LAST,
 
 		ID_VALUE_TEXTBOX,
 		ID_SCALAR_SPINNER,

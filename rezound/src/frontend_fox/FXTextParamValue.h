@@ -57,10 +57,8 @@ public:
 
 	enum
 	{
-		ID_SLIDER=FXPacker::ID_LAST,
-
+		ID_VALUE_SPINNER=FXHorizontalFrame::ID_LAST,
 		ID_VALUE_TEXTBOX,
-		ID_VALUE_SPINNER,
 
 		ID_LAST
 	};
