@@ -82,3 +82,12 @@ bool CSwapChannelsDialog::show(CActionSound *actionSound,CActionParameters *acti
 }
 
 
+// --- add channels ---------------------------
+
+CAddChannelsDialog::CAddChannelsDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Add Channels")
+{
+	addTextEntry("Insert Where","",0,0,MAX_CHANNELS);
+	addTextEntry("Insert Count","",1,1,MAX_CHANNELS);
+}
+

@@ -59,6 +59,16 @@ public:
 
 
 
+// --- add channels ----------------------
+
+class CAddChannelsDialog : public CActionParamDialog
+{
+public:
+	CAddChannelsDialog(FXWindow *mainWindow);
+};
+
+
+
 
 
 

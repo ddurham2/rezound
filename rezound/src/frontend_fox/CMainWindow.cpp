@@ -381,12 +381,13 @@ void CMainWindow::createMenus()
 		new CActionMenuCommand(new CMuteEditFactory(gChannelSelectDialog),menu,"Ctrl+M");
 
 		new FXMenuSeparator(menu);
-		new CActionMenuCommand(new CRotateLeftEditFactory(gChannelSelectDialog,new CRotateDialog(this)),menu,"");
-		new CActionMenuCommand(new CRotateRightEditFactory(gChannelSelectDialog,new CRotateDialog(this)),menu,"");
+		new CActionMenuCommand(new CAddChannelsEditFactory(new CAddChannelsDialog(this)),menu,"");
+		new CActionMenuCommand(new CRemoveChannelsEditFactory(gChannelSelectDialog),menu,"");
+		new CActionMenuCommand(new CSwapChannelsEditFactory(new CSwapChannelsDialog(this)),menu,"");
 
 		new FXMenuSeparator(menu);
-		new CActionMenuCommand(new CSwapChannelsEditFactory(new CSwapChannelsDialog(this)),menu,"");
-		// add/remove channels would go here
+		new CActionMenuCommand(new CRotateLeftEditFactory(gChannelSelectDialog,new CRotateDialog(this)),menu,"");
+		new CActionMenuCommand(new CRotateRightEditFactory(gChannelSelectDialog,new CRotateDialog(this)),menu,"");
 
 		new FXMenuSeparator(menu);
 		new CActionMenuCommand(new CSelectionEditFactory(sSelectAll),menu,"Ctrl+A");
