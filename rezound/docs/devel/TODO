@@ -1,5 +1,7 @@
 --- THINGS TO DO FOR SURE ---
 
+	- if any problem shows up with reswrap not being found causing problems... then it would be quite simple to write a very simple .c file that for every argument outputs stdout the array definition
+
 	- go to each dialog and make at least some presets for each that could use it
 		- crossfading could use it
 
