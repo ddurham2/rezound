@@ -243,7 +243,7 @@ bool CMIDISDSSoundTranslator::onLoadSound(const string filename,CSound *sound) c
 				if(write(fd,buffer,7)!=7)
 				{
 					const int err=errno;
-					throw runtime_error(string(__func__)+" -- error writing SAMPLE DUMP request to device -- "+strerror(err));
+					throw runtime_error(string(__func__)+" -- error writing SAMPLE DUMP request to device -- perhaps the disk is full -- "+strerror(err));
 				}
 
 				sampleDumpRequestSent=true;
