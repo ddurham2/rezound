@@ -28,18 +28,18 @@ CCrossfadeEdgesDialog *gCrossfadeEdgesDialog=NULL;
 
 
 CCrossfadeEdgesDialog::CCrossfadeEdgesDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Crossfade Edges Settings")
+	CActionParamDialog(mainWindow,N_("Crossfade Edges Settings"))
 {
 	setMargin(130);
 
 	void *p=newVertPanel(NULL);
-		addNumericTextEntry(p,"Crossfade Start Edge","ms",gCrossfadeStartTime,0,10000,"milliseconds");
-		addNumericTextEntry(p,"Crossfade Stop Edge","ms",gCrossfadeStopTime,0,10000,"milliseconds");
+		addNumericTextEntry(p,N_("Crossfade Start Edge"),"ms",gCrossfadeStartTime,0,10000,_("milliseconds"));
+		addNumericTextEntry(p,N_("Crossfade Stop Edge"),"ms",gCrossfadeStopTime,0,10000,_("milliseconds"));
 		
 		vector<string> fadeMethods;
-			fadeMethods.push_back("Linear Fade");
-			fadeMethods.push_back("Parabolic Fade"); // a more industry standard term for this??? it means a gain x^2 where 0<=x<=1
-		addComboTextEntry(p,"Crossfade Fade Method",fadeMethods,"Linear will maintain a constant gain of 1.0\nParabolic sounds a bit more natural\nFor very quick fades (less than 250ms) linear is recommended");
+			fadeMethods.push_back(N_("Linear Fade"));
+			fadeMethods.push_back(N_("Parabolic Fade")); // a more industry standard term for this??? it means a gain x^2 where 0<=x<=1
+		addComboTextEntry(p,N_("Crossfade Fade Method"),fadeMethods,_("Linear will maintain a constant gain of 1.0\nParabolic sounds a bit more natural\nFor very quick fades (less than 250ms) linear is recommended"));
 
 }
 

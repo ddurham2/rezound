@@ -41,7 +41,7 @@ class FXComboTextParamValue : public FXHorizontalFrame
 {
 	FXDECLARE(FXComboTextParamValue);
 public:
-	FXComboTextParamValue(FXComposite *p,int opts,const char *title,const vector<string> &items,bool isEditable);
+	FXComboTextParamValue(FXComposite *p,int opts,const char *name,const vector<string> &items,bool isEditable);
 	virtual ~FXComboTextParamValue();
 
 	const FXint getValue(); // returns the index into the items given at construction of the selected item (or if isEditable it returns the numeric representation of the current string value in the combo box.. this needs to be changed really)
@@ -55,7 +55,7 @@ public:
 
 	void setCurrentItem(const unsigned current);
 
-	const string getTitle() const;
+	const string getName() const;
 
 	void setTipText(const FXString &text);
 	FXString getTipText() const;
@@ -67,12 +67,16 @@ protected:
 	FXComboTextParamValue() {}
 
 private:
+	const string name;
+
 	bool isEditable;
 
 	FXLabel *titleLabel;
 	FXComboBox *valueComboBox;
 
 	FXFont *textFont;
+
+	vector<string> items;
 };
 
 #endif

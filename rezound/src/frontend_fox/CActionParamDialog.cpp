@@ -64,7 +64,9 @@ FXIMPLEMENT(CActionParamDialog,FXModalDialogBox,CActionParamDialogMap,ARRAYNUMBE
 // parameters should be unnecessary
 
 CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title,bool showPresetPanel,FXModalDialogBox::ShowTypes showType) :
-	FXModalDialogBox(mainWindow,title,0,0,FXModalDialogBox::ftVertical,showType),
+	FXModalDialogBox(mainWindow,gettext(title.text()),0,0,FXModalDialogBox::ftVertical,showType),
+
+	origTitle(title.text()),
 
 	explainationButtonCreated(false),
 	
@@ -85,7 +87,7 @@ CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title
 	{
 		try
 		{
-			if(gSysPresetsFile->getArraySize((getTitle()+DOT+"names").text())>0)
+			if(gSysPresetsFile->getArraySize((getOrigTitle()+DOT+"names").c_str())>0)
 			{
 				// native preset stuff
 				FXPacker *listFrame=new FXPacker(presetsFrame,FRAME_SUNKEN|FRAME_THICK|LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y, 0,0,210,0, 0,0,0,0, 0,0); // had to do this because FXList won't take that frame style
@@ -117,6 +119,11 @@ CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title
 
 CActionParamDialog::~CActionParamDialog()
 {
+}
+
+const string CActionParamDialog::getOrigTitle() const
+{
+	return origTitle;
 }
 
 void CActionParamDialog::create()
@@ -196,7 +203,7 @@ FXTextParamValue *CActionParamDialog::getTextParam(const string name)
 {
 	for(size_t t=0;t<parameters.size();t++)
 	{
-		if((parameters[t].first==ptStringText || parameters[t].first==ptNumericText) && ((FXTextParamValue *)parameters[t].second)->getTitle()==name)
+		if((parameters[t].first==ptStringText || parameters[t].first==ptNumericText) && ((FXTextParamValue *)parameters[t].second)->getName()==name)
 			return (FXTextParamValue *)parameters[t].second;
 	}
 	throw runtime_error(string(__func__)+" -- no text param found named "+name);
@@ -227,7 +234,7 @@ FXComboTextParamValue *CActionParamDialog::getComboText(const string name)
 {
 	for(size_t t=0;t<parameters.size();t++)
 	{
-		if(parameters[t].first==ptComboText && ((FXComboTextParamValue *)parameters[t].second)->getTitle()==name)
+		if(parameters[t].first==ptComboText && ((FXComboTextParamValue *)parameters[t].second)->getName()==name)
 			return (FXComboTextParamValue *)parameters[t].second;
 	}
 	throw runtime_error(string(__func__)+" -- no combo text param found named "+name);
@@ -269,7 +276,7 @@ FXGraphParamValue *CActionParamDialog::getGraphParam(const string name)
 {
 	for(size_t t=0;t<parameters.size();t++)
 	{
-		if((parameters[t].first==ptGraph || parameters[t].first==ptGraphWithWaveform) && ((FXGraphParamValue *)parameters[t].second)->getTitle()==name)
+		if((parameters[t].first==ptGraph || parameters[t].first==ptGraphWithWaveform) && ((FXGraphParamValue *)parameters[t].second)->getName()==name)
 			return (FXGraphParamValue *)parameters[t].second;
 	}
 	throw runtime_error(string(__func__)+" -- no graph param found named "+name);
@@ -547,7 +554,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 					if(retValueConvs[t]!=NULL)
 						ret=retValueConvs[t](ret);
 
-					actionParameters->addDoubleParameter(slider->getTitle(),ret);
+					actionParameters->addDoubleParameter(slider->getName(),ret);
 				}
 				break;
 
@@ -559,7 +566,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 					if(retValueConvs[t]!=NULL)
 						ret=retValueConvs[t](ret);
 
-					actionParameters->addDoubleParameter(textEntry->getTitle(),ret);	
+					actionParameters->addDoubleParameter(textEntry->getName(),ret);	
 				}
 				break;
 
@@ -567,7 +574,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 				{
 					FXTextParamValue *textEntry=(FXTextParamValue *)parameters[t].second;
 					const string ret=textEntry->getText();
-					actionParameters->addStringParameter(textEntry->getTitle(),ret);	
+					actionParameters->addStringParameter(textEntry->getName(),ret);	
 				}
 				break;
 
@@ -576,10 +583,10 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 					FXDiskEntityParamValue *diskEntityEntry=(FXDiskEntityParamValue *)parameters[t].second;
 					const string ret=diskEntityEntry->getEntityName();
 
-					actionParameters->addStringParameter(diskEntityEntry->getTitle(),ret);	
+					actionParameters->addStringParameter(diskEntityEntry->getName(),ret);	
 
 					if(diskEntityEntry->getEntityType()==FXDiskEntityParamValue::detAudioFilename)
-						actionParameters->addBoolParameter(diskEntityEntry->getTitle()+" OpenAsRaw",diskEntityEntry->getOpenAsRaw());	
+						actionParameters->addBoolParameter(diskEntityEntry->getName()+" OpenAsRaw",diskEntityEntry->getOpenAsRaw());	
 				}
 				break;
 
@@ -588,7 +595,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 					FXComboTextParamValue *comboTextEntry=(FXComboTextParamValue *)parameters[t].second;
 					FXint ret=comboTextEntry->getValue();
 
-					actionParameters->addUnsignedParameter(comboTextEntry->getTitle(),(unsigned)ret);	
+					actionParameters->addUnsignedParameter(comboTextEntry->getName(),(unsigned)ret);	
 				}
 				break;
 
@@ -597,7 +604,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 					FXCheckBoxParamValue *checkBoxEntry=(FXCheckBoxParamValue *)parameters[t].second;
 					bool ret=checkBoxEntry->getValue();
 
-					actionParameters->addBoolParameter(checkBoxEntry->getTitle(),ret);	
+					actionParameters->addBoolParameter(checkBoxEntry->getName(),ret);	
 				}
 				break;
 
@@ -613,14 +620,14 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 							nodes[i].y=retValueConvs[t](nodes[i].y);
 					}
 
-					actionParameters->addGraphParameter(graph->getTitle(),nodes);
+					actionParameters->addGraphParameter(graph->getName(),nodes);
 				}
 				break;
 
 			case ptLFO:
 				{
 					FXLFOParamValue *LFOEntry=(FXLFOParamValue *)parameters[t].second;
-					actionParameters->addLFODescription(LFOEntry->getTitle(),LFOEntry->getValue());
+					actionParameters->addLFODescription(LFOEntry->getName(),LFOEntry->getValue());
 				}
 				break;
 
@@ -671,7 +678,7 @@ long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void 
 		}
 		
 		const string name=string(listBox->getItemText(listBox->getCurrentItem()).text()).substr(4);
-		const string title=string(getTitle().text())+DOT+name;
+		const string title=getOrigTitle()+DOT+name;
 
 		for(unsigned t=0;t<parameters.size();t++)
 		{
@@ -747,7 +754,7 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 			CNestedDataFile *presetsFile=gUserPresetsFile;
 
 
-			const string title=string(getTitle().text())+DOT+name;
+			const string title=getOrigTitle()+DOT+name;
 
 			bool alreadyExists=false;
 			if(presetsFile->keyExists(title.c_str()))
@@ -798,7 +805,7 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 
 			if(!alreadyExists)
 			{
-				const string key=(getTitle()+DOT+"names").text();
+				const string key=getOrigTitle()+DOT+"names";
 				presetsFile->createArrayKey(key.c_str(),presetsFile->getArraySize(key.c_str()),name);
 				buildPresetList(presetsFile,userPresetList);
 			}
@@ -823,10 +830,10 @@ long CActionParamDialog::onPresetRemoveButton(FXObject *sender,FXSelector sel,vo
 		{
 			CNestedDataFile *presetsFile=gUserPresetsFile;
 
-			const string key=string(getTitle().text())+DOT+name;
+			const string key=getOrigTitle()+DOT+name;
 
 			presetsFile->removeKey(key.c_str());
-			presetsFile->removeArrayKey((getTitle()+DOT+"names").text(),userPresetList->getCurrentItem());
+			presetsFile->removeArrayKey((getOrigTitle()+DOT+"names").c_str(),userPresetList->getCurrentItem());
 
 			buildPresetList(presetsFile,userPresetList);
 			presetsFile->save();
@@ -867,11 +874,11 @@ void CActionParamDialog::buildPresetLists()
 
 void CActionParamDialog::buildPresetList(CNestedDataFile *f,FXList *list)
 {
-	const size_t presetCount=f->getArraySize((getTitle()+DOT+"names").text());
+	const size_t presetCount=f->getArraySize((getOrigTitle()+DOT+"names").c_str());
 	list->clearItems();
 	for(size_t t=0;t<presetCount;t++)
 	{
-		const string name=f->getArrayValue((getTitle()+DOT+"names").text(),t);
+		const string name=f->getArrayValue((getOrigTitle()+DOT+"names").c_str(),t);
 		list->appendItem((istring(t,3,true)+" "+name).c_str());
 	}
 }
@@ -884,39 +891,39 @@ unsigned CActionParamDialog::findParamByName(const string name) const
 		switch(parameters[t].first)
 		{
 		case ptConstant:
-			if(((FXConstantParamValue *)parameters[t].second)->getTitle()==name)
+			if(((FXConstantParamValue *)parameters[t].second)->getName()==name)
 				return t;
 			break;
 
 		case ptNumericText:
 		case ptStringText:
-			if(((FXTextParamValue *)parameters[t].second)->getTitle()==name)
+			if(((FXTextParamValue *)parameters[t].second)->getName()==name)
 				return t;
 			break;
 
 		case ptDiskEntity:
-			if(((FXDiskEntityParamValue *)parameters[t].second)->getTitle()==name)
+			if(((FXDiskEntityParamValue *)parameters[t].second)->getName()==name)
 				return t;
 			break;
 
 		case ptComboText:
-			if(((FXComboTextParamValue *)parameters[t].second)->getTitle()==name)
+			if(((FXComboTextParamValue *)parameters[t].second)->getName()==name)
 				return t;
 			break;
 
 		case ptCheckBox:
-			if(((FXCheckBoxParamValue *)parameters[t].second)->getTitle()==name)
+			if(((FXCheckBoxParamValue *)parameters[t].second)->getName()==name)
 				return t;
 			break;
 
 		case ptGraph:
 		case ptGraphWithWaveform:
-			if(((FXGraphParamValue *)parameters[t].second)->getTitle()==name)
+			if(((FXGraphParamValue *)parameters[t].second)->getName()==name)
 				return t;
 			break;
 
 		case ptLFO:
-			if(((FXLFOParamValue *)parameters[t].second)->getTitle()==name)
+			if(((FXLFOParamValue *)parameters[t].second)->getName()==name)
 				return t;
 			break;
 

@@ -34,8 +34,8 @@ class FXTextParamValue : public FXHorizontalFrame
 {
 	FXDECLARE(FXTextParamValue);
 public:
-	FXTextParamValue(FXComposite *p,int opts,const char *title,const double initialValue,const double minValue,const double maxValue); // make it behave as a numeric entry
-	FXTextParamValue(FXComposite *p,int opts,const char *title,const string initialValue); // make it behave like a text entry
+	FXTextParamValue(FXComposite *p,int opts,const char *name,const double initialValue,const double minValue,const double maxValue); // make it behave as a numeric entry
+	FXTextParamValue(FXComposite *p,int opts,const char *name,const string initialValue); // make it behave like a text entry
 	virtual ~FXTextParamValue();
 
 	long onValueTextBoxChange(FXObject *sender,FXSelector sel,void *ptr);
@@ -52,7 +52,7 @@ public:
 
 	void setRange(const double minValue,const double maxValue);
 
-	const string getTitle() const;
+	const string getName() const;
 
 	void setTipText(const FXString &text);
 	FXString getTipText() const;
@@ -73,6 +73,8 @@ protected:
 	FXTextParamValue() {}
 
 private:
+	const string name;
+
 	const bool isNumeric;
 
 	const string initialValue;

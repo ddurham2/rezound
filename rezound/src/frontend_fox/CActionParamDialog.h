@@ -119,6 +119,8 @@ public:
 
 	void create();
 
+	const string getOrigTitle() const;
+
 protected:
 	CActionParamDialog() {}
 
@@ -126,6 +128,7 @@ protected:
 	virtual const string getExplaination() const { return ""; }
 
 private:
+	const string origTitle;
 	const CActionSound *actionSound;
 
 	bool explainationButtonCreated;

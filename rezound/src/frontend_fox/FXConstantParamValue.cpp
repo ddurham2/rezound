@@ -62,10 +62,12 @@ FXIMPLEMENT(FXConstantParamValue,FXVerticalFrame,FXConstantParamValueMap,ARRAYNU
 
 #include "utils.h"
 
-FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _uninterpretValue,const int minScalar,const int maxScalar,const int _initScalar,bool showInverseButton,FXComposite *p,int opts,const char *title) :
+FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _uninterpretValue,const int minScalar,const int maxScalar,const int _initScalar,bool showInverseButton,FXComposite *p,int opts,const char *_name) :
 	FXVerticalFrame(p,opts|FRAME_RAISED | LAYOUT_FILL_Y|LAYOUT_CENTER_X,0,0,0,0, 4,4,2,2, 0,0),
 
-	titleLabel(new FXLabel(this,title,NULL,LAYOUT_TOP|LAYOUT_FILL_X | JUSTIFY_CENTER_X)),
+	name(_name),
+
+	titleLabel(new FXLabel(this,gettext(_name),NULL,LAYOUT_TOP|LAYOUT_FILL_X | JUSTIFY_CENTER_X)),
 	horzSep(new FXHorizontalSeparator(this)),
 	middleFrame(new FXHorizontalFrame(this,LAYOUT_FILL_Y|LAYOUT_CENTER_X, 0,0,60,60, 0,0,2,2, 2,0)),
 		inverseButtonFrame(showInverseButton ? new FXPacker(middleFrame,LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0) : NULL),
@@ -145,7 +147,7 @@ long FXConstantParamValue::onSliderChange(FXObject *sender,FXSelector sel,void *
 {
 	retValue=interpretValue((double)slider->getValue()/10000.0,GET_SCALAR_VALUE);
 	valueTextBox->setText((istring(retValue,7,4)).c_str());
-	return(1);
+	return 1;
 }
 
 long FXConstantParamValue::onScalarSpinnerChange(FXObject *sender,FXSelector sel,void *ptr)
@@ -154,7 +156,7 @@ long FXConstantParamValue::onScalarSpinnerChange(FXObject *sender,FXSelector sel
 	retValue=interpretValue((double)slider->getValue()/10000.0,GET_SCALAR_VALUE);
 	valueTextBox->setText((istring(retValue,7,4)).c_str());
 	updateNumbers();
-	return(1);
+	return 1;
 }
 
 long FXConstantParamValue::onValueTextBoxChange(FXObject *sender,FXSelector sel,void *ptr)
@@ -163,13 +165,13 @@ long FXConstantParamValue::onValueTextBoxChange(FXObject *sender,FXSelector sel,
 	retValue=interpretValue(uninterpretValue(atof(valueTextBox->getText().text()),GET_SCALAR_VALUE),GET_SCALAR_VALUE);
 	slider->setValue((int)(uninterpretValue(retValue,GET_SCALAR_VALUE)*10000.0));
 
-	return(1);
+	return 1;
 }
 
 long FXConstantParamValue::onInverseButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	slider->setValue(10000-slider->getValue());
-	return(onSliderChange(sender,sel,ptr));
+	return onSliderChange(sender,sel,ptr);
 }
 
 long FXConstantParamValue::onMiddleLabelClick(FXObject *sender,FXSelector sel,void *ptr)
@@ -191,7 +193,7 @@ void FXConstantParamValue::updateNumbers()
 
 const double FXConstantParamValue::getValue() const
 {
-	return(retValue);
+	return retValue;
 }
 
 void FXConstantParamValue::setValue(const double value)
@@ -209,7 +211,7 @@ void FXConstantParamValue::prvSetValue(const double value)
 
 const int FXConstantParamValue::getScalar() const
 {
-	return(GET_SCALAR_VALUE);
+	return GET_SCALAR_VALUE;
 }
 
 void FXConstantParamValue::setScalar(const int scalar)
@@ -223,7 +225,7 @@ const int FXConstantParamValue::getMinScalar() const
 	FXint lo=0,hi=0;
 	if(scalarSpinner!=NULL)
 		scalarSpinner->getRange(lo,hi);
-	return(lo);
+	return lo;
 }
 
 const int FXConstantParamValue::getMaxScalar() const
@@ -231,12 +233,12 @@ const int FXConstantParamValue::getMaxScalar() const
 	FXint lo=0,hi=0;
 	if(scalarSpinner!=NULL)
 		scalarSpinner->getRange(lo,hi);
-	return(hi);
+	return hi;
 }
 
-const string FXConstantParamValue::getTitle() const
+const string FXConstantParamValue::getName() const
 {
-	return(titleLabel->getText().text());
+	return name;
 }
 
 void FXConstantParamValue::setTipText(const FXString &text)
@@ -262,7 +264,7 @@ void FXConstantParamValue::setTipText(const FXString &text)
 
 FXString FXConstantParamValue::getTipText() const
 {
-	return(titleLabel->getTipText());	
+	return titleLabel->getTipText();
 }
 
 /* ??? I might want to move this into a common place so that other action parameter widgets can use them */
@@ -300,7 +302,7 @@ void FXConstantParamValue::disable()
 
 void FXConstantParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getTitle()+DOT;
+	const string key=prefix+DOT+getName()+DOT;
 
 	const double value=f->keyExists((key+"value").c_str()) ? atof(f->getValue((key+"value").c_str()).c_str()) : defaultValue;
 	const int scalar=f->keyExists((key+"scalar").c_str()) ? atoi(f->getValue((key+"scalar").c_str()).c_str()) : initScalar;
@@ -316,7 +318,7 @@ void FXConstantParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 
 void FXConstantParamValue::writeToFile(const string &prefix,CNestedDataFile *f) const
 {
-	const string key=prefix+DOT+getTitle()+DOT;
+	const string key=prefix+DOT+getName()+DOT;
 
 	f->createKey((key+"value").c_str(),getValue());
 	if(getMinScalar()!=getMaxScalar())

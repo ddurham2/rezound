@@ -47,13 +47,15 @@ FXDEFMAP(FXLFOParamValue) FXLFOParamValueMap[]=
 
 FXIMPLEMENT(FXLFOParamValue,FXVerticalFrame,FXLFOParamValueMap,ARRAYNUMBER(FXLFOParamValueMap))
 
-static const double interpretValue(const double x,const int s) { return(x*s); }
-static const double uninterpretValue(const double x,const int s) { return(x/s); }
+static const double interpretValue(const double x,const int s) { return x*s; }
+static const double uninterpretValue(const double x,const int s) { return x/s; }
 
-FXLFOParamValue::FXLFOParamValue(FXComposite *p,int opts,const char *title,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs) :
+FXLFOParamValue::FXLFOParamValue(FXComposite *p,int opts,const char *_name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs) :
 	FXVerticalFrame(p,opts|FRAME_RAISED |LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 2,2,2,2, 0,2),
 
-	titleLabel(new FXLabel(this,title,NULL,LABEL_NORMAL|LAYOUT_CENTER_X)),
+	name(_name),
+
+	titleLabel(new FXLabel(this,gettext(_name),NULL,LABEL_NORMAL|LAYOUT_CENTER_X)),
 	sliders(new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
 		amplitudeSlider(new FXConstantParamValue(interpretValue,uninterpretValue,min((int)maxAmp,1),(int)maxAmp,min((int)maxAmp,1),false,sliders,LAYOUT_CENTER_X,ampTitle.c_str())),
 		frequencySlider(new FXConstantParamValue(interpretValue,uninterpretValue,min((int)maxFreq,1),(int)maxFreq,min((int)maxFreq,1),false,sliders,LAYOUT_CENTER_X,"Frequency")),
@@ -115,24 +117,24 @@ long FXLFOParamValue::onLFOTypeChange(FXObject *sender,FXSelector sel,void *ptr)
 		frequencySlider->enable();
 		phaseSlider->enable();
 	}
-	return(1);
+	return 1;
 }
 
 const CLFODescription FXLFOParamValue::getValue()
 {
 	//validateRange();
-	return(CLFODescription(
+	return CLFODescription(
 		amplitudeSlider->getValue(),
 		frequencySlider->getValue(),
 		phaseSlider->getValue(),
 		gLFORegistry.getIndexByName(LFOTypeComboBox->getItemText(LFOTypeComboBox->getCurrentItem()).text())
-	));
+	);
 
 }
 
-const string FXLFOParamValue::getTitle() const
+const string FXLFOParamValue::getName() const
 {
-	return(titleLabel->getText().text());
+	return name;
 }
 
 /*
@@ -145,13 +147,13 @@ void FXLFOParamValue::setTipText(const FXString &text)
 
 FXString FXLFOParamValue::getTipText() const
 {
-	return(titleLabel->getTipText());	
+	return titleLabel->getTipText();
 }
 */
 
 void FXLFOParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getTitle();
+	const string key=prefix+DOT+getName();
 	const string LFOName=f->keyExists((key+DOT+"name").c_str()) ? f->getValue((key+DOT+"name").c_str()) : "Constant";
 	try
 	{
@@ -178,7 +180,7 @@ void FXLFOParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 
 void FXLFOParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getTitle();
+	const string key=prefix+DOT+getName();
 	f->createKey((key+DOT+"name").c_str(),LFOTypeComboBox->getItemText(LFOTypeComboBox->getCurrentItem()).text());
 
 	amplitudeSlider->writeToFile(key,f);

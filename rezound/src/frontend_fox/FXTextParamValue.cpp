@@ -45,8 +45,10 @@ FXDEFMAP(FXTextParamValue) FXTextParamValueMap[]=
 
 FXIMPLEMENT(FXTextParamValue,FXHorizontalFrame,FXTextParamValueMap,ARRAYNUMBER(FXTextParamValueMap))
 
-FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title,const double _initialValue,const double _minValue,const double _maxValue) :
+FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *_name,const double _initialValue,const double _minValue,const double _maxValue) :
 	FXHorizontalFrame(p,opts|FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 2,2,4,4, 0,0),
+
+	name(_name),
 
 	isNumeric(true),
 	
@@ -54,7 +56,7 @@ FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title,con
 	minValue(_minValue),
 	maxValue(_maxValue),
 
-	titleLabel(new FXLabel(this,title,NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
+	titleLabel(new FXLabel(this,gettext(_name),NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
 	valueTextBox(new FXTextField(this,8,this,ID_VALUE_TEXTBOX, TEXTFIELD_NORMAL | LAYOUT_CENTER_Y)),
 	valueSpinner(new FXSpinner(this,0,this,ID_VALUE_SPINNER, SPIN_NORMAL|SPIN_NOTEXT | LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0)),
 	unitsLabel(new FXLabel(this,"",NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
@@ -75,14 +77,16 @@ FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title,con
 	//setFontOfAllChildren(this,textFont);
 }
 
-FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title,const string _initialValue) :
+FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *_name,const string _initialValue) :
 	FXHorizontalFrame(p,opts|FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 2,2,4,4, 0,0),
+
+	name(_name),
 
 	isNumeric(false),
 
 	initialValue(_initialValue),
 
-	titleLabel(new FXLabel(this,title,NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
+	titleLabel(new FXLabel(this,gettext(_name),NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
 	valueTextBox(new FXTextField(this,8,this,ID_VALUE_TEXTBOX, TEXTFIELD_NORMAL | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
 	valueSpinner(NULL),
 	unitsLabel(NULL),
@@ -185,9 +189,9 @@ void FXTextParamValue::validateRange()
 	valueTextBox->setText(istring(v).c_str());
 }
 
-const string FXTextParamValue::getTitle() const
+const string FXTextParamValue::getName() const
 {
-	return titleLabel->getText().text();
+	return name;
 }
 
 void FXTextParamValue::setTipText(const FXString &text)
@@ -205,7 +209,7 @@ FXString FXTextParamValue::getTipText() const
 
 void FXTextParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getTitle()+DOT;
+	const string key=prefix+DOT+getName()+DOT;
 	const string v= f->keyExists((key+"value").c_str()) ? f->getValue((key+"value").c_str()) : initialValue;
 	if(isNumeric)
 		setValue(atof(v.c_str()));
@@ -216,7 +220,7 @@ void FXTextParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 
 void FXTextParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getTitle()+DOT;
+	const string key=prefix+DOT+getName()+DOT;
 	if(isNumeric)
 		f->createKey((key+"value").c_str(),istring(getValue()));
 	else

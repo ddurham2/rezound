@@ -24,7 +24,6 @@
 #include "../../config/common.h"
 #include "fox_compat.h"
 
-#include <vector>
 #include <string>
 
 #include <fox/fx.h>
@@ -35,13 +34,13 @@ class FXCheckBoxParamValue : public FXVerticalFrame
 {
 	FXDECLARE(FXCheckBoxParamValue);
 public:
-	FXCheckBoxParamValue(FXComposite *p,int opts,const char *title,bool checked);
+	FXCheckBoxParamValue(FXComposite *p,int opts,const char *name,bool checked);
 	virtual ~FXCheckBoxParamValue();
 
 	const bool getValue();
 	void setValue(const bool checked);
 
-	const string getTitle() const;
+	const string getName() const;
 
 	void setTipText(const FXString &text);
 	FXString getTipText() const;
@@ -53,6 +52,7 @@ protected:
 	FXCheckBoxParamValue() {}
 
 private:
+	const string name;
 	FXCheckButton *checkBox;
 
 	FXFont *textFont;

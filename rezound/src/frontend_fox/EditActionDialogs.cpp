@@ -28,10 +28,10 @@
 // --- insert silence -------------------------
 
 CInsertSilenceDialog::CInsertSilenceDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Insert Silence")
+	CActionParamDialog(mainWindow,N_("Insert Silence"))
 {
 	void *p=newHorzPanel(NULL);
-		addNumericTextEntry(p,"Length","seconds",1.0,0,10000);
+		addNumericTextEntry(p,N_("Length"),N_("seconds"),1.0,0,10000);
 }
 
 
@@ -39,10 +39,10 @@ CInsertSilenceDialog::CInsertSilenceDialog(FXWindow *mainWindow) :
 // --- rotate ---------------------------------
 
 CRotateDialog::CRotateDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Rotate")
+	CActionParamDialog(mainWindow,N_("Rotate"))
 {
 	void *p=newHorzPanel(NULL);
-		addNumericTextEntry(p,"Amount","seconds",1.0,0,10000);
+		addNumericTextEntry(p,N_("Amount"),N_("seconds"),1.0,0,10000);
 }
 
 
@@ -50,12 +50,12 @@ CRotateDialog::CRotateDialog(FXWindow *mainWindow) :
 // --- swap channels --------------------------
 
 CSwapChannelsDialog::CSwapChannelsDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Swap Channels A & B")
+	CActionParamDialog(mainWindow,N_("Swap Channels A & B"))
 {
 	void *p=newHorzPanel(NULL);
 		vector<string> items;
-		addComboTextEntry(p,"Channel A",items,"");
-		addComboTextEntry(p,"Channel B",items,"");
+		addComboTextEntry(p,N_("Channel A"),items,"");
+		addComboTextEntry(p,N_("Channel B"),items,"");
 }
 
 #include "../backend/CActionParameters.h"
@@ -93,11 +93,11 @@ bool CSwapChannelsDialog::show(CActionSound *actionSound,CActionParameters *acti
 // --- add channels ---------------------------
 
 CAddChannelsDialog::CAddChannelsDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Add Channels")
+	CActionParamDialog(mainWindow,N_("Add Channels"))
 {
 	void *p=newHorzPanel(NULL);
-		addNumericTextEntry(p,"Insert Where","",0,0,MAX_CHANNELS);
-		addNumericTextEntry(p,"Insert Count","",1,1,MAX_CHANNELS);
+		addNumericTextEntry(p,N_("Insert Where"),"",0,0,MAX_CHANNELS);
+		addNumericTextEntry(p,N_("Insert Count"),"",1,1,MAX_CHANNELS);
 }
 
 
@@ -107,19 +107,19 @@ CAddChannelsDialog::CAddChannelsDialog(FXWindow *mainWindow) :
 #include "../backend/ASoundTranslator.h"
 #include "../backend/Edits/CSaveAsMultipleFilesAction.h"
 CSaveAsMultipleFilesDialog::CSaveAsMultipleFilesDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Save As Multiple Files")
+	CActionParamDialog(mainWindow,N_("Save As Multiple Files"))
 {
 	void *p1=newVertPanel(NULL);
-		addDiskEntityEntry(p1,"Save to Directory",".",FXDiskEntityParamValue::detDirectory,"All the files will be saved into this directory");
-		addStringTextEntry(p1,"Filename Prefix","Part#","This will be added to the front of the filename");
-		addStringTextEntry(p1,"Filename Suffix","","This will be added to the end of the filename");
-		addComboTextEntry(p1,"Format",ASoundTranslator::getFlatFormatList(),"The format to save each segment as",false);
-		addNumericTextEntry(p1,"Segment Number Start","",1,0,1000,"The Number to Start With When Substituting the Track Number For '#' in the Filenames");
-		addCheckBoxEntry(p1,"Open Saved Segments",false,"Open the Segments After Saving Them");
+		addDiskEntityEntry(p1,N_("Save to Directory"),".",FXDiskEntityParamValue::detDirectory,_("All the files will be saved into this directory"));
+		addStringTextEntry(p1,N_("Filename Prefix"),_("Part#"),_("This will be added to the front of the filename"));
+		addStringTextEntry(p1,N_("Filename Suffix"),"",_("This will be added to the end of the filename"));
+		addComboTextEntry(p1,N_("Format"),ASoundTranslator::getFlatFormatList(),_("The format to save each segment as"),false);
+		addNumericTextEntry(p1,N_("Segment Number Start"),"",1,0,1000,_("The Number to Start With When Substituting the Track Number For '#' in the Filenames"));
+		addCheckBoxEntry(p1,N_("Open Saved Segments"),false,_("Open the Segments After Saving Them"));
 		vector<string> items;
-			items.push_back("Entire File");
-			items.push_back("Selection Only");
-		addComboTextEntry(p1,"Applies to",items);
+			items.push_back(N_("Entire File"));
+			items.push_back(N_("Selection Only"));
+		addComboTextEntry(p1,N_("Applies to"),items);
 }
 
 const string CSaveAsMultipleFilesDialog::getExplaination() const
@@ -135,19 +135,19 @@ static const double interpretValue_alterSelection(const double x,const int s) { 
 static const double uninterpretValue_alterSelection(const double x,const int s) { return(x/s); }
 
 CGrowOrSlideSelectionDialog::CGrowOrSlideSelectionDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Grow or Slide Selected Region")
+	CActionParamDialog(mainWindow,N_("Grow or Slide Selected Region"))
 {
 	void *p=newVertPanel(NULL);
-		addSlider(p,"Amount","s",interpretValue_alterSelection,uninterpretValue_alterSelection,NULL,1.0,1,3600,2,false);
-		setTipText("Amount","Amount to Affect the Selection in Seconds");
+		addSlider(p,N_("Amount"),"s",interpretValue_alterSelection,uninterpretValue_alterSelection,NULL,1.0,1,3600,2,false);
+		setTipText("Amount",_("Amount to Affect the Selection in Seconds"));
 
 		vector<string> items;
-			items.push_back("Grow Selection to the Left");
-			items.push_back("Grow Selection to the Right");
-			items.push_back("Grow Selection in Both Directions");
-			items.push_back("Slide Selection to the Left");
-			items.push_back("Slide Selection to the Right");
-		addComboTextEntry(p,"How",items);
+			items.push_back(N_("Grow Selection to the Left"));
+			items.push_back(N_("Grow Selection to the Right"));
+			items.push_back(N_("Grow Selection in Both Directions"));
+			items.push_back(N_("Slide Selection to the Left"));
+			items.push_back(N_("Slide Selection to the Right"));
+		addComboTextEntry(p,N_("How"),items);
 		getComboText("How")->setCurrentItem(1);
 }
 

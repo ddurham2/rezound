@@ -48,7 +48,7 @@ public:
 		detDirectory
 	};
 
-	FXDiskEntityParamValue(FXComposite *p,int opts,const char *title,const string initialEntityName,DiskEntityTypes entityType);
+	FXDiskEntityParamValue(FXComposite *p,int opts,const char *name,const string initialEntityName,DiskEntityTypes entityType);
 	virtual ~FXDiskEntityParamValue();
 
 	long onEntityNameTextBoxChange(FXObject *sender,FXSelector sel,void *ptr);
@@ -58,7 +58,7 @@ public:
 	const bool getOpenAsRaw() const; // the notion of 'raw' is really only applicable for a type of detAudioFilename and can be ignored for other types
 	void setEntityName(const string entityName,bool openAsRaw=false);
 
-	const string getTitle() const;
+	const string getName() const;
 
 	void setTipText(const FXString &text);
 	FXString getTipText() const;
@@ -80,6 +80,8 @@ protected:
 	FXDiskEntityParamValue() {}
 
 private:
+	const string name;
+
 	const DiskEntityTypes entityType;
 
 	FXHorizontalFrame *hFrame;

@@ -50,7 +50,7 @@ public:
 	typedef const double (*f_at_xs)(const double x,const int s);
 
 	// minScalar and maxScalar define the min and max spinner values, if they're the same, no spinner is shown
-	FXGraphParamValue(const string title,const int minScalar,const int maxScalar,const int initScalar,FXComposite *p,int opts,int x=0,int y=0,int w=0,int h=0);
+	FXGraphParamValue(const char *name,const int minScalar,const int maxScalar,const int initScalar,FXComposite *p,int opts,int x=0,int y=0,int w=0,int h=0);
 	virtual ~FXGraphParamValue();
 
 	FXint getDefaultWidth();
@@ -90,7 +90,7 @@ public:
 	const int getMinScalar() const;
 	const int getMaxScalar() const;
 
-	const string getTitle() const;
+	const string getName() const;
 
 
 	void readFromFile(const string &prefix,CNestedDataFile *f);
@@ -123,7 +123,7 @@ private:
 	friend class CVertRuler;
 	friend class CHorzRuler;
 
-	string title;
+	const string name;
 
 	int initScalar;
 

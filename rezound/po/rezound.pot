@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-03-29 01:37-0600\n"
+"POT-Creation-Date: 2003-04-04 15:27-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,20 +15,49 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/backend/Edits/CRotateEdit.cpp:94
-msgid ">> Rotate Right"
-msgstr ""
-
-#: src/backend/Edits/CPasteEdit.cpp:587
-msgid "Fit Mix Paste"
-msgstr ""
-
 #: src/backend/Edits/CSaveAsMultipleFilesAction.cpp:242
+#: src/frontend_fox/EditActionDialogs.cpp:110
 msgid "Save As Multiple Files"
 msgstr ""
 
 #: src/backend/Edits/CSaveSelectionAsAction.cpp:61
 msgid "Save Selection As"
+msgstr ""
+
+#: src/frontend_fox/CCrossfadeEdgesDialog.cpp:31
+msgid "Crossfade Edges Settings"
+msgstr ""
+
+#: src/frontend_fox/CCrossfadeEdgesDialog.cpp:36
+msgid "Crossfade Start Edge"
+msgstr ""
+
+#: src/frontend_fox/CCrossfadeEdgesDialog.cpp:36
+#: src/frontend_fox/CCrossfadeEdgesDialog.cpp:37
+msgid "milliseconds"
+msgstr ""
+
+#: src/frontend_fox/CCrossfadeEdgesDialog.cpp:37
+msgid "Crossfade Stop Edge"
+msgstr ""
+
+#: src/frontend_fox/CCrossfadeEdgesDialog.cpp:40
+msgid "Linear Fade"
+msgstr ""
+
+#: src/frontend_fox/CCrossfadeEdgesDialog.cpp:41
+msgid "Parabolic Fade"
+msgstr ""
+
+#: src/frontend_fox/CCrossfadeEdgesDialog.cpp:42
+msgid "Crossfade Fade Method"
+msgstr ""
+
+#: src/frontend_fox/CCrossfadeEdgesDialog.cpp:42
+msgid ""
+"Linear will maintain a constant gain of 1.0\n"
+"Parabolic sounds a bit more natural\n"
+"For very quick fades (less than 250ms) linear is recommended"
 msgstr ""
 
 #: src/frontend_fox/CAboutDialog.cpp:43
@@ -91,6 +120,618 @@ msgstr ""
 
 #: src/frontend_fox/CAboutDialog.cpp:127 src/frontend_fox/CMainWindow.cpp:702
 msgid "&Close"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:47
+msgid "Convolution Filter"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:52
+#: src/frontend_fox/FilterActionDialogs.cpp:132
+msgid "Wet/Dry Mix"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:54
+msgid "Input Lowpass"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:55
+#: src/frontend_fox/EffectActionDialogs.cpp:168
+#: src/frontend_fox/RemasterActionDialogs.cpp:222
+msgid "Input Gain"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:56
+#: src/frontend_fox/EffectActionDialogs.cpp:171
+#: src/frontend_fox/RemasterActionDialogs.cpp:223
+msgid "Output Gain"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:57
+msgid "Predelay"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:60
+msgid "Filter Kernel"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:60
+msgid "The Audio File to Use as the Filter Kernel"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:63
+msgid "FK Gain"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:64
+msgid "FK Lowpass"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:66
+msgid "FK Rate"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:67
+msgid "Reverse"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:69
+msgid "Wrap Decay back to Beginning"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:129
+msgid "Arbitrary FIR Filter"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:134
+msgid "Frequency Response"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:134
+msgid "Frequency"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:134
+msgid "Change"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:136
+msgid "Base Frequency"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:136
+msgid ""
+"This Sets the Lowest Frequency Displayed on the Graph.\n"
+"This is the Frequency of the First Octave."
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:137
+msgid "Number of Octaves"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:137
+msgid ""
+"This Sets the Number of Octaves Displayed on the Graph.\n"
+"But Note that no Frequency Higher than Half of the Sound's Sampling Rate can "
+"be Affected Since it Cannot Contain a Frequency Higher than That."
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:140
+msgid "Kernel Length"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:141
+msgid ""
+"This is the Size of the Filter Kernel Computed (in samples) From Your Curve "
+"to be Convolved with the Audio"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:142
+msgid "Undelay"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:142
+msgid "This Counteracts the Delay Side-Effect of Custom FIR Filters"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:191
+msgid "Single Pole Lowpass Filter"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:194
+#: src/frontend_fox/FilterActionDialogs.cpp:204
+#: src/frontend_fox/FilterActionDialogs.cpp:214
+#: src/frontend_fox/FilterActionDialogs.cpp:225
+#: src/frontend_fox/FilterActionDialogs.cpp:238
+#: src/frontend_fox/FilterActionDialogs.cpp:249
+#: src/frontend_fox/FilterActionDialogs.cpp:260
+#: src/frontend_fox/EffectActionDialogs.cpp:57
+#: src/frontend_fox/EffectActionDialogs.cpp:64
+#: src/frontend_fox/EffectActionDialogs.cpp:148
+msgid "Gain"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:195
+#: src/frontend_fox/FilterActionDialogs.cpp:205
+#: src/frontend_fox/FilterActionDialogs.cpp:239
+#: src/frontend_fox/FilterActionDialogs.cpp:250
+msgid "Cutoff Frequency"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:201
+msgid "Single Pole Highpass Filter"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:211
+msgid "Bandpass Filter"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:215
+#: src/frontend_fox/FilterActionDialogs.cpp:226
+#: src/frontend_fox/FilterActionDialogs.cpp:261
+msgid "Center Frequency"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:216
+#: src/frontend_fox/FilterActionDialogs.cpp:227
+msgid "Band Width"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:222
+msgid "Notch Filter"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:235
+msgid "Biquad Resonant Lowpass Filter"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:240
+#: src/frontend_fox/FilterActionDialogs.cpp:251
+#: src/frontend_fox/FilterActionDialogs.cpp:262
+msgid "Resonance"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:246
+msgid "Biquad Resonant Highpass Filter"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:257
+msgid "Biquad Resonant Bandpass Filter"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:39
+msgid "Change Volume"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:42
+msgid "Volume Change"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:54
+msgid "Change Gain"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:61
+msgid "Change Gain According to a Curve"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:64
+msgid "Gain Curve"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:82
+msgid "Change Rate"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:85
+msgid "Rate Change"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:100
+msgid "Change Rate According to a Curve"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:103
+msgid "Rate Curve"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:103
+msgid "Rate"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:124
+msgid "Flange"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:127
+#: src/frontend_fox/EffectActionDialogs.cpp:147
+msgid "Delay"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:128
+msgid "Wet Gain"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:129
+msgid "Dry Gain"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:130
+msgid "Flange LFO"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:130
+msgid "LFO Depth"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:131
+#: src/frontend_fox/EffectActionDialogs.cpp:149
+msgid "Feedback"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:144
+msgid "Simple Delay"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:165
+msgid "Quantize"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:169
+msgid "Quantum Count"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:170
+msgid "The Number of Possible Sample Values Above Zero"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:185
+msgid "Distortion"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:188
+msgid "Curve"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:188
+msgid "Input"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:188
+msgid "Output"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:207
+msgid "Varied Repeat"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:210
+msgid "LFO"
+msgstr ""
+
+#: src/frontend_fox/EffectActionDialogs.cpp:211
+msgid "Time"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:31
+msgid "Insert Silence"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:34
+msgid "Length"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:34
+#: src/frontend_fox/EditActionDialogs.cpp:45
+msgid "seconds"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:42
+msgid "Rotate"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:45
+#: src/frontend_fox/EditActionDialogs.cpp:141
+msgid "Amount"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:53
+msgid "Swap Channels A & B"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:57
+#: src/frontend_fox/RemasterActionDialogs.cpp:46
+#: src/frontend_fox/RemasterActionDialogs.cpp:100
+msgid "Channel A"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:58
+#: src/frontend_fox/RemasterActionDialogs.cpp:47
+#: src/frontend_fox/RemasterActionDialogs.cpp:101
+msgid "Channel B"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:96
+msgid "Add Channels"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:99
+msgid "Insert Where"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:100
+msgid "Insert Count"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:113
+msgid "Save to Directory"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:113
+msgid "All the files will be saved into this directory"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:114
+msgid "Filename Prefix"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:114
+msgid "Part#"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:114
+msgid "This will be added to the front of the filename"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:115
+msgid "Filename Suffix"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:115
+msgid "This will be added to the end of the filename"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:116
+msgid "Format"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:116
+msgid "The format to save each segment as"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:117
+msgid "Segment Number Start"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:117
+msgid ""
+"The Number to Start With When Substituting the Track Number For '#' in the "
+"Filenames"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:118
+msgid "Open Saved Segments"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:118
+msgid "Open the Segments After Saving Them"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:120
+msgid "Entire File"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:121
+msgid "Selection Only"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:122
+msgid "Applies to"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:138
+msgid "Grow or Slide Selected Region"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:142
+msgid "Amount to Affect the Selection in Seconds"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:145
+msgid "Grow Selection to the Left"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:146
+msgid "Grow Selection to the Right"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:147
+msgid "Grow Selection in Both Directions"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:148
+msgid "Slide Selection to the Left"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:149
+msgid "Slide Selection to the Right"
+msgstr ""
+
+#: src/frontend_fox/EditActionDialogs.cpp:150
+msgid "How"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:40
+msgid "Simple Balance Change"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:50
+#: src/frontend_fox/RemasterActionDialogs.cpp:103
+msgid "Balance"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:53
+#: src/frontend_fox/RemasterActionDialogs.cpp:106
+msgid "Strict Balance"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:54
+#: src/frontend_fox/RemasterActionDialogs.cpp:107
+msgid "1x Pan"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:55
+#: src/frontend_fox/RemasterActionDialogs.cpp:108
+msgid "2x Pan"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:56
+#: src/frontend_fox/RemasterActionDialogs.cpp:109
+msgid "Balance Type"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:78
+#: src/frontend_fox/RemasterActionDialogs.cpp:124
+#: src/frontend_fox/RemasterActionDialogs.cpp:153
+#: src/frontend_fox/CChannelSelectDialog.cpp:65
+msgid "Channel "
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:94
+msgid "Curved Balance Change"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:103
+msgid "Balance Curve"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:148
+msgid "Monoize"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:156
+msgid "Remove All But One Channel"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:157
+msgid "Make All Channels The Same"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:158
+msgid "Method"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:181
+msgid "Noise Gate"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:184
+#: src/frontend_fox/RemasterActionDialogs.cpp:217
+msgid "Window Time"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:185
+#: src/frontend_fox/RemasterActionDialogs.cpp:218
+msgid "Threshold"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:186
+msgid "Gain Attack Time"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:187
+msgid "Gain Release Time"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:213
+msgid "Compressor"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:219
+msgid "Ratio"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:220
+msgid "Attack Time"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:221
+msgid "Release Time"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:225
+#: src/frontend_fox/RemasterActionDialogs.cpp:248
+msgid "Lock Channels"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:225
+msgid ""
+"This Toggles That Compression Should be Applied to Both Channels when Either "
+"Channel Needs Compression"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:241
+msgid "Normalize"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:245
+msgid "Normalization Level"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:246
+msgid "Region Count"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:255
+msgid "Resample"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:268
+msgid "New Sample Rate"
+msgstr ""
+
+#: src/frontend_fox/CChannelSelectDialog.cpp:56
+msgid "Channel Select"
+msgstr ""
+
+#: src/frontend_fox/CChannelSelectDialog.cpp:58
+msgid "Channels to Which This Action Should Apply:"
+msgstr ""
+
+#: src/frontend_fox/CChannelSelectDialog.cpp:68
+msgid "Default"
+msgstr ""
+
+#: src/frontend_fox/CChannelSelectDialog.cpp:69
+msgid "Clear"
+msgstr ""
+
+#: src/frontend_fox/CFrontendHooks.cpp:58
+msgid "Select Directory"
+msgstr ""
+
+#: src/frontend_fox/CFrontendHooks.cpp:78
+msgid "Open File"
+msgstr ""
+
+#: src/frontend_fox/CFrontendHooks.cpp:86
+msgid "Open as Raw"
+msgstr ""
+
+#: src/frontend_fox/CFrontendHooks.cpp:91
+msgid "Save File"
+msgstr ""
+
+#: src/frontend_fox/CFrontendHooks.cpp:99
+msgid "Save as Raw"
+msgstr ""
+
+#: src/frontend_fox/CFrontendHooks.cpp:163
+msgid "All Supported Types"
+msgstr ""
+
+#: src/frontend_fox/CFrontendHooks.cpp:163
+msgid "All Files"
 msgstr ""
 
 #: src/frontend_fox/CMainWindow.cpp:194 src/frontend_fox/CMainWindow.cpp:738
@@ -364,4 +1005,44 @@ msgstr ""
 
 #: src/frontend_fox/CMainWindow.cpp:875
 msgid "&Remaster"
+msgstr ""
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:26
+msgid "Add N Cues"
+msgstr ""
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:29
+#: src/frontend_fox/LoopingActionDialogs.cpp:41
+msgid "Cue Name"
+msgstr ""
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:29
+#: src/frontend_fox/LoopingActionDialogs.cpp:41
+msgid "What to Name the New Cues"
+msgstr ""
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:30
+msgid "Cue Count"
+msgstr ""
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:30
+msgid "How Many Cues to Place Equally Spaced within the Selection"
+msgstr ""
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:31
+#: src/frontend_fox/LoopingActionDialogs.cpp:43
+msgid "Anchor Cues in Time"
+msgstr ""
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:31
+#: src/frontend_fox/LoopingActionDialogs.cpp:43
+msgid "Set the Cues to be Anchored in Time or Not"
+msgstr ""
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:38
+msgid "Add Cues Every X Seconds"
+msgstr ""
+
+#: src/frontend_fox/LoopingActionDialogs.cpp:42
+msgid "Time Interval"
 msgstr ""

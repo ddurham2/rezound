@@ -37,14 +37,14 @@ class FXLFOParamValue : public FXVerticalFrame
 {
 	FXDECLARE(FXLFOParamValue);
 public:
-	FXLFOParamValue(FXComposite *p,int opts,const char *title,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs);
+	FXLFOParamValue(FXComposite *p,int opts,const char *name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs);
 	virtual ~FXLFOParamValue();
 
 	long onLFOTypeChange(FXObject *sender,FXSelector sel,void *ptr);
 
 	const CLFODescription getValue();
 
-	const string getTitle() const;
+	const string getName() const;
 
 /*
 	void setTipText(const FXString &text);
@@ -65,6 +65,8 @@ protected:
 	FXLFOParamValue() {}
 
 private:
+	const string name;
+
 	FXLabel *titleLabel;
 	FXHorizontalFrame *sliders;
 		FXConstantParamValue *amplitudeSlider;

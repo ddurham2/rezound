@@ -315,10 +315,10 @@ FXDEFMAP(FXGraphParamValue) FXGraphParamValueMap[]=
 
 FXIMPLEMENT(FXGraphParamValue,FXVerticalFrame,FXGraphParamValueMap,ARRAYNUMBER(FXGraphParamValueMap))
 
-FXGraphParamValue::FXGraphParamValue(const string _title,const int minScalar,const int maxScalar,const int _initScalar,FXComposite *p,int opts,int x,int y,int w,int h) :
+FXGraphParamValue::FXGraphParamValue(const char *_name,const int minScalar,const int maxScalar,const int _initScalar,FXComposite *p,int opts,int x,int y,int w,int h) :
 	FXVerticalFrame(p,opts|FRAME_RAISED,x,y,w,h, 0,0,0,0, 0,0),
 
-	title(_title),
+	name(_name),
 
 	initScalar(_initScalar),
 
@@ -1004,14 +1004,14 @@ const int FXGraphParamValue::getMaxScalar() const
 	return hi;
 }
 
-const string FXGraphParamValue::getTitle() const
+const string FXGraphParamValue::getName() const
 {
-	return title;
+	return name;
 }
 
 void FXGraphParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getTitle()+DOT;
+	const string key=prefix+DOT+getName()+DOT;
 
 	if(f->keyExists((key+"scalar").c_str()))
 	{
@@ -1042,7 +1042,7 @@ void FXGraphParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 
 void FXGraphParamValue::writeToFile(const string &prefix,CNestedDataFile *f) const
 {
-	const string key=prefix+DOT+getTitle()+DOT;
+	const string key=prefix+DOT+getName()+DOT;
 
 	if(getMinScalar()!=getMaxScalar())
 		f->createKey((key+"scalar").c_str(),istring(getScalar()));

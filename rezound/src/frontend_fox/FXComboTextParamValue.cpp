@@ -46,11 +46,14 @@ FXDEFMAP(FXComboTextParamValue) FXComboTextParamValueMap[]=
 
 FXIMPLEMENT(FXComboTextParamValue,FXHorizontalFrame,FXComboTextParamValueMap,ARRAYNUMBER(FXComboTextParamValueMap))
 
-FXComboTextParamValue::FXComboTextParamValue(FXComposite *p,int opts,const char *title,const vector<string> &items,bool _isEditable) :
+FXComboTextParamValue::FXComboTextParamValue(FXComposite *p,int opts,const char *_name,const vector<string> &items,bool _isEditable) :
 	FXHorizontalFrame(p,opts|FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 2,2,4,4, 0,0),
+
+	name(_name),
+
 	isEditable(_isEditable),
 
-	titleLabel(new FXLabel(this,title,NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
+	titleLabel(new FXLabel(this,gettext(_name),NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
 	valueComboBox(new FXComboBox(this,8,min((size_t)items.size(),(size_t)8),NULL,0, COMBOBOX_NORMAL|(!isEditable ? COMBOBOX_STATIC : 0) | FRAME_SUNKEN|FRAME_THICK | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
 
 	textFont(getApp()->getNormalFont())
@@ -89,11 +92,12 @@ void FXComboTextParamValue::setValue(const FXint value)
 
 void FXComboTextParamValue::setItems(const vector<string> &items)
 {
+	this->items=items;
 	FXint n=valueComboBox->getCurrentItem();
 
 	valueComboBox->clearItems();
 	for(size_t t=0;t<items.size();t++)
-		valueComboBox->appendItem(items[t].c_str());
+		valueComboBox->appendItem(gettext(items[t].c_str()));
 
 	if(n>=0)
 		valueComboBox->setCurrentItem(min(n,valueComboBox->getNumItems()-1));
@@ -105,11 +109,12 @@ void FXComboTextParamValue::setItems(const vector<string> &items)
 
 const vector<string> FXComboTextParamValue::getItems() const
 {
+	/*
 	vector<string> items;
 
 	for(int t=0;t<valueComboBox->getNumItems();t++)
 		items.push_back(valueComboBox->getItemText(t).text());
-
+	*/
 	return items;
 }
 
@@ -129,9 +134,9 @@ void FXComboTextParamValue::setCurrentItem(const unsigned current)
 	valueComboBox->setCurrentItem(current);
 }
 
-const string FXComboTextParamValue::getTitle() const
+const string FXComboTextParamValue::getName() const
 {
-	return(titleLabel->getText().text());
+	return name;
 }
 
 void FXComboTextParamValue::setTipText(const FXString &text)
@@ -142,16 +147,18 @@ void FXComboTextParamValue::setTipText(const FXString &text)
 
 FXString FXComboTextParamValue::getTipText() const
 {
-	return(titleLabel->getTipText());	
+	return titleLabel->getTipText();
 }
 
 void FXComboTextParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getTitle()+DOT+"index";
+	const string key=prefix+DOT+getName()+DOT+"index";
 	if(f->keyExists(key.c_str()))
 	{
 		const string v=f->getValue(key.c_str());
-		setValue(atoi(v.c_str()));
+		const int i=atoi(v.c_str());
+		if(i>=0 && i<valueComboBox->getNumItems())
+			setValue(i);
 	}
 	else
 		setValue(0); // ??? would use initialIndex if there were such a thing
@@ -159,7 +166,7 @@ void FXComboTextParamValue::readFromFile(const string &prefix,CNestedDataFile *f
 
 void FXComboTextParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getTitle()+DOT;
+	const string key=prefix+DOT+getName()+DOT;
 	f->createKey((key+"index").c_str(),istring(getValue()));
 }
 
