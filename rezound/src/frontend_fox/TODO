@@ -76,7 +76,8 @@
 	- supply icons for all the windows
 		- just new FXIcon(...) instead of passing NULL
 
-
+	- the front end needs a way to tell COSSSoundPlayer and COSSSoundRecorder which device to use
+		- I should be able to test this at home since I have 2 sound cards installed
 
 
 
