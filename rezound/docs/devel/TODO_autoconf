@@ -24,9 +24,4 @@ and set up a common.h header to deal with these problems.
 	  about my machine's configuration affects the distro tar ball
 
 
-- UH OH... I remember you mentioning something about this... but the -D_GNU_SOURCE
-  got dropped from the compile line.  It is necessary otherwise you (er, I) get a
-  syntax error in /usr/local/include/cc++/thread.h:344 because a certain type 
-  is not defined.
-
 
