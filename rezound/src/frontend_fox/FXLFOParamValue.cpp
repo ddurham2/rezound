@@ -27,6 +27,7 @@
 #define DOT (CNestedDataFile::delimChar)
 
 #include "FXConstantParamValue.h"
+#include "CFOXIcons.h"
 
 /*
 	- This is the LFO selection widget used over and over by ReZound on action dialogs
@@ -74,7 +75,9 @@ FXLFOParamValue::FXLFOParamValue(FXComposite *p,int opts,const char *title,const
 	for(size_t t=0;t<gLFORegistry.getCount();t++)
 	{
 		if(!hideBipolarLFOs || !gLFORegistry.isBipolar(t))
-			LFOTypeComboBox->appendItem(gLFORegistry.getName(t).c_str(),NULL,(void *)t);
+		{
+			LFOTypeComboBox->appendItem(gLFORegistry.getName(t).c_str(),FOXIcons->getByName(gLFORegistry.getName(t).c_str()),(void *)t);
+		}
 	}
 	LFOTypeComboBox->setCurrentItem(1); // sin is the first one.. just so constant won't be the initial
 
