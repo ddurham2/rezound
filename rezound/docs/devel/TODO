@@ -1,5 +1,13 @@
 --- THINGS TO DO FOR SURE ---
 
+	- HMM... I've been thinking about a desicion I made a long time ago about selected regions...
+		- I decided back then that I would have a start and a stop postion int stored internally
+		- However, if there's one thing C teaches you, it's that for a region, a start/length combination is better.
+		- In many places I have to have a +1, -1, max(1,...) etc.. also, the stop could wind up being less than the start
+		- if I used a start/length combination, I would have a fair amount of code to modify, but I think border conditions would be less of a problem.
+		- I could still have the getStart/Stop setStart/Stop methods in channel
+		
+
 	- Is there any way while recording we could know if data was dropped?
 		- perhaps OSS can give a sequence number?  Then if one's missing it dropped something?
 
