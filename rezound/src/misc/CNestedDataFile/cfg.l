@@ -91,7 +91,7 @@ string currentFilename;
 			// convert "\ " to " "
 			for(size_t t=0;t<strlen(yylval.stringValue);t++)
 			{
-				if(yylval.stringValue[t]=='\\' and yylval.stringValue[t+1]==' ')
+				if(yylval.stringValue[t]=='\\' && yylval.stringValue[t+1]==' ')
 					memmove(yylval.stringValue+t,yylval.stringValue+t+1,strlen(yylval.stringValue+t+1)+1);
 			}
 
