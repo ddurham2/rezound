@@ -35,7 +35,7 @@ template <class type> TMemoryPipe<type>::TMemoryPipe(int _pipeSize) :
 	buffer(NULL)
 {
 	if(_pipeSize<=0)
-		throw(runtime_error(string(__func__)+" -- invalid pipeSize: "+istring(_pipeSize)));
+		throw runtime_error(string(__func__)+" -- invalid pipeSize: "+istring(_pipeSize));
 	
 	bufferSize=_pipeSize+1;
 	buffer=new type[bufferSize];
@@ -53,7 +53,7 @@ template <class type> TMemoryPipe<type>::~TMemoryPipe()
 template <class type> void TMemoryPipe<type>::open()
 {
 	if(readOpened || writeOpened)
-		throw(runtime_error(string(__func__)+" -- either the read or write end is already open"));
+		throw runtime_error(string(__func__)+" -- either the read or write end is already open");
 
 	readPos=writePos=0;
 	readOpened=writeOpened=true;
@@ -66,7 +66,7 @@ template <class type> void TMemoryPipe<type>::open()
 template <class type> int TMemoryPipe<type>::read(type *dest,int size,bool block)
 {
 	if(size<=0)
-		return(0);
+		return 0;
 
 	CMutexLocker l(readerMutex); // protect from more than one reader
 	CMutexLocker wsl(waitStateMutex);
@@ -79,7 +79,7 @@ template <class type> int TMemoryPipe<type>::read(type *dest,int size,bool block
 	restart:
 	
 	if(!readOpened) // closed while we were in this method
-		throw(runtime_error(string(__func__)+" -- read end is not open"));
+		throw EPipeClosed(string(__func__)+" -- read end is not open");
 
 	if(!writeOpened)
 	{
@@ -175,7 +175,7 @@ template <class type> int TMemoryPipe<type>::read(type *dest,int size,bool block
 	done:
 
 	fullCond.signal();
-	return(totalRead);
+	return totalRead;
 }
 
 /*
@@ -186,11 +186,13 @@ template <class type> int TMemoryPipe<type>::read(type *dest,int size,bool block
 template <class type> int TMemoryPipe<type>::peek(type *dest,int size,bool block)
 {
 	if(readOpened && size>bufferSize-1)
-		throw(runtime_error(string(__func__)+" -- cannot peek for more data than the pipe can hold: "+istring(size)+">"+istring(bufferSize-1)));
+			// ??? not really an error, just return what we can I suppose
+		throw runtime_error(string(__func__)+" -- cannot peek for more data than the pipe can hold: "+istring(size)+">"+istring(bufferSize-1));
+
 	int readPos=this->readPos;
 
 	if(size<=0)
-		return(0);
+		return 0;
 
 	CMutexLocker l(readerMutex); // protect from more than one reader
 	CMutexLocker wsl(waitStateMutex);
@@ -203,7 +205,7 @@ template <class type> int TMemoryPipe<type>::peek(type *dest,int size,bool block
 	restart:
 	
 	if(!readOpened) // closed while we were in this method
-		throw(runtime_error(string(__func__)+" -- read end is not open"));
+		throw EPipeClosed(string(__func__)+" -- read end is not open");
 
 	if(!writeOpened)
 	{
@@ -299,7 +301,7 @@ template <class type> int TMemoryPipe<type>::peek(type *dest,int size,bool block
 	done:
 
 	fullCond.signal();
-	return(totalRead);
+	return totalRead;
 }
 
 /*
@@ -309,7 +311,7 @@ template <class type> int TMemoryPipe<type>::peek(type *dest,int size,bool block
 template <class type> int TMemoryPipe<type>::skip(int size,bool block)
 {
 	if(size<=0)
-		return(0);
+		return 0;
 
 	CMutexLocker l(readerMutex); // protect from more than one reader
 	CMutexLocker wsl(waitStateMutex);
@@ -322,7 +324,7 @@ template <class type> int TMemoryPipe<type>::skip(int size,bool block)
 	restart:
 	
 	if(!readOpened) // closed while we were in this method
-		throw(runtime_error(string(__func__)+" -- read end is not open"));
+		throw EPipeClosed(string(__func__)+" -- read end is not open");
 
 	if(!writeOpened)
 	{
@@ -412,14 +414,14 @@ template <class type> int TMemoryPipe<type>::skip(int size,bool block)
 	done:
 
 	fullCond.signal();
-	return(totalRead);
+	return totalRead;
 }
 
 
 template <class type> int TMemoryPipe<type>::write(const type *_src,int size)
 {
 	if(size<=0)
-		return(0);
+		return 0;
 
 	CMutexLocker l(writerMutex); // protect from more than one writer
 	CMutexLocker wsl(waitStateMutex);
@@ -433,7 +435,7 @@ template <class type> int TMemoryPipe<type>::write(const type *_src,int size)
 	restart:
 
 	if(!writeOpened)
-		throw(runtime_error(string(__func__)+" -- write end is not open"));
+		throw EPipeClosed(string(__func__)+" -- write end is not open");
 
 	if(!readOpened)
 	{
@@ -507,7 +509,7 @@ template <class type> int TMemoryPipe<type>::write(const type *_src,int size)
 	done:
 
 	emptyCond.signal();
-	return(totalWritten);
+	return totalWritten;
 }
 
 template <class type> void TMemoryPipe<type>::closeRead()
@@ -534,12 +536,12 @@ template <class type> void TMemoryPipe<type>::closeWrite()
 
 template <class type> bool TMemoryPipe<type>::isReadOpened() const
 {
-	return(readOpened);
+	return readOpened;
 }
 
 template <class type> bool TMemoryPipe<type>::isWriteOpened() const
 {
-	return(writeOpened);
+	return writeOpened;
 }
 
 template <class type> int TMemoryPipe<type>::getSize() const
@@ -556,9 +558,9 @@ template <class type> int TMemoryPipe<type>::getSize() const
 
 	const int diff=writePos-readPos;
 	if(diff<0) // if(writePos<readPos)
-		return(bufferSize+diff);
+		return bufferSize+diff;
 	else // if(writePos>=readPos);
-		return(diff);
+		return diff;
 }
 
 template <class type> void TMemoryPipe<type>::clear()

@@ -23,6 +23,8 @@
 
 #include "../../config/common.h"
 
+#include <stdexcept>
+
 #include "CMutex.h"
 #include "CConditionVariable.h"
 
@@ -49,11 +51,13 @@ public:
 	TMemoryPipe(int pipeSize);
 	virtual ~TMemoryPipe();
 
+	 // an EPipeClosed is thrown if the read end of the pipe is closed (all 3 methods)
 	int read(type *buffer,int size,bool block);
 	int peek(type *buffer,int size,bool block);
 	int skip(int size,bool block);
 
 	 // the write method always blocks
+	 // an EPipeClosed is thrown if the write end of the pipe is closed
 	int write(const type *buffer,int size);
 
 	void closeRead();
@@ -63,7 +67,9 @@ public:
 	bool isWriteOpened() const;
 
 	int getSize() const; // get available read space
-	void clear(); // remove all data in pipe
+	void clear(); // remove all data currently in pipe
+
+	class EPipeClosed : public runtime_error { public: EPipeClosed(const string msg) : runtime_error(msg) { } };
 
 private:
 	void open();
