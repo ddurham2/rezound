@@ -27,24 +27,6 @@ bool CRunMacroAction::doActionSizeSafe(CActionSound *actionSound,bool prepareFor
 {
 	CMacroPlayer p(gUserMacroStore,macroName);
 	p.doMacro(soundFileManager);
-	/*
-	if(actionCount>0)
-	{
-		if(actionSound)
-		{
-			// set our start and stop positions the same as the last action set them
-			// and for lack of a better way, obtain these values like this ...
-			for(size_t t=0;t<soundFileManager->getOpenedCount();t++)
-			{
-				if(soundFileManager->getSound(t)->sound==actionSound->sound)
-				{
-					actionSound->start=soundFileManager->getSound(t)->channel->getStartPosition();
-					actionSound->stop=soundFileManager->getSound(t)->channel->getStopPosition();
-				}
-			}
-		}
-	}
-	*/
 	return false; // pretend it was cancelled so this object doesn't go onto the undo stack
 }
 
@@ -64,7 +46,6 @@ void CRunMacroAction::undoActionSizeSafe(const CActionSound *actionSound)
 CRunMacroActionFactory::CRunMacroActionFactory(AActionDialog *dialog) :
 	AActionFactory(N_("Run Macro"),"",NULL,dialog,false,false)
 {
-	setLockSoundMutex(false); 
 	requiresALoadedSound=false;
 }
 
@@ -138,7 +119,6 @@ void CRanMacroAction::undoActionSizeSafe(const CActionSound *actionSound)
 CRanMacroActionFactory::CRanMacroActionFactory() :
 	AActionFactory(N_("Ran Macro"),"",NULL,NULL,false,false)
 {
-	setLockSoundMutex(false); 
 }
 
 CRanMacroActionFactory::~CRanMacroActionFactory()

@@ -51,9 +51,6 @@ protected:
 
 	bool doesWarrantSaving() const { return false; }
 
-	// since we undo within undoActionSizeSafe() we don't want the flag to be affected after it returns
-	bool restoreIsModifiedAfterUndo() const { return false; }
-
 private:
 	ASoundFileManager *soundFileManager;
 	const string macroName;

@@ -106,6 +106,8 @@ public:
 	bool requiresALoadedSound; 
 
 	// this flag indicates whether this action is affected by selection positions; defaults to true; can be modified by the dereived class
+	// 	(it is not equivalent in implications to crossfadeEdges is applicable (i.e. selection positions are applicable to the CBurnToCDAction, but crossfadingTheEdiges is not)
+	// 	(this flag is used by the macro recording/playing to know if it needs to ask the user how to set the selection positions when the macro is played back)
 	bool selectionPositionsAreApplicable; 
 
 	static CMacroRecorder macroRecorder;
@@ -130,9 +132,6 @@ protected:
 	 */
 	virtual AAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const=0;
 
-	// special use method for macros where the sound's mutex shouldn't be locked while the action is running to avoid dead-locks with actions it runs
-	void setLockSoundMutex(bool lockSoundMutex);
-
 protected:
 	const string actionName;
 	const string actionDescription;
@@ -143,7 +142,6 @@ protected:
 private: 
 	const bool willResize;
 	const bool crossfadeEdgesIsApplicable;
-	bool lockSoundMutex;
 
 };
 
@@ -222,9 +220,6 @@ protected:
 	// this method can be overloaded to return false, if the action does not warrent saving the file (i.e. the user will not be prompted)
 	virtual bool doesWarrantSaving() const;
 
-	// this method can be overloaded to return false, if the isModified flag should not be affected by the undoing of the action (only used for macro undoing now, which is really a meta-undo.. the flag will be handled by the actions that take place within the macro)
-	virtual bool restoreIsModifiedAfterUndo() const;
-
 	// This can be overridden to return something other than it's default implementation.
 	// It can return false if this is not possibly known and it will tell the user than an inner crossfade cannot be done for that particular action
 	// It is necessary for an inner crossfade to know from where to backup data to be able to crossfade with the new selection after the action.
@@ -275,7 +270,7 @@ private:
 	// - if prepareForUndo is false, then the derivation shouldn't make provisions to be able to undo the action
 	// - sets the selection of the channel to the selection of the resulting actionSound when done
 	// - note, willResize includes not only changing the length of the data, but also moving data into undo pools and such
-	bool doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool willResize,bool crossfadeEdgesIsApplicable,bool lockSoundMutex);
+	bool doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool willResize,bool crossfadeEdgesIsApplicable);
 
 	CanUndoResults canUndo() const;
 
@@ -286,7 +281,6 @@ private:
 
 	auto_ptr<CActionSound> actionSound;	// a copy of the CActionSound this action was constructed with
 	bool willResize;
-	bool didLockSoundMutex;
 	bool done;				// true if this action has already been done
 
 	// members used to keep track of undo backup information

@@ -42,7 +42,7 @@ bool COpenAudioFileAction::doActionSizeSafe(CActionSound *actionSound,bool prepa
 // ------------------------------
 
 COpenAudioFileActionFactory::COpenAudioFileActionFactory(AActionDialog *dialog) :
-	AActionFactory(N_("Open"),_("Open an Audio File"),NULL,dialog)
+	AActionFactory(N_("Open"),_("Open an Audio File"),NULL,dialog,false)
 {
 	requiresALoadedSound=false;
 	selectionPositionsAreApplicable=false;

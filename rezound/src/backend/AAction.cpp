@@ -36,7 +36,7 @@ using namespace std;
 
 #include "settings.h"
 
-
+#include "CRunMacroAction.h"
 
 
 // ----------------------------------------------------------------------
@@ -56,8 +56,7 @@ AActionFactory::AActionFactory(const string _actionName,const string _actionDesc
 	dialog(_dialog),
 
 	willResize(_willResize),
-	crossfadeEdgesIsApplicable(_crossfadeEdgesIsApplicable),
-	lockSoundMutex(true)
+	crossfadeEdgesIsApplicable(_crossfadeEdgesIsApplicable)
 {
 }
 
@@ -121,7 +120,7 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 		if(actionParameters->getSoundFileManager()!=NULL)
 			action->positionalInfo=actionParameters->getSoundFileManager()->getPositionalInfo();
 
-		ret&=action->doAction((requiresALoadedSound ? loadedSound->channel : NULL),true,willResize,crossfadeEdgesIsApplicable,lockSoundMutex);
+		ret&=action->doAction((requiresALoadedSound ? loadedSound->channel : NULL),true,willResize,crossfadeEdgesIsApplicable);
 
 		if(requiresALoadedSound)
 		{
@@ -172,11 +171,6 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 	}
 }
 
-void AActionFactory::setLockSoundMutex(bool _lockSoundMutex)
-{
-	lockSoundMutex=_lockSoundMutex;
-}
-
 const string &AActionFactory::getName() const
 {
 	return actionName;
@@ -204,8 +198,6 @@ vector<ASoundClipboard *> AAction::clipboards;
 int AAction::doActionRecursionCount=0;
 int AAction::undoActionRecursionCount=0;
 
-// ??? perhaps we could hold on to a pointer to our factory to easily be able to rePEAT the action
-
 AAction::AAction(const AActionFactory *_factory,const CActionSound *_actionSound) :
 	tempAudioPoolKey(-1),
 	tempAudioPoolKey2(-1),
@@ -216,7 +208,6 @@ AAction::AAction(const AActionFactory *_factory,const CActionSound *_actionSound
 
 	actionSound(_actionSound ? new CActionSound(*_actionSound) : NULL),
 	willResize(false),
-	didLockSoundMutex(false),
 	done(false),
 	oldSelectStart(NIL_SAMPLE_POS),
 	oldSelectStop(NIL_SAMPLE_POS),
@@ -251,11 +242,6 @@ bool AAction::doesWarrantSaving() const
 	return true; // by default
 }
 
-bool AAction::restoreIsModifiedAfterUndo() const
-{
-	return true; // by default
-}
-
 bool AAction::getResultingCrossfadePoints(const CActionSound *actionSound,sample_pos_t &start,sample_pos_t &stop)
 {
 	start=actionSound->start;
@@ -263,14 +249,16 @@ bool AAction::getResultingCrossfadePoints(const CActionSound *actionSound,sample
 	return true;
 }
 
-bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _willResize,bool crossfadeEdgesIsApplicable,bool lockSoundMutex)
+bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _willResize,bool crossfadeEdgesIsApplicable)
 {
 	if(done)
 		throw runtime_error(string(__func__)+" -- action has already been done");
 
+	bool doingAMacro=dynamic_cast<CRunMacroAction *>(this)!=NULL;
+
 	done=true;
 
-	if(factory->requiresALoadedSound)
+	if(factory->requiresALoadedSound && !doingAMacro)
 	{
 		origIsModified=actionSound->sound->isModified();
 		actionSound->sound->setIsModified(actionSound->sound->isModified() || doesWarrantSaving());
@@ -280,16 +268,10 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 		// even though the AAction derived class might not resize the sound, we will if crossfading is to be done
 		willResize|= (actionSound->doCrossfadeEdges!=cetNone && crossfadeEdgesIsApplicable);
 
-		if(lockSoundMutex)
-		{
-			if(willResize)
-				actionSound->sound->lockForResize();
-			else
-				actionSound->sound->lockSize();
-			didLockSoundMutex=true;
-		}
+		if(willResize)
+			actionSound->sound->lockForResize();
 		else
-			didLockSoundMutex=false;
+			actionSound->sound->lockSize();
 
 		doActionRecursionCount++;
 		try
@@ -361,13 +343,10 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 				channel->updateAfterEdit(dummy);
 			}
 
-			if(lockSoundMutex)
-			{
-				if(willResize)
-					actionSound->sound->unlockForResize();
-				else
-					actionSound->sound->unlockSize();
-			}
+			if(willResize)
+				actionSound->sound->unlockForResize();
+			else
+				actionSound->sound->unlockSize();
 
 			actionSound->sound->flush();
 
@@ -379,13 +358,10 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 		}
 		catch(EUserMessage &e)
 		{
-			if(didLockSoundMutex)
-			{
-				if(willResize)
-					actionSound->sound->unlockForResize();
-				else
-					actionSound->sound->unlockSize();
-			}
+			if(willResize)
+				actionSound->sound->unlockForResize();
+			else
+				actionSound->sound->unlockSize();
 
 			if(e.what()[0])
 				Message(e.what());
@@ -395,19 +371,16 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 		}
 		catch(...)
 		{
-			if(didLockSoundMutex)
-			{
-				if(willResize)
-					actionSound->sound->unlockForResize();
-				else
-					actionSound->sound->unlockSize();
-			}
+			if(willResize)
+				actionSound->sound->unlockForResize();
+			else
+				actionSound->sound->unlockSize();
 
 			doActionRecursionCount--;
 			throw;
 		}
 	}
-	else //if(!factory->requiresALoadedSound)
+	else //if(!factory->requiresALoadedSound || doingAMacro)
 	{
 		doActionRecursionCount++;
 		try
@@ -441,104 +414,117 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 	if(!factory->requiresALoadedSound)
 		throw runtime_error(string(__func__)+" -- cannot undo an action that did not require a loaded sound");
 
-	if(didLockSoundMutex)
+	bool undoingAMacro=dynamic_cast<CRanMacroAction *>(this)!=NULL;
+
+	if(!undoingAMacro)
 	{
 		// willResize is set from doAction, and it's needed value should be consistant with the way the action will be undo
 		if(willResize)
 			actionSound->sound->lockForResize();
 		else
 			actionSound->sound->lockSize();
-	}
 
-	undoActionRecursionCount++;
-	try
-	{
-		if(canUndo()!=curYes)
-			throw runtime_error(string(__func__)+" -- cannot undo action");
+		undoActionRecursionCount++;
+		try
+		{
+			if(canUndo()!=curYes)
+				throw runtime_error(string(__func__)+" -- cannot undo action");
 
-		uncrossfadeEdges();
+			uncrossfadeEdges();
 
-		auto_ptr<const CActionSound> _actionSound(actionSound.get() ? new CActionSound(*actionSound) : NULL);
+			auto_ptr<const CActionSound> _actionSound(actionSound.get() ? new CActionSound(*actionSound) : NULL);
 
-		undoActionSizeSafe(_actionSound.get());
+			undoActionSizeSafe(_actionSound.get());
 
-		// make sure that the start and stop positions are in range after undoing the action
-		if(_actionSound->start<0)
-			_actionSound->start=0;
-		else if(_actionSound->start>=_actionSound->sound->getLength())
-			_actionSound->start=_actionSound->sound->getLength()-1;
-	
-		if(_actionSound->stop<0)
-			_actionSound->stop=0;
-		else if(_actionSound->stop>=_actionSound->sound->getLength())
-			_actionSound->stop=_actionSound->sound->getLength()-1;
-	
+			// make sure that the start and stop positions are in range after undoing the action
+			if(_actionSound->start<0)
+				_actionSound->start=0;
+			else if(_actionSound->start>=_actionSound->sound->getLength())
+				_actionSound->start=_actionSound->sound->getLength()-1;
+		
+			if(_actionSound->stop<0)
+				_actionSound->stop=0;
+			else if(_actionSound->stop>=_actionSound->sound->getLength())
+				_actionSound->stop=_actionSound->sound->getLength()-1;
+		
 
-		// restore the cues
-		actionSound->sound->clearCues();
-		for(size_t t=0;t<restoreCues.size();t++)
-			actionSound->sound->addCue(restoreCues[t].name,restoreCues[t].time,restoreCues[t].isAnchored);
-		restoreCues.clear();
-
-
-		// one thing this will do is restore the output routing information
-		if(channel!=NULL)
-			channel->updateAfterEdit(restoreOutputRoutes);
+			// restore the cues
+			actionSound->sound->clearCues();
+			for(size_t t=0;t<restoreCues.size();t++)
+				actionSound->sound->addCue(restoreCues[t].name,restoreCues[t].time,restoreCues[t].isAnchored);
+			restoreCues.clear();
 
 
-		if(didLockSoundMutex)
+			// one thing this will do is restore the output routing information
+			if(channel!=NULL)
+				channel->updateAfterEdit(restoreOutputRoutes);
+
+
+			if(willResize)
+				actionSound->sound->unlockForResize();
+			else
+				actionSound->sound->unlockSize();
+
+			actionSound->sound->flush();
+
+			// restore the selection position
+			if(channel!=NULL)
+			{
+				// either restore the selection from our saved position before doActionSizeSafe() was called 
+				// or what the undoActionSizeSafe() just said
+				if(oldSelectStart!=NIL_SAMPLE_POS && oldSelectStop!=NIL_SAMPLE_POS)
+					setSelection(oldSelectStart,oldSelectStop,channel);
+				else
+					setSelection(_actionSound->start,_actionSound->stop,channel);
+			}
+
+			done=false;
+		}
+		catch(EUserMessage &e)
 		{
 			if(willResize)
 				actionSound->sound->unlockForResize();
 			else
 				actionSound->sound->unlockSize();
+
+			if(e.what()[0])
+				Message(e.what());
 		}
-
-		actionSound->sound->flush();
-
-		// restore the selection position
-		if(channel!=NULL)
-		{
-			// either restore the selection from our saved position before doActionSizeSafe() was called 
-			// or what the undoActionSizeSafe() just said
-			if(oldSelectStart!=NIL_SAMPLE_POS && oldSelectStop!=NIL_SAMPLE_POS)
-				setSelection(oldSelectStart,oldSelectStop,channel);
-			else
-				setSelection(_actionSound->start,_actionSound->stop,channel);
-		}
-
-		done=false;
-	}
-	catch(EUserMessage &e)
-	{
-		if(didLockSoundMutex)
+		catch(...)
 		{
 			if(willResize)
 				actionSound->sound->unlockForResize();
 			else
 				actionSound->sound->unlockSize();
-		}
 
-		if(e.what()[0])
-			Message(e.what());
-	}
-	catch(...)
-	{
-		if(didLockSoundMutex)
-		{
-			if(willResize)
-				actionSound->sound->unlockForResize();
-			else
-				actionSound->sound->unlockSize();
+			undoActionRecursionCount--;
+			throw;
 		}
-
 		undoActionRecursionCount--;
-		throw;
-	}
-	undoActionRecursionCount--;
 
-	if(restoreIsModifiedAfterUndo())
 		actionSound->sound->setIsModified(origIsModified);
+	}
+	else // if(undoingAMacro)
+	{
+		undoActionRecursionCount++;
+		try
+		{
+			auto_ptr<const CActionSound> _actionSound(actionSound.get() ? new CActionSound(*actionSound) : NULL);
+			undoActionSizeSafe(_actionSound.get());
+			done=false;
+		}
+		catch(EUserMessage &e)
+		{
+			if(e.what()[0])
+				Message(e.what());
+		}
+		catch(...)
+		{
+			undoActionRecursionCount--;
+			throw;
+		}
+		undoActionRecursionCount--;
+	}
 }
 
 AAction::CanUndoResults AAction::canUndo() const
@@ -946,7 +932,7 @@ void AAction::freeAllTempPools()
 }
 
 // fudgeFactor is used to copy a few more samples of data past the end of the moved data.  Useful for effects like CChangeRateEffect which uses the undo data as a source buffer... but needs to always read ahead a little
-// ??? if I thought it was going to be happening... I should lock the undo CPoolFile before changing its size in case 2 threads were using it at the same time
+// ??? if I thought it was going to be happening... I should lock the undo TPoolFile before changing its size in case 2 threads were using it at the same time
 void AAction::moveSelectionToTempPools(const CActionSound *actionSound,const MoveModes moveMode,sample_pos_t replaceLength,sample_pos_t fudgeFactor)
 {
 	if(tempAudioPoolKey!=-1)
