@@ -104,3 +104,20 @@ bool ASoundTranslator::saveSound(const string filename,const CSound *sound,const
 	}
 }
 
+const vector<string> ASoundTranslator::getFlatFormatList()
+{
+	vector<string> v;
+	
+	for(size_t t=0;t<registeredTranslators.size();t++)
+	{
+		const vector<string> formatNames=registeredTranslators[t]->getFormatNames();
+		const vector<vector<string> > formatExtensions=registeredTranslators[t]->getFormatExtensions();
+		for(size_t i=0;i<formatNames.size();i++)
+		{
+			for(size_t k=0;k<formatExtensions[i].size();k++)
+				v.push_back(formatExtensions[i][k]+" ["+formatNames[i]+"]");
+		}
+	}
+
+	return v;
+}

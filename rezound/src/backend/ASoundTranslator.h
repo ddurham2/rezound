@@ -48,6 +48,7 @@ public:
 
 
 	static vector<const ASoundTranslator *> registeredTranslators;
+	static const vector<string> getFlatFormatList(); // returns a flattened list of every supported extension followed by a " [" then the format name then "]'
 
 protected:
 
