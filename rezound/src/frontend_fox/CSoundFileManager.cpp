@@ -87,8 +87,11 @@ const size_t CSoundFileManager::getOpenedCount() const
 	return(soundWindows.size());
 }
 
+#include "../backend/CSound.h"
+CSoundWindow *previousActiveWindow=NULL; // used for alt-` meaning switch back to the previously active window
 void CSoundFileManager::untoggleActiveForAllSoundWindows(CSoundWindow *exceptThisOne)
 {
+	previousActiveWindow=getActiveWindow();
 	for(size_t t=0;t<soundWindows.size();t++)
 	{
 		if(soundWindows[t]!=exceptThisOne)

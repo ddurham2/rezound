@@ -199,6 +199,19 @@ void setupAccels(CMainWindow *mainWindow)
 	// view
 	at->addAccel(KEY_z ,mainWindow,MKUINT(CMainWindow::ID_CENTER_START_POS,SEL_COMMAND));
 	at->addAccel(KEY_x ,mainWindow,MKUINT(CMainWindow::ID_CENTER_STOP_POS,SEL_COMMAND));
+
+	// sound switching
+	at->addAccel(MKUINT(KEY_1,ALTMASK),mainWindow,MKUINT(CMainWindow::ID_SOUND_LIST_HOTKEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_2,ALTMASK),mainWindow,MKUINT(CMainWindow::ID_SOUND_LIST_HOTKEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_3,ALTMASK),mainWindow,MKUINT(CMainWindow::ID_SOUND_LIST_HOTKEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_4,ALTMASK),mainWindow,MKUINT(CMainWindow::ID_SOUND_LIST_HOTKEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_5,ALTMASK),mainWindow,MKUINT(CMainWindow::ID_SOUND_LIST_HOTKEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_6,ALTMASK),mainWindow,MKUINT(CMainWindow::ID_SOUND_LIST_HOTKEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_7,ALTMASK),mainWindow,MKUINT(CMainWindow::ID_SOUND_LIST_HOTKEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_8,ALTMASK),mainWindow,MKUINT(CMainWindow::ID_SOUND_LIST_HOTKEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_9,ALTMASK),mainWindow,MKUINT(CMainWindow::ID_SOUND_LIST_HOTKEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_0,ALTMASK),mainWindow,MKUINT(CMainWindow::ID_SOUND_LIST_HOTKEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_quoteleft,ALTMASK),mainWindow,MKUINT(CMainWindow::ID_SOUND_LIST_HOTKEY,SEL_COMMAND));
 }
 
 

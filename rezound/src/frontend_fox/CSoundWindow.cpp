@@ -294,8 +294,8 @@ void CSoundWindow::setActiveState(bool isActive)
 	{
 		static_cast<CMainWindow *>(getOwner()->getOwner()->getOwner())->positionShuttleGivenSpeed(loadedSound->channel->getSeekSpeed(),shuttleControlScalar,shuttleControlSpringBack);
 		recalc();
-		show();
 		gSoundFileManager->untoggleActiveForAllSoundWindows(this);
+		show();
 	}
 	else
 		hide();

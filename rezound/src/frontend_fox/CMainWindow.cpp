@@ -123,6 +123,7 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CLIPBOARD_COMBOBOX,		CMainWindow::onClipboardComboBox),
 
 	FXMAPFUNC(SEL_CHANGED,			CMainWindow::ID_SOUND_LIST,			CMainWindow::onSoundListChange),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SOUND_LIST_HOTKEY,		CMainWindow::onSoundListHotKey),
 };
 
 FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
@@ -285,7 +286,7 @@ void CMainWindow::addSoundWindow(CSoundWindow *win)
 	// if I could, i'd like a two column list where the basename was in the first column and path in the second???
 	soundList->appendItem((p.baseName()+"  "+p.dirName()).c_str(),NULL,win);
 	soundList->setCurrentItem(soundList->getNumItems()-1);
-	soundList->makeItemVisible(soundList->getNumItems()-1);
+	soundList->makeItemVisible(soundList->getNumItems()-1); // ??? not working?
 }
 
 void CMainWindow::removeSoundWindow(CSoundWindow *win)
@@ -323,12 +324,52 @@ long CMainWindow::onSoundListChange(FXObject *sender,FXSelector sel,void *ptr)
 {
 	FXint index=(FXint)ptr;
 
-	if(index!=-1)
+	if(index>=0 && index<soundList->getNumItems())
 		((CSoundWindow *)soundList->getItemData(index))->setActiveState(true);
 
 	return 1;
 }
 
+extern CSoundWindow *previousActiveWindow;
+long CMainWindow::onSoundListHotKey(FXObject *sender,FXSelector sel,void *ptr)
+{
+	FXEvent *ev=(FXEvent *)ptr;
+	
+	if(ev->code=='`')
+	{ // switch to previously active window
+		if(previousActiveWindow!=NULL)
+		{
+			int index=0;
+			for(;index<soundList->getNumItems();index++)
+			{ // find the index in the sound list of the previous active window so we can set the current item
+				if(((CSoundWindow *)soundList->getItemData(index))==previousActiveWindow)
+					break;
+			}
+			previousActiveWindow->setActiveState(true);
+			soundList->setCurrentItem(index);
+			soundList->makeItemVisible(soundList->getCurrentItem());
+		}
+		return 1;
+	}
+	else
+	{
+		FXint index=ev->code-'0';
+
+		// take care of 0 meaning 10 actualy (which is index 9)
+		index--;
+		if(index==-1)
+			index=9;
+		
+		if(index>=0 && index<soundList->getNumItems())
+		{
+			soundList->setCurrentItem(index);
+			soundList->makeItemVisible(soundList->getCurrentItem());
+			return onSoundListChange(NULL,0,(void *)index);
+		}
+		else
+			return 0;
+	}
+}
 
 extern const string escapeAmpersand(const string i); // defined in CStatusComm.cpp
 
