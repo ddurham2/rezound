@@ -30,7 +30,8 @@ include $(top_srcdir)/config/am_include.mk
 EXTRA_DIST= \
 	TPoolAccesser.cpp \
 	TPoolFile.cpp \
-	TStaticPoolAccesser.cpp 
+	TStaticPoolAccesser.cpp \
+	test.cpp 
 
 noinst_HEADERS= \
 	   CMultiFile.h \
