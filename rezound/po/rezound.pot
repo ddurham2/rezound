@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-07-08 14:07-0500\n"
+"POT-Creation-Date: 2003-07-24 12:08-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -506,13 +506,13 @@ msgid "Change Volume"
 msgstr ""
 
 #: src/backend/Effects/CChangeAmplitudeEffect.cpp:114
-#: src/frontend_fox/FilterActionDialogs.cpp:194
-#: src/frontend_fox/FilterActionDialogs.cpp:204
-#: src/frontend_fox/FilterActionDialogs.cpp:214
-#: src/frontend_fox/FilterActionDialogs.cpp:225
-#: src/frontend_fox/FilterActionDialogs.cpp:238
-#: src/frontend_fox/FilterActionDialogs.cpp:249
-#: src/frontend_fox/FilterActionDialogs.cpp:260
+#: src/frontend_fox/FilterActionDialogs.cpp:283
+#: src/frontend_fox/FilterActionDialogs.cpp:293
+#: src/frontend_fox/FilterActionDialogs.cpp:303
+#: src/frontend_fox/FilterActionDialogs.cpp:314
+#: src/frontend_fox/FilterActionDialogs.cpp:327
+#: src/frontend_fox/FilterActionDialogs.cpp:338
+#: src/frontend_fox/FilterActionDialogs.cpp:349
 #: src/frontend_fox/EffectActionDialogs.cpp:57
 #: src/frontend_fox/EffectActionDialogs.cpp:64
 #: src/frontend_fox/EffectActionDialogs.cpp:148
@@ -573,7 +573,7 @@ msgid "Cancelling Reverse -- Channel "
 msgstr ""
 
 #: src/backend/Effects/CReverseEffect.cpp:144
-#: src/frontend_fox/FilterActionDialogs.cpp:67
+#: src/frontend_fox/FilterActionDialogs.cpp:68
 msgid "Reverse"
 msgstr ""
 
@@ -652,7 +652,7 @@ msgid "Convolving -- Channel "
 msgstr ""
 
 #: src/backend/Filters/CConvolutionFilter.cpp:239
-#: src/backend/Filters/CArbitraryFIRFilter.cpp:225
+#: src/backend/Filters/CArbitraryFIRFilter.cpp:187
 msgid ""
 " -- feature disabled because the fftw/rfftw library was not installed or "
 "detected when configure was run"
@@ -713,15 +713,15 @@ msgstr ""
 msgid "Biquad Resonant Bandpass Filter"
 msgstr ""
 
-#: src/backend/Filters/CArbitraryFIRFilter.cpp:130
+#: src/backend/Filters/CArbitraryFIRFilter.cpp:92
 msgid "Filtering -- Channel "
 msgstr ""
 
-#: src/backend/Filters/CArbitraryFIRFilter.cpp:242
+#: src/backend/Filters/CArbitraryFIRFilter.cpp:204
 msgid "Arbitrary FIR Filter"
 msgstr ""
 
-#: src/backend/Filters/CArbitraryFIRFilter.cpp:242
+#: src/backend/Filters/CArbitraryFIRFilter.cpp:204
 msgid ""
 "Finite Impulse Response Filter Given a Custom/User-Defined Frequency Response"
 msgstr ""
@@ -834,11 +834,11 @@ msgstr ""
 msgid "Change Sample Rate"
 msgstr ""
 
-#: src/backend/Generate/CGenerateNoiseAction.cpp:214
+#: src/backend/Generate/CGenerateNoiseAction.cpp:255
 msgid "Generate Noise"
 msgstr ""
 
-#: src/backend/Generate/CGenerateNoiseAction.cpp:214
+#: src/backend/Generate/CGenerateNoiseAction.cpp:255
 msgid "Generate Various Colors of Noise"
 msgstr ""
 
@@ -1115,128 +1115,164 @@ msgstr ""
 msgid "&Close"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:52
-#: src/frontend_fox/FilterActionDialogs.cpp:132
+#: src/frontend_fox/FilterActionDialogs.cpp:53
+#: src/frontend_fox/FilterActionDialogs.cpp:133
+#: src/frontend_fox/FilterActionDialogs.cpp:209
 msgid "Wet/Dry Mix"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:54
+#: src/frontend_fox/FilterActionDialogs.cpp:55
 msgid "Input Lowpass"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:55
+#: src/frontend_fox/FilterActionDialogs.cpp:56
 #: src/frontend_fox/EffectActionDialogs.cpp:168
 #: src/frontend_fox/RemasterActionDialogs.cpp:230
 msgid "Input Gain"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:56
+#: src/frontend_fox/FilterActionDialogs.cpp:57
 #: src/frontend_fox/EffectActionDialogs.cpp:171
 #: src/frontend_fox/RemasterActionDialogs.cpp:231
 msgid "Output Gain"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:57
+#: src/frontend_fox/FilterActionDialogs.cpp:58
 msgid "Predelay"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:60
+#: src/frontend_fox/FilterActionDialogs.cpp:61
 msgid "Filter Kernel"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:60
+#: src/frontend_fox/FilterActionDialogs.cpp:61
 msgid "The Audio File to Use as the Filter Kernel"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:63
+#: src/frontend_fox/FilterActionDialogs.cpp:64
 msgid "FK Gain"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:64
+#: src/frontend_fox/FilterActionDialogs.cpp:65
 msgid "FK Lowpass"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:66
+#: src/frontend_fox/FilterActionDialogs.cpp:67
 msgid "FK Rate"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:69
+#: src/frontend_fox/FilterActionDialogs.cpp:70
 msgid "Wrap Decay back to Beginning"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:134
+#: src/frontend_fox/FilterActionDialogs.cpp:135
 msgid "Frequency Response"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:134
+#: src/frontend_fox/FilterActionDialogs.cpp:135
+#: src/frontend_fox/FilterActionDialogs.cpp:195
+#: src/frontend_fox/FilterActionDialogs.cpp:196
 #: src/frontend_fox/FXLFOParamValue.cpp:57
+#: src/frontend_fox/GenerateActionDialogs.cpp:114
 msgid "Frequency"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:134
+#: src/frontend_fox/FilterActionDialogs.cpp:135
+#: src/frontend_fox/FilterActionDialogs.cpp:195
+#: src/frontend_fox/FilterActionDialogs.cpp:196
 msgid "Change"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:136
+#: src/frontend_fox/FilterActionDialogs.cpp:137
+#: src/frontend_fox/FilterActionDialogs.cpp:199
 msgid "Base Frequency"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:136
+#: src/frontend_fox/FilterActionDialogs.cpp:137
+#: src/frontend_fox/FilterActionDialogs.cpp:199
 msgid ""
 "This Sets the Lowest Frequency Displayed on the Graph.\n"
 "This is the Frequency of the First Octave."
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:137
+#: src/frontend_fox/FilterActionDialogs.cpp:138
+#: src/frontend_fox/FilterActionDialogs.cpp:202
 msgid "Number of Octaves"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:137
+#: src/frontend_fox/FilterActionDialogs.cpp:138
+#: src/frontend_fox/FilterActionDialogs.cpp:202
 msgid ""
 "This Sets the Number of Octaves Displayed on the Graph.\n"
 "But Note that no Frequency Higher than Half of the Sound's Sampling Rate can "
 "be Affected Since it Cannot Contain a Frequency Higher than That."
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:140
+#: src/frontend_fox/FilterActionDialogs.cpp:141
+#: src/frontend_fox/FilterActionDialogs.cpp:219
 msgid "Kernel Length"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:141
+#: src/frontend_fox/FilterActionDialogs.cpp:142
+#: src/frontend_fox/FilterActionDialogs.cpp:220
 msgid ""
 "This is the Size of the Filter Kernel Computed (in samples) From Your Curve "
 "to be Convolved with the Audio"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:142
+#: src/frontend_fox/FilterActionDialogs.cpp:143
+#: src/frontend_fox/FilterActionDialogs.cpp:221
 msgid "Undelay"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:142
+#: src/frontend_fox/FilterActionDialogs.cpp:143
+#: src/frontend_fox/FilterActionDialogs.cpp:221
 msgid "This Counteracts the Delay Side-Effect of Custom FIR Filters"
 msgstr ""
 
 #: src/frontend_fox/FilterActionDialogs.cpp:195
-#: src/frontend_fox/FilterActionDialogs.cpp:205
-#: src/frontend_fox/FilterActionDialogs.cpp:239
-#: src/frontend_fox/FilterActionDialogs.cpp:250
-msgid "Cutoff Frequency"
+msgid "Frequency Response 1"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:215
-#: src/frontend_fox/FilterActionDialogs.cpp:226
-#: src/frontend_fox/FilterActionDialogs.cpp:261
-msgid "Center Frequency"
+#: src/frontend_fox/FilterActionDialogs.cpp:196
+msgid "Frequency Response 2"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:212
+msgid "Use LFO"
 msgstr ""
 
 #: src/frontend_fox/FilterActionDialogs.cpp:216
-#: src/frontend_fox/FilterActionDialogs.cpp:227
+msgid "Sweep LFO"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:257
+msgid ""
+"Frequency Response 1 and Frequency Response 2 must contain the same number "
+"of nodes"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:284
+#: src/frontend_fox/FilterActionDialogs.cpp:294
+#: src/frontend_fox/FilterActionDialogs.cpp:328
+#: src/frontend_fox/FilterActionDialogs.cpp:339
+msgid "Cutoff Frequency"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:304
+#: src/frontend_fox/FilterActionDialogs.cpp:315
+#: src/frontend_fox/FilterActionDialogs.cpp:350
+msgid "Center Frequency"
+msgstr ""
+
+#: src/frontend_fox/FilterActionDialogs.cpp:305
+#: src/frontend_fox/FilterActionDialogs.cpp:316
 msgid "Band Width"
 msgstr ""
 
-#: src/frontend_fox/FilterActionDialogs.cpp:240
-#: src/frontend_fox/FilterActionDialogs.cpp:251
-#: src/frontend_fox/FilterActionDialogs.cpp:262
+#: src/frontend_fox/FilterActionDialogs.cpp:329
+#: src/frontend_fox/FilterActionDialogs.cpp:340
+#: src/frontend_fox/FilterActionDialogs.cpp:351
 msgid "Resonance"
 msgstr ""
 
@@ -1315,7 +1351,8 @@ msgid "Time"
 msgstr ""
 
 #: src/frontend_fox/EditActionDialogs.cpp:34
-#: src/frontend_fox/GenerateActionDialogs.cpp:42
+#: src/frontend_fox/GenerateActionDialogs.cpp:53
+#: src/frontend_fox/GenerateActionDialogs.cpp:115
 msgid "Length"
 msgstr ""
 
@@ -1649,36 +1686,36 @@ msgstr ""
 msgid "Explain"
 msgstr ""
 
-#: src/frontend_fox/CActionParamDialog.cpp:703
+#: src/frontend_fox/CActionParamDialog.cpp:743
 msgid "Preset Name"
 msgstr ""
 
-#: src/frontend_fox/CActionParamDialog.cpp:707
+#: src/frontend_fox/CActionParamDialog.cpp:747
 msgid "Invalid Preset Name"
 msgstr ""
 
-#: src/frontend_fox/CActionParamDialog.cpp:716
+#: src/frontend_fox/CActionParamDialog.cpp:756
 msgid "Preset Name cannot contain"
 msgstr ""
 
-#: src/frontend_fox/CActionParamDialog.cpp:731
+#: src/frontend_fox/CActionParamDialog.cpp:771
 msgid "Overwrite Existing Preset"
 msgstr ""
 
-#: src/frontend_fox/CActionParamDialog.cpp:799
+#: src/frontend_fox/CActionParamDialog.cpp:839
 msgid "Remove Preset"
 msgstr ""
 
-#: src/frontend_fox/CActionParamDialog.cpp:856
+#: src/frontend_fox/CActionParamDialog.cpp:896
 msgid "&Use\tOr Double-Click an Item in the List"
 msgstr ""
 
-#: src/frontend_fox/CActionParamDialog.cpp:857
+#: src/frontend_fox/CActionParamDialog.cpp:897
 #: src/frontend_fox/CMainWindow.cpp:718
 msgid "&Save"
 msgstr ""
 
-#: src/frontend_fox/CActionParamDialog.cpp:858
+#: src/frontend_fox/CActionParamDialog.cpp:898
 #: src/frontend_fox/CCueListDialog.cpp:77
 msgid "&Remove"
 msgstr ""
@@ -1942,7 +1979,7 @@ msgstr ""
 msgid "&Add"
 msgstr ""
 
-#: src/frontend_fox/CCueListDialog.cpp:78 src/frontend_fox/CMainWindow.cpp:890
+#: src/frontend_fox/CCueListDialog.cpp:78 src/frontend_fox/CMainWindow.cpp:892
 msgid "&Edit"
 msgstr ""
 
@@ -2187,41 +2224,41 @@ msgstr ""
 msgid "&Recent Actions"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:888
+#: src/frontend_fox/CMainWindow.cpp:890
 msgid "&File"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:889
+#: src/frontend_fox/CMainWindow.cpp:891
 msgid "&Control"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:891
+#: src/frontend_fox/CMainWindow.cpp:893
 msgid "Selection"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:892
+#: src/frontend_fox/CMainWindow.cpp:894
 msgid "Effec&ts"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:893
+#: src/frontend_fox/CMainWindow.cpp:895
 msgid "&Looping"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:894
+#: src/frontend_fox/CMainWindow.cpp:896
 msgid "F&ilters"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:895
+#: src/frontend_fox/CMainWindow.cpp:897
 msgid "&Remaster"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:896
+#: src/frontend_fox/CMainWindow.cpp:898
 msgid "&Generate"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1305 src/frontend_fox/CMainWindow.cpp:1339
-#: src/frontend_fox/CMainWindow.cpp:1399 src/frontend_fox/CMainWindow.cpp:1437
-#: src/frontend_fox/CMainWindow.cpp:1438
+#: src/frontend_fox/CMainWindow.cpp:1307 src/frontend_fox/CMainWindow.cpp:1341
+#: src/frontend_fox/CMainWindow.cpp:1401 src/frontend_fox/CMainWindow.cpp:1439
+#: src/frontend_fox/CMainWindow.cpp:1440
 msgid "semitones"
 msgstr ""
 
@@ -2393,17 +2430,22 @@ msgstr ""
 msgid "Loop type must be from 0 to 127"
 msgstr ""
 
-#: src/frontend_fox/CMetersWindow.cpp:644
+#: src/frontend_fox/CMetersWindow.cpp:579
+#: src/frontend_fox/CMetersWindow.cpp:581
+msgid "Unrotate from Natural 45 Degree Line"
+msgstr ""
+
+#: src/frontend_fox/CMetersWindow.cpp:725
 msgid ""
 "Adjust Zoom Factor for Analyzer\n"
 "Right-click for Default"
 msgstr ""
 
-#: src/frontend_fox/CMetersWindow.cpp:719
+#: src/frontend_fox/CMetersWindow.cpp:800
 msgid "Configure with FFTW"
 msgstr ""
 
-#: src/frontend_fox/CMetersWindow.cpp:720
+#: src/frontend_fox/CMetersWindow.cpp:801
 msgid "for Freq. Analysis"
 msgstr ""
 
@@ -2467,6 +2509,71 @@ msgstr ""
 msgid "JACK Port Selection"
 msgstr ""
 
-#: src/frontend_fox/GenerateActionDialogs.cpp:44
+#: src/frontend_fox/GenerateActionDialogs.cpp:55
+#: src/frontend_fox/GenerateActionDialogs.cpp:116
 msgid "Volume"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:56
+msgid "Max Particle Velocity"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:60
+msgid "White (Equal Energy per Frequency)"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:61
+msgid "Pink (Natural, Equal Energy per Octave; response: f^(-1))"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:62
+msgid "Brown (as in Brownian Motion; response: f^(-2))"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:63
+msgid "Black :)"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:68
+msgid "Noise Color"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:77
+msgid "Independent Channels"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:78
+msgid "Mono"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:79
+msgid "Inverse Mono"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:81
+msgid "Stereo Image"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:119
+msgid "Sine Wave"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:120
+msgid "Square Wave"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:121
+msgid "Rising Sawtooth Wave"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:122
+msgid "Falling Sawtooth Wave"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:123
+msgid "Triangle Wave"
+msgstr ""
+
+#: src/frontend_fox/GenerateActionDialogs.cpp:124
+msgid "Tone Type"
 msgstr ""
