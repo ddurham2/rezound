@@ -66,12 +66,11 @@ CGenerateNoiseDialog::CGenerateNoiseDialog(FXWindow *mainWindow) :
 	//items.push_back("Blue");
 	//items.push_back("Violet");
 	//items.push_back("Binary");
-	addComboTextEntry(p0,"Noise Color",items);
-		FXComboTextParamValue *t=getComboText("Noise Color");
-		t->setTarget(this);
-		t->setSelector(ID_NOISE_COLOR_COMBOBOX);
+	FXComboTextParamValue *noiseColorComboBox=addComboTextEntry(p0,"Noise Color",items);
+		noiseColorComboBox->setTarget(this);
+		noiseColorComboBox->setSelector(ID_NOISE_COLOR_COMBOBOX);
 
-	onNoiseColorChange(NULL,0,NULL);
+	onNoiseColorChange(noiseColorComboBox,0,NULL);
 	
 
 	// these need to follow the order in the enum in CGenerateNoiseAction.cpp
@@ -86,8 +85,10 @@ CGenerateNoiseDialog::CGenerateNoiseDialog(FXWindow *mainWindow) :
 
 long CGenerateNoiseDialog::onNoiseColorChange(FXObject *sender,FXSelector sel,void *ptr)
 {
-	FXComboTextParamValue *t=getComboText("Noise Color");
-	showControl("Max Particle Velocity",t->getValue()==2); // show iff "Brown Noise" is selected
+	if(((FXComboTextParamValue *)sender)->getValue()==2)
+		getSliderParam("Max Particle Velocity")->enable();
+	else
+		getSliderParam("Max Particle Velocity")->disable();
 	return 1;
 }
 
