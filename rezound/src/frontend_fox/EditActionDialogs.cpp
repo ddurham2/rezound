@@ -105,7 +105,7 @@ CSaveAsMultipleFilesDialog::CSaveAsMultipleFilesDialog(FXWindow *mainWindow) :
 {
 	void *p1=newVertPanel(NULL);
 		addDiskEntityEntry(p1,"Save to Directory",".",FXDiskEntityParamValue::detDirectory,"All the files will be saved into this directory");
-		addStringTextEntry(p1,"Filename Prefix","","This will be added to the front of the filename");
+		addStringTextEntry(p1,"Filename Prefix","#","This will be added to the front of the filename");
 		addStringTextEntry(p1,"Filename Suffix","","This will be added to the end of the filename");
 		addComboTextEntry(p1,"Format",ASoundTranslator::getFlatFormatList(),"The format to save each segment as",false);
 		addNumericTextEntry(p1,"Segment Number Start","",1,0,1000,"The Number to Start With When Substituting the Track Number For '#' in the Filenames");
