@@ -96,63 +96,53 @@ void ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 		throw(runtime_error(string(__func__)+" -- input does not appear to be an Ogg bitstream"));
 	}
 
-	vorbis_info *vi=ov_info(&vf,-1);
-
-	unsigned channelCount=vi->channels;
-	if(channelCount<=0 || channelCount>MAX_CHANNELS) // ??? could just ignore the extra channels
-	{
-		ov_clear(&vf);
-		fclose(f);
-		throw(runtime_error(string(__func__)+" -- invalid number of channels in audio file: "+istring(channelCount)+" -- you could simply increase MAX_CHANNELS in CSound.h"));
-	}
-
-	unsigned sampleRate=vi->rate;
-	if(sampleRate<4000 || sampleRate>96000)
-	{
-		ov_clear(&vf);
-		fclose(f);
-		throw(runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate)));
-	}
-
-#define REALLOC_FILE_SIZE (1024*1024)
-
-	// ??? make sure it's not more than MAX_LENGTH
-		// ??? just truncate the length
-	sample_pos_t size=REALLOC_FILE_SIZE;  // start with an initial size unless there's a way to get the final length from vorbisfile
-	if(size<0)
-	{
-		ov_clear(&vf);
-		fclose(f);
-		throw(runtime_error(string(__func__)+" -- libvorbis reports the data length as "+istring(size)));
-	}
-
-	sound->createWorkingPoolFile(filename,sampleRate,channelCount,size);
-
-
-
-	// load the user notes
-	char **userNotes=ov_comment(&vf,-1)->user_comments;
-	string _userNotes;
-	while(*userNotes)
-	{
-		_userNotes+=(*userNotes);
-		_userNotes+="\n";
-		userNotes++;
-	}
-	sound->setUserNotes(_userNotes);
-
-
-	// load the audio data
 	CRezPoolAccesser *accessers[MAX_CHANNELS]={0};
 	try
 	{
+
+		vorbis_info *vi=ov_info(&vf,-1);
+
+		unsigned channelCount=vi->channels;
+		if(channelCount<=0 || channelCount>MAX_CHANNELS) // ??? could just ignore the extra channels
+			throw(runtime_error(string(__func__)+" -- invalid number of channels in audio file: "+istring(channelCount)+" -- you could simply increase MAX_CHANNELS in CSound.h"));
+
+		unsigned sampleRate=vi->rate;
+		if(sampleRate<4000 || sampleRate>96000)
+			throw(runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate)));
+
+#define REALLOC_FILE_SIZE (1024*1024)
+
+		// ??? make sure it's not more than MAX_LENGTH
+			// ??? just truncate the length
+		sample_pos_t size=REALLOC_FILE_SIZE;  // start with an initial size unless there's a way to get the final length from vorbisfile
+		if(size<0)
+			throw(runtime_error(string(__func__)+" -- libvorbis reports the data length as "+istring(size)));
+
+		sound->createWorkingPoolFile(filename,sampleRate,channelCount,size);
+
+
+
+		// load the user notes
+		char **userNotes=ov_comment(&vf,-1)->user_comments;
+		string _userNotes;
+		while(*userNotes)
+		{
+			_userNotes+=(*userNotes);
+			_userNotes+="\n";
+			userNotes++;
+		}
+		sound->setUserNotes(_userNotes);
+
+
+		// load the audio data
 		for(unsigned t=0;t<channelCount;t++)
 			accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
 
 
 		// ??? if sample_t is not the bit type that ogg is going to return I should write some convertion functions... that are overloaded to go to and from several types to and from sample_t
 			// ??? this needs to match the type of sample_t
-			// ??? I don't know if libvorbis supports float aynway.. I would have to do the simple conversion
+			// ??? float is supported by ov_read_float
+			// 	
 		#define bitRate 16 // ??? I guess ogg is always giving us 16bit pcm
 
 		TAutoBuffer<sample_t> buffer((size_t)((bitRate/8)*4096/sizeof(sample_t)));
@@ -205,16 +195,14 @@ void ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 	{
 		endAllProgressBars();
 
-		fclose(f);
-		ov_clear(&vf);
+		ov_clear(&vf); // closes file too
 
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 			delete accessers[t];
 		throw;
 	}
 
-	ov_clear(&vf);
-	fclose(f);
+	ov_clear(&vf); // closes file too
 
 	sound->setIsModified(false);
 }
