@@ -34,6 +34,15 @@
 class FXGraphParamNode;
 class CNestedDataFile;
 
+/*
+ * This can be constructed to be a widget for drawing a curve as a parameter
+ * to some action to be performed on a sound.  Either setSound() should be 
+ * called to display a waveform behind the curve and 'time' will be the 
+ * horizontal unit displayed.  OR, setHorzParameters should be called to indicate
+ * the horizontal units and the background will be a solid color.
+ * The vertical units are specified through setVertParameters
+ */
+
 class FXGraphParamValue : public FXPacker
 {
 	FXDECLARE(FXGraphParamValue);
@@ -41,9 +50,14 @@ public:
 	typedef const double (*f_at_xs)(const double x,const int s);
 
 	// minScalar and maxScalar define the min and max spinner values, if they're the same, no spinner is shown
-	FXGraphParamValue(const string title,f_at_xs interpretValue,f_at_xs uninterpretValue,const int minScalar,const int maxScalar,const int initScalar,FXComposite *p,int opts,int x=0,int y=0,int w=0,int h=0);
+	FXGraphParamValue(const string title,const int minScalar,const int maxScalar,const int initScalar,FXComposite *p,int opts,int x=0,int y=0,int w=0,int h=0);
+	virtual ~FXGraphParamValue();
+
 
 	void setSound(CSound *sound,sample_pos_t start,sample_pos_t stop);
+	void setHorzParameters(const string horzAxisLabel,const string horzUnits,f_at_xs interpretValue,f_at_xs uninterpretValue);
+	void setVertParameters(const string vertAxisLabel,const string vertUnits,f_at_xs interpretValue,f_at_xs uninterpretValue);
+
 	void clearNodes();
 
 	long onGraphPanelPaint(FXObject *sender,FXSelector sel,void *ptr);
@@ -59,8 +73,6 @@ public:
 	long onPatternButton(FXObject *sender,FXSelector sel,void *ptr);
 
 	void updateNumbers();
-
-	void setUnits(FXString units);
 
 	const CGraphParamValueNodeList &getNodes() const;
 
@@ -100,20 +112,15 @@ private:
 
 	int initScalar;
 
-	CSound *sound;
-	sample_pos_t start,stop;
-
-	FXString units;
 
 	FXComposite *buttonPanel;
 		FXLabel *scalarLabel;
 		FXSpinner *scalarSpinner;
-	FXComposite *hRuler;
-	FXComposite *vRuler;
+	FXComposite *horzRuler;
+	FXComposite *vertRuler;
 	FXComposite *statusPanel;
-		FXLabel *positionLabel;
-		FXLabel *valueLabel;
-		FXLabel *unitsLabel;
+		FXLabel *horzValueLabel;
+		FXLabel *vertValueLabel;
 	FXComposite *graphPanelParent;
 	FXCanvas *graphPanel;
 
@@ -131,8 +138,8 @@ private:
 
 	int findNodeAt(int x,int y);
 
-	double screenToNodePosition(int x);
-	double screenToNodeValue(int y);
+	double screenToNodeHorzValue(int x);
+	double screenToNodeVertValue(int y);
 
 	int nodeToScreenX(const CGraphParamValueNode &node);
 	int nodeToScreenY(const CGraphParamValueNode &node);
@@ -140,11 +147,21 @@ private:
 	void updateStatus();
 	void clearStatus();
 
-	const string getXValue(double xPos) const;
-	const string getYValue(double yPos) const;
+	const string getHorzValueString(double horzValue) const; /* horzValue is [0..1] */
+	const string getVertValueString(double vertValue) const; /* vertValue is [0..1] */
 
-	f_at_xs interpretValue;
-	f_at_xs uninterpretValue;
+	CSound *sound;
+	sample_pos_t start,stop;
+
+	string horzAxisLabel;
+	string horzUnits;
+	f_at_xs horzInterpretValue;
+	f_at_xs horzUninterpretValue;
+
+	string vertAxisLabel;
+	string vertUnits;
+	f_at_xs vertInterpretValue;
+	f_at_xs vertUninterpretValue;
 
 	// we draw on this one time and blit from it anytime we need to update the canvas
 	FXImage *backBuffer;

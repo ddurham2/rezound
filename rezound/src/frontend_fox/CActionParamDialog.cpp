@@ -208,8 +208,8 @@ void CActionParamDialog::addGraph(void *parent,const string name,const string un
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
 		// ??? there is still a question of how quite to lay out the graph if there are graph(s) and sliders
-	FXGraphParamValue *graph=new FXGraphParamValue(name.c_str(),interpretValue,uninterpretValue,minScalar,maxScalar,initialScalar,(FXPacker *)parent,LAYOUT_FILL_X|LAYOUT_FILL_Y);
-	graph->setUnits(units.c_str());
+	FXGraphParamValue *graph=new FXGraphParamValue(name.c_str(),minScalar,maxScalar,initialScalar,(FXPacker *)parent,LAYOUT_FILL_X|LAYOUT_FILL_Y);
+	graph->setVertParameters("Value",units,interpretValue,uninterpretValue);
 	parameters.push_back(pair<ParamTypes,void *>(ptGraph,(void *)graph));
 	retValueConvs.push_back(optRetValueConv);
 }
