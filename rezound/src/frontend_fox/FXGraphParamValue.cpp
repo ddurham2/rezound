@@ -27,19 +27,40 @@
 
 #include <istring>
 
-#warning I for the most part fixed the nodes strange moving behavior, but Ive come to the conclusion that I think I would rather just manage the nodes on my own...
-/*
- * - that is, just drawing filled circles for the nodes and determining when and if the mouse is inside one of these circles and where the button is pressed and such...
- * - I should write a function that given an X and Y, return the node (if any) that is at that x and y position.
- * - this should make porting to windows easier since I was going to have to contend with calling or not calling grab() for a child window and other various problems
- *   	- the only real thing I see to watch out for is not letting the node go outside the bounds of its parent window
- *   	- also I can color the end nodes with a different color and probably avoid ever swaping out what is the end node
- *   	- I should be able to use the userData member of CGraphParam node to store all the information that I need
- */
-
+#define NODE_RADIUS 4
 
 #define GET_SCALAR_VALUE(o) ( o->scalarSpinner==NULL ? 0 : o->scalarSpinner->getValue() )
 	
+
+
+/* TODO:
+ *
+ *	- I probably need to limit the minimum size as it could cause divide by zero errors, and really be unusable anyway
+ *
+ *	- be able to save or load a particular curve to disk
+ *
+ * 	- I would have liked to reuse code (without copy/pasting) from FXRezWaveView, but it's currently
+ * 	  too much tied to CLoadedSound for start and stop positions and such...
+ * 	  - At least I pulled draw portion out not to have to rewrite that
+ * 	  - but it would be nice if all the scrolling and zooming capabilities where also there....
+ *
+ * 	- I would like to put a horz ruler at the top of the rendered wave
+ * 		- I should also onMouseMove print the time that the cursor is over
+ * 			- clear it onExit
+ *
+ * 	- draw a vertical to the time and a horizontal line to the ruler while dragging the nodes 
+ *
+ * 	- still a glitch with the drawing of the bottom tick in the ruler.. I might draw more values in the ticks
+ *
+ *   	- I might ought to draw the play position in there if I can get the event
+ *
+ *	- I might want to avoid redrawing everything.  Alternatively I could:
+ *         - blit only the sections between the nodes involving the change
+ *
+ *	- Create some predefined patterns
+ *	   
+ */
+
 
 // --- declaration of FXValueRuler -----------------------------------------------
 
@@ -115,8 +136,6 @@ public:
 			{ // draw and label this tick
 				dc.drawLine(getWidth()-2,renderY,getWidth()-10,renderY);
 
-				//printf("y: %d\n",y);
-
 				double value=parent->interpretValue(parent->screenToNodeValue(y),GET_SCALAR_VALUE(parent));
 
 				const string sValue=istring(value,5,3);
@@ -156,200 +175,7 @@ FXIMPLEMENT(FXValueRuler,FXHorizontalFrame,FXValueRulerMap,ARRAYNUMBER(FXValueRu
 
 
 
-
-
-// --- FXGraphParamNode ---------------------------------------------------------
-
-
-
-#define FX_NODE(n) ((FXGraphParamNode *)((n).userData))
-
-#define NODE_WIDTH 9
-#define NODE_HEIGHT 9
-
-class FXGraphParamNode : public FXFrame
-{
-	FXDECLARE(FXGraphParamNode);
-public:
-	FXGraphParamNode(FXGraphParamValue *p,int x,int y,bool _isEdgeNode=false) :
-		FXFrame(p->graphPanel,FRAME_RAISED | LAYOUT_EXPLICIT, x,y,NODE_WIDTH,NODE_HEIGHT),
-		isEdgeNode(_isEdgeNode), // if this node is on the edge (can't remove it and can't move it left and right)
-		owner(p),
-		dragging(false)
-	{
-		disable(); // I have to disable so that if I press the right button while dragging after create it messes things up
-		if(isEdgeNode)
-			enable();
-
-		setBackColor(FXRGB(0,200,64));
-	}
-
-	virtual void move(FXint x,FXint y)
-	{
-		// limit the position to inside the parent window, but let it go outside the bounds by half of the NODE_SIZE
-		if(x<0-NODE_WIDTH/2)
-			x=0-NODE_WIDTH/2;
-		else if(x>(owner->graphPanel->getWidth())-NODE_WIDTH/2)
-			x=(owner->graphPanel->getWidth())-NODE_WIDTH/2;
-
-		if(y<0-NODE_HEIGHT/2)
-			y=0-NODE_HEIGHT/2;
-		else if(y>(owner->getGraphPanelHeight())-NODE_HEIGHT/2)
-			y=(owner->getGraphPanelHeight())-NODE_HEIGHT/2;
-
-		FXFrame::move(x,y);
-	}
-
-	long onDestroyNode(FXObject *sender,FXSelector sel,void *ptr)
-	{
-		//printf("node right release\n");
-		 if(!isEdgeNode && underCursor())
-		{
-			owner->removeNode=this;
-			hide();
-		}
-		ungrab();
-		return(0);
-	}
-
-	long onDragStart(FXObject *sender,FXSelector sel,void *ptr)
-	{
-		//printf("node left press\n");
-		dragging=true;
-		grab();
-
-		return(0);
-	}
-
-	long onDragStop(FXObject *sender,FXSelector sel,void *ptr)
-	{
-		//printf("node left release\n");
-		dragging=false;
-		ungrab();
-
-		// erase status ??? make sure that changing these doesn't cause everything to re-layout
-		clearStatus();
-		return(0);
-	}
-
-	long onDrag(FXObject *sender,FXSelector sel,void *ptr)
-	{
-		if(dragging)
-		{
-			FXEvent *ev=(FXEvent *)ptr;
-			
-			int x,y;
-			getParent()->translateCoordinatesFrom(x,y,getRoot(),ev->root_x-ev->click_x,ev->root_y-ev->click_y);
-
-
-			static int g=0;
-			printf("%5d node move while dragging x:%d y:%d\n",g++,x,y);fflush(stdout);
-
-
-			// if shift or control is held, lock the x or y position
-			if(ev->state&SHIFTMASK)
-				x=getX();
-			else if(ev->state&CONTROLMASK)
-				y=getY();
-
-			owner->moveAndRecalcNode(this,x,y);
-
-			updateStatus();
-		}
-		return(0);
-	}
-
-
-	FXGraphParamNode() {}
-
-	bool isEdgeNode;
-	FXGraphParamValue *owner;
-	bool dragging;
-
-	void updateStatus()
-	{
-return;
-		const int index=owner->findNode(this);
-		if(index==-1)
-			return;
-
-		const CGraphParamValueNode &n=owner->nodes[index];
-
-		// draw status
-		const string time=owner->sound->getTimePosition((sample_pos_t)((sample_fpos_t)(owner->stop-owner->start+1)*n.position+owner->start));
-		//owner->positionLabel->setText(("Time: "+time).c_str());
-		owner->valueLabel->setText(("Value: "+istring(owner->interpretValue(n.value,GET_SCALAR_VALUE(owner)),6,3)).c_str());
-	}
-
-	void clearStatus()
-	{
-return;
-		owner->positionLabel->setText("Time: ");
-		owner->valueLabel->setText("Value: ");
-	}
-	
-};
-
-FXDEFMAP(FXGraphParamNode) FXGraphParamNodeMap[]=
-{
-	//Message_Type				ID			Message_Handler
-	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	0,			FXGraphParamNode::onDestroyNode),
-
-	FXMAPFUNC(SEL_LEFTBUTTONPRESS,		0,			FXGraphParamNode::onDragStart),
-	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	0,			FXGraphParamNode::onDragStop),
-	FXMAPFUNC(SEL_MOTION,			0,			FXGraphParamNode::onDrag),
-};
-
-FXIMPLEMENT(FXGraphParamNode,FXFrame,FXGraphParamNodeMap,ARRAYNUMBER(FXGraphParamNodeMap));
-
-
-
-
-
-
 // -----------------------------------------------
-
-
-/* TODO:
- *
- *	- I probably need to limit the minimum size as it could cause divide by zero errors, and really be unusable anyway
- *
- *	- be able to save or load a particular curve to disk
- *
- * 	- I would have liked to reuse code (without copy/pasting) from FXRezWaveView, but it's currently
- * 	  too much tied to CLoadedSound for start and stop positions and such...
- * 	  - At least I pulled draw portion out not to have to rewrite that
- * 	  - but it would be nice if all the scrolling and zooming capabilities where also there....
- *
- * 	- I would like to put a horz ruler at the top of the rendered wave
- * 		- I should also onMouseMove print the time that the cursor is over
- * 			- clear it onExit
- *
- * 	- draw a vertical to the time and a horizontal line to the ruler while dragging the nodes 
- *
- * 	- still a glitch with the drawing of the bottom tick in the ruler.. I might draw more values in the ticks
- *
- *   	- I might ought to draw the play position in there if I can get the event
- *
- *   	- I don't know why it's happening, but sometimes when you click on an existing node, it jumps a pixel either leftward, upward or both
- *   		- I assume it's moving because we moveAndRecalc the node even when it's just clicked and released, so the value isn't coming out the same each click
- *
- *	- There is a bug which I should probably ask the author of FOX to look at... 
- *		- if you left-press to create a node, then while holding the left button, you press and 
- *		  and release the right button, it never seems to get the left-release.  I guess it's some
- *		  grab/ungrab problem
- *
- *	- There is also some screwy stuff going on with this case: (and I can watch the print statments I put in to see it)
- *		- create a node, right press to delete it, but move outside the node, then release and it never ungrabs it seems EXCEPT, I put a call to ungrab in there... take that out and you'll see the problem
- *
- *	- There is still some goofy stuff that can go on if you have a large selection and move the mouse around fast
- *	- I've seen orphaned nodes sometimes... Perhaps after clearing?
- *
- *	- Create some predefined patterns
- *
- *	   
- */
-
 
 FXDEFMAP(FXGraphParamValue) FXGraphParamValueMap[]=
 {
@@ -357,9 +183,12 @@ FXDEFMAP(FXGraphParamValue) FXGraphParamValueMap[]=
 
 	FXMAPFUNC(SEL_PAINT,			FXGraphParamValue::ID_GRAPH_PANEL,	FXGraphParamValue::onGraphPanelPaint),
 
-	FXMAPFUNC(SEL_LEFTBUTTONPRESS,		FXGraphParamValue::ID_GRAPH_PANEL,	FXGraphParamValue::onCreateNode),
-	FXMAPFUNC(SEL_MOTION,			FXGraphParamValue::ID_GRAPH_PANEL,	FXGraphParamValue::onDragNodeAfterCreate),
-	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	FXGraphParamValue::ID_GRAPH_PANEL,	FXGraphParamValue::onStopDraggingNodeAfterCreate),
+	FXMAPFUNC(SEL_CONFIGURE,		FXGraphParamValue::ID_GRAPH_PANEL,	FXGraphParamValue::onGraphPanelResize),
+
+	FXMAPFUNC(SEL_LEFTBUTTONPRESS,		FXGraphParamValue::ID_GRAPH_PANEL,	FXGraphParamValue::onCreateOrStartDragNode),
+	FXMAPFUNC(SEL_MOTION,			FXGraphParamValue::ID_GRAPH_PANEL,	FXGraphParamValue::onDragNode),
+	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	FXGraphParamValue::ID_GRAPH_PANEL,	FXGraphParamValue::onStopDragNode),
+	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	FXGraphParamValue::ID_GRAPH_PANEL,	FXGraphParamValue::onDestroyNode),
 
 	FXMAPFUNC(SEL_COMMAND,			FXGraphParamValue::ID_SCALAR_SPINNER,	FXGraphParamValue::onScalarSpinnerChange),
 	FXMAPFUNC(SEL_COMMAND,			FXGraphParamValue::ID_CLEAR_BUTTON,	FXGraphParamValue::onPatternButton),
@@ -373,21 +202,20 @@ FXGraphParamValue::FXGraphParamValue(f_at_xs _interpretValue,f_at_xs _uninterpre
 	sound(NULL),
 	start(0),
 	stop(0),
-	firstTime(true),
 
 	buttonPanel(new FXHorizontalFrame(this,FRAME_NONE | LAYOUT_SIDE_BOTTOM | LAYOUT_FILL_X)),
 		scalarLabel(NULL),
 		scalarSpinner(NULL),
 	vRuler(new FXValueRuler(this,this)),
 	statusPanel(new FXHorizontalFrame(this,FRAME_RAISED | LAYOUT_SIDE_BOTTOM | LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 4,0)),
-		positionLabel(new FXLabel(statusPanel,"Time: ",NULL)),
+		positionLabel(new FXLabel(statusPanel,"Time: ",NULL,LAYOUT_LEFT)),
 		valueLabel(new FXLabel(statusPanel,"Value: ",NULL)),
 		unitsLabel(new FXLabel(statusPanel,"x",NULL)),
 	graphPanelParent(new FXPacker(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,2,2)),
-	graphPanel(new FXPackerCanvas(graphPanelParent,this,ID_GRAPH_PANEL,LAYOUT_FILL_X|LAYOUT_FILL_Y)),
+	graphPanel(new FXCanvas(graphPanelParent,this,ID_GRAPH_PANEL,LAYOUT_FILL_X|LAYOUT_FILL_Y)),
 
-	removeNode(NULL),
-	draggingNodeAfterCreate(NULL),
+	draggingNode(-1),
+	dragOffsetX(0),dragOffsetY(0),
 
 	interpretValue(_interpretValue),
 	uninterpretValue(_uninterpretValue),
@@ -411,35 +239,8 @@ FXGraphParamValue::FXGraphParamValue(f_at_xs _interpretValue,f_at_xs _uninterpre
 	nodes.reserve(100);
 
 	backBuffer->create();
-}
 
-void FXGraphParamValue::layout()
-{
-	FXPacker::layout();
-
-//printf("layout 456\n");
-
-/* add back but try to get cleanStatus and updateStatus not to cause a whole layout event
-	if(nodes.size()>=2)
-	{
-		// relocate all the nodes based on their distances and values
-		for(size_t t=0;t<nodes.size();t++)
-		{
-			FX_NODE(nodes[t])->isEdgeNode=false;
-			FX_NODE(nodes[t])->move((int)(nodes[t].position*graphPanel->getWidth()-NODE_WIDTH/2),(int)((1.0-nodes[t].value)*getGraphPanelHeight()-NODE_HEIGHT/2));
-		}
-		FX_NODE(nodes[0])->isEdgeNode=true;
-		FX_NODE(nodes[nodes.size()-1])->isEdgeNode=true;
-	}
-*/
-
-	// render waveform to the backbuffer
-	backBuffer->resize(graphPanel->getWidth(),graphPanel->getHeight());
-	if(sound!=NULL)
-	{
-		FXDCWindow dc(backBuffer);
-		drawPortion(0,graphPanel->getWidth(),&dc);
-	}
+	clearNodes();
 }
 
 void FXGraphParamValue::setSound(ASound *_sound,sample_pos_t _start,sample_pos_t _stop)
@@ -449,31 +250,19 @@ void FXGraphParamValue::setSound(ASound *_sound,sample_pos_t _start,sample_pos_t
 	stop=_stop;
 
 	// make sure that the back buffer re-renders
-	layout();
+	onGraphPanelResize(NULL,0,NULL);
 }
 
 void FXGraphParamValue::clearNodes()
 {
-	for(size_t t=0;t<nodes.size();t++)
-		delete (FXGraphParamNode *)(nodes[t].userData);
 	nodes.clear();
 
-	// remove any nodes that accidently got removed from nodes (via bad logic in insertIntoNodes on my part)
-	while(graphPanel->numChildren()>0)
-		delete graphPanel->childAtIndex(0);
-
 	// add endpoints
-	CGraphParamValueNode first(0.0,0.5,new FXGraphParamNode(this,0-NODE_WIDTH/2,getGraphPanelHeight()/2-NODE_HEIGHT/2,true));
-	FX_NODE(first)->create();
-	FX_NODE(first)->recalc();
+	CGraphParamValueNode first(0.0,0.5);
 	nodes.push_back(first);
 
-	CGraphParamValueNode last(1.0,0.5,new FXGraphParamNode(this,graphPanel->getWidth()-NODE_WIDTH/2,getGraphPanelHeight()/2-NODE_HEIGHT/2,true));
-	FX_NODE(last)->create();
-	FX_NODE(last)->recalc();
+	CGraphParamValueNode last(1.0,0.5);
 	nodes.push_back(last);
-
-	firstTime=false;
 
 	graphPanel->update();
 }
@@ -490,35 +279,15 @@ long FXGraphParamValue::onPatternButton(FXObject *sender,FXSelector sel,void *pt
 	clearNodes();
 
 	graphPanel->update();
-
 	return(1);
 }
 
 long FXGraphParamValue::onGraphPanelPaint(FXObject *sender,FXSelector sel,void *ptr)
 {
-	if(firstTime)
-		clearNodes();
-
-	static int g=0;
-	//printf("on paint: %d\n",g++);
-
-	if(removeNode!=NULL)
-	{
-		for(size_t t=0;t<nodes.size();t++)
-		{
-			if(nodes[t].userData==removeNode)
-			{
-				nodes.erase(nodes.begin()+t);
-				break;
-			}
-		}
-	}
-
 	FXDCWindow dc(graphPanel);
 
 	// draw the whole background
 	dc.drawImage(backBuffer,0,0);
-
 
 	// draw the lines connecting the nodes
 	dc.setForeground(FXRGB(255,64,64));
@@ -527,24 +296,52 @@ long FXGraphParamValue::onGraphPanelPaint(FXObject *sender,FXSelector sel,void *
 		CGraphParamValueNode &n1=nodes[t-1];
 		CGraphParamValueNode &n2=nodes[t];
 		
-		const int x1=FX_NODE(n1)->getX()+NODE_WIDTH/2;
-		const int y1=FX_NODE(n1)->getY()+NODE_HEIGHT/2;
-		const int x2=FX_NODE(n2)->getX()+NODE_WIDTH/2;
-		const int y2=FX_NODE(n2)->getY()+NODE_HEIGHT/2;
+		const int x1=nodeToScreenX(n1);
+		const int y1=nodeToScreenY(n1);
+		const int x2=nodeToScreenX(n2);
+		const int y2=nodeToScreenY(n2);
 		
 		dc.drawLine(x1,y1,x2,y2);
 	}
 
+	// draw the nodes
+	for(size_t t=0;t<nodes.size();t++)
+	{
+		CGraphParamValueNode &n=nodes[t];
+
+		const int x=nodeToScreenX(n);
+		const int y=nodeToScreenY(n);
+		
+		if(t==0 || t==nodes.size()-1)
+			dc.setForeground(FXRGB(0,191,255)); // end point node
+		else
+			dc.setForeground(FXRGB(0,255,0));
+
+		dc.fillArc(x-NODE_RADIUS,y-NODE_RADIUS,NODE_RADIUS*2,NODE_RADIUS*2,0*64,360*64);
+	}
+		
 	return(1);
 }
 
-bool isBetween(double v,double p1,double p2)
+#include "drawPortion.h"
+long FXGraphParamValue::onGraphPanelResize(FXObject *sender,FXSelector sel,void *ptr)
 {
-	if(p1<p2)
-		return(v>=p1 && v<=p2);
-	else // if(p1>=p2)
-		return(v>=p2 && v<=p1);
+	// render waveform to the backbuffer
+	backBuffer->resize(graphPanel->getWidth(),graphPanel->getHeight());
+	if(sound!=NULL)
+	{
+		FXDCWindow dc(backBuffer);
 
+		const int canvasWidth=graphPanel->getWidth();
+		const int canvasHeight=graphPanel->getHeight();
+		const sample_pos_t length=stop-start+1;
+		const double hScalar=(double)((sample_fpos_t)length/canvasWidth);
+		const int hOffset=(int)(start/hScalar);
+		const double vScalar=(65536.0/(double)canvasHeight)*(double)sound->getChannelCount();
+
+		drawPortion(0,canvasWidth,&dc,sound,canvasWidth,canvasHeight,-1,-1,hScalar,hOffset,vScalar,0,true);
+	}
+	return(1);
 }
 
 // always returns an even value >=2
@@ -556,225 +353,162 @@ int FXGraphParamValue::getGraphPanelHeight() const
 	return(max(h,2));
 }
 
-int FXGraphParamValue::findNode(FXGraphParamNode *node) const
+int FXGraphParamValue::insertIntoNodes(const CGraphParamValueNode &node)
+{
+	// sanity checks
+	if(nodes.size()<2)
+		throw(runtime_error(string(__func__)+" -- nodes doesn't already contain at least 2 items"));
+	if(node.position<0.0 || node.position>1.0)
+		throw(runtime_error(string(__func__)+" -- node's position is out of range: "+istring(node.position)));
+
+	int insertedIndex=-1;
+
+	// - basically, this function inserts the node into sorted order first by the nodes' postions
+
+	// - insert into the first position to keep the node's position in non-desreasing order
+	for(size_t t1=1;t1<nodes.size();t1++)
+	{
+		CGraphParamValueNode &temp=nodes[t1];
+		if(temp.position>=node.position)
+		{
+			nodes.insert(nodes.begin()+t1,node);
+			insertedIndex=t1;
+			break;
+		}
+	}
+
+	return(insertedIndex);
+}
+
+long FXGraphParamValue::onCreateOrStartDragNode(FXObject *sender,FXSelector sel,void *ptr)
+{
+	FXEvent *ev=(FXEvent *)ptr;
+
+	int nodeIndex=findNodeAt(ev->win_x,ev->win_y);
+	if(nodeIndex==-1)
+	{ // create a new node
+		CGraphParamValueNode node(screenToNodePosition(ev->win_x),screenToNodeValue(ev->win_y));
+		draggingNode=insertIntoNodes(node);
+
+		dragOffsetX=0;
+		dragOffsetY=0;
+	}
+	else
+	{
+		dragOffsetX=ev->win_x-nodeToScreenX(nodes[nodeIndex]);
+		dragOffsetY=ev->win_y-nodeToScreenY(nodes[nodeIndex]);
+		draggingNode=nodeIndex;
+	}
+	
+	updateStatus();
+	graphPanel->update();
+	return(1);
+}
+
+long FXGraphParamValue::onDragNode(FXObject *sender,FXSelector sel,void *ptr)
+{
+	if(draggingNode!=-1)
+	{
+		FXEvent *ev=(FXEvent *)ptr;
+
+		bool lockX=(draggingNode==0 || draggingNode==(int)nodes.size()-1) ? true : false; // lock X for endpoints
+		bool lockY=false;
+
+		// if shift or control is held, lock the x or y position
+		if(ev->state&SHIFTMASK)
+			lockX=true;
+		else if(ev->state&CONTROLMASK)
+			lockY=true;
+
+
+		CGraphParamValueNode node=nodes[draggingNode];
+
+		// calculate the new positions
+		node.position=	lockX ? node.position : screenToNodePosition(ev->win_x-dragOffsetX);
+		node.value=	lockY ? node.value : screenToNodeValue(ev->win_y-dragOffsetY);
+
+		// update the node within the vector
+		if(draggingNode!=0 && draggingNode!=(int)nodes.size()-1)
+		{ // not an end point
+			// re-insert the node so that the nodes vector will be in the proper order
+			nodes.erase(nodes.begin()+draggingNode);
+			draggingNode=insertIntoNodes(node);
+		}
+		else
+			nodes[draggingNode]=node;
+
+		// redraw
+		updateStatus();
+		graphPanel->update();
+	}
+	return(1);
+}
+
+long FXGraphParamValue::onStopDragNode(FXObject *sender,FXSelector sel,void *ptr)
+{
+	draggingNode=-1;
+	clearStatus();
+	return(1);
+}
+
+long FXGraphParamValue::onDestroyNode(FXObject *sender,FXSelector sel,void *ptr)
+{
+	FXEvent *ev=(FXEvent *)ptr;
+	int nodeIndex=findNodeAt(ev->win_x,ev->win_y);
+	if(nodeIndex!=-1)
+	{
+		nodes.erase(nodes.begin()+nodeIndex);
+		draggingNode=-1;
+		graphPanel->update();
+	}
+	return(1);
+}
+
+int FXGraphParamValue::findNodeAt(int x,int y)
 {
 	for(size_t t=0;t<nodes.size();t++)
 	{
-		if(nodes[t].userData==node)
+		CGraphParamValueNode &n=nodes[t];
+		
+		const int nx=nodeToScreenX(n);
+		const int ny=nodeToScreenY(n);
+
+		// see if the node's position is <= the NODE_RADIUS from the give x,y position
+		if( ((nx-x)*(nx-x)+(ny-y)*(ny-y)) <= (NODE_RADIUS*NODE_RADIUS) )
 			return(t);
 	}
+
 	return(-1);
-}
-
-/*
- * - This method recalculates the position and value for a node given a screen x and y on graphPanel
- * - It then removes and adds it to the node list to be moved to the correct spot
- */
-void FXGraphParamValue::moveAndRecalcNode(FXGraphParamNode *fx_node,int x,int y)
-{
-
-	// if it's an edge node, don't let the X change
-	fx_node->move(fx_node->isEdgeNode ? fx_node->getX() : x,y);
-
-	const int index=findNode(fx_node);
-	if(index==-1)
-	{
-		printf("warning: node not found in node list\n");
-		return;
-	}
-
-	CGraphParamValueNode &node=nodes[index];
-
-	// recalculate the position and distance value
-	node.position=screenToNodePosition(fx_node->getX()+NODE_WIDTH/2);
-	node.value=screenToNodeValue(fx_node->getY()+NODE_HEIGHT/2);
-
-	//printf("recalcutating to: %f %f\n",node.position,node.value);
-
-	if(!fx_node->isEdgeNode)
-	{
-		CGraphParamValueNode temp=node; // making a copy since it's about to go away after the remove
-		// now remove and re-insert the node into the nodes list
-		nodes.erase(nodes.begin()+index);
-		insertIntoNodes(temp);
-	}
-}
-
-/*
- * - This method does the logic to figure out where to insert a given node, 'n' into the nodes list
- * - This method is called for a newly created node
- * - And this method is called everytime a node is moved, it is removed from the list, then re-inserted
- */
-void FXGraphParamValue::insertIntoNodes(CGraphParamValueNode &n)
-{
-	try
-	{
-		FX_NODE(n)->isEdgeNode=false;
-		FX_NODE(nodes[0])->isEdgeNode=false;
-		FX_NODE(nodes[nodes.size()-1])->isEdgeNode=false;
-
-		// insert into the list appropriately
-		bool handled=false;
-		for(size_t x=0;x<nodes.size();x++)
-		{
-			CGraphParamValueNode &temp=nodes[x];
-			
-			if(n.position<temp.position)
-			{ 
-				nodes.insert(nodes.begin()+x,n);
-				handled=true;
-				break;
-			}
-			else if(n.position==temp.position)
-			{ // if it's on the same X, see where it fits in vertically
-
-				// find i1..i2 where they all have the same positions (that is, they are all in a vertical line
-				int i1=x;
-				int i2=x;
-				for(size_t y=i1+1;y<nodes.size();y++)
-				{
-					if(nodes[y].position!=n.position)
-						break;
-					i2=y;
-				}
-
-				if(i1==i2)
-				{ // we should get inserted either before or after the node at i1 (or i2.. no diff)
-					if(nodes[i1].value>n.value)
-						nodes.insert(nodes.begin()+i1,n);
-					else
-						nodes.insert(nodes.begin()+i1+1,n);
-
-				}
-				else if(i1>i2)
-				{
-					printf("************************************************** warning -- i1 > i2 %d>%d\n",i1,i2);
-				}
-				else
-				{
-					// now find where, from i1..i2 that n belongs
-					bool done=false;
-					for(int t=i1;t<i2;t++)
-					{
-						if(isBetween(n.value,nodes[t].value,nodes[t+1].value))
-						{
-							done=true;
-							nodes.insert(nodes.begin()+t+1,n);
-							break;
-						}
-					}
-					if(!done)
-						nodes.insert(nodes.begin()+i2+1,n);
-				}
-
-				handled=true;
-				break;
-			}
-		}
-		
-		if(!handled)
-		{
-			printf("node not inserted into list... remove it???\n");
-			// ??? deleteing it caused a segfault... ???
-		}
-	}
-	catch(exception &e)
-	{
-		printf("exception -- %s\n",e.what());
-	}
-
-	FX_NODE(nodes[0])->isEdgeNode=true;
-	FX_NODE(nodes[nodes.size()-1])->isEdgeNode=true;
-}
-
-long FXGraphParamValue::onCreateNode(FXObject *sender,FXSelector sel,void *ptr)
-{
-	//printf("panel left press\n");
-	FXEvent *ev=(FXEvent *)ptr;
-
-	CGraphParamValueNode n(screenToNodePosition(ev->win_x),screenToNodeValue(ev->win_y),new FXGraphParamNode(this,ev->win_x-NODE_WIDTH/2,ev->win_y-NODE_HEIGHT/2,false));
-	FX_NODE(n)->create();
-	FX_NODE(n)->recalc();
-	FX_NODE(n)->dragging=true;
-	//FX_NODE(n)->grab();  on purpose so that the onDragNodeAfterCreateEvent still works
-	draggingNodeAfterCreate=(FXGraphParamNode *)n.userData;
-
-	insertIntoNodes(n);
-
-	if(draggingNodeAfterCreate!=NULL)
-	{
-		FXEvent ev2=*((FXEvent *)ptr); // making a copy of event since we're modifying it
-		//((FXWindow *)sender)->translateCoordinatesTo(ev2.win_x,ev2.win_y,draggingNodeAfterCreate,ev2.win_x-NODE_WIDTH/2,ev2.win_y-NODE_HEIGHT/2);
-		ev2.click_x=NODE_WIDTH/2;
-		ev2.click_y=NODE_HEIGHT/2;
-		draggingNodeAfterCreate->onDrag(sender,sel,&ev2);
-	}
-
-
-	graphPanel->update();
-	return(0);
-}
-
-long FXGraphParamValue::onDragNodeAfterCreate(FXObject *sender,FXSelector sel,void *ptr)
-{
-	/*
-	{
-		FXEvent *ev=(FXEvent *)ptr;
-		printf("X: %d\n",ev->win_x);
-	}
-	*/
-
-	if(draggingNodeAfterCreate!=NULL)
-	{
-		//printf("panel move while dragging after create\n");
-
-		FXEvent ev=*((FXEvent *)ptr); // making a copy of event since we're modifying it
-		//((FXWindow *)sender)->translateCoordinatesTo(ev.win_x,ev.win_y,draggingNodeAfterCreate,ev.win_x-NODE_WIDTH/2,ev.win_y-NODE_HEIGHT/2);
-		ev.click_x=NODE_WIDTH/2;
-		ev.click_y=NODE_HEIGHT/2;
-		draggingNodeAfterCreate->onDrag(sender,sel,&ev);
-	}
-	return(0);
-}
-
-long FXGraphParamValue::onStopDraggingNodeAfterCreate(FXObject *sender,FXSelector sel,void *ptr)
-{
-	//printf("panel left release\n");
-	if(draggingNodeAfterCreate!=NULL)
-	{
-		draggingNodeAfterCreate->onDragStop(sender,sel,ptr);
-		draggingNodeAfterCreate->enable();
-		draggingNodeAfterCreate->dragging=false;
-		//draggingNodeAfterCreate->ungrab();
-		draggingNodeAfterCreate=NULL;
-	}
-	return(0);
-}
-
-#include "drawPortion.h"
-void FXGraphParamValue::drawPortion(int left,int width,FXDCWindow *dc)
-{
-	if(sound==NULL)
-		throw(runtime_error(string(__func__)+" -- sound is NULL"));
-
-	const int canvasWidth=graphPanel->getWidth();
-	const int canvasHeight=graphPanel->getHeight();
-	const sample_pos_t length=stop-start+1;
-	const double hScalar=(double)((sample_fpos_t)length/canvasWidth);
-	const int hOffset=(int)(start/hScalar);
-	const double vScalar=(65536.0/(double)canvasHeight)*(double)sound->getChannelCount();
-
-	::drawPortion(left,width,dc,sound,canvasWidth,canvasHeight,-1,-1,hScalar,hOffset,vScalar,0,true);
 }
 
 double FXGraphParamValue::screenToNodePosition(int x)
 {
-	return((double)x/(double)graphPanel->getWidth());
+	double v=((double)x/(double)(graphPanel->getWidth()-1));
+	if(v<0.0)
+		v=0.0;
+	else if(v>1.0)
+		v=1.0;
+	return(v);
 }
 
 double FXGraphParamValue::screenToNodeValue(int y)
 {
-	return(1.0-((double)y/(double)getGraphPanelHeight()));
+	double v=(1.0-((double)y/(double)(getGraphPanelHeight())));
+	if(v<0.0)
+		v=0.0;
+	else if(v>1.0)
+		v=1.0;
+	return(v);
+}
+
+int FXGraphParamValue::nodeToScreenX(const CGraphParamValueNode &node)
+{
+	return((int)(node.position*(graphPanel->getWidth()-1)));
+}
+
+int FXGraphParamValue::nodeToScreenY(const CGraphParamValueNode &node)
+{
+	return((int)((1.0-node.value)*(getGraphPanelHeight())));
 }
 
 void FXGraphParamValue::updateNumbers()
@@ -793,10 +527,30 @@ void FXGraphParamValue::setUnits(FXString _units)
 const CGraphParamValueNodeList &FXGraphParamValue::getNodes() const
 {
 	retNodes=nodes;
+	// adjust the value by the given function
 	for(size_t t=0;t<retNodes.size();t++)
 		retNodes[t].value=interpretValue(nodes[t].value,GET_SCALAR_VALUE(this));
 
 	return(retNodes);
 }
 
+void FXGraphParamValue::updateStatus()
+{
+	if(draggingNode==-1)
+		return;
+
+	const CGraphParamValueNode &n=nodes[draggingNode];
+
+	// draw status
+	const string time=sound->getTimePosition((sample_pos_t)((sample_fpos_t)(stop-start+1)*n.position+start));
+	positionLabel->setText(("Time: "+time).c_str());
+	valueLabel->setText(("Value: "+istring(interpretValue(n.value,GET_SCALAR_VALUE(this)),6,3)).c_str());
+}
+
+void FXGraphParamValue::clearStatus()
+{
+	positionLabel->setText("Time: ");
+	valueLabel->setText("Value: ");
+}
+	
 

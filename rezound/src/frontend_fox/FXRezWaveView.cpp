@@ -574,7 +574,6 @@ void FXWaveScrollArea::layout()
 {
 	FXScrollArea::layout();
 	canvas->resize(getSupposedCanvasWidth(),getSupposedCanvasHeight());
-
 }
 
 long FXWaveScrollArea::onPaint(FXObject*,FXSelector,void *ptr)
@@ -1027,7 +1026,7 @@ long FXWaveRuler::onPaint(FXObject *object,FXSelector sel,void *ptr)
 		
 			dc.drawLine(cueXPosition,height-1,cueXPosition,CUE_Y);
 			dc.setForeground(FXRGB(0,0,0));
-			dc.drawArc(cueXPosition-CUE_RADIUS,CUE_Y-CUE_RADIUS,CUE_RADIUS*2,CUE_RADIUS*2,0*64,359*64);
+			dc.drawArc(cueXPosition-CUE_RADIUS,CUE_Y-CUE_RADIUS,CUE_RADIUS*2,CUE_RADIUS*2,0*64,360*64);
 		
 			const string cueName=sound->getCueName(t);
 			dc.drawText(cueXPosition+CUE_RADIUS+1,height-1,cueName.data(),cueName.size());

@@ -57,7 +57,6 @@ ReZound_SOURCES= main.cpp \
 		 FXConstantParamValue.cpp \
 		 FXGraphParamValue.cpp \
 		 FXModalDialogBox.cpp \
-		 FXPackerCanvas.cpp \
 		 FXRezWaveView.cpp \
 		 initialize.cpp \
 		 RemasterActionDialogs.cpp \
@@ -101,7 +100,6 @@ EXTRA_DIST=\
 	FXConstantParamValue.h \
 	FXGraphParamValue.h \
 	FXModalDialogBox.h \
-	FXPackerCanvas.h \
 	FXRezWaveView.h \
 	RemasterActionDialogs.h \
 	drawPortion.h \
@@ -230,7 +228,6 @@ CEditToolbar.o: CEditToolbar.cpp \
 	FXConstantParamValue.h \
 	FXGraphParamValue.h \
 	FXModalDialogBox.h \
-	FXPackerCanvas.h \
 	$(top_srcdir)/src/backend/AAction.h \
 	$(top_srcdir)/src/backend/ASound.h \
 	$(top_srcdir)/src/backend/ASoundPlayer.h \
@@ -258,7 +255,6 @@ CGraphParamActionDialog.o: CGraphParamActionDialog.cpp \
 	CGraphParamActionDialog.h \
 	FXGraphParamValue.h \
 	FXModalDialogBox.h \
-	FXPackerCanvas.h \
 	$(top_srcdir)/src/backend/AAction.h \
 	$(top_srcdir)/src/backend/ASound.h \
 	$(top_srcdir)/src/backend/ASoundPlayer.h \
@@ -287,7 +283,6 @@ CMainWindow.o: CMainWindow.cpp \
 	FXConstantParamValue.h \
 	FXGraphParamValue.h \
 	FXModalDialogBox.h \
-	FXPackerCanvas.h \
 	RemasterActionDialogs.h \
 	rememberShow.h \
 	settings.h \
@@ -489,7 +484,6 @@ EditActionDialogs.o: EditActionDialogs.cpp \
 	FXConstantParamValue.h \
 	FXGraphParamValue.h \
 	FXModalDialogBox.h \
-	FXPackerCanvas.h \
 	$(top_srcdir)/src/backend/AAction.h \
 	$(top_srcdir)/src/backend/ASound.h \
 	$(top_srcdir)/src/backend/ASoundPlayer.h \
@@ -512,7 +506,6 @@ EffectActionDialogs.o: EffectActionDialogs.cpp \
 	FXConstantParamValue.h \
 	FXGraphParamValue.h \
 	FXModalDialogBox.h \
-	FXPackerCanvas.h \
 	$(top_srcdir)/src/backend/AAction.h \
 	$(top_srcdir)/src/backend/ASound.h \
 	$(top_srcdir)/src/backend/ASoundPlayer.h \
@@ -542,7 +535,6 @@ FXConstantParamValue.o: FXConstantParamValue.cpp \
 FXGraphParamValue.o: FXGraphParamValue.cpp \
 	FXGraphParamValue.h \
 	drawPortion.h \
-	FXPackerCanvas.h \
 	$(top_srcdir)/src/backend/ASound.h \
 	$(top_srcdir)/src/backend/CGraphParamValueNode.h \
 	$(top_srcdir)/src/misc/cc++/TAutoBuffer.h \
@@ -556,9 +548,6 @@ FXModalDialogBox.o: FXModalDialogBox.cpp \
 	FXModalDialogBox.h \
 	rememberShow.h \
 	$(top_srcdir)/src/images/images.h 
-
-FXPackerCanvas.o: FXPackerCanvas.cpp \
-	FXPackerCanvas.h
 
 FXRezWaveView.o: FXRezWaveView.cpp \
 	FXRezWaveView.h \

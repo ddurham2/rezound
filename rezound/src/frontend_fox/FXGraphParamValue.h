@@ -25,7 +25,6 @@
 
 
 #include <fox/fx.h>
-#include "FXPackerCanvas.h"
 
 #include "../backend/ASound.h"
 #include "../backend/CGraphParamValueNode.h"
@@ -44,13 +43,13 @@ public:
 	void setSound(ASound *sound,sample_pos_t start,sample_pos_t stop);
 	void clearNodes();
 
-	virtual void layout();
-
 	long onGraphPanelPaint(FXObject *sender,FXSelector sel,void *ptr);
-	long onCreateNode(FXObject *sender,FXSelector sel,void *ptr);
+	long onGraphPanelResize(FXObject *sender,FXSelector sel,void *ptr);
 
-	long onDragNodeAfterCreate(FXObject *sender,FXSelector sel,void *ptr);
-	long onStopDraggingNodeAfterCreate(FXObject *sender,FXSelector sel,void *ptr);
+	long onCreateOrStartDragNode(FXObject *sender,FXSelector sel,void *ptr);
+	long onDragNode(FXObject *sender,FXSelector sel,void *ptr);
+	long onStopDragNode(FXObject *sender,FXSelector sel,void *ptr);
+	long onDestroyNode(FXObject *sender,FXSelector sel,void *ptr);
 
 	long onScalarSpinnerChange(FXObject *sender,FXSelector sel,void *ptr);
 
@@ -82,7 +81,6 @@ private:
 
 	ASound *sound;
 	sample_pos_t start,stop;
-	bool firstTime;
 
 	FXString units;
 
@@ -95,24 +93,29 @@ private:
 		FXLabel *valueLabel;
 		FXLabel *unitsLabel;
 	FXComposite *graphPanelParent;
-	FXComposite *graphPanel;
+	FXCanvas *graphPanel;
 
-	FXGraphParamNode *removeNode; // set when onDestroy is invoked for a node
-	FXGraphParamNode *draggingNodeAfterCreate;
+	int draggingNode;
+	int dragOffsetX,dragOffsetY;
 
 	CGraphParamValueNodeList nodes;
 	mutable CGraphParamValueNodeList retNodes; // a copy of nodes that is returned
 
 	int getGraphPanelHeight() const; // always returns an even value
 
-	int findNode(FXGraphParamNode *node) const;
-	void moveAndRecalcNode(FXGraphParamNode *node,int x,int y);
-	void insertIntoNodes(CGraphParamValueNode &n);
+	// returns the index where it was inserted
+	int insertIntoNodes(const CGraphParamValueNode &node);
 
-	void drawPortion(int left,int width,FXDCWindow *dc);
+	int findNodeAt(int x,int y);
 
 	double screenToNodePosition(int x);
 	double screenToNodeValue(int y);
+
+	int nodeToScreenX(const CGraphParamValueNode &node);
+	int nodeToScreenY(const CGraphParamValueNode &node);
+
+	void updateStatus();
+	void clearStatus();
 
 	f_at_xs interpretValue;
 	f_at_xs uninterpretValue;
