@@ -109,6 +109,8 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 	{
 		FXMatrix *t=new FXMatrix(tabs,2,MATRIX_BY_COLUMNS | LAYOUT_FILL_X | FRAME_RAISED|FRAME_THICK);
 
+		MAKE_TEXT(t,"Alexandre Prokoudine",_("Russian Translation"));
+		MAKE_TEXT(t,"Joost Andrae",_("German Translation"));
 		MAKE_TEXT(t,"Richard Lovison",_("Bug Finding"));
 		MAKE_TEXT(t,"Veres Imre",_("Bug Finding"));
 		MAKE_TEXT(t,"Götz Waschk",_("Bug Finding"));
