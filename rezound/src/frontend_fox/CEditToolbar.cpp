@@ -48,10 +48,10 @@ FXIMPLEMENT(CEditToolbar,FXTopWindow,CEditToolbarMap,ARRAYNUMBER(CEditToolbarMap
 
 	
 CEditToolbar::CEditToolbar(FXWindow *mainWindow) :
-	FXTopWindow(mainWindow,"Edit",NULL,NULL,DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE,mainWindow->getX(),mainWindow->getY()+mainWindow->getDefaultHeight()+30,75,450, 0,0,0,0, 0,0),
+	FXTopWindow(mainWindow,"Edit",NULL,NULL,DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE,mainWindow->getX(),mainWindow->getY()+mainWindow->getDefaultHeight()+30,78,450, 0,0,0,0, 0,0),
 
 	scrollWindow(new FXScrollWindow(this,LAYOUT_FILL_X|LAYOUT_FILL_Y)),
-	contents(new FXMatrix(scrollWindow,2,MATRIX_BY_COLUMNS|FRAME_RAISED, 0,0,0,0, 4,4,4,4, 1,1))
+	contents(new FXMatrix(scrollWindow,2,MATRIX_BY_COLUMNS|FRAME_RIDGE, 0,0,0,0, 4,4,4,4, 1,1))
 {
 	delete getAccelTable();
 	setAccelTable(mainWindow->getAccelTable());

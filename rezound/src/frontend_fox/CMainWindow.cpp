@@ -174,7 +174,7 @@ CMainWindow::CMainWindow(FXApp* a) :
 	/* ??? it is not necessary to have all these data members for all the buttons */
 
 	int actionControlTabOrder=0;
-	actionControlsFrame=new FXTabBook(contents,NULL,0,TABBOOK_NORMAL|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_RIDGE, 0,0,0,0, 2,2,2,2);
+	actionControlsFrame=new FXTabBook(contents,NULL,0,TABBOOK_NORMAL|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_NONE, 0,0,0,0, 1,1,1,1);
 		fileTab=new FXTabItem(actionControlsFrame,"&File",NULL,TAB_TOP_NORMAL);
 		fileTab->setTarget(this);
 		fileTab->setSelector(ID_ACTIONCONTROL_TAB);
