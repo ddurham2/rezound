@@ -576,8 +576,13 @@ public:
 		FXMenuPane popupMenu(this);
 			// ??? make sure that these get deleted when gotoMenu is deleted
 #if REZ_FOX_VERSION>=10119
-			(new FXMenuCheck(&popupMenu,"Unrotate from Natural 45 Degree Line",this, ID_UNROTATE))->setCheck(gStereoPhaseMeterUnrotate);
+			(new FXMenuCheck(&popupMenu,_("Unrotate from Natural 45 Degree Line"),this, ID_UNROTATE))->setCheck(gStereoPhaseMeterUnrotate);
 #else
+			FXMenuCommand *m=new FXMenuCommand(&popupMenu,_("Unrotate from Natural 45 Degree Line"),NULL,this, ID_UNROTATE);
+			if(gStereoPhaseMeterUnrotate)
+				m->check();
+			else
+				m->uncheck();
 #endif
 
 		popupMenu.create();
@@ -592,6 +597,11 @@ public:
 #if REZ_FOX_VERSION>=10119
 		gStereoPhaseMeterUnrotate= ((FXMenuCheck *)object)->getCheck() ? true : false;
 #else
+		if(dynamic_cast<FXMenuCommand *>(object)->isChecked())
+			dynamic_cast<FXMenuCommand *>(object)->uncheck();
+		else
+			dynamic_cast<FXMenuCommand *>(object)->check();
+		gStereoPhaseMeterUnrotate= ((FXMenuCommand *)object)->isChecked() ? true : false;
 #endif
 		return 0;
 	}
