@@ -73,7 +73,7 @@ public:
 
 	// is called after an action is performed to update the screen or when the title
 	// bar and other status information of a loaded sound window needs to be modified
-	virtual void updateAfterEdit()=0;
+	virtual void updateAfterEdit(CLoadedSound *sound=NULL)=0; // if NULL, then use the active one
 
 	// returns a list of error messages
 	const vector<string> loadFilesInRegistry();

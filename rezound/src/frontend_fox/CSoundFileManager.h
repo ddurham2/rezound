@@ -52,7 +52,9 @@ public:
 
 	CLoadedSound *getActive();
 	CSoundWindow *getActiveWindow();
-	void updateAfterEdit();
+	void updateAfterEdit(CLoadedSound *soundToUpdate=NULL); // if NULL, then use the active one
+
+	bool isValidLoadedSound(const CLoadedSound *sound) const;
 
 protected:
 	void createWindow(CLoadedSound *loaded);
