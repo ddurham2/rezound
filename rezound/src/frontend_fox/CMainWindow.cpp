@@ -626,6 +626,8 @@ void CMainWindow::createMenus()
 		new FXMenuCommand(menu,"Undo\tCtrl+Z",FOXIcons->edit_undo,this,ID_UNDO_MENUITEM);
 		new FXMenuCommand(menu,"Clear Undo History",NULL,this,ID_CLEAR_UNDO_HISTORY_MENUITEM);
 
+		// ??? perhaps I could avoid hard coding all of this by having a list of registered action factories which define the menu path, and hot keys are user definable anyway.. but then the frontend would have to be more abstracted or done more the way that Frontend Hooks are done.. the advanced and normal dialog stuff should already be gone before doing this tho
+		// a few things to think about:  the order of the registered list (when each action specifies it's menu path) and the visual menu separators as well as how the frontend code gets bound to the right backend code
 		new FXMenuSeparator(menu);
 		new CActionMenuCommand(new CCopyEditFactory(gChannelSelectDialog),menu,"Ctrl+C",FOXIcons->edit_copy);
 		new CActionMenuCommand(new CCutEditFactory(gChannelSelectDialog),menu,"Ctrl+X",FOXIcons->edit_cut);
