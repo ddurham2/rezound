@@ -12,9 +12,15 @@ at http://oss.sgi.com/projects/audiofile/
 
 
 2. gnucc-1.9.4 (a.k.a. commonc++-1.9.4 (>1.9.1-11)) - 	GNU Common C++ library,
-develoment was done with v1.9.4 but earlier versions may be found to work. If
+development was done with v1.9.4 but earlier versions may be found to work. If
 you don't have libgnucc then you can download it at
 http://www.gnu.org/software/commonc++
+ ***NOTE*** commonc++2.x is usually a different series of packages than the 1.x series.
+ Even the commonc++2.x tarball places its header files in /usr/.../include/cc++2 so that 
+ both versions can exist on the same system.  ReZound has not been written to use the 
+ version2 API, but requires a 1.x series install.  (Frankly, all I use commonc++ for is 
+ mutexes and threads, and I may go to something more standard like the SDL which seems to 
+ be installed on more boxes than commonc++.  Sorry for any inconvenience.)
 
 3. fox-0.99.193 -	The fox GUI toolkit, ReZound should build fine with v0.99.193, but versions earlier that 0.99.87-2 may not work. If you don't have fos or need to get a newer version go to http://www.fox-toolkit.org/
 

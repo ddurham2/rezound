@@ -70,7 +70,7 @@ dnl extra -l flags so this test (as suggested by Davy) would work.
 dnl As for potential problems with a compiler not recognizing namespaces:
 dnl For now let's worry about g++, and sooner or later everything should
 dnl become ANSI and recognize namespaces.
-ajv_CXX_CHECK_LIB([ccgnu],ost::Mutex,cc++/thread.h,[http://www.gnu.org/directory/commoncpp.html],[-lpthread -ldl])
+ajv_CXX_CHECK_LIB([ccgnu],ost::Mutex,cc++/thread.h,[http://www.gnu.org/directory/commoncpp.html (NOTE: the version 1.x series is required)],[-lpthread -ldl])
 
 dnl This is a check for a class in a C++ library. To pinpoint
 dnl the specific version we need we could change what class is linked.
