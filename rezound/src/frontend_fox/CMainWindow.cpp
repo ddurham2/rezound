@@ -247,6 +247,10 @@ void CMainWindow::showAbout()
 	{ // different version
 		gSettingsRegistry->createKey("SeenAboutDialogVersion",REZOUND_VERSION);
 		gSettingsRegistry->createKey("SeenAboutDialogCount","1");
+
+		// if the version has changed from the previous run, then forget all window positions/sizes and splitter positions
+		gSettingsRegistry->removeKey("SplitterPositions");
+		gSettingsRegistry->removeKey("WindowDimensions");
 	}
 	else
 	{ // same version, now check count or increment count
