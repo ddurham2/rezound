@@ -55,7 +55,7 @@ CFrontendHooks::CFrontendHooks(FXWindow *_mainWindow) :
 	mp3Dialog(NULL),
 	voxDialog(NULL)
 {
-	dirDialog=new FXDirDialog(mainWindow,"Select Directory");
+	dirDialog=new FXDirDialog(mainWindow,_("Select Directory"));
 
 	JACKPortChoiceDialog=new CJACKPortChoiceDialog(mainWindow);
 }
@@ -75,7 +75,7 @@ CFrontendHooks::~CFrontendHooks()
 
 void CFrontendHooks::doSetupAfterBackendIsSetup()
 {
-	openDialog=new FXFileDialog(mainWindow,"Open File");
+	openDialog=new FXFileDialog(mainWindow,_("Open File"));
 	openDialog->setPatternList(getFOXFileTypes().c_str());
 	openDialog->setCurrentPattern(0);
 	openDialog->showReadOnly(false); // would be true if I supported it
@@ -83,12 +83,12 @@ void CFrontendHooks::doSetupAfterBackendIsSetup()
 	{ // add the "Open as Raw" check button
 		FXVerticalFrame *f=new FXVerticalFrame(openDialog,LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 0,0,0,0, 0,0);
 		openDialog->childAtIndex(0)->reparent(f);
-		openAsRawCheckButton=new FXCheckButton(new FXPacker(f,0, 0,0,0,0, DEFAULT_SPACING*2,0,0),"Open as Raw",NULL,0,CHECKBUTTON_NORMAL);
+		openAsRawCheckButton=new FXCheckButton(new FXPacker(f,0, 0,0,0,0, DEFAULT_SPACING*2,0,0),_("Open as Raw"),NULL,0,CHECKBUTTON_NORMAL);
 	}
 	if(openDialog->getDirectory()!=gPromptDialogDirectory.c_str())
 		openDialog->setDirectory(gPromptDialogDirectory.c_str());
 
-	saveDialog=new FXFileDialog(mainWindow,"Save File");
+	saveDialog=new FXFileDialog(mainWindow,_("Save File"));
 	saveDialog->setSelectMode(SELECTFILE_ANY);
 	saveDialog->setPatternList(getFOXFileTypes().c_str());
 	saveDialog->setCurrentPattern(0);
@@ -96,7 +96,7 @@ void CFrontendHooks::doSetupAfterBackendIsSetup()
 	{ // add the "Save as Raw" check button
 		FXVerticalFrame *f=new FXVerticalFrame(saveDialog,LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 0,0,0,0, 0,0);
 		saveDialog->childAtIndex(0)->reparent(f);
-		saveAsRawCheckButton=new FXCheckButton(new FXPacker(f,0, 0,0,0,0, DEFAULT_SPACING*2,0,0),"Save as Raw",NULL,0,CHECKBUTTON_NORMAL);
+		saveAsRawCheckButton=new FXCheckButton(new FXPacker(f,0, 0,0,0,0, DEFAULT_SPACING*2,0,0),_("Save as Raw"),NULL,0,CHECKBUTTON_NORMAL);
 	}
 
 	newSoundDialog=new CNewSoundDialog(mainWindow);
@@ -160,7 +160,7 @@ const string CFrontendHooks::getFOXFileTypes() const
 		}
 	}
 	
-	types="All Supported Types ("+allTypes+")\n"+types+"All Files(*)\n";
+	types=string(_("All Supported Types"))+" ("+allTypes+")\n"+types+_("All Files")+"(*)\n";
 
 	return(types);
 }
@@ -238,7 +238,7 @@ bool CFrontendHooks::promptForNewSoundParameters(string &filename,bool &rawForma
 {
 	newSoundDialog->hideFilename(hideFilename);
 	if(hideChannelCount)
-		throw runtime_error(string(__func__)+" -- unimeplemented: hideChannelCount");
+		throw runtime_error(string(__func__)+" -- unimplemented: hideChannelCount");
 	newSoundDialog->hideSampleRate(hideSampleRate);
 	newSoundDialog->hideLength(hideLength);
 
