@@ -77,13 +77,15 @@ FXLFOParamValue::FXLFOParamValue(FXComposite *p,int opts,const char *_name,const
 			N_("Phase")
 		)),
 
-	LFOTypeComboBox(new FXListBox(this,this,ID_LFO_TYPE_COMBOBOX,FRAME_SUNKEN|FRAME_THICK|LISTBOX_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,180,0)),
+	LFOTypeComboBox(new FXListBox(this,this,ID_LFO_TYPE_COMBOBOX,FRAME_SUNKEN|FRAME_THICK|LISTBOX_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH)),
 
 	textFont(getApp()->getNormalFont()),
 
 	minWidth(0),
 	minHeight(236)
 {
+	LFOTypeComboBox->position(0,0,180,0);
+
 	amplitudeSlider->setMinSize(0,0);
 	frequencySlider->setMinSize(0,0);
 	phaseSlider->setMinSize(0,0);
