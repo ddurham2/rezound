@@ -12,20 +12,6 @@
 
 	- if the sound is playing and a certain button is pressed (or key also bound to that button) I should place a marker with a given name "cue #" where the number is an integer being kept up with
 
-	- before the first public release, I should create an about dialog:
-		- give version, name
-		- give authors
-		- give introductary instructions
-		- give where to go for bugs
-		- give where to go for feature requests
-		- give a few of the major features hopefully implemented in the future
-
-		- either list these things themselves, or give URLs or file paths of where to find the information
-			- could I actually #include the file from the docs directory ?
-
-		- Also, encourage the user to actually report bugs or request features and not to just assume someone else will
-		- make the about dialog show up on the first run
-
 	- make sure that nothing is being allocated and left around when a file is unable to be loaded at startup...
 		- I guess that should go for any load of a sound... that upon having an error (unsupported format perhaps) that nothing be left around...
 		- Also if there's  an error creating perhaps the CSoundPlayerChannel that the ASound is deleted and all temp data is cleaned up
@@ -49,7 +35,7 @@
 
 	- decide on exactly what keys to finally bind to by default for play controls
 		- all bindings should (at some point in development) be configurable
-		- list the default bindings in the FrontendFoxFeatures.txt file and it's copy on the www site
+		- list the default bindings in the FrontendFoxFeatures.txt file and its copy on the www site
 
 	- the frontend needs a way to tell COSSSoundPlayer and COSSSoundRecorder which device to use
 		- I should be able to test this at home since I have 2 sound cards installed
@@ -196,4 +182,18 @@
 		--> - actually.. I could myself derive from FXLabel and do this, except that label is not derived from composite
 
 	- move the undo button to the edit tool bar
+
+	- before the first public release, I should create an about dialog:
+		- give version, name
+		- give authors
+		- give introductary instructions
+		- give where to go for bugs
+		- give where to go for feature requests
+		- give a few of the major features hopefully implemented in the future
+
+		- either list these things themselves, or give URLs or file paths of where to find the information
+			- could I actually #include the file from the docs directory ?
+
+		- Also, encourage the user to actually report bugs or request features and not to just assume someone else will
+		- make the about dialog show up on the first run
 
