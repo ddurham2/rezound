@@ -49,20 +49,14 @@ public:
 	long onMouseClick(FXObject *sender,FXSelector sel,void *ptr);
 	long onKeyClick(FXObject *sender,FXSelector sel,void *ptr);
 
-/*
-	enum
-	{
-		ID_KEY=FXMenuCommand::ID_LAST,
-		ID_PRESS,
-		ID_LAST
-	};
-*/
+	long onQueryTip(FXObject* sender,FXSelector sel,void *ptr);
 
 protected:
 	CActionMenuCommand() {}
 
 private:
 	AActionFactory * const actionFactory;
+	FXString tip;
 
 };
 

@@ -37,6 +37,8 @@ FXDEFMAP(CActionMenuCommand) CActionMenuCommandMap[]=
 	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	0,				CActionMenuCommand::onMouseClick),
 
 	FXMAPFUNC(SEL_KEYRELEASE,		0,				CActionMenuCommand::onKeyClick),
+
+	FXMAPFUNC(SEL_UPDATE,			FXWindow::ID_QUERY_TIP,		CActionMenuCommand::onQueryTip)
 };
 
 FXIMPLEMENT(CActionMenuCommand,FXMenuCommand,CActionMenuCommandMap,ARRAYNUMBER(CActionMenuCommandMap))
@@ -45,9 +47,7 @@ CActionMenuCommand::CActionMenuCommand(AActionFactory *_actionFactory,FXComposit
 	FXMenuCommand(p,text,(ic==NULL ? new FXGIFIcon(p->getApp(),_actionFactory->hasAdvancedMode() ? advanced_action_gif : normal_action_gif) : ic),NULL,0,opts),
 	actionFactory(_actionFactory)
 {
-		// ??? I want this to be a tooltip
-		// ??? grab the implementation from FXLabel
-	setHelpText(_actionFactory->getDescription().c_str());
+	tip=_actionFactory->getDescription().c_str();
 }
 
 long CActionMenuCommand::onMouseClick(FXObject *sender,FXSelector sel,void *ptr)
@@ -97,6 +97,17 @@ long CActionMenuCommand::onKeyClick(FXObject *sender,FXSelector sel,void *ptr)
 		getApp()->beep();
 
 	return(1);
+}
+
+
+long CActionMenuCommand::onQueryTip(FXObject* sender,FXSelector sel,void *ptr)
+{
+	if(!tip.empty() && (flags&FLAG_TIP))
+	{
+		sender->handle(this,MKUINT(ID_SETSTRINGVALUE,SEL_COMMAND),(void*)&tip);
+		return 1;
+	}
+	return 0;
 }
 
 
