@@ -2,7 +2,7 @@
 - On a sound window:
 	- LEFT mouse button changes start position
 	- RIGHT mouse button changes stop position
-	- mouse WHEEL *should* scroll the view when not zoomed out full
+	- mouse WHEEL *should* scroll the wave view when not zoomed out full
 	- RIGHT clicking the ruler across the top shows a popup menu for manipulating cues
 		- normally the selection positions will 'snap' to the cue positions
 		- holding SHIFT while changing the selection positions will momentarily disable the 'snap to cue' feature
@@ -51,7 +51,7 @@
 	- LEFT clicking where there is not a node will create a node.
 	- LEFT dragging on an existing node will move it around.
 	- RIGHT clicking on an existing node will remove it.
-	- Holding SHIFT or CONTROL while dragging a node will lock either the horizontal or vertical movement when only needed to move the node in one direction.
+	- Holding SHIFT or CONTROL while dragging a node will lock either the horizontal or vertical movement when only needing to move the node in one direction.
 
 - Record Dialog:
 	- You can start and stop the recording multiple times to create a longer and longer recording.  You must hit redo/reset to actually reset the recording position to the beginning
