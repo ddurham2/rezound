@@ -2001,12 +2001,16 @@ void CSound::removeCue(size_t index)
 	rebuildCueIndex();
 }
 
-bool CSound::containsCue(const string &name) const
+size_t CSound::__default_cue_index;
+bool CSound::containsCue(const string &name,size_t &index) const
 {
 	for(size_t t=0;t<cueAccesser->getSize();t++)
 	{
 		if(strncmp((*cueAccesser)[t].name,name.c_str(),MAX_SOUND_CUE_NAME_LENGTH)==0)
+		{
+			index=t;
 			return(true);
+		}
 	}
 	return(false);
 }

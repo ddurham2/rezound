@@ -109,11 +109,11 @@ public:
 
 
 
-	sample_pos_t getLength() const		{ return(size); }
-	unsigned getChannelCount() const	{ return(channelCount); }
-	unsigned getSampleRate() const		{ return(sampleRate); }
+	sample_pos_t getLength() const		{ return size; }
+	unsigned getChannelCount() const	{ return channelCount; }
+	unsigned getSampleRate() const		{ return sampleRate; }
 	void setSampleRate(unsigned newSampleRate);
-	bool isEmpty() const			{ return(size==0 || channelCount==0); }
+	bool isEmpty() const			{ return size==0 || channelCount==0; }
 
 	/*
 	 * It is very important to lock the sound (writer's lock) before calling these methods.
@@ -282,7 +282,7 @@ public:
 			time=rhs.time;
 			isAnchored=rhs.isAnchored;
 
-			return(*this);
+			return *this;
 		}
 
 		// ??? char better remain 8 bits
@@ -310,7 +310,8 @@ public:
 	void removeCue(size_t index);
 	void clearCues();
 
-	bool containsCue(const string &name) const;
+	static size_t __default_cue_index;
+	bool containsCue(const string &name,size_t &index=__default_cue_index) const;
 	bool findCue(const sample_pos_t time,size_t &index) const;
 		// finds the cue nearest to the given time
 	bool findNearestCue(const sample_pos_t time,size_t &index,sample_pos_t &distance) const;
@@ -341,8 +342,18 @@ public:
 		if(poolFile.containsPool("__GENERAL__ "+poolName))
 			return poolFile.PoolFile_t::getPoolAccesser<T>("__GENERAL__ "+poolName);
 		else
-			return(poolFile.PoolFile_t::createPool<T>("__GENERAL__ "+poolName));
+			return poolFile.PoolFile_t::createPool<T>("__GENERAL__ "+poolName);
 	}
+
+	template<class T> const TPoolAccesser<T,PoolFile_t > getGeneralDataAccesser(const string poolName) const
+	{
+		if(poolFile.containsPool("__GENERAL__ "+poolName))
+			return poolFile.PoolFile_t::getPoolAccesser<T>("__GENERAL__ "+poolName);
+		else
+			throw runtime_error(string(__func__)+" -- general data pool does not exist: "+poolName);
+	}
+
+	bool containsGeneralDataPool(const string poolName) const { return poolFile.containsPool("__GENERAL__ "+poolName); }
 	
 	void removeGeneralDataPool(const string poolName) { poolFile.removePool("__GENERAL__ "+poolName,false); }
 
