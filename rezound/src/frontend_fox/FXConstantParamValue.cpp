@@ -34,6 +34,11 @@
  */
 
 
+// this didn't exist much before fox 1.0
+#if FOX_MAJOR < 1
+	#define SLIDER_TICKS_RIGHT 0
+#endif
+
 FXDEFMAP(FXConstantParamValue) FXConstantParamValueMap[]=
 {
 	//Message_Type				ID						Message_Handler
@@ -87,7 +92,9 @@ FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _unin
 
 	slider->setRange(0,10000);
 	slider->setHeadSize(30);
+#if FOX_MAJOR >= 1 // this did not exist much before fox 1.0
 	slider->setTickDelta(10000/8);
+#endif
 	slider->setValue(0);
 
 	updateNumbers();

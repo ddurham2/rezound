@@ -334,8 +334,10 @@ FXDEFMAP(FXWaveScrollArea) FXWaveViewScrollAreaMap[]=
 	FXMAPFUNC(SEL_MOTION,			FXWaveScrollArea::ID_CANVAS,	FXWaveScrollArea::onMouseMove),
 	FXMAPFUNC(SEL_TIMEOUT,			FXWindow::ID_AUTOSCROLL,	FXWaveScrollArea::onAutoScroll),
 
+#if FOX_MAJOR >= 1
 	// re-route the mouse wheel event to scroll horizontally instead of its default, vertically
 	FXMAPFUNC(SEL_MOUSEWHEEL,0,FXScrollArea::onHMouseWheel),
+#endif
 };
 
 FXIMPLEMENT(FXWaveScrollArea,FXScrollArea,FXWaveViewScrollAreaMap,ARRAYNUMBER(FXWaveViewScrollAreaMap))
