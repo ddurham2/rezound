@@ -34,7 +34,8 @@ public:
 	ASoundTranslator();
 	virtual ~ASoundTranslator();
 
-	void loadSound(const string filename,CSound *sound) const;
+		// normally these return true, or they return false if cancelled
+	bool loadSound(const string filename,CSound *sound) const;
 	bool saveSound(const string filename,CSound *sound) const;
 
 	virtual bool handlesExtension(const string extension) const=0;
@@ -49,7 +50,9 @@ public:
 
 protected:
 
-	virtual void onLoadSound(const string filename,CSound *sound) const=0;
+	// ??? It might make sense to swap the return values of these before anyone codes
+		// these should return true normally, or they should return false if cancelled
+	virtual bool onLoadSound(const string filename,CSound *sound) const=0;
 	virtual bool onSaveSound(const string filename,CSound *sound) const=0;
 
 private:

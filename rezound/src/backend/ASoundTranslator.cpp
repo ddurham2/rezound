@@ -34,7 +34,7 @@ ASoundTranslator::~ASoundTranslator()
 {
 }
 
-void ASoundTranslator::loadSound(const string filename,CSound *sound) const
+bool ASoundTranslator::loadSound(const string filename,CSound *sound) const
 {
 	sound->lockForResize();
 	try
@@ -42,7 +42,13 @@ void ASoundTranslator::loadSound(const string filename,CSound *sound) const
 		// use working file if it exists
 		if(!sound->createFromWorkingPoolFileIfExists(filename))
 		{
-			onLoadSound(filename,sound);
+			if(!onLoadSound(filename,sound))
+			{
+				sound->unlockForResize();
+				sound->closeSound(); // this removes the working poolfile
+				return false; // cancelled
+			}
+
 			sound->setIsModified(false);
 		}
 
@@ -58,6 +64,7 @@ void ASoundTranslator::loadSound(const string filename,CSound *sound) const
 		endAllProgressBars();
 		throw;
 	}
+	return true;
 }
 
 bool ASoundTranslator::saveSound(const string filename,CSound *sound) const
@@ -65,9 +72,22 @@ bool ASoundTranslator::saveSound(const string filename,CSound *sound) const
 	sound->lockSize();
 	try
 	{
+		/*
+		 * ??? A nice feature that would be good now that saving a file can be cancelled
+		 * is for onSaveSound to be passed two files.. one to display in error msgs and on dialogs and such
+		 * and another to actually write to.. then this code would do a move after everything was successful.
+		 * The only problem might be running out of space... Perhaps if space is low, or there isn't
+		 * enough for raw PCM size on that directory, then I should prompt the user
+		 *
+		 * Another solution is to rename the current file that exists and then do the same.. when the 
+		 * save is successful, delete the original, or if the save is cancelled, then rename the original
+		 * back again.
+		 *
+		 * ESPECIALLY since saving a file can be cancelled thus killing the original
+		 */
 		bool ret=onSaveSound(filename,sound);
 		sound->unlockSize();
-		return(ret);
+		return ret;
 	}
 	catch(...)
 	{

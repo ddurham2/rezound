@@ -45,7 +45,7 @@ CrawSoundTranslator::~CrawSoundTranslator()
 {
 }
 
-void CrawSoundTranslator::onLoadSound(const string filename,CSound *sound) const
+bool CrawSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 {
 	AFfilesetup setup=afNewFileSetup();
 	try
@@ -62,9 +62,11 @@ void CrawSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 		afInitDataOffset(setup,AF_DEFAULT_TRACK,0);				// ??? should be a parameter
 		//afInitFrameCount(setup,AF_DEFAULT_TRACK, 12345 ); 			// ??? should be a parameter, I assume this can be used to limit the amount of data to read from the file
 
-		loadSoundGivenSetup(filename,sound,setup);
+		const bool ret=loadSoundGivenSetup(filename,sound,setup);
 
 		afFreeFileSetup(setup);
+
+		return ret;
 	}
 	catch(...)
 	{

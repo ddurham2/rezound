@@ -78,7 +78,7 @@ typedef TPoolAccesser<RFormatInfo2,CSound::PoolFile_t > CFormat2InfoPoolAccesser
 
 
 
-void CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
+bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 {
 	// after the "Format Info" pool is read, these will be populated with data from the file
 	sample_pos_t size=0;
@@ -184,7 +184,7 @@ void CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 		{
 			for(unsigned i=0;i<channelCount;i++)
 			{
-				BEGIN_PROGRESS_BAR("Loading Channel "+istring(i),0,99);
+				BEGIN_CANCEL_PROGRESS_BAR("Loading Channel "+istring(i),0,99);
 
 				CSound::CInternalRezPoolAccesser dest=sound->getAudioInternal(i);
 
@@ -195,7 +195,11 @@ void CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 					for(unsigned int t=0;t<100;t++)
 					{
 						dest.copyData(t*chunkSize,loadFromFile.getPoolAccesser<sample_t>("Channel "+istring(i+1)),t*chunkSize,chunkSize);
-						UPDATE_PROGRESS_BAR(t);
+						UPDATE_PROGRESS_BAR__IF_CANCEL(t)
+						{
+							END_PROGRESS_BAR();
+							return false; // cancelled
+						}
 					}
 				}
 				dest.copyData(100*chunkSize,loadFromFile.getPoolAccesser<sample_t>("Channel "+istring(i+1)),100*chunkSize,size%100);
@@ -208,6 +212,7 @@ void CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 	}
 
 	loadFromFile.closeFile(false,false);
+	return true;
 }
 
 bool CrezSoundTranslator::onSaveSound(const string filename,CSound *sound) const
@@ -263,7 +268,7 @@ bool CrezSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 		{
 			for(unsigned i=0;i<sound->getChannelCount();i++)
 			{
-				BEGIN_PROGRESS_BAR("Saving Channel "+istring(i),0,99);
+				BEGIN_CANCEL_PROGRESS_BAR("Saving Channel "+istring(i),0,99);
 
 				TPoolAccesser<sample_t,CSound::PoolFile_t> dest=saveToFile.createPool<sample_t>("Channel "+istring(i+1));
 
@@ -274,7 +279,13 @@ bool CrezSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 					for(unsigned int t=0;t<100;t++)
 					{
 						dest.copyData(t*chunkSize,sound->getAudio(i),t*chunkSize,chunkSize,true);
-						UPDATE_PROGRESS_BAR(t);
+
+						UPDATE_PROGRESS_BAR__IF_CANCEL(t)
+						{ // cancelled
+							saveToFile.closeFile(false,true);
+							END_PROGRESS_BAR();
+							return false;
+						}
 					}
 				}
 				dest.copyData(100*chunkSize,sound->getAudio(i),100*chunkSize,sound->getLength()%100,true);
@@ -285,11 +296,10 @@ bool CrezSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 		else
 			throw(runtime_error(string(__func__)+" -- unhandled format conversion while saving"));
 	}
-	
 
 	saveToFile.closeFile(false,false);
 
-	return(true);
+	return true;
 }
 
 

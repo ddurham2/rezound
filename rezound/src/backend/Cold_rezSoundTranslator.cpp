@@ -36,7 +36,7 @@ Cold_rezSoundTranslator::~Cold_rezSoundTranslator()
 {
 }
 
-void Cold_rezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
+bool Cold_rezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 {
 	FILE *f=NULL;
 	CRezPoolAccesser *accessers[MAX_CHANNELS]={0};
@@ -122,6 +122,7 @@ void Cold_rezSoundTranslator::onLoadSound(const string filename,CSound *sound) c
 			delete accessers[t];
 		throw;
 	}
+	return true;
 }
 
 bool Cold_rezSoundTranslator::onSaveSound(const string filename,CSound *sound) const

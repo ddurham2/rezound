@@ -130,7 +130,13 @@ void ASoundFileManager::prvOpen(const string &filename,bool readOnly,bool doRegi
 		if(translatorToUse==NULL)
 			translatorToUse=getTranslator(filename,/*isRaw*/false);
 		sound=new CSound;
-		translatorToUse->loadSound(filename,sound);
+
+		if(!translatorToUse->loadSound(filename,sound))
+		{ // cancelled
+			delete sound;
+			return;
+		}
+
 		channel=soundPlayer->newSoundPlayerChannel(sound);
 		loaded=new CLoadedSound(filename,channel,readOnly,translatorToUse);
 

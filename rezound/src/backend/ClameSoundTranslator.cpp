@@ -114,7 +114,7 @@ static const string fixEscapes(const string _filename)
 
 	// ??? could just return a CSound object an have used the one constructor that takes the meta info
 	// ??? but, then how would I be able to have createWorkingPoolFileIfExists
-void ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) const
+bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 {
 	if(gPathToLame=="")
 		throw(runtime_error(string(__func__)+" -- path to 'lame' not set"));
@@ -245,10 +245,14 @@ void ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 	
 		throw;
 	}
+
+	return true;
 }
 
 bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 {
+	bool ret=true;
+
 	if(gPathToLame=="")
 		throw(runtime_error(string(__func__)+" -- path to 'lame' not set"));
 
@@ -371,7 +375,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 			TAutoBuffer<sample_t> buffer(BUFFER_SIZE*channelCount);
 			sample_pos_t pos=0;
 
-			BEGIN_PROGRESS_BAR("Saving Sound",0,size);
+			BEGIN_CANCEL_PROGRESS_BAR("Saving Sound",0,size);
 			while(pos<size)
 			{
 				size_t chunkSize=BUFFER_SIZE;
@@ -390,12 +394,19 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 				if(fwrite((void *)((sample_t *)buffer),sizeof(sample_t)*channelCount,chunkSize,p)!=chunkSize)
 					fprintf(stderr,"%s -- dropped some data while writing\n",__func__);
 
-				UPDATE_PROGRESS_BAR(pos);
+				UPDATE_PROGRESS_BAR__IF_CANCEL(pos)
+				{ // cancelled
+					END_PROGRESS_BAR();
+					ret=false;
+					goto cancelled;
+				}
 			}
 			END_PROGRESS_BAR();
 		}
 		else
 			throw(runtime_error(string(__func__)+" -- internal error -- an unhandled sample_t type"));
+
+		cancelled:
 
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 			delete accessers[t];
@@ -418,7 +429,10 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 		throw;
 	}
 
-	return(true);
+	if(!ret)
+		remove(filename.c_str()); // remove the cancelled file
+
+	return ret;
 }
 
 

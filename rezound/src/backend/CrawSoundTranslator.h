@@ -42,7 +42,7 @@ public:
 
 protected:
 
-	void onLoadSound(const string filename,CSound *sound) const;
+	bool onLoadSound(const string filename,CSound *sound) const;
 	bool onSaveSound(const string filename,CSound *sound) const;
 
 private:
