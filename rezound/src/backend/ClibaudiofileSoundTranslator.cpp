@@ -226,16 +226,18 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 
 			TAutoBuffer<sample_t> buffer((size_t)(afGetVirtualFrameSize(h,AF_DEFAULT_TRACK,1)*4096/sizeof(sample_t)));
 			sample_pos_t pos=0;
-			AFframecount count=size/4096+1;
+			AFframecount count=size/4096;
 			CStatusBar statusBar(_("Loading Sound"),0,size,true);
-			for(AFframecount t=0;t<count;t++)
+			unsigned total=0;
+			for(AFframecount t=0;t<=count;t++)
 			{
-				const int chunkSize=  (t==count-1 ) ? size%4096 : 4096;
+				const int chunkSize= (t==count) ? ((size%4096)-1/* substracting one because libaudiofile is reporting 1 more than it will read*/) : 4096;
 				if(chunkSize!=0)
 				{
 					const int read=afReadFrames(h,AF_DEFAULT_TRACK,(void *)buffer,chunkSize);
 					if(read>0)
 					{
+						total+=read;
 						for(unsigned c=0;c<channelCount;c++)
 						{
 							for(int i=0;i<read;i++)
@@ -541,11 +543,11 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,con
 			// save the audio data
 			TAutoBuffer<sample_t> buffer((size_t)(channelCount*4096));
 			sample_pos_t pos=0;
-			AFframecount count=saveLength/4096+1;
+			AFframecount count=saveLength/4096;
 			CStatusBar statusBar(_("Saving Sound"),0,saveLength,true);
-			for(AFframecount t=0;t<count;t++)
+			for(AFframecount t=0;t<=count;t++)
 			{
-				const int chunkSize=  (t==count-1 ) ? saveLength%4096 : 4096;
+				const int chunkSize= (t==count) ? (saveLength%4096) : 4096;
 				if(chunkSize!=0)
 				{
 					for(unsigned c=0;c<channelCount;c++)
