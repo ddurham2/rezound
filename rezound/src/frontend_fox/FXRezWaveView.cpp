@@ -894,7 +894,7 @@ void FXWaveRuler::focusNextCue()
 {
 	if(focusedCueIndex==0xffffffff)
 	{
-		size_t dummy;
+		sample_pos_t dummy;
 		if(!sound->findNearestCue(0,focusedCueIndex,dummy))
 			focusedCueIndex=0xffffffff;
 		else
@@ -915,7 +915,6 @@ void FXWaveRuler::focusPrevCue()
 		focusNextCue(); // would implement the same thing here, so just call it
 	else
 	{
-		size_t dummy;
 		if(sound->findPrevCue(focusedCueTime,focusedCueIndex))
 			focusedCueTime=sound->getCueTime(focusedCueIndex);
 		else
@@ -925,7 +924,7 @@ void FXWaveRuler::focusPrevCue()
 
 void FXWaveRuler::focusFirstCue()
 {
-	size_t dummy;
+	sample_pos_t dummy;
 	if(!sound->findNearestCue(0,focusedCueIndex,dummy))
 		focusedCueIndex=0xffffffff;
 	else
@@ -934,7 +933,7 @@ void FXWaveRuler::focusFirstCue()
 
 void FXWaveRuler::focusLastCue()
 {
-	size_t dummy;
+	sample_pos_t dummy;
 	if(!sound->findNearestCue(sound->getLength()-1,focusedCueIndex,dummy))
 		focusedCueIndex=0xffffffff;
 	else
