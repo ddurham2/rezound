@@ -720,7 +720,7 @@ long CMetersWindow::onUpdateMeters(FXObject *sender,FXSelector sel,void *ptr)
 
 	// schedule another update again in METER_UPDATE_RATE milliseconds
 	timeout=getApp()->addTimeout(gMeterUpdateTime,this,ID_UPDATE_TIMEOUT);
-	return 0;
+	return 0; // returning 0 because 1 makes it use a ton of CPU (because returning 1 causes FXApp::refresh() to be called)
 }
 
 long CMetersWindow::onLabelFrameConfigure(FXObject *sender,FXSelector,void*)
