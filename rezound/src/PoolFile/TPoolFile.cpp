@@ -411,17 +411,26 @@ template<class l_addr_t,class p_addr_t>
 	try
 	{
 		// need to probably wait for any outstanding accessers to deallocate
-		invalidateAllCachedBlocks();
+		if(_removeFile)
+		{
+			closeSATFiles();
+			blockFile.close(true);
+		}
+		else
+		{
+			invalidateAllCachedBlocks();
 
-		if(_defrag)
-			defrag();
+			if(_defrag)
+				defrag();
 
-		writeMetaData(&blockFile);
-		writeDirtyIndicator(false,&blockFile);
-		closeSATFiles();
+			writeMetaData(&blockFile);
+			writeDirtyIndicator(false,&blockFile);
 
-		blockFile.sync();
-		blockFile.close(_removeFile);
+			closeSATFiles();
+
+			blockFile.sync();
+			blockFile.close(false);
+		}
 		init();
 
 		//writeStructureInfoUnlock();
