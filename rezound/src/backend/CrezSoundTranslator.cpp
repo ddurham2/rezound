@@ -194,7 +194,7 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 			{
 				for(unsigned i=0;i<channelCount;i++)
 				{
-					CStatusBar statusBar("Loading Channel "+istring(i),0,99,true);
+					CStatusBar statusBar("Loading Channel "+istring(i+1)+"/"+istring(channelCount),0,99,true);
 
 					CSound::CInternalRezPoolAccesser dest=sound->getAudioInternal(i);
 
@@ -290,7 +290,7 @@ bool CrezSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 		{
 			for(unsigned i=0;i<sound->getChannelCount();i++)
 			{
-				CStatusBar statusBar("Saving Channel "+istring(i),0,99,true);
+				CStatusBar statusBar("Saving Channel "+istring(i+1)+"/"+istring(sound->getChannelCount()),0,99,true);
 
 				TPoolAccesser<sample_t,CSound::PoolFile_t> dest=saveToFile.createPool<sample_t>("Channel "+istring(i+1));
 
