@@ -661,8 +661,10 @@ private:
 			rot_wx+=width/2;
 			rot_wy+=height/2;
 
-			FXint offset=(FXint)(round(rot_wy)*width+round(rot_wx));
-			if(offset>=0 && offset<(width*height))
+			rot_wx=round(rot_wx);
+			rot_wy=round(rot_wy);
+			FXint offset=(FXint)(rot_wy*width+rot_wx);
+			if((rot_wx>=0 && rot_wx<width && rot_wy>=0 && rot_wy<height) && (offset>=0 && offset<(width*height)))
 				unrotateMapping[sy*width+sx]=offset;
 			else
 				unrotateMapping[sy*width+sx]=0;
