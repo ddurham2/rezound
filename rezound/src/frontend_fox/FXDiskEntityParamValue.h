@@ -26,8 +26,6 @@
 
 #include <string>
 
-#include <fox/fx.h>
-
 class CNestedDataFile;
 
 /*

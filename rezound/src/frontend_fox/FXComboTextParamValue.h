@@ -27,8 +27,6 @@
 #include <vector>
 #include <string>
 
-#include <fox/fx.h>
-
 /*
  * If isEditable is true, then getValue and setValue are interpreted as the 
  * actual value to put in the combo box field.. if isEditable is false, then 

@@ -24,8 +24,6 @@
 #include "../../config/common.h"
 #include "fox_compat.h"
 
-#include <fox/fx.h>
-
 #include <string>
 
 // used to place an invisible FXFrame in another widget to make sure it has a minimum height or width

@@ -54,7 +54,6 @@
 
 #include "rememberShow.h"
 
-
 /* TODO:
  * 	- it is necesary for the owner to specifically delete the FXMenuPane objects it creates
  */
@@ -156,8 +155,6 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 };
 
 FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
-
-#include <fox/fxkeys.h>
 
 #include "drawPortion.h" // for backgroundColor
 
@@ -452,6 +449,7 @@ long CMainWindow::onSoundListHotKey(FXObject *sender,FXSelector sel,void *ptr)
 	up, down, tab, et al.
 	
 */
+
 long CMainWindow::onHotKeyFocusFixup(FXObject *sender,FXSelector sel,void *ptr)
 {
 	switch(((FXEvent*)ptr)->code)

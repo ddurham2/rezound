@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
+
 #ifndef DRAW_PORTION_H
 #define DRAW_PORTION_H
 
@@ -24,8 +25,6 @@
 #include "fox_compat.h"
 
 #include "../backend/CSound_defs.h"
-
-#include <fox/fxdefs.h>
 
 #ifdef FOX_NO_NAMESPACE
 	class FXDCWindow;

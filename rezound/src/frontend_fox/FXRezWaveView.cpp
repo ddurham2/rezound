@@ -813,7 +813,6 @@ long FXWaveRuler::onFocusOut(FXObject* sender,FXSelector sel,void* ptr){
  * some given time I guess (because I dont want every little nudge to be undoable)
  */
 
-#include <fox/fxkeys.h>
 long FXWaveRuler::onKeyPress(FXObject *object,FXSelector sel,void *ptr)
 {
 	FXEvent* event=(FXEvent*)ptr;

@@ -21,17 +21,15 @@
 #ifndef __FXPopupHint_H__
 #define __FXPopupHint_H__
 
+#include "../../config/common.h"
+#include "fox_compat.h"
+
 /*
  * This class derives from FXToolTip except it intercepts the 
  * SEL_UPDATE events and keeps FXToolTip from hiding itself 
  * upon that event.  
  * It also makes autoplace public
  */
-
-#include "../../config/common.h"
-#include "fox_compat.h"
-
-#include <fox/fx.h>
 
 class FXPopupHint : public FXToolTip
 {

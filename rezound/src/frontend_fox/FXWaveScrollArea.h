@@ -24,8 +24,6 @@
 #include "../../config/common.h"
 #include "fox_compat.h"
 
-#include <fox/fx.h>
-
 #include "FXWaveCanvas.h" // for FXWaveCanvas::HorzRecenterTypes
 
 class FXRezWaveView;

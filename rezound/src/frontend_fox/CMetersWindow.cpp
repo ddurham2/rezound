@@ -20,18 +20,27 @@
 
 #include "CMetersWindow.h"
 
+/* 
+ * I would put this in fox_compat.h, but then I get 'multiple definitions' linker errors, this also means 
+ * that I will need to do something different if I start to use it in more than just CMetersWindow.cpp 
+ */
+#ifndef FXBACKBUFFEREDCANVAS_H
+	// if Jeroen hasn't added it yet to libfox, include my implementation of it
+	#include "FXBackBufferedCanvas.h"
+#endif
+
+
 #include <math.h>
 
 #include <stdexcept>
 #include <algorithm>
-
-#include <fox/FXBackBufferedCanvas.h>
 
 #include "../backend/CSound_defs.h"
 #include "../backend/unit_conv.h"
 #include "../backend/ASoundPlayer.h"
 
 #include "settings.h"
+
 
 /*
 ??? I need to make this more general so I can use it for recording or playback

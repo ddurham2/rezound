@@ -20,8 +20,6 @@
 
 #include "drawPortion.h"
 
-#include <fox/fx.h>
-
 #include <math.h>
 
 #include <exception>

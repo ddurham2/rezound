@@ -24,8 +24,6 @@
 #include "../../config/common.h"
 #include "fox_compat.h"
 
-#include <fox/fx.h>
-
 /*
  * This class is a normal FXMenuCommand except that the window it's
  * on doesn't need to setup an event handler for it.  The event

@@ -21,8 +21,6 @@
 #include "../../config/common.h"
 #include "fox_compat.h"
 
-#include <fox/fx.h>
-
 #include <stdexcept>
 #ifdef ENABLE_NLS
 #include <clocale> // for gettext init
@@ -209,7 +207,6 @@ void setupWindows(CMainWindow *mainWindow)
 		mainWindow->createMenus();
 }
 
-#include <fox/fxkeys.h>
 void setupAccels(CMainWindow *mainWindow)
 {
 	FXAccelTable *at=mainWindow->getAccelTable();

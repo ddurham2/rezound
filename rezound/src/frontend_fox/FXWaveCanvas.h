@@ -37,8 +37,6 @@
 #include "../../config/common.h"
 #include "fox_compat.h"
 
-#include <fox/fx.h>
-
 #include "../backend/CSound_defs.h"
 class CLoadedSound;
 

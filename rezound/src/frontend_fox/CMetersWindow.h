@@ -26,8 +26,6 @@
 
 #include <vector>
 
-#include <fox/fx.h>
-
 #include "../backend/CSound_defs.h"
 #include "../misc/TAutoBuffer.h"
 

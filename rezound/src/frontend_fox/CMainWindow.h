@@ -28,8 +28,6 @@
 #include <vector>
 #include <string>
 
-#include <fox/fx.h>
-
 class CSoundWindow;
 class CMetersWindow;
 class CActionMenuCommand;

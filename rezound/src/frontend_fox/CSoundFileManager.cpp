@@ -30,7 +30,6 @@
 #include "CSoundWindow.h"
 #include "CMainWindow.h"
 
-#include <fox/fx.h>
 
 CSoundFileManager *gSoundFileManager=NULL;
 

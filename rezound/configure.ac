@@ -494,7 +494,15 @@ AC_CHECK_HEADER(
 
 # This is a check for a class in a C++ library. To pinpoint the specific version we need we could change what class is linked.
 # it sets $1_CXXFLAGS and $1_LIBS to either something useful or nothing
-ajv_CXX_CHECK_LIB(FOX,FXApp,fox/fx.h,[http://fox-toolkit.org])
+	# need to pass something that says not to error if it's not found so we can continue looking for just libFOX
+ajv_CXX_CHECK_LIB(FOX-1.1,FXApp,fox-1.1/fx.h,[http://fox-toolkit.org],[],false)
+if test -z "$FOX_1_1_LIBS"; then
+	# libFOX-1.1 was not found, now try libFOX
+	ajv_CXX_CHECK_LIB(FOX,FXApp,fox/fx.h,[http://fox-toolkit.org],[],true)
+fi
+
+AC_SUBST(FOX_1_1_CXXFLAGS)
+AC_SUBST(FOX_1_1_LIBS)
 AC_SUBST(FOX_CXXFLAGS)
 AC_SUBST(FOX_LIBS)
 
@@ -502,24 +510,6 @@ AC_SUBST(FOX_LIBS)
 AC_PATH_PROG(RESWRAP, reswrap)
 	test -z "$RESWRAP" && AC_MSG_ERROR([reswrap not found (it comes with fox) -- perhaps you need to add reswrap's location to your PATH])
 
-
-
-
-
-################################################################################
-# Supply header files (again) if their missing (and we have an implementation) #
-################################################################################
-
-# check for FXBackBufferedCanvas.h and use my implementation if not found
-if ! test -z "$FOX_LIBS"; then
-	AC_CHECK_HEADER(fox/FXBackBufferedCanvas.h,
-		[rm -f $builddir/src/misc/missing/generated/fox/FXBackBufferedCanvas.h],
-		[
-			mkdir -p $builddir/src/misc/missing/generated/fox 2>/dev/null
-			cp $srcdir/src/misc/missing/FXBackBufferedCanvas.h-missing $builddir/src/misc/missing/generated/fox/FXBackBufferedCanvas.h
-		]
-	)
-fi
 
 
 

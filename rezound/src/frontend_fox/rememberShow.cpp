@@ -32,8 +32,6 @@
 #include <string>
 #include <algorithm>
 
-#include <fox/fx.h>
-
 #include <CNestedDataFile/CNestedDataFile.h>
 
 #include "settings.h"

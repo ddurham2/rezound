@@ -100,9 +100,9 @@ rezound_LDADD= libfrontend.la\
 	$(top_builddir)/src/backend/Remaster/libRemaster.la \
 	$(top_builddir)/src/backend/Generate/libGenerate.la \
 	$(top_builddir)/src/misc/CNestedDataFile/libmiscCN.la \
-	$(top_builddir)/src/PoolFile/libPoolFile.la @FOX_LIBS@
+	$(top_builddir)/src/PoolFile/libPoolFile.la @FOX_1_1_LIBS@ @FOX_LIBS@
 
-AM_CXXFLAGS=@FOX_CXXFLAGS@
+AM_CXXFLAGS=@FOX_1_1_CXXFLAGS@ @FOX_CXXFLAGS@
 
 noinst_HEADERS=\
 	fox_compat.h \
@@ -149,6 +149,7 @@ noinst_HEADERS=\
 	FXWaveScrollArea.h \
 	FXWaveCanvas.h \
 	FXPopupHint.h \
+	FXBackBufferedCanvas.h \
 	drawPortion.h \
 	rememberShow.h \
 	custom_cursors.h \

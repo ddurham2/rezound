@@ -1,7 +1,18 @@
 #ifndef __fox_compat_H__
 #define __fox_compat_H__
 
-#include <fox/fxver.h>
+#include "../../config/common.h"
+
+#if defined(HAVE_LIBFOX)
+	#include <fox/fx.h>
+	#include <fox/fxkeys.h>
+#elif defined(HAVE_LIBFOX_1_1)
+	#include <fox-1.1/fx.h>
+	#include <fox-1.1/fxkeys.h>
+#else
+	#error no HAVE_LIBFOX defined
+#endif
+
 
 #define REZ_FOX_VERSION ((FOX_MAJOR*10000)+(FOX_MINOR*100)+FOX_LEVEL)
 
@@ -50,7 +61,6 @@
 #endif
 
 #if REZ_FOX_VERSION<10125
-	#include <fox/fx.h>  // so that the class gets defined before we redefine the method name's meaning
 	#define addTimeout(tgt,sel,ms) addTimeout(ms,tgt,sel)
 #endif
 

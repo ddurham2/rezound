@@ -38,8 +38,6 @@
 
 #include "../backend/ASoundTranslator.h"
 
-#include <fox/fx.h>
-
 
 CFrontendHooks::CFrontendHooks(FXWindow *_mainWindow) :
 	mainWindow(_mainWindow),

@@ -20,6 +20,15 @@ then
 	exit 1
 fi
 
+# now determine if reswrap should be run with -n or -r depending on the version of reswrap
+maj_ver=`reswrap -v 2>&1 | head -1 | cut -f2 -d' ' | cut -f1 -d'.'`
+if test $maj_ver -le 2; then 	# versions 1 and 2
+	RESWRAP="$RESWRAP -n"
+else				# version 3
+	RESWRAP="$RESWRAP -r"
+fi
+
+
 H_FILE=CFOXIcons.h.tmp
 C_FILE=CFOXIcons.cpp
 
@@ -29,7 +38,7 @@ echo "#ifndef __CFOXIcons_H__" >> $H_FILE
 echo "#define __CFOXIcons_H__" >> $H_FILE
 echo "#include \"../../config/common.h\"" >> $H_FILE
 echo  >> $H_FILE
-echo "#include <fox/fx.h>" >> $H_FILE
+echo "#include \"fox_compat.h\"" >> $H_FILE
 echo  >> $H_FILE
 echo "class CFOXIcons" >> $H_FILE
 echo "{" >> $H_FILE
@@ -42,29 +51,10 @@ echo >> $H_FILE
 
 
 # this function encodes filenames with spaces or other non-printable characters into something that will be a valid C-variable name
-function filenameToVarname # $1 is a [path/]filename
+function filenameToVarname # $1 is a [path/]filename.ext
 {
-	name=`basename "${1%\.*}"`	# remove extention and pathname
-
-	# for each characters in the name
-	t=0
-	while [ $t -lt ${#1} ]
-	do
-		c=${name:t:1}
-
-		# these encode characters to other valid C-variable characters
-		c=${c/\ /_}
-		c=${c/\[/_}
-		c=${c/\]/_}
-		c=${c/\,/_}
-		c=${c/\-/_}
-
-		echo -n $c
-		#echo -n $c >&2
-			
-		t=$((t + 1))
-	done
-	#echo >&2
+	# remove path and extension and translate chars
+	basename "${1%\.*}" | tr ' [],-' '_____'
 }
 
 # for each file create a data-member in the class
@@ -111,7 +101,7 @@ ls $IMAGE_PATH/*.gif | while read i
 do
 	varname=`filenameToVarname "$i"`
 	echo "static " >> $C_FILE
-	$RESWRAP -n "${varname}_icon" "$i" >> $C_FILE
+	$RESWRAP "${varname}_icon" "$i" >> $C_FILE
 done
 
 

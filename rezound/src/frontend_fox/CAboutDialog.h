@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-
 #ifndef __CAboutDialog_H__
 #define __CAboutDialog_H__
 
@@ -26,9 +25,6 @@
 #include "fox_compat.h"
 
 class CAboutDialog;
-
-#include <fox/fx.h>
-
 extern CAboutDialog *gAboutDialog;
 
 class CAboutDialog : public FXDialogBox

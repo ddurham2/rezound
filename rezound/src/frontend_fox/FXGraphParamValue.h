@@ -26,8 +26,6 @@
 
 #include <string>
 
-#include <fox/fx.h>
-
 #include "../backend/CSound_defs.h"
 #include "../backend/CGraphParamValueNode.h"
 

@@ -25,8 +25,6 @@
 
 #include <stdexcept>
 
-#include <fox/fx.h>
-
 #include "CProgressDialog.h"
 
 const string escapeAmpersand(const string i)

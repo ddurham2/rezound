@@ -31,7 +31,7 @@
 // had a separate .h and .cpp file.. I combined it for a quick and dirty way not to need a
 // lib
 
-#include <fox/fx.h> // change to "FXCanvas.h"
+//#include "FXCanvas.h" // uncomment when putting into lib
 
 // namespace FX {
 
