@@ -446,6 +446,7 @@ void CMainWindow::createMenus()
 		new FXMenuCommand(menu,"&Save\tCtrl+S",FOXIcons->file_save,this,ID_FILE_SAVE_MENUITEM);
 		new FXMenuCommand(menu,"Save &As",FOXIcons->file_save_as,this,ID_FILE_SAVE_AS_MENUITEM);
 		new CActionMenuCommand(new CSaveSelectionAsActionFactory(),menu,"",FOXIcons->file_save_as);
+		new CActionMenuCommand(new CSaveAsMultipleFilesActionFactory(new CSaveAsMultipleFilesDialog(this)),menu,"",FOXIcons->file_save_as);
 		new FXMenuCommand(menu,"&Close\tCtrl+W",FOXIcons->file_close,this,ID_FILE_CLOSE_MENUITEM);
 		new FXMenuCommand(menu,"Re&vert",FOXIcons->file_revert,this,ID_FILE_REVERT_MENUITEM);
 

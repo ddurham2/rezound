@@ -31,7 +31,7 @@ CInsertSilenceDialog::CInsertSilenceDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Insert Silence")
 {
 	void *p=newHorzPanel(NULL);
-		addTextEntry(p,"Length","seconds",1.0,0,10000);
+		addNumericTextEntry(p,"Length","seconds",1.0,0,10000);
 }
 
 
@@ -42,7 +42,7 @@ CRotateDialog::CRotateDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Rotate")
 {
 	void *p=newHorzPanel(NULL);
-		addTextEntry(p,"Amount","seconds",1.0,0,10000);
+		addNumericTextEntry(p,"Amount","seconds",1.0,0,10000);
 }
 
 
@@ -91,7 +91,28 @@ CAddChannelsDialog::CAddChannelsDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Add Channels")
 {
 	void *p=newHorzPanel(NULL);
-		addTextEntry(p,"Insert Where","",0,0,MAX_CHANNELS);
-		addTextEntry(p,"Insert Count","",1,1,MAX_CHANNELS);
+		addNumericTextEntry(p,"Insert Where","",0,0,MAX_CHANNELS);
+		addNumericTextEntry(p,"Insert Count","",1,1,MAX_CHANNELS);
+}
+
+
+
+// --- save as multiple files -----------------
+
+#include "../backend/ASoundTranslator.h"
+CSaveAsMultipleFilesDialog::CSaveAsMultipleFilesDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Save As Multiple Files")
+{
+	void *p=newVertPanel(NULL,false);
+		void *p1=newVertPanel(p);
+			addDiskEntityEntry(p1,"Save to Directory","",FXDiskEntityParamValue::detDirectory,"All the files will be saved into this directory");
+			addStringTextEntry(p1,"Filename Prefix","","This will be added to the front of the filename");
+			addStringTextEntry(p1,"Filename Suffix","","This will be added to the end of the filename");
+			addComboTextEntry(p1,"Format",ASoundTranslator::getFlatFormatList(),"The format to save each segment as",false);
+		p1=newVertPanel(p);
+			addCheckBoxEntry(p1,"Open Saved Segments",false,"Open the Segments After Saving Them");
+
+
+	
 }
 

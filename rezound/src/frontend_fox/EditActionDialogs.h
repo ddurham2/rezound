@@ -74,6 +74,18 @@ public:
 
 
 
+// --- save as multiple filenames --------
+
+class CSaveAsMultipleFilesDialog : public CActionParamDialog
+{
+public:
+	CSaveAsMultipleFilesDialog(FXWindow *mainWindow);
+	virtual ~CSaveAsMultipleFilesDialog(){}
+};
+
+
+
+
 
 
 #endif
