@@ -93,6 +93,7 @@ bool CPasteAsNewEdit::doesWarrantSaving() const
 CPasteAsNewEditFactory::CPasteAsNewEditFactory() :
 	AActionFactory(N_("Paste As New"),_("Paste the Clipboard's Contents into a Newly Created Sound Window"),NULL,NULL,false,false)
 {
+	requiresALoadedSound=false;
 	selectionPositionsAreApplicable=false;
 }
 
