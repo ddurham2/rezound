@@ -1,12 +1,20 @@
 
-1. Put in a check for gnucc, AC_CHECK_HEADER isn't working, so I'll have to write a macro. Also I want to put an option to override the check similar to the other override options.
+1. Put in a check for gnucc, AC_CHECK_HEADER isn't working, so I'll have to
+write a macro. Also I want to put an option to override the check similar to
+the other override options.
 
-2. Look for other possible trouble spots such as stdint.h int32_t int16_t etc and set up a common.h header to deal with these problems. 
+2. Look for other possible trouble spots such as stdint.h int32_t int16_t etc
+and set up a common.h header to deal with these problems. 
 
 
-- How is the best way to enable the -g flag for the compiler? Is it a flag to configure?  I didn't see a --enable-debug option or anything in configure
-	- the -g, of course, is necessary for being able to use gdb to debug the application
-	- I would be happy to always have it enabled, even on releases unless they configure it with --strip-debug (which is a flag in configure, so I suppose that's what it does, that is strips the debug info out of the binary at the end)
+- How is the best way to enable the -g flag for the compiler? Is it a flag to
+  configure?  I didn't see a --enable-debug option or anything in configure
+	- the -g, of course, is necessary for being able to use gdb to debug
+	  the application
+	- I would be happy to always have it enabled, even on releases unless
+	  they configure it with --strip-debug (which is a flag in configure,
+	  so I suppose that's what it does, that is strips the debug info out
+	  of the binary at the end)
 
 - THE MOST IMPORTANT -
 	- Does it do this on yours (btw- I'm running on a 1.2ghz... I feel for
@@ -15,29 +23,6 @@
 	  it would recompile the whole thing.. Perhaps some global dependancy
 	  is getting touched with the current date?
 
-
-	- I did not check into cvs any of these files because I determined that
-	  they were all created after running libtoolize, bootstrap, and
-	  configure ./configure ./aclocal.m4
-
-			Makefile.in from any directory
-
-			./config/config.guess ./config/config.h.in
-			./config/config.sub ./config/install-sh
-			./config/ltconfig  -- libtoolize, bootstrap, nor
-			configure ever regenerated this file, so I assume it
-			may not even be necessary?  ./config/ltmain.sh
-			./config/missing ./config/mkinstalldirs
-			./config/stamp-h ./config/stamp-h.in
-
-		- I realize that someone who just anonymously checks out the
-		  code from CVS would need autotools installed.. but if they're
-		  going to develop, then they probably already have these tools
-			- and I mention it elsewhere, but I would think
-			  bootstrap should run 'libtoolize -f' also
-
-		- If for some reason we did want these files checked in, it
-		  would quite easily be done
 
 --------------------------------------------------------
 --------------------------------------------------------
@@ -148,10 +133,10 @@
   find one before the other.. 
 
 
-- since I seemed to have found a buncha files that are also script generated but 
-  not are not removed by bootstrap --clean I didn't know if you want to add them
-  to be removed also.  If you do want to see just which files these were (i.e.
-  the symlinks too) just do a cvs checkout to another top level directory and
-  you'll see all the files that aren't in there that are in the normal cvs
-  repository (after doing a bootstrap --clean)
+- since I seemed to have found a buncha files that are also script generated
+  but not are not removed by bootstrap --clean I didn't know if you want to add
+  them to be removed also.  If you do want to see just which files these were
+  (i.e.  the symlinks too) just do a cvs checkout to another top level
+  directory and you'll see all the files that aren't in there that are in the
+  normal cvs repository (after doing a bootstrap --clean)
 

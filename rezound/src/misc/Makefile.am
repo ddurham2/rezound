@@ -2,7 +2,7 @@
 ## Process this file with automake to create Makefile.in
 ##
 ##
-##   Copyright (C) 2002 - David W. Durham
+##   Copyright (C) 2002 - Anthony Ventimiglia
 ##   
 ##   This file is part of ReZound, an audio editing application, 
 ##   

@@ -1,5 +1,4 @@
 /* 
- * common.h Written by Anthony Ventimiglia
  * 
  * Copyright (C) 2002 - Anthony Ventimiglia
  * 
@@ -51,7 +50,7 @@
 #endif
 
 /* Taken out of CXXFLAGS from am_include.mk (I think ccgnu wants this */
-#define _GNU_SOURCE
+#define _GNU_SOURCE (1)
 
 
 #endif /* COMMON_H */

@@ -2,7 +2,7 @@
  * written by Anthony Ventimiglia
  * process this file with autoheader to create config.h.in
  *
- * Copyright (C) 2002 - David W. Durham
+ * Copyright (C) 2002 - Anthony Ventimiglia
  * 
  * This file is part of ReZound, an audio editing application.
  * 

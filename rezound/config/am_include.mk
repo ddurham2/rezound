@@ -48,7 +48,6 @@ INCLUDES=\
 ##
 ## The Debian gcc chokes on -Wno-unused-variable and -Wno-unused-function
 ## so I'm removing it for now.
-##CXXFLAGS=-Wall -Wno-unused-function -Wno-unused-variable -D_GNU_SOURCE
 CXXFLAGS=-Wall 
 
 ## LDFLAGS will be added at link time
