@@ -71,7 +71,7 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 			dialog->wasShown=false;
 
 		if(!doPreActionSetup(loadedSound))
-			return(false);
+			return false;
 
 		CActionSound actionSound(loadedSound->channel,gCrossfadeEdges);
 		if(!showChannelSelectDialog || channelSelectDialog==NULL || (channelSelectDialog->wasShown=true,channelSelectDialog->show(&actionSound,actionParameters)))
@@ -81,7 +81,7 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 			if(dialog!=NULL)
 			{
 				if(!(dialog->wasShown=true,dialog->show(&actionSound,actionParameters)))
-					return(false);
+					return false;
 			}
 
 			action=manufactureAction(actionSound,actionParameters);
@@ -110,26 +110,31 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 			}
 			*/
 
-			return(ret);
+			return ret;
 		}
 
-		return(false);
+		return false;
 	}
 	catch(exception &e)
 	{
 		Error(e.what());
-		return(false);
+		return false;
 	}
 }
 
 const string &AActionFactory::getName() const
 {
-	return(actionName);
+	return actionName;
 }
 
 const string &AActionFactory::getDescription() const
 {
-	return(actionDescription);
+	return actionDescription;
+}
+
+bool AActionFactory::hasDialog() const
+{
+	return dialog!=NULL;
 }
 
 
@@ -185,13 +190,13 @@ bool AAction::getResultingCrossfadePoints(const CActionSound &actionSound,sample
 {
 	start=actionSound.start;
 	stop=actionSound.stop;
-	return(true);
+	return true;
 }
 
 bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _willResize,bool crossfadeEdgesIsApplicable)
 {
 	if(done)
-		throw(runtime_error(string(__func__)+" -- action has already been done"));
+		throw runtime_error(string(__func__)+" -- action has already been done");
 
 	done=true;
 
@@ -286,7 +291,7 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 
 		actionSound.sound->flush();
 
-		return(ret);
+		return ret;
 	}
 	catch(EUserMessage &e)
 	{
@@ -296,7 +301,7 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 			actionSound.sound->unlockSize();
 
 		Message(e.what());
-		return(false);
+		return false;
 	}
 	catch(...)
 	{
@@ -314,7 +319,7 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 void AAction::undoAction(CSoundPlayerChannel *channel)
 {
 	if(!done)
-		throw(runtime_error(string(__func__)+" -- action has not yet been done"));
+		throw runtime_error(string(__func__)+" -- action has not yet been done");
 
 	// willResize is set from doAction, and it's needed value should be consistant with the way the action will be undo
 	if(willResize)
@@ -325,7 +330,7 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 	try
 	{
 		if(canUndo()!=curYes)
-			throw(runtime_error(string(__func__)+" -- cannot undo action"));
+			throw runtime_error(string(__func__)+" -- cannot undo action");
 
 		uncrossfadeEdges();
 
@@ -395,7 +400,7 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 
 AAction::CanUndoResults AAction::canUndo() const
 {
-	return(canUndo(actionSound));
+	return canUndo(actionSound);
 }
 
 void AAction::setSelection(sample_pos_t start,sample_pos_t stop,CSoundPlayerChannel *channel)
@@ -444,7 +449,7 @@ void AAction::prepareForInnerCrossfade(const CActionSound &actionSound)
 
 		sample_pos_t startPos,stopPos;
 		if(!getResultingCrossfadePoints(actionSound,startPos,stopPos))
-			throw(EUserMessage("Cannot anticipate certain information necessary to do an inner crossfade for action"));
+			throw EUserMessage("Cannot anticipate certain information necessary to do an inner crossfade for action");
 
 		sample_pos_t crossfadeStartTime=(sample_pos_t)(gCrossfadeStartTime*actionSound.sound->getSampleRate()/1000.0);
 		sample_pos_t crossfadeStopTime=(sample_pos_t)(gCrossfadeStopTime*actionSound.sound->getSampleRate()/1000.0);
@@ -782,7 +787,7 @@ void AAction::freeAllTempPools()
 void AAction::moveSelectionToTempPools(const CActionSound &actionSound,const MoveModes moveMode,sample_pos_t replaceLength,sample_pos_t fudgeFactor)
 {
 	if(tempAudioPoolKey!=-1)
-		throw(runtime_error(string(__func__)+" -- selection already moved"));
+		throw runtime_error(string(__func__)+" -- selection already moved");
 
 	restoreMoveMode=moveMode;
 
@@ -827,9 +832,9 @@ void AAction::moveSelectionToTempPools(const CActionSound &actionSound,const Mov
 
 	case mmAllButSelection:
 		if(fudgeFactor>0)
-			throw(runtime_error(string(__func__)+" -- fudgeFactor cannot be used when moveMethod is mmAllButSelection"));
+			throw runtime_error(string(__func__)+" -- fudgeFactor cannot be used when moveMethod is mmAllButSelection");
 		if(replaceLength>0)
-			throw(runtime_error(string(__func__)+" -- replaceLength cannot be used when moveMethod is mmAllButSelection"));
+			throw runtime_error(string(__func__)+" -- replaceLength cannot be used when moveMethod is mmAllButSelection");
 
 		restoreWhere=0;
 		restoreLength=start;
@@ -841,7 +846,7 @@ void AAction::moveSelectionToTempPools(const CActionSound &actionSound,const Mov
 		break;
 
 	default:
-		throw(runtime_error(string(__func__)+" -- unhandled moveMode: "+istring(moveMode)));
+		throw runtime_error(string(__func__)+" -- unhandled moveMode: "+istring(moveMode));
 	}
 }
 
@@ -861,7 +866,7 @@ void AAction::restoreSelectionFromTempPools(const CActionSound &actionSound,samp
 
 	case mmAllButSelection:
 		if(removeWhere!=0 || removeLength!=0)
-			throw(runtime_error(string(__func__)+" -- cannot pass removeWhere/removeLength when moveMode was mmAllButSelection"));
+			throw runtime_error(string(__func__)+" -- cannot pass removeWhere/removeLength when moveMode was mmAllButSelection");
 
 		// on both sides outside of start and stop
 		actionSound.sound->moveDataFromTemp(actionSound.doChannel,tempAudioPoolKey,restoreWhere,restoreLength,false,restoreTotalLength);
@@ -872,7 +877,7 @@ void AAction::restoreSelectionFromTempPools(const CActionSound &actionSound,samp
 		break;
 
 	default:
-		throw(runtime_error(string(__func__)+" -- unhandled moveMode: "+istring(restoreMoveMode)));
+		throw runtime_error(string(__func__)+" -- unhandled moveMode: "+istring(restoreMoveMode));
 	}
 }
 
