@@ -28,6 +28,7 @@ include $(top_srcdir)/config/am_include.mk
 ## in make dist
 noinst_HEADERS= \
 		CCopyCutDeleteEdit.h \
+		CCopyCutToNewEdit.h \
 		CCropEdit.h \
 		CCueAction.h \
 		CInsertSilenceEdit.h \
@@ -48,6 +49,7 @@ noinst_HEADERS= \
 noinst_LTLIBRARIES=libEdits.la
 libEdits_la_SOURCES= \
 		CCopyCutDeleteEdit.cpp \
+		CCopyCutToNewEdit.cpp \
 		CCropEdit.cpp \
 		CCueAction.cpp \
 		CInsertSilenceEdit.cpp \

@@ -25,6 +25,7 @@
 
 #include "CCropEdit.h"
 #include "CCopyCutDeleteEdit.h"
+#include "CCopyCutToNewEdit.h"
 #include "CMuteEdit.h"
 #include "CSelectionEdit.h"
 #include "CPasteEdit.h"
