@@ -22,6 +22,8 @@
 #include "CSound.h"
 #include "AStatusComm.h"
 
+#include <stdio.h>
+
 #include <stdexcept>
 #include <typeinfo>
 
@@ -33,6 +35,9 @@ CrezSoundTranslator::~CrezSoundTranslator()
 {
 }
 
+// need to include this I use some of the template *methods* for types that are no where else
+// so the explicit instantation at the bottom of CSound.cpp doesn't instantiate everything
+#include <TPoolFile.cpp>
 
 struct RFormatInfo1
 {
@@ -54,7 +59,7 @@ typedef TPoolAccesser<RFormatInfo1,CSound::PoolFile_t > CFormat1InfoPoolAccesser
 
 enum PCMTypes
 {
-	pcmSigned16Bit=1
+	pcmSigned16BitInteger=1
 };
 
 struct RFormatInfo2
@@ -108,7 +113,7 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 			size=r.size;
 			sampleRate=r.sampleRate;
 			channelCount=r.channelCount;
-			PCMType=pcmSigned16Bit;
+			PCMType=pcmSigned16BitInteger;
 		}
 		else if(version==2)
 		{
@@ -180,7 +185,7 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 	// read the audio
 	{
 		// ??? need to do convertions to the native type
-		if((PCMType==pcmSigned16Bit && typeid(sample_t)==typeid(int16_t)) )
+		if((PCMType==pcmSigned16BitInteger && typeid(sample_t)==typeid(int16_t)) )
 		{
 			for(unsigned i=0;i<channelCount;i++)
 			{
@@ -223,7 +228,7 @@ bool CrezSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 	saveToFile.openFile(filename,true);
 	saveToFile.clear();
 
- 	PCMTypes PCMType=pcmSigned16Bit; // ??? or what the user asked as export format 
+ 	PCMTypes PCMType=pcmSigned16BitInteger; // ??? or what the user asked as export format 
 
 	// write the meta data pool
 	{
@@ -264,7 +269,7 @@ bool CrezSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 		// ??? need to make sure it's going to fit before I start writing... a convertion in sample format could as much as double the size
 
 		// need to do conversions from the native type ???
-		if((PCMType==pcmSigned16Bit && typeid(sample_t)==typeid(int16_t)) )
+		if((PCMType==pcmSigned16BitInteger && typeid(sample_t)==typeid(int16_t)) )
 		{
 			for(unsigned i=0;i<sound->getChannelCount();i++)
 			{
