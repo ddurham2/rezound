@@ -64,8 +64,9 @@ CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
 	label(new FXLabel(getFrame(),"Pasting Routing Information:",NULL,LAYOUT_CENTER_X)),
 	horzSeparator(new FXHorizontalSeparator(getFrame())),
 	topFrame(new FXHorizontalFrame(getFrame())),
-		repeatFrame(new FXVerticalFrame(topFrame,LAYOUT_CENTER_X)),
-		contents(new FXMatrix(topFrame,2,MATRIX_BY_COLUMNS | LAYOUT_FILL_X|LAYOUT_FILL_Y))
+		routingContents(new FXMatrix(topFrame,2,MATRIX_BY_COLUMNS | LAYOUT_FILL_X|LAYOUT_FILL_Y)),
+		vertSeparator(new FXVerticalSeparator(topFrame)),
+		repeatFrame(new FXVerticalFrame(topFrame,LAYOUT_CENTER_X))
 {
 	// setup the repeat type controls
 
@@ -104,10 +105,10 @@ CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
 			mixTypeComboBox->appendItem("Average",(void *)mmAverage);
 
 
-	new FXLabel(contents,"");
-	sourceLabel=new FXLabel(contents,"Clipboard",NULL,LAYOUT_CENTER_X);
-	destinationLabel=new FXLabel(contents,"Destination",NULL,LAYOUT_CENTER_Y);
-	checkBoxMatrix=new FXMatrix(contents,MAX_CHANNELS+1,MATRIX_BY_COLUMNS | LAYOUT_FILL_X|LAYOUT_FILL_Y);
+	new FXLabel(routingContents,"");
+	sourceLabel=new FXLabel(routingContents,"Clipboard",NULL,LAYOUT_CENTER_X);
+	destinationLabel=new FXLabel(routingContents,"Destination",NULL,LAYOUT_CENTER_Y);
+	checkBoxMatrix=new FXMatrix(routingContents,MAX_CHANNELS+1,MATRIX_BY_COLUMNS | LAYOUT_FILL_X|LAYOUT_FILL_Y);
 
 	// put top source labels 
 	new FXLabel(checkBoxMatrix,"");

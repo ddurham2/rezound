@@ -80,18 +80,21 @@ private:
 	FXLabel *label;
 	FXHorizontalSeparator *horzSeparator;
 	FXComposite *topFrame;
+		FXMatrix *routingContents;
+			// dummy
+			FXLabel *sourceLabel;
+			FXLabel *destinationLabel;
+			FXMatrix *checkBoxMatrix;
+				FXCheckButton *checkBoxes[MAX_CHANNELS][MAX_CHANNELS];
+
+		FXVerticalSeparator *vertSeparator;
+
 		FXComposite *repeatFrame;
 			FXSwitcher *repeatTypeSwitcher;
 				FXConstantParamValue *repeatCountSlider;
 				FXConstantParamValue *repeatTimeSlider;
 			FXComboBox *repeatTypeComboBox;
 		
-		FXMatrix *contents;
-			// dummy
-			FXLabel *sourceLabel;
-			FXLabel *destinationLabel;
-			FXMatrix *checkBoxMatrix;
-				FXCheckButton *checkBoxes[MAX_CHANNELS][MAX_CHANNELS];
 	
 	FXPacker *mixTypeFrame;
 		FXComboBox *mixTypeComboBox;
