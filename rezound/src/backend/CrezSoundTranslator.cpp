@@ -152,6 +152,8 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 		// ??? perhaps know if the output routing information is different on this machine than it was on the saved machine
 			// prompt the user to reset the information if it was different
 
+#warning shouldnt I load/save the general data pools if perhaps I have flagged them to the persistant?
+
 		// read the cues
 		{
 			const CSound::CCuePoolAccesser srcCues=loadFromFile.createPool<CSound::RCue>("Cues",false);
@@ -228,7 +230,7 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 	return true;
 }
 
-bool CrezSoundTranslator::onSaveSound(const string filename,CSound *sound) const
+bool CrezSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const
 {
 	// ??? The user still needs to be able to choose what format the data will be saved in... whether 16bit float.. etc.. and the import/export process needs to convert to and from the working format
 
@@ -243,7 +245,7 @@ bool CrezSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 		RFormatInfo2 formatInfo2;
 
 		formatInfo2.version=2;
-		formatInfo2.size=sound->getLength();
+		formatInfo2.size=saveLength;
 		formatInfo2.sampleRate=sound->getSampleRate();
 		formatInfo2.channelCount=sound->getChannelCount();
 		formatInfo2.PCMType=PCMType;
@@ -260,7 +262,14 @@ bool CrezSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 	{
 		// unless we're converting sample rates here, the sample positions in sound's cues are valid for saving
 		CSound::CCuePoolAccesser destCues=saveToFile.createPool<CSound::RCue>("Cues");
-		destCues.copyData(0,*sound->cueAccesser,0,sound->cueAccesser->getSize(),true);
+		for(size_t t=0;t<sound->getCueCount();t++)
+		{
+			if(sound->getCueTime(t)>=saveStart && sound->getCueTime(t)<(saveStart+saveLength))
+			{
+				destCues.append(1);
+				destCues[destCues.getSize()-1]=CSound::RCue(sound->getCueName(t).c_str(),sound->getCueTime(t)-saveStart,sound->isCueAnchored(t));
+			}
+		}
 	}
 	
 
@@ -285,13 +294,13 @@ bool CrezSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 
 				TPoolAccesser<sample_t,CSound::PoolFile_t> dest=saveToFile.createPool<sample_t>("Channel "+istring(i+1));
 
-				const sample_pos_t chunkSize=sound->getLength()/100;
+				const sample_pos_t chunkSize=saveLength/100;
 
 				if(chunkSize>0)
 				{
 					for(unsigned int t=0;t<100;t++)
 					{
-						dest.copyData(t*chunkSize,sound->getAudio(i),t*chunkSize,chunkSize,true);
+						dest.copyData(t*chunkSize,sound->getAudio(i),t*chunkSize+saveStart,chunkSize,true);
 
 						if(statusBar.update(t))
 						{ // cancelled
@@ -300,7 +309,7 @@ bool CrezSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 						}
 					}
 				}
-				dest.copyData(100*chunkSize,sound->getAudio(i),100*chunkSize,sound->getLength()%100,true);
+				dest.copyData(100*chunkSize,sound->getAudio(i),100*chunkSize+saveStart,saveLength%100,true);
 			}
 		}
 		else

@@ -344,7 +344,7 @@ bool ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 #endif
 }
 
-bool ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound) const
+bool ClibvorbisSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const
 {
 #ifdef HAVE_LIBVORBISENC
 	bool ret=true;
@@ -355,7 +355,6 @@ bool ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound)
 	int e;
 	const unsigned channelCount=sound->getChannelCount();
 	const unsigned sampleRate=sound->getSampleRate();
-	const sample_pos_t size=sound->getLength();
 
 	vorbis_info_init(&vi);
 
@@ -383,8 +382,11 @@ bool ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound)
 	// save the cues
 	for(size_t t=0;t<sound->getCueCount();t++)
 	{
-		const string cueDesc="CUE="+istring(sound->getCueTime(t))+(sound->isCueAnchored(t) ? "+" : "-")+sound->getCueName(t);
-		vorbis_comment_add(&vc,(char *)cueDesc.c_str());
+		if(sound->getCueTime(t)>=saveStart && sound->getCueTime(t)<(saveStart+saveLength))
+		{
+			const string cueDesc="CUE="+istring(sound->getCueTime(t)-saveStart)+(sound->isCueAnchored(t) ? "+" : "-")+sound->getCueName(t);
+			vorbis_comment_add(&vc,(char *)cueDesc.c_str());
+		}
 	}
 
 
@@ -472,7 +474,7 @@ bool ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound)
 
 		sample_pos_t pos=0;
 
-		const sample_pos_t chunkCount= (size/CHUNK_SIZE) + ((size%CHUNK_SIZE)!=0 ? 1 : 0);
+		const sample_pos_t chunkCount= (saveLength/CHUNK_SIZE) + ((saveLength%CHUNK_SIZE)!=0 ? 1 : 0);
 
 		CStatusBar statusBar("Saving Sound",0,chunkCount,true);
 
@@ -493,10 +495,10 @@ bool ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound)
 				float **buffer=vorbis_analysis_buffer(&vd,CHUNK_SIZE);
 
 				// copy data into buffer
-				const unsigned chunkSize= (t==chunkCount-1) ? (size%CHUNK_SIZE) : CHUNK_SIZE;
+				const unsigned chunkSize= (t==chunkCount-1) ? (saveLength%CHUNK_SIZE) : CHUNK_SIZE;
 				for(unsigned c=0;c<channelCount;c++)
 				for(unsigned i=0;i<chunkSize;i++)
-					buffer[c][i]=(float)((*(accessers[c]))[pos+i])/(float)MAX_SAMPLE;
+					buffer[c][i]=(float)((*(accessers[c]))[pos+i+saveStart])/(float)MAX_SAMPLE;
 				pos+=chunkSize;
 
 				// tell the library how much we actually submitted

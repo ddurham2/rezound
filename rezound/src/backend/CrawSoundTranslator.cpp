@@ -123,7 +123,7 @@ bool CrawSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 	}
 }
 
-bool CrawSoundTranslator::onSaveSound(const string filename,CSound *sound) const
+bool CrawSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const
 {
 	AFfilesetup setup=afNewFileSetup();
 	try
@@ -134,7 +134,7 @@ bool CrawSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 
 		initSetup(setup,parameters);
 
-		const bool ret=saveSoundGivenSetup(filename,sound,setup,AF_FILE_RAWDATA);
+		const bool ret=saveSoundGivenSetup(filename,sound,saveStart,saveLength,setup,AF_FILE_RAWDATA);
 
 		afFreeFileSetup(setup);
 

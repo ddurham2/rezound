@@ -26,7 +26,7 @@
 #include <string>
 #include <vector>
 
-class CSound;
+#include "CSound_defs.h"
 
 class ASoundTranslator
 {
@@ -36,7 +36,8 @@ public:
 
 		// normally these return true, or they return false if cancelled
 	bool loadSound(const string filename,CSound *sound) const;
-	bool saveSound(const string filename,CSound *sound) const;
+	bool saveSound(const string filename,const CSound *sound) const;
+	bool saveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const;
 
 	virtual bool handlesExtension(const string extension) const=0;
 	virtual bool supportsFormat(const string filename) const=0;
@@ -53,7 +54,7 @@ protected:
 	// ??? It might make sense to swap the return values of these before anyone codes
 		// these should return true normally, or they should return false if cancelled
 	virtual bool onLoadSound(const string filename,CSound *sound) const=0;
-	virtual bool onSaveSound(const string filename,CSound *sound) const=0;
+	virtual bool onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveStop) const=0;
 
 private:
 

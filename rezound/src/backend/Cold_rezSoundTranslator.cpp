@@ -127,7 +127,7 @@ bool Cold_rezSoundTranslator::onLoadSound(const string filename,CSound *sound) c
 	return true;
 }
 
-bool Cold_rezSoundTranslator::onSaveSound(const string filename,CSound *sound) const
+bool Cold_rezSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const
 {
 	throw(runtime_error(string(__func__)+" -- unimplemented"));
 }

@@ -48,10 +48,10 @@ public:
 protected:
 
 	bool onLoadSound(const string filename,CSound *sound) const;
-	bool onSaveSound(const string filename,CSound *sound) const;
+	bool onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const;
 
 	bool loadSoundGivenSetup(const string filename,CSound *sound,AFfilesetup initialSetup) const;
-	bool saveSoundGivenSetup(const string filename,CSound *sound,AFfilesetup initialSetup,int fileFormatType) const;
+	bool saveSoundGivenSetup(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,AFfilesetup initialSetup,int fileFormatType) const;
 
 private:
 

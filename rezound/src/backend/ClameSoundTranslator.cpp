@@ -210,7 +210,7 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 	return ret;
 }
 
-bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) const
+bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const
 {
 	bool ret=true;
 
@@ -266,7 +266,6 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 	try
 	{
 		const unsigned channelCount=sound->getChannelCount();
-		const sample_pos_t size=sound->getLength();
 
 		// for now lame always outputs a fixed size wave header as little 
 		// endian just specifying the format so I'll just fread this struct
@@ -290,11 +289,11 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 
 		#define BITS 16 // has to go along with how we're writing it to the pipe below
 
-		if(size>((0x7fffffff-4096)/((BITS/2)*channelCount)))
+		if(saveLength>((0x7fffffff-4096)/((BITS/2)*channelCount)))
 			throw(runtime_error(string(__func__)+" -- audio data is too large to be converted to mp3 (more than 2gigs of "+istring(BITS)+"bit/"+istring(channelCount)+"channels"));
 
 		strncpy(waveHeader.RIFF_ID,"RIFF",4);
-		waveHeader.fileSize=36+(size*(channelCount*(BITS/8)));
+		waveHeader.fileSize=36+(saveLength*(channelCount*(BITS/8)));
 		strncpy(waveHeader.WAVE_ID,"WAVE",4);
 		strncpy(waveHeader.fmt_ID,"fmt ",4);
 		waveHeader.fmtSize=16;
@@ -304,7 +303,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 		waveHeader.bytesPerSec=sound->getSampleRate()*channelCount*(BITS/8);
 		waveHeader.bitsPerSample=BITS;
 		strncpy(waveHeader.data_ID,"data",4);
-		waveHeader.dataLength=size*(channelCount*(BITS/8));
+		waveHeader.dataLength=saveLength*(channelCount*(BITS/8));
 
 		if(SIGPIPECaught)
 			throw(runtime_error(string(__func__)+" -- lame aborted -- check stderr for more information"));
@@ -320,17 +319,17 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 			TAutoBuffer<sample_t> buffer(BUFFER_SIZE*channelCount);
 			sample_pos_t pos=0;
 
-			CStatusBar statusBar("Saving Sound",0,size,true);
-			while(pos<size)
+			CStatusBar statusBar("Saving Sound",0,saveLength,true);
+			while(pos<saveLength)
 			{
 				size_t chunkSize=BUFFER_SIZE;
-				if(pos+chunkSize>size)
-					chunkSize=size-pos;
+				if(pos+chunkSize>saveLength)
+					chunkSize=saveLength-pos;
 
 				for(unsigned c=0;c<channelCount;c++)
 				{
 					for(unsigned i=0;i<chunkSize;i++)
-						buffer[i*channelCount+c]=(*(accessers[c]))[pos+i];
+						buffer[i*channelCount+c]=(*(accessers[c]))[pos+i+saveStart];
 				}
 				pos+=chunkSize;
 

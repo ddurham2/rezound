@@ -263,7 +263,7 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 	return ret;
 }
 
-bool ClibaudiofileSoundTranslator::onSaveSound(const string filename,CSound *sound) const
+bool ClibaudiofileSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const
 {
 	int fileType;
 
@@ -291,9 +291,9 @@ bool ClibaudiofileSoundTranslator::onSaveSound(const string filename,CSound *sou
 		afInitRate(setup,AF_DEFAULT_TRACK,sound->getSampleRate()); 				// ??? I would actually want to pass how the user wants to export the data... doesn't actual do any conversion right now (perhaps I could patch it for them)
 		afInitCompression(setup,AF_DEFAULT_TRACK,AF_COMPRESSION_NONE);
 			//afInitInitCompressionParams(setup,AF_DEFAULT_TRACK, ... );
-		afInitFrameCount(setup,AF_DEFAULT_TRACK,sound->getLength());				// ??? I suppose I could allow the user to specify something shorter on the dialog
+		afInitFrameCount(setup,AF_DEFAULT_TRACK,saveLength);
 
-		const bool ret=saveSoundGivenSetup(filename,sound,setup,fileType);
+		const bool ret=saveSoundGivenSetup(filename,sound,saveStart,saveLength,setup,fileType);
 
 		afFreeFileSetup(setup);
 
@@ -307,7 +307,7 @@ bool ClibaudiofileSoundTranslator::onSaveSound(const string filename,CSound *sou
 }
 
 
-bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSound *sound,AFfilesetup initialSetup,int fileFormatType) const
+bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,AFfilesetup initialSetup,int fileFormatType) const
 {
 	bool ret=true;
 
@@ -316,32 +316,39 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 
 	const unsigned channelCount=sound->getChannelCount();
 	const unsigned sampleRate=sound->getSampleRate();
-	const sample_pos_t size=sound->getLength();
 
 #ifdef HANDLE_CUES_AND_MISC
 
 	// setup for saving the cues (except for positions)
 	TAutoBuffer<int> markIDs(sound->getCueCount());
-	if(sound->getCueCount()>0)
+	size_t cueCount=0;
+	for(size_t t=0;t<sound->getCueCount();t++)
+	{
+		if(sound->getCueTime(t)>=saveStart && sound->getCueTime(t)<(saveStart+saveLength))
+			markIDs[cueCount]=cueCount++;
+	}
+	if(cueCount>0)
 	{
 		if(!afQueryLong(AF_QUERYTYPE_MARK,AF_QUERY_SUPPORTED,fileFormatType,0,0))
 			Warning("This format does not support saving cues");
 		else
 		{
-			for(size_t t=0;t<sound->getCueCount();t++)
-				markIDs[t]=t;
 
-			afInitMarkIDs(initialSetup,AF_DEFAULT_TRACK,markIDs,(int)sound->getCueCount());
+			afInitMarkIDs(initialSetup,AF_DEFAULT_TRACK,markIDs,(int)cueCount);
+			size_t temp=0;
 			for(size_t t=0;t<sound->getCueCount();t++)
 			{
-				// to indicate if the cue is anchored we append to the name:
-				// "|+" or "|-" whether it is or isn't
-				const string name=sound->getCueName(t)+"|"+(sound->isCueAnchored(t) ? "+" : "-");
-				afInitMarkName(initialSetup,AF_DEFAULT_TRACK,markIDs[t],name.c_str());
+				if(sound->getCueTime(t)>=saveStart && sound->getCueTime(t)<(saveStart+saveLength))
+				{
+						// to indicate if the cue is anchored we append to the name:
+						// "|+" or "|-" whether it is or isn't
+						const string name=sound->getCueName(t)+"|"+(sound->isCueAnchored(t) ? "+" : "-");
+						afInitMarkName(initialSetup,AF_DEFAULT_TRACK,markIDs[temp++],name.c_str());
 
-				// can't save position yet because that function requires a file handle, but
-				// we can't move this code after the afOpenFile, or it won't save cues at all
-				//afSetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[t],sound->getCueTime(t));
+						// can't save position yet because that function requires a file handle, but
+						// we can't move this code after the afOpenFile, or it won't save cues at all
+						//afSetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[temp++],sound->getCueTime(t));
+				}
 			}
 		}
 	}
@@ -402,17 +409,17 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 		// save the audio data
 		TAutoBuffer<sample_t> buffer((size_t)(channelCount*4096));
 		sample_pos_t pos=0;
-		AFframecount count=size/4096+1;
-		CStatusBar statusBar("Saving Sound",0,size,true);
+		AFframecount count=saveLength/4096+1;
+		CStatusBar statusBar("Saving Sound",0,saveLength,true);
 		for(AFframecount t=0;t<count;t++)
 		{
-			const int chunkSize=  (t==count-1 ) ? size%4096 : 4096;
+			const int chunkSize=  (t==count-1 ) ? saveLength%4096 : 4096;
 			if(chunkSize!=0)
 			{
 				for(unsigned c=0;c<channelCount;c++)
 				{
 					for(int i=0;i<chunkSize;i++)
-						buffer[i*channelCount+c]=(*(accessers[c]))[pos+i];
+						buffer[i*channelCount+c]=(*(accessers[c]))[pos+i+saveStart];
 				}
 				if(afWriteFrames(h,AF_DEFAULT_TRACK,(void *)buffer,chunkSize)!=chunkSize)
 					throw(runtime_error(string(__func__)+" -- error writing audio data -- "+errorMessage));
@@ -431,8 +438,12 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 		// write the cue's positions
 		if(afQueryLong(AF_QUERYTYPE_MARK,AF_QUERY_SUPPORTED,fileFormatType,0,0))
 		{
+			size_t temp=0;
 			for(size_t t=0;t<sound->getCueCount();t++)
-				afSetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[t],sound->getCueTime(t));
+			{
+				if(sound->getCueTime(t)>=saveStart && sound->getCueTime(t)<(saveStart+saveLength))
+					afSetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[temp++],sound->getCueTime(t)-saveStart);
+			}
 		}
 
 		// write the user notes

@@ -153,7 +153,7 @@ bool CvoxSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 	return ret;
 }
 
-bool CvoxSoundTranslator::onSaveSound(const string filename,CSound *sound) const
+bool CvoxSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const
 {
 	bool ret=true;
 
@@ -181,11 +181,10 @@ bool CvoxSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 	try
 	{
 		const unsigned channelCount=sound->getChannelCount();
-		const sample_pos_t size=sound->getLength();
 
 		#define BITS 16 // has to go along with how we're writing it to the pipe below
 
-		if(size>((0x7fffffff-4096)/((BITS/2)*channelCount)))
+		if(saveLength>((0x7fffffff-4096)/((BITS/2)*channelCount)))
 			throw(runtime_error(string(__func__)+" -- audio data is too large to be converted to vox (more than 2gigs of "+istring(BITS)+"bit/"+istring(channelCount)+"channels"));
 
 		if(SIGPIPECaught)
@@ -200,17 +199,17 @@ bool CvoxSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 			TAutoBuffer<sample_t> buffer(BUFFER_SIZE*channelCount);
 			sample_pos_t pos=0;
 
-			CStatusBar statusBar("Saving Sound",0,size,true);
-			while(pos<size)
+			CStatusBar statusBar("Saving Sound",0,saveLength,true);
+			while(pos<saveLength)
 			{
 				size_t chunkSize=BUFFER_SIZE;
-				if(pos+chunkSize>size)
-					chunkSize=size-pos;
+				if(pos+chunkSize>saveLength)
+					chunkSize=saveLength-pos;
 
 				for(unsigned c=0;c<channelCount;c++)
 				{
 					for(unsigned i=0;i<chunkSize;i++)
-						buffer[i*channelCount+c]=(*(accessers[c]))[pos+i];
+						buffer[i*channelCount+c]=(*(accessers[c]))[pos+i+saveStart];
 				}
 				pos+=chunkSize;
 
