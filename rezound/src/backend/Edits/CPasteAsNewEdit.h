@@ -38,6 +38,8 @@ protected:
 	void undoActionSizeSafe(const CActionSound &actionSound);
 	CanUndoResults canUndo(const CActionSound &actionSound) const;
 
+	bool doesWarrantSaving() const;
+
 private:
 	ASoundFileManager *soundFileManager;
 

@@ -81,6 +81,10 @@ void CPasteAsNewEdit::undoActionSizeSafe(const CActionSound &actionSound)
 {
 }
 
+bool CPasteAsNewEdit::doesWarrantSaving() const
+{
+	return false;
+}
 
 
 // ------------------------------
