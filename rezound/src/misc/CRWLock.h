@@ -35,6 +35,8 @@
 #include <stdexcept>
 #include <string>
 
+#ifndef NO_POSIX_RWLOCKS
+
 // ??? this should be called CRWMutex (shouldn't it?)
 class CRWLock
 {
@@ -46,14 +48,14 @@ public:
 	{
 		const int ret=pthread_rwlock_init(&rwlock,NULL);
 		if(ret)
-			throw(runtime_error(string(__func__)+" -- error creating pthread rwlock -- "+strerror(ret)));
+			throw runtime_error(string(__func__)+" -- error creating pthread rwlock -- "+strerror(ret));
 	}
 
 	virtual ~CRWLock()
 	{
 		const int ret=pthread_rwlock_destroy(&rwlock);
 		if(ret)
-			throw(runtime_error(string(__func__)+" -- error destroying pthread rwlock -- "+strerror(ret))); // may not care tho
+			throw runtime_error(string(__func__)+" -- error destroying pthread rwlock -- "+strerror(ret)); // may not care tho
 	}
 
 	// read lock
@@ -61,7 +63,7 @@ public:
 	{
 		const int ret=pthread_rwlock_rdlock(&rwlock);
 		if(ret)
-			throw(runtime_error(string(__func__)+" -- error aquiring read lock -- "+strerror(ret)));
+			throw runtime_error(string(__func__)+" -- error aquiring read lock -- "+strerror(ret));
 		readLockCount++;
 	}
 
@@ -69,15 +71,15 @@ public:
 	{
 		int ret=pthread_rwlock_tryrdlock(&rwlock);
 		if(ret!=EBUSY && ret!=0)
-			throw(runtime_error(string(__func__)+" -- error doing try read lock -- "+strerror(ret)));
+			throw runtime_error(string(__func__)+" -- error doing try read lock -- "+strerror(ret));
 		if(ret==0)
 			readLockCount++;
-		return(ret==0);
+		return ret==0;
 	}
 
 	size_t getReadLockCount() const
 	{
-		return(readLockCount);
+		return readLockCount;
 	}
 
 
@@ -86,7 +88,7 @@ public:
 	{
 		const int ret=pthread_rwlock_wrlock(&rwlock);
 		if(ret)
-			throw(runtime_error(string(__func__)+" -- error aquiring write lock -- "+strerror(ret)));
+			throw runtime_error(string(__func__)+" -- error aquiring write lock -- "+strerror(ret));
 		isWriteLocked++;
 	}
 
@@ -94,15 +96,15 @@ public:
 	{
 		const int ret=pthread_rwlock_trywrlock(&rwlock);
 		if(ret!=EBUSY && ret!=0)
-			throw(runtime_error(string(__func__)+" -- error doing try write lock -- "+strerror(ret)));
+			throw runtime_error(string(__func__)+" -- error doing try write lock -- "+strerror(ret));
 		if(ret==0)
 			isWriteLocked++;
-		return(ret==0);
+		return ret==0;
 	}
 
 	bool isLockedForWrite() const
 	{
-		return(isWriteLocked>0);
+		return isWriteLocked>0;
 	}
 
 
@@ -111,7 +113,7 @@ public:
 	{
 		const int ret=pthread_rwlock_unlock(&rwlock);
 		if(ret)
-			throw(runtime_error(string(__func__)+" -- error unlocking -- "+strerror(ret)));
+			throw runtime_error(string(__func__)+" -- error unlocking -- "+strerror(ret));
 		if(isWriteLocked>0)
 			isWriteLocked--;
 		else
@@ -125,6 +127,443 @@ private:
 	int readLockCount;
 
 };
+
+#else // NEED TO IMPLEMENT OUR OWN RWLOCK since posix rwlocks are not available
+
+
+#include "CMutex.h"
+#include <stdio.h>
+#include <execinfo.h>
+
+/*
+ * the configure script is ready to allow libPTL (on netbsd) as long as it contains rwlocks
+ * in which cause wouldn't need to implement my own class.  I tried implementing my own class
+ * which worked a little bit, but was fairly unreliable.  I'm not sure if my used of rwlocks is
+ * invalid or if my implementation is.  But somehow a writelock seems to hang around starving all
+ * readers.   But for now I would just like to get 0.9beta out the door and not worry about the
+ * netbsd platform (which probably almost no one would be using to run ReZound)
+ */
+#error Need a thread library with rwlocks (or implement a proper rwlock class here)
+
+#if 0 // doesn't work for some reason 
+
+/* badly starves writers */
+class CRWLock
+{
+public:
+	CRWLock() :
+		activeReaders(0),
+		writeLocks(0)
+	{
+	}
+
+	virtual ~CRWLock()
+	{
+	}
+
+	// read lock
+	void readLock()
+	{
+		print_backtrace("readLock");
+		readerMutex.lock();
+		if(activeReaders==0)
+			writerMutex.lock();
+		activeReaders++;
+		readerMutex.unlock();
+	}
+
+	bool tryReadLock()
+	{
+		/*
+		// same as readLock() but uses trylock() everywhere that readLock() uses lock()
+		if(readerMutex.trylock())
+		{
+			if(activeReaders==0)
+			{
+				if(writerMutex.trylock())
+				{
+					readerMutex.unlock();
+					return true;
+				}
+			}
+			activeReaders++;
+			readerMutex.unlock();
+		}
+		return false;
+		*/
+		print_backtrace("tryReadLock");
+		readLock();
+		return true;
+	}
+
+	size_t getReadLockCount() const
+	{
+		return activeReaders;
+	}
+
+
+	// write lock
+	void writeLock()
+	{
+		print_backtrace("writeLock");
+		writerMutex.lock();
+		writeLocks++;
+	}
+
+	bool tryWriteLock()
+	{
+		print_backtrace("tryWriteLock");
+		//return writerMutex.trylock();
+		writeLock();
+		return true;
+	}
+
+	bool isLockedForWrite() const
+	{
+		return writerMutex.isLocked() && activeReaders<=0;
+	}
+
+#if ENABLE_JACK
+	#warning NOT JACK SAFE WITHOUT pthread_rwlocks
+#endif
+
+	// unlock (try lock doesn't work well because unlocking from a trylock can wait for blocked readers!)
+	void unlock()
+	{
+		print_backtrace("unlock");
+		if(isLockedForWrite())
+			writeUnlock();
+		else if(getReadLockCount()>0)
+			readUnlock();
+	}
+
+private:
+	CMutex readerMutex,writerMutex;
+	int activeReaders;
+	int writeLocks;
+
+	void readUnlock()
+	{
+		print_backtrace("readUnlock");
+		readerMutex.lock();
+		if(activeReaders>0)
+		{
+			activeReaders--;
+			if(activeReaders<=0)
+				writerMutex.unlock();
+		}
+		readerMutex.unlock();
+	}
+
+	void writeUnlock()
+	{
+		print_backtrace("writeUnlock");
+		writeLocks--;
+		writerMutex.unlock();
+	}
+
+	void print_backtrace(const char *s)
+	{
+		void *array[25];
+		char **strings;
+		int size=backtrace(array,25);
+		strings=backtrace_symbols(array,size);
+		printf("%s ===================================================\n",s);
+		printf("readLocks: %d writeLocks: %d\n",activeReaders,writeLocks);
+		for(int t=0;t<size;t++)
+		{
+			for(int k=0;k<t;k++)
+				printf(" ");
+			printf("%s\n",strings[t]);
+		}
+		fflush(stdout);
+		free(strings);
+	}
+};
+#endif
+
+/* my sorry attempt at a quick-and-dirty implementation (didn't work correctly)
+class CRWLock
+{
+public:
+	CRWLock() :
+		activeReaders(0),
+		activeWriters(0)
+	{
+	}
+
+	virtual ~CRWLock()
+	{
+	}
+
+	// read lock
+	void readLock()
+	{
+		mutexThatMakesReadersWaitOnWriters.lock();
+		mutex.lock();
+		if(activeReaders<=0)
+			writerMutex.lock();
+		activeReaders++;
+		mutex.unlock();
+		mutexThatMakesReadersWaitOnWriters.unlock();
+	}
+
+	bool tryReadLock()
+	{
+		// same as readLock() but uses trylock() everywhere that readLock() uses lock()
+		if(mutexThatMakesReadersWaitOnWriters.trylock())
+		{
+			if(mutex.trylock())
+			{
+				if(activeReaders<=0)
+				{
+					if(writerMutex.trylock())
+					{
+						activeReaders++;
+						mutex.unlock();
+						mutexThatMakesReadersWaitOnWriters.unlock();
+						return true;
+					}
+					else
+					{
+						mutex.unlock();
+						mutexThatMakesReadersWaitOnWriters.unlock();
+					}
+				}
+			}
+			else
+				mutexThatMakesReadersWaitOnWriters.unlock();
+		}
+		return false;
+	}
+
+	size_t getReadLockCount() const
+	{
+		return activeReaders;
+	}
+
+
+	// write lock
+	void writeLock()
+	{
+		mutexThatMakesReadersWaitOnWriters.lock();
+		writerMutex.lock();
+		activeWriters++;
+		mutexThatMakesReadersWaitOnWriters.unlock();
+	}
+
+	bool tryWriteLock()
+	{
+		if(mutexThatMakesReadersWaitOnWriters.trylock())
+		{
+			if(writerMutex.trylock())
+			{
+				activeWriters++;
+				mutexThatMakesReadersWaitOnWriters.unlock();
+				return true;
+			}
+			else
+				mutexThatMakesReadersWaitOnWriters.unlock();
+		}
+		return false;
+	}
+
+	bool isLockedForWrite() const
+	{
+		return activeWriters>0;
+	}
+
+
+	// unlock
+	void unlock()
+	{
+		mutex.lock();
+		if(isLockedForWrite())
+			writeUnlock();
+		else if(getReadLockCount()>0)
+			readUnlock();
+		mutex.unlock();
+	}
+
+private:
+	CMutex mutex,writerMutex,mutexThatMakesReadersWaitOnWriters;
+	int activeReaders;
+	int activeWriters;
+
+	void readUnlock()
+	{
+		//mutex.lock();
+		if(activeReaders>0)
+		{
+			activeReaders--;
+			if(activeReaders<=0)
+				writerMutex.unlock();
+		}
+		//mutex.unlock();
+	}
+
+	void writeUnlock()
+	{
+		//mutex.lock();
+		if(activeWriters>0)
+		{
+			activeWriters--;
+			writerMutex.unlock();
+		}
+		//mutex.unlock();
+	}
+
+
+};
+*/
+
+#if 0 // had problems working correctly
+// Implementation based on: http://www.cs.kent.edu/~walker/classes/os.f00/lectures/L15.pdf
+class CRWLock
+{
+public:
+	CRWLock() :
+		waitingReaders(0),
+		activeReaders(0),
+		waitingWriters(0),
+		activeWriters(0)
+	{
+	}
+
+	virtual ~CRWLock()
+	{
+		mutex.lock();
+		okToRead.unlock();
+		okToWrite.unlock();
+		mutex.unlock();
+	}
+
+	// read lock
+	void readLock()
+	{
+		mutex.lock();
+		if((activeWriters+waitingWriters)>0)
+			waitingWriters++;
+		else 
+		{
+			okToRead.unlock();
+			activeReaders++;
+		}
+		mutex.unlock();
+		okToRead.lock();
+	}
+
+	bool tryReadLock()
+	{
+		/*??? bogus race-condition implementation */
+		if(activeWriters<=0)
+		{
+			readLock();
+			return true;
+		}
+		else
+			return false;
+	}
+
+	size_t getReadLockCount() const
+	{
+		return activeReaders;
+	}
+
+
+	// write lock
+	void writeLock()
+	{
+		mutex.lock();
+		if(activeWriters+activeReaders>0)
+			waitingWriters++;
+		else
+		{
+			okToWrite.unlock();
+			activeWriters++;
+		}
+		mutex.unlock();
+		okToWrite.lock();
+	}
+
+	bool tryWriteLock()
+	{
+		/*??? bogus race-condition implementation */
+		if(activeReaders<=0)
+		{
+			writeLock();
+			return true;
+		}
+		else
+			return false;
+	}
+
+	bool isLockedForWrite() const
+	{
+		return activeWriters>0;
+	}
+
+
+	// unlock
+	void unlock()
+	{
+		mutex.lock();
+		if(isLockedForWrite())
+			writeUnlock();
+		else if(getReadLockCount()>0)
+			readUnlock();
+		mutex.unlock();
+	}
+
+private:
+	CMutex mutex,okToRead,okToWrite;
+	int waitingReaders;	// waiting readers
+	int activeReaders;	// active readers
+	int waitingWriters;	// waiting writers
+	int activeWriters; 	// active writers
+
+	void readUnlock()
+	{
+		//mutex.lock();
+		if(activeReaders>0)
+		{
+			activeReaders--;
+			if(activeReaders==0 && waitingWriters>0)
+			{
+				okToWrite.unlock();
+				activeWriters++;
+				waitingWriters--;
+			}
+		}
+		//mutex.unlock();
+	}
+
+	void writeUnlock()
+	{
+		//mutex.lock();
+		if(activeWriters>0)
+		{
+			activeWriters--;
+			if(waitingWriters>0)
+			{
+				okToWrite.unlock();
+				activeWriters++;
+				waitingWriters--;
+			}
+			else if(waitingWriters>0)
+			{
+				okToRead.unlock();
+				activeReaders++;
+				waitingWriters--;
+			}
+		}
+		//mutex.unlock();
+	}
+
+};
+#endif
+
+#endif // NO_POSIX_RWLOCKS
 
 
 /* 
