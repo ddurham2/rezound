@@ -20,9 +20,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
+/* this would be needed if I were utilizing gcc's implicit instantiation for TPoolFile
 #ifndef __TPoolFile_H__CPP
 #error this file must be included through TPoolFile.h NOT compiled on its own
 #endif
+*/
 
 /* ??? 
  * something I keep thinking about is the fact that the logical space table contains duplicate information from the physical space table
@@ -57,9 +59,6 @@
 // ??? I didn't think of this until just now, but for fault tolerancy during a space modifications operation, I could simply
 // restore to the backed up SAT just before the space modification method began if there was an error either in the logic or in
 // extending the file's length
-
-#ifndef __TPoolFile_CPP__
-#define __TPoolFile_CPP__
 
 #include <stdio.h> // for the printf errors... should probably use assert (but assumably temporary)  (It's also for printSAT())
 
@@ -780,7 +779,7 @@ template<class l_addr_t,class p_addr_t>
 		invalidateAllCachedBlocks();
 
 		// swap SATs for two pools
-		vector<vector<RLogicalBlock> > tempSAT=SAT[poolId1];
+		vector<RLogicalBlock> tempSAT=SAT[poolId1];
 		SAT[poolId1]=SAT[poolId2];
 		SAT[poolId2]=tempSAT;
 
@@ -1007,7 +1006,7 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::verifyBlockInfo(const poolId_t poolId) const
 {
-	if(!validPoolId(poolId))
+	if(!isValidPoolId(poolId))
 		throw(runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId)));
 
 		// this didn't seem to catch some errors I put in on purpose, so I wrote verifyAllBlockInfo()
@@ -3598,4 +3597,3 @@ template<class l_addr_t,class p_addr_t>
 	f->write(s.c_str(),len,multiFileHandle);
 }
 
-#endif
