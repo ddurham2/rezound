@@ -49,7 +49,7 @@ FXIMPLEMENT(CActionMenuCommand,FXMenuCommand,CActionMenuCommandMap,ARRAYNUMBER(C
 CActionMenuCommand::CActionMenuCommand(AActionFactory *_actionFactory,FXComposite* p, const FXString& accelKeyText, FXIcon* ic, FXuint opts) :
 	FXMenuCommand(
 		p,
-		(_actionFactory->getName()+"\t"+accelKeyText.text()).c_str(),
+		(_actionFactory->getName()+(_actionFactory->hasDialog() ? "..." : "")+"\t"+accelKeyText.text()).c_str(),
 		(ic==NULL ? FOXIcons->normal_action_buff : ic),
 		this,
 		ID_HOTKEY,
@@ -67,7 +67,7 @@ CActionMenuCommand::CActionMenuCommand(AActionFactory *_actionFactory,FXComposit
 CActionMenuCommand::CActionMenuCommand(FXComposite *p,const CActionMenuCommand &src) :
 	FXMenuCommand(
 		p,
-		src.actionFactory->getName().c_str(),
+		(src.actionFactory->getName()+(src.actionFactory->hasDialog() ? "..." : "")).c_str(),
 		src.getIcon(),
 		this,
 		src.getSelector(),

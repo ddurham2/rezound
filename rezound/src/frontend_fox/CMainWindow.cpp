@@ -691,18 +691,18 @@ void CMainWindow::createMenus()
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&File",NULL,menu);
-		new FXMenuCommand(menu,"&New",FOXIcons->file_new,this,ID_NEW_FILE);
-		new FXMenuCommand(menu,"&Open\tCtrl+O",FOXIcons->file_open,this,ID_OPEN_FILE);
+		new FXMenuCommand(menu,"&New...",FOXIcons->file_new,this,ID_NEW_FILE);
+		new FXMenuCommand(menu,"&Open...\tCtrl+O",FOXIcons->file_open,this,ID_OPEN_FILE);
 		new FXMenuCascade(menu,"&Reopen",FOXIcons->file_open,new CReopenPopup(this));
-		new FXMenuCommand(menu,"&Save\tCtrl+S",FOXIcons->file_save,this,ID_SAVE_FILE);
-		new FXMenuCommand(menu,"Save &As",FOXIcons->file_save_as,this,ID_SAVE_FILE_AS);
+		new FXMenuCommand(menu,"&Save(...)\tCtrl+S",FOXIcons->file_save,this,ID_SAVE_FILE);
+		new FXMenuCommand(menu,"Save &As...",FOXIcons->file_save_as,this,ID_SAVE_FILE_AS);
 		new CActionMenuCommand(new CSaveSelectionAsActionFactory(),menu,"",FOXIcons->file_save_as);
 		new CActionMenuCommand(new CSaveAsMultipleFilesActionFactory(new CSaveAsMultipleFilesDialog(this)),menu,"",FOXIcons->file_save_as);
 		new FXMenuCommand(menu,"&Close\tCtrl+W",FOXIcons->file_close,this,ID_CLOSE_FILE);
 		new FXMenuCommand(menu,"Re&vert",FOXIcons->file_revert,this,ID_REVERT_FILE);
 
 		new FXMenuSeparator(menu);
-		new FXMenuCommand(menu,"User No&tes"/*\tUser notes about the sound (and preserved in the file if the format supports it)"*/,FOXIcons->notes,this,ID_EDIT_USERNOTES);
+		new FXMenuCommand(menu,"User No&tes..."/*\tUser notes about the sound (and preserved in the file if the format supports it)"*/,FOXIcons->notes,this,ID_EDIT_USERNOTES);
 
 		new FXMenuSeparator(menu);
 		new FXMenuCommand(menu,"&About ReZound\tF1",NULL,this,ID_SHOW_ABOUT);
@@ -733,7 +733,7 @@ void CMainWindow::createMenus()
 		new FXMenuCommand(menu,"&Redraw",FOXIcons->normal_action_buff,this,ID_REDRAW);
 
 		new FXMenuSeparator(menu);
-		new FXMenuCommand(menu,"Record",FOXIcons->small_record,this,ID_RECORD);
+		new FXMenuCommand(menu,"Record...",FOXIcons->small_record,this,ID_RECORD);
 		new FXMenuCommand(menu,"Play All Once",FOXIcons->small_play_all_once,this,ID_PLAY_ALL_ONCE);
 		new FXMenuCommand(menu,"Play All Looped",FOXIcons->small_play_all_looped,this,ID_PLAY_ALL_LOOPED);
 		new FXMenuCommand(menu,"Play Selection Once\ta",FOXIcons->small_play_selection_once,this,ID_PLAY_SELECTION_ONCE);
