@@ -23,6 +23,8 @@
 #include <errno.h>
 #include <string.h>
 
+#include <stdio.h> // for fprintf
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -114,7 +116,7 @@ void COSSSoundPlayer::initialize()
 		} 
 		if (speed!=SAMPLE_RATE)
 		{ 
-			fprintf(stderr,"warning: OSS used a different sample rate ("+istring(speed)+") than what was asked for ("+istring(SAMPLE_RATE)+")\n");
+			fprintf(stderr,("warning: OSS used a different sample rate ("+istring(speed)+") than what was asked for ("+istring(SAMPLE_RATE)+")\n").c_str());
 			//close(audio_fd);
 			//throw(runtime_error(string(__func__)+" -- error setting the sample rate -- the sample rate is not supported"));
 		} 
