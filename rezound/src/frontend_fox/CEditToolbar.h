@@ -31,7 +31,7 @@
 class CEditToolbar;
 extern CEditToolbar *gEditToolbar;
 
-class CEditToolbar : public FXToolbarShell
+class CEditToolbar : public FXTopWindow
 {
 	FXDECLARE(CEditToolbar);
 public:
@@ -41,7 +41,7 @@ public:
 /*
 	enum 
 	{
-		ID_SOUND_LISTBOX=FXToolbarShell::ID_LAST,
+		ID_SOUND_LISTBOX=FXTopWindow::ID_LAST,
 		ID_LAST
 	};
 */

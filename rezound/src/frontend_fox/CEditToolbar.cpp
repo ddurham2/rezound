@@ -44,17 +44,15 @@ FXDEFMAP(CEditToolbar) CEditToolbarMap[]=
 	//	  Message_Type			ID					Message_Handler
 };
 
-FXIMPLEMENT(CEditToolbar,FXToolbarShell,CEditToolbarMap,ARRAYNUMBER(CEditToolbarMap))
+FXIMPLEMENT(CEditToolbar,FXTopWindow,CEditToolbarMap,ARRAYNUMBER(CEditToolbarMap))
 
 	
 CEditToolbar::CEditToolbar(FXWindow *mainWindow) :
-								// ??? ignored by enlightenment
-	FXToolbarShell(mainWindow,/*FRAME_RAISED|FRAME_THICK*/DECOR_BORDER|DECOR_TITLE,mainWindow->getX(),mainWindow->getY()+mainWindow->getDefaultHeight()+30,75,450),
+	FXTopWindow(mainWindow,"Edit",NULL,NULL,DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE,mainWindow->getX(),mainWindow->getY()+mainWindow->getDefaultHeight()+30,75,450, 0,0,0,0, 0,0),
 
 	scrollWindow(new FXScrollWindow(this,LAYOUT_FILL_X|LAYOUT_FILL_Y)),
 	contents(new FXMatrix(scrollWindow,2,MATRIX_BY_COLUMNS|FRAME_RAISED, 0,0,0,0, 4,4,4,4, 1,1))
 {
-	setTitle("Edit");
 
 	#define MAKE_FILLER new FXFrame(contents,LAYOUT_FIX_HEIGHT, 0,0,0,8);
 
@@ -100,7 +98,7 @@ CEditToolbar::CEditToolbar(FXWindow *mainWindow) :
 /*
 void CEditToolbar::create()
 {
-	FXToolbarShell::create();
+	FXTopWindow::create();
 
 	show();
 }
@@ -109,13 +107,13 @@ void CEditToolbar::create()
 void CEditToolbar::show()
 {
 	rememberShow(this);
-	FXToolbarShell::show();
+	FXTopWindow::show();
 }
 
 void CEditToolbar::hide()
 {
 	rememberHide(this);
-	FXToolbarShell::hide();
+	FXTopWindow::hide();
 }
 
 
