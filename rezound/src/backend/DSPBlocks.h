@@ -588,6 +588,47 @@ private:
 
 
 
+
+/* --- TDSPQuantizer ------------------------------------
+	This class is a DSP block to quantize the number of sample levels.
+
+	The parameter, quantumCount, is the number of levels to have above zero.
+	This is thus produce the same number below zero.  And zero is considered
+	a level as well.  So There the actual output is (quantumCount*2)+1 possible
+	distinct sample values.
+
+	// ??? I could specialize this template for integer and float types separately to improve performance
+*/
+template<class sample_t,int maxSample> class TDSPQuantizer
+{
+public:
+	TDSPQuantizer(const unsigned _quantumCount) :
+		quantumCount(_quantumCount),
+		fQuantumCount(_quantumCount),
+		s(maxSample/fQuantumCount)
+	{
+		if(_quantumCount<1)
+			throw(runtime_error(string(__func__)+" -- invalid quantumCount: "+istring(quantumCount)));
+	}
+
+	virtual ~TDSPQuantizer()
+	{
+	}
+
+	const sample_t processSample(const sample_t input) const
+	{
+		return (sample_t)(floorl((float)input/(float)maxSample*quantumCount)*s);
+	}
+
+private:
+	const float quantumCount;
+	const float fQuantumCount;
+	const float s;
+};
+
+
+
+
 /* --- TDSPConvolver ------------------------------------
  * 
 	This class is a DSP block to do a sample by sample convolution of the given 
@@ -614,7 +655,7 @@ public:
 	{
 	}
 
-	sample_t processSample(const sample_t input)
+	const sample_t processSample(const sample_t input)
 	{
 		coefficient_t output=input*coefficients[0];
 		for(unsigned t=coefficientCountSub1;t>0;t--)
