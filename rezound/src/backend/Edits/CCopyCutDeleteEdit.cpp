@@ -93,7 +93,7 @@ bool CCopyCutDeleteEdit::doesWarrantSaving() const
 // ---------------------------------------------
 
 CCopyEditFactory::CCopyEditFactory(AActionDialog *channelSelectDialog) :
-	AActionFactory("Copy","Copy",false,channelSelectDialog,NULL,NULL)
+	AActionFactory("Copy","Copy",false,channelSelectDialog,NULL,NULL,false)
 {
 }
 

@@ -14,8 +14,6 @@
 	- need to do a backup of the sat after recording because right now, all the insertSpace calls didn't do it
 		- do this AFTER backupSAT is faster
 
-	- the copy action doesn't need to lockForResize, but could do fine on lockSize so playing doesn't stop while copying
-
 	- use a registry setting for knowing where to put working files and the clipboard instead of always /tmp
 
 	- When it's possible, I really need to do something different in TPoolFile::isExclusiveLocked and also TPoolFile::getSharedLockCount because right now, the isExclusiveLocked returns true if it's shared locked obviously because the tryLock fails so it assumes wrongly that there's an exclusive lock obtained
@@ -157,4 +155,6 @@
 
 	- a newly recorded sound needs to be !saved
 	- a new sounds need to be !saved
+
+	- the copy action doesn't need to lockForResize, but could do fine on lockSize so playing doesn't stop while copying
 
