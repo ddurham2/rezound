@@ -55,6 +55,8 @@ so that the meter and analyzer widgets are not tied to using ASoundPlayer
 #define MIN_METER_HEIGHT 15
 #define MIN_METERS_WINDOW_HEIGHT 75
 
+#define ANALYZER_BAR_WIDTH 6
+
 
 // --- CMeter ----------------------------------------------------------------
 
@@ -293,14 +295,19 @@ class CAnalyzer : public FXHorizontalFrame
 public:
 	CAnalyzer::CAnalyzer(FXComposite *parent) :
 		FXHorizontalFrame(parent,LAYOUT_RIGHT|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0),
-		canvasFrame(new FXPacker(this,LAYOUT_FIX_WIDTH|LAYOUT_FILL_Y|FRAME_SUNKEN|FRAME_THICK,0,0,0,0, 0,0,0,0, 0,0)),
+		canvasFrame(new FXVerticalFrame(this,LAYOUT_FIX_WIDTH|LAYOUT_FILL_Y|FRAME_SUNKEN|FRAME_THICK,0,0,0,0, 2,2,2,2, 0,1)),
 			canvas(new FXBackBufferedCanvas(canvasFrame,this,ID_CANVAS,LAYOUT_FILL_X|LAYOUT_FILL_Y)),
+			labelFrame(new FXHorizontalFrame(canvasFrame,LAYOUT_FILL_X|FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0)),
 
 		zoomDial(new FXDial(this,this,ID_ZOOM_DIAL,DIAL_VERTICAL|DIAL_HAS_NOTCH|LAYOUT_FILL_Y|LAYOUT_FIX_WIDTH,0,0,18,0)),
 
-		statusFont(getApp()->getNormalFont())
+		statusFont(getApp()->getNormalFont()),
+
+		drawBarFreq(false)
 	{
 		setBackColor(M_BACKGROUND);
+			canvasFrame->setBackColor(M_BACKGROUND);
+			labelFrame->setBackColor(M_BACKGROUND);
 
 		// create the font to use for numbers
 		FXFontDesc d;
@@ -346,17 +353,17 @@ public:
 		dc.fillRectangle(0,0,canvas->getWidth(),canvas->getHeight());
 
 		// the w and h that we're going to render to (minus some borders and tick marks)
-		const size_t canvasWidth=canvas->getWidth()-6; // 2 pixel border on left and right plus tick marks on the left
-		const size_t canvasHeight=canvas->getHeight()-4; // 2 pixel border on top and bottom
+		const size_t canvasWidth=canvas->getWidth(); 
+		const size_t canvasHeight=canvas->getHeight();
 		
-		const size_t barWidth=analysis.size()>0 ? max((size_t)2,(size_t)canvasWidth/analysis.size()) : 1;
+		const size_t barWidth=analysis.size()>0 ? canvasWidth/analysis.size() : 1;
 
 		// draw vertical octave separator lines
 		dc.setForeground(M_METER_OFF);
 		if(octaveStride>0)
 		{
-			for(size_t x=4;x<canvasWidth;x+=(barWidth*octaveStride))
-				dc.drawLine(x,2,x,canvasHeight+2);
+			for(size_t x=0;x<canvasWidth;x+=(barWidth*octaveStride))
+				dc.drawLine(x,0,x,canvasHeight);
 		}
 
 		// ??? also probably want some dB labels 
@@ -364,8 +371,8 @@ public:
 		dc.setForeground(M_TEXT_COLOR);
 		for(size_t t=0;t<4;t++)
 		{
-			size_t y=2+((((canvasHeight+2-1)-2)*t)/(4-1));
-			dc.drawLine(4,y,canvasWidth+4,y);
+			size_t y=((canvasHeight-1)*t/(4-1));
+			dc.drawLine(0,y,canvasWidth,y);
 		}
 			
 
@@ -373,11 +380,11 @@ public:
 		dc.setForeground(M_GREEN);
 		if(analysis.size()>0)
 		{
-			size_t x=4;
+			size_t x=0;
 			for(size_t t=0;t<analysis.size();t++)
 			{
 				const size_t barHeight=(size_t)floor(analysis[t]*canvasHeight);
-				dc.fillRectangle(x+1,canvasHeight-barHeight+2,barWidth-1,barHeight);
+				dc.fillRectangle(x+1,canvasHeight-barHeight,barWidth-1,barHeight);
 				x+=barWidth;
 			}
 		}
@@ -390,19 +397,49 @@ public:
 
 		// draw the peaks
 		dc.setForeground(M_BRT_YELLOW);
-		size_t x=4;
+		size_t x=0;
 		for(size_t t=0;t<peaks.size();t++)
 		{
 			const size_t peakHeight=(size_t)floor(peaks[t]*canvasHeight);
-			const FXint y=canvasHeight-peakHeight+2-1;
+			const FXint y=canvasHeight-peakHeight-1;
 			dc.drawLine(x+1,y,x+barWidth-1,y);
 			x+=barWidth;
+		}
+
+		// if mouse is over the canvas, then report what frequency is to be displaye
+		if(analysis.size()>0 && drawBarFreq && barFreqIndex<frequencies.size())
+		{
+			const string f=istring(frequencies[barFreqIndex])+"Hz";
+			const int w=statusFont->getTextWidth(f.c_str(),f.length());
+			dc.setForeground(M_METER_OFF);
+			dc.fillRectangle(0,0,w+3,statusFont->getFontHeight()+2);
+			dc.setForeground(M_TEXT_COLOR);
+			dc.setFont(statusFont);
+			dc.drawText(1,statusFont->getFontHeight(),f.c_str(),f.length());
 		}
 
 		return 1;
 	}
 
-	void setAnalysis(const vector<float> &_analysis,size_t _octaveStride)
+	long CAnalyzer::onCanvasEnter(FXObject *sender,FXSelector sel,void *ptr)
+	{
+		drawBarFreq=true;
+		return 1;
+	}
+
+	long CAnalyzer::onCanvasLeave(FXObject *sender,FXSelector sel,void *ptr)
+	{
+		drawBarFreq=false;
+		return 1;
+	}
+
+	long CAnalyzer::onCanvasMotion(FXObject *sender,FXSelector sel,void *ptr)
+	{
+		barFreqIndex=((FXEvent *)ptr)->win_x/ANALYZER_BAR_WIDTH;
+		return 1;
+	}
+
+	bool setAnalysis(const vector<float> &_analysis,size_t _octaveStride)
 	{
 		analysis=_analysis;
 		for(size_t t=0;t<analysis.size();t++)
@@ -413,12 +450,17 @@ public:
 		// resize the canvas frame if needed
 		FXint desiredWidth;
 		if(analysis.size()>0)
-			desiredWidth=(analysis.size()*5)+2/*on left*/+2/*on right*/+2/*for ticks*/+4/*for sunken frame*/;
+			desiredWidth=(analysis.size()*ANALYZER_BAR_WIDTH)+canvasFrame->getPadLeft()+canvasFrame->getPadRight()+4/*for sunken frame*/;
 		else
 			desiredWidth=150;  // big enough to render a message about installing fftw
 
+		bool rebuildLabels=false;
+
 		if(canvasFrame->getWidth()!=desiredWidth)
+		{
 			canvasFrame->setWidth(desiredWidth);
+			rebuildLabels=true;
+		}
 
 		
 		// rebuild peaks if the number of elements in analysis changed from the last time this was called  (should really only do anything the first time this is called)
@@ -430,8 +472,9 @@ public:
 				peaks.push_back(0.0);
 				peakFallDelayTimers.push_back(0);
 			}
-		}
+			rebuildLabels=true;
 
+		}
 
 		// make peaks fall
 		for(size_t t=0;t<peaks.size();t++)
@@ -453,6 +496,33 @@ public:
 		}
 		
 		canvas->update(); // flag for repainting
+
+		return rebuildLabels;
+	}
+
+	void rebuildLabels(const vector<size_t> _frequencies,size_t octaveStride)
+	{
+		frequencies=_frequencies;
+		for(FXint t=0;t<labelFrame->numChildren();t++)
+			delete labelFrame->childAtIndex(t);
+		for(size_t t=0;t<analysis.size()/octaveStride;t++)
+		{
+			string text;
+			if(frequencies[t*octaveStride]>=1000)
+				text=istring(frequencies[t*octaveStride]/1000.0,1,1)+"k";
+			else
+				text=istring(frequencies[t*octaveStride]);
+
+			FXLabel *l=new FXLabel(labelFrame,text.c_str(),NULL,JUSTIFY_LEFT|LAYOUT_FIX_WIDTH,0,0,0,0, 0,0,0,0);
+			l->setBackColor(M_BACKGROUND);
+			l->setTextColor(M_TEXT_COLOR);
+			l->setFont(statusFont);
+			if(t!=((analysis.size()/octaveStride)-1))
+				l->setWidth(ANALYZER_BAR_WIDTH*octaveStride);
+			else
+				l->setWidth((ANALYZER_BAR_WIDTH*octaveStride)+(ANALYZER_BAR_WIDTH*(analysis.size()%octaveStride))); // make the last one the remaining width
+			l->create();
+		}
 	}
 
 	enum
@@ -469,6 +539,7 @@ private:
 
 	FXPacker *canvasFrame;
 		FXCanvas *canvas;
+		FXPacker *labelFrame;
 	FXDial *zoomDial;
 	FXFont *statusFont;
 
@@ -477,13 +548,22 @@ private:
 	vector<int> peakFallDelayTimers;
 	size_t octaveStride;
 	float zoom;
+
+	// used when the mouse is over the canvas to draw what the frequency for the pointed-to bar is
+	vector<size_t> frequencies;
+	bool drawBarFreq;
+	size_t barFreqIndex;
 };
 
 FXDEFMAP(CAnalyzer) CAnalyzerMap[]=
 {
 	//	  Message_Type			ID					Message_Handler
 	FXMAPFUNC(SEL_PAINT,			CAnalyzer::ID_CANVAS,			CAnalyzer::onCanvasPaint),
-	FXMAPFUNC(SEL_CHANGED ,			CAnalyzer::ID_ZOOM_DIAL,		CAnalyzer::onZoomDial),
+	FXMAPFUNC(SEL_ENTER,			CAnalyzer::ID_CANVAS,			CAnalyzer::onCanvasEnter),
+	FXMAPFUNC(SEL_LEAVE,			CAnalyzer::ID_CANVAS,			CAnalyzer::onCanvasLeave),
+	FXMAPFUNC(SEL_MOTION,			CAnalyzer::ID_CANVAS,			CAnalyzer::onCanvasMotion),
+
+	FXMAPFUNC(SEL_CHANGED,			CAnalyzer::ID_ZOOM_DIAL,		CAnalyzer::onZoomDial),
 	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	CAnalyzer::ID_ZOOM_DIAL,		CAnalyzer::onZoomDialDefault),
 };
 
@@ -591,7 +671,14 @@ long CMetersWindow::onUpdateMeters(FXObject *sender,FXSelector sel,void *ptr)
 				meters[t]->grandMaxPeakLevelLabel->setWidth(maxGrandMaxPeakLabelWidth);
 		}
 
-		analyzer->setAnalysis(soundPlayer->getFrequencyAnalysis(),soundPlayer->getFrequencyAnalysisOctaveStride());
+		if(analyzer->setAnalysis(soundPlayer->getFrequencyAnalysis(),soundPlayer->getFrequencyAnalysisOctaveStride()))
+		{
+			const vector<float> a=soundPlayer->getFrequencyAnalysis();
+			vector<size_t> frequencies;
+			for(size_t t=0;t<a.size();t++)
+				frequencies.push_back(soundPlayer->getFrequency(t));
+			analyzer->rebuildLabels(frequencies,soundPlayer->getFrequencyAnalysisOctaveStride());
+		}
 	}
 
 	// schedule another update again in METER_UPDATE_RATE milliseconds
