@@ -30,6 +30,7 @@
 #include "CFlangeEffect.h"
 #include "CReverseEffect.h"
 #include "CStaticReverbEffect.h"
+#include "CVariedRepeatEffect.h"
 
 #include "CTestEffect.h"
 

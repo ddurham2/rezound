@@ -40,6 +40,7 @@ public:
 	}
 
 	virtual const float nextValue()=0;
+	virtual const float getValue(sample_pos_t time) const=0; // time is in samples, that is not seconds or ms
 
 protected:
 
@@ -76,6 +77,11 @@ public:
 		return(value);
 	}
 
+	const float getValue(const sample_pos_t time) const
+	{
+		return(value);
+	}
+
 private:
 	const float value;
 	
@@ -97,8 +103,10 @@ public:
 	CSinLFO(float _frequency,float initialAngle,unsigned sampleRate) :
 			// convert from herz to scalar to mul with counter
 		frequency((1.0/((float)sampleRate/_frequency))*(2.0*M_PI)),
+		initial(degrees_to_radians(initialAngle)/frequency),
+
 			// initialize the counter to return the initial angle
-		counter(degrees_to_radians(initialAngle)/frequency)
+		counter(initial)
 	{
 	}
 
@@ -111,8 +119,14 @@ public:
 		return(sinf((counter++)*frequency));
 	}
 
+	const float getValue(const sample_pos_t time) const
+	{
+		return(sinf((time+initial)*frequency));
+	}
+
 protected:
 	float frequency;
+	float initial;
 	// ??? I probably do need to worry about counter wrap around
 		// perhaps I could know a threshold when to fmod the counter
 	float counter;
@@ -139,6 +153,11 @@ public:
 	const float nextValue()
 	{
 		return((sinf((counter++)*frequency)+1.0)/2.0);
+	}
+
+	const float getValue(const sample_pos_t time) const
+	{
+		return((sinf((time+initial)*frequency)+1.0)/2.0);
 	}
 
 };

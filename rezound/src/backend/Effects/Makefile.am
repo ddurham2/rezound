@@ -35,6 +35,7 @@ libEffects_la_SOURCES=CChangeAmplitudeEffect.cpp \
 		      CFlangeEffect.cpp \
 		      CReverseEffect.cpp \
 		      CStaticReverbEffect.cpp \
+		      CVariedRepeatEffect.cpp \
 		      CTestEffect.cpp 
 
 
@@ -44,6 +45,7 @@ EXTRA_DIST=CChangeAmplitudeEffect.h \
 	   CFlangeEffect.h \
 	   CReverseEffect.h \
 	   CStaticReverbEffect.h \
+	   CVariedRepeatEffect.h \
 	   CTestEffect.h \
 	   EffectActions.h
 
