@@ -97,6 +97,7 @@
 	- Noise Gate
 	- Dynamic Range Compression
 	- Normalization
+	- Resample
 
 - Selectable LFO Shapes for Actions that Use an LFO (more to come)
 

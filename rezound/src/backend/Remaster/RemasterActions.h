@@ -29,5 +29,6 @@
 #include "CNoiseGateAction.h"
 #include "CCompressorAction.h"
 #include "CNormalizeAction.h"
+#include "CResampleAction.h"
 
 #endif

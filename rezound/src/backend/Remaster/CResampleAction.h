@@ -18,53 +18,36 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __RemasterActionDialogs_H__
-#define __RemasterActionDialogs_H__
+#ifndef __CResampleAction_H__
+#define __CResampleAction_H__
 
-#include "../../config/common.h"
-#include "fox_compat.h"
+#include "../../../config/common.h"
 
-#include "CActionParamDialog.h"
+#include "../AAction.h"
 
-
-// --- noise gate ------------------------
-
-class CNoiseGateDialog : public CActionParamDialog
+class CResampleAction : public AAction
 {
 public:
-	CNoiseGateDialog(FXWindow *mainWindow);
+	CResampleAction(const CActionSound &actionSound,const unsigned newSampleRate);
+
+protected:
+	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound &actionSound);
+	CanUndoResults canUndo(const CActionSound &actionSound) const;
+
+private:
+	sample_pos_t undoRemoveLength;
+	unsigned newSampleRate;
+	unsigned oldSampleRate;
 };
 
 
-
-// --- compressor ------------------------
-
-class CCompressorDialog : public CActionParamDialog
+class CResampleActionFactory : public AActionFactory
 {
 public:
-	CCompressorDialog(FXWindow *mainWindow);
+	CResampleActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+
+	CResampleAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };
-
-
-
-// --- normalize -------------------------
-
-class CNormalizeDialog : public CActionParamDialog
-{
-public:
-	CNormalizeDialog(FXWindow *mainWindow);
-};
-
-
-
-// --- remaster --------------------------
-
-class CResampleDialog : public CActionParamDialog
-{
-public:
-	CResampleDialog(FXWindow *mainWindow);
-};
-
-
 
 #endif

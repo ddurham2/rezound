@@ -97,4 +97,23 @@ CNormalizeDialog::CNormalizeDialog(FXWindow *mainWindow) :
 }
 
 
+// --- resample ----------------------------
+
+CResampleDialog::CResampleDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Resample",false)
+{
+	vector<string> items;
+	items.push_back("4000");
+	items.push_back("8000");
+	items.push_back("11025");
+	items.push_back("22050");
+	items.push_back("44100");
+	items.push_back("48000");
+	items.push_back("88200");
+	items.push_back("96000");
+
+	void *p0=newVertPanel(NULL);
+		addComboTextEntry(p0,"New Sample Rate",items,"",true);
+			getComboText("New Sample Rate")->setValue(44100);
+}
 

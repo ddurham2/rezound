@@ -1,7 +1,5 @@
 --- THINGS TO DO FOR SURE ---
 
-	- add a 'Resampling' action where it's basically just a rate change with a constant value, but also sets the sample rate to a new value afterwards
-
 	- I might want to make sure that gcc is some minimum version in configure.in.. I really don't think gcc2.8 will cut it
 
 	- create a 'paste to new' edit action
@@ -20,13 +18,6 @@
 		- crossfading could use it
 
 	- eventually need to go through and remove all the unneeded commented code
-
-	- DONE needs some compressor action(s)
-		- need a "link-channels" toggle parameter which causes all the channels to be compressed if any channel needs to be compressed
-			- I have to implement a frontend checkbox action dialog widget for this
-			- the backend already supports this behavior
-			- selecting hard or soft knee may be a useful parameter if someone could tell me exactly what it is
-			- I also could make a parameter for selecting whether to use RMS or Peak-Level for the level detecting
 
 	- HMM... I've been thinking about a decision I made a long time ago about selected regions...
 		- I decided back then that I would have a start and a stop postion int stored internally
@@ -502,4 +493,13 @@
 	- um.. if you make 3 edits.. then save the file.. then undo 3 times.. it still needs to be marked as modified
 		- I'd say to iterate to the bottom of the action stack and modify it's 'saved state' value whenever you save and set it to not saved
 		- ??? this might affect redo in some way
+
+	- needs some compressor action(s)
+		- need a "link-channels" toggle parameter which causes all the channels to be compressed if any channel needs to be compressed
+			- I have to implement a frontend checkbox action dialog widget for this
+			- the backend already supports this behavior
+			??? - selecting hard or soft knee may be a useful parameter if someone could tell me exactly what it is
+			??? - I also could make a parameter for selecting whether to use RMS or Peak-Level for the level detecting
+
+	- add a 'Resampling' action where it's basically just a rate change with a constant value, but also sets the sample rate to a new value afterwards
 
