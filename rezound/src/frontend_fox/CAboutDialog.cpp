@@ -107,7 +107,7 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 
 	tab=new FXTabItem(tabs,_("Thanks To"),NULL,TAB_TOP_NORMAL);
 	{
-		FXMatrix *t=new FXMatrix(tabs,2,MATRIX_BY_COLUMNS | LAYOUT_FILL_X | FRAME_RAISED|FRAME_THICK);
+		FXMatrix *t=new FXMatrix(new FXScrollWindow(tabs,LAYOUT_FILL_X|LAYOUT_FILL_Y),2,MATRIX_BY_COLUMNS | LAYOUT_FILL_X | FRAME_RAISED|FRAME_THICK);
 
 		MAKE_TEXT(t,"Alexandre Prokoudine",_("Russian Translation"));
 		MAKE_TEXT(t,"Joost Andrae",_("German Translation"));
