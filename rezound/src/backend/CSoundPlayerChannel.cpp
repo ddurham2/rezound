@@ -199,6 +199,9 @@ void CSoundPlayerChannel::stop()
 		// prebufferChunk() checks the bools set above 
 		// after it locks the mutex so it can stop early
 		CMutexLocker l(prebufferPositionMutex);
+
+		// remove any more prebuffered data that might have been just waiting to be written into the pipe
+		prebufferedChunkPipe.clear();
 	}
 }
 
