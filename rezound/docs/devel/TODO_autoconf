@@ -152,4 +152,10 @@
   find one before the other.. 
 
 
+- since I seemed to have found a buncha files that are also script generated but 
+  not are not removed by bootstrap --clean I didn't know if you want to add them
+  to be removed also.  If you do want to see just which files these were (i.e.
+  the symlinks too) just do a cvs checkout to another top level directory and
+  you'll see all the files that aren't in there that are in the normal cvs
+  repository (after doing a bootstrap --clean)
 
