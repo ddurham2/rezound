@@ -14,6 +14,8 @@ In addition to what's listed in the INSTALL doc...
 
 	(These minimum version numbers may not be exactly right.  The version numbers listed have worked for me and a few others on particular distros.  Even though it should not be the case, I have come across users with different distros where they had to have higher versions than the minumums listed here.)
 
+	(If you run Redhat 9 with all libraries installed, chances are that you already have most of these libraries installed except gettext 0.11.5. It is recommended to install this library from the source tarball rather than from the RPM to minimize dependencies with glibc.)
+
    Then, from the top source directory, run the bootstrap script. This will create the configure script. Now you can follow the instructions in INSTALL for normal build.
 
    When running bootstrap IF aclocal complains that one or more macros are not defined in the library, then it may be necessary to modify or create a dirlist file for aclocal to know where to look for .m4 files
