@@ -96,42 +96,30 @@ private:
  * it is useful to use where a lock should be obtained, then released on return or
  * exception... when an object of this class goes out of scope, the lock will be 
  * released
+ *
+ * The constructor can optionally take a second parameter that says not to wait when 
+ * locking, but to do a trylock.  If this method is used, then it is necessary to
+ * call didLock() to see if a lock was obtained.
  */
 class CMutexLocker
 {
 public:
-	CMutexLocker(CMutex &_m) :
+	CMutexLocker(CMutex &_m,bool block=true) :
 		m(_m)
 	{
-		m.lock();
+		if(block)
+		{
+			m.lock();
+			locked=true;
+		}
+		else
+		{
+			locked=m.trylock();
+		}
+
 	}
 
 	virtual ~CMutexLocker()
-	{
-		m.unlock();
-	}
-
-private:
-	CMutex &m;
-};
-
-
-/*
- * This class does a try-lock on the mutex at construction.  It is then necessary
- * to check the didLock() method's return value and continue if it's true else
- * do not continue into the critical section.  If a lock was obtained then it 
- * will release the lock when the object destructs.
- */
-class CMutexTryLocker
-{
-public:
-	CMutexTryLocker(CMutex &_m) :
-		m(_m),
-		locked(m.trylock())
-	{
-	}
-
-	virtual ~CMutexTryLocker()
 	{
 		if(locked)
 			m.unlock();
@@ -144,7 +132,29 @@ public:
 
 private:
 	CMutex &m;
-	const bool locked;
+	bool locked;
+};
+
+
+/*
+ * This class does a try-lock on the mutex at construction.  It is then necessary
+ * to check the didLock() method's return value and continue if it's true else
+ * do not continue into the critical section.  If a lock was obtained then it 
+ * will release the lock when the object destructs.
+ */
+class CMutexTryLocker : private CMutexLocker
+{
+public:
+	CMutexTryLocker(CMutex &m) :
+		CMutexLocker(m,false)
+	{
+	}
+
+	virtual ~CMutexTryLocker()
+	{
+	}
+
+	CMutexLocker::didLock;
 };
 
 
