@@ -16,12 +16,24 @@ distro tarball(eg: removing warning flags)
 
 5. PROOF-READ ALL CHANGES YOU JUST MADE!
 
+--- EITHER -------------
+
+6. update the rpm spec file
+
+7. rebuild FOX with all the possible --disable flags then 'make_standalone.sh'
+
+8. run build_packages_for_release.sh (which is only local to me -- not in CVS)
+
+--- OR -----------------
+
 6. 'make distcheck'
 7. rebuild FOX with all the possible --disable flags then 'make_standalone.sh'
 8. create .rpm as standalone
 	- update the rpm spec file
 	- copy the source tarball to /usr/src/RPM/SOURCES
 	- rpmbuild -ba rezound.spec
+
+------------------------
 
 9. checkin any modified files (docs/AUTHORS, docs/NEWS, docs/Features.txt, configure.in, docs/INSTALL, etc)
 

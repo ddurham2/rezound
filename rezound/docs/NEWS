@@ -1,3 +1,14 @@
+rezound-0.7.0beta
+	This is a new feature release.  Changes include:
+	- Added preliminary JACK support (the speed of and load on your computer will deterine how well this works)
+	- Added a "Repeat Count" or "Repeat Time" when pasting from any clipboard
+	- Added a "Balance" action which can change the balance or pan audio between two channels
+	- Added some symmetry changing buttons and smoothing feature to the graph parameter widget
+	- Added a "Recent Actions" under the "Edit" menu
+	- When an audio I/O system is selected at configure time, ReZound will now fall back to OSS if the other is unavailable
+	- Buffer size and buffer count settings can now be made without rebuilding
+	- Made other minor cosmetic change, backend changes and bug fixes
+
 rezound-0.6.0beta
 	This is a big new feature release.  This being the case, please report 
 	any bugs as you might find to the bug reporting system on the SourceForge 

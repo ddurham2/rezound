@@ -10,7 +10,7 @@
 	- MPEG Layer-3,2,1	(lame)
 
 - Audio I/O Interfaces
-	- native OSS
+	- OSS (default)
 	- PortAudio ( http://www.portaudio.com )
 	- JACK ( http://jackit.sourceforge.net )
 
@@ -61,7 +61,7 @@
 	- Cut to New
 	- Delete
 	- Crop
-	- Paste
+	- Paste (all types allow for a "Repeat Count" or "Repeat Time" when pasting)
 		- Insert
 		- Replace
 		- Overwrite
@@ -112,6 +112,7 @@
 	- Add a Cue Every X Seconds
 
 - Mastering/Remastering Tools (more to come)
+	- Balance/Pan (by constant or curve)
 	- Remove DC Component
 	- Noise Gate
 	- Dynamic Range Compression
