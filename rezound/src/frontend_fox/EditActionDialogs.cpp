@@ -30,7 +30,8 @@
 CInsertSilenceDialog::CInsertSilenceDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Insert Silence")
 {
-	addTextEntry("Length","seconds",1.0,0,10000);
+	void *p=newHorzPanel(NULL);
+		addTextEntry(p,"Length","seconds",1.0,0,10000);
 }
 
 
@@ -40,7 +41,8 @@ CInsertSilenceDialog::CInsertSilenceDialog(FXWindow *mainWindow) :
 CRotateDialog::CRotateDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Rotate")
 {
-	addTextEntry("Amount","seconds",1.0,0,10000);
+	void *p=newHorzPanel(NULL);
+		addTextEntry(p,"Amount","seconds",1.0,0,10000);
 }
 
 
@@ -50,9 +52,10 @@ CRotateDialog::CRotateDialog(FXWindow *mainWindow) :
 CSwapChannelsDialog::CSwapChannelsDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Swap Channels A & B")
 {
-	vector<string> items;
-	addComboTextEntry("Channel A",items,"");
-	addComboTextEntry("Channel B",items,"");
+	void *p=newHorzPanel(NULL);
+		vector<string> items;
+		addComboTextEntry(p,"Channel A",items,"");
+		addComboTextEntry(p,"Channel B",items,"");
 }
 
 #include "../backend/CActionParameters.h"
@@ -87,7 +90,8 @@ bool CSwapChannelsDialog::show(CActionSound *actionSound,CActionParameters *acti
 CAddChannelsDialog::CAddChannelsDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Add Channels")
 {
-	addTextEntry("Insert Where","",0,0,MAX_CHANNELS);
-	addTextEntry("Insert Count","",1,1,MAX_CHANNELS);
+	void *p=newHorzPanel(NULL);
+		addTextEntry(p,"Insert Where","",0,0,MAX_CHANNELS);
+		addTextEntry(p,"Insert Count","",1,1,MAX_CHANNELS);
 }
 
