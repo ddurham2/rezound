@@ -31,7 +31,8 @@ class CAddCuesActionFactory;
 class CAddCuesAction : public AAction
 {
 public:
-	CAddCuesAction(const CActionSound &actionSound,const string cueName,const unsigned cueCount);
+	CAddCuesAction(const CActionSound &actionSound,const string cueName,const unsigned cueCount,const bool anchoredInTime);
+	CAddCuesAction(const CActionSound &actionSound,const string cueName,const double timeInterval,const bool anchoredInTime);
 	virtual ~CAddCuesAction();
 
 protected:
@@ -42,14 +43,25 @@ protected:
 private:
 	const string cueName;
 	const unsigned cueCount;
+	const double timeInterval;
+	const bool anchoredInTime;
 
 };
 
-class CAddCuesActionFactory : public AActionFactory
+class CAddNCuesActionFactory : public AActionFactory
 {
 public:
-	CAddCuesActionFactory(AActionDialog *channelSelectDialog);
-	virtual ~CAddCuesActionFactory();
+	CAddNCuesActionFactory(AActionDialog *channelSelectDialog);
+	virtual ~CAddNCuesActionFactory();
+
+	CAddCuesAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+};
+
+class CAddTimedCuesActionFactory : public AActionFactory
+{
+public:
+	CAddTimedCuesActionFactory(AActionDialog *channelSelectDialog);
+	virtual ~CAddTimedCuesActionFactory();
 
 	CAddCuesAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
 };

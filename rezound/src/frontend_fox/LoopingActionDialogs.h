@@ -29,11 +29,18 @@
 
 // --- add cues --------------------------
 
-class CAddCuesDialog : public CActionParamDialog
+class CAddNCuesDialog : public CActionParamDialog
 {
 public:
-	CAddCuesDialog(FXWindow *mainWindow);
-	virtual ~CAddCuesDialog(){}
+	CAddNCuesDialog(FXWindow *mainWindow);
+	virtual ~CAddNCuesDialog(){}
+};
+
+class CAddTimedCuesDialog : public CActionParamDialog
+{
+public:
+	CAddTimedCuesDialog(FXWindow *mainWindow);
+	virtual ~CAddTimedCuesDialog(){}
 };
 
 

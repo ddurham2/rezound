@@ -22,10 +22,21 @@
 
 #include "../CActionParameters.h"
 
-CAddCuesAction::CAddCuesAction(const CActionSound &actionSound,const string _cueName,const unsigned _cueCount) :
+CAddCuesAction::CAddCuesAction(const CActionSound &actionSound,const string _cueName,const unsigned _cueCount,const bool _anchoredInTime) :
 	AAction(actionSound),
 	cueName(_cueName),
-	cueCount(_cueCount)
+	cueCount(_cueCount),
+	timeInterval(0.0),
+	anchoredInTime(_anchoredInTime)
+{
+}
+
+CAddCuesAction::CAddCuesAction(const CActionSound &actionSound,const string _cueName,const double _timeInterval,const bool _anchoredInTime) :
+	AAction(actionSound),
+	cueName(_cueName),
+	cueCount(0),
+	timeInterval(_timeInterval),
+	anchoredInTime(_anchoredInTime)
 {
 }
 
@@ -36,14 +47,34 @@ CAddCuesAction::~CAddCuesAction()
 bool CAddCuesAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
 	const sample_pos_t start=actionSound.start;
+	const sample_pos_t stop=actionSound.stop;
 	const sample_pos_t selectionLength=actionSound.selectionLength();
 
-	sample_fpos_t interval=(sample_fpos_t)selectionLength/cueCount;
-	sample_fpos_t position=start;
-	for(size_t t=0;t<cueCount;t++)
-	{
-		actionSound.sound->addCue(cueName,(sample_pos_t)sample_fpos_round(position),false);
-		position+=interval;
+	if(cueCount==0)
+	{ // add a cue every X seconds within the selection
+		const sample_pos_t interval=(sample_pos_t)sample_fpos_round(timeInterval*actionSound.sound->getSampleRate());
+
+		if(interval<=0)
+			throw runtime_error("The time interval was zero");
+		if((selectionLength/interval)>10000)
+			throw runtime_error("The time interval was so small for the selected area that an unlikely desired amount of cues would be added");
+
+		sample_pos_t pos=start;
+		do
+		{
+			actionSound.sound->addCue(cueName,pos,anchoredInTime);
+			pos+=interval;
+		} while(pos<stop);
+	}
+	else
+	{ // add N cues within the selection
+		sample_fpos_t interval=(sample_fpos_t)selectionLength/cueCount;
+		sample_fpos_t position=start;
+		for(size_t t=0;t<cueCount;t++)
+		{
+			actionSound.sound->addCue(cueName,(sample_pos_t)sample_fpos_round(position),anchoredInTime);
+			position+=interval;
+		}
 	}
 
 	return true;
@@ -61,22 +92,45 @@ void CAddCuesAction::undoActionSizeSafe(const CActionSound &actionSound)
 
 
 // --------------------------------------------------
-//
-CAddCuesActionFactory::CAddCuesActionFactory(AActionDialog *normalDialog) :
-	AActionFactory("Add Cues","Add Cues at Evenly Spaced Intervals",NULL,normalDialog)
+
+CAddNCuesActionFactory::CAddNCuesActionFactory(AActionDialog *normalDialog) :
+	AActionFactory("Add N Cues","Add N Cues at Evenly Spaced Intervals",NULL,normalDialog)
 {
 }
 
-CAddCuesActionFactory::~CAddCuesActionFactory()
+CAddNCuesActionFactory::~CAddNCuesActionFactory()
 {
 }
 
-CAddCuesAction *CAddCuesActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+CAddCuesAction *CAddNCuesActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
 	return new CAddCuesAction(
 		actionSound,
 		actionParameters->getStringParameter("Cue Name"),
-		actionParameters->getUnsignedParameter("Cue Count")
+		actionParameters->getUnsignedParameter("Cue Count"),
+		actionParameters->getBoolParameter("Anchor Cues in Time")
+		);
+}
+
+
+// --------------------------------------------------
+
+CAddTimedCuesActionFactory::CAddTimedCuesActionFactory(AActionDialog *normalDialog) :
+	AActionFactory("Add Timed Cues","Add a Cue Every X Seconds",NULL,normalDialog)
+{
+}
+
+CAddTimedCuesActionFactory::~CAddTimedCuesActionFactory()
+{
+}
+
+CAddCuesAction *CAddTimedCuesActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
+{
+	return new CAddCuesAction(
+		actionSound,
+		actionParameters->getStringParameter("Cue Name"),
+		actionParameters->getDoubleParameter("Time Interval"),
+		actionParameters->getBoolParameter("Anchor Cues in Time")
 		);
 }
 

@@ -703,7 +703,8 @@ void CMainWindow::createMenus()
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&Looping",NULL,menu);
 		new CActionMenuCommand(new CMakeSymetricActionFactory(gChannelSelectDialog),menu,"");
-		new CActionMenuCommand(new CAddCuesActionFactory(new CAddCuesDialog(this)),menu,"");
+		new CActionMenuCommand(new CAddNCuesActionFactory(new CAddNCuesDialog(this)),menu,"");
+		new CActionMenuCommand(new CAddTimedCuesActionFactory(new CAddTimedCuesDialog(this)),menu,"");
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&Remaster",NULL,menu);

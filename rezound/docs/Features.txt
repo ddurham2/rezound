@@ -103,7 +103,8 @@
 
 - Looping Tools (much more to come)
 	- Make Selection Symetric
-	- Add Cues at Regular Intervals
+	- Add N Equally Spaced Cues
+	- Add a Cue Every X Seconds
 
 - Mastering/Remastering Tools (more to come)
 	- Remove DC Component
