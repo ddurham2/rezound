@@ -20,6 +20,7 @@
 
 #include "ASoundTranslator.h"
 #include "CSound.h"
+#include "AStatusComm.h"
 
 #include <stdexcept>
 
@@ -47,6 +48,7 @@ void ASoundTranslator::loadSound(const string filename,CSound *sound) const
 	catch(...)
 	{
 		sound->unlockForResize();
+		endAllProgressBars();
 		throw;
 	}
 }
@@ -62,6 +64,7 @@ void ASoundTranslator::saveSound(const string filename,CSound *sound) const
 	catch(...)
 	{
 		sound->unlockSize();
+		endAllProgressBars();
 		throw;
 	}
 }

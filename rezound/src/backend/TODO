@@ -22,16 +22,13 @@
 
 	- Add a feature to ASoundRecorder that tells it to start when a certain threshold is hit in percent
 
-	- in CrezSoundTranslator::onSaveSound, copyToFile unnecessarily copies any temp pools and peak chunk pools...  thus making the saved file way too big
-		- so I should manually copy the pools... TPoolAccessor should have a method for copying pool efficiently
-
 	- need to make 'add channel' and remove channel actions so I can test more than stereo number of channels... 
 		- DONE (but no frontend control yet): when I do implement the more than 2 channels, I need to have a way to route the multiple channels of a sound to the 2 (or more) channels of sound card output
 		- DONE the default (when a sound is loaded) should be just to assign each channel to the lesser number of sound card channels in a rotating fashion
 		- DONE the routing should be assigned per CSoundPlayerChannel object, but the routing information should also be saved in a pool in the sound object
 
 	- use progress bars when doing TPoolAccesser::copyData and TPoolAccesser::zeroData 
-		- PoolFile::copyToFile is still without a progress bar, this is used when loading native .rez files
+		- acutally... break the call into 100 chunks and update a progress bar then
 
 	- rename MAX_CHANNELS and MAX_LENGTH in CSound_defs.h to something a little more ReZound specific like REZ_MAX_CHANNELS REZ_MAX_LENGTH
 
@@ -228,3 +225,6 @@
 	- enhance TSoundStretcher to do interpolation
 		- done... used a pointer to a method to dynamically choose an implementation based on how it needs to be stretched
 
+	- in CrezSoundTranslator::onSaveSound, copyToFile unnecessarily copies any temp pools and peak chunk pools...  thus making the saved file way too big
+		- so I should manually copy the pools... TPoolAccessor should have a method for copying pool efficiently
+		- PoolFile::copyToFile is still without a progress bar, this is used when loading native .rez files

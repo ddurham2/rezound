@@ -33,6 +33,7 @@
 #include <TPoolAccesser.h>
 #define REZOUND_POOLFILE_BLOCKSIZE 32768
 #define REZOUND_POOLFILE_SIGNATURE "ReZoundF"
+#define REZOUND_WORKING_POOLFILE_SIGNATURE "ReZoundW"
 
 
 typedef TStaticPoolAccesser<sample_t,TPoolFile<sample_pos_t,CMultiFile::l_addr_t> > CRezPoolAccesser;
@@ -356,14 +357,14 @@ private:
 
 	static void appendForFudgeFactor(CInternalRezPoolAccesser dest,const CInternalRezPoolAccesser src,sample_pos_t srcWhere,sample_pos_t fudgeFactor);
 
-	struct RFormatInfo1
+	struct RFormatInfo
 	{
 		uint32_t version;
 		uint64_t size;
 		uint32_t sampleRate;
 		uint32_t channelCount;
 
-		void operator=(const RFormatInfo1 &src)
+		void operator=(const RFormatInfo &src)
 		{
 			version=src.version;
 			size=src.size;
@@ -371,7 +372,7 @@ private:
 			channelCount=src.channelCount;
 		}
 	};
-	typedef TPoolAccesser<RFormatInfo1,PoolFile_t > CFormat1InfoPoolAccesser;
+	typedef TPoolAccesser<RFormatInfo,PoolFile_t > CFormatInfoPoolAccesser;
 
 	int metaInfoPoolID;
 	int channelPoolIDs[MAX_CHANNELS];

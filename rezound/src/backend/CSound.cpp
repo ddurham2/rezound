@@ -61,7 +61,6 @@
 		throw(runtime_error(string(__func__)+" -- this CSound object's size has not been locked"));
 
 
-#define CURRENT_VERSION 1
 // current pool names for the current version
 #define FORMAT_INFO_POOL_NAME "Format Info"
 #define AUDIO_POOL_NAME "Channel "
@@ -72,7 +71,7 @@
 
 
 CSound::CSound() :
-	poolFile(REZOUND_POOLFILE_BLOCKSIZE,REZOUND_POOLFILE_SIGNATURE),
+	poolFile(REZOUND_POOLFILE_BLOCKSIZE,REZOUND_WORKING_POOLFILE_SIGNATURE),
 
 	size(0),
 	sampleRate(0),
@@ -92,7 +91,7 @@ CSound::CSound() :
 }
 
 CSound::CSound(const string &_filename,const unsigned _sampleRate,const unsigned _channelCount,const sample_pos_t _size) :
-	poolFile(REZOUND_POOLFILE_BLOCKSIZE,REZOUND_POOLFILE_SIGNATURE),
+	poolFile(REZOUND_POOLFILE_BLOCKSIZE,REZOUND_WORKING_POOLFILE_SIGNATURE),
 
 	size(0),
 	sampleRate(0),
@@ -1197,7 +1196,7 @@ void CSound::createWorkingPoolFile(const string originalFilename,const unsigned 
 	poolFile.openFile(filename,true);
 	removeAllTempAudioPools();
 
-	CFormat1InfoPoolAccesser a=poolFile.createPool<RFormatInfo1>(FORMAT_INFO_POOL_NAME);
+	CFormatInfoPoolAccesser a=poolFile.createPool<RFormatInfo>(FORMAT_INFO_POOL_NAME);
 	metaInfoPoolID=poolFile.getPoolIdByName(FORMAT_INFO_POOL_NAME);
 	a.append(1);
 
@@ -1262,8 +1261,8 @@ bool CSound::createFromWorkingPoolFileIfExists(const string originalFilename,boo
 		poolFile.readPoolRaw(metaInfoPoolID,&version,sizeof(version));
 		if(version==1)
 		{
-			const CFormat1InfoPoolAccesser a=poolFile.getPoolAccesser<RFormatInfo1>(metaInfoPoolID);
-			RFormatInfo1 r;
+			const CFormatInfoPoolAccesser a=poolFile.getPoolAccesser<RFormatInfo>(metaInfoPoolID);
+			RFormatInfo r;
 			r=a[0];
 
 			if(r.size>MAX_LENGTH)
@@ -1275,7 +1274,6 @@ bool CSound::createFromWorkingPoolFileIfExists(const string originalFilename,boo
 			sampleRate=r.sampleRate;
 			channelCount=r.channelCount;
 		}
-		// else if saving to a new version... clear and change the alignement of the "Format Info" pool
 		else
 			throw(runtime_error(string(__func__)+" -- unhandled format version: "+istring(version)));
 
@@ -1318,31 +1316,31 @@ void CSound::saveMetaInfo()
 	if(!poolFile.isOpen())
 		throw(runtime_error(string(__func__)+" -- poolFile is not opened"));
 
-	CFormat1InfoPoolAccesser b=poolFile.getPoolAccesser<RFormatInfo1>(metaInfoPoolID);
+	CFormatInfoPoolAccesser b=poolFile.getPoolAccesser<RFormatInfo>(metaInfoPoolID);
 	if(b.getSize()==1)
 	{
-		RFormatInfo1 &r=b[0];
+		RFormatInfo &r=b[0];
 
 		// always write the newest format
-		r.version=CURRENT_VERSION;
+		r.version=1;
 		r.size=size;
 		r.sampleRate=sampleRate;
 		r.channelCount=channelCount;
 	}
 	else
 	{
-		RFormatInfo1 r;
+		RFormatInfo r;
 
 		// always write the newest format
-		r.version=CURRENT_VERSION;
+		r.version=1;
 		r.size=size;
 		r.sampleRate=sampleRate;
 		r.channelCount=channelCount;
 
 		poolFile.clearPool(metaInfoPoolID);
-		poolFile.setPoolAlignment(metaInfoPoolID,sizeof(RFormatInfo1));
+		poolFile.setPoolAlignment(metaInfoPoolID,sizeof(RFormatInfo));
 
-		CFormat1InfoPoolAccesser b=poolFile.getPoolAccesser<RFormatInfo1>(metaInfoPoolID);
+		CFormatInfoPoolAccesser b=poolFile.getPoolAccesser<RFormatInfo>(metaInfoPoolID);
 		b.append(1);
 		b[0]=r;
 	}

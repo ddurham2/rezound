@@ -87,11 +87,11 @@ void ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 	//unsigned channelCount=(unsigned)(afGetVirtualFrameSize(h,AF_DEFAULT_TRACK,1)/sizeof(sample_t));
 	unsigned channelCount=afGetChannels(h,AF_DEFAULT_TRACK);
 	if(channelCount<=0 || channelCount>MAX_CHANNELS) // ??? could just ignore the extra channels
-		throw(runtime_error(string(__func__)+" -- invalid number of channels in audio file: "+istring(channelCount)+" -- you could simply increase MAX_CHANNELS in ASound.h"));
+		throw(runtime_error(string(__func__)+" -- invalid number of channels in audio file: "+istring(channelCount)+" -- you could simply increase MAX_CHANNELS in CSound.h"));
 	unsigned sampleRate=(unsigned)afGetRate(h,AF_DEFAULT_TRACK);
 
 	if(sampleRate<4000 || sampleRate>96000)
-		throw(runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate)+" indicates probably a corrupt file and SGI's libaudiofile has been known to miss these"));
+		throw(runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate)+" probably indicates a corrupt file and SGI's libaudiofile has been known to miss these"));
 
 	
 	// ??? make sure it's not more than MAX_LENGTH
