@@ -141,7 +141,14 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 
 
 		// -- 4
-		soundPlayer->initialize();
+		try
+		{
+			soundPlayer->initialize();
+		}
+		catch(exception &e)
+		{
+			Error(string(e.what())+"\nPlaying will be disabled.");
+		}
 
 	}
 	catch(exception &e)

@@ -103,6 +103,9 @@ void CSoundPlayerChannel::deinit()
 
 void CSoundPlayerChannel::play(bool _playLooped,bool _playSelectionOnly,CEnvelope &_envelope)
 {
+	if(!player->isInitialized())
+		throw(runtime_error(string(__func__)+" -- the sound player is not initialized"));
+
 	// mutex???
 	if(!playing)
 	{

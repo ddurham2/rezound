@@ -37,6 +37,7 @@ public:
 
 	void initialize();
 	void deinitialize();
+	bool isInitialized() const;
 
 private:
 

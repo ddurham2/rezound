@@ -39,6 +39,8 @@
 
 #include <istring>
 
+#include "AStatusComm.h"
+
 
 // ??? edit this to be able to detect necessary parameters from the typeof sample_t
 // 	or I need to convert to 16bit 
@@ -70,6 +72,11 @@ COSSSoundPlayer::COSSSoundPlayer() :
 COSSSoundPlayer::~COSSSoundPlayer()
 {
 	deinitialize();
+}
+
+bool COSSSoundPlayer::isInitialized() const
+{
+	return(initialized);
 }
 
 void COSSSoundPlayer::initialize()
@@ -170,6 +177,7 @@ void COSSSoundPlayer::initialize()
 		if(playThread.Start())
 		{
 			threadFinishedSem.Post();
+			close(audio_fd);
 			throw(runtime_error(string(__func__)+" -- error starting play thread"));
 		}
 
