@@ -230,12 +230,12 @@ FXString FXConstantParamValue::getHelpText() const
 	return(titleLabel->getHelpText());	
 }
 
-void FXConstantParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
+void FXConstantParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
 	const string key=prefix+DOT+getTitle()+DOT;
 
-	const double value=f.keyExists((key+"value").c_str()) ? atof(f.getValue((key+"value").c_str()).c_str()) : defaultValue;
-	const int scalar=f.keyExists((key+"scalar").c_str()) ? atoi(f.getValue((key+"scalar").c_str()).c_str()) : initScalar;
+	const double value=f->keyExists((key+"value").c_str()) ? atof(f->getValue((key+"value").c_str()).c_str()) : defaultValue;
+	const int scalar=f->keyExists((key+"scalar").c_str()) ? atoi(f->getValue((key+"scalar").c_str()).c_str()) : initScalar;
 
 	// do it twice.. because setting one before the other may cause a range problem.. by the second time, the range shouldn't be a problem
 	prvSetValue(value);
@@ -246,13 +246,13 @@ void FXConstantParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
 
 }
 
-void FXConstantParamValue::writeToFile(const string &prefix,CNestedDataFile &f) const
+void FXConstantParamValue::writeToFile(const string &prefix,CNestedDataFile *f) const
 {
 	const string key=prefix+DOT+getTitle()+DOT;
 
-	f.createKey((key+"value").c_str(),istring(getValue()));
+	f->createKey((key+"value").c_str(),istring(getValue()));
 	if(getMinScalar()!=getMaxScalar())
-		f.createKey((key+"scalar").c_str(),istring(getScalar()));
+		f->createKey((key+"scalar").c_str(),istring(getScalar()));
 }
 
 

@@ -129,17 +129,17 @@ FXString FXTextParamValue::getHelpText() const
 	return(titleLabel->getHelpText());	
 }
 
-void FXTextParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
+void FXTextParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
 	const string key=prefix+DOT+getTitle()+DOT;
-	const string v=f.getValue((key+"value").c_str());
+	const string v=f->getValue((key+"value").c_str());
 	setValue(atof(v.c_str()));
 }
 
-void FXTextParamValue::writeToFile(const string &prefix,CNestedDataFile &f)
+void FXTextParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 {
 	const string key=prefix+DOT+getTitle()+DOT;
-	f.createKey((key+"value").c_str(),istring(getValue()));
+	f->createKey((key+"value").c_str(),istring(getValue()));
 }
 
 

@@ -47,8 +47,8 @@ public:
 	void setHelpText(const FXString &text);
 	FXString getHelpText() const;
 
-	void readFromFile(const string &prefix,CNestedDataFile &f);
-	void writeToFile(const string &prefix,CNestedDataFile &f);
+	void readFromFile(const string &prefix,CNestedDataFile *f);
+	void writeToFile(const string &prefix,CNestedDataFile *f);
 
 /*
 	enum

@@ -116,7 +116,7 @@ private:
 	bool shrinkPresetsFrame;
 
 	void buildPresetLists();
-	void buildPresetList(CNestedDataFile &f,FXList *list);
+	void buildPresetList(CNestedDataFile *f,FXList *list);
 
 };
 

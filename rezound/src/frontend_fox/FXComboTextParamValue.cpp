@@ -87,22 +87,22 @@ FXString FXComboTextParamValue::getHelpText() const
 	return(titleLabel->getHelpText());	
 }
 
-void FXComboTextParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
+void FXComboTextParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
 	const string key=prefix+DOT+getTitle()+DOT+"index";
-	if(f.keyExists(key.c_str()))
+	if(f->keyExists(key.c_str()))
 	{
-		const string v=f.getValue(key.c_str());
+		const string v=f->getValue(key.c_str());
 		setValue(atoi(v.c_str()));
 	}
 	else
 		setValue(0); // ??? would use initialIndex if there were such a thing
 }
 
-void FXComboTextParamValue::writeToFile(const string &prefix,CNestedDataFile &f)
+void FXComboTextParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 {
 	const string key=prefix+DOT+getTitle()+DOT;
-	f.createKey((key+"index").c_str(),istring(getValue()));
+	f->createKey((key+"index").c_str(),istring(getValue()));
 }
 
 

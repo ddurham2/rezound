@@ -136,9 +136,32 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 		}
 
 
-		gSysPresetsFile=gSysDataDirectory+istring(CPath::dirDelim)+"presets.dat";
-		gUserPresetsFile=gUserDataDirectory+istring(CPath::dirDelim)+"presets.dat";
-		CPath(gUserPresetsFile).touch();
+		// parse the system presets
+		gSysPresetsFilename=gSysDataDirectory+istring(CPath::dirDelim)+"presets.dat";
+		gSysPresetsFile=new CNestedDataFile("",false);
+		try
+		{
+			gSysPresetsFile->parseFile(gSysPresetsFilename);
+		}
+		catch(exception &e)
+		{
+			Error(e.what());
+		}
+
+		
+		// parse the user presets
+		gUserPresetsFilename=gUserDataDirectory+istring(CPath::dirDelim)+"presets.dat";
+		CPath(gUserPresetsFilename).touch();
+		gUserPresetsFile=new CNestedDataFile("",false);
+		try
+		{
+			gUserPresetsFile->parseFile(gUserPresetsFilename);
+		}
+		catch(exception &e)
+		{
+			Error(e.what());
+		}
+		
 
 		gPromptDialogDirectory=gSettingsRegistry->getValue("promptDialogDirectory");
 

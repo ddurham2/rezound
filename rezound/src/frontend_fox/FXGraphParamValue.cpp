@@ -595,13 +595,13 @@ const string FXGraphParamValue::getTitle() const
 	return(title);
 }
 
-void FXGraphParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
+void FXGraphParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
 	const string key=prefix+DOT+getTitle()+DOT;
 
-	if(f.keyExists((key+"scalar").c_str()))
+	if(f->keyExists((key+"scalar").c_str()))
 	{
-		const string s=f.getValue((key+"scalar").c_str());
+		const string s=f->getValue((key+"scalar").c_str());
 		setScalar(atoi(s.c_str()));
 	}
 	else	
@@ -611,13 +611,13 @@ void FXGraphParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
 	nodes.clear();
 
 	const string k1=key+"node_positions";
-	if(f.keyExists(k1.c_str()))
+	if(f->keyExists(k1.c_str()))
 	{
 		const string k2=key+"node_values";
-		const size_t count=f.getArraySize(k1.c_str());
+		const size_t count=f->getArraySize(k1.c_str());
 		// ??? I could either save the node positions and values as [0,1], or I could use save the actual values ( <-- currently)
 		for(size_t t=0;t<count;t++)
-			nodes.push_back(CGraphParamValueNode(atof(f.getArrayValue(k1.c_str(),t).c_str()),atof(f.getArrayValue(k2.c_str(),t).c_str())));
+			nodes.push_back(CGraphParamValueNode(atof(f->getArrayValue(k1.c_str(),t).c_str()),atof(f->getArrayValue(k2.c_str(),t).c_str())));
 	}
 	else
 		clearNodes();
@@ -627,29 +627,29 @@ void FXGraphParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
 	graphPanel->update();
 }
 
-void FXGraphParamValue::writeToFile(const string &prefix,CNestedDataFile &f) const
+void FXGraphParamValue::writeToFile(const string &prefix,CNestedDataFile *f) const
 {
 	const string key=prefix+DOT+getTitle()+DOT;
 
 	if(getMinScalar()!=getMaxScalar())
-		f.createKey((key+"scalar").c_str(),istring(getScalar()));
+		f->createKey((key+"scalar").c_str(),istring(getScalar()));
 
 	//const CGraphParamValueNodeList nodes=getNodes();
 
 
 	const string k1=key+"node_positions";
 		// ??? I could implement a createArrayKey which takes a double so I wouldn't have to convert to string here
-	f.removeKey(k1.c_str());
+	f->removeKey(k1.c_str());
 	for(size_t t=0;t<nodes.size();t++)
-		f.createArrayKey(k1.c_str(),t,istring(nodes[t].position).c_str());
+		f->createArrayKey(k1.c_str(),t,istring(nodes[t].position).c_str());
 
 	const string k2=key+"node_values";
-	f.removeKey(k2.c_str());
+	f->removeKey(k2.c_str());
 	for(size_t t=0;t<nodes.size();t++)
-		f.createArrayKey(k2.c_str(),t,istring(nodes[t].value).c_str());
+		f->createArrayKey(k2.c_str(),t,istring(nodes[t].value).c_str());
 
 	if(getMinScalar()!=getMaxScalar())
-		f.createKey((key+"scalar").c_str(),istring(getScalar()));
+		f->createKey((key+"scalar").c_str(),istring(getScalar()));
 }
 
 

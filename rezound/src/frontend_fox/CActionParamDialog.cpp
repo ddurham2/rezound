@@ -83,7 +83,7 @@ CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title
 
 	try
 	{
-		if(CNestedDataFile(gSysPresetsFile).getArraySize((getTitle()+DOT+"names").text())>0)
+		if(gSysPresetsFile->getArraySize((getTitle()+DOT+"names").text())>0)
 		{
 			// native preset stuff
 			FXPacker *listFrame=new FXPacker(presetsFrame,FRAME_SUNKEN|FRAME_THICK|LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y, 0,0,200,0, 0,0,0,0, 0,0); // had to do this because FXList won't take that frame style
@@ -270,23 +270,21 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 
 long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-	string filename;
+	CNestedDataFile *presetsFile;
 	FXList *listBox;
 	if(SELID(sel)==ID_NATIVE_PRESET_BUTTON || SELID(sel)==ID_NATIVE_PRESET_LIST)
 	{
-		filename=gSysPresetsFile;
+		presetsFile=gSysPresetsFile;
 		listBox=nativePresetList;
 	}
 	else //if(SELID(sel)==ID_USER_PRESET_BUTTON || SELID(sel)==ID_USER_PRESET_LIST)
 	{
-		filename=gUserPresetsFile;
+		presetsFile=gUserPresetsFile;
 		listBox=userPresetList;
 	}
 
 	try
 	{
-		CNestedDataFile f(filename);
-
 		if(listBox->getCurrentItem()<0)
 		{
 			gStatusComm->beep();
@@ -301,19 +299,19 @@ long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void 
 			switch(parameters[t].first)
 			{
 			case ptConstant:
-				((FXConstantParamValue *)parameters[t].second)->readFromFile(title,f);
+				((FXConstantParamValue *)parameters[t].second)->readFromFile(title,presetsFile);
 				break;
 
 			case ptText:
-				((FXTextParamValue *)parameters[t].second)->readFromFile(title,f);
+				((FXTextParamValue *)parameters[t].second)->readFromFile(title,presetsFile);
 				break;
 
 			case ptComboText:
-				((FXComboTextParamValue *)parameters[t].second)->readFromFile(title,f);
+				((FXComboTextParamValue *)parameters[t].second)->readFromFile(title,presetsFile);
 				break;
 
 			case ptGraph:
-				((FXGraphParamValue *)parameters[t].second)->readFromFile(title,f);
+				((FXGraphParamValue *)parameters[t].second)->readFromFile(title,presetsFile);
 				break;
 
 			default:
@@ -353,13 +351,13 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 
 		try
 		{
-			CNestedDataFile f(gUserPresetsFile);
+			CNestedDataFile *presetsFile=gUserPresetsFile;
 
 
 			const string title=string(getTitle().text())+DOT+name;
 
 			bool alreadyExists=false;
-			if(f.keyExists(title.c_str()))
+			if(presetsFile->keyExists(title.c_str()))
 			{
 				alreadyExists=true;
 				if(Question("Overwrite Existing Preset '"+name+"'",yesnoQues)!=yesAns)
@@ -371,19 +369,19 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 				switch(parameters[t].first)
 				{
 				case ptConstant:
-					((FXConstantParamValue *)parameters[t].second)->writeToFile(title,f);
+					((FXConstantParamValue *)parameters[t].second)->writeToFile(title,presetsFile);
 					break;
 
 				case ptText:
-					((FXTextParamValue *)parameters[t].second)->writeToFile(title,f);
+					((FXTextParamValue *)parameters[t].second)->writeToFile(title,presetsFile);
 					break;
 
 				case ptComboText:
-					((FXComboTextParamValue *)parameters[t].second)->writeToFile(title,f);
+					((FXComboTextParamValue *)parameters[t].second)->writeToFile(title,presetsFile);
 					break;
 
 				case ptGraph:
-					((FXGraphParamValue *)parameters[t].second)->writeToFile(title,f);
+					((FXGraphParamValue *)parameters[t].second)->writeToFile(title,presetsFile);
 					break;
 
 				default:
@@ -394,12 +392,11 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 			if(!alreadyExists)
 			{
 				const string key=(getTitle()+DOT+"names").text();
-				f.createArrayKey(key.c_str(),f.getArraySize(key.c_str()),name);
-				buildPresetList(f,userPresetList);
+				presetsFile->createArrayKey(key.c_str(),presetsFile->getArraySize(key.c_str()),name);
+				buildPresetList(presetsFile,userPresetList);
 			}
 				
-			f.save();
-
+			presetsFile->save();
 		}
 		catch(exception &e)
 		{
@@ -417,15 +414,15 @@ long CActionParamDialog::onPresetRemoveButton(FXObject *sender,FXSelector sel,vo
 		string name=(userPresetList->getItemText(userPresetList->getCurrentItem())).mid(4,255).text();
 		if(Question("Remove Preset '"+name+"'",yesnoQues)==yesAns)
 		{
-			CNestedDataFile f(gUserPresetsFile);
+			CNestedDataFile *presetsFile=gUserPresetsFile;
 
 			const string key=string(getTitle().text())+DOT+name;
 
-			f.removeKey(key.c_str());
-			f.removeArrayKey((getTitle()+DOT+"names").text(),userPresetList->getCurrentItem());
+			presetsFile->removeKey(key.c_str());
+			presetsFile->removeArrayKey((getTitle()+DOT+"names").text(),userPresetList->getCurrentItem());
 
-			buildPresetList(f,userPresetList);
-			f.save();
+			buildPresetList(presetsFile,userPresetList);
+			presetsFile->save();
 		}
 	}
 	else
@@ -440,8 +437,7 @@ void CActionParamDialog::buildPresetLists()
 	{
 		try
 		{
-			CNestedDataFile f1(gSysPresetsFile);
-			buildPresetList(f1,nativePresetList);
+			buildPresetList(gSysPresetsFile,nativePresetList);
 		}
 		catch(exception &e)
 		{
@@ -452,8 +448,7 @@ void CActionParamDialog::buildPresetLists()
 
 	try
 	{
-		CNestedDataFile f2(gUserPresetsFile);
-		buildPresetList(f2,userPresetList);
+		buildPresetList(gUserPresetsFile,userPresetList);
 	}
 	catch(exception &e)
 	{
@@ -463,13 +458,13 @@ void CActionParamDialog::buildPresetLists()
 	
 }
 
-void CActionParamDialog::buildPresetList(CNestedDataFile &f,FXList *list)
+void CActionParamDialog::buildPresetList(CNestedDataFile *f,FXList *list)
 {
-	const size_t presetCount=f.getArraySize((getTitle()+DOT+"names").text());
+	const size_t presetCount=f->getArraySize((getTitle()+DOT+"names").text());
 	list->clearItems();
 	for(size_t t=0;t<presetCount;t++)
 	{
-		const string name=f.getArrayValue((getTitle()+DOT+"names").text(),t);
+		const string name=f->getArrayValue((getTitle()+DOT+"names").text(),t);
 		list->appendItem((istring(t,3,true)+" "+name).c_str());
 	}
 }

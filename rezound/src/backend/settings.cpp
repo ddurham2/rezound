@@ -31,9 +31,11 @@ string gPromptDialogDirectory="";
 string gUserDataDirectory="";
 string gSysDataDirectory="";
 
+string gUserPresetsFilename="";
+CNestedDataFile *gUserPresetsFile=NULL;
 
-string gUserPresetsFile="";
-string gSysPresetsFile="";
+string gSysPresetsFilename="";
+CNestedDataFile *gSysPresetsFile=NULL;
 
 
 size_t gWhichClipboard=0;

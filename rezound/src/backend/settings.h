@@ -41,11 +41,16 @@ extern string gPromptDialogDirectory;
 /*
  * These are the paths to the /usr/share/rezound or ~/.rezound directories
  */
-extern string gUserDataDirectory;	// "~/.rezound"
-extern string gSysDataDirectory;	// "/usr/share/rezound" (or whereever the --prefix was set)
+extern string gUserDataDirectory;		// "~/.rezound"
+extern string gSysDataDirectory;		// "/usr/share/rezound" (or whereever the --prefix was set)
 
-extern string gUserPresetsFile;		// "~/.rezound/presets.dat"
-extern string gSysPresetsFile;		// "/usr/share/rezound/presets.dat"
+
+extern string gUserPresetsFilename;		// gUserDataDirectory+"/presets.dat"
+extern CNestedDataFile *gUserPresetsFile;	// opened to gUserPresetsFilename
+
+extern string gSysPresetsFilename;		// gSysDataDirectory+"/presets.dat"
+extern CNestedDataFile *gSysPresetsFile;	// opened to gSysPresetsFilename
+
 
 
 
