@@ -99,10 +99,12 @@ void FXWaveCanvas::updateFromEdit()
 	lastHorzZoom=-1.0;
 	setHorzZoom(hZoom,hrtLeftEdge);
 
+	const double origVertZoomFactor=vertZoomFactor;
 	const double vZoom=getVertZoom();
 	lastVertZoom=-1.0;
 	setVertZoom(vZoom);
-	setVertOffset(getVertSize()/2-getHeight()/2);
+	if(origVertZoomFactor!=vertZoomFactor) // if the vertical zoom factor had to change, then re-center the vertical offset
+		setVertOffset(getVertSize()/2-getHeight()/2);
 
 	update();
 }
