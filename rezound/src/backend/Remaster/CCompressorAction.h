@@ -10,7 +10,7 @@ class CCompressorActionFactory;
 class CCompressorAction : public AAction
 {
 public:
-	CCompressorAction(const CActionSound &actionSound,float windowTime,float threshold,float ratio,float attackTime,float releaseTime);
+	CCompressorAction(const CActionSound &actionSound,float windowTime,float threshold,float ratio,float attackTime,float releaseTime,bool syncChannels);
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
@@ -23,6 +23,7 @@ private:
 	const float ratio;
 	const float attackTime;
 	const float releaseTime;
+	const bool syncChannels;
 };
 
 class CCompressorActionFactory : public AActionFactory

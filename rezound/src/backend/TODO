@@ -3,6 +3,8 @@
 
 	- create separate CDSPLevelDetectorRMS and CDSPPeakLevelDetectorPeak dsp blocks
 
+	- distortion would be an easy effect
+
 	- use TSoundStretcher in CSoundPlayerChannel
 		- the checks in the inner loop are not necessary... I should be able to determine before hand, how many loops to do and when the loop point will be.... just use TSoundStretcher in the mean time of each loop
 		- handling the amplitudes and envelopes is still a matter of scaling the result of TSoundStretcher::getSample()

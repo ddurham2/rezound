@@ -259,7 +259,7 @@ private:
 /* --- CDSPCompressor ----------------------------------------
  *
  * - This DSP block begins to change the gain from 1.0 to a different value based 
- *   on the ratio on the sound when the level of the audio rises above the given 
+ *   on the ratio on the sound when the level of the level signal rises above the given 
  *   'threshold'.  The rate at which it begins to change this gain is given by the 
  *   'attackTime' and the rate at which it begins to return to a gain of 1.0 once 
  *   the level is again below the threshold is given by 'releaseTime'.  The level 
@@ -267,8 +267,9 @@ private:
  *   of the moving window is given by 'windowTime'
  *
  * - To use simply construct the block with the desired parameters and repeatedly call 
- *   processSample() which returns the sample that was given but adjusted by the 
- *   calculated gain.
+ *   processSample() which returns the 'inputSample' that was given but adjusted by the 
+ *   calculated gain which acts according to the changes in level for successive 
+ *   'levelSample' values.
  *
  * - Note: it may be desirable to initialize the level detector within the algorithm
  *   by calling initSample() for 'windowTime' samples before calling processSample() 
@@ -276,10 +277,7 @@ private:
  *   enough sample have been observed.
  *
  * Info reference: http://www.harmony-central.com/Effects/Articles/Compression/
- *
- * Also, I had a lot of details to work out myself.  Basically, when the level rises
- * above the threshold then a gain is calculated to multiply with the sound which will
- * change the level by 1/ratio of the difference the level is above the threshold
+ * 		   and newsgroup: comp.dsp  my thread, 'compressor question'
  *
  */
 class CDSPCompressor
@@ -312,10 +310,9 @@ public:
 		levelDetector.readLevel(s);
 	}
 
-	// ??? could also do duck/cross limiting by having two input samples.. one that's used for level detection and one that's the signal to adjust
-	const mix_sample_t processSample(const mix_sample_t s)
+	const mix_sample_t processSample(const mix_sample_t inputSample,const mix_sample_t levelSample)
 	{
-		const mix_sample_t level=levelDetector.readLevel(s);
+		const mix_sample_t level=levelDetector.readLevel(levelSample);
 		
 		// ??? I need to allow compression ratio to also be less than 1 to act as an exciter
 		if(level>=threshold && bouncingRatio!=compressionRatio)
@@ -328,11 +325,40 @@ public:
 		#define _bouncingRatio bouncingRatio
 
 		if(_bouncingRatio>1.0)
-			//return (mix_sample_t)(s * ((threshold*(bouncingRatio-1.0)+level)/(bouncingRatio*level)) );
-			return (mix_sample_t)(s * pow((double)threshold/(double)level,(_bouncingRatio-1.0)/_bouncingRatio) );
+			return (mix_sample_t)(inputSample * pow((double)threshold/(double)level,(_bouncingRatio-1.0)/_bouncingRatio) );
 		else
-			return s;
+			return inputSample;
 		
+	}
+
+	// this works like processSample except that it uses all the channels in the frame to determine the signal level and adjust all the samples in the frame according to that singular calculated level
+	// its output is a modification of the inputFrame parameter
+	void processSampleFrame(mix_sample_t *inputFrame,const unsigned frameSize)
+	{
+		// determine the maximum sample value in the frame to use as the level detector's input
+		mix_sample_t levelSample=inputFrame[0];
+		if(levelSample<0) levelSample=-levelSample;
+		for(unsigned t=1;t<frameSize;t++)
+		{
+			mix_sample_t l=inputFrame[t];
+			if(l<0) l=-l;
+			levelSample=max(levelSample,l);
+		}
+			
+		const mix_sample_t level=levelDetector.readLevel(levelSample);
+		
+		// ??? I need to allow compression ratio to also be less than 1 to act as an exciter
+		if(level>=threshold && bouncingRatio!=compressionRatio)
+			bouncingRatio= min(bouncingRatio+attackVelocity,compressionRatio);
+		else if(level<threshold && bouncingRatio!=1.0)
+			bouncingRatio= max(bouncingRatio-releaseVelocity,(float)1.0);
+
+		if(bouncingRatio>1.0)
+		{
+			const double g=pow((double)threshold/(double)level,(bouncingRatio-1.0)/bouncingRatio);
+			for(unsigned t=0;t<frameSize;t++)
+				inputFrame[t]=(mix_sample_t)(inputFrame[t]*g);
+		}
 	}
 
 
