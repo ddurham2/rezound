@@ -85,14 +85,14 @@ static const sample_pos_t NIL_SAMPLE_POS=~((sample_pos_t)0);
 // audio type specifications
 #if 1 // 16 bit PCM
 
-	#define MAX_SAMPLE (32767)
-	#define MIN_SAMPLE (-MAX_SAMPLE) // these should stay symetric so I don't have to handle the possilbility of them being off center in the frontend rendering
+	#define MAX_SAMPLE ((sample_t)32767)
+	#define MIN_SAMPLE ((sample_t)-MAX_SAMPLE) // these should stay symetric so I don't have to handle the possilbility of them being off center in the frontend rendering
 	typedef int16_t sample_t;
 	typedef int_fast32_t mix_sample_t; // this needs to hold at least a value of MAX_SAMPLE squared
 
-#elif 0 // 32 bit floating point PCM
-	#define MAX_SAMPLE (1.0)
-	#define MIN_SAMPLE (-MAX_SAMPLE) // these should stay symetric so I don't have to handle the possilbility of them being off center in the frontend rendering
+#elif 0 // 32 bit floating point PCM (??? UNTESTED!)
+	#define MAX_SAMPLE ((float)1.0)
+	#define MIN_SAMPLE ((float)-MAX_SAMPLE) // these should stay symetric so I don't have to handle the possilbility of them being off center in the frontend rendering
 	typedef float sample_t;
 	typedef float mix_sample_t;
 
