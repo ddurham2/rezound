@@ -1,7 +1,5 @@
 $Id$
 
-    ---- I removed dependencies from Makefile.am's, now I have to make sure I check the Instructions I wrote for modifying Makefile.am's to remove any references to the dependencies
-
 - might ought to verify that bootstrap is running within the toplevel directory
 and move it into config
 

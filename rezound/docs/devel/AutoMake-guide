@@ -110,8 +110,7 @@ libEffects_la_SOURCES=CChangeAmplitudeEffect.cpp \
 
 	Right now you've done enough to build the package with your new file,
 	but before you're done, you'll have to add your header file to make
-	the tarball build process complete. And you'll need to add
-	dependencies to make other developers lives easier. 
+	the tarball build process complete. 
 
 	To add the your new header file. find the line EXTRA_DIST in the same
 	Makefile.am. It should look something like this.
@@ -129,33 +128,6 @@ EXTRA_DIST=CChangeAmplitudeEffect.h \
 	list, the same way as above. Now to set up the dependencies the right
 	way. 
 	
-	Go down to the end of Makefile.am, and youll see lists of files that
-	look something like this:
-
-CTestEffect.o: CTestEffect.cpp \
-	CTestEffect.h \
-	$(top_srcdir)/src/backend/AAction.h \
-	$(top_srcdir)/src/backend/ASound.h \
-	$(top_srcdir)/src/backend/ASoundPlayer.h \
-	$(top_srcdir)/src/backend/AStatusComm.h \
-	$(top_srcdir)/src/backend/CEnvelope.h 
-
-	This may look familiar if you are used to writing Makefiles. It's
-	basically the first line of a make command without the following
-	compiler commands. Since your file  EnvelopeFilter.cpp depends on
-	EnvelopeFilter.h and ../CEnvelope.h your dependency line will look
-	like the following:
-
-EnvelopeFilter.o: EnvelopeFilter.cpp \
-		EnvelopeFilter.h \
-		$(top_srcdir)/src/backend/CEnvelope.h
-
-	Notice the $(top_srcdir) macro used to list CEnvelope.h. We have to
-	use the macro $(top_srcdir) allow the build process to work properly. 
-	The automake process allows us to build in a separate build directory, 
-	and if we used a relative link (like ../CEnvelope.h) here external
-	builds wouldn't work properly.
-
 	Ok so that's it. Now if you run make, the new Makefile will be created
 	and your new file should be built in. Give it try, if it's not
 	working, make sure you re-read my instructions before asking for help.
@@ -207,8 +179,6 @@ include $(top_srcdir)/config/am_include.mk
 	Ok, now the rest of your Makefile.am will follow the same format
 	explained in the previous section (Still haven't read it Huh?, I guess
 	now's a good time!).
-
-
 	
 	Now that you've finished writing the Makefile.am for your new
 	directory, you'll still have to incorparate it into the whole build
