@@ -168,6 +168,9 @@ private:
 	CMetersWindow		*metersWindow;
 
 	FXFont *shuttleFont;
+	FXFont *soundListFont;
+	FXFont *soundListHeaderFont;
+
 	FXDial *shuttleDial;
 	FXToggleButton *shuttleDialSpringButton;
 	FXButton *shuttleDialScaleButton;

@@ -113,7 +113,7 @@ void playTrigger(void *Pthis)
 // ----------------------------------------------------------
 
 CSoundWindow::CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound) :
-	FXPacker(parent,FRAME_RIDGE|LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 0,0,0,0, 0,0),
+	FXPacker(parent,FRAME_NONE|LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 0,0,0,0, 0,0),
 
 	shuttleControlScalar("100x"),
 	shuttleControlSpringBack(true),

@@ -135,8 +135,12 @@ FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
 
 CMainWindow::CMainWindow(FXApp* a) :
 	FXMainWindow(a,"ReZound",FOXIcons->icon_logo_32,FOXIcons->icon_logo_16,DECOR_ALL,10,20,800,600),
-	shuttleFont(NULL)
+	shuttleFont(NULL),
+	soundListFont(NULL),
+	soundListHeaderFont(NULL)
 {
+	FXFontDesc d;
+
 	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X);
 
 	contents=new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 1,1,0,0, 1,0);
@@ -169,8 +173,6 @@ CMainWindow::CMainWindow(FXApp* a) :
 		t=new FXHorizontalFrame(playControlsFrame,FRAME_NONE|LAYOUT_FIX_X|LAYOUT_FIX_Y,0,32+32+16+16,0,0, 0,0,0,0, 0,0);
 
 			shuttleFont=getApp()->getNormalFont();
-
-			FXFontDesc d;
 			shuttleFont->getFontDesc(d);
 			d.weight=FONTWEIGHT_LIGHT;
 			d.size=65;
@@ -209,21 +211,39 @@ CMainWindow::CMainWindow(FXApp* a) :
 	t=new FXPacker(s,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_RIDGE);
 		t=new FXPacker(t,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_SUNKEN|FRAME_THICK, 0,0,0,0, 0,0,0,0, 0,0);
 			soundList=new FXIconList(t,this,ID_SOUND_LIST,HSCROLLER_NEVER|ICONLIST_BROWSESELECT|LAYOUT_FILL_X|LAYOUT_FILL_Y);
+
+				soundListFont=getApp()->getNormalFont();
+				shuttleFont->getFontDesc(d);
+				d.weight=FONTWEIGHT_NORMAL;
+				d.size=80;
+				soundListFont=new FXFont(getApp(),d);
+
+				soundList->setFont(soundListFont);
+
+				soundListHeaderFont=getApp()->getNormalFont();
+				shuttleFont->getFontDesc(d);
+				d.weight=FONTWEIGHT_BOLD;
+				d.size=80;
+				soundListHeaderFont=new FXFont(getApp(),d);
+
+				soundList->getHeader()->setFont(soundListHeaderFont);
 				soundList->getHeader()->setPadLeft(0);
 				soundList->getHeader()->setPadRight(0);
 				soundList->getHeader()->setPadTop(0);
 				soundList->getHeader()->setPadBottom(0);
-				// soundList->getHeader()-> make font smaller ???
+
 				soundList->appendHeader(" #",NULL,25);
 				soundList->appendHeader("Name",NULL,200);
 				soundList->appendHeader("Path",NULL,9999);
 
-	soundWindowFrame=new FXPacker(contents,LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 0,0,0,0, 0,0);
+	soundWindowFrame=new FXPacker(contents,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_RIDGE,0,0,0,0, 0,0,0,0, 0,0);
 }
 
 CMainWindow::~CMainWindow()
 {
 	delete shuttleFont;
+	delete soundListFont;
+	delete soundListHeaderFont;
 }
 
 void CMainWindow::show()

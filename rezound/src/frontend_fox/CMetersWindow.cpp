@@ -73,6 +73,7 @@ public:
 
 	CMeter::~CMeter()
 	{
+		delete statusFont;
 	}
 
 	void create()
