@@ -49,6 +49,8 @@ libfrontend_la_SOURCES= \
 			drawPortion.cpp \
 			EditActionDialogs.cpp \
 			EffectActionDialogs.cpp \
+			FilterActionDialogs.cpp \
+			RemasterActionDialogs.cpp \
 			CAboutDialog.cpp \
 			FXConstantParamValue.cpp \
 			FXTextParamValue.cpp \
@@ -56,7 +58,6 @@ libfrontend_la_SOURCES= \
 			FXGraphParamValue.cpp \
 			FXModalDialogBox.cpp \
 			FXRezWaveView.cpp \
-			RemasterActionDialogs.cpp \
 			rememberShow.cpp \
 			settings.cpp
 
@@ -81,6 +82,7 @@ ReZound_LDADD= libfrontend.la\
 	$(top_builddir)/src/backend/libbackend.la \
 	$(top_builddir)/src/backend/Edits/libEdits.la \
 	$(top_builddir)/src/backend/Effects/libEffects.la \
+	$(top_builddir)/src/backend/Filters/libFilters.la \
 	$(top_builddir)/src/backend/Looping/libLooping.la \
 	$(top_builddir)/src/backend/Remaster/libRemaster.la \
 	$(top_builddir)/src/misc/CNestedDataFile/libmiscCN.la \
@@ -108,6 +110,8 @@ noinst_HEADERS=\
 	CUserNotesDialog.h \
 	EditActionDialogs.h \
 	EffectActionDialogs.h \
+	FilterActionDialogs.h \
+	RemasterActionDialogs.h \
 	CAboutDialog.h \
 	FXConstantParamValue.h \
 	FXTextParamValue.h \
@@ -115,7 +119,6 @@ noinst_HEADERS=\
 	FXGraphParamValue.h \
 	FXModalDialogBox.h \
 	FXRezWaveView.h \
-	RemasterActionDialogs.h \
 	drawPortion.h \
 	rememberShow.h \
 	settings.h 

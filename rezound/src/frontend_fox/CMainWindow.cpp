@@ -253,6 +253,9 @@ public:
 #include "../backend/Effects/EffectActions.h"
 #include "EffectActionDialogs.h"
 
+#include "../backend/Filters/FilterActions.h"
+#include "FilterActionDialogs.h"
+
 #include "../backend/Looping/LoopingActions.h"
 //#include "LoopingActionDialogs.h"
 
@@ -346,6 +349,13 @@ void CMainWindow::createMenus()
 		new CActionMenuCommand(new CVariedRepeatEffectFactory(gChannelSelectDialog,new CVariedRepeatDialog(this)),menu,"");
 
 		new CActionMenuCommand(new CTestEffectFactory(gChannelSelectDialog),menu,"");
+
+	menu=new FXMenuPane(this);
+	new FXMenuTitle(menubar,"&F&ilters",NULL,menu);
+		new CActionMenuCommand(new CSinglePoleLowpassFilterFactory(gChannelSelectDialog,new CSinglePoleLowpassFilterDialog(this)),menu,"");
+		new CActionMenuCommand(new CSinglePoleHighpassFilterFactory(gChannelSelectDialog,new CSinglePoleHighpassFilterDialog(this)),menu,"");
+		new CActionMenuCommand(new CBandpassFilterFactory(gChannelSelectDialog,new CBandpassFilterDialog(this)),menu,"");
+		new CActionMenuCommand(new CNotchFilterFactory(gChannelSelectDialog,new CNotchFilterDialog(this)),menu,"");
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&Looping",NULL,menu);
