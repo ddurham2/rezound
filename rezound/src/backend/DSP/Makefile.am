@@ -34,4 +34,5 @@ noinst_HEADERS= \
 	NoiseGate.h \
 	Quantizer.h \
 	SinglePoleFilters.h \
+	BiquadResFilters.h \
 	TSoundStretcher.h
