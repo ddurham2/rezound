@@ -1296,7 +1296,12 @@ void CMetersWindow::enableStereoPhaseMeters(bool enable)
 	for(size_t t=0;t<stereoPhaseMeters.size();t++)
 	{
 		if(enable)
+		{
+			// have to call this so that onResize() will get called in order to calculate the unrotateMapping
+			stereoPhaseMeters[t]->resize(1,1); 
+
 			stereoPhaseMeters[t]->show();
+		}
 		else
 			stereoPhaseMeters[t]->hide();
 	}
