@@ -129,6 +129,8 @@ FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
 
 #include <fox/fxkeys.h>
 
+#include "drawPortion.h" // for backgroundColor
+
 CMainWindow::CMainWindow(FXApp* a) :
 	FXMainWindow(a,"ReZound",FOXIcons->icon_logo_32,FOXIcons->icon_logo_16,DECOR_ALL,10,20,800,600),
 	shuttleFont(NULL)
@@ -321,7 +323,7 @@ long CMainWindow::onSoundListChange(FXObject *sender,FXSelector sel,void *ptr)
 {
 	FXint index=(FXint)ptr;
 
-	if(index>=0 && index<soundList->getNumItems())
+	if(index!=-1)
 		((CSoundWindow *)soundList->getItemData(index))->setActiveState(true);
 
 	return 1;
