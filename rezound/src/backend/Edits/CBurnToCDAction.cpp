@@ -156,6 +156,10 @@ bool CBurnToCDAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 	}
 
 
+	if(Question(_("About to write data to burn.  Afterwards burning will begin.  Watch standard output/error for progress information, or just wait for cdrdao to finish.")+string("\n")+_("Do you want to continue?"),yesnoQues)!=yesAns)
+		return false;
+
+
 	// proceed to save files
 	{
 		CStatusBar statusBar(_("Writing Data to Burn"),0,(sample_pos_t)((sample_fpos_t)selectionLength/sampleRate*44100),true);
@@ -347,12 +351,9 @@ bool CBurnToCDAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 	// burn the files
 	const string command="'"+pathTo_cdrdao+"' "+(testOnly ? "simulate " : "write ")+endianSwap+"--speed "+istring(burnSpeed)+" --device "+device+" '"+TOCFilename+"'";
 	printf("about to run command: %s\n",command.c_str());
-	if(Question(_("Burning will now begin.  Watch standard output/error for progress information, or just wait for it to finish.")+string("\n")+_("Do you want to continue?"),yesnoQues)==yesAns)
-	{
-		int status=system(command.c_str());
-		if(WEXITSTATUS(status)!=0)
-				Warning(_("cdrdao returned non-zero exit status.  Consult standard output/error for problems."));
-	}
+	int status=system(command.c_str());
+	if(WEXITSTATUS(status)!=0)
+		Warning(_("cdrdao returned non-zero exit status.  Consult standard output/error for problems."));
 
 	// cleanup
 	unlink(TOCFilename.c_str());
