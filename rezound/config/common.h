@@ -24,6 +24,8 @@
 /* common.h -- This file will deal with low-level portability problems. It
  * should be includede at the top of every package file. */
 
+//This is added for g++-3.0 and later, which requires it
+using namespace std;
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -48,9 +50,6 @@
 #else
 # define REZOUND_VERSION	"vx.xxx" /* just in case it wasn't defined. */
 #endif
-
-/* I'm trying to move this here instead if as CXXFLAGS from am_include.mk (I think ccgnu wants this). For some reason It's not happy with this here, but until I figure it out it will remain as a CXXFLAG  */
-//#define _GNU_SOURCE (1)
 
 
 /* 
