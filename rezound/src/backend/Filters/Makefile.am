@@ -29,6 +29,7 @@ include $(top_srcdir)/config/am_include.mk
 ## 
 noinst_HEADERS= \
 		CConvolutionFilter.h \
+		CArbitraryFIRFilter.h \
 		CSinglePoleFilter.h \
 		CBiquadResFilter.h \
 		FilterActions.h
@@ -36,6 +37,7 @@ noinst_HEADERS= \
 noinst_LTLIBRARIES=libFilters.la
 libFilters_la_SOURCES= \
 			CConvolutionFilter.cpp \
+			CArbitraryFIRFilter.cpp \
 			CSinglePoleFilter.cpp \
 			CBiquadResFilter.cpp 
 
