@@ -43,13 +43,12 @@
 
 #define SAMPLE_RATE 44100
 #define CHANNELS 2
-#define BITS 16
-#define OSS_PCM_FORMAT AFMT_S16_LE // needs to match for what is above and type of sample_t ???
+#define OSS_PCM_FORMAT AFMT_S16_LE // needs to match for type of sample_t ???
 
 #define BUFFER_COUNT 4
 #define BUFFER_SIZE_BYTES 4096						// buffer size in bytes
 #define BUFFER_SIZE_BYTES_LOG2 12					// log2(BUFFER_SIZE_BYTES) -- that is 2^this is BUFFER_SIZE_BYTES
-#define BUFFER_SIZE_SAMPLES (BUFFER_SIZE_BYTES/(BITS/8)/CHANNELS) 	// in samples
+#define BUFFER_SIZE_FRAMES (BUFFER_SIZE_BYTES/(sizeof(sample_t))/CHANNELS) 	// in sample frames
 
 
 COSSSoundPlayer::COSSSoundPlayer() :
@@ -83,12 +82,12 @@ void COSSSoundPlayer::initialize()
 		if (ioctl(audio_fd, SNDCTL_DSP_SETFMT,&format)==-1)
 		{
 			close(audio_fd);
-			throw(runtime_error(string(__func__)+" -- error setting the bit rate -- "+strerror(errno)));
+			throw(runtime_error(string(__func__)+" -- error setting the format -- "+strerror(errno)));
 		}
 		else if(format!=OSS_PCM_FORMAT)
 		{
 			close(audio_fd);
-			throw(runtime_error(string(__func__)+" -- error setting the bit rate -- the device does not support "+istring(BITS)+" bit little endian data"));
+			throw(runtime_error(string(__func__)+" -- error setting the format -- the device does not support OSS_PCM_FORMAT formatted data"));
 		}
 		//printf("OSS: format: %d\n",format);
 
@@ -206,15 +205,15 @@ void COSSSoundPlayer::CPlayThread::Run()
 		 * 	I think it was sending a signal that perhaps I should catch.
 		 *      So, I'm just making it bigger than necessary
 		 */
-		sample_t buffer[BUFFER_SIZE_SAMPLES*CHANNELS*2]; 
+		sample_t buffer[BUFFER_SIZE_FRAMES*CHANNELS*2]; 
 
 		while(!kill)
 		{
 			// can mixChannels throw any exception?
-			parent->mixSoundPlayerChannels(CHANNELS,buffer,BUFFER_SIZE_SAMPLES*2);
+			parent->mixSoundPlayerChannels(CHANNELS,buffer,BUFFER_SIZE_FRAMES);
 
 			int len;
-			if((len=write(parent->audio_fd,buffer,BUFFER_SIZE_BYTES))!=BUFFER_SIZE_BYTES)
+			if((len=write(parent->audio_fd,buffer,BUFFER_SIZE_FRAMES*sizeof(sample_t)*CHANNELS))!=BUFFER_SIZE_BYTES)
 				fprintf(stderr,"warning: didn't write whole buffer -- only wrote %d of %d bytes\n",len,BUFFER_SIZE_BYTES);
 
 		}
