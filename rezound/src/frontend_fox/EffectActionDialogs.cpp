@@ -185,7 +185,7 @@ CDistortionDialog::CDistortionDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Distortion")
 {
 	void *p=newHorzPanel(NULL);
-		addGraph(p,"Curve","%",interpretValue_distortion,uninterpretValue_distortion,NULL,0,0,0);
+		addGraph(p,"Curve","Input","%",interpretValue_distortion,uninterpretValue_distortion,"Output","%",interpretValue_distortion,uninterpretValue_distortion,NULL,0,0,0);
 
 }
 
