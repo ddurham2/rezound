@@ -50,7 +50,7 @@ class CArbitraryFIRFilterFactory;
 class CArbitraryFIRFilter : public AAction
 {
 public:
-	CArbitraryFIRFilter(const CActionSound &actionSound,const float wetdryMix,const CGraphParamValueNodeList &freqResponse,const unsigned firstOctaveFrequency,const unsigned numberOfOctaves,const unsigned kernelLength,const bool removeDelay);
+	CArbitraryFIRFilter(const CActionSound &actionSound,const float wetdryMix,const CGraphParamValueNodeList &freqResponse,const unsigned kernelLength,const bool removeDelay);
 	virtual ~CArbitraryFIRFilter();
 
 protected:
@@ -61,8 +61,6 @@ protected:
 private:
 	const float wetdryMix;
 	CGraphParamValueNodeList freqResponse;
-	const unsigned firstOctaveFrequency;
-	const unsigned numberOfOctaves;
 
 	const unsigned kernelLength;
 

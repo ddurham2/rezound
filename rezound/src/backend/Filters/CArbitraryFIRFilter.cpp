@@ -27,55 +27,17 @@
 #include "../DSP/Convolver.h"
 #include "../unit_conv.h"
 
-CArbitraryFIRFilter::CArbitraryFIRFilter(const CActionSound &actionSound,const float _wetdryMix,const CGraphParamValueNodeList &_freqResponse,const unsigned _firstOctaveFrequency,const unsigned _numberOfOctaves,const unsigned _kernelLength,const bool _removeDelay) :
+#include "filters_util.h"
+
+CArbitraryFIRFilter::CArbitraryFIRFilter(const CActionSound &actionSound,const float _wetdryMix,const CGraphParamValueNodeList &_freqResponse,const unsigned _kernelLength,const bool _removeDelay) :
 	AAction(actionSound),
 
 	wetdryMix(_wetdryMix),
-		// these define how to interpret the values freqReponse[*].x and covert them to 0->1
-	firstOctaveFrequency(_firstOctaveFrequency),
-	numberOfOctaves(_numberOfOctaves),
 	kernelLength(_kernelLength),
 	removeDelay(_removeDelay)
 {
 	// the iterator won't work unless the range of the .x components are 0 to 1, so I have to convert the frequencies (in .x) to a value from 0 to 1
-	// The range of .x is firstOctaveFrequency -> firstOctaveFrequency*pow(2,numberOfOctaves) so I have to fabricate values from 0 to baseFrequency
-	// and eoither fabricate values above the max (if the sampleRate/2 is higher), or ignore some of the values  (if the sampleRate/2 is less than the max)
-	freqResponse.push_back(CGraphParamValueNode(0,_freqResponse[0].y)); // fabricate the values from 0 to the base the same as the first element defined
-	for(size_t t=0;t<_freqResponse.size();t++)
-	{
-		//printf("%d: %f, %f\n",t,_freqResponse[t].x,_freqResponse[t].y);
-
-		if(_freqResponse[t].x>(actionSound.sound->getSampleRate()/2))
-		{
-			if(t<1)
-			{ // shouldn't happen, but I suppose it could
-				freqResponse.push_back(CGraphParamValueNode(1.0, _freqResponse[t].y ));
-			}
-			else
-			{
-				const double x1=_freqResponse[t-1].x;
-				const double x2=_freqResponse[t].x;
-				const double y1=_freqResponse[t-1].y;
-				const double y2=_freqResponse[t].y;
-				const double x=actionSound.sound->getSampleRate()/2;
-									// interpolate where the truncation point to fall on the last line segment
-				const double y=((y2-y1)/(x2-x1))*(x-x1)+y1;
-				freqResponse.push_back(CGraphParamValueNode(1.0, y ));
-			}
-			break;
-		}
-		else
-			freqResponse.push_back(CGraphParamValueNode(_freqResponse[t].x/(actionSound.sound->getSampleRate()/2),_freqResponse[t].y));
-	}
-
-	// fabricate values above the highest defined frequency in the given response if the sampleRate/2 is higher than it
-	if(_freqResponse[_freqResponse.size()-1].x<=actionSound.sound->getSampleRate()/2)
-		freqResponse.push_back(CGraphParamValueNode(1.0,_freqResponse[_freqResponse.size()-1].y));
-
-/* might need to print the kernel nodes in debugging
-	for(size_t t=0;t<freqResponse.size();t++)
-		printf("%d: %f, %f\n",t,freqResponse[t].x,freqResponse[t].y);
-*/
+	freqResponse=normalizeFrequencyResponse(_freqResponse,actionSound.sound->getSampleRate());
 }
 
 CArbitraryFIRFilter::~CArbitraryFIRFilter()
@@ -100,7 +62,7 @@ bool CArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,bool prepar
 		   because we're doing the +1 here.. but I do that to speed up the one-time fft it has to do to convert the given freq kernel
 		   time domain kernel.. perhaps I could fudge the plus one value in convolver instead of here and not cause the 4x issue 
 		*/
-	const sample_pos_t filterKernelLength=kernelLength+1; // needs to be a parameter ... and I need to avoid tha horrible delay at the beginning
+	const sample_pos_t filterKernelLength=kernelLength+1;
 	TAutoBuffer<float> filterKernel(filterKernelLength);
 	CGraphParamValueIterator fr_i(freqResponse,filterKernelLength);
 	for(size_t t=0;t<filterKernelLength;t++)
@@ -253,8 +215,6 @@ CArbitraryFIRFilter *CArbitraryFIRFilterFactory::manufactureAction(const CAction
 		actionSound,
 		actionParameters->getDoubleParameter("Wet/Dry Mix"),
 		actionParameters->getGraphParameter("Frequency Response"),
-		actionParameters->getUnsignedParameter("Base Frequency"),
-		actionParameters->getUnsignedParameter("Number of Octaves"),
 		actionParameters->getUnsignedParameter("Kernel Length"),
 		actionParameters->getBoolParameter("Undelay")
 	));
