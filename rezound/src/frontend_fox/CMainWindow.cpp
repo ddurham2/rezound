@@ -125,7 +125,7 @@ FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
 #include <fox/fxkeys.h>
 
 CMainWindow::CMainWindow(FXApp* a) :
-	FXMainWindow(a,"ReZound",NULL,NULL,DECOR_ALL,0,0,346,145)
+	FXMainWindow(a,"ReZound",new FXGIFIcon(a,icon_logo_32_gif,0,IMAGE_ALPHACOLOR),new FXGIFIcon(a,icon_logo_16_gif,0,IMAGE_ALPHACOLOR),DECOR_ALL,0,0,346,145)
 {
 	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X);
 
