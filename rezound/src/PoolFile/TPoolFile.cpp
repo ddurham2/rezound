@@ -266,6 +266,15 @@ template<class l_addr_t,class p_addr_t>
 
 
 template<class l_addr_t,class p_addr_t>
+	void TPoolFile<l_addr_t,p_addr_t>::removeFile(const string filename)
+{
+		// ??? in the furture needs to as CMultiFile to remove the file since each file may be made up of several files if they go over the 2gig limit
+	remove(filename.c_str());
+	remove((filename+".SAT1").c_str());
+	remove((filename+".SAT2").c_str());
+}
+
+template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::setup()
 {
 	try

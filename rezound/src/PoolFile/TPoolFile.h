@@ -77,6 +77,10 @@ public:
 	void openFile(const string _filename,const bool canCreate=true);
 	//LLL void createTemp();
 
+	// removes all files that would be generated if a pool file was opened with the given name
+	// it cleans up the .SAT[12] files (and in the future should remove multiple files if mutiple files were create for a pool file larger than the 2gig limit)
+	static void removeFile(const string filename);
+
 	const bool isTemp() const;
 	const bool isOpen() const;
 
