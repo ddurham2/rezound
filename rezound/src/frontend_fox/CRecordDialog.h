@@ -26,23 +26,69 @@
 class CRecordDialog;
 
 #include "FXModalDialogBox.h"
-#include "../backend/AAction.h"
+#include <vector>
 
 extern CRecordDialog *gRecordDialog;
 
-class CRecordDialog : public FXModalDialogBox, public AActionDialog
+class ASoundRecorder;
+
+class CRecordDialog : public FXModalDialogBox
 {
 	FXDECLARE(CRecordDialog);
 public:
 
 	CRecordDialog(FXWindow *mainWindow);
 
-	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
+	bool show(ASoundRecorder *recorder);
+
+	enum
+	{
+		ID_START_BUTTON=FXModalDialogBox::ID_LAST,
+		ID_STOP_BUTTON,
+		ID_REDO_BUTTON,
+
+		ID_ADD_CUE_BUTTON,
+		ID_ADD_ANCHORED_CUE_BUTTON,
+
+		ID_CLEAR_CLIP_COUNT_BUTTON,
+
+		ID_LAST
+	};
+
+	
+	long onStartButton(FXObject *sender,FXSelector sel,void *ptr);
+	long onStopButton(FXObject *sender,FXSelector sel,void *ptr);
+	long onRedoButton(FXObject *sender,FXSelector sel,void *ptr);
+
+	long onAddCueButton(FXObject *sender,FXSelector sel,void *ptr);
 
 protected:
 	CRecordDialog() {}
 
 private:
+
+	friend void onLevelMeter(void *);
+
+	ASoundRecorder *recorder;
+
+	FXHorizontalFrame *meterFrame;
+
+	FXLabel *lengthStatusLabel;
+	FXLabel *locationStatusLabel;
+	FXLabel *sizeStatusLabel;
+
+	FXLabel *clipCountLabel;
+
+	FXCheckButton *setDurationButton;
+	FXTextField *durationEdit;
+
+	void cleanupMeters();
+	void setMeterValue(unsigned channel,float value); // value is 0 to 1
+	vector<FXProgressBar *> meters;
+
+	size_t clipCount;
+	void incClipCount();
+	void clearClipCount();
 
 };
 

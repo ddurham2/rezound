@@ -44,7 +44,7 @@ static FXColor darkenedWaveformColor=FXRGB(min(255, FXREDVAL(waveformColor)+DARK
 #define SELECTED_WAVE_ADD 142
 static FXColor selectedWaveformColor=FXRGB(min(255, FXREDVAL(selectedBackGroundColor)+SELECTED_WAVE_ADD),min(255,FXGREENVAL(selectedBackGroundColor)+SELECTED_WAVE_ADD),min(255,FXBLUEVAL(selectedBackGroundColor)+SELECTED_WAVE_ADD)); // selectedBackGroundColor + SELECTED_WAVE_ADD
 
-static FXColor clippedWaveformColor=FXRGB(255,0,127); // pink to stand out
+FXColor clippedWaveformColor=FXRGB(255,0,127); // pink to stand out
 
 /* TODO
  * 	there seems to be a slight drawing bug (STILL) in that if I zoom all the way in to the sound

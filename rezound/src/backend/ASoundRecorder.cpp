@@ -20,34 +20,97 @@
 
 #include "ASoundRecorder.h"
 
+#include <algorithm>
 
 ASoundRecorder::ASoundRecorder() :
 	sound(NULL)
 {
+	for(unsigned i=0;i<MAX_CHANNELS;i++)
+		lastPeakValues[i]=0.0;
 }
 
 ASoundRecorder::~ASoundRecorder()
 {
 }
 
-void ASoundRecorder::onInit(ASound *_sound)
-{
-	started=false;
-	sound=_sound;
-	prealloced=0;
-}
-
-void ASoundRecorder::onStart()
+void ASoundRecorder::start()
 {
 	origLength=sound->getLength();
 	writePos=origLength;
 	started=true;
 }
 
+void ASoundRecorder::redo()
+{
+	// do I want to clear out the buffers already recorded??? Cause it may cause a hiccup in the input containig some of the already buffered data
+	// there may be a way to do this with OSS
+	sound->lockForResize();
+	try
+	{
+		if(sound->getLength()>origLength)
+			sound->removeSpace(origLength,sound->getLength()-origLength);
+		writePos=origLength;
+	}
+	catch(...)
+	{
+		sound->unlockForResize();
+		throw;
+	}
+}
+
+
+void ASoundRecorder::initialize(ASound *_sound)
+{
+	started=false;
+	sound=_sound;
+	prealloced=0;
+}
+
+
+void ASoundRecorder::deinitialize()
+{
+	if(sound!=NULL)
+	{
+		started=false;
+		sound->lockForResize();
+		try
+		{
+			// ??? on error should I remove all recorded space back to the origLength?
+			if(prealloced>0)
+				// remove extra space
+				sound->removeSpace(sound->getLength()-prealloced,prealloced);
+
+			sound->unlockForResize();
+			sound=NULL;
+		}
+		catch(...)
+		{
+			sound->unlockForResize();
+			sound=NULL;
+			throw;
+		}
+	}
+}
+
+
 void ASoundRecorder::onData(const sample_t *samples,const size_t sampleFramesRecorded)
 {
-	// need to find peak value for each channel ???
-	// and give public methods to get the most recent peak value per channel
+	const unsigned channelCount=sound->getChannelCount();
+
+	for(unsigned i=0;i<channelCount;i++)
+	{
+		sample_t maxSample=0;
+		const sample_t *_samples=samples+i;
+		for(size_t t=0;t<sampleFramesRecorded;t++)
+		{
+			sample_t s=*_samples;
+			if(s<0)
+				s=-s; // only use positive values
+			maxSample=max(maxSample,s);
+			_samples+=channelCount;
+		}
+		lastPeakValues[i]=(float)maxSample/(float)MAX_SAMPLE;
+	}
 	peakReadTrigger.trip();
 
 	if(started)
@@ -72,7 +135,6 @@ void ASoundRecorder::onData(const sample_t *samples,const size_t sampleFramesRec
 			}
 		}
 
-		const unsigned channelCount=sound->getChannelCount();
 		sample_pos_t writePos=0;
 		for(unsigned i=0;i<channelCount;i++)
 		{
@@ -91,42 +153,6 @@ void ASoundRecorder::onData(const sample_t *samples,const size_t sampleFramesRec
 	}
 }
 
-void ASoundRecorder::onStop(bool error)
-{
-	started=false;
-	sound->lockForResize();
-	try
-	{
-		// ??? on error should I remove all recorded space back to the origLength?
-		if(prealloced>0)
-			// remove extra space
-			sound->removeSpace(sound->getLength()-prealloced,prealloced);
-
-		sound->unlockForResize();
-	}
-	catch(...)
-	{
-		sound->unlockForResize();
-		throw;
-	}
-}
-
-void ASoundRecorder::onRedo()
-{
-	sound->lockForResize();
-	try
-	{
-		if(sound->getLength()>origLength)
-			sound->removeSpace(origLength,sound->getLength()-origLength);
-		writePos=origLength;
-	}
-	catch(...)
-	{
-		sound->unlockForResize();
-		throw;
-	}
-}
-
 unsigned ASoundRecorder::getChannelCount() const
 {
 	return(sound->getChannelCount());
@@ -137,8 +163,18 @@ unsigned ASoundRecorder::getSampleRate() const
 	return(sound->getSampleRate());
 }
 
+float ASoundRecorder::getLastPeakValue(unsigned channel) const
+{
+	return(lastPeakValues[channel]);
+}
+
 void ASoundRecorder::setPeakReadTrigger(TriggerFunc triggerFunc,void *data)
 {
 	peakReadTrigger.set(triggerFunc,data);
+}
+
+void ASoundRecorder::removePeakReadTrigger(TriggerFunc triggerFunc,void *data)
+{
+	peakReadTrigger.unset(triggerFunc,data);
 }
 

@@ -29,6 +29,7 @@ extern void drawPortion(int left,int width,FXDCWindow *dc,ASound *sound,int canv
 
 #include <fox/fxdefs.h>
 extern FXColor backGroundColor;
+extern FXColor clippedWaveformColor;
 
 
 #endif

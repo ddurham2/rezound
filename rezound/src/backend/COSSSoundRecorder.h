@@ -38,9 +38,6 @@ public:
 	void initialize(ASound *sound);
 	void deinitialize();
 
-	void start();
-	void redo();
-
 	//????This was changed from it's private status
 	//????To make gcc 2.95.2 happy -AV
 	int audio_fd;

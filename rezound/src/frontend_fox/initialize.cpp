@@ -91,6 +91,8 @@ void initializeReZound()
 		catch(exception &e)
 		{
 			// well, then start with an empty one
+					// ??? call a function to setup the initial registry, we could either insert values manually, or copy a file from the share dir and maybe have to change a couple of things specific to this user
+					// 	because later I expect there to be many necesary default settings
 			gSettingsRegistry=new CNestedDataFile("",true);
 			gSettingsRegistry->setFilename(gUserDataDirectory+"/registry.dat");
 

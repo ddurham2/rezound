@@ -119,7 +119,7 @@ bool CSoundFileManager::promptForNewSoundParameters(string &filename,unsigned &c
 
 bool CSoundFileManager::promptForRecord(ASoundRecorder *recorder)
 {
-	if(gRecordDialog->execute(PLACEMENT_CURSOR))
+	if(gRecordDialog->show(recorder))
 	{
 
 		return(true);

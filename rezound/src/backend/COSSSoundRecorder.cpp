@@ -68,6 +68,8 @@ void COSSSoundRecorder::initialize(ASound *sound)
 {
 	if(!initialized)
 	{
+		ASoundRecorder::initialize(sound);
+
 		// open OSS device
 		if((audio_fd=open("/dev/dsp",O_RDONLY,0)) == -1) 
 			throw(runtime_error(string(__func__)+" -- error opening OSS device -- "+strerror(errno)));
@@ -150,7 +152,8 @@ void COSSSoundRecorder::initialize(ASound *sound)
 		printf("OSS record: info.bytes: %d\n",info.bytes);
 		
 
-		onInit(sound);
+		// start record thread
+		recordThread.Start();
 
 		initialized=true;
 	}
@@ -166,31 +169,14 @@ void COSSSoundRecorder::deinitialize()
 		recordThread.kill=true;
 		recordThread.wait();
 
-		onStop(false);
-
 		// close OSS audio device
 		close(audio_fd);
+
+		ASoundRecorder::deinitialize();
 
 		initialized=false;
 	}
 }
-
-void COSSSoundRecorder::start()
-{
-	onStart();
-
-	// start record thread
-	recordThread.Start();
-
-}
-
-void COSSSoundRecorder::redo()
-{
-	// do I want to clear out the buffers already recorded??? Cause it may cause a hiccup in the input containig some of the already buffered data
-	// there may be a way to do this with OSS
-	onRedo();
-}
-
 
 COSSSoundRecorder::CRecordThread::CRecordThread(COSSSoundRecorder *_parent) :
 	Thread(),

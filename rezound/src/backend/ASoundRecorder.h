@@ -29,20 +29,19 @@
 
 /*
  - This class should be derived from to do sound recording for a specific
- platform.  The platform specific code should call the onFunc protected 
- methods on each's appropriate event.
- - The implementation should not cause start() to wait until recording stops
+ platform.  The platform specific code should call the onData
+ protected method when data is recorded.
+
+ - The implementation should not cause initialize() to wait until recording stops
  but should return control to the caller while it records so the that the caller
- can also call redo and deinit to affect the recording process.
+ can also call redo and deinitialize to affect the recording process.
 
- - This class appends the recorded data to the given pool file whose format must 
- match the parmaters also given at init time
+ - The derived class should NOT forget to call this base class's initialize and
+ deinitialize methods.  initialize() should be called at the top of the dirved 
+ class's implementation, and deinitialize() should be called at the botton of
+ the derived class's implementation.
 
- - If the derived class calls the onFunc events inappropriatly, that is, out of
- order, the behavior is undefined
-
- - We will eventually need a way to get a realtime audio status
-	- probably could use a CTrigger object to do this
+ - This class appends the recorded data to the given ASound object
 
 */
 class ASoundRecorder
@@ -53,33 +52,24 @@ public:
 	virtual ~ASoundRecorder();
 
 	void setPeakReadTrigger(TriggerFunc triggerFunc,void *data);
+	void removePeakReadTrigger(TriggerFunc triggerFunc,void *data);
+	float getLastPeakValue(unsigned channel) const;
 
-	virtual void initialize(ASound *sound)=0;
+	virtual void initialize(ASound *sound);
 	// it should not be an error to deinitialize while not initialize
-	virtual void deinitialize()=0;
+	virtual void deinitialize();
 
-	virtual void start()=0;
-	virtual void redo()=0;
-
-protected:
-
-	// These functions should return true on success and false on failure
-
-	// the implementation of init should call this 
-	void onInit(ASound *sound);
-
-	// This function should be called before any data will be recorded
-	void onStart();
-	// This function should be called when a data chunk is recorded
-	// data should come in an interlaced format that is [sL1sR1 sL2sR2 sL3sR3 ...]
-	void onData(const sample_t *samples,const size_t sampleFramesRecorded);
-	// This function should be called after all data is recorded (pass true if there was an error that caused the stop)
-	void onStop(bool error);
-	// This function should be called upon redo request
-	void onRedo();
+	void start();
+	virtual void redo();
 
 	unsigned getChannelCount() const;
 	unsigned getSampleRate() const;
+
+protected:
+
+	// This function should be called when a data chunk is recorded
+	// data should come in an interlaced format that is [sL1sR1 sL2sR2 sL3sR3 ...]
+	void onData(const sample_t *samples,const size_t sampleFramesRecorded);
 
 private:
 	ASound *sound;
@@ -89,6 +79,8 @@ private:
 	sample_pos_t writePos;
 
 	CTrigger peakReadTrigger;
+
+	float lastPeakValues[MAX_CHANNELS];
 
 };
 
