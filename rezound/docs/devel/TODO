@@ -1,5 +1,10 @@
 --- THINGS TO DO FOR SURE ---
 
+	- When they're all implemented, I need to update the description to something like: 
+		... Including features such as: Recording, Effects Previews, Realistic Reverbs, Convolution, Custom FIR Filters, Several IIR Filters, Many Supported Audio Formats, LADSPA Support, Undo/Redo, Level Meters & Frequency Analyzer, Seek Shuttle Wheel, Loads of Editing Tools, Dynamic Range Compressor, and Many Other Tools
+			- and decide on the best ordering of this listing
+			- I'm also trying to negotiate some noise removal actions
+
 	- Implement createKey and getValue methods in CNestedData file and use them properly so I'm not doing string conversions everywhere in there
 
 	- I discovered that the M_PI (and others) #defines are not in the C/C++ specification... So I might want to test for them in configure.in and define them if they're not found in common.h ( M_PI=atan(1)*4; )
