@@ -104,7 +104,7 @@ AC_CHECK_LIB(
 	AC_DEFINE(HAVE_LIBOGG)
 	
 	dnl libogg found, now check for libvorbis
-	AC_CHECK_LIB(
+	[AC_CHECK_LIB(
 		vorbis, 
 		vorbis_info_init,
 		[
@@ -127,7 +127,7 @@ AC_CHECK_LIB(
 		],
 
 		AC_MSG_WARN([***** libvorbis.a not found -- ogg vorbis support will be disabled *****])
-	),
+	)],
 
 	AC_MSG_WARN([***** libogg.a not found -- ogg vorbis support will be disabled *****])
 )
