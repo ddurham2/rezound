@@ -74,12 +74,3 @@ CAddChannelsEdit *CAddChannelsEditFactory::manufactureAction(const CActionSound 
 	);
 }
 
-#include "../CLoadedSound.h"
-#include "../CSoundPlayerChannel.h"
-bool CAddChannelsEditFactory::doPreActionSetup(CLoadedSound *loadedSound)
-{
-	// ??? if there were many more actions that required this, I should have a flag set to the factory that told it to stop the channel if it was playing before doing the action
-	loadedSound->channel->stop();
-	return true;
-}
-

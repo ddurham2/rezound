@@ -49,9 +49,6 @@ public:
 	virtual ~CAddChannelsEditFactory();
 
 	CAddChannelsEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
-
-protected:
-	bool doPreActionSetup(CLoadedSound *loadedSound);
 };
 
 #endif
