@@ -71,7 +71,7 @@ public:
 
 	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 
-	bool doPreActionSetup();
+	bool doPreActionSetup(CLoadedSound *loadedSound);
 };
 
 class CReplacePasteEditFactory : public AActionFactory
@@ -81,7 +81,7 @@ public:
 
 	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 
-	bool doPreActionSetup();
+	bool doPreActionSetup(CLoadedSound *loadedSound);
 };
 
 class COverwritePasteEditFactory : public AActionFactory
@@ -91,7 +91,7 @@ public:
 
 	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 
-	bool doPreActionSetup();
+	bool doPreActionSetup(CLoadedSound *loadedSound);
 };
 
 class CLimitedOverwritePasteEditFactory : public AActionFactory
@@ -101,7 +101,7 @@ public:
 
 	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 
-	bool doPreActionSetup();
+	bool doPreActionSetup(CLoadedSound *loadedSound);
 };
 
 class CMixPasteEditFactory : public AActionFactory
@@ -111,7 +111,7 @@ public:
 
 	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 
-	bool doPreActionSetup();
+	bool doPreActionSetup(CLoadedSound *loadedSound);
 };
 
 class CLimitedMixPasteEditFactory : public AActionFactory
@@ -121,7 +121,7 @@ public:
 
 	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 
-	bool doPreActionSetup();
+	bool doPreActionSetup(CLoadedSound *loadedSound);
 };
 
 #endif

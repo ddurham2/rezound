@@ -81,7 +81,7 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 			return(false);
 		}
 
-		if(!doPreActionSetup())
+		if(!doPreActionSetup(loadedSound))
 			return(false);
 
 		CActionSound actionSound(loadedSound->channel,gCrossfadeEdges);

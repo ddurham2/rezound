@@ -106,7 +106,7 @@ protected:
 
 
 	// this method can be overridden to do and setup before any dialog is shown for doing the action
-	virtual bool doPreActionSetup() { return(true); }
+	virtual bool doPreActionSetup(CLoadedSound *loadedSound) { return(true); }
 
 	/*
 	 * - The derived class is to implement this method to 'new' the derived AAction class and construct it

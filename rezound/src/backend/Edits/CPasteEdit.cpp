@@ -289,7 +289,7 @@ bool CPasteEdit::getResultingCrossfadePoints(const CActionSound &actionSound,sam
 
 
 #define CHECK_FOR_DATA(ClassName) 						\
-	bool ClassName::doPreActionSetup() 					\
+	bool ClassName::doPreActionSetup(CLoadedSound *loadedSound)		\
 	{ 									\
 		if(!AAction::clipboards[gWhichClipboard]->prepareForCopyTo())	\
 			return(false);						\
