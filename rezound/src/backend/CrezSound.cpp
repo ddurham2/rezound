@@ -68,6 +68,7 @@ CrezSound::CrezSound(const string &_filename,const unsigned _sampleRate,const un
 
 void CrezSound::loadSound(const string _filename)
 {
+	lockForResize();
 	try
 	{
 		if(!createFromWorkingPoolFileIfExists(_filename))
@@ -85,9 +86,11 @@ void CrezSound::loadSound(const string _filename)
 			_isModified=false;
 
 		}
+		unlockForResize();
 	}
 	catch(...)
 	{
+		unlockForResize();
 		try
 		{
 			poolFile.closeFile(false,false);
@@ -100,13 +103,17 @@ void CrezSound::loadSound(const string _filename)
 
 void CrezSound::saveSound(const string filename)
 {
+	// ??? when I fix CMultiPoolFile to have separate seek position information I should change this to lockSize()
+	lockForResize();
 	try
 	{
 		poolFile.flushData();
 		poolFile.copyToFile(filename);
+		unlockForResize();
 	}
-	catch(exception &e)
+	catch(...)
 	{
+		unlockForResize();
 		throw;
 	}
 }
