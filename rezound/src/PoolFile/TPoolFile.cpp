@@ -127,7 +127,12 @@
 
 #define MAX_POOL_NAME_LENGTH 256
 #define FORMAT_SIGNATURE formatSignature // now a data member in the class instead of a constant
-#define FORMAT_VERSION 0
+
+#define FORMAT_VERSION 1
+/* Format 0 - original
+ * Format 1 - started writing RPoolInfo::size and RLogicalBlock::logicalStart as p_addr_t instead of l_addr_t (since l_addr_t changes in ReZound depending on enable-largefile or not)
+ */
+
 #define INITIAL_CACHED_BLOCK_COUNT 4
 
 // Signature, EOF, Format Version, Dirty, Which SAT File, Meta Data Offset, Filler To Align To Disk Block Buffer
@@ -254,7 +259,7 @@ template<class l_addr_t,class p_addr_t>
 			uint32_t formatVersion;
 			blockFile.read(&formatVersion,sizeof(formatVersion),FORMAT_VERSION_OFFSET);
 			lethe(&formatVersion);
-			if(formatVersion!=FORMAT_VERSION)
+			if(formatVersion!=0 && formatVersion!=FORMAT_VERSION)
 				throw runtime_error("invalid or unsupported format version: "+istring((int)formatVersion));
 
 			int8_t dirty;
@@ -269,7 +274,7 @@ template<class l_addr_t,class p_addr_t>
 				SATFilename=filename+".SAT";
 
 				openSATFiles(true);
-				restoreSAT();
+				restoreSAT(formatVersion);
 				joinAllAdjacentBlocks();
 
 				opened=true;
@@ -284,7 +289,7 @@ template<class l_addr_t,class p_addr_t>
 				if(metaDataOffset<LEADING_DATA_SIZE)
 					throw runtime_error("invalid meta data offset");
 
-				buildSATFromFile(&blockFile,metaDataOffset);
+				buildSATFromFile(&blockFile,metaDataOffset,formatVersion);
 				joinAllAdjacentBlocks();
 			}
 		}
@@ -1189,7 +1194,7 @@ template<class l_addr_t,class p_addr_t>
 		f->write(&SATSize,sizeof(SATSize),multiFileHandle);
 		}
 
-		TAutoBuffer<uint8_t> mem(SAT[poolId].size()*RLogicalBlock().getMemSize());
+		TAutoBuffer<uint8_t> mem(SAT[poolId].size()*RLogicalBlock().getMemSize(FORMAT_VERSION));
 
 		// write each SAT entry
 		size_t offset=0;
@@ -1201,7 +1206,7 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::restoreSAT()
+	void TPoolFile<l_addr_t,p_addr_t>::restoreSAT(int formatVersion)
 {
 	invalidateAllCachedBlocks();
 
@@ -1215,11 +1220,11 @@ template<class l_addr_t,class p_addr_t>
 		exit(0);
 	}
 
-	buildSATFromFile(&SATFiles[whichSATFile],0);
+	buildSATFromFile(&SATFiles[whichSATFile],0,formatVersion);
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::buildSATFromFile(CMultiFile *f,const p_addr_t readWhere)
+	void TPoolFile<l_addr_t,p_addr_t>::buildSATFromFile(CMultiFile *f,const p_addr_t readWhere,int formatVersion)
 {
 	CMultiFile::RHandle multiFileHandle;
 	f->seek(readWhere,multiFileHandle);
@@ -1244,7 +1249,7 @@ template<class l_addr_t,class p_addr_t>
 
 		// read pool info structure
 		RPoolInfo poolInfo;
-		poolInfo.readFromFile(f,multiFileHandle);
+		poolInfo.readFromFile(f,multiFileHandle,formatVersion);
 		poolInfo.isValid= (poolName!="__internal_invalid_pool");
 
 		if(poolInfo.isValid)
@@ -1272,7 +1277,7 @@ template<class l_addr_t,class p_addr_t>
 			throw runtime_error(string(__func__)+" -- SATSize is >0 on an invalid pool: '"+poolName+"'");
 
 		// read SAT into mem buffer
-		TAutoBuffer<uint8_t> mem(SATSize*RLogicalBlock().getMemSize());
+		TAutoBuffer<uint8_t> mem(SATSize*RLogicalBlock().getMemSize(formatVersion));
 		f->read(mem,mem.getSize(),multiFileHandle);
 
 		const blocksize_t maxBlockSize=poolInfo.isValid ? getMaxBlockSizeFromAlignment(poolInfo.alignment) : 0;
@@ -1282,7 +1287,7 @@ template<class l_addr_t,class p_addr_t>
 		for(size_t t=0;t<SATSize;t++)
 		{
 			RLogicalBlock logicalBlock;
-			logicalBlock.readFromMem(mem,offset);
+			logicalBlock.readFromMem(mem,offset,formatVersion);
 
 			// divide the size of the block just read into pieces that will fit into maxBlockSize sizes blocks
 			// just in case the maxBlockSize is smaller than it used to be
@@ -2448,20 +2453,32 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::RPoolInfo::writeToFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle) /*const  makes typeof create const types */
 {
-	typeof(size) tSize=size;
+	p_addr_t tSize=size; // always write size as a p_addr_t because l_addr_t can change in ReZound
 	typeof(alignment) tAlignment=alignment;
 
 	hetle(&tSize);
-	f->write(&tSize,sizeof(size),multiFileHandle);
+	f->write(&tSize,sizeof(tSize),multiFileHandle);
 	hetle(&tAlignment);
-	f->write(&tAlignment,sizeof(alignment),multiFileHandle);
+	f->write(&tAlignment,sizeof(tAlignment),multiFileHandle);
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::RPoolInfo::readFromFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle)
+	void TPoolFile<l_addr_t,p_addr_t>::RPoolInfo::readFromFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle,int formatVersion)
 {
-	f->read(&size,sizeof(size),multiFileHandle);
-	lethe(&size);
+	if(formatVersion==0)
+	{
+		uint32_t _size;
+		f->read(&_size,sizeof(_size),multiFileHandle);
+		lethe(&_size);
+		size=_size;
+	}
+	else // if(formatVersion>=1)
+	{
+		p_addr_t _size;
+		f->read(&_size,sizeof(_size),multiFileHandle);
+		lethe(&_size);
+		size=_size;
+	}
 	f->read(&alignment,sizeof(alignment),multiFileHandle);
 	lethe(&alignment);
 }
@@ -2550,17 +2567,18 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	const size_t TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::getMemSize()
+	const size_t TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::getMemSize(int formatVersion)
 {
-	return sizeof(logicalStart)+sizeof(size)+sizeof(physicalStart);
+	return (formatVersion==0 ? sizeof(uint32_t) : sizeof(p_addr_t))+sizeof(size)+sizeof(physicalStart);
 }
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::writeToMem(uint8_t *mem,size_t &offset) /*const  makes typeof cause const types */
 {
-	memcpy(mem+offset,&logicalStart,sizeof(logicalStart));
-	hetle((typeof(logicalStart) *)(mem+offset));
-	offset+=sizeof(logicalStart);
+	p_addr_t _logicalStart=logicalStart;
+	memcpy(mem+offset,&_logicalStart,sizeof(_logicalStart));
+	hetle((typeof(_logicalStart) *)(mem+offset));
+	offset+=sizeof(_logicalStart);
 
 	memcpy(mem+offset,&size,sizeof(size));
 	hetle((typeof(size) *)(mem+offset));
@@ -2572,11 +2590,24 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::readFromMem(const uint8_t *mem,size_t &offset)
+	void TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::readFromMem(const uint8_t *mem,size_t &offset,int formatVersion)
 {
-	memcpy(&logicalStart,mem+offset,sizeof(logicalStart));
-	lethe(&logicalStart);
-	offset+=sizeof(logicalStart);
+	if(formatVersion==0)
+	{
+		uint32_t _logicalStart;
+		memcpy(&_logicalStart,mem+offset,sizeof(_logicalStart));
+		lethe(&_logicalStart);
+		offset+=sizeof(_logicalStart);
+		logicalStart=_logicalStart;
+	}
+	else //if(formatVersion>=1)
+	{
+		p_addr_t _logicalStart;
+		memcpy(&_logicalStart,mem+offset,sizeof(_logicalStart));
+		lethe(&_logicalStart);
+		offset+=sizeof(_logicalStart);
+		logicalStart=_logicalStart;
+	}
 
 	memcpy(&size,mem+offset,sizeof(size));
 	lethe(&size);

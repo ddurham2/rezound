@@ -63,7 +63,7 @@ template<class pool_element_t,class pool_file_t> class TStaticPoolAccesser;
 template<class _l_addr_t,class _p_addr_t> class TPoolFile
 {
 public:
-	typedef _l_addr_t l_addr_t;	// is written to file
+	typedef _l_addr_t l_addr_t;
 	typedef _p_addr_t p_addr_t;	// is written to file
 	typedef uint32_t alignment_t;	// is written to file
 	typedef uint32_t blocksize_t;	// is written to file
@@ -205,7 +205,7 @@ private:
 		RPoolInfo &operator=(const RPoolInfo &src);
 
 		void writeToFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle) /*const*/;
-		void readFromFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle);
+		void readFromFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle,int formatVersion);
 	};
 
 	map<const string,poolId_t> poolNames;	// the integer data indexes into pools and SAT given a name string key, which is the 'poolId'
@@ -235,8 +235,8 @@ private:
 	void closeSATFiles(const bool removeFiles=true);
 	void writeWhichSATFile();
 	void writeSATToFile(CMultiFile *f,const p_addr_t writeWhere);
-	void restoreSAT();
-	void buildSATFromFile(CMultiFile *f,const p_addr_t readWhere);
+	void restoreSAT(int formatVersion);
+	void buildSATFromFile(CMultiFile *f,const p_addr_t readWhere,int formatVersion);
 
 	// SAT operations
 	const size_t findSATBlockContaining(const poolId_t poolId,const l_addr_t where,bool &atStartOfBlock) const;
@@ -305,9 +305,9 @@ private:
 		const bool operator<(const RLogicalBlock &src) const;
 		const bool operator<=(const RLogicalBlock &src) const { return operator<(src) || operator==(src); }
 
-		const size_t getMemSize();
+		const size_t getMemSize(int formatVersion);
 		void writeToMem(uint8_t *mem,size_t &offset) /*const*/;
-		void readFromMem(const uint8_t *mem,size_t &offset);
+		void readFromMem(const uint8_t *mem,size_t &offset,int formatVersion);
 
 		void print() const;
 	};
