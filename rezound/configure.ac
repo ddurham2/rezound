@@ -388,7 +388,7 @@ dnl ############################################################################
 dnl # Handle link type flag                                                    #
 dnl ############################################################################
 
-dnl If the user gave --enable-standalone then add -all-static and -ldl to the 
+dnl If the user gave --enable-standalone then add -static and -ldl to the 
 dnl linker arguments
 dnl And this check has to be after the ajv_CXX_CHECK_LIB calls because it
 dnl does not use libtool to compile so it fails as a valid flag to the compiler
@@ -398,7 +398,7 @@ AC_ARG_ENABLE(
 	[
 		dnl the 3rd arg would not be necessary if this section didn't have to come after ajv_CXX_CHECK_LIB's
 		AC_CHECK_LIB(dl, dlopen,[LIBS="$LIBS -ldl"])
-		LDFLAGS="-all-static $LDFLAGS"
+		LDFLAGS="-static $LDFLAGS"
 	]
 	)
 
