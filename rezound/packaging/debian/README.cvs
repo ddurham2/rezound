@@ -6,4 +6,5 @@ This directory is used for the debian packaging.
 
 Here are the steps to making a debian package.
 
-1.	Run deb-prep.sh
+1.	From the top directory run packaging/debian/deb-prep.sh
+
