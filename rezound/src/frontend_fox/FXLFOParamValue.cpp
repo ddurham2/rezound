@@ -75,7 +75,8 @@ FXLFOParamValue::FXLFOParamValue(FXComposite *p,int opts,const char *_name,const
 	phaseSlider->setUnits("deg");
 
 	// something initial
-	amplitudeSlider->setValue(1.0);
+	if(ampTitle!="")
+		amplitudeSlider->setValue(1.0);
 	frequencySlider->setValue(1.0);
 	phaseSlider->setValue(90.0);
 
