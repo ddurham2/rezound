@@ -67,7 +67,7 @@ public:
 	const bool *getWhichChannels() const;
 
 	virtual unsigned getSampleRate() const=0;
-	
+	virtual unsigned getChannelCount() const=0;
 
 protected:
 	ASoundClipboard(const string description);

@@ -157,3 +157,8 @@ unsigned CNativeSoundClipboard::getSampleRate() const
 	return sampleRate;
 }
 
+unsigned CNativeSoundClipboard::getChannelCount() const
+{
+	return channelCount;
+}
+

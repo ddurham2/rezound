@@ -230,3 +230,8 @@ unsigned CRecordSoundClipboard::getSampleRate() const
 	return workingFile==NULL ? 0 : workingFile->getSampleRate();
 }
 
+unsigned CRecordSoundClipboard::getChannelCount() const
+{
+	return workingFile==NULL ? 0 : workingFile->getChannelCount();
+}
+

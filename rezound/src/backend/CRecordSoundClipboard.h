@@ -48,6 +48,7 @@ public:
 	void undoTemporaryShortenLength();
 
 	unsigned getSampleRate() const;
+	unsigned getChannelCount() const;
 
 private:
 	const string workingFilename;
