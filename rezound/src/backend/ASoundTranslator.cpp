@@ -194,6 +194,7 @@ const vector<string> ASoundTranslator::getFlatFormatList()
 #include "CrezSoundTranslator.h"
 #include "ClibvorbisSoundTranslator.h"
 #include "ClibaudiofileSoundTranslator.h"
+#include "CMIDISDSSoundTranslator.h"
 #include "ClameSoundTranslator.h"
 #include "CvoxSoundTranslator.h"
 #include "CrawSoundTranslator.h"
@@ -217,6 +218,9 @@ void ASoundTranslator::buildRegisteredTranslatorsVector()
 	static const CrawSoundTranslator rawSoundTranslator;
 	registeredTranslators.push_back(&rawSoundTranslator);
 #endif
+
+	static const CMIDISDSSoundTranslator MIDISDSSoundTranslator;
+	registeredTranslators.push_back(&MIDISDSSoundTranslator);
 
 	if(ClameSoundTranslator::checkForApp())
 	{

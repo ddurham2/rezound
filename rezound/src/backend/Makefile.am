@@ -52,6 +52,7 @@ noinst_HEADERS= \
 	   ClameSoundTranslator.h \
 	   ClibaudiofileSoundTranslator.h \
 	   ClibvorbisSoundTranslator.h \
+	   CMIDISDSSoundTranslator.h \
 	   CLoadedSound.h \
 	   CNativeSoundClipboard.h \
 	   Cold_rezSoundTranslator.h \
@@ -96,6 +97,7 @@ libbackend_la_SOURCES= \
 			ClameSoundTranslator.cpp \
 			ClibaudiofileSoundTranslator.cpp \
 			ClibvorbisSoundTranslator.cpp \
+			CMIDISDSSoundTranslator.cpp \
 			CLoadedSound.cpp  \
 			CNativeSoundClipboard.cpp \
 			Cold_rezSoundTranslator.cpp \
