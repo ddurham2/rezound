@@ -3,8 +3,6 @@
 
 	- Add a button to the FXGraphParamValue which smoothes out angles by making it many nodes to approximate curve.. call it 'approximate'
 
-	- need make sure there is a virtual destructor for all the classes
-
 	- need to have a hot-key that centers the cue's by seeing the right or left most one on screen and centering the one after that.. might include the start and stop positions in that too
 
 	- add a quick (shortcut to) fading in or out the selection use x^2 for the algorithm
@@ -292,4 +290,6 @@
 
 	- in subsequent versions when a default width/height of a dialog changes, I should have stored the version in the registry, if that's older, then I should remove the WindowDimensions key from the registry
 		- I just removed all splitter positions and window dimensions whenever the version changes
+
+	- need make sure there is a virtual destructor for all the classes
 
