@@ -38,21 +38,21 @@ FXDEFMAP(CActionParamDialog) CActionParamDialogMap[]=
 	FXMAPFUNC(SEL_COMMAND,		CActionParamDialog::ID_USER_PRESET_SAVE_BUTTON,	CActionParamDialog::onPresetSaveButton),
 	FXMAPFUNC(SEL_COMMAND,		CActionParamDialog::ID_USER_PRESET_REMOVE_BUTTON,CActionParamDialog::onPresetRemoveButton),
 	FXMAPFUNC(SEL_DOUBLECLICKED,	CActionParamDialog::ID_USER_PRESET_LIST,	CActionParamDialog::onPresetUseButton),
-
-
-	//FXMAPFUNC(SEL_COMMAND,	CActionParamDialog::ID_OKAY_BUTTON,	CActionParamDialog::onOkayButton),
 };
 		
 
 FXIMPLEMENT(CActionParamDialog,FXModalDialogBox,CActionParamDialogMap,ARRAYNUMBER(CActionParamDialogMap))
 
 
-//TODO use string instead of FXString where reasonable
-
 // ----------------------------------------
 
+// ??? TODO Well, I got it to not need the width, it's determined by the 
+// widgets' needed widths.. I don't quite know tho, what the height won't 
+// work the same what.. I'll work on figuring that out and then both 
+// parameters should be unnecessary
+
 CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title,int w,int h) :
-	FXModalDialogBox(mainWindow,title,w,h,FXModalDialogBox::ftVertical),
+	FXModalDialogBox(mainWindow,title,w=0,h,FXModalDialogBox::ftVertical),
 	
 	splitter(new FXSplitter(getFrame(),SPLITTER_VERTICAL|SPLITTER_REVERSED | LAYOUT_FILL_X|LAYOUT_FILL_Y)),
 		controlsFrame(new FXHorizontalFrame(splitter,FRAME_RAISED|FRAME_THICK | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 5,5,5,5)),
@@ -63,8 +63,6 @@ CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title
 	disableFrameDecor();
 
 	setHeight(getHeight()+100); // since we're adding this presets section, make the dialog taller
-
-	// ??? it would be nice if we remembered the height of presetsFrame so that it would remember from run to run where the splitter location was
 
 	try
 	{
@@ -90,7 +88,6 @@ CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title
 		new FXButton(buttonGroup,"&Save",NULL,this,ID_USER_PRESET_SAVE_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
 		new FXButton(buttonGroup,"&Remove",NULL,this,ID_USER_PRESET_REMOVE_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
 
-
 	buildPresetLists();
 
 	// make sure the dialog has at least a minimum height and width
@@ -98,36 +95,41 @@ CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title
 	//ASSURE_WIDTH(this,200);
 }
 
-void CActionParamDialog::addSlider(const FXString name,const FXString units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton)
+void CActionParamDialog::addSlider(const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton)
 {
-	FXConstantParamValue *slider=new FXConstantParamValue(interpretValue,uninterpretValue,minScalar,maxScalar,initScalar,showInverseButton,controlsFrame,0,name.text());
-	slider->setUnits(units);
+	FXConstantParamValue *slider=new FXConstantParamValue(interpretValue,uninterpretValue,minScalar,maxScalar,initScalar,showInverseButton,controlsFrame,0,name.c_str());
+	slider->setUnits(units.c_str());
 	slider->setValue(initialValue);
 	parameters.push_back(pair<ParamTypes,void *>(ptConstant,(void *)slider));
 	retValueConvs.push_back(optRetValueConv);
 }
 
-void CActionParamDialog::addValueEntry(const FXString name,const FXString units,const double initialValue)
+void CActionParamDialog::addValueEntry(const string name,const string units,const double initialValue)
 {
-	FXConstantParamValue *valueEntry=new FXConstantParamValue(controlsFrame,0,name.text());
-	valueEntry->setUnits(units);
+	FXConstantParamValue *valueEntry=new FXConstantParamValue(controlsFrame,0,name.c_str());
+	valueEntry->setUnits(units.c_str());
 	valueEntry->setValue(initialValue);
 	parameters.push_back(pair<ParamTypes,void *>(ptConstant,(void *)valueEntry));
 	retValueConvs.push_back(NULL);
 }
 
 
-void CActionParamDialog::addGraph(const FXString name,const FXString units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar)
+void CActionParamDialog::addGraph(const string name,const string units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar)
 {
 		// ??? there is still a question of how quite to lay out the graph if there are graph(s) and sliders
-	FXGraphParamValue *graph=new FXGraphParamValue(name.text(),interpretValue,uninterpretValue,minScalar,maxScalar,initialScalar,controlsFrame,LAYOUT_FILL_X|LAYOUT_FILL_Y);
-	graph->setUnits(units);
+	FXGraphParamValue *graph=new FXGraphParamValue(name.c_str(),interpretValue,uninterpretValue,minScalar,maxScalar,initialScalar,controlsFrame,LAYOUT_FILL_X|LAYOUT_FILL_Y);
+	graph->setUnits(units.c_str());
 	parameters.push_back(pair<ParamTypes,void *>(ptGraph,(void *)graph));
 	retValueConvs.push_back(optRetValueConv);
 }
 
 bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
+	// restore the splitter's position
+	const FXint h=atoi(gSettingsRegistry->getValue((getTitle()+"_SplitterPos").text()).c_str());
+	presetsFrame->setHeight(h);
+
+
 	// initialize all the graphs to this sound
 	for(size_t t=0;t<parameters.size();t++)
 	{
@@ -172,6 +174,12 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 				throw(runtime_error(string(__func__)+" -- unhandled parameter type: "+istring(parameters[t].first)));
 			}
 		}
+
+
+		// save the splitter's position
+		FXint h=presetsFrame->getHeight();
+		gSettingsRegistry->createKey((getTitle()+"_SplitterPos").text(),istring(h));
+
 		return(true);
 	}
 	return(false);

@@ -343,3 +343,26 @@ Simple\ Delay
 	}
 
 }
+
+Change\ Rate
+{
+	names[]={"Half","Double"};
+
+	Double
+	{
+		Rate\ Change
+		{
+			value=2;
+			scalar=4;
+		}
+	}
+
+	Half
+	{
+		Rate\ Change
+		{
+			value=0.5;
+			scalar=4;
+		}
+	}
+}

@@ -47,9 +47,9 @@ public:
 
 	CActionParamDialog(FXWindow *mainWindow,const FXString title,int w,int h);
 
-	void addSlider(const FXString name,const FXString units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton);
-	void addValueEntry(const FXString name,const FXString units,const double initialValue);
-	void addGraph(const FXString name,const FXString units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar);
+	void addSlider(const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton);
+	void addValueEntry(const string name,const string units,const double initialValue);
+	void addGraph(const string name,const string units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar);
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 
@@ -92,6 +92,8 @@ private:
 		FXPacker *presetsFrame;
 			FXList *nativePresetList;
 			FXList *userPresetList;
+
+	bool shrinkPresetsFrame;
 
 	void buildPresetLists();
 	void buildPresetList(CNestedDataFile &f,FXList *list);

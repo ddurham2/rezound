@@ -151,6 +151,3 @@ CVariedRepeatDialog::CVariedRepeatDialog(FXWindow *mainWindow) :
 }
 
 
-
-
-

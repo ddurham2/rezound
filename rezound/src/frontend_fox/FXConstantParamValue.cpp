@@ -53,7 +53,7 @@ FXDEFMAP(FXConstantParamValue) FXConstantParamValueMap[]=
 FXIMPLEMENT(FXConstantParamValue,FXVerticalFrame,FXConstantParamValueMap,ARRAYNUMBER(FXConstantParamValueMap))
 
 FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _uninterpretValue,const int minScalar,const int maxScalar,const int _initScalar,bool showInverseButton,FXComposite *p,int opts,const char *title) :
-	FXVerticalFrame(p,opts|FRAME_RIDGE | LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 6,6,2,4, 0,2),
+	FXVerticalFrame(p,opts|FRAME_RIDGE | /*LAYOUT_FILL_X|*/LAYOUT_FILL_Y|LAYOUT_CENTER_X,0,0,0,0, 6,6,2,4, 0,2),
 
 	titleLabel(new FXLabel(this,title,NULL,LAYOUT_TOP|LAYOUT_FILL_X | JUSTIFY_CENTER_X)),
 	horzSep(new FXHorizontalSeparator(this)),
