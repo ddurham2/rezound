@@ -101,44 +101,9 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 
 	const ASoundClipboard *clipboard=AAction::clipboards[gWhichClipboard];
 	if(clipboard->isEmpty())
-		return(false);
-
-	// determine if and which channel is the only channel available in the clipbaord
-	bool isSingleClipboardChannel=false;
-	size_t singleClipboardChannel=0;
-	for(size_t t=0;t<MAX_CHANNELS;t++)
-	{
-		if(clipboard->getWhichChannels()[t])
-		{
-			if(isSingleClipboardChannel)
-			{
-				isSingleClipboardChannel=false;
-				break;
-			}
-			else
-			{
-				isSingleClipboardChannel=true;
-				singleClipboardChannel=t;
-			}
-		}
-	}
+		return false;
 
 	vector<vector<bool> > &pasteChannels=pasteInfo.second;
-
-	// don't show the dialog if there is only one channel in both the source and destination
-	if(actionSound->sound->getChannelCount()<=1 && isSingleClipboardChannel)
-	{
-		pasteChannels.clear();
-		for(unsigned y=0;y<MAX_CHANNELS;y++)
-		{
-			pasteChannels.push_back(vector<bool>());
-			for(unsigned x=0;x<MAX_CHANNELS;x++)
-				pasteChannels[y].push_back(false);
-		}
-
-		pasteChannels[0][singleClipboardChannel]=true;
-		return(true);
-	}
 
 
 	// uncheck all check boxes and enable only the valid ones where data could be pasted to and from
@@ -173,9 +138,9 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 			}
 		}
 
-		return(ret);
+		return ret;
 	}
-	return(false);
+	return false;
 
 }
 
