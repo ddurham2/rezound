@@ -75,6 +75,10 @@ or sample values to follow
 
 --- POSSIBLE THINGS TO DO ---
 
+	- macros would be a good feature for rezound to have.  Marc on the mailing list described an interesting way to add ambience to a mono sample that could be done through the use of several standard features that already exist.
+		- if these could be scripted (thru something like CScriptedAction(name)) like this (undo would be for the action as a whole instead of a individual undos on each part)
+		- CActionParameters is a step in that direction if it could be saved/loaded from disk
+
 	- after evolution of the code, some TAutoBuffers might now be trivially turned into stack arrays
 
 	- consider moving the cue oriented actions to a Cue directory or something

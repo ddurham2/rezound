@@ -1,5 +1,15 @@
 
 --- THINGS TO DO FOR SURE ---
+	
+	- put a vertical dBFS scale on the wave view
+		- add a label somewhere that displays dBFS
+		- moving the mouse on the vertical dBFS scale draws a horz line on the waveform for reference (and displays the dBFS in the label)
+		- moving the mouse on the wave view displays the dBFS (and perhaps time too) of the cursor position
+		- all this should take into account the vert zoom factor and vert offset
+
+	- allow users to save a selection positions so they can quickly recall them
+		- !perhaps even adjust them in the AAction if they're not anchored (like cues)!
+			- perhaps save them like cues with special names
 
 	- Possibly I could develop a set of widget for FOX that are generic enough that I could use them to create plugin routes
 		- basically it would be a generic widget set that allows drawing lines and making/removing connections between widgets
@@ -105,10 +115,6 @@
 	- in order to create multiple taps for an echo effect... I could have the dialog have tabs and each tap could be tap.. there would be buttons outside the tab bar to insert, remove, move left/right the tabs to rearrange the taps
 
 	- right now all the play control buttons are activated on mouse_button_release events, where it might be good to active on mouse button down.... perhaps I could derive my own button class... or get a feature added to FXButton to selected which way it should behave
-
-	- make cues draggable
-		- snap them to the start, stop, beginning and end positions
-		- maybe even autoscroll when a cue is near the edge if it's not terribly difficult
 
 	- perhaps I could have the channel select dialog default its check boxes according to the mute buttons of the sound window
 
@@ -322,4 +328,8 @@
 		- toggle on/off the analyzer 
 
 	- Add a button to the FXGraphParamValue which smoothes out angles by making it many nodes to approximate curve.. call it 'approximate'
+
+	- make cues draggable
+		- snap them to the start, stop, beginning and end positions
+		- maybe even autoscroll when a cue is near the edge if it's not terribly difficult
 
