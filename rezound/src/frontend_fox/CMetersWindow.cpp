@@ -495,9 +495,9 @@ public:
 		canvas->setBackBufferOptions(IMAGE_OWNED); /* 1.1.29 and later always has 32bit image data */
 #endif
 
-		zoomDial->setRange(100,200);
+		zoomDial->setRange(100,400);
 		zoomDial->setValue(100);
-		zoomDial->setRevolutionIncrement(100*2);
+		zoomDial->setRevolutionIncrement(400);
 		zoomDial->setTipText(_("Adjust Zoom Factor for Stereo Phase Meter\nAll the way down means no zooming"));
 		zoom=((float)zoomDial->getValue())/100.0;
 
@@ -567,8 +567,8 @@ public:
 		for(size_t t=0;t<samplingNFrames;t++)
 		{
 			// let x and y be the normalized (1.0) sample values (x:right y:left) then scaled up to the canvas width/height and centered in the square
-			const FXint x=(FXint)((zoom*(samplingBuffer[t*samplingNChannels+samplingRightChannel]*(int)canvasSize/2/MAX_SAMPLE)) + canvasSize/2);
-			const FXint y=(FXint)((zoom*(-samplingBuffer[t*samplingNChannels+samplingLeftChannel ]*(int)canvasSize/2/MAX_SAMPLE)) + canvasSize/2); // negation because increasing values go down on the screen which is up-side-down from the Cartesian plane
+			const FXint x=(FXint)( (zoom*samplingBuffer[t*samplingNChannels+samplingRightChannel])*canvasSize/2/MAX_SAMPLE) + canvasSize/2;
+			const FXint y=(FXint)(-(zoom*samplingBuffer[t*samplingNChannels+samplingLeftChannel ])*canvasSize/2/MAX_SAMPLE) + canvasSize/2; // negation because increasing values go down on the screen which is up-side-down from the Cartesian plane
 
 			if(x>=0 && x<canvasSize && y>=0 && y<canvasSize)
 			{
