@@ -1,5 +1,7 @@
 --- THINGS TO DO FOR SURE ---
 
+	- I discovered that the M_PI (and others) #defines are not in the C/C++ specification... So I might want to test for them in configure.in and define them if they're not found in common.h ( M_PI=atan(1)*4; )
+
 	- Change all the status bars to say "Channel X/Y" so that they know how many iterations to expect (and i will have to be a count instead of literally i)
 
 	- Make a links section on the homepage about who is/has-used ReZound
