@@ -504,6 +504,8 @@ const ASoundTranslator *ASoundFileManager::getTranslator(const string filename,b
 		return(&rezSoundTranslator);
 	else if(libaudiofileSoundTranslator.handlesExtension(extension))
 		return(&libaudiofileSoundTranslator);
+	else if(rawSoundTranslator.handlesExtension(extension))
+		return(&rawSoundTranslator);
 	else
 		throw(runtime_error(string(__func__)+" -- unhandled extension for the filename '"+filename+"'"));
 }
