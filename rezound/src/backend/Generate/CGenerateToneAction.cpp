@@ -76,6 +76,12 @@ bool CGenerateToneAction::doActionSizeSafe(CActionSound &actionSound,bool prepar
 				}
 
 
+			/* ???
+			 * I've read that there are cleaner ways to compute these waveforms.  But the only way
+			 * I could see them as being 'cleaner' is that the pure math doesn't sound so great on
+			 * typical DAC hardware.  So anyway, if someone knows how and is willing to replace these
+			 * routines with 'better sounding' ones, be my guest.
+			 */
 			switch(toneType)
 			{
 			case ttSineWave: {
