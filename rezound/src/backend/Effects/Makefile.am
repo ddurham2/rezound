@@ -37,6 +37,7 @@ libEffects_la_SOURCES=\
 		CReverseEffect.cpp \
 		CVariedRepeatEffect.cpp \
 		CQuantizeEffect.cpp \
+		CDistortionEffect.cpp \
 		CTestEffect.cpp
 
 
@@ -48,6 +49,7 @@ noinst_HEADERS= \
 		CReverseEffect.h \
 		CVariedRepeatEffect.h \
 		CQuantizeEffect.h \
+		CDistortionEffect.h \
 		CTestEffect.h \
 		EffectActions.h
 
