@@ -142,12 +142,10 @@ int CPortAudioSoundRecorder::PortAudioCallback(void *inputBuffer,void *outputBuf
 	catch(exception &e)
 	{
 		fprintf(stderr,"exception caught in record callback: %s\n",e.what());
-		abort();
 	}
 	catch(...)
 	{
 		fprintf(stderr,"unknown exception caught in record callback\n");
-		abort();
 	}
 	return 0;
 }

@@ -37,7 +37,6 @@
 
 #include <stdexcept>
 #include <string>
-#include <iostream>
 
 #include <istring>
 
@@ -329,9 +328,8 @@ void COSSSoundRecorder::CRecordThread::main()
 		if(redoMutexLocked)
 			parent->redoMutex.unlock();
 */
-		cerr << "exception caught in record thread: " << e.what() << endl;
+		fprintf(stderr,"exception caught in record thread: %s\n",e.what());
 
-		abort();
 	}
 	catch(...)
 	{
@@ -339,9 +337,8 @@ void COSSSoundRecorder::CRecordThread::main()
 		if(redoMutexLocked)
 			parent->redoMutex.unlock();
 */
-		cerr << "unknown exception caught in record thread" << endl;
+		fprintf(stderr,"unknown exception caught in record thread\n");
 
-		abort();
 	}
 }
 

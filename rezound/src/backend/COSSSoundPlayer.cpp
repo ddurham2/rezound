@@ -332,12 +332,10 @@ void COSSSoundPlayer::CPlayThread::main()
 	catch(exception &e)
 	{
 		cerr << "exception caught in play thread: " << e.what() << endl;
-		abort();
 	}
 	catch(...)
 	{
 		cerr << "unknown exception caught in play thread" << endl;
-		abort();
 	}
 }
 
