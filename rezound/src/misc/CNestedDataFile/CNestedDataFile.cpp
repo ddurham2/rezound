@@ -376,7 +376,10 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const string &_name,const
  */
 void CNestedDataFile::verifyKey(const string &key)
 {
-	size_t l=key.length();
+	const size_t l=key.length();
+	if(l==0)
+		throw runtime_error(string(__func__)+" -- key is blank");
+
 	for(size_t t=0;t<l;t++)
 	{
 		// accept only graphic characters (i.e. not control chars), space and tab
