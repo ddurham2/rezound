@@ -23,6 +23,7 @@
 include $(top_srcdir)/config/am_include.mk
 
 SUBDIRS=\
+	images\
 	misc \
 	PoolFile \
 	backend \

@@ -23,16 +23,43 @@
 
 include $(top_srcdir)/config/am_include.mk
 
-SUBDIRS= \
-	CNestedDataFile
-
-noinst_HEADERS=\
-		AThread.h\
-		CMutex.h\
-		CPath.h\
-		CRWLock.h\
-		TAutoBuffer.h		
-
-EXTRA_DIST= \
-	istring \
-	missing
+EXTRA_DIST=\
+	GreenCheck1.gif\
+	GreenLED1.gif\
+	GreenPlus1.gif\
+	OffLED1.gif\
+	RedLED1.gif\
+	RedMinus1.gif\
+	RedX1.gif\
+	YellowLED1.gif\
+	advanced_action.gif\
+	advanced_action_buff.gif\
+	edit_copy.gif\
+	edit_crop.gif\
+	edit_cut.gif\
+	edit_delete.gif\
+	edit_paste.gif\
+	edit_redo.gif\
+	edit_undo.gif\
+	file_close.gif\
+	file_new.gif\
+	file_open.gif\
+	file_revert.gif\
+	file_save.gif\
+	file_save_as.gif\
+	icon_logo_16.gif\
+	icon_logo_32.gif\
+	jump_to_beginning.gif\
+	jump_to_next_q.gif\
+	jump_to_previous_q.gif\
+	jump_to_selection.gif\
+	logo.gif\
+	normal_action.gif\
+	normal_action_buff.gif\
+	notes.gif\
+	pause.gif\
+	play_all_looped.gif\
+	play_all_once.gif\
+	play_selection_looped.gif\
+	play_selection_once.gif\
+	stop.gif

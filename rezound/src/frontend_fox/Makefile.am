@@ -123,7 +123,8 @@ noinst_HEADERS=\
 	rememberShow.h \
 	settings.h 
 
-images.cpp: ../images/*.gif
+images.h: images.cpp
+images.cpp: 
 	./convert_images.sh ${RESWRAP} ../images
 
 clean-local: 
