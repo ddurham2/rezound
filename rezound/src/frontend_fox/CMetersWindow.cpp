@@ -497,7 +497,7 @@ public:
 
 		zoomDial->setRange(100,400);
 		zoomDial->setValue(100);
-		zoomDial->setRevolutionIncrement(400);
+		zoomDial->setRevolutionIncrement((400-100+10)*2);
 		zoomDial->setTipText(_("Adjust Zoom Factor for Stereo Phase Meter\nAll the way down means no zooming"));
 		zoom=((float)zoomDial->getValue())/100.0;
 
