@@ -157,11 +157,15 @@ AC_DEFUN(ajv_CHECK_LIB_ABORT, dnl
 [AC_ARG_WITH($1-include, dnl
 [  --with-$1-include	  Specify path to $1 header files], dnl
 [ 	ajv_inc$1_path=-I$withval
-	enable_$1_check="no"  ],
+# I'm commenting this out, so passing the with option won't override check.
+#	enable_$1_check="no"  
+],
 ajv_inc$1_path="")] dnl
 [AC_ARG_WITH($1-path,[  --with-$1-path	  Specify path to $1 libraries], dnl
 [	ajv_lib$1_path=-L$withval
-	enable_$1_check="no" ], dnl
+# I'm commenting this out, so passing the with option won't override check.
+#	enable_$1_check="no" 
+], dnl
 ajv_lib$1_path="")] 
 LDFLAGS="$ajv_lib$1_path $LDFLAGS"
 CXXFLAGS="$ajv_inc$1_path $CXXFLAGS"
