@@ -44,6 +44,9 @@ public:
 	sample_pos_t getLength(unsigned sampleRate) const;
 	bool isEmpty() const;
 
+	void temporarilyShortenLength(unsigned sampleRate,sample_pos_t changeTo);
+	void undoTemporaryShortenLength();
+
 	unsigned getSampleRate() const;
 
 private:
@@ -53,6 +56,10 @@ private:
 	CSound *workingFile;
 
 	ASoundPlayer *soundPlayer;
+
+	// used by temporarilyShortenLength
+	unsigned tempAudioPoolKey;
+	sample_pos_t origLength;
 };
 
 #endif

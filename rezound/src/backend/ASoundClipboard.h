@@ -59,6 +59,10 @@ public:
 		// returns true if there is no data on the clipboard
 	virtual bool isEmpty() const=0;
 
+		// temporarily makes the clipboard's data shorter than it is (and this can be undone)
+	virtual void temporarilyShortenLength(unsigned sampleRate,sample_pos_t changeTo)=0;
+	virtual void undoTemporaryShortenLength()=0;
+
 		// returns a pointer to an array of MAX_CHANNELS bools which are true for each channel there is data for in the clipboard
 	const bool *getWhichChannels() const;
 

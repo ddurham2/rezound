@@ -38,7 +38,9 @@ CRecordSoundClipboard::CRecordSoundClipboard(const string description,const stri
 	ASoundClipboard(description),
 	workingFilename(_workingFilename),
 	workingFile(NULL),
-	soundPlayer(_soundPlayer)
+	soundPlayer(_soundPlayer),
+
+	tempAudioPoolKey(0)
 {
 }
 
@@ -172,6 +174,55 @@ sample_pos_t CRecordSoundClipboard::getLength(unsigned _sampleRate) const
 bool CRecordSoundClipboard::isEmpty() const
 {
 	return workingFile==NULL || workingFile->getLength()<=1;
+}
+
+void CRecordSoundClipboard::temporarilyShortenLength(unsigned sampleRate,sample_pos_t changeTo)
+{
+	if(workingFile==NULL)
+		return;
+
+	workingFile->lockForResize();
+	try
+	{
+		if(changeTo>getLength(sampleRate))
+			throw runtime_error(string(__func__)+" -- changeTo is greater than the current length");
+		if(changeTo==getLength(sampleRate))
+			return;
+
+		sample_pos_t newLength=(sample_pos_t)sample_fpos_floor((sample_fpos_t)changeTo/(sample_fpos_t)workingFile->getSampleRate()*(sample_fpos_t)sampleRate);
+		origLength=workingFile->getLength();
+
+		tempAudioPoolKey=workingFile->moveDataToTemp(whichChannels,newLength,workingFile->getLength()-newLength);
+
+		workingFile->unlockForResize();
+	}
+	catch(...)
+	{
+		workingFile->unlockForResize();
+		throw;
+	}
+	
+}
+
+void CRecordSoundClipboard::undoTemporaryShortenLength()
+{
+	if(workingFile==NULL)
+		return;
+
+	workingFile->lockForResize();
+	try
+	{
+		if(tempAudioPoolKey!=0)
+			workingFile->moveDataFromTemp(whichChannels,tempAudioPoolKey,workingFile->getLength(),origLength-workingFile->getLength());
+
+		workingFile->unlockForResize();
+	}
+	catch(...)
+	{
+		workingFile->unlockForResize();
+		throw;
+	}
+	tempAudioPoolKey=0;
 }
 
 unsigned CRecordSoundClipboard::getSampleRate() const
