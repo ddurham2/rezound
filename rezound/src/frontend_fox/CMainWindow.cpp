@@ -134,16 +134,16 @@ FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
 #include "drawPortion.h" // for backgroundColor
 
 CMainWindow::CMainWindow(FXApp* a) :
-	FXMainWindow(a,"ReZound",FOXIcons->icon_logo_32,FOXIcons->icon_logo_16,DECOR_ALL,10,20,800,600),
+	FXMainWindow(a,"ReZound",FOXIcons->icon_logo_32,FOXIcons->icon_logo_16,DECOR_ALL,10,20,800,600, 0,0,0,0, 0,0),
 	shuttleFont(NULL),
 	soundListFont(NULL),
 	soundListHeaderFont(NULL)
 {
 	FXFontDesc d;
 
-	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X);
+	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|FRAME_RAISED|FRAME_THICK,0,0,0,0, 0,0,0,0);
 
-	contents=new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 1,1,0,0, 1,0);
+	contents=new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 1,0);
 
 	metersWindow=new CMetersWindow(contents);
 
@@ -153,7 +153,7 @@ CMainWindow::CMainWindow(FXApp* a) :
 
 	#define BUTTON_STYLE FRAME_RAISED|LAYOUT_EXPLICIT
 	// build play control buttons
-	FXPacker *playControlsFrame=new FXPacker(new FXPacker(s,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 4,4,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
+	FXPacker *playControlsFrame=new FXPacker(new FXPacker(s,FRAME_RAISED|FRAME_THICK|LAYOUT_FILL_Y,0,0,0,0, 4,4,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
 		#define PLAY_CONTROLS_BUTTON_STYLE BUTTON_STYLE
 		new FXButton(playControlsFrame,"\tPlay All Once",FOXIcons->play_all_once,this,ID_PLAY_ALL_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,0,32,32);
 		new FXButton(playControlsFrame,"\tPlay Selection Once",FOXIcons->play_selection_once,this,ID_PLAY_SELECTION_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32,0,32,32);
@@ -193,9 +193,10 @@ CMainWindow::CMainWindow(FXApp* a) :
 
 
 	// build miscellaneous buttons
-	FXPacker *miscControlsFrame=new FXPacker(new FXPacker(s,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 3,2);
+	FXPacker *miscControlsFrame=new FXPacker(new FXPacker(s,FRAME_RAISED|FRAME_THICK|LAYOUT_FILL_Y,0,0,0,0, 4,4,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 3,2);
 		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
 		followPlayPositionButton=new FXCheckButton(miscControlsFrame,"Follow Play Position",this,ID_FOLLOW_PLAY_POSITION_BUTTON);
+		followPlayPositionButton->setPadLeft(0); followPlayPositionButton->setPadRight(0); followPlayPositionButton->setPadTop(0); followPlayPositionButton->setPadBottom(0);
 		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
 			//new FXLabel(t,"Crossfade Edges: ");
 			crossfadeEdgesComboBox=new FXComboBox(t,8,3, this,ID_CROSSFADE_EDGES_COMBOBOX, FRAME_SUNKEN|FRAME_THICK | COMBOBOX_NORMAL|COMBOBOX_STATIC | LAYOUT_CENTER_Y);
@@ -208,7 +209,7 @@ CMainWindow::CMainWindow(FXApp* a) :
 		clipboardComboBox=new FXComboBox(miscControlsFrame,8,8, this,ID_CLIPBOARD_COMBOBOX, FRAME_SUNKEN|FRAME_THICK | COMBOBOX_NORMAL|COMBOBOX_STATIC);
 
 	// build sound list 
-	t=new FXPacker(s,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_RIDGE);
+	t=new FXPacker(s,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_RAISED|FRAME_THICK,0,0,0,0, 4,4,2,3, 0,0);
 		t=new FXPacker(t,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_SUNKEN|FRAME_THICK, 0,0,0,0, 0,0,0,0, 0,0);
 			soundList=new FXIconList(t,this,ID_SOUND_LIST,HSCROLLER_NEVER|ICONLIST_BROWSESELECT|LAYOUT_FILL_X|LAYOUT_FILL_Y);
 
@@ -236,7 +237,7 @@ CMainWindow::CMainWindow(FXApp* a) :
 				soundList->appendHeader("Name",NULL,200);
 				soundList->appendHeader("Path",NULL,9999);
 
-	soundWindowFrame=new FXPacker(contents,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_RIDGE,0,0,0,0, 0,0,0,0, 0,0);
+	soundWindowFrame=new FXPacker(contents,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_RAISED|FRAME_THICK,0,0,0,0, 0,0,0,0, 0,0);
 }
 
 CMainWindow::~CMainWindow()
