@@ -37,6 +37,10 @@ CBiquadResFilter::CBiquadResFilter(const CActionSound &actionSound,FilterTypes _
 {
 }
 
+CBiquadResFilter::~CBiquadResFilter()
+{
+}
+
 bool CBiquadResFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
 	const sample_pos_t start=actionSound.start;
@@ -134,6 +138,10 @@ void CBiquadResFilter::undoActionSizeSafe(const CActionSound &actionSound)
 
 CBiquadResLowpassFilterFactory::CBiquadResLowpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
 	AActionFactory("Biquad Resonant Lowpass Filter","Single Pole Lowpass Filter",false,channelSelectDialog,normalDialog,NULL)
+{
+}
+
+CBiquadResLowpassFilterFactory::~CBiquadResLowpassFilterFactory()
 {
 }
 

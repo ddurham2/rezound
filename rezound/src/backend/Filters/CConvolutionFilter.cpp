@@ -56,6 +56,10 @@ CConvolutionFilter::CConvolutionFilter(const CActionSound &actionSound,const flo
 {
 }
 
+CConvolutionFilter::~CConvolutionFilter()
+{
+}
+
 #include <unistd.h> // for symlink and unlink
 bool CConvolutionFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
@@ -252,6 +256,10 @@ void CConvolutionFilter::undoActionSizeSafe(const CActionSound &actionSound)
 
 CConvolutionFilterFactory::CConvolutionFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
 	AActionFactory("Convolution Filter","Convolve One Audio File with this One",false,channelSelectDialog,normalDialog,NULL)
+{
+}
+
+CConvolutionFilterFactory::~CConvolutionFilterFactory()
 {
 }
 

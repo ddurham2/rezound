@@ -37,6 +37,10 @@ CSinglePoleFilter::CSinglePoleFilter(const CActionSound &actionSound,FilterTypes
 {
 }
 
+CSinglePoleFilter::~CSinglePoleFilter()
+{
+}
+
 bool CSinglePoleFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
 	const sample_pos_t start=actionSound.start;
@@ -149,6 +153,10 @@ CSinglePoleLowpassFilterFactory::CSinglePoleLowpassFilterFactory(AActionDialog *
 {
 }
 
+CSinglePoleLowpassFilterFactory::~CSinglePoleLowpassFilterFactory()
+{
+}
+
 CSinglePoleFilter *CSinglePoleLowpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	return(new CSinglePoleFilter(
@@ -159,9 +167,14 @@ CSinglePoleFilter *CSinglePoleLowpassFilterFactory::manufactureAction(const CAct
 	));
 }
 
+// --------------------------------------------------
 
 CSinglePoleHighpassFilterFactory::CSinglePoleHighpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
 	AActionFactory("Single Pole Highpass Filter","Single Pole Highpass Filter",false,channelSelectDialog,normalDialog,NULL)
+{
+}
+
+CSinglePoleHighpassFilterFactory::~CSinglePoleHighpassFilterFactory()
 {
 }
 
@@ -175,9 +188,14 @@ CSinglePoleFilter *CSinglePoleHighpassFilterFactory::manufactureAction(const CAc
 	));
 }
 
+// --------------------------------------------------
 
 CBandpassFilterFactory::CBandpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
 	AActionFactory("Bandpass Filter","Bandpass Filter",false,channelSelectDialog,normalDialog,NULL)
+{
+}
+
+CBandpassFilterFactory::~CBandpassFilterFactory()
 {
 }
 
@@ -192,9 +210,14 @@ CSinglePoleFilter *CBandpassFilterFactory::manufactureAction(const CActionSound 
 	));
 }
 
+// --------------------------------------------------
 
 CNotchFilterFactory::CNotchFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
 	AActionFactory("Notch Filter","Notch Filter",false,channelSelectDialog,normalDialog,NULL)
+{
+}
+
+CNotchFilterFactory::~CNotchFilterFactory()
 {
 }
 
