@@ -103,7 +103,7 @@ CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
 					recordedSizeStatusLabel=new FXLabel(frame4,"0",NULL,LAYOUT_FILL_X|JUSTIFY_LEFT);
 					recordLimitLabel=new FXLabel(frame4,"",NULL,LAYOUT_FILL_X|JUSTIFY_LEFT);
 		frame2=new FXVerticalFrame(frame1,FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_FILL_Y);
-			frame3=new FXHorizontalFrame(frame2);
+			frame3=new FXHorizontalFrame(frame2,0,0,0,0, 0,0,0,0, 0,0);
 				new FXButton(frame3,"Reset",NULL,this,ID_CLEAR_CLIP_COUNT_BUTTON);
 				clipCountLabel=new FXLabel(frame3,"Clip Count: 0",NULL);
 			meterFrame=new FXHorizontalFrame(frame2,LAYOUT_FILL_X|LAYOUT_FILL_Y);
