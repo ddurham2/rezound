@@ -202,7 +202,8 @@ void CCueListDialog::show(FXuint placement)
 		throw(runtime_error(string(__func__)+" -- setSound() was not called with a non-NULL value"));
 
 	rebuildCueList();
-	cueList->setCurrentItem(0);
+	if(cueList->getNumItems()>0)
+		cueList->setCurrentItem(0);
 
 	rememberShow(this);
 	FXDialogBox::show(placement);
