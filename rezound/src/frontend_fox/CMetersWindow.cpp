@@ -833,7 +833,7 @@ public:
 		else
 		{
 #if REZ_FOX_VERSION<10117
-			dc.setTextFont(getApp()->getNormalFont());
+			dc.setFont(getApp()->getNormalFont());
 #else
 			dc.setTextFont(getApp()->getNormalFont());
 #endif
