@@ -579,8 +579,8 @@ static void printUsage(const string app)
 	printf("\t- The file ~/.rezound/registry.dat does contain some settings that\n\t  can only be changed by editing the file (right now)\n");
 
 	printf("\n");
-	printf("Project homepage\n\thttp://rezound.sourceforge.net\n");
-	printf("Please report bugs to\n\thttp://sourceforge.net/tracker/?atid=105056&group_id=5056\n");
+	printf("Project homepage:\n\thttp://rezound.sourceforge.net\n");
+	printf("Please report bugs to:\n\thttp://sourceforge.net/tracker/?atid=105056&group_id=5056\n");
 
 	printf("Please consider joining the ReZound-users mailing list:\n\thttp://lists.sourceforge.net/lists/listinfo/rezound-users\n");
 
