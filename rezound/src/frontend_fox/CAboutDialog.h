@@ -38,6 +38,8 @@ public:
 	CAboutDialog(FXWindow *mainWindow);
 	virtual ~CAboutDialog();
 
+	void showOnStartup();
+
 protected:
 	CAboutDialog() {}
 

@@ -115,6 +115,7 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 		MAKE_TEXT(t,"Heiko Irrgang",_("Bug Finding"));
 		MAKE_TEXT(t,"Jason Lyons",_("Bug Finding"));
 		MAKE_TEXT(t,"Stakker",_("Feature Suggestions"));
+		MAKE_TEXT(t,"Dave Phillips",_("Bug Finding/Fixing"));
 	}
 
 	tab=new FXTabItem(tabs,"License",NULL,TAB_TOP_NORMAL);
@@ -132,4 +133,36 @@ CAboutDialog::~CAboutDialog()
 {
 }
 
+
+// ------------------------------------------------------------------------------
+
+#include <stdlib.h>
+
+#include <CNestedDataFile/CNestedDataFile.h>
+#include "settings.h"
+void CAboutDialog::showOnStartup()
+{
+	// this is called whenever the application starts
+	// I do it to make sure the user at least knows *why* this release was made for the alpha and beta stages
+	// make the about dialog show up some fixed number of times every time the version changes
+	string version=gSettingsRegistry->getValue<string>("SeenAboutDialogVersion");
+	int count=gSettingsRegistry->getValue<int>("SeenAboutDialogCount");
+	if(version!=REZOUND_VERSION)
+	{ // different version
+		gSettingsRegistry->createValue<string>("SeenAboutDialogVersion",REZOUND_VERSION);
+		gSettingsRegistry->createValue<int>("SeenAboutDialogCount",1);
+
+		// if the version has changed from the previous run, then forget all window positions/sizes and splitter positions
+		gSettingsRegistry->removeKey("SplitterPositions");
+		gSettingsRegistry->removeKey("WindowDimensions");
+	}
+	else
+	{ // same version, now check count or increment count
+		if(count>2)
+			return; // been seen 3 times already
+		else
+			gSettingsRegistry->createValue<int>("SeenAboutDialogCount",count+1);
+	}
+	execute(PLACEMENT_SCREEN);
+}
 
