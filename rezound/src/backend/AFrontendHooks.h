@@ -70,6 +70,12 @@ public:
 	virtual const string promptForJACKPort(const string message,const vector<string> portNames)=0;
 #endif
 
+	struct RezSaveParameters
+	{
+		AudioEncodingTypes audioEncodingType; // enum defined in CSound_defs.h
+	};
+	virtual bool promptForRezSaveParameters(RezSaveParameters &parameters)=0;
+
 
 	// called when the user is loading a raw file and format parameters are needed
 	struct RawParameters

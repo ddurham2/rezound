@@ -47,6 +47,7 @@ libfrontend_la_SOURCES= \
 			CMetersWindow.cpp \
 			CStatusComm.cpp \
 			CUserNotesDialog.cpp \
+			CRezSaveParametersDialog.cpp \
 			CRawDialog.cpp \
 			CVoxDialog.cpp \
 			COggDialog.cpp \
@@ -137,6 +138,7 @@ noinst_HEADERS=\
 	CMetersWindow.h \
 	CStatusComm.h \
 	CUserNotesDialog.h \
+	CRezSaveParametersDialog.h \
 	CRawDialog.h \
 	CVoxDialog.h \
 	COggDialog.h \

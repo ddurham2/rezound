@@ -30,6 +30,7 @@
 #include "CNewSoundDialog.h"
 #include "CRecordDialog.h"
 #include "CJACKPortChoiceDialog.h"
+#include "CRezSaveParametersDialog.h"
 #include "CRawDialog.h"
 #include "COggDialog.h"
 #include "CMp3Dialog.h"
@@ -50,6 +51,7 @@ CFrontendHooks::CFrontendHooks(FXWindow *_mainWindow) :
 	newSoundDialog(NULL),
 	recordDialog(NULL),
 	JACKPortChoiceDialog(NULL),
+	rezSaveParametersDialog(NULL),
 	rawDialog(NULL),
 	oggDialog(NULL),
 	mp3Dialog(NULL),
@@ -70,6 +72,8 @@ CFrontendHooks::~CFrontendHooks()
 	delete newSoundDialog;
 	delete recordDialog;
 	delete JACKPortChoiceDialog;
+	delete rezSaveParametersDialog;
+	delete rawDialog;
 	delete oggDialog;
 	delete mp3Dialog;
 	delete voxDialog;
@@ -111,13 +115,12 @@ void CFrontendHooks::doSetupAfterBackendIsSetup()
 
 	newSoundDialog=new CNewSoundDialog(mainWindow);
 	recordDialog=new CRecordDialog(mainWindow);
+	rezSaveParametersDialog=new CRezSaveParametersDialog(mainWindow);
 	rawDialog=new CRawDialog(mainWindow);
 	oggDialog=new COggDialog(mainWindow);
 	mp3Dialog=new CMp3Dialog(mainWindow);
 	voxDialog=new CVoxDialog(mainWindow);
-	
 	MIDIDumpSampleIdDialog=new CMIDIDumpSampleIdDialog(mainWindow);
-
 	libaudiofileSaveParametersDialog=new ClibaudiofileSaveParametersDialog(mainWindow);
 }
 
@@ -303,6 +306,11 @@ const string CFrontendHooks::promptForJACKPort(const string message,const vector
 		return JACKPortChoiceDialog->getPortName();
 	else
 		throw runtime_error(string(__func__)+" -- choice aborted");
+}
+
+bool CFrontendHooks::promptForRezSaveParameters(RezSaveParameters &parameters)
+{
+	return rezSaveParametersDialog->show(parameters);
 }
 
 bool CFrontendHooks::promptForRawParameters(RawParameters &parameters,bool showOffsetAndLengthParameters)

@@ -21,24 +21,20 @@
 #include "CrezSoundTranslator.h"
 #include "CSound.h"
 #include "AStatusComm.h"
+#include "AFrontendHooks.h"
 
-#include <stdio.h>
 #include <string.h> // for memcpy
 
 #include <stdexcept>
 
 #include <endian_util.h>
 
-enum Endians
-{
-	eLittleEndian=0,
-	eBigEndian=1
-};
-
 typedef TPoolAccesser<CSound::RCue::PackedChunk,CSound::PoolFile_t> CPackedCueAccesser;
 
 CrezSoundTranslator::CrezSoundTranslator()
 {
+	if(sizeof(int24_t)!=3)
+		Warning(string(__func__)+" -- sizeof(int24_t) is not 3!!! A new method will need to be devised (or somehow pack the struct");
 }
 
 CrezSoundTranslator::~CrezSoundTranslator()
@@ -85,13 +81,6 @@ struct RFormatInfo1
 		lethe(&channelCount);
 		offset+=sizeof(channelCount);
 	}
-};
-
-
-enum AudioEncodingTypes
-{
-	aetPCMSigned16BitInteger=1,
-	aetPCM32BitFloat=2
 };
 
 struct RFormatInfo2
@@ -229,6 +218,116 @@ struct RFormatInfo3
 };
 typedef TPoolAccesser<RFormatInfo3::PackedChunk,CSound::PoolFile_t > CFormatInfo3PoolAccesser;
 
+// loads data from poolfile as type src_t and writes into dest as sample_t
+template<typename src_t> inline bool CrezSoundTranslator::load_samples_from_X_to_native(unsigned i,CSound::PoolFile_t &loadFromFile,CSound *sound,const TStaticPoolAccesser<src_t,CSound::PoolFile_t> &src,const sample_pos_t size,CStatusBar &statusBar,Endians endian)
+{
+	const register sample_pos_t chunkSize=size/100;
+	CSound::CInternalRezPoolAccesser dest=sound->getAudioInternal(i);
+	sample_pos_t pos=0;
+	
+	// copy 100 chunks (where chunkSize is floor(size/100))
+	for(unsigned int t=0;t<100 && chunkSize>0;t++)
+	{
+		if(endian==eLittleEndian)
+		{ // need to convert from little endian to host endian
+			for(sample_pos_t k=0;k<chunkSize;k++)
+			{
+				dest[pos]=convert_sample<src_t,sample_t>(lethe(src[pos]));
+				pos++;
+			}
+		}
+		else if(endian==eBigEndian)
+		{ // need to convert from big endian to host endian
+			for(sample_pos_t k=0;k<chunkSize;k++)
+			{
+				dest[pos]=convert_sample<src_t,sample_t>(bethe(src[pos]));;
+				pos++;
+			}
+		}
+		if(statusBar.update(t))
+		{
+			loadFromFile.closeFile(false,false);
+			return false; // cancelled
+		}
+	}
+
+	// copy remainder
+	if(endian==eLittleEndian)
+	{ // need to convert from little endian to host endian
+		for(sample_pos_t k=0;k<size%100;k++)
+		{
+			dest[pos]=convert_sample<src_t,sample_t>(lethe(src[pos]));
+			pos++;
+		}
+	}
+	else if(endian==eBigEndian)
+	{ // need to convert from big endian to host endian
+		for(sample_pos_t k=0;k<size%100;k++)
+		{
+			dest[pos]=convert_sample<src_t,sample_t>(bethe(src[pos]));
+			pos++;
+		}
+	}
+	return true;
+}
+
+// loads data from poolfile as type sample_t and writes into dest as sample_t (and so uses copyData())
+inline bool CrezSoundTranslator::load_samples__sample_t(unsigned i,CSound::PoolFile_t &loadFromFile,CSound *sound,const sample_pos_t size,CStatusBar &statusBar,Endians endian)
+{
+	CSound::CInternalRezPoolAccesser dest=sound->getAudioInternal(i);
+
+	const register sample_pos_t chunkSize=size/100;
+
+	for(unsigned int t=0;t<100 && chunkSize>0;t++)
+	{
+		dest.copyData(t*chunkSize,loadFromFile.getPoolAccesser<sample_t>("Channel "+istring(i+1)),t*chunkSize,chunkSize);
+#ifdef WORDS_BIGENDIAN
+		if(endian==eLittleEndian)
+		{ // need to convert from little endian to big
+			const sample_pos_t start=t*chunkSize;
+			const sample_pos_t end=start+chunkSize;
+			for(unsigned k=start;k<end;k++)
+				dest[k]=swap_endian(dest[k]);
+		}
+#else // LITTLE ENDIAM
+		if(endian==eBigEndian)
+		{ // need to convert from big endian to little
+			const sample_pos_t start=t*chunkSize;
+			const sample_pos_t end=start+chunkSize;
+			for(unsigned k=start;k<end;k++)
+				dest[k]=swap_endian(dest[k]);
+		}
+#endif
+		if(statusBar.update(t))
+		{
+			loadFromFile.closeFile(false,false);
+			return false; // cancelled
+		}
+	}
+
+	// ??? perhaps handle this is the above for-loop on a last-iteration test
+	dest.copyData(100*chunkSize,loadFromFile.getPoolAccesser<sample_t>("Channel "+istring(i+1)),100*chunkSize,size%100);
+#ifdef WORDS_BIGENDIAN
+	if(endian==eLittleEndian)
+	{ // need to convert from little endian to big
+		const sample_pos_t start=100*chunkSize;
+		const sample_pos_t end=start+(size%100);
+		for(unsigned k=start;k<end;k++)
+			dest[k]=swap_endian(dest[k]);
+	}
+#else // LITTLE ENDIAN
+	if(endian==eBigEndian)
+	{ // need to convert from big endian to little
+		const sample_pos_t start=100*chunkSize;
+		const sample_pos_t end=start+(size%100);
+		for(unsigned k=start;k<end;k++)
+			dest[k]=swap_endian(dest[k]);
+	}
+#endif
+
+	return true;
+}
+
 bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 {
 	// after the "Format Info" pool is read, these will be populated with data from the file
@@ -328,6 +427,14 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 			sound->createWorkingPoolFile(filename,sampleRate,channelCount,size);
 		}
 
+		// remember information for how to save the file if this class is also used to save it
+		{
+			AFrontendHooks::RezSaveParameters rsp;
+
+			rsp.audioEncodingType=audioEncodingType;
+
+			sound->getGeneralDataAccesser<AFrontendHooks::RezSaveParameters>("RezSaveParameters").write(&rsp,1);
+		}
 
 		// read the output routing information
 		// ??? need to do when I'm sure how it will be stored and there is actually a frontend to verify it
@@ -386,114 +493,41 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 		{
 			CStatusBar statusBar(_("Loading Channel ")+istring(i+1)+"/"+istring(channelCount),0,99,true);
 
-			CSound::CInternalRezPoolAccesser dest=sound->getAudioInternal(i);
-
-			const register sample_pos_t chunkSize=size/100;
-
-/* ??? see if some of this can be reworked.. when audioEncodingType matches sample_t exactly, use copyData, else use convert_sample<>() and for-loops */
-			if(audioEncodingType==aetPCMSigned16BitInteger)
+			if(audioEncodingType==aetPCMSigned8BitInteger)
+			{
+				TStaticPoolAccesser<int8_t,CSound::PoolFile_t> src=loadFromFile.getPoolAccesser<int8_t>("Channel "+istring(i+1));
+				load_samples_from_X_to_native<int8_t>(i,loadFromFile,sound,src,size,statusBar,endian);
+			}
+			else if(audioEncodingType==aetPCMSigned16BitInteger)
 			{
 #if defined(SAMPLE_TYPE_S16)
-				for(unsigned int t=0;t<100 && chunkSize>0;t++)
-				{
-					dest.copyData(t*chunkSize,loadFromFile.getPoolAccesser<sample_t>("Channel "+istring(i+1)),t*chunkSize,chunkSize);
-	#ifdef WORDS_BIGENDIAN
-					if(endian==eLittleEndian)
-					{ // need to convert from little endian to big
-						const sample_pos_t start=t*chunkSize;
-						const sample_pos_t end=start+chunkSize;
-						for(unsigned k=start;k<end;k++)
-							dest[k]=swap_endian(dest[k]);
-					}
-	#else // LITTLE ENDIAM
-					if(endian==eBigEndian)
-					{ // need to convert from big endian to little
-						const sample_pos_t start=t*chunkSize;
-						const sample_pos_t end=start+chunkSize;
-						for(unsigned k=start;k<end;k++)
-							dest[k]=swap_endian(dest[k]);
-					}
-	#endif
-					if(statusBar.update(t))
-					{
-						loadFromFile.closeFile(false,false);
-						return false; // cancelled
-					}
-				}
-
-				// ??? perhaps handle this is the above for-loop on a last-iteration test
-				dest.copyData(100*chunkSize,loadFromFile.getPoolAccesser<sample_t>("Channel "+istring(i+1)),100*chunkSize,size%100);
-	#ifdef WORDS_BIGENDIAN
-				if(endian==eLittleEndian)
-				{ // need to convert from little endian to big
-					const sample_pos_t start=100*chunkSize;
-					const sample_pos_t end=start+(size%100);
-					for(unsigned k=start;k<end;k++)
-						dest[k]=swap_endian(dest[k]);
-				}
-	#else // LITTLE ENDIAN
-				if(endian==eBigEndian)
-				{ // need to convert from big endian to little
-					const sample_pos_t start=100*chunkSize;
-					const sample_pos_t end=start+(size%100);
-					for(unsigned k=start;k<end;k++)
-						dest[k]=swap_endian(dest[k]);
-				}
-	#endif
-
-#elif defined(SAMPLE_TYPE_FLOAT)
-				TStaticPoolAccesser<int16_t,CSound::PoolFile_t> src=loadFromFile.getPoolAccesser<int16_t>("Channel "+istring(i+1));
-				sample_pos_t pos=0;
-				
-				// copy 100 chunks (where chunkSize is floor(size/100))
-				for(unsigned int t=0;t<100 && chunkSize>0;t++)
-				{
-					if(endian==eLittleEndian)
-					{ // need to convert from little endian to host endian
-						for(sample_pos_t k=0;k<chunkSize;k++)
-						{
-							dest[pos]=convert_sample<int16_t,sample_t>(lethe(src[pos]));
-							pos++;
-						}
-					}
-					else if(endian==eBigEndian)
-					{ // need to convert from big endian to host endian
-						for(sample_pos_t k=0;k<chunkSize;k++)
-						{
-							dest[pos]=convert_sample<int16_t,sample_t>(bethe(src[pos]));;
-							pos++;
-						}
-					}
-					if(statusBar.update(t))
-					{
-						loadFromFile.closeFile(false,false);
-						return false; // cancelled
-					}
-				}
-
-				// copy remainder (??? perhaps handle this above in a last-iteration test)
-				if(endian==eLittleEndian)
-				{ // need to convert from little endian to host endian
-					for(sample_pos_t k=0;k<size%100;k++)
-					{
-						dest[pos]=convert_sample<int16_t,sample_t>(lethe(src[pos]));
-						pos++;
-					}
-				}
-				else if(endian==eBigEndian)
-				{ // need to convert from big endian to host endian
-					for(sample_pos_t k=0;k<size%100;k++)
-					{
-						dest[pos]=convert_sample<int16_t,sample_t>(bethe(src[pos]));
-						pos++;
-					}
-				}
+				load_samples__sample_t(i,loadFromFile,sound,size,statusBar,endian);
 #else
-				#error unhandled SAMPLE_TYPE_xxx define
+				TStaticPoolAccesser<int16_t,CSound::PoolFile_t> src=loadFromFile.getPoolAccesser<int16_t>("Channel "+istring(i+1));
+				load_samples_from_X_to_native<int16_t>(i,loadFromFile,sound,src,size,statusBar,endian);
+#endif
+			}
+			else if(audioEncodingType==aetPCMSigned24BitInteger)
+			{
+				TStaticPoolAccesser<int24_t,CSound::PoolFile_t> src=loadFromFile.getPoolAccesser<int24_t>("Channel "+istring(i+1));
+				load_samples_from_X_to_native<int24_t>(i,loadFromFile,sound,src,size,statusBar,endian);
+			}
+			else if(audioEncodingType==aetPCMSigned32BitInteger)
+			{
+				TStaticPoolAccesser<int32_t,CSound::PoolFile_t> src=loadFromFile.getPoolAccesser<int32_t>("Channel "+istring(i+1));
+				load_samples_from_X_to_native<int32_t>(i,loadFromFile,sound,src,size,statusBar,endian);
+			}
+			else if(audioEncodingType==aetPCM32BitFloat)
+			{
+#if defined(SAMPLE_TYPE_FLOAT)
+				load_samples__sample_t(i,loadFromFile,sound,size,statusBar,endian);
+#else
+				TStaticPoolAccesser<float,CSound::PoolFile_t> src=loadFromFile.getPoolAccesser<float>("Channel "+istring(i+1));
+				load_samples_from_X_to_native<float>(i,loadFromFile,sound,src,size,statusBar,endian);
 #endif
 			}
 			else
-				throw runtime_error(string(__func__)+" -- internal error -- unhandled audioEncodingType");
+				throw runtime_error(string(__func__)+" -- internal error -- unhandled audioEncodingType -- "+istring(audioEncodingType));
 		}
 
 	}
@@ -507,16 +541,90 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 	return true;
 }
 
+// ??? I would declare 'dest' in this function instead of passing it in except I get syntax errors trying to call TPoolFile::createPool<type>() for some reason
+template<typename dest_t> inline bool CrezSoundTranslator::save_samples_from_native_as_X(unsigned i,CSound::PoolFile_t &saveToFile,const CSound *sound,TPoolAccesser<dest_t,CSound::PoolFile_t> dest,const sample_pos_t saveStart,const sample_pos_t saveLength,CStatusBar &statusBar)
+{
+	const CRezPoolAccesser src=sound->getAudio(i);
+	dest.append(saveLength);
+
+	const sample_pos_t chunkSize=saveLength/100;
+	sample_pos_t pos=0;
+	if(chunkSize>0)
+	{
+		for(unsigned int t=0;t<100;t++)
+		{
+			for(sample_pos_t k=0;k<chunkSize;k++)
+			{
+				dest[pos]=convert_sample<sample_t,dest_t>(src[pos+saveStart]);
+				pos++;
+			}
+
+			if(statusBar.update(t))
+			{
+				// cancelled
+				saveToFile.closeFile(false,true);
+				return false;
+			}
+		}
+	}
+
+	for(sample_pos_t k=0;k<saveLength%100;k++)
+	{
+		dest[pos]=convert_sample<sample_t,dest_t>(src[pos+saveStart]);
+		pos++;
+	}
+
+	return true;
+}
+
+inline bool CrezSoundTranslator::save_samples__sample_t(unsigned i,CSound::PoolFile_t &saveToFile,const CSound *sound,TPoolAccesser<sample_t,CSound::PoolFile_t> dest,const sample_pos_t saveStart,const sample_pos_t saveLength,CStatusBar &statusBar)
+{
+	const CRezPoolAccesser src=sound->getAudio(i);
+
+	// sample_t is the same as what we're saving as
+	const sample_pos_t chunkSize=saveLength/100;
+	if(chunkSize>0)
+	{
+		for(unsigned int t=0;t<100;t++)
+		{
+			dest.copyData(t*chunkSize,src,t*chunkSize+saveStart,chunkSize,true);
+
+			if(statusBar.update(t))
+			{ // cancelled
+				saveToFile.closeFile(false,true);
+				return false;
+			}
+		}
+	}
+	dest.copyData(100*chunkSize,src,100*chunkSize+saveStart,saveLength%100,true);
+	return true;
+}
+
 bool CrezSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs) const
 {
-	// ??? The user still needs to be able to choose what format the data will be saved in... whether 16bit float.. etc.. and the import/export process needs to convert to and from the working format
-
-	remove(filename.c_str()); // remove file incase it exists
+	remove(filename.c_str()); // remove file in case it exists
 	CSound::PoolFile_t saveToFile(REZOUND_POOLFILE_BLOCKSIZE,REZOUND_POOLFILE_SIGNATURE);
 	saveToFile.openFile(filename,true);
 	saveToFile.clear();
 
- 	AudioEncodingTypes audioEncodingType=aetPCMSigned16BitInteger; // ??? or what the user asked as export format 
+	// get user preferences for saving the rez
+	static bool parametersGotten=false;
+	static AFrontendHooks::RezSaveParameters parameters;
+	useLastUserPrefs&=parametersGotten;
+	if(!useLastUserPrefs)
+	{
+		parameters=
+			sound->containsGeneralDataPool("RezSaveParameters") 
+			? 
+				(sound->getGeneralDataAccesser<AFrontendHooks::RezSaveParameters>("RezSaveParameters")[0])
+			: 
+				(AFrontendHooks::RezSaveParameters){aetPCM32BitFloat}
+			;
+
+		if(!gFrontendHooks->promptForRezSaveParameters(parameters))
+			return false;
+		parametersGotten=true;
+	}
 
 	// write the meta data pool
 	{
@@ -531,7 +639,7 @@ bool CrezSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 		formatInfo3.size=saveLength;
 		formatInfo3.sampleRate=sound->getSampleRate();
 		formatInfo3.channelCount=sound->getChannelCount();
-		formatInfo3.audioEncodingType=audioEncodingType;
+		formatInfo3.audioEncodingType=parameters.audioEncodingType;
 
 
 		RFormatInfo3::PackedChunk p;
@@ -570,71 +678,49 @@ bool CrezSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 
 
 	// write the audio data
+		// ??? need to make sure it's going to fit before I start writing... a conversion in sample format could as much as double the size
+	// need to prompt the user about what format to save it in (also make the current format the default on the interface ???
+	for(unsigned i=0;i<sound->getChannelCount();i++)
 	{
-		// ??? need to make sure it's going to fit before I start writing... a convertion in sample format could as much as double the size
+		CStatusBar statusBar(_("Saving Channel ")+istring(i+1)+"/"+istring(sound->getChannelCount()),0,99,true);
 
-		// need to prompt the user about what format to save it in (also make the current format the default on the interface ???
-		if(audioEncodingType==aetPCMSigned16BitInteger)
+		if(parameters.audioEncodingType==aetPCMSigned8BitInteger)
 		{
-			for(unsigned i=0;i<sound->getChannelCount();i++)
-			{
-				CStatusBar statusBar(_("Saving Channel ")+istring(i+1)+"/"+istring(sound->getChannelCount()),0,99,true);
-				const CRezPoolAccesser src=sound->getAudio(i);
-/* ??? see if some of this can be reworked.. when audioEncodingType matches sample_t exactly, use copyData, else use convert_sample<>() and for-loops */
+			TPoolAccesser<int8_t,CSound::PoolFile_t> dest=saveToFile.createPool<int8_t>("Channel "+istring(i+1));
+			if(!save_samples_from_native_as_X<int8_t>(i,saveToFile,sound,dest,saveStart,saveLength,statusBar))
+				return false;
+		}
+		else if(parameters.audioEncodingType==aetPCMSigned16BitInteger)
+		{
+			TPoolAccesser<int16_t,CSound::PoolFile_t> dest=saveToFile.createPool<int16_t>("Channel "+istring(i+1));
 #if defined(SAMPLE_TYPE_S16)
-				// sample_t is the same as what we're saving as
-				TPoolAccesser<sample_t,CSound::PoolFile_t> dest=saveToFile.createPool<sample_t>("Channel "+istring(i+1));
-				const sample_pos_t chunkSize=saveLength/100;
-				if(chunkSize>0)
-				{
-					for(unsigned int t=0;t<100;t++)
-					{
-						dest.copyData(t*chunkSize,src,t*chunkSize+saveStart,chunkSize,true);
-
-						if(statusBar.update(t))
-						{ // cancelled
-							saveToFile.closeFile(false,true);
-							return false;
-						}
-					}
-				}
-				dest.copyData(100*chunkSize,src,100*chunkSize+saveStart,saveLength%100,true);
-
-#elif defined(SAMPLE_TYPE_FLOAT)
-				TPoolAccesser<int16_t,CSound::PoolFile_t> dest=saveToFile.createPool<int16_t>("Channel "+istring(i+1));
-				dest.append(saveLength);
-
-				const sample_pos_t chunkSize=saveLength/100;
-				sample_pos_t pos=0;
-				if(chunkSize>0)
-				{
-					for(unsigned int t=0;t<100;t++)
-					{
-						for(sample_pos_t k=0;k<chunkSize;k++)
-						{
-							dest[pos]=convert_sample<float,int16_t>(src[pos+saveStart]);
-							pos++;
-						}
-
-						if(statusBar.update(t))
-						{ // cancelled
-							saveToFile.closeFile(false,true);
-							return false;
-						}
-					}
-				}
-
-				// ??? perhaps handle this above in a last-iteration test
-				for(sample_pos_t k=0;k<saveLength%100;k++)
-				{
-					dest[pos]=convert_sample<float,int16_t>(src[pos+saveStart]);
-					pos++;
-				}
-
+			if(!save_samples__sample_t(i,saveToFile,sound,dest,saveStart,saveLength,statusBar))
 #else
-				#error unhandled SAMPLE_TYPE_xxx define
+			if(!save_samples_from_native_as_X<int16_t>(i,saveToFile,sound,dest,saveStart,saveLength,statusBar))
 #endif
-			}
+				return false;
+		}
+		else if(parameters.audioEncodingType==aetPCMSigned24BitInteger)
+		{
+			TPoolAccesser<int24_t,CSound::PoolFile_t> dest=saveToFile.createPool<int24_t>("Channel "+istring(i+1));
+			if(!save_samples_from_native_as_X<int24_t>(i,saveToFile,sound,dest,saveStart,saveLength,statusBar))
+				return false;
+		}
+		else if(parameters.audioEncodingType==aetPCMSigned32BitInteger)
+		{
+			TPoolAccesser<int32_t,CSound::PoolFile_t> dest=saveToFile.createPool<int32_t>("Channel "+istring(i+1));
+			if(!save_samples_from_native_as_X<int32_t>(i,saveToFile,sound,dest,saveStart,saveLength,statusBar))
+				return false;
+		}
+		else if(parameters.audioEncodingType==aetPCM32BitFloat)
+		{
+			TPoolAccesser<float,CSound::PoolFile_t> dest=saveToFile.createPool<float>("Channel "+istring(i+1));
+#if defined(SAMPLE_TYPE_FLOAT)
+			if(!save_samples__sample_t(i,saveToFile,sound,dest,saveStart,saveLength,statusBar))
+#else
+			if(!save_samples_from_native_as_X<float>(i,saveToFile,sound,dest,saveStart,saveLength,statusBar))
+#endif
+				return false;
 		}
 		else
 			throw runtime_error(string(__func__)+" -- unhandled format conversion while saving");

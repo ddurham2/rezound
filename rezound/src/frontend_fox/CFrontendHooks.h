@@ -39,6 +39,7 @@
 class CNewSoundDialog;
 class CRecordDialog;
 class CJACKPortChoiceDialog;
+class CRezSaveParametersDialog;
 class CRawDialog;
 class COggDialog;
 class CMp3Dialog;
@@ -68,6 +69,7 @@ public:
 
 	const string promptForJACKPort(const string message,const vector<string> portNames);
 
+	bool promptForRezSaveParameters(RezSaveParameters &parameters);
 	bool promptForRawParameters(RawParameters &parameters,bool showOffsetAndLengthParameters);
 	bool promptForOggCompressionParameters(OggCompressionParameters &parameters);
 	bool promptForMp3CompressionParameters(Mp3CompressionParameters &parameters);
@@ -95,6 +97,7 @@ private:
 	CNewSoundDialog *newSoundDialog;
 	CRecordDialog *recordDialog;
 	CJACKPortChoiceDialog *JACKPortChoiceDialog;
+	CRezSaveParametersDialog *rezSaveParametersDialog;
 	CRawDialog *rawDialog;
 	COggDialog *oggDialog;
 	CMp3Dialog *mp3Dialog;
