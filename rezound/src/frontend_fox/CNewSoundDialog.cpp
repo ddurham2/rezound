@@ -55,13 +55,13 @@ CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 		rawFormatCheckButton(new FXCheckButton(rawFormatFrame,"Raw Format",NULL,0,CHECKBUTTON_NORMAL|LAYOUT_CENTER_X)),
 	matrix(new FXMatrix(getFrame(),2,MATRIX_BY_COLUMNS|LAYOUT_CENTER_X)),
 
-		channelsLabel(new FXLabel(matrix,"      Channels:")),
+		channelsLabel(new FXLabel(matrix,"Channels:",NULL,LABEL_NORMAL|LAYOUT_RIGHT)),
 		channelsComboBox(new FXComboBox(matrix,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC)),
 
-		sampleRateLabel(new FXLabel(matrix,"Sample Rate:")),
+		sampleRateLabel(new FXLabel(matrix,"Sample Rate:",NULL,LABEL_NORMAL|LAYOUT_RIGHT)),
 		sampleRateComboBox(new FXComboBox(matrix,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK)),
 
-		lengthLabel(new FXLabel(matrix,"         Length:")),
+		lengthLabel(new FXLabel(matrix,"Length:",NULL,LABEL_NORMAL|LAYOUT_RIGHT)),
 		lengthFrame(new FXHorizontalFrame(matrix,LAYOUT_CENTER_X,0,0,0,0, 0,0,0,0, 0,0)),
 			lengthComboBox(new FXComboBox(lengthFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK)),
 			lengthUnitsLabel(new FXLabel(lengthFrame,"second(s)"))
