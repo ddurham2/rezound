@@ -141,6 +141,7 @@ private:
 	FXHorizontalFrame *statusPanel;
 		FXLabel *horzValueLabel;
 		FXLabel *vertValueLabel;
+		FXLabel *pointCountLabel;
 
 	FXHorizontalFrame *buttonPanel;
 		FXLabel *scalarLabel;

@@ -332,6 +332,7 @@ FXGraphParamValue::FXGraphParamValue(const char *_name,FXComposite *p,int opts,i
 	statusPanel(new FXHorizontalFrame(this,FRAME_NONE | LAYOUT_FILL_X, 0,0,0,0, 4,4,0,0, 4,0)),
 		horzValueLabel(new FXLabel(statusPanel,": ",NULL,LAYOUT_LEFT)),
 		vertValueLabel(new FXLabel(statusPanel,": ",NULL,LAYOUT_LEFT)),
+		pointCountLabel(new FXLabel(statusPanel,"",NULL,LAYOUT_RIGHT)),
 
 	buttonPanel(new FXHorizontalFrame(this,FRAME_NONE | LAYOUT_FILL_X, 0,0,0,0, 4,4,2,4)),
 		scalarLabel(NULL),
@@ -511,6 +512,7 @@ long FXGraphParamValue::onPatternButton(FXObject *sender,FXSelector sel,void *pt
 	}
 
 	graphCanvas->update();
+	updateNumbers();
 	return 1;
 }
 
@@ -818,6 +820,7 @@ long FXGraphParamValue::onDestroyNode(FXObject *sender,FXSelector sel,void *ptr)
 		nodes.erase(nodes.begin()+nodeIndex);
 		draggingNode=-1;
 		graphCanvas->update();
+		updateNumbers();
 	}
 	return 1;
 }
@@ -1027,6 +1030,8 @@ const string FXGraphParamValue::getHorzValueString(double horzValue) const
 
 void FXGraphParamValue::updateStatus()
 {
+	pointCountLabel->setText((istring(nodes.size())+" "+_("points")).c_str());
+
 	if(draggingNode==-1)
 		return;
 
@@ -1041,6 +1046,7 @@ void FXGraphParamValue::clearStatus()
 {
 	horzValueLabel->setText((horzAxisLabel+": #"+horzUnits).c_str());
 	vertValueLabel->setText((vertAxisLabel+": #"+vertUnits).c_str());
+	pointCountLabel->setText((istring(nodes.size())+" "+_("points")).c_str());
 }
 	
 
