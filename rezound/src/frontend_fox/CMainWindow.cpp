@@ -191,7 +191,7 @@ CMainWindow::CMainWindow(FXApp* a) :
 		#define PLAY_CONTROLS_BUTTON_STYLE BUTTON_STYLE
 		new FXButton(playControlsFrame,"\tPlay All Once",FOXIcons->play_all_once,this,ID_PLAY_ALL_ONCE,PLAY_CONTROLS_BUTTON_STYLE, 32,0,32,32);
 		new FXButton(playControlsFrame,"\tPlay Selection Once",FOXIcons->play_selection_once,this,ID_PLAY_SELECTION_ONCE,PLAY_CONTROLS_BUTTON_STYLE, 32+32,0,32,32);
-		new FXButton(playControlsFrame,"\tPlay Selection Looped and Play a Gap Before Repeating",FOXIcons->play_selection_looped_gap_at_end,this,ID_PLAY_SELECTION_LOOPED_GAP_BEFORE_REPEAT,PLAY_CONTROLS_BUTTON_STYLE, 32+32+32,0,32,32);
+		new FXButton(playControlsFrame,"\tPlay Selection Looped and Play a Gap Before Repeating",FOXIcons->play_selection_looped_gap_before_repeat,this,ID_PLAY_SELECTION_LOOPED_GAP_BEFORE_REPEAT,PLAY_CONTROLS_BUTTON_STYLE, 32+32+32,0,32,32);
 		new FXButton(playControlsFrame,"\tPlay All Looped",FOXIcons->play_all_looped,this,ID_PLAY_ALL_LOOPED,PLAY_CONTROLS_BUTTON_STYLE, 32,32,32,32);
 		new FXButton(playControlsFrame,"\tPlay Selection Looped",FOXIcons->play_selection_looped,this,ID_PLAY_SELECTION_LOOPED,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32,32,32);
 		new FXButton(playControlsFrame,"\tPlay Selection Looped but Skip Most of the Middle",FOXIcons->play_selection_looped_skip_most,this,ID_PLAY_SELECTION_LOOPED_SKIP_MOST,PLAY_CONTROLS_BUTTON_STYLE, 32+32+32,32,32,32);
@@ -734,7 +734,7 @@ void CMainWindow::createMenus()
 		new FXMenuCommand(menu,"Play Selection Once\ta",FOXIcons->small_play_selection_once,this,ID_PLAY_SELECTION_ONCE);
 		new FXMenuCommand(menu,"Play Selection Looped",FOXIcons->small_play_selection_looped,this,ID_PLAY_SELECTION_LOOPED);
 		new FXMenuCommand(menu,"Loop Selection but Skip Most of the Middle",FOXIcons->small_play_selection_looped_skip_most,this,ID_PLAY_SELECTION_LOOPED_SKIP_MOST);
-		new FXMenuCommand(menu,"Loop Selection and Play a Gap Before Repeating",FOXIcons->small_play_selection_looped_gap_at_end,this,ID_PLAY_SELECTION_LOOPED_GAP_BEFORE_REPEAT);
+		new FXMenuCommand(menu,"Loop Selection and Play a Gap Before Repeating",FOXIcons->small_play_selection_looped_gap_before_repeat,this,ID_PLAY_SELECTION_LOOPED_GAP_BEFORE_REPEAT);
 		new FXMenuCommand(menu,"Stop\ts",FOXIcons->small_stop,this,ID_STOP);
 		new FXMenuCommand(menu,"Pause",FOXIcons->small_pause,this,ID_PAUSE);
 		new FXMenuCommand(menu,"Jump to Beginning",FOXIcons->small_jump_to_beginning,this,ID_JUMP_TO_BEGINNING);
