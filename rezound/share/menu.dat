@@ -23,7 +23,7 @@ default
 	}
 	File
 	{
-		menuitems={"&New", "&Open", "&Reopen", "&Save", "Save &As...", "Save Selection As...", "Save As Multiple Files...", "&Close", "Re&vert", "-", "User No&tes...", "-", "&About ReZound...", "-", "- Just for testing", "Defrag", "PrintSAT", "VerifySAT", "-", "&Quit"};
+		menuitems={"&New", "&Open", "&Reopen", "&Save", "Save &As...", "Save Selection As...", "Save As Multiple Files...", "&Burn to CD...", "&Close", "Re&vert", "-", "User No&tes...", "-", "&About ReZound...", "-", "- Just for testing", "Defrag", "PrintSAT", "VerifySAT", "-", "&Quit"};
 	}
 	Filters
 	{

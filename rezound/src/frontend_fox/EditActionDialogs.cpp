@@ -25,6 +25,7 @@
 #include "../backend/CActionSound.h"
 #include "../backend/CSound.h"
 
+
 // --- insert silence -------------------------
 
 CInsertSilenceDialog::CInsertSilenceDialog(FXWindow *mainWindow) :
@@ -125,6 +126,68 @@ CSaveAsMultipleFilesDialog::CSaveAsMultipleFilesDialog(FXWindow *mainWindow) :
 const string CSaveAsMultipleFilesDialog::getExplanation() const
 {
 	return CSaveAsMultipleFilesAction::getExplanation();
+}
+
+
+
+// --- burn to CD -----------------------------
+
+#include <CPath.h>
+#include "../backend/Edits/CBurnToCDAction.h"
+#include "settings.h"
+
+FXDEFMAP(CBurnToCDDialog) CBurnToCDDialogMap[]=
+{
+	//Message_Type			ID						Message_Handler
+	FXMAPFUNC(SEL_COMMAND,		CBurnToCDDialog::ID_DETECT_DEVICE_BUTTON,	CBurnToCDDialog::onDetectDeviceButton),
+};
+
+FXIMPLEMENT(CBurnToCDDialog,CActionParamDialog,CBurnToCDDialogMap,ARRAYNUMBER(CBurnToCDDialogMap))
+
+CBurnToCDDialog::CBurnToCDDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow)
+{
+	FXPacker *p1=newVertPanel(NULL);
+			// ??? default to file location or fallback work dir
+		addDiskEntityEntry(p1,N_("Temp Space Directory"),gFallbackWorkDir,FXDiskEntityParamValue::detDirectory,_("A temporary file for burning will be placed in this location.  Enough space will be needed for CD quality audio of the length of the audio to be burned to the CD"));
+
+			// ??? default to `which cdrdao` or if not found, blank
+		FXDiskEntityParamValue *cdrdaoPath=addDiskEntityEntry(p1,N_("Path to cdrdao"),CPath::which("cdrdao"),FXDiskEntityParamValue::detGeneralFilename);
+
+		vector<string> burnSpeeds;
+		for(unsigned t=1;t<=50;t++)
+			burnSpeeds.push_back(istring(t)+"x");
+		FXComboTextParamValue *burnSpeed=addComboTextEntry(p1,N_("Burn Speed"),burnSpeeds);
+			burnSpeed->setValue(7);
+
+		vector<string> trackGaps;
+		for(unsigned t=0;t<=10;t++)
+			trackGaps.push_back(istring(t)+"s");
+		FXComboTextParamValue *trackGap=addComboTextEntry(p1,N_("Gap Between Tracks"),trackGaps,_("The Gap of Silence to Place Between Each Track"));
+			trackGap->setValue(0);
+
+		vector<string> appliesTo;
+			appliesTo.push_back(N_("Entire File"));
+			appliesTo.push_back(N_("Selection Only"));
+		addComboTextEntry(p1,N_("Applies to"),appliesTo);
+
+		FXHorizontalFrame *p2=new FXHorizontalFrame(p1,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 4,0);
+			FXComposite *device=addStringTextEntry(p2,N_("Device"),"0,0,0");
+				new FXButton(device,_("Detect"),NULL,this,ID_DETECT_DEVICE_BUTTON,BUTTON_NORMAL|LAYOUT_RIGHT);
+
+		addStringTextEntry(p1,N_("Extra cdrdao Options"),"");
+		addCheckBoxEntry(p1,N_("Simulate Burn Only"),false,_("Don't Turn on Burn Laser"));
+}
+
+long CBurnToCDDialog::onDetectDeviceButton(FXObject *object,FXSelector sel,void *ptr)
+{
+	getTextParam("Device")->setText(CBurnToCDAction::detectDevice(getDiskEntityParam("Path to cdrdao")->getEntityName()));
+	return 0;
+}
+
+const string CBurnToCDDialog::getExplanation() const
+{
+	return CBurnToCDAction::getExplanation();
 }
 
 
