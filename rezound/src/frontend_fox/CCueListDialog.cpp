@@ -202,11 +202,12 @@ void CCueListDialog::rebuildCueList()
 		);
 	}
 
+	unsigned c=1;
 	for(multimap<sample_pos_t,size_t>::iterator i=cues.begin();i!=cues.end();i++)
 	{
 		const size_t t=i->second;
 		const string str=sound->getTimePosition(sound->getCueTime(t),5)+(sound->isCueAnchored(t) ? " + " : " - ")+sound->getCueName(t);
-		cueList->appendItem(str.c_str(),NULL,(void *)i->second);
+		cueList->appendItem((istring(c++,3,true)+": "+str).c_str(),NULL,(void *)i->second);
 	}
 
 
