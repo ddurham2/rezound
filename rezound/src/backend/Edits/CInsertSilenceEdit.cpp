@@ -41,6 +41,8 @@ bool CInsertSilenceEdit::doActionSizeSafe(CActionSound &actionSound,bool prepare
 	const sample_pos_t sampleCount=(sample_pos_t)(silenceLength*actionSound.sound->getSampleRate());
 	if(sampleCount>0)
 	{
+		if(actionSound.start==actionSound.sound->getLength()-1)
+			actionSound.start++; // FIXUP: if the start is at the end, then actually insert AFTER the last sample 
 		actionSound.sound->addSpace(actionSound.doChannel,actionSound.start,sampleCount,true);
 		actionSound.stop=(actionSound.start+sampleCount)-1;
 	}

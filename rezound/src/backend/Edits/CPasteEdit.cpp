@@ -93,6 +93,9 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 	switch(pasteType)
 	{
 	case ptInsert:
+		if(actionSound.start==actionSound.sound->getLength()-1)
+			actionSound.start++; // FIXUP: if the start is at the end, then actually insert AFTER the last sample 
+
 		// insert the space into the channels we need to
 		actionSound.sound->addSpace(whichChannels,actionSound.start,repeatedClipboardLength);
 		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,repeatCount,false,mmOverwrite,mixMethod,sftNone);
