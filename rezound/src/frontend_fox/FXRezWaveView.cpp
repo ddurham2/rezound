@@ -28,6 +28,7 @@
 
 #include "../backend/CActionParameters.h"
 #include "../backend/Edits/CCueAction.h"
+#include "../backend/Edits/CSelectionEdit.h"
 
 #include <string>
 #include <algorithm>
@@ -129,6 +130,7 @@ private:
 
 	bool draggingSelectionToo; // true when a cue to be dragged was on the start or stop position
 
+	CSelectionEditPositionFactory *selectionEditPositionFactory;
 	CMoveCueActionFactory *moveCueActionFactory;
 	CRemoveCueActionFactory *removeCueActionFactory;
 };
@@ -326,6 +328,7 @@ FXWaveRuler::FXWaveRuler(FXComposite *p,FXRezWaveView *_parent,CLoadedSound *_lo
 
 	dragCueHint(new FXPopupHint(p->getApp())),
 
+	selectionEditPositionFactory(NULL),
 	moveCueActionFactory(NULL),
 	removeCueActionFactory(NULL)
 {
@@ -345,6 +348,7 @@ FXWaveRuler::FXWaveRuler(FXComposite *p,FXRezWaveView *_parent,CLoadedSound *_lo
 
 	dragCueHint->create();
 
+	selectionEditPositionFactory=new CSelectionEditPositionFactory;
 	moveCueActionFactory=new CMoveCueActionFactory;
 	removeCueActionFactory=new CRemoveCueActionFactory;
 }
@@ -788,7 +792,28 @@ long FXWaveRuler::onLeftBtnRelease(FXObject *object,FXSelector sel,void *ptr)
 		if(cueClicked<sound->getCueCount())
 			return onEditCue(object,sel,(void *)cueClicked);
 		else
-			return onShowCueList(object,sel,ptr);
+		{ // clicking not on a cue.. change selection to be that which is between the two nearest cues (or to start or end if there isn't any near on that side)
+			size_t index;
+			sample_pos_t startPos=0;
+			sample_pos_t stopPos=sound->getLength()-1;
+			sample_pos_t clickedPos=parent->waveScrollArea->getCueTimeFromX(event->win_x);
+
+			if(sound->findPrevCueInTime(clickedPos,index))
+				startPos=sound->getCueTime(index);
+
+			if(sound->findNextCueInTime(clickedPos,index))
+				stopPos=sound->getCueTime(index)-1; // select from the position AT the start cue to one less sample prior to the next cue
+
+			if(stopPos<startPos) // safety
+				stopPos=startPos;
+
+			// could make this a real action so that it could be undone
+			CActionParameters actionParameters(NULL);
+			selectionEditPositionFactory->selectStart=startPos;
+			selectionEditPositionFactory->selectStop=stopPos;
+			selectionEditPositionFactory->performAction(loadedSound,&actionParameters,false);
+			parent->updateFromEdit();
+		}
 	}
 
 	cueClicked=NIL_CUE_INDEX;
