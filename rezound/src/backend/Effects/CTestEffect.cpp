@@ -62,7 +62,7 @@ bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 	for(sample_pos_t i=0;i<M;i++) 
 	{
 		if(i!=M/2)
-			filter_kernel[i]=sin(2*M_PI*freq*(i-M/2))/(i-M/2);
+			filter_kernel[i]=sinf(2*M_PI*freq*(i-M/2))/(i-M/2);
 		else // avoid div by 0
 			filter_kernel[i]=2*M_PI*freq;
 	}
@@ -73,9 +73,9 @@ bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 	float filter_kernel[M];
 	for(sample_pos_t i=0;i<M;i++) 
 	{
-		filter_kernel[i]=(sin((i+10)/50.0)/3.0)*cos((i-13)/10.0)/3;
-		//filter_kernel[i]=(sin(i/50.0)/3.0)*(cos(i/10.0)/(i/(M/10.0)+1));
-		//filter_kernel[i]=sin(i/50.0)*cos(i/10.0)/(cos((float)i/M*M_PI)+2.0);
+		filter_kernel[i]=(sinf((i+10)/50.0)/3.0)*cos((i-13)/10.0)/3;
+		//filter_kernel[i]=(sinf(i/50.0)/3.0)*(cos(i/10.0)/(i/(M/10.0)+1));
+		//filter_kernel[i]=sinf(i/50.0)*cos(i/10.0)/(cos((float)i/M*M_PI)+2.0);
 	}
 #else
 	
@@ -84,7 +84,7 @@ bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 	float filter_kernel[M];
 	for(sample_pos_t i=0;i<M;i++) 
 	{
-		filter_kernel[i]=pow((float)(i)/M,2)+sin(i/10);
+		filter_kernel[i]=pow((float)(i)/M,2)+sinf(i/10);
 	}
 #endif
 
