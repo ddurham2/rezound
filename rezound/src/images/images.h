@@ -3,6 +3,7 @@
 #define __Images_H__
 #include "../../config/common.h"
 
+extern const unsigned char advanced_action_buff_gif[];
 extern const unsigned char advanced_action_gif[];
 extern const unsigned char edit_copy_gif[];
 extern const unsigned char edit_cut_gif[];
@@ -18,6 +19,7 @@ extern const unsigned char file_save_gif[];
 extern const unsigned char GreenCheck1_gif[];
 extern const unsigned char GreenLED1_gif[];
 extern const unsigned char GreenPlus1_gif[];
+extern const unsigned char normal_action_buff_gif[];
 extern const unsigned char normal_action_gif[];
 extern const unsigned char notes_gif[];
 extern const unsigned char OffLED1_gif[];

@@ -143,7 +143,6 @@ private:
 
 	FXMenuBar 		*menubar;
 	FXHorizontalFrame	*contents;		// top horizontal main frame which contains play controls and action controls
-		FXPacker	*editFrame;		// top horizontal main frame which contains play controls and action controls
 
 	FXDial *shuttleDial;
 

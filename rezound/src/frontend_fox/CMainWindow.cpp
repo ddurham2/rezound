@@ -129,7 +129,6 @@ CMainWindow::CMainWindow(FXApp* a) :
 {
 	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X);
 
-	//contents=new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 1,1,1,1, 1,1);
 	contents=new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 1,1,0,0, 1,0);
 
 	#define BUTTON_STYLE FRAME_RAISED|LAYOUT_EXPLICIT
@@ -157,9 +156,6 @@ CMainWindow::CMainWindow(FXApp* a) :
 		shuttleDial->setRange(-((shuttleDial->getWidth())/2),(shuttleDial->getWidth())/2);
 		shuttleDial->setRevolutionIncrement(shuttleDial->getWidth()*2-1);
 		shuttleDial->setTipText("Shuttle Seek While Playing\n(Hint: try the mouse wheel as well as dragging)");
-
-	// edit buttons will be built later
-	//editFrame=new FXHorizontalFrame(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 3,2);
 
 	// build miscellaneous buttons
 	FXPacker *miscControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 3,2);

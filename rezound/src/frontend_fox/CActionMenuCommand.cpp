@@ -49,7 +49,7 @@ CActionMenuCommand::CActionMenuCommand(AActionFactory *_actionFactory,FXComposit
 	FXMenuCommand(
 		p,
 		(_actionFactory->getName()+"\t"+accelKeyText.text()).c_str(),
-		(ic==NULL ? new FXGIFIcon(p->getApp(),_actionFactory->hasAdvancedMode() ? advanced_action_gif : normal_action_gif) : ic),
+		(ic==NULL ? new FXGIFIcon(p->getApp(),_actionFactory->hasAdvancedMode() ? advanced_action_buff_gif : normal_action_buff_gif) : ic),
 		this,
 		ID_HOTKEY,
 		opts
