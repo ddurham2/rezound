@@ -73,7 +73,7 @@ int myyynerrs=0;
 
 %expect 1
 
-%union cfg_parse_union
+%union // stopped being allowed after bison 1.35 cfg_parse_union
 {
 	char *				stringValue;
 	double				floatValue;

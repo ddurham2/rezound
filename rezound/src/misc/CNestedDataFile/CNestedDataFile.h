@@ -85,14 +85,6 @@ public:
 	void save() const;
 	void writeFile(const string filename) const;
 
-private:
-
-	class CVariant;
-	friend class CVariant;
-
-	string filename;
-	CVariant *root;
-	bool saveOnEachEdit;
 
 	class CVariant
 	{
@@ -117,6 +109,15 @@ private:
 		double floatValue;
 		vector<CVariant> arrayValue;
 	};
+
+private: // private: should be above the definition of CVariant but bison stopped letting the union be named, so I can't declare it as a friend
+
+	class CVariant;
+	friend class CVariant;
+
+	string filename;
+	CVariant *root;
+	bool saveOnEachEdit;
 
 	// I would have to implement this if I were to allow qualified idents in the input file which aren't always fully qualified... I would also need to have a parent * in CVariant to be able to implement this (unless I suppose I wanted to search more than I had to.. which I would do.. okay.. ya)
 	//CVariant *upwardsScopeLookup(const char *key) const;
@@ -144,7 +145,7 @@ private:
 	friend void cfg_init();
 
 	friend struct RKeyValue;
-	friend union cfg_parse_union;
+	//friend union cfg_parse_union;
 
 };
 
