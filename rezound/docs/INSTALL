@@ -23,7 +23,7 @@ http://www.gnu.org/software/commonc++
 5. libdl -- This is also common library that is most likely present with the glibc package. As with pthreads it should be avalable on your distribution discs if it's not already installed. 
 
 
-You should also have a working c++ compiler (gcc is preferred) as well as the normal group of regular libraries and headers for compiling packages. 
+You should also have a working c++ compiler (g++ is preferred) as well as the normal group of regular libraries and headers for compiling packages. 
 
 See the end of this file for information on configure options specific to
 ReZound.

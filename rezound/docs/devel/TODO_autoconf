@@ -6,8 +6,6 @@ and move it into config
 -- See if things might possibly work with -O2 set. Decide if we should be using 
 -O2 or not.
 
---update INSTALL and Automake-guide
-
 --------------The stuff below this line can wait, because I don't expect to
 --------------See a problem with GNU/Linux systems related to thiese.
  Look for other possible trouble spots such as stdint.h int32_t int16_t etc

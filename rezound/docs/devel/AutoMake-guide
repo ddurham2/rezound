@@ -73,7 +73,7 @@ A NOTE ABOUT common.h :
 ADDING SOURCE FILES TO EXISTING DIRECTORY STRUCTURE
 ---------------------------------------------------
 
-	Adding a new file to one of the existing directories is a failrly
+	Adding a new file to one of the existing directories is a fairly
 	simple thing to do. As an example, let's say we wrote a new effect in
 	src/backend/Effects called EnvelopeFilter.cpp with a header called
 	EnvelopeFilter.h. Your header file also includes the existing file
@@ -139,18 +139,18 @@ ADDING NEW DIRECTORIES TO EXISTING STRUCTURE
 	there that will be the same in this section.
 
 	As an example let's say that someone wanted had built an equalizer and
-	wants to add a graphinc equalizer controller panel and add it as a new
+	wants to add a graphic equalizer controller panel and add it as a new
 	window to the frontend. The E.Q. controller is made of a few different
 	files, lets say: EQSlider.cpp EQChannelPanel.cpp and EQMainWindow.cpp,
 	as well as some corresponding header files. These sources will be a
 	subdirectory of src/frontend_fox called Equalizer
 
 	Following the conventions used in the other sub directories, we'll
-	compile our sources into one convienience library called
+	compile our sources into one convenience library called
 	libEqualizer.la. 
 
 	The first step will be to write Makefile.am in the Equalizer
-	directory. It will bear a strong resemblence to the other
+	directory. It will bear a strong resemblance to the other
 	Makefile.am's already in the package, so take a look at
 	src/misc/cc++/Makefile.am now, because it's the smallest.
 
@@ -178,10 +178,10 @@ include $(top_srcdir)/config/am_include.mk
 
 	Ok, now the rest of your Makefile.am will follow the same format
 	explained in the previous section (Still haven't read it Huh?, I guess
-	now's a good time!).
+	nows a good time!).
 	
 	Now that you've finished writing the Makefile.am for your new
-	directory, you'll still have to incorparate it into the whole build
+	directory, you'll still have to incorporate it into the whole build
 	process. First thing to do is drop down to the parent directory, `..'
 	and add your new directory in. So in our example we have a new
 	directory `src/frontend_fox/Equalizer', so we'll have to edit
@@ -242,7 +242,7 @@ AC_OUTPUT(Makefile src/Makefile src/misc/Makefile src/misc/cc++/Makefile src/Poo
 	I've included `bootstrap' a nice little script to handle making your
 	configure script. If you're working from a CVS source package you may
 	have already used it. Basically bootstrap removes everything produced
-	by the autotools and remakes them. So as the last step, run
+	by the autotools and re-makes them. So as the last step, run
 	./bootstrap (from the top source directory). ./configure and make.
 
 	Hopefully everything works out well, if you are having problems, read
