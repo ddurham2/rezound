@@ -80,7 +80,7 @@ string currentFilename;
 
 (([0-9]*\.[0-9]+(e[\-+]?[0-9]+)?)|([0-9]+))		{ yylval.stringValue=strdup(yytext); return LIT_NUMBER; }
 
-([_0-9A-Za-z]|(\\[\x20-\x7e]))+	{ 
+([_0-9A-Za-z]|(\\[\x20-\xff]))+	{ 
 		if(strcmp(yytext,"include")==0)
 			return INCLUDE;
 		else if(strcmp(yytext,"true")==0)

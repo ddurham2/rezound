@@ -310,7 +310,14 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const string &_name,const
 	// and escape the first char if it's a digit
 	for(size_t t=0;t<name.length();t++)
 	{
-		if((!isalnum(name[t]) && name[t]!='_') || (t==0 && isdigit(name[t])))
+		const char c=name[t];
+		if( 	
+			// corrisponding with the RE for IDENT in cfg.l, escape non-[_0-9A-Za-z]
+			(!(c=='_' || (c>='a' && c<='z') || (c>='A' && c<='Z') || isdigit(c)))
+			||
+			// OR escape first char if it's a 0-9 (so it won't match the LIT_NUMBER ruler in the lexer)
+			(t==0 && isdigit(c))
+		)
 		{
 			name.insert(t,"\\");
 			t++;
@@ -383,6 +390,7 @@ void CNestedDataFile::verifyKey(const string &key)
 	for(size_t t=0;t<l;t++)
 	{
 		// accept only graphic characters (i.e. not control chars), space and tab
+		// 	??? will using isgraph cause problems when locales changed between runs (someone saved a key in one language with chars that aren't graphic in another language
 		if(!(isgraph(key[t]) || key[t]==' ' || key[t]=='\t'))
 			throw runtime_error(string(__func__)+" -- invalid character in key: '"+key+"' at position: "+istring(t)+" while creating key in "+filename);
 	}
