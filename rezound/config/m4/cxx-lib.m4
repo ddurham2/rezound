@@ -54,7 +54,7 @@ dnl
 dnl This macro defines some args that define the include or lib paths
 dnl 
 dnl This macro will also #define HAVE_LIBXXX where XXX is the capitalized
-dnl normalized name if arg 1
+dnl normalized name of arg 1
 dnl
 dnl What a mess with the AS_TR_CPP($1); now if I knew how to assign a variable
 dnl at the top that I could use everwhere else I would
