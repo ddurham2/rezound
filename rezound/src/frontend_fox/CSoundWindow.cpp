@@ -453,6 +453,7 @@ void CSoundWindow::layout()
 {
 	FXTopWindow::layout();
 
+	// ??? however, I could try using the SEL_CONFIGURE event for this (except it only happens on resize and not on startup)
 	//I do this because on resize the max horzZoomFactor changes, perhaps in FXRezWaveViewScrollArea::layout I should adjust the zoomFactor by the ratio of the old and the new size if I can get the old and new width and height
 	if(prevW!=width || prevH!=height)
 	{
