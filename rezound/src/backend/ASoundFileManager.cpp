@@ -98,6 +98,11 @@ void ASoundFileManager::open(const string _filename)
 	updateReopenHistory(filename);
 }
 
+/*
+ * I believe the only time we wouldn't want a file to be registered, doRegisterFilename==false is 
+ * when we are loading the registered files from a previous sessions, so they would already be
+ * in the registry
+ */
 void ASoundFileManager::prvOpen(const string &filename,bool readOnly,bool doRegisterFilename)
 {
 	if(doRegisterFilename && isFilenameRegistered(filename))
@@ -174,11 +179,21 @@ void ASoundFileManager::saveAs()
 		if(!promptForSave(filename,ost::Path(loaded->getSound()->getFilename()).Extension()))
 			return;
 
+		if(loaded->getSound()->getFilename()==filename)
+		{
+			save();
+			return;
+		}
+
+		if(isFilenameRegistered(filename))
+			throw(runtime_error(string(__func__)+" -- file is currently opened: '"+filename+"'"));
+
 		if(ost::Path(filename).Exists())
 		{
 			if(Question("Overwrite Existing File:\n"+filename,yesnoQues)!=yesAns)
 				return;
 		}
+
 		
 		loaded->getSound()->saveSound(filename);
 
