@@ -74,10 +74,10 @@ bool CvoxSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 	bool ret=true;
 
 	if(gPathToDevox=="")
-		throw(runtime_error(string(__func__)+" -- path to 'devox' not set"));
+		throw runtime_error(string(__func__)+" -- path to 'devox' not set");
 
 	if(!checkThatFileExists(filename))
-		throw(runtime_error(string(__func__)+" -- file not found, '"+filename+"'"));
+		throw runtime_error(string(__func__)+" -- file not found, '"+filename+"'");
 
 	// remove the temp file; devox the input file to the temp file; cat the temp file for reading stdout; remove temp file
 	const string tempFilename=gFallbackWorkDir+"/rez_devox_temp_output";
@@ -136,7 +136,7 @@ bool CvoxSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 				sound->removeSpace(pos,sound->getLength()-pos);
 		}
 		else
-			throw(runtime_error(string(__func__)+" -- an unhandled bit rate of "+istring(bits)));
+			throw runtime_error(string(__func__)+" -- an unhandled bit rate of "+istring(bits));
 
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 			delete accessers[t];
@@ -161,7 +161,7 @@ bool CvoxSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 	bool ret=true;
 
 	if(gPathToVox=="")
-		throw(runtime_error(string(__func__)+" -- path to 'vox' not set"));
+		throw runtime_error(string(__func__)+" -- path to 'vox' not set");
 
 	if(sound->getCueCount()>0 || sound->getUserNotes()!="")
 	{
@@ -188,10 +188,10 @@ bool CvoxSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 		#define BITS 16 // has to go along with how we're writing it to the pipe below
 
 		if(saveLength>((0x7fffffff-4096)/((BITS/2)*channelCount)))
-			throw(runtime_error(string(__func__)+" -- audio data is too large to be converted to vox (more than 2gigs of "+istring(BITS)+"bit/"+istring(channelCount)+"channels"));
+			throw runtime_error(string(__func__)+" -- audio data is too large to be converted to vox (more than 2gigs of "+istring(BITS)+"bit/"+istring(channelCount)+"channels");
 
 		if(SIGPIPECaught)
-			throw(runtime_error(string(__func__)+" -- vox aborted -- check stderr for more information"));
+			throw runtime_error(string(__func__)+" -- vox aborted -- check stderr for more information");
 
 		for(unsigned t=0;t<channelCount;t++)
 			accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
@@ -217,7 +217,7 @@ bool CvoxSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 				pos+=chunkSize;
 
 				if(SIGPIPECaught)
-					throw(runtime_error(string(__func__)+" -- lame aborted -- check stderr for more information"));
+					throw runtime_error(string(__func__)+" -- lame aborted -- check stderr for more information");
 				if(fwrite((void *)((sample_t *)buffer),sizeof(sample_t)*channelCount,chunkSize,p)!=chunkSize)
 					fprintf(stderr,"%s -- dropped some data while writing\n",__func__);
 
@@ -229,7 +229,7 @@ bool CvoxSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 			}
 		}
 		else
-			throw(runtime_error(string(__func__)+" -- internal error -- an unhandled sample_t type"));
+			throw runtime_error(string(__func__)+" -- internal error -- an unhandled sample_t type");
 
 		cancelled:
 
@@ -259,7 +259,7 @@ bool CvoxSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 }
 
 
-bool CvoxSoundTranslator::handlesExtension(const string extension) const
+bool CvoxSoundTranslator::handlesExtension(const string extension,const string filename) const
 {
 	return extension=="vox";
 }
@@ -279,14 +279,14 @@ const vector<string> CvoxSoundTranslator::getFormatNames() const
 	return names;
 }
 
-const vector<vector<string> > CvoxSoundTranslator::getFormatExtensions() const
+const vector<vector<string> > CvoxSoundTranslator::getFormatFileMasks() const
 {
 	vector<vector<string> > list;
-	vector<string> extensions;
+	vector<string> fileMasks;
 
-	extensions.clear();
-	extensions.push_back("vox");
-	list.push_back(extensions);
+	fileMasks.clear();
+	fileMasks.push_back("*.vox");
+	list.push_back(fileMasks);
 
 	return list;
 }

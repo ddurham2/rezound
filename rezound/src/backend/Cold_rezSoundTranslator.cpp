@@ -55,17 +55,17 @@ bool Cold_rezSoundTranslator::onLoadSound(const string filename,CSound *sound) c
 
 		f=fopen(filename.c_str(),"rb");
 		if(f==NULL)
-			throw(runtime_error(string(__func__)+" -- error opening '"+filename+"' -- "+strerror(errno)));
+			throw runtime_error(string(__func__)+" -- error opening '"+filename+"' -- "+strerror(errno));
 
 		fread(Header,1,4,f);
 		if(strncmp(Header,"sNdF",4)!=0)
-			throw(runtime_error(string(__func__)+" -- not a valid sound file or corrupt data"));
+			throw runtime_error(string(__func__)+" -- not a valid sound file or corrupt data");
 
 		int32_t tmp;
 
 		fread(&tmp,sizeof(tmp),1,f);
 		if(tmp>CURRENT_FORMAT_VERSION)
-			throw(runtime_error(string(__func__)+" -- version of format is too great"));
+			throw runtime_error(string(__func__)+" -- version of format is too great");
 		
 		fread(&tmp,sizeof(tmp),1,f);
 		unsigned channelCount=tmp;
@@ -99,7 +99,7 @@ bool Cold_rezSoundTranslator::onLoadSound(const string filename,CSound *sound) c
 				if(chunkSize!=0)
 				{
 					if(fread(buffer,sizeof(sample_t),chunkSize,f)!=chunkSize)
-						throw(runtime_error(string(__func__)+" -- error reading audio data -- "+strerror(errno)));
+						throw runtime_error(string(__func__)+" -- error reading audio data -- "+strerror(errno));
 
 					for(size_t i=0;i<chunkSize;i++)
 						(*(accessers[c]))[pos++]=buffer[i];
@@ -129,13 +129,13 @@ bool Cold_rezSoundTranslator::onLoadSound(const string filename,CSound *sound) c
 
 bool Cold_rezSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const
 {
-	throw(runtime_error(string(__func__)+" -- unimplemented"));
+	throw runtime_error(string(__func__)+" -- unimplemented");
 }
 
 
-bool Cold_rezSoundTranslator::handlesExtension(const string extension) const
+bool Cold_rezSoundTranslator::handlesExtension(const string extension,const string filename) const
 {
-	return(false);
+	return false;
 }
 
 bool Cold_rezSoundTranslator::supportsFormat(const string filename) const
@@ -152,7 +152,7 @@ bool Cold_rezSoundTranslator::supportsFormat(const string filename) const
 		fclose(f);
 	}
 
-	return(oldFormat);
+	return oldFormat;
 }
 
 const vector<string> Cold_rezSoundTranslator::getFormatNames() const
@@ -160,17 +160,17 @@ const vector<string> Cold_rezSoundTranslator::getFormatNames() const
 	vector<string> names;
 	names.push_back("Old ReZound Format");
 
-	return(names);
+	return names;
 }
 
-const vector<vector<string> > Cold_rezSoundTranslator::getFormatExtensions() const
+const vector<vector<string> > Cold_rezSoundTranslator::getFormatFileMasks() const
 {
 	vector<vector<string> > list;
 
-	vector<string> extensions;
-	extensions.push_back("rez");
-	list.push_back(extensions);
+	vector<string> fileMasks;
+	fileMasks.push_back("*.rez");
+	list.push_back(fileMasks);
 
-	return(list);
+	return list;
 }
 

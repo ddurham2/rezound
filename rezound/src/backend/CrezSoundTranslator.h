@@ -31,11 +31,11 @@ public:
 	CrezSoundTranslator();
 	virtual ~CrezSoundTranslator();
 
-	bool handlesExtension(const string extension) const;
+	bool handlesExtension(const string extension,const string filename) const;
 	bool supportsFormat(const string filename) const;
 
 	const vector<string> getFormatNames() const;
-	const vector<vector<string> > getFormatExtensions() const;
+	const vector<vector<string> > getFormatFileMasks() const;
 
 
 protected:

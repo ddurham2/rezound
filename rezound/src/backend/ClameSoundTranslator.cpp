@@ -376,7 +376,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound
 }
 
 
-bool ClameSoundTranslator::handlesExtension(const string extension) const
+bool ClameSoundTranslator::handlesExtension(const string extension,const string filename) const
 {
 	return extension=="mp3" || extension=="mp2" || extension=="mp1";
 }
@@ -397,16 +397,16 @@ const vector<string> ClameSoundTranslator::getFormatNames() const
 	return names;
 }
 
-const vector<vector<string> > ClameSoundTranslator::getFormatExtensions() const
+const vector<vector<string> > ClameSoundTranslator::getFormatFileMasks() const
 {
 	vector<vector<string> > list;
-	vector<string> extensions;
+	vector<string> fileMasks;
 
-	extensions.clear();
-	extensions.push_back("mp3");
-	extensions.push_back("mp2");
-	extensions.push_back("mp1");
-	list.push_back(extensions);
+	fileMasks.clear();
+	fileMasks.push_back("*.mp3");
+	fileMasks.push_back("*.mp2");
+	fileMasks.push_back("*.mp1");
+	list.push_back(fileMasks);
 
 	return list;
 }

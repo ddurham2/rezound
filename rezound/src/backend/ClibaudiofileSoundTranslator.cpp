@@ -488,7 +488,7 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,con
 }
 
 
-bool ClibaudiofileSoundTranslator::handlesExtension(const string extension) const
+bool ClibaudiofileSoundTranslator::handlesExtension(const string extension,const string filename) const
 {
 	return(extension=="wav" || extension=="aiff" || extension=="au" || extension=="snd" || extension=="sf");
 }
@@ -519,27 +519,27 @@ const vector<string> ClibaudiofileSoundTranslator::getFormatNames() const
 	return(names);
 }
 
-const vector<vector<string> > ClibaudiofileSoundTranslator::getFormatExtensions() const
+const vector<vector<string> > ClibaudiofileSoundTranslator::getFormatFileMasks() const
 {
 	vector<vector<string> > list;
-	vector<string> extensions;
+	vector<string> fileMasks;
 
-	extensions.clear();
-	extensions.push_back("wav");
-	list.push_back(extensions);
+	fileMasks.clear();
+	fileMasks.push_back("*.wav");
+	list.push_back(fileMasks);
 
-	extensions.clear();
-	extensions.push_back("aiff");
-	list.push_back(extensions);
+	fileMasks.clear();
+	fileMasks.push_back("*.aiff");
+	list.push_back(fileMasks);
 
-	extensions.clear();
-	extensions.push_back("snd");
-	extensions.push_back("au");
-	list.push_back(extensions);
+	fileMasks.clear();
+	fileMasks.push_back("*.snd");
+	fileMasks.push_back("*.au");
+	list.push_back(fileMasks);
 
-	extensions.clear();
-	extensions.push_back("sf");
-	list.push_back(extensions);
+	fileMasks.clear();
+	fileMasks.push_back("*.sf");
+	list.push_back(fileMasks);
 
 	return(list);
 }

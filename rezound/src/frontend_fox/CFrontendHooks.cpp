@@ -127,22 +127,21 @@ const string CFrontendHooks::getFOXFileTypes() const
 	for(size_t t=0;t<translators.size();t++)
 	{
 		const vector<string> names=translators[t]->getFormatNames();
-		const vector<vector<string> > extensions=translators[t]->getFormatExtensions();
+		const vector<vector<string> > fileMasks=translators[t]->getFormatFileMasks();
 	
 		for(size_t i=0;i<names.size();i++)
 		{
 			types+=names[i];
 			types+=" (";
-			for(size_t k=0;k<extensions[i].size();k++)
+			for(size_t k=0;k<fileMasks[i].size();k++)
 			{
 				if(k>0)
 					types+=",";
-				types+="*."+extensions[i][k]+",";
-				types+="*."+istring(extensions[i][k]).upper();
+				types+=fileMasks[i][k]+","+istring(fileMasks[i][k]).upper();
 
 				if(allTypes!="")
 					allTypes+=",";
-				allTypes+="*."+extensions[i][k];
+				allTypes+=fileMasks[i][k];
 			}
 			types+=")\n";
 		}
@@ -151,15 +150,15 @@ const string CFrontendHooks::getFOXFileTypes() const
 	for(size_t t=0;t<translators.size();t++)
 	{
 		const vector<string> names=translators[t]->getFormatNames();
-		const vector<vector<string> > extensions=translators[t]->getFormatExtensions();
+		const vector<vector<string> > fileMasks=translators[t]->getFormatFileMasks();
 	
 		for(size_t i=0;i<names.size();i++)
 		{
-			for(size_t k=0;k<extensions[i].size();k++)
+			for(size_t k=0;k<fileMasks[i].size();k++)
 			{
 				if(allTypes!="")
 					allTypes+=",";
-				allTypes+="*."+istring(extensions[i][k]).upper();
+				allTypes+=istring(fileMasks[i][k]).upper();
 			}
 		}
 	}

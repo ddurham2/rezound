@@ -135,13 +135,13 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 				PCMType=r.PCMType;
 			}
 			else
-				throw(runtime_error(string(__func__)+" -- unhandled format version: "+istring(version)));
+				throw runtime_error(string(__func__)+" -- unhandled format version: "+istring(version));
 
 
 			if(sampleRate<4000 || sampleRate>96000)
-				throw(runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate)+" probably indicates a corrupt file"));
+				throw runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate)+" probably indicates a corrupt file");
 			if(channelCount<=0 || channelCount>MAX_CHANNELS) // ??? could warn the user and just ignore the extra channels
-				throw(runtime_error(string(__func__)+" -- invalid number of channels in audio file: "+istring(channelCount)+" -- you could simply increase MAX_CHANNELS in CSound.h"));
+				throw runtime_error(string(__func__)+" -- invalid number of channels in audio file: "+istring(channelCount)+" -- you could simply increase MAX_CHANNELS in CSound.h");
 
 			sound->createWorkingPoolFile(filename,sampleRate,channelCount,size);
 		}
@@ -216,7 +216,7 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 				}
 			}
 			else
-				throw(runtime_error(string(__func__)+" -- unhandled format conversion while loading"));
+				throw runtime_error(string(__func__)+" -- unhandled format conversion while loading");
 		}
 
 	}
@@ -314,7 +314,7 @@ bool CrezSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 			}
 		}
 		else
-			throw(runtime_error(string(__func__)+" -- unhandled format conversion while saving"));
+			throw runtime_error(string(__func__)+" -- unhandled format conversion while saving");
 	}
 
 	saveToFile.closeFile(false,false);
@@ -323,9 +323,9 @@ bool CrezSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 }
 
 
-bool CrezSoundTranslator::handlesExtension(const string extension) const
+bool CrezSoundTranslator::handlesExtension(const string extension,const string filename) const
 {
-	return(extension=="rez");
+	return extension=="rez";
 }
 
 bool CrezSoundTranslator::supportsFormat(const string filename) const
@@ -334,21 +334,21 @@ bool CrezSoundTranslator::supportsFormat(const string filename) const
 	// and must have at least 1024 bytes to read
 	FILE *f=fopen(filename.c_str(),"rb");
 	if(f==NULL)
-		return(false);
+		return false;
 
 	char buffer[1024];
 	if(fread(buffer,1,1024,f)!=1024)
 	{
 		fclose(f);
-		return(false);
+		return false;
 	}
 	if(strncmp(buffer+512,REZOUND_POOLFILE_SIGNATURE,strlen(REZOUND_POOLFILE_SIGNATURE))==0)
 	{
 		fclose(f);
-		return(true);
+		return true;
 	}
 
-	return(false);
+	return false;
 }
 
 const vector<string> CrezSoundTranslator::getFormatNames() const
@@ -356,17 +356,17 @@ const vector<string> CrezSoundTranslator::getFormatNames() const
 	vector<string> names;
 	names.push_back("Native ReZound");
 
-	return(names);
+	return names;
 }
 
-const vector<vector<string> > CrezSoundTranslator::getFormatExtensions() const
+const vector<vector<string> > CrezSoundTranslator::getFormatFileMasks() const
 {
 	vector<vector<string> > list;
 
-	vector<string> extensions;
-	extensions.push_back("rez");
-	list.push_back(extensions);
+	vector<string> fileMasks;
+	fileMasks.push_back("*.rez");
+	list.push_back(fileMasks);
 
-	return(list);
+	return list;
 }
 

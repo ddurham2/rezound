@@ -140,15 +140,10 @@ const ASoundTranslator *ASoundTranslator::findTranslator(const string filename,b
 
 	// file doesn't exist or no supported signature, so attempt to determine the translater based on the file extension
 	const string extension=istring(CPath(filename).extension()).lower();
-	if(extension=="")
-		throw(runtime_error(string(__func__)+" -- cannot determine the extension on the filename: "+filename));
-	else
+	for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
 	{
-		for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
-		{
-			if(ASoundTranslator::registeredTranslators[t]->handlesExtension(extension))
-				return(ASoundTranslator::registeredTranslators[t]);
-		}
+		if(ASoundTranslator::registeredTranslators[t]->handlesExtension(extension,filename))
+			return(ASoundTranslator::registeredTranslators[t]);
 	}
 
 	// find the raw translator and ask the user if they want to use it
@@ -179,11 +174,18 @@ const vector<string> ASoundTranslator::getFlatFormatList()
 	for(size_t t=0;t<registeredTranslators.size();t++)
 	{
 		const vector<string> formatNames=registeredTranslators[t]->getFormatNames();
-		const vector<vector<string> > formatExtensions=registeredTranslators[t]->getFormatExtensions();
+		const vector<vector<string> > formatFileMasks=registeredTranslators[t]->getFormatFileMasks();
 		for(size_t i=0;i<formatNames.size();i++)
 		{
-			for(size_t k=0;k<formatExtensions[i].size();k++)
-				v.push_back(formatExtensions[i][k]+" ["+formatNames[i]+"]");
+			for(size_t k=0;k<formatFileMasks[i].size();k++)
+			{
+				// only return formats with masks that are in the form: "*.ext" and trim off the *. in front
+				// this is because existing code used to use this when only extensions were returned by
+				// ASoundTranslator objects and not a generic filemask.  If I need to accomodate things
+				// furthur later, then I will.
+				if(formatFileMasks[i][k].substr(0,2)=="*.")
+					v.push_back(formatFileMasks[i][k].substr(2)+" ["+formatNames[i]+"]");
+			}
 		}
 	}
 

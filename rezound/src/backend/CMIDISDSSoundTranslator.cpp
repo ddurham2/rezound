@@ -779,30 +779,24 @@ bool CMIDISDSSoundTranslator::onSaveSound(const string filename,const CSound *so
 }
 
 
-bool CMIDISDSSoundTranslator::handlesExtension(const string extension) const
+bool CMIDISDSSoundTranslator::handlesExtension(const string extension,const string filename) const
 {
-	return extension=="sds";
+	CPath path(filename);
+	//         *.sds        or       path is a device and the filename part starts with "midi"
+	return extension=="sds" || (path.exists() && path.isDevice() && path.baseName().substr(0,4)=="midi");
 }
 
 bool CMIDISDSSoundTranslator::supportsFormat(const string filename) const
 {
+	// shouldn't get called if filename is a device
+
 	// check if filename is a normal file or a link to a normal file I guess (use realpath perhaps)
 	// should start with  "F0 7E xx 01 xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx xx F7"
 
-	//throw runtime_error(string(__func__)+" -- unimplemented");
-	/*
-	int fd=open(filename.c_str(),O_RDONLY);
-	int _e=errno;
-	if(fd==-1)
-		throw(runtime_error(string(__func__)+" -- error opening file '"+filename+"' -- "+strerror(_e)));
-
-	close(fd);
-
-	return supported;
-	*/
-// ??? if isDevice, then send a NAK and it will resend the data, if not a device, then we can seek
-// we'd have to know the waveformId and request it or wait for something
-
+	// ??? if isDevice, then send a NAK and it will resend the data, if not a device, then we can seek
+	// we'd have to know the waveformId and request it or wait for something.. but if it wasn't a MIDI 
+	// then attempting to read a header would mess things up unless we could rewind some
+	
 	return false;
 }
 
@@ -812,18 +806,19 @@ const vector<string> CMIDISDSSoundTranslator::getFormatNames() const
 
 	names.push_back("MIDI Sample Dump Standard");
 
-	return(names);
+	return names;
 }
 
-const vector<vector<string> > CMIDISDSSoundTranslator::getFormatExtensions() const
+const vector<vector<string> > CMIDISDSSoundTranslator::getFormatFileMasks() const
 {
 	vector<vector<string> > list;
-	vector<string> extensions;
+	vector<string> fileMasks;
 
-	extensions.clear();
-	extensions.push_back("sds");
-	list.push_back(extensions);
+	fileMasks.clear();
+	fileMasks.push_back("*.sds");
+	fileMasks.push_back("midi*");
+	list.push_back(fileMasks);
 
-	return(list);
+	return list;
 }
 
