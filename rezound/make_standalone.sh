@@ -15,7 +15,7 @@ dir=rezound-bin-x86-linux-$1
 rm -rf $dir
 
 mkdir $dir \
-&& configure --prefix=`pwd`/$dir --enable-standalone --with-audiofile-include=/usr/local/include --with-audiofile-path=/usr/local/lib --with-FOX-include=/usr/local/include --with-FOX-path=/usr/local/lib \
+&& configure --prefix=`pwd`/$dir --enable-internal-sample-type=float --enable-standalone --with-audiofile-include=/usr/local/include --with-audiofile-path=/usr/local/lib --with-FOX-include=/usr/local/include --with-FOX-path=/usr/local/lib \
 && make clean \
 && make \
 && make install-strip \
