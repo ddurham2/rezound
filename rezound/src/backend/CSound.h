@@ -263,7 +263,7 @@ public:
 		{
 			strncpy(name,_name,MAX_SOUND_CUE_NAME_LENGTH);
 			name[MAX_SOUND_CUE_NAME_LENGTH]=0;
-			memset(reserved,0,90);
+			memset(reserved,0,sizeof(reserved));
 
 			time=_time;
 			isAnchored=_isAnchored ? 1 : 0;
