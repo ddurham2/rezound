@@ -1,4 +1,30 @@
-rezound-0.7.0beta
+rezound-0.8.0beta -- 6/24/2003
+	This is a major new feature release, and it has been a while
+	- Added a new play mode: Loop Selection but Skip Most of the Middle
+	- Added a new play mode: Loop Selection but Insert a Gap before Repeating
+	- Added a Monoize action under the Remaster menu
+	- Added actions under the Edit->Selection menu to Grow or Slide the selection
+	- Added a playback Balance Meter
+	- Added a playback Stereo Phase Meter
+	- Added a "Generate Noise" action
+	- Added preliminary FLAC file format support
+	- Added toggle-able vertical lines drawn on the waveview down from the cue positions
+	- Several changes to make it not nearly as CPU intensive
+	- Cues are now draggable and have focus for keyboard manipulation (cues movable with keyboard later)
+	- The layout of the menu is now defined in a file so it can be rearraged (manual editing of [~/.rezound/]menu.dat for now)
+	- DC offsets can now be compensated for when recording
+	- Now clip indications can be toggled on or off
+	- Added initial support to load audio from and dump audio to a MIDI device or file (just open/save /dev/midi)
+		- More work needs to be done about naming the file
+	- Added gettext support for i18n, so let the translations role in.  (Still have font issues though)
+	- The names of all actions that bring up a dialog now end in '...'
+	- Now using autoconf-2.5x
+	- Enahanced the Status Bar titling
+	- Made some gcc3 compatibility changes
+	- Playback meters can now toggled
+	- Many other bug fixes, tweaks and cosmetic enhancements
+
+rezound-0.7.0beta -- 2/26/2003
 	This is a new feature release.  Changes include:
 	- Added preliminary JACK support (the speed of and load on your computer will deterine how well this works)
 	- Added a "Repeat Count" or "Repeat Time" when pasting from any clipboard
@@ -9,7 +35,7 @@ rezound-0.7.0beta
 	- Buffer size and buffer count settings can now be made without rebuilding
 	- Made other minor cosmetic change, backend changes and bug fixes
 
-rezound-0.6.0beta
+rezound-0.6.0beta -- 1/29/2003
 	This is a big new feature release.  This being the case, please report 
 	any bugs as you might find to the bug reporting system on the SourceForge 
 	project page.  Also, I have created a mailing list with SourceForge so 
@@ -46,12 +72,12 @@ rezound-0.6.0beta
 	- Numerous other cosmetic tweaks and changes
 
 
-rezound-0.5.1beta
+rezound-0.5.1beta -- 10/28/2002
 	I fixed a nasty bug with ReZound crashing RedHat 8.0 with some other specific sound card and drivers.
 	Thanks goes to Jason Lyons for detecting this.
 
 
-rezound-0.5.0beta
+rezound-0.5.0beta -- 10/25/2002
 	This is mostly a new-feature release, but some bugs also have been fixed.
 	- Added a Convolution filter and some presets for reverbs
 	- Added a Distortion by a curve action (not complete)
@@ -67,7 +93,7 @@ rezound-0.5.0beta
 	- Minor bug fixes and other enhancements
 
 
-rezound-0.4.0beta
+rezound-0.4.0beta -- 9/6/2002
 	This is a new-feature and bug-fix release.  I am making this release simply 
 	because it has been a month since the last one.  I have bumped ReZound to
 	the beta stage now that I've received relatively few reports concerning
@@ -90,7 +116,7 @@ rezound-0.4.0beta
 	- Various other bug fixes and changes
 
 
-rezound-0.3.0alpha
+rezound-0.3.0alpha -- 8/7/2002
 	This is a new-feature and bug-fix release -- As some totally new code now exists
 	I ask that you please report any bugs or crashes that you may have.  Please try
 	to determine under what circumstances the crash or bug appeared in.  If all goes
@@ -107,7 +133,7 @@ rezound-0.3.0alpha
 	- Various other error message changes, bug fixes and enhancements
 
 
-rezound-0.2.0alpha
+rezound-1.2.0alpha -- 7/2/2002
 	- Added Ogg/Vorbis and MP3 file format support
 	- Added gain parameters to the single pole filters
 	- Improved the startup speed
@@ -116,11 +142,11 @@ rezound-0.2.0alpha
 	- Various other speed updates and problem fixes
 
 
-ReZound-0.1.2alpha
+ReZound-0.1.2alpha -- 6/25/2002
 	- Had a minor but important bug fix about the /usr/share/ReZound path
 
 
-ReZound-0.1.1alpha
+ReZound-0.1.1alpha -- 6/22/2002
 	- Made changes so ReZound would compile with gcc 3.x.  However, one guy
 	  has gcc3.1 on SuSE and one file would not compile on his, but would 
 	  compile on for me on Mandrake with gcc3.1.  So, I am not sure what the
@@ -132,7 +158,7 @@ ReZound-0.1.1alpha
 	- Various minor fixes/enhancements
 
 
-ReZound-0.1.0alpha
+ReZound-0.1.0alpha -- 6/21/2002
 	Very First Release -- The primary goal for this alpha stage is to obtain 
 	feedback on what problems ReZound may have compiling on different linux 
 	distros and such. Please report any problems you may have with the 

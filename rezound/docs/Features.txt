@@ -8,6 +8,7 @@
 	- raw				(libaudiofile)
 	- Ogg Vorbis			(libogg and libvorbis)
 	- MPEG Layer-3,2,1		(lame)
+	- FLAC (preliminary)		(libFLAC LIBFLAC++)
 	- MIDI Sample Dump Standard	(/dev/midi)
 
 - Audio I/O Interfaces
@@ -58,7 +59,9 @@
 	- Play from Mouse Cursor (hold ctrl and use left and right mouse buttons)
 
 - Playback Meters
+	- Toggle-able
 	- Audio Level Meters
+	- Balance Meter
 	- Stereo Phase Meters 
 	- Frequency Analyzer
 
@@ -128,6 +131,10 @@
 	- Normalization
 	- Resample
 
+- Generate Various Colors of Noise
+
 - Selectable LFO Shapes for Actions that Use an LFO (more to come)
 
 - Dynamic Menu Layout (no frontend interface easy user-defining yet)
+
+- gettext support (i18n, internationalization)

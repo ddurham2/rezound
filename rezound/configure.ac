@@ -23,7 +23,7 @@ dnl this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 dnl Place - Suite 330, Boston, MA  02111-1307, USA
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT(rezound, 0.7.0beta, [http://sourceforge.net/tracker/?group_id=5056&atid=105056])
+AC_INIT(rezound, 0.8.0beta, [http://sourceforge.net/tracker/?group_id=5056&atid=105056])
 AC_CONFIG_AUX_DIR(config)
 dnl ??? AC_CONFIG_SRCDIR([config/config.h])
 AM_CONFIG_HEADER([config/config.h])
@@ -290,6 +290,27 @@ AC_LANG_POP(C)
 
 
 
+
+dnl ### FLAC Library ##########################################################
+
+dnl used to conditionally activate code in CFLACSoundTranslator.*
+AH_TEMPLATE(HAVE_LIBFLACPP)
+AH_TEMPLATE(HAVE_LIBFLAC)
+
+dnl look for libFLAC and if it's found then look for libFLAC++
+AM_PATH_LIBFLAC(
+	[
+		AC_DEFINE(HAVE_LIBFLAC)
+		AM_PATH_LIBFLACPP(AC_DEFINE(HAVE_LIBFLACPP),AC_MSG_NOTICE([FLAC website: http://flac.sourceforge.net]))
+	],
+	AC_MSG_NOTICE([FLAC website: http://flac.sourceforge.net])
+)
+
+
+
+
+
+
 dnl ############################################################################
 dnl # Handle the flags for the FFTW library                                    *
 dnl ############################################################################
@@ -408,6 +429,7 @@ AM_GNU_GETTEXT([external])
 
 
 
+
 dnl ############################################################################
 dnl # Handle link type flag                                                    #
 dnl ############################################################################
@@ -429,6 +451,7 @@ AC_ARG_ENABLE(
 		if ! test -z "$FOX_LIBS"; then
 			AC_MSG_NOTICE([*** NOTICE *** since static linking is enabled, FOX will require static versions of libjpeg, libpng, libtiff, XFree86-libs, and maybe others (Also, I have found it necessary to configure FOX as: "CPPFLAGS=-DNO_XIM configure --with-opengl=no" when statically linking)])
 		fi
+
 		
 	]
 	)

@@ -11,25 +11,25 @@ distro tarball(eg: removing warning flags)
 
 3. Revise docs/NEWS and docs/Features.txt (use cvs2cl.pl to determine what significant things have changed since the previous release)
 
-4. Update the version number in configure.in and docs/INSTALL
+4. Update the version number in configure.ac and docs/INSTALL
 	- and then do a bootstrap ; configure
 
 5. PROOF-READ ALL CHANGES YOU JUST MADE!
 
-6. Remove any files: rm `find . -name ".#*`
+6. Remove any files: rm `find . -name ".#*"`
 
 --- EITHER -------------
 
 7. update the rpm spec file
 
-8. rebuild FOX with all the possible --disable flags then 'make_standalone.sh'
+8. rebuild FOX with all the possible --disable flags, --with-opengl=no, and probably CPPFLAGS=-DN_XIM
 
 9. run build_packages_for_release.sh (which is only local to me -- not in CVS)
 
 --- OR -----------------
 
 7. 'make distcheck'
-8. rebuild FOX with all the possible --disable flags then 'make_standalone.sh'
+8. rebuild FOX with all the possible --disable flags, --with-opengl=no, and probably CPPFLAGS=-DN_XIM then 'make_standalone.sh'
 9. create .rpm as standalone
 	- update the rpm spec file
 	- copy the source tarball to /usr/src/RPM/SOURCES
