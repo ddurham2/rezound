@@ -3026,7 +3026,7 @@ template<class l_addr_t,class p_addr_t>
 				const p_addr_t right_addr=i->first+i->second;
 				if(right_addr!=next_i->first)
 				{
-					const p_addr_t holeSize=right_addr-next_i->first;
+					const p_addr_t holeSize=next_i->first-right_addr;
 					holeSizeIndex.insert(make_pair(holeSize,holes.insert(make_pair(right_addr,holeSize)).first));
 				}
 			}
