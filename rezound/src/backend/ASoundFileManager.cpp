@@ -339,7 +339,7 @@ const string ASoundFileManager::getUntitledFilename(const string directory,const
 	static const char *prefixes[]={"untitled","newfile","default"};
 	for(size_t i=0;i<(sizeof(prefixes)/sizeof(*prefixes));i++)
 	{
-		const string filename=directory+prefixes[i];
+		const string filename=directory+ost::Path::dirDelim+prefixes[i];
 		for(size_t t=0;t<100;t++)
 		{
 			const string temp=filename+istring(t)+"."+extension;
