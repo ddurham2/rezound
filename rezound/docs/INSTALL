@@ -230,9 +230,16 @@ ADDITIONAL CONFIGURE FLAGS:
 
 --disable-audiofile-check	Skips the check for the audiofile package. 
 --disable-FOX-check		Skips the check for the FOX package.
---disable-ccgnuheck		Skips the check for the Commonc++ library
+--disable-ccgnu-check		Skips the check for the Commonc++ library
 
 --with-audiofile-path		Allows you to manually pass the path to
 --with-FOX-path			libraries that may not be in default linker 
 --with-ccgnu-path		path. Pass the path to lirary directory
 				(eg: --with-FOX-path=/usr/lib gets -L/usr/lib)
+
+--with-audiofile-includes	Allows you to manually pass the path to 
+--with-FOX-includes		header files, which may not be in a normal place
+--with-ccgnu-includes		The headers are #included as <fox/fx.h>, so if
+				your FOX headers are in /home/ant/include/fox,
+				you would use 
+				--with-FOX-includes=/home/ant/include

@@ -1,15 +1,13 @@
 
 2. Look for other possible trouble spots such as stdint.h int32_t int16_t etc
-and set up a common.h header to deal with these problems. 
-
+and set up a common.h header to deal with these problems.  -- I'll wait until these things come up before I worry about them.
 
 - might ought to verify that bootstrap is running within the toplevel directory
 and move it into config
-
 
 -- See if things might possibly work with -O2 set. Decide if we should be using 
 -O2 or not.
 
 -Get libfrontend_fox.la to work. 
 
--We need to add an option to add -I paths for header files listed in a strange place. I'm using the compile farm to work out bugs like this.
+--make sure this works on cf.sourceforge.net

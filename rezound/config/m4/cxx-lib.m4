@@ -50,6 +50,9 @@ dnl
 dnl This macro will also #define HAVE_LIBXXX where XXX is the capitalized
 dnl normalized name if arg 1
 AC_DEFUN(ajv_CXX_CHECK_LIB, dnl
+[AC_ARG_WITH($1-includes, dnl
+[  --with-$1-includes	  Specify path to $1 header files], dnl
+ajv_inc$1_path=-I$withval, ajv_inc$1_path="")] dnl
 [AC_ARG_WITH($1-path,[  --with-$1-path	  Specify path to $1 libraries], dnl
 ajv_lib$1_path=-L$withval, ajv_lib$1_path="")] dnl
 [AC_ARG_ENABLE($1-check, dnl
@@ -63,10 +66,11 @@ if test "$enable_$1_check" = "yes"; then
 int main()
 { $2 xxx; }
 EOF
-	$CXX -l$1 $5 ajv_chk_cxx_lib_$1.cc >/dev/null 2>ajv_chk_cxx_lib_$1.err
+	$CXX -l$1 $5 $ajv_lib$1_path $ajv_inc$1_path ajv_chk_cxx_lib_$1.cc >/dev/null 2>ajv_chk_cxx_lib_$1.err
 	if test $? = 0; then
 		AC_MSG_RESULT(yes)
-		LDFLAGS="$LDFLAGS $ajv_lib$1_path"
+		LDFLAGS="$ajv_lib$1_path $LDFLAGS"
+		CXXFLAGS="$ajv_inc$1_path $CXXFLAGS"
 		rm -f ajv_chk_cxx_lib_$1.cc
 		rm -f ajv_chk_cxx_lib_$1.err
 	else
@@ -122,6 +126,9 @@ dnl 	like it.
 dnl
 dnl 4. URL to download library given in abort message.
 AC_DEFUN(ajv_CHECK_LIB_ABORT, dnl
+[AC_ARG_WITH($1-includes, dnl
+[  --with-$1-includes	  Specify path to $1 header files], dnl
+ajv_inc$1_path=-I$withval, ajv_inc$1_path="")] dnl
 [AC_ARG_WITH($1-path,[  --with-$1-path	  Specify path to $1 libraries], dnl
 ajv_lib$1_path=-L$withval, ajv_lib$1_path="")] dnl
 [AC_ARG_ENABLE($1-check, dnl
@@ -136,9 +143,10 @@ if test "$enable_$1_check" = "yes"; then
 #error $1 library check failed
 #endif
 EOF
-	$CPP $ajv_lib_path ajv_ck_lib_$1.c >/dev/null 2>ajv_ck_lib_$1.err
+	$CPP $ajv_lib$1_path $ajv_inc$1_path ajv_ck_lib_$1.c >/dev/null 2>ajv_ck_lib_$1.err
 	if test $? = 0; then
-		LDFLAGS="$LDFLAGS $ajv_lib$1_path"
+		LDFLAGS="$ajv_lib$1_path $LDFLAGS"
+		CXXFLAGS="$ajv_inc$1_path $CXXFLAGS"
 		rm -f ajv_ck_lib_$1.c
 		rm -f ajv_ck_lib_$1.err
 	else
