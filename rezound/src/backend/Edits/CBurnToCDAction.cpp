@@ -180,9 +180,6 @@ bool CBurnToCDAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 				if(f==NULL)
 					throw runtime_error(string(__func__)+" -- error creating file: "+filename);
 
-		/* converts a smaple_t into a range-clipped 16bit value */
-#define make_16(s) (int16_t)(max(-32767,min(32767,(int)((((float)(s))/MAX_SAMPLE)*32767))));
-
 				// write out as stereo, 16bit, 44100
 				if(channelCount==1)
 				{	/* write 1 channel as stereo */
@@ -191,7 +188,7 @@ bool CBurnToCDAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 
 					for(sample_pos_t t=0;t<destLength;t++)
 					{
-						int16_t s=make_16(src.getSample());
+						int16_t s=convert_sample<sample_t,int16_t>(src.getSample());
 						fwrite(&s,2,1,f);
 						fwrite(&s,2,1,f);
 						if(ferror(f))
@@ -213,8 +210,8 @@ bool CBurnToCDAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 
 					for(sample_pos_t t=0;t<destLength;t++)
 					{
-						int16_t left=make_16(srcL.getSample());
-						int16_t right=make_16(srcR.getSample());
+						int16_t left=convert_sample<sample_t,int16_t>(srcL.getSample());
+						int16_t right=convert_sample<sample_t,int16_t>(srcR.getSample());
 
 						fwrite(&left,2,1,f);
 						fwrite(&right,2,1,f);
@@ -252,8 +249,8 @@ bool CBurnToCDAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 									tleft+=src[i]->getSample();
 							}
 		
-							int16_t left=make_16(tleft);
-							int16_t right=make_16(tright);
+							int16_t left=convert_sample<sample_t,int16_t>(tleft);
+							int16_t right=convert_sample<sample_t,int16_t>(tright);
 		
 							fwrite(&left,2,1,f);
 							fwrite(&right,2,1,f);
