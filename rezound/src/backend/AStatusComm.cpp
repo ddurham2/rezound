@@ -106,7 +106,7 @@ CStatusBar::CStatusBar(const string title,const sample_pos_t firstValue,const sa
 
 CStatusBar::~CStatusBar()
 {
-	gStatusComm->endProgressBar(handle);
+	hide();
 }
 
 void CStatusBar::reset()
@@ -114,3 +114,13 @@ void CStatusBar::reset()
 	lastProgress=0;
 	gStatusComm->updateProgressBar(handle,0);
 }
+
+void CStatusBar::hide()
+{
+	if(handle!=-1)
+	{
+		gStatusComm->endProgressBar(handle);
+		handle=-1;
+	}
+}
+

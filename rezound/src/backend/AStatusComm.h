@@ -100,12 +100,13 @@ public:
 	CStatusBar(const string title,const sample_pos_t firstValue,const sample_pos_t lastValue,const bool showCancelButton=false);
 	virtual ~CStatusBar();
 
-	inline bool update(const sample_pos_t value) { const sample_pos_t progress=(value-sub)/div; return progress!=lastProgress && gStatusComm->updateProgressBar(handle,(int)((lastProgress=progress)*mul)); }
+	inline bool update(const sample_pos_t value) { const sample_pos_t progress=(value-sub)/div; return progress!=lastProgress && handle!=-1 && gStatusComm->updateProgressBar(handle,(int)((lastProgress=progress)*mul)); }
 
 	void reset();
+	void hide();
 	
 private:
-	const int handle;
+	int handle;
 	const sample_pos_t sub;
 	const sample_pos_t valueDiff;
 	const sample_pos_t div;
