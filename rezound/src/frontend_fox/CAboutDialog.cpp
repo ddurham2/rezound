@@ -44,7 +44,7 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 	FXPacker *contents=new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 2,2,2,2, 0,0);
 
 	FXPacker *upperFrame=new FXHorizontalFrame(contents,LAYOUT_FILL_X | FRAME_RAISED|FRAME_THICK);
-		new FXLabel(upperFrame,"",new FXGIFIcon(getApp(),GreenCheck1_gif),LABEL_NORMAL | LAYOUT_SIDE_LEFT); // ??? needs to be the ReZound logo icon
+		new FXLabel(upperFrame,"",new FXGIFIcon(getApp(),logo_gif,0,IMAGE_ALPHACOLOR),LABEL_NORMAL | LAYOUT_SIDE_LEFT | FRAME_RAISED|FRAME_THICK, 0,0,0,0, 0,0,0,0);
 		new FXLabel(upperFrame,FXString(REZOUND_PACKAGE)+" v"+FXString(REZOUND_VERSION),NULL,LABEL_NORMAL|LAYOUT_CENTER_X);
 		
 	FXTabBook *tabs=new FXTabBook(contents,NULL,0,TABBOOK_NORMAL | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0);
@@ -70,6 +70,7 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 
 		MAKE_TEXT(t,"Author","Davy Durham, ddurham@users.sourceforge.net");
 		MAKE_TEXT(t,"Autoconfiscator","Anthony Ventimiglia");
+		MAKE_TEXT(t,"Artistic Consultant","Will Jayroe");
 		MAKE_LINK(t,"Home Page","http://rezound.sourceforge.net");
 		MAKE_LINK(t,"Bug Reports","http://sourceforge.net/tracker/?group_id=5056&atid=105056");
 		MAKE_LINK(t,"Feature Requests","http://sourceforge.net/tracker/?atid=355056&group_id=5056&func=browse");
