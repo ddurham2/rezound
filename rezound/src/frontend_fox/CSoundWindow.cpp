@@ -458,7 +458,7 @@ long CSoundWindow::onMuteButton(FXObject *sender,FXSelector,void*)
 
 long CSoundWindow::onInvertMuteButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-	if(SELTYPE(sel)==SEL_COMMAND)
+	if(FXSELTYPE(sel)==SEL_COMMAND)
 	{
 		for(unsigned t=0;t<loadedSound->sound->getChannelCount();t++)
 			muteButtons[t]->setCheck(!muteButtons[t]->getCheck());
@@ -668,12 +668,12 @@ long CSoundWindow::onAddCue(FXObject *sender,FXSelector sel,void *ptr)
 {
 	try
 	{
-		CActionParameters actionParameters;
+		CActionParameters actionParameters(NULL);
 
 		// add the parameters for the dialog to display initially
 		actionParameters.addStringParameter("name","Cue1");
 
-		switch(SELTYPE(sel))
+		switch(FXSELTYPE(sel))
 		{
 		case FXRezWaveView::SEL_ADD_CUE:
 			actionParameters.addSamplePosParameter("position",*((sample_pos_t *)ptr));
@@ -702,7 +702,7 @@ long CSoundWindow::onAddCue(FXObject *sender,FXSelector sel,void *ptr)
 
 long CSoundWindow::onRemoveCue(FXObject *sender,FXSelector sel,void *ptr)
 {
-	CActionParameters actionParameters;
+	CActionParameters actionParameters(NULL);
 	actionParameters.addUnsignedParameter("index",*((size_t *)ptr));
 	removeCueActionFactory->performAction(loadedSound,&actionParameters,false,false);
 	return 1;
@@ -710,7 +710,7 @@ long CSoundWindow::onRemoveCue(FXObject *sender,FXSelector sel,void *ptr)
 
 long CSoundWindow::onEditCue(FXObject *sender,FXSelector sel,void *ptr)
 {
-	CActionParameters actionParameters;
+	CActionParameters actionParameters(NULL);
 	size_t cueIndex=*((size_t *)ptr);
 
 	// add the parameters for the dialog to display initially

@@ -33,8 +33,8 @@ CCrossfadeEdgesDialog::CCrossfadeEdgesDialog(FXWindow *mainWindow) :
 	setMargin(130);
 
 	void *p=newVertPanel(NULL);
-		addTextEntry(p,"Crossfade Start Edge","ms",gCrossfadeStartTime,0,10000,"milliseconds");
-		addTextEntry(p,"Crossfade Stop Edge","ms",gCrossfadeStopTime,0,10000,"milliseconds");
+		addNumericTextEntry(p,"Crossfade Start Edge","ms",gCrossfadeStartTime,0,10000,"milliseconds");
+		addNumericTextEntry(p,"Crossfade Stop Edge","ms",gCrossfadeStopTime,0,10000,"milliseconds");
 		
 		vector<string> fadeMethods;
 			fadeMethods.push_back("Linear Fade");
@@ -49,7 +49,7 @@ CCrossfadeEdgesDialog::~CCrossfadeEdgesDialog()
 
 void CCrossfadeEdgesDialog::showIt()
 {
-	CActionParameters actionParameters;
+	CActionParameters actionParameters(NULL);
 	setValue(0,gCrossfadeStartTime);
 	setValue(1,gCrossfadeStopTime);
 	setValue(2,gCrossfadeFadeMethod);

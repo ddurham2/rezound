@@ -118,7 +118,7 @@ long CCueListDialog::onCloseButton(FXObject *sender,FXSelector sel,void *ptr)
 
 long CCueListDialog::onAddCueButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-	CActionParameters actionParameters;
+	CActionParameters actionParameters(NULL);
 
 	if(cueList->getCurrentItem()!=-1)
 	{
@@ -146,7 +146,7 @@ long CCueListDialog::onRemoveCueButton(FXObject *sender,FXSelector sel,void *ptr
 {
 	if(cueList->getCurrentItem()!=-1)
 	{
-		CActionParameters actionParameters;
+		CActionParameters actionParameters(NULL);
 		actionParameters.addUnsignedParameter("index",(size_t)cueList->getItemData(cueList->getCurrentItem()));
 		removeCueActionFactory->performAction(loadedSound,&actionParameters,false,false);
 
@@ -160,7 +160,7 @@ long CCueListDialog::onEditCueButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	if(cueList->getCurrentItem()!=-1)
 	{
-		CActionParameters actionParameters;
+		CActionParameters actionParameters(NULL);
 		size_t cueIndex=(size_t)cueList->getItemData(cueList->getCurrentItem());
 
 		actionParameters.addUnsignedParameter("index",cueIndex);
@@ -183,19 +183,19 @@ void CCueListDialog::rebuildCueList()
 	cueList->clearItems();
 
 	// insert into a map and then extract (sorted) into the list box
-	map<string,size_t> cues;
+	multimap<string,size_t> cues;
 	CSound *sound=loadedSound->sound;
 	for(size_t t=0;t<loadedSound->sound->getCueCount();t++)
 	{
 		cues.insert(
-			map<string,size_t>::value_type(
+			multimap<string,size_t>::value_type(
 				sound->getTimePosition(sound->getCueTime(t),5)+(sound->isCueAnchored(t) ? " + " : " - ")+sound->getCueName(t),
 				t
 			)
 		);
 	}
 
-	for(map<string,size_t>::iterator i=cues.begin();i!=cues.end();i++)
+	for(multimap<string,size_t>::iterator i=cues.begin();i!=cues.end();i++)
 		cueList->appendItem(i->first.c_str(),NULL,(void *)i->second);
 
 
