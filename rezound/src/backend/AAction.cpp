@@ -583,7 +583,20 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool wil
 			_actionSound.stop=_actionSound.sound->getLength()-1;
 	
 		if(crossfadeEdgesIsApplicable)
+		{
 			crossfadeEdges(_actionSound);
+	
+			// again, make sure that the start and stop positions are in range after the crossfade
+			if(_actionSound.start<0)
+				_actionSound.start=0;
+			else if(_actionSound.start>=_actionSound.sound->getLength())
+				_actionSound.start=_actionSound.sound->getLength()-1;
+		
+			if(_actionSound.stop<0)
+				_actionSound.stop=0;
+			else if(_actionSound.stop>=_actionSound.sound->getLength())
+				_actionSound.stop=_actionSound.sound->getLength()-1;
+		}
 	
 		if(channel!=NULL)
 			setSelection(_actionSound.start,_actionSound.stop,channel);
@@ -738,10 +751,11 @@ void AAction::crossfadeEdges(CActionSound &actionSound)
 	// crossfade at the start position
 	sample_pos_t crossfadeTime=(sample_pos_t)(gCrossfadeStartTime*actionSound.sound->getSampleRate()/1000.0);
 		// make crossfadeTime smaller if there isn't room around the start position to fully do the crossfade
-	crossfadeTime=min(crossfadeTime,min(actionSound.start,actionSound.sound->getLength()-actionSound.start));
+	crossfadeTime=min(crossfadeTime,min(actionSound.start,(actionSound.sound->getLength()-actionSound.start)));
 
 	if(crossfadeTime>0)
 	{
+		printf("crossfadeTime1: %d\n",crossfadeTime);
 		// we don't look at actionSound.whichChannels so that when we 
 		// make the sound slightly shorter, it keeps the channels in sync
 
@@ -795,10 +809,11 @@ void AAction::crossfadeEdges(CActionSound &actionSound)
 		// crossfade at the stop position
 		sample_pos_t crossfadeTime=(sample_pos_t)(gCrossfadeStopTime*actionSound.sound->getSampleRate()/1000.0);
 			// make crossfadeTime smaller if there isn't room around the stop position to fully do the crossfade
-		crossfadeTime=min(crossfadeTime,min(actionSound.stop,actionSound.sound->getLength()-actionSound.stop));
+		crossfadeTime=min(crossfadeTime,min(actionSound.stop,actionSound.sound->getLength()-(actionSound.stop+1)));
 
 		if(crossfadeTime>0)
 		{
+		printf("crossfadeTime2: %d\n",crossfadeTime);
 			// move cues just as we did in the start case
 			for(size_t t=0;t<actionSound.sound->getCueCount();t++)
 			{
