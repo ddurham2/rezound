@@ -19,7 +19,7 @@
 	- Standard: New, Open, Save, Save As, Close, Revert
 	- Reopen History
 	- Save Selection As
-	- Save As Multiple Files
+	- Save As Multiple Files (according to cue positions)
 
 - Fast Editing of Large Files
 
