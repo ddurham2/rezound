@@ -39,8 +39,8 @@ noinst_HEADERS= \
 		CRemoveChannelsEdit.h \
 		CSelectionEdit.h \
 		CSaveSelectionAsAction.h \
+		CSaveAsMultipleFilesAction.h \
 		EditActions.h
-		#CSaveAsMultipleFilesAction.h 
 
 ## see PoolFile Makefile.am for explanation here out
 ## 
@@ -57,5 +57,5 @@ libEdits_la_SOURCES= \
 		CAddChannelsEdit.cpp \
 		CRemoveChannelsEdit.cpp \
 		CSaveSelectionAsAction.cpp \
+		CSaveAsMultipleFilesAction.cpp \
 		CSelectionEdit.cpp 
-		#CSaveAsMultipleFilesAction.cpp 

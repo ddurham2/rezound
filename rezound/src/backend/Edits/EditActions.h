@@ -37,7 +37,7 @@
 
 // ---------- does not appear actually under the Edit menu
 #include "CSaveSelectionAsAction.h"
-//#include "CSaveAsMultipleFilesAction.h"
+#include "CSaveAsMultipleFilesAction.h"
 
 
 #endif
