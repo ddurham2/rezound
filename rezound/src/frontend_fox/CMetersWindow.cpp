@@ -478,11 +478,15 @@ public:
 		samplingNFrames(_samplingNFrames),
 		samplingNChannels(_samplingNChannels),
 		samplingLeftChannel(_samplingLeftChannel),
-		samplingRightChannel(_samplingRightChannel)
+		samplingRightChannel(_samplingRightChannel),
+
+		clear(true)
 	{
 		hide();
 		setBackColor(M_BACKGROUND);
 			canvasFrame->setBackColor(M_BACKGROUND);
+			
+		canvas->setBackBufferOptions(IMAGE_OWNED|IMAGE_ALPHA); // IMAGE_ALPHA: the alpha channel is not used, but it's a place holder so I can work with 32bit values
 
 		// create the font to use for numbers
 		FXFontDesc d;
@@ -507,50 +511,46 @@ public:
 
 	long CStereoPhaseMeter::onCanvasPaint(FXObject *sender,FXSelector sel,void *ptr)
 	{
-		FXDC &dc=*((FXDC*)ptr); // back buffered canvases send the DC to draw onto in ptr
+		FXColor *data=(FXColor *)canvas->getBackBufferData();
 
 		// the w and h that we're going to render to (minus some borders and tick marks)
 		const size_t canvasSize=canvas->getWidth();  // w==h is guarenteed in onResize()
-		
-		dc.setForeground(M_BACKGROUND);
-		dc.fillRectangle(0,0,canvasSize,canvasSize);
-		/* would like to dim the backBuffer instead of erase it, but there is no effecient way of doing that
-		dc.setForeground(FXRGBA(64,64,64,255));
-		for(size_t y=0;y<canvasSize;y++)
-		for(size_t x=0;x<canvasSize;x++)
+
+		if(clear)
 		{
-			//FXColor c=dc.readPixel(x,y);
-			//c=FXRGB( max(0,(int)FXREDVAL(c)-10), max(0,(int)FXGREENVAL(c)-10), max(0,(int)FXBLUEVAL(c)-10));
-			//dc.setForeground(c);
-			dc.drawPoint(x,y);
+			memset(data,0,canvasSize*canvasSize*sizeof(FXColor));
+			clear=false;
 		}
-		*/
 
 		// if the global setting is disabled, stop drawing right here
 		if(!gStereoPhaseMetersEnabled)
-		{
-			canvas->endPaint();
 			return 1;
+
+		// fade previous frame (so we get a ghosting history)
+		for(size_t t=0;t<canvasSize*canvasSize;t++)
+		{
+			const FXColor c=data[t];
+			data[t]= c==0 ? 0 : FXRGB( FXREDVAL(c)*7/8, FXGREENVAL(c)*7/8, FXBLUEVAL(c)*7/8 );
 		}
 
-		// draw axies 
-		dc.setForeground(M_METER_OFF);
-		dc.drawLine(canvasSize/2,0,canvasSize/2,canvasSize);
-		dc.drawLine(0,canvasSize/2,canvasSize,canvasSize/2);
+		// draw the axies
+		for(size_t t=0;t<canvasSize;t++)
+		{
+			data[t+(canvasSize*canvasSize/2)]=M_METER_OFF; // horz
+			data[(t*canvasSize)+canvasSize/2]=M_METER_OFF; // vert
+		}
 
-
-		// plot the points
-		dc.setForeground(M_BRT_GREEN);
+		// draw the points
 		for(size_t t=0;t<samplingNFrames;t++)
 		{
 			// let x and y be the normalized (1.0) sample values (x:left y:right) then scaled up to the canvas width/height and centered in the square
-			const FXint x=(FXint)((mix_sample_t)samplingBuffer[t*samplingNChannels+samplingLeftChannel]*canvasSize/MAX_SAMPLE/2 + canvasSize/2);
-			const FXint y=(FXint)(-(mix_sample_t)samplingBuffer[t*samplingNChannels+samplingRightChannel]*canvasSize/MAX_SAMPLE/2 + canvasSize/2); // - because increasing values go down on the screen which is up-side-down from the Cartesian plane
-			dc.drawPoint(x,y);
+			const FXint x= (FXint)(samplingBuffer[t*samplingNChannels+samplingLeftChannel ]*(int)canvasSize/2/MAX_SAMPLE + canvasSize/2);
+			const FXint y=(FXint)(-samplingBuffer[t*samplingNChannels+samplingRightChannel]*(int)canvasSize/2/MAX_SAMPLE + canvasSize/2); // negation because increasing values go down on the screen which is up-side-down from the Cartesian plane
+			if(x>=0 && x<canvasSize && y>=0 && y<canvasSize)
+				data[y*canvasSize+x]=M_BRT_GREEN;
 		}
 
-		canvas->endPaint();
-		return 1;
+		return 0;
 	}
 
 	void updateCanvas()
@@ -560,12 +560,7 @@ public:
 
 	void clearCanvas()
 	{
-		FXDC *dc=canvas->beginPaint();
-
-		dc->setForeground(M_BACKGROUND);
-		dc->fillRectangle(0,0,canvas->getWidth(),canvas->getHeight());
-
-		canvas->endPaint();
+		clear=true;
 	}
 
 	enum
@@ -586,6 +581,8 @@ private:
 	const unsigned samplingNChannels;
 	const unsigned samplingLeftChannel;
 	const unsigned samplingRightChannel;
+
+	bool clear;
 };
 
 FXDEFMAP(CStereoPhaseMeter) CStereoPhaseMeterMap[]=
@@ -670,10 +667,7 @@ public:
 
 		// if the global setting is disabled, stop drawing right here
 		if(!gFrequencyAnalyzerEnabled)
-		{
-			canvas->endPaint();
 			return 1;
-		}
 
 		// the w and h that we're going to render to (minus some borders and tick marks)
 		const size_t canvasWidth=canvas->getWidth(); 
@@ -748,7 +742,6 @@ public:
 			dc.drawText(1,statusFont->getFontHeight(),f.c_str(),f.length());
 		}
 
-		canvas->endPaint();
 		return 1;
 	}
 
@@ -1008,6 +1001,7 @@ long CMetersWindow::onUpdateMeters(FXObject *sender,FXSelector sel,void *ptr)
 			// set the balance meter position
 			for(size_t t=0;t<balanceMeters.size();t++)
 				// there is a balance meter for every two level meters
+				// 	NOTE: ??? using getPeakLevel doesn't given an accurate peaked balance because the two peaks are from two separate points of time.. I'm not sure if this is a really bad issue right now or not
 				balanceMeters[t]->setBalance(levelMeters[t*2+0]->getRMSLevel(),levelMeters[t*2+1]->getRMSLevel(),levelMeters[t*2+0]->getPeakLevel(),levelMeters[t*2+1]->getPeakLevel());
 
 			// make sure all the levelMeters' grandMaxPeakLabels are the same width
