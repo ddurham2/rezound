@@ -12,7 +12,7 @@ distro tarball(eg: removing warning flags)
 3. Revise docs/NEWS use cvs2cl.pl to determine what significant things have changed since the previous release
 
 5. Update the version number in configure.in and docs/INSTALL
-	- and then do a bootstrap
+	- and then do a bootstrap ; configure
 	- check these two in
 
 5. 'make distcheck'
