@@ -52,4 +52,8 @@ INCLUDES=\
 CXXFLAGS=-Wall -g -D_GNU_SOURCE @CXXFLAGS@
 
 ## LDFLAGS will be added at link time
-LDFLAGS= -lFOX -laudiofile -lccgnu -ldl -lm -lpthread @LDFLAGS@
+##LDFLAGS= -lFOX -laudiofile -lccgnu -ldl -lm -lpthread @LDFLAGS@
+## note that the -l flags are set by the LIBS macro that is set by configure
+## This line doesn't need to be here, configure will add LDFLAGS on it's own,
+## but I'm leaving here as a place to add LDFLAGS if so desired
+LDFLAGS=@LDFLAGS@

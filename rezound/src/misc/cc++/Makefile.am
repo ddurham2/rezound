@@ -30,6 +30,8 @@ EXTRA_DIST=path.h \
 ## 
 noinst_LTLIBRARIES=libmisc.la
 libmisc_la_SOURCES=path.cpp
+## LDFLAGS needed for libmisc.la
+##libmisc_la_LDFLAGS=-lccgnu -ldl -lpthread
 
 path.o:path.cpp \
 	path.h 

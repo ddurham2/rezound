@@ -50,6 +50,7 @@ noinst_LTLIBRARIES=libPoolFile.la
 ## here we list all the source files that will be used to build libPoolFile.la
 libPoolFile_la_SOURCES=CMultiFile.cpp
 
+
 ## Automake inherently adds the $(CXX) $(CXXFLAGS) command, so all we have to do
 ## is tell it our dependencies. This is really more of a benefit for a potential
 ## developer than someone who ants to do a one time build. Automake is smart

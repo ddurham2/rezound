@@ -50,15 +50,22 @@ dnl
 dnl This macro will also #define HAVE_LIBXXX where XXX is the capitalized
 dnl normalized name if arg 1
 AC_DEFUN(ajv_CXX_CHECK_LIB, dnl
+[AC_ARG_ENABLE($1-check, dnl
+[  --disable-$1-check     Override the check for $1 library ], dnl
+[enable_$1_check=$enableval], dnl
+[enable_$1_check="yes" ])]
 [AC_ARG_WITH($1-include, dnl
 [  --with-$1-include	  Specify path to $1 header files], dnl
-ajv_inc$1_path=-I$withval, ajv_inc$1_path="")] dnl
+[ 	ajv_inc$1_path=-I$withval
+	enable_$1_check="no"  ],
+ajv_inc$1_path="")] dnl
 [AC_ARG_WITH($1-path,[  --with-$1-path	  Specify path to $1 libraries], dnl
-ajv_lib$1_path=-L$withval, ajv_lib$1_path="")] dnl
-[AC_ARG_ENABLE($1-check, dnl
-[  --disable-$1-check	  Override the check for $1 library], dnl
-[ enable_$1_check=$enableval ], dnl
-[ enable_$1_check="yes" ])]
+[	ajv_lib$1_path=-L$withval
+	enable_$1_check="no" ], dnl
+ajv_lib$1_path="")] 
+LIBS="-l$1 $LIBS"
+LDFLAGS="$ajv_lib$1_path $LDFLAGS"
+CXXFLAGS="$ajv_inc$1_path $CXXFLAGS"
 if test "$enable_$1_check" = "yes"; then
 	[AC_MSG_CHECKING(for $2 class in -l$1)] 
 	cat > ajv_chk_cxx_lib_$1.cc << EOF
@@ -69,8 +76,6 @@ EOF
 	$CXX -l$1 $5 $ajv_lib$1_path $ajv_inc$1_path ajv_chk_cxx_lib_$1.cc >/dev/null 2>ajv_chk_cxx_lib_$1.err
 	if test $? = 0; then
 		AC_MSG_RESULT(yes)
-		LDFLAGS="$ajv_lib$1_path $LDFLAGS"
-		CXXFLAGS="$ajv_inc$1_path $CXXFLAGS"
 		rm -f ajv_chk_cxx_lib_$1.cc
 		rm -f ajv_chk_cxx_lib_$1.err
 	else
@@ -88,9 +93,14 @@ EOF
  
    If you have $1 installed and the linker couldn't find it, you can specify
    the path by passing --with-$1-path=/path/to/$1 to configure.
+   You may also have to pass the $1 header path with the 
+   --with-$1-include=   option. Setting these flags overrides the library 
+   test.
 
    If you have $1 and you believe it is up to date, you can override 
    this check by passing --disable-$1-check as an option to configure. 
+   specifying --with-$1-path or --with-$1-include will override the
+   test for lib$1
    
    If you believe this  error message is a result of a bug in the 
    configure script, please report the bug to the Package Maintainers. 
@@ -126,20 +136,23 @@ dnl 	like it.
 dnl
 dnl 4. URL to download library given in abort message.
 AC_DEFUN(ajv_CHECK_LIB_ABORT, dnl
-[AC_ARG_WITH($1-include, dnl
-[  --with-$1-include	  Specify path to $1 header files], dnl
-ajv_inc$1_path=-I$withval, ajv_inc$1_path="")] dnl
-[AC_ARG_WITH($1-path,[  --with-$1-path	  Specify path to $1 libraries], dnl
-ajv_lib$1_path=-L$withval, ajv_lib$1_path="")] dnl
 [AC_ARG_ENABLE($1-check, dnl
 [  --disable-$1-check     Override the check for $1 library ], dnl
 [enable_$1_check=$enableval], dnl
 [enable_$1_check="yes" ])]
+[AC_ARG_WITH($1-include, dnl
+[  --with-$1-include	  Specify path to $1 header files], dnl
+[ 	ajv_inc$1_path=-I$withval
+	enable_$1_check="no"  ],
+ajv_inc$1_path="")] dnl
+[AC_ARG_WITH($1-path,[  --with-$1-path	  Specify path to $1 libraries], dnl
+[	ajv_lib$1_path=-L$withval
+	enable_$1_check="no" ], dnl
+ajv_lib$1_path="")] 
+LIBS="-l$1 $LIBS"
+LDFLAGS="$ajv_lib$1_path $LDFLAGS"
+CXXFLAGS="$ajv_inc$1_path $CXXFLAGS"
 if test "$enable_$1_check" = "yes"; then
-	tmp_ldflags=$LDFLAGS
-	tmp_cxxflags=$CXXFLAGS
-	LDFLAGS="$ajv_lib$1_path $LDFLAGS"
-	CXXFLAGS="$ajv_inc$1_path $CXXFLAGS"
 	[AC_CHECK_LIB($1, $2)]
 	cat > ajv_ck_lib_$1.c <<EOF
 #include "confdefs.h"
@@ -149,8 +162,6 @@ if test "$enable_$1_check" = "yes"; then
 EOF
 	$CPP $ajv_lib$1_path $ajv_inc$1_path ajv_ck_lib_$1.c >/dev/null 2>ajv_ck_lib_$1.err
 	if test $? = 0; then
-		LDFLAGS=$tmp_ldflags
-		CXXFLAGS=$tmp_cxxflags
 		LDFLAGS="$ajv_lib$1_path $LDFLAGS"
 		CXXFLAGS="$ajv_inc$1_path $CXXFLAGS"
 		rm -f ajv_ck_lib_$1.c
@@ -169,9 +180,14 @@ EOF
 
    If you have $1 installed and the linker couldn't find it, you can specify
    the path by passing --with-$1-path=/path/to/$1 to configure.
+   You may also have to pass the $1 header path with the 
+   --with-$1-include=   option. Setting these flags overrides the library 
+   test.
  
    If you have $1 and you believe it is up to date, you can override 
    this check by passing --disable-$1-check as an option to configure. 
+   specifying --with-$1-path or --with-$1-include will override the
+   test for lib$1
    
    If you believe this  error message is a result of a bug in the 
    configure script, please report the bug to the Package Maintainers. 
