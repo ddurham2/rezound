@@ -25,11 +25,12 @@
 
 
 #include "../AAction.h"
+#include "../ALFO.h"
 
 class CFlangeEffect : public AAction
 {
 public:
-	CFlangeEffect(const CActionSound &actionSound,float delayTime,float wetGain,float dryGain,float LFOFreq,float LFODepth,float LFOPhase,float feedback);
+	CFlangeEffect(const CActionSound &actionSound,float delayTime,float wetGain,float dryGain,const CLFODescription &flangeLFO,float feedback);
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
@@ -40,9 +41,7 @@ private:
 	const float delayTime;
 	const float wetGain;
 	const float dryGain;
-	const float LFOFreq;
-	const float LFODepth;
-	const float LFOPhase;
+	const CLFODescription flangeLFO;
 	const float feedback;
 
 };

@@ -1,6 +1,7 @@
 #include "CVariedRepeatEffect.h"
 
 #include <stdexcept>
+#include <memory>
 
 //#include "../CActionSound.h"
 #include "../CActionParameters.h"
@@ -59,11 +60,13 @@ bool CVariedRepeatEffect::doActionSizeSafe(CActionSound &actionSound,bool prepar
 				a.copyData(start,actionSound.sound->getTempAudio(tempAudioPoolKey,i),0,selectionLength);
 */
 
-			CPosSinLFO LFO(LFOFreq,LFOPhase,actionSound.sound->getSampleRate());
+				// ??? when the frontend supports it, this need to be generic
+			auto_ptr<ALFO> LFO(gLFORegistry.createLFO(CLFODescription(1.0,LFOFreq,LFOPhase,gLFORegistry.getIndexByName("Sin Wave [ 0,1]")),actionSound.sound->getSampleRate()));
+			
 
 			for(sample_pos_t t=0;t<lTime;t++)
 			{
-				const sample_pos_t repeat=(sample_pos_t)(LFO.getValue(t)*(selectionLength));
+				const sample_pos_t repeat=(sample_pos_t)(LFO->getValue(t)*(selectionLength));
 				for(sample_pos_t p=0;p<repeat && t<lTime;p++,t++)
 					dest[start+t]=src[p];
 

@@ -21,6 +21,7 @@
 #include "CFlangeEffect.h"
 
 #include <stdexcept>
+#include <memory>
 
 #include "../DSPBlocks.h"
 #include "../unit_conv.h"
@@ -29,7 +30,7 @@
 #include "../CActionSound.h"
 
 // LFO Speed is in Hertz, LFO Depth is in ?,LFO Phase is in degrees, Delay is in milliseconds
-CFlangeEffect::CFlangeEffect(const CActionSound &actionSound,float _delayTime,float _wetGain,float _dryGain,float _LFOFreq,float _LFODepth,float _LFOPhase,float _feedback) :
+CFlangeEffect::CFlangeEffect(const CActionSound &actionSound,float _delayTime,float _wetGain,float _dryGain,const CLFODescription &_flangeLFO,float _feedback) :
 	AAction(actionSound),
 
 	// ??? perhaps I should do these conversions down in the code because I might someday be able to stream the action to disk for later use and the sampleRate would not necessarily be the same
@@ -39,18 +40,14 @@ CFlangeEffect::CFlangeEffect(const CActionSound &actionSound,float _delayTime,fl
 	wetGain(_wetGain),
 	dryGain(_dryGain),
 
-	LFOFreq(_LFOFreq),
-
-	LFODepth(_LFODepth),
-
-	LFOPhase(_LFOPhase),
+	flangeLFO(_flangeLFO),
 
 	feedback(_feedback)
 {
 	if(_delayTime<0.0)
 		throw(runtime_error(string(__func__)+" -- _delayTime is negative"));
-	if(_LFODepth<0.0)
-		throw(runtime_error(string(__func__)+" -- _LFODepth is negative"));
+	if(flangeLFO.amp<0.0)
+		throw(runtime_error(string(__func__)+" -- flangeLFO.amp is negative"));
 }
 
 bool CFlangeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
@@ -70,16 +67,14 @@ bool CFlangeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
 
-			CPosSinLFO LFO(LFOFreq,LFOPhase,actionSound.sound->getSampleRate());
+			auto_ptr<ALFO> LFO(gLFORegistry.createLFO(flangeLFO,actionSound.sound->getSampleRate()));
 
 			CDSPFlangeEffect flangeEffect(
 				ms_to_samples(delayTime,actionSound.sound->getSampleRate()),
 				wetGain,
 				dryGain,
-				//LFOFreq,actionSound.sound->getSampleRate(),
-				&LFO,
-				ms_to_samples(LFODepth,actionSound.sound->getSampleRate()),
-				//LFOPhase,
+				LFO.get(),
+				ms_to_samples(flangeLFO.amp,actionSound.sound->getSampleRate()),
 				feedback
 				);
 
@@ -121,9 +116,7 @@ CFlangeEffect *CFlangeEffectFactory::manufactureAction(const CActionSound &actio
 		(float)actionParameters->getDoubleParameter("Delay"),
 		(float)actionParameters->getDoubleParameter("Wet Gain"),
 		(float)actionParameters->getDoubleParameter("Dry Gain"),
-		(float)actionParameters->getDoubleParameter("LFO Freq"),
-		(float)actionParameters->getDoubleParameter("LFO Depth"),
-		(float)actionParameters->getDoubleParameter("LFO Phase"),
+		actionParameters->getLFODescription("Flange LFO"),
 		(float)actionParameters->getDoubleParameter("Feedback")
 	));
 }
