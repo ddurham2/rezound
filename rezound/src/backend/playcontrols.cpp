@@ -205,7 +205,8 @@ void jumpToPreviousCue(ASoundFileManager *soundFileManager)
 			// For each cue whose time is in front of the current play position, find the nearest one.
 			// But since the play position is always advancing, I also ignore cues that aren't more than
 			// 0.4 of a second from the play position so that a user can click faster than 0.4 of a second
-			// to go back, back, back on the cues.
+			// to go back, back, back on the cues.  (EXCEPT, if it's paused, forget about the 0.4 minimum 
+			// requirement)
 			const size_t cueCount=sound->getCueCount();
 			for(size_t t=0;t<cueCount;t++)
 			{
@@ -214,9 +215,9 @@ void jumpToPreviousCue(ASoundFileManager *soundFileManager)
 				{
 					const sample_pos_t distance=playPosition-cueTime;
 					const sample_fpos_t distanceInTime=((sample_fpos_t)distance)/(sample_fpos_t)sound->getSampleRate();
-					if(previousCueIndex==0 || (distance<smallestDistance && distanceInTime>0.4))
+					if(previousCueIndex==0 || (distance<smallestDistance && (distanceInTime>0.4 || channel->isPaused())))
 					{
-						smallestDistance=distanceInTime>0.4 ? distance : smallestDistance;
+						smallestDistance=(distanceInTime>0.4 || channel->isPaused()) ? distance : smallestDistance;
 						previousCueIndex=t+1;
 					}
 				}
