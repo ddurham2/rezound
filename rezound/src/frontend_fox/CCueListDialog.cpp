@@ -33,6 +33,8 @@
 #include "../backend/Edits/CCueAction.h"
 #include "../backend/CActionParameters.h"
 
+#include "CSoundFileManager.h"
+
 #include "CCueDialog.h" // ??? this is going to have to rename to CCueDialog.h
 
 /* TODO:
@@ -137,6 +139,8 @@ long CCueListDialog::onAddCueButton(FXObject *sender,FXSelector sel,void *ptr)
 	}
 
 	addCueActionFactory->performAction(loadedSound,&actionParameters,false);
+	gSoundFileManager->updateAfterEdit(loadedSound);
+
 	rebuildCueList();
 
 	return(1);
@@ -149,6 +153,7 @@ long CCueListDialog::onRemoveCueButton(FXObject *sender,FXSelector sel,void *ptr
 		CActionParameters actionParameters(NULL);
 		actionParameters.addUnsignedParameter("index",(size_t)cueList->getItemData(cueList->getCurrentItem()));
 		removeCueActionFactory->performAction(loadedSound,&actionParameters,false);
+		gSoundFileManager->updateAfterEdit(loadedSound);
 
 		rebuildCueList();
 	}
@@ -169,6 +174,7 @@ long CCueListDialog::onEditCueButton(FXObject *sender,FXSelector sel,void *ptr)
 		actionParameters.addBoolParameter("isAnchored",loadedSound->sound->isCueAnchored(cueIndex));
 
 		replaceCueActionFactory->performAction(loadedSound,&actionParameters,false);
+		gSoundFileManager->updateAfterEdit(loadedSound);
 
 		rebuildCueList();
 	}

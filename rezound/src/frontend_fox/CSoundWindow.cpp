@@ -758,6 +758,7 @@ long CSoundWindow::onAddCue(FXObject *sender,FXSelector sel,void *ptr)
 		actionParameters.addBoolParameter("isAnchored",false);
 
 		addCueActionFactory->performAction(loadedSound,&actionParameters,false);
+		updateFromEdit();
 	}
 	catch(exception &e)
 	{
@@ -772,6 +773,7 @@ long CSoundWindow::onRemoveCue(FXObject *sender,FXSelector sel,void *ptr)
 	CActionParameters actionParameters(NULL);
 	actionParameters.addUnsignedParameter("index",*((size_t *)ptr));
 	removeCueActionFactory->performAction(loadedSound,&actionParameters,false);
+	updateFromEdit();
 	return 1;
 }
 
@@ -787,6 +789,7 @@ long CSoundWindow::onEditCue(FXObject *sender,FXSelector sel,void *ptr)
 	actionParameters.addBoolParameter("isAnchored",loadedSound->sound->isCueAnchored(cueIndex));
 
 	replaceCueActionFactory->performAction(loadedSound,&actionParameters,false);
+	updateFromEdit();
 	return 1;
 }
 
