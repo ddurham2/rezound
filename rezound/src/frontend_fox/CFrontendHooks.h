@@ -41,6 +41,7 @@ class CRecordDialog;
 class CRawDialog;
 class COggDialog;
 class CMp3Dialog;
+class CVoxDialog;
 
 class CFrontendHooks : public AFrontendHooks
 {
@@ -67,6 +68,7 @@ public:
 	bool promptForRawParameters(RawParameters &parameters);
 	bool promptForOggCompressionParameters(OggCompressionParameters &parameters);
 	bool promptForMp3CompressionParameters(Mp3CompressionParameters &parameters);
+	bool promptForVoxParameters(VoxParameters &parameters);
 
 private:
 	FXWindow *mainWindow;
@@ -82,6 +84,7 @@ private:
 	CRawDialog *rawDialog;
 	COggDialog *oggDialog;
 	CMp3Dialog *mp3Dialog;
+	CVoxDialog *voxDialog;
 };
 
 #endif

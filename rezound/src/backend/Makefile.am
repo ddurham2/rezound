@@ -68,6 +68,7 @@ noinst_HEADERS= \
 	   CSound.h \
 	   CSoundPlayerChannel.h \
 	   CTrigger.h \
+	   CvoxSoundTranslator.h \
 	   initialize.h \
 	   license.h \
 	   main_controls.h \
@@ -110,6 +111,7 @@ libbackend_la_SOURCES= \
 			CSound.cpp  \
 			CSoundPlayerChannel.cpp \
 			CTrigger.cpp \
+			CvoxSoundTranslator.cpp \
 		        initialize.cpp \
 			main_controls.cpp \
 		        mypopen.cpp \

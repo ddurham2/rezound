@@ -140,6 +140,15 @@ public:
 	};
 	virtual bool promptForMp3CompressionParameters(Mp3CompressionParameters &parameters)=0;
 
+
+	// called when the user is loading a vox file and format parameters are needed
+	struct VoxParameters
+	{
+		unsigned channelCount;
+		unsigned sampleRate;
+
+	};
+	virtual bool promptForVoxParameters(VoxParameters &parameters)=0;
 };
 
 #endif

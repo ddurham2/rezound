@@ -387,6 +387,7 @@ void deinitializeBackend()
 #include "ClibvorbisSoundTranslator.h"
 #include "ClibaudiofileSoundTranslator.h"
 #include "ClameSoundTranslator.h"
+#include "CvoxSoundTranslator.h"
 #include "CrawSoundTranslator.h"
 #include "Cold_rezSoundTranslator.h"
 static void setupSoundTranslators()
@@ -413,6 +414,12 @@ static void setupSoundTranslators()
 	{
 		static const ClameSoundTranslator lameSoundTranslator;
 		ASoundTranslator::registeredTranslators.push_back(&lameSoundTranslator);
+	}
+
+	if(CvoxSoundTranslator::checkForApp())
+	{
+		static const CvoxSoundTranslator voxSoundTranslator;
+		ASoundTranslator::registeredTranslators.push_back(&voxSoundTranslator);
 	}
 
 	static const Cold_rezSoundTranslator old_rezSoundTranslator;

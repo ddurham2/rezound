@@ -32,6 +32,7 @@
 #include "CRawDialog.h"
 #include "COggDialog.h"
 #include "CMp3Dialog.h"
+#include "CVoxDialog.h"
 
 #include "../backend/ASoundTranslator.h"
 
@@ -59,6 +60,8 @@ CFrontendHooks::~CFrontendHooks()
 	delete newSoundDialog;
 	delete recordDialog;
 	delete oggDialog;
+	delete mp3Dialog;
+	delete voxDialog;
 }
 
 void CFrontendHooks::doSetupAfterBackendIsSetup()
@@ -92,6 +95,7 @@ void CFrontendHooks::doSetupAfterBackendIsSetup()
 	rawDialog=new CRawDialog(mainWindow);
 	oggDialog=new COggDialog(mainWindow);
 	mp3Dialog=new CMp3Dialog(mainWindow);
+	voxDialog=new CVoxDialog(mainWindow);
 	
 }
 
@@ -295,5 +299,10 @@ bool CFrontendHooks::promptForOggCompressionParameters(OggCompressionParameters 
 bool CFrontendHooks::promptForMp3CompressionParameters(Mp3CompressionParameters &parameters)
 {
 	return(mp3Dialog->show(parameters));
+}
+
+bool CFrontendHooks::promptForVoxParameters(VoxParameters &parameters)
+{
+	return(voxDialog->show(parameters));
 }
 
