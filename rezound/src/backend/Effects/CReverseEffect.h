@@ -33,6 +33,7 @@ class CReverseEffect : public AAction
 {
 public:
 	CReverseEffect(const CActionSound &actionSound);
+	virtual ~CReverseEffect();
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
@@ -48,6 +49,7 @@ class CReverseEffectFactory : public AActionFactory
 {
 public:
 	CReverseEffectFactory(AActionDialog *channelSelectDialog);
+	virtual ~CReverseEffectFactory();
 
 	CReverseEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

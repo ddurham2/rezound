@@ -50,6 +50,10 @@ CFlangeEffect::CFlangeEffect(const CActionSound &actionSound,float _delayTime,fl
 		throw(runtime_error(string(__func__)+" -- flangeLFO.amp is negative"));
 }
 
+CFlangeEffect::~CFlangeEffect()
+{
+}
+
 bool CFlangeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
 	const sample_pos_t start=actionSound.start;
@@ -123,6 +127,10 @@ void CFlangeEffect::undoActionSizeSafe(const CActionSound &actionSound)
 
 CFlangeEffectFactory::CFlangeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
 	AActionFactory("Flange","Flange Effect",false,channelSelectDialog,normalDialog,NULL)
+{
+}
+
+CFlangeEffectFactory::~CFlangeEffectFactory()
 {
 }
 

@@ -31,6 +31,7 @@ class CChangeRateEffect : public AAction
 {
 public:
 	CChangeRateEffect(const CActionSound &actionSound,const CGraphParamValueNodeList &rateCurve);
+	virtual ~CChangeRateEffect();
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
@@ -51,6 +52,7 @@ class CChangeRateEffectFactory : public AActionFactory
 {
 public:
 	CChangeRateEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog,AActionDialog *advancedDialog);
+	virtual ~CChangeRateEffectFactory();
 
 	CChangeRateEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

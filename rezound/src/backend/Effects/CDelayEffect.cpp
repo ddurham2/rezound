@@ -142,6 +142,10 @@ CSimpleDelayEffectFactory::CSimpleDelayEffectFactory(AActionDialog *channelSelec
 {
 }
 
+CSimpleDelayEffectFactory::~CSimpleDelayEffectFactory()
+{
+}
+
 CDelayEffect *CSimpleDelayEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	/*

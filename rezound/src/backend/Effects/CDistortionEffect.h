@@ -12,6 +12,7 @@ class CDistortionEffect : public AAction
 {
 public:
 	CDistortionEffect(const CActionSound &actionSound,const CGraphParamValueNodeList &_curve);
+	virtual ~CDistortionEffect();
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
@@ -26,6 +27,7 @@ class CDistortionEffectFactory : public AActionFactory
 {
 public:
 	CDistortionEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	virtual ~CDistortionEffectFactory();
 
 	CDistortionEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

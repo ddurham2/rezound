@@ -31,6 +31,10 @@ CChangeAmplitudeEffect::CChangeAmplitudeEffect(const CActionSound &actionSound,c
 {
 }
 
+CChangeAmplitudeEffect::~CChangeAmplitudeEffect()
+{
+}
+
 bool CChangeAmplitudeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
 	if(prepareForUndo)
@@ -122,6 +126,10 @@ CChangeVolumeEffectFactory::CChangeVolumeEffectFactory(AActionDialog *channelSel
 {
 }
 
+CChangeVolumeEffectFactory::~CChangeVolumeEffectFactory()
+{
+}
+
 CChangeAmplitudeEffect *CChangeVolumeEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	if(actionParameters->getGraphParameter("Volume Change").size()<2)
@@ -135,6 +143,10 @@ CChangeAmplitudeEffect *CChangeVolumeEffectFactory::manufactureAction(const CAct
 
 CGainEffectFactory::CGainEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog,AActionDialog *advancedDialog) :
 	AActionFactory("Gain","Gain",true,channelSelectDialog,normalDialog,advancedDialog)
+{
+}
+
+CGainEffectFactory::~CGainEffectFactory()
 {
 }
 

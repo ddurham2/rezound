@@ -31,6 +31,7 @@ class CFlangeEffect : public AAction
 {
 public:
 	CFlangeEffect(const CActionSound &actionSound,float delayTime,float wetGain,float dryGain,const CLFODescription &flangeLFO,float feedback);
+	virtual ~CFlangeEffect();
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
@@ -50,6 +51,7 @@ class CFlangeEffectFactory : public AActionFactory
 {
 public:
 	CFlangeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	virtual ~CFlangeEffectFactory();
 
 	CFlangeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

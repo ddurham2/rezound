@@ -50,6 +50,7 @@ class CSimpleDelayEffectFactory : public AActionFactory
 {
 public:
 	CSimpleDelayEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	virtual ~CSimpleDelayEffectFactory();
 
 	CDelayEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

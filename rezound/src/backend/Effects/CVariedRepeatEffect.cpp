@@ -21,6 +21,10 @@ CVariedRepeatEffect::CVariedRepeatEffect(const CActionSound &actionSound,const C
 		throw(runtime_error(string(__func__)+" -- _time is negative"));
 }
 
+CVariedRepeatEffect::~CVariedRepeatEffect()
+{
+}
+
 // and have options for mixing on top of what's already there
 
 bool CVariedRepeatEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
@@ -85,6 +89,10 @@ void CVariedRepeatEffect::undoActionSizeSafe(const CActionSound &actionSound)
 
 CVariedRepeatEffectFactory::CVariedRepeatEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
 	AActionFactory("Varied Repeat","Varied Repeat",false,channelSelectDialog,normalDialog,NULL)
+{
+}
+
+CVariedRepeatEffectFactory::~CVariedRepeatEffectFactory()
 {
 }
 

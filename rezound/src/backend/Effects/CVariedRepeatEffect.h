@@ -12,6 +12,7 @@ class CVariedRepeatEffect : public AAction
 {
 public:
 	CVariedRepeatEffect(const CActionSound &actionSound,const CLFODescription &LFODescription,float _time);
+	virtual ~CVariedRepeatEffect();
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
@@ -30,6 +31,7 @@ class CVariedRepeatEffectFactory : public AActionFactory
 {
 public:
 	CVariedRepeatEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	virtual ~CVariedRepeatEffectFactory();
 
 	CVariedRepeatEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

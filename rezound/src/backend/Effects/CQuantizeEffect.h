@@ -46,6 +46,7 @@ class CQuantizeEffectFactory : public AActionFactory
 {
 public:
 	CQuantizeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	virtual ~CQuantizeEffectFactory();
 
 	CQuantizeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

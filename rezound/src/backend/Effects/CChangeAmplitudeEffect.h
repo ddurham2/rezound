@@ -30,6 +30,7 @@ class CChangeAmplitudeEffect : public AAction
 {
 public:
 	CChangeAmplitudeEffect(const CActionSound &actionSound,const CGraphParamValueNodeList &volumeCurve);
+	virtual ~CChangeAmplitudeEffect();
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
@@ -45,6 +46,7 @@ class CChangeVolumeEffectFactory : public AActionFactory
 {
 public:
 	CChangeVolumeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	virtual ~CChangeVolumeEffectFactory();
 
 	CChangeAmplitudeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };
@@ -53,6 +55,7 @@ class CGainEffectFactory : public AActionFactory
 {
 public:
 	CGainEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog,AActionDialog *advancedDialog);
+	virtual ~CGainEffectFactory();
 
 	CChangeAmplitudeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

@@ -26,6 +26,10 @@ CReverseEffect::CReverseEffect(const CActionSound &actionSound) :
 {
 }
 
+CReverseEffect::~CReverseEffect()
+{
+}
+
 bool CReverseEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
 	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
@@ -131,9 +135,13 @@ void CReverseEffect::undoActionSizeSafe(const CActionSound &actionSound)
 
 
 // --------------------------------------------------
-//
+
 CReverseEffectFactory::CReverseEffectFactory(AActionDialog *channelSelectDialog) :
 	AActionFactory("Reverse","Reverse",false,channelSelectDialog,NULL,NULL,false)
+{
+}
+
+CReverseEffectFactory::~CReverseEffectFactory()
 {
 }
 

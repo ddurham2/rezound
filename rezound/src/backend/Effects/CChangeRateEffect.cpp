@@ -51,6 +51,10 @@ CChangeRateEffect::CChangeRateEffect(const CActionSound &actionSound,const CGrap
 	}
 }
 
+CChangeRateEffect::~CChangeRateEffect()
+{
+}
+
 #include <stdio.h> // ??? just for the printf below
 bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
@@ -231,6 +235,10 @@ void CChangeRateEffect::undoActionSizeSafe(const CActionSound &actionSound)
 
 CChangeRateEffectFactory::CChangeRateEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog,AActionDialog *advancedDialog) :
 	AActionFactory("Change Rate","Change Rate",true,channelSelectDialog,normalDialog,advancedDialog)
+{
+}
+
+CChangeRateEffectFactory::~CChangeRateEffectFactory()
 {
 }
 

@@ -105,6 +105,10 @@ CQuantizeEffectFactory::CQuantizeEffectFactory(AActionDialog *channelSelectDialo
 {
 }
 
+CQuantizeEffectFactory::~CQuantizeEffectFactory()
+{
+}
+
 CQuantizeEffect *CQuantizeEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	return(new CQuantizeEffect(

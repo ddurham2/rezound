@@ -11,6 +11,10 @@ CDistortionEffect::CDistortionEffect(const CActionSound &actionSound,const CGrap
 {
 }
 
+CDistortionEffect::~CDistortionEffect()
+{
+}
+
 bool CDistortionEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
 	const sample_pos_t start=actionSound.start;
@@ -76,9 +80,13 @@ void CDistortionEffect::undoActionSizeSafe(const CActionSound &actionSound)
 
 
 // --------------------------------------------------
-//
+
 CDistortionEffectFactory::CDistortionEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
 	AActionFactory("Distortion","Distortion",false,channelSelectDialog,normalDialog,NULL)
+{
+}
+
+CDistortionEffectFactory::~CDistortionEffectFactory()
 {
 }
 
