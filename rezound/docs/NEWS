@@ -1,0 +1,21 @@
+
+
+ReZound-0.1.1alpha
+	- Made changes so ReZound would compile with gcc 3.x.  However, one guy
+	  has gcc3.1 on SuSE and one file would not compile on his, but would 
+	  compile on for me on Mandrake with gcc3.1.  So, I am not sure what the
+	  problem is there
+	- Made some changes to move toward ReZound running on FreeBSD
+	- Suppressed most unnecessary compiler warnings
+	- Added check for big endian platforms since ReZound isn't tested there 
+	  yet
+	- Various minor fixes/enhancements
+
+
+ReZound-0.1.0alpha
+	Very First Release -- The primary goal for this alpha stage is to obtain 
+	feedback on what problems ReZound may have compiling on different linux 
+	distros and such. Please report any problems you may have with the 
+	configure/compiling process through the bug reporting system on 
+	http://sourceforge.net/projects/rezound 
+
