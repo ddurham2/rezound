@@ -22,9 +22,6 @@
 
 #include <stdlib.h>
 
-#include <istring>
-
-
 FXDEFMAP(COggDialog) COggDialogMap[]=
 {
 //	Message_Type			ID					Message_Handler

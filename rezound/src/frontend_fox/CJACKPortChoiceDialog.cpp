@@ -22,9 +22,6 @@
 
 #include <stdlib.h>
 
-#include <istring>
-
-
 FXDEFMAP(CJACKPortChoiceDialog) CJACKPortChoiceDialogMap[]=
 {
 //	Message_Type			ID					Message_Handler

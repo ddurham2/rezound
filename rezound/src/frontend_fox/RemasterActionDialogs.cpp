@@ -21,6 +21,8 @@
 #include "RemasterActionDialogs.h"
 #include "../backend/unit_conv.h"
 
+#include <istring>
+
 #include "CFOXIcons.h"
 
 #include "../backend/CActionSound.h"

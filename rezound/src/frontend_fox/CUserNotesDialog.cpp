@@ -23,8 +23,6 @@
 #include "../backend/CLoadedSound.h"
 #include "../backend/CSound.h"
 
-#include <istring>
-
 CUserNotesDialog *gUserNotesDialog=NULL;
 
 
