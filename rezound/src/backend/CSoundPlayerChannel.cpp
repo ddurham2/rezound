@@ -53,6 +53,16 @@
  *
  * - the JJJ comments indicate something I don't really like about the way I'm mutexing
  *
+ * - Some mutex stuff is pretty kooky.. It might not even work well on a SMP machine.  Things
+ *   need to be redesigned (again) to accomadate several shared resources:
+ *   	routing info
+ *   	allocated RPrebufferChunk objects
+ *	prebufferPosition
+ *	CSound's size 
+ *
+ * 	At least one thing:
+ *	mainly prebufferChunk() doesn't keep mutexes locked the whole time, it gets a chunk
+ *	with getPrebufferChunk() and uses it while updateAfterEdit() runs
  */
 
 CSoundPlayerChannel::CSoundPlayerChannel(ASoundPlayer *_player,CSound *_sound) :
@@ -446,12 +456,10 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 		return;
 	}
 	
-	const CSound &sound=*this->sound;
-
 	const size_t deviceIndex=0; // ??? would loop through all devices later (probably actually in a more inner loop than here)
 
 	// heed the sampling rate of the sound also when adjusting the play position (??? only have device 0 for now)
-	const sample_fpos_t tPlaySpeed= fabs(playSpeedForMixer)  *  (((sample_fpos_t)sound.getSampleRate())/((sample_fpos_t)player->devices[deviceIndex].sampleRate));
+	const sample_fpos_t tPlaySpeed= fabs(playSpeedForMixer)  *  (((sample_fpos_t)sound->getSampleRate())/((sample_fpos_t)player->devices[deviceIndex].sampleRate));
 
 	CMutexLocker l2(routingInfoMutex);	// protect routing info (??? should probably do a try-lock and bail if not locked to avoid problems with JACK)
 
@@ -577,7 +585,19 @@ bool CSoundPlayerChannel::prebufferChunk()
 	const sample_pos_t skipMiddleMargin=(sample_pos_t)(gSkipMiddleMarginSeconds*sound->getSampleRate());
 	bool queueUpAGap=false;
 
-	RPrebufferedChunk *chunk=getPrebufferChunk();
+	// fill chunk with 1 chunk's worth of audio
+	sound->lockSize();
+
+	RPrebufferedChunk *chunk;
+	try
+	{
+		chunk=getPrebufferChunk();
+	}
+	catch(...)
+	{
+		sound->unlockSize();
+		throw;
+	}
 
 	sample_t *buffer=chunk->data;
 	size_t bufferUsed=0;
@@ -585,8 +605,6 @@ bool CSoundPlayerChannel::prebufferChunk()
 
 	sample_pos_t pos1=0,pos2=0; // declared out here incase I need their values when queuing up a gap
 
-	// fill chunk with 1 chunk's worth of audio
-	sound->lockSize();
 	const unsigned channelCount=sound->getChannelCount();
 	try
 	{
@@ -762,6 +780,7 @@ bool CSoundPlayerChannel::prebufferChunk()
 
 	if(queueUpAGap)
 	{ // we've been flagged to insert a gap of silence after the audio chunk
+		CMutexLocker l(prebufferPositionMutex); // protect if updateAfterEdit has just cleared the pipe
 
 		// queue up the gap signal chunk
 
@@ -836,17 +855,18 @@ void CSoundPlayerChannel::updateAfterEdit(const vector<int16_t> &restoreOutputRo
 	if(prebufferedChunks[0]->channelCount!=sound->getChannelCount() || prebufferedChunks[0]->sampleRate!=sound->getSampleRate())
 	{ // channel count or sample rate has changed
 		stop();
-		CMutexLocker l(prebufferPositionMutex); // lock so that prebufferChunk won't be running
+		CMutexLocker l(prebufferPositionMutex); // lock so that prebufferChunk won't be running (mostly)
+		CMutexLocker l2(routingInfoMutex); // lock so that mixOntoBuffer won't be running
 
 		// re-create prebuffer chunks
 		destroyPrebufferedChunks();
 		createPrebufferedChunks();
 
+
 		// restore/recreate routing information
 		TPoolAccesser<int16_t,CSound::PoolFile_t> a=sound->getGeneralDataAccesser<int16_t>("OutputRoutes_v2");
 		if(restoreOutputRoutes.size()>1)
 		{ // restore from what was given, trusting that it was saved from the information when it had the current number of channels
-			CMutexLocker l2(routingInfoMutex);
 			a.clear();
 			a.append(restoreOutputRoutes.size());
 			for(size_t t=0;t<restoreOutputRoutes.size();t++)
@@ -854,7 +874,6 @@ void CSoundPlayerChannel::updateAfterEdit(const vector<int16_t> &restoreOutputRo
 		}
 		else
 		{ // recreate the default routing
-			CMutexLocker l2(routingInfoMutex);
 			a.clear();
 			createInitialOutputRoute();
 		}
