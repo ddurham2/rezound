@@ -64,12 +64,14 @@ public:
 	void addSlider(void *parent,const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton);
 	void addNumericTextEntry(void *parent,const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsTipText="");
 	void addStringTextEntry(void *parent,const string name,const string initialValue,const string unitsTipText="");
+		FXTextParamValue *getTextParam(const string name);
 	void addDiskEntityEntry(void *parent,const string name,const string intialEntityName,FXDiskEntityParamValue::DiskEntityTypes entityType,const string tipText="");
 		/* is isEditable then the value is an integer of the actual value, if isEditable is false, then the integer value is the index of the items */
 	void addComboTextEntry(void *parent,const string name,const vector<string> &items,const string tipText="",bool isEditable=false);
 		FXComboTextParamValue *getComboText(const string name); // so a derived class can set the values
 	void addCheckBoxEntry(void *parent,const string name,const bool checked,const string tipText="");
 	void addGraph(void *parent,const string name,const string horzAxisLabel,const string horzUnits,FXGraphParamValue::f_at_xs horzInterpretValue,FXGraphParamValue::f_at_xs horzUninterpretValue,const string vertAxisLabel,const string vertUnits,FXGraphParamValue::f_at_xs vertInterpretValue,FXGraphParamValue::f_at_xs vertUninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar);
+		FXGraphParamValue *getGraphParam(const string name); // so a derived class can set some ranges
 	void addGraphWithWaveform(void *parent,const string name,const string vertAxisLabel,const string vertUnits,FXGraphParamValue::f_at_xs vertInterpretValue,FXGraphParamValue::f_at_xs vertUninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar);
 	void addLFO(void *parent,const string name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs);
 
@@ -83,7 +85,7 @@ public:
 	//void setControlHeight(size_t index,const size_t height);
 	//const size_t getControlHeight(size_t index) const;
 
-	void setTipText(size_t index,const string tipText);
+	void setTipText(const string name,const string tipText);
 
 	// don't like this, but it will do for now... someday I've got to come up with just how to specify placement of the added wigets
 	void setMargin(FXint margin); // will add a margin the left and right of all the controls
@@ -155,6 +157,8 @@ private:
 
 	void buildPresetLists();
 	void buildPresetList(CNestedDataFile *f,FXList *list);
+
+	unsigned findParamByName(const string name) const;
 
 };
 

@@ -88,7 +88,7 @@ CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title
 			if(gSysPresetsFile->getArraySize((getTitle()+DOT+"names").text())>0)
 			{
 				// native preset stuff
-				FXPacker *listFrame=new FXPacker(presetsFrame,FRAME_SUNKEN|FRAME_THICK|LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y, 0,0,200,0, 0,0,0,0, 0,0); // had to do this because FXList won't take that frame style
+				FXPacker *listFrame=new FXPacker(presetsFrame,FRAME_SUNKEN|FRAME_THICK|LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y, 0,0,210,0, 0,0,0,0, 0,0); // had to do this because FXList won't take that frame style
 					nativePresetList=new FXList(listFrame,4,this,ID_NATIVE_PRESET_LIST,LIST_BROWSESELECT | LAYOUT_FILL_X|LAYOUT_FILL_Y);
 				new FXButton(presetsFrame,"&Use\tOr Double-Click an Item in the List",NULL,this,ID_NATIVE_PRESET_BUTTON);
 			}
@@ -100,7 +100,7 @@ CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title
 		}
 
 		// user preset stuff
-		FXPacker *listFrame=new FXPacker(presetsFrame,FRAME_SUNKEN|FRAME_THICK|LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y, 0,0,200,0, 0,0,0,0, 0,0); // had to do this because FXList won't take that frame style
+		FXPacker *listFrame=new FXPacker(presetsFrame,FRAME_SUNKEN|FRAME_THICK|LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y, 0,0,210,0, 0,0,0,0, 0,0); // had to do this because FXList won't take that frame style
 			userPresetList=new FXList(listFrame,4,this,ID_USER_PRESET_LIST,LIST_BROWSESELECT | LAYOUT_FILL_X|LAYOUT_FILL_Y);
 		FXPacker *buttonGroup=new FXVerticalFrame(presetsFrame);
 			new FXButton(buttonGroup,"&Use\tOr Double-Click an Item in the List",NULL,this,ID_USER_PRESET_USE_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
@@ -192,6 +192,16 @@ void CActionParamDialog::addStringTextEntry(void *parent,const string name,const
 	retValueConvs.push_back(NULL);
 }
 
+FXTextParamValue *CActionParamDialog::getTextParam(const string name)
+{
+	for(size_t t=0;t<parameters.size();t++)
+	{
+		if((parameters[t].first==ptStringText || parameters[t].first==ptNumericText) && ((FXTextParamValue *)parameters[t].second)->getTitle()==name)
+			return (FXTextParamValue *)parameters[t].second;
+	}
+	throw runtime_error(string(__func__)+" -- no text param found named "+name);
+}
+
 void CActionParamDialog::addDiskEntityEntry(void *parent,const string name,const string initialEntityName,FXDiskEntityParamValue::DiskEntityTypes entityType,const string tipText)
 {
 	if(parent==NULL)
@@ -218,9 +228,9 @@ FXComboTextParamValue *CActionParamDialog::getComboText(const string name)
 	for(size_t t=0;t<parameters.size();t++)
 	{
 		if(parameters[t].first==ptComboText && ((FXComboTextParamValue *)parameters[t].second)->getTitle()==name)
-			return((FXComboTextParamValue *)parameters[t].second);
+			return (FXComboTextParamValue *)parameters[t].second;
 	}
-	return(NULL);
+	throw runtime_error(string(__func__)+" -- no combo text param found named "+name);
 }
 
 
@@ -253,6 +263,16 @@ void CActionParamDialog::addGraphWithWaveform(void *parent,const string name,con
 	graph->setVertParameters(vertAxisLabel,vertUnits,vertInterpretValue,vertUninterpretValue);
 	parameters.push_back(make_pair(ptGraphWithWaveform,(void *)graph));
 	retValueConvs.push_back(optRetValueConv);
+}
+
+FXGraphParamValue *CActionParamDialog::getGraphParam(const string name)
+{
+	for(size_t t=0;t<parameters.size();t++)
+	{
+		if((parameters[t].first==ptGraph || parameters[t].first==ptGraphWithWaveform) && ((FXGraphParamValue *)parameters[t].second)->getTitle()==name)
+			return (FXGraphParamValue *)parameters[t].second;
+	}
+	throw runtime_error(string(__func__)+" -- no graph param found named "+name);
 }
 
 void CActionParamDialog::addLFO(void *parent,const string name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs)
@@ -309,7 +329,7 @@ void CActionParamDialog::setValue(size_t index,const double value)
 		*/
 
 	default:
-		throw(runtime_error(string(__func__)+" -- unhandled or unimplemented parameter type: "+istring(parameters[index].first)));
+		throw runtime_error(string(__func__)+" -- unhandled or unimplemented parameter type: "+istring(parameters[index].first));
 	}
 }
 
@@ -349,7 +369,7 @@ void CActionParamDialog::setControlHeight(size_t index,const size_t height)
 		break;
 
 	default:
-		throw(runtime_error(string(__func__)+" -- unhandled or unimplemented parameter type: "+istring(parameters[index].first)));
+		throw runtime_error(string(__func__)+" -- unhandled or unimplemented parameter type: "+istring(parameters[index].first));
 	}
 }
 
@@ -381,13 +401,15 @@ const size_t CActionParamDialog::getControlHeight(size_t index) const
 		return ((FXGraphParamValue *)parameters[index].second)->getHeight();
 
 	default:
-		throw(runtime_error(string(__func__)+" -- unhandled or unimplemented parameter type: "+istring(parameters[index].first)));
+		throw runtime_error(string(__func__)+" -- unhandled or unimplemented parameter type: "+istring(parameters[index].first));
 	}
 }
 #endif
 
-void CActionParamDialog::setTipText(size_t index,const string tipText)
+void CActionParamDialog::setTipText(const string name,const string tipText)
 {
+	const unsigned index=findParamByName(name);
+	
 	switch(parameters[index].first)
 	{
 	case ptConstant:
@@ -425,7 +447,7 @@ void CActionParamDialog::setTipText(size_t index,const string tipText)
 */
 
 	default:
-		throw(runtime_error(string(__func__)+" -- unhandled or unimplemented parameter type: "+istring(parameters[index].first)));
+		throw runtime_error(string(__func__)+" -- unhandled or unimplemented parameter type: "+istring(parameters[index].first));
 	}
 }
 
@@ -538,7 +560,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 				break;
 
 			default:
-				throw(runtime_error(string(__func__)+" -- unhandled parameter type: "+istring(parameters[t].first)));
+				throw runtime_error(string(__func__)+" -- unhandled parameter type: "+istring(parameters[t].first));
 			}
 		}
 
@@ -557,7 +579,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 	getApp()->repaint(); // force redraws from disappearing dialogs now
 #endif
 
-	return(retval);
+	return retval;
 }
 
 long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void *ptr)
@@ -580,7 +602,7 @@ long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void 
 		if(listBox->getCurrentItem()<0)
 		{
 			gStatusComm->beep();
-			return(1);
+			return 1;
 		}
 		
 		const string name=string(listBox->getItemText(listBox->getCurrentItem()).text()).substr(4);
@@ -621,7 +643,7 @@ long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void 
 				break;
 
 			default:
-				throw(runtime_error(string(__func__)+" -- unhandled parameter type: "+istring(parameters[t].first)));
+				throw runtime_error(string(__func__)+" -- unhandled parameter type: "+istring(parameters[t].first));
 			}
 		}
 	}
@@ -630,7 +652,7 @@ long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void 
 		Error(e.what());
 	}
 
-	return(1);
+	return 1;
 }
 
 long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void *ptr)
@@ -667,7 +689,7 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 			{
 				alreadyExists=true;
 				if(Question("Overwrite Existing Preset '"+name+"'",yesnoQues)!=yesAns)
-					return(1);
+					return 1;
 			}
 
 			for(unsigned t=0;t<parameters.size();t++)
@@ -705,7 +727,7 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 					break;
 
 				default:
-					throw(runtime_error(string(__func__)+" -- unhandled parameter type: "+istring(parameters[t].first)));
+					throw runtime_error(string(__func__)+" -- unhandled parameter type: "+istring(parameters[t].first));
 				}
 			}
 
@@ -724,7 +746,7 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 		}
 	}
 
-	return(1);
+	return 1;
 }
 
 long CActionParamDialog::onPresetRemoveButton(FXObject *sender,FXSelector sel,void *ptr)
@@ -748,7 +770,7 @@ long CActionParamDialog::onPresetRemoveButton(FXObject *sender,FXSelector sel,vo
 	else
 		gStatusComm->beep();
 
-	return(1);
+	return 1;
 }
 
 void CActionParamDialog::buildPresetLists()
@@ -789,4 +811,55 @@ void CActionParamDialog::buildPresetList(CNestedDataFile *f,FXList *list)
 	}
 }
 
+
+unsigned CActionParamDialog::findParamByName(const string name) const
+{
+	for(unsigned t=0;t<parameters.size();t++)
+	{
+		switch(parameters[t].first)
+		{
+		case ptConstant:
+			if(((FXConstantParamValue *)parameters[t].second)->getTitle()==name)
+				return t;
+			break;
+
+		case ptNumericText:
+		case ptStringText:
+			if(((FXTextParamValue *)parameters[t].second)->getTitle()==name)
+				return t;
+			break;
+
+		case ptDiskEntity:
+			if(((FXDiskEntityParamValue *)parameters[t].second)->getTitle()==name)
+				return t;
+			break;
+
+		case ptComboText:
+			if(((FXComboTextParamValue *)parameters[t].second)->getTitle()==name)
+				return t;
+			break;
+
+		case ptCheckBox:
+			if(((FXCheckBoxParamValue *)parameters[t].second)->getTitle()==name)
+				return t;
+			break;
+
+		case ptGraph:
+		case ptGraphWithWaveform:
+			if(((FXGraphParamValue *)parameters[t].second)->getTitle()==name)
+				return t;
+			break;
+
+		case ptLFO:
+			if(((FXLFOParamValue *)parameters[t].second)->getTitle()==name)
+				return t;
+			break;
+
+		default:
+			throw runtime_error(string(__func__)+" -- unhandled parameter type: "+istring(parameters[t].first));
+		}
+	}
+
+	throw runtime_error(string(__func__)+" -- no param found named "+name);
+}
 
