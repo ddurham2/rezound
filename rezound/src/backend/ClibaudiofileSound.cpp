@@ -144,10 +144,16 @@ void ClibaudiofileSound::loadSound(const string _filename)
 		// ??? make sure it's not more than MAX_LENGTH
 			// ??? just truncate the length
 		size=afGetFrameCount(h,AF_DEFAULT_TRACK);
+		if(size<0)
+			throw(runtime_error(string(__func__)+" -- libaudiofile reports the data length as "+istring(size)));
 
-		const sample_pos_t fileSize=ost::Path(filename).getSize(false);
-		if(size<0 || fileSize<size)
-			throw(runtime_error(string(__func__)+" -- SGI's libaudiofile is not seeing this as a corrupt file -- it thinks the data length is "+istring(size)+" yet when the file is only "+istring(fileSize)+" bytes"));
+		const sample_pos_t fileSize=ost::Path(filename).getSize(false)/(channelCount*sizeof(sample_t));
+		if(fileSize<size)
+		{
+			Warning("libaudiofile reports that "+filename+" contains "+istring(size)+" samples yet the file is not large enough to contain that many samples.\nLoading what can be loaded.");
+			size=fileSize;
+			//throw(runtime_error(string(__func__)+" -- libaudiofile is not seeing this as a corrupt file -- it thinks the data length is "+istring(size)+" yet when the file is only "+istring(fileSize)+" bytes"));
+		}
 
 		createWorkingPoolFile(filename);
 
@@ -209,7 +215,12 @@ void ClibaudiofileSound::loadSound(const string _filename)
 			if(chunkSize!=0)
 			{
 				if(afReadFrames(h,AF_DEFAULT_TRACK,(void *)buffer,chunkSize)!=chunkSize)
-					throw(runtime_error(string(__func__)+" -- error reading audio data -- "+errorMessage));
+				{
+					//throw(runtime_error(string(__func__)+" -- error reading audio data -- "+errorMessage));
+					Error("error reading audio data from "+filename+" -- "+errorMessage+" -- keeping what was read");
+					break;
+				}
+
 				for(unsigned c=0;c<channelCount;c++)
 				{
 					for(int i=0;i<chunkSize;i++)
