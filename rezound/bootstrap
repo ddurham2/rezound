@@ -26,6 +26,9 @@
 ## should anything be changed, It's really of no use to The common used 
 ## who wants to do a one-time build. 
 ##
+## In order to run this, the automake, autoconf, and libtool packages must
+## be install on the system.
+##
 ## passing the --strip option will remove all auto-generated files from the
 ## directory tree
 
