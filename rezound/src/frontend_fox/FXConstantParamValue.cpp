@@ -234,15 +234,15 @@ void FXConstantParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
 {
 	const string key=prefix+DOT+getTitle()+DOT;
 
-	if(f.keyExists((key+"value").c_str()))
-		prvSetValue(atof(f.getValue((key+"value").c_str()).c_str()));
-	else
-		prvSetValue(defaultValue);
+	const double value=f.keyExists((key+"value").c_str()) ? atof(f.getValue((key+"value").c_str()).c_str()) : defaultValue;
+	const int scalar=f.keyExists((key+"scalar").c_str()) ? atoi(f.getValue((key+"scalar").c_str()).c_str()) : initScalar;
 
-	if(f.keyExists((key+"scalar").c_str()))
-		setScalar(atoi(f.getValue((key+"scalar").c_str()).c_str()));
-	else
-		setScalar(initScalar);
+	// do it twice.. because setting one before the other may cause a range problem.. by the second time, the range shouldn't be a problem
+	prvSetValue(value);
+	setScalar(scalar);
+
+	prvSetValue(value);
+	setScalar(scalar);
 
 }
 
