@@ -306,6 +306,7 @@ if(dataPos==getLength()-1)
 
 		RPeakChunk ret;
 
+#warning see about using a const CPeakChunkRezPoolAccesser here
 		CPeakChunkRezPoolAccesser &peakChunkAccesser=*(peakChunkAccessers[channel]);
 
 		// don't attempt to read from skipped chunks that don't exist
@@ -321,6 +322,7 @@ if(dataPos==getLength()-1)
 			// if dirty, then recalculate for this chunk
 			if(p.dirty)
 			{
+				//printf("recalculating peak chunk data for: %lld\n",(long long)t);
 				sample_pos_t start=t*PEAK_CHUNK_SIZE;
 				sample_pos_t end=start+PEAK_CHUNK_SIZE;
 				if(start<getLength())
@@ -354,7 +356,6 @@ if(dataPos==getLength()-1)
 				ret.min=min(ret.min,p.min);
 				ret.max=max(ret.max,p.max);
 			}
-
 		}
 		
 		return(ret);
