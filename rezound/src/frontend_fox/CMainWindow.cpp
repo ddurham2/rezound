@@ -1044,6 +1044,9 @@ void CMainWindow::createMenus()
 		}
 		else
 		{
+			// determine number of FXMenuCaption will fit on the screen (msh -> menu screen height)
+			const FXuint msh=(getApp()->getRootWindow()->getHeight()/(7+getApp()->getNormalFont()->getFontHeight()))-1;
+
 			if(LADSPAActionFactories.size()>20)
 			{
 				// add a submenu grouped by manufacturer
@@ -1061,7 +1064,12 @@ void CMainWindow::createMenus()
 
 					for(map<const string,map<const string,CLADSPAActionFactory *> >::iterator i=makerGrouped.begin();i!=makerGrouped.end();i++)
 					{
+#if REZ_FOX_VERSION<10142
 						FXMenuPane *submenu=new FXMenuPane(this);
+#else
+						// if menu will be vertically taller than the screen, then make the menu scrollable
+						FXMenuPane *submenu=i->second.size()>msh ? new FXScrollPane(this,msh) : new FXMenuPane(this);
+#endif
 						new FXMenuCascade(makerMenu,i->first.c_str(),NULL,submenu);
 	
 						for(map<const string,CLADSPAActionFactory *>::iterator t=i->second.begin();t!=i->second.end();t++)
@@ -1083,7 +1091,12 @@ void CMainWindow::createMenus()
 
 				for(map<const char,map<const string,CLADSPAActionFactory *> >::iterator i=nameGrouped.begin();i!=nameGrouped.end();i++)
 				{
+#if REZ_FOX_VERSION<10142
 					FXMenuPane *submenu=new FXMenuPane(this);
+#else
+					// if menu will be vertically taller than the screen, then make the menu scrollable
+					FXMenuPane *submenu=i->second.size()>msh ? new FXScrollPane(this,msh) : new FXMenuPane(this);
+#endif
 					new FXMenuCascade(menu,string(&(i->first),1).c_str(),NULL,submenu);
 
 					for(map<const string,CLADSPAActionFactory *>::iterator t=i->second.begin();t!=i->second.end();t++)
