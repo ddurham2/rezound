@@ -73,7 +73,7 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 		(new FXText(t,NULL,0,TEXT_READONLY|TEXT_WORDWRAP|LAYOUT_FILL_X|LAYOUT_FILL_Y))->setText("*** PLEASE READ ***
 
    Welcome to this beta stage release of ReZound.  The primary goal for this beta stage is to get feedback on what problems ReZound has running as well as adding a (not-so-well) defined list of features that I would like ReZound to have before calling it '1.0'.  Please report any problems you may have with the configure/compiling/running process to me through the bug report link on the next tab in this about dialog.
-   There are not a huge number of features yet, but they are growing.  I plan to write a brief document on how to implement new actions/effects/edits.  I specifically designed ReZound so that it would be easy to create new actions.
+   Features are growing.  I plan eventually to write a brief document on how to implement new actions/effects/edits.  I specifically designed ReZound so that it would be easy to create new actions.
    If you have any suggestions about the UI or other functionality then please report them also to me through either the support link or feature request link on the next tab.  Thank you for giving ReZound a try.  I hope your experience is a good one and that you will find this application useful when you need to edit audio as I find it useful.
 
    -- Davy
