@@ -18,20 +18,16 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __TMemoryPipe_H__
+#ifndef __TMemoryPipe_H__CPP
 #error this file should not be included or compiled except from within the TMemoryPipe.h header file
 #endif
 
 #include <string.h>
-#include <stdio.h> // for fprintf(stderr,...)
 
 #include <stdexcept>
 #include <algorithm>
 
 #include <istring>
-
-#include <AThread.h>
-
 
 template <class type> TMemoryPipe<type>::TMemoryPipe(int _pipeSize) :
 	readOpened(false),

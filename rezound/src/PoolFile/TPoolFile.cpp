@@ -20,8 +20,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __TPoolFile_H__
-#error This file must be included through TPoolFile.h NOT compiled with a project file or a makefile.
+#ifndef __TPoolFile_H__CPP
+#error this file must be included through TPoolFile.h NOT compiled on its own
 #endif
 
 /* ??? 

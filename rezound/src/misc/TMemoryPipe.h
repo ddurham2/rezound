@@ -46,7 +46,6 @@
 template <class type> class TMemoryPipe
 {
 public:
-
 	TMemoryPipe(int pipeSize);
 	virtual ~TMemoryPipe();
 
@@ -54,10 +53,7 @@ public:
 	int peek(type *buffer,int size,bool block);
 	int skip(int size,bool block);
 
-	/* 
-	 * the write method always blocks, unless kickOutWriter is called
-	 * in which it will return the number of elements that were written 
-	 */
+	 // the write method always blocks
 	int write(const type *buffer,int size);
 
 	void closeRead();
@@ -70,7 +66,6 @@ public:
 	void clear(); // remove all data in pipe
 
 private:
-
 	void open();
 
 	bool readOpened;
@@ -91,7 +86,9 @@ private:
 
 };
 
+#define __TMemoryPipe_H__CPP
 #include "TMemoryPipe.cpp"
+#undef __TMemoryPipe_H__CPP
 
 #endif
 

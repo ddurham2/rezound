@@ -371,6 +371,8 @@ private:
 
 };
 
+#define __TPoolFile_H__CPP
 #include "TPoolFile.cpp"
+#undef __TPoolFile_H__CPP
 
 #endif
