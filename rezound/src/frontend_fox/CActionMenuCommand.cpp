@@ -40,7 +40,11 @@ FXDEFMAP(CActionMenuCommand) CActionMenuCommandMap[]=
 
 	FXMAPFUNC(SEL_COMMAND,			CActionMenuCommand::ID_HOTKEY,	CActionMenuCommand::onCommand),
 
+#if REZ_FOX_VERSION<10304
 	FXMAPFUNC(SEL_UPDATE,			FXWindow::ID_QUERY_TIP,		CActionMenuCommand::onQueryTip)
+#else
+	FXMAPFUNC(SEL_QUERY_TIP,		0,				CActionMenuCommand::onQueryTip)
+#endif
 };
 
 FXIMPLEMENT(CActionMenuCommand,FXMenuCommand,CActionMenuCommandMap,ARRAYNUMBER(CActionMenuCommandMap))
