@@ -27,6 +27,7 @@ class ASoundFileManager;
 
 #include <string>
 #include <vector>
+#include <map>
 
 class CLoadedSound;
 class CNestedDataFile;
@@ -73,7 +74,13 @@ public:
 
 	// is called after an action is performed to update the screen or when the title
 	// bar and other status information of a loaded sound window needs to be modified
-	virtual void updateAfterEdit(CLoadedSound *sound=NULL)=0; // if NULL, then use the active one
+	virtual void updateAfterEdit(CLoadedSound *sound=NULL,bool undoing=false)=0; // if NULL, then use the active one
+
+	// these two methods should be implemented to get and set the positional information (i.e. zoom
+	// factors and scroll positions) of the window with the given sound (or the active one if sound
+	// is not passed in).
+	virtual const map<string,string> getPositionalInfo(CLoadedSound *sound=NULL)=0; // would be 'const' but have to call getActive()
+	virtual void setPositionalInfo(const map<string,string> positionalInfo,CLoadedSound *sound=NULL)=0;
 
 	// returns a list of error messages
 	const vector<string> loadFilesInRegistry();

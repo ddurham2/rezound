@@ -377,13 +377,13 @@ int CSoundWindow::getZoomDecimalPlaces() const
 	return places;
 }
 
-void CSoundWindow::updateFromEdit()
+void CSoundWindow::updateFromEdit(bool undoing)
 {
 	// see if the number of channels changed
 	if(loadedSound->sound->getChannelCount()!=muteButtonCount)
 		recreateMuteButtons(true);
 
-	waveView->updateFromEdit();
+	waveView->updateFromEdit(undoing);
 	updateAllStatusInfo();
 }
 
@@ -632,11 +632,16 @@ void CSoundWindow::horzZoomOutFull()
 	onHorzZoomDialChange(NULL,0,NULL);
 }
 
+void CSoundWindow::updateHorzZoomDial()
+{
+	horzZoomDial->setValue(zoomFactorToZoomDial(waveView->getHorzZoom()));
+	horzZoomValueLabel->setText(("  "+istring(horzZoomDial->getValue()/(double)ZOOM_MUL,3,1,true)+"%").c_str());
+}
+
 void CSoundWindow::horzZoomSelectionFit()
 {
 	waveView->showAmount((sample_fpos_t)(loadedSound->channel->getStopPosition()-loadedSound->channel->getStartPosition()+1)/(sample_fpos_t)loadedSound->sound->getSampleRate(),loadedSound->channel->getStartPosition(),10);
-	horzZoomDial->setValue(zoomFactorToZoomDial(waveView->getHorzZoom()));
-	horzZoomValueLabel->setText(("  "+istring(horzZoomDial->getValue()/(double)ZOOM_MUL,3,1,true)+"%").c_str());
+	updateHorzZoomDial();
 }
 
 void CSoundWindow::redraw()
@@ -678,6 +683,12 @@ long CSoundWindow::onBothZoomDialMinusIndClick(FXObject *sender,FXSelector sel,v
 	onVertZoomDialChange(NULL,0,NULL);
 
 	return 1;
+}
+
+void CSoundWindow::updateVertZoomDial()
+{
+				// inverse of expr in onVertZoomDialChange
+	vertZoomDial->setValue((FXint)(100*ZOOM_MUL*pow(waveView->getVertZoom(),2.0)));
 }
 
 
@@ -794,3 +805,30 @@ long CSoundWindow::onCloseWindow(FXObject *sender,FXSelector sel,void *ptr)
 	gSoundFileManager->close(ASoundFileManager::ctSaveYesNoCancel,loadedSound);
 	return 1;
 }
+
+const map<string,string> CSoundWindow::getPositionalInfo() const
+{
+	map<string,string> info;
+	info["horzZoom"]=istring(waveView->getHorzZoom());
+	info["vertZoom"]=istring(waveView->getVertZoom());
+	info["horzOffset"]=istring(waveView->getHorzOffset());
+	info["vertOffset"]=istring(waveView->getVertOffset());
+	return info;
+}
+
+void CSoundWindow::setPositionalInfo(const map<string,string> _info)
+{
+	map<string,string> info=_info; /* making copy so ["asdf"] can be called on the map */
+	if(!info.empty())
+	{
+		waveView->setHorzZoom(atof(info["horzZoom"].c_str()),FXWaveCanvas::hrtNone);
+		waveView->setVertZoom(atof(info["vertZoom"].c_str()));
+		waveView->setHorzOffset(atoll(info["horzOffset"].c_str()));
+		waveView->setVertOffset(atoi(info["vertOffset"].c_str()));
+
+		updateVertZoomDial();
+		updateHorzZoomDial();
+		updateAllStatusInfo();
+	}
+}
+

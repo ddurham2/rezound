@@ -27,6 +27,7 @@
 #include <fox/fx.h>
 
 #include <string>
+#include <map>
 
 #include "FXRezWaveView.h"
 
@@ -55,7 +56,7 @@ public:
 
 	virtual void show();
 
-	void updateFromEdit();
+	void updateFromEdit(bool undoing=false);
 
 	void centerStartPos();
 	void centerStopPos();
@@ -144,6 +145,10 @@ public:
 	long onShowCueList(FXObject *sender,FXSelector sel,void *ptr);
 
 	long onCloseWindow(FXObject *sender,FXSelector sel,void *ptr);
+
+	// called by CSoundFileManager::same_method_name()
+	const map<string,string> getPositionalInfo() const;
+	void setPositionalInfo(const map<string,string> info);
 
 	string shuttleControlScalar;
 	bool shuttleControlSpringBack;
@@ -243,6 +248,9 @@ private:
 	void updatePlayPositionStatusInfo();
 
 	void changeHorzZoom(double horzZoom,FXWaveCanvas::HorzRecenterTypes horzRecenterType=FXWaveCanvas::hrtNone); // 0 -> 1
+
+	void updateVertZoomDial();
+	void updateHorzZoomDial();
 };
 
 

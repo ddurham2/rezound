@@ -93,11 +93,14 @@ FXWaveCanvas::~FXWaveCanvas()
 {
 }
 
-void FXWaveCanvas::updateFromEdit()
+void FXWaveCanvas::updateFromEdit(bool undoing)
 {
 	const double hZoom=getHorzZoom();
 	lastHorzZoom=-1.0;
-	setHorzZoom(hZoom,hrtLeftEdge);
+	if(undoing)
+		setHorzZoom(hZoom,hrtNone);
+	else
+		setHorzZoom(hZoom,hrtLeftEdge);
 
 	const double origVertZoomFactor=vertZoomFactor;
 	const double vZoom=getVertZoom();

@@ -135,7 +135,7 @@ CSoundWindow *CSoundFileManager::getSoundWindow(CLoadedSound *loadedSound)
 	throw runtime_error(string(__func__)+" -- given soundToUpdate was not found in the list of loaded sounds");
 }
 
-void CSoundFileManager::updateAfterEdit(CLoadedSound *soundToUpdate)
+void CSoundFileManager::updateAfterEdit(CLoadedSound *soundToUpdate,bool undoing)
 {
 	CSoundWindow *activeSoundWindow=getActiveWindow();
 
@@ -145,8 +145,39 @@ void CSoundFileManager::updateAfterEdit(CLoadedSound *soundToUpdate)
 
 	if(activeSoundWindow)
 	{
-		activeSoundWindow->updateFromEdit();
+		activeSoundWindow->updateFromEdit(undoing);
 		mainWindow->rebuildSoundWindowList();
+	}
+}
+
+const map<string,string> CSoundFileManager::getPositionalInfo(CLoadedSound *sound)
+{
+	map<string,string> info;
+	CSoundWindow *activeSoundWindow=getActiveWindow();
+
+	// however, if soundToUpdate was passed, then find that sound window
+	if(sound!=NULL)
+		activeSoundWindow=getSoundWindow(sound);
+
+	if(activeSoundWindow)
+		info=activeSoundWindow->getPositionalInfo();
+
+	return info;
+
+}
+
+void CSoundFileManager::setPositionalInfo(const map<string,string> positionalInfo,CLoadedSound *sound)
+{
+	if(!positionalInfo.empty())
+	{
+		CSoundWindow *activeSoundWindow=getActiveWindow();
+	
+		// however, if soundToUpdate was passed, then find that sound window
+		if(sound!=NULL)
+			activeSoundWindow=getSoundWindow(sound);
+
+		if(activeSoundWindow)
+			activeSoundWindow->setPositionalInfo(positionalInfo);
 	}
 }
 

@@ -27,6 +27,10 @@
 #include "CActionSound.h"
 #include "AActionDialog.h"
 
+// for frontend positional information saving
+#include "CActionParameters.h"
+#include "ASoundFileManager.h"
+
 #include "settings.h"
 
 
@@ -81,6 +85,11 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 			}
 
 			action=manufactureAction(actionSound,actionParameters);
+
+			// save zoom factors and scroll positions so the frontend can restore this upon undo
+			if(actionParameters->getSoundFileManager()!=NULL)
+				action->positionalInfo=actionParameters->getSoundFileManager()->getPositionalInfo();
+
 			ret&=action->doAction(loadedSound->channel,true,willResize,crossfadeEdgesIsApplicable);
 
 			/*

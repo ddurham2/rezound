@@ -174,6 +174,32 @@ void FXRezWaveView::setVertZoom(double v)
 	waveScrollArea->setVertZoom(v);
 }
 
+double FXRezWaveView::getVertZoom() const
+{
+	return waveScrollArea->getVertZoom();
+}
+
+void FXRezWaveView::setHorzOffset(const sample_pos_t offset)
+{
+	waveScrollArea->setHorzOffset(offset);
+}
+
+sample_pos_t FXRezWaveView::getHorzOffset() const
+{
+	return waveScrollArea->getHorzOffset();
+}
+
+void FXRezWaveView::setVertOffset(const int offset)
+{
+	waveScrollArea->setVertOffset(offset);
+}
+
+int FXRezWaveView::getVertOffset() const
+{
+	return waveScrollArea->getVertOffset();
+}
+
+
 void FXRezWaveView::drawPlayPosition(sample_pos_t dataPosition,bool justErasing,bool scrollToMakeVisible)
 {
 	waveScrollArea->drawPlayPosition(dataPosition,justErasing,scrollToMakeVisible);
@@ -208,9 +234,9 @@ void FXRezWaveView::updateFromSelectionChange(FXWaveCanvas::LastChangedPositions
 	waveScrollArea->updateFromSelectionChange(lastChangedPosition);
 }
 
-void FXRezWaveView::updateFromEdit()
+void FXRezWaveView::updateFromEdit(bool undoing)
 {
-	waveScrollArea->updateFromEdit();
+	waveScrollArea->updateFromEdit(undoing);
 	update();
 	rulerPanel->update();
 }

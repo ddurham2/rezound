@@ -98,9 +98,9 @@ FXWaveScrollArea::~FXWaveScrollArea()
 {
 }
 
-void FXWaveScrollArea::updateFromEdit()
+void FXWaveScrollArea::updateFromEdit(bool undoing)
 {
-	canvas->updateFromEdit();
+	canvas->updateFromEdit(undoing);
 
 	setPosition(-canvas->getHorzOffset(),-canvas->getVertOffset());
 	layout();
@@ -154,6 +154,34 @@ void FXWaveScrollArea::setVertZoom(double v)
 
 	vertical->repaint(); // cause it's a little slow to update on its own
 }
+
+double FXWaveScrollArea::getVertZoom() const
+{
+	return canvas->getVertZoom();
+}
+
+void FXWaveScrollArea::setHorzOffset(sample_pos_t offset)
+{
+	//canvas->setHorzOffset(offset); will get called by calling setPosition()
+	setPosition(-offset,getYPosition());
+}
+
+sample_pos_t FXWaveScrollArea::getHorzOffset() const
+{
+	return canvas->getHorzOffset();
+}
+
+void FXWaveScrollArea::setVertOffset(int offset)
+{
+	//canvas->setVertOffset(offset); will get called by calling setPosition()
+	setPosition(getXPosition(),-offset);
+}
+
+int FXWaveScrollArea::getVertOffset() const
+{
+	return canvas->getVertOffset();
+}
+
 
 void FXWaveScrollArea::drawPlayPosition(sample_pos_t dataPosition,bool justErasing,bool scrollToMakeVisible)
 {

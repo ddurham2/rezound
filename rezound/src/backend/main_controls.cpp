@@ -366,8 +366,13 @@ void undo(ASoundFileManager *soundFileManager)
 				s->actions.pop();
 
 				a->undoAction(s->channel);
+
+				// restore the frontend position information as part of undoing the action
+				soundFileManager->setPositionalInfo(a->positionalInfo);
+
 				delete a; // ??? what ever final logic is implemented for undo, it should probably push it onto a redo stack
-				soundFileManager->updateAfterEdit();
+
+				soundFileManager->updateAfterEdit(NULL,true);
 			}
 			else
 				gStatusComm->beep();

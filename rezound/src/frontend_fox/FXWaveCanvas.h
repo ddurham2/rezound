@@ -49,7 +49,7 @@ public:
 	FXWaveCanvas(CLoadedSound* loadedSound, FXComposite* p, FXObject* tgt=NULL, FXSelector sel=0, FXuint opts=FRAME_NORMAL, FXint x=0, FXint y=0, FXint w=0, FXint h=0);
 	virtual ~FXWaveCanvas();
 
-	void updateFromEdit();
+	void updateFromEdit(bool undoing=false);
 
 	enum LastChangedPositions { lcpNone,lcpStart,lcpStop };
 
