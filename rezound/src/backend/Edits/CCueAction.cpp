@@ -66,7 +66,12 @@ CAddCueActionFactory::CAddCueActionFactory(AActionDialog *normalDialog) :
 
 CAddCueAction *CAddCueActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CAddCueAction(actionSound,actionParameters->getStringParameter(0),actionParameters->getSamplePosParameter(1),actionParameters->getBoolParameter(2)));
+	return(new CAddCueAction(
+		actionSound,
+		actionParameters->getStringParameter("name"),
+		actionParameters->getSamplePosParameter("position"),
+		actionParameters->getBoolParameter("isAnchored")
+	));
 }
 
 
@@ -108,7 +113,10 @@ CRemoveCueActionFactory::CRemoveCueActionFactory() :
 
 CRemoveCueAction *CRemoveCueActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CRemoveCueAction(actionSound,actionParameters->getUnsignedParameter(0)));
+	return(new CRemoveCueAction(
+		actionSound,
+		actionParameters->getUnsignedParameter("index")
+	));
 }
 
 
@@ -158,7 +166,13 @@ CReplaceCueActionFactory::CReplaceCueActionFactory(AActionDialog *normalDialog) 
 
 CReplaceCueAction *CReplaceCueActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CReplaceCueAction(actionSound,actionParameters->getUnsignedParameter(0),actionParameters->getStringParameter(1),actionParameters->getSamplePosParameter(2),actionParameters->getBoolParameter(3)));
+	return(new CReplaceCueAction(
+		actionSound,
+		actionParameters->getUnsignedParameter("index"),
+		actionParameters->getStringParameter("name"),
+		actionParameters->getSamplePosParameter("position"),
+		actionParameters->getBoolParameter("isAnchored")
+	));
 }
 
 

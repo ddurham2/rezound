@@ -65,20 +65,18 @@ bool CCueDialog::show(CActionSound *_actionSound,CActionParameters *actionParame
 {
 	actionSound=_actionSound;
 
-	unsigned offset=actionParameters->getParameterCount()-3;
+	cueTime=actionParameters->getSamplePosParameter("position");
+	isAnchored=actionParameters->getBoolParameter("isAnchored");
 
-	cueTime=actionParameters->getSamplePosParameter(offset+1);
-	isAnchored=actionParameters->getBoolParameter(offset+2);
-
-	cueNameTextBox->setText(actionParameters->getStringParameter(offset+0).c_str());
-	cueTimeTextBox->setText(actionSound->sound->getTimePosition(actionParameters->getSamplePosParameter(offset+1),5,false).c_str());
-	isAnchoredCheckButton->setCheck(actionParameters->getBoolParameter(offset+2));
+	cueNameTextBox->setText(actionParameters->getStringParameter("name").c_str());
+	cueTimeTextBox->setText(actionSound->sound->getTimePosition(actionParameters->getSamplePosParameter("position"),5,false).c_str());
+	isAnchoredCheckButton->setCheck(actionParameters->getBoolParameter("isAnchored"));
 
 	if(execute(PLACEMENT_CURSOR))
 	{
-		actionParameters->setStringParameter(offset+0,cueName);
-		actionParameters->setSamplePosParameter(offset+1,cueTime);
-		actionParameters->setBoolParameter(offset+2,isAnchored);
+		actionParameters->setStringParameter("name",cueName);
+		actionParameters->setSamplePosParameter("position",cueTime);
+		actionParameters->setBoolParameter("isAnchored",isAnchored);
 		return(true);
 	}
 	return(false);

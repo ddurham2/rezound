@@ -69,7 +69,11 @@ CSwapChannelsEditFactory::CSwapChannelsEditFactory(AActionDialog *normalDialog) 
 
 CSwapChannelsEdit *CSwapChannelsEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CSwapChannelsEdit(actionSound,actionParameters->getUnsignedParameter(0),actionParameters->getUnsignedParameter(1)));
+	return(new CSwapChannelsEdit(
+		actionSound,
+		actionParameters->getUnsignedParameter("Channel A"),
+		actionParameters->getUnsignedParameter("Channel B")
+	));
 }
 
 bool CSwapChannelsEditFactory::doPreActionSetup(CLoadedSound *loadedSound)

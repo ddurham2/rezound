@@ -237,7 +237,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 					if(retValueConvs[t]!=NULL)
 						ret=retValueConvs[t](ret);
 
-					actionParameters->addDoubleParameter(ret);	
+					actionParameters->addDoubleParameter(slider->getTitle(),ret);
 				}
 				break;
 
@@ -249,7 +249,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 					if(retValueConvs[t]!=NULL)
 						ret=retValueConvs[t](ret);
 
-					actionParameters->addDoubleParameter(ret);	
+					actionParameters->addDoubleParameter(textEntry->getTitle(),ret);	
 				}
 				break;
 
@@ -258,7 +258,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 					FXComboTextParamValue *comboTextEntry=(FXComboTextParamValue *)parameters[t].second;
 					FXint ret=comboTextEntry->getValue();
 
-					actionParameters->addUnsignedParameter((unsigned)ret);	
+					actionParameters->addUnsignedParameter(comboTextEntry->getTitle(),(unsigned)ret);	
 				}
 				break;
 
@@ -267,7 +267,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 					FXCheckBoxParamValue *checkBoxEntry=(FXCheckBoxParamValue *)parameters[t].second;
 					bool ret=checkBoxEntry->getValue();
 
-					actionParameters->addBoolParameter(ret);	
+					actionParameters->addBoolParameter(checkBoxEntry->getTitle(),ret);	
 				}
 				break;
 
@@ -282,7 +282,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 							nodes[i].value=retValueConvs[t](nodes[i].value);
 					}
 
-					actionParameters->addGraphParameter(nodes);
+					actionParameters->addGraphParameter(graph->getTitle(),nodes);
 				}
 				break;
 

@@ -174,15 +174,15 @@ CCompressorAction *CCompressorActionFactory::manufactureAction(const CActionSoun
 {
 	return(new CCompressorAction(
 		actionSound,
-		actionParameters->getDoubleParameter(0),	// windowTime
-		actionParameters->getDoubleParameter(1),	// threshold
-		actionParameters->getDoubleParameter(2),	// ratio
-		actionParameters->getDoubleParameter(3),	// attackTime
-		actionParameters->getDoubleParameter(4),	// releaseTime
-		actionParameters->getDoubleParameter(5),	// inputGain
-		actionParameters->getDoubleParameter(6),	// outputGain
-		true//actionParameters->getBoolParameter(7) ??? need to implement a checkbox parameter on the frontend
-		));
+		actionParameters->getDoubleParameter("Window Time"),
+		actionParameters->getDoubleParameter("Threshold"),
+		actionParameters->getDoubleParameter("Ratio"),
+		actionParameters->getDoubleParameter("Attack Time"),
+		actionParameters->getDoubleParameter("Release Time"),
+		actionParameters->getDoubleParameter("Input Gain"),
+		actionParameters->getDoubleParameter("Output Gain"),
+		true//actionParameters->getBoolParameter("Lock Channels") ??? need to implement a checkbox parameter on the frontend --> I've done this now.. now I need to use it!
+	));
 }
 
 

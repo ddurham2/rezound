@@ -118,13 +118,13 @@ CFlangeEffectFactory::CFlangeEffectFactory(AActionDialog *channelSelectDialog,AA
 CFlangeEffect *CFlangeEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	return(new CFlangeEffect(actionSound,
-		(float)actionParameters->getDoubleParameter(0),	// delay time
-		(float)actionParameters->getDoubleParameter(1),	// wet gain
-		(float)actionParameters->getDoubleParameter(2),	// dry gain
-		(float)actionParameters->getDoubleParameter(3),	// LFO freq
-		(float)actionParameters->getDoubleParameter(4),	// LFO depth
-		(float)actionParameters->getDoubleParameter(5),	// LFO phase
-		(float)actionParameters->getDoubleParameter(6)	// feedback
+		(float)actionParameters->getDoubleParameter("Delay"),
+		(float)actionParameters->getDoubleParameter("Wet Gain"),
+		(float)actionParameters->getDoubleParameter("Dry Gain"),
+		(float)actionParameters->getDoubleParameter("LFO Freq"),
+		(float)actionParameters->getDoubleParameter("LFO Depth"),
+		(float)actionParameters->getDoubleParameter("LFO Phase"),
+		(float)actionParameters->getDoubleParameter("Feedback")
 	));
 }
 

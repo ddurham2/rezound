@@ -159,9 +159,9 @@ CDelayEffect *CSimpleDelayEffectFactory::manufactureAction(const CActionSound &a
 
 
 	// need to be able to get vectors from actionParameters
-	float a=actionParameters->getDoubleParameter(0);
-	float b=actionParameters->getDoubleParameter(1);
-	float c=actionParameters->getDoubleParameter(2);
+	float a=actionParameters->getDoubleParameter("Delay");
+	float b=actionParameters->getDoubleParameter("Gain");
+	float c=actionParameters->getDoubleParameter("Feedback");
 
 	return(new CDelayEffect(actionSound,
 		1,

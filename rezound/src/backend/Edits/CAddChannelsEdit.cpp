@@ -63,7 +63,11 @@ CAddChannelsEditFactory::CAddChannelsEditFactory(AActionDialog *normalDialog) :
 
 CAddChannelsEdit *CAddChannelsEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CAddChannelsEdit(actionSound,actionParameters->getUnsignedParameter(0),actionParameters->getUnsignedParameter(1)));
+	return(new CAddChannelsEdit(
+		actionSound,
+		actionParameters->getUnsignedParameter("Insert Where"),
+		actionParameters->getUnsignedParameter("Insert Count")
+	));
 }
 
 #include "../CLoadedSound.h"

@@ -141,7 +141,12 @@ CSinglePoleLowpassFilterFactory::CSinglePoleLowpassFilterFactory(AActionDialog *
 
 CSinglePoleFilter *CSinglePoleLowpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CSinglePoleFilter(actionSound,CSinglePoleFilter::ftLowpass,(float)actionParameters->getDoubleParameter(0),(float)actionParameters->getDoubleParameter(1)));
+	return(new CSinglePoleFilter(
+		actionSound,
+		CSinglePoleFilter::ftLowpass,
+		(float)actionParameters->getDoubleParameter("Gain"),
+		(float)actionParameters->getDoubleParameter("Cutoff Frequency")
+	));
 }
 
 
@@ -152,7 +157,12 @@ CSinglePoleHighpassFilterFactory::CSinglePoleHighpassFilterFactory(AActionDialog
 
 CSinglePoleFilter *CSinglePoleHighpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CSinglePoleFilter(actionSound,CSinglePoleFilter::ftHighpass,(float)actionParameters->getDoubleParameter(0),(float)actionParameters->getDoubleParameter(1)));
+	return(new CSinglePoleFilter(
+		actionSound,
+		CSinglePoleFilter::ftHighpass,
+		(float)actionParameters->getDoubleParameter("Gain"),
+		(float)actionParameters->getDoubleParameter("Cutoff Frequency")
+	));
 }
 
 
@@ -163,7 +173,13 @@ CBandpassFilterFactory::CBandpassFilterFactory(AActionDialog *channelSelectDialo
 
 CSinglePoleFilter *CBandpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CSinglePoleFilter(actionSound,CSinglePoleFilter::ftBandpass,(float)actionParameters->getDoubleParameter(0),(float)actionParameters->getDoubleParameter(1),(float)actionParameters->getDoubleParameter(2)));
+	return(new CSinglePoleFilter(
+		actionSound,
+		CSinglePoleFilter::ftBandpass,
+		(float)actionParameters->getDoubleParameter("Gain"),
+		(float)actionParameters->getDoubleParameter("Center Frequency"),
+		(float)actionParameters->getDoubleParameter("Band Width")
+	));
 }
 
 
@@ -174,7 +190,13 @@ CNotchFilterFactory::CNotchFilterFactory(AActionDialog *channelSelectDialog,AAct
 
 CSinglePoleFilter *CNotchFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CSinglePoleFilter(actionSound,CSinglePoleFilter::ftNotch,(float)actionParameters->getDoubleParameter(0),(float)actionParameters->getDoubleParameter(1),(float)actionParameters->getDoubleParameter(2)));
+	return(new CSinglePoleFilter(
+		actionSound,
+		CSinglePoleFilter::ftNotch,
+		(float)actionParameters->getDoubleParameter("Gain"),
+		(float)actionParameters->getDoubleParameter("Center Frequency"),
+		(float)actionParameters->getDoubleParameter("Band Width")
+	));
 }
 
 

@@ -54,7 +54,7 @@ CBandpassFilterDialog::CBandpassFilterDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Bandpass Filter")
 {
 	addSlider("Gain","x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
-	addSlider("Cutoff Frequency","Hz",interpretValue_filter,uninterpretValue_filter,NULL,1000.0,5,100000,10000,false);
+	addSlider("Center Frequency","Hz",interpretValue_filter,uninterpretValue_filter,NULL,1000.0,5,100000,10000,false);
 	addSlider("Band Width","Hz",interpretValue_filter,uninterpretValue_filter,NULL,500.0,5,100000,1000,false);
 }
 
@@ -64,7 +64,7 @@ CNotchFilterDialog::CNotchFilterDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Notch Filter")
 {
 	addSlider("Gain","x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
-	addSlider("Cutoff Frequency","Hz",interpretValue_filter,uninterpretValue_filter,NULL,1000.0,5,100000,10000,false);
+	addSlider("Center Frequency","Hz",interpretValue_filter,uninterpretValue_filter,NULL,1000.0,5,100000,10000,false);
 	addSlider("Band Width","Hz",interpretValue_filter,uninterpretValue_filter,NULL,500.0,5,100000,1000,false);
 }
 

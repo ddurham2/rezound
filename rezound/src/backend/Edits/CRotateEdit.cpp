@@ -76,7 +76,11 @@ CRotateLeftEditFactory::CRotateLeftEditFactory(AActionDialog *channelSelectDialo
 
 CRotateEdit *CRotateLeftEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CRotateEdit(actionSound,CRotateEdit::rtLeft,actionParameters->getDoubleParameter(0)));
+	return(new CRotateEdit(
+		actionSound,
+		CRotateEdit::rtLeft,
+		actionParameters->getDoubleParameter("Amount")
+	));
 }
 
 
@@ -88,5 +92,9 @@ CRotateRightEditFactory::CRotateRightEditFactory(AActionDialog *channelSelectDia
 
 CRotateEdit *CRotateRightEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CRotateEdit(actionSound,CRotateEdit::rtRight,actionParameters->getDoubleParameter(0)));
+	return(new CRotateEdit(
+		actionSound,
+		CRotateEdit::rtRight,
+		actionParameters->getDoubleParameter("Amount")
+	));
 }

@@ -118,10 +118,10 @@ CChangeVolumeEffectFactory::CChangeVolumeEffectFactory(AActionDialog *channelSel
 
 CChangeAmplitudeEffect *CChangeVolumeEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	if(actionParameters->getGraphParameter(0).size()<2)
+	if(actionParameters->getGraphParameter("Volume Change").size()<2)
 		throw(runtime_error(string(__func__)+" -- graph parameter 0 contains less than 2 nodes"));
 
-	return(new CChangeAmplitudeEffect(actionSound,actionParameters->getGraphParameter(0)));
+	return(new CChangeAmplitudeEffect(actionSound,actionParameters->getGraphParameter("Volume Change")));
 }
 
 
@@ -134,10 +134,16 @@ CGainEffectFactory::CGainEffectFactory(AActionDialog *channelSelectDialog,AActio
 
 CChangeAmplitudeEffect *CGainEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	if(actionParameters->getGraphParameter(0).size()<2)
+	string parameterName;
+	if(actionParameters->containsParameter("Gain")) // it's just that the frontend uses two different names for the same parameter because the dialog is different
+		parameterName="Gain";
+	else
+		parameterName="Gain Curve";
+
+	if(actionParameters->getGraphParameter(parameterName).size()<2)
 		throw(runtime_error(string(__func__)+" -- graph parameter 0 contains less than 2 nodes"));
 
-	return(new CChangeAmplitudeEffect(actionSound,actionParameters->getGraphParameter(0)));
+		return(new CChangeAmplitudeEffect(actionSound,actionParameters->getGraphParameter(parameterName)));
 }
 
 

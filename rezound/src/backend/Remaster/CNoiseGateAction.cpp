@@ -121,12 +121,13 @@ CNoiseGateActionFactory::CNoiseGateActionFactory(AActionDialog *channelSelectDia
 
 CNoiseGateAction *CNoiseGateActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CNoiseGateAction(actionSound,
-		actionParameters->getDoubleParameter(0),
-		actionParameters->getDoubleParameter(1),
-		actionParameters->getDoubleParameter(2),
-		actionParameters->getDoubleParameter(3)
-		));
+	return(new CNoiseGateAction(
+		actionSound,
+		actionParameters->getDoubleParameter("Window Time"),
+		actionParameters->getDoubleParameter("Threshold"),
+		actionParameters->getDoubleParameter("Gain Attack Time"),
+		actionParameters->getDoubleParameter("Gain Release Time")
+	));
 }
 
 

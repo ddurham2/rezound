@@ -74,6 +74,9 @@ CInsertSilenceEditFactory::CInsertSilenceEditFactory(AActionDialog *channelSelec
 
 CInsertSilenceEdit *CInsertSilenceEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CInsertSilenceEdit(actionSound,actionParameters->getDoubleParameter(0)));
+	return(new CInsertSilenceEdit(
+		actionSound,
+		actionParameters->getDoubleParameter("Length")
+	));
 }
 

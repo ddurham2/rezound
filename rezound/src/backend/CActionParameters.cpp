@@ -33,35 +33,34 @@ CActionParameters::CActionParameters(const CActionParameters &src)
 {
 	for(unsigned t=0;t<src.parameters.size();t++)
 	{
-		parameterTypes.push_back(src.parameterTypes[t]);
-		switch(parameterTypes[parameterTypes.size()-1])
+		switch(src.parameters[t].first)
 		{
 		case ptBool:
-			parameters.push_back(new bool(*((bool *)src.parameters[t])));
+			parameters.push_back(parameter_t(src.parameters[t].first, new bool(*((bool *)src.parameters[t].second))));
 			break;
 
 		case ptString:
-			parameters.push_back(new string(*((string *)src.parameters[t])));
+			parameters.push_back(parameter_t(src.parameters[t].first,new string(*((string *)src.parameters[t].second))));
 			break;
 
 		case ptUnsigned:
-			parameters.push_back(new unsigned(*((unsigned *)src.parameters[t])));
+			parameters.push_back(parameter_t(src.parameters[t].first,new unsigned(*((unsigned *)src.parameters[t].second))));
 			break;
 
 		case ptSamplePos:
-			parameters.push_back(new sample_pos_t(*((sample_pos_t *)src.parameters[t])));
+			parameters.push_back(parameter_t(src.parameters[t].first,new sample_pos_t(*((sample_pos_t *)src.parameters[t].second))));
 			break;
 
 		case ptDouble:
-			parameters.push_back(new double(*((double *)src.parameters[t])));
+			parameters.push_back(parameter_t(src.parameters[t].first,new double(*((double *)src.parameters[t].second))));
 			break;
 
 		case ptGraph:
-			parameters.push_back(new CGraphParamValueNodeList(*((CGraphParamValueNodeList *)src.parameters[t])));
+			parameters.push_back(parameter_t(src.parameters[t].first,new CGraphParamValueNodeList(*((CGraphParamValueNodeList *)src.parameters[t].second))));
 			break;
 
 		default:
-			throw(string(__func__)+" -- internal error -- unhandled parameter type: "+istring(parameterTypes[parameterTypes.size()-1]));
+			throw(string(__func__)+" -- internal error -- unhandled parameter type: "+istring(src.parameters[t].first));
 		}
 	}
 }
@@ -75,37 +74,36 @@ void CActionParameters::clear()
 {
 	for(unsigned t=0;t<parameters.size();t++)
 	{
-		switch(parameterTypes[t])
+		switch(parameters[t].first)
 		{
 		case ptBool:
-			delete ((bool *)parameters[t]);
+			delete ((bool *)parameters[t].second);
 			break;
 
 		case ptString:
-			delete ((string *)parameters[t]);
+			delete ((string *)parameters[t].second);
 			break;
 
 		case ptUnsigned:
-			delete ((unsigned *)parameters[t]);
+			delete ((unsigned *)parameters[t].second);
 			break;
 
 		case ptSamplePos:
-			delete ((sample_pos_t *)parameters[t]);
+			delete ((sample_pos_t *)parameters[t].second);
 			break;
 
 		case ptDouble:
-			delete ((double *)parameters[t]);
+			delete ((double *)parameters[t].second);
 			break;
 
 		case ptGraph:
-			delete ((CGraphParamValueNodeList *)parameters[t]);
+			delete ((CGraphParamValueNodeList *)parameters[t].second);
 			break;
 
 		default:
-			throw(string(__func__)+" -- internal error -- unhandled parameter type: "+istring(parameterTypes[parameterTypes.size()-1]));
+			throw(string(__func__)+" -- internal error -- unhandled parameter type: "+istring(parameters[t].first));
 		}
 	}
-	parameterTypes.clear();
 	parameters.clear();
 }
 
@@ -114,60 +112,177 @@ unsigned CActionParameters::getParameterCount() const
 	return(parameters.size());
 }
 
-void CActionParameters::addBoolParameter(const bool v)
+const bool CActionParameters::containsParameter(const string name) const
 {
-	parameterTypes.push_back(ptBool);
-	parameters.push_back(new bool(v));
+	return(parameterNames.find(name)!=parameterNames.end());
 }
 
-void CActionParameters::addStringParameter(const string v)
-{
-	parameterTypes.push_back(ptString);
-	parameters.push_back(new string(v));
+#define VERIFY_IS_NEW(name)	 												\
+{																\
+	const map<string,unsigned>::const_iterator iter=parameterNames.find((name));						\
+	if(iter!=parameterNames.end())												\
+		throw(runtime_error(string(__func__)+" -- parameter already exists found with name '"+string(name)+"'"));	\
 }
 
-void CActionParameters::addUnsignedParameter(const unsigned v)
+void CActionParameters::addBoolParameter(const string name,const bool v)
 {
-	parameterTypes.push_back(ptUnsigned);
-	parameters.push_back(new unsigned(v));
+	VERIFY_IS_NEW(name)
+	parameterNames[name]=parameters.size();
+	parameters.push_back(parameter_t(ptBool,new bool(v)));
 }
 
-void CActionParameters::addSamplePosParameter(const sample_pos_t v)
+void CActionParameters::addStringParameter(const string name,const string v)
 {
-	parameterTypes.push_back(ptSamplePos);
-	parameters.push_back(new sample_pos_t(v));
+	VERIFY_IS_NEW(name)
+	parameterNames[name]=parameters.size();
+	parameters.push_back(parameter_t(ptString,new string(v)));
 }
 
-void CActionParameters::addDoubleParameter(const double v)
+void CActionParameters::addUnsignedParameter(const string name,const unsigned v)
 {
-	parameterTypes.push_back(ptDouble);
-	parameters.push_back(new double(v));
+	VERIFY_IS_NEW(name)
+	parameterNames[name]=parameters.size();
+	parameters.push_back(parameter_t(ptUnsigned,new unsigned(v)));
 }
 
-void CActionParameters::addGraphParameter(const CGraphParamValueNodeList &v)
+void CActionParameters::addSamplePosParameter(const string name,const sample_pos_t v)
 {
-	parameterTypes.push_back(ptGraph);
-	parameters.push_back(new CGraphParamValueNodeList(v));
+	VERIFY_IS_NEW(name)
+	parameterNames[name]=parameters.size();
+	parameters.push_back(parameter_t(ptSamplePos,new sample_pos_t(v)));
 }
+
+void CActionParameters::addDoubleParameter(const string name,const double v)
+{
+	VERIFY_IS_NEW(name)
+	parameterNames[name]=parameters.size();
+	parameters.push_back(parameter_t(ptDouble,new double(v)));
+}
+
+void CActionParameters::addGraphParameter(const string name,const CGraphParamValueNodeList &v)
+{
+	VERIFY_IS_NEW(name)
+	parameterNames[name]=parameters.size();
+	parameters.push_back(parameter_t(ptGraph,new CGraphParamValueNodeList(v)));
+}
+
+
+
+#define PARM_INDEX_BY_NAME(name,index) 										\
+{														\
+	const map<string,unsigned>::const_iterator iter=parameterNames.find((name));				\
+	if(iter==parameterNames.end())										\
+		throw(runtime_error(string(__func__)+" -- parameter not found with name '"+string(name)+"'"));	\
+	index=iter->second;											\
+}
+
+const bool CActionParameters::getBoolParameter(const string name) const
+{
+	unsigned i;
+	PARM_INDEX_BY_NAME(name,i)
+	return(getBoolParameter(i));
+}
+
+const string CActionParameters::getStringParameter(const string name) const
+{
+	unsigned i;
+	PARM_INDEX_BY_NAME(name,i)
+	return(getStringParameter(i));
+}
+
+const unsigned CActionParameters::getUnsignedParameter(const string name) const
+{
+	unsigned i;
+	PARM_INDEX_BY_NAME(name,i)
+	return(getUnsignedParameter(i));
+}
+
+const sample_pos_t CActionParameters::getSamplePosParameter(const string name) const
+{
+	unsigned i;
+	PARM_INDEX_BY_NAME(name,i)
+	return(getSamplePosParameter(i));
+}
+
+const double CActionParameters::getDoubleParameter(const string name) const
+{
+	unsigned i;
+	PARM_INDEX_BY_NAME(name,i)
+	return(getDoubleParameter(i));
+}
+
+const CGraphParamValueNodeList CActionParameters::getGraphParameter(const string name) const
+{
+	unsigned i;
+	PARM_INDEX_BY_NAME(name,i)
+	return(getGraphParameter(i));
+}
+
+
+void CActionParameters::setBoolParameter(const string name,const bool v)
+{
+	unsigned i;
+	PARM_INDEX_BY_NAME(name,i)
+	setBoolParameter(i,v);
+}
+
+void CActionParameters::setStringParameter(const string name,const string v)
+{
+	unsigned i;
+	PARM_INDEX_BY_NAME(name,i)
+	setStringParameter(i,v);
+}
+
+void CActionParameters::setUnsignedParameter(const string name,const unsigned v)
+{
+	unsigned i;
+	PARM_INDEX_BY_NAME(name,i)
+	setUnsignedParameter(i,v);
+}
+
+void CActionParameters::setSamplePosParameter(const string name,const sample_pos_t v)
+{
+	unsigned i;
+	PARM_INDEX_BY_NAME(name,i)
+	setSamplePosParameter(i,v);
+}
+
+void CActionParameters::setDoubleParameter(const string name,const double v)
+{
+	unsigned i;
+	PARM_INDEX_BY_NAME(name,i)
+	setDoubleParameter(i,v);
+}
+
+void CActionParameters::setGraphParameter(const string name,const CGraphParamValueNodeList &v)
+{
+	unsigned i;
+	PARM_INDEX_BY_NAME(name,i)
+	setGraphParameter(i,v);
+}
+
+
+
+
 
 const bool CActionParameters::getBoolParameter(const unsigned i) const
 {
 	if(i>=parameters.size())
 		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(i)+" -- caller probably didn't pass enough parameters to the action"));
-	if(parameterTypes[i]!=ptBool)
+	if(parameters[i].first!=ptBool)
 		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptBool"));
 	else
-		return(*((bool *)parameters[i]));
+		return(*((bool *)parameters[i].second));
 }
 
 const string CActionParameters::getStringParameter(const unsigned i) const
 {
 	if(i>=parameters.size())
 		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(i)+" -- caller probably didn't pass enough parameters to the action"));
-	if(parameterTypes[i]!=ptString)
+	if(parameters[i].first!=ptString)
 		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptString"));
 	else
-		return(*((string *)parameters[i]));
+		return(*((string *)parameters[i].second));
 }
 
 const unsigned CActionParameters::getUnsignedParameter(const unsigned i) const
@@ -175,10 +290,10 @@ const unsigned CActionParameters::getUnsignedParameter(const unsigned i) const
 	if(i>=parameters.size())
 		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(i)+" -- caller probably didn't pass enough parameters to the action"));
 
-	if(parameterTypes[i]==ptUnsigned)
-		return(*((unsigned *)parameters[i]));
-	else if(parameterTypes[i]==ptDouble)
-		return((unsigned)(*((double *)parameters[i])));
+	if(parameters[i].first==ptUnsigned)
+		return(*((unsigned *)parameters[i].second));
+	else if(parameters[i].first==ptDouble)
+		return((unsigned)(*((double *)parameters[i].second)));
 	else
 		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptUnsigned nor ptDouble"));
 }
@@ -187,20 +302,20 @@ const sample_pos_t CActionParameters::getSamplePosParameter(const unsigned i) co
 {
 	if(i>=parameters.size())
 		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(i)+" -- caller probably didn't pass enough parameters to the action"));
-	if(parameterTypes[i]!=ptSamplePos)
+	if(parameters[i].first!=ptSamplePos)
 		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptSamplePos"));
 	else
-		return(*((sample_pos_t *)parameters[i]));
+		return(*((sample_pos_t *)parameters[i].second));
 }
 
 const double CActionParameters::getDoubleParameter(const unsigned i) const
 {
 	if(i>=parameters.size())
 		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(i)+" -- caller probably didn't pass enough parameters to the action"));
-	if(parameterTypes[i]==ptDouble)
-		return(*((double *)parameters[i]));
-	else if(parameterTypes[i]==ptUnsigned)
-		return((double)(*((unsigned *)parameters[i])));
+	if(parameters[i].first==ptDouble)
+		return(*((double *)parameters[i].second));
+	else if(parameters[i].first==ptUnsigned)
+		return((double)(*((unsigned *)parameters[i].second)));
 	else
 		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptDouble nor ptUnsigned"));
 }
@@ -209,77 +324,77 @@ const CGraphParamValueNodeList CActionParameters::getGraphParameter(const unsign
 {
 	if(i>=parameters.size())
 		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(i)+" -- caller probably didn't pass enough parameters to the action"));
-	if(parameterTypes[i]!=ptGraph)
+	if(parameters[i].first!=ptGraph)
 	{
-		if(parameterTypes[i]==ptDouble)
-			return(singleValueToGraph(*((double *)parameters[i])));
+		if(parameters[i].first==ptDouble)
+			return(singleValueToGraph(*((double *)parameters[i].second)));
 		else
 			throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptDouble or ptGraph"));
 	}
 	else
-		return(*((CGraphParamValueNodeList *)parameters[i]));
+		return(*((CGraphParamValueNodeList *)parameters[i].second));
 }
 
 
 
-void CActionParameters::setBoolParameter(const unsigned i,const bool v) const
+void CActionParameters::setBoolParameter(const unsigned i,const bool v)
 {
 	if(i>=parameters.size())
 		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(i)+" -- caller probably didn't pass enough parameters to the action"));
-	if(parameterTypes[i]!=ptBool)
+	if(parameters[i].first!=ptBool)
 		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptBool"));
 	else
-		(*((bool *)parameters[i]))=v;
+		(*((bool *)parameters[i].second))=v;
 }
 
-void CActionParameters::setStringParameter(const unsigned i,const string v) const
+void CActionParameters::setStringParameter(const unsigned i,const string v)
 {
 	if(i>=parameters.size())
 		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(i)+" -- caller probably didn't pass enough parameters to the action"));
-	if(parameterTypes[i]!=ptString)
+	if(parameters[i].first!=ptString)
 		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptString"));
 	else
-		(*((string *)parameters[i]))=v;
+		(*((string *)parameters[i].second))=v;
 }
 
-void CActionParameters::setUnsignedParameter(const unsigned i,const unsigned v) const
+void CActionParameters::setUnsignedParameter(const unsigned i,const unsigned v)
 {
 	if(i>=parameters.size())
 		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(i)+" -- caller probably didn't pass enough parameters to the action"));
-	if(parameterTypes[i]!=ptUnsigned)
+	if(parameters[i].first!=ptUnsigned)
 		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptUnsigned"));
 	else
-		(*((unsigned *)parameters[i]))=v;
+		(*((unsigned *)parameters[i].second))=v;
 }
 
-void CActionParameters::setSamplePosParameter(const unsigned i,const sample_pos_t v) const
+void CActionParameters::setSamplePosParameter(const unsigned i,const sample_pos_t v)
 {
 	if(i>=parameters.size())
 		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(i)+" -- caller probably didn't pass enough parameters to the action"));
-	if(parameterTypes[i]!=ptSamplePos)
+	if(parameters[i].first!=ptSamplePos)
 		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptSamplePos"));
 	else
-		(*((sample_pos_t *)parameters[i]))=v;
+		(*((sample_pos_t *)parameters[i].second))=v;
 }
 
-void CActionParameters::setDoubleParameter(const unsigned i,const double v) const
+void CActionParameters::setDoubleParameter(const unsigned i,const double v)
 {
 	if(i>=parameters.size())
 		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(i)+" -- caller probably didn't pass enough parameters to the action"));
-	if(parameterTypes[i]!=ptDouble)
+	if(parameters[i].first!=ptDouble)
 		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptDouble"));
 	else
-		(*((double *)parameters[i]))=v;
+		(*((double *)parameters[i].second))=v;
 }
 
-void CActionParameters::setGraphParameter(const unsigned i,const CGraphParamValueNodeList &v) const
+void CActionParameters::setGraphParameter(const unsigned i,const CGraphParamValueNodeList &v)
 {
 	if(i>=parameters.size())
 		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(i)+" -- caller probably didn't pass enough parameters to the action"));
-	if(parameterTypes[i]!=ptGraph)
+	if(parameters[i].first!=ptGraph)
 		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptGraph"));
 	else
-		(*((CGraphParamValueNodeList *)parameters[i]))=v;
+		(*((CGraphParamValueNodeList *)parameters[i].second))=v;
 }
 
 

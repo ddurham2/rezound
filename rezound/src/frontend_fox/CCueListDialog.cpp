@@ -124,16 +124,16 @@ long CCueListDialog::onAddCueButton(FXObject *sender,FXSelector sel,void *ptr)
 	{
 		size_t cueIndex=(size_t)cueList->getItemData(cueList->getCurrentItem());
 
-		actionParameters.addStringParameter(loadedSound->getSound()->getCueName(cueIndex));
-		actionParameters.addSamplePosParameter(loadedSound->getSound()->getCueTime(cueIndex));
-		actionParameters.addBoolParameter(loadedSound->getSound()->isCueAnchored(cueIndex));
+		actionParameters.addStringParameter("name",loadedSound->getSound()->getCueName(cueIndex));
+		actionParameters.addSamplePosParameter("position",loadedSound->getSound()->getCueTime(cueIndex));
+		actionParameters.addBoolParameter("isAnchored",loadedSound->getSound()->isCueAnchored(cueIndex));
 
 	}
 	else
 	{	
-		actionParameters.addStringParameter("Cue1");
-		actionParameters.addSamplePosParameter(0);
-		actionParameters.addBoolParameter(false);
+		actionParameters.addStringParameter("name","Cue1");
+		actionParameters.addSamplePosParameter("position",0);
+		actionParameters.addBoolParameter("isAnchored",false);
 	}
 
 	addCueActionFactory->performAction(loadedSound,&actionParameters,false,false);
@@ -147,7 +147,7 @@ long CCueListDialog::onRemoveCueButton(FXObject *sender,FXSelector sel,void *ptr
 	if(cueList->getCurrentItem()!=-1)
 	{
 		CActionParameters actionParameters;
-		actionParameters.addUnsignedParameter((size_t)cueList->getItemData(cueList->getCurrentItem()));
+		actionParameters.addUnsignedParameter("index",(size_t)cueList->getItemData(cueList->getCurrentItem()));
 		removeCueActionFactory->performAction(loadedSound,&actionParameters,false,false);
 
 		rebuildCueList();
@@ -163,10 +163,10 @@ long CCueListDialog::onEditCueButton(FXObject *sender,FXSelector sel,void *ptr)
 		CActionParameters actionParameters;
 		size_t cueIndex=(size_t)cueList->getItemData(cueList->getCurrentItem());
 
-		actionParameters.addUnsignedParameter(cueIndex);
-		actionParameters.addStringParameter(loadedSound->getSound()->getCueName(cueIndex));
-		actionParameters.addSamplePosParameter(loadedSound->getSound()->getCueTime(cueIndex));
-		actionParameters.addBoolParameter(loadedSound->getSound()->isCueAnchored(cueIndex));
+		actionParameters.addUnsignedParameter("index",cueIndex);
+		actionParameters.addStringParameter("name",loadedSound->getSound()->getCueName(cueIndex));
+		actionParameters.addSamplePosParameter("position",loadedSound->getSound()->getCueTime(cueIndex));
+		actionParameters.addBoolParameter("isAnchored",loadedSound->getSound()->isCueAnchored(cueIndex));
 
 		replaceCueActionFactory->performAction(loadedSound,&actionParameters,false,false);
 

@@ -223,10 +223,16 @@ CChangeRateEffectFactory::CChangeRateEffectFactory(AActionDialog *channelSelectD
 
 CChangeRateEffect *CChangeRateEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	if(actionParameters->getGraphParameter(0).size()<2)
+	string parameterName;
+	if(actionParameters->containsParameter("Rate Change")) // it's just that the frontend uses two different names for the same parameter because the dialog is different
+		parameterName="Rate Change";
+	else
+		parameterName="Rate Curve";
+
+	if(actionParameters->getGraphParameter(parameterName).size()<2)
 		throw(runtime_error(string(__func__)+" -- nodes contains less than 2 nodes"));
 
-	return(new CChangeRateEffect(actionSound,actionParameters->getGraphParameter(0)));
+	return(new CChangeRateEffect(actionSound,actionParameters->getGraphParameter(parameterName)));
 }
 
 

@@ -104,7 +104,13 @@ CVariedRepeatEffectFactory::CVariedRepeatEffectFactory(AActionDialog *channelSel
 CVariedRepeatEffect *CVariedRepeatEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	//return(new CVariedRepeatEffect(actionSound,0.1,280.0,5.0));
-	return(new CVariedRepeatEffect(actionSound,actionParameters->getDoubleParameter(0),actionParameters->getDoubleParameter(1),actionParameters->getDoubleParameter(2)));
+	return(new CVariedRepeatEffect(
+		actionSound,
+		actionParameters->getDoubleParameter("LFO Freq"),
+		actionParameters->getDoubleParameter("LFO Phase"),
+		actionParameters->getDoubleParameter("Time")
+		)
+	);
 }
 
 
