@@ -199,9 +199,9 @@ private:
 		FXLabel *selectStartLabel;
 		FXLabel *selectStopLabel;
 
-		FXLabel *playPositionLabel;
-
-		//FXButton *button;
+		//FXLabel *playPositionLabel;    used to be a simple label, but calling setText was too CPU intensive
+		FXFrame *playPositionLabel;
+		FXint prevPlayPositionLabelWidth;
 
 	FXPacker *waveViewPanel;
 		FXPacker *horzZoomPanel;

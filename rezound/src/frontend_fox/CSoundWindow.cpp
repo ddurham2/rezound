@@ -225,9 +225,8 @@ CSoundWindow::CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound) :
 		selectStopLabel->setFont(statusFont);
 
 	new FXVerticalSeparator(statusPanel);
-	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 2,0,0,0, 0,0);
-		playPositionLabel=new FXLabel(t,"Playing: ",NULL,LAYOUT_LEFT|LAYOUT_FILL_Y);
-		playPositionLabel->setFont(statusFont);
+	playPositionLabel=new FXFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_X|LAYOUT_FILL_Y); // used to be a label, but setText was too CPU intensive
+	prevPlayPositionLabelWidth=0;
 
 	// register to know when the sound start/stops so we can know when it is necessary
 	// to draw the play position and when to change the state of the playing/paused LEDs
@@ -416,20 +415,39 @@ void CSoundWindow::updateSelectionStatusInfo()
 
 void CSoundWindow::updatePlayPositionStatusInfo()
 {
-	int places;
-	if(horzZoomDial->getValue()>75*ZOOM_MUL)
-		places=5;
-	else if(horzZoomDial->getValue()>60*ZOOM_MUL)
-		places=4;
-	else if(horzZoomDial->getValue()>40*ZOOM_MUL)
-		places=3;
-	else
-		places=2;
+	FXDCWindow dc(playPositionLabel);
+
+	if(prevPlayPositionLabelWidth>0)
+	{ // erase previous text
+		dc.setForeground(playPositionLabel->getBackColor());
+		dc.fillRectangle(2,0,prevPlayPositionLabelWidth,playPositionLabel->getHeight());
+		prevPlayPositionLabelWidth=0;
+	}
 
 	if(loadedSound->channel->isPlaying())
-		playPositionLabel->setText(("Playing: "+loadedSound->sound->getTimePosition(loadedSound->channel->getPosition(),places)).c_str());
-	else
-		playPositionLabel->setText("");
+	{ // draw new play position
+		int places;
+		if(horzZoomDial->getValue()>75*ZOOM_MUL)
+			places=5;
+		else if(horzZoomDial->getValue()>60*ZOOM_MUL)
+			places=4;
+		else if(horzZoomDial->getValue()>40*ZOOM_MUL)
+			places=3;
+		else
+			places=2;
+
+		const string label="Playing: "+loadedSound->sound->getTimePosition(loadedSound->channel->getPosition(),places);
+
+#if REZ_FOX_VERSION<10117	
+		dc.setTextFont(statusFont);
+#else
+		dc.setFont(statusFont);
+#endif
+		dc.setForeground(FXRGB(0,0,0));
+		dc.drawText(2,(playPositionLabel->getHeight()/2)+(statusFont->getFontHeight()/2),label.c_str(),label.size());
+
+		prevPlayPositionLabelWidth=statusFont->getTextWidth(label.c_str(),label.size())+1;
+	}
 }
 
 void CSoundWindow::centerStartPos()
