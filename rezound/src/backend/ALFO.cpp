@@ -175,6 +175,32 @@ public:
 	}
 };
 
+/* 
+ * - Same as CSinLFO except it has a range of [0,1] by taking abs(value)
+ */
+class CABSSinLFO : public CSinLFO
+{
+public:
+	CABSSinLFO(float frequency,float initialAngle,unsigned sampleRate) :
+		CSinLFO(frequency,initialAngle,sampleRate)
+	{
+	}
+
+	virtual ~CABSSinLFO()
+	{
+	}
+
+	const float nextValue()
+	{
+		return fabs(CSinLFO::nextValue());
+	}
+
+	const float getValue(const sample_pos_t time) const
+	{
+		return fabs(CSinLFO::getValue(time));
+	}
+};
+
 
 
 
@@ -302,6 +328,55 @@ public:
 };
 
 
+/* square is just derived from SinLFO and if the Sin is >=0 then we return 1 else -1 */
+class CSquareLFO : public CSinLFO
+{
+public:
+	CSquareLFO(float frequency,float initialAngle,unsigned sampleRate) :
+		CSinLFO(frequency,initialAngle,sampleRate)
+	{
+	}
+
+	virtual ~CSquareLFO()
+	{
+	}
+
+	const float nextValue()
+	{
+		return CSinLFO::nextValue()>=0.0 ? 1.0 : -1.0;
+	}
+
+	const float getValue(const sample_pos_t time) const
+	{
+		return CSinLFO::getValue(time)>=0.0 ? 1.0 : -1.0;
+	}
+};
+
+/* square is just derived from SinLFO and if the Sin is >=0 then we return 1 else 0 */
+class CPosSquareLFO : public CSinLFO
+{
+public:
+	CPosSquareLFO(float frequency,float initialAngle,unsigned sampleRate) :
+		CSinLFO(frequency,initialAngle,sampleRate)
+	{
+	}
+
+	virtual ~CPosSquareLFO()
+	{
+	}
+
+	const float nextValue()
+	{
+		return CSinLFO::nextValue()>=0.0 ? 1.0 : 0.0;
+	}
+
+	const float getValue(const sample_pos_t time) const
+	{
+		return CSinLFO::getValue(time)>=0.0 ? 1.0 : 0.0;
+	}
+};
+
+
 
 
 
@@ -403,7 +478,7 @@ CLFORegistry::~CLFORegistry()
 
 const size_t CLFORegistry::getCount() const
 {
-	return 7;
+	return 10;
 }
 
 const string CLFORegistry::getName(const size_t index) const
@@ -415,15 +490,21 @@ const string CLFORegistry::getName(const size_t index) const
 	case 1:
 		return N_("Sine Wave [ 0,1]");
 	case 2:
-		return N_("Constant");
+		return N_("ABS Sine Wave [ 0,1]");
 	case 3:
-		return N_("Rising Sawtooth Wave [-1,1]");
+		return N_("Constant");
 	case 4:
-		return N_("Rising Sawtooth Wave [ 0,1]");
+		return N_("Rising Sawtooth Wave [-1,1]");
 	case 5:
-		return N_("Falling Sawtooth Wave [-1,1]");
+		return N_("Rising Sawtooth Wave [ 0,1]");
 	case 6:
+		return N_("Falling Sawtooth Wave [-1,1]");
+	case 7:
 		return N_("Falling Sawtooth Wave [ 0,1]");
+	case 8:
+		return N_("Square Wave [-1,1]");
+	case 9:
+		return N_("Square Wave [ 0,1]");
 	}
 	throw runtime_error(string(__func__)+" -- unhandled index: "+istring(index));
 }
@@ -432,19 +513,25 @@ const bool CLFORegistry::isBipolar(const size_t index) const
 {
 	switch(index)
 	{
-	case 0:
+	case 0:	// sin
 		return true;
-	case 1:
+	case 1:	// pos sin
 		return false;
-	case 2:
+	case 2:	// abs(sin)
 		return false;
-	case 3:
+	case 3: // constant
+		return false;
+	case 4:	// rising saw
 		return true;
-	case 4:
+	case 5:	// pos rising saw
 		return false;
-	case 5:
+	case 6:	// falling saw
 		return true;
-	case 6:
+	case 7: // pos falling saw
+		return false;
+	case 8: // square
+		return true;
+	case 9: // pos square
 		return false;
 	}
 	throw runtime_error(string(__func__)+" -- unhandled index: "+istring(index));
@@ -456,16 +543,22 @@ const size_t CLFORegistry::getIndexByName(const string name) const
 		return 0;
 	else if(name=="Sine Wave [ 0,1]")
 		return 1;
-	else if(name=="Constant")
+	else if(name=="ABS Sine Wave [ 0,1]")
 		return 2;
-	else if(name=="Rising Sawtooth Wave [-1,1]")
+	else if(name=="Constant")
 		return 3;
-	else if(name=="Rising Sawtooth Wave [ 0,1]")
+	else if(name=="Rising Sawtooth Wave [-1,1]")
 		return 4;
-	else if(name=="Falling Sawtooth Wave [-1,1]")
+	else if(name=="Rising Sawtooth Wave [ 0,1]")
 		return 5;
-	else if(name=="Falling Sawtooth Wave [ 0,1]")
+	else if(name=="Falling Sawtooth Wave [-1,1]")
 		return 6;
+	else if(name=="Falling Sawtooth Wave [ 0,1]")
+		return 7;
+	else if(name=="Square Wave [-1,1]")
+		return 8;
+	else if(name=="Square Wave [ 0,1]")
+		return 9;
 	else
 		throw runtime_error(string(__func__)+" -- unhandled name: '"+name+"'");
 }
@@ -479,15 +572,21 @@ ALFO *CLFORegistry::createLFO(const CLFODescription &desc,const unsigned sampleR
 	case 1:
 		return new CPosSinLFO(desc.freq,desc.phase,sampleRate);
 	case 2:
-		return new CConstantLFO;
+		return new CABSSinLFO(desc.freq,desc.phase,sampleRate);
 	case 3:
-		return new CRisingSawtoothLFO(desc.freq,desc.phase,sampleRate);
+		return new CConstantLFO;
 	case 4:
-		return new CPosRisingSawtoothLFO(desc.freq,desc.phase,sampleRate);
+		return new CRisingSawtoothLFO(desc.freq,desc.phase,sampleRate);
 	case 5:
-		return new CFallingSawtoothLFO(desc.freq,desc.phase,sampleRate);
+		return new CPosRisingSawtoothLFO(desc.freq,desc.phase,sampleRate);
 	case 6:
+		return new CFallingSawtoothLFO(desc.freq,desc.phase,sampleRate);
+	case 7:
 		return new CPosFallingSawtoothLFO(desc.freq,desc.phase,sampleRate);
+	case 8:
+		return new CSquareLFO(desc.freq,desc.phase,sampleRate);
+	case 9:
+		return new CPosSquareLFO(desc.freq,desc.phase,sampleRate);
 	}
 	throw runtime_error(string(__func__)+" -- unhandled LFOType (index): "+istring(desc.LFOType));
 }
