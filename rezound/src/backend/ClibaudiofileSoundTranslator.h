@@ -25,6 +25,8 @@
 
 #include "ASoundTranslator.h"
 
+#include <audiofile.h>
+
 class ClibaudiofileSoundTranslator : public ASoundTranslator
 {
 public:
@@ -38,6 +40,9 @@ protected:
 
 	void onLoadSound(const string filename,CSound *sound) const;
 	void onSaveSound(const string filename,CSound *sound) const;
+
+	void loadSoundGivenSetup(const string filename,CSound *sound,AFfilesetup initialSetup) const;
+	void saveSoundGivenSetup(const string filename,CSound *sound,AFfilesetup initialSetup) const;
 
 private:
 

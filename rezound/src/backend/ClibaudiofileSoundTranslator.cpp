@@ -30,8 +30,6 @@
 
 #include <cc++/path.h>
 
-#include "audiofile.h"
-
 #include "CSound.h"
 #include "AStatusComm.h"
 
@@ -54,10 +52,16 @@ static void errorFunction(long code,const char *msg)
 	// ??? but, then how would I be able to have createWorkingPoolFileIfExists
 void ClibaudiofileSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 {
+	// passing AF_NULL_FILESETUP makes it detect the parameters from the file itself
+	loadSoundGivenSetup(filename,sound,AF_NULL_FILESETUP);
+}
+
+void ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSound *sound,AFfilesetup initialSetup) const
+{
 	errorMessage="";
 	afSetErrorHandler(errorFunction);
 
-	AFfilehandle h=afOpenFile(filename.c_str(),"r",AF_NULL_FILESETUP);
+	AFfilehandle h=afOpenFile(filename.c_str(),"r",initialSetup);
 	if(h==AF_NULL_FILEHANDLE)
 		throw(runtime_error(string(__func__)+" -- error opening '"+filename+"' -- "+errorMessage));
 
@@ -224,20 +228,41 @@ void ClibaudiofileSoundTranslator::onSaveSound(const string filename,CSound *sou
 	else
 		throw(runtime_error(string(__func__)+" -- unhandled extension for filename: "+filename));
 
+	AFfilesetup setup=afNewFileSetup();
+	try
+	{
+		// ??? all the following parameters need to be passed in somehow as the export format
+		afInitFileFormat(setup,fileType); 
+		afInitByteOrder(setup,AF_DEFAULT_TRACK,AF_BYTEORDER_LITTLEENDIAN); 			// ??? I would actually want to pass how the user wants to export the data...
+		afInitChannels(setup,AF_DEFAULT_TRACK,sound->getChannelCount());
+		afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,sizeof(int16_t)*8); 	// ??? I would actually want to pass how the user wants to export the data... int16_t matching AF_SAMPFMT_TWOSCOMP
+		afInitRate(setup,AF_DEFAULT_TRACK,sound->getSampleRate()); 				// ??? I would actually want to pass how the user wants to export the data... doesn't actual do any conversion right now (perhaps I could patch it for them)
+		afInitCompression(setup,AF_DEFAULT_TRACK,AF_COMPRESSION_NONE);
+			//afInitInitCompressionParams(setup,AF_DEFAULT_TRACK, ... );
+		afInitFrameCount(setup,AF_DEFAULT_TRACK,sound->getLength());				// ??? I suppose I could allow the user to specify something shorter on the dialog
+
+		saveSoundGivenSetup(filename,sound,setup);
+
+		afFreeFileSetup(setup);
+	}
+	catch(...)
+	{
+		afFreeFileSetup(setup);
+		throw;
+	}
+
 	
+}
+
+
+void ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSound *sound,AFfilesetup initialSetup) const
+{
 	errorMessage="";
 	afSetErrorHandler(errorFunction);
 
 	const unsigned channelCount=sound->getChannelCount();
 	const unsigned sampleRate=sound->getSampleRate();
 	const sample_pos_t size=sound->getLength();
-
-	// ??? all the following parameters need to be passed in somehow as the export format
-	AFfilesetup newFile=afNewFileSetup();
-	afInitFileFormat(newFile,fileType); 
-	afInitSampleFormat(newFile,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,sizeof(int16_t)*8); // ??? int16_t matching AF_SAMPFMT_TWOSCOMP
-	afInitChannels(newFile,AF_DEFAULT_TRACK,channelCount);
-	afInitRate(newFile,AF_DEFAULT_TRACK,sampleRate);
 
 	// setup for saving the cues (except for positions)
 	ost::TAutoBuffer<int> markIDs(sound->getCueCount());
@@ -246,13 +271,13 @@ void ClibaudiofileSoundTranslator::onSaveSound(const string filename,CSound *sou
 		for(size_t t=0;t<sound->getCueCount();t++)
 			markIDs[t]=t;
 
-		afInitMarkIDs(newFile,AF_DEFAULT_TRACK,markIDs,(int)sound->getCueCount());
+		afInitMarkIDs(initialSetup,AF_DEFAULT_TRACK,markIDs,(int)sound->getCueCount());
 		for(size_t t=0;t<sound->getCueCount();t++)
 		{
 			// to indicate if the cue is anchored we append to the name:
 			// "|+" or "|-" whether it is or isn't
 			const string name=sound->getCueName(t)+"|"+(sound->isCueAnchored(t) ? "+" : "-");
-			afInitMarkName(newFile,AF_DEFAULT_TRACK,markIDs[t],name.c_str());
+			afInitMarkName(initialSetup,AF_DEFAULT_TRACK,markIDs[t],name.c_str());
 
 			// can't save position yet because that function requires a file handle, but
 			// we can't move this code after the afOpenFile, or it won't save cues at all
@@ -264,7 +289,7 @@ void ClibaudiofileSoundTranslator::onSaveSound(const string filename,CSound *sou
 		// ???
 
 	unlink(filename.c_str());
-	AFfilehandle h=afOpenFile(filename.c_str(),"w",newFile);
+	AFfilehandle h=afOpenFile(filename.c_str(),"w",initialSetup);
 	if(h==AF_NULL_FILEHANDLE)
 		throw(runtime_error(string(__func__)+" -- error opening '"+filename+"' for writing -- "+errorMessage));
 
@@ -325,9 +350,7 @@ void ClibaudiofileSoundTranslator::onSaveSound(const string filename,CSound *sou
 			afSetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[t],sound->getCueTime(t));
 
 
-		afFreeFileSetup(newFile);
 		afCloseFile(h);
-
 
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 		{

@@ -23,9 +23,9 @@
 
 #include "../../config/common.h"
 
-#include "ASoundTranslator.h"
+#include "ClibaudiofileSoundTranslator.h"
 
-class CrawSoundTranslator : public ASoundTranslator
+class CrawSoundTranslator : public ClibaudiofileSoundTranslator
 {
 public:
 	CrawSoundTranslator();
