@@ -451,42 +451,41 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 		const sample_fpos_t srcStart=chunk->offset+last;
 
 		// mix onto the buffer according to the routing information
+		bool didOutput=false;
 		for(unsigned i=0;i<channelCount;i++)
 		{
-			if(muted[i]) 
-			{ // if muted we still need to set last according to what the actual output loop would have produced
-				last=srcStart+(outputLengthToUse*tPlaySpeed);
-			}
-			else
+			if(!muted[i]) 
 			{
-				// ... here's where I could put up a for-loop to support mapping a single mono sound into both output channels
-				// basically the output route should be a simple matrix of bools and the call to getOutputRouteParams would be just a simple matrix lookup
-
-				unsigned outputDevice,outputDeviceChannel;
-				getOutputRouteParams(outputRoute,i,outputDevice,outputDeviceChannel);
-
-				outputDeviceChannel%=nChannels;
-				register sample_t *ooBuffer=oBuffer+outputDeviceChannel;
-
-				chunk->data[-channelCount+i]=prevFrame[i];
-
-				const size_t _outputLengthToUse=outputLengthToUse*nChannels;
-				if(tPlaySpeed==1.0 && floor(srcStart)==srcStart)
-				{ // simple 1.0 speed copy
-					size_t p=((size_t)srcStart)*channelCount+i;
-					for(size_t t=0;t<_outputLengthToUse;t+=nChannels)
-					{
-						ooBuffer[t]=ClipSample(ooBuffer[t]+chunk->data[p]);
-						p+=channelCount;
-					}
-					last=outputLengthToUse+(size_t)srcStart;
-				}
-				else
+				// returns a vector of bools indicating which channels in the output device to which we should write this channel's (i's) data
+				const vector<bool> deviceRoute=getOutputRoute(deviceIndex,i);
+				for(size_t outputDeviceChannel=0;outputDeviceChannel<deviceRoute.size();outputDeviceChannel++)
 				{
-					TSoundStretcher<sample_t *> stretcher(chunk->data-channelCount,srcStart,(sample_fpos_t)outputLengthToUse*tPlaySpeed,(sample_fpos_t)outputLengthToUse,channelCount,i,true);
-					for(size_t t=0;t<_outputLengthToUse;t+=nChannels)
-						ooBuffer[t]=ClipSample(ooBuffer[t]+stretcher.getSample());
-					last=stretcher.getCurrentSrcPosition();
+					if(deviceRoute[outputDeviceChannel])
+					{
+						register sample_t *ooBuffer=oBuffer+outputDeviceChannel;
+
+						chunk->data[-channelCount+i]=prevFrame[i];
+
+						const size_t _outputLengthToUse=outputLengthToUse*nChannels;
+						if(tPlaySpeed==1.0 && floor(srcStart)==srcStart)
+						{ // simple 1.0 speed copy
+							size_t p=((size_t)srcStart)*channelCount+i;
+							for(size_t t=0;t<_outputLengthToUse;t+=nChannels)
+							{
+								ooBuffer[t]=ClipSample(ooBuffer[t]+chunk->data[p]);
+								p+=channelCount;
+							}
+							last=outputLengthToUse+(size_t)srcStart;
+						}
+						else
+						{
+							TSoundStretcher<sample_t *> stretcher(chunk->data-channelCount,srcStart,(sample_fpos_t)outputLengthToUse*tPlaySpeed,(sample_fpos_t)outputLengthToUse,channelCount,i,true);
+							for(size_t t=0;t<_outputLengthToUse;t+=nChannels)
+								ooBuffer[t]=ClipSample(ooBuffer[t]+stretcher.getSample());
+							last=stretcher.getCurrentSrcPosition();
+						}
+						didOutput=true;
+					}
 				}
 			}
 
@@ -494,6 +493,10 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 			if(floor(last)==chunk->size)
 				prevFrame[i]=chunk->data[(chunk->size-1)*channelCount+i];
 		}
+		// if all channels were muted, or none were mapped to an output device 
+		// we need to at least set last so the playing progress will advance
+		if(!didOutput)
+			last=srcStart+(outputLengthToUse*tPlaySpeed);
 
 		outputBufferLength-=outputLengthToUse;
 		oBuffer+=outputLengthToUse*nChannels;
@@ -694,49 +697,160 @@ bool CSoundPlayerChannel::prebufferChunk()
 	return(ret);
 }
 
-// ??? I could fix this by making a 2 element union, where one element is a count of how many of the other element is about to follow... this way I wouldn't have the 32 channel limit
-#define MAX_ROUTE_CHANNELS 32 // ??? we'll have a problem if a loaded sound even can have more than 32 channels.  
-struct _ROutputRoute
-{
-	uint32_t outputDevice;
-	uint32_t outputDeviceChannel;
-};
-typedef _ROutputRoute ROutputRoute[MAX_ROUTE_CHANNELS];
 
+
+// --- Output Routing ---------------------------------
+
+/*
+	The output routing information is preserved in .rez files when the file is saved.
+	The only issue is that the file may be loaded on a machine that has a different 
+	output device configuration.  The number of device may change or the number of 
+	channels on each output device may change.   But, at least preserving the 
+	information in the .rez file will allow any changes in the routing made by the 
+	user not to have to be done again by just closing and opening the file later.
+
+	The format of the output information is just a long set of 16bit integers.
+	The way to interpret that sequence of integers is as follows:
+	
+	The first integer tells how many output route tables there are.  There would be
+	one for each audio output device.
+
+	Then follows the first output route table which is just part of the sequence of
+	integers.  After the first output route table follows the next one.
+
+	The first integer in an output route table indicates to number of rows in the 
+	output route table, and the second integer indicates the number of columns.
+
+	Following these two counts are rowCount X columnCount integers which are either 
+	0 or 1 indicating if that part of the route is on or off.  And the following 
+	example should show how these integers are to be interpreted
+	
+
+	This would be an example of one output route table where the device has 5 output
+	channels (possibly a 5.1 surround sound sound card) and the audio file has 2 
+	channels (a stereo sound):
+
+	Audio      Device's Channels-->
+        Data's    -------------------------
+	Channels | 1 0 0 0 0
+	   |     | 0 1 0 1 0
+	   |     |
+	   V 
+
+	channel 0 of the audio is mapped to channel 0 of the output device
+	channel 1 of the audio is mapped to channel 1 of the output device
+	channel 1 of the audio is mapped to channel 3 of the output device
+
+	So the sequence of integers for this output route table would be:
+
+		2 3 1 0 0 0 0 0 1 0 1 0
+		    ^       ^ ^       ^
+                    |1st row| |2nd row|
+
+	where the rows in the table follow each other.
+	
+	So, the entire output routing information stored in the file would be first the 
+	count of how many route tables there are and then following would be each output 
+	route table.
+
+	In the future I may allow there to actually be multiple sets of routing
+	tables where integer would preceed all routing tables indicating how many
+	sets of routes there are
+*/
+
+
+/*
+	Creates the initial output route which just maps each channel in the audio
+	to a channel in the first output device.
+*/
 void CSoundPlayerChannel::createInitialOutputRoute()
 {
 	CMutexLocker l(routingInfoMutex);
 
-	TPoolAccesser<ROutputRoute,CSound::PoolFile_t> a=sound->getGeneralDataAccesser<ROutputRoute>("OutputRoutes");
+	TPoolAccesser<int16_t,CSound::PoolFile_t> a=sound->getGeneralDataAccesser<int16_t>("OutputRoutes_v2");
 
 	const size_t outputDeviceIndex=0;
 	
 	if(a.getSize()<=0)
 	{
-		a.append(1);
+		const unsigned audioChannelCount=sound->getChannelCount();
+		const unsigned deviceChannelCount=player->devices[outputDeviceIndex].channelCount;
 
-		// assign the channesl in the sound to the device's channels in a round-robin fasion
-		for(size_t t=0;t<MAX_ROUTE_CHANNELS;t++)
+		size_t p=0;
+		a.append(1);
+		a[p++]=1; // 1 output route table
+		
+		a.append(1);
+		a[p++]=audioChannelCount; // row count in route table
+
+		a.append(1);
+		a[p++]=deviceChannelCount; // row count in route table
+
+		if(audioChannelCount==1 && deviceChannelCount>=2)
+		{ // special case of mono sound played in a stereo (or greater) sound card (map the 1 mono audio channel to the first 2 channels on the device)
+			for(size_t x=0;x<deviceChannelCount;x++)
+			{
+				a.append(1);
+				a[p++]= (x<2) ? 1 : 0;
+			}
+		}
+		else
 		{
-			a[0][t].outputDevice=outputDeviceIndex;
-			a[0][t].outputDeviceChannel=t%(player->devices[outputDeviceIndex].channelCount);
+			// assign the channels in the sound to the device's channels in a round-robin fashion
+			// to make sure each channel in the audio data is heard at least on one channel in the
+			// output device
+			for(size_t y=0;y<audioChannelCount;y++)
+			for(size_t x=0;x<deviceChannelCount;x++)
+			{
+				a.append(1);
+				a[p++]= (x==(y%deviceChannelCount)) ? 1 : 0;
+
+			}
 		}
 	}
 }
 
-void CSoundPlayerChannel::getOutputRouteParams(unsigned route,unsigned channel,unsigned &outputDevice,unsigned &outputDeviceChannel)
+/*
+	Returns a row from the output route table given which output device (which output route table)
+	and which channel in the audio data (which gets you to one row in one output route table)
+ */
+const vector<bool> CSoundPlayerChannel::getOutputRoute(unsigned deviceIndex,unsigned audioChannel) const
 {
-	if(channel>=MAX_ROUTE_CHANNELS)
-		throw(runtime_error(string(__func__)+" -- channel out of bounds: "+istring(channel)));
+	const TPoolAccesser<int16_t,CSound::PoolFile_t> a=sound->getGeneralDataAccesser<int16_t>("OutputRoutes_v2");
 
-	// ??? make this const again if I ever move away from the typedef [32] thing
-	/*const*/ TPoolAccesser<ROutputRoute,CSound::PoolFile_t> a=sound->getGeneralDataAccesser<ROutputRoute>("OutputRoutes");
-	if(route>=a.getSize())
-		route=0; // if out of bounds, use default
+	if(a.getSize()<=0)
+		throw(runtime_error(string(__func__)+" -- internal error -- somehow the initial route didn't get created and output route information was requested"));
 
-	outputDevice=a[route][channel].outputDevice;
-	outputDeviceChannel=a[route][channel].outputDeviceChannel;
+	size_t p=0;
+	const size_t deviceCount=a[p++];
+	if(deviceIndex>=deviceCount)
+		// ??? perhaps I don't want such a serious error on this
+		throw(runtime_error(string(__func__)+" -- deviceIndex out of bounds: "+istring(deviceIndex)+">="+istring(deviceCount)));
+
+	// skip to the output route table requested
+	for(size_t t=0;t<deviceIndex;t++)
+	{
+		const size_t rowCount=a[p++];
+		const size_t columnCount=a[p++];
+		p+=rowCount*columnCount;
+	}
+	
+	// now we're at the device requested
+	const size_t rowCount=a[p++];
+	const size_t columnCount=a[p++];
+		
+	if(audioChannel>=rowCount)
+		// ??? perhaps I don't want such a serious error on this
+		throw(runtime_error(string(__func__)+" -- audioChannel out of bounds: "+istring(audioChannel)+">="+istring(rowCount)));
+
+	vector<bool> row;
+	p+=(columnCount*audioChannel); // skip to the requested row in the table
+	for(size_t t=0;t<columnCount;t++)
+		row.push_back( a[p++] ? true : false);
+
+	return(row);
 }
+
 
 
 // --- Prebuffering Thread ---------------------------

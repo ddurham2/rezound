@@ -139,6 +139,11 @@ void CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 	}
 
 
+	// read the output routing information
+	// ??? need to do when I'm sure how it will be stored and there is actually a frontend to verify it
+	// ??? perhaps know if the output routing information is different on this machine than it was on the saved machine
+		// prompt the user to reset the information if it was different
+
 	// read the cues
 	{
 		const CSound::CCuePoolAccesser srcCues=loadFromFile.createPool<CSound::RCue>("Cues",false);
@@ -229,6 +234,9 @@ bool CrezSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 		formatInfoAccesser.write(&formatInfo2,1,true);
 	}
 
+	// write the output routing information
+	// ??? need to do when I'm sure how it will be stored and there is actually a frontend to verify it
+	// ??? perhaps write something to know if the output routing information is different on this machine when loaded than it was on the saved machine
 
 	// write the cues
 	{

@@ -151,7 +151,7 @@ private:
 
 	CMutex routingInfoMutex;
 	void createInitialOutputRoute();
-	void getOutputRouteParams(unsigned route,unsigned channel,unsigned &outputDevice,unsigned &outputDeviceChannel);
+	const vector<bool> getOutputRoute(unsigned deviceIndex,unsigned audioChannel) const;
 
 };
 
