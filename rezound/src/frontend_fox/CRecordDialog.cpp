@@ -87,8 +87,8 @@ CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
 			meterFrame=new FXHorizontalFrame(frame2,LAYOUT_FILL_X|LAYOUT_FILL_Y);
 	frame1=new FXVerticalFrame(getFrame(),FRAME_RAISED | LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 1,1);
 		frame2=new FXHorizontalFrame(frame1,LAYOUT_CENTER_X);
-			new FXButton(frame2,"Record",NULL,this,ID_START_BUTTON);
-			new FXButton(frame2,"Stop",NULL,this,ID_STOP_BUTTON);
+			new FXButton(frame2,"Record/\nResume",NULL,this,ID_START_BUTTON);
+			new FXButton(frame2,"Stop/\nPause",NULL,this,ID_STOP_BUTTON);
 			new FXButton(frame2,"Redo",NULL,this,ID_REDO_BUTTON);
 		frame2=new FXHorizontalFrame(frame1,LAYOUT_CENTER_X);
 			setDurationButton=new FXCheckButton(frame2,"Limit Duration to ");
