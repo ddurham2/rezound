@@ -9,31 +9,6 @@
 
 - THE MOST IMPORTANT -
 	- well.. I don't know why this is but here's the senario
-
-		- if I untar your original package and 'configure' then 'make'
-		  it works fine
-		- if I untar your original package and 'bootstrap' then
-		  'configure' then 'make' it does not work
-			- it gives: 	libtool: ltconfig version `' does not
-			  match ltmain.sh version `1.3.5' 
-		- if I untar your original package and 'bootstrap', then
-		  'libtoolize -f' then 'configure' and finally 'make' it does
-		  work
-			- and it also works if I libtoolize before I
-			  bootstrap... either way works
-
-		- maybe 'libtoolize -f' should be added to the bootstrap
-		  script???
-			- I believe libtoolize recreates the symlinks within
-			  the config directory, but I wouldn't think that would
-			  matter since we're both running the make autoconf,
-			  automake, and libtool package which came with
-			  mandrake 8.1
-			- so maybe libtoolize does something else?
-
-		- I also tried the same cases with the most up-to-date
-		  mandrake-cooker autoconf, automake, and libtool packages
-
 	
 	- Does it do this on yours (btw- I'm running on a 1.2ghz... I feel for
 	  ya man).. After I compile, it was failing because of not finding
