@@ -389,6 +389,51 @@ CNormalizeDialog::CNormalizeDialog(FXWindow *mainWindow) :
 }
 
 
+// --- adaptive normalize ------------------
+
+CAdaptiveNormalizeDialog::CAdaptiveNormalizeDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow)
+{
+	void *p1=newVertPanel(NULL);
+		void *p2=newHorzPanel(p1,false);
+			addSlider(p2,
+				N_("Normalization Level"),
+				"dBFS",
+				new CActionParamMapper_dBFS(-20.0),
+				NULL,
+				false
+			);
+
+			addSlider(p2,
+				N_("Window Time"),
+				"ms",
+				new CActionParamMapper_linear_range_scaled(2000.0,10,1000,1,1,100),
+				NULL,
+				false
+			);
+
+			addSlider(p2,
+				N_("Maximum Gain"),
+				"dB",
+				new CActionParamMapper_linear(60.0,100,1,200),
+				NULL,
+				true
+			);
+
+		p2=newVertPanel(p1,false);
+			addCheckBoxEntry(p2,
+				N_("Lock Channels"),
+				true,
+				_("Calculate Signal Level Across All Channels Simultaneously")
+			);
+}
+
+#include "../backend/Remaster/CAdaptiveNormalizeAction.h"
+const string CAdaptiveNormalizeDialog::getExplanation() const
+{
+	return CAdaptiveNormalizeAction::getExplanation();
+}
+
 // --- mark quiet areas --------------------
 
 CMarkQuietAreasDialog::CMarkQuietAreasDialog(FXWindow *mainWindow) :

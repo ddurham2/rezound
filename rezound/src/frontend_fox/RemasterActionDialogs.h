@@ -100,6 +100,20 @@ public:
 
 
 
+// --- adaptive normalize ----------------
+
+class CAdaptiveNormalizeDialog : public CActionParamDialog
+{
+public:
+	CAdaptiveNormalizeDialog(FXWindow *mainWindow);
+	virtual ~CAdaptiveNormalizeDialog(){}
+
+protected:
+	const string getExplanation() const;
+};
+
+
+
 // --- mark quiet areas ------------------
 
 class CMarkQuietAreasDialog : public CActionParamDialog
@@ -111,7 +125,7 @@ public:
 
 
 
-// --- remaster --------------------------
+// --- resample --------------------------
 
 class CResampleDialog : public CActionParamDialog
 {
