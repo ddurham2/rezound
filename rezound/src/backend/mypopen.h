@@ -25,7 +25,7 @@
 
 #include <stdio.h>
 
-FILE *mypopen(const char cmd[],const char type[]);
+FILE *mypopen(const char cmd[],const char type[],FILE **errStream=NULL);
 int mypclose(FILE *p);
 
 #endif

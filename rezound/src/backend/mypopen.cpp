@@ -60,6 +60,7 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 #include <string.h>
 #include <sys/wait.h>
@@ -68,6 +69,7 @@
 #define MAX_OPENS 100
 int child_pids[MAX_OPENS]; /* init to zero */
 FILE *pipe_streams[MAX_OPENS];
+FILE *pipe_err_streams[MAX_OPENS];
 
 /* 
 	passed:	process id -- pid
@@ -75,7 +77,7 @@ FILE *pipe_streams[MAX_OPENS];
 	returns: 0 -- success
 		 1 -- failure
 */
-int add_piped_process(int pid,FILE *s)
+int add_piped_process(int pid,FILE *s,FILE *e)
 {
 	int t;
 	for(t=0;t<MAX_OPENS;t++)
@@ -84,6 +86,7 @@ int add_piped_process(int pid,FILE *s)
 		{
 			child_pids[t]=pid;
 			pipe_streams[t]=s;
+			pipe_err_streams[t]=e;
 			return(0);
 		}
 	}
@@ -95,7 +98,7 @@ int add_piped_process(int pid,FILE *s)
 	returns: 0 -- not in list
 		 else -- pid
 */
-int remove_piped_process(FILE *s)
+int remove_piped_process(FILE *s,FILE **e)
 {
 	int t;
 	for(t=0;t<MAX_OPENS;t++)
@@ -104,6 +107,7 @@ int remove_piped_process(FILE *s)
 		{
 			int pid=child_pids[t];
 			child_pids[t]=0;
+			(*e)=pipe_err_streams[t];
 			return(pid);
 		}
 	}
@@ -112,10 +116,11 @@ int remove_piped_process(FILE *s)
 
 
 
-FILE *mypopen(const char cmd[],const char type[])
+FILE *mypopen(const char cmd[],const char type[],FILE **errStream)
 {
 	int pid;
 	int pipe_ends[2];
+	int err_pipe_ends[2];
 
 	if(pipe(pipe_ends)!=0)
 		return(NULL);
@@ -138,13 +143,16 @@ FILE *mypopen(const char cmd[],const char type[])
 		else
 		{ /* parent */
 			FILE *pipe_end=fdopen(pipe_ends[1],type);
-			add_piped_process(pid,pipe_end);
+			add_piped_process(pid,pipe_end,NULL);
 			close(pipe_ends[0]);
 			return(pipe_end);
 		}
 	}
 	else if(strcmp(type,"r")==0)
 	{
+		if(errStream!=NULL && pipe(err_pipe_ends)!=0)
+			return(NULL);
+
 		/*
 		Using vfork might be better but I wrote it originally
 		for fork and ReZound doesn't use popen for much and 
@@ -153,10 +161,23 @@ FILE *mypopen(const char cmd[],const char type[])
 		*/
 		if((pid=fork())==0)
 		{ /* child */
+
+			// redirect stdout
 			close(1);
-			dup(pipe_ends[1]);
+			dup(pipe_ends[1]); // this will replace file descriptor 1
 			close(pipe_ends[1]);
 			close(pipe_ends[0]);
+
+			// redirect stderr
+			if(errStream)
+			{
+				close(2);
+				dup(err_pipe_ends[1]); // this will replace file descriptor 2
+				close(err_pipe_ends[1]);
+				close(err_pipe_ends[0]);
+			}
+
+			// close stdin
 			close(0);
 			execlp("/bin/sh","/bin/sh","-c",cmd,NULL);
 			return(NULL); // just to make compiler happy
@@ -164,8 +185,23 @@ FILE *mypopen(const char cmd[],const char type[])
 		else
 		{ /* parent */
 			FILE *pipe_end=fdopen(pipe_ends[0],type);
-			add_piped_process(pid,pipe_end);
 			close(pipe_ends[1]);
+
+			FILE *err_pipe_end=NULL;
+			if(errStream)
+			{
+				// make sure we do non-blocking I/O on the err stream
+				int flags=fcntl(err_pipe_ends[0],F_GETFL);
+				flags|=O_NONBLOCK;
+				fcntl(err_pipe_ends[0],F_SETFL,flags);
+						
+				err_pipe_end=fdopen(err_pipe_ends[0],type);
+				(*errStream)=err_pipe_end;
+				close(err_pipe_ends[1]);
+			}
+
+
+			add_piped_process(pid,pipe_end,err_pipe_end);
 			return(pipe_end);
 		}
 	}
@@ -177,13 +213,19 @@ FILE *mypopen(const char cmd[],const char type[])
 
 int mypclose(FILE *p)
 {
-	int pid=remove_piped_process(p);
+	FILE *e;
+	int pid=remove_piped_process(p,&e);
 	int statval;
 
 	if(pid==0)
 		return(-1);
 
+	// close stdout
 	fclose(p);
+
+	if(e!=NULL) // close error stream too
+		fclose(e);
+
 	waitpid(pid,&statval,0);
 	return(0);
 }
