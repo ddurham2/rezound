@@ -26,6 +26,7 @@
 
 #include "CConvolutionFilter.h"
 #include "CArbitraryFIRFilter.h"
+#include "CMorphingArbitraryFIRFilter.h"
 #include "CSinglePoleFilter.h"
 #include "CBiquadResFilter.h"
 

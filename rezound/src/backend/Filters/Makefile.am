@@ -30,14 +30,17 @@ include $(top_srcdir)/config/am_include.mk
 noinst_HEADERS= \
 		CConvolutionFilter.h \
 		CArbitraryFIRFilter.h \
+		CMorphingArbitraryFIRFilter.h \
 		CSinglePoleFilter.h \
 		CBiquadResFilter.h \
-		FilterActions.h
+		FilterActions.h \
+		filters_util.h
 
 noinst_LTLIBRARIES=libFilters.la
 libFilters_la_SOURCES= \
 			CConvolutionFilter.cpp \
 			CArbitraryFIRFilter.cpp \
+			CMorphingArbitraryFIRFilter.cpp \
 			CSinglePoleFilter.cpp \
 			CBiquadResFilter.cpp 
 
