@@ -37,61 +37,68 @@ CrawSoundTranslator::~CrawSoundTranslator()
 {
 }
 
+static void initSetup(AFfilesetup &setup,const AFrontendHooks::RawParameters &parameters)
+{
+	afInitFileFormat(setup,AF_FILE_RAWDATA);
+
+	afInitChannels(setup,AF_DEFAULT_TRACK,parameters.channelCount);
+
+	afInitRate(setup,AF_DEFAULT_TRACK,parameters.sampleRate);
+
+	switch(parameters.sampleFormat)
+	{
+	case AFrontendHooks::RawParameters::f8BitSignedPCM:
+		afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,8);
+		break;
+	case AFrontendHooks::RawParameters::f8BitUnsignedPCM:
+		afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_UNSIGNED,8);
+		break;
+	case AFrontendHooks::RawParameters::f16BitSignedPCM:
+		afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,16);
+		break;
+	case AFrontendHooks::RawParameters::f16BitUnsignedPCM:
+		afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_UNSIGNED,16);
+		break;
+	case AFrontendHooks::RawParameters::f24BitSignedPCM:
+		afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,24);
+		break;
+	case AFrontendHooks::RawParameters::f24BitUnsignedPCM:
+		afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_UNSIGNED,24);
+		break;
+	case AFrontendHooks::RawParameters::f32BitSignedPCM:
+		afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,32);
+		break;
+	case AFrontendHooks::RawParameters::f32BitUnsignedPCM:
+		afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_UNSIGNED,32);
+		break;
+	case AFrontendHooks::RawParameters::f32BitFloatPCM:
+		afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_FLOAT,32);
+		break;
+	case AFrontendHooks::RawParameters::f64BitFloatPCM:
+		afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_DOUBLE,64);
+		break;
+	default:
+		throw runtime_error(string(__func__)+" -- unhandled parameters.sampleFormat: "+istring(parameters.sampleFormat));
+	}
+
+	afInitByteOrder(setup,AF_DEFAULT_TRACK,(parameters.endian==AFrontendHooks::RawParameters::eBigEndian) ? AF_BYTEORDER_BIGENDIAN : AF_BYTEORDER_LITTLEENDIAN);
+
+	afInitCompression(setup,AF_DEFAULT_TRACK,AF_COMPRESSION_NONE);		// ??? should be a parameter, quite a few are supported by libaudiofile (at least it says)
+		//afInitInitCompressionParams(setup,AF_DEFAULT_TRACK, ... ); 		// ??? sould depend on the compression type... should interface with the frontend somehow
+
+}
+
+
 bool CrawSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 {
 	AFfilesetup setup=afNewFileSetup();
 	try
 	{
 		AFrontendHooks::RawParameters parameters;
-		if(!gFrontendHooks->promptForRawParameters(parameters))
-			return(false);
+		if(!gFrontendHooks->promptForRawParameters(parameters,true))
+			return false;
 
-		afInitFileFormat(setup,AF_FILE_RAWDATA);
-
-		afInitChannels(setup,AF_DEFAULT_TRACK,parameters.channelCount);
-
-		afInitRate(setup,AF_DEFAULT_TRACK,parameters.sampleRate);
-
-		switch(parameters.sampleFormat)
-		{
-		case AFrontendHooks::RawParameters::f8BitSignedPCM:
-			afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,8);
-			break;
-		case AFrontendHooks::RawParameters::f8BitUnsignedPCM:
-			afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_UNSIGNED,8);
-			break;
-		case AFrontendHooks::RawParameters::f16BitSignedPCM:
-			afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,16);
-			break;
-		case AFrontendHooks::RawParameters::f16BitUnsignedPCM:
-			afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_UNSIGNED,16);
-			break;
-		case AFrontendHooks::RawParameters::f24BitSignedPCM:
-			afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,24);
-			break;
-		case AFrontendHooks::RawParameters::f24BitUnsignedPCM:
-			afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_UNSIGNED,24);
-			break;
-		case AFrontendHooks::RawParameters::f32BitSignedPCM:
-			afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,32);
-			break;
-		case AFrontendHooks::RawParameters::f32BitUnsignedPCM:
-			afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_UNSIGNED,32);
-			break;
-		case AFrontendHooks::RawParameters::f32BitFloatPCM:
-			afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_FLOAT,32);
-			break;
-		case AFrontendHooks::RawParameters::f64BitFloatPCM:
-			afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_DOUBLE,64);
-			break;
-		default:
-			throw runtime_error(string(__func__)+" -- unhandled parameters.sampleFormat: "+istring(parameters.sampleFormat));
-		}
-
-		afInitCompression(setup,AF_DEFAULT_TRACK,AF_COMPRESSION_NONE);		// ??? should be a parameter, quite a few are supported by libaudiofile (at least it says)
-			//afInitInitCompressionParams(setup,AF_DEFAULT_TRACK, ... ); 		// ??? sould depend on the compression type... should interface with the frontend somehow
-
-		afInitByteOrder(setup,AF_DEFAULT_TRACK,(parameters.endian==AFrontendHooks::RawParameters::eBigEndian) ? AF_BYTEORDER_BIGENDIAN : AF_BYTEORDER_LITTLEENDIAN);
+		initSetup(setup,parameters);
 
 #if (LIBAUDIOFILE_MAJOR_VERSION*10000+LIBAUDIOFILE_MINOR_VERSION*100+LIBAUDIOFILE_MICRO_VERSION) >= /*000204*/204
 		afInitDataOffset(setup,AF_DEFAULT_TRACK,parameters.dataOffset);
@@ -118,19 +125,37 @@ bool CrawSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 
 bool CrawSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 {
-	throw(runtime_error(string(__func__)+" -- unimplemented -- I need to create a frontend to allow the user to choose the export parameters"));
-	//probabaly can just use the open's dialog except don't show the data offset and data length parameters
+	AFfilesetup setup=afNewFileSetup();
+	try
+	{
+		AFrontendHooks::RawParameters parameters;
+		if(!gFrontendHooks->promptForRawParameters(parameters,false))
+			return false;
+
+		initSetup(setup,parameters);
+
+		const bool ret=saveSoundGivenSetup(filename,sound,setup,AF_FILE_RAWDATA);
+
+		afFreeFileSetup(setup);
+
+		return ret;
+	}
+	catch(...)
+	{
+		afFreeFileSetup(setup);
+		throw;
+	}
 }
 
 
 bool CrawSoundTranslator::handlesExtension(const string extension) const
 {
-	return(extension=="raw");
+	return extension=="raw";
 }
 
 bool CrawSoundTranslator::supportsFormat(const string filename) const
 {
-	return(false); // to keep it from catching all formats
+	return false; // to keep it from catching all formats
 }
 
 const vector<string> CrawSoundTranslator::getFormatNames() const
@@ -139,7 +164,7 @@ const vector<string> CrawSoundTranslator::getFormatNames() const
 
 	names.push_back("Raw PCM Data");
 
-	return(names);
+	return names;
 }
 
 const vector<vector<string> > CrawSoundTranslator::getFormatExtensions() const
@@ -150,7 +175,7 @@ const vector<vector<string> > CrawSoundTranslator::getFormatExtensions() const
 	extensions.push_back("raw");
 	list.push_back(extensions);
 
-	return(list);
+	return list;
 }
 
 #endif // HAVE_LIBAUDIOFILE
