@@ -18,8 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#define METER_UPDATE_RATE 50	 // update every <this value> milliseconds
-
 #include "CMetersWindow.h"
 
 #include <math.h>
@@ -29,6 +27,8 @@
 #include "../backend/CSound_defs.h"
 #include "../backend/unit_conv.h"
 #include "../backend/ASoundPlayer.h"
+
+#include "settings.h"
 
 
 // color definitions
@@ -206,7 +206,7 @@ public:
 		if((--maxPeakFallTimer)<0)
 		{
 			//maxPeakLevel=0;
-			maxPeakLevel=maxPeakLevel-MAX_SAMPLE/50; // fall 2% of the max sample
+			maxPeakLevel=maxPeakLevel-(sample_t)(MAX_SAMPLE*gMaxPeakFallRate);
 			maxPeakLevel=maxPeakLevel<0 ? 0 : maxPeakLevel;
 			maxPeakFallTimer=0;
 		}
@@ -215,7 +215,7 @@ public:
 		if(peakLevel>=maxPeakLevel)
 		{
 			maxPeakLevel=peakLevel;
-			maxPeakFallTimer=10;
+			maxPeakFallTimer=gMaxPeakFallDelayTime/gMeterUpdateTime;
 		}
 
 		if(peakLevel>grandMaxPeakLevel)
@@ -347,7 +347,7 @@ CMetersWindow::CMetersWindow(FXComposite *parent) :
 	// AAA
 	chore=NULL;
 	// schedule the first update meters event
-	timeout=getApp()->addTimeout(METER_UPDATE_RATE,this,ID_UPDATE_TIMEOUT);
+	timeout=getApp()->addTimeout(gMeterUpdateTime,this,ID_UPDATE_TIMEOUT);
 }
 
 CMetersWindow::~CMetersWindow()
@@ -394,7 +394,7 @@ long CMetersWindow::onUpdateMeters(FXObject *sender,FXSelector sel,void *ptr)
 	}
 
 	// schedule another update again in METER_UPDATE_RATE milliseconds
-	timeout=getApp()->addTimeout(METER_UPDATE_RATE,this,ID_UPDATE_TIMEOUT);
+	timeout=getApp()->addTimeout(gMeterUpdateTime,this,ID_UPDATE_TIMEOUT);
 	return 1;
 }
 
