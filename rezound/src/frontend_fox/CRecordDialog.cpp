@@ -61,7 +61,7 @@ FXIMPLEMENT(CRecordDialog,FXModalDialogBox,CRecordDialogMap,ARRAYNUMBER(CRecordD
 // ----------------------------------------
 
 CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,_("Record"),350,360,FXModalDialogBox::ftVertical),
+	FXModalDialogBox(mainWindow,N_("Record"),350,360,FXModalDialogBox::ftVertical),
 
 	recorder(NULL),
 	showing(false),

@@ -53,7 +53,7 @@ static void fillBitRateComboBox(FXComboBox *c)
 }
 
 COggDialog::COggDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,_("Ogg Compression Parameters"),0,0,FXModalDialogBox::ftVertical)//,
+	FXModalDialogBox(mainWindow,N_("Ogg Compression Parameters"),0,0,FXModalDialogBox::ftVertical)//,
 
 	//notesFrame(new FXPacker(getFrame(),FRAME_SUNKEN|FRAME_THICK | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
 		//notesTextBox(new FXText(notesFrame,NULL,0,TEXT_WORDWRAP | LAYOUT_FILL_X|LAYOUT_FILL_Y))

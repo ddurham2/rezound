@@ -45,7 +45,7 @@ FXIMPLEMENT(CNewSoundDialog,FXModalDialogBox,CNewSoundDialogMap,ARRAYNUMBER(CNew
 // ----------------------------------------
 
 CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,_("New Sound"),395,210,FXModalDialogBox::ftVertical),
+	FXModalDialogBox(mainWindow,N_("New Sound"),395,210,FXModalDialogBox::ftVertical),
 	
 	filenameFrame(new FXHorizontalFrame(getFrame(),LAYOUT_FILL_X)),
 		filenameLabel(new FXLabel(filenameFrame,_("Filename:"))),

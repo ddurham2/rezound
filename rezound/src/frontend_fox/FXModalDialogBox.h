@@ -26,6 +26,8 @@
 
 #include <fox/fx.h>
 
+#include <string>
+
 // used to place an invisible FXFrame in another widget to make sure it has a minimum height or width
 #define ASSURE_HEIGHT(parent,height) new FXFrame(parent,FRAME_NONE|LAYOUT_SIDE_LEFT | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT,0,0,1,height);
 #define ASSURE_WIDTH(parent,width) new FXFrame(parent,FRAME_NONE|LAYOUT_SIDE_BOTTOM | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT,0,0,width,1);
@@ -62,6 +64,9 @@ public:
 		ID_LAST
 	};
 
+	void setTitle(const string title);
+	const string getOrigTitle() const;
+
 protected:
 	FXModalDialogBox() {}
 
@@ -82,6 +87,7 @@ private:
 
 	const ShowTypes showType;
 
+	string origTitle;
 };
 
 #endif

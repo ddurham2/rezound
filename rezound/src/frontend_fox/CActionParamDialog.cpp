@@ -89,11 +89,6 @@ CActionParamDialog::~CActionParamDialog()
 {
 }
 
-const string CActionParamDialog::getOrigTitle() const
-{
-	return origTitle;
-}
-
 void CActionParamDialog::create()
 {
 	if(!explanationButtonCreated && getExplanation()!="")
@@ -501,7 +496,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 	buildPresetLists();
 
 	// restore the splitter's position
-	const FXint h=gSettingsRegistry->getValue<int>("FOX" DOT "SplitterPositions" DOT getTitle().text());
+	const FXint h=gSettingsRegistry->getValue<int>("FOX" DOT "SplitterPositions" DOT getOrigTitle());
 	if(presetsFrame!=NULL)
 		presetsFrame->setHeight(h);
 
@@ -616,7 +611,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 	if(presetsFrame!=NULL)
 	{
 		FXint h2=presetsFrame->getHeight();
-		gSettingsRegistry->createValue<string>("FOX" DOT "SplitterPositions" DOT getTitle().text(),istring(h2));
+		gSettingsRegistry->createValue<string>("FOX" DOT "SplitterPositions" DOT getOrigTitle(),istring(h2));
 	}
 
 	hide(); // hide now and ... 
@@ -625,12 +620,6 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 #endif
 
 	return retval;
-}
-
-void CActionParamDialog::setTitle(const string title)
-{
-	origTitle=title;
-	FXModalDialogBox::setTitle(gettext(title.c_str()));
 }
 
 long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void *ptr)
@@ -835,6 +824,8 @@ void CActionParamDialog::buildPresetLists()
 {
 	if(showPresetPanel)
 	{
+		bool firstTime=presetsFrame==NULL;
+
 		// delete previous stuff
 		delete presetsFrame;
 			nativePresetList=NULL;
@@ -893,6 +884,10 @@ void CActionParamDialog::buildPresetLists()
 			Error(e.what());
 			userPresetList->clearItems();
 		}
+
+		// have to do this after the first showing, otherwise the presets won't show up until you resize the dialog
+		if(!firstTime)
+			presetsFrame->create();
 	}
 }
 

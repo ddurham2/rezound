@@ -65,7 +65,7 @@ static void fillBitRateComboBox(FXComboBox *c,bool t=false)
 }
 
 CMp3Dialog::CMp3Dialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,_("mp3 Compression Parameters"),0,0,FXModalDialogBox::ftVertical)//,
+	FXModalDialogBox(mainWindow,N_("mp3 Compression Parameters"),0,0,FXModalDialogBox::ftVertical)//,
 
 	//notesFrame(new FXPacker(getFrame(),FRAME_SUNKEN|FRAME_THICK | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
 		//notesTextBox(new FXText(notesFrame,NULL,0,TEXT_WORDWRAP | LAYOUT_FILL_X|LAYOUT_FILL_Y))

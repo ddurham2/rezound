@@ -43,7 +43,7 @@ FXIMPLEMENT(CRawDialog,FXModalDialogBox,CRawDialogMap,ARRAYNUMBER(CRawDialogMap)
 
 
 CRawDialog::CRawDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,_("Raw Parameters"),0,0,FXModalDialogBox::ftVertical)
+	FXModalDialogBox(mainWindow,N_("Raw Parameters"),0,0,FXModalDialogBox::ftVertical)
 {
 	FXComposite *main=new FXMatrix(getFrame(),2,MATRIX_BY_COLUMNS,LAYOUT_FILL_X|LAYOUT_FILL_Y);
 	FXComboBox *combo;

@@ -55,7 +55,7 @@ CChannelSelectDialog::CChannelSelectDialog(FXWindow *mainWindow) :
  *
  * ??? I *think* I can make this _() instead of N_() on the title.. I don't call getTitle() anywhere
  */
-	FXModalDialogBox(mainWindow,_("Channel Select"),100,100,FXModalDialogBox::ftVertical,FXModalDialogBox::stShrinkWrap),
+	FXModalDialogBox(mainWindow,N_("Channel Select"),100,100,FXModalDialogBox::ftVertical,FXModalDialogBox::stShrinkWrap),
 
 	label(new FXLabel(getFrame(),_("Channels to Which This Action Should Apply:"),NULL,LAYOUT_CENTER_X))
 {

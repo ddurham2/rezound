@@ -40,7 +40,7 @@ FXIMPLEMENT(CUserNotesDialog,FXModalDialogBox,CUserNotesDialogMap,ARRAYNUMBER(CU
 // ----------------------------------------
 
 CUserNotesDialog::CUserNotesDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,_("User Notes"),450,400,FXModalDialogBox::ftVertical),
+	FXModalDialogBox(mainWindow,N_("User Notes"),450,400,FXModalDialogBox::ftVertical),
 
 	notesFrame(new FXPacker(getFrame(),FRAME_SUNKEN|FRAME_THICK | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
 		notesTextBox(new FXText(notesFrame,NULL,0,TEXT_WORDWRAP | LAYOUT_FILL_X|LAYOUT_FILL_Y))

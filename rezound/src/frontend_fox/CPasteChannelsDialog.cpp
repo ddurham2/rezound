@@ -57,7 +57,7 @@ static const double interpret_repeat(const double x,const int s) { return x*s; }
 static const double uninterpret_repeat(const double x,const int s) { return x/s; }
 
 CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,_("Paste Channels"),100,100,FXModalDialogBox::ftVertical,FXModalDialogBox::stShrinkWrap),
+	FXModalDialogBox(mainWindow,N_("Paste Channels"),100,100,FXModalDialogBox::ftVertical,FXModalDialogBox::stShrinkWrap),
 
 	label(new FXLabel(getFrame(),_("Pasting Parameters:"),NULL,LAYOUT_CENTER_X)),
 	horzSeparator(new FXHorizontalSeparator(getFrame())),

@@ -42,7 +42,7 @@ FXIMPLEMENT(CMIDIDumpSampleIdDialog,FXModalDialogBox,CMIDIDumpSampleIdDialogMap,
 
 
 CMIDIDumpSampleIdDialog::CMIDIDumpSampleIdDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,_("MIDI Sample Dump"),0,0,FXModalDialogBox::ftVertical,FXModalDialogBox::stShrinkWrap)
+	FXModalDialogBox(mainWindow,N_("MIDI Sample Dump"),0,0,FXModalDialogBox::ftVertical,FXModalDialogBox::stShrinkWrap)
 {
 	FXComposite *t;
 	

@@ -45,7 +45,7 @@ FXIMPLEMENT(CCueDialog,FXModalDialogBox,CCueDialogMap,ARRAYNUMBER(CCueDialogMap)
 // ----------------------------------------
 
 CCueDialog::CCueDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,_("Cue Properties"),300,175,FXModalDialogBox::ftVertical),
+	FXModalDialogBox(mainWindow,N_("Cue Properties"),300,175,FXModalDialogBox::ftVertical),
 	
 	cueNamePacker(new FXHorizontalFrame(getFrame(),LAYOUT_FILL_X)),
 		cueNameLabel(new FXLabel(cueNamePacker,_("Cue Name:"),NULL,LABEL_NORMAL | LAYOUT_CENTER_X|LAYOUT_CENTER_Y)),

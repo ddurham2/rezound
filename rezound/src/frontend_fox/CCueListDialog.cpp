@@ -62,6 +62,7 @@ FXIMPLEMENT(CCueListDialog,FXDialogBox,CCueListDialogMap,ARRAYNUMBER(CCueListDia
 // ----------------------------------------
 
 CCueListDialog::CCueListDialog(FXWindow *owner) :
+	/* ??? why isn't this an FXModalDialogBox? */
 	FXDialogBox(owner,_("Cue List"),DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE, 0,0,350,350, 0,0,0,0, 0,0),
 
 	contents(new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
@@ -221,14 +222,14 @@ void CCueListDialog::show(FXuint placement)
 	if(cueList->getNumItems()>0)
 		cueList->setCurrentItem(0);
 
-	rememberShow(this);
+	rememberShow(this,"Cue List");
 	FXDialogBox::show(placement);
 }
 
 void CCueListDialog::hide()
 {
 	loadedSound=NULL;
-	rememberHide(this);
+	rememberHide(this,"Cue List");
 	FXDialogBox::hide();
 }
 

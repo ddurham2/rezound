@@ -95,8 +95,6 @@ public:
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 
-	void setTitle(const string title);
-
 	enum 
 	{
 		ID_NATIVE_PRESET_BUTTON=FXModalDialogBox::ID_LAST,
@@ -121,7 +119,7 @@ public:
 
 	void create();
 
-	const string getOrigTitle() const;
+	void setTitle(const string title) { FXModalDialogBox::setTitle(title); }
 
 protected:
 	CActionParamDialog() {}
@@ -130,7 +128,6 @@ protected:
 	virtual const string getExplanation() const { return ""; }
 
 private:
-	string origTitle;
 	const CActionSound *actionSound;
 
 	bool showPresetPanel;
