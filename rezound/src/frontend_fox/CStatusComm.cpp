@@ -39,26 +39,34 @@ CStatusComm::~CStatusComm()
 {
 }
 
+/* I really doubt that all these levels of severity are necessary */
+
 void CStatusComm::error(const string &message,VSeverity severity)
 {
 	switch(severity)
 	{
 	case none:
+		fprintf(stderr,"error - %s\n",message.c_str());
 		FXMessageBox::error(gMainWindow,MBOX_OK,"Error",message.c_str());
 		break;
 	case light:
+		fprintf(stderr,"light error - %s\n",message.c_str());
 		FXMessageBox::error(gMainWindow,MBOX_OK,"Light Error",message.c_str());
 		break;
 	case medium:
+		fprintf(stderr,"medium error - %s\n",message.c_str());
 		FXMessageBox::error(gMainWindow,MBOX_OK,"Medium Error",message.c_str());
 		break;
 	case hard:
+		fprintf(stderr,"hard error - %s\n",message.c_str());
 		FXMessageBox::error(gMainWindow,MBOX_OK,"Hard Error",message.c_str());
 		break;
 	case fatal:
+		fprintf(stderr,"fatal error - %s\n",message.c_str());
 		FXMessageBox::error(gMainWindow,MBOX_OK,"Fatal Error!",message.c_str());
 		break;
 	default:
+		fprintf(stderr,"unknwon severity error - %s\n",message.c_str());
 		FXMessageBox::error(gMainWindow,MBOX_OK,"Error -- unknown severity",message.c_str());
 		break;
 	}
@@ -66,6 +74,7 @@ void CStatusComm::error(const string &message,VSeverity severity)
 
 void CStatusComm::warning(const string &message)
 {
+	fprintf(stderr,"warning -- %s\n",message.c_str());
 	FXMessageBox::warning(gMainWindow,MBOX_OK,"Warning",message.c_str());
 }
 
