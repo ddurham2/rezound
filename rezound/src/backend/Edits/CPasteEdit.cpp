@@ -274,7 +274,7 @@ bool CPasteEdit::getResultingCrossfadePoints(const CActionSound &actionSound,sam
 	default:
 		throw(runtime_error(string(__func__)+" -- unhandled pasteType: "+istring(pasteType)));
 	}
-	return(false);
+	return(true);
 }
 
 
