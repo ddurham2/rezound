@@ -32,8 +32,10 @@ class CActionParameters;
 
 #include "CSound_defs.h"
 #include "ALFO.h"
+#include "CPluginMapping.h"
 
 class ASoundFileManager;
+
 
 /*
  * One of these is always the input to an action
@@ -62,6 +64,7 @@ public:
 	void addDoubleParameter(const string name,const double v);
 	void addGraphParameter(const string name,const CGraphParamValueNodeList &v);
 	void addLFODescription(const string name,const CLFODescription &v);
+	void addPluginMapping(const string name,const CPluginMapping &v);
 
 	const bool getBoolParameter(const string name) const;
 	const string getStringParameter(const string name) const;
@@ -70,6 +73,7 @@ public:
 	const double getDoubleParameter(const string name) const;
 	const CGraphParamValueNodeList getGraphParameter(const string name) const;
 	const CLFODescription &getLFODescription(const string name) const;
+	const CPluginMapping &getPluginMapping(const string name) const;
 
 	void setBoolParameter(const string name,const bool v);
 	void setStringParameter(const string name,const string v);
@@ -78,6 +82,7 @@ public:
 	void setDoubleParameter(const string name,const double v);
 	void setGraphParameter(const string name,const CGraphParamValueNodeList &v);
 	void setLFODescription(const string name,const CLFODescription &v);
+	void setPluginMapping(const string name,const CPluginMapping &v);
 
 	ASoundFileManager *getSoundFileManager() const;
 
@@ -96,6 +101,7 @@ private:
 	const double getDoubleParameter(const unsigned i) const;
 	const CGraphParamValueNodeList getGraphParameter(const unsigned i) const;
 	const CLFODescription &getLFODescription(const unsigned i) const;
+	const CPluginMapping &getPluginMapping(const unsigned i) const;
 
 	void setBoolParameter(const unsigned i,const bool v);
 	void setStringParameter(const unsigned i,const string v);
@@ -104,12 +110,23 @@ private:
 	void setDoubleParameter(const unsigned i,const double v);
 	void setGraphParameter(const unsigned i,const CGraphParamValueNodeList &v);
 	void setLFODescription(const unsigned i,const CLFODescription &v);
+	void setPluginMapping(const unsigned i,const CPluginMapping &v);
 
 
 
 	ASoundFileManager *soundFileManager;
 
-	enum ParameterTypes { ptBool,ptString,ptUnsigned,ptSamplePos,ptDouble,ptGraph,ptLFODescription };
+	enum ParameterTypes 
+	{
+		ptBool,
+		ptString,
+		ptUnsigned,
+		ptSamplePos,
+		ptDouble,
+		ptGraph,
+		ptLFODescription,
+		ptPluginMapping
+	};
 
 	//            type          value
 	typedef pair<ParameterTypes,void *> parameter_t;

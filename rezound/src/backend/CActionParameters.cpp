@@ -66,6 +66,10 @@ CActionParameters::CActionParameters(const CActionParameters &src) :
 			parameters.push_back(parameter_t(src.parameters[t].first,new CLFODescription(*((CLFODescription *)src.parameters[t].second))));
 			break;
 
+		case ptPluginMapping:
+			parameters.push_back(parameter_t(src.parameters[t].first,new CPluginMapping(*((CPluginMapping *)src.parameters[t].second))));
+			break;
+
 		default:
 			throw(string(__func__)+" -- internal error -- unhandled parameter type: "+istring(src.parameters[t].first));
 		}
@@ -114,6 +118,10 @@ void CActionParameters::clear()
 
 		case ptLFODescription:
 			delete ((CLFODescription *)parameters[t].second);
+			break;
+
+		case ptPluginMapping:
+			delete ((CPluginMapping *)parameters[t].second);
 			break;
 
 		default:
@@ -189,6 +197,13 @@ void CActionParameters::addLFODescription(const string name,const CLFODescriptio
 	parameters.push_back(parameter_t(ptLFODescription,new CLFODescription(v)));
 }
 
+void CActionParameters::addPluginMapping(const string name,const CPluginMapping &v)
+{
+	VERIFY_IS_NEW(name)
+	parameterNames[name]=parameters.size();
+	parameters.push_back(parameter_t(ptPluginMapping,new CPluginMapping(v)));
+}
+
 
 
 #define PARM_INDEX_BY_NAME(name,index) 										\
@@ -248,6 +263,14 @@ const CLFODescription &CActionParameters::getLFODescription(const string name) c
 	return(getLFODescription(i));
 }
 
+const CPluginMapping &CActionParameters::getPluginMapping(const string name) const
+{
+	unsigned i;
+	PARM_INDEX_BY_NAME(name,i)
+	return(getPluginMapping(i));
+}
+
+
 
 
 
@@ -300,6 +323,14 @@ void CActionParameters::setLFODescription(const string name,const CLFODescriptio
 	PARM_INDEX_BY_NAME(name,i)
 	setLFODescription(i,v);
 }
+
+void CActionParameters::setPluginMapping(const string name,const CPluginMapping &v)
+{
+	unsigned i;
+	PARM_INDEX_BY_NAME(name,i)
+	setPluginMapping(i,v);
+}
+
 
 
 
@@ -387,7 +418,21 @@ const CLFODescription &CActionParameters::getLFODescription(const unsigned i) co
 		return(*((CLFODescription *)parameters[i].second));
 }
 
+const CPluginMapping &CActionParameters::getPluginMapping(const unsigned i) const
+{
+	if(i>=parameters.size())
+		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(i)+" -- caller probably didn't pass enough parameters to the action"));
+	if(parameters[i].first!=ptPluginMapping)
+		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptPluginMapping"));
+	else
+		return(*((CPluginMapping *)parameters[i].second));
+}
 
+
+
+
+
+// -------------------------
 
 void CActionParameters::setBoolParameter(const unsigned i,const bool v)
 {
@@ -458,4 +503,15 @@ void CActionParameters::setLFODescription(const unsigned i,const CLFODescription
 	else
 		(*((CLFODescription *)parameters[i].second))=v;
 }
+
+void CActionParameters::setPluginMapping(const unsigned i,const CPluginMapping &v)
+{
+	if(i>=parameters.size())
+		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(i)+" -- caller probably didn't pass enough parameters to the action"));
+	if(parameters[i].first!=ptPluginMapping)
+		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptPluginMapping"));
+	else
+		(*((CPluginMapping *)parameters[i].second))=v;
+}
+
 
