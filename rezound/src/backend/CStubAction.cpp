@@ -40,6 +40,9 @@ bool CStubAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 		}
 	}
 
+	// set the new selection points (only necessary if the length of the sound has changed)
+	//actionSound.stop=actionSound.start+selectionLength-1;
+
 	return(true);
 }
 
