@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-07-29 12:38-0500\n"
+"POT-Creation-Date: 2003-07-31 17:48-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,32 +15,44 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/backend/ALFO.cpp:414
+#: src/backend/ALFO.cpp:489
 msgid "Sine Wave [-1,1]"
 msgstr ""
 
-#: src/backend/ALFO.cpp:416
+#: src/backend/ALFO.cpp:491
 msgid "Sine Wave [ 0,1]"
 msgstr ""
 
-#: src/backend/ALFO.cpp:418
+#: src/backend/ALFO.cpp:493
+msgid "ABS Sine Wave [ 0,1]"
+msgstr ""
+
+#: src/backend/ALFO.cpp:495
 msgid "Constant"
 msgstr ""
 
-#: src/backend/ALFO.cpp:420
+#: src/backend/ALFO.cpp:497
 msgid "Rising Sawtooth Wave [-1,1]"
 msgstr ""
 
-#: src/backend/ALFO.cpp:422
+#: src/backend/ALFO.cpp:499
 msgid "Rising Sawtooth Wave [ 0,1]"
 msgstr ""
 
-#: src/backend/ALFO.cpp:424
+#: src/backend/ALFO.cpp:501
 msgid "Falling Sawtooth Wave [-1,1]"
 msgstr ""
 
-#: src/backend/ALFO.cpp:426
+#: src/backend/ALFO.cpp:503
 msgid "Falling Sawtooth Wave [ 0,1]"
+msgstr ""
+
+#: src/backend/ALFO.cpp:505
+msgid "Square Wave [-1,1]"
+msgstr ""
+
+#: src/backend/ALFO.cpp:507
+msgid "Square Wave [ 0,1]"
 msgstr ""
 
 #: src/backend/ASoundFileManager.cpp:135
@@ -67,13 +79,25 @@ msgstr ""
 msgid "Load sound from previous session?"
 msgstr ""
 
-#: src/backend/ASoundPlayer.cpp:499 src/backend/ASoundPlayer.cpp:515
-#: src/backend/ASoundPlayer.cpp:518
-msgid "Playing will be disabled."
+#: src/backend/ASoundPlayer.cpp:555
+msgid ""
+"No audio output method could be initialized -- Playing will be disabled."
 msgstr ""
 
-#: src/backend/ASoundPlayer.cpp:515
-msgid "Error occurred after trying to fall back to OSS"
+#: src/backend/ASoundPlayer.cpp:560
+msgid ""
+"Either no audio output method was enabled at configure-time, or no method "
+"was recognized in the registry:AudioOutputMethods[] setting"
+msgstr ""
+
+#: src/backend/ASoundRecorder.cpp:547
+msgid "No audio input method could be initialized"
+msgstr ""
+
+#: src/backend/ASoundRecorder.cpp:553
+msgid ""
+"Either no audio input method was enabled at configure-time, or no method was "
+"recognized in the registry:AudioInputMethods[] setting"
 msgstr ""
 
 #: src/backend/ASoundTranslator.cpp:154
@@ -228,11 +252,11 @@ msgstr ""
 msgid "Native ReZound"
 msgstr ""
 
-#: src/backend/initialize.cpp:124
+#: src/backend/initialize.cpp:128
 msgid "Native Clipboard "
 msgstr ""
 
-#: src/backend/initialize.cpp:137
+#: src/backend/initialize.cpp:141
 msgid "Record Clipboard "
 msgstr ""
 
