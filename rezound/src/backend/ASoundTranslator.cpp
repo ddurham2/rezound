@@ -47,7 +47,7 @@ void ASoundTranslator::loadSound(const string filename,CSound *sound) const
 		}
 
 		// ??? could check various other things
-		if(!sound->poolFile->isOpen())
+		if(!sound->poolFile.isOpen())
 			throw(runtime_error(string(__func__)+" -- internal error -- no pool file was open after loading file"));
 
 		sound->unlockForResize();
