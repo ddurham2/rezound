@@ -29,6 +29,9 @@ CNestedDataFile *gSettingsRegistry=NULL;
 
 CNestedDataFile *gUserMacroStore=NULL;
 
+CNestedDataFile *gKeyBindingsStore=NULL;
+const CNestedDataFile *gDefaultKeyBindingsStore=NULL;
+
 
 string gPromptDialogDirectory="";
 

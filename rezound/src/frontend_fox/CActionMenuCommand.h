@@ -44,7 +44,7 @@ class CActionMenuCommand : public FXMenuCommand
 {
 	FXDECLARE(CActionMenuCommand)
 public:
-	CActionMenuCommand(AActionFactory *_actionFactory,FXComposite* p, const FXString& accelKeyText, FXIcon* ic=NULL, FXuint opts=0);
+	CActionMenuCommand(AActionFactory *_actionFactory,FXComposite* p, FXIcon* ic, FXuint opts=0);
 	CActionMenuCommand(FXComposite *p,const CActionMenuCommand &src);
 
 	virtual ~CActionMenuCommand();

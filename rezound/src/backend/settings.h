@@ -35,7 +35,16 @@ extern CNestedDataFile *gSettingsRegistry;
 	if(gSettingsRegistry->keyExists((key)))				\
 		variable= gSettingsRegistry->getValue<type>((key));
 
+/*
+ * Used to store macros that the user defines
+ */
 extern CNestedDataFile *gUserMacroStore;
+
+/*
+ * Used to store key bindings to actions that the user defines, or that may be defined by default
+ */
+extern CNestedDataFile *gKeyBindingsStore;
+extern const CNestedDataFile *gDefaultKeyBindingsStore;
 
 
 /*

@@ -49,6 +49,8 @@ public:
 
 	long onQuit(FXObject *sender,FXSelector sel,void *ptr);
 
+	long onSetupKeyBindings(FXObject *sender,FXSelector sel,void *ptr);
+
 	long onFollowPlayPositionButton(FXObject *sender,FXSelector sel,void *ptr);
 
 	long onRenderClippingWarningButton(FXObject *sender,FXSelector sel,void *ptr);
@@ -104,6 +106,8 @@ public:
 		ID_RECENT_ACTION,
 
 		ID_SHOW_ABOUT,
+
+		ID_SETUP_KEY_BINDINGS,
 
 		ID_QUIT,
 
@@ -171,7 +175,18 @@ public:
 		ID_CLIPBOARD_COMBOBOX,
 
 		ID_SOUND_LIST,
-		ID_SOUND_LIST_HOTKEY,
+
+		ID_SOUND_LIST_HOTKEY_PREV,
+		ID_SOUND_LIST_HOTKEY1,
+		ID_SOUND_LIST_HOTKEY2,
+		ID_SOUND_LIST_HOTKEY3,
+		ID_SOUND_LIST_HOTKEY4,
+		ID_SOUND_LIST_HOTKEY5,
+		ID_SOUND_LIST_HOTKEY6,
+		ID_SOUND_LIST_HOTKEY7,
+		ID_SOUND_LIST_HOTKEY8,
+		ID_SOUND_LIST_HOTKEY9,
+		ID_SOUND_LIST_HOTKEY10,
 
 		ID_LAST
 	};
@@ -232,6 +247,10 @@ private:
 
 	AActionFactory *reopenActionFactory;
 
+	void addActionToKeyBindingRegistery(const string name,FXMenuCommand *mc);
+	void setupKeyBindings();
+
+	void buildLADSPAMenus();
 };
 
 

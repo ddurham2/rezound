@@ -2,11 +2,11 @@ layouts={"default"};
 
 default
 {
-	menuitems={"&File", "&Control", "&Edit", "Effec&ts", "F&ilters", "&Looping", "&Remaster", "&Generate"};
+	menuitems={"&File", "&Edit", "&View", "&Control", "Effec&ts", "F&ilters", "&Looping", "&Remaster", "&Generate"};
 
-	Control
+	File
 	{
-		menuitems={"Zoom Out F&ull", "Zoom &Out", "Zoom &In", "Zoom &Fit Selection", "-", "Find &Start Position", "Find Sto&p Position", "-", "&Redraw", "-", "Record", "Play All Once", "Play All Looped", "Play Selection Once", "Play From Selection Start to End", "Play From Left Edge of Screen to End", "Play Selection Looped", "Loop Selection but Skip Most of the Middle", "Loop Selection and Play a Gap Before Repeating", "Stop", "Pause", "Jump to Beginning", "Jump to Selection Start", "Jump to Previous Cue", "Jump to Next Cue", "Shuttle Rewind", "Shuttle Amount", "Shuttle Forward", "-", "Toggle &Level Meters", "Toggle &Stereo Phase Meters", "Toggle Frequency &Analyzer", "-", "View Loaded File 1", "View Loaded File 2", "...", "View Loaded File 9", "View Loaded File 10", "Previously Viewed File"};
+		menuitems={"&New", "&Open", "&Reopen", "&Save", "Save &As", "Save Selection As", "Save As Multiple Files", "&Burn to CD", "&Close", "Re&vert", "-", "R&un Macro", "Record Macro", "-", "User No&tes", "-", "&About ReZound", "-", "Setup Hotkeys", "-", "- Just for testing", "Defrag", "PrintSAT", "VerifySAT", "-", "&Quit"};
 	}
 	Edit
 	{
@@ -17,13 +17,17 @@ default
 			menuitems={"Select All", "Grow or Slide Selection", "Select to Beginning", "Select to End", "Flip to Beginning", "Flip to End", "Move Stop to Start Position", "Move Start to Stop Position"};
 		}
 	}
+	View
+	{
+		menuitems={"Zoom Out F&ull", "Zoom &Out", "Zoom &In", "Zoom &Fit Selection", "-", "Find &Start Position", "Find Sto&p Position", "-", "&Redraw", "-", "Toggle &Level Meters", "Toggle &Stereo Phase Meters", "Toggle Frequency &Analyzer", "-", "Switch to Loaded File 1", "Switch to Loaded File 2", "Switch to Loaded File 3", "Switch to Loaded File 4", "Switch to Loaded File 5", "Switch to Loaded File 6", "Switch to Loaded File 7", "Switch to Loaded File 8", "Switch to Loaded File 9", "Switch to Loaded File 10", "Switch to Previously Viewed File"};
+	}
+	Control
+	{
+		menuitems={"Record", "Play All Once", "Play All Looped", "Play Selection Once", "Play From Selection Start to End", "Play From Left Edge of Screen to End", "Play Selection Looped", "Loop Selection but Skip Most of the Middle", "Loop Selection and Play a Gap Before Repeating", "Stop", "Pause", "-", "Jump to Beginning", "Jump to Selection Start", "Jump to Previous Cue", "Jump to Next Cue", "-", "Shuttle Rewind", "Shuttle Amount", "Shuttle Forward"};
+	}
 	Effects
 	{
 		menuitems={"Reverse", "-", "Change Volume", "Gain", "Curved Gain", "-", "Change Rate", "Curved Change Rate", "-", "Flange", "Simple Delay (Echo)", "Quantize", "Distortion", "Varied Repeat", "-", "Test"};
-	}
-	File
-	{
-		menuitems={"&New", "&Open", "&Reopen", "&Save", "Save &As", "Save Selection As", "Save As Multiple Files", "&Burn to CD", "&Close", "Re&vert", "-", "R&un Macro", "Record Macro", "-", "User No&tes", "-", "&About ReZound", "-", "- Just for testing", "Defrag", "PrintSAT", "VerifySAT", "-", "&Quit"};
 	}
 	Filters
 	{

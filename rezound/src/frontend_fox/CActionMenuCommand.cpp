@@ -49,11 +49,11 @@ FXDEFMAP(CActionMenuCommand) CActionMenuCommandMap[]=
 
 FXIMPLEMENT(CActionMenuCommand,FXMenuCommand,CActionMenuCommandMap,ARRAYNUMBER(CActionMenuCommandMap))
 
-CActionMenuCommand::CActionMenuCommand(AActionFactory *_actionFactory,FXComposite* p, const FXString& accelKeyText, FXIcon* ic, FXuint opts) :
+CActionMenuCommand::CActionMenuCommand(AActionFactory *_actionFactory,FXComposite* p, FXIcon* ic, FXuint opts) :
 	FXMenuCommand(
 		p,
-		// i18n/translate the action's name, append '...' if it has a dialog and set the accelerator key
-		(string(gettext(_actionFactory->getName().c_str()))+(_actionFactory->hasDialog() ? "..." : "")+"\t"+accelKeyText.text()).c_str(),
+		// i18n/translate the action's name, append '...' if it has a dialog
+		(string(gettext(_actionFactory->getName().c_str()))+(_actionFactory->hasDialog() ? "..." : "")).c_str(),
 		(ic==NULL ? FOXIcons->normal_action_buff : ic),
 		this,
 		ID_HOTKEY,

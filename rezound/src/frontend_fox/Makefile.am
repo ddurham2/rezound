@@ -81,6 +81,7 @@ libfrontend_la_SOURCES= \
 			FXWaveScrollArea.cpp \
 			FXWaveCanvas.cpp \
 			CLADSPAActionDialog.cpp \
+			CKeyBindingsDialog.cpp \
 			rememberShow.cpp \
 			settings.cpp
 
@@ -175,6 +176,7 @@ noinst_HEADERS=\
 	FXWaveScrollArea.h \
 	FXWaveCanvas.h \
 	CLADSPAActionDialog.h \
+	CKeyBindingsDialog.h \
 	FXPopupHint.h \
 	FXBackBufferedCanvas.h \
 	drawPortion.h \
