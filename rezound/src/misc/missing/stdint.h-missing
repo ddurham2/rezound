@@ -7,47 +7,67 @@
 #include "../../../../config/common.h" 
 
 
-/* -- linux machine using gcc --
-
-	- This was taken from: "gcc -E /usr/include/stdint.h | grep ^typedef" on a machine that did have it.
-	- I know the #if .. #endif isn't sufficient for the determining the platform, but it will have to 
-	do for now.  Any ANSI C99 compliant set of glibc headers should not even be including this file.
-*/
 #if defined(__linux) && defined(__GNUC__)
-typedef signed char int8_t;
-typedef short int int16_t;
-typedef int int32_t;
-typedef long long int int64_t;
-typedef unsigned char uint8_t;
-typedef unsigned short int uint16_t;
-typedef unsigned int uint32_t;
-typedef unsigned long long int uint64_t;
-typedef signed char int_least8_t;
-typedef short int int_least16_t;
-typedef int int_least32_t;
-typedef long long int int_least64_t;
-typedef unsigned char uint_least8_t;
-typedef unsigned short int uint_least16_t;
-typedef unsigned int uint_least32_t;
-typedef unsigned long long int uint_least64_t;
-typedef signed char int_fast8_t;
-typedef int int_fast16_t;
-typedef int int_fast32_t;
-typedef long long int int_fast64_t;
-typedef unsigned char uint_fast8_t;
-typedef unsigned int uint_fast16_t;
-typedef unsigned int uint_fast32_t;
-typedef unsigned long long int uint_fast64_t;
-typedef int intptr_t;
-typedef unsigned int uintptr_t;
-typedef long long int intmax_t;
-typedef unsigned long long int uintmax_t;
+
+	/* -- linux machine using gcc --
+
+		- This was taken from: "gcc -E /usr/include/stdint.h | grep ^typedef" on a machine that did have it.
+		- I know the #if .. #endif isn't sufficient for the determining the platform, but it will have to 
+		do for now.  Any ANSI C99 compliant set of glibc headers should not even be including this file.
+	*/
+	typedef signed char int8_t;
+	typedef short int int16_t;
+	typedef int int32_t;
+	typedef long long int int64_t;
+	typedef unsigned char uint8_t;
+	typedef unsigned short int uint16_t;
+	typedef unsigned int uint32_t;
+	typedef unsigned long long int uint64_t;
+	typedef signed char int_least8_t;
+	typedef short int int_least16_t;
+	typedef int int_least32_t;
+	typedef long long int int_least64_t;
+	typedef unsigned char uint_least8_t;
+	typedef unsigned short int uint_least16_t;
+	typedef unsigned int uint_least32_t;
+	typedef unsigned long long int uint_least64_t;
+	typedef signed char int_fast8_t;
+	typedef int int_fast16_t;
+	typedef int int_fast32_t;
+	typedef long long int int_fast64_t;
+	typedef unsigned char uint_fast8_t;
+	typedef unsigned int uint_fast16_t;
+	typedef unsigned int uint_fast32_t;
+	typedef unsigned long long int uint_fast64_t;
+	typedef int intptr_t;
+	typedef unsigned int uintptr_t;
+	typedef long long int intmax_t;
+	typedef unsigned long long int uintmax_t;
+
+#elif defined(__FreeBSD__)
+
+	#include <inttypes.h>
+
+	typedef int8_t int_least8_t;
+	typedef int16_t int_least16_t;
+	typedef int32_t int_least32_t;
+	typedef int64_t int_least64_t;
+	typedef uint8_t uint_least8_t;
+	typedef uint16_t uint_least16_t;
+	typedef uint32_t uint_least32_t;
+	typedef uint64_t uint_least64_t;
+
+	typedef int8_t int_fast8_t;
+	typedef int16_t int_fast16_t;
+	typedef int32_t int_fast32_t;
+	typedef int64_t int_fast64_t;
+	typedef uint8_t uint_fast8_t;
+	typedef uint16_t uint_fast16_t;
+	typedef uint32_t uint_fast32_t;
+	typedef uint64_t uint_least64_t;
+
 #else
 	#error stdint.h-missing needs an implementation for this platform or get an ANSI C99 compliant release of your standard headers
 #endif
-
-
-
-
 
 #endif

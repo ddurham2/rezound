@@ -43,7 +43,7 @@ class AThread
 {
 public:
 	AThread() : 
-		threadID(0x7fffffff),
+		threadID((pthread_t)0x7fffffff),
 		running(false)
 	{
 	}
@@ -92,12 +92,12 @@ public:
 
 	void wait()
 	{
-		if(threadID==0x7fffffff)
+		if(threadID==(pthread_t)0x7fffffff)
 			return;
 
 		void *status;
 		pthread_join(threadID,&status);
-		threadID=0x7fffffff;
+		threadID=(pthread_t)0x7fffffff;
 	}
 
 	static void yield()

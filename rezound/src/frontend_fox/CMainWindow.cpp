@@ -405,7 +405,7 @@ void CMainWindow::createMenus()
 
 long CMainWindow::onQuit(FXObject *sender,FXSelector sel,void *ptr)
 {
-	if(getApp()->modalModality()==MODAL_FOR_WINDOW)
+	if(getApp()->getModality()==MODAL_FOR_WINDOW)
 	{ // don't allow a quit if there is a modal window showing
 		gStatusComm->beep();
 		return(1);

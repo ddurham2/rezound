@@ -24,12 +24,16 @@
 	#define FXToolBarGrip FXToolbarGrip
 	#define horizontalScrollBar horizontalScrollbar
 	#define verticalScrollBar verticalScrollbar
-
 #else
 	
 	#define FOX_RESTORE_WINDOW_POSITIONS
 
 #endif
+
+#if REZ_FOX_VERSION<101012
+	#define getModality() modalModality
+#endif
+
 
 
 

@@ -68,4 +68,16 @@ static const char *REZOUND_VERSION=VERSION;
 # define __func__ __func__
 #endif //__GNUC__
 
+
+/*
+ * This should really be a configure test because 'nearbyint() and round()' might 
+ * exist one day on BSD I could also just use rint, but nearbyint is supposed to 
+ * be slightly faster because it doesn't raise the inexact math exception.
+ */
+#ifdef __FreeBSD__
+#define nearbyint rint
+#define round rintf
+#endif
+
+
 #endif /* COMMON_H */

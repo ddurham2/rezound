@@ -54,6 +54,11 @@ dnl ---------------------|
 dnl Checks for libraries.|
 dnl ---------------------|
 AC_CHECK_LIB(m, sqrt)
+
+dnl  ??? on FreeBSD pthread isn't the right lib name... it should be 
+dnl libc_r ("-lc_r").. so I think on the action-if-not-found parameter 
+dnl to call AC_CHECK_LIB(c_r,pthread_create)  and same for the other 2
+dnl I need to ask Anthony about it
 AC_CHECK_LIB(pthread, pthread_create)
 AC_CHECK_LIB(pthread, pthread_mutex_init)
 AC_CHECK_LIB(pthread, pthread_rwlock_init)

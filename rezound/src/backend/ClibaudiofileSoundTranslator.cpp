@@ -33,6 +33,16 @@
 #include "CSound.h"
 #include "AStatusComm.h"
 
+static int getUserNotesMiscType(int type)
+{
+	if(type==AF_FILE_AIFFC || type==AF_FILE_AIFF)
+		return(AF_MISC_ANNO);
+	else if(type==AF_FILE_WAVE)
+		return(AF_MISC_ICMT);
+
+	return(0);
+}
+
 
 ClibaudiofileSoundTranslator::ClibaudiofileSoundTranslator()
 {
@@ -65,7 +75,8 @@ void ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 	if(h==AF_NULL_FILEHANDLE)
 		throw(runtime_error(string(__func__)+" -- error opening '"+filename+"' -- "+errorMessage));
 
-	// ??? this if set may not completly handle all possilbilities
+
+	// ??? this if set may not completly handle all possibilities
 	int ret;
 	if(typeid(sample_t)==typeid(int16_t))
 		ret=afSetVirtualSampleFormat(h,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,sizeof(sample_t)*8);
@@ -152,7 +163,32 @@ void ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 	
 
 	// load the user notes
-		// ???
+	if(afGetMiscIDs(h,NULL)>0 /*this is not implemented in libaudiofile yet && afQueryLong(AF_QUERYTYPE_MISC,AF_QUERY_SUPPORTED,fileFormatType,0,0)*/)
+	{
+		// ??? actually there are probably several AF_MISC_XXX that I would want to include in the user notes... just separate each one found with a newline
+		// find the misc ID of the user notes
+		int _v;
+		const int userNotesMiscType=getUserNotesMiscType(afGetFileFormat(h,&_v));
+		TAutoBuffer<int> miscIDs(afGetMiscIDs(h,NULL));
+		const int miscIDCount=afGetMiscIDs(h,miscIDs);
+		int userNotesMiscID=-1;
+		for(int t=0;t<miscIDCount;t++)
+		{
+			if(afGetMiscType(h,miscIDs[t])==userNotesMiscType)
+			{
+				userNotesMiscID=miscIDs[t];
+				break;
+			}
+		}
+
+		if(userNotesMiscID!=-1) // was found
+		{
+			const int userNotesLength=afGetMiscSize(h,userNotesMiscID);
+			TAutoBuffer<int8_t> buf(userNotesLength);
+			afReadMisc(h,userNotesMiscID,(void *)buf,userNotesLength);
+			sound->setUserNotes(string((char *)((void *)buf),userNotesLength));
+		}
+	}
 	
 
 	// load the audio data
@@ -292,14 +328,25 @@ void ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 		}
 	}
 
-	// save the user notes
-	/* this is not implemented in libaudiofile yet
-	if(!afQueryLong(AF_QUERYTYPE_MISC,AF_QUERY_SUPPORTED,fileFormatType,0,0))
-		Warning("This format does not support saving user notes");
-	else
+
+
+	// prepare to save the user notes
+	const string userNotes=sound->getUserNotes();
+	int userNotesMiscID=1;
+	const int userNotesMiscType=getUserNotesMiscType(fileFormatType);
+	if(userNotes.length()>0)
 	{
+		/* this is not implemented in libaudiofile yet
+		if(!afQueryLong(AF_QUERYTYPE_MISC,AF_QUERY_SUPPORTED,fileFormatType,0,0))
+			Warning("This format does not support saving user notes");
+		else
+		*/
+		{
+			afInitMiscIDs(initialSetup,&userNotesMiscID,1);
+			afInitMiscType(initialSetup,userNotesMiscID,userNotesMiscType);
+			afInitMiscSize(initialSetup,userNotesMiscID,userNotes.length());
+		}
 	}
-	*/
 
 	unlink(filename.c_str());
 	AFfilehandle h=afOpenFile(filename.c_str(),"w",initialSetup);
@@ -363,6 +410,19 @@ void ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 		{
 			for(size_t t=0;t<sound->getCueCount();t++)
 				afSetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[t],sound->getCueTime(t));
+		}
+
+		// write the user notes
+		if(userNotes.length()>0)
+		{
+			/* this is not implemented in libaudiofile yet
+			if(!afQueryLong(AF_QUERYTYPE_MISC,AF_QUERY_SUPPORTED,fileFormatType,0,0))
+				Warning("This format does not support saving user notes");
+			else
+			*/
+			{
+				afWriteMisc(h,userNotesMiscID,(void *)userNotes.c_str(),userNotes.length());
+			}
 		}
 
 
