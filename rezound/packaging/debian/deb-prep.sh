@@ -21,7 +21,12 @@ sed -e 's/\(AUTOHEADER="autoheader\)/\12.13/g' bootstrap.orig |\
 
 make dist ;
 
+BUILD_DIR='packaging/debian/build'
+
 mv bootstrap.orig bootstrap
-tar -zxvf rezound*.tar.gz
+mkdir $BUILD_DIR
+mv rezound*.tar.gz $BUILD_DIR
+cd $BUILD_DIR
+tar zxvf rezound*.tar.gz
 
 

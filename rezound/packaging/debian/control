@@ -1,0 +1,18 @@
+Source: rezound
+Section: sound
+Priority: optional
+Maintainer: Anthony Ventimiglia <anthony@ventimiglia.org>
+Build-Depends: debhelper (>> 3.0.0), binutils (>= 2.13.90.0.10-1 ), coreutils (>= 4.5.2-1 ), gcc-2.95 (>= 1 ), libc6 (>= 2.2.5-14.3 ), libncurses5 (>= 5.2.20020112a-8 ), libstdc++2.10-glibc2.2 (>= 1 )
+
+Standards-Version: 3.5.8
+
+Package: rezound
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Graphical audio file editor supporting multiple formats.
+ ReZound aims to be a stable, open source, and graphical audio file editor
+ primarily for but not limited to the Linux operating system. 
+ .
+ This project is still in the beta stage, so your feedback is important. 
+ Please join the mailing list at 
+ (http://lists.sourceforge.net/lists/listinfo/rezound-users)
