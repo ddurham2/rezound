@@ -72,17 +72,14 @@ public:
 	void killAll();
 
 	CSoundPlayerChannel *newSoundPlayerChannel(CSound *sound);
-		// ??? I think this can be moved back now that we declared friendship in the derived class's nested thread class
-	//????This was moved from being a protected member.
-	//????To make gcc 2.95.2 happy --AV
-	// bufferSize is in sample frames (NOT BYTES)
-	void mixSoundPlayerChannels(const unsigned nChannels,sample_t * const buffer,const size_t bufferSize);
 
 protected:
 
 	ASoundPlayer();
-	//????mixSoundPlayerChannels was moved form here
-	//??? look up -AV
+
+	// bufferSize is in sample frames (NOT BYTES)
+	void mixSoundPlayerChannels(const unsigned nChannels,sample_t * const buffer,const size_t bufferSize);
+
 private:
 
 	friend class CSoundPlayerChannel;

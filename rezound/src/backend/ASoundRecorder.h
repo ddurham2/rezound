@@ -90,14 +90,11 @@ public:
 
 	void addCueNow(const string name,bool isAnchored);
 
-	// This function should be called when a data chunk is recorded
-	// data should come in an interlaced format that is [sL1sR1 sL2sR2 sL3sR3 ...]
-		 //??? This should be corrected now that we declared friendship in the derived class's thread nested class
-	//$$$$$Davy This wasn't working on my gcc as a protected member, 
-	//so I just moved it into the public
-	void onData(const sample_t *samples,const size_t sampleFramesRecorded);
 protected:
 
+	// This function should be called when a data chunk is recorded
+	// data should come in an interlaced format that is [sL1sR1 sL2sR2 sL3sR3 ...]
+	void onData(const sample_t *samples,const size_t sampleFramesRecorded);
 
 private:
 	CSound *sound;
