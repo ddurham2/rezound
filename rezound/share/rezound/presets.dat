@@ -257,7 +257,7 @@ Simple\ Delay
 		Gain
 		{
 			scalar=1;
-			value=0.5;
+			value=0.4;
 		}
 		Feedback
 		{
