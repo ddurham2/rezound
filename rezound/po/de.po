@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ReZound 0.8.3beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-10-21 19:35-0500\n"
+"POT-Creation-Date: 2004-10-26 10:32-0500\n"
 "PO-Revision-Date: 2003-09-30 12:02+CST\n"
 "Last-Translator: Joost Andrae <Joost.Andrae@gmx.de>\n"
 "Language-Team: German <de@li.org>\n"
@@ -79,14 +79,14 @@ msgstr "Sind Sie sich sicher, daß Sie zurückkehren möchten zur Kopie von"
 msgid "Load sound from previous session?"
 msgstr "Möchten Sie den Sound der letzten Session laden ?"
 
-#: src/backend/ASoundPlayer.cpp:570
+#: src/backend/ASoundPlayer.cpp:571
 msgid ""
 "No audio output method could be initialized -- Playing will be disabled."
 msgstr ""
 "Es konnte kein Audio-Ausgabegerät initialisiert werden -- Ausgabe wird "
 "deaktiviert."
 
-#: src/backend/ASoundPlayer.cpp:575
+#: src/backend/ASoundPlayer.cpp:576
 msgid ""
 "Either no audio output method was enabled at configure-time, or no method "
 "was recognized in the registry:AudioOutputMethods[] setting"
@@ -94,11 +94,11 @@ msgstr ""
 "Entweder wurde keine Audio-Ausgabemethode konfiguriert oder es wurde keine "
 "Methode festgelegt in registry:AudioOutputMethods[] Einstellungen"
 
-#: src/backend/ASoundRecorder.cpp:554
+#: src/backend/ASoundRecorder.cpp:555
 msgid "No audio input method could be initialized"
 msgstr "Keine Audio-Eingabemethode konnte initialisiert werden"
 
-#: src/backend/ASoundRecorder.cpp:560
+#: src/backend/ASoundRecorder.cpp:561
 msgid ""
 "Either no audio input method was enabled at configure-time, or no method was "
 "recognized in the registry:AudioInputMethods[] setting"
@@ -489,7 +489,7 @@ msgstr ""
 #: src/backend/Edits/CDuplicateChannelEdit.cpp:79
 #, fuzzy
 msgid "Duplicate Channel"
-msgstr "Kanäle Einfügen"
+msgstr "Kanäle duplizieren"
 
 #: src/backend/Edits/CInsertSilenceEdit.cpp:31
 msgid " -- silenceLength is less than zero: "
@@ -1504,7 +1504,7 @@ msgstr "Lösche Preset"
 #: src/frontend_fox/CActionParamDialog.cpp:918
 #: src/frontend_fox/CActionParamDialog.cpp:932
 msgid "&Use\tOr Double-Click an Item in the List"
-msgstr "Ben&uthe\toder Doppel-Klick auf einen Eintrag in der Liste"
+msgstr "Ben&utzen\toder Doppel-Klick auf einen Eintrag in der Liste"
 
 #: src/frontend_fox/CActionParamDialog.cpp:933
 #: src/frontend_fox/CMainWindow.cpp:723
@@ -1848,7 +1848,7 @@ msgstr "&Öffnen"
 
 #: src/frontend_fox/CMainWindow.cpp:722
 msgid "&Reopen"
-msgstr "Öffnen Sie &Wieder"
+msgstr "Erneut öffnen"
 
 #: src/frontend_fox/CMainWindow.cpp:724
 msgid "Save &As"
@@ -1856,11 +1856,11 @@ msgstr "Speichern &Als"
 
 #: src/frontend_fox/CMainWindow.cpp:729
 msgid "Re&vert"
-msgstr "&Umladen"
+msgstr "Neu Laden"
 
 #: src/frontend_fox/CMainWindow.cpp:731
 msgid "User No&tes"
-msgstr "Benu&tzer Kommentare"
+msgstr "Eigene Kommen&tare"
 
 #: src/frontend_fox/CMainWindow.cpp:733
 msgid "&About ReZound"
@@ -1868,7 +1868,7 @@ msgstr "Über ReZound"
 
 #: src/frontend_fox/CMainWindow.cpp:740
 msgid "&Quit"
-msgstr "A&usgang"
+msgstr "&Beenden"
 
 #: src/frontend_fox/CMainWindow.cpp:744
 msgid "Zoom Out F&ull"
@@ -1924,15 +1924,15 @@ msgstr "Shuttle Vorwärts"
 
 #: src/frontend_fox/CMainWindow.cpp:773 src/frontend_fox/CMainWindow.cpp:777
 msgid "Toggle &Level Meters"
-msgstr "Knebel &Level Meter"
+msgstr "Umschalten zur &Lautstärke Anzeige"
 
 #: src/frontend_fox/CMainWindow.cpp:774 src/frontend_fox/CMainWindow.cpp:778
 msgid "Toggle &Stereo Phase Meters"
-msgstr "Knebel &Stereo Phasen Meter"
+msgstr "Umschalten zur &Stereo Phasen Anzeige"
 
 #: src/frontend_fox/CMainWindow.cpp:775 src/frontend_fox/CMainWindow.cpp:779
 msgid "Toggle Frequency &Analyzer"
-msgstr "Knebel Frequenz &Analysator"
+msgstr "Umschalten zum Frequenz &Analysator"
 
 #: src/frontend_fox/CMainWindow.cpp:783
 msgid "View Loaded File 1"
