@@ -440,8 +440,8 @@ Change\ Gain\ According\ to\ a\ Curve
 
 Crossfade\ Edges\ Settings
 {
-	names[]={"Default"};
-	Default
+	names[]={"Default 10ms","1/4 Second","1/2 Second", "1 Second", "2 Seconds", "3 Seconds", "4 Seconds", "5 Seconds"};
+	Default\ 10ms
 	{
 		Crossfade\ Start\ Edge
 		{
@@ -454,4 +454,192 @@ Crossfade\ Edges\ Settings
 		}
 
 	}
+	1\/4\ Second
+	{
+		Crossfade\ Start\ Edge
+		{
+			value="250";
+		}
+
+		Crossfade\ Stop\ Edge
+		{
+			value="250";
+		}
+
+	}
+	1\/2\ Second
+	{
+		Crossfade\ Start\ Edge
+		{
+			value="500";
+		}
+
+		Crossfade\ Stop\ Edge
+		{
+			value="500";
+		}
+
+	}
+	1\ Second
+	{
+		Crossfade\ Start\ Edge
+		{
+			value="1000";
+		}
+
+		Crossfade\ Stop\ Edge
+		{
+			value="1000";
+		}
+
+	}
+	2\ Seconds
+	{
+		Crossfade\ Start\ Edge
+		{
+			value="2000";
+		}
+
+		Crossfade\ Stop\ Edge
+		{
+			value="2000";
+		}
+
+	}
+	3\ Seconds
+	{
+		Crossfade\ Start\ Edge
+		{
+			value="3000";
+		}
+
+		Crossfade\ Stop\ Edge
+		{
+			value="3000";
+		}
+
+	}
+	4\ Seconds
+	{
+		Crossfade\ Start\ Edge
+		{
+			value="4000";
+		}
+
+		Crossfade\ Stop\ Edge
+		{
+			value="4000";
+		}
+
+	}
+	5\ Seconds
+	{
+		Crossfade\ Start\ Edge
+		{
+			value="5000";
+		}
+
+		Crossfade\ Stop\ Edge
+		{
+			value="5000";
+		}
+
+	}
 }
+
+Change\ Volume
+{
+	\+12dB
+	{
+		Volume\ Change
+		{
+			scalar="12";
+			value="12";
+		}
+	}
+	\+3dB
+	{
+		Volume\ Change
+		{
+			scalar="3";
+			value="3";
+		}
+	}
+	\+6dB
+	{
+		Volume\ Change
+		{
+			scalar="6";
+			value="6";
+		}
+	}
+	\-12dB
+	{
+		Volume\ Change
+		{
+			scalar="12";
+			value="-12";
+		}
+	}
+	\-3dB
+	{
+		Volume\ Change
+		{
+			scalar="3";
+			value="-3";
+		}
+	}
+	\-6dB
+	{
+		Volume\ Change
+		{
+			scalar="6";
+			value="-6";
+		}
+	}
+
+	names[]={"+3dB","-3dB","+6dB","-6dB","+12dB","-12dB"};
+}
+
+Change\ Gain
+{
+	names[]={"1.5x", "2x", "2.5x", "3x"};
+
+	1\.5x
+	{
+
+		Gain
+		{
+			scalar="3";
+			value="1.5";
+		}
+	}
+	2\.5x
+	{
+
+		Gain
+		{
+			scalar="3";
+			value="2.5";
+		}
+	}
+	2x
+	{
+
+		Gain
+		{
+			scalar="3";
+			value="2";
+		}
+	}
+	3x
+	{
+
+		Gain
+		{
+			scalar="3";
+			value="3";
+		}
+	}
+}
+
