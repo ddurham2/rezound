@@ -71,6 +71,8 @@ public:
 	void updateRuler();
 	void updateRulerFromScroll(int deltaX,FXEvent *event);
 
+	sample_pos_t getSamplePosForScreenX(FXint X) const;
+
 	enum
 	{
 		ID_RULER_PANEL=FXVerticalFrame::ID_LAST,

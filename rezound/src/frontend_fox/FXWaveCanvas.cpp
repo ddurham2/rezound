@@ -387,8 +387,8 @@ void FXWaveCanvas::drawPortion(int left,int width,FXDCWindow *dc)
 		{	// draw cue positions as inverted colors
 
 			// calculate the min and max times based on the left and right boundries of the drawing
-			const sample_pos_t minTime=getCueTimeFromX(max(0,left-1));
-			const sample_pos_t maxTime=getCueTimeFromX(left+width+1);
+			const sample_pos_t minTime=getSamplePosForScreenX(max(0,left-1));
+			const sample_pos_t maxTime=getSamplePosForScreenX(left+width+1);
 
 			/* ??? if I iterated over the cues by increasing time, then I could be more efficient by finding the neared cue to minTime and stop when a cue is greater than maxTime */
 			const size_t cueCount=loadedSound->sound->getCueCount();
@@ -517,12 +517,6 @@ const FXint FXWaveCanvas::getCueScreenX(size_t cueIndex) const
 		return(CUE_OFF_SCREEN);
 
 }
-
-const sample_pos_t FXWaveCanvas::getCueTimeFromX(FXint screenX) const
-{
-	return getSamplePosForScreenX(screenX);
-}
-
 
 // --- setting of selection positions methods ------------------------------------------------
 

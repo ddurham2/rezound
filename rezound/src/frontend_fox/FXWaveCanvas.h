@@ -91,7 +91,6 @@ public:
 
 	const sample_pos_t snapPositionToCue(sample_pos_t p) const;
 	const FXint getCueScreenX(size_t cueIndex) const;
-	const sample_pos_t getCueTimeFromX(FXint screenX) const;
 
 	const sample_pos_t getSamplePosForScreenX(FXint X) const;
 	void setSelectStartFromScreen(FXint X);

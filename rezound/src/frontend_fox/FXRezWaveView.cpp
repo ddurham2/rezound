@@ -256,6 +256,11 @@ void FXRezWaveView::updateRulerFromScroll(int deltaX,FXEvent *event)
 	rulerPanel->onMouseMove(NULL,0,&e);
 }
 
+sample_pos_t FXRezWaveView::getSamplePosForScreenX(FXint X) const
+{
+	return waveScrollArea->getSamplePosForScreenX(X);
+}
+
 void FXRezWaveView::getWaveSize(int &top,int &height)
 {
 	top=waveScrollArea->getY();
@@ -524,7 +529,7 @@ long FXWaveRuler::onPopupMenu(FXObject *object,FXSelector sel,void *ptr)
 	}
 	else
 	{
-		addCueTime=  parent->waveScrollArea->getCueTimeFromX(event->win_x);
+		addCueTime=  parent->waveScrollArea->getSamplePosForScreenX(event->win_x);
 
 		FXMenuPane gotoMenu(this);
 			// ??? make sure that these get deleted when gotoMenu is deleted
@@ -689,7 +694,7 @@ long FXWaveRuler::onMouseMove(FXObject *object,FXSelector sel,void *ptr)
 		}
 
 
-		sample_pos_t newTime=parent->waveScrollArea->getCueTimeFromX(event->win_x-cueClickedOffset);
+		sample_pos_t newTime=parent->waveScrollArea->getSamplePosForScreenX(event->win_x-cueClickedOffset);
 		
 		if(draggingSelectionToo)
 		{
@@ -796,7 +801,7 @@ long FXWaveRuler::onLeftBtnRelease(FXObject *object,FXSelector sel,void *ptr)
 			size_t index;
 			sample_pos_t startPos=0;
 			sample_pos_t stopPos=sound->getLength()-1;
-			sample_pos_t clickedPos=parent->waveScrollArea->getCueTimeFromX(event->win_x);
+			sample_pos_t clickedPos=parent->waveScrollArea->getSamplePosForScreenX(event->win_x);
 
 			if(sound->findPrevCueInTime(clickedPos,index))
 				startPos=sound->getCueTime(index);

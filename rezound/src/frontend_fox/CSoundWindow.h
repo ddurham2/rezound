@@ -62,6 +62,8 @@ public:
 
 	int getZoomDecimalPlaces() const; // return number of decimal places that should be appropriated on a time value depending on the zoom factor
 
+	sample_pos_t getLeftEdgePosition() const;
+
 	enum
 	{
 		ID_HORZ_ZOOM_DIAL=FXTopWindow::ID_LAST,

@@ -510,6 +510,10 @@ void CSoundWindow::centerStopPos()
 	waveView->centerStopPos();
 }
 
+sample_pos_t CSoundWindow::getLeftEdgePosition() const
+{
+	return waveView->getSamplePosForScreenX(0);
+}
 
 // events I get from overriding a method
 

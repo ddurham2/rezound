@@ -432,7 +432,3 @@ const FXint FXWaveScrollArea::getCueScreenX(size_t cueIndex) const
 	return canvas->getCueScreenX(cueIndex);
 }
 
-const sample_pos_t FXWaveScrollArea::getCueTimeFromX(FXint screenX) const
-{
-	return canvas->getCueTimeFromX(screenX);
-}

@@ -63,7 +63,6 @@ public:
 
 	const FXint getCanvasWidth() const;
 	const FXint getCueScreenX(size_t cueIndex) const;
-	const sample_pos_t getCueTimeFromX(FXint screenX) const;
 
 
 	void updateFromSelectionChange(FXWaveCanvas::LastChangedPositions lastChangedPosition=FXWaveCanvas::lcpNone);
