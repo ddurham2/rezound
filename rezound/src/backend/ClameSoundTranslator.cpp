@@ -33,12 +33,66 @@
 
 #include <CPath.h>
 #include <TAutoBuffer.h>
+#include <endian_util.h>
 
 #include "CSound.h"
 #include "AFrontendHooks.h"
 #include "AStatusComm.h"
 
 static string gPathToLame="";
+
+struct RWaveHeader
+{
+	char RIFF_ID[4];
+	uint32_t fileSize; // bogus coming from lame
+	char WAVE_ID[4];
+	char fmt_ID[4];
+	uint32_t fmtSize;
+	uint16_t dataType; // 1 => PCM
+	uint16_t channelCount;
+	uint32_t sampleRate;
+	uint32_t bytesPerSec;
+	uint16_t bytesPerSample;
+	uint16_t bitsPerSample;
+	char data_ID[4];
+	uint32_t dataLength; // bogus coming from lame
+
+	void convertFromLE()
+	{
+		//hetle((uint32_t *)RIFF_ID);
+		hetle(&fileSize);
+		//hetle((uint32_t *)WAVE_ID);
+		//hetle((uint32_t *)fmt_ID);
+		hetle(&fmtSize);
+		hetle(&dataType);
+		hetle(&channelCount);
+		hetle(&sampleRate);
+		hetle(&bytesPerSec);
+		hetle(&bytesPerSample);
+		hetle(&bitsPerSample);
+		//hetle((uint32_t *)data_ID);
+		hetle(&dataLength);
+	}
+
+	void convertToLE()
+	{
+		//hetle((uint32_t *)RIFF_ID);
+		hetle(&fileSize);
+		//hetle((uint32_t *)WAVE_ID);
+		//hetle((uint32_t *)fmt_ID);
+		hetle(&fmtSize);
+		hetle(&dataType);
+		hetle(&channelCount);
+		hetle(&sampleRate);
+		hetle(&bytesPerSec);
+		hetle(&bytesPerSample);
+		hetle(&bitsPerSample);
+		//hetle((uint32_t *)data_ID);
+		hetle(&dataLength);
+	}
+
+
+}; 
 
 ClameSoundTranslator::ClameSoundTranslator() :
 	ApipedSoundTranslator()
@@ -79,29 +133,12 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 	CRezPoolAccesser *accessers[MAX_CHANNELS]={0};
 	try
 	{
-		// for now lame always outputs a fixed size wave header as little 
-		// endian just specifying the format so I'll just fread this struct
-		// and later I will have to contend with endian-ness ???
-		struct 
-		{
-			char RIFF_ID[4];
-			uint32_t fileSize; // bogus coming from lame
-			char WAVE_ID[4];
-			char fmt_ID[4];
-			uint32_t fmtSize;
-			uint16_t dataType; // 1 => PCM
-			uint16_t channelCount;
-			uint32_t sampleRate;
-			uint32_t bytesPerSec;
-			uint16_t bytesPerSample;
-			uint16_t bitsPerSample;
-			char data_ID[4];
-			uint32_t dataLength; // bogus coming from lame
-		} waveHeader; 
+		RWaveHeader waveHeader; 
 		memset(&waveHeader,0,sizeof(waveHeader));
 
 
 		fread(&waveHeader,1,sizeof(waveHeader),p);
+		waveHeader.convertFromLE();
 
 		// verify some stuff about the output of lame
 		if(waveHeader.fmtSize!=16)
@@ -163,7 +200,7 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 				for(unsigned c=0;c<channelCount;c++)
 				{
 					for(unsigned i=0;i<chunkSize;i++)
-						(*(accessers[c]))[pos+i]=buffer[i*channelCount+c];
+						(*(accessers[c]))[pos+i]=lethe(buffer[i*channelCount+c]);
 				}
 				pos+=chunkSize;
 
@@ -278,31 +315,13 @@ bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound
 	{
 		const unsigned channelCount=sound->getChannelCount();
 
-		// for now lame always outputs a fixed size wave header as little 
-		// endian just specifying the format so I'll just fread this struct
-		// and later I will have to contend with endian-ness
-		struct 
-		{
-			char RIFF_ID[4];
-			uint32_t fileSize;
-			char WAVE_ID[4];
-			char fmt_ID[4];
-			uint32_t fmtSize;
-			uint16_t dataType; // 1 => PCM
-			uint16_t channelCount;
-			uint32_t sampleRate;
-			uint32_t bytesPerSec;
-			uint16_t bytesPerSample;
-			uint16_t bitsPerSample;
-			char data_ID[4];
-			uint32_t dataLength;
-		} waveHeader; 
 
 		#define BITS 16 // has to go along with how we're writing it to the pipe below
 
 		if(saveLength>((0x7fffffff-4096)/((BITS/2)*channelCount)))
 			throw runtime_error(string(__func__)+" -- audio data is too large to be converted to mp3 (more than 2gigs of "+istring(BITS)+"bit/"+istring(channelCount)+"channels");
 
+		RWaveHeader waveHeader; 
 		strncpy(waveHeader.RIFF_ID,"RIFF",4);
 		waveHeader.fileSize=36+(saveLength*(channelCount*(BITS/8)));
 		strncpy(waveHeader.WAVE_ID,"WAVE",4);
@@ -318,8 +337,9 @@ bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound
 
 		if(SIGPIPECaught)
 			throw runtime_error(string(__func__)+" -- lame aborted -- check stderr for more information");
-		fwrite(&waveHeader,1,sizeof(waveHeader),p);
 
+		waveHeader.convertToLE();
+		fwrite(&waveHeader,1,sizeof(waveHeader),p);
 
 		for(unsigned t=0;t<channelCount;t++)
 			accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
@@ -340,7 +360,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound
 				for(unsigned c=0;c<channelCount;c++)
 				{
 					for(unsigned i=0;i<chunkSize;i++)
-						buffer[i*channelCount+c]=(*(accessers[c]))[pos+i+saveStart];
+						buffer[i*channelCount+c]=hetle((*(accessers[c]))[pos+i+saveStart]);
 				}
 				pos+=chunkSize;
 

@@ -101,7 +101,11 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 	if(err!=0)
 		throw(runtime_error(string(__func__)+" -- error setting virtual format -- "+errorMessage));
 		
+#ifdef WORDS_BIGENDIAN
+	if(afSetVirtualByteOrder(h,AF_DEFAULT_TRACK,AF_BYTEORDER_BIGENDIAN))
+#else
 	if(afSetVirtualByteOrder(h,AF_DEFAULT_TRACK,AF_BYTEORDER_LITTLEENDIAN))
+#endif
 		throw(runtime_error(string(__func__)+" -- error setting virtual byte order -- "+errorMessage));
 
 		// ??? I'm not sure about the 3to4 parameter, because won't it give it to me in whatever bit size I said in afSetVirtualSampleFormat ?
@@ -287,7 +291,20 @@ bool ClibaudiofileSoundTranslator::onSaveSound(const string filename,const CSoun
 		// ??? all the following parameters need to be passed in somehow as the export format
 		// 	??? can easily do it with AFrontendHooks
 		afInitFileFormat(setup,fileType); 
-		afInitByteOrder(setup,AF_DEFAULT_TRACK,AF_BYTEORDER_LITTLEENDIAN); 			// ??? I would actually want to pass how the user wants to export the data...
+		if(fileType==AF_FILE_WAVE)
+			afInitByteOrder(setup,AF_DEFAULT_TRACK,AF_BYTEORDER_LITTLEENDIAN);
+		else if(fileType==AF_FILE_AIFF)
+			afInitByteOrder(setup,AF_DEFAULT_TRACK,AF_BYTEORDER_BIGENDIAN);
+		else if(fileType==AF_FILE_NEXTSND)
+			afInitByteOrder(setup,AF_DEFAULT_TRACK,AF_BYTEORDER_BIGENDIAN);
+		else
+		{	// let the endian be native
+#ifdef WORDS_BIGENDIAN
+			afInitByteOrder(setup,AF_DEFAULT_TRACK,AF_BYTEORDER_BIGENDIAN);
+#else
+			afInitByteOrder(setup,AF_DEFAULT_TRACK,AF_BYTEORDER_LITTLEENDIAN);
+#endif
+		}
 		afInitChannels(setup,AF_DEFAULT_TRACK,sound->getChannelCount());
 		afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,sizeof(int16_t)*8); 	// ??? I would actually want to pass how the user wants to export the data... int16_t matching AF_SAMPFMT_TWOSCOMP
 		afInitRate(setup,AF_DEFAULT_TRACK,sound->getSampleRate()); 				// ??? I would actually want to pass how the user wants to export the data... doesn't actual do any conversion right now (perhaps I could patch it for them)
@@ -371,6 +388,7 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,con
 			Warning("This format does not support saving user notes");
 		else
 		*/
+		if(fileFormatType==AF_FILE_WAVE || fileFormatType==AF_FILE_AIFF)
 		{
 			afInitMiscIDs(initialSetup,&userNotesMiscID,1);
 			afInitMiscType(initialSetup,userNotesMiscID,userNotesMiscType);
@@ -401,7 +419,11 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,con
 	if(err!=0)
 		throw(runtime_error(string(__func__)+" -- error setting virtual format -- "+errorMessage));
 
+#ifdef WORDS_BIGENDIAN
+	if(afSetVirtualByteOrder(h,AF_DEFAULT_TRACK,AF_BYTEORDER_BIGENDIAN))
+#else
 	if(afSetVirtualByteOrder(h,AF_DEFAULT_TRACK,AF_BYTEORDER_LITTLEENDIAN))
+#endif
 		throw(runtime_error(string(__func__)+" -- error setting virtual byte order -- "+errorMessage));
 	afSetVirtualChannels(h,AF_DEFAULT_TRACK,channelCount);
 
@@ -459,6 +481,7 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,con
 				Warning("This format does not support saving user notes");
 			else
 			*/
+			if(fileFormatType==AF_FILE_WAVE || fileFormatType==AF_FILE_AIFF)
 			{
 				afWriteMisc(h,userNotesMiscID,(void *)userNotes.c_str(),userNotes.length());
 			}
