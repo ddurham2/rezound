@@ -121,11 +121,11 @@ const string CNestedDataFile::getValue(const char *key,bool throwIfNotExists) co
 
 	switch(value->type)
 	{
-	case vtString:
+	case ktString:
 		return(value->stringValue);
-	case vtFloat:
+	case ktFloat:
 		return(istring(value->floatValue));
-	case vtScope:
+	case ktScope:
 		throw(runtime_error(string(__func__)+" -- '"+string(key)+"' resolves to a scope, not a value from file: "+filename));
 	default:
 		throw(runtime_error(string(__func__)+" -- internal error: unhandled type: '"+istring(value->type)+"' from file: "+filename));
@@ -143,7 +143,7 @@ const string CNestedDataFile::getArrayValue(const char *key,size_t index,bool th
 			return("");
 	}
 
-	if(value->type!=vtArray)
+	if(value->type!=ktArray)
 	{
 		if(throwIfNotExists)
 			throw(runtime_error(string(__func__)+" -- '"+string(key)+"' is not an array from file: "+filename));
@@ -161,9 +161,9 @@ const string CNestedDataFile::getArrayValue(const char *key,size_t index,bool th
 
 	switch(value->arrayValue[index].type)
 	{
-	case vtString:
+	case ktString:
 		return(value->arrayValue[index].stringValue);
-	case vtFloat:
+	case ktFloat:
 		return(istring(value->arrayValue[index].floatValue));
 	default:
 		throw(runtime_error(string(__func__)+" -- internal error: unhandled type: '"+istring(value->arrayValue[index].type)+"' from file: "+filename));
@@ -181,7 +181,7 @@ const size_t CNestedDataFile::getArraySize(const char *key,bool throwIfNotExists
 			return(0);
 	}
 
-	if(value->type!=vtArray)
+	if(value->type!=ktArray)
 	{
 		if(throwIfNotExists)
 			throw(runtime_error(string(__func__)+" -- '"+string(key)+"' is not an array from file: "+filename));
@@ -192,10 +192,13 @@ const size_t CNestedDataFile::getArraySize(const char *key,bool throwIfNotExists
 	return(value->arrayValue.size());
 }
 
-bool CNestedDataFile::keyExists(const char *key) const
+CNestedDataFile::KeyTypes CNestedDataFile::keyExists(const char *key) const
 {
 	CVariant *value;
-	return(findVariantNode(value,key,0,false,root));
+	if(findVariantNode(value,key,0,false,root))
+		return(value->type);
+	else
+		return(ktNotExists);
 }
 
 const vector<string> CNestedDataFile::getChildKeys(const char *parentKey,bool throwIfNotExists) const
@@ -215,7 +218,7 @@ const vector<string> CNestedDataFile::getChildKeys(const char *parentKey,bool th
 				return(childKeys);
 		}
 
-		if(scope->type!=vtScope)
+		if(scope->type!=ktScope)
 		{
 			if(throwIfNotExists) // it DID actually exist, but it wasn't a scope containing more child values
 				throw(runtime_error(string(__func__)+" -- parent key '"+string(parentKey)+"' resolved to a value from file: "+filename));
@@ -234,7 +237,7 @@ const vector<string> CNestedDataFile::getChildKeys(const char *parentKey,bool th
 
 bool CNestedDataFile::findVariantNode(CVariant *&retValue,const char *key,int offset,bool throwOnError,const CVariant *variant) const
 {
-	if(variant->type!=vtScope)
+	if(variant->type!=ktScope)
 	{
 		if(throwOnError)
 			throw(runtime_error(string(__func__)+" -- '"+string(key)+"' resolves too soon to a value at: '"+string(key,max(0,offset-1))+"' from file: "+filename));
@@ -342,7 +345,7 @@ void CNestedDataFile::createArrayKey(const char *key,size_t index,const string &
 		return;
 	}
 
-	if(value->type!=vtArray)
+	if(value->type!=ktArray)
 		throw(runtime_error(string(__func__)+" -- '"+string(key)+"' is not an array from file: "+filename));
 
 	if(index>value->arrayValue.size())
@@ -406,7 +409,7 @@ void CNestedDataFile::removeArrayKey(const char *key,size_t index,bool throwOnEr
 		return;
 	}
 
-	if(value->type!=vtArray)
+	if(value->type!=ktArray)
 	{
 		if(throwOnError)
 			throw(runtime_error(string(__func__)+" -- '"+string(key)+"' is not an array from file: "+filename));
@@ -442,7 +445,7 @@ void CNestedDataFile::prvCreateKey(const char *key,int offset,CVariant &value,CV
 	else
 	{ // dot found, then we must be asking for a nested scope
 
-		if(variant->type!=vtScope)
+		if(variant->type!=ktScope)
 			throw(runtime_error(string(__func__)+" -- '"+string(key)+"' resolves too soon to a value at: '"+string(key,offset+pos)+"' from file: "+filename));
 
 		map<string,CVariant>::const_iterator i=variant->members.find(string(key+offset,pos));
@@ -507,16 +510,16 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant) 
 
 	switch(variant->type)
 	{
-	case vtString:
+	case ktString:
 		fprintf(f,"%s=\"%s\";\n",name.c_str(),variant->stringValue.c_str());
 		break;
 
-	case vtFloat:
+	case ktFloat:
 		// ??? I may want to do a better job of making sure I don't truncate any necessary percision on outputing the value
 		fprintf(f,"%s=%f;\n",name.c_str(),variant->floatValue);
 		break;
 
-	case vtScope:
+	case ktScope:
 		if(indent>=0) // not root scope
 		{
 			fprintf(f,"%s\n",name.c_str());
@@ -537,7 +540,7 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant) 
 		}
 		break;
 
-	case vtArray:
+	case ktArray:
 		fprintf(f,"%s[]={",name.c_str());
 		for(size_t t=0;t<variant->arrayValue.size();t++)
 		{
@@ -545,10 +548,10 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant) 
 				fprintf(f,", ");
 			switch(variant->arrayValue[t].type)
 			{
-			case vtString:
+			case ktString:
 				fprintf(f,"\"%s\"",variant->arrayValue[t].stringValue.c_str());
 				break;
-			case vtFloat:
+			case ktFloat:
 				fprintf(f,"%f",variant->arrayValue[t].floatValue);
 				break;
 			default:
@@ -584,19 +587,19 @@ void CNestedDataFile::verifyKey(const char *key)
 // -----------------------------------------------------------------------------
 
 CNestedDataFile::CVariant::CVariant() :
-	type(vtInvalid)
+	type(ktNotExists)
 {
 }
 
 CNestedDataFile::CVariant::CVariant(const string _name) :
 	name(_name),
-	type(vtScope)
+	type(ktScope)
 {
 }
 
 CNestedDataFile::CVariant::CVariant(const string _name,const string value) :
 	name(_name),
-	type(vtString),
+	type(ktString),
 	stringValue(value)
 {
 	if(name!="")
@@ -605,7 +608,7 @@ CNestedDataFile::CVariant::CVariant(const string _name,const string value) :
 
 CNestedDataFile::CVariant::CVariant(const string _name,const double value) :
 	name(_name),
-	type(vtFloat),
+	type(ktFloat),
 	floatValue(value)
 {
 	if(name!="")
@@ -613,13 +616,13 @@ CNestedDataFile::CVariant::CVariant(const string _name,const double value) :
 }
 
 CNestedDataFile::CVariant::CVariant(const vector<CVariant> &value) :
-	type(vtArray),
+	type(ktArray),
 	arrayValue(value)
 {
 }
 
 CNestedDataFile::CVariant::CVariant(const CVariant &src) :
-	type(vtInvalid)
+	type(ktNotExists)
 {
 	operator=(src);
 }
@@ -632,13 +635,13 @@ const CNestedDataFile::CVariant &CNestedDataFile::CVariant::operator=(const CVar
 	name=rhs.name;
 	type=rhs.type;
 
-	if(type==vtScope)
+	if(type==ktScope)
 		members=rhs.members;
-	else if(type==vtString)
+	else if(type==ktString)
 		stringValue=rhs.stringValue;
-	else if(type==vtFloat)
+	else if(type==ktFloat)
 		floatValue=rhs.floatValue;
-	else if(type==vtArray)
+	else if(type==ktArray)
 		arrayValue=rhs.arrayValue;
 
 	return(*this);

@@ -41,6 +41,15 @@ extern void cfg_init(void);
 class CNestedDataFile
 {
 public:
+	enum KeyTypes
+	{
+		ktNotExists=0,
+		ktScope,
+		ktString,
+		ktFloat,
+		ktArray
+	};
+
 	// create a scope from this filename
 	CNestedDataFile(const string filename="",bool saveOnEachEdit=false);
 	virtual ~CNestedDataFile();
@@ -50,7 +59,9 @@ public:
 	void parseFile(const string filename,bool clearExisting=true);
 	void setFilename(const string filename);
 
-	bool keyExists(const char *key) const;
+	// if(keyExists(...)) will tell you if a key does exist, but 
+	// the return value actually tells you what type as well.
+	KeyTypes keyExists(const char *key) const;
 
 	// just pass this "" if you want everything in the root scope
 	// or "foo" for a list of all keys under the scope named "foo"
@@ -82,24 +93,15 @@ private:
 	CVariant *root;
 	bool saveOnEachEdit;
 
-	enum VariantTypes
-	{
-		vtInvalid,
-		vtScope,
-		vtString,
-		vtFloat,
-		vtArray
-	};
-
 	class CVariant
 	{
 	public:	
 		CVariant();
-		CVariant(const string name);			// vtScope
+		CVariant(const string name);			// ktScope
 			// ??? I think these name parameters are never used
-		CVariant(const string name,const string value);	// vtString
-		CVariant(const string name,const double value);	// vtFloat
-		CVariant(const vector<CVariant> &value);	// vtArray
+		CVariant(const string name,const string value);	// ktString
+		CVariant(const string name,const double value);	// ktFloat
+		CVariant(const vector<CVariant> &value);	// ktArray
 		CVariant(const CVariant &src);
 		virtual ~CVariant();
 
@@ -108,7 +110,7 @@ private:
 		string name;
 
 		// would use a union, but you can't have constructor-ed classes in a union (could use void *)
-		VariantTypes type; // depending on this we use one of the following data-members
+		KeyTypes type; // depending on this we use one of the following data-members
 		map<string,CVariant> members; // I could be a bit more efficient if I were to use CVariant *'s, but this is a quick implementation right now
 		string stringValue;
 		double floatValue;

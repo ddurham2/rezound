@@ -58,7 +58,7 @@ static const string getCurrentScope();
 int myyynerrs=0;
 
 #define VERIFY_TYPE(ap,a) 				\
-	if(a->type!=CNestedDataFile::vtFloat)			\
+	if(a->type!=CNestedDataFile::ktFloat)			\
 		cfg_error(ap,"invalid operand"); 	
 
 #define BINARY_EXPR(r,ap,a,bp,b,o)	\
@@ -295,13 +295,13 @@ primary_expr
 			
 		switch(value->type)
 		{
-		case CNestedDataFile::vtString:
+		case CNestedDataFile::ktString:
 			$$=new CNestedDataFile::CVariant("",atof(value->stringValue.c_str()));
 			break;
-		case CNestedDataFile::vtFloat:
+		case CNestedDataFile::ktFloat:
 			$$=new CNestedDataFile::CVariant("",value->floatValue);
 			break;
-		case CNestedDataFile::vtScope:
+		case CNestedDataFile::ktScope:
 			cfg_error(@1,("symbol resolves to a scope: '"+string($1)+"'").c_str());
 			value=new CNestedDataFile::CVariant("",0.0);
 			break;
@@ -334,7 +334,7 @@ unary_expr
 	
 	| unary_op unary_expr
 	{
-		if($2->type!=CNestedDataFile::vtFloat)
+		if($2->type!=CNestedDataFile::ktFloat)
 			cfg_error(@2,"invalid operand");
 		$$=$2;
 		if($1==ADD)
