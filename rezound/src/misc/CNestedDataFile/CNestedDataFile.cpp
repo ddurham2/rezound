@@ -41,20 +41,44 @@ extern int cfg_parse();
 CNestedDataFile *CNestedDataFile::parseTree;
 const char *CNestedDataFile::initialFilename;
 
-CNestedDataFile::CNestedDataFile(const string filename)
+CNestedDataFile::CNestedDataFile(const string _filename,bool _saveOnEachEdit) :
+	root(NULL),
+	saveOnEachEdit(_saveOnEachEdit)
 {
+	clear();
+	if(_filename!="")
+		parseFile(_filename);
+}
+
+CNestedDataFile::~CNestedDataFile()
+{
+	delete root;
+}
+
+void CNestedDataFile::clear()
+{
+	delete root;
+	root=new CVariant("root");
+}
+
+void CNestedDataFile::parseFile(const string _filename,bool clearExisting)
+{
+	if(clearExisting)
+	{
+		clear();
+	}
+
 	#ifdef THREAD_SAFE_CSCOPE
 	mutex.lock();
 	#endif
 	try
 	{
-		initialFilename=filename.c_str();
-		this->filename=filename;
-		root=new CVariant("root");
+		initialFilename=_filename.c_str();
+		filename=_filename;
 		parseTree=this;
 
 		if(cfg_parse())
-			throw(runtime_error(string(__func__)+" -- error while parsing file: "+filename));
+			throw(runtime_error(string(__func__)+" -- error while parsing file: "+_filename));
 
 		//free(scanString);
 		#ifdef THREAD_SAFE_CSCOPE
@@ -67,15 +91,19 @@ CNestedDataFile::CNestedDataFile(const string filename)
 		#ifdef THREAD_SAFE_CSCOPE
 		mutex.unlock();
 		#endif
+
+		if(clearExisting)
+			clear();
+
 		throw;
 	}
-
 }
 
-CNestedDataFile::~CNestedDataFile()
+void CNestedDataFile::setFilename(const string _filename)
 {
-	delete root;
+	filename=_filename;
 }
+
 
 const string CNestedDataFile::getValue(const char *key,bool throwIfNotExists) const
 {
@@ -247,12 +275,18 @@ void CNestedDataFile::createKey(const char *key,const double value)
 {
 	CVariant newVariant("",value);
 	prvCreateKey(key,0,newVariant,root);
+
+	if(saveOnEachEdit)
+		save();
 }
 
 void CNestedDataFile::createKey(const char *key,const string &value)
 {
 	CVariant newVariant("",value);
 	prvCreateKey(key,0,newVariant,root);
+
+	if(saveOnEachEdit)
+		save();
 }
 
 void CNestedDataFile::createArrayKey(const char *key,size_t index,const string &initValue)
@@ -278,12 +312,18 @@ void CNestedDataFile::createArrayKey(const char *key,size_t index,const string &
 		throw(runtime_error(string(__func__)+" -- '"+string(key)+"["+istring(index)+"]' array index is out of bounds (+"+istring(value->arrayValue.size())+"+) from file: "+filename));
 
 	value->arrayValue.insert(value->arrayValue.begin()+index,CVariant("",initValue));
+
+	if(saveOnEachEdit)
+		save();
 }
 
 void CNestedDataFile::createKey(const char *key,const vector<CVariant> &value)
 {
 	CVariant newVariant(value);
 	prvCreateKey(key,0,newVariant,root);
+
+	if(saveOnEachEdit)
+		save();
 }
 
 void CNestedDataFile::removeKey(const char *key,bool throwOnError)
@@ -314,6 +354,9 @@ void CNestedDataFile::removeKey(const char *key,bool throwOnError)
 		}
 		parent->members.erase(childKey);
 	}
+
+	if(saveOnEachEdit)
+		save();
 }
 
 void CNestedDataFile::removeArrayKey(const char *key,size_t index,bool throwOnError)
@@ -341,6 +384,9 @@ void CNestedDataFile::removeArrayKey(const char *key,size_t index,bool throwOnEr
 	}
 
 	value->arrayValue.erase(value->arrayValue.begin()+index);
+
+	if(saveOnEachEdit)
+		save();
 }
 
 
@@ -375,8 +421,16 @@ void CNestedDataFile::prvCreateKey(const char *key,int offset,CVariant &value,CV
 	}
 }
 
-void CNestedDataFile::writeFile(const string filename)
+void CNestedDataFile::save() const
 {
+	writeFile(filename);
+}
+
+void CNestedDataFile::writeFile(const string filename) const
+{
+	if(filename=="")
+		return;
+
 	// ??? do I wanna reassign this->filename ?
 	FILE *f=fopen(filename.c_str(),"wt");
 	if(f==NULL)
@@ -393,7 +447,7 @@ void CNestedDataFile::writeFile(const string filename)
 	}
 }
 
-void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant)
+void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant) const
 {
 	FILE *f=(FILE *)_f; // to avoid including stdio.h in the .h file
 

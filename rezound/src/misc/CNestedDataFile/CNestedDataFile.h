@@ -41,8 +41,13 @@ class CNestedDataFile
 {
 public:
 	// create a scope from this filename
-	CNestedDataFile(const string filename);
+	CNestedDataFile(const string filename="",bool saveOnEachEdit=false);
 	virtual ~CNestedDataFile();
+
+	void clear();
+
+	void parseFile(const string filename,bool clearExisting=true);
+	void setFilename(const string filename);
 
 	bool keyExists(const char *key) const;
 
@@ -59,8 +64,9 @@ public:
 	void createArrayKey(const char *key,size_t index,const string &value);	// string
 	void removeArrayKey(const char *key,size_t index,bool throwOnError=false);
 
-	// CAUTION: collapses all arithmetic expressions to the evaluated value and throws away all comments from the original file
-	void writeFile(const string filename);
+	// CAUTION: these collaps all arithmetic expressions to the evaluated value and throws away all comments from the original file
+	void save() const;
+	void writeFile(const string filename) const;
 
 private:
 
@@ -69,6 +75,7 @@ private:
 
 	string filename;
 	CVariant *root;
+	bool saveOnEachEdit;
 
 	enum VariantTypes
 	{
@@ -116,7 +123,7 @@ private:
 	void prvCreateKey(const char *key,int offset,CVariant &value,CVariant *variant);
 
 	// this could be a method of CVariant
-	void prvWriteData(void *f,int indent,const CVariant *variant);
+	void prvWriteData(void *f,int indent,const CVariant *variant) const;
 
 	// used in cfg_parse
 	static CNestedDataFile *parseTree;
