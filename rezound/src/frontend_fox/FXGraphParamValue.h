@@ -43,7 +43,7 @@ class CNestedDataFile;
  * The vertical units are specified through setVertParameters
  */
 
-class FXGraphParamValue : public FXPacker
+class FXGraphParamValue : public FXVerticalFrame
 {
 	FXDECLARE(FXGraphParamValue);
 public:
@@ -53,6 +53,8 @@ public:
 	FXGraphParamValue(const string title,const int minScalar,const int maxScalar,const int initScalar,FXComposite *p,int opts,int x=0,int y=0,int w=0,int h=0);
 	virtual ~FXGraphParamValue();
 
+	FXint getDefaultWidth();
+	FXint getDefaultHeight();
 
 	void setSound(CSound *sound,sample_pos_t start,sample_pos_t stop);
 	void setHorzParameters(const string horzAxisLabel,const string horzUnits,f_at_xs interpretValue,f_at_xs uninterpretValue);
@@ -96,7 +98,7 @@ public:
 
 	enum
 	{
-		ID_GRAPH_PANEL=FXPacker::ID_LAST,
+		ID_GRAPH_CANVAS=FXVerticalFrame::ID_LAST,
 
 		ID_SCALAR_SPINNER,
 		ID_CLEAR_BUTTON,
@@ -121,20 +123,24 @@ private:
 
 	int initScalar;
 
+	FXPacker *graphPanel;
+		FXVerticalFrame *vertDeformPanel;
+			FXSlider *vertDeformSlider;
+		CHorzRuler *horzRuler;
+		FXComposite *vertRuler;
+		FXHorizontalFrame *horzDeformPanel;
+			FXSlider *horzDeformSlider;
+		FXCanvas *graphCanvas;
+		
 
-	FXComposite *buttonPanel;
-		FXLabel *scalarLabel;
-		FXSpinner *scalarSpinner;
-	FXComposite *horzRuler;
-	FXComposite *vertRuler;
-	FXComposite *statusPanel;
+	FXHorizontalFrame *statusPanel;
 		FXLabel *horzValueLabel;
 		FXLabel *vertValueLabel;
-	FXSlider *vertDeformSlider;
-	FXComposite *horzDeformPanel;
-		FXSlider *horzDeformSlider;
-	FXComposite *graphPanelParent;
-		FXCanvas *graphPanel;
+
+	FXHorizontalFrame *buttonPanel;
+		FXLabel *scalarLabel;
+		FXSpinner *scalarSpinner;
+	
 
 	int draggingNode;
 	int dragOffsetX,dragOffsetY;
