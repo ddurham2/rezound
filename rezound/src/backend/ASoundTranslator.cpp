@@ -66,12 +66,12 @@ bool ASoundTranslator::loadSound(const string filename,CSound *sound) const
 	return true;
 }
 
-bool ASoundTranslator::saveSound(const string filename,const CSound *sound) const
+bool ASoundTranslator::saveSound(const string filename,const CSound *sound,bool useLastUserPrefs) const
 {
-	return saveSound(filename,sound,0,sound->getLength());
+	return saveSound(filename,sound,0,sound->getLength(),useLastUserPrefs);
 }
 
-bool ASoundTranslator::saveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const
+bool ASoundTranslator::saveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs) const
 {
 	sound->lockSize();
 	try
@@ -93,7 +93,7 @@ bool ASoundTranslator::saveSound(const string filename,const CSound *sound,const
 		if(saveLength>sound->getLength() || (sound->getLength()-saveLength)<saveStart)
 			throw runtime_error(string(__func__)+" -- invalid saveStart and saveLength range: from "+istring(saveStart)+" for "+istring(saveLength));
 
-		bool ret=onSaveSound(filename,sound,saveStart,saveLength);
+		bool ret=onSaveSound(filename,sound,saveStart,saveLength,useLastUserPrefs);
 		sound->unlockSize();
 		return ret;
 	}

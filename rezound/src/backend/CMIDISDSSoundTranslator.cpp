@@ -509,7 +509,7 @@ bool CMIDISDSSoundTranslator::onLoadSound(const string filename,CSound *sound) c
 
 }
 
-bool CMIDISDSSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const
+bool CMIDISDSSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs) const
 {
 	int sysExChannel=-1;
 	int packetSeq=0;

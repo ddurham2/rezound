@@ -64,10 +64,10 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 	bool ret=true;
 
 	if(gPathToLame=="")
-		throw(runtime_error(string(__func__)+" -- $PATH to 'lame' not set"));
+		throw runtime_error(string(__func__)+" -- $PATH to 'lame' not set");
 
 	if(!checkThatFileExists(filename))
-		throw(runtime_error(string(__func__)+" -- file not found, '"+filename+"'"));
+		throw runtime_error(string(__func__)+" -- file not found, '"+filename+"'");
 
 	const string cmdLine=gPathToLame+" --decode "+escapeFilename(filename)+" -";
 
@@ -105,30 +105,30 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 
 		// verify some stuff about the output of lame
 		if(waveHeader.fmtSize!=16)
-			throw(runtime_error(string(__func__)+" -- it looks as if either there is an error in the input file -- or lame was not compiled with decoding support (get latest at http://mp3dev.org) -- or an error has occuring executing lame -- or your version of lame has started to output a different wave file header when decoding MPEG Layer-1,2,3 files to wave files.  Changes will have to be made to this source to handle the new wave file output -- check stderr for more information"));
+			throw runtime_error(string(__func__)+" -- it looks as if either there is an error in the input file -- or lame was not compiled with decoding support (get latest at http://mp3dev.org) -- or an error has occuring executing lame -- or your version of lame has started to output a different wave file header when decoding MPEG Layer-1,2,3 files to wave files.  Changes will have to be made to this source to handle the new wave file output -- check stderr for more information");
 		if(strncmp(waveHeader.RIFF_ID,"RIFF",4)!=0)
-			throw(runtime_error(string(__func__)+" -- internal error -- 'RIFF' expected in lame output"));
+			throw runtime_error(string(__func__)+" -- internal error -- 'RIFF' expected in lame output");
 		if(strncmp(waveHeader.WAVE_ID,"WAVE",4)!=0)
-			throw(runtime_error(string(__func__)+" -- internal error -- 'WAVE' expected in lame output"));
+			throw runtime_error(string(__func__)+" -- internal error -- 'WAVE' expected in lame output");
 		if(strncmp(waveHeader.fmt_ID,"fmt ",4)!=0)
-			throw(runtime_error(string(__func__)+" -- internal error -- 'fmt ' expected in lame output"));
+			throw runtime_error(string(__func__)+" -- internal error -- 'fmt ' expected in lame output");
 		if(strncmp(waveHeader.data_ID,"data",4)!=0)
-			throw(runtime_error(string(__func__)+" -- internal error -- 'data' expected in lame output"));
+			throw runtime_error(string(__func__)+" -- internal error -- 'data' expected in lame output");
 
 		if(waveHeader.dataType!=1)
-			throw(runtime_error(string(__func__)+" -- internal error -- it looks as if your version of lame has started to output non-PCM data when decoding mp3 files to wave files.  Changes will have to be made to this source to handle the new wave file output"));
+			throw runtime_error(string(__func__)+" -- internal error -- it looks as if your version of lame has started to output non-PCM data when decoding mp3 files to wave files.  Changes will have to be made to this source to handle the new wave file output");
 
 		unsigned channelCount=waveHeader.channelCount;
 		if(channelCount<=0 || channelCount>MAX_CHANNELS) // ??? could just ignore the extra channels
-			throw(runtime_error(string(__func__)+" -- invalid number of channels in audio file: "+istring(channelCount)+" -- you could simply increase MAX_CHANNELS in CSound.h"));
+			throw runtime_error(string(__func__)+" -- invalid number of channels in audio file: "+istring(channelCount)+" -- you could simply increase MAX_CHANNELS in CSound.h");
 
 		unsigned sampleRate=waveHeader.sampleRate;
 		if(sampleRate<100 || sampleRate>196000)
-			throw(runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate)));
+			throw runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate));
 
 		unsigned bits=waveHeader.bitsPerSample;
 		if(bits!=16 && bits!=8)
-			throw(runtime_error(string(__func__)+" -- an unlikely/unhandled bit rate of "+istring(bits)));
+			throw runtime_error(string(__func__)+" -- an unlikely/unhandled bit rate of "+istring(bits));
 
 		#define REALLOC_FILE_SIZE (1024*1024/4)
 		
@@ -188,7 +188,7 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 				sound->removeSpace(pos,sound->getLength()-pos);
 		}
 		else
-			throw(runtime_error(string(__func__)+" -- an unhandled bit rate of "+istring(bits)));
+			throw runtime_error(string(__func__)+" -- an unhandled bit rate of "+istring(bits));
 
 		cancelled:
 
@@ -210,24 +210,35 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 	return ret;
 }
 
-bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const
+bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs) const
 {
 	bool ret=true;
 
 	if(gPathToLame=="")
-		throw(runtime_error(string(__func__)+" -- path to 'lame' not set"));
+		throw runtime_error(string(__func__)+" -- path to 'lame' not set");
 
 	if(CPath(filename).extension()!="mp3")
-		throw(runtime_error(string(__func__)+" -- can only encode in MPEG Layer-3"));
+		throw runtime_error(string(__func__)+" -- can only encode in MPEG Layer-3");
 
-	AFrontendHooks::Mp3CompressionParameters parameters;
-	if(!gFrontendHooks->promptForMp3CompressionParameters(parameters))
-		return false;
-	
+	// get user preferences for saving the mp3
+	static bool parametersGotten=false;
+	static AFrontendHooks::Mp3CompressionParameters parameters;
+	useLastUserPrefs&=parametersGotten;
+	if(!useLastUserPrefs)
+	{
+		if(!gFrontendHooks->promptForMp3CompressionParameters(parameters))
+			return false;
+		parametersGotten=true;
+	}
+		
 	if(sound->getCueCount()>0 || sound->getUserNotes()!="")
 	{
-		if(Question(_("MPEG Layer-3 does not support saving user notes or cues\nDo you wish to continue?"),yesnoQues)!=yesAns)
-			return false;
+		// don't prompt the user if they've already answered this question
+		if(!useLastUserPrefs)
+		{
+			if(Question(_("MPEG Layer-3 does not support saving user notes or cues\nDo you wish to continue?"),yesnoQues)!=yesAns)
+				return false;
+		}
 	}
 
 	removeExistingFile(filename);
@@ -249,7 +260,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound
 			cmdLine+=" -V "+istring(parameters.quality)+" ";
 		}
 		else
-			throw(runtime_error(string(__func__)+" -- internal error -- unhandle bit rate method "+istring(parameters.method)));
+			throw runtime_error(string(__func__)+" -- internal error -- unhandle bit rate method "+istring(parameters.method));
 	}
 
 	cmdLine+=" "+parameters.additionalFlags+" ";
@@ -290,7 +301,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound
 		#define BITS 16 // has to go along with how we're writing it to the pipe below
 
 		if(saveLength>((0x7fffffff-4096)/((BITS/2)*channelCount)))
-			throw(runtime_error(string(__func__)+" -- audio data is too large to be converted to mp3 (more than 2gigs of "+istring(BITS)+"bit/"+istring(channelCount)+"channels"));
+			throw runtime_error(string(__func__)+" -- audio data is too large to be converted to mp3 (more than 2gigs of "+istring(BITS)+"bit/"+istring(channelCount)+"channels");
 
 		strncpy(waveHeader.RIFF_ID,"RIFF",4);
 		waveHeader.fileSize=36+(saveLength*(channelCount*(BITS/8)));
@@ -306,7 +317,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound
 		waveHeader.dataLength=saveLength*(channelCount*(BITS/8));
 
 		if(SIGPIPECaught)
-			throw(runtime_error(string(__func__)+" -- lame aborted -- check stderr for more information"));
+			throw runtime_error(string(__func__)+" -- lame aborted -- check stderr for more information");
 		fwrite(&waveHeader,1,sizeof(waveHeader),p);
 
 
@@ -334,7 +345,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound
 				pos+=chunkSize;
 
 				if(SIGPIPECaught)
-					throw(runtime_error(string(__func__)+" -- lame aborted -- check stderr for more information"));
+					throw runtime_error(string(__func__)+" -- lame aborted -- check stderr for more information");
 				if(fwrite((void *)((sample_t *)buffer),sizeof(sample_t)*channelCount,chunkSize,p)!=chunkSize)
 					fprintf(stderr,"%s -- dropped some data while writing\n",__func__);
 
@@ -346,7 +357,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound
 			}
 		}
 		else
-			throw(runtime_error(string(__func__)+" -- internal error -- an unhandled sample_t type"));
+			throw runtime_error(string(__func__)+" -- internal error -- an unhandled sample_t type");
 
 		cancelled:
 

@@ -338,7 +338,7 @@ bool ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 #endif
 }
 
-bool ClibvorbisSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const
+bool ClibvorbisSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs) const
 {
 #ifdef HAVE_LIBVORBIS
 	bool ret=true;
@@ -352,9 +352,16 @@ bool ClibvorbisSoundTranslator::onSaveSound(const string filename,const CSound *
 
 	vorbis_info_init(&vi);
 
-	AFrontendHooks::OggCompressionParameters parameters;
-	if(!gFrontendHooks->promptForOggCompressionParameters(parameters))
-		return false;
+	// get user preferences for saving the ogg
+	static bool parametersGotten=false;
+	static AFrontendHooks::OggCompressionParameters parameters;
+	useLastUserPrefs&=parametersGotten;
+	if(!useLastUserPrefs)
+	{
+		if(!gFrontendHooks->promptForOggCompressionParameters(parameters))
+			return false;
+		parametersGotten=true;
+	}
 
 	if(parameters.method==AFrontendHooks::OggCompressionParameters::brVBR)
 	{

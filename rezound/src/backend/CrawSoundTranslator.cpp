@@ -124,18 +124,25 @@ bool CrawSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 	}
 }
 
-bool CrawSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const
+bool CrawSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs) const
 {
 	AFfilesetup setup=afNewFileSetup();
 	try
 	{
-		AFrontendHooks::RawParameters parameters;
-		if(!gFrontendHooks->promptForRawParameters(parameters,false))
-			return false;
+		// get user preferences for saving the raw data
+		static bool parametersGotten=false;
+		static AFrontendHooks::RawParameters parameters;
+		useLastUserPrefs&=parametersGotten;
+		if(!useLastUserPrefs)
+		{
+			if(!gFrontendHooks->promptForRawParameters(parameters,false))
+				return false;
+			parametersGotten=true;
+		}
 
 		initSetup(setup,parameters);
 
-		const bool ret=saveSoundGivenSetup(filename,sound,saveStart,saveLength,setup,AF_FILE_RAWDATA);
+		const bool ret=saveSoundGivenSetup(filename,sound,saveStart,saveLength,setup,AF_FILE_RAWDATA,useLastUserPrefs);
 
 		afFreeFileSetup(setup);
 

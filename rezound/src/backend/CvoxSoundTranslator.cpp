@@ -160,7 +160,7 @@ bool CvoxSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 	return ret;
 }
 
-bool CvoxSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const
+bool CvoxSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs) const
 {
 	bool ret=true;
 

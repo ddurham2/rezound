@@ -34,10 +34,19 @@ public:
 	ASoundTranslator();
 	virtual ~ASoundTranslator();
 
-		// normally these return true, or they return false if cancelled
+	/* 
+	 * Normally returns true, or return false if cancelled.
+	 */
 	bool loadSound(const string filename,CSound *sound) const;
-	bool saveSound(const string filename,const CSound *sound) const;
-	bool saveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const;
+
+	/*
+	 * Normally returns true, or return false if cancelled.
+	 * useLastUserPrefs says: if possible, avoid prompting the user for saving 
+	 * preferences (i.e. compression type, audio format, etc) and use the last 
+	 * user chosen set of information.
+	 */
+	bool saveSound(const string filename,const CSound *sound,bool useLastUserPrefs=false) const;
+	bool saveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs=false) const;
 
 	// filename is passed, but that is just because sometimes at the point at which we want to let the extension determine the format, the filename might also help determine it too
 	virtual bool handlesExtension(const string extension,const string filename) const=0;
@@ -60,7 +69,7 @@ protected:
 	// ??? It might make sense to swap the return values of these before anyone codes
 		// these should return true normally, or they should return false if cancelled
 	virtual bool onLoadSound(const string filename,CSound *sound) const=0;
-	virtual bool onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveStop) const=0;
+	virtual bool onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveStop,bool useLastUserPrefs) const=0;
 
 private:
 	// this vectors is to be a list of all implemented (and enabled) ASoundTranslator derived classes

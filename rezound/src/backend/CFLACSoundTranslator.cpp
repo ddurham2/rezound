@@ -223,7 +223,7 @@ protected:
 	}
 };
 
-bool CFLACSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const
+bool CFLACSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs) const
 {
 	if(sound->getCueCount()>0 || sound->getUserNotes()!="")
 	{

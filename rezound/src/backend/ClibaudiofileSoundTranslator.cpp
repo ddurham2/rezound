@@ -263,7 +263,7 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 	return ret;
 }
 
-bool ClibaudiofileSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const
+bool ClibaudiofileSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs) const
 {
 	int fileType;
 
@@ -282,6 +282,8 @@ bool ClibaudiofileSoundTranslator::onSaveSound(const string filename,const CSoun
 	AFfilesetup setup=afNewFileSetup();
 	try
 	{
+// ??? use useLastUserPrefs here to know if to prompt the user or use the user's previous choice
+
 		// ??? all the following parameters need to be passed in somehow as the export format
 		// 	??? can easily do it with AFrontendHooks
 		afInitFileFormat(setup,fileType); 
@@ -293,7 +295,7 @@ bool ClibaudiofileSoundTranslator::onSaveSound(const string filename,const CSoun
 			//afInitInitCompressionParams(setup,AF_DEFAULT_TRACK, ... );
 		afInitFrameCount(setup,AF_DEFAULT_TRACK,saveLength);
 
-		const bool ret=saveSoundGivenSetup(filename,sound,saveStart,saveLength,setup,fileType);
+		const bool ret=saveSoundGivenSetup(filename,sound,saveStart,saveLength,setup,fileType,useLastUserPrefs);
 
 		afFreeFileSetup(setup);
 
@@ -307,7 +309,7 @@ bool ClibaudiofileSoundTranslator::onSaveSound(const string filename,const CSoun
 }
 
 
-bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,AFfilesetup initialSetup,int fileFormatType) const
+bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,AFfilesetup initialSetup,int fileFormatType,bool useLastUserPrefs) const
 {
 	bool ret=true;
 
@@ -330,7 +332,10 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,con
 	if(cueCount>0)
 	{
 		if(!afQueryLong(AF_QUERYTYPE_MARK,AF_QUERY_SUPPORTED,fileFormatType,0,0))
-			Warning(_("This format does not support saving cues"));
+		{
+			if(!useLastUserPrefs) /* don't warn user if they've probably already been warned */
+				Warning(_("This format does not support saving cues"));
+		}
 		else
 		{
 

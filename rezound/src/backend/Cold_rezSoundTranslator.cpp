@@ -127,9 +127,9 @@ bool Cold_rezSoundTranslator::onLoadSound(const string filename,CSound *sound) c
 	return true;
 }
 
-bool Cold_rezSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const
+bool Cold_rezSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs) const
 {
-	throw runtime_error(string(__func__)+" -- unimplemented");
+	throw runtime_error(string(__func__)+" -- support for saving the ancient ReZound format is not implemented");
 }
 
 
