@@ -8,6 +8,11 @@ int main()
 	{
 		CNestedDataFile s("test.dat");
 
+		s.createKey("foo.bar.bill.ester","15");
+		s.createKey("foo.x",200.123);
+
+		s.writeFile("test.dat");
+
 	}
 	catch(exception &e)
 	{

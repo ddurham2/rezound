@@ -1,4 +1,4 @@
 flex -Pcfg_ -t cfg.l > cfg.lex.c
-bison -p cfg_ -b cfg cfg.y && mv cfg.tab.c cfg.tab.cc
-c++ -g -o t t.cpp CNestedDataFile.cpp cfg.tab.cc -I/home/ddurham/code/rezound/src/misc -I/home/ddurham/code/rezound/src/misc/missing
+bison -p cfg_ -b cfg cfg.y #&& mv cfg.tab.c cfg.tab.cc
+c++ -g -o t t.cpp CNestedDataFile.cpp cfg.tab.c -I.. -I../missing
 

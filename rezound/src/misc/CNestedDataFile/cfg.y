@@ -10,7 +10,7 @@
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  * 
- * istring is distributed in the hope that it will be useful, but
+ * CNestedDataFile is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -27,11 +27,7 @@
 
 #include "CNestedDataFile.h"
 
-struct RKeyValue
-{
-	char *key;
-	CNestedDataFile::CVariant *value;
-};
+#include <istring>
 
 struct RTokenPosition
 {
@@ -42,7 +38,7 @@ struct RTokenPosition
 #define YYLTYPE RTokenPosition
 #define YYLSP_NEEDED
 
-stack<CNestedDataFile *> scopeStack;
+stack<string> scopeStack;
 
 void cfg_error(int line,const char *msg);
 void cfg_error(const YYLTYPE &pos,const char *msg);
@@ -55,7 +51,9 @@ void cfg_deinit();
 
 void cfg_includeFile(const char *filename);
 
-void addScopeMember(int line,CNestedDataFile *scope,const char *key,CNestedDataFile::CVariant *value);
+void checkForDupMember(int line,const char *key);
+
+static const string getCurrentScope();
 
 int myyynerrs=0;
 
@@ -67,7 +65,8 @@ int myyynerrs=0;
 	VERIFY_TYPE(ap,a)		\
 	VERIFY_TYPE(bp,b)		\
 	r=a;				\
-	r->floatValue = r->floatValue o b->floatValue;	
+	r->floatValue = r->floatValue o b->floatValue;	 \
+	delete b;
 
 
 %}
@@ -76,11 +75,9 @@ int myyynerrs=0;
 
 %union cfg_parse_union
 {
-	char *			stringValue;
-	float			floatValue;
-	int 			intValue;
-	RKeyValue 		keyValue;
-	CNestedDataFile *		scopeValue;
+	char *				stringValue;
+	double				floatValue;
+	int 				intValue;
 	CNestedDataFile::CVariant *	variant;
 }
 
@@ -112,8 +109,8 @@ int myyynerrs=0;
 %left			'.'
 
 
-%type	<scopeValue>	scope;
-%type	<keyValue>	scope_body_item;
+//%type	<variant>	scope;
+//%type	<keyValue>	scope_body_item;
 
 // numeric expression stuff
 %type	<variant>	primary_expr
@@ -141,7 +138,7 @@ int myyynerrs=0;
 
 
 start 
-	: { cfg_init(); scopeStack.push(CNestedDataFile::parseTree) } scope_body
+	: { cfg_init(); } scope_body
 	{
 		cfg_deinit();
 
@@ -153,16 +150,15 @@ start
 scope
 	: IDENT '{' 
 	{ /* mid-rule action */
-		// create new named scope now that we know there will be one
-		CNestedDataFile *newScope=new CNestedDataFile($1,scopeStack.top());
-		// add the new scope as a member of its parent scope
-		addScopeMember(@1.first_line,scopeStack.top(),$1,new CNestedDataFile::CVariant(newScope));
-		// let new scope become the scope currently being parsed
-		scopeStack.push(newScope);
+
+		checkForDupMember(@1.first_line,$1);
+
+		scopeStack.push($1);
+
 		free($1);
+
 		// now continue parsing for new scope's body
 	} scope_body '}' {
-		$$=scopeStack.top();
 		scopeStack.pop();
 	}
 	;
@@ -170,13 +166,6 @@ scope
 scope_body
 	: /* empty */
 	| scope_body scope_body_item
-	{
-		if($2.key)
-		{ // not error or include
-			addScopeMember(@2.first_line,scopeStack.top(),$2.key,$2.value);
-			free($2.key);
-		}
-	}
 
 	// ERROR CASES
 	| error ';'
@@ -191,33 +180,29 @@ scope_body
 
 scope_body_item
 	: scope
-	{
-		$$.key=NULL;
-		/* 
-		All scope_body members are added to the scope by the semantic action for 
-		scope_body except for nested scopes.  They are added earlier on so that 
-		qualified_ident lookups will correctly resolve if perhaps the whole scope 
-		hasn't been parsed and therefore not added as a member yet.
-		*/
-	}
 	| IDENT ASSIGN expr ';'
 	{
-		$$.key=$1;
-		$$.value=$3;
+		VERIFY_TYPE(@3,$3)
+		checkForDupMember(@1.first_line,$1);
+		CNestedDataFile::parseTree->createKey((getCurrentScope()+$1).c_str(),$3->floatValue);
+
+		delete $3;
+		free($1);
 	}
 	| IDENT ASSIGN string_expr ';'
 	{
-		$$.key=$1;
-		$$.value=new CNestedDataFile::CVariant($3);
+		checkForDupMember(@1.first_line,$1);
+		CNestedDataFile::parseTree->createKey((getCurrentScope()+$1).c_str(),$3);
+
 		free($3);
+		free($1);
 	}
 	| INCLUDE LIT_STRING
 	{
-		$$.key=NULL;
 		cfg_includeFile($2);
 		free($2);
 	}
-	| ';' { $$.key=NULL; } // allow stray ';'s
+	| ';' // allow stray ';'s
 	;
 
 
@@ -227,27 +212,33 @@ primary_expr
 	// literal values
 	: LIT_NUMBER
 	{
-		$$=new CNestedDataFile::CVariant($1);
+		$$=new CNestedDataFile::CVariant("",$1);
 	}
 
 	// symbol lookups
 	| qualified_ident
 	{
-		CNestedDataFile::CVariant *value=scopeStack.top()->upwardsScopeLookup($1);
-
+		CNestedDataFile::CVariant *value;
+		if(!CNestedDataFile::parseTree->prvGetValue(value,$1,0,false,CNestedDataFile::parseTree->root))
+		{
+			cfg_error(@1,("symbol not found: '"+string($1)+"'").c_str());
+			value=new CNestedDataFile::CVariant("",0.0);
+		}
+			
 		switch(value->type)
 		{
 		case CNestedDataFile::vtString:
-			$$=new CNestedDataFile::CVariant(atof(value->stringValue.c_str()));
+			$$=new CNestedDataFile::CVariant("",atof(value->stringValue.c_str()));
 			break;
 		case CNestedDataFile::vtFloat:
-			$$=new CNestedDataFile::CVariant(value->floatValue);
+			$$=new CNestedDataFile::CVariant("",value->floatValue);
 			break;
 		case CNestedDataFile::vtScope:
-			$$=new CNestedDataFile::CVariant(scopeStack.top(),*value);
+			cfg_error(@1,("symbol resolves to a scope: '"+string($1)+"'").c_str());
+			value=new CNestedDataFile::CVariant("",0.0);
 			break;
 		default:
-			cfg_error(@1,"internal error 1");
+			throw(runtime_error("cfg_parse -- unhandled variant type"));
 
 		}
 
@@ -264,8 +255,8 @@ primary_expr
 	// ERROR CASES
 	| '(' error ')'
 	{
-	yyclearin;
-	$$=new CNestedDataFile::CVariant(0.0);
+		yyclearin;
+		$$=new CNestedDataFile::CVariant("",0.0);
 	}
 	;
 
@@ -296,7 +287,7 @@ multiplicative_expr
 	: unary_expr { $$=$1; }
 	| multiplicative_expr MUL unary_expr { BINARY_EXPR($$,@1,$1,@3,$3,*) }
 	| multiplicative_expr DIV unary_expr { BINARY_EXPR($$,@1,$1,@3,$3,/) }
-	| multiplicative_expr MOD unary_expr { VERIFY_TYPE(@1,$1) VERIFY_TYPE(@3,$3) $$=$1; $$->floatValue=fmod($$->floatValue,$3->floatValue) }
+	| multiplicative_expr MOD unary_expr { VERIFY_TYPE(@1,$1) VERIFY_TYPE(@3,$3) $$=$1; $$->floatValue=fmod($$->floatValue,$3->floatValue); delete $3; }
 	;
 
 
@@ -334,7 +325,7 @@ logical_or_expr
 
 conditional_expr
 	: logical_or_expr { $$=$1; }
-	| logical_or_expr '?' expr ':' conditional_expr { $$=($1->floatValue ? ((delete $5),$3) : ((delete $3),$5)); delete $1; }
+	| logical_or_expr '?' expr ':' conditional_expr { VERIFY_TYPE(@1,$1) $$=($1->floatValue ? ((delete $5),$3) : ((delete $3),$5)); delete $1; }
 	;
 
 
@@ -365,7 +356,7 @@ string_expr
 	: LIT_STRING { $$=$1; }
 	| TRUE { $$=strdup("true"); }
 	| FALSE { $$=strdup("false"); }
-	| string_expr '.' string_expr 
+	| string_expr '.' string_expr
 	{ 
 		$$=$1; 
 		$$=(char *)realloc($$,strlen($$)+strlen($3)+1); 
@@ -393,10 +384,7 @@ void cfg_error(int line,const char *msg)
 	
 	myyynerrs++;
 	if(myyynerrs>25)
-	{
-		fprintf(stderr,"more than 25 errors; bailing\n");
-		exit(0);
-	}
+		throw(runtime_error("cfg_error -- more than 25 errors; bailing"));
 }
 
 void cfg_error(const RTokenPosition &pos,const char *msg)
@@ -411,14 +399,28 @@ void cfg_error(const char *msg)
 	cfg_error(yylloc.first_line,msg);
 }
 
-void addScopeMember(int line,CNestedDataFile *scope,const char *key,CNestedDataFile::CVariant *value)
+void checkForDupMember(int line,const char *key)
 {
-	bool found= scope->values.find(key)!=scope->values.end();
-	if(found)
-	{
-		cfg_error(line,("duplicate name: "+string(key)).c_str());
-		delete value;
-	}
-	else
-		scope->values[key]=value;
+	if(CNestedDataFile::parseTree->keyExists((getCurrentScope()+key).c_str()))
+		cfg_error(line,("duplicate scope name: "+(getCurrentScope()+string(key))).c_str());
 }
+
+static const string getCurrentScope()
+{
+	stack<string> copy=scopeStack;
+	string s;
+	while(!copy.empty())
+	{
+		s=copy.top()+s;
+		s="."+s;
+
+		copy.pop();
+	}
+
+	s+=".";
+
+	s.erase(0,1);
+
+	return(s);
+}
+

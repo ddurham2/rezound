@@ -8,7 +8,7 @@
  * by the Free Software Foundation; either version 2 of the License,
  * or (at your option) any later version.
  * 
- * istring is distributed in the hope that it will be useful, but
+ * CNestedDataFile is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -43,20 +43,23 @@ public:
 	CNestedDataFile(const string filename);
 	virtual ~CNestedDataFile();
 
-	const string getValue(const char *key) const;
+	bool keyExists(const char *key) const;
 
+	const string getValue(const char *key,bool throwIfNotExists=false) const;
+
+	// will create the parents of key as necessary
+	void createKey(const char *key,const double value);
+	void createKey(const char *key,const string value);
+
+	// CAUTION: collapses all arithmetic expressions to the evaluated value and throws away all comments from the original file
+	void writeFile(const string filename);
 
 private:
 
 	class CVariant;
 	friend class CVariant;
 
-	CNestedDataFile(const CNestedDataFile &src);
-	CNestedDataFile(const char *name,CNestedDataFile *parentScope);
-	CNestedDataFile(CNestedDataFile *parentScope,const CNestedDataFile &src);
-
-	bool prvGetValue(CVariant *&retValue,const char *key,int offset,bool throwOnError) const;
-	CVariant *upwardsScopeLookup(const char *key) const;
+	CVariant *root;
 
 	enum VariantTypes
 	{
@@ -65,45 +68,45 @@ private:
 		vtString,
 		vtFloat
 	};
-		
-	/*
-	 * Although Jack only wants all values as strings, internally
-	 * the types are maintained in case someday we do want to enforce
-	 * the type of a value by having to call getInt, getFloat, getString, etc
-	 */
+
 	class CVariant
 	{
 	public:	
 		CVariant();
-		CVariant(CNestedDataFile *value);
-		CVariant(const string value);
-		CVariant(float value);
+		CVariant(const string name);			// vtScope
+		CVariant(const string name,const string value);	// vtString
+		CVariant(const string name,const double value);	// vtFloat
 		CVariant(const CVariant &src);
-		CVariant(CNestedDataFile *parentScope,const CVariant &src);
 		virtual ~CVariant();
 
-		CVariant &operator=(const CVariant &rhs);
+		const CVariant &operator=(const CVariant &src);
 
-		// this ain't too efficient if say entire scenes were loaded with this
-		VariantTypes type;
-		CNestedDataFile *scopeValue;
+		string name;
+
+		// would use a union, but you can't have constructor-ed classes in a union (could use void *)
+		VariantTypes type; // depending on this we use one of the following data-members
+		map<string,CVariant> members; // I could be a bit more efficient if I were to use CVariant *'s, but this is a quick implementation right now
 		string stringValue;
-		float floatValue;
+		double floatValue;
 	};
 
-	const string name;
-	CNestedDataFile *parentScope;
-	map<string,CVariant *> values;
+	// I would have to implement this if I were to allow qualified idents in the input file which aren't always fully qualified... I would also need to have a parent * in CVariant to be able to implement this (unless I suppose I wanted to search more than I had to.. which I would do.. okay.. ya)
+	//CVariant *upwardsScopeLookup(const char *key) const;
 
-	#ifdef THREAD_SAFE_CSCOPE
-	mutable CMutex mutex; // used to make cfg_parse thread-safe
-	#endif
+	// this could be a method of CVariant
+	bool prvGetValue(CVariant *&retValue,const char *key,int offset,bool throwOnError,const CVariant *variant) const;
+
+	// this could be a method of CVariant
+	void prvCreateKey(const char *key,int offset,CVariant &value,CVariant *variant);
+
+	// this could be a method of CVariant
+	void prvWriteData(void *f,int indent,const CVariant *variant);
 
 	// used in cfg_parse
 	static CNestedDataFile *parseTree;
 	static const char *initialFilename;
 
-	friend void addScopeMember(int line,CNestedDataFile *scope,const char *key,CVariant *value);
+	friend void checkForDupMember(int line,const char *key);
 	friend int cfg_parse();
 	friend void cfg_init();
 
