@@ -1,9 +1,6 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- a newly recorded sound needs to be !saved
-	- a new sounds need to be !saved
-
 	- in CrezSound::saveSound, copyToFile unnecessarily copies any temp pools and peak chunk pools...  thus making the saved file way too big
 		- so I should manually copy the pools... TPoolAccessor should have a method for copying pool efficiently
 
@@ -146,4 +143,6 @@
 
 	- something wasn't handled right when I did a recording to filename 'A' and hit okay.. then recorded to filename 'A' again.. I need to check is registrered after I get the new filename before I popup the record dialog
 
+	- a newly recorded sound needs to be !saved
+	- a new sounds need to be !saved
 
