@@ -453,8 +453,8 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 	positions or end samples position would be to create a template function out of 
 	CSound::mixSound .    I would just determine how far the sample position would be
 	able to go before the next loop point, and I would call it multiple times... Then
-	I could use mixSound as a function outside of ASound and use it here and in CPasteEdit
-	and other actions later to come
+	I could use mixSound as a function outside of ASound and use it here and in the clipboard
+	copyTo methods and other actions later to come
 */
 
 		const sample_fpos_t origPlayPosition=fPlayPosition;
