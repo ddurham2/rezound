@@ -110,7 +110,7 @@ private:
 		// returns the number of bytes read or written
 		ssize_t read(int fd);
 		ssize_t write(int fd);
-			void encodeEndianBeforeWrite();
+		void encodeEndianBeforeWrite();
 	};
 
 	void writeHeaderToFiles();
