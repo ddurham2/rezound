@@ -83,7 +83,7 @@ unsigned gSnapToCueDistance=5;
 bool gFollowPlayPosition=true;
 
 
-double gInitialLengthToShow=10.0; // default 10 seconds
+double gInitialLengthToShow=120.0; // default 120 seconds
 
 
 unsigned gMeterUpdateTime=50;
