@@ -49,7 +49,17 @@ static void playTrigger(void *Pthis);
 
 #define DRAW_PLAY_POSITION_TIME 75	// 75 ms
 
-#define ZOOM_MUL 3
+#define ZOOM_MUL 7
+
+static double zoomDialToZoomFactor(FXint zoomDial)
+{
+	return pow(zoomDial/(100.0*ZOOM_MUL),1.0/4.0);
+}
+
+static FXint zoomFactorToZoomDial(double zoomFactor)
+{
+	return (FXint)(pow(zoomFactor,4.0)*(100.0*ZOOM_MUL));
+}
 
 
 FXDEFMAP(CSoundWindow) CSoundWindowMap[]=
@@ -131,7 +141,7 @@ CSoundWindow::CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound) :
 		horzZoomPanel(new FXPacker(waveViewPanel,LAYOUT_SIDE_BOTTOM | FRAME_NONE | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0,0,0,22, 4,4,2,2, 2,2)),
 			horzZoomFitButton(new FXButton(horzZoomPanel,"Fit\tZoom to Fit Selection",NULL,this,ID_HORZ_ZOOM_FIT,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
 			horzZoomMinusInd(new FXButton(horzZoomPanel," - \tZoom Out Full",NULL,this,ID_HORZ_ZOOM_DIAL_MINUS,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
-			horzZoomDial(new FXDial(horzZoomPanel,this,ID_HORZ_ZOOM_DIAL,LAYOUT_SIDE_LEFT | DIAL_HORIZONTAL|DIAL_HAS_NOTCH | LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0,0,150,0, 0,0,0,0)),
+			horzZoomDial(new FXDial(horzZoomPanel,this,ID_HORZ_ZOOM_DIAL,LAYOUT_SIDE_LEFT | DIAL_HORIZONTAL|DIAL_HAS_NOTCH | LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0,0,200,0, 0,0,0,0)),
 			horzZoomPlusInd(new FXButton(horzZoomPanel," + \tZoom In Full",NULL,this,ID_HORZ_ZOOM_DIAL_PLUS,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
 			horzZoomValueLabel(new FXLabel(horzZoomPanel,"",NULL,LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
 			bothZoomMinusButton(new FXButton(horzZoomPanel," -- \tHorizontally and Vertically Zoom Out Full",NULL,this,ID_BOTH_ZOOM_DIAL_MINUS,FRAME_RAISED | LAYOUT_SIDE_RIGHT | LAYOUT_FILL_Y)),
@@ -316,9 +326,8 @@ void CSoundWindow::show()
 			// approximately show 10 (setting) seconds of sound (apx because we haven't done layout yet)
 			// can't do this at construction because we don't know the max until the window's are laid out
 		waveView->showAmount(gInitialLengthToShow,0);
-
-		horzZoomDial->setValue((FXint)(waveView->getHorzZoom()*100*ZOOM_MUL));
-		horzZoomValueLabel->setText(("  "+istring(horzZoomDial->getValue()/(double)ZOOM_MUL,3,1,true)+"%").c_str());
+		horzZoomDial->setValue(zoomFactorToZoomDial(waveView->getHorzZoom()));
+		onHorzZoomDialChange(NULL,0,NULL);
 
 		firstTimeShowing=false;
 	}
@@ -543,7 +552,6 @@ long CSoundWindow::onDrawPlayPosition(FXObject *sender,FXSelector,void*)
 	return 1;
 }
 
-
 // horz zoom handlers
 
 long CSoundWindow::onHorzZoomDialChange(FXObject *sender ,FXSelector sel,void *ptr)
@@ -561,7 +569,7 @@ long CSoundWindow::onHorzZoomDialChange(FXObject *sender ,FXSelector sel,void *p
 		
 
 	// ??? for some reason, this does not behave quite like the original (before rewrite), but it is acceptable for now... perhaps look at it later
-	waveView->setHorzZoom(pow(horzZoomDial->getValue()/(100.0*ZOOM_MUL),1.0/3.0),horzRecenterType);
+	waveView->setHorzZoom(zoomDialToZoomFactor(horzZoomDial->getValue()),horzRecenterType);
 	horzZoomValueLabel->setText(("  "+istring(horzZoomDial->getValue()/(double)ZOOM_MUL,3,1,true)+"%").c_str());
 	horzZoomValueLabel->repaint(); // make it update now
 
@@ -587,8 +595,7 @@ long CSoundWindow::onHorzZoomDialMinusIndClick(FXObject *sender,FXSelector sel,v
 long CSoundWindow::onHorzZoomFitClick(FXObject *sender,FXSelector sel,void *ptr)
 {
 	waveView->showAmount((sample_fpos_t)(loadedSound->channel->getStopPosition()-loadedSound->channel->getStartPosition()+1)/(sample_fpos_t)loadedSound->sound->getSampleRate(),loadedSound->channel->getStartPosition(),10);
-
-	horzZoomDial->setValue((FXint)(waveView->getHorzZoom()*100*ZOOM_MUL));
+	horzZoomDial->setValue(zoomFactorToZoomDial(waveView->getHorzZoom()));
 	horzZoomValueLabel->setText(("  "+istring(horzZoomDial->getValue()/(double)ZOOM_MUL,3,1,true)+"%").c_str());
 	return 1;
 }
