@@ -279,12 +279,15 @@ static bool **getPasteChannels(AActionDialog *pasteChannelsDialog)
 		return((bool **)pasteChannelsDialog->getUserData());
 	else
 	{ // if the dialog was not shown for this action, then make channel1 -> channel1, channel2 -> channel2, ...
+
+		const ASoundClipboard *clipboard=AAction::clipboards[gWhichClipboard];
+
 		static PasteChannels_t pasteChannels;
 
 		for(unsigned y=0;y<MAX_CHANNELS;y++)
 		for(unsigned x=0;x<MAX_CHANNELS;x++)
 		{
-			if(y==x)
+			if(y==x && clipboard->getWhichChannels()[y])
 				pasteChannels[x][y]=true;
 			else
 				pasteChannels[x][y]=false;
