@@ -289,6 +289,14 @@ void ASoundFileManager::recordToNew()
 
 	if(!ret)
 		close(ctSaveNone,loaded); // record dialog was cancelled, don't ask to save when closing
+	else
+	{
+		// set some kind of initial selection
+		loaded->channel->setStopPosition(loaded->getSound()->getLength()/2+loaded->getSound()->getLength()/4);
+		loaded->channel->setStartPosition(loaded->getSound()->getLength()/2-loaded->getSound()->getLength()/4);
+
+		redrawActive();
+	}
 }
 
 
