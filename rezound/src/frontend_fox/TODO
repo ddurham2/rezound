@@ -1,8 +1,6 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- Need to remember openAsRaw when doing reopen's 
-
 	- Add a button to the FXGraphParamValue which smoothes out angles by making it many nodes to approximate curve.. call it 'approximate'
 
 	- need make sure there is a virtual destructor for all the classes
@@ -107,6 +105,11 @@
 	- Put the name of each channel horizontally along the left of the channels so that if the sound is 5 channels you label the first 2 'left' and 'right' then the next ones 'center', 'rear left' and 'rear right' 
 	
 	- if the frontend gets too slow about saving user presets, I could create a gUserPresetFile which stays allocated and doesn't have to reparse the file every time like it does now.
+
+	- Need to remember openAsRaw when doing reopen's 
+		- this also affects the registered filenames history
+
+
 
 
 --- PREFERENCES when I make a preferences dialog --
