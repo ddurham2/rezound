@@ -25,7 +25,7 @@
  * -- Davy
  */
 
-/* ??? I could consider using string instead of any char *'s passing strings seems to be quote efficient */
+/* ??? I could consider using string instead of any char *'s passing strings seems to be quite efficient */
 
 #include "CNestedDataFile.h"
 
