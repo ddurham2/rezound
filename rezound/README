@@ -15,15 +15,20 @@ Potential hackers should look at the docs/devel and docs/class directories.
 
 
 
-     This Project is still in it's Alpha phase, the developers would really
-     like to get as much feedback as possible. We would really like to get any
-     bug reports and other suggestions. Please visit the ReZound Homepage. 
+     This project is still in a beta stage, I would really like to get as much 
+     feedback as possible. We would really like to get any bug reports and other 
+     suggestions.  Please visit the ReZound Homepage. 
 
 ReZound Homepage:	http://rezound.sourceforge.net/
-Support:		http://sourceforge.net/tracker/?atid=205056&group_id=5056
+
+General Discussions and Help:	
+	ReZound-users mailing list 
+		http://lists.sourceforge.net/lists/listinfo/rezound-users
+	or SourceForge Tracker (Support Requests)
+		http://sourceforge.net/tracker/?atid=205056&group_id=5056
+
 Bug Reports:		http://sourceforge.net/tracker/?atid=105056&group_id=5056
 Feature Requests:	http://sourceforge.net/tracker/?atid=355056&group_id=5056
-Open Discussions:	http://sourceforge.net/forum/forum.php?forum_id=15508
 Submit Patches:		http://sourceforge.net/tracker/?atid=305056&group_id=5056
 
 
@@ -37,11 +42,14 @@ snd:	- http://ccrma-www.stanford.edu/software/snd/
 
 glame:	- http://glame.sourceforge.net/
 	This is a very nice audio editing application similar to ReZound.
-	Not perfect, but it's maturing more and more everyday.
 
 
+sweep:	- http://www.metadecks.org/software/sweep/
+	This is a very nice audio editing application similar to ReZound.
+	
 sox:	- http://sox.sourceforge.net/
 	This is a command line based audio file manipulation
 	program.  It's sort of like ImageMagick for audio files.
+
 	
 
