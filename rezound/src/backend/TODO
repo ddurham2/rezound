@@ -6,8 +6,9 @@
 	- create a template method in DSPBlocks which is a mean finder given an accessor and a range to find the mean for removing DC
 		- it would handle avoiding overflow by use of recursion and also should be give an accuracy parameter to avoid looking at every value
 
-	- distortion would be an easy effect
-		- create the same widget as the curved amplitude or rate change has and make both axies dBFS and the user can create a mapping for sample values to follow
+	DONE except for symetric or non-symetic - distortion would be an easy effect
+		- create the same widget as the curved amplitude or rate change has and make both axies dBFS and the user can create a mapping f
+or sample values to follow
 		- create presets for 'mute above axis' and 'mute below axis'
 
 	- create an effects->pan action where two chosen channels (or default if stereo) can be crossfaded/mixed in every combination I can think of
@@ -31,7 +32,7 @@
 	- Warn the user if saving to a file format that doesn't save more than 31bits worth of sound and the sound file is longer than that
 
 	- There may be some more formats that libaudiofile supports... I just didn't see them in the docs... work with the author to include any others
-	
+
 	- add   PCM to PWM  and  PWM to PCM  actions... I'm not sure if they would really fall under Effects... Maybe a new category should be created.  If a new one, then plan other new actions related to these.
 
 
