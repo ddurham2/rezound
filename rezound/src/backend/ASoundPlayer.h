@@ -75,7 +75,7 @@ public:
 	CSoundPlayerChannel *newSoundPlayerChannel(ASound *sound);
 	//????This was moved from being a protected member.
 	//????To make gcc 2.95.2 happy --AV
-	// bufferSize is in samples (NOT BYTES)
+	// bufferSize is in sample frames (NOT BYTES)
 	void mixSoundPlayerChannels(const unsigned nChannels,sample_t * const buffer,const size_t bufferSize);
 
 protected:

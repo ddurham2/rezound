@@ -91,7 +91,7 @@ private:
 
 	// - called by ASoundPlayer
 	// - nChannels is the number of channels buffer represents (i.e 1 mono, 2 stereo, etc)
-	// - bufferSize is in samples
+	// - bufferSize is in sample frames
 	void mixOntoBuffer(const unsigned nChannels,sample_t * const buffer,const size_t bufferSize);
 
 	void lock() const;

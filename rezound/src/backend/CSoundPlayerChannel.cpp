@@ -366,10 +366,12 @@ void CSoundPlayerChannel::calcVolumeScalars()
 }
 
 /* ??? need to rewrite this to support N channels of PCM data, no l or r buffers... */
-void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * const oBuffer,const size_t oBufferLength)
+void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * const oBuffer,const size_t _oBufferLength)
 {
 	if(!playing || (paused && playSpeed==1.0/*not shuttling*/))
 		return;
+	
+	const size_t oBufferLength=_oBufferLength*nChannels; // in this method I want to deal with oBuffer in samples
 
 	lock();
 
