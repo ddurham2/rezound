@@ -141,7 +141,7 @@ private:
  * doActionSizeSafe should just throw one of these.
  */
 #include <stdexcept>
-class EUserMessage : public runtime_error { public: EUserMessage(const char *msg) : runtime_error(msg) { } };
+class EUserMessage : public runtime_error { public: EUserMessage(const string msg) : runtime_error(msg) { } };
 
 /*
     This class is a base class for all effect and edit actions.  doActionSizeSafe
