@@ -141,6 +141,7 @@ noinst_HEADERS=\
 	FXWaveCanvas.h \
 	drawPortion.h \
 	rememberShow.h \
+	custom_cursors.h \
 	settings.h 
 
 EXTRA_DIST=convert_images.sh
