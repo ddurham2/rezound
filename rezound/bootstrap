@@ -35,7 +35,7 @@
 
 
 DIRS="./ ./config ./src ./src/PoolFile ./src/backend ./src/backend/Edits ./src/backend/Effects ./src/backend/Remaster ./src/misc ./src/misc/cc++ ./src/frontend_fox"
-FILES="libtool Makefile Makefile.in aclocal.m4 config.cache config.h config.h.in config.status configure config.log install-sh missing mkinstalldirs stamp-h stamp-h.in config.guess config.sub ltconfig ltmain.sh"
+FILES="ltconfig libtool Makefile Makefile.in aclocal.m4 config.cache config.h config.h.in config.status configure config.log install-sh missing mkinstalldirs stamp-h stamp-h.in config.guess config.sub ltconfig ltmain.sh"
 
 for dir in $DIRS; do
 	for file in $FILES; do
