@@ -7,10 +7,6 @@ and move it into config
 -O2 or not.
 
 - Create define in config.h for the install prefix (the value of the --prefix flag to configure)
-- Create define in config.h for the current working directory of configure
-	- There may be a better way of doing this... What I need is some path that I can get to /.../rezound/share/rezound/presets.dat which, at run time, I will look for first, THEN I will look in the /usr/.../share/rezound directory
-	- I say a better way because you could run configure some other directory where configure is not
-
 
 
 --------------The stuff below this line can wait, because I don't expect to
