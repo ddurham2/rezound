@@ -59,7 +59,7 @@ bool CRemoveChannelsEdit::doActionSizeSafe(CActionSound &actionSound,bool prepar
 
 AAction::CanUndoResults CRemoveChannelsEdit::canUndo(const CActionSound &actionSound) const
 {
-	return curNo;
+	return curYes;
 }
 
 void CRemoveChannelsEdit::undoActionSizeSafe(const CActionSound &actionSound)
