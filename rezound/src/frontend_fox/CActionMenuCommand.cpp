@@ -81,8 +81,9 @@ long CActionMenuCommand::onCommand(FXObject *sender,FXSelector sel,void *ptr)
 	if(activeSound)
 	{
 		CActionParameters actionParameters;
-		if(actionFactory->performAction(activeSound,&actionParameters,prevEvent.state&SHIFTMASK,prevEvent.click_button==RIGHTBUTTON))
-			gSoundFileManager->updateAfterEdit();
+		actionFactory->performAction(activeSound,&actionParameters,prevEvent.state&SHIFTMASK,prevEvent.click_button==RIGHTBUTTON);
+
+		gSoundFileManager->updateAfterEdit();
 
 		prevEvent.state=0;
 		prevEvent.click_button=0;
