@@ -198,6 +198,33 @@ bool CNestedDataFile::keyExists(const char *key) const
 	return(findVariantNode(value,key,0,false,root));
 }
 
+const vector<string> CNestedDataFile::getChildKeys(const char *parentKey,bool throwIfNotExists) const
+{
+	vector<string> childKeys;
+	CVariant *scope;
+	if(!findVariantNode(scope,parentKey,0,true,root))
+	{
+		if(throwIfNotExists)
+			throw(runtime_error(string(__func__)+" -- parent key '"+string(parentKey)+"' does not exist from file: "+filename));
+		else
+			return(childKeys);
+	}
+
+	if(scope->type!=vtScope)
+	{
+		if(throwIfNotExists) // it DID actually exist, but it wasn't a scope containing more child values
+			throw(runtime_error(string(__func__)+" -- parent key '"+string(parentKey)+"' resolved to a value from file: "+filename));
+		else
+			return(childKeys);
+
+	}
+	
+	for(map<string,CVariant>::const_iterator i=scope->members.begin();i!=scope->members.end();i++)
+		childKeys.push_back(i->first);
+	
+	return(childKeys);
+}
+
 bool CNestedDataFile::findVariantNode(CVariant *&retValue,const char *key,int offset,bool throwOnError,const CVariant *variant) const
 {
 	if(variant->type!=vtScope)

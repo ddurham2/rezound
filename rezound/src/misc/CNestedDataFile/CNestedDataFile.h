@@ -52,6 +52,10 @@ public:
 
 	bool keyExists(const char *key) const;
 
+	// just pass this "" if you want everything in the root scope
+	// or "foo" for a list of all keys under the scope named "foo"
+	const vector<string> getChildKeys(const char *parentKey,bool throwIfNotExists=false) const;
+
 	const string getValue(const char *key,bool throwIfNotExists=false) const;
 
 	const string getArrayValue(const char *key,size_t index,bool throwIfNotExists=false) const;
