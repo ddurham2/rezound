@@ -93,8 +93,6 @@ public:
 	
 	virtual void create();
 
-	virtual void layout();
-
 
 
 	// --- event handlers I setup  --------------------------------------------
@@ -142,9 +140,6 @@ public:
 	long onActiveToggleButton(FXObject *sender,FXSelector sel,void *ptr);
 
 	long onCloseWindow(FXObject *sender,FXSelector sel,void *ptr);
-
-	long onResize(FXObject *sender,FXSelector,void*);
-
 
 	string shuttleControlScalar;
 	bool shuttleControlSpringBack;
@@ -246,9 +241,6 @@ private:
 	void updateAllStatusInfo();
 	void updateSelectionStatusInfo();
 	void updatePlayPositionStatusInfo();
-	
-	void setHorzZoomFactor(sample_fpos_t horzZoomFactor);
-
 };
 
 

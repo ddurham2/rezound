@@ -8,7 +8,8 @@
 	- LEFT mouse button changes start position
 	- RIGHT mouse button changes stop position
 	- mouse WHEEL *should* scroll the wave view when not zoomed out full
-	- RIGHT clicking the ruler across the top shows a popup menu for manipulating cues
+		- holding CONTROL while using the mouse WHEEL will cause it to scroll faster
+	- RIGHT clicking the ruler across the top shows a popup menu for manipulating cues, RIGHT clicking on a cue shows one menu and RIGHT clicking on the other part of the ruler shows another
 		- normally the selection positions will 'snap' to the cue positions
 		- holding SHIFT while changing the selection positions will momentarily disable the 'snap to cue' feature
 		- holding SHIFT while changing the selection positions will also momentarily disable auto scrolling when selecting near the edges

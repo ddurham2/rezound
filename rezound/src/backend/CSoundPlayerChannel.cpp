@@ -86,7 +86,11 @@ void CSoundPlayerChannel::init()
 	prebuffering=false;
 	playing=false;
 	playPosition=0;
-	startPosition=stopPosition=0;
+
+	// start out with something selected
+	startPosition=sound->getLength()/2-sound->getLength()/4;
+	stopPosition=sound->getLength()/2+sound->getLength()/4;
+
 	outputRoute=0;
 
 	for(size_t t=0;t<MAX_CHANNELS;t++)

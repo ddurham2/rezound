@@ -249,10 +249,6 @@
 	- OUTSTANDING -
 		- I've seen it once hang when closing the application... I attached to the process with the debugger and it was stuck waiting on a mutex of loaded->getSound()->lockForResize() in ASoundFileManager::close ... so perhaps some condition happened which left a mutex unlocked
 
-		- I didn't notice this being a problem until I upgraded to Mandrake 8.2 with the 2.4.18 kernel, but when closing a large (80megs) file it would write all the meta data to end of the file.  Each write caused a call to ftruncate to make the file a little bigger each write.  ftruncate seemed to be taking quite a longer time than before because the program would seem to have on closing the file.
-			- However, I have avoided the problem for now by change TPoolFile::closeFile to not write the meta data if the file is about to be removed.  
-			- I should test this with a later kernel in a few weeks and see if the problem is still there.  If so, I should avoid calling ftruncate so often by preallocating some space.
-
 		- I accidently recorded for 8.5 hours and when I stopped it it it segfaulted... 
 			- I'm sure that most of the problem was that I only had 32bit address space compiled in...
 			- When I add the length limit based on the address space this wouldn't have been a problem
@@ -260,9 +256,16 @@
 		- It segfaulted while I defragged an 800 meg file after having deleted some at the beginning and some at the end
 			- load in debugger and watch what happend.. it could have been a stack overflow.. if so, then I need to simulate the recursion instead of using real recursion
 
+		- There's a slight drawing glitch in the wave form: if you zoom all the way in, then select just one sample about 3 or 4 samples from then end.. then proceed to slowly zoom out, the one selected sample region will blink in and out occasionally
+			- what's happening is that in drawPortion() on the last drawn position with data, it's saying that dataPostition is >= the sound's length, so it skips down to the section where it just draws blank background
+			- I (temporarily) solved that by just also conditionally setting the background color in the else part of that if statment just like I conditionally set it in the drawing-wave
+			- but then, I set the last selected sample to a gain of 100x or so, so it would draw pink (clipped), but then when I would zoom out, the pink would also flicker because that last drawn sample position thought it was beyond the sound's length after offseting and scaling the pixel position to a data position
+			- so if I fixed the problem well, it would probably look smoother altogether while zooming
+			- this must have something to do with floating point or integer truncation or rounding error
+
 
 	- FIXED - 
-		- glitches occurr at the beginning and/or end of a CChangeRateEffects... 
+		- glitches occur at the beginning and/or end of a CChangeRateEffects... 
 		- determining the 'active' window has not been resolved yet... For now, it's just the last sound that was loaded... and if you close that sound... there is no active window until you open another sound... Hence there is no advantage at the moment of having more than one sound loaded
 		- closing sound windows with the top left button doesn't work right yet... it simply hides the window
 		- clicking the right button while dragging a node after creation of the FXGraphParamValue widget messing things up... I think it's a bug in FOX 
@@ -271,6 +274,11 @@
 			- I think it's trying to focus an item that doesn't exist (Jeroen fixed it in fox)
 		- It's not reproducable, but I've seen Xlib return something which causes the application to lock up; fox even prints an 'unexpected ...' message, VERY seldom though
 			- I think this is because I'm modifying FOX widgets in the play/pause triggers in CSoundWindow
+
+		- fixed by grouping metadata writes into a memory chunk and writing all that all at once
+			- I didn't notice this being a problem until I upgraded to Mandrake 8.2 with the 2.4.18 kernel, but when closing a large (80megs) file it would write all the meta data to end of the file.  Each write caused a call to ftruncate to make the file a little bigger each write.  ftruncate seemed to be taking quite a longer time than before because the program would seem to have on closing the file.
+				- However, I have avoided the problem for now by change TPoolFile::closeFile to not write the meta data if the file is about to be removed.  
+				- I should test this with a later kernel in a few weeks and see if the problem is still there.  If so, I should avoid calling ftruncate so often by preallocating some space.
 
 
 

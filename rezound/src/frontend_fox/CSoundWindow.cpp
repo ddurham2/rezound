@@ -56,6 +56,8 @@ static void playTrigger(void *Pthis);
 
 #define DRAW_PLAY_POSITION_TIME 75	// 75 ms
 
+#define ZOOM_MUL 3
+
 
 FXDEFMAP(CSoundWindow) CSoundWindowMap[]=
 {
@@ -103,10 +105,6 @@ FXDEFMAP(CSoundWindow) CSoundWindowMap[]=
 	FXMAPFUNC(SEL_COMMAND,			CSoundWindow::ID_ACTIVE_TOGGLE_BUTTON,		CSoundWindow::onActiveToggleButton),
 
 	FXMAPFUNC(SEL_CLOSE,			0,						CSoundWindow::onCloseWindow),
-
-
-	//FXMAPFUNC(SEL_CONFIGURE,		CSoundWindow::ID_THIS,			CSoundWindow::onResize),
-
 };
 
 FXIMPLEMENT(CSoundWindow,FXTopWindow,CSoundWindowMap,ARRAYNUMBER(CSoundWindowMap))
@@ -251,12 +249,12 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 
 
 	// set the ranges and initial values of the vertical and horiztonal zoom dials
-	horzZoomDial->setRange(0,100);
-	horzZoomDial->setRevolutionIncrement(100);
+	horzZoomDial->setRange(0,100*ZOOM_MUL);
+	horzZoomDial->setRevolutionIncrement(100*ZOOM_MUL);
 	horzZoomDial->setValue(0);
 
-	vertZoomDial->setRange(0,100);
-	vertZoomDial->setRevolutionIncrement(100);
+	vertZoomDial->setRange(0,100*ZOOM_MUL);
+	vertZoomDial->setRevolutionIncrement(100*ZOOM_MUL);
 	vertZoomDial->setValue(0);
 
 
@@ -361,8 +359,11 @@ void CSoundWindow::show()
 	{
 			// approximately show 10 (setting) seconds of sound (apx because we haven't done layout yet)
 			// can't do this at construction because we don't know the max until the window's are laid out
-		setHorzZoomFactor(((sample_fpos_t)gInitialLengthToShow*loadedSound->getSound()->getSampleRate())/waveView->getCanvasWidth());
-		waveView->horzScroll(0);
+		waveView->showAmount(10.0,0);
+
+		horzZoomDial->setValue((FXint)(waveView->getHorzZoom()*100*ZOOM_MUL));
+		horzZoomValueLabel->setText(("  "+istring(horzZoomDial->getValue()/(double)ZOOM_MUL,3,1,true)+"%").c_str());
+
 		firstTimeShowing=false;
 	}
 }
@@ -405,12 +406,16 @@ void CSoundWindow::updateFromEdit()
 	if(loadedSound->getSound()->getChannelCount()!=muteButtonCount)
 	{
 		recreateMuteButtons(true);
+		/* ??? not necessary anymore... FXWaveViewCanvas::updateFromEdit() handles it
+			// sort of a hack to get it to redisplay properly
+		onVertZoomDialPlusIndClick(NULL,0,NULL);
 		onVertZoomDialMinusIndClick(NULL,0,NULL);
+		*/
 	}
 
 	setTitle(loadedSound->getFilename().c_str()); // incase the filename changed
 	waveView->updateFromEdit();
-	onHorzZoomDialChange(NULL,0,NULL);
+	//onHorzZoomDialChange(NULL,0,NULL);
 	updateAllStatusInfo();
 }
 
@@ -424,11 +429,11 @@ void CSoundWindow::updateAllStatusInfo()
 
 	// ??? this should depend on the FXRezWaveView's actual horzZoomFactor value because the FXDial doesn't represent how many samples a pixel represents
 	int places;
-	if(horzZoomDial->getValue()>90)
+	if(horzZoomDial->getValue()>90*ZOOM_MUL)
 		places=5;
-	else if(horzZoomDial->getValue()>80)
+	else if(horzZoomDial->getValue()>80*ZOOM_MUL)
 		places=4;
-	else if(horzZoomDial->getValue()>60)
+	else if(horzZoomDial->getValue()>60*ZOOM_MUL)
 		places=3;
 	else
 		places=2;
@@ -443,11 +448,11 @@ void CSoundWindow::updateSelectionStatusInfo()
 {
 	// ??? this should depend on the FXRezWaveView's actual horzZoomFactor value because the FXDial doesn't represent how many samples a pixel represents
 	int places;
-	if(horzZoomDial->getValue()>90)
+	if(horzZoomDial->getValue()>90*ZOOM_MUL)
 		places=5;
-	else if(horzZoomDial->getValue()>80)
+	else if(horzZoomDial->getValue()>80*ZOOM_MUL)
 		places=4;
-	else if(horzZoomDial->getValue()>60)
+	else if(horzZoomDial->getValue()>60*ZOOM_MUL)
 		places=3;
 	else 
 		places=2;
@@ -460,11 +465,11 @@ void CSoundWindow::updateSelectionStatusInfo()
 void CSoundWindow::updatePlayPositionStatusInfo()
 {
 	int places;
-	if(horzZoomDial->getValue()>90)
+	if(horzZoomDial->getValue()>90*ZOOM_MUL)
 		places=5;
-	else if(horzZoomDial->getValue()>80)
+	else if(horzZoomDial->getValue()>80*ZOOM_MUL)
 		places=4;
-	else if(horzZoomDial->getValue()>60)
+	else if(horzZoomDial->getValue()>60*ZOOM_MUL)
 		places=3;
 	else
 		places=2;
@@ -516,28 +521,6 @@ void CSoundWindow::create()
 		invertMuteButton->setHeight(waveView->getHeight()-(height+top)-2);
 	}
 }
-
-void CSoundWindow::layout()
-{
-	FXTopWindow::layout();
-
-	// ??? however, I could try using the SEL_CONFIGURE event for this (except it only happens on resize and not on startup)
-	//I do this because on resize the max horzZoomFactor changes, perhaps in FXRezWaveViewScrollArea::layout I should adjust the zoomFactor by the ratio of the old and the new size if I can get the old and new width and height
-	if(prevW!=width || prevH!=height)
-	{
-		prevW=width;
-		prevH=height;
-		onHorzZoomDialChange(NULL,0,NULL);
-		onVertZoomDialChange(NULL,0,NULL);
-	}
-
-}
-
-long CSoundWindow::onResize(FXObject *sender,FXSelector,void*)
-{
-	return(0);
-}
-
 
 // --- event handlers I setup  --------------------------------------------
 
@@ -627,55 +610,34 @@ long CSoundWindow::onDrawPlayPosition(FXObject *sender,FXSelector,void*)
 
 // horz zoom handlers
 
-void CSoundWindow::setHorzZoomFactor(sample_fpos_t horzZoomFactor)
-{
-	waveView->setHorzZoomFactor(horzZoomFactor);
-	horzZoomFactor=waveView->getHorzZoomFactor(); // after range check
-
-
-	// this stuff is just the invese of the math in onHorzZoomDialChange
-	sample_fpos_t p= ((horzZoomFactor-1.0)/(waveView->getMaxHorzZoomFactor()-1.0));
-	p=sample_fpos_pow(p, 1.0/3.0 );
-	p=100.0-(p*100.0);
-
-	horzZoomDial->setValue((FXint)p);
-	horzZoomValueLabel->setText(("  "+istring(horzZoomDial->getValue())+"%").c_str());
-}
-
 long CSoundWindow::onHorzZoomDialChange(FXObject *sender ,FXSelector sel,void *ptr)
 {
-	// map (v)0..100 ---> (z)1.0..max_horz_zoom_factor
-	// that is the zoom dial's range ---> the zoom factor's range
-	// except, we read the zoom dial's value backwards since we can't ...->setRange(100,0);
-	double v=100.0-(double)horzZoomDial->getValue();
-
-	// now apply a curve to v, because linear 0.0..100.0 jams most of the useful zoom factors near 0
-	// I apply f(v)=(v^3)/(100^2)  which makes f(0)==0 and f(100)==100 but chages the linear curve to a parametric curve having more values near 0.0
-	v=(v*v*v)/(100.0*100.0);
-
-	double z=1.0+(((waveView->getMaxHorzZoomFactor()-1.0)*v)/100.0);
-
 	FXint dummy;
 	FXuint keyboardModifierState;
 	horzZoomDial->getCursorPosition(dummy,dummy,keyboardModifierState);
-	waveView->setHorzZoomFactor(z,keyboardModifierState);
 
-	horzZoomValueLabel->setText(("  "+istring(horzZoomDial->getValue())+"%").c_str());
+	// depend on keyboard modifier change the way it recenters while zooming
+	FXWaveCanvas::HorzRecenterTypes horzRecenterType=FXWaveCanvas::hrtAuto;
+	if(keyboardModifierState&SHIFTMASK)
+		horzRecenterType=FXWaveCanvas::hrtStart;
+	else if(keyboardModifierState&CONTROLMASK)
+		horzRecenterType=FXWaveCanvas::hrtStop;
+		
 
-	if(sender!=NULL)
-		waveView->redraw();
+	// ??? for some reason, this does not behave quite like the original (before rewrite), but it is acceptable for now... perhaps look at it later
+	waveView->setHorzZoom(pow(horzZoomDial->getValue()/(100.0*ZOOM_MUL),1.0/3.0),horzRecenterType);
+	horzZoomValueLabel->setText(("  "+istring(horzZoomDial->getValue()/(double)ZOOM_MUL,3,1,true)+"%").c_str());
+	horzZoomValueLabel->repaint(); // make it update now
 
-	updateAllStatusInfo();
+	updateAllStatusInfo(); // in case the number of drawn decimal places needs to change
 
 	return 1;
 }
 
 long CSoundWindow::onHorzZoomDialPlusIndClick(FXObject *sender,FXSelector sel,void *ptr)
 {
-	horzZoomDial->setValue(100);
+	horzZoomDial->setValue(100*ZOOM_MUL);
 	onHorzZoomDialChange(NULL,0,NULL);
-	waveView->redraw();
-
 	return 1;
 }
 
@@ -683,8 +645,6 @@ long CSoundWindow::onHorzZoomDialMinusIndClick(FXObject *sender,FXSelector sel,v
 {
 	horzZoomDial->setValue(0);
 	onHorzZoomDialChange(NULL,0,NULL);
-	waveView->redraw();
-
 	return 1;
 }
 
@@ -693,31 +653,14 @@ long CSoundWindow::onHorzZoomDialMinusIndClick(FXObject *sender,FXSelector sel,v
 // vert zoom handlers
 long CSoundWindow::onVertZoomDialChange(FXObject *sender,FXSelector,void*)
 {
-	// map (v)0..100 ---> (z)1.0..max_vert_zoom_factor
-	// that is the zoom dial's range ---> the zoom factor's range
-	// except, we read the zoom dial's value backwards since we can't ...->setRange(100,0);
-	double v=100.0-(double)vertZoomDial->getValue();
-
-	// now apply a curve to v, because linear 0.0..100.0 jams most of the useful zoom factors near 0
-	// I apply f(v)=(v^3)/(100^2)  which makes f(0)==0 and f(100)==100 but chages the linear curve to a parametric curve having more values near 0.0
-	v=(v*v*v)/(100.0*100.0);
-
-	double z=1.0+(((waveView->getMaxVertZoomFactor()-1.0)*v)/100.0);
-	waveView->setVertZoomFactor(z);
-
-	if(sender!=NULL)
-		waveView->redraw();
-
-	updateAllStatusInfo();
-
+	waveView->setVertZoom(pow(vertZoomDial->getValue()/(100.0*ZOOM_MUL),1.0/2.0));
 	return 1;
 }
 
 long CSoundWindow::onVertZoomDialPlusIndClick(FXObject *sender,FXSelector sel,void *ptr)
 {
-	vertZoomDial->setValue(100);
+	vertZoomDial->setValue(100*ZOOM_MUL);
 	onVertZoomDialChange(NULL,0,NULL);
-	waveView->redraw();
 	return 1;
 }
 
@@ -725,7 +668,6 @@ long CSoundWindow::onVertZoomDialMinusIndClick(FXObject *sender,FXSelector sel,v
 {
 	vertZoomDial->setValue(0);
 	onVertZoomDialChange(NULL,0,NULL);
-	waveView->redraw();
 	return 1;
 }
 
@@ -738,7 +680,6 @@ long CSoundWindow::onBothZoomDialMinusIndClick(FXObject *sender,FXSelector sel,v
 	vertZoomDial->setValue(0);
 	onVertZoomDialChange(NULL,0,NULL);
 
-	waveView->redraw();
 	return 1;
 }
 
@@ -764,7 +705,7 @@ long CSoundWindow::onSelectStartSpinnerChange(FXObject *sender,FXSelector sel,vo
 
 	loadedSound->channel->setStartPosition((sample_pos_t)newSelectStart);
 	selectStartSpinner->setValue(0);
-	waveView->updateFromSelectionChange(FXRezWaveView::lcpStart);
+	waveView->updateFromSelectionChange(FXWaveCanvas::lcpStart);
 	return 1;
 }
 
@@ -779,7 +720,7 @@ long CSoundWindow::onSelectStopSpinnerChange(FXObject *sender,FXSelector sel,voi
 
 	loadedSound->channel->setStopPosition((sample_pos_t)newSelectStop);
 	selectStopSpinner->setValue(0);
-	waveView->updateFromSelectionChange(FXRezWaveView::lcpStop);
+	waveView->updateFromSelectionChange(FXWaveCanvas::lcpStop);
 	return 1;
 }
 

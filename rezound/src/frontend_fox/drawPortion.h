@@ -23,7 +23,7 @@
 #include "../../config/common.h"
 #include "fox_compat.h"
 
-class CSound;
+#include "../backend/CSound_defs.h"
 
 #include <fox/fxdefs.h>
 
@@ -40,7 +40,7 @@ class CSound;
 	extern FX::FXColor clippedWaveformColor;
 #endif
 
-extern void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth,int canvasHeight,int drawSelectStart,int drawSelectStop,double horzZoomFactor,int hOffset,double vertZoomFactor,int vOffset,bool darkened=false);
+extern void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth,int canvasHeight,int drawSelectStart,int drawSelectStop,double horzZoomFactor,sample_pos_t hOffset,double vertZoomFactor,int vOffset,bool darkened=false);
 
 
 

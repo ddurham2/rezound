@@ -55,8 +55,9 @@ FXColor clippedWaveformColor=FXRGB(255,0,127); // pink to stand out
  */
 
 
+// ??? some of these int types would need to be changed to be sample_pos_t or int64_t if >31bits zoomed-in lengths were supported
 // need to lock sound's size before calling this to be safe
-void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth,int canvasHeight,int drawSelectStart,int drawSelectStop,double horzZoomFactor,int hOffset,double vertZoomFactor,int vOffset,bool darkened)
+void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth,int canvasHeight,int drawSelectStart,int drawSelectStop,double horzZoomFactor,sample_pos_t hOffset,double vertZoomFactor,int vOffset,bool darkened)
 {
 	try
 	{
@@ -91,10 +92,8 @@ void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth
 		if(right<0 || left>=canvasWidth)
 			return;
 
-		/*
-		static int g=0;
-		printf("draw: c: %d   left: %d right: %d width: %d\n",g++,left,right,width);
-		*/
+		//static int g=0; // used to watch when actually drawing takes place for testing purposes
+		//printf("draw: c: %d   left: %d right: %d width: %d\n",g++,left,right,width);
 
 		// Draw the waveform and axies
 		if(sound!=NULL && !sound->isEmpty())
@@ -110,7 +109,6 @@ void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth
 				left=0;
 			}
 
-
 			for(unsigned i=0;i<sound->getChannelCount();i++)
 			{
 				const int channelTop=(int)nearbyint(_channelTop);
@@ -119,12 +117,11 @@ void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth
 				const sample_pos_t soundLength=sound->getLength();
 
 				// draw waveform
-				//for(int x=left-(left>0 ? 1 : 0);x<=right+1;x++)
 				for(int x=left;x<=right;x++)
 				{
 					const sample_pos_t dataPosition=(sample_pos_t)((x+hOffset)*horzZoomFactor);
 
-					// I don't think this should happen either
+					// this is false when drawing the right margin of unused space or when zoomed out on a sound of very few samples
 					if(dataPosition<soundLength)
 					{
 						const sample_pos_t next_dataPosition=(sample_pos_t)((x+hOffset+1)*horzZoomFactor);
@@ -149,19 +146,22 @@ void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth
 						FXColor bgc;
 
 						if(x>=drawSelectStart && x<=drawSelectStop)
-						{ // selected data
+						{ // drawing in selected region
 							wfc=selectedWaveformColor;
 							bgc=selectedBackGroundColor;
 						}
-						else if(!darkened)
-						{
-							wfc=waveformColor;
-							bgc=backGroundColor;
-						}
 						else
-						{
-							wfc=darkenedWaveformColor;
-							bgc=backGroundColor;
+						{ // not drawing in selected region
+							if(!darkened)
+							{
+								wfc=waveformColor;
+								bgc=backGroundColor;
+							}
+							else
+							{
+								wfc=darkenedWaveformColor;
+								bgc=backGroundColor;
+							}
 						}
 
 						// but if sample was clipped, make it stand out

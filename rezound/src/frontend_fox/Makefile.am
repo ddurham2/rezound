@@ -62,6 +62,8 @@ libfrontend_la_SOURCES= \
 			FXLFOParamValue.cpp \
 			FXModalDialogBox.cpp \
 			FXRezWaveView.cpp \
+			FXWaveScrollArea.cpp \
+			FXWaveCanvas.cpp \
 			rememberShow.cpp \
 			settings.cpp
 
@@ -127,6 +129,8 @@ noinst_HEADERS=\
 	FXLFOParamValue.h \
 	FXModalDialogBox.h \
 	FXRezWaveView.h \
+	FXWaveScrollArea.h \
+	FXWaveCanvas.h \
 	drawPortion.h \
 	rememberShow.h \
 	settings.h 

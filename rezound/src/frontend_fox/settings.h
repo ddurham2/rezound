@@ -26,6 +26,10 @@
 
 #include "../backend/settings.h"
 
+
+#define CUE_RADIUS 3
+#define CUE_OFF_SCREEN (-(CUE_RADIUS+1000))
+
 /*
  * how sound windows are focused
  */

@@ -1,7 +1,7 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- the FXCanvas::copyArea doesn't do right, when part of the window is off-screen.. I don't know if X needs to handle this.. or if I can tell if it's exposed or not.. if it's not exposed then I do need to draw instead of copyArea
+	- need to have a hot-key that centers the cue's by seeing the right or left most one on screen and centering the one after that.. might include the start and stop positions in that too
 
 	- add a quick (shortcut to) fading in or out the selection use x^2 for the algorithm
 
@@ -267,4 +267,6 @@
 	- need to create an LFO action dialog widget for selecting LFO parameters
 		- every LFO has 3 parameters, frequency[0..1000Hz], amplitude[0..1] and phase[0..359] -- except a constant 
 		- so selecting a constant LFO would gray out frequency and phase and only allow selection of amplitude
+
+	- the FXCanvas::copyArea doesn't do right, when part of the window is off-screen.. I don't know if X needs to handle this.. or if I can tell if it's exposed or not.. if it's not exposed then I do need to draw instead of copyArea
 

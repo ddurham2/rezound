@@ -29,9 +29,13 @@
 class CLoadedSound;
 #include "../backend/CSound_defs.h"
 
+#include "FXWaveCanvas.h"
+
+/* just possibilities
 // these need to be static class members
 enum UnitTypes { utSeconds, utSamples };
 enum ViewTypes { vtNormal, vtLoopSplit };
+*/
 
 class FXWaveScrollArea;
 
@@ -42,34 +46,22 @@ public:
 	FXRezWaveView(FXComposite* p,CLoadedSound *_loadedSound);
 	virtual ~FXRezWaveView();
 
-	void setHorzZoomFactor(double v,FXint keyboardState=0);
-	double getHorzZoomFactor();
-	double getMaxHorzZoomFactor();
-
-	void setVertZoomFactor(double v);
-	double getMaxVertZoomFactor();
-
-	void horzScroll(FXint x);
+	void setHorzZoom(double v,FXWaveCanvas::HorzRecenterTypes horzRecenterType);
+	double getHorzZoom() const;
+	void setVertZoom(double v);
 
 	void drawPlayPosition(sample_pos_t dataPosition,bool justErasing,bool scrollToMakeVisible);
 
 	void centerStartPos();
 	void centerStopPos();
+	void showAmount(double seconds,sample_pos_t pos);
 
 	void redraw();
 
-	FXint getCanvasWidth();
-
-	enum LastChangedPosition
-	{
-		lcpNone,
-		lcpStart,
-		lcpStop
-	};
-
-	void updateFromSelectionChange(LastChangedPosition _lastChangedPosition=lcpNone);
-
+	void updateFromSelectionChange(FXWaveCanvas::LastChangedPositions lastChangedPosition=FXWaveCanvas::lcpNone);
 	void updateFromEdit();
+
+	void updateRuler();
 
 	enum
 	{
