@@ -41,6 +41,7 @@ FXIMPLEMENT(CMp3Dialog,FXModalDialogBox,CMp3DialogMap,ARRAYNUMBER(CMp3DialogMap)
 
 static void fillBitRateComboBox(FXComboBox *c,bool t=false)
 {
+	c->appendItem("16000");
 	c->appendItem("32000");
 	c->appendItem("40000");
 	c->appendItem("48000");
