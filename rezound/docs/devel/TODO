@@ -158,6 +158,12 @@
 	- I think it's fine for now, but gWhichClipboard is essentially a global which specifies which clipboard to use from the time the pasteChannelSelect dialog shows, to the time the factory is constructed, to the time the action runs
 		- it would be better if this were something passed on the action parameters or action sound to make SURE it would be consitant through out each stage
 
+	- After reading more of the DSP book about filters
+		- create a data type in CActionParameters which is the filter to apply to the sound
+		- then this filter data should be convolved with a selected region
+		- or this filter data should be applied to the data in a windowed fasion...  As far as I know, it has no name.. but say I wanted to set every 8th sample to zero to add a ringing noise... then I would create a filter window of width 8 where the first sample is 0 and the rest are 1.0... then I would apply this window to the first 8 samples [0..7], then apply it to the next 8, [8..15] and so on
+			- maybe this is possible with the convolution method
+
 
 
 --- KNOWN BUGS/GLITCHES ---
