@@ -385,13 +385,13 @@ bool CBurnToCDAction::doesWarrantSaving() const
 
 const string CBurnToCDAction::getExplanation()
 {
-	return "\n\
+	return _("\n\
 This action can be used to burn the loaded audio file onto a CD using the cdrdao (CD-R Disk-At-Once) tool.\n\
 \n\
 Tracks are defined by cues named in a '('... [')'] fashion.  See the 'Explain' button on the 'File->Save As Multiple Files' action on how this is done.  Some parts of that explaination should be obviously non-applicable.\n\
 \n\
 cdrdao must be installed on this system.  $PATH with be searched for 'cdrdao' when ReZound starts, but if it is not found you will need to supply the path to it on the action dialog.\n\
-	";
+	");
 }
 
 #include <stdio.h>

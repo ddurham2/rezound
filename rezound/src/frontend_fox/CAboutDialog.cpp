@@ -70,14 +70,14 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 	{
 		FXPacker *t=new FXPacker(tabs, LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_RAISED|FRAME_THICK);
 
-		(new FXText(t,NULL,0,TEXT_READONLY|TEXT_WORDWRAP|LAYOUT_FILL_X|LAYOUT_FILL_Y))->setText("*** PLEASE READ ***\n\
+		(new FXText(t,NULL,0,TEXT_READONLY|TEXT_WORDWRAP|LAYOUT_FILL_X|LAYOUT_FILL_Y))->setText(_("*** PLEASE READ ***\n\
 \n\
    Welcome to this beta stage release of ReZound.  The primary goal for this beta stage is to get feedback on what problems ReZound has running as well as adding a (not-so-well) defined list of features that I would like ReZound to have before calling it '1.0'.  Please report any problems you may have with the configure/compiling/running process to me through the bug report link on the next tab in this about dialog.\n\
    Features are growing.  I plan eventually to write a brief document on how to implement new actions/effects/edits.  I specifically designed ReZound so that it would be easy to create new actions.\n\
    If you have any suggestions about the UI or other functionality then please report them also to me through either the support link or feature request link on the next tab.  Thank you for giving ReZound a try.  I hope your experience is a good one and that you will find this application useful when you need to edit audio as I find it useful.\n\
 \n\
    -- Davy\n\
-		");								   
+		"));								   
 
 	}
 
@@ -121,14 +121,14 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 		MAKE_TEXT(t,"Stakker",_("Feature Suggestions"));
 		MAKE_TEXT(t,"Dave Phillips",_("Bug Finding/Fixing"));
 		MAKE_TEXT(t,"Pilagá",_("Bug Finding"));
-		MAKE_TEXT(t,"Gerhard Zintel","Semitones Shuttle Wheel Feature Patch");
+		MAKE_TEXT(t,"Gerhard Zintel",_("Semitones Shuttle Wheel Feature Patch"));
 		MAKE_TEXT(t,"L.Andrew Somerville",_("Bug Finding"));
 		MAKE_TEXT(t,"Michael Deiss",_("Bug Finding"));
 		MAKE_TEXT(t,"Vladimir Savic",_("Bug Finding"));
 		MAKE_TEXT(t,"John Ouzts",_("Bug Finding"));
 	}
 
-	tab=new FXTabItem(tabs,"License",NULL,TAB_TOP_NORMAL);
+	tab=new FXTabItem(tabs,_("License"),NULL,TAB_TOP_NORMAL);
 	{
 		FXPacker *t=new FXPacker(tabs,LAYOUT_FILL_X | FRAME_RAISED|FRAME_THICK);
 

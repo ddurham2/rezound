@@ -59,9 +59,9 @@ FXDiskEntityParamValue::FXDiskEntityParamValue(FXComposite *p,int opts,const cha
 	hFrame(new FXHorizontalFrame(this,LAYOUT_FILL_X,0,0,0,0, 0,0,0,0, 2,0)),
 		titleLabel(new FXLabel(hFrame,gettext(_name),NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
 		entityNameTextBox(new FXTextField(hFrame,8,this,ID_ENTITYNAME_TEXTBOX, TEXTFIELD_NORMAL | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
-		browseButton(new FXButton(hFrame,"&Browse",NULL,this,ID_BROWSE_BUTTON)),
+		browseButton(new FXButton(hFrame,_("&Browse"),NULL,this,ID_BROWSE_BUTTON)),
 			// ??? if this widget is ever going to be used for anything other than sound files, then I need to conditionally show this checkButton
-	openAsRawCheckButton(entityType==detAudioFilename ? new FXCheckButton(this,"Open as &Raw") : NULL),
+	openAsRawCheckButton(entityType==detAudioFilename ? new FXCheckButton(this,_("Open as &Raw")) : NULL),
 
 	textFont(getApp()->getNormalFont())
 {

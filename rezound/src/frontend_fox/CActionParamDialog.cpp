@@ -915,7 +915,7 @@ void CActionParamDialog::buildPresetLists()
 				FXPacker *listFrame=new FXPacker(presetsFrame,FRAME_SUNKEN|FRAME_THICK|LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y, 0,0,210,0, 0,0,0,0, 0,0); // had to do this because FXList won't take that frame style
 					nativePresetList=new FXList(listFrame,this,ID_NATIVE_PRESET_LIST,LIST_BROWSESELECT | LAYOUT_FILL_X|LAYOUT_FILL_Y);
 					nativePresetList->setNumVisible(4);
-				new FXButton(presetsFrame,"&Use\tOr Double-Click an Item in the List",NULL,this,ID_NATIVE_PRESET_BUTTON);
+				new FXButton(presetsFrame,_("&Use\tOr Double-Click an Item in the List"),NULL,this,ID_NATIVE_PRESET_BUTTON);
 			}
 		}
 		catch(exception &e)

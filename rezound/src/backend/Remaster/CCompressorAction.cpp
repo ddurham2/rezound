@@ -273,7 +273,7 @@ void CCompressorAction::undoActionSizeSafe(const CActionSound &actionSound)
 
 const string CCompressorAction::getExplanation()
 {
-	return "This is my first attempt at creating a compressor algorithm.  I'm not sure how it fairs with other 'professional' tools.  I really have little experience with hardware compressors myself.  If you are an experienced compressor user and can make intelligent suggestions about how to make this one better, then please contact me.  Contact information is in the about dialog under the file menu";
+	return _("This is my first attempt at creating a compressor algorithm.  I'm not sure how it fairs with other 'professional' tools.  I really have little experience with hardware compressors myself.  If you are an experienced compressor user and can make intelligent suggestions about how to make this one better, then please contact me.  Contact information is in the about dialog under the file menu");
 }
 
 // --------------------------------------------------

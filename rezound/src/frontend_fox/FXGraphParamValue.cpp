@@ -384,10 +384,10 @@ FXGraphParamValue::FXGraphParamValue(const char *_name,FXComposite *p,int opts,i
 
 
 
-	new FXButton(buttonPanel,"\tClear to Normal",FOXIcons->graph_clear,this,ID_CLEAR_BUTTON);
-	new FXButton(buttonPanel,"\tFlip Graph Horizontally",FOXIcons->graph_horz_flip,this,ID_HORZ_FLIP_BUTTON);
-	new FXButton(buttonPanel,"\tFlip Graph Vertically",FOXIcons->graph_vert_flip,this,ID_VERT_FLIP_BUTTON);
-	new FXButton(buttonPanel,"\tSmooth Graph Nodes",FOXIcons->graph_smooth,this,ID_SMOOTH_BUTTON);
+	new FXButton(buttonPanel,(string("\t")+_("Clear to Normal")).c_str(),FOXIcons->graph_clear,this,ID_CLEAR_BUTTON);
+	new FXButton(buttonPanel,(string("\t")+_("Flip Graph Horizontally")).c_str(),FOXIcons->graph_horz_flip,this,ID_HORZ_FLIP_BUTTON);
+	new FXButton(buttonPanel,(string("\t")+_("Flip Graph Vertically")).c_str(),FOXIcons->graph_vert_flip,this,ID_VERT_FLIP_BUTTON);
+	new FXButton(buttonPanel,(string("\t")+_("Smooth Graph Nodes")).c_str(),FOXIcons->graph_smooth,this,ID_SMOOTH_BUTTON);
 
 	nodes.reserve(100);
 
@@ -449,7 +449,7 @@ void FXGraphParamValue::setVertParameters(const string vertAxisLabel,const strin
 	delete scalarSpinner;
 	if(vertValueMapper->getMinScalar()!=vertValueMapper->getMaxScalar())
 	{
-		scalarLabel=new FXLabel(buttonPanel,"Scalar",NULL,LABEL_NORMAL|LAYOUT_CENTER_Y);
+		scalarLabel=new FXLabel(buttonPanel,_("Scalar"),NULL,LABEL_NORMAL|LAYOUT_CENTER_Y);
 		scalarSpinner=new FXSpinner(buttonPanel,5,this,ID_SCALAR_SPINNER,SPIN_NORMAL|FRAME_SUNKEN|FRAME_THICK|LAYOUT_CENTER_Y);
 		scalarSpinner->setRange(vertValueMapper->getMinScalar(),vertValueMapper->getMaxScalar());
 		scalarSpinner->setValue(vertValueMapper->getDefaultScalar());

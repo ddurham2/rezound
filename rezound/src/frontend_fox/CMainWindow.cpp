@@ -1038,12 +1038,12 @@ void CMainWindow::createMenus()
 		const vector<CLADSPAActionFactory *> LADSPAActionFactories=getLADSPAActionFactories();
 		if(LADSPAActionFactories.size()<=0)
 		{
-			new FXMenuCaption(menu,"No LADSPA Plugins Found");
+			new FXMenuCaption(menu,_("No LADSPA Plugins Found"));
 			new FXMenuSeparator(menu);
-			new FXMenuCaption(menu,"Like PATH, set LADSPA_PATH to point");
-			new FXMenuCaption(menu,"to a directory(s) containing LADSPA");
-			new FXMenuCaption(menu,"plugin .so file at least once.  Or");
-			new FXMenuCaption(menu,"edit the value in ~/.rezound/registry.dat");
+			new FXMenuCaption(menu,_("Like PATH, set LADSPA_PATH to point"));
+			new FXMenuCaption(menu,_("to a directory(s) containing LADSPA"));
+			new FXMenuCaption(menu,_("plugin .so file at least once.  Or"));
+			new FXMenuCaption(menu,_("edit the value in ~/.rezound/registry.dat"));
 		}
 		else
 		{

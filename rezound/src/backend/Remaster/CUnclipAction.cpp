@@ -352,7 +352,7 @@ void CUnclipAction::undoActionSizeSafe(const CActionSound &actionSound)
 // ------------------------------
 
 CUnclipActionFactory::CUnclipActionFactory(AActionDialog *channelSelectDialog) :
-	AActionFactory("Unclip (just messing around)","(NOTE: I was just messing around trying this.  It is really useless as is.  I'll work on it later) Unclip is used to fix by guessing the natural shape of a very short\nregions in the audio where the peak of a waveform was clipped",channelSelectDialog,NULL)
+	AActionFactory(N_("Unclip (just messing around)"),_("(NOTE: I was just messing around trying this.  It is really useless as is.  I'll work on it later) Unclip is used to fix by guessing the natural shape of a very short\nregions in the audio where the peak of a waveform was clipped"),channelSelectDialog,NULL)
 {
 }
 

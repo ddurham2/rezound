@@ -34,7 +34,7 @@ CInsertSilenceDialog::CInsertSilenceDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addNumericTextEntry(p,N_("Length"),N_("seconds"),1.0,0,10000);
+		addNumericTextEntry(p,N_("Length"),_("seconds"),1.0,0,10000);
 }
 
 
@@ -45,7 +45,7 @@ CRotateDialog::CRotateDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
-		addNumericTextEntry(p,N_("Amount"),N_("seconds"),1.0,0,10000);
+		addNumericTextEntry(p,N_("Amount"),_("seconds"),1.0,0,10000);
 }
 
 
@@ -79,7 +79,7 @@ bool CSwapChannelsDialog::show(CActionSound *actionSound,CActionParameters *acti
 		{
 			vector<string> items;
 			for(size_t t=0;t<actionSound->sound->getChannelCount();t++)
-				items.push_back("Channel "+istring(t));
+				items.push_back(_("Channel ")+istring(t));
 
 			// set the combo boxes according to actionSound
 			getComboText("Channel A")->setItems(items);
@@ -123,13 +123,13 @@ bool CDuplicateChannelDialog::show(CActionSound *actionSound,CActionParameters *
 	{
 		vector<string> items;
 		for(size_t t=0;t<actionSound->sound->getChannelCount();t++)
-			items.push_back("Channel "+istring(t));
+			items.push_back(_("Channel ")+istring(t));
 
 		// set the combo boxes according to actionSound
 		getComboText("Which Channel")->setItems(items);
 		getComboText("Which Channel")->setCurrentItem(0);
 
-		items.push_back("Channel "+istring(actionSound->sound->getChannelCount()));
+		items.push_back(_("Channel ")+istring(actionSound->sound->getChannelCount()));
 		getComboText("Insert Where")->setItems(items);
 		getComboText("Insert Where")->setCurrentItem(1);
 	}

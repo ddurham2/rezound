@@ -71,7 +71,7 @@ FXConstantParamValue::FXConstantParamValue(AActionParamMapper *_valueMapper,bool
 	horzSep(new FXHorizontalSeparator(this)),
 	middleFrame(new FXHorizontalFrame(this,LAYOUT_FILL_Y|LAYOUT_CENTER_X, 0,0,60,60, 0,0,2,2, 2,0)),
 		inverseButtonFrame(showInverseButton ? new FXPacker(middleFrame,LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0) : NULL),
-			inverseButton(showInverseButton ? new FXButton(inverseButtonFrame,"I\tInvert Value",NULL,this,ID_INVERSE_BUTTON,FRAME_THICK|FRAME_RAISED | LAYOUT_CENTER_Y) : NULL),
+			inverseButton(showInverseButton ? new FXButton(inverseButtonFrame,_("I\tInvert Value"),NULL,this,ID_INVERSE_BUTTON,FRAME_THICK|FRAME_RAISED | LAYOUT_CENTER_Y) : NULL),
 		slider(new FXSlider(middleFrame,this,ID_SLIDER,  SLIDER_INSIDE_BAR|SLIDER_VERTICAL|SLIDER_TICKS_RIGHT | LAYOUT_FILL_X|LAYOUT_FILL_Y)),
 		tickLabelFrame(new FXVerticalFrame(middleFrame,LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
 			maxLabel(new FXLabel(tickLabelFrame,"1.0",NULL,JUSTIFY_LEFT|LAYOUT_TOP)),
@@ -106,7 +106,7 @@ FXConstantParamValue::FXConstantParamValue(AActionParamMapper *_valueMapper,bool
 	if(valueMapper->getMinScalar()!=valueMapper->getMaxScalar())
 	{
 		scalarPanel=new FXHorizontalFrame(this,LAYOUT_BOTTOM|LAYOUT_FILL_X | JUSTIFY_CENTER_X, 0,0,0,0, 2,2,2,2, 0,0);
-			scalarLabel=new FXLabel(scalarPanel,"Scalar",NULL, LAYOUT_CENTER_Y);
+			scalarLabel=new FXLabel(scalarPanel,_("Scalar"),NULL, LAYOUT_CENTER_Y);
 			scalarSpinner=new FXSpinner(scalarPanel,5,this,ID_SCALAR_SPINNER,SPIN_NORMAL | LAYOUT_CENTER_Y | FRAME_SUNKEN|FRAME_THICK);
 
 		scalarSpinner->setRange(valueMapper->getMinScalar(),valueMapper->getMaxScalar());

@@ -298,7 +298,7 @@ CMonoizeAction *CMonoizeActionFactory::manufactureAction(const CActionSound &act
 {
 	vector<float> gains;
 	for(unsigned t=0;t<actionSound.sound->getChannelCount();t++)
-		gains.push_back(actionParameters->getDoubleParameter("Channel "+istring(t)));
+		gains.push_back(actionParameters->getDoubleParameter(_("Channel ")+istring(t)));
 
 	return new CMonoizeAction(
 		actionSound,

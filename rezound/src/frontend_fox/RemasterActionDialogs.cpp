@@ -96,7 +96,7 @@ bool CSimpleBalanceActionDialog::show(CActionSound *actionSound,CActionParameter
 		{
 			vector<string> items;
 			for(size_t t=0;t<actionSound->sound->getChannelCount();t++)
-				items.push_back(N_("Channel ")+istring(t));
+				items.push_back(_("Channel ")+istring(t));
 
 			// set the combo boxes according to actionSound
 			getComboText("Channel A")->setItems(items);
@@ -163,7 +163,7 @@ bool CCurvedBalanceActionDialog::show(CActionSound *actionSound,CActionParameter
 		{
 			vector<string> items;
 			for(size_t t=0;t<actionSound->sound->getChannelCount();t++)
-				items.push_back(N_("Channel ")+istring(t));
+				items.push_back(_("Channel ")+istring(t));
 
 			// set the combo boxes according to actionSound
 			getComboText("Channel A")->setItems(items);
@@ -216,7 +216,7 @@ bool CMonoizeActionDialog::show(CActionSound *actionSound,CActionParameters *act
 	else
 	{
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
-			showControl("Channel "+istring(t), t<actionSound->sound->getChannelCount() );
+			showControl(_("Channel ")+istring(t), t<actionSound->sound->getChannelCount() );
 
 		return CActionParamDialog::show(actionSound,actionParameters);
 	}
@@ -532,7 +532,7 @@ CChangePitchDialog::CChangePitchDialog(FXWindow *mainWindow) :
 			addSlider(
 				p2,
 				N_("Semitones"),
-				"semitones",
+				_("semitones"),
 				new CActionParamMapper_linear_bipolar(1,7,60),
 				NULL,
 				true);
