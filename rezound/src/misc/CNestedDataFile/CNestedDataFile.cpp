@@ -432,7 +432,8 @@ void CNestedDataFile::removeArrayKey(const char *key,size_t index,bool throwOnEr
 
 void CNestedDataFile::prvCreateKey(const char *key,int offset,CVariant &value,CVariant *variant)
 {
-	verifyKey(key);
+	if(variant==root) // only verify once
+		verifyKey(key);
 
 	// look for a dot in the key
 	int pos=strchr(key+offset,'.')-(key+offset);
@@ -576,8 +577,8 @@ void CNestedDataFile::verifyKey(const char *key)
 	size_t l=strlen(key);
 	for(size_t t=0;t<l;t++)
 	{
-		if((!isalnum(key[t]) && key[t]!=' ' && key[t]!=':' && key[t]!='_' && key[t]!='.') || (t==0 && isdigit(key[t]))) 
-			throw(runtime_error(string(__func__)+" -- invalid character in key: '"+key+"' or first character is a digit for creating key in file: "+filename));
+		if((!isalnum(key[t]) && key[t]!=' ' && key[t]!=':' && key[t]!='_' && key[t]!='.') || ((t==0||key[t-1]=='.') && isdigit(key[t]))) 
+			throw(runtime_error(string(__func__)+" -- invalid character in key: '"+key+"' or first character of a sub-key is a digit for creating key in file: "+filename));
 	}
 }
 

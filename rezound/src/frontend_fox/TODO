@@ -1,8 +1,6 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- I was able to create a preset named "3 seconds" which is invalid when it reparses, but verifyKey should have caught it
-
 	- there needs to be a key binding for "center" start position or "center" stop position, list this key in the drop down from the CSoundWindow ruler too
 		- ??? this listed binding should be read from a list of bindings.... but I don't have that yet
 
@@ -112,7 +110,8 @@
 		- If I tought about it long enough, I might be able to come up with the answer
 
 	- Put the name of each channel horizontally along the left of the channels so that if the sound is 5 channels you label the first 2 'left' and 'right' then the next ones 'center', 'rear left' and 'rear right' 
-
+	
+	- if the frontend gets too slow about saving user presets, I could create a gUserPresetFile which stays allocated and doesn't have to reparse the file every time like it does now.
 
 
 
@@ -178,4 +177,6 @@
 		- (ctrl-a)select all (space)play, (space)stop, (p)pause, (a,z)seek, (ctrl-c)copy, (ctrl-x)cut, (ctrl-d,del)delete, (ctrl-v)paste, etc
 		- make keys for zooming out full
 		- this should be relatively simple I think... 
+
+	- I was able to create a preset named "3 seconds" which is invalid when it reparses, but verifyKey should have caught it
 
