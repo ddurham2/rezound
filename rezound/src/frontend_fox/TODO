@@ -1,6 +1,12 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- Possibly I could develop a set of widget for FOX that are generic enough that I could use them to create plugin routes
+		- basically it would be a generic widget set that allows drawing lines and making/removing connections between widgets
+		- widgets would be draggable and lines would follow
+		- hooks would exist to know when things changed
+		- each 'node' would have a name, and there would be rules about what is 'connectable' to what
+
 	- fix the dotted lines when the phase scope meter is rotated .. it should look solid
 
 	- The pause button has no effect when the shuttle mode is 'free' since the backend doesn't pause if the play speed isn't 1.0 (since it things you're shuttling while paused so it should play except that the wheel doesn't spring back)
