@@ -106,7 +106,8 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 	{
 		FXMatrix *t=new FXMatrix(tabs,2,MATRIX_BY_COLUMNS | LAYOUT_FILL_X | FRAME_RAISED|FRAME_THICK);
 
-		MAKE_TEXT(t,"John Doe","Beta Testing");
+		MAKE_TEXT(t,"Richard Lovison","Bug Finding");
+		MAKE_TEXT(t,"Veres Imre","Bug Finding");
 	}
 
 	tab=new FXTabItem(tabs,"License",NULL,TAB_TOP_NORMAL);
