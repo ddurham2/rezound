@@ -158,11 +158,9 @@ static const double uninterpretValue_flange_LFO_phase(const double x,const int s
 CVariedRepeatDialog::CVariedRepeatDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Varied Repeat")
 {
-	// make this an LFO widget
-		// ??? need to make this an LFO widget.. but I need to be able to set initial values
-	addSlider("LFO Freq","Hz",interpretValue_varied_repeat,uninterpretValue_varied_repeat,NULL,0.1,1,20,1,false);
-	addSlider("LFO Phase","deg",interpretValue_flange_LFO_phase,uninterpretValue_flange_LFO_phase,NULL,290.0,0,0,0,true);
+	addLFO("LFO","","",0,"Hz",200,true);
 	addSlider("Time","s",interpretValue_varied_repeat,uninterpretValue_varied_repeat,NULL,4.0,1,100,10,false);
+		// ??? need a checkbox that enables a gain parameter to make it mix ontop of the current audio instead of inserting into it
 }
 
 

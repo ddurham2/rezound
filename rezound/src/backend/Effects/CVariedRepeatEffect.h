@@ -6,11 +6,12 @@ class CVariedRepeatEffect;
 class CVariedRepeatEffectFactory;
 
 #include "../AAction.h"
+#include "../ALFO.h"
 
 class CVariedRepeatEffect : public AAction
 {
 public:
-	CVariedRepeatEffect(const CActionSound &actionSound,float _LFOFreq,float _LFOPhase,float _time);
+	CVariedRepeatEffect(const CActionSound &actionSound,const CLFODescription &LFODescription,float _time);
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
@@ -18,8 +19,7 @@ protected:
 	CanUndoResults canUndo(const CActionSound &actionSound) const;
 
 private:
-	float LFOFreq;
-	float LFOPhase;
+	CLFODescription LFODescription;
 	float time;
 
 	sample_pos_t origTotalLength;
