@@ -131,6 +131,9 @@ void FXWaveCanvas::setHorzZoom(double v,HorzRecenterTypes horzRecenterType)
 		sample_fpos_t tHorzOffset=horzOffset;
 		switch(horzRecenterType)
 		{
+		case hrtNone:
+			break;
+
 		case hrtAuto:
 			if(lastChangedPosition==lcpStart && startPosIsOnScreen)
 				// start postion where it is
