@@ -32,6 +32,7 @@
 #include <stdio.h>
 
 #include <stdexcept>
+#include <algorithm>
 
 #include <istring>
 
@@ -48,6 +49,7 @@ CNestedDataFile::CNestedDataFile(const string filename)
 	try
 	{
 		initialFilename=filename.c_str();
+		this->filename=filename;
 		root=new CVariant("root");
 		parseTree=this;
 
@@ -81,7 +83,7 @@ const string CNestedDataFile::getValue(const char *key,bool throwIfNotExists) co
 	if(!prvGetValue(value,key,0,true,root))
 	{
 		if(throwIfNotExists)
-			throw(runtime_error("CNestedDataFile::getValue -- key '"+string(key)+"' does not exist"));
+			throw(runtime_error("CNestedDataFile::getValue -- key '"+string(key)+"' does not exist from file: "+filename));
 		else
 			return("");
 	}
@@ -93,9 +95,9 @@ const string CNestedDataFile::getValue(const char *key,bool throwIfNotExists) co
 	case vtFloat:
 		return(istring(value->floatValue));
 	case vtScope:
-		throw(runtime_error("CNestedDataFile::getValue -- "+string(key)+" resolves to a scope, not a value"));
+		throw(runtime_error("CNestedDataFile::getValue -- '"+string(key)+"' resolves to a scope, not a value from file: "+filename));
 	default:
-		throw(runtime_error("CNestedDataFile::getValue -- internal error: unhandled type: "+istring(value->type)));
+		throw(runtime_error("CNestedDataFile::getValue -- internal error: unhandled type: '"+istring(value->type)+"' from file: "+filename));
 	}
 }
 
@@ -110,7 +112,7 @@ bool CNestedDataFile::prvGetValue(CVariant *&retValue,const char *key,int offset
 	if(variant->type!=vtScope)
 	{
 		if(throwOnError)
-			throw(runtime_error("CNestedDataFile::getValue -- "+string(key)+" resolves too soon to a value at: "+string(key)));
+			throw(runtime_error("CNestedDataFile::getValue -- '"+string(key)+"' resolves too soon to a value at: '"+string(key,max(0,offset-1))+"' from file: "+filename));
 		else
 			return(false);
 	}
@@ -207,7 +209,7 @@ void CNestedDataFile::prvCreateKey(const char *key,int offset,CVariant &value,CV
 	{ // dot found, then we must be asking for a nested scope
 
 		if(variant->type!=vtScope)
-			throw(runtime_error("CNestedDataFile::createKey -- "+string(key)+" resolves too soon to a value at: "+string(key,offset+pos)));
+			throw(runtime_error("CNestedDataFile::createKey -- '"+string(key)+"' resolves too soon to a value at: '"+string(key,offset+pos)+"' from file: "+filename));
 
 		map<string,CVariant>::const_iterator i=variant->members.find(string(key+offset,pos));
 		if(i==variant->members.end())
@@ -226,6 +228,7 @@ void CNestedDataFile::prvCreateKey(const char *key,int offset,CVariant &value,CV
 
 void CNestedDataFile::writeFile(const string filename)
 {
+	// ??? do I wanna reassign this->filename ?
 	FILE *f=fopen(filename.c_str(),"wt");
 	if(f==NULL)
 		throw(runtime_error("CNestedDataFile::writeFile -- error opening file for write: "+filename));
@@ -248,19 +251,33 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant)
 	for(int t=0;t<indent;t++)
 		fprintf(f,"\t");
 
+	string name=variant->name;
+
+	// convert " " to "\ "
+	for(size_t t=0;t<name.length();t++)
+	{
+		if(name[t]==' ')
+		{
+			name.insert(t,"\\");
+			t++;
+		}
+	}
+
 	switch(variant->type)
 	{
 	case vtString:
-		fprintf(f,"%s=\"%s\";\n",variant->name.c_str(),variant->stringValue.c_str());
+		fprintf(f,"%s=\"%s\";\n",name.c_str(),variant->stringValue.c_str());
 		break;
+
 	case vtFloat:
 		// ??? I may want to do a better job of making sure I don't truncate any necessary percision on outputing the value
-		fprintf(f,"%s=%f;\n",variant->name.c_str(),variant->floatValue);
+		fprintf(f,"%s=%f;\n",name.c_str(),variant->floatValue);
 		break;
+
 	case vtScope:
 		if(indent>=0) // not root scope
 		{
-			fprintf(f,"%s\n",variant->name.c_str());
+			fprintf(f,"%s\n",name.c_str());
 
 			for(int t=0;t<indent;t++)
 				fprintf(f,"\t");
@@ -277,8 +294,9 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant)
 			fprintf(f,"}\n");
 		}
 		break;
+
 	default:
-		throw(runtime_error("CNestedDataFile::prvWriteData -- internal error: unhandled type: "+istring(variant->type)));
+		throw(runtime_error("CNestedDataFile::prvWriteData -- internal error: unhandled type: "+istring(variant->type)+" from file: "+filename));
 	}
 }
 

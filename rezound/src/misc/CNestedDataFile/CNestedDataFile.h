@@ -59,6 +59,7 @@ private:
 	class CVariant;
 	friend class CVariant;
 
+	string filename;
 	CVariant *root;
 
 	enum VariantTypes

@@ -48,8 +48,8 @@ string currentFilename;
 	yylloc.first_line=yylineno; 		\
 	for(int t=0;t<yyleng;t++) 		\
 		if(yytext[t]=='\n') 		\
-			yylineno++; 		\
-	printf("%s:%d: token: %s\n",currentFilename.c_str(),yylineno,yytext);fflush(stdout);
+			yylineno++; 		
+	//printf("%s:%d: token: %s\n",currentFilename.c_str(),yylineno,yytext);fflush(stdout);
 
 
 %}
@@ -74,7 +74,7 @@ string currentFilename;
 
 
 
-[\_A-Za-z][\_0-9A-Za-z]*		{ 
+([\_A-Za-z:]|"\\ ")([\_0-9A-Za-z:]|"\\ ")*	{ 
 		if(strcmp(yytext,"include")==0)
 			return(INCLUDE);
 		else if(strcmp(yytext,"true")==0)
@@ -84,6 +84,15 @@ string currentFilename;
 		else
 		{
 			yylval.stringValue=strdup(yytext); 
+
+				// ??? besure to convert the other way when outputing the data file
+			// convert "\ " to " "
+			for(size_t t=0;t<strlen(yylval.stringValue);t++)
+			{
+				if(yylval.stringValue[t]=='\\' and yylval.stringValue[t+1]==' ')
+					memmove(yylval.stringValue+t,yylval.stringValue+t+1,strlen(yylval.stringValue+t+1)+1);
+			}
+
 			return(IDENT); 
 		}
 	}

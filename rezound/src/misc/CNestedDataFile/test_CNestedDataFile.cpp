@@ -23,9 +23,6 @@ int main()
 		fprintf(stderr,"unknown exception caught\n");
 	}
 
-
-
 	return(0);
 }
-
 
