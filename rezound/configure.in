@@ -2,6 +2,7 @@ dnl vim:tw=78
 dnl Process this file with autoconf to build a configure script
 dnl
 dnl ReZound configure.in Written by Anthony Ventimiglia
+dnl Heavily modified by David W. Durham
 dnl
 dnl Copyright (C) 2002 - Anthony Ventimiglia
 dnl 
@@ -20,12 +21,6 @@ dnl
 dnl You should have received a copy of the GNU General Public License along with
 dnl this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 dnl Place - Suite 330, Boston, MA  02111-1307, USA
-
-
-dnl since this script isn't terribly big and it can be confusing when things 
-dnl are cached and you're re-running configure after installing some library I 
-dnl will just always remove the cache before starting
-rm -f config.cache
 
 
 dnl Process this file with autoconf to produce a configure script.
@@ -87,12 +82,25 @@ AC_CHECK_LIB(pthread, pthread_create)
 AC_CHECK_LIB(pthread, pthread_mutex_init)
 AC_CHECK_LIB(pthread, pthread_rwlock_init)
 
+
 dnl check for the rfftw library installed.  Eventually this macro call
 dnl should define HAVE_FFTW and enable or disable the FFT based actions
 dnl if it's not found, then I should print a noticable warning that FFT
 dnl actions will be disabled and why
-AC_CHECK_LIB(fftw, fftw_create_plan)
-AC_CHECK_LIB(rfftw, rfftw_create_plan)
+dnl AC_CHECK_LIB(fftw, fftw_create_plan)
+dnl AC_CHECK_LIB(rfftw, rfftw_create_plan)
+AC_CHECK_HEADER(
+	fftw.h,
+	AC_CHECK_LIB(fftw, fftw_create_plan, , AC_MSG_WARN([***** libfftw.a not found -- any FFT based actions will be disabled (http://www.fftw.org) *****]),-lfftw),
+	AC_MSG_WARN([***** fftw.h header file not found -- and FFT based actions will be disabled (http://www.fftw.org) *****])
+	)
+
+AC_CHECK_HEADER(
+	rfftw.h,
+	AC_CHECK_LIB(rfftw, rfftw_create_plan, , AC_MSG_WARN([***** librfftw.a not found -- any FFT based actions will be disabled (http://www.fftw.org) *****]),-lrfftw),
+	AC_MSG_WARN([***** rfftw.h header file not found -- and FFT based actions will be disabled (http://www.fftw.org) *****])
+	)
+
 
 dnl see config/cxx-lib.m4 for ajv_ macro definitions. 
 dnl
@@ -100,7 +108,7 @@ dnl I found that afSetVirtualSampleFormat() was missing from earlier versions
 dnl of audifile, so this is a little better than checking for a random
 dnl function in libaudiofile. I still have to work this so configure will
 dnl abort if the test fails.
-ajv_CHECK_LIB_ABORT(audiofile, afSetVirtualSampleFormat, AUDIOFILE, [http://oss.sgi.com/projects/audiofile/])
+ajv_CHECK_LIB_ABORT(audiofile, afSetVirtualSampleFormat, AUDIOFILE, [http://oss.sgi.com/projects/audiofile])
 
 
 dnl handle the --enable-portaudio flag
@@ -199,21 +207,21 @@ AC_CHECK_LIB(
 		dnl libvorbis found, now check for vorbisfile and vorbisenc header files and libraries
 		AC_CHECK_HEADER(
 			vorbis/vorbisfile.h,
-			AC_CHECK_LIB(vorbisfile, ov_read, , AC_MSG_WARN([***** libvorbisenc.a not found; LOADING ogg vorbis support will be disabled *****]),-lvorbis),
-			AC_MSG_WARN([***** vorbisfile.h header file not found -- LOADING ogg vorbis support will be disabled *****])
+			AC_CHECK_LIB(vorbisfile, ov_read, , AC_MSG_WARN([***** libvorbisenc.a not found -- LOADING ogg vorbis support will be disabled (http://www.xiph.org) *****]),-lvorbis),
+			AC_MSG_WARN([***** vorbisfile.h header file not found -- LOADING ogg vorbis support will be disabled (http://www.xiph.org) *****])
 			)
 
 		AC_CHECK_HEADER(
 			vorbis/vorbisenc.h,
-			AC_CHECK_LIB(vorbisenc, vorbis_encode_init, , AC_MSG_WARN([***** libvorbisenc.a not found; SAVING ogg vorbis support will be disabled *****]),-lvorbis),
-			AC_MSG_WARN([***** vorbisenc.h header file not found -- SAVING ogg vorbis support will be disabled *****])
+			AC_CHECK_LIB(vorbisenc, vorbis_encode_init, , AC_MSG_WARN([***** libvorbisenc.a not found -- SAVING ogg vorbis support will be disabled (http://www.xiph.org) *****]),-lvorbis),
+			AC_MSG_WARN([***** vorbisenc.h header file not found -- SAVING ogg vorbis support will be disabled (http://www.xiph.org) *****])
 			)
 		],
 
-		AC_MSG_WARN([***** libvorbis.a not found -- ogg vorbis support will be disabled *****])
+		AC_MSG_WARN([***** libvorbis.a not found -- ogg vorbis support will be disabled (http://www.xiph.org) *****])
 	)],
 
-	AC_MSG_WARN([***** libogg.a not found -- ogg vorbis support will be disabled *****])
+	AC_MSG_WARN([***** libogg.a not found -- ogg vorbis support will be disabled (http://www.xiph.org) *****])
 )
 
 
@@ -325,4 +333,9 @@ AC_OUTPUT( \
 # statement
 rm -f ./rezound
 ln -s $srcdir/src/frontend_fox/rezound ./rezound
+
+dnl since this script isn't terribly big and it can be confusing when things 
+dnl are cached and you're re-running configure after installing some library I 
+dnl will just always remove the cache file after running
+rm -f config.cache
 
