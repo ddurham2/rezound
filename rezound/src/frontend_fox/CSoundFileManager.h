@@ -56,6 +56,8 @@ public:
 
 	bool isValidLoadedSound(const CLoadedSound *sound) const;
 
+	CMainWindow *getMainWindow() const { return mainWindow; }
+
 protected:
 	void createWindow(CLoadedSound *loaded);
 	void destroyWindow(CLoadedSound *loaded);
