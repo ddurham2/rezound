@@ -1948,18 +1948,22 @@ const size_t CSound::getCueCount() const
 
 const string CSound::getCueName(size_t index) const
 {
+	if(index>=getCueCount())
+		throw runtime_error(string(__func__)+" -- index is out of bounds: "+istring(index));
 	return((*cueAccesser)[index].name);
 }
 
 const sample_pos_t CSound::getCueTime(size_t index) const
 {
+	if(index>=getCueCount())
+		throw runtime_error(string(__func__)+" -- index is out of bounds: "+istring(index));
 	return((*cueAccesser)[index].time);
 }
 
 void CSound::setCueTime(size_t index,sample_pos_t newTime)
 {
-	if(index>cueAccesser->getSize())
-		throw(runtime_error(string(__func__)+" -- invalid index: "+istring(index)));
+	if(index>=getCueCount())
+		throw runtime_error(string(__func__)+" -- index is out of bounds: "+istring(index));
 	(*cueAccesser)[index].time=newTime;
 
 	// update cueIndex
@@ -1968,6 +1972,8 @@ void CSound::setCueTime(size_t index,sample_pos_t newTime)
 
 const bool CSound::isCueAnchored(size_t index) const
 {
+	if(index>=getCueCount())
+		throw runtime_error(string(__func__)+" -- index is out of bounds: "+istring(index));
 	return((*cueAccesser)[index].isAnchored);
 }
 
@@ -1999,6 +2005,8 @@ void CSound::insertCue(size_t index,const string &name,const sample_pos_t time,c
 
 void CSound::removeCue(size_t index)
 {
+	if(index>=getCueCount())
+		throw runtime_error(string(__func__)+" -- index is out of bounds: "+istring(index));
 	cueAccesser->remove(index,1);
 
 	// update cueIndex
