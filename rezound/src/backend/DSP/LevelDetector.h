@@ -83,4 +83,72 @@ private:
 	const unsigned iWindowTime;
 };
 
+
+/* --- CDSPPeakLevelDetector --------------------------------------
+ *
+ *	- This class can be used to determine the level or volume of an audio source.
+ *	- It finds the sample with the maximum absolute value within the past window-time samples
+ *	- The windowTime given at construction is in samples not seconds
+ *	- It is often necessary to initialize the object with 'windowTime' samples before even using the value from readLevel()
+ *		- To do this, simply call readLevel() for the first 'windowTime' samples in the audio stream
+ */
+#include <map>
+class CDSPPeakLevelDetector
+{
+public:
+	CDSPPeakLevelDetector(const unsigned _windowTime) :
+		window(_windowTime),
+		windowTime(_windowTime)
+	{
+		// initialize the history and the histogram
+		for(size_t t=0;t<windowTime;t++)
+			window.putSample(0);
+		histogram[0]=windowTime;
+	}
+
+	virtual ~CDSPPeakLevelDetector()
+	{
+	}
+
+	// every time you read the level, you have to supply the next sample in the audio stream
+	const sample_t readLevel(const sample_t _newSample)
+	{
+		// same abs value of the new sample
+		const sample_t newSample= _newSample<0 ? -_newSample : _newSample;
+
+		// get the oldest sample from the delay window
+		const sample_t oldestSample=window.getSample();
+
+		// add the new sample into the delay window
+		window.putSample(newSample);
+	
+		// remove the oldest sample from the histogram
+		map<sample_t,size_t>::iterator i1=histogram.find(oldestSample);
+		if(i1->second<=1)
+			histogram.erase(i1);
+		else
+			i1->second--;
+
+		// add the new sample to the hisogram
+		map<sample_t,size_t>::iterator i2=histogram.find(newSample);
+		if(i2!=histogram.end())
+			i2->second++;
+		else
+			histogram[newSample]=1;
+		
+		// return the largest value in the histogram
+		return histogram.rbegin()->first;
+	}
+
+	const unsigned getWindowTime() const
+	{
+		return windowTime; // the value this was constructed with
+	}
+
+private:
+	TDSPDelay<sample_t> window; // used to know a past set of samples
+	map<sample_t,size_t> histogram;
+	const unsigned windowTime;
+};
+
 #endif
