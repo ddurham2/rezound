@@ -496,7 +496,7 @@ Change\ Gain\ According\ to\ a\ Curve
 Crossfade\ Edges\ Settings
 {
 	names[]={"Default 1/100 Second", "1/10 Second", "1/4 Second", "1/2 Second", "1 Second", "2 Seconds", "3 Seconds", "4 Seconds", "5 Seconds"};
-	Default\ 10ms
+	Default\ 1\/100\ Second
 	{
 		Crossfade\ Start\ Edge
 		{
