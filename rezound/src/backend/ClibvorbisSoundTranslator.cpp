@@ -34,9 +34,10 @@
 #include <stdio.h>	// for fopen/fclose
 #include <errno.h>
 #include <string.h>	// for strerror()
+#include <ctype.h>
 
 #include <time.h>	// for time()
-#include <stdlib.h>	// for rand()
+#include <stdlib.h>	// for rand() and atoll
 
 #include "vorbis/codec.h"
 
@@ -51,6 +52,7 @@
 
 #include <stdexcept>
 #include <typeinfo>
+#include <vector>
 
 #include <istring>
 #include <TAutoBuffer.h>
@@ -106,7 +108,7 @@ void ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 		if(sampleRate<4000 || sampleRate>96000)
 			throw(runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate)));
 
-#define REALLOC_FILE_SIZE (1024*1024/4)
+		#define REALLOC_FILE_SIZE (1024*1024/4)
 
 		// ??? make sure it's not more than MAX_LENGTH
 			// ??? just truncate the length
@@ -116,18 +118,117 @@ void ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 
 		sound->createWorkingPoolFile(filename,sampleRate,channelCount,size);
 
+		/*
+		 * As best as I can tell, the ogg stream format for user comments
+		 * is simply an array of strings.  Now the API presets an interface
+		 * for supporting 'tags' but it looked to me like all this is is a
+		 * tag name follow by an '=' constitutes a tag a value (which 
+		 * follows the '=').  So I will use these 'tags' to loading and 
+		 * saving of cues, and the usernotes will be made up of any tags in
+		 * the user comments that aren't my cue tags.
+		 */
 
-			// ??? I should use the comment_get_tag or something
-		// load the user notes
-		char **userNotes=ov_comment(&vf,-1)->user_comments;
-		string _userNotes;
-		while(*userNotes)
+		vorbis_comment *oc=ov_comment(&vf,-1);
+		char **commentsArray;
+		vector<int> commentsThatWereCues;
+
+		// load the cues
+		commentsArray=oc->user_comments;
+		sound->clearCues();
+		for(int t=0;t<oc->comments;t++)
 		{
-			_userNotes+=(*userNotes);
-			_userNotes+="\n";
-			userNotes++;
+			if(strncmp(*commentsArray,"CUE=",4)==0)
+			{
+				string cuePos;
+				string cueName;
+				bool isAnchored=false;
+
+				// parse "[0-9]+[+-][A-Z]*\0" which should follow the "CUE="
+				// which is the sample position, +(is anchored) -(is not), cue name
+				char *cueDesc=*commentsArray+4;
+				int state=0;
+				for(;;)
+				{
+					const char c=*cueDesc;
+					cueDesc++;
+					if(c==0)
+						break;
+
+					switch(state)
+					{
+					case 0:
+						if(isdigit(c))
+						{
+							cuePos.append(&c,1);
+							state=1;
+						}
+						else
+							goto notACue;
+						break;
+
+					case 1:
+						if(isdigit(c))
+							cuePos.append(&c,1);
+						else if(c=='-')
+						{
+							isAnchored=false;
+							state=2;
+						}
+						else if(c=='+')
+						{
+							isAnchored=true;
+							state=2;
+						}
+						else
+							goto notACue;
+						break;
+
+					case 2:
+						cueName.append(&c,1);
+						break;
+
+					default:
+						goto notACue;
+					}
+				}
+				
+				if(cueName=="")
+					cueName=sound->getUnusedCueName("cue"); // give it a unique name
+
+				try
+				{
+					sound->addCue(cueName,(sample_pos_t)atoll(cuePos.c_str()),isAnchored);
+				}
+				catch(exception &e)
+				{ // don't make an error adding a cue cause the whole file not to load
+					Warning("file: '"+filename+"' -- "+e.what());
+				}
+
+				commentsThatWereCues.push_back(t);
+			}
+
+			notACue:
+
+			commentsArray++;
 		}
-		sound->setUserNotes(_userNotes);
+
+		// load the user notes
+		commentsArray=oc->user_comments;
+		string userNotes;
+		size_t ctwcPos=0;
+		for(int t=0;t<oc->comments;t++)
+		{
+			if(commentsThatWereCues.empty() || commentsThatWereCues[ctwcPos]!=t)
+			{ // comment was not previously found to be a cue definition
+				userNotes+=(*commentsArray);
+				userNotes+="\n";
+			}
+			else // ignore comment if it was a cue definition
+				ctwcPos++;
+
+			commentsArray++;
+		}
+		sound->setUserNotes(userNotes);
 
 
 		// load the audio data
@@ -138,8 +239,7 @@ void ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 		// ??? if sample_t is not the bit type that ogg is going to return I should write some convertion functions... that are overloaded to go to and from several types to and from sample_t
 			// ??? this needs to match the type of sample_t
 			// ??? float is supported by ov_read_float
-			// 	
-		#define bitRate 16 // ??? I guess ogg is always giving us 16bit pcm
+		#define BIT_RATE 16
 
 		TAutoBuffer<sample_t> buffer((size_t)((bitRate/8)*4096/sizeof(sample_t)));
 		sample_pos_t pos=0;
@@ -151,7 +251,7 @@ void ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 		int current_section;
 		for(;;)
 		{
-			const long ret=ov_read(&vf,(char *)((sample_t *)buffer),buffer.getSize()*sizeof(sample_t),ENDIAN,bitRate/8,1,&current_section);
+			const long ret=ov_read(&vf,(char *)((sample_t *)buffer),buffer.getSize()*sizeof(sample_t),ENDIAN,BIT_RATE/8,1,&current_section);
 			if(ret==0)
 				break;
 			else if(ret<0)
@@ -202,7 +302,7 @@ void ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 
 	sound->setIsModified(false);
 #else
-	throw(runtime_error(string(__func__)+" -- loading ogg/vorbis is not enabled -- missing libvorbisfile"));
+	throw(runtime_error(string(__func__)+" -- loading Ogg Vorbis is not enabled -- missing libvorbisfile"));
 #endif
 }
 
@@ -224,15 +324,39 @@ void ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound)
 	maxEncBitRate=normEncBitRate=minEncBitRate=128000; // ??? need to prompt the user for these settings
 	if(vorbis_encode_init(&vi,channelCount,sampleRate,maxEncBitRate,normEncBitRate,minEncBitRate)<0) // constant bitrate
 	*/
-	/* or variable bitrate (with .7 quality) */
+	/* or variable bitrate (with .7 quality) ??? need to prompt the user for the quality setting */
 	if(vorbis_encode_init_vbr(&vi,channelCount,sampleRate,0.7)<0)
-		throw(runtime_error(string(__func__)+" -- error initializing the ogg/vorbis encoder engine"));
+		throw(runtime_error(string(__func__)+" -- error initializing the Ogg Vorbis encoder engine"));
 
-	// ??? could save cue positions this way too (in the comments or thru use of tagged comments)
-	// save user notes
 	vorbis_comment vc;
 	vorbis_comment_init(&vc);
-	vorbis_comment_add(&vc,(char * /*cause they need const*/)sound->getUserNotes().c_str()); // ??? perhaps multiple lines need to be multiple calls to this function
+
+
+	// save the cues
+	for(size_t t=0;t<sound->getCueCount();t++)
+	{
+		const string cueDesc="CUE="+istring(sound->getCueTime(t))+(sound->isCueAnchored(t) ? "+" : "-")+sound->getCueName(t);
+		vorbis_comment_add(&vc,(char *)cueDesc.c_str());
+	}
+
+
+	// save user notes
+	// since the user notes may contain "tagname=value" then I break each line in the user notes string into a separate comment
+	const string userNotes=sound->getUserNotes();
+	string comment;
+	for(size_t t=0;t<userNotes.length();t++)
+	{
+		const char c=userNotes[t];
+		if(c=='\n')
+		{
+			vorbis_comment_add(&vc,(char *)comment.c_str());
+			comment="";
+		}
+		else
+			comment.append(&c,1);
+	}
+	if(comment!="")
+		vorbis_comment_add(&vc,(char *)comment.c_str());
 	
 
 	/* set up the analysis state and auxiliary encoding storage */
@@ -400,7 +524,7 @@ void ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound)
 	}
 
 #else
-	throw(runtime_error(string(__func__)+" -- saving ogg/vorbis is not enabled -- missing libvorbisenc"));
+	throw(runtime_error(string(__func__)+" -- saving Ogg Vorbis is not enabled -- missing libvorbisenc"));
 #endif
 }
 
@@ -435,7 +559,7 @@ const vector<string> ClibvorbisSoundTranslator::getFormatNames() const
 {
 	vector<string> names;
 
-	names.push_back("OggVorbis");
+	names.push_back("Ogg Vorbis");
 
 	return(names);
 }
