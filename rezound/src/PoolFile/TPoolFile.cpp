@@ -547,7 +547,7 @@ template<class l_addr_t,class p_addr_t>
 	for(size_t t=0;t<SAT[poolId].size();t++)
 	{
 		RLogicalBlock &block=SAT[poolId][t];
-			// could just call physicalBLockList.erase(serach...)
+			// could just call physicalBLockList.erase(search...) ???
 		const size_t index=findPhysicalBlockContaining(block.physicalStart);
 		physicalBlockList.erase(physicalBlockList.begin()+index);
 	}
@@ -810,30 +810,32 @@ template<class l_addr_t,class p_addr_t>
 		while(unusedCachedBlocks.size()>INITIAL_CACHED_BLOCK_COUNT)
 		{
 			delete unusedCachedBlocks.front();
-			unusedCachedBlocks.pop();
+			unusedCachedBlocks.pop_front();
 		}
 
 		while(unusedCachedBlocks.size()<INITIAL_CACHED_BLOCK_COUNT)
-			unusedCachedBlocks.push(new RCachedBlock(maxBlockSize));
+			unusedCachedBlocks.push_back(new RCachedBlock(maxBlockSize));
 	}
 	else
 	{
 		while(!unusedCachedBlocks.empty())
 		{
 			delete unusedCachedBlocks.front();
-			unusedCachedBlocks.pop();
+			unusedCachedBlocks.pop_front();
 		}
 	}
 
 	while(!unreferencedCachedBlocks.empty())
 	{
-		delete unreferencedCachedBlocks.front();
-		unreferencedCachedBlocks.pop_front();
+		typename set<RCachedBlock *>::iterator i=unreferencedCachedBlocks.begin();
+		delete *i;
+		unreferencedCachedBlocks.erase(i);
 	}
 	while(!activeCachedBlocks.empty())
 	{
-		delete activeCachedBlocks.front();
-		activeCachedBlocks.pop_front();
+		typename set<RCachedBlock *>::iterator i=activeCachedBlocks.begin();
+		delete *i;
+		activeCachedBlocks.erase(i);
 	}
 
 	opened=false;
@@ -2259,9 +2261,8 @@ template<class l_addr_t,class p_addr_t>
 
 	RCachedBlock *found=NULL;
 
-	// ??? Optimization: if there were many many pools, I could make this a TDimableList by poolId to eliminate looking through all of them
 	// look to see if this block is already cached in the active cached blocks
-	for(typename deque<RCachedBlock *>::iterator i=activeCachedBlocks.begin();i!=activeCachedBlocks.end();i++)
+	for(typename set<RCachedBlock *>::iterator i=activeCachedBlocks.begin();i!=activeCachedBlocks.end();i++)
 	{
 		RCachedBlock *cachedBlock=(*i);
 		if(cachedBlock->poolId==poolId && cachedBlock->containsAddress(byteWhere))
@@ -2271,11 +2272,10 @@ template<class l_addr_t,class p_addr_t>
 		}
 	}
 
-	// ??? Optimization: if there were many many pools, I could make this a TDimableList by poolId to eliminate looking through all of them
 	// if not found then look to see if this block is already cached in the unreferenced cached blocks
 	if(found==NULL)
 	{
-		for(typename deque<RCachedBlock *>::iterator i=unreferencedCachedBlocks.begin();i!=unreferencedCachedBlocks.end();i++)
+		for(typename set<RCachedBlock *>::iterator i=unreferencedCachedBlocks.begin();i!=unreferencedCachedBlocks.end();i++)
 		{
 			RCachedBlock *cachedBlock=(*i);
 			if(cachedBlock->poolId==poolId && cachedBlock->containsAddress(byteWhere))
@@ -2303,14 +2303,14 @@ template<class l_addr_t,class p_addr_t>
 			if(!unusedCachedBlocks.empty())
 			{
 				found=unusedCachedBlocks.front();
-				unusedCachedBlocks.pop();
+				unusedCachedBlocks.pop_front();
 			}
 
 			if(found==NULL)
 			{	// invalidate an unreferenced one or create a new one if none are available
 				if(!unreferencedCachedBlocks.empty())
 				{	// create an unused one from the unreferencedCachedBlocks
-					invalidateCachedBlock((found=unreferencedCachedBlocks.front()));
+					invalidateCachedBlock(*unreferencedCachedBlocks.begin());
 					// ??? sanity check
 					if(unusedCachedBlocks.empty())
 					{
@@ -2318,7 +2318,7 @@ template<class l_addr_t,class p_addr_t>
 						exit(0);
 					}
 					found=unusedCachedBlocks.front();
-					unusedCachedBlocks.pop();
+					unusedCachedBlocks.pop_front();
 				}
 				else
 					found=new RCachedBlock(maxBlockSize);
@@ -2331,7 +2331,7 @@ template<class l_addr_t,class p_addr_t>
 			// initialize the cachedBlock
 			found->init(poolId,SAT[poolId][SATIndex].logicalStart,SAT[poolId][SATIndex].size);
 		}
-		activeCachedBlocks.push_back(found);
+		activeCachedBlocks.insert(found);
 	}
 
 	found->referenceCount++;
@@ -2374,17 +2374,25 @@ template<class l_addr_t,class p_addr_t>
 	}
 
 	// the cached block structure is now unreferenced and unused
-	typename deque<RCachedBlock *>::iterator i=find(unreferencedCachedBlocks.begin(),unreferencedCachedBlocks.end(),cachedBlock);
+	typename set<RCachedBlock *>::iterator i=unreferencedCachedBlocks.find(cachedBlock);
 	if(i!=unreferencedCachedBlocks.end())
 	{
 		unreferencedCachedBlocks.erase(i);
-		unusedCachedBlocks.push(cachedBlock);
+		unusedCachedBlocks.push_back(cachedBlock);
 	}
 	else
 	{
-		i=find(activeCachedBlocks.begin(),activeCachedBlocks.end(),cachedBlock);
+		typename set<RCachedBlock *>::iterator i=activeCachedBlocks.find(cachedBlock);
 		if(i!=activeCachedBlocks.end())
+		{
 			activeCachedBlocks.erase(i);
+			printf("I think a mem-leak just occurred!\n");
+			if(find(unusedCachedBlocks.begin(),unusedCachedBlocks.end(),cachedBlock)==unusedCachedBlocks.end()
+			&& find(unreferencedCachedBlocks.begin(),unreferencedCachedBlocks.end(),cachedBlock)==unreferencedCachedBlocks.end())
+				printf("  yep..\n");
+			else
+				printf("  nope..\n");
+		}
 	}
 }
 
@@ -2398,11 +2406,10 @@ template<class l_addr_t,class p_addr_t>
 		cachedBlock->referenceCount--;
 		if(cachedBlock->referenceCount==0)
 		{	// move cachedBlock from activeQueue to unreferencedQueue
-			// could check the return value
-			typename deque<RCachedBlock *>::iterator i=find(activeCachedBlocks.begin(),activeCachedBlocks.end(),cachedBlock);
+			typename set<RCachedBlock *>::iterator i=activeCachedBlocks.find(cachedBlock);
 			if(i!=activeCachedBlocks.end())
 				activeCachedBlocks.erase(i);
-			unreferencedCachedBlocks.push_back(cachedBlock);
+			unreferencedCachedBlocks.insert(cachedBlock);
 		}
 		accesser->init();
 	}
@@ -2411,10 +2418,18 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::invalidateAllCachedBlocks()
 {
-	while(!activeCachedBlocks.empty())
-		invalidateCachedBlock(activeCachedBlocks.front());
-	while(!unreferencedCachedBlocks.empty())
-		invalidateCachedBlock(unreferencedCachedBlocks.front());
+	for(typename set<RCachedBlock *>::iterator i=activeCachedBlocks.begin();i!=activeCachedBlocks.end();)
+	{
+		typename set<RCachedBlock *>::iterator ii=i;
+		i++;
+		invalidateCachedBlock(*ii);
+	}
+	for(typename set<RCachedBlock *>::iterator i=unreferencedCachedBlocks.begin();i!=unreferencedCachedBlocks.end();)
+	{
+		typename set<RCachedBlock *>::iterator ii=i;
+		i++;
+		invalidateCachedBlock(*ii);
+	}
 }
 
 template<class l_addr_t,class p_addr_t>

@@ -32,6 +32,7 @@
 #include <map>
 #include <vector>
 #include <queue>
+#include <set>
 
 #include <CMutex.h>
 #include <CRWLock.h>
@@ -276,9 +277,9 @@ private:
 	typedef TStaticPoolAccesser<char,TPoolFile<l_addr_t,p_addr_t> > CGenericPoolAccesser;
 	vector<const CGenericPoolAccesser *> accessers;
 
-	queue<RCachedBlock *> unusedCachedBlocks;		// available, not caching anything
-	deque<RCachedBlock *> unreferencedCachedBlocks;		// is caching data, but is not currently referenced by any PoolAccesser object
-	deque<RCachedBlock *> activeCachedBlocks;		// is caching data, and is currently being used by one or more PoolAccesser objects
+	deque<RCachedBlock *> unusedCachedBlocks;	// available, not caching anything
+	set<RCachedBlock *> unreferencedCachedBlocks;	// is caching data, but is not currently referenced by any PoolAccesser object
+	set<RCachedBlock *> activeCachedBlocks;		// is caching data, and is currently being used by one or more PoolAccesser objects
 
 
 	template<class pool_element_t> void cacheBlock(const l_addr_t byteWhere,const TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > *accesser);
