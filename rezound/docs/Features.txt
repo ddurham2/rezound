@@ -91,7 +91,8 @@
 
 - Convolution
 	- For Various Effects Like Reverb and Applying Room Characteristics
-	- Custom Filters
+
+- Arbitrary FIR Filter (the user can draw their own frequency response)
 
 - IIR Single Pole Filters
 	- Lowpass
