@@ -6,14 +6,19 @@
 
 	- I have taken the call to backupSAT() out of TPoolFile::insertSpace because it is just too slow in the real-time situation of recording.
 		- perhaps I could have a more efficient way of storing the SAT or backing it up more effiently
+			- do now have that, but still don't think I want to call it while recording
+			- ???  I got it... have a bool flag in TPoolFile which says to turn on or off crash recovery and then do or don't call backupSAT while it's off
 	
-	- I should at least implement writeSATToFile to go much faster because it really took for ever to write the SAT on a 500 meg file... 
-		- Write to a buffer in memory and write it all at once to disk... or change CMultiFile to preallocate space rather than calling ftruncate so many times, which may be what's taking so long
-
-	- And maybe buildSATFromFile too
-
-
 	- reimplement TPoolFile::copyToFile to do this: 
 		- for each pool, use pool accessors to copy alignment-sized buffers of data from the source to the destination.
 		- this way, I don't unnecessarily copy data that doesn't belong to any pool
+
+
+- DONE -
+
+	- I should at least implement writeSATToFile to go much faster because it really took for ever to write the SAT on a 500 meg file... 
+		- Write to a buffer in memory and write it all at once to disk... or change CMultiFile to preallocate space rather than calling ftruncate so many times, which may be what's taking so long
+	- And maybe buildSATFromFile too
+
+
 

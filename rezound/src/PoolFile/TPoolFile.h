@@ -335,8 +335,9 @@ private:
 		const bool operator<(const RLogicalBlock &src) const;
 		const bool operator<=(const RLogicalBlock &src) const { return(operator<(src) || operator==(src)); }
 
-		void writeToFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle) const;
-		void readFromFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle);
+		const size_t getMemSize();
+		void writeToMem(uint8_t *mem,size_t &offset) const;
+		void readFromMem(const uint8_t *mem,size_t &offset);
 
 		void print() const;
 	};

@@ -1504,10 +1504,15 @@ template<class l_addr_t,class p_addr_t>
 		const uint32_t SATSize=SAT[poolId].size();
 		f->write(&SATSize,sizeof(SATSize),multiFileHandle);
 
+		ost::TAutoBuffer<uint8_t> mem(SATSize*RLogicalBlock().getMemSize());
+
 		// write each SAT entry
+		size_t offset=0;
 		for(size_t t=0;t<SAT[poolId].size();t++)
 		//for(set<RLogicalBlock>::const_iterator t=SAT[poolId].begin();t!=SAT[poolId].end();t++)
-			SAT[poolId][t].writeToFile(f,multiFileHandle);
+			SAT[poolId][t].writeToMem(mem,offset);
+
+		f->write(mem,mem.getSize(),multiFileHandle);
 	}
 }
 
@@ -1575,10 +1580,17 @@ template<class l_addr_t,class p_addr_t>
 		// read number of SAT entries
 		uint32_t SATSize;
 		f->read(&SATSize,sizeof(SATSize),multiFileHandle);
+
+		// read SAT into mem buffer
+		ost::TAutoBuffer<uint8_t> mem(SATSize*RLogicalBlock().getMemSize());
+		f->read(mem,mem.getSize(),multiFileHandle);
+
+		// read each SAT entry from that mem buffer and put into the actual SAT data-member
+		size_t offset=0;
 		for(size_t t=0;t<SATSize;t++)
 		{
 			RLogicalBlock logicalBlock;
-			logicalBlock.readFromFile(f,multiFileHandle);
+			logicalBlock.readFromMem(mem,offset);
 
 			// divide the size of the block just read into pieces that will fit into maxBlockSize sizes blocks
 			// just in case the maxBlockSize is smaller than it used to be
@@ -1586,23 +1598,9 @@ template<class l_addr_t,class p_addr_t>
 			for(l_addr_t j=0;j<blockSize/maxBlockSize;j++)
 			{
 				logicalBlock.size=maxBlockSize;
-				sortedInsert(SAT[poolId],logicalBlock);
-				/*
-				if(!SAT[poolId].insert(logicalBlock).second)
-				{
-					printf("error adding SAT entry\n");
-					exit(0);
-				}
-				*/
 
+				sortedInsert(SAT[poolId],logicalBlock);
 				sortedInsert(physicalBlockList,RPhysicalBlock(logicalBlock));
-				/*
-				if(!physicalBlockList.insert(RPhysicalBlock(logicalBlock)).second)
-				{
-					printf("error adding physical block entry\n");
-					exit(0);
-				}
-				*/
 
 				logicalBlock.logicalStart+=maxBlockSize;
 				logicalBlock.physicalStart+=maxBlockSize;
@@ -1611,22 +1609,7 @@ template<class l_addr_t,class p_addr_t>
 			if(logicalBlock.size>0)
 			{
 				sortedInsert(SAT[poolId],logicalBlock);
-				/*
-				if(!SAT[poolId].insert(logicalBlock).second)
-				{
-					printf("error adding SAT entry\n");
-					exit(0);
-				}
-				*/
-
 				sortedInsert(physicalBlockList,RPhysicalBlock(logicalBlock));
-				/*
-				if(!physicalBlockList.insert(RPhysicalBlock(logicalBlock)).second)
-				{
-					printf("error adding physical block entry\n");
-					exit(0);
-				}
-				*/
 			}
 
 			pools[poolId].size+=blockSize;
@@ -3494,6 +3477,7 @@ template<class l_addr_t,class p_addr_t>
 
 
 // ---- RLogicalBlock ---------------------------------------------------------
+
 template<class l_addr_t,class p_addr_t>
 	TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::RLogicalBlock()
 {
@@ -3539,19 +3523,35 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::writeToFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle) const
+	const size_t TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::getMemSize()
 {
-	f->write(&logicalStart,sizeof(logicalStart),multiFileHandle);
-	f->write(&size,sizeof(size),multiFileHandle);
-	f->write(&physicalStart,sizeof(physicalStart),multiFileHandle);
+	return(sizeof(logicalStart)+sizeof(size)+sizeof(physicalStart));
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::readFromFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle)
+	void TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::writeToMem(uint8_t *mem,size_t &offset) const
 {
-	f->read(&logicalStart,sizeof(logicalStart),multiFileHandle);
-	f->read(&size,sizeof(size),multiFileHandle);
-	f->read(&physicalStart,sizeof(physicalStart),multiFileHandle);
+	memcpy(mem+offset,&logicalStart,sizeof(logicalStart));
+	offset+=sizeof(logicalStart);
+
+	memcpy(mem+offset,&size,sizeof(size));
+	offset+=sizeof(size);
+	
+	memcpy(mem+offset,&physicalStart,sizeof(physicalStart));
+	offset+=sizeof(physicalStart);
+}
+
+template<class l_addr_t,class p_addr_t>
+	void TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::readFromMem(const uint8_t *mem,size_t &offset)
+{
+	memcpy(&logicalStart,mem+offset,sizeof(logicalStart));
+	offset+=sizeof(logicalStart);
+
+	memcpy(&size,mem+offset,sizeof(size));
+	offset+=sizeof(size);
+
+	memcpy(&physicalStart,mem+offset,sizeof(physicalStart));
+	offset+=sizeof(physicalStart);
 }
 
 template<class l_addr_t,class p_addr_t>
