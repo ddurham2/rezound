@@ -1,4 +1,3 @@
-# vim:tw=78
 # ReZound src/misc/CNestedDataFile/Makefile.am Written by Anthony Ventimiglia
 ## Process this file with automake to create Makefile.in
 ##
@@ -37,17 +36,20 @@ libmiscCN_la_SOURCES= \
 CFG_L=$(top_srcdir)/src/misc/CNestedDataFile/cfg.l
 CFG_Y=$(top_srcdir)/src/misc/CNestedDataFile/cfg.y
 		     
-#CNestedDataFile.o:CNestedDataFile.cpp CNestedDataFile.h
-#test_CNestedDataFile.o:test_CNestedDataFile.cpp CNestedDataFile.h
-
 cfg.tab.o: cfg.tab.cc
 	
-cfg.tab.cc: cfg.lex.c $(CFG_Y) CNestedDataFile.h
+cfg.tab.cc: cfg.lex.c $(CFG_Y) CNestedDataFile.h anytype.h
 	$(YACC) -p cfg_ -b cfg $(CFG_Y)
 	mv cfg.tab.c cfg.tab.cc
 	
 cfg.lex.c: $(CFG_L) CNestedDataFile.h
 	$(LEX) -Pcfg_ -t $(CFG_L) > cfg.lex.c
 
+
+# target to build the test app
+test_CNestedDataFile: test_CNestedDataFile.cpp cfg.tab.o CNestedDataFile.o anytype.h
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o test_CNestedDataFile test_CNestedDataFile.cpp CNestedDataFile.o cfg.tab.o 
+
+
 clean-local: 
-	-rm -f cfg.tab.cc cfg.lex.c
+	-rm -f cfg.tab.cc cfg.lex.c test_CNestedDataFile test.dat2

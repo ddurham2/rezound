@@ -18,19 +18,22 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
+#warning see about retaining the order that things were parsed in the file
+	// if I did this, I could remove the 'names' array in presets.dat because I could call getChildKeys to know the preset's names and they would remain in the order they were parsed
+	
 
 /*
  * I could have used XML, to store this sort of information, but it's way too bulky for me.
- * So, here's my simplistic solution.
+ * So, here's my more simplistic solution.
  * -- Davy
+ *
+ * I could store a typeid in CVariant and enforce strict types, except then I wouldn't know what
+ * it was exactly when I parsed it (i.e. is '25' a short or int?)
+ *  not can you copy construct a type_info per ISO/C++
  */
-
-/* ??? I could consider using string instead of any char *'s passing strings seems to be quite efficient */
 
 #include "CNestedDataFile.h"
 
-#include <stdlib.h>
-#include <string.h>
 #include <stdio.h>
 #include <ctype.h>
 
@@ -39,14 +42,18 @@
 
 #include <istring>
 
+
 extern int cfg_parse();
 
 CNestedDataFile *CNestedDataFile::parseTree;
-const char *CNestedDataFile::initialFilename;
+string CNestedDataFile::initialFilename;
+vector<string> CNestedDataFile::s2at_return_value;
+string CNestedDataFile::s2at_string;
 
-// changed from "." because this is more likely not needed in a 
-// preset's name, where "." might be quite useful in a preset name
-const char *CNestedDataFile::delimChar="|"; // !!!NOTE!!! Change the qualified_ident rule in cfg.y also!!!
+CMutex CNestedDataFile::cfg_parse_mutex;
+
+
+const string CNestedDataFile::delim="|"; // !!!NOTE!!! Change the qualified_ident rule in cfg.y also!!!
 
 CNestedDataFile::CNestedDataFile(const string _filename,bool _saveOnEachEdit) :
 	root(NULL),
@@ -65,40 +72,28 @@ CNestedDataFile::~CNestedDataFile()
 void CNestedDataFile::clear()
 {
 	delete root;
-	root=new CVariant("root");
+	root=new CVariant(ktScope);
 }
 
 void CNestedDataFile::parseFile(const string _filename,bool clearExisting)
 {
 	if(clearExisting)
-	{
 		clear();
-	}
 
-	#ifdef THREAD_SAFE_CSCOPE
-	mutex.lock();
-	#endif
 	try
 	{
-		initialFilename=_filename.c_str();
+		CMutexLocker l(cfg_parse_mutex); // because bison/flex aren't thread-safe
+
+		initialFilename=_filename;
+		s2at_string="";		 // make sure the yacc parser not in s2at mode
 		filename=_filename;
 		parseTree=this;
 
 		if(cfg_parse())
-			throw(runtime_error(string(__func__)+" -- error while parsing file: "+_filename));
-
-		//free(scanString);
-		#ifdef THREAD_SAFE_CSCOPE
-		mutex.unlock();
-		#endif
+			throw runtime_error(string(__func__)+" -- error while parsing "+_filename);
 	}
 	catch(...)
 	{
-		//free(scanString);
-		#ifdef THREAD_SAFE_CSCOPE
-		mutex.unlock();
-		#endif
-
 		if(clearExisting)
 			clear();
 
@@ -112,277 +107,125 @@ void CNestedDataFile::setFilename(const string _filename)
 }
 
 
-const string CNestedDataFile::getValue(const char *key,bool throwIfNotExists) const
-{
-	CVariant *value;
-	if(!findVariantNode(value,key,0,true,root))
-	{
-		if(throwIfNotExists)
-			throw(runtime_error(string(__func__)+" -- key '"+string(key)+"' does not exist from file: "+filename));
-		else
-			return("");
-	}
+//template<class type> const type CNestedDataFile::getValue(const string &key,bool throwIfNotExists) const
+//	in .h file
 
-	switch(value->type)
-	{
-	case ktString:
-		return(value->stringValue);
-	case ktFloat:
-		if(value->floatValue>999999.0)
-			return(istring(value->floatValue,24,12).ltrim());
-		else
-			return(istring(value->floatValue));
-	case ktScope:
-		throw(runtime_error(string(__func__)+" -- '"+string(key)+"' resolves to a scope, not a value from file: "+filename));
-	default:
-		throw(runtime_error(string(__func__)+" -- internal error: unhandled type: '"+istring(value->type)+"' from file: "+filename));
-	}
-}
-
-const string CNestedDataFile::getArrayValue(const char *key,size_t index,bool throwIfNotExists) const
-{
-	CVariant *value;
-	if(!findVariantNode(value,key,0,true,root))
-	{
-		if(throwIfNotExists)
-			throw(runtime_error(string(__func__)+" -- key '"+string(key)+"' does not exist from file: "+filename));
-		else
-			return("");
-	}
-
-	if(value->type!=ktArray)
-	{
-		if(throwIfNotExists)
-			throw(runtime_error(string(__func__)+" -- '"+string(key)+"' is not an array from file: "+filename));
-		else
-			return("");
-	}
-
-	if(index>=value->arrayValue.size())
-	{
-		if(throwIfNotExists)
-			throw(runtime_error(string(__func__)+" -- '"+string(key)+"["+istring(index)+"]' array index is out of bounds (+"+istring(value->arrayValue.size())+"+) from file: "+filename));
-		else
-			return("");
-	}
-
-	switch(value->arrayValue[index].type)
-	{
-	case ktString:
-		return(value->arrayValue[index].stringValue);
-	case ktFloat:
-		if(value->arrayValue[index].floatValue>999999.0)
-			return(istring(value->arrayValue[index].floatValue,24,12).ltrim());
-		else
-			return(istring(value->arrayValue[index].floatValue));
-	default:
-		throw(runtime_error(string(__func__)+" -- internal error: unhandled type: '"+istring(value->arrayValue[index].type)+"' from file: "+filename));
-	}
-}
-
-const size_t CNestedDataFile::getArraySize(const char *key,bool throwIfNotExists) const
-{
-	CVariant *value;
-	if(!findVariantNode(value,key,0,true,root))
-	{
-		if(throwIfNotExists)
-			throw(runtime_error(string(__func__)+" -- key '"+string(key)+"' does not exist from file: "+filename));
-		else
-			return(0);
-	}
-
-	if(value->type!=ktArray)
-	{
-		if(throwIfNotExists)
-			throw(runtime_error(string(__func__)+" -- '"+string(key)+"' is not an array from file: "+filename));
-		else
-			return(0);
-	}
-
-	return(value->arrayValue.size());
-}
-
-CNestedDataFile::KeyTypes CNestedDataFile::keyExists(const char *key) const
+CNestedDataFile::KeyTypes CNestedDataFile::keyExists(const string &key) const
 {
 	CVariant *value;
 	if(findVariantNode(value,key,0,false,root))
-		return(value->type);
+		return value->type;
 	else
-		return(ktNotExists);
+		return ktNotExists;
 }
 
-const vector<string> CNestedDataFile::getChildKeys(const char *parentKey,bool throwIfNotExists) const
+const vector<string> CNestedDataFile::getChildKeys(const string &parentKey,bool throwIfNotExists) const
 {
 	vector<string> childKeys;
 	CVariant *scope;
 
-	if(parentKey==NULL || parentKey[0]==0)
+	if(parentKey=="")
 		scope=root;
 	else
 	{
 		if(!findVariantNode(scope,parentKey,0,true,root))
 		{
 			if(throwIfNotExists)
-				throw(runtime_error(string(__func__)+" -- parent key '"+string(parentKey)+"' does not exist from file: "+filename));
+				throw runtime_error(string(__func__)+" -- parent key '"+parentKey+"' does not exist from "+filename);
 			else
-				return(childKeys);
+				return childKeys;
 		}
 
 		if(scope->type!=ktScope)
 		{
 			if(throwIfNotExists) // it DID actually exist, but it wasn't a scope containing more child values
-				throw(runtime_error(string(__func__)+" -- parent key '"+string(parentKey)+"' resolved to a value from file: "+filename));
+				throw runtime_error(string(__func__)+" -- parent key '"+parentKey+"' resolved to a value from "+filename);
 			else
-				return(childKeys);
+				return childKeys;
 
 		}
 	}
-	
+
 	for(map<string,CVariant>::const_iterator i=scope->members.begin();i!=scope->members.end();i++)
-		//childKeys.push_back(scope==root ? i->first.substr(1) : i->first);
 		childKeys.push_back(i->first);
-	
-	return(childKeys);
+
+	return childKeys;
 }
 
-bool CNestedDataFile::findVariantNode(CVariant *&retValue,const char *key,int offset,bool throwOnError,const CVariant *variant) const
+bool CNestedDataFile::findVariantNode(CVariant *&retValue,const string &key,int offset,bool throwOnError,const CVariant *variant) const
 {
 	if(variant->type!=ktScope)
 	{
 		if(throwOnError)
-			throw(runtime_error(string(__func__)+" -- '"+string(key)+"' resolves too soon to a value at: '"+string(key,max(0,offset-1))+"' from file: "+filename));
+			throw runtime_error(string(__func__)+" -- '"+key+"' resolves too soon to a value at: '"+string(key,max(0,offset-(int)delim.length()))+"' from "+filename);
 		else
-			return(false);
+			return false;
 	}
 
-	// look for a dot in the key
-	int pos=strchr(key+offset,*delimChar)-(key+offset);
-	if(pos<0)
-	{ // no dot found, then we must be now asking for a value
-		map<string,CVariant>::const_iterator i=variant->members.find(string(key+offset));
+	// look for the first dot in the key
+	size_t pos=key.find(delim,offset);
+	if(pos==string::npos)
+	{ // no dot found, then we're now asking for a member of the current scope
+		map<string,CVariant>::const_iterator i=variant->members.find(key.substr(offset));
 		if(i==variant->members.end())
-			return(false);
+			return false;
 		else
 		{
 			retValue=const_cast<CVariant *>(&(i->second));
-			return(true);
+			return true;
 		}
 	}
 	else
 	{ // dot found, then we must be asking for a nested scope
-		map<string,CVariant>::const_iterator i=variant->members.find(string(key+offset,pos));
+		const string subKey=key.substr(offset,pos-offset);
+		map<string,CVariant>::const_iterator i=variant->members.find(subKey);
 		if(i==variant->members.end())
-			return(false);
+			return false;
 		else
-			return(findVariantNode(retValue,key,offset+pos+1,throwOnError,&i->second));
+			return findVariantNode(retValue,key,pos+delim.length(),throwOnError,&i->second);
 	}
 }
 
-#if 0
-CNestedDataFile::CVariant *CNestedDataFile::upwardsScopeLookup(const char *key) const
-{
-/*
- * This method is used to resolve names like "aaa.bbb.c" when used in expressions
- * For example:
- * 	aaa
- * 	{
- * 		bbb
- * 		{
- * 			c=10;
- * 		}
- *
- * 		ddd
- * 		{
- * 			e=aaa.bbb.c;
- * 		}
- * 	}
- *
- * When The "aaa.bbb.c" token is encountered it should attempt to resolve that
- * name as a value.  The correct way to do this is: Starting within the scope, ddd
- * attempt to look up the name "aaa.bbb.c".  It won't be found, so go out a scope to
- * ddd's parent, aaa.  Then attempt to look up the name "aaa.bbb.c".  It again won't 
- * be found, so go out a scope again to aaa's parent, the root scope.  Then attempt
- * to look up the name "aaa.bbb.c".  This time it will resolve to the value, 10.
- *
- * The name upwardsScopeLookup means each time the lookup faile, it goes UP the 
- * scope tree to the searched scope's parent.
- */
-	const CNestedDataFile *scope=this; // start with the current scope
-	while(scope!=NULL)
-	{
-		CVariant *value;
-		if(scope->findVariantNode(value,key,0,false))
-			return(value);
+//template<class type> void CNestedDataFile::createKey(const string &key,const type value)
+//	in .h file
 
-		scope=scope->parentScope;
+void CNestedDataFile::prvCreateKey(const string &key,int offset,const CVariant &value,CVariant *variant)
+{
+	if(variant==root) // only verify once
+		verifyKey(key);
+
+	// look for a dot in the key
+	size_t pos=key.find(delim,offset);
+	if(pos==string::npos)
+	{ // no dot found, then we're now creating a value
+		variant->members[key.substr(offset)]=value;
 	}
-	// not found -> exception on error???
-	return(NULL);
-}
-#endif
+	else
+	{ // dot found, then we're now asking for a nested scope
+		if(variant->type!=ktScope)
+			throw runtime_error(string(__func__)+" -- '"+key+"' resolves too soon to a value at: '"+string(key,offset+pos)+"' from "+filename);
 
-void CNestedDataFile::createKey(const char *key,const double value)
-{
-	CVariant newVariant("",value);
-	prvCreateKey(key,0,newVariant,root);
-
-	if(saveOnEachEdit)
-		save();
-}
-
-void CNestedDataFile::createKey(const char *key,const string &value)
-{
-	CVariant newVariant("",value);
-	prvCreateKey(key,0,newVariant,root);
-
-	if(saveOnEachEdit)
-		save();
-}
-
-void CNestedDataFile::createArrayKey(const char *key,size_t index,const string &initValue)
-{
-	CVariant *value;
-	if(!findVariantNode(value,key,0,true,root))
-	{
-		if(index!=0)
-			throw(runtime_error(string(__func__)+" -- '"+string(key)+"["+istring(index)+"]' key not found from file: "+filename));
-
-		vector<CVariant> values;
-		values.push_back(CVariant("",initValue));
-
-		CVariant newVariant(values);
-		prvCreateKey(key,0,newVariant,root);
-		return;
+		const string subKey=key.substr(offset,pos-offset);
+		map<string,CVariant>::const_iterator i=variant->members.find(subKey);
+		if(i==variant->members.end())
+		{ // create a new scope
+			variant->members[subKey]=CVariant(ktScope);
+			prvCreateKey(key,pos+delim.length(),value,&variant->members[subKey]);
+		}
+		else
+		{
+			prvCreateKey(key,pos+delim.length(),value,const_cast<CVariant *>(&(i->second)));
+		}
 	}
-
-	if(value->type!=ktArray)
-		throw(runtime_error(string(__func__)+" -- '"+string(key)+"' is not an array from file: "+filename));
-
-	if(index>value->arrayValue.size())
-		throw(runtime_error(string(__func__)+" -- '"+string(key)+"["+istring(index)+"]' array index is out of bounds (+"+istring(value->arrayValue.size())+"+) from file: "+filename));
-
-	value->arrayValue.insert(value->arrayValue.begin()+index,CVariant("",initValue));
-
-	if(saveOnEachEdit)
-		save();
 }
 
-void CNestedDataFile::createKey(const char *key,const vector<CVariant> &value)
-{
-	CVariant newVariant(value);
-	prvCreateKey(key,0,newVariant,root);
-
-	if(saveOnEachEdit)
-		save();
-}
-
-void CNestedDataFile::removeKey(const char *key,bool throwOnError)
+void CNestedDataFile::removeKey(const string &key,bool throwOnError)
 {
 	CVariant *parent=NULL;;
 
 	string parentKey;
 	string childKey;
-	size_t lastDot=string(key).rfind(*delimChar);
+	size_t lastDot=key.rfind(delim);
 	if(lastDot==string::npos)
 	{
 		parent=root;
@@ -390,16 +233,16 @@ void CNestedDataFile::removeKey(const char *key,bool throwOnError)
 	}
 	else
 	{
-		parentKey=string(key).substr(0,lastDot);
-		childKey=string(key).substr(lastDot+1);
+		parentKey=key.substr(0,lastDot);
+		childKey=key.substr(lastDot+delim.length());
 	}
 
-	if(parent==root || findVariantNode(parent,parentKey.c_str(),0,throwOnError,root))
+	if(parent==root || findVariantNode(parent,parentKey,0,throwOnError,root))
 	{
 		if(parent->members.find(childKey)==parent->members.end())
 		{
 			if(throwOnError)
-				throw(runtime_error(string(__func__)+" -- '"+string(key)+"' key not found from file: "+filename));
+				throw runtime_error(string(__func__)+" -- '"+key+"' key not found from "+filename);
 			return;
 		}
 		parent->members.erase(childKey);
@@ -407,71 +250,6 @@ void CNestedDataFile::removeKey(const char *key,bool throwOnError)
 
 	if(saveOnEachEdit)
 		save();
-}
-
-void CNestedDataFile::removeArrayKey(const char *key,size_t index,bool throwOnError)
-{
-	CVariant *value;
-	if(!findVariantNode(value,key,0,true,root))
-	{
-		if(throwOnError)
-			throw(runtime_error(string(__func__)+" -- '"+string(key)+"["+istring(index)+"]' key not found from file: "+filename));
-		return;
-	}
-
-	if(value->type!=ktArray)
-	{
-		if(throwOnError)
-			throw(runtime_error(string(__func__)+" -- '"+string(key)+"' is not an array from file: "+filename));
-		return;
-	}
-
-	if(index>=value->arrayValue.size())
-	{
-		if(throwOnError)
-			throw(runtime_error(string(__func__)+" -- '"+string(key)+"["+istring(index)+"]' array index is out of bounds (+"+istring(value->arrayValue.size())+"+) from file: "+filename));
-		return;
-	}
-
-	value->arrayValue.erase(value->arrayValue.begin()+index);
-
-	if(saveOnEachEdit)
-		save();
-}
-
-
-void CNestedDataFile::prvCreateKey(const char *key,int offset,CVariant &value,CVariant *variant)
-{
-	if(variant==root) // only verify once
-		verifyKey(key);
-
-	// look for a dot in the key
-	int pos=strchr(key+offset,*delimChar)-(key+offset);
-	if(pos<0)
-	{ // no dot found, then we must be now creating a value
-		//printf("creating new value: %s\n",string(key+offset).c_str());
-		value.name=string(key+offset);
-		variant->members[string(key+offset)]=value;
-	}
-	else
-	{ // dot found, then we must be asking for a nested scope
-
-		if(variant->type!=ktScope)
-			throw(runtime_error(string(__func__)+" -- '"+string(key)+"' resolves too soon to a value at: '"+string(key,offset+pos)+"' from file: "+filename));
-
-		map<string,CVariant>::const_iterator i=variant->members.find(string(key+offset,pos));
-		if(i==variant->members.end())
-		{ // create a new scope
-			//printf("creating new scope: %s\n",string(key+offset,pos).c_str());
-			variant->members[string(key+offset,pos)]=CVariant(string(key+offset,pos));
-			prvCreateKey(key,offset+pos+1,value,&variant->members[string(key+offset,pos)]);
-		}
-		else
-		{
-			//printf("while creating key, decending into: %s\n",string(key+offset,pos).c_str());
-			prvCreateKey(key,offset+pos+1,value,const_cast<CVariant *>(&(i->second)));
-		}
-	}
 }
 
 void CNestedDataFile::save() const
@@ -484,16 +262,17 @@ void CNestedDataFile::writeFile(const string filename) const
 	if(filename=="")
 		return;
 
-	// ??? do I wanna reassign this->filename ?
+	CMutexLocker l(cfg_parse_mutex);  // just to keep two threads from writing the file at the same time
+
 	FILE *f=fopen(filename.c_str(),"wt");
 	if(f==NULL)
-		throw(runtime_error(string(__func__)+" -- error opening file for write: "+filename));
+		throw runtime_error(string(__func__)+" -- error opening file for write: "+filename);
 
 	fprintf(f,"// ReZound program generated data; be careful if modifying.  Modify ONLY when ReZound is NOT running.  Consider making a backup before modifying!\n\n");
 
 	try
 	{
-		prvWriteData(f,-1,root);
+		prvWriteData(f,-1,"",root);
 		fclose(f);
 	}
 	catch(...)
@@ -515,19 +294,20 @@ static const string fixEscapes(const string _s)
 			t++;
 		}
 	}
-	return(s);
+	return s;
 }
 
-void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant) const
+void CNestedDataFile::prvWriteData(void *_f,int indent,const string &_name,const CVariant *variant) const
 {
 	FILE *f=(FILE *)_f; // to avoid including stdio.h in the .h file
 
 	for(int t=0;t<indent;t++)
 		fprintf(f,"\t");
 
-	string name=variant->name;
+	string name=_name; // make copy to be able to escape certain chars
 
-	// convert non-alnum to '\'non-alnum (and also don't make '_' into '\_')
+	// escape non-alnum to '\'non-alnum (and also don't make '_' into '\_')
+	// and escape the first char if it's a digit
 	for(size_t t=0;t<name.length();t++)
 	{
 		if((!isalnum(name[t]) && name[t]!='_') || (t==0 && isdigit(name[t])))
@@ -539,16 +319,8 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant) 
 
 	switch(variant->type)
 	{
-	case ktString:
-		fprintf(f,"%s=\"%s\";\n",name.c_str(),fixEscapes(variant->stringValue).c_str());
-		break;
-
-	case ktFloat:
-		// ??? I may want to do a better job of making sure I don't truncate any necessary percision on outputing the value
-		if(variant->floatValue>999999.0)
-			fprintf(f,"%s=%.12e;\n",name.c_str(),variant->floatValue);
-		else
-			fprintf(f,"%s=%f;\n",name.c_str(),variant->floatValue);
+	case ktValue:
+		fprintf(f,"%s=%s;\n",name.c_str(),variant->stringValue.c_str());
 		break;
 
 	case ktScope:
@@ -562,12 +334,12 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant) 
 			fprintf(f,"{\n");
 		}
 
-		// write non scopes for (just to look nicer)
+		// write non scopes first (just to look nicer)
 		bool more=false;
 		for(map<string,CVariant>::const_iterator i=variant->members.begin();i!=variant->members.end();i++)
 		{
 			if(i->second.type!=ktScope)
-				prvWriteData(f,indent+1,&i->second);
+				prvWriteData(f,indent+1,i->first,&i->second);
 			else
 				more=true;
 		}
@@ -578,7 +350,7 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant) 
 		for(map<string,CVariant>::const_iterator i=variant->members.begin();i!=variant->members.end();i++)
 		{
 			if(i->second.type==ktScope)
-				prvWriteData(f,indent+1,&i->second);
+				prvWriteData(f,indent+1,i->first,&i->second);
 		}
 
 		if(indent>=0) // not root scope
@@ -592,55 +364,24 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant) 
 		break;
 	}
 
-	case ktArray:
-		fprintf(f,"%s[]={",name.c_str());
-		for(size_t t=0;t<variant->arrayValue.size();t++)
-		{
-			if(t!=0)
-				fprintf(f,", ");
-			switch(variant->arrayValue[t].type)
-			{
-			case ktString:
-				fprintf(f,"\"%s\"",variant->arrayValue[t].stringValue.c_str());
-				break;
-			case ktFloat:
-				if(variant->arrayValue[t].floatValue>999999.0)
-					fprintf(f,"%.12e",variant->arrayValue[t].floatValue);
-				else
-					fprintf(f,"%f",variant->arrayValue[t].floatValue);
-				break;
-			default:
-				throw(runtime_error(string(__func__)+" -- internal error: unhandled type while writing array: "+istring(variant->arrayValue[t].type)+" from file: "+filename));
-			}
-		}
-		fprintf(f,"};\n");
-		break;
-
 	default:
-		throw(runtime_error(string(__func__)+" -- internal error: unhandled type: "+istring(variant->type)+" from file: "+filename));
+		throw runtime_error(string(__func__)+" -- internal error: unhandled type: "+istring(variant->type)+" from "+filename);
 	}
 }
 
 /*
- * This method makes sure that when creating a key in the file that it 
+ * This method makes sure that when creating a key in the file that it
  * does not contain invalid characters that would cause a parse error
  * if the file were parsed again with this supposed invalid key.
  */
-void CNestedDataFile::verifyKey(const char *key)
+void CNestedDataFile::verifyKey(const string &key)
 {
-	size_t l=strlen(key);
+	size_t l=key.length();
 	for(size_t t=0;t<l;t++)
 	{
-		/*
-		if((!isalnum(key[t]) && key[t]!=' ' && key[t]!=':' && key[t]!='_' && key[t]!='.') || ((t==0||key[t-1]=='.') && isdigit(key[t]))) 
-			throw(runtime_error(string(__func__)+" -- invalid character in key: '"+key+"' or first character of a sub-key is a digit for creating key in file: "+filename));
-		*/
-		/*
-		if(!isalnum(key[t]) && key[t]!=' ' && key[t]!=':' && key[t]!='_' && key[t]!='.') 
-		*/
-			// ??? This totally depends on this code running on an ASCII machine
-		if(key[t]<32 || key[t]>126)
-			throw(runtime_error(string(__func__)+" -- invalid character in key: '"+key+"' creating key in file: "+filename));
+		// accept only graphic characters (i.e. not control chars), space and tab
+		if(!(isgraph(key[t]) || key[t]==' ' || key[t]=='\t'))
+			throw runtime_error(string(__func__)+" -- invalid character in key: '"+key+"' at position: "+istring(t)+" while creating key in "+filename);
 	}
 }
 
@@ -649,38 +390,14 @@ void CNestedDataFile::verifyKey(const char *key)
 
 // -----------------------------------------------------------------------------
 
-CNestedDataFile::CVariant::CVariant() :
-	type(ktNotExists)
+CNestedDataFile::CVariant::CVariant(KeyTypes _keyType) :
+	type(_keyType)
 {
 }
 
-CNestedDataFile::CVariant::CVariant(const string _name) :
-	name(_name),
-	type(ktScope)
-{
-}
-
-CNestedDataFile::CVariant::CVariant(const string _name,const string value) :
-	name(_name),
-	type(ktString),
+CNestedDataFile::CVariant::CVariant(const string &value) :
+	type(ktValue),
 	stringValue(value)
-{
-	if(name!="")
-		printf("okay.. it is used: %s\n",name.c_str());
-}
-
-CNestedDataFile::CVariant::CVariant(const string _name,const double value) :
-	name(_name),
-	type(ktFloat),
-	floatValue(value)
-{
-	if(name!="")
-		printf("okay.. it is used: %s\n",name.c_str());
-}
-
-CNestedDataFile::CVariant::CVariant(const vector<CVariant> &value) :
-	type(ktArray),
-	arrayValue(value)
 {
 }
 
@@ -692,22 +409,17 @@ CNestedDataFile::CVariant::CVariant(const CVariant &src) :
 
 const CNestedDataFile::CVariant &CNestedDataFile::CVariant::operator=(const CVariant &rhs)
 {
-	if(this==&rhs)	
-		return(*this);
+	if(this!=&rhs)
+	{
+		type=rhs.type;
 
-	name=rhs.name;
-	type=rhs.type;
+		if(type==ktScope)
+			members=rhs.members;
+		else if(type==ktValue)
+			stringValue=rhs.stringValue;
+	}
 
-	if(type==ktScope)
-		members=rhs.members;
-	else if(type==ktString)
-		stringValue=rhs.stringValue;
-	else if(type==ktFloat)
-		floatValue=rhs.floatValue;
-	else if(type==ktArray)
-		arrayValue=rhs.arrayValue;
-
-	return(*this);
+	return *this;
 }
 
 CNestedDataFile::CVariant::~CVariant()
