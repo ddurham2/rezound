@@ -559,7 +559,20 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool wil
 		CActionSound _actionSound(actionSound);
 	
 		bool ret=doActionSizeSafe(_actionSound,prepareForUndo && canUndo()==curYes);
+
+		// make sure that the start and stop positions are in range after the action
+		if(_actionSound.start<0)
+			_actionSound.start=0;
+		else if(_actionSound.start>=_actionSound.sound->getLength())
+			_actionSound.start=_actionSound.sound->getLength()-1;
 	
+		if(_actionSound.stop<0)
+			_actionSound.stop=0;
+		else if(_actionSound.stop>=_actionSound.sound->getLength())
+			_actionSound.stop=_actionSound.sound->getLength()-1;
+	
+
+
 		if(channel!=NULL)
 			setSelection(_actionSound.start,_actionSound.stop,channel);
 	
@@ -618,6 +631,19 @@ void AAction::undoAction(CSoundPlayerChannel *channel,bool willResize)
 		const CActionSound _actionSound(actionSound);
 
 		undoActionSizeSafe(_actionSound);
+
+		// make sure that the start and stop positions are in range after undoing the action
+		if(_actionSound.start<0)
+			_actionSound.start=0;
+		else if(_actionSound.start>=_actionSound.sound->getLength())
+			_actionSound.start=_actionSound.sound->getLength()-1;
+	
+		if(_actionSound.stop<0)
+			_actionSound.stop=0;
+		else if(_actionSound.stop>=_actionSound.sound->getLength())
+			_actionSound.stop=_actionSound.sound->getLength()-1;
+	
+
 
 		if(channel!=NULL && oldSelectStart!=NIL_SAMPLE_POS && oldSelectStop!=NIL_SAMPLE_POS)
 			setSelection(oldSelectStart,oldSelectStop,channel);
