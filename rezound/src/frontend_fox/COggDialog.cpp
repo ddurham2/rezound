@@ -53,40 +53,40 @@ static void fillBitRateComboBox(FXComboBox *c)
 }
 
 COggDialog::COggDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"Ogg Compression Parameters",0,0,FXModalDialogBox::ftVertical)//,
+	FXModalDialogBox(mainWindow,_("Ogg Compression Parameters"),0,0,FXModalDialogBox::ftVertical)//,
 
 	//notesFrame(new FXPacker(getFrame(),FRAME_SUNKEN|FRAME_THICK | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
 		//notesTextBox(new FXText(notesFrame,NULL,0,TEXT_WORDWRAP | LAYOUT_FILL_X|LAYOUT_FILL_Y))
 {
 	FXComposite *main=new FXGroupBox(getFrame(),"",GROUPBOX_NORMAL|LAYOUT_FILL_X|LAYOUT_FILL_Y);
 
-	qualityButton=new FXRadioButton(main,"Quality Setting",this,ID_WHICH_BUTTON);
+	qualityButton=new FXRadioButton(main,_("Quality Setting"),this,ID_WHICH_BUTTON);
 		qualityFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RAISED|LAYOUT_FILL_X);
-			new FXLabel(qualityFrame,"Quality: ");
+			new FXLabel(qualityFrame,_("Quality: "));
 			qualityTextBox=new FXTextField(qualityFrame,10,NULL,0,TEXTFIELD_REAL|TEXTFIELD_NORMAL);
 			qualityTextBox->setText("0.7");
 			new FXLabel(qualityFrame,"");
-			new FXLabel(qualityFrame,"0 (lowest) to 1 (highest)");
+			new FXLabel(qualityFrame,_("0 (lowest) to 1 (highest)"));
 
 	
 	new FXFrame(main,LAYOUT_FIX_HEIGHT,0,0,1,10);
-	CBRButton=new FXRadioButton(main,"Constant Bit Rate",this,ID_WHICH_BUTTON);
+	CBRButton=new FXRadioButton(main,_("Constant Bit Rate"),this,ID_WHICH_BUTTON);
 		CBRFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RAISED|LAYOUT_FILL_X);
-			new FXLabel(CBRFrame,"Bit Rate: ");
+			new FXLabel(CBRFrame,_("Bit Rate: "));
 			bitRateComboBox=new FXComboBox(CBRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
 			fillBitRateComboBox(bitRateComboBox);
 
 
 	new FXFrame(main,LAYOUT_FIX_HEIGHT,0,0,1,10);
-	VBRButton=new FXRadioButton(main,"Variable Bit Rate",this,ID_WHICH_BUTTON);
+	VBRButton=new FXRadioButton(main,_("Variable Bit Rate"),this,ID_WHICH_BUTTON);
 		VBRFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RAISED|LAYOUT_FILL_X);
-			new FXLabel(VBRFrame,"Minimum Bit Rate: ");
+			new FXLabel(VBRFrame,_("Minimum Bit Rate: "));
 			minRateComboBox=new FXComboBox(VBRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
 			fillBitRateComboBox(minRateComboBox);
-			new FXLabel(VBRFrame,"Normal Bit Rate: ");
+			new FXLabel(VBRFrame,_("Normal Bit Rate: "));
 			normRateComboBox=new FXComboBox(VBRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
 			fillBitRateComboBox(normRateComboBox);
-			new FXLabel(VBRFrame,"Maximum Bit Rate: ");
+			new FXLabel(VBRFrame,_("Maximum Bit Rate: "));
 			maxRateComboBox=new FXComboBox(VBRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
 			fillBitRateComboBox(maxRateComboBox);
 

@@ -53,7 +53,7 @@ bool CQuantizeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 	{
 		if(actionSound.doChannel[i])
 		{
-			CStatusBar statusBar("Quantize -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
+			CStatusBar statusBar(_("Quantize -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
 
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
@@ -98,7 +98,7 @@ void CQuantizeEffect::undoActionSizeSafe(const CActionSound &actionSound)
 // ---------------------------------------------
 
 CQuantizeEffectFactory::CQuantizeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory("Quantize","Quantize the Number of Possible Sample Levels",channelSelectDialog,dialog)
+	AActionFactory(N_("Quantize"),_("Quantize the Number of Possible Sample Levels"),channelSelectDialog,dialog)
 {
 }
 

@@ -44,7 +44,7 @@ static const double interpretValue_delayTime(const double x,const int s) { retur
 static const double uninterpretValue_delayTime(const double x,const int s) { return(x/s); }
 
 CConvolutionFilterDialog::CConvolutionFilterDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Convolution Filter"))
+	CActionParamDialog(mainWindow)
 {
 	// ??? still need predelay sliders
 	void *p0=newVertPanel(NULL,true);
@@ -126,7 +126,7 @@ FXDEFMAP(CArbitraryFIRFilterDialog) CArbitraryFIRFilterDialogMap[]=
 FXIMPLEMENT(CArbitraryFIRFilterDialog,CActionParamDialog,CArbitraryFIRFilterDialogMap,ARRAYNUMBER(CArbitraryFIRFilterDialogMap))
 
 CArbitraryFIRFilterDialog::CArbitraryFIRFilterDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Arbitrary FIR Filter"))
+	CActionParamDialog(mainWindow)
 {
 	FXPacker *p0=newHorzPanel(NULL);
 		addSlider(p0,N_("Wet/Dry Mix"),"%",interpretValue_wetdry_mix,uninterpretValue_wetdry_mix,NULL,100.0,0,0,0,true);
@@ -188,7 +188,7 @@ bool CArbitraryFIRFilterDialog::show(CActionSound *actionSound,CActionParameters
 // --- single pole lowpass ---------------
 
 CSinglePoleLowpassFilterDialog::CSinglePoleLowpassFilterDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Single Pole Lowpass Filter"))
+	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
 		addSlider(p,N_("Gain"),"x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
@@ -198,7 +198,7 @@ CSinglePoleLowpassFilterDialog::CSinglePoleLowpassFilterDialog(FXWindow *mainWin
 // --- single pole highpass --------------
 
 CSinglePoleHighpassFilterDialog::CSinglePoleHighpassFilterDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Single Pole Highpass Filter"))
+	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
 		addSlider(p,N_("Gain"),"x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
@@ -208,7 +208,7 @@ CSinglePoleHighpassFilterDialog::CSinglePoleHighpassFilterDialog(FXWindow *mainW
 // --- bandpass --------------------------
 
 CBandpassFilterDialog::CBandpassFilterDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Bandpass Filter"))
+	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
 		addSlider(p,N_("Gain"),"x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
@@ -219,7 +219,7 @@ CBandpassFilterDialog::CBandpassFilterDialog(FXWindow *mainWindow) :
 // --- notch -----------------------------
 
 CNotchFilterDialog::CNotchFilterDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Notch Filter"))
+	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
 		addSlider(p,N_("Gain"),"x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
@@ -232,7 +232,7 @@ CNotchFilterDialog::CNotchFilterDialog(FXWindow *mainWindow) :
 // --- biquad resonant lowpass -----------
 
 CBiquadResLowpassFilterDialog::CBiquadResLowpassFilterDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Biquad Resonant Lowpass Filter"))
+	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
 		addSlider(p,N_("Gain"),"x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
@@ -243,7 +243,7 @@ CBiquadResLowpassFilterDialog::CBiquadResLowpassFilterDialog(FXWindow *mainWindo
 // --- biquad resonant highpass ----------
 
 CBiquadResHighpassFilterDialog::CBiquadResHighpassFilterDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Biquad Resonant Highpass Filter"))
+	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
 		addSlider(p,N_("Gain"),"x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
@@ -254,7 +254,7 @@ CBiquadResHighpassFilterDialog::CBiquadResHighpassFilterDialog(FXWindow *mainWin
 // --- biquad resonant bandpass ----------
 
 CBiquadResBandpassFilterDialog::CBiquadResBandpassFilterDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Biquad Resonant Bandpass Filter"))
+	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
 		addSlider(p,N_("Gain"),"x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);

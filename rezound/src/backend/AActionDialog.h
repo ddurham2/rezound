@@ -26,6 +26,7 @@
 class AActionDialog;
 
 #include <stddef.h>
+#include <string>
 
 class CActionParameters;
 class CActionSound;
@@ -47,6 +48,10 @@ public:
 	virtual ~AActionDialog();
 
 	virtual bool show(CActionSound *actionSound,CActionParameters *actionParameters)=0;
+
+	// for the action dialog of an AActionFactory (i.e. not the channelSelectDialog)
+	// this gets called just before each call to show(), given the action factory's name
+	virtual void setTitle(const string title)=0;
 
 	// can be implemented to get data from the dialog which does not fit the normal model of passing parameters to actions
 	// 	namely, right now, the matrix of bools that indicates how to paste data is obtained through this method

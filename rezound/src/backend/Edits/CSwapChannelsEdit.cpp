@@ -63,7 +63,7 @@ void CSwapChannelsEdit::undoActionSizeSafe(const CActionSound &actionSound)
 // ------------------------------
 
 CSwapChannelsEditFactory::CSwapChannelsEditFactory(AActionDialog *dialog) :
-	AActionFactory("Swap Channels","Swap the Audio Between Two Channels",NULL,dialog)
+	AActionFactory(N_("Swap Channels"),_("Swap the Audio Between Two Channels"),NULL,dialog)
 {
 }
 

@@ -23,7 +23,7 @@ bool CStubAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 	{
 		if(actionSound.doChannel[i])
 		{
-			CStatusBar statusBar("Stub Action -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true);
+			CStatusBar statusBar(_("Stub Action -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true);
 
 			sample_pos_t srcPos=prepareForUndo ? 0 : start;
 			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
@@ -78,7 +78,7 @@ void CStubAction::undoActionSizeSafe(const CActionSound &actionSound)
 // --------------------------------------------------
 
 CStubActionFactory::CStubActionFactory(AActionDialog *channelSelectDialog) :
-	AActionFactory("Stub","Stub",channelSelectDialog,NULL)
+	AActionFactory(N_("Stub"),"",channelSelectDialog,NULL)
 {
 }
 

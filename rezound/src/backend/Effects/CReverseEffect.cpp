@@ -50,7 +50,7 @@ bool CReverseEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 			sample_pos_t p2=actionSound.stop;
 			sample_pos_t d=actionSound.selectionLength()/2;
 
-			CStatusBar statusBar("Reversing -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),0,d,allowCancel);
+			CStatusBar statusBar(_("Reversing -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),0,d,allowCancel);
 
 			for(sample_pos_t t=0;t<d;t++)
 			{
@@ -68,7 +68,7 @@ bool CReverseEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 
 					// undo what we've done so-far for this channel
 					{
-						CStatusBar statusBar("Cancelling Reverse -- Channel "+istring(channelsDoneCount),0,t);
+						CStatusBar statusBar(_("Cancelling Reverse -- Channel ")+istring(channelsDoneCount),0,t);
 
 						for(sample_pos_t j=0;j<=t;j++)
 						{
@@ -91,7 +91,7 @@ bool CReverseEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 							sample_pos_t p1=actionSound.start;
 							sample_pos_t p2=actionSound.stop;
 	
-							CStatusBar statusBar("Cancelling Reverse -- Channel "+istring(--channelsDoneCount),0,d);
+							CStatusBar statusBar(_("Cancelling Reverse -- Channel ")+istring(--channelsDoneCount),0,d);
 	
 							for(sample_pos_t t=0;t<d;t++)
 							{
@@ -141,7 +141,7 @@ void CReverseEffect::undoActionSizeSafe(const CActionSound &actionSound)
 // --------------------------------------------------
 
 CReverseEffectFactory::CReverseEffectFactory(AActionDialog *channelSelectDialog) :
-	AActionFactory("Reverse","Reverse",channelSelectDialog,NULL,false)
+	AActionFactory(N_("Reverse"),"",channelSelectDialog,NULL,false)
 {
 }
 

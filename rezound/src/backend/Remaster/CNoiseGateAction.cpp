@@ -71,7 +71,7 @@ bool CNoiseGateAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 			if(prepareForUndo)
 				a.copyData(start,actionSound.sound->getTempAudio(tempAudioPoolKey,i),0,selectionLength);
 
-			CStatusBar statusBar("Noise Gating -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true);
+			CStatusBar statusBar(_("Noise Gating -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true);
 
 			CDSPNoiseGate gate(
 				ms_to_samples(windowTime,actionSound.sound->getSampleRate()),
@@ -121,11 +121,16 @@ void CNoiseGateAction::undoActionSizeSafe(const CActionSound &actionSound)
 	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
 }
 
+const string CNoiseGateAction::getExplanation()
+{
+	return _("Applies a gain [0,1] to the sound when the level becomes less than the threshold.\nThe gain changes with a velocity according to the attack and release times");
+}
+
 
 // --------------------------------------------------
 
 CNoiseGateActionFactory::CNoiseGateActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory("Noise Gate","Applies a gain [0,1] to the sound when the level becomes less than the threshold.\nThe gain changes with a velocity according to the attack and release times",channelSelectDialog,dialog)
+	AActionFactory(N_("Noise Gate"),"",channelSelectDialog,dialog)
 {
 }
 
@@ -143,5 +148,4 @@ CNoiseGateAction *CNoiseGateActionFactory::manufactureAction(const CActionSound 
 		actionParameters->getDoubleParameter("Gain Release Time")
 	));
 }
-
 

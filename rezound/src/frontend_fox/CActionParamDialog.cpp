@@ -60,12 +60,10 @@ FXIMPLEMENT(CActionParamDialog,FXModalDialogBox,CActionParamDialogMap,ARRAYNUMBE
 // work the same what.. I'll work on figuring that out and then both 
 // parameters should be unnecessary
 
-CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title,bool showPresetPanel,FXModalDialogBox::ShowTypes showType) :
+CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,bool showPresetPanel,FXModalDialogBox::ShowTypes showType) :
 	FXModalDialogBox(mainWindow,gettext(title.text()),0,0,FXModalDialogBox::ftVertical,showType),
 
-	origTitle(title.text()),
-
-	explainationButtonCreated(false),
+	explanationButtonCreated(false),
 	
 	splitter(new FXSplitter(getFrame(),SPLITTER_VERTICAL|SPLITTER_REVERSED | LAYOUT_FILL_X|LAYOUT_FILL_Y)),
 		topPanel(new FXHorizontalFrame(splitter,FRAME_RAISED|FRAME_THICK, 0,0,0,0, 0,0,0,0, 0,0)),
@@ -102,9 +100,9 @@ CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title
 		FXPacker *listFrame=new FXPacker(presetsFrame,FRAME_SUNKEN|FRAME_THICK|LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y, 0,0,210,0, 0,0,0,0, 0,0); // had to do this because FXList won't take that frame style
 			userPresetList=new FXList(listFrame,4,this,ID_USER_PRESET_LIST,LIST_BROWSESELECT | LAYOUT_FILL_X|LAYOUT_FILL_Y);
 		FXPacker *buttonGroup=new FXVerticalFrame(presetsFrame);
-			new FXButton(buttonGroup,"&Use\tOr Double-Click an Item in the List",NULL,this,ID_USER_PRESET_USE_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
-			new FXButton(buttonGroup,"&Save",NULL,this,ID_USER_PRESET_SAVE_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
-			new FXButton(buttonGroup,"&Remove",NULL,this,ID_USER_PRESET_REMOVE_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
+			new FXButton(buttonGroup,_("&Use\tOr Double-Click an Item in the List"),NULL,this,ID_USER_PRESET_USE_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
+			new FXButton(buttonGroup,_("&Save"),NULL,this,ID_USER_PRESET_SAVE_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
+			new FXButton(buttonGroup,_("&Remove"),NULL,this,ID_USER_PRESET_REMOVE_BUTTON,BUTTON_NORMAL|LAYOUT_FILL_X);
 
 		buildPresetLists();
 	}
@@ -125,16 +123,16 @@ const string CActionParamDialog::getOrigTitle() const
 
 void CActionParamDialog::create()
 {
-	if(!explainationButtonCreated && getExplaination()!="")
-		new FXButton(getButtonFrame(),"Explain",FOXIcons->explain,this,ID_EXPLAIN_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2);
-	explainationButtonCreated=true;
+	if(!explanationButtonCreated && getExplanation()!="")
+		new FXButton(getButtonFrame(),_("Explain"),FOXIcons->explain,this,ID_EXPLAIN_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2);
+	explanationButtonCreated=true;
 	
 	FXModalDialogBox::create();
 }
 
 long CActionParamDialog::onExplainButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-	Message(getExplaination());
+	Message(getExplanation());
 	return 1;
 }
 
@@ -651,6 +649,12 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 	return retval;
 }
 
+void CActionParamDialog::setTitle(const string title)
+{
+	origTitle=title;
+	FXModalDialogBox::setTitle(gettext(title.c_str()));
+}
+
 long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	CNestedDataFile *presetsFile;
@@ -729,11 +733,11 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 	FXString _name=userPresetList->getCurrentItem()>=0 ? (userPresetList->getItemText(userPresetList->getCurrentItem())).mid(4,255) : "";
 
 	askAgain:
-	if(FXInputDialog::getString(_name,this,"Preset Name","Preset Name"))
+	if(FXInputDialog::getString(_name,this,_("Preset Name"),_("Preset Name")))
 	{
 		if(_name.trim()=="")
 		{
-			Error("Invalid Preset Name");
+			Error(_("Invalid Preset Name"));
 			goto askAgain;
 		}
 
@@ -742,7 +746,7 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 		// make sure it doesn't contain DOT
 		if(name.find(CNestedDataFile::delim)!=string::npos)
 		{
-			Error("Preset Name cannot contain '"+string(CNestedDataFile::delim)+"'");
+			Error(_("Preset Name cannot contain")+string(" '")+string(CNestedDataFile::delim)+"'");
 			goto askAgain;
 		}
 
@@ -757,7 +761,7 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 			if(presetsFile->keyExists(title))
 			{
 				alreadyExists=true;
-				if(Question("Overwrite Existing Preset '"+name+"'",yesnoQues)!=yesAns)
+				if(Question(_("Overwrite Existing Preset")+string(" '")+name+"'",yesnoQues)!=yesAns)
 					return 1;
 			}
 
@@ -825,7 +829,7 @@ long CActionParamDialog::onPresetRemoveButton(FXObject *sender,FXSelector sel,vo
 	if(userPresetList->getCurrentItem()>=0)
 	{
 		string name=(userPresetList->getItemText(userPresetList->getCurrentItem())).mid(4,255).text();
-		if(Question("Remove Preset '"+name+"'",yesnoQues)==yesAns)
+		if(Question(_("Remove Preset")+string(" '")+name+"'",yesnoQues)==yesAns)
 		{
 			CNestedDataFile *presetsFile=gUserPresetsFile;
 

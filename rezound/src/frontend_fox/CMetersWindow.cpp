@@ -637,7 +637,7 @@ public:
 		zoomDial->setRange(1,200);
 		zoomDial->setValue(25);
 		zoomDial->setRevolutionIncrement(200*2);
-		zoomDial->setTipText("Adjust Zoom Factor for Analyzer\nRight-click for Default");
+		zoomDial->setTipText(_("Adjust Zoom Factor for Analyzer\nRight-click for Default"));
 		zoom=zoomDial->getValue();
 
 		canvasFrame->setWidth(150);
@@ -712,8 +712,8 @@ public:
 #ifndef HAVE_LIBRFFTW
 		else
 		{
-			dc.drawText(3,3+12,"Configure with FFTW",19);
-			dc.drawText(3,20+12,"for Freq. Analysis",18);
+			dc.drawText(3,3+12,_("Configure with FFTW"),19);
+			dc.drawText(3,20+12,_("for Freq. Analysis"),18);
 		}
 #endif
 

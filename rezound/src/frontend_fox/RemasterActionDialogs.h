@@ -69,6 +69,8 @@ class CNoiseGateDialog : public CActionParamDialog
 public:
 	CNoiseGateDialog(FXWindow *mainWindow);
 	virtual ~CNoiseGateDialog(){}
+
+	const string getExplanation() const;
 };
 
 
@@ -82,7 +84,7 @@ public:
 	virtual ~CCompressorDialog(){}
 
 protected:
-	const string getExplaination() const;
+	const string getExplanation() const;
 };
 
 

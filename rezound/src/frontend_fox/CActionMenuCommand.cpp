@@ -48,6 +48,7 @@ FXIMPLEMENT(CActionMenuCommand,FXMenuCommand,CActionMenuCommandMap,ARRAYNUMBER(C
 CActionMenuCommand::CActionMenuCommand(AActionFactory *_actionFactory,FXComposite* p, const FXString& accelKeyText, FXIcon* ic, FXuint opts) :
 	FXMenuCommand(
 		p,
+		// i18n/translate the action's name, append '...' if it has a dialog and set the accelerator key
 		(string(gettext(_actionFactory->getName().c_str()))+(_actionFactory->hasDialog() ? "..." : "")+"\t"+accelKeyText.text()).c_str(),
 		(ic==NULL ? FOXIcons->normal_action_buff : ic),
 		this,
@@ -56,8 +57,7 @@ CActionMenuCommand::CActionMenuCommand(AActionFactory *_actionFactory,FXComposit
 		),
 	actionFactory(_actionFactory)
 {
-	if(actionFactory->getName()!=actionFactory->getDescription()) // don't be stupid (no need for a popup hint)
-		tip=actionFactory->getDescription().c_str();
+	tip=actionFactory->getDescription().c_str();
 
 	prevEvent.state=0;
 	prevEvent.click_button=0;

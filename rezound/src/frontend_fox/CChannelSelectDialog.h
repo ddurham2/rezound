@@ -52,6 +52,8 @@ public:
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 
+	void setTitle(const string title) { };
+
 	enum
 	{
 		ID_DEFAULT_BUTTON=FXModalDialogBox::ID_LAST,

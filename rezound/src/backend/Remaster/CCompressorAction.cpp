@@ -44,7 +44,7 @@ bool CCompressorAction::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 		{
 			if(actionSound.doChannel[i])
 			{
-				CStatusBar statusBar("Compressor -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true);
+				CStatusBar statusBar(_("Compressor -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true);
 
 				sample_pos_t srcPos=prepareForUndo ? 0 : start;
 				const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
@@ -116,7 +116,7 @@ bool CCompressorAction::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 
 		try
 		{
-			CStatusBar statusBar("Compressor ",start,stop,true);
+			CStatusBar statusBar(_("Compressor "),start,stop,true);
 
 			// initialize the compressor's level detector
 			//while((destPos++)<min(stop,4000))
@@ -189,11 +189,15 @@ void CCompressorAction::undoActionSizeSafe(const CActionSound &actionSound)
 	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
 }
 
+const string CCompressorAction::getExplanation()
+{
+	return "This is my first attempt at creating a compressor algorithm.  I'm not sure how it fairs with other 'professional' tools.  I really have little experience with hardware compressors myself.  If you are an experienced compressor user and can make intelligent suggestions about how to make this one better, then please contact me.  Contact information is in the about dialog under the file menu";
+}
 
 // --------------------------------------------------
 
 CCompressorActionFactory::CCompressorActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory("Dynamic Range Compressor","Dynamic Range Compressor",channelSelectDialog,dialog)
+	AActionFactory(N_("Dynamic Range Compressor"),"",channelSelectDialog,dialog)
 {
 }
 

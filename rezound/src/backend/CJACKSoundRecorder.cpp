@@ -62,7 +62,7 @@ void CJACKSoundRecorder::initialize(CSound *sound)
 		{
 			// try to become a client of the JACK server
 			if((client=jack_client_new((REZOUND_PACKAGE+string("_recording")).c_str()))==NULL) 
-				throw runtime_error(string(__func__)+" -- error connecting to jack server -- jackd not running?");
+				throw runtime_error(string(__func__)+_(" -- error connecting to jack server -- jackd not running?"));
 
 			// tell the JACK server to call `processAudio()' whenever there is work to be done
 			jack_set_process_callback(client,processAudio,this);
@@ -107,13 +107,13 @@ void CJACKSoundRecorder::initialize(CSound *sound)
 					if(outputPortNames.size()<=0)
 						throw runtime_error(string(__func__)+" -- no output ports are defined within the JACK server to connect to for audio recording");
 
-					gJACKInputPortNames[t]=gFrontendHooks->promptForJACKPort("Choose Port for Input Channel "+istring(t+1),outputPortNames);
+					gJACKInputPortNames[t]=gFrontendHooks->promptForJACKPort(_("Choose Port for Input Channel ")+istring(t+1),outputPortNames);
 				}
 
 				const string portName=gJACKInputPortNames[t];
 				if(jack_connect(client,portName.c_str(),jack_port_name(input_ports[t]))) 
 				{
-					Warning("Cannot connect to JACK port, "+portName+", please choose a different one");
+					Warning(_("Cannot connect to JACK port, ")+portName+_(", please choose a different one"));
 					gJACKInputPortNames[t]="";
 					goto askAgain;
 				}

@@ -83,7 +83,7 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 
 	AFfilehandle h=afOpenFile(filename.c_str(),"r",initialSetup);
 	if(h==AF_NULL_FILEHANDLE)
-		throw(runtime_error(string(__func__)+" -- error opening '"+filename+"' -- "+errorMessage));
+		throw(runtime_error(string(__func__)+_(" -- error opening")+" '"+filename+"' -- "+errorMessage));
 
 
 	// ??? this if set may not completly handle all possibilities
@@ -216,7 +216,7 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 		TAutoBuffer<sample_t> buffer((size_t)(afGetVirtualFrameSize(h,AF_DEFAULT_TRACK,1)*4096/sizeof(sample_t)));
 		sample_pos_t pos=0;
 		AFframecount count=size/4096+1;
-		CStatusBar statusBar("Loading Sound",0,size,true);
+		CStatusBar statusBar(_("Loading Sound"),0,size,true);
 		for(AFframecount t=0;t<count;t++)
 		{
 			const int chunkSize=  (t==count-1 ) ? size%4096 : 4096;
@@ -330,7 +330,7 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,con
 	if(cueCount>0)
 	{
 		if(!afQueryLong(AF_QUERYTYPE_MARK,AF_QUERY_SUPPORTED,fileFormatType,0,0))
-			Warning("This format does not support saving cues");
+			Warning(_("This format does not support saving cues"));
 		else
 		{
 
@@ -410,7 +410,7 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,con
 		TAutoBuffer<sample_t> buffer((size_t)(channelCount*4096));
 		sample_pos_t pos=0;
 		AFframecount count=saveLength/4096+1;
-		CStatusBar statusBar("Saving Sound",0,saveLength,true);
+		CStatusBar statusBar(_("Saving Sound"),0,saveLength,true);
 		for(AFframecount t=0;t<count;t++)
 		{
 			const int chunkSize=  (t==count-1 ) ? saveLength%4096 : 4096;

@@ -43,18 +43,18 @@ FXIMPLEMENT(CRawDialog,FXModalDialogBox,CRawDialogMap,ARRAYNUMBER(CRawDialogMap)
 
 
 CRawDialog::CRawDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"Raw Parameters",0,0,FXModalDialogBox::ftVertical)
+	FXModalDialogBox(mainWindow,_("Raw Parameters"),0,0,FXModalDialogBox::ftVertical)
 {
 	FXComposite *main=new FXMatrix(getFrame(),2,MATRIX_BY_COLUMNS,LAYOUT_FILL_X|LAYOUT_FILL_Y);
 	FXComboBox *combo;
 
-	new FXLabel(main,"Channels:",NULL,LABEL_NORMAL|LAYOUT_RIGHT);
+	new FXLabel(main,_("Channels:"),NULL,LABEL_NORMAL|LAYOUT_RIGHT);
 	combo=channelsCountComboBox=new FXComboBox(main,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK);
 		for(unsigned t=1;t<=MAX_CHANNELS;t++)
 			combo->appendItem(istring(t).c_str());
 		combo->setCurrentItem(1); // stereo
 
-	new FXLabel(main,"Sample Rate:",NULL,LABEL_NORMAL|LAYOUT_RIGHT);
+	new FXLabel(main,_("Sample Rate:"),NULL,LABEL_NORMAL|LAYOUT_RIGHT);
 	combo=sampleRateComboBox=new FXComboBox(main,10,9,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK);
 		combo->appendItem("4000");
 		combo->appendItem("8000");
@@ -67,38 +67,38 @@ CRawDialog::CRawDialog(FXWindow *mainWindow) :
 		combo->appendItem("96000");
 		combo->setCurrentItem(5);
 
-	new FXLabel(main,"Sample Format:",NULL,LABEL_NORMAL|LAYOUT_RIGHT);
+	new FXLabel(main,_("Sample Format:"),NULL,LABEL_NORMAL|LAYOUT_RIGHT);
 	combo=sampleFormatComboBox=new FXComboBox(main,25,10,NULL,0,COMBOBOX_STATIC|FRAME_SUNKEN|FRAME_THICK);
-		combo->appendItem("8bit Signed PCM");
-		combo->appendItem("8bit Unsigned PCM");
-		combo->appendItem("16bit Signed PCM");
-		combo->appendItem("16bit Unsigned PCM");
-		combo->appendItem("24bit Signed PCM");
-		combo->appendItem("24bit Unsigned PCM");
-		combo->appendItem("32bit Signed PCM");
-		combo->appendItem("32bit Unsigned PCM");
-		combo->appendItem("32bit Floating Point PCM");
-		combo->appendItem("64bit Floating Point PCM");
+		combo->appendItem(_("8bit Signed PCM"));
+		combo->appendItem(_("8bit Unsigned PCM"));
+		combo->appendItem(_("16bit Signed PCM"));
+		combo->appendItem(_("16bit Unsigned PCM"));
+		combo->appendItem(_("24bit Signed PCM"));
+		combo->appendItem(_("24bit Unsigned PCM"));
+		combo->appendItem(_("32bit Signed PCM"));
+		combo->appendItem(_("32bit Unsigned PCM"));
+		combo->appendItem(_("32bit Floating Point PCM"));
+		combo->appendItem(_("64bit Floating Point PCM"));
 		combo->setCurrentItem(2);
 
-	new FXLabel(main,"Byte Order:",NULL,LABEL_NORMAL|LAYOUT_RIGHT);
-	byteOrderToggleButton=new FXToggleButton(main,"Little Endian (Intel)","Big Endian (non-Intel)");
+	new FXLabel(main,_("Byte Order:"),NULL,LABEL_NORMAL|LAYOUT_RIGHT);
+	byteOrderToggleButton=new FXToggleButton(main,_("Little Endian (Intel)"),_("Big Endian (non-Intel)"));
 
 	FXComposite *t;
 
-	offsetLabel=new FXLabel(main,"Data Start:",NULL,LABEL_NORMAL|LAYOUT_RIGHT);
+	offsetLabel=new FXLabel(main,_("Data Start:"),NULL,LABEL_NORMAL|LAYOUT_RIGHT);
 	offsetFrame=new FXHorizontalFrame(main,0, 0,0,0,0, 0,0,0,0);
 		dataOffsetTextBox=new FXTextField(offsetFrame,10,NULL,0,TEXTFIELD_NORMAL|TEXTFIELD_INTEGER);
 		dataOffsetTextBox->setText("0");
-		new FXLabel(offsetFrame,"in bytes");
+		new FXLabel(offsetFrame,_("in bytes"));
 
-	lengthLabel=new FXLabel(main,"Data Length:",NULL,LABEL_NORMAL|LAYOUT_RIGHT);
-		lengthLabel->setTipText("normally leave this 0");
+	lengthLabel=new FXLabel(main,_("Data Length:"),NULL,LABEL_NORMAL|LAYOUT_RIGHT);
+		lengthLabel->setTipText(_("normally leave this 0"));
 	lengthFrame=new FXHorizontalFrame(main,0, 0,0,0,0, 0,0,0,0);
 		dataLengthTextBox=new FXTextField(lengthFrame,10,NULL,0,TEXTFIELD_NORMAL|TEXTFIELD_INTEGER);
 		dataLengthTextBox->setText("0");
-		dataLengthTextBox->setTipText("normally leave this 0");
-		(new FXLabel(lengthFrame,"in audio frames"))->setTipText("normally leave this 0");
+		dataLengthTextBox->setTipText(_("normally leave this 0"));
+		(new FXLabel(lengthFrame,_("in audio frames")))->setTipText(_("normally leave this 0"));
 }
 
 CRawDialog::~CRawDialog()
@@ -148,14 +148,14 @@ bool CRawDialog::show(AFrontendHooks::RawParameters &parameters,bool showOffsetA
 
 		if(atoi(dataOffsetTextBox->getText().text())<0)
 		{
-			Error("invalid negative data offset");
+			Error(_("invalid negative data offset"));
 			return(false);
 		}
 		parameters.dataOffset=atoi(dataOffsetTextBox->getText().text());
 
 		if(atoi(dataLengthTextBox->getText().text())<0)
 		{
-			Error("invalid negative data length");
+			Error(_("invalid negative data length"));
 			return(false);
 		}
 		parameters.dataLength=atoi(dataLengthTextBox->getText().text());

@@ -74,7 +74,9 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 
 			if(dialog!=NULL)
 			{
-				if(!(dialog->wasShown=true,dialog->show(&actionSound,actionParameters)))
+				dialog->setTitle(getName());
+				dialog->wasShown=true;
+				if(!dialog->show(&actionSound,actionParameters))
 					return false;
 			}
 

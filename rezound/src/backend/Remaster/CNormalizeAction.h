@@ -54,6 +54,8 @@ public:
 	virtual ~CNormalizeActionFactory();
 
 	CNormalizeAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const;
+
+	const string getExplanation() const;
 };
 
 #endif

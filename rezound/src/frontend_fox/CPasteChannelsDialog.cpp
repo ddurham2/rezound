@@ -57,9 +57,9 @@ static const double interpret_repeat(const double x,const int s) { return x*s; }
 static const double uninterpret_repeat(const double x,const int s) { return x/s; }
 
 CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"Paste Channels",100,100,FXModalDialogBox::ftVertical,FXModalDialogBox::stShrinkWrap),
+	FXModalDialogBox(mainWindow,_("Paste Channels"),100,100,FXModalDialogBox::ftVertical,FXModalDialogBox::stShrinkWrap),
 
-	label(new FXLabel(getFrame(),"Pasting Parameters:",NULL,LAYOUT_CENTER_X)),
+	label(new FXLabel(getFrame(),_("Pasting Parameters:"),NULL,LAYOUT_CENTER_X)),
 	horzSeparator(new FXHorizontalSeparator(getFrame())),
 	topFrame(new FXHorizontalFrame(getFrame())),
 		routingContents(new FXMatrix(topFrame,2,MATRIX_BY_COLUMNS | LAYOUT_FILL_X|LAYOUT_FILL_Y)),
@@ -70,19 +70,19 @@ CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
 
 	repeatTypeSwitcher=new FXSwitcher(repeatFrame,LAYOUT_CENTER_X);
 
-		repeatCountSlider=new FXConstantParamValue(interpret_repeat,uninterpret_repeat,1,100,4,false,repeatTypeSwitcher,LAYOUT_CENTER_X,"Repeat Count");
+		repeatCountSlider=new FXConstantParamValue(interpret_repeat,uninterpret_repeat,1,100,4,false,repeatTypeSwitcher,LAYOUT_CENTER_X,_("Repeat Count"));
 		repeatCountSlider->setUnits("x");
 		repeatCountSlider->setValue(1.0);
 
-		repeatTimeSlider=new FXConstantParamValue(interpret_repeat,uninterpret_repeat,1,3600,60,false,repeatTypeSwitcher,LAYOUT_CENTER_X,"Repeat Time");
+		repeatTimeSlider=new FXConstantParamValue(interpret_repeat,uninterpret_repeat,1,3600,60,false,repeatTypeSwitcher,LAYOUT_CENTER_X,_("Repeat Time"));
 		repeatTimeSlider->setUnits("s");
 		repeatTimeSlider->setValue(10.0);
 
 		repeatTypeSwitcher->setCurrent(0);
 
 	repeatTypeComboBox=new FXComboBox(repeatFrame,0,2,this,ID_REPEAT_TYPE_COMBOBOX,COMBOBOX_NORMAL|COMBOBOX_STATIC | FRAME_SUNKEN|FRAME_THICK | LAYOUT_CENTER_X);
-		repeatTypeComboBox->appendItem("Repeat X Times");
-		repeatTypeComboBox->appendItem("Repeat for X Seconds");
+		repeatTypeComboBox->appendItem(_("Repeat X Times"));
+		repeatTypeComboBox->appendItem(_("Repeat for X Seconds"));
 		repeatTypeComboBox->setCurrentItem(0);
 
 
@@ -92,31 +92,31 @@ CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
 
 	// add clear and default buffers, and the dropdown list for choosing the mix type
 	FXPacker *buttonPacker=new FXHorizontalFrame((/*this cast might cause a problem in the future*/FXComposite *)(getFrame()->getParent()),LAYOUT_FILL_X | FRAME_RAISED|FRAME_THICK);
-		new FXButton(buttonPacker,"Default",NULL,this,ID_DEFAULT_BUTTON,BUTTON_NORMAL|LAYOUT_CENTER_Y);
-		new FXButton(buttonPacker,"Clear",NULL,this,ID_CLEAR_BUTTON,BUTTON_NORMAL|LAYOUT_CENTER_Y);
+		new FXButton(buttonPacker,_("Default"),NULL,this,ID_DEFAULT_BUTTON,BUTTON_NORMAL|LAYOUT_CENTER_Y);
+		new FXButton(buttonPacker,_("Clear"),NULL,this,ID_CLEAR_BUTTON,BUTTON_NORMAL|LAYOUT_CENTER_Y);
 		mixTypeFrame=new FXHorizontalFrame(buttonPacker,LAYOUT_CENTER_X|LAYOUT_CENTER_Y);
-			new FXLabel(mixTypeFrame,"Mix Type:",NULL,LAYOUT_CENTER_Y);
+			new FXLabel(mixTypeFrame,_("Mix Type:"),NULL,LAYOUT_CENTER_Y);
 			mixTypeComboBox=new FXComboBox(mixTypeFrame,16,4,NULL,0, COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK | COMBOBOX_STATIC | LAYOUT_CENTER_Y);
-			mixTypeComboBox->appendItem("Add",(void *)mmAdd);
-			mixTypeComboBox->appendItem("Subtract",(void *)mmSubtract);
-			mixTypeComboBox->appendItem("Multiply",(void *)mmMultiply);
-			mixTypeComboBox->appendItem("Average",(void *)mmAverage);
+			mixTypeComboBox->appendItem(_("Add"),(void *)mmAdd);
+			mixTypeComboBox->appendItem(_("Subtract"),(void *)mmSubtract);
+			mixTypeComboBox->appendItem(_("Multiply"),(void *)mmMultiply);
+			mixTypeComboBox->appendItem(_("Average"),(void *)mmAverage);
 
 
 	new FXLabel(routingContents,"");
-	sourceLabel=new FXLabel(routingContents,"Clipboard",NULL,LAYOUT_CENTER_X);
-	destinationLabel=new FXLabel(routingContents,"Destination",NULL,LAYOUT_CENTER_Y);
+	sourceLabel=new FXLabel(routingContents,_("Clipboard"),NULL,LAYOUT_CENTER_X);
+	destinationLabel=new FXLabel(routingContents,_("Destination"),NULL,LAYOUT_CENTER_Y);
 	checkBoxMatrix=new FXMatrix(routingContents,MAX_CHANNELS+1,MATRIX_BY_COLUMNS | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0);
 
 	// put top source labels 
 	new FXLabel(checkBoxMatrix,"");
 	for(unsigned t=0;t<MAX_CHANNELS;t++)
-		new FXLabel(checkBoxMatrix,("Channel "+istring(t)).c_str());
+		new FXLabel(checkBoxMatrix,(_("Channel ")+istring(t)).c_str());
 
 	for(unsigned t=0;t<MAX_CHANNELS;t++)
 	{
 		// put side destination label
-		new FXLabel(checkBoxMatrix,("Channel "+istring(t)).c_str(),NULL,LAYOUT_RIGHT);
+		new FXLabel(checkBoxMatrix,(_("Channel ")+istring(t)).c_str(),NULL,LAYOUT_RIGHT);
 
 		// built a row of check boxes
 		for(unsigned col=0;col<MAX_CHANNELS;col++)
@@ -196,15 +196,15 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 	{
 		pasteChannels.clear();
 
-		actionParameters->addUnsignedParameter("MixMethod",(unsigned)(mixTypeComboBox->getItemData(mixTypeComboBox->getCurrentItem())));
+		actionParameters->addUnsignedParameter(_("MixMethod"),(unsigned)(mixTypeComboBox->getItemData(mixTypeComboBox->getCurrentItem())));
 		
 		if(repeatTypeComboBox->getCurrentItem()==0)
 		{ // repeating it a given number of times
-			actionParameters->addDoubleParameter("Repeat Count",repeatCountSlider->getValue());
+			actionParameters->addDoubleParameter(_("Repeat Count"),repeatCountSlider->getValue());
 		}
 		else
 		{ // repeating it for a given number of seconds
-			actionParameters->addDoubleParameter("Repeat Count",
+			actionParameters->addDoubleParameter(_("Repeat Count"),
 				(double)( (sample_fpos_t)repeatTimeSlider->getValue() * actionSound->sound->getSampleRate() / clipboard->getLength(actionSound->sound->getSampleRate()) )
 			);
 		}

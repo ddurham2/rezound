@@ -67,7 +67,7 @@ bool CRecordSoundClipboard::prepareForCopyTo()
 	// --- possibly cleanup from previous ----
 	if(!isEmpty())
 	{
-		VAnswer ans=Question("There is already data on this recording clipboard.  Do you want to record something new?",cancelQues);
+		VAnswer ans=Question(_("There is already data on this recording clipboard.  Do you want to record something new?"),cancelQues);
 		if(ans==noAns)
 			return true;
 		else if(ans==cancelAns)

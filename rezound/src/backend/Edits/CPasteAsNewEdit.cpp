@@ -91,7 +91,7 @@ bool CPasteAsNewEdit::doesWarrantSaving() const
 
 
 CPasteAsNewEditFactory::CPasteAsNewEditFactory() :
-	AActionFactory("Paste As New","Paste the Clipboard's Contents into a Newly Created Sound Window",NULL,NULL,false,false)
+	AActionFactory(N_("Paste As New"),_("Paste the Clipboard's Contents into a Newly Created Sound Window"),NULL,NULL,false,false)
 {
 }
 
@@ -111,7 +111,7 @@ bool CPasteAsNewEditFactory::doPreActionSetup(CLoadedSound *loadedSound)
 
 	if(AAction::clipboards[gWhichClipboard]->isEmpty())
 	{
-		Message("No data has been cut or copied to the selected clipboard yet.");
+		Message(_("No data has been cut or copied to the selected clipboard yet."));
 		return false;
 	}
 	return true;

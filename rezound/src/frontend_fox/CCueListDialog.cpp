@@ -62,7 +62,7 @@ FXIMPLEMENT(CCueListDialog,FXDialogBox,CCueListDialogMap,ARRAYNUMBER(CCueListDia
 // ----------------------------------------
 
 CCueListDialog::CCueListDialog(FXWindow *owner) :
-	FXDialogBox(owner,"Cue List",DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE, 0,0,350,350, 0,0,0,0, 0,0),
+	FXDialogBox(owner,_("Cue List"),DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE, 0,0,350,350, 0,0,0,0, 0,0),
 
 	contents(new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
 		upperFrame(new FXVerticalFrame(contents,FRAME_RAISED|FRAME_THICK | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 5,5,5,5)),
@@ -70,11 +70,11 @@ CCueListDialog::CCueListDialog(FXWindow *owner) :
 				cueList(new FXList(cueListFrame,0,this,ID_CUE_LIST,LIST_BROWSESELECT | LAYOUT_FILL_X|LAYOUT_FILL_Y)),
 		lowerFrame(new FXHorizontalFrame(contents,FRAME_RAISED|FRAME_THICK | LAYOUT_FILL_X|LAYOUT_FIX_HEIGHT, 0,0,0,65)),
 			buttonPacker(new FXHorizontalFrame(lowerFrame,LAYOUT_CENTER_X|LAYOUT_CENTER_Y, 0,0,0,0, 0,0,0,0, 12)),
-				closeButton(new FXButton(buttonPacker,"&Close",FOXIcons->GreenCheck1,this,ID_CLOSE_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2)),
+				closeButton(new FXButton(buttonPacker,_("&Close"),FOXIcons->GreenCheck1,this,ID_CLOSE_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2)),
 
-				addCueButton(new FXButton(buttonPacker,"&Add",NULL,this,ID_ADD_CUE_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT ,0,0,60,0, 2,2,2,2)),
-				removeCueButton(new FXButton(buttonPacker,"&Remove",NULL,this,ID_REMOVE_CUE_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT , 0,0,60,0, 2,2,2,2)),
-				editCueButton(new FXButton(buttonPacker,"&Edit",NULL,this,ID_CHANGE_CUE_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT , 0,0,60,0, 2,2,2,2)),
+				addCueButton(new FXButton(buttonPacker,_("&Add"),NULL,this,ID_ADD_CUE_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT ,0,0,60,0, 2,2,2,2)),
+				removeCueButton(new FXButton(buttonPacker,_("&Remove"),NULL,this,ID_REMOVE_CUE_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT , 0,0,60,0, 2,2,2,2)),
+				editCueButton(new FXButton(buttonPacker,_("&Edit"),NULL,this,ID_CHANGE_CUE_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT , 0,0,60,0, 2,2,2,2)),
 
 	loadedSound(NULL),
 

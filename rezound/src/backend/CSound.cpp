@@ -1080,7 +1080,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 				const sample_pos_t last=where+length;
 				if(showProgressBar)
 				{
-					CStatusBar statusBar("Copying/Fitting Data -- Channel "+istring(channel),where,last);
+					CStatusBar statusBar(_("Copying/Fitting Data -- Channel ")+istring(channel),where,last);
 					for(sample_pos_t t=where;t<last;t++)
 					{
 						dest[t]=srcStretcher.getSample();
@@ -1102,7 +1102,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
-				CStatusBar statusBar("Copying Data -- Channel "+istring(channel),where,last);
+				CStatusBar statusBar(_("Copying Data -- Channel ")+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
 					dest[t]=srcStretcher.getSample();
@@ -1132,7 +1132,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 				const sample_pos_t last=where+length;
 				if(showProgressBar)
 				{
-					CStatusBar statusBar("Mixing/Fitting Data (add) -- Channel "+istring(channel),where,last);
+					CStatusBar statusBar(_("Mixing/Fitting Data (add) -- Channel ")+istring(channel),where,last);
 					for(sample_pos_t t=where;t<last;t++)
 					{
 						dest[t]=ClipSample((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample());
@@ -1154,7 +1154,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
-				CStatusBar statusBar("Mixing Data (add) -- Channel "+istring(channel),where,last);
+				CStatusBar statusBar(_("Mixing Data (add) -- Channel ")+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
 					dest[t]=ClipSample((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample());
@@ -1172,7 +1172,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
-				CStatusBar statusBar("Mixing Data (add) -- Channel "+istring(channel),where,last);
+				CStatusBar statusBar(_("Mixing Data (add) -- Channel ")+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
 					dest[t]=ClipSample((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++]);
@@ -1197,7 +1197,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 				const sample_pos_t last=where+length;
 				if(showProgressBar)
 				{
-					CStatusBar statusBar("Mixing/Fitting Data (subtract) -- Channel "+istring(channel),where,last);
+					CStatusBar statusBar(_("Mixing/Fitting Data (subtract) -- Channel ")+istring(channel),where,last);
 					for(sample_pos_t t=where;t<last;t++)
 					{
 						dest[t]=ClipSample((mix_sample_t)dest[t]-(mix_sample_t)srcStretcher.getSample());
@@ -1219,7 +1219,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
-				CStatusBar statusBar("Mixing Data (subtract) -- Channel "+istring(channel),where,last);
+				CStatusBar statusBar(_("Mixing Data (subtract) -- Channel ")+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
 					dest[t]=ClipSample((mix_sample_t)dest[t]-(mix_sample_t)srcStretcher.getSample());
@@ -1237,7 +1237,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
-				CStatusBar statusBar("Mixing Data (subtract) -- Channel "+istring(channel),where,last);
+				CStatusBar statusBar(_("Mixing Data (subtract) -- Channel ")+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
 					dest[t]=ClipSample((mix_sample_t)dest[t]-(mix_sample_t)src[srcWhere++]);
@@ -1262,7 +1262,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 				const sample_pos_t last=where+length;
 				if(showProgressBar)
 				{
-					CStatusBar statusBar("Mixing/Fitting Data (multiply) -- Channel "+istring(channel),where,last);
+					CStatusBar statusBar(_("Mixing/Fitting Data (multiply) -- Channel ")+istring(channel),where,last);
 					for(sample_pos_t t=where;t<last;t++)
 					{
 						dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)srcStretcher.getSample()/MAX_SAMPLE);
@@ -1284,7 +1284,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
-				CStatusBar statusBar("Mixing Data (multiply) -- Channel "+istring(channel),where,last);
+				CStatusBar statusBar(_("Mixing Data (multiply) -- Channel ")+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
 					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)srcStretcher.getSample()/MAX_SAMPLE);
@@ -1302,7 +1302,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
-				CStatusBar statusBar("Mixing Data (multiply) -- Channel "+istring(channel),where,last);
+				CStatusBar statusBar(_("Mixing Data (multiply) -- Channel ")+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
 					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)src[srcWhere++]/MAX_SAMPLE);
@@ -1327,7 +1327,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 				const sample_pos_t last=where+length;
 				if(showProgressBar)
 				{
-					CStatusBar statusBar("Mixing/Fitting Data (average) -- Channel "+istring(channel),where,last);
+					CStatusBar statusBar(_("Mixing/Fitting Data (average) -- Channel ")+istring(channel),where,last);
 					for(sample_pos_t t=where;t<last;t++)
 					{
 						dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample())/2;
@@ -1349,7 +1349,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
-				CStatusBar statusBar("Mixing Data (average) -- Channel "+istring(channel),where,last);
+				CStatusBar statusBar(_("Mixing Data (average) -- Channel ")+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
 					dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample())/2;
@@ -1367,7 +1367,7 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
-				CStatusBar statusBar("Mixing Data (average) -- Channel "+istring(channel),where,last);
+				CStatusBar statusBar(_("Mixing Data (average) -- Channel ")+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
 					dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++])/2;
@@ -1673,7 +1673,7 @@ bool CSound::createFromWorkingPoolFileIfExists(const string originalFilename,boo
 		if(promptIfFound)
 		{
 			// ??? probably have a cancel button to avoid loaded the sound at all.. probably throw an exception of a different type which is an ESkipLoadingFile
-			if(Question("File: "+workingFilename+"\n\nA temporary file was found indicating that this file was previously being edited when a crash occurred or the process was killed.\n\nDo you wish to attempt to recover from this temporary file (otherwise the file will be deleted)?",yesnoQues)==noAns)
+			if(Question(_("File: ")+workingFilename+"\n\n"+_("A temporary file was found indicating that this file was previously being edited when a crash occurred or the process was killed.\n\nDo you wish to attempt to recover from this temporary file (otherwise the file will be deleted)?"),yesnoQues)==noAns)
 			{
 				// ??? doesn't remove other files in the set of files if it was a multi file set >2gb
 				PoolFile_t::removeFile(workingFilename);

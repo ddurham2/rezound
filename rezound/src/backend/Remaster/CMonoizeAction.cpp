@@ -82,7 +82,7 @@ bool CMonoizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 			}
 			else
 			{
-				CStatusBar statusBar("Monoizing",0,actionSound.sound->getLength(),true);
+				CStatusBar statusBar(_("Monoizing"),0,actionSound.sound->getLength(),true);
 		
 				CRezPoolAccesser dest=actionSound.sound->getAudio(0);
 		
@@ -188,7 +188,7 @@ bool CMonoizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 			}
 			else
 			{
-				CStatusBar statusBar("Monoizing",0,actionSound.sound->getLength(),true);
+				CStatusBar statusBar(_("Monoizing"),0,actionSound.sound->getLength(),true);
 		
 				CRezPoolAccesser dest=actionSound.sound->getAudio(0);
 		
@@ -286,7 +286,7 @@ bool CMonoizeAction::doPreactionSetup(CLoadedSound *loadedSound) const
 // ---------------------------------------------
 
 CMonoizeActionFactory::CMonoizeActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory("Monoize","Monoize",channelSelectDialog,dialog,true,false)
+	AActionFactory(N_("Monoize"),"",channelSelectDialog,dialog,true,false)
 {
 }
 

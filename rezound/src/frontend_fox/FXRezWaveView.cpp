@@ -464,20 +464,20 @@ long FXWaveRuler::onPopupMenu(FXObject *object,FXSelector sel,void *ptr)
 			const sample_fpos_t cueTime=sound->getCueTime(cueClicked);
 
 			if(cueTime<loadedSound->channel->getStartPosition())
-				new FXMenuCommand(&cueMenu,"Set Start Position to Cue",NULL,this,ID_SET_START_POSITION);
+				new FXMenuCommand(&cueMenu,_("Set Start Position to Cue"),NULL,this,ID_SET_START_POSITION);
 			else if(cueTime>loadedSound->channel->getStopPosition())
-				new FXMenuCommand(&cueMenu,"Set Stop Position to Cue",NULL,this,ID_SET_STOP_POSITION);
+				new FXMenuCommand(&cueMenu,_("Set Stop Position to Cue"),NULL,this,ID_SET_STOP_POSITION);
 			else
 			{
-				new FXMenuCommand(&cueMenu,"Set Start Position to Cue",NULL,this,ID_SET_START_POSITION);
-				new FXMenuCommand(&cueMenu,"Set Stop Position to Cue",NULL,this,ID_SET_STOP_POSITION);
+				new FXMenuCommand(&cueMenu,_("Set Start Position to Cue"),NULL,this,ID_SET_START_POSITION);
+				new FXMenuCommand(&cueMenu,_("Set Stop Position to Cue"),NULL,this,ID_SET_STOP_POSITION);
 			}
 		
 			new FXMenuSeparator(&cueMenu);
-			new FXMenuCommand(&cueMenu,"&Edit Cue",NULL,this,ID_EDIT_CUE);
-			new FXMenuCommand(&cueMenu,"&Remove Cue",NULL,this,ID_REMOVE_CUE);
+			new FXMenuCommand(&cueMenu,_("&Edit Cue"),NULL,this,ID_EDIT_CUE);
+			new FXMenuCommand(&cueMenu,_("&Remove Cue"),NULL,this,ID_REMOVE_CUE);
 			new FXMenuSeparator(&cueMenu);
-			new FXMenuCommand(&cueMenu,"Show Cues &List",NULL,this,ID_SHOW_CUE_LIST);
+			new FXMenuCommand(&cueMenu,_("Show Cues &List"),NULL,this,ID_SHOW_CUE_LIST);
 
 		cueMenu.create();
 		cueMenu.popup(NULL,event->root_x,event->root_y);
@@ -489,14 +489,14 @@ long FXWaveRuler::onPopupMenu(FXObject *object,FXSelector sel,void *ptr)
 
 		FXMenuPane gotoMenu(this);
 			// ??? make sure that these get deleted when gotoMenu is deleted
-			new FXMenuCommand(&gotoMenu,"Center Start Position",NULL,this,ID_FIND_START_POSITION);
-			new FXMenuCommand(&gotoMenu,"Center Stop Position",NULL,this,ID_FIND_STOP_POSITION);
+			new FXMenuCommand(&gotoMenu,_("Center Start Position"),NULL,this,ID_FIND_START_POSITION);
+			new FXMenuCommand(&gotoMenu,_("Center Stop Position"),NULL,this,ID_FIND_STOP_POSITION);
 			new FXMenuSeparator(&gotoMenu);
-			new FXMenuCommand(&gotoMenu,"Add Cue at This Position",NULL,this,ID_ADD_CUE);
-			new FXMenuCommand(&gotoMenu,"Add Cue at Start Position",NULL,this,ID_ADD_CUE_AT_START_POSITION);
-			new FXMenuCommand(&gotoMenu,"Add Cue at Stop Position",NULL,this,ID_ADD_CUE_AT_STOP_POSITION);
+			new FXMenuCommand(&gotoMenu,_("Add Cue at This Position"),NULL,this,ID_ADD_CUE);
+			new FXMenuCommand(&gotoMenu,_("Add Cue at Start Position"),NULL,this,ID_ADD_CUE_AT_START_POSITION);
+			new FXMenuCommand(&gotoMenu,_("Add Cue at Stop Position"),NULL,this,ID_ADD_CUE_AT_STOP_POSITION);
 			new FXMenuSeparator(&gotoMenu);
-			new FXMenuCommand(&gotoMenu,"Show Cues &List",NULL,this,ID_SHOW_CUE_LIST);
+			new FXMenuCommand(&gotoMenu,_("Show Cues &List"),NULL,this,ID_SHOW_CUE_LIST);
 
 		gotoMenu.create();
 		gotoMenu.popup(NULL,event->root_x,event->root_y);

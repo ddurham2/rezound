@@ -40,7 +40,7 @@ bool CVariedRepeatEffect::doActionSizeSafe(CActionSound &actionSound,bool prepar
 	{
 		if(actionSound.doChannel[i])
 		{
-			CStatusBar statusBar("Varied Repeat -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),0,lTime,true); 
+			CStatusBar statusBar(_("Varied Repeat -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),0,lTime,true); 
 
 			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempAudioPoolKey,i);
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
@@ -88,7 +88,7 @@ void CVariedRepeatEffect::undoActionSizeSafe(const CActionSound &actionSound)
 // --------------------------------------------------
 
 CVariedRepeatEffectFactory::CVariedRepeatEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory("Varied Repeat","Varied Repeat",channelSelectDialog,dialog)
+	AActionFactory(N_("Varied Repeat"),_("Repeat the Selection Variably According to an LFO"),channelSelectDialog,dialog)
 {
 }
 

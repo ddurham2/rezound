@@ -24,24 +24,24 @@
 
 static const char *gSelectionNames[]=
 {
-	"Select All",
-	"Select to Beginning",
-	"Select to End",
-	"Flip to Beginning",
-	"Flip to End",
-	"Move Stop to Start Position",
-	"Move Start to Stop Position"
+	N_("Select All"),
+	N_("Select to Beginning"),
+	N_("Select to End"),
+	N_("Flip to Beginning"),
+	N_("Flip to End"),
+	N_("Move Stop to Start Position"),
+	N_("Move Start to Stop Position")	
 };
 
 static const char *gSelectionDescriptions[]=
 {
-	"Select All",
-	"Move Start Position to Beginning",
-	"Move Stop Position to End",
-	"Move Stop Position to Beginning",
-	"Move Start Position to End",
-	"Move Stop Position Backward to Start Position",
-	"Move Start Position Forward to Stop Position"
+	"",
+	N_("Move Start Position to Beginning"),
+	N_("Move Stop Position to End"),
+	N_("Move Stop Position to Beginning"),
+	N_("Move Start Position to End"),
+	N_("Move Stop Position Backward to Start Position"),
+	N_("Move Start Position Forward to Stop Position")	
 };
 
 
@@ -198,7 +198,7 @@ bool CSelectionEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 			break;
 
 		default:
-			throw runtime_error("select -- invalid selection type: "+istring(selection));
+			throw runtime_error(string(__func__)+" -- invalid selection type: "+istring(selection));
 		}
 	}
 	else
@@ -227,7 +227,7 @@ void CSelectionEdit::undoActionSizeSafe(const CActionSound &actionSound)
 // -----------------------------------
 
 CSelectionEditFactory::CSelectionEditFactory(Selections _selection) :
-	AActionFactory(gSelectionNames[_selection],gSelectionDescriptions[_selection],NULL,NULL,false,false),
+	AActionFactory(gSelectionNames[_selection],_(gSelectionDescriptions[_selection]),NULL,NULL,false,false),
 
 	selection(_selection)
 {
@@ -247,7 +247,7 @@ CSelectionEdit *CSelectionEditFactory::manufactureAction(const CActionSound &act
 // -----------------------------------
 
 CSelectionEditPositionFactory::CSelectionEditPositionFactory() :
-	AActionFactory("Selection Change","Selection Change From Mouse",NULL,NULL,false,false),
+	AActionFactory(N_("Selection Change"),_("Selection Change From Mouse"),NULL,NULL,false,false),
 
 	selectStart(0),
 	selectStop(0)
@@ -267,7 +267,7 @@ CSelectionEdit *CSelectionEditPositionFactory::manufactureAction(const CActionSo
 // -----------------------------------
 
 CGrowOrSlideSelectionEditFactory::CGrowOrSlideSelectionEditFactory(AActionDialog *normalDialog) :
-	AActionFactory("Grow or Slide Selection","Grow or Slide Selection",NULL,normalDialog,false,false)
+	AActionFactory(N_("Grow or Slide Selection"),"",NULL,normalDialog,false,false)
 {
 }
 
@@ -296,7 +296,7 @@ CSelectionEdit *CGrowOrSlideSelectionEditFactory::manufactureAction(const CActio
 		selection=sSlideSelectionToTheRight;
 		break;
 	default:
-		throw runtime_error("unhandled How value: "+istring(actionParameters->getUnsignedParameter("How")));
+		throw runtime_error(string(__func__)+" -- unhandled How value: "+istring(actionParameters->getUnsignedParameter("How")));
 	};
 	
 	return new CSelectionEdit(actionSound,selection,actionParameters->getDoubleParameter("Amount"));

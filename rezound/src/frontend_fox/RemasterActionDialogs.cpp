@@ -39,7 +39,7 @@ static const double uninterpretValue_balance(const double x,const int s) { retur
 static const double ret_balance(const double x) { return x/100.0; }
 
 CSimpleBalanceActionDialog::CSimpleBalanceActionDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Simple Balance Change"))
+	CActionParamDialog(mainWindow)
 {
 	void *p0=newVertPanel(NULL,true);
 		void *p1=newHorzPanel(p0,false);
@@ -55,7 +55,7 @@ CSimpleBalanceActionDialog::CSimpleBalanceActionDialog(FXWindow *mainWindow) :
 			balanceTypes.push_back(N_("Strict Balance"));
 			balanceTypes.push_back(N_("1x Pan"));
 			balanceTypes.push_back(N_("2x Pan"));
-		addComboTextEntry(p0,N_("Balance Type"),balanceTypes,CBalanceAction::getBalanceTypeExplaination());
+		addComboTextEntry(p0,N_("Balance Type"),balanceTypes,CBalanceAction::getBalanceTypeExplanation());
 		/* not possible
 			vector<FXIcon *> balanceTypeIcons;
 			balanceTypeIcons.push_back(FOXIcons->Falling_Sawtooth_Wave___0_1_);
@@ -93,7 +93,7 @@ bool CSimpleBalanceActionDialog::show(CActionSound *actionSound,CActionParameter
 
 
 CCurvedBalanceActionDialog::CCurvedBalanceActionDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Curved Balance Change"))
+	CActionParamDialog(mainWindow)
 {
 	void *p0=newVertPanel(NULL,true);
 		void *p1=newHorzPanel(p0,false);
@@ -108,7 +108,7 @@ CCurvedBalanceActionDialog::CCurvedBalanceActionDialog(FXWindow *mainWindow) :
 		balanceTypes.push_back(N_("Strict Balance"));
 		balanceTypes.push_back(N_("1x Pan"));
 		balanceTypes.push_back(N_("2x Pan"));
-		addComboTextEntry(p0,N_("Balance Type"),balanceTypes,CBalanceAction::getBalanceTypeExplaination());
+		addComboTextEntry(p0,N_("Balance Type"),balanceTypes,CBalanceAction::getBalanceTypeExplanation());
 }
 
 bool CCurvedBalanceActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
@@ -147,7 +147,7 @@ static const double uninterpretValue_monoize(const double x,const int s) { retur
 static const double retconv_monoize(const double x) { return x/100.0 ; }
 
 CMonoizeActionDialog::CMonoizeActionDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Monoize"),true,FXModalDialogBox::stShrinkWrap)
+	CActionParamDialog(mainWindow,true,FXModalDialogBox::stShrinkWrap)
 {
 		void *p0=newVertPanel(NULL);
 			void *p1=newHorzPanel(p0,false);
@@ -180,13 +180,19 @@ static const double interpretValue_noiseGate(const double x,const int s) { retur
 static const double uninterpretValue_noiseGate(const double x,const int s) { return(x/s); }
 
 CNoiseGateDialog::CNoiseGateDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Noise Gate"))
+	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
 		addSlider(p,N_("Window Time"),"ms",interpretValue_noiseGate,uninterpretValue_noiseGate,NULL,35.0,5,1000,30,false);
 		addSlider(p,N_("Threshold"),"%",interpretValue_noiseGate,uninterpretValue_noiseGate,NULL,3.0,5,100,20,false);
 		addSlider(p,N_("Gain Attack Time"),"ms",interpretValue_noiseGate,uninterpretValue_noiseGate,NULL,10.0,5,1000,30,false);
 		addSlider(p,N_("Gain Release Time"),"ms",interpretValue_noiseGate,uninterpretValue_noiseGate,NULL,10.0,5,1000,30,false);
+}
+
+#include "../backend/Remaster/CNoiseGateAction.h"
+const string CNoiseGateDialog::getExplanation() const
+{
+	return CNoiseGateAction::getExplanation();
 }
 
 
@@ -212,7 +218,7 @@ static const double interpretValue_compressGain(const double x,const int s) { re
 static const double uninterpretValue_compressGain(const double x,const int s) { return(bipolarRange_to_unitRange_exp(x,10.0)); }
 
 CCompressorDialog::CCompressorDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Compressor"))
+	CActionParamDialog(mainWindow)
 {
 	void *p0=newVertPanel(NULL,true);
 		void *p1=newHorzPanel(p0,false);
@@ -228,9 +234,10 @@ CCompressorDialog::CCompressorDialog(FXWindow *mainWindow) :
 }
 
 // ??? remove this before 1.0 and make sure it is up-to-standard as far as a compressor goes before 1.0
-const string CCompressorDialog::getExplaination() const
+#include "../backend/Remaster/CCompressorAction.h"
+const string CCompressorDialog::getExplanation() const
 {
-	return "This is my first attempt at creating a compressor algorithm.  I'm not sure how it fairs with other 'professional' tools.  I really have little experience with hardware compressors myself.  If you are an experienced compressor user and can make intelligent suggestions about how to make this one better, then please contact me.  Contact information is in the about dialog under the file menu";
+	return CCompressorAction::getExplanation();
 }
 
 
@@ -240,7 +247,7 @@ static const double interpretValue_regionCount(const double x,const int s) { ret
 static const double uninterpretValue_regionCount(const double x,const int s) { return((x-1.0)/99.0); }
 
 CNormalizeDialog::CNormalizeDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Normalize"))
+	CActionParamDialog(mainWindow)
 {
 	void *p1=newVertPanel(NULL);
 		void *p2=newHorzPanel(p1,false);
@@ -254,7 +261,7 @@ CNormalizeDialog::CNormalizeDialog(FXWindow *mainWindow) :
 // --- resample ----------------------------
 
 CResampleDialog::CResampleDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Resample"),false)
+	CActionParamDialog(mainWindow,false)
 {
 	vector<string> items;
 	items.push_back("4000");

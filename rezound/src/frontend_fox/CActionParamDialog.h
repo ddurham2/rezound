@@ -52,7 +52,7 @@ class CActionParamDialog : public FXModalDialogBox, public AActionDialog
 public:
 	typedef const double (*f_at_x)(const double x);
 
-	CActionParamDialog(FXWindow *mainWindow,const FXString title,bool showPresetPanel=true,FXModalDialogBox::ShowTypes showType=FXModalDialogBox::stRememberSizeAndPosition);
+	CActionParamDialog(FXWindow *mainWindow,bool showPresetPanel=true,FXModalDialogBox::ShowTypes showType=FXModalDialogBox::stRememberSizeAndPosition);
 	virtual ~CActionParamDialog();
 
 	// these are used to create new parents for the controls
@@ -95,6 +95,8 @@ public:
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 
+	void setTitle(const string title);
+
 	enum 
 	{
 		ID_NATIVE_PRESET_BUTTON=FXModalDialogBox::ID_LAST,
@@ -124,14 +126,14 @@ public:
 protected:
 	CActionParamDialog() {}
 
-	// can be overridden to return an explaination of the action which will cause the appearance of an 'explain' button on the dialog
-	virtual const string getExplaination() const { return ""; }
+	// can be overridden to return an explanation of the action which will cause the appearance of an 'explain' button on the dialog
+	virtual const string getExplanation() const { return ""; }
 
 private:
-	const string origTitle;
+	string origTitle;
 	const CActionSound *actionSound;
 
-	bool explainationButtonCreated;
+	bool explanationButtonCreated;
 
 	enum ParamTypes
 	{

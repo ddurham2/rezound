@@ -496,7 +496,7 @@ ASoundPlayer *ASoundPlayer::createInitializedSoundPlayer()
 	{
 #if !defined(ENABLE_PORAUDIO) && !defined(ENABLE_JACK)
 		// OSS was the only defined method
-		Error(string(e.what())+"\nPlaying will be disabled.");
+		Error(string(e.what())+"\n"+_("Playing will be disabled."));
 #else
 		// OSS was not the original method chosen at configure time so now fall back to using OSS if it wasn't disabled
 	#ifdef ENABLE_OSS
@@ -512,10 +512,10 @@ ASoundPlayer *ASoundPlayer::createInitializedSoundPlayer()
 		}
 		catch(exception &e)
 		{ // now really give up
-			Error(string("Error occurred after trying to fall back to OSS\n")+e.what()+"\nPlaying will be disabled.");
+			Error(string(_("Error occurred after trying to fall back to OSS"))+"\n"+e.what()+"\n"+_("Playing will be disabled."));
 		}
 	#else
-		Error(string(e.what())+"\nPlaying will be disabled.");
+		Error(string(e.what())+"\n"+_("Playing will be disabled."));
 	#endif
 #endif
 	}

@@ -121,7 +121,7 @@ bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[])
 			const string filename=gClipboardDir+CPath::dirDelim+gClipboardFilenamePrefix+".clipboard"+istring(t)+"."+istring(getuid());
 			try
 			{
-				AAction::clipboards.push_back(new CNativeSoundClipboard("Native Clipboard "+istring(t),filename));
+				AAction::clipboards.push_back(new CNativeSoundClipboard(_("Native Clipboard ")+istring(t),filename));
 			}
 			catch(exception &e)
 			{
@@ -134,7 +134,7 @@ bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[])
 			const string filename=gClipboardDir+CPath::dirDelim+gClipboardFilenamePrefix+".record"+istring(t)+"."+istring(getuid());
 			try
 			{
-				AAction::clipboards.push_back(new CRecordSoundClipboard("Record Clipboard "+istring(t),filename,soundPlayer));
+				AAction::clipboards.push_back(new CRecordSoundClipboard(_("Record Clipboard ")+istring(t),filename,soundPlayer));
 			}
 			catch(exception &e)
 			{

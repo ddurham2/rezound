@@ -407,7 +407,7 @@ bool ASoundRecorder::cueNameExists(const string name) const
 void ASoundRecorder::addCueNow(const string name,bool isAnchored)
 {
 	if(sound->containsCue(name) || cueNameExists(istring(name).truncate(MAX_SOUND_CUE_NAME_LENGTH)))
-		throw runtime_error(string(__func__)+" -- a cue already exist with the name: '"+name+"'");
+		throw runtime_error(string(__func__)+_(" -- a cue already exist with the name")+": '"+name+"'");
 
 	// this actually adds the cue at the last 20th of a second or so
 	// depending on the how often the derived class is invoking onData

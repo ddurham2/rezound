@@ -55,9 +55,9 @@ bool CAddCuesAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 		const sample_pos_t interval=(sample_pos_t)sample_fpos_round(timeInterval*actionSound.sound->getSampleRate());
 
 		if(interval<=0)
-			throw runtime_error("The time interval was zero");
+			throw runtime_error(_("The time interval was zero"));
 		if((selectionLength/interval)>10000)
-			throw runtime_error("The time interval was so small for the selected area that an unlikely desired amount of cues would be added");
+			throw runtime_error(_("The time interval was so small for the selected area that an unlikely desired amount of cues would be added"));
 
 		sample_pos_t pos=start;
 		do
@@ -94,7 +94,7 @@ void CAddCuesAction::undoActionSizeSafe(const CActionSound &actionSound)
 // --------------------------------------------------
 
 CAddNCuesActionFactory::CAddNCuesActionFactory(AActionDialog *normalDialog) :
-	AActionFactory("Add N Cues","Add N Cues at Evenly Spaced Intervals",NULL,normalDialog)
+	AActionFactory(N_("Add N Cues"),_("Add N Cues at Evenly Spaced Intervals"),NULL,normalDialog)
 {
 }
 
@@ -116,7 +116,7 @@ CAddCuesAction *CAddNCuesActionFactory::manufactureAction(const CActionSound &ac
 // --------------------------------------------------
 
 CAddTimedCuesActionFactory::CAddTimedCuesActionFactory(AActionDialog *normalDialog) :
-	AActionFactory("Add Timed Cues","Add a Cue Every X Seconds",NULL,normalDialog)
+	AActionFactory(N_("Add Timed Cues"),_("Add a Cue Every X Seconds"),NULL,normalDialog)
 {
 }
 

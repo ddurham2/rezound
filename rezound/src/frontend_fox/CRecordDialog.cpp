@@ -61,7 +61,7 @@ FXIMPLEMENT(CRecordDialog,FXModalDialogBox,CRecordDialogMap,ARRAYNUMBER(CRecordD
 // ----------------------------------------
 
 CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"Record",350,360,FXModalDialogBox::ftVertical),
+	FXModalDialogBox(mainWindow,_("Record"),350,360,FXModalDialogBox::ftVertical),
 
 	recorder(NULL),
 	showing(false),
@@ -82,60 +82,60 @@ CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
 		frame2=new FXVerticalFrame(frame1,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 1,1);
 			frame3=new FXVerticalFrame(frame2,FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_FILL_Y);
 				frame4=new FXHorizontalFrame(frame3,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
-					new FXLabel(frame4,"   Cue Prefix:");
+					new FXLabel(frame4,_("   Cue Prefix:"));
 					cueNamePrefix=new FXTextField(frame4,10);
 					cueNamePrefix->setText("cue");
 				frame4=new FXHorizontalFrame(frame3,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
-					new FXLabel(frame4,"Cue Number:");
+					new FXLabel(frame4,_("Cue Number:"));
 					cueNameNumber=new FXSpinner(frame4,3,NULL,0,SPIN_NORMAL|FRAME_NORMAL);
 					cueNameNumber->setRange(-1,1000);
-				new FXButton(frame3,"Add Cue",NULL,this,ID_ADD_CUE_BUTTON);
-				new FXButton(frame3,"Add Anchored Cue",NULL,this,ID_ADD_ANCHORED_CUE_BUTTON);
+				new FXButton(frame3,_("Add Cue"),NULL,this,ID_ADD_CUE_BUTTON);
+				new FXButton(frame3,_("Add Anchored Cue"),NULL,this,ID_ADD_ANCHORED_CUE_BUTTON);
 					// but what name shall I give the cues
 					// the checkbox should indicate that cues will be placed at each time the sound is stopped and started
 				//surroundWithCuesButton=new FXCheckButton(frame3,"Surround With Cues");
 			frame3=new FXVerticalFrame(frame2,FRAME_RAISED | LAYOUT_FILL_X, 0,0,0,0, 0,45,0,0, 0,0);
 				recordingLED=new FXPacker(frame3,LAYOUT_RIGHT|LAYOUT_CENTER_Y, 0,0,0,0, 0,0,0,0, 0,0);
-					new FXLabel(recordingLED,"Recording:",FOXIcons->RedLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0);
-					new FXLabel(recordingLED,"Recording:",FOXIcons->OffLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0);
+					new FXLabel(recordingLED,_("Recording:"),FOXIcons->RedLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0);
+					new FXLabel(recordingLED,_("Recording:"),FOXIcons->OffLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0);
 				waitingForThresholdLED=new FXPacker(frame3,LAYOUT_RIGHT|LAYOUT_CENTER_Y, 0,0,0,0, 0,0,0,0, 0,0);
-					new FXLabel(waitingForThresholdLED,"Waiting for Threshold:",FOXIcons->YellowLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0);
-					new FXLabel(waitingForThresholdLED,"Waiting for Threshold:",FOXIcons->OffLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0);
+					new FXLabel(waitingForThresholdLED,_("Waiting for Threshold:"),FOXIcons->YellowLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0);
+					new FXLabel(waitingForThresholdLED,_("Waiting for Threshold:"),FOXIcons->OffLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0);
 			frame3=new FXHorizontalFrame(frame2,FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_FILL_Y);
 				frame3->setHSpacing(0);
 				frame3->setVSpacing(0);
 				frame4=new FXVerticalFrame(frame3,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
-					new FXLabel(frame4,"Record Length: ",NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT);
-					new FXLabel(frame4,"Record Size: ",NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT);
-					new FXLabel(frame4,"Record Limit: ",NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT);
+					new FXLabel(frame4,_("Record Length: "),NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT);
+					new FXLabel(frame4,_("Record Size: "),NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT);
+					new FXLabel(frame4,_("Record Limit: "),NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT);
 				frame4=new FXVerticalFrame(frame3,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
 					recordedLengthStatusLabel=new FXLabel(frame4,"00:00.000",NULL,LAYOUT_FILL_X|JUSTIFY_LEFT);
 					recordedSizeStatusLabel=new FXLabel(frame4,"0",NULL,LAYOUT_FILL_X|JUSTIFY_LEFT);
 					recordLimitLabel=new FXLabel(frame4,"",NULL,LAYOUT_FILL_X|JUSTIFY_LEFT);
 			frame3=new FXVerticalFrame(frame2,FRAME_RAISED | LAYOUT_FILL_X);
-				DCOffsetLabel=new FXLabel(frame3,"DCOffset: ",NULL,LAYOUT_CENTER_Y);
-				DCOffsetLabel->setTipText("Reported Every 5 Seconds");
-				new FXButton(frame3,"Compensate\tSubtract out the currently reported DC Offset from any further recorded data",NULL,this,ID_DC_OFFSET_COMPENSATE_BUTTON,BUTTON_NORMAL|LAYOUT_CENTER_Y);
+				DCOffsetLabel=new FXLabel(frame3,_("DCOffset: "),NULL,LAYOUT_CENTER_Y);
+				DCOffsetLabel->setTipText(_("Reported Every 5 Seconds"));
+				new FXButton(frame3,_("Compensate\tSubtract out the currently reported DC Offset from any further recorded data"),NULL,this,ID_DC_OFFSET_COMPENSATE_BUTTON,BUTTON_NORMAL|LAYOUT_CENTER_Y);
 		frame2=new FXVerticalFrame(frame1,FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_FILL_Y);
 			frame3=new FXHorizontalFrame(frame2,0,0,0,0, 0,0,0,0, 0,0);
-				new FXButton(frame3,"Reset",NULL,this,ID_CLEAR_CLIP_COUNT_BUTTON);
-				clipCountLabel=new FXLabel(frame3,"Clip Count: 0",NULL);
+				new FXButton(frame3,_("Reset"),NULL,this,ID_CLEAR_CLIP_COUNT_BUTTON);
+				clipCountLabel=new FXLabel(frame3,FXString(_("Clip Count: "))+"0",NULL);
 			meterFrame=new FXHorizontalFrame(frame2,LAYOUT_FILL_X|LAYOUT_FILL_Y);
 	frame1=new FXVerticalFrame(getFrame(),FRAME_RAISED | LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 1,1);
 		frame2=new FXHorizontalFrame(frame1,LAYOUT_CENTER_X);
-			new FXButton(frame2,"Record/\nResume",NULL,this,ID_START_BUTTON);
-			new FXButton(frame2,"Stop/\nPause",NULL,this,ID_STOP_BUTTON);
-			new FXButton(frame2,"Redo/\nReset",NULL,this,ID_REDO_BUTTON);
+			new FXButton(frame2,_("Record/\nResume"),NULL,this,ID_START_BUTTON);
+			new FXButton(frame2,_("Stop/\nPause"),NULL,this,ID_STOP_BUTTON);
+			new FXButton(frame2,_("Redo/\nReset"),NULL,this,ID_REDO_BUTTON);
 
 		frame2=new FXHorizontalFrame(frame1,LAYOUT_CENTER_X);
-			setDurationButton=new FXCheckButton(frame2,"Limit Duration to ");
+			setDurationButton=new FXCheckButton(frame2,_("Limit Duration to "));
 			durationEdit=new FXTextField(frame2,12);
 			durationEdit->setText("MM:SS.sss");
 			durationSpinner=new FXSpinner(frame2,0,this,ID_DURATION_SPINNER, SPIN_NOTEXT);
 			durationSpinner->setRange(-10,10);
 
 		frame2=new FXHorizontalFrame(frame1,LAYOUT_CENTER_X);
-			startThresholdButton=new FXCheckButton(frame2,"Effective on Threshold ");
+			startThresholdButton=new FXCheckButton(frame2,_("Effective on Threshold "));
 			startThresholdEdit=new FXTextField(frame2,12);
 			startThresholdEdit->setText("-25");
 			startThresholdSpinner=new FXSpinner(frame2,0,this,ID_START_THRESHOLD_SPINNER, SPIN_NOTEXT);
@@ -181,7 +181,7 @@ long CRecordDialog::onStatusUpdate(FXObject *sender,FXSelector sel,void *ptr)
 	for(unsigned i=0;i<meters.size();i++)
 		setMeterValue(i,recorder->getAndResetLastPeakValue(i));
 
-	clipCountLabel->setText(("Clip Count: "+istring(recorder->clipCount)).c_str());
+	clipCountLabel->setText((_("Clip Count: ")+istring(recorder->clipCount)).c_str());
 
 	recordedLengthStatusLabel->setText(recorder->getRecordedLengthS().c_str());
 	recordedSizeStatusLabel->setText(recorder->getRecordedSizeS().c_str());
@@ -232,7 +232,7 @@ long CRecordDialog::onStatusUpdate(FXObject *sender,FXSelector sel,void *ptr)
 		if(abs(DCOffset)>abs(recorder->getDCOffset(i)))
 			DCOffset=recorder->getDCOffset(i);
 	}
-	DCOffsetLabel->setText(("DC Offset: "+istring(amp_to_dBFS(recorder->getDCOffset(1)))+"dBFS").c_str());
+	DCOffsetLabel->setText((_("DC Offset: ")+istring(amp_to_dBFS(recorder->getDCOffset(1)))+"dBFS").c_str());
 
 	// schedule for the next status update
 	timerHandle=getApp()->addTimeout(this,CRecordDialog::ID_STATUS_UPDATE,STATUS_UPDATE_TIME);
@@ -288,7 +288,7 @@ const sample_pos_t CRecordDialog::getMaxDuration()
 		const sample_pos_t d=recorder->getSound()->getPositionFromTime(durationEdit->getText().text(),wasInvalid);
 		if(wasInvalid)
 		{
-			Error("Invalid record time limit -- Should be in the form of HH:MM:SS.sss, MM:SS.sss or SS.sss");
+			Error(_("Invalid record time limit -- Should be in the form of HH:MM:SS.sss, MM:SS.sss or SS.sss"));
 			return 1;
 		}
 
@@ -358,7 +358,7 @@ long CRecordDialog::onAddCueButton(FXObject *sender,FXSelector sel,void *ptr)
 void CRecordDialog::clearClipCount()
 {
 	recorder->clipCount=0;
-	clipCountLabel->setText("Clip Count: 0");
+	clipCountLabel->setText(FXString(_("Clip Count: "))+"0");
 }
 
 long CRecordDialog::onClearClipCountButton(FXObject *sender,FXSelector sel,void *ptr)

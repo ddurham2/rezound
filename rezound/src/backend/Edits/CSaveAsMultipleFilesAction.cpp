@@ -101,7 +101,7 @@ bool CSaveAsMultipleFilesAction::doActionSizeSafe(CActionSound &actionSound,bool
 				state=1;
 			}
 			else
-				throw runtime_error(string(__func__)+" -- syntax error in cue names -- expected to find a cue beginning with '(' at time: "+actionSound.sound->getTimePosition(time));
+				throw runtime_error(string(__func__)+_(" -- syntax error in cue names -- expected to find a cue beginning with '(' at time: ")+actionSound.sound->getTimePosition(time));
 
 			break;
 
@@ -125,12 +125,12 @@ bool CSaveAsMultipleFilesAction::doActionSizeSafe(CActionSound &actionSound,bool
 				state=0;
 			}
 			else
-				throw runtime_error(string(__func__)+" -- syntax error in cue names -- expected to find a cue beginning with '(' or ')' at time: "+actionSound.sound->getTimePosition(time));
+				throw runtime_error(string(__func__)+_(" -- syntax error in cue names -- expected to find a cue beginning with '(' or ')' at time: ")+actionSound.sound->getTimePosition(time));
 
 			break;
 	
 		default:
-			throw runtime_error(string(__func__)+" -- internal error -- invalid state: "+istring(state));
+			throw runtime_error(string(__func__)+_(" -- internal error -- invalid state: ")+istring(state));
 		}
 	}
 
@@ -154,7 +154,7 @@ bool CSaveAsMultipleFilesAction::doActionSizeSafe(CActionSound &actionSound,bool
 
 	if(segments.size()<=0)
 	{
-		Message("No appropriately named cues found to define segments to save.  See the 'explain' button on the previous window for how to name the cues.");
+		Message(_("No appropriately named cues found to define segments to save.  See the 'explain' button on the previous window for how to name the cues."));
 		return false;
 	}
 
@@ -170,6 +170,7 @@ bool CSaveAsMultipleFilesAction::doActionSizeSafe(CActionSound &actionSound,bool
 		track++;
 	}
 
+#warning need to i18n this but it probably needs to be done better than just putting _() around each string literal
 	// show the results and ask the user if they want to continue
 	string msg="These are the files about to be created...\n\n";
 	for(vector<pair<string,pair<sample_pos_t,sample_pos_t> > >::iterator i=segments.begin();i!=segments.end();i++)
@@ -208,9 +209,9 @@ bool CSaveAsMultipleFilesAction::doesWarrantSaving() const
 }
 
 
-const string CSaveAsMultipleFilesAction::getExplaination()
+const string CSaveAsMultipleFilesAction::getExplanation()
 {
-	return "\n\
+	return _("\n\
 To save a large file (or just a selection from it) as several smaller segments you can create cues that define the segments and then click on \"Save As Multiple Files\" under the \"File\" menu.\n\
 \n\
 In general, cues can be named '(' and ')' to define the beginning and end of each segment to be saved.\n\
@@ -229,14 +230,14 @@ After a segment's filename is formed by putting together, [directory]/[prefix][x
 The \"Segment Number Start\" parameter can be changed from '1' to start the '#' substitutions at something different.\n\
 The \"Open Saved Segments\" can be selected simply if you want to open the segments after they have been saved.\n\
 The \"Applies to\" parameter indicates if the action should regard only the current selection or the entire file.\n\
-";
+");
 }
 
 
 // ------------------------------
 
 CSaveAsMultipleFilesActionFactory::CSaveAsMultipleFilesActionFactory(AActionDialog *dialog) :
-	AActionFactory(N_("Save As Multiple Files"),N_("Save As Multiple Files"),NULL,dialog,false,false)
+	AActionFactory(N_("Save As Multiple Files"),"",NULL,dialog,false,false)
 {
 }
 

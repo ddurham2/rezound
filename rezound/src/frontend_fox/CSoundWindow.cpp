@@ -137,19 +137,19 @@ CSoundWindow::CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound) :
 
 	waveViewPanel(new FXPacker(this,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
 		horzZoomPanel(new FXPacker(waveViewPanel,LAYOUT_SIDE_BOTTOM | FRAME_NONE | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0,0,0,22, 4,4,2,2, 2,2)),
-			horzZoomFitButton(new FXButton(horzZoomPanel,"Fit\tZoom to Fit Selection",NULL,this,ID_HORZ_ZOOM_FIT,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
-			horzZoomMinusInd(new FXButton(horzZoomPanel," - \tZoom Out Full",NULL,this,ID_HORZ_ZOOM_DIAL_MINUS,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
+			horzZoomFitButton(new FXButton(horzZoomPanel,_("Fit\tZoom to Fit Selection"),NULL,this,ID_HORZ_ZOOM_FIT,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
+			horzZoomMinusInd(new FXButton(horzZoomPanel,FXString(" - ")+_("Zoom Out Full"),NULL,this,ID_HORZ_ZOOM_DIAL_MINUS,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
 			horzZoomDial(new FXDial(horzZoomPanel,this,ID_HORZ_ZOOM_DIAL,LAYOUT_SIDE_LEFT | DIAL_HORIZONTAL|DIAL_HAS_NOTCH | LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0,0,200,0, 0,0,0,0)),
-			horzZoomPlusInd(new FXButton(horzZoomPanel," + \tZoom In Full",NULL,this,ID_HORZ_ZOOM_DIAL_PLUS,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
+			horzZoomPlusInd(new FXButton(horzZoomPanel,FXString(" + \t")+_("Zoom In Full"),NULL,this,ID_HORZ_ZOOM_DIAL_PLUS,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
 			horzZoomValueLabel(new FXLabel(horzZoomPanel,"",NULL,LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
-			bothZoomMinusButton(new FXButton(horzZoomPanel," -- \tHorizontally and Vertically Zoom Out Full",NULL,this,ID_BOTH_ZOOM_DIAL_MINUS,FRAME_RAISED | LAYOUT_SIDE_RIGHT | LAYOUT_FILL_Y)),
+			bothZoomMinusButton(new FXButton(horzZoomPanel,FXString(" -- \t")+_("Horizontally and Vertically Zoom Out Full"),NULL,this,ID_BOTH_ZOOM_DIAL_MINUS,FRAME_RAISED | LAYOUT_SIDE_RIGHT | LAYOUT_FILL_Y)),
 		vertZoomPanel(new FXPacker(waveViewPanel,LAYOUT_SIDE_RIGHT | FRAME_NONE | LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0,0,17,0, 2,2,2,2, 2,2)),
-			vertZoomPlusInd(new FXButton(vertZoomPanel,"+\tZoom In Full",NULL,this,ID_VERT_ZOOM_DIAL_PLUS,FRAME_RAISED | LAYOUT_SIDE_TOP | LAYOUT_FILL_X)),
+			vertZoomPlusInd(new FXButton(vertZoomPanel,FXString("+\t")+_("Zoom In Full"),NULL,this,ID_VERT_ZOOM_DIAL_PLUS,FRAME_RAISED | LAYOUT_SIDE_TOP | LAYOUT_FILL_X)),
 			vertZoomDial(new FXDial(vertZoomPanel,this,LAYOUT_SIDE_TOP | ID_VERT_ZOOM_DIAL,DIAL_VERTICAL|DIAL_HAS_NOTCH | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0,0,0,100, 0,0,0,0)),
-			vertZoomMinusInd(new FXButton(vertZoomPanel,"-\tZoom Out Full",NULL,this,ID_VERT_ZOOM_DIAL_MINUS,FRAME_RAISED | LAYOUT_SIDE_TOP | LAYOUT_FILL_X)),
+			vertZoomMinusInd(new FXButton(vertZoomPanel,FXString("-\t")+_("Zoom Out Full"),NULL,this,ID_VERT_ZOOM_DIAL_MINUS,FRAME_RAISED | LAYOUT_SIDE_TOP | LAYOUT_FILL_X)),
 		mutePanel(new FXPacker(waveViewPanel,LAYOUT_SIDE_LEFT | FRAME_NONE | LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
-			upperMuteLabel(new FXLabel(mutePanel,"M\tMute Channels",NULL,LABEL_NORMAL|LAYOUT_SIDE_TOP|LAYOUT_FIX_HEIGHT)),
-			invertMuteButton(new FXButton(mutePanel,"!\tInvert the Muted State of Each Channel or (right click) Unmute All Channels",NULL,this,ID_INVERT_MUTE_BUTTON,LAYOUT_FILL_X | FRAME_RAISED|FRAME_THICK | LAYOUT_SIDE_BOTTOM|LAYOUT_FIX_HEIGHT)),
+			upperMuteLabel(new FXLabel(mutePanel,_("M\tMute Channels"),NULL,LABEL_NORMAL|LAYOUT_SIDE_TOP|LAYOUT_FIX_HEIGHT)),
+			invertMuteButton(new FXButton(mutePanel,_("!\tInvert the Muted State of Each Channel or (right click) Unmute All Channels"),NULL,this,ID_INVERT_MUTE_BUTTON,LAYOUT_FILL_X | FRAME_RAISED|FRAME_THICK | LAYOUT_SIDE_BOTTOM|LAYOUT_FIX_HEIGHT)),
 			muteContents(new FXVerticalFrame(mutePanel,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
 		waveView(new FXRezWaveView(waveViewPanel,_loadedSound)),
 
@@ -183,46 +183,46 @@ CSoundWindow::CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound) :
 	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 2,0,0,0, 0,0);
 		// add the actual LEDs to the packer for turning the LED on and off, done by raising or lowering the first child of the packer
 		playingLED=new FXPacker(t,LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0);
-			(new FXLabel(playingLED,"Playing:",FOXIcons->GreenLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
-			(new FXLabel(playingLED,"Playing:",FOXIcons->OffLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
+			(new FXLabel(playingLED,_("Playing:"),FOXIcons->GreenLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
+			(new FXLabel(playingLED,_("Playing:"),FOXIcons->OffLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
 		pausedLED=new FXPacker(t,LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0);
-			(new FXLabel(pausedLED,"Paused:",FOXIcons->YellowLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
-			(new FXLabel(pausedLED,"Paused:",FOXIcons->OffLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
+			(new FXLabel(pausedLED,_("Paused:"),FOXIcons->YellowLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
+			(new FXLabel(pausedLED,_("Paused:"),FOXIcons->OffLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0))->setFont(statusFont);
 
 	new FXVerticalSeparator(statusPanel);
 	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 2,0,0,0, 0,0);
-		sampleRateLabel=new FXLabel(t,"Sample Rate; ",NULL,LAYOUT_LEFT|LAYOUT_FILL_Y);
+		sampleRateLabel=new FXLabel(t,_("Sample Rate; "),NULL,LAYOUT_LEFT|LAYOUT_FILL_Y);
 		sampleRateLabel->setFont(statusFont);
-		channelCountLabel=new FXLabel(t,"Channel Count: ",NULL,LAYOUT_LEFT|LAYOUT_FILL_Y);
+		channelCountLabel=new FXLabel(t,_("Channel Count: "),NULL,LAYOUT_LEFT|LAYOUT_FILL_Y);
 		channelCountLabel->setFont(statusFont);
 
 	new FXVerticalSeparator(statusPanel);
 	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 2,0,0,0, 0,0);
-		audioDataSizeLabel=new FXLabel(t,"Audio Size; ",NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
+		audioDataSizeLabel=new FXLabel(t,_("Audio Size; "),NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
 		audioDataSizeLabel->setFont(statusFont);
-		poolFileSizeLabel=new FXLabel(t,"Working File: ",NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
+		poolFileSizeLabel=new FXLabel(t,_("Working File: "),NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
 		poolFileSizeLabel->setFont(statusFont);
 
 	new FXVerticalSeparator(statusPanel);
 	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 2,0,0,0, 0,0);
-		totalLengthLabel=new FXLabel(t,"Total: ",NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
+		totalLengthLabel=new FXLabel(t,_("Total: "),NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
 		totalLengthLabel->setFont(statusFont);
-		selectionLengthLabel=new FXLabel(t,"Selection: ",NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
+		selectionLengthLabel=new FXLabel(t,_("Selection: "),NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
 		selectionLengthLabel->setFont(statusFont);
 		
 	new FXVerticalSeparator(statusPanel);
 	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 2,0,0,0, 0,0);
 		selectStartSpinner=new FXSpinner(t,0,this,ID_SELECT_START_SPINNER, SPIN_NOTEXT|LAYOUT_FILL_Y);
 		selectStartSpinner->setRange(-10,10);
-		selectStartSpinner->setTipText("Increase/Decrease Start Position by One Sample");
+		selectStartSpinner->setTipText(_("Increase/Decrease Start Position by One Sample"));
 		selectStopSpinner=new FXSpinner(t,0,this,ID_SELECT_STOP_SPINNER, SPIN_NOTEXT|LAYOUT_FILL_Y);
 		selectStopSpinner->setRange(-10,10);
-		selectStopSpinner->setTipText("Increase/Decrease Stop Position by One Sample");
+		selectStopSpinner->setTipText(_("Increase/Decrease Stop Position by One Sample"));
 		
 	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0);
-		selectStartLabel=new FXLabel(t,"Start: ",NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
+		selectStartLabel=new FXLabel(t,_("Start: "),NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
 		selectStartLabel->setFont(statusFont);
-		selectStopLabel=new FXLabel(t,"Stop: ",NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
+		selectStopLabel=new FXLabel(t,_("Stop: "),NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
 		selectStopLabel->setFont(statusFont);
 
 	new FXVerticalSeparator(statusPanel);
@@ -389,13 +389,13 @@ void CSoundWindow::updateFromEdit()
 
 void CSoundWindow::updateAllStatusInfo()
 {
-	sampleRateLabel->setText(("Rate: "+istring(loadedSound->sound->getSampleRate())).c_str());
-	channelCountLabel->setText(("Channels: "+istring(loadedSound->sound->getChannelCount())).c_str());
+	sampleRateLabel->setText((_("Rate: ")+istring(loadedSound->sound->getSampleRate())).c_str());
+	channelCountLabel->setText((_("Channels: ")+istring(loadedSound->sound->getChannelCount())).c_str());
 
-	audioDataSizeLabel->setText(("Audio Size: "+loadedSound->sound->getAudioDataSize()).c_str());
-	poolFileSizeLabel->setText(("Working File: "+loadedSound->sound->getPoolFileSize()).c_str());
+	audioDataSizeLabel->setText((_("Audio Size: ")+loadedSound->sound->getAudioDataSize()).c_str());
+	poolFileSizeLabel->setText((_("Working File: ")+loadedSound->sound->getPoolFileSize()).c_str());
 
-	totalLengthLabel->setText(("Total: "+loadedSound->sound->getTimePosition(loadedSound->sound->getLength(),getZoomDecimalPlaces())).c_str());
+	totalLengthLabel->setText((_("Total: ")+loadedSound->sound->getTimePosition(loadedSound->sound->getLength(),getZoomDecimalPlaces())).c_str());
 
 	updateSelectionStatusInfo();
 	updatePlayPositionStatusInfo();
@@ -405,9 +405,9 @@ void CSoundWindow::updateSelectionStatusInfo()
 {
 	const int places=getZoomDecimalPlaces();
 
-	selectionLengthLabel->setText(("Selection: "+loadedSound->sound->getTimePosition(loadedSound->channel->getStopPosition()-loadedSound->channel->getStartPosition()+1,places)).c_str());
-	selectStartLabel->setText(("Start: "+loadedSound->sound->getTimePosition(loadedSound->channel->getStartPosition(),places)).c_str());
-	selectStopLabel->setText(("Stop: "+loadedSound->sound->getTimePosition(loadedSound->channel->getStopPosition(),places)).c_str());
+	selectionLengthLabel->setText((_("Selection: ")+loadedSound->sound->getTimePosition(loadedSound->channel->getStopPosition()-loadedSound->channel->getStartPosition()+1,places)).c_str());
+	selectStartLabel->setText((_("Start: ")+loadedSound->sound->getTimePosition(loadedSound->channel->getStartPosition(),places)).c_str());
+	selectStopLabel->setText((_("Stop: ")+loadedSound->sound->getTimePosition(loadedSound->channel->getStopPosition(),places)).c_str());
 }
 
 void CSoundWindow::updatePlayPositionStatusInfo()
@@ -425,7 +425,7 @@ void CSoundWindow::updatePlayPositionStatusInfo()
 	{ // draw new play position
 		const int places=getZoomDecimalPlaces();
 
-		const string label="Playing: "+loadedSound->sound->getTimePosition(loadedSound->channel->getPosition(),places);
+		const string label=_("Playing: ")+loadedSound->sound->getTimePosition(loadedSound->channel->getPosition(),places);
 
 #if REZ_FOX_VERSION<10117	
 		dc.setTextFont(statusFont);

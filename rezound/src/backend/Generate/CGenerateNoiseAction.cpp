@@ -211,7 +211,7 @@ void CGenerateNoiseAction::undoActionSizeSafe(const CActionSound &actionSound)
 // ------------------------------
 
 CGenerateNoiseActionFactory::CGenerateNoiseActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory("Generate Noise","Generate Various Colors of Noise",channelSelectDialog,dialog)
+	AActionFactory(N_("Generate Noise"),_("Generate Various Colors of Noise"),channelSelectDialog,dialog)
 {
 }
 

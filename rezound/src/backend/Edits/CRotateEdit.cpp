@@ -30,7 +30,7 @@ CRotateEdit::CRotateEdit(const CActionSound actionSound,const RotateTypes _rotat
     	amount((sample_pos_t)(_amount*actionSound.sound->getSampleRate()))
 {
 	if(_amount<0)
-		throw(runtime_error(string(__func__)+" -- amount is negative"));
+		throw(runtime_error(string(__func__)+_(" -- amount is negative")));
 }
 
 CRotateEdit::~CRotateEdit()
@@ -70,7 +70,7 @@ void CRotateEdit::rotate(const CActionSound &actionSound,const RotateTypes rotat
 
 
 CRotateLeftEditFactory::CRotateLeftEditFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory("<< Rotate Left","Rotate Left",channelSelectDialog,dialog)
+	AActionFactory(N_("<< Rotate Left"),"",channelSelectDialog,dialog)
 {
 }
 
@@ -91,7 +91,7 @@ CRotateEdit *CRotateLeftEditFactory::manufactureAction(const CActionSound &actio
 
 
 CRotateRightEditFactory::CRotateRightEditFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory(">> Rotate Right","Rotate Right",channelSelectDialog,dialog)
+	AActionFactory(N_(">> Rotate Right"),"",channelSelectDialog,dialog)
 {
 }
 

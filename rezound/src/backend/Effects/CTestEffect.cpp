@@ -199,7 +199,7 @@ void CTestEffect::undoActionSizeSafe(const CActionSound &actionSound)
 // --------------------------------------------------
 
 CTestEffectFactory::CTestEffectFactory(AActionDialog *channelSelectDialog) :
-	AActionFactory("Test","Test",channelSelectDialog,NULL)
+	AActionFactory("Test","",channelSelectDialog,NULL)
 {
 }
 

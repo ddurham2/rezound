@@ -37,7 +37,7 @@ FXIMPLEMENT(CJACKPortChoiceDialog,FXModalDialogBox,CJACKPortChoiceDialogMap,ARRA
 
 
 CJACKPortChoiceDialog::CJACKPortChoiceDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"JACK Port Selection",0,0,FXModalDialogBox::ftVertical)
+	FXModalDialogBox(mainWindow,_("JACK Port Selection"),0,0,FXModalDialogBox::ftVertical)
 {
 	messageLabel=new FXLabel(getFrame(),"",NULL,LAYOUT_CENTER_X);
 	portNamesComboBox=new FXComboBox(getFrame(),10,8,NULL,0,COMBOBOX_NORMAL|LAYOUT_CENTER_X|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);

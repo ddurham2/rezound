@@ -29,7 +29,7 @@ waves.
 
 The only reason I haven't done this already is that the frontend would need a 4th
 slider which would have to be appropriately names, and second, because I would 
-probably need an explaination of it by showing the user an image.
+probably need an explanation of it by showing the user an image.
 
 If I did have a 4th parameter, I could also use that to define the number of 
 steps for a step function LFO.  But it would have a different name.. so CLFORegistry

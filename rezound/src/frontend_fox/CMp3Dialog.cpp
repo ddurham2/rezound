@@ -65,55 +65,55 @@ static void fillBitRateComboBox(FXComboBox *c,bool t=false)
 }
 
 CMp3Dialog::CMp3Dialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"mp3 Compression Parameters",0,0,FXModalDialogBox::ftVertical)//,
+	FXModalDialogBox(mainWindow,_("mp3 Compression Parameters"),0,0,FXModalDialogBox::ftVertical)//,
 
 	//notesFrame(new FXPacker(getFrame(),FRAME_SUNKEN|FRAME_THICK | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
 		//notesTextBox(new FXText(notesFrame,NULL,0,TEXT_WORDWRAP | LAYOUT_FILL_X|LAYOUT_FILL_Y))
 {
 	FXComposite *main=new FXGroupBox(getFrame(),"",GROUPBOX_NORMAL|LAYOUT_FILL_X|LAYOUT_FILL_Y);
 
-	CBRButton=new FXRadioButton(main,"Constant Bit Rate",this,ID_WHICH_BUTTON);
+	CBRButton=new FXRadioButton(main,_("Constant Bit Rate"),this,ID_WHICH_BUTTON);
 		CBRFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RAISED|LAYOUT_FILL_X);
-			new FXLabel(CBRFrame,"Bit Rate: ");
+			new FXLabel(CBRFrame,_("Bit Rate: "));
 			bitRateComboBox=new FXComboBox(CBRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
 			fillBitRateComboBox(bitRateComboBox);
 
 
 	new FXFrame(main,LAYOUT_FIX_HEIGHT,0,0,1,10);
-	ABRButton=new FXRadioButton(main,"Average Bit Rate",this,ID_WHICH_BUTTON);
+	ABRButton=new FXRadioButton(main,_("Average Bit Rate"),this,ID_WHICH_BUTTON);
 		ABRFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RAISED|LAYOUT_FILL_X);
-			new FXLabel(ABRFrame,"Minimum Bit Rate: ");
+			new FXLabel(ABRFrame,_("Minimum Bit Rate: "));
 			minRateComboBox=new FXComboBox(ABRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
 			fillBitRateComboBox(minRateComboBox);
-			new FXLabel(ABRFrame,"Average Bit Rate: ");
+			new FXLabel(ABRFrame,_("Average Bit Rate: "));
 			normRateComboBox=new FXComboBox(ABRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
 			fillBitRateComboBox(normRateComboBox,true);
-			new FXLabel(ABRFrame,"Maximum Bit Rate: ");
+			new FXLabel(ABRFrame,_("Maximum Bit Rate: "));
 			maxRateComboBox=new FXComboBox(ABRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
 			fillBitRateComboBox(maxRateComboBox);
 
 
 	new FXFrame(main,LAYOUT_FIX_HEIGHT,0,0,1,10);
-	qualityButton=new FXRadioButton(main,"Variable Bit Rate Quality Setting",this,ID_WHICH_BUTTON);
+	qualityButton=new FXRadioButton(main,_("Variable Bit Rate Quality Setting"),this,ID_WHICH_BUTTON);
 		qualityFrame=new FXMatrix(main,3,MATRIX_BY_COLUMNS|FRAME_RAISED|LAYOUT_FILL_X);
-			new FXLabel(qualityFrame,"Quality: ");
+			new FXLabel(qualityFrame,_("Quality: "));
 			qualityComboBox=new FXComboBox(qualityFrame,10,10,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
 			for(int t=0;t<10;t++)
 				qualityComboBox->appendItem(istring(t).c_str());
 			qualityComboBox->setCurrentItem(4);
-			new FXLabel(qualityFrame,"0(Highest Quality -> 9(Lowest Quality)");
+			new FXLabel(qualityFrame,_("0(Highest Quality -> 9(Lowest Quality)"));
 
 	
 	new FXFrame(main,LAYOUT_FIX_HEIGHT,0,0,1,10);
 		flagsFrame=new FXMatrix(main,3,MATRIX_BY_COLUMNS|FRAME_RAISED|LAYOUT_FILL_X);
-			useOnlyFlagsButton=new FXCheckButton(flagsFrame,"Use Only These Flags");
+			useOnlyFlagsButton=new FXCheckButton(flagsFrame,_("Use Only These Flags"));
 			new FXFrame(flagsFrame,FRAME_NONE); // place holder
 			new FXFrame(flagsFrame,FRAME_NONE); // place holder
 
-			new FXLabel(flagsFrame,"Additional Flags: ");
+			new FXLabel(flagsFrame,_("Additional Flags: "));
 			additionalFlagsTextBox=new FXTextField(flagsFrame,25,NULL,0,TEXTFIELD_NORMAL);
 			additionalFlagsTextBox->setText("");
-			new FXLabel(flagsFrame,"To lame");
+			new FXLabel(flagsFrame,_("To lame"));
 
 	
 	CBRButton->setCheck(TRUE);

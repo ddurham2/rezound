@@ -53,7 +53,7 @@ bool CMakeSymetricAction::doActionSizeSafe(CActionSound &actionSound,bool prepar
 			const sample_pos_t selectionLengthDiv2=selectionLength/2;
 			const sample_pos_t selectionLengthSub1=selectionLength-1;
 
-			CStatusBar statusBar("Make Symetric -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),0,selectionLengthDiv2,true);
+			CStatusBar statusBar(_("Make Symetric -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),0,selectionLengthDiv2,true);
 
 			for(sample_pos_t t=0;t<=selectionLengthDiv2;t++)
 			{
@@ -95,7 +95,7 @@ void CMakeSymetricAction::undoActionSizeSafe(const CActionSound &actionSound)
 // --------------------------------------------------
 //
 CMakeSymetricActionFactory::CMakeSymetricActionFactory(AActionDialog *channelSelectDialog) :
-	AActionFactory("Make Symetric","Make Symetric For Noise Loops",channelSelectDialog,NULL)
+	AActionFactory(N_("Make Symetric"),_("Make Symetric For Noise Loops"),channelSelectDialog,NULL)
 {
 }
 

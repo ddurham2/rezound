@@ -32,7 +32,7 @@ static const double interpretValue_volume(const double x,const int scalar) { ret
 static const double uninterpretValue_volume(const double x,const int scalar) { return dB_to_scalar(x); }
 
 CGenerateNoiseDialog::CGenerateNoiseDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Generate Noise"))
+	CActionParamDialog(mainWindow)
 {
 	vector<string> items;
 

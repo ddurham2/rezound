@@ -39,18 +39,18 @@ FXIMPLEMENT(CVoxDialog,FXModalDialogBox,CVoxDialogMap,ARRAYNUMBER(CVoxDialogMap)
 
 
 CVoxDialog::CVoxDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"Vox Parameters",0,0,FXModalDialogBox::ftVertical)
+	FXModalDialogBox(mainWindow,_("Vox Parameters"),0,0,FXModalDialogBox::ftVertical)
 {
 	FXComposite *main=new FXMatrix(getFrame(),2,MATRIX_BY_COLUMNS,LAYOUT_FILL_X|LAYOUT_FILL_Y);
 	FXComboBox *combo;
 
-	new FXLabel(main,"Channels:");
+	new FXLabel(main,_("Channels:"));
 	combo=channelsCountComboBox=new FXComboBox(main,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK);
 		for(unsigned t=1;t<=MAX_CHANNELS;t++)
 			combo->appendItem(istring(t).c_str());
 		combo->setCurrentItem(1); // stereo
 
-	new FXLabel(main,"Sample Rate:");
+	new FXLabel(main,_("Sample Rate:"));
 	combo=sampleRateComboBox=new FXComboBox(main,10,9,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK);
 		combo->appendItem("4000");
 		combo->appendItem("8000");

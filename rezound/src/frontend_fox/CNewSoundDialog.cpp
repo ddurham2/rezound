@@ -45,26 +45,26 @@ FXIMPLEMENT(CNewSoundDialog,FXModalDialogBox,CNewSoundDialogMap,ARRAYNUMBER(CNew
 // ----------------------------------------
 
 CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"New Sound",395,210,FXModalDialogBox::ftVertical),
+	FXModalDialogBox(mainWindow,_("New Sound"),395,210,FXModalDialogBox::ftVertical),
 	
 	filenameFrame(new FXHorizontalFrame(getFrame(),LAYOUT_FILL_X)),
-		filenameLabel(new FXLabel(filenameFrame,"Filename:")),
+		filenameLabel(new FXLabel(filenameFrame,_("Filename:"))),
 		filenameTextBox(new FXTextField(filenameFrame,30,NULL,0,TEXTFIELD_NORMAL | LAYOUT_FILL_X)),
-		browseButton(new FXButton(filenameFrame,"&Browse",NULL,this,ID_BROWSE_BUTTON)),
+		browseButton(new FXButton(filenameFrame,_("&Browse"),NULL,this,ID_BROWSE_BUTTON)),
 	rawFormatFrame(new FXHorizontalFrame(getFrame(),LAYOUT_FILL_X)),
-		rawFormatCheckButton(new FXCheckButton(rawFormatFrame,"Raw Format",NULL,0,CHECKBUTTON_NORMAL|LAYOUT_CENTER_X)),
+		rawFormatCheckButton(new FXCheckButton(rawFormatFrame,_("Raw Format"),NULL,0,CHECKBUTTON_NORMAL|LAYOUT_CENTER_X)),
 	matrix(new FXMatrix(getFrame(),2,MATRIX_BY_COLUMNS|LAYOUT_CENTER_X)),
 
-		channelsLabel(new FXLabel(matrix,"Channels:",NULL,LABEL_NORMAL|LAYOUT_RIGHT)),
+		channelsLabel(new FXLabel(matrix,_("Channels:"),NULL,LABEL_NORMAL|LAYOUT_RIGHT)),
 		channelsComboBox(new FXComboBox(matrix,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC)),
 
-		sampleRateLabel(new FXLabel(matrix,"Sample Rate:",NULL,LABEL_NORMAL|LAYOUT_RIGHT)),
+		sampleRateLabel(new FXLabel(matrix,_("Sample Rate:"),NULL,LABEL_NORMAL|LAYOUT_RIGHT)),
 		sampleRateComboBox(new FXComboBox(matrix,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK)),
 
-		lengthLabel(new FXLabel(matrix,"Length:",NULL,LABEL_NORMAL|LAYOUT_RIGHT)),
+		lengthLabel(new FXLabel(matrix,_("Length:"),NULL,LABEL_NORMAL|LAYOUT_RIGHT)),
 		lengthFrame(new FXHorizontalFrame(matrix,LAYOUT_CENTER_X,0,0,0,0, 0,0,0,0, 0,0)),
 			lengthComboBox(new FXComboBox(lengthFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK)),
-			lengthUnitsLabel(new FXLabel(lengthFrame,"second(s)"))
+			lengthUnitsLabel(new FXLabel(lengthFrame,_("second(s)")))
 {
 	for(size_t t=0;t<MAX_CHANNELS;t++)
 		channelsComboBox->appendItem(istring(t+1).c_str());
@@ -173,7 +173,7 @@ bool CNewSoundDialog::validateOnOkay()
 
 		if(filename=="")
 		{
-			Warning("Please supply a filename");
+			Warning(_("Please supply a filename"));
 			return false;
 		}
 
@@ -184,7 +184,7 @@ bool CNewSoundDialog::validateOnOkay()
 
 		if(CPath(filename).exists())
 		{
-			if(Question(string("Are you sure you want to overwrite the existing file:\n   ")+filename.c_str(),yesnoQues)!=yesAns)
+			if(Question(_("Are you sure you want to overwrite the existing file:\n   ")+filename,yesnoQues)!=yesAns)
 				return false;
 		}
 		this->filename=filename;
@@ -197,7 +197,7 @@ bool CNewSoundDialog::validateOnOkay()
 	int channelCount=atoi(channelsComboBox->getText().text());
 	if(channelCount<0 || channelCount>=MAX_CHANNELS)
 	{
-		Error("Invalid number of channels");
+		Error(_("Invalid number of channels"));
 		return false;
 	}
 	this->channelCount=channelCount;
@@ -206,7 +206,7 @@ bool CNewSoundDialog::validateOnOkay()
 	int sampleRate=atoi(sampleRateComboBox->getText().text());
 	if(sampleRate<1000 || sampleRate>1000000)
 	{
-		Error("Invalid sample rate");
+		Error(_("Invalid sample rate"));
 		return false;
 	}
 	this->sampleRate=sampleRate;
@@ -216,7 +216,7 @@ bool CNewSoundDialog::validateOnOkay()
 		double length=atof(lengthComboBox->getText().text());
 		if(length<0 || MAX_LENGTH/sampleRate<length)
 		{
-			Error("Invalid length");
+			Error(_("Invalid length"));
 			return false;
 		} 
 		this->length=(int)(length*sampleRate);

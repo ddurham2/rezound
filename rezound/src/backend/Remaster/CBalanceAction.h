@@ -39,7 +39,7 @@ public:
 	CBalanceAction(const CActionSound &actionSound,const CGraphParamValueNodeList &balanceCurve,const unsigned channelA,const unsigned channelB,const BalanceTypes balanceType);
 	virtual ~CBalanceAction();
 
-	static const string getBalanceTypeExplaination();
+	static const string getBalanceTypeExplanation();
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);

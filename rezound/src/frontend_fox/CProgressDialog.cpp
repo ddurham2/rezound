@@ -41,7 +41,7 @@ CProgressDialog::CProgressDialog(FXWindow *owner,const FXString &title,bool show
 	isCancelled(false),
 	contents(new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_RAISED|FRAME_THICK, 0,0,0,0, 6,6,6,6, 6,2)),
 		progressBar(new FXProgressBar(contents,NULL,0,PROGRESSBAR_NORMAL | LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,250,26)),
-		cancelButton(!showCancelButton ? NULL : new FXButton(contents,"&Cancel",/*FOXIcons->RedX1*/NULL,this,ID_CANCEL_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2))
+		cancelButton(!showCancelButton ? NULL : new FXButton(contents,_("&Cancel"),/*FOXIcons->RedX1*/NULL,this,ID_CANCEL_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2))
 {
 	progressBar->setTotal(100);
 	progressBar->showNumber();

@@ -42,11 +42,11 @@ FXIMPLEMENT(CMIDIDumpSampleIdDialog,FXModalDialogBox,CMIDIDumpSampleIdDialogMap,
 
 
 CMIDIDumpSampleIdDialog::CMIDIDumpSampleIdDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"MIDI Sample Dump",0,0,FXModalDialogBox::ftVertical,FXModalDialogBox::stShrinkWrap)
+	FXModalDialogBox(mainWindow,_("MIDI Sample Dump"),0,0,FXModalDialogBox::ftVertical,FXModalDialogBox::stShrinkWrap)
 {
 	FXComposite *t;
 	
-	waitCheckButton=new FXCheckButton(getFrame(),"Wait for Dump",this,ID_WAIT_CHECKBUTTON);
+	waitCheckButton=new FXCheckButton(getFrame(),_("Wait for Dump"),this,ID_WAIT_CHECKBUTTON);
 
 	t=new FXHorizontalFrame(getFrame());
 		new FXLabel(t,_("Sample ID"));
@@ -99,7 +99,7 @@ bool CMIDIDumpSampleIdDialog::showForOpen(int &sysExChannel,int &waveformId)
 			waveformId=atoi(waveformIdEdit->getText().text());
 			if(waveformId<0 || waveformId>16384)
 			{
-				Error("Sample IDs must be from 0 to 16384");
+				Error(_("Waveform IDs must be from 0 to 16384"));
 				goto redo;
 			}
 
@@ -136,7 +136,7 @@ bool CMIDIDumpSampleIdDialog::showForSave(int &sysExChannel,int &waveformId,int 
 		waveformId=atoi(waveformIdEdit->getText().text());
 		if(waveformId<0 || waveformId>16384)
 		{
-			Error("Waveform IDs must be from 0 to 16384");
+			Error(_("Waveform IDs must be from 0 to 16384"));
 			goto redo;
 		}
 
@@ -145,7 +145,7 @@ bool CMIDIDumpSampleIdDialog::showForSave(int &sysExChannel,int &waveformId,int 
 		loopType=atoi(loopTypeEdit->getText().text());
 		if(loopType<0 || loopType>127)
 		{
-			Error("Loop type must be from 0 to 127");
+			Error(_("Loop type must be from 0 to 127"));
 			goto redo;
 		}
 

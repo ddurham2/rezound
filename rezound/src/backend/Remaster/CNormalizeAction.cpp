@@ -69,7 +69,7 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 			sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 			sample_pos_t posAdd=prepareForUndo ? start : 0; // add this to the positions incase src is a tempPool for undo purposes because it would start at 0 instead of start
 
-			CStatusBar statusBar("Analyzing -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),srcOffset,srcOffset+selectionLength,true); 
+			CStatusBar statusBar(_("Analyzing -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),srcOffset,srcOffset+selectionLength,true); 
 
 			for(unsigned t=0;t<regionCount;t++)
 			{
@@ -142,7 +142,7 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 				sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 				sample_pos_t destPos=start;
 
-				CStatusBar statusBar("Normalizing -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
+				CStatusBar statusBar(_("Normalizing -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
 
 				const float gain=(float)normalizationLevel/(float)maxValues[i][0];
 				for(sample_pos_t j=0;j<selectionLength;j++)
@@ -196,7 +196,7 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 				sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 				sample_pos_t destPos=start;
 
-				CStatusBar statusBar("Normalizing -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
+				CStatusBar statusBar(_("Normalizing -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
 
 				for(unsigned t=0;t<=regionCount;t++)
 				{
@@ -251,7 +251,7 @@ void CNormalizeAction::undoActionSizeSafe(const CActionSound &actionSound)
 // --------------------------------------------------
 
 CNormalizeActionFactory::CNormalizeActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory("Normalize","Normalize Amplitude (Some of this technique is experimental, please let me know if you approve or disapprove of the result's quality)",channelSelectDialog,dialog)
+	AActionFactory(N_("Normalize"),_("Normalize Amplitude"),channelSelectDialog,dialog)
 {
 }
 
@@ -261,7 +261,15 @@ CNormalizeActionFactory::~CNormalizeActionFactory()
 
 CNormalizeAction *CNormalizeActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
-	return(new CNormalizeAction(actionSound,actionParameters->getDoubleParameter("Normalization Level"),actionParameters->getUnsignedParameter("Region Count"),actionParameters->getBoolParameter("Lock Channels")));
+	return(new CNormalizeAction(actionSound,
+		actionParameters->getDoubleParameter("Normalization Level"),
+		actionParameters->getUnsignedParameter("Region Count"),
+		actionParameters->getBoolParameter("Lock Channels"))
+	);
 }
 
+const string CNormalizeActionFactory::getExplanation() const 
+{
+	return _("Normalize Amplitude (Some of this technique is experimental, please let me know if you approve or disapprove of the result's quality)");
+}
 

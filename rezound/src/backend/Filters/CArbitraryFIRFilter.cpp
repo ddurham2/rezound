@@ -127,7 +127,7 @@ bool CArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,bool prepar
 			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
 			sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 
-			CStatusBar statusBar("Filtering -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
+			CStatusBar statusBar(_("Filtering -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
 
 			if(removeDelay)
 			{
@@ -222,7 +222,7 @@ bool CArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,bool prepar
 
 	return(true);
 #endif
-	throw(EUserMessage(string(__func__)+" -- feature disabled because the fftw/rfftw library was not installed or detected when configure was run"));
+	throw(EUserMessage(string(__func__)+_(" -- feature disabled because the fftw/rfftw library was not installed or detected when configure was run")));
 }
 
 AAction::CanUndoResults CArbitraryFIRFilter::canUndo(const CActionSound &actionSound) const
@@ -239,7 +239,7 @@ void CArbitraryFIRFilter::undoActionSizeSafe(const CActionSound &actionSound)
 // --------------------------------------------------
 
 CArbitraryFIRFilterFactory::CArbitraryFIRFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory("Arbitrary FIR Filter","Finite Impulse Response Filter Given a Custom/User-Defined Frequency Response",channelSelectDialog,dialog)
+	AActionFactory(N_("Arbitrary FIR Filter"),_("Finite Impulse Response Filter Given a Custom/User-Defined Frequency Response"),channelSelectDialog,dialog)
 {
 }
 

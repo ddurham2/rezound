@@ -102,7 +102,7 @@ bool CCopyCutToNewEdit::doesWarrantSaving() const
 // ---------------------------------------------
 
 CCopyToNewEditFactory::CCopyToNewEditFactory(AActionDialog *channelSelectDialog) :
-	AActionFactory("Copy to New","Copy to Selection to a Newly Created Sound",channelSelectDialog,NULL,false,false)
+	AActionFactory(N_("Copy to New"),_("Copy to Selection to a Newly Created Sound Window"),channelSelectDialog,NULL,false,false)
 {
 }
 
@@ -121,7 +121,7 @@ CCopyCutToNewEdit *CCopyToNewEditFactory::manufactureAction(const CActionSound &
 
 
 CCutToNewEditFactory::CCutToNewEditFactory(AActionDialog *channelSelectDialog) :
-	AActionFactory("Cut to New","Cut and Move the Selection to a Newly Created Sound",channelSelectDialog,NULL)
+	AActionFactory(N_("Cut to New"),_("Cut and Move the Selection to a Newly Created Sound Window"),channelSelectDialog,NULL)
 {
 }
 

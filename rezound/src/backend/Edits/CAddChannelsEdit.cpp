@@ -57,7 +57,7 @@ void CAddChannelsEdit::undoActionSizeSafe(const CActionSound &actionSound)
 // ------------------------------
 
 CAddChannelsEditFactory::CAddChannelsEditFactory(AActionDialog *dialog) :
-	AActionFactory("Add Channels","Add New Channels of Audio",NULL,dialog,true,false)
+	AActionFactory(N_("Add Channels"),_("Add New Channels of Audio"),NULL,dialog,true,false)
 {
 }
 

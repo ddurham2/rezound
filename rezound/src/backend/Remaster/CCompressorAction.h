@@ -13,6 +13,8 @@ public:
 	CCompressorAction(const CActionSound &actionSound,float windowTime,float threshold,float ratio,float attackTime,float releaseTime,float inputGain,float outputGain,bool syncChannels);
 	virtual ~CCompressorAction();
 
+	static const string getExplanation();
+
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
 	void undoActionSizeSafe(const CActionSound &actionSound);

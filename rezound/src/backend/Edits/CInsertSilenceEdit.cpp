@@ -28,7 +28,7 @@ CInsertSilenceEdit::CInsertSilenceEdit(const CActionSound actionSound,const doub
 	origLength(0)
 {
 	if(silenceLength<0)
-		throw(runtime_error(string(__func__)+" -- silenceLength is less than zero: "+istring(silenceLength)));
+		throw(runtime_error(string(__func__)+_(" -- silenceLength is less than zero: ")+istring(silenceLength)));
 }
 
 CInsertSilenceEdit::~CInsertSilenceEdit()
@@ -66,7 +66,7 @@ void CInsertSilenceEdit::undoActionSizeSafe(const CActionSound &actionSound)
 // ------------------------------
 
 CInsertSilenceEditFactory::CInsertSilenceEditFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory("Insert Silence","Insert Silence",channelSelectDialog,dialog)
+	AActionFactory(N_("Insert Silence"),"",channelSelectDialog,dialog)
 {
 }
 

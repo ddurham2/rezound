@@ -92,12 +92,12 @@ void CStatusComm::error(const string &message,VSeverity severity,bool reformatIf
 void CStatusComm::warning(const string &message,bool reformatIfNeeded)
 {
 	fprintf(stderr,"warning -- %s\n",message.c_str());
-	FXMessageBox::warning(mainWindow,MBOX_OK,"Warning",escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str());
+	FXMessageBox::warning(mainWindow,MBOX_OK,_("Warning"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str());
 }
 
 void CStatusComm::message(const string &message,bool reformatIfNeeded)
 {
-	FXMessageBox::information(mainWindow,MBOX_OK,"Note",escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str());
+	FXMessageBox::information(mainWindow,MBOX_OK,_("Note"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str());
 }
 
 VAnswer CStatusComm::question(const string &message,VQuestion options,bool reformatIfNeeded)
@@ -112,7 +112,7 @@ VAnswer CStatusComm::question(const string &message,VQuestion options,bool refor
 	if(flags==0)
 		flags=MBOX_OK;
 
-	switch(FXMessageBox::question(mainWindow,flags,"Question",escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str()))
+	switch(FXMessageBox::question(mainWindow,flags,_("Question"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str()))
 	{
 	case MBOX_CLICKED_YES:
 		return(yesAns);

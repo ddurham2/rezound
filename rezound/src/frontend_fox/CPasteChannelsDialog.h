@@ -56,6 +56,9 @@ public:
 	virtual ~CPasteChannelsDialog();
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
+
+	void setTitle(const string title) { }
+
 	void *getUserData();
 
 	enum

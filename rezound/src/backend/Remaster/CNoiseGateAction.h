@@ -41,6 +41,8 @@ public:
 	CNoiseGateAction(const CActionSound &actionSound,const float windowTime,const float threshold,const float gainAttackTime,const float gainReleaseTime);
 	virtual ~CNoiseGateAction();
 
+	static const string getExplanation();
+
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
 	void undoActionSizeSafe(const CActionSound &actionSound);

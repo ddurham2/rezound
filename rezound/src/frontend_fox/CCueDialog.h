@@ -44,6 +44,8 @@ public:
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 
+	void setTitle(const string title) { }
+
 protected:
 	CCueDialog() {}
 

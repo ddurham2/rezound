@@ -83,7 +83,7 @@ public:
 	virtual ~CSaveAsMultipleFilesDialog(){}
 
 protected:
-	const string getExplaination() const;
+	const string getExplanation() const;
 };
 
 

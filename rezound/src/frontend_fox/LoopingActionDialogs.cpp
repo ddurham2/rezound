@@ -23,7 +23,7 @@
 // --- add cues -------------------------------
 
 CAddNCuesDialog::CAddNCuesDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Add N Cues"))
+	CActionParamDialog(mainWindow)
 {
 	void *p=newVertPanel(NULL);
 		addStringTextEntry(p,N_("Cue Name"),"(",_("What to Name the New Cues"));
@@ -35,7 +35,7 @@ static const double interpretValue_addTimedCues(const double x,const int s) { re
 static const double uninterpretValue_addTimedCues(const double x,const int s) { return x/s; }
 
 CAddTimedCuesDialog::CAddTimedCuesDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Add Cues Every X Seconds"))
+	CActionParamDialog(mainWindow)
 {
 	void *p=newVertPanel(NULL);
 		addStringTextEntry(p,N_("Cue Name"),"(",_("What to Name the New Cues"));

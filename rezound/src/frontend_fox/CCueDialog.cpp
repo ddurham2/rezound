@@ -45,18 +45,18 @@ FXIMPLEMENT(CCueDialog,FXModalDialogBox,CCueDialogMap,ARRAYNUMBER(CCueDialogMap)
 // ----------------------------------------
 
 CCueDialog::CCueDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"Cue Properties",300,175,FXModalDialogBox::ftVertical),
+	FXModalDialogBox(mainWindow,_("Cue Properties"),300,175,FXModalDialogBox::ftVertical),
 	
 	cueNamePacker(new FXHorizontalFrame(getFrame(),LAYOUT_FILL_X)),
-		cueNameLabel(new FXLabel(cueNamePacker,"Cue Name:",NULL,LABEL_NORMAL | LAYOUT_CENTER_X|LAYOUT_CENTER_Y)),
+		cueNameLabel(new FXLabel(cueNamePacker,_("Cue Name:"),NULL,LABEL_NORMAL | LAYOUT_CENTER_X|LAYOUT_CENTER_Y)),
 		cueNameTextBox(new FXTextField(cueNamePacker,20,NULL,0,TEXTFIELD_NORMAL | LAYOUT_CENTER_X|LAYOUT_CENTER_Y)),
 
 	cueTimePacker(new FXHorizontalFrame(getFrame(),LAYOUT_FILL_X)),
-		cueTimeLabel(new FXLabel(cueTimePacker," Cue Time:",NULL,LABEL_NORMAL | LAYOUT_CENTER_X|LAYOUT_CENTER_Y)),
+		cueTimeLabel(new FXLabel(cueTimePacker,_(" Cue Time:"),NULL,LABEL_NORMAL | LAYOUT_CENTER_X|LAYOUT_CENTER_Y)),
 		cueTimeTextBox(new FXTextField(cueTimePacker,20,NULL,0,TEXTFIELD_NORMAL | LAYOUT_CENTER_X|LAYOUT_CENTER_Y)),
 
 	isAnchoredPacker(new FXHorizontalFrame(getFrame(),LAYOUT_FILL_X)),
-		isAnchoredCheckButton(new FXCheckButton(isAnchoredPacker,"Anchored in Time\tMeaning That This Cue's Position Will Not Be Affected by Adding and Removing Space Within the Audio",NULL,0,CHECKBUTTON_NORMAL | LAYOUT_CENTER_X|LAYOUT_CENTER_Y))
+		isAnchoredCheckButton(new FXCheckButton(isAnchoredPacker,_("Anchored in Time\tMeaning That This Cue's Position Will Not Be Affected by Adding and Removing Space Within the Audio"),NULL,0,CHECKBUTTON_NORMAL | LAYOUT_CENTER_X|LAYOUT_CENTER_Y))
 
 {
 }
@@ -93,7 +93,7 @@ bool CCueDialog::validateOnOkay()
 		return(false);
 	if(cueName.size()>=MAX_SOUND_CUE_NAME_LENGTH-1)
 	{
-		Error("Cue Name Too Long");
+		Error(_("Cue Name Too Long"));
 		return(false);
 	}
 
@@ -101,7 +101,7 @@ bool CCueDialog::validateOnOkay()
 	cueTime=actionSound->sound->getPositionFromTime(cueTimeTextBox->getText().text(),wasInvalid);
 	if(wasInvalid)
 	{
-		Error("Invalid Cue Time.  Format: HH:MM:SS.sssss or MM:SS.sssss");
+		Error(_("Invalid Cue Time.  Format: HH:MM:SS.sssss or MM:SS.sssss"));
 		return(false);
 	}
 

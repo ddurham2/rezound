@@ -28,7 +28,7 @@
 // --- insert silence -------------------------
 
 CInsertSilenceDialog::CInsertSilenceDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Insert Silence"))
+	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
 		addNumericTextEntry(p,N_("Length"),N_("seconds"),1.0,0,10000);
@@ -39,7 +39,7 @@ CInsertSilenceDialog::CInsertSilenceDialog(FXWindow *mainWindow) :
 // --- rotate ---------------------------------
 
 CRotateDialog::CRotateDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Rotate"))
+	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
 		addNumericTextEntry(p,N_("Amount"),N_("seconds"),1.0,0,10000);
@@ -50,7 +50,7 @@ CRotateDialog::CRotateDialog(FXWindow *mainWindow) :
 // --- swap channels --------------------------
 
 CSwapChannelsDialog::CSwapChannelsDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Swap Channels A & B"))
+	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
 		vector<string> items;
@@ -93,7 +93,7 @@ bool CSwapChannelsDialog::show(CActionSound *actionSound,CActionParameters *acti
 // --- add channels ---------------------------
 
 CAddChannelsDialog::CAddChannelsDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Add Channels"))
+	CActionParamDialog(mainWindow)
 {
 	void *p=newHorzPanel(NULL);
 		addNumericTextEntry(p,N_("Insert Where"),"",0,0,MAX_CHANNELS);
@@ -107,7 +107,7 @@ CAddChannelsDialog::CAddChannelsDialog(FXWindow *mainWindow) :
 #include "../backend/ASoundTranslator.h"
 #include "../backend/Edits/CSaveAsMultipleFilesAction.h"
 CSaveAsMultipleFilesDialog::CSaveAsMultipleFilesDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Save As Multiple Files"))
+	CActionParamDialog(mainWindow)
 {
 	void *p1=newVertPanel(NULL);
 		addDiskEntityEntry(p1,N_("Save to Directory"),".",FXDiskEntityParamValue::detDirectory,_("All the files will be saved into this directory"));
@@ -122,9 +122,9 @@ CSaveAsMultipleFilesDialog::CSaveAsMultipleFilesDialog(FXWindow *mainWindow) :
 		addComboTextEntry(p1,N_("Applies to"),items);
 }
 
-const string CSaveAsMultipleFilesDialog::getExplaination() const
+const string CSaveAsMultipleFilesDialog::getExplanation() const
 {
-	return CSaveAsMultipleFilesAction::getExplaination();
+	return CSaveAsMultipleFilesAction::getExplanation();
 }
 
 
@@ -135,7 +135,7 @@ static const double interpretValue_alterSelection(const double x,const int s) { 
 static const double uninterpretValue_alterSelection(const double x,const int s) { return(x/s); }
 
 CGrowOrSlideSelectionDialog::CGrowOrSlideSelectionDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,N_("Grow or Slide Selected Region"))
+	CActionParamDialog(mainWindow)
 {
 	void *p=newVertPanel(NULL);
 		addSlider(p,N_("Amount"),"s",interpretValue_alterSelection,uninterpretValue_alterSelection,NULL,1.0,1,3600,2,false);

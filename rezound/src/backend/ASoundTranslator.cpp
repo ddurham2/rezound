@@ -151,13 +151,13 @@ const ASoundTranslator *ASoundTranslator::findTranslator(const string filename,b
 	{
 		if(ASoundTranslator::registeredTranslators[t]->handlesRaw())
 		{
-			if(Question("No handler found to support the format for "+filename+"\nWould you like to use a raw format?",yesnoQues)==yesAns)
+			if(Question(_("No handler found to support the format for ")+filename+"\n"+_("Would you like to use a raw format?"),yesnoQues)==yesAns)
 				return(ASoundTranslator::registeredTranslators[t]);
 			else
 				break;
 		}
 	}
-	throw(runtime_error(string(__func__)+" -- unhandled format/extension for the filename '"+filename+"'"));
+	throw(runtime_error(string(__func__)+_(" -- unhandled format/extension for the filename")+" '"+filename+"'"));
 }
 
 const vector<const ASoundTranslator *> ASoundTranslator::getTranslators()

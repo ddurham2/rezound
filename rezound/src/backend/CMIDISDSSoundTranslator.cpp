@@ -382,7 +382,7 @@ bool CMIDISDSSoundTranslator::onLoadSound(const string filename,CSound *sound) c
 		printf("reading data...\n");
 #endif
 
-		CStatusBar statusBar("Downloading Sample",0,length,true);
+		CStatusBar statusBar(_("Downloading Sample"),0,length,true);
 
 		sample_pos_t lengthRead=0;
 		int expectedPacketNumber=0;
@@ -475,7 +475,7 @@ bool CMIDISDSSoundTranslator::onLoadSound(const string filename,CSound *sound) c
 				if(lengthRead<=0)
 					ret=false;
 				else
-					Message("Keeping what was received");
+					Message(_("Keeping what was received"));
 
 				if(isDevice)
 				{ // send CANCEL message
@@ -649,7 +649,7 @@ bool CMIDISDSSoundTranslator::onSaveSound(const string filename,const CSound *so
 		#define SAMPLES_PER_PACK 40 // only 40 16bit samples can fit in the packed 120 7bit bytes
 		const int lastPacketSeq=saveLength/SAMPLES_PER_PACK;
 
-		CStatusBar statusBar(isDevice ? "Uploading Sample" : "Dumping Sample",0,lastPacketSeq,true);
+		CStatusBar statusBar(isDevice ? _("Uploading Sample") : _("Dumping Sample"),0,lastPacketSeq,true);
 
 		while(packetSeq<=lastPacketSeq)
 		{

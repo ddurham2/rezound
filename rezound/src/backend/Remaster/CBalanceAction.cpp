@@ -54,7 +54,7 @@ bool CBalanceAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 	const sample_pos_t start=actionSound.start;
 	const sample_pos_t selectionLength=actionSound.selectionLength();
 
-	CStatusBar statusBar("Changing Balance",0,selectionLength,true);
+	CStatusBar statusBar(_("Changing Balance"),0,selectionLength,true);
 
 	sample_pos_t srcPos=prepareForUndo ? 0 : start;
 	const CRezPoolAccesser srcA=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,channelA) : actionSound.sound->getAudio(channelA);
@@ -176,13 +176,13 @@ void CBalanceAction::undoActionSizeSafe(const CActionSound &_actionSound)
 	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
 }
 
-const string CBalanceAction::getBalanceTypeExplaination()
+const string CBalanceAction::getBalanceTypeExplanation()
 {
-	return "\
+	return _("\
 Strict Balance: -100% means normal A and no B, 0 means normal A and normal B, 100% means no A and normal B\n\
 1x Balance: -100% means normal A and no B, 0 means half A and half B, 100% means no A and normal B\n\
 2x Balance: -100% means 2x A and no B, 0 means normal A and normal B, 100% means no A and 2x B\
-";
+");
 }
 
 
@@ -192,7 +192,7 @@ Strict Balance: -100% means normal A and no B, 0 means normal A and normal B, 10
 // ---------------------------------------------
 
 CSimpleBalanceActionFactory::CSimpleBalanceActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory("Balance","Balance",channelSelectDialog,dialog)
+	AActionFactory(_("Balance"),"",channelSelectDialog,dialog)
 {
 }
 
@@ -214,7 +214,7 @@ CBalanceAction *CSimpleBalanceActionFactory::manufactureAction(const CActionSoun
 // ---------------------------------------------
 
 CCurvedBalanceActionFactory::CCurvedBalanceActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory("Curved Balance","Curved Balance",channelSelectDialog,dialog)
+	AActionFactory(_("Curved Balance"),"",channelSelectDialog,dialog)
 {
 }
 

@@ -64,7 +64,7 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 	bool ret=true;
 
 	if(gPathToLame=="")
-		throw(runtime_error(string(__func__)+" -- path to 'lame' not set"));
+		throw(runtime_error(string(__func__)+" -- $PATH to 'lame' not set"));
 
 	if(!checkThatFileExists(filename))
 		throw(runtime_error(string(__func__)+" -- file not found, '"+filename+"'"));
@@ -226,7 +226,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound
 	
 	if(sound->getCueCount()>0 || sound->getUserNotes()!="")
 	{
-		if(Question("MPEG Layer-3 does not support saving user notes or cues\nDo you wish to continue?",yesnoQues)!=yesAns)
+		if(Question(_("MPEG Layer-3 does not support saving user notes or cues\nDo you wish to continue?"),yesnoQues)!=yesAns)
 			return false;
 	}
 
@@ -319,7 +319,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound
 			TAutoBuffer<sample_t> buffer(BUFFER_SIZE*channelCount);
 			sample_pos_t pos=0;
 
-			CStatusBar statusBar("Saving Sound",0,saveLength,true);
+			CStatusBar statusBar(_("Saving Sound"),0,saveLength,true);
 			while(pos<saveLength)
 			{
 				size_t chunkSize=BUFFER_SIZE;

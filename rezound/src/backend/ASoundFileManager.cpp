@@ -132,7 +132,7 @@ void ASoundFileManager::open(const string _filename,bool openAsRaw)
 void ASoundFileManager::prvOpen(const string filename,bool readOnly,bool doRegisterFilename,bool asRaw,const ASoundTranslator *translatorToUse)
 {
 	if(doRegisterFilename && isFilenameRegistered(filename))
-		throw(runtime_error(string(__func__)+" -- file already opened"));
+		throw(runtime_error(string(__func__)+_(_(" -- file already opened"))));
 
 	if(readOnly)
 		throw(runtime_error(string(__func__)+" -- readOnly is true -- read only loading is not implemented yet"));
@@ -244,13 +244,13 @@ askAgain:
 		}
 
 		if(isFilenameRegistered(filename))
-			throw(runtime_error(string(__func__)+" -- file is currently opened: '"+filename+"'"));
+			throw(runtime_error(string(__func__)+_(" -- file is currently opened")+": '"+filename+"'"));
 
 		try
 		{
 			if(CPath(filename).exists() && !CPath(filename).isDevice())
 			{
-				if(Question("Overwrite Existing File:\n"+filename,yesnoQues)!=yesAns)
+				if(Question(_("Overwrite Existing File")+string(":\n")+filename,yesnoQues)!=yesAns)
 				{
 					if(reregisterFilenameOnError)
 						registerFilename(filename);
@@ -298,11 +298,11 @@ askAgain:
 	first=false;
 
 	if(isFilenameRegistered(filename))
-		throw(runtime_error(string(__func__)+" -- file is currently opened: '"+filename+"'"));
+		throw(runtime_error(string(__func__)+_(" -- file is currently opened")+": '"+filename+"'"));
 
 	if(CPath(filename).exists() && !CPath(filename).isDevice())
 	{
-		if(Question("Overwrite Existing File:\n"+filename,yesnoQues)!=yesAns)
+		if(Question(_("Overwrite Existing File")+string(":\n")+filename,yesnoQues)!=yesAns)
 			goto askAgain;
 	}
 
@@ -322,14 +322,14 @@ void ASoundFileManager::close(CloseTypes closeType,CLoadedSound *closeWhichSound
 		{
 			if(closeType==ctSaveYesNoStop)
 			{
-				VAnswer a=Question("Save Modified Sound:\n"+loaded->getFilename(),cancelQues);
+				VAnswer a=Question(_("Save Modified Sound")+string(":\n")+loaded->getFilename(),cancelQues);
 				if(a==cancelAns)
 					throw EStopClosing();
 				doSave=(a==yesAns);
 			}
 			else if(closeType==ctSaveYesNoCancel)
 			{
-				VAnswer a=Question("Save Modified Sound:\n"+loaded->getFilename(),cancelQues);
+				VAnswer a=Question(_("Save Modified Sound")+string(":\n")+loaded->getFilename(),cancelQues);
 				if(a==cancelAns)
 					return;
 				doSave=(a==yesAns);
@@ -380,7 +380,7 @@ void ASoundFileManager::revert()
 		}
 
 		// ??? could check isMofied(), but if it isn't, then there's no need to revert...
-		if(Question("Are you sure you want to revert to the last saved copy of '"+filename+"'",yesnoQues)!=yesAns)
+		if(Question(_("Are you sure you want to revert to the last saved copy of")+string(" '")+filename+"'",yesnoQues)!=yesAns)
 			return;
 
 		// could be more effecient by not destroying then creating the sound window
@@ -487,7 +487,7 @@ const vector<string> ASoundFileManager::loadFilesInRegistry()
 		const string filename=reg[t];
 		try
 		{
-			if(Question("Load sound from previous session?\n   "+filename,yesnoQues)==yesAns)
+			if(Question(_("Load sound from previous session?")+string("\n   ")+filename,yesnoQues)==yesAns)
 			{
 						// ??? readOnly and asRaw really need to be whatever the last value was, when it was originally loaded
 				prvOpen(filename,false,false,false);

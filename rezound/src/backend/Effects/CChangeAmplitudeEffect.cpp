@@ -46,7 +46,7 @@ bool CChangeAmplitudeEffect::doActionSizeSafe(CActionSound &actionSound,bool pre
 	{
 		if(actionSound.doChannel[i])
 		{
-			CStatusBar statusBar("Changing Amplitude -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),0,selectionLength,true);
+			CStatusBar statusBar(N_("Changing Amplitude -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),0,selectionLength,true);
 
 			sample_pos_t srcPos=prepareForUndo ? 0 : start;
 			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
@@ -91,7 +91,7 @@ void CChangeAmplitudeEffect::undoActionSizeSafe(const CActionSound &actionSound)
 // ---------------------------------------------
 
 CChangeVolumeEffectFactory::CChangeVolumeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory("Change Volume","Change Volume",channelSelectDialog,dialog)
+	AActionFactory(N_("Change Volume"),"",channelSelectDialog,dialog)
 {
 }
 
@@ -111,7 +111,7 @@ CChangeAmplitudeEffect *CChangeVolumeEffectFactory::manufactureAction(const CAct
 // ---------------------------------------------
 
 CSimpleGainEffectFactory::CSimpleGainEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory("Gain","Gain",channelSelectDialog,dialog)
+	AActionFactory(N_("Gain"),"",channelSelectDialog,dialog)
 {
 }
 
@@ -129,7 +129,7 @@ CChangeAmplitudeEffect *CSimpleGainEffectFactory::manufactureAction(const CActio
 // ---------------------------------------------
 
 CCurvedGainEffectFactory::CCurvedGainEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory("Curved Gain","Curved Gain",channelSelectDialog,dialog)
+	AActionFactory(N_("Curved Gain"),_("Change Gain According to a Curve"),channelSelectDialog,dialog)
 {
 }
 
