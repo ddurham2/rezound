@@ -289,7 +289,7 @@ long FXWaveRuler::onPaint(FXObject *object,FXSelector sel,void *ptr)
 		e=lastX;
 
 	dc.setForeground(FXRGB(20,20,20));
-	dc.setFont(font);
+	dc.setTextFont(font);
 	for(FXint x=s;x<=e;x++)
 	{
 		if((x%LABEL_TICK_FREQ)==0)
