@@ -73,6 +73,8 @@ void initializeReZound()
 		if(mkdirResult!=0 && mkdirErrno!=EEXIST)
 			throw(runtime_error(string(__func__)+" -- error creating "+gUserDataDirectory+" -- "+strerror(mkdirErrno)));
 
+		ost::Path(gUserDataDirectory+"/presets.dat").Touch();
+
 		// determine where /usr/share/rezound has been placed (try the install-from directory first)
 		gSysDataDirectory=SOURCE_DIR"/share/rezound";
 		if(!ost::Path(gSysDataDirectory).Exists()) 
