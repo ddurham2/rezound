@@ -114,11 +114,12 @@ void COSSSoundPlayer::initialize()
 		} 
 		if (speed!=SAMPLE_RATE)
 		{ 
-			close(audio_fd);
-			throw(runtime_error(string(__func__)+" -- error setting the sample rate -- the sample rate is not supported"));
+			fprintf(stderr,"warning: OSS used a different sample rate ("+istring(speed)+") than what was asked for ("+istring(SAMPLE_RATE)+")\n");
+			//close(audio_fd);
+			//throw(runtime_error(string(__func__)+" -- error setting the sample rate -- the sample rate is not supported"));
 		} 
 
-		devices[0].sampleRate=SAMPLE_RATE; // make note of the sample rate for this device (??? which is only device zero for now)
+		devices[0].sampleRate=speed; // make note of the sample rate for this device (??? which is only device zero for now)
 
 
 		// set the buffering parameters
