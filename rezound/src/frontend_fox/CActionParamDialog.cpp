@@ -61,7 +61,7 @@ FXIMPLEMENT(CActionParamDialog,FXModalDialogBox,CActionParamDialogMap,ARRAYNUMBE
 // parameters should be unnecessary
 
 CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,bool _showPresetPanel,FXModalDialogBox::ShowTypes showType) :
-	FXModalDialogBox(mainWindow,gettext(title.text()),0,0,FXModalDialogBox::ftVertical,showType),
+	FXModalDialogBox(mainWindow,"",0,0,FXModalDialogBox::ftVertical,showType),
 
 	showPresetPanel(_showPresetPanel),
 
