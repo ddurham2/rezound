@@ -21,4 +21,13 @@
 	- And maybe buildSATFromFile too
 
 
+	- When it's possible, I really need to do something different in TPoolFile::isExclusiveLocked and also TPoolFile::getSharedLockCount because right now, the isExclusiveLocked returns true if it's shared locked obviously because the tryLock fails so it assumes wrongly that there's an exclusive lock obtained
+		- perhaps I could keep a counter for the shared locks and bool for the exclusive lock myself in TPoolFile to count the number of locks
+			- I would set and increment/decrement these myself when the lock was obtained
+			- put mutex protection around actually changing the counter
+		- it would still not be quite perfect this way because between the lock/unlock and the counter getting changed there would be a lie returned by isExclusiveLocked() or getSharedLockCount()
+			- but I don't believe this is a problem, since getting the lock count would really never be guarenteed accurate
+
+
+
 

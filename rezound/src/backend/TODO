@@ -16,11 +16,6 @@
 
 	- use a registry setting for knowing where to put working files and the clipboard instead of always /tmp
 
-	- When it's possible, I really need to do something different in TPoolFile::isExclusiveLocked and also TPoolFile::getSharedLockCount because right now, the isExclusiveLocked returns true if it's shared locked obviously because the tryLock fails so it assumes wrongly that there's an exclusive lock obtained
-		- perhaps I could keep a counter for the shared locks and bool for the exclusive lock myself in TPoolFile to count the number of locks
-			- I would set and increment/decrement these myself when the lock was obtained
-
-
 	- warn the user if he's saving an exported file format and information such as cues and user notes will not be exported (for now)
 		- problem should somewhat go away with a different audio file library
 

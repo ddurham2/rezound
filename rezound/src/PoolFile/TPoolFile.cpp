@@ -141,6 +141,9 @@
 template<class l_addr_t,class p_addr_t>
 	TPoolFile<l_addr_t,p_addr_t>::TPoolFile(const size_t _maxBlockSize,const char *_formatSignature) :
 
+	_sharedLockCount(0),
+	_isExclusiveLocked(false),
+
 	formatSignature(_formatSignature),
 
 	maxBlockSize(_maxBlockSize),
@@ -945,58 +948,68 @@ template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::sharedLock() const
 {
 	structureMutex.ReadLock();
+
+	accesserInfoMutex.EnterMutex(); // so the counter is protected
+	_sharedLockCount++;
+	accesserInfoMutex.LeaveMutex();
 }
 
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::sharedTrylock() const
 {
-	return(structureMutex.TryReadLock());
+	bool l=structureMutex.TryReadLock();
+	if(l)
+	{
+		accesserInfoMutex.EnterMutex(); // so the counter is protected
+		_sharedLockCount++;
+		accesserInfoMutex.LeaveMutex();
+	}
+	return(l);
 }
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::sharedUnlock() const
 {
 	structureMutex.Unlock();
+
+	accesserInfoMutex.EnterMutex(); // so the counter is protected
+	_sharedLockCount--;
+	accesserInfoMutex.LeaveMutex();
 }
 
 template<class l_addr_t,class p_addr_t>
 	const size_t TPoolFile<l_addr_t,p_addr_t>::getSharedLockCount() const
 {
-	//return(structureMutex.getReadLockCount());
-	
-	// ??? for lack of a method in ost::ThreadLock we just do this stupid thing
-	bool l=structureMutex.TryReadLock();
-	if(l)
-		structureMutex.Unlock();
-	return(l ? 1 : 0);
+	return(_sharedLockCount);
 }
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::exclusiveLock() const
 {
 	structureMutex.WriteLock();
+	_isExclusiveLocked=true;
 }
 
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::exclusiveTrylock() const
 {
-	return(structureMutex.TryWriteLock());
+	bool l=structureMutex.TryWriteLock();
+	if(l)
+		_isExclusiveLocked=true;
+	return(l);
 }
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::exclusiveUnlock() const
 {
 	structureMutex.Unlock();
+	_isExclusiveLocked=false;
 }
 
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::isExclusiveLocked() const
 {
-	//return(structureMutex.isLockedForWrite());
-	bool l=structureMutex.TryWriteLock();
-	if(l)
-		structureMutex.Unlock();
-	return(!l);
+	return(_isExclusiveLocked);
 }
 
 

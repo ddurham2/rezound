@@ -185,6 +185,8 @@ private:
 
 	//mutable CRWMutex structureMutex;
 	mutable ost::ThreadLock structureMutex;
+	mutable int _sharedLockCount;
+	mutable bool _isExclusiveLocked;
 
 	//mutable CMutex accesserInfoMutex;
 	mutable ost::Mutex accesserInfoMutex;
