@@ -22,7 +22,9 @@
 #include "fox_compat.h"
 
 #include <fox/fx.h>
+
 #include <stdexcept>
+#include <clocale> // for gettext init
 
 #include <CPath.h>
 DECLARE_STATIC_CPATH // to declare CPath::dirDelim
@@ -42,7 +44,23 @@ void setupWindows(CMainWindow *mainWindow);
 void setupAccels(CMainWindow *mainWindow);
 
 
-#include <clocale> // for gettext init
+#if 0
+int wc=1;
+void countWidgets(FXWindow *w)
+{
+	w=w->getFirst();
+	if(w)
+	{
+		do
+		{
+			wc++;
+			countWidgets(w);
+		}
+		while((w=w->getNext()));
+	}
+}
+#endif
+
 
 int main(int argc,char *argv[])
 {
@@ -119,6 +137,11 @@ int main(int argc,char *argv[])
 		mainWindow->show();
 
 		application->run();
+
+#if 0
+		countWidgets(application->getRootWindow());
+		printf("wc: %d\n",wc);
+#endif
 
 
 		delete gSoundFileManager;
