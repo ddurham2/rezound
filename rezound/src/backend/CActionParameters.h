@@ -31,6 +31,7 @@ class CActionParameters;
 #include <utility>
 
 #include "CSound_defs.h"
+#include "ALFO.h"
 
 /*
  * One of these is always the input to an action
@@ -58,6 +59,7 @@ public:
 	void addSamplePosParameter(const string name,const sample_pos_t v);
 	void addDoubleParameter(const string name,const double v);
 	void addGraphParameter(const string name,const CGraphParamValueNodeList &v);
+	void addLFODescription(const string name,const CLFODescription &v);
 
 	const bool getBoolParameter(const string name) const;
 	const string getStringParameter(const string name) const;
@@ -65,6 +67,7 @@ public:
 	const sample_pos_t getSamplePosParameter(const string name) const;
 	const double getDoubleParameter(const string name) const;
 	const CGraphParamValueNodeList getGraphParameter(const string name) const;
+	const CLFODescription &getLFODescription(const string name) const;
 
 	void setBoolParameter(const string name,const bool v);
 	void setStringParameter(const string name,const string v);
@@ -72,6 +75,7 @@ public:
 	void setSamplePosParameter(const string name,const sample_pos_t v);
 	void setDoubleParameter(const string name,const double v);
 	void setGraphParameter(const string name,const CGraphParamValueNodeList &v);
+	void setLFODescription(const string name,const CLFODescription &v);
 
 private:
 
@@ -87,6 +91,7 @@ private:
 	const sample_pos_t getSamplePosParameter(const unsigned i) const;
 	const double getDoubleParameter(const unsigned i) const;
 	const CGraphParamValueNodeList getGraphParameter(const unsigned i) const;
+	const CLFODescription &getLFODescription(const unsigned i) const;
 
 	void setBoolParameter(const unsigned i,const bool v);
 	void setStringParameter(const unsigned i,const string v);
@@ -94,12 +99,12 @@ private:
 	void setSamplePosParameter(const unsigned i,const sample_pos_t v);
 	void setDoubleParameter(const unsigned i,const double v);
 	void setGraphParameter(const unsigned i,const CGraphParamValueNodeList &v);
+	void setLFODescription(const unsigned i,const CLFODescription &v);
 
 
 
 
-
-	enum ParameterTypes { ptBool,ptString,ptUnsigned,ptSamplePos,ptDouble,ptGraph };
+	enum ParameterTypes { ptBool,ptString,ptUnsigned,ptSamplePos,ptDouble,ptGraph,ptLFODescription };
 
 	//            type          value
 	typedef pair<ParameterTypes,void *> parameter_t;

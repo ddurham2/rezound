@@ -59,6 +59,10 @@ CActionParameters::CActionParameters(const CActionParameters &src)
 			parameters.push_back(parameter_t(src.parameters[t].first,new CGraphParamValueNodeList(*((CGraphParamValueNodeList *)src.parameters[t].second))));
 			break;
 
+		case ptLFODescription:
+			parameters.push_back(parameter_t(src.parameters[t].first,new CLFODescription(*((CLFODescription *)src.parameters[t].second))));
+			break;
+
 		default:
 			throw(string(__func__)+" -- internal error -- unhandled parameter type: "+istring(src.parameters[t].first));
 		}
@@ -98,6 +102,10 @@ void CActionParameters::clear()
 
 		case ptGraph:
 			delete ((CGraphParamValueNodeList *)parameters[t].second);
+			break;
+
+		case ptLFODescription:
+			delete ((CLFODescription *)parameters[t].second);
 			break;
 
 		default:
@@ -166,6 +174,13 @@ void CActionParameters::addGraphParameter(const string name,const CGraphParamVal
 	parameters.push_back(parameter_t(ptGraph,new CGraphParamValueNodeList(v)));
 }
 
+void CActionParameters::addLFODescription(const string name,const CLFODescription &v)
+{
+	VERIFY_IS_NEW(name)
+	parameterNames[name]=parameters.size();
+	parameters.push_back(parameter_t(ptLFODescription,new CLFODescription(v)));
+}
+
 
 
 #define PARM_INDEX_BY_NAME(name,index) 										\
@@ -218,6 +233,16 @@ const CGraphParamValueNodeList CActionParameters::getGraphParameter(const string
 	return(getGraphParameter(i));
 }
 
+const CLFODescription &CActionParameters::getLFODescription(const string name) const
+{
+	unsigned i;
+	PARM_INDEX_BY_NAME(name,i)
+	return(getLFODescription(i));
+}
+
+
+
+
 
 void CActionParameters::setBoolParameter(const string name,const bool v)
 {
@@ -259,6 +284,13 @@ void CActionParameters::setGraphParameter(const string name,const CGraphParamVal
 	unsigned i;
 	PARM_INDEX_BY_NAME(name,i)
 	setGraphParameter(i,v);
+}
+
+void CActionParameters::setLFODescription(const string name,const CLFODescription &v)
+{
+	unsigned i;
+	PARM_INDEX_BY_NAME(name,i)
+	setLFODescription(i,v);
 }
 
 
@@ -335,6 +367,16 @@ const CGraphParamValueNodeList CActionParameters::getGraphParameter(const unsign
 		return(*((CGraphParamValueNodeList *)parameters[i].second));
 }
 
+const CLFODescription &CActionParameters::getLFODescription(const unsigned i) const
+{
+	if(i>=parameters.size())
+		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(i)+" -- caller probably didn't pass enough parameters to the action"));
+	if(parameters[i].first!=ptLFODescription)
+		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptLFODescription"));
+	else
+		return(*((CLFODescription *)parameters[i].second));
+}
+
 
 
 void CActionParameters::setBoolParameter(const unsigned i,const bool v)
@@ -395,6 +437,16 @@ void CActionParameters::setGraphParameter(const unsigned i,const CGraphParamValu
 		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptGraph"));
 	else
 		(*((CGraphParamValueNodeList *)parameters[i].second))=v;
+}
+
+void CActionParameters::setLFODescription(const unsigned i,const CLFODescription &v)
+{
+	if(i>=parameters.size())
+		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(i)+" -- caller probably didn't pass enough parameters to the action"));
+	if(parameters[i].first!=ptLFODescription)
+		throw(runtime_error(string(__func__)+" -- parameter at index: "+istring(i)+" is not ptLFODescription"));
+	else
+		(*((CLFODescription *)parameters[i].second))=v;
 }
 
 
