@@ -66,7 +66,8 @@ public:
 	void addComboTextEntry(void *parent,const string name,const vector<string> &items,const string tipText="",bool isEditable=false);
 		FXComboTextParamValue *getComboText(const string name); // so a derived class can set the values
 	void addCheckBoxEntry(void *parent,const string name,const bool checked,const string tipText="");
-	void addGraph(void *parent,const string name,const string units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar);
+	void addGraph(void *parent,const string name,const string horzAxisLabel,const string horzUnits,FXGraphParamValue::f_at_xs horzInterpretValue,FXGraphParamValue::f_at_xs horzUninterpretValue,const string vertAxisLabel,const string vertUnits,FXGraphParamValue::f_at_xs vertInterpretValue,FXGraphParamValue::f_at_xs vertUninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar);
+	void addGraphWithWaveform(void *parent,const string name,const string vertAxisLabel,const string vertUnits,FXGraphParamValue::f_at_xs vertInterpretValue,FXGraphParamValue::f_at_xs vertUninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar);
 	void addLFO(void *parent,const string name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs);
 
 	/* 
@@ -118,6 +119,7 @@ private:
 		ptComboText,
 		ptCheckBox,
 		ptGraph,
+		ptGraphWithWaveform,
 		ptLFO
 	};
 

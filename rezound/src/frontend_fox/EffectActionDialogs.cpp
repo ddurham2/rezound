@@ -61,7 +61,7 @@ CAdvancedGainDialog::CAdvancedGainDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Change Gain According to a Curve")
 {
 	void *p=newHorzPanel(NULL);
-		addGraph(p,"Gain Curve","x",interpretValue_gain_curve,uninterpretValue_gain_curve,NULL,-10,10,2);
+		addGraphWithWaveform(p,"Gain Curve","Gain","x",interpretValue_gain_curve,uninterpretValue_gain_curve,NULL,-10,10,2);
 }
 
 
@@ -100,7 +100,7 @@ CAdvancedRateChangeDialog::CAdvancedRateChangeDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Change Rate According to a Curve")
 {
 	void *p=newHorzPanel(NULL);
-		addGraph(p,"Rate Curve","x",interpretValue_rate2,uninterpretValue_rate2,NULL,1,100,2);
+		addGraphWithWaveform(p,"Rate Curve","Rate","x",interpretValue_rate2,uninterpretValue_rate2,NULL,1,100,2);
 }
 
 

@@ -201,16 +201,24 @@ void CActionParamDialog::addCheckBoxEntry(void *parent,const string name,const b
 	retValueConvs.push_back(NULL);
 }
 
-void setComboBoxItems(const string name,const vector<string> &items);
-
-void CActionParamDialog::addGraph(void *parent,const string name,const string units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar)
+void CActionParamDialog::addGraph(void *parent,const string name,const string horzAxisLabel,const string horzUnits,FXGraphParamValue::f_at_xs horzInterpretValue,FXGraphParamValue::f_at_xs horzUninterpretValue,const string vertAxisLabel,const string vertUnits,FXGraphParamValue::f_at_xs vertInterpretValue,FXGraphParamValue::f_at_xs vertUninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar)
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
-		// ??? there is still a question of how quite to lay out the graph if there are graph(s) and sliders
 	FXGraphParamValue *graph=new FXGraphParamValue(name.c_str(),minScalar,maxScalar,initialScalar,(FXPacker *)parent,LAYOUT_FILL_X|LAYOUT_FILL_Y);
-	graph->setVertParameters("Value",units,interpretValue,uninterpretValue);
+	graph->setHorzParameters(horzAxisLabel,horzUnits,horzInterpretValue,horzUninterpretValue);
+	graph->setVertParameters(vertAxisLabel,vertUnits,vertInterpretValue,vertUninterpretValue);
 	parameters.push_back(pair<ParamTypes,void *>(ptGraph,(void *)graph));
+	retValueConvs.push_back(optRetValueConv);
+}
+
+void CActionParamDialog::addGraphWithWaveform(void *parent,const string name,const string vertAxisLabel,const string vertUnits,FXGraphParamValue::f_at_xs vertInterpretValue,FXGraphParamValue::f_at_xs vertUninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar)
+{
+	if(parent==NULL)
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+	FXGraphParamValue *graph=new FXGraphParamValue(name.c_str(),minScalar,maxScalar,initialScalar,(FXPacker *)parent,LAYOUT_FILL_X|LAYOUT_FILL_Y);
+	graph->setVertParameters(vertAxisLabel,vertUnits,vertInterpretValue,vertUninterpretValue);
+	parameters.push_back(pair<ParamTypes,void *>(ptGraphWithWaveform,(void *)graph));
 	retValueConvs.push_back(optRetValueConv);
 }
 
@@ -251,6 +259,7 @@ void CActionParamDialog::setValue(size_t index,const double value)
 		break;
 
 	case ptGraph:
+	case ptGraphWithWaveform:
 		/*
 		((FXGraphParamValue *)parameters[index].second)->setValue(value);
 		break;
@@ -293,6 +302,7 @@ void CActionParamDialog::setControlHeight(size_t index,const size_t height)
 		break;
 
 	case ptGraph:
+	case ptGraphWithWaveform:
 		((FXGraphParamValue *)parameters[index].second)->setHeight(height);
 		break;
 
@@ -325,6 +335,7 @@ const size_t CActionParamDialog::getControlHeight(size_t index) const
 		return ((FXCheckBoxParamValue *)parameters[index].second)->getHeight();
 
 	case ptGraph:
+	case ptGraphWithWaveform:
 		return ((FXGraphParamValue *)parameters[index].second)->getHeight();
 
 	case ptLFO:
@@ -361,6 +372,7 @@ void CActionParamDialog::setTipText(size_t index,const string tipText)
 		break;
 
 	case ptGraph:
+	case ptGraphWithWaveform:
 /*
 		((FXGraphParamValue *)parameters[index].second)->setTipText(tipText.c_str());
 		break;
@@ -390,7 +402,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 	// initialize all the graphs to this sound
 	for(size_t t=0;t<parameters.size();t++)
 	{
-		if(parameters[t].first==ptGraph)
+		if(parameters[t].first==ptGraphWithWaveform)
 			((FXGraphParamValue *)parameters[t].second)->setSound(actionSound->sound,actionSound->start,actionSound->stop);
 	}
 
@@ -451,6 +463,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 				break;
 
 			case ptGraph:
+			case ptGraphWithWaveform:
 				{
 					FXGraphParamValue *graph=(FXGraphParamValue *)parameters[t].second;
 					CGraphParamValueNodeList nodes=graph->getNodes();
@@ -546,6 +559,7 @@ long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void 
 				break;
 
 			case ptGraph:
+			case ptGraphWithWaveform:
 				((FXGraphParamValue *)parameters[t].second)->readFromFile(title,presetsFile);
 				break;
 
@@ -628,6 +642,7 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 					break;
 
 				case ptGraph:
+				case ptGraphWithWaveform:
 					((FXGraphParamValue *)parameters[t].second)->writeToFile(title,presetsFile);
 					break;
 
