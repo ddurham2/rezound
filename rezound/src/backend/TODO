@@ -1,6 +1,8 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- change CLoadedSound->sound to be public and a *const if after looking at things it could be.. then I could elimintate loadedSound->getSound() everywhere
+
 	- change ASoundFileManager to cancel closing if the close asks to save an mp3 file.. then it asks for the save parameters, then they hit cancel on the mp3 parameters dialog... just return the bool value back up.. this should also top a close all on exit and stop the exit
 
 	- create separate CDSPLevelDetectorRMS and CDSPPeakLevelDetectorPeak dsp blocks
