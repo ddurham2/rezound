@@ -18,14 +18,10 @@
 or sample values to follow
 		- create presets for 'mute above axis' and 'mute below axis'
 
-	- create an effects->pan action where two chosen channels (or default if stereo) can be crossfaded/mixed in every combination I can think of
-
 	- figure out what to do with the 4 bogus cues that appear in an aiff file when the file had no cues in it, itself
 		- libaudiofile is doing this and the author insists that it's correct for some reason
 		- just check for them (4 unnamed at zero) and remove them I guess?
 		- won't be a problem if I move to libsndfile
-
-	- Add a feature to ASoundRecorder that tells it to start when a certain threshold is hit in percent or dBFS
 
 	- use progress bars when doing TPoolAccesser::copyData and TPoolAccesser::zeroData 
 		- acutally... break the call into 100 chunks and update a progress bar then
@@ -61,8 +57,6 @@ or sample values to follow
 	- could warn the user if they are saving a file that was loaded from a lossy format then saving again to a lossy format that the loss will start to build up and become quite audible rather quickly
 
 	- I could enhance moveDataIntoPool/moveDataOutOfPool to save peak chunk information too, so it wouldn't recalc all the peak chunks when undoing an action... I would still have to recalculate the 1 or 2 peak chunks for the edges, but be able to avoid doing all of the middle
-
-	- in order to implement a "Save Selection" under the editing menu, I should make the sound translator objects accept a start and stop paramater in the save methods (and even later, a vector of starts and stops for multiple selected regions or something)
 
 	- I could easily remember native clipboards between runs by not deleting removing the pool file's file
 
@@ -300,4 +294,10 @@ or sample values to follow
 		- The same could go for CChangeAmplitudeRate, flange(done) and Echo(done) effect
 
 	- Need to handle duplicate named cues when loading a file.. I don't allow them, but a file format might
+
+	- create an effects->pan action where two chosen channels (or default if stereo) can be crossfaded/mixed in every combination I can think of
+
+	- Add a feature to ASoundRecorder that tells it to start when a certain threshold is hit in percent or dBFS
+
+	- in order to implement a "Save Selection" under the editing menu, I should make the sound translator objects accept a start and stop paramater in the save methods (and even later, a vector of starts and stops for multiple selected regions or something)
 
