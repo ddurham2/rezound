@@ -92,6 +92,7 @@ ajv_CHECK_LIB_ABORT(audiofile, afSetVirtualSampleFormat, AUDIOFILE,[http://oss.s
 dnl This is a check for a class in a C++ library. To pinpoint
 dnl the specific version we need we could change what class is linked.
 ajv_CXX_CHECK_LIB([FOX],FXApp,fox/fx.h,[http://fox-toolkit.org])
+dnl AC_CHECK_LIB(FOX,fxfindfox)
 
 
 dnl Check for FOX's reswrap program. 
