@@ -67,17 +67,15 @@ bool CRemoveDCAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 
 			const mix_sample_t DCOffset=(mix_sample_t)round(avgValue);
 
-			BEGIN_PROGRESS_BAR("Remove DC Component -- Channel "+istring(i),start,stop);
+			CStatusBar statusBar("Remove DC Component -- Channel "+istring(i),start,stop);
 
 			sample_pos_t srcPos=srcStart;
 			for(sample_pos_t t=start;t<=stop;t++)
 			{
 				dest[t]=ClipSample(src[srcPos++]-DCOffset);
 
-				UPDATE_PROGRESS_BAR(t);
+				statusBar.update(t);
 			}
-
-			END_PROGRESS_BAR();
 
 			// invalid if we didn't prepare for undo (which created new and invalidated space)
 			if(!prepareForUndo)

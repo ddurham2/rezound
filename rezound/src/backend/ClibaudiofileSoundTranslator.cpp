@@ -220,7 +220,7 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 		TAutoBuffer<sample_t> buffer((size_t)(afGetVirtualFrameSize(h,AF_DEFAULT_TRACK,1)*4096/sizeof(sample_t)));
 		sample_pos_t pos=0;
 		AFframecount count=size/4096+1;
-		BEGIN_CANCEL_PROGRESS_BAR("Loading Sound",0,size);
+		CStatusBar statusBar("Loading Sound",0,size,true);
 		for(AFframecount t=0;t<count;t++)
 		{
 			const int chunkSize=  (t==count-1 ) ? size%4096 : 4096;
@@ -241,7 +241,7 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 				pos+=chunkSize;
 			}
 
-			UPDATE_PROGRESS_BAR__IF_CANCEL(pos)
+			if(statusBar.update(pos))
 			{ // cancelled
 				ret=false;
 				goto cancelled;
@@ -249,8 +249,6 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 		}
 
 		cancelled:
-
-		END_PROGRESS_BAR();
 
 		afCloseFile(h);
 
@@ -262,8 +260,6 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 	}
 	catch(...)
 	{
-		endAllProgressBars();
-
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 			delete accessers[t];
 		throw;
@@ -411,7 +407,7 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 		TAutoBuffer<sample_t> buffer((size_t)(channelCount*4096));
 		sample_pos_t pos=0;
 		AFframecount count=size/4096+1;
-		BEGIN_CANCEL_PROGRESS_BAR("Saving Sound",0,size);
+		CStatusBar statusBar("Saving Sound",0,size,true);
 		for(AFframecount t=0;t<count;t++)
 		{
 			const int chunkSize=  (t==count-1 ) ? size%4096 : 4096;
@@ -427,14 +423,12 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 				pos+=chunkSize;
 			}
 
-			UPDATE_PROGRESS_BAR__IF_CANCEL(pos)
+			if(statusBar.update(pos))
 			{ // cancelled
-				END_PROGRESS_BAR();
 				ret=false;
 				goto cancelled;
 			}
 		}
-		END_PROGRESS_BAR();
 
 #ifdef HANDLE_CUES_AND_MISC
 		
@@ -473,8 +467,6 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 	catch(...)
 	{
 		// attempt to close the file ??? and free the setup???
-
-		endAllProgressBars();
 
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 			delete accessers[t];

@@ -59,53 +59,52 @@ bool CSinglePoleFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 			{
 			case ftLowpass:
 			{
-				BEGIN_PROGRESS_BAR("Lowpass Filter -- Channel "+istring(i),start,stop); 
+				CStatusBar statusBar("Lowpass Filter -- Channel "+istring(i),start,stop); 
+
 				TDSPSinglePoleLowpassFilter<mix_sample_t> filter(freq_to_fraction(frequency,actionSound.sound->getSampleRate()));
 				for(sample_pos_t t=start;t<=stop;t++)
 				{
 					dest[t]=ClipSample(filter.processSample((mix_sample_t)(gain*src[t-srcOffset])));
-					UPDATE_PROGRESS_BAR(t);
+					statusBar.update(t);
 				}
-				END_PROGRESS_BAR();
 			break;
 			}
 
 			case ftHighpass:
 			{
-				BEGIN_PROGRESS_BAR("Highpass Filter -- Channel "+istring(i),start,stop); 
+				CStatusBar statusBar("Highpass Filter -- Channel "+istring(i),start,stop); 
+
 				TDSPSinglePoleHighpassFilter<mix_sample_t> filter(freq_to_fraction(frequency,actionSound.sound->getSampleRate()));
 				for(sample_pos_t t=start;t<=stop;t++)
 				{
 					dest[t]=ClipSample(filter.processSample((mix_sample_t)(gain*src[t-srcOffset])));
-					UPDATE_PROGRESS_BAR(t);
+					statusBar.update(t);
 				}
-				END_PROGRESS_BAR();
 			break;
 			}
 
 			case ftBandpass:
 			{
-				BEGIN_PROGRESS_BAR("Bandpass Filter -- Channel "+istring(i),start,stop); 
+				CStatusBar statusBar("Bandpass Filter -- Channel "+istring(i),start,stop); 
+
 				TDSPBandpassFilter<mix_sample_t> filter(freq_to_fraction(frequency,actionSound.sound->getSampleRate()),freq_to_fraction(bandwidth,actionSound.sound->getSampleRate()));
 				for(sample_pos_t t=start;t<=stop;t++)
 				{
 					dest[t]=ClipSample(filter.processSample((mix_sample_t)(gain*src[t-srcOffset])));
-					UPDATE_PROGRESS_BAR(t);
+					statusBar.update(t);
 				}
-				END_PROGRESS_BAR();
 			break;
 			}
 
 			case ftNotch:
 			{
-				BEGIN_PROGRESS_BAR("Notch Filter -- Channel "+istring(i),start,stop); 
+				CStatusBar statusBar("Notch Filter -- Channel "+istring(i),start,stop); 
 				TDSPNotchFilter<mix_sample_t> filter(freq_to_fraction(frequency,actionSound.sound->getSampleRate()),freq_to_fraction(bandwidth,actionSound.sound->getSampleRate()));
 				for(sample_pos_t t=start;t<=stop;t++)
 				{
 					dest[t]=ClipSample(filter.processSample((mix_sample_t)(gain*src[t-srcOffset])));
-					UPDATE_PROGRESS_BAR(t);
+					statusBar.update(t);
 				}
-				END_PROGRESS_BAR();
 			break;
 			}
 

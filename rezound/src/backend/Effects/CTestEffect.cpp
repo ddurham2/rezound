@@ -122,7 +122,7 @@ bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 
 			c.reset();
 
-			BEGIN_PROGRESS_BAR("Filtering -- Channel "+istring(i),start,stop); 
+			CStatusBar statusBar("Filtering -- Channel "+istring(i),start,stop); 
 
 			sample_pos_t srcPos=srcOffset;
 			sample_pos_t destPos=start;
@@ -140,7 +140,7 @@ bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 				for(sample_pos_t t=0;t<count;t++)
 					dest[destPos++]=ClipSample(c.readSample());
 
-				UPDATE_PROGRESS_BAR(destPos);
+				statusBar.update(destPos);
 			}
 
 			/* could do this.. but would need to back that data up too for undo
@@ -148,8 +148,6 @@ bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 			for(sample_pos_t t=0;t<M-1;t++,destPos++)
 				dest[destPos]=ClipSample(dest[destPos]+c.readSample());
 			*/
-
-			END_PROGRESS_BAR();
 
 
 			if(!prepareForUndo)
@@ -167,15 +165,13 @@ bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 
 			TSimpleConvolver<mix_sample_t,float> convolver(filter_kernel,M);
 
-			BEGIN_PROGRESS_BAR("Filtering -- Channel "+istring(i),start,stop); 
+			CStatusBar statusBar("Filtering -- Channel "+istring(i),start,stop); 
 
 			for(sample_pos_t t=start;t<=stop;t++)
 			{
 				dest[t]=ClipSample(convolver.processSample(src[t-srcOffset]));
-				UPDATE_PROGRESS_BAR(t);
+				statusBar.update(t);
 			}
-
-			END_PROGRESS_BAR();
 
 			if(!prepareForUndo)
 				actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);

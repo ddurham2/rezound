@@ -62,7 +62,7 @@ bool CFlangeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 	{
 		if(actionSound.doChannel[i])
 		{
-			BEGIN_PROGRESS_BAR("Flange -- Channel "+istring(i),start,stop); 
+			CStatusBar statusBar("Flange -- Channel "+istring(i),start,stop); 
 
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
@@ -82,7 +82,7 @@ bool CFlangeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 			for(sample_pos_t t=start;t<=stop;t++)
 			{
 				dest[t]=ClipSample(flangeEffect.processSample(src[srcP++]));
-				UPDATE_PROGRESS_BAR(t);
+				statusBar.update(t);
 			}
 			
 /* This code can be used to test what the LFOs actually look like
@@ -92,8 +92,6 @@ bool CFlangeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 				UPDATE_PROGRESS_BAR(t);
 			}
 */
-
-			END_PROGRESS_BAR();
 		}
 	}
 

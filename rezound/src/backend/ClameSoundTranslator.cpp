@@ -204,7 +204,7 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 
 				// ??? in order to do a status bar I would need to be able to capture the stderr from the process (which I could do by using and modifying my own popen)
 				// ??? or I could tell peopen to redirect the ouptut to a temp file and maybe read that temp file
-			//BEGIN_PROGRESS_BAR("Loading Sound",ftell(f),count);
+			//CStatusBar statusBar("Loading Sound",ftell(f),count);
 			for(;;)
 			{
 				size_t chunkSize=fread((void *)((sample_t *)buffer),sizeof(sample_t)*channelCount,BUFFER_SIZE,p);
@@ -221,9 +221,8 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 				}
 				pos+=chunkSize;
 
-				//UPDATE_PROGRESS_BAR(ftell(f));
+				//statusBar.update(ftell(f));
 			}
-			//END_PROGRESS_BAR();
 
 			// remove any extra allocated space
 			if(sound->getLength()>pos)
@@ -376,7 +375,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 			TAutoBuffer<sample_t> buffer(BUFFER_SIZE*channelCount);
 			sample_pos_t pos=0;
 
-			BEGIN_CANCEL_PROGRESS_BAR("Saving Sound",0,size);
+			CStatusBar statusBar("Saving Sound",0,size,true);
 			while(pos<size)
 			{
 				size_t chunkSize=BUFFER_SIZE;
@@ -395,14 +394,12 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 				if(fwrite((void *)((sample_t *)buffer),sizeof(sample_t)*channelCount,chunkSize,p)!=chunkSize)
 					fprintf(stderr,"%s -- dropped some data while writing\n",__func__);
 
-				UPDATE_PROGRESS_BAR__IF_CANCEL(pos)
+				if(statusBar.update(pos))
 				{ // cancelled
-					END_PROGRESS_BAR();
 					ret=false;
 					goto cancelled;
 				}
 			}
-			END_PROGRESS_BAR();
 		}
 		else
 			throw(runtime_error(string(__func__)+" -- internal error -- an unhandled sample_t type"));

@@ -281,7 +281,7 @@ bool ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 		sample_pos_t pos=0;
 
 		unsigned long count=CPath(filename).getSize();
-		BEGIN_CANCEL_PROGRESS_BAR("Loading Sound",ftell(f),count);
+		CStatusBar statusBar("Loading Sound",ftell(f),count,true);
 
 		int eof=0;
 		int current_section;
@@ -308,7 +308,7 @@ bool ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 				pos+=chunkSize;
 			}
 
-			UPDATE_PROGRESS_BAR__IF_CANCEL(ftell(f))
+			if(statusBar.update(ftell(f)))
 			{ // cancelled
 				ret=false;
 				goto cancelled;
@@ -321,8 +321,6 @@ bool ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 
 		cancelled:
 
-		END_PROGRESS_BAR();
-
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 		{
 			delete accessers[t];
@@ -331,8 +329,6 @@ bool ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 	}
 	catch(...)
 	{
-		endAllProgressBars();
-
 		ov_clear(&vf); // closes file too
 
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
@@ -478,7 +474,7 @@ bool ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound)
 
 		const sample_pos_t chunkCount= (size/CHUNK_SIZE) + ((size%CHUNK_SIZE)!=0 ? 1 : 0);
 
-		BEGIN_CANCEL_PROGRESS_BAR("Saving Sound",0,chunkCount);
+		CStatusBar statusBar("Saving Sound",0,chunkCount,true);
 
 		for(sample_pos_t t=0;t<=chunkCount;t++)
 		{
@@ -537,7 +533,7 @@ bool ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound)
 				}
 			}
 
-			UPDATE_PROGRESS_BAR__IF_CANCEL(t)
+			if(statusBar.update(t))
 			{
 				ret=false;
 				goto cancelled;
@@ -545,8 +541,6 @@ bool ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound)
 		}
 
 		cancelled:
-
-		END_PROGRESS_BAR();
 
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 		{
@@ -572,8 +566,6 @@ bool ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound)
 		vorbis_info_clear(&vi);
 
 		fclose(f);
-
-		endAllProgressBars();
 
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 			delete accessers[t];

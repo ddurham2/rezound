@@ -91,3 +91,26 @@ void endAllProgressBars()
 	gStatusComm->endAllProgressBars();
 }
 
+
+// --- CStatusBar --------------------------------------
+
+CStatusBar::CStatusBar(const string title,const sample_pos_t firstValue,const sample_pos_t lastValue,const bool showCancelButton) :
+	handle(gStatusComm->beginProgressBar(title,showCancelButton)),
+	sub(firstValue),
+	valueDiff(lastValue-firstValue),
+	div( valueDiff<100 ? 1 : ((valueDiff+100-1)/100) ),
+	mul( valueDiff<100 ? (100.0/valueDiff) : 100.0/(valueDiff/div) ),
+	lastProgress(0)
+{
+}
+
+CStatusBar::~CStatusBar()
+{
+	gStatusComm->endProgressBar(handle);
+}
+
+void CStatusBar::reset()
+{
+	lastProgress=0;
+	gStatusComm->updateProgressBar(handle,0);
+}

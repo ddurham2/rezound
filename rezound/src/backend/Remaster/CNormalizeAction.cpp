@@ -64,7 +64,7 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 			sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 			sample_pos_t posAdd=prepareForUndo ? start : 0; // add this to the positions incase src is a tempPool for undo purposes because it would start at 0 instead of start
 
-			BEGIN_PROGRESS_BAR("Analyzing -- Channel "+istring(i),srcOffset,srcOffset+selectionLength); 
+			CStatusBar statusBar("Analyzing -- Channel "+istring(i),srcOffset,srcOffset+selectionLength); 
 
 			for(unsigned t=0;t<regionCount;t++)
 			{
@@ -77,13 +77,11 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 						maxValues[i][t]=my_abs(src[srcOffset]);
 						maxValuePositions[i][t]=srcOffset+posAdd;
 					}
-					UPDATE_PROGRESS_BAR(srcOffset);
+					statusBar.update(srcOffset);
 			
 					srcOffset++;
 				}
 			}
-
-			END_PROGRESS_BAR();
 		}
 	}
 
@@ -132,17 +130,15 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 				sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 				sample_pos_t destPos=start;
 
-				BEGIN_PROGRESS_BAR("Normalizing -- Channel "+istring(i),start,stop); 
+				CStatusBar statusBar("Normalizing -- Channel "+istring(i),start,stop); 
 
 				const float gain=(float)normalizationLevel/(float)maxValues[i][0];
 				for(sample_pos_t j=0;j<selectionLength;j++)
 				{
 					dest[destPos++]=ClipSample(src[srcOffset++]*gain);
-					UPDATE_PROGRESS_BAR(destPos);
+					statusBar.update(destPos);
 				}
 			
-				END_PROGRESS_BAR();
-
 				if(!prepareForUndo)
 					actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
 			}
@@ -179,7 +175,7 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 				sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 				sample_pos_t destPos=start;
 
-				BEGIN_PROGRESS_BAR("Normalizing -- Channel "+istring(i),start,stop); 
+				CStatusBar statusBar("Normalizing -- Channel "+istring(i),start,stop); 
 
 				for(unsigned t=0;t<=regionCount;t++)
 				{
@@ -199,12 +195,10 @@ bool CNormalizeAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 						float gain=(float)(fNormalizationLevel/y);
 
 						dest[destPos++]=ClipSample(src[srcOffset++]*gain);
-						UPDATE_PROGRESS_BAR(destPos);
+						statusBar.update(destPos);
 					}
 				}
 			
-				END_PROGRESS_BAR();
-
 				if(!prepareForUndo)
 					actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
 			}

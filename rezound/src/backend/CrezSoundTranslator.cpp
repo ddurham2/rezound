@@ -189,7 +189,7 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 		{
 			for(unsigned i=0;i<channelCount;i++)
 			{
-				BEGIN_CANCEL_PROGRESS_BAR("Loading Channel "+istring(i),0,99);
+				CStatusBar statusBar("Loading Channel "+istring(i),0,99,true);
 
 				CSound::CInternalRezPoolAccesser dest=sound->getAudioInternal(i);
 
@@ -200,16 +200,11 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 					for(unsigned int t=0;t<100;t++)
 					{
 						dest.copyData(t*chunkSize,loadFromFile.getPoolAccesser<sample_t>("Channel "+istring(i+1)),t*chunkSize,chunkSize);
-						UPDATE_PROGRESS_BAR__IF_CANCEL(t)
-						{
-							END_PROGRESS_BAR();
+						if(statusBar.update(t))
 							return false; // cancelled
-						}
 					}
 				}
 				dest.copyData(100*chunkSize,loadFromFile.getPoolAccesser<sample_t>("Channel "+istring(i+1)),100*chunkSize,size%100);
-
-				END_PROGRESS_BAR();
 			}
 		}
 		else
@@ -273,7 +268,7 @@ bool CrezSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 		{
 			for(unsigned i=0;i<sound->getChannelCount();i++)
 			{
-				BEGIN_CANCEL_PROGRESS_BAR("Saving Channel "+istring(i),0,99);
+				CStatusBar statusBar("Saving Channel "+istring(i),0,99,true);
 
 				TPoolAccesser<sample_t,CSound::PoolFile_t> dest=saveToFile.createPool<sample_t>("Channel "+istring(i+1));
 
@@ -285,17 +280,14 @@ bool CrezSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 					{
 						dest.copyData(t*chunkSize,sound->getAudio(i),t*chunkSize,chunkSize,true);
 
-						UPDATE_PROGRESS_BAR__IF_CANCEL(t)
+						if(statusBar.update(t))
 						{ // cancelled
 							saveToFile.closeFile(false,true);
-							END_PROGRESS_BAR();
 							return false;
 						}
 					}
 				}
 				dest.copyData(100*chunkSize,sound->getAudio(i),100*chunkSize,sound->getLength()%100,true);
-
-				END_PROGRESS_BAR();
 			}
 		}
 		else

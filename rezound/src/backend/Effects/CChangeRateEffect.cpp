@@ -70,7 +70,7 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 	{
 		if(actionSound.doChannel[i])
 		{
-			BEGIN_PROGRESS_BAR("Changing Rate -- Channel "+istring(i),actionSound.start,actionSound.start+newLength); 
+			CStatusBar statusBar("Changing Rate -- Channel "+istring(i),actionSound.start,actionSound.start+newLength); 
 	
 			// here, we're using the undo data as a source from which to calculate the new data
 			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempAudioPoolKey,i);
@@ -116,7 +116,7 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 						// here the fudgeFactor is used with iReadPos+1 when we made the undo backup
 						dest[writePos++]=(sample_t)(p1*src[iReadPos]+p2*src[iReadPos+1]);
 		
-						UPDATE_PROGRESS_BAR(writePos);
+						statusBar.update(writePos);
 					}
 				}
 				else
@@ -134,7 +134,7 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 							// here the fudgeFactor is used with iReadPos+1 when we made the undo backup
 							dest[writePos++]=(sample_t)(p1*src[iReadPos]+p2*src[iReadPos+1]);
 
-							UPDATE_PROGRESS_BAR(writePos);
+							statusBar.update(writePos);
 						}
 					}
 					else
@@ -157,7 +157,6 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 			else
 				printf("YEAH NO SAMPLES OFF!!!\n");
 
-			END_PROGRESS_BAR();
 		}
 	}
 

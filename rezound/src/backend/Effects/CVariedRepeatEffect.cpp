@@ -36,8 +36,7 @@ bool CVariedRepeatEffect::doActionSizeSafe(CActionSound &actionSound,bool prepar
 	{
 		if(actionSound.doChannel[i])
 		{
-
-			BEGIN_PROGRESS_BAR("Varied Repeat -- Channel "+istring(i),0,lTime); 
+			CStatusBar statusBar("Varied Repeat -- Channel "+istring(i),0,lTime); 
 
 			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempAudioPoolKey,i);
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
@@ -50,10 +49,8 @@ bool CVariedRepeatEffect::doActionSizeSafe(CActionSound &actionSound,bool prepar
 				for(sample_pos_t p=0;p<repeat && t<lTime;p++,t++)
 					dest[start+t]=src[p];
 
-				UPDATE_PROGRESS_BAR(t);
+				statusBar.update(t);
 			}
-
-			END_PROGRESS_BAR();
 		}
 	}
 

@@ -109,7 +109,7 @@ bool CStaticReverbEffect::doActionSizeSafe(CActionSound &actionSound,bool prepar
 	{
 		if(actionSound.doChannel[i])
 		{
-			BEGIN_PROGRESS_BAR("Reverb -- Channel "+istring(i),start,stop); 
+			CStatusBar statusBar("Reverb -- Channel "+istring(i),start,stop); 
 
 			CRezPoolAccesser a=actionSound.sound->getAudio(i);
 
@@ -153,13 +153,9 @@ bool CStaticReverbEffect::doActionSizeSafe(CActionSound &actionSound,bool prepar
 
 				a[t]=ClipSample(sum);
 
-				UPDATE_PROGRESS_BAR(t);
+				statusBar.update(t);
 			}
 #endif
-
-
-
-			END_PROGRESS_BAR();
 		}
 	}
 

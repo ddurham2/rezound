@@ -1082,13 +1082,12 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
-				BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
+				CStatusBar statusBar("Mixing Data -- Channel "+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
 					dest[t]=srcStretcher.getSample();
-					UPDATE_PROGRESS_BAR(t);
+					statusBar.update(t);
 				}
-				END_PROGRESS_BAR();
 			}
 			else
 			{
@@ -1105,14 +1104,13 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
-				BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
+				CStatusBar statusBar("Mixing Data -- Channel "+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
 					dest[t]=ClipSample((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++]);
 
-					UPDATE_PROGRESS_BAR(t);
+					statusBar.update(t);
 				}
-				END_PROGRESS_BAR();
 			}
 			else
 			{
@@ -1126,13 +1124,12 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
-				BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
+				CStatusBar statusBar("Mixing Data -- Channel "+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
 					dest[t]=ClipSample((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample());
-					UPDATE_PROGRESS_BAR(t);
+					statusBar.update(t);
 				}
-				END_PROGRESS_BAR();
 			}
 			else
 			{
@@ -1149,14 +1146,12 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
-				BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
+				CStatusBar statusBar("Mixing Data -- Channel "+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
 					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)src[srcWhere++]);
-
-					UPDATE_PROGRESS_BAR(t);
+					statusBar.update(t);
 				}
-				END_PROGRESS_BAR();
 			}
 			else
 			{	
@@ -1170,13 +1165,12 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
-				BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
+				CStatusBar statusBar("Mixing Data -- Channel "+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
 					dest[t]=ClipSample((mix_sample_t)dest[t]*(mix_sample_t)srcStretcher.getSample());
-					UPDATE_PROGRESS_BAR(t);
+					statusBar.update(t);
 				}
-				END_PROGRESS_BAR();
 			}
 			else
 			{
@@ -1193,14 +1187,12 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
-				BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
+				CStatusBar statusBar("Mixing Data -- Channel "+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
 					dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)src[srcWhere++])/2;
-
-					UPDATE_PROGRESS_BAR(t);
+					statusBar.update(t);
 				}
-				END_PROGRESS_BAR();
 			}
 			else
 			{
@@ -1214,13 +1206,12 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 			const sample_pos_t last=where+length;
 			if(showProgressBar)
 			{
-				BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
+				CStatusBar statusBar("Mixing Data -- Channel "+istring(channel),where,last);
 				for(sample_pos_t t=where;t<last;t++)
 				{
 					dest[t]=((mix_sample_t)dest[t]+(mix_sample_t)srcStretcher.getSample())/2;
-					UPDATE_PROGRESS_BAR(t);
+					statusBar.update(t);
 				}
-				END_PROGRESS_BAR();
 			}
 			else
 			{

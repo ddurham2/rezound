@@ -91,7 +91,7 @@ bool CUnclipAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 
 		if(actionSound.doChannel[i])
 		{
-			BEGIN_PROGRESS_BAR("Unclip -- Channel "+istring(i),start,stop);
+			CStatusBar statusBar("Unclip -- Channel "+istring(i),start,stop);
 
 			CRezPoolAccesser a=actionSound.sound->getAudio(i);
 
@@ -208,12 +208,12 @@ bool CUnclipAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 						greaterThanZeroSlopeCount++;
 				}
 
-				UPDATE_PROGRESS_BAR(pos);
+				statusBar.update(pos);
 			}
 
 			}
 
-			RESET_PROGRESS_BAR()
+			statusBar.reset();
 
 			{
 			//                                         _
@@ -317,7 +317,7 @@ bool CUnclipAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 						lessThanZeroSlopeCount++;
 				}
 
-				UPDATE_PROGRESS_BAR(pos);
+				statusBar.update(pos);
 			}
 
 			}
@@ -327,10 +327,7 @@ bool CUnclipAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 			if(!prepareForUndo)
 				actionSound.sound->invalidatePeakData(i,start,stop);
 			
-			END_PROGRESS_BAR();
 		}
-		
-
 
 		//break; // ??? remove LATER!!!
 	}

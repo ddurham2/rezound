@@ -310,8 +310,6 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 	}
 	catch(EUserMessage &e)
 	{
-		endAllProgressBars();
-
 		if(willResize)
 			actionSound.sound->unlockForResize();
 		else
@@ -322,8 +320,6 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 	}
 	catch(...)
 	{
-		endAllProgressBars();
-
 		if(willResize)
 			actionSound.sound->unlockForResize();
 		else
@@ -398,8 +394,6 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 	}
 	catch(EUserMessage &e)
 	{
-		endAllProgressBars();
-
 		if(willResize)
 			actionSound.sound->unlockForResize();
 		else
@@ -409,8 +403,6 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 	}
 	catch(...)
 	{
-		endAllProgressBars();
-
 		if(willResize)
 			actionSound.sound->unlockForResize();
 		else

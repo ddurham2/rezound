@@ -42,7 +42,7 @@ bool CReverseEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 			sample_pos_t p2=actionSound.stop;
 			sample_pos_t d=actionSound.selectionLength()/2;
 
-			BEGIN_PROGRESS_BAR("Reversing -- Channel "+istring(i),0,d);
+			CStatusBar statusBar("Reversing -- Channel "+istring(i),0,d);
 
 			for(sample_pos_t t=0;t<d;t++)
 			{
@@ -50,10 +50,8 @@ bool CReverseEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 				a[p1++]=b[p2];
 				b[p2--]=temp;
 
-				UPDATE_PROGRESS_BAR(t);
+				statusBar.update(t);
 			}
-
-			END_PROGRESS_BAR();
 
 			actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
 		}

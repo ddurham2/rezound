@@ -61,7 +61,6 @@ bool ASoundTranslator::loadSound(const string filename,CSound *sound) const
 	catch(...)
 	{
 		sound->unlockForResize();
-		endAllProgressBars();
 		throw;
 	}
 	return true;
@@ -92,7 +91,6 @@ bool ASoundTranslator::saveSound(const string filename,CSound *sound) const
 	catch(...)
 	{
 		sound->unlockSize();
-		endAllProgressBars();
 		throw;
 	}
 }

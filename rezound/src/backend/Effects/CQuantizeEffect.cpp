@@ -56,7 +56,7 @@ bool CQuantizeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 	{
 		if(actionSound.doChannel[i])
 		{
-			BEGIN_PROGRESS_BAR("Quantize -- Channel "+istring(i),start,stop); 
+			CStatusBar statusBar("Quantize -- Channel "+istring(i),start,stop); 
 
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
@@ -67,10 +67,8 @@ bool CQuantizeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 			for(sample_pos_t t=start;t<=stop;t++)
 			{
 				dest[t]=ClipSample(quantizer.processSample((mix_sample_t)(inputGain*src[srcP++]))*outputGain);
-				UPDATE_PROGRESS_BAR(t);
+				statusBar.update(t);
 			}
-
-			END_PROGRESS_BAR();
 		}
 	}
 

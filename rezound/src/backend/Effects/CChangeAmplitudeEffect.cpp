@@ -43,7 +43,7 @@ bool CChangeAmplitudeEffect::doActionSizeSafe(CActionSound &actionSound,bool pre
 	{
 		if(actionSound.doChannel[i])
 		{
-			BEGIN_PROGRESS_BAR("Changing Amplitude -- Channel "+istring(i),0,selectionLength); 
+			CStatusBar statusBar("Changing Amplitude -- Channel "+istring(i),0,selectionLength); 
 
 			sample_pos_t srcp=0;
 			for(unsigned x=0;x<volumeCurve.size()-1;x++)
@@ -71,7 +71,7 @@ bool CChangeAmplitudeEffect::doActionSizeSafe(CActionSound &actionSound,bool pre
 						float scalar=(float)(segmentStartValue+(((segmentStopValue-segmentStartValue)*(double)(t))/(segmentLength)));
 						dest[t+segmentStartPosition]=ClipSample((mix_sample_t)(src[srcp++]*scalar));
 
-						UPDATE_PROGRESS_BAR(srcp);
+						statusBar.update(srcp);
 					}
 				}
 				else
@@ -82,13 +82,11 @@ bool CChangeAmplitudeEffect::doActionSizeSafe(CActionSound &actionSound,bool pre
 						float scalar=(float)(segmentStartValue+(((segmentStopValue-segmentStartValue)*(double)(t-segmentStartPosition))/(segmentLength)));
 						a[t]=ClipSample((mix_sample_t)(a[t]*scalar));
 
-						UPDATE_PROGRESS_BAR(t-start);
+						statusBar.update(t-start);
 					}
 					actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
 				}
 			}
-
-			END_PROGRESS_BAR();
 		}
 	}
 
