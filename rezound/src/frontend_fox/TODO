@@ -1,6 +1,8 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- Add a button to the FXGraphParamValue which smoothes out angles by making it many nodes to approximate curve.. call it 'approximate'
+
 	- need to have a hot-key that centers the cue's by seeing the right or left most one on screen and centering the one after that.. might include the start and stop positions in that too
 
 	- add a quick (shortcut to) fading in or out the selection use x^2 for the algorithm
