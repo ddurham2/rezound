@@ -50,6 +50,7 @@ libfrontend_la_SOURCES= \
 			CVoxDialog.cpp \
 			COggDialog.cpp \
 			CMp3Dialog.cpp \
+			CJACKPortChoiceDialog.cpp \
 			drawPortion.cpp \
 			EditActionDialogs.cpp \
 			EffectActionDialogs.cpp \
@@ -122,6 +123,7 @@ noinst_HEADERS=\
 	CVoxDialog.h \
 	COggDialog.h \
 	CMp3Dialog.h \
+	CJACKPortChoiceDialog.h \
 	EditActionDialogs.h \
 	EffectActionDialogs.h \
 	FilterActionDialogs.h \
