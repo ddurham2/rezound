@@ -313,6 +313,8 @@
 			- I would need to address how real-time effects get inserted into the play queue, perhaps CSoundPlayerChannel would pull data from a module chain
 				- then different playback rates and formats could be handled by just having an initial sample rate conversion module to the native sample rate
 
+		- or for multi-track editing, I could create a derivation of CSoundPlayerChannel that overrides prebufferChunk() so that it reads from all the sounds that are in the multitrack sound for that chunk period and apply any real-time alterations
+
 	- I could determine the most recent cue passed while playing at the beginning of each time I go to mix some sound... and set just an integer index in the ASoundPlayerChannel object for the frontend to read and display the current playing cue name in a status bar
 		- I'm not implementing this right away because I don't know how useful it would be... But there were lots of off screen cues, it could be useful to have an idea of where the sound was playing 
 		- If I do implement this, I should create a method in ASound which returns the most recent cue, and call it at each mix buffer call... This method should use the cue index in ASound for effient finding of this value
@@ -497,4 +499,7 @@
 		- this would be fixed in src/PoolFile/CMultiFile.cpp
 
 	- should put a "swap audio between two channels" in the edit menu which would not allow showing the  channel select dialog, but would have a normal dialog allowing the user to selection which two channels to swap data for.. moveData should work as a means of swapping data
+
+	- Add a "fit paste mix" which stretches the clipboard contents to fit within the selected region and mixes it on top.. I should allow two modes, one that uses changing the rate and one that uses changing the speed (without the pitch)
+		- ??? still would need to implement changing the speed without the pitch
 
