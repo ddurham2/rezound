@@ -48,6 +48,8 @@
  * - If I ever do have TSoundStretcher support more than 2 pointer sample interpolation then I 
  *   should make mixOntoBuffer support saving N samples instead of a fixed 1 samples.
  *
+ * - the JJJ comments indicate something I don't really like about the way I'm mutexing
+ *
  */
 
 CSoundPlayerChannel::CSoundPlayerChannel(ASoundPlayer *_player,CSound *_sound) :
@@ -252,19 +254,21 @@ void CSoundPlayerChannel::setSeekSpeed(float _seekSpeed)
 	}
 
 
-	if(fabs(origSeekSpeed)>5.0 && fabs(seekSpeed)<=5.0)
-	{ // since we're coming from a seek speed faster than 5.0 and now it's less than 5.0 invalidate prebuffered data because what has been buffered so far is skipping a lot of data
+	if((fabs(origSeekSpeed)>5.0 && fabs(seekSpeed)<=5.0) || (fabs(origSeekSpeed)<=5.0 && fabs(seekSpeed)>5.0))
+	{ // the play speed just cross over or back from the 5.0 threshold so invalidate prebuffered data because what has been buffered so far is skipping or not skipping data
 		// and set the prebuffer position to the most recently played position
 		CMutexLocker l(prebufferPositionMutex);
+		prebufferedChunkPipe.clear(); // JJJ need to clean the buffer
 		prebufferPosition=playPosition;
-		prebufferedChunkPipe.clear();
+		prebufferedChunkPipe.clear(); // JJJ (but a write() might have been pending on the buffer)
 	}
 	else if((seekSpeed*origSeekSpeed)<0.0)
 	{ // invalidate prebuffered data since the signs of the new and old play speeds where different (which means direction changed)
 		// and set the prebuffer position to the most recently played position
 		CMutexLocker l(prebufferPositionMutex);
+		prebufferedChunkPipe.clear(); // JJJ need to clean the buffer
 		prebufferPosition=playPosition;
-		prebufferedChunkPipe.clear();
+		prebufferedChunkPipe.clear(); // JJJ (but a write() might have been pending on the buffer)
 	}
 
 	
