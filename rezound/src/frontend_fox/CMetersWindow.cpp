@@ -30,6 +30,22 @@
 #include "../backend/unit_conv.h"
 #include "../backend/ASoundPlayer.h"
 
+
+// color definitions
+#define M_BACKGROUND (FXRGB(0,0,0))
+#define M_TEXT_COLOR (FXRGB(164,164,164))
+#define M_METER_OFF (FXRGB(48,48,48))
+
+#define M_GREEN (FXRGB(80,255,32))
+#define M_YELLOW (FXRGB(255,212,48))
+#define M_RED (FXRGB(255,38,0))
+
+#define M_BRT_GREEN (FXRGB(144,255,96))
+#define M_BRT_YELLOW (FXRGB(255,255,112))
+#define M_BRT_RED (FXRGB(255,38,0))
+
+
+
 class CMeter : public FXHorizontalFrame
 {
 	FXDECLARE(CMeter);
@@ -57,8 +73,8 @@ public:
 		grandMaxPeakLevelLabel->setTarget(this);
 		grandMaxPeakLevelLabel->setSelector(ID_GRAND_MAX_PEAK_LEVEL_LABEL);
 		grandMaxPeakLevelLabel->setFont(statusFont);
-		grandMaxPeakLevelLabel->setTextColor(FXRGB(128,128,128));
-		grandMaxPeakLevelLabel->setBackColor(FXRGB(0,0,0));
+		grandMaxPeakLevelLabel->setTextColor(M_TEXT_COLOR);
+		grandMaxPeakLevelLabel->setBackColor(M_BACKGROUND);
 
 
 		//static char pix[]={0x55,0x2a};
@@ -92,9 +108,9 @@ public:
 		const FXint height=canvas->getHeight();
 
 		// draw 11 tick marks above level indication
-		dc.setForeground(FXRGB(0,0,0));
+		dc.setForeground(M_BACKGROUND);
 		dc.fillRectangle(0,0,width,2);
-		dc.setForeground(FXRGB(128,128,128));
+		dc.setForeground(M_TEXT_COLOR);
 		#define NUM 11
 		for(int t=0;t<NUM;t++)
 		{
@@ -103,11 +119,11 @@ public:
 		}
 
 		// draw horz line below level indication
-		dc.setForeground(FXRGB(128,128,128));
+		dc.setForeground(M_TEXT_COLOR);
 		dc.drawLine(0,height-1,width,height-1);
 
 		// draw gray background underneath the stippled level indication 
-		dc.setForeground(FXRGB(48,48,48));
+		dc.setForeground(M_METER_OFF);
 		dc.fillRectangle(0,2,width,height-3);
 
 		// draw RMS level indication
@@ -116,23 +132,23 @@ public:
 		dc.setStipple(stipplePattern);
 		if(x>(width*3/4))
 		{
-			dc.setForeground(FXRGB(80,255,32)); // green
+			dc.setForeground(M_GREEN); // green
 			dc.fillRectangle(0,2,width/2,height-3);
-			dc.setForeground(FXRGB(255,212,48)); // yellow
+			dc.setForeground(M_YELLOW); // yellow
 			dc.fillRectangle(width/2,2,width/4,height-3);
-			dc.setForeground(FXRGB(255,38,0)); // red
+			dc.setForeground(M_RED); // red
 			dc.fillRectangle(width*3/4,2,x-(width*3/4),height-3);
 		}
 		else if(x>(width/2))
 		{
-			dc.setForeground(FXRGB(80,255,32)); // green
+			dc.setForeground(M_GREEN); // green
 			dc.fillRectangle(0,2,width/2,height-3);
-			dc.setForeground(FXRGB(255,212,48)); // yellow
+			dc.setForeground(M_YELLOW); // yellow
 			dc.fillRectangle(width/2,2,x-width/2,height-3);
 		}
 		else
 		{
-			dc.setForeground(FXRGB(80,255,32)); // green
+			dc.setForeground(M_GREEN); // green
 			dc.fillRectangle(0,2,x,height-3);
 		}
 
@@ -142,26 +158,26 @@ public:
 		dc.setFillStyle(FILL_SOLID);
 		if(x>(width*3/4))
 		{
-			dc.setForeground(FXRGB(80,255,32)); // green
+			dc.setForeground(M_GREEN);
 			dc.fillRectangle(0,y,width/2,2);
 
-			dc.setForeground(FXRGB(255,212,48)); // yellow
+			dc.setForeground(M_YELLOW);
 			dc.fillRectangle(width/2,y,width/4,2);
 
-			dc.setForeground(FXRGB(255,38,0)); // red
+			dc.setForeground(M_RED);
 			dc.fillRectangle(width*3/4,y,x-(width*3/4),2);
 		}
 		else if(x>(width/2))
 		{
-			dc.setForeground(FXRGB(80,255,32)); // green
+			dc.setForeground(M_GREEN);
 			dc.fillRectangle(0,y,width/2,2);
 
-			dc.setForeground(FXRGB(255,212,48)); // yellow
+			dc.setForeground(M_YELLOW);
 			dc.fillRectangle(width/2,y,x-width/2,2);
 		}
 		else
 		{
-			dc.setForeground(FXRGB(80,255,32)); // green
+			dc.setForeground(M_GREEN);
 			dc.fillRectangle(0,y,x,2);
 		}
 
@@ -169,11 +185,11 @@ public:
 		x=(maxPeakLevel*width/MAX_SAMPLE);
 		dc.setFillStyle(FILL_SOLID);
 		if(x>(width*3/4))
-			dc.setForeground(FXRGB(255,38,0)); // brighter red
+			dc.setForeground(M_BRT_RED);
 		else if(x>(width/2))
-			dc.setForeground(FXRGB(255,255,112)); // brighter yellow
+			dc.setForeground(M_BRT_YELLOW);
 		else
-			dc.setForeground(FXRGB(144,255,96)); // brighter green
+			dc.setForeground(M_BRT_GREEN);
 		dc.fillRectangle(x-1,2,2,height-3);
 			
 
@@ -300,13 +316,13 @@ CMetersWindow::CMetersWindow(FXComposite *parent) :
 	d.weight=FONTWEIGHT_NORMAL;
 	statusFont=new FXFont(getApp(),d);
 
-	levelMetersFrame->setBackColor(FXRGB(0,0,0));
-		headerFrame->setBackColor(FXRGB(0,0,0));
+	levelMetersFrame->setBackColor(M_BACKGROUND);
+		headerFrame->setBackColor(M_BACKGROUND);
 
 			labelFrame->setTarget(this);
 			labelFrame->setSelector(ID_LABEL_FRAME);
-			labelFrame->setBackColor(FXRGB(0,0,0));
-			#define MAKE_DB_LABEL(text) { FXLabel *l=new FXLabel(labelFrame,text,NULL,LAYOUT_FIX_X|LAYOUT_FIX_Y,0,0,0,0, 0,0,0,0); l->setBackColor(FXRGB(0,0,0)); l->setTextColor(FXRGB(128,128,128)); l->setFont(statusFont); }
+			labelFrame->setBackColor(M_BACKGROUND);
+			#define MAKE_DB_LABEL(text) { FXLabel *l=new FXLabel(labelFrame,text,NULL,LAYOUT_FIX_X|LAYOUT_FIX_Y,0,0,0,0, 0,0,0,0); l->setBackColor(M_BACKGROUND); l->setTextColor(M_TEXT_COLOR); l->setFont(statusFont); }
 			MAKE_DB_LABEL("dBFS")
 			MAKE_DB_LABEL("-20")
 			MAKE_DB_LABEL("-14")
@@ -322,10 +338,10 @@ CMetersWindow::CMetersWindow(FXComposite *parent) :
 			grandMaxPeakLevelLabel->setTarget(this);
 			grandMaxPeakLevelLabel->setSelector(ID_GRAND_MAX_PEAK_LEVEL_LABEL);
 			grandMaxPeakLevelLabel->setFont(statusFont);
-			grandMaxPeakLevelLabel->setTextColor(FXRGB(128,128,128));
-			grandMaxPeakLevelLabel->setBackColor(FXRGB(0,0,0));
+			grandMaxPeakLevelLabel->setTextColor(M_TEXT_COLOR);
+			grandMaxPeakLevelLabel->setBackColor(M_BACKGROUND);
 
-	analyzerFrame->setBackColor(FXRGB(0,0,0));
+	analyzerFrame->setBackColor(M_BACKGROUND);
 
 
 	// AAA
