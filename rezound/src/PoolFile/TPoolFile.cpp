@@ -42,6 +42,13 @@
  * 	In many functions i re-evaluate over and over SAT[poolId][index].. I should probably reduce that to  vector<RLogicalBlock> &poolSAT=SAT[poolId];
  */
 
+/*???
+ *	For now I have chosen simply to write all data as little endian.  This could be improved by writing an endian indicator
+ *	and always write as the native endian.  Then upon reading the data check the endian indicated and convert only if necessary.
+ *	Have a version number increase so that previous versions of rezound loading a new file will say 'this code cannot read that version'
+ *	This way people running rezound on big endian hardware do not get penalized.  Conversion is done only when a file is take from one endian platform to another
+ */
+
 /* ??? One possible improvment, would be to fix this situation:
  * 	blockSize=2048
  * 	all pools are empty
@@ -68,6 +75,8 @@
 #include <iterator>
 
 #include <istring>
+
+#include <endian_util.h>
 
 #include "TPoolFile.h"
 #include "TStaticPoolAccesser.h"
@@ -226,23 +235,27 @@ template<class l_addr_t,class p_addr_t>
 		if(blockFile.getSize()>0)
 		{
 			// check signature string
-			char buffer[8]={0};
+			int8_t buffer[8]={0};
 			blockFile.read(buffer,8,SIGNATURE_OFFSET);
-			if(strncmp(buffer,FORMAT_SIGNATURE,8))
+		// ??? if sizeof(char)!=sizeof(int8_t) then strncmp won't work
+			if(strncmp((const char *)buffer,FORMAT_SIGNATURE,8))
 				throw runtime_error("invalid format signature");
 
 			// check format version
 			uint32_t formatVersion;
 			blockFile.read(&formatVersion,sizeof(formatVersion),FORMAT_VERSION_OFFSET);
+			lethe(&formatVersion);
 			if(formatVersion!=FORMAT_VERSION)
 				throw runtime_error("invalid or unsupported format version: "+istring((int)formatVersion));
 
 			int8_t dirty;
 			blockFile.read(&dirty,sizeof(dirty),DIRTY_INDICATOR_OFFSET);
+			lethe(&dirty);
 
 			if(dirty)
 			{	// file is marked as dirty
 				blockFile.read(&whichSATFile,sizeof(whichSATFile),WHICH_SAT_FILE_OFFSET);
+				lethe(&whichSATFile);
 
 				SATFilename=filename+".SAT";
 
@@ -258,6 +271,7 @@ template<class l_addr_t,class p_addr_t>
 			{
 				uint64_t metaDataOffset;
 				blockFile.read(&metaDataOffset,sizeof(metaDataOffset),META_DATA_OFFSET);
+				lethe(&metaDataOffset);
 				if(metaDataOffset<LEADING_DATA_SIZE)
 					throw runtime_error("invalid meta data offset");
 
@@ -1052,18 +1066,24 @@ template<class l_addr_t,class p_addr_t>
 	f->write(&eofChar,sizeof(eofChar),EOF_OFFSET);
 
 	// Format Version
+	{
 	uint32_t formatVersion=FORMAT_VERSION;
+	hetle(&formatVersion);
 	f->write(&formatVersion,sizeof(formatVersion),FORMAT_VERSION_OFFSET);
+	}
 
 	// Dirty
 	int8_t dirty=1;
 	f->write(&dirty,sizeof(dirty),DIRTY_INDICATOR_OFFSET);
 
 	// Which SAT File
+	{
 	uint8_t _whichSATFile=0;
 	f->write(&_whichSATFile,sizeof(_whichSATFile),WHICH_SAT_FILE_OFFSET);
+	}
 
 	// Meta Data Offset
+	hetle(&metaDataOffset);
 	f->write(&metaDataOffset,sizeof(metaDataOffset),META_DATA_OFFSET);
 }
 
@@ -1140,9 +1160,9 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::writeDirtyIndicator(const bool dirty,CMultiFile *f)
 {
-	int8_t buffer[1];
-	buffer[0]=dirty ? (char)1 : (char)0;
-	f->write(buffer,sizeof(*buffer),DIRTY_INDICATOR_OFFSET);
+	int8_t temp;
+	temp=dirty ? 1 : 0;
+	f->write(&temp,sizeof(temp),DIRTY_INDICATOR_OFFSET);
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -1187,9 +1207,9 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::writeWhichSATFile()
 {
-	uint8_t buffer[1];
-	buffer[0]=whichSATFile;
-	blockFile.write(buffer,sizeof(*buffer),WHICH_SAT_FILE_OFFSET);
+	uint8_t temp;
+	temp=whichSATFile;
+	blockFile.write(&temp,sizeof(temp),WHICH_SAT_FILE_OFFSET);
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -1210,8 +1230,11 @@ template<class l_addr_t,class p_addr_t>
 	f->seek(writeWhere,multiFileHandle);
 
 	// write number of pools
-	const uint32_t poolCount=SAT.size();
+	{
+	uint32_t poolCount=SAT.size();
+	hetle(&poolCount);
 	f->write(&poolCount,sizeof(poolCount),multiFileHandle);
+	}
 
 	for(size_t poolId=0;poolId<SAT.size();poolId++)
 	{
@@ -1225,10 +1248,13 @@ template<class l_addr_t,class p_addr_t>
 		pools[poolId].writeToFile(f,multiFileHandle);
 
 		// write number of SAT entries for this pool
-		const uint32_t SATSize=SAT[poolId].size();
+		{
+		uint32_t SATSize=SAT[poolId].size();
+		hetle(&SATSize);
 		f->write(&SATSize,sizeof(SATSize),multiFileHandle);
+		}
 
-		TAutoBuffer<uint8_t> mem(SATSize*RLogicalBlock().getMemSize());
+		TAutoBuffer<uint8_t> mem(SAT[poolId].size()*RLogicalBlock().getMemSize());
 
 		// write each SAT entry
 		size_t offset=0;
@@ -1245,9 +1271,9 @@ template<class l_addr_t,class p_addr_t>
 	invalidateAllCachedBlocks();
 
 
-	uint8_t buffer[1];
-	blockFile.read(buffer,sizeof(*buffer),WHICH_SAT_FILE_OFFSET);
-	whichSATFile=buffer[0];
+	uint8_t buffer;
+	blockFile.read(&buffer,sizeof(buffer),WHICH_SAT_FILE_OFFSET);
+	whichSATFile=buffer;
 	if(whichSATFile!=0 && whichSATFile!=1)
 	{
 		printf("invalid which SAT file value\n");
@@ -1274,6 +1300,7 @@ template<class l_addr_t,class p_addr_t>
 	// read number of pools
 	uint32_t poolCount;
 	f->read(&poolCount,sizeof(poolCount),multiFileHandle);
+	lethe(&poolCount);
 	for(size_t poolId=0;poolId<poolCount;poolId++)
 	{
 		// read pool name
@@ -1297,6 +1324,7 @@ template<class l_addr_t,class p_addr_t>
 		// read number of SAT entries
 		uint32_t SATSize;
 		f->read(&SATSize,sizeof(SATSize),multiFileHandle);
+		lethe(&SATSize);
 
 		// read SAT into mem buffer
 		TAutoBuffer<uint8_t> mem(SATSize*RLogicalBlock().getMemSize());
@@ -2667,17 +2695,24 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::RPoolInfo::writeToFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle) const
+	void TPoolFile<l_addr_t,p_addr_t>::RPoolInfo::writeToFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle) /*const  makes typeof create const types */
 {
-	f->write(&size,sizeof(size),multiFileHandle);
-	f->write(&alignment,sizeof(alignment),multiFileHandle);
+	typeof(size) tSize=size;
+	typeof(alignment) tAlignment=alignment;
+
+	hetle(&tSize);
+	f->write(&tSize,sizeof(size),multiFileHandle);
+	hetle(&tAlignment);
+	f->write(&tAlignment,sizeof(alignment),multiFileHandle);
 }
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::RPoolInfo::readFromFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle)
 {
 	f->read(&size,sizeof(size),multiFileHandle);
+	lethe(&size);
 	f->read(&alignment,sizeof(alignment),multiFileHandle);
+	lethe(&alignment);
 }
 
 
@@ -2770,15 +2805,18 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::writeToMem(uint8_t *mem,size_t &offset) const
+	void TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::writeToMem(uint8_t *mem,size_t &offset) /*const  makes typeof cause const types */
 {
 	memcpy(mem+offset,&logicalStart,sizeof(logicalStart));
+	hetle((typeof(logicalStart) *)(mem+offset));
 	offset+=sizeof(logicalStart);
 
 	memcpy(mem+offset,&size,sizeof(size));
+	hetle((typeof(size) *)(mem+offset));
 	offset+=sizeof(size);
 	
 	memcpy(mem+offset,&physicalStart,sizeof(physicalStart));
+	hetle((typeof(physicalStart) *)(mem+offset));
 	offset+=sizeof(physicalStart);
 }
 
@@ -2786,12 +2824,15 @@ template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::readFromMem(const uint8_t *mem,size_t &offset)
 {
 	memcpy(&logicalStart,mem+offset,sizeof(logicalStart));
+	lethe(&logicalStart);
 	offset+=sizeof(logicalStart);
 
 	memcpy(&size,mem+offset,sizeof(size));
+	lethe(&size);
 	offset+=sizeof(size);
 
 	memcpy(&physicalStart,mem+offset,sizeof(physicalStart));
+	lethe(&physicalStart);
 	offset+=sizeof(physicalStart);
 }
 
@@ -2876,6 +2917,8 @@ template<class l_addr_t,class p_addr_t>
 {
 	uint32_t len;
 	f->read(&len,sizeof(len),multiFileHandle);
+	lethe(&len);
+/* ??? if sizeof(char) != sizeof(int8_t) then we're in trouble */
 	char buffer[1024];
 	for(size_t t=0;t<len/1024;t++)
 	{
@@ -2892,8 +2935,11 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::writeString(const string &s,CMultiFile *f,CMultiFile::RHandle &multiFileHandle)
 {
-	uint32_t len=s.length();
-	f->write(&len,sizeof(len),multiFileHandle);
+	const uint32_t len=s.length();
+	uint32_t tLen=len;
+	hetle(&tLen);
+	f->write(&tLen,sizeof(len),multiFileHandle);
+/* ??? if sizeof(char) != sizeof(int8_t) then we're in trouble */
 	f->write(s.c_str(),len,multiFileHandle);
 }
 
