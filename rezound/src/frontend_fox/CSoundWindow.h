@@ -65,6 +65,7 @@ public:
 		ID_HORZ_ZOOM_DIAL=FXTopWindow::ID_LAST,
 		ID_HORZ_ZOOM_DIAL_PLUS,
 		ID_HORZ_ZOOM_DIAL_MINUS,
+		ID_HORZ_ZOOM_FIT,
 
 		ID_VERT_ZOOM_DIAL,
 		ID_VERT_ZOOM_DIAL_PLUS,
@@ -107,6 +108,7 @@ public:
 	long onHorzZoomDialChange(FXObject *sender,FXSelector,void*);
 	long onHorzZoomDialPlusIndClick(FXObject *sender,FXSelector sel,void *ptr);
 	long onHorzZoomDialMinusIndClick(FXObject *sender,FXSelector sel,void *ptr);
+	long onHorzZoomFitClick(FXObject *sender,FXSelector sel,void *ptr);
 
 
 
@@ -199,6 +201,7 @@ private:
 
 	FXPacker *waveViewPanel;
 		FXPacker *horzZoomPanel;
+			FXButton *horzZoomFitButton;
 			FXButton *horzZoomMinusInd;
 			FXDial *horzZoomDial;
 			FXButton *horzZoomPlusInd;
@@ -232,6 +235,8 @@ private:
 	void updateAllStatusInfo();
 	void updateSelectionStatusInfo();
 	void updatePlayPositionStatusInfo();
+
+	void changeHorzZoom(double horzZoom,FXWaveCanvas::HorzRecenterTypes horzRecenterType=FXWaveCanvas::hrtNone); // 0 -> 1
 };
 
 

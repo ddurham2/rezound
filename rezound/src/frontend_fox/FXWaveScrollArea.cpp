@@ -96,6 +96,11 @@ FXWaveScrollArea::~FXWaveScrollArea()
 void FXWaveScrollArea::updateFromEdit()
 {
 	canvas->updateFromEdit();
+
+	setPosition(-canvas->getHorzOffset(),-canvas->getVertOffset());
+	layout();
+
+	// don't ask me why.. but if I don't put this twice it won't work unless I press the fit button twice.. and still it doesn't always work.. maybe I'll figure it out one day
 	setPosition(-canvas->getHorzOffset(),-canvas->getVertOffset());
 	layout();
 }
@@ -327,9 +332,9 @@ void FXWaveScrollArea::centerStopPos()
 	setPosition(-canvas->getHorzOffsetToCenterStopPos(),pos_y);
 }
 
-void FXWaveScrollArea::showAmount(double seconds,sample_pos_t pos)
+void FXWaveScrollArea::showAmount(double seconds,sample_pos_t pos,int marginPixels)
 {
-	canvas->showAmount(seconds,pos);
+	canvas->showAmount(seconds,pos,marginPixels);
 	updateFromEdit();
 }
 

@@ -80,7 +80,7 @@ public:
 
 	const sample_pos_t getHorzOffsetToCenterStartPos() const;
 	const sample_pos_t getHorzOffsetToCenterStopPos() const;
-	void showAmount(double seconds,sample_pos_t pos);
+	void showAmount(double seconds,sample_pos_t pos,int marginPixels=0);
 
 	const bool isStartPosOnScreen() const;
 	const bool isStopPosOnScreen() const;

@@ -159,9 +159,9 @@ void FXRezWaveView::centerStopPos()
 	rulerPanel->update();
 }
 
-void FXRezWaveView::showAmount(double seconds,sample_pos_t pos)
+void FXRezWaveView::showAmount(double seconds,sample_pos_t pos,int marginPixels)
 {
-	waveScrollArea->showAmount(seconds,pos);
+	waveScrollArea->showAmount(seconds,pos,marginPixels);
 }
 
 void FXRezWaveView::updateFromSelectionChange(FXWaveCanvas::LastChangedPositions lastChangedPosition)

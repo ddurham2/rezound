@@ -67,6 +67,7 @@ FXDEFMAP(CSoundWindow) CSoundWindowMap[]=
 		// events to quickly zoom all the way in or out
 	FXMAPFUNC(SEL_COMMAND,			CSoundWindow::ID_HORZ_ZOOM_DIAL_PLUS,		CSoundWindow::onHorzZoomDialPlusIndClick),
 	FXMAPFUNC(SEL_COMMAND,			CSoundWindow::ID_HORZ_ZOOM_DIAL_MINUS,		CSoundWindow::onHorzZoomDialMinusIndClick),
+	FXMAPFUNC(SEL_COMMAND,			CSoundWindow::ID_HORZ_ZOOM_FIT,			CSoundWindow::onHorzZoomFitClick),
 
 		// invoked when vert zoom dial is changed
 	FXMAPFUNC(SEL_CHANGED,			CSoundWindow::ID_VERT_ZOOM_DIAL,		CSoundWindow::onVertZoomDialChange),
@@ -128,6 +129,7 @@ CSoundWindow::CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound) :
 
 	waveViewPanel(new FXPacker(this,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
 		horzZoomPanel(new FXPacker(waveViewPanel,LAYOUT_SIDE_BOTTOM | FRAME_NONE | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0,0,0,22, 4,4,2,2, 2,2)),
+			horzZoomFitButton(new FXButton(horzZoomPanel,"Fit\tZoom to Fit Selection",NULL,this,ID_HORZ_ZOOM_FIT,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
 			horzZoomMinusInd(new FXButton(horzZoomPanel," - \tZoom Out Full",NULL,this,ID_HORZ_ZOOM_DIAL_MINUS,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
 			horzZoomDial(new FXDial(horzZoomPanel,this,ID_HORZ_ZOOM_DIAL,LAYOUT_SIDE_LEFT | DIAL_HORIZONTAL|DIAL_HAS_NOTCH | LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0,0,150,0, 0,0,0,0)),
 			horzZoomPlusInd(new FXButton(horzZoomPanel," + \tZoom In Full",NULL,this,ID_HORZ_ZOOM_DIAL_PLUS,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
@@ -582,6 +584,14 @@ long CSoundWindow::onHorzZoomDialMinusIndClick(FXObject *sender,FXSelector sel,v
 	return 1;
 }
 
+long CSoundWindow::onHorzZoomFitClick(FXObject *sender,FXSelector sel,void *ptr)
+{
+	waveView->showAmount((sample_fpos_t)(loadedSound->channel->getStopPosition()-loadedSound->channel->getStartPosition()+1)/(sample_fpos_t)loadedSound->sound->getSampleRate(),loadedSound->channel->getStartPosition(),10);
+
+	horzZoomDial->setValue((FXint)(waveView->getHorzZoom()*100*ZOOM_MUL));
+	horzZoomValueLabel->setText(("  "+istring(horzZoomDial->getValue()/(double)ZOOM_MUL,3,1,true)+"%").c_str());
+	return 1;
+}
 
 
 // vert zoom handlers

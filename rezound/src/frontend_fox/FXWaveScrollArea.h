@@ -49,7 +49,7 @@ public:
 
 	void centerStartPos();
 	void centerStopPos();
-	void showAmount(double seconds,sample_pos_t pos);
+	void showAmount(double seconds,sample_pos_t pos,int marginPixels=0);
 
 	void drawPlayPosition(sample_pos_t dataPosition,bool justErasing,bool scrollToMakeVisible);
 	const sample_pos_t getSamplePosForScreenX(FXint x) const;
