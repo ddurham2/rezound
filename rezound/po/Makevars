@@ -24,3 +24,9 @@ COPYRIGHT_HOLDER = David W. Durham
 # message catalogs shall be used.  It is usually empty.
 EXTRA_LOCALE_CATEGORIES =
 
+
+POTFILES.in-update:
+	cd $(top_srcdir) && (grep "^#" po/POTFILES.in ; find src -name "*.cpp" ; find src -name "*.h") | grep -v generated > POTFILES.in && mv -f POTFILES.in po/POTFILES.in
+	@echo "YOU MUST NOW RUN CONFIGURE AGAIN"
+	@echo "THEN RUN 'make rezound.pot-update'"
+
