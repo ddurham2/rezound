@@ -472,6 +472,7 @@ const size_t ASoundPlayer::getFrequencyAnalysisOctaveStride() const
 #include <vector>
 #include <string>
 
+#include "CNULLSoundPlayer.h"
 #include "COSSSoundPlayer.h"
 #include "CPortAudioSoundPlayer.h"
 #include "CJACKSoundPlayer.h"
@@ -501,6 +502,9 @@ ASoundPlayer *ASoundPlayer::createInitializedSoundPlayer()
 	// add --audio-method=... to the beginning
 	if(gDefaultAudioMethod!="")
 		methods.insert(methods.begin(),gDefaultAudioMethod);
+
+	// try this as a last resort (it just holds the pointer place (so it's not NULL throughout the rest of the code) but it is written to fail to initialize
+	methods.push_back("null");
 
 	// for each requested method in registry.AudioOutputMethods try each until one succeeds
 	// 'suceeding' is true if the method was enabled at build time and it can initialize now at run-time
@@ -536,6 +540,10 @@ ASoundPlayer *ASoundPlayer::createInitializedSoundPlayer()
 				INITIALIZE_PLAYER(CPortAudioSoundPlayer)
 #endif
 			}
+			else if(method=="null")
+			{
+				INITIALIZE_PLAYER(CNULLSoundPlayer)
+			}
 			else
 			{
 				Warning("unhandled method type in the registry:AudioOutputMethods[] '"+method+"'");
@@ -556,7 +564,7 @@ ASoundPlayer *ASoundPlayer::createInitializedSoundPlayer()
 
 		return soundPlayer;
 	}
-	else
+	else	/* ??? this should never happen anymore now with CNULLSoundPlayer */
 		throw runtime_error(string(__func__)+" -- "+_("Either no audio output method was enabled at configure-time, or no method was recognized in the registry:AudioOutputMethods[] setting"));
 }
 

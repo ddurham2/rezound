@@ -63,6 +63,7 @@ noinst_HEADERS= \
 	   CLoadedSound.h \
 	   CNativeSoundClipboard.h \
 	   Cold_rezSoundTranslator.h \
+	   CNULLSoundPlayer.h \
 	   COSSSoundPlayer.h \
 	   COSSSoundRecorder.h \
 	   CPortAudioSoundPlayer.h \
