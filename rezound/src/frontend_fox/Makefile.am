@@ -57,7 +57,7 @@ libfrontend_la_SOURCES= \
 			CAboutDialog.cpp \
 			FXConstantParamValue.cpp \
 			FXTextParamValue.cpp \
-			FXFilenameParamValue.cpp \
+			FXDiskEntityParamValue.cpp \
 			FXComboTextParamValue.cpp \
 			FXCheckBoxParamValue.cpp \
 			FXGraphParamValue.cpp \
@@ -126,7 +126,7 @@ noinst_HEADERS=\
 	CAboutDialog.h \
 	FXConstantParamValue.h \
 	FXTextParamValue.h \
-	FXFilenameParamValue.h \
+	FXDiskEntityParamValue.h \
 	FXComboTextParamValue.h \
 	FXCheckBoxParamValue.h \
 	FXGraphParamValue.h \

@@ -163,13 +163,13 @@ void CActionParamDialog::addTextEntry(void *parent,const string name,const strin
 	retValueConvs.push_back(NULL);
 }
 
-void CActionParamDialog::addFilenameEntry(void *parent,const string name,const string initialFilename,const string tipText)
+void CActionParamDialog::addDiskEntityEntry(void *parent,const string name,const string initialEntityName,FXDiskEntityParamValue::DiskEntityTypes entityType,const string tipText)
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
-	FXFilenameParamValue *filenameEntry=new FXFilenameParamValue((FXPacker *)parent,0,name.c_str(),initialFilename);
-	filenameEntry->setTipText(tipText.c_str());
-	parameters.push_back(pair<ParamTypes,void *>(ptFilename,(void *)filenameEntry));
+	FXDiskEntityParamValue *diskEntityEntry=new FXDiskEntityParamValue((FXPacker *)parent,0,name.c_str(),initialEntityName,entityType);
+	diskEntityEntry->setTipText(tipText.c_str());
+	parameters.push_back(pair<ParamTypes,void *>(ptDiskEntity,(void *)diskEntityEntry));
 	retValueConvs.push_back(NULL);
 }
 
@@ -293,8 +293,8 @@ void CActionParamDialog::setControlHeight(size_t index,const size_t height)
 		((FXTextParamValue *)parameters[index].second)->setHeight(height);
 		break;
 
-	case ptFilename:
-		((FXFilenameParamValue *)parameters[index].second)->setHeight(height);
+	case ptDiskEntity:
+		((FXDiskEntityParamValue *)parameters[index].second)->setHeight(height);
 		break;
 
 	case ptComboText:
@@ -329,8 +329,8 @@ const size_t CActionParamDialog::getControlHeight(size_t index) const
 	case ptText:
 		return ((FXTextParamValue *)parameters[index].second)->getHeight();
 
-	case ptFilename:
-		return ((FXFilenameParamValue *)parameters[index].second)->getHeight();
+	case ptDiskEntity:
+		return ((FXDiskEntityParamValue *)parameters[index].second)->getHeight();
 
 	case ptComboText:
 		return ((FXComboTextParamValue *)parameters[index].second)->getHeight();
@@ -363,8 +363,8 @@ void CActionParamDialog::setTipText(size_t index,const string tipText)
 		((FXTextParamValue *)parameters[index].second)->setTipText(tipText.c_str());
 		break;
 
-	case ptFilename:
-		((FXFilenameParamValue *)parameters[index].second)->setTipText(tipText.c_str());
+	case ptDiskEntity:
+		((FXDiskEntityParamValue *)parameters[index].second)->setTipText(tipText.c_str());
 		break;
 
 	case ptComboText:
@@ -440,12 +440,15 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 				}
 				break;
 
-			case ptFilename:
+			case ptDiskEntity:
 				{
-					FXFilenameParamValue *filenameEntry=(FXFilenameParamValue *)parameters[t].second;
-					const string ret=filenameEntry->getFilename();
-					actionParameters->addStringParameter(filenameEntry->getTitle(),ret);	
-					actionParameters->addBoolParameter(filenameEntry->getTitle()+" OpenAsRaw",filenameEntry->getOpenAsRaw());	
+					FXDiskEntityParamValue *diskEntityEntry=(FXDiskEntityParamValue *)parameters[t].second;
+					const string ret=diskEntityEntry->getEntityName();
+
+					actionParameters->addStringParameter(diskEntityEntry->getTitle(),ret);	
+
+					if(diskEntityEntry->getEntityType()==FXDiskEntityParamValue::detAudioFilename)
+						actionParameters->addBoolParameter(diskEntityEntry->getTitle()+" OpenAsRaw",diskEntityEntry->getOpenAsRaw());	
 				}
 				break;
 
@@ -517,12 +520,12 @@ long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void 
 {
 	CNestedDataFile *presetsFile;
 	FXList *listBox;
-	if(SELID(sel)==ID_NATIVE_PRESET_BUTTON || SELID(sel)==ID_NATIVE_PRESET_LIST)
+	if(FXSELID(sel)==ID_NATIVE_PRESET_BUTTON || FXSELID(sel)==ID_NATIVE_PRESET_LIST)
 	{
 		presetsFile=gSysPresetsFile;
 		listBox=nativePresetList;
 	}
-	else //if(SELID(sel)==ID_USER_PRESET_BUTTON || SELID(sel)==ID_USER_PRESET_LIST)
+	else //if(FXSELID(sel)==ID_USER_PRESET_BUTTON || FXSELID(sel)==ID_USER_PRESET_LIST)
 	{
 		presetsFile=gUserPresetsFile;
 		listBox=userPresetList;
@@ -551,8 +554,8 @@ long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void 
 				((FXTextParamValue *)parameters[t].second)->readFromFile(title,presetsFile);
 				break;
 
-			case ptFilename:
-				((FXFilenameParamValue *)parameters[t].second)->readFromFile(title,presetsFile);
+			case ptDiskEntity:
+				((FXDiskEntityParamValue *)parameters[t].second)->readFromFile(title,presetsFile);
 				break;
 
 			case ptComboText:
@@ -634,8 +637,8 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 					((FXTextParamValue *)parameters[t].second)->writeToFile(title,presetsFile);
 					break;
 
-				case ptFilename:
-					((FXFilenameParamValue *)parameters[t].second)->writeToFile(title,presetsFile);
+				case ptDiskEntity:
+					((FXDiskEntityParamValue *)parameters[t].second)->writeToFile(title,presetsFile);
 					break;
 
 				case ptComboText:
