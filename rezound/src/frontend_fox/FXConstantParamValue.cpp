@@ -71,6 +71,9 @@ FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _unin
 		//valueLabel(new FXLabel(valuePanel,"Value",NULL, LAYOUT_CENTER_Y)),
 		valueTextBox(new FXTextField(valuePanel,6,this,ID_VALUE_TEXTBOX, TEXTFIELD_NORMAL | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
 		unitsLabel(new FXLabel(valuePanel,"x",NULL,LAYOUT_CENTER_Y)),
+	scalarPanel(NULL),
+		scalarLabel(NULL),
+		scalarSpinner(NULL),
 
 	interpretValue(_interpretValue),
 	uninterpretValue(_uninterpretValue),
