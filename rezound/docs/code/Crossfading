@@ -1,4 +1,19 @@
 
+First, I should define crossfade in case the reader does not know.
+	A crossfade is when a transition is made from one source of sound 
+	to another source.  The first source is faded out while at the 
+	same time the second source is faded in.  Gennerally, one would 
+	want the two fade times to be the same so that the time the first 
+	source fades fully out is the time that the second source fades 
+	fully in.
+
+	The fade-out is implemented by multiplying the source by g (gain) 
+	where g goes from 1.0 down to 0.0 in the amount of time as the 
+	crossfade is to take place.  Likewise, the fade-in has g go from 
+	0.0 up to 1.0 in the same amount of time.
+
+
+
 - In order to make a smoother sounding edge after an edit where a transition is 
   made from the non-edited region to the edited region and back again to the 
   non-edited after the selection I have implemented the ability ReZound to do a 
