@@ -6,7 +6,6 @@ src/PoolFile/CMultiFile.cpp
 src/PoolFile/TPoolAccesser.cpp
 src/PoolFile/TPoolFile.cpp
 src/PoolFile/TStaticPoolAccesser.cpp
-src/images.bak/images.cpp
 src/backend/ASoundClipboard.cpp
 src/backend/CRecordSoundClipboard.cpp
 src/backend/ClameSoundTranslator.cpp
@@ -152,7 +151,6 @@ src/PoolFile/TPoolAccesser.h
 src/PoolFile/CMultiFile.h
 src/PoolFile/TPoolFile.h
 src/PoolFile/TStaticPoolAccesser.h
-src/images.bak/images.h
 src/backend/DSP/Quantizer.h
 src/backend/DSP/BiquadResFilters.h
 src/backend/DSP/FlangeEffect.h
