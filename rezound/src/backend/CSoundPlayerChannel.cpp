@@ -448,6 +448,15 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 		else if(fPlayPosition>pos2)
 			fPlayPosition=pos2;
 
+/* ???
+	Perhaps a better way to implement mixing of channels rather than checking the loop
+	positions or end samples position would be to create a template function out of 
+	CSound::mixSound .    I would just determine how far the sample position would be
+	able to go before the next loop point, and I would call it multiple times... Then
+	I could use mixSound as a function outside of ASound and use it here and in CPasteEdit
+	and other actions later to come
+*/
+
 		const sample_fpos_t origPlayPosition=fPlayPosition;
 
 		#define MOVE_PLAY_POSITION								\
