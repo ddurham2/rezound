@@ -54,6 +54,8 @@ AC_PROG_YACC
 
 AM_PROG_LIBTOOL dnl turn on using libtool
 
+AC_PATH_PROG(LAME, lame)
+	test -z "$LAME" && AC_MSG_WARN([lame not found on \$PATH -- this is necessary for loading and saving MP3s -- it is called 'notlame' on some distroes -- the source can be downloaded from http://lame.sourceforge.net])
 
 
 
