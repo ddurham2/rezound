@@ -18,6 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
+#include "drawPortion.h"
+
 #include <fox/fx.h>
 
 #include <math.h>
@@ -29,7 +31,6 @@
 
 #include "../backend/CSound.h"
 #include "../backend/unit_conv.h"
-#include "drawPortion.h"
 
 //static FXColor playStatusColor=FXRGB(255,0,0);
 static FXColor axisColor=FXRGB(64,64,180);
