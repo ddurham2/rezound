@@ -51,6 +51,7 @@ public:
 	virtual ~CChannelSelectDialog();
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
+	void hide();
 
 	void setTitle(const string title) { };
 

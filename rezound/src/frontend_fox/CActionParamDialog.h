@@ -97,6 +97,7 @@ public:
 	void setMargin(FXint margin); // will add a margin the left and right of all the controls
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
+	void hide();
 
 	enum 
 	{

@@ -48,6 +48,7 @@ public:
 	virtual ~AActionDialog();
 
 	virtual bool show(CActionSound *actionSound,CActionParameters *actionParameters)=0;
+	virtual void hide()=0;
 
 	// for the action dialog of an AActionFactory (i.e. not the channelSelectDialog)
 	// this gets called just before each call to show(), given the action factory's name

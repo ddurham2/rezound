@@ -86,6 +86,11 @@ bool CCueDialog::show(CActionSound *_actionSound,CActionParameters *actionParame
 	return(false);
 }
 
+void CCueDialog::hide()
+{
+	FXModalDialogBox::hide();
+}
+
 bool CCueDialog::validateOnOkay()
 {
 	cueName=istring(cueNameTextBox->getText().text()).trim();

@@ -227,6 +227,11 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 
 }
 
+void CPasteChannelsDialog::hide()
+{
+	FXModalDialogBox::hide();
+}
+
 void *CPasteChannelsDialog::getUserData()
 {
 	return(&pasteChannels);

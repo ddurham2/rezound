@@ -123,6 +123,12 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 	catch(exception &e)
 	{
 		Error(e.what());
+
+		if(channelSelectDialog) 
+			channelSelectDialog->hide();
+		if(dialog)
+			dialog->hide();
+
 		return false;
 	}
 }

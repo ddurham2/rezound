@@ -662,6 +662,11 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 	return retval;
 }
 
+void CActionParamDialog::hide()
+{
+	FXModalDialogBox::hide();
+}
+
 long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	CNestedDataFile *presetsFile;

@@ -118,6 +118,11 @@ bool CChannelSelectDialog::show(CActionSound *actionSound,CActionParameters *act
 
 }
 
+void CChannelSelectDialog::hide()
+{
+	FXModalDialogBox::hide();
+}
+
 long CChannelSelectDialog::onDefaultButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	for(unsigned x=0;x<MAX_CHANNELS;x++)
