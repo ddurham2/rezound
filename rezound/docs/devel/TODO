@@ -1,5 +1,7 @@
 --- THINGS TO DO FOR SURE ---
 
+	- add a "sync channels" for noise gate just like the compressor.. probably have it gate only when both channels are below the treshold or maybe a radio button for "gate when all are below threshold.. or any is below threshold"
+
 	- Possibly remove the concept of 'advanced mode' stuff for actions
 		- so far, I've only used it in two actions and don't see any reason to add it to more
 		- for gain and rate change I should just make two factories, but still use the same action code.. and I can make the procedure for adding new actions a bit more easy to understand without getting confused by the 'advanced mode' code
