@@ -329,7 +329,7 @@ The formulas: (target IS in degrees)
 	R2Mul=1.0/(2.0-(1.0/R1Mul))
 	R2Phase=0.75*M_PI - M_PI/(2.0*R1Mul)
 
-I derived these on paper which looks really nasty.. so I'll just use them
+//I derived these on paper which looks really nasty.. so I'll just use them
 	
 
 // ---------------------------------------------
