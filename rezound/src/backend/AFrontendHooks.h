@@ -235,16 +235,19 @@ public:
 	struct libaudiofileSaveParameters
 	{
 		int sampleFormat;	// AF_SAMPFMT_xxx
-			int defaultSampleFormatIndex; // of signed, unsigned, float, double
+		int defaultSampleFormatIndex; // of signed, unsigned, float, double
 		int sampleWidth;	// bit rate
-			int defaultSampleWidthIndex; // of 8, 16, 24, 32
+		int defaultSampleWidthIndex; // of 8, 16, 24, 32
 
 		// this is an input value that indicates which compression types are supported
 		// pair: name of compression type, audiofiles enum value for it
 		vector<pair<string,int> > supportedCompressionTypes; 
 
-			int defaultCompressionTypeIndex; // of the items in the vector
+		int defaultCompressionTypeIndex; // of the items in the vector
 		int compressionType;	// AF_COMPRESSION_xxx
+
+		bool saveCues;
+		bool saveUserNotes;
 	};
 	virtual bool promptForlibaudiofileSaveParameters(libaudiofileSaveParameters &parameters,const string formatName)=0;
 };

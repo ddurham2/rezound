@@ -142,7 +142,7 @@ bool CrawSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 
 		initSetup(setup,parameters);
 
-		const bool ret=saveSoundGivenSetup(filename,sound,saveStart,saveLength,setup,AF_FILE_RAWDATA,useLastUserPrefs);
+		const bool ret=saveSoundGivenSetup(filename,sound,saveStart,saveLength,setup,AF_FILE_RAWDATA,useLastUserPrefs,false,false);
 
 		afFreeFileSetup(setup);
 

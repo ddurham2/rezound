@@ -423,7 +423,7 @@ bool ClibaudiofileSoundTranslator::onSaveSound(const string filename,const CSoun
 		afInitCompression(setup,AF_DEFAULT_TRACK,parameters.compressionType);
 		afInitFrameCount(setup,AF_DEFAULT_TRACK,saveLength);
 
-		const bool ret=saveSoundGivenSetup(filename,sound,saveStart,saveLength,setup,fileType,useLastUserPrefs);
+		const bool ret=saveSoundGivenSetup(filename,sound,saveStart,saveLength,setup,fileType,useLastUserPrefs,parameters.saveCues,parameters.saveUserNotes);
 
 		afFreeFileSetup(setup);
 
@@ -437,7 +437,7 @@ bool ClibaudiofileSoundTranslator::onSaveSound(const string filename,const CSoun
 }
 
 
-bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,AFfilesetup initialSetup,int fileFormatType,bool useLastUserPrefs) const
+bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,AFfilesetup initialSetup,int fileFormatType,bool useLastUserPrefs,bool saveCues,bool saveUserNotes) const
 {
 	bool ret=true;
 
@@ -451,36 +451,39 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,con
 
 	// setup for saving the cues (except for positions)
 	TAutoBuffer<int> markIDs(sound->getCueCount());
-	size_t cueCount=0;
-	for(size_t t=0;t<sound->getCueCount();t++)
+	if(saveCues)
 	{
-		if(sound->getCueTime(t)>=saveStart && sound->getCueTime(t)<(saveStart+saveLength))
-			markIDs[cueCount]=cueCount++;
-	}
-	if(cueCount>0)
-	{
-		if(!afQueryLong(AF_QUERYTYPE_MARK,AF_QUERY_SUPPORTED,fileFormatType,0,0))
+		size_t cueCount=0;
+		for(size_t t=0;t<sound->getCueCount();t++)
 		{
-			if(!useLastUserPrefs) /* don't warn user if they've probably already been warned */
-				Warning(_("This format does not support saving cues"));
+			if(sound->getCueTime(t)>=saveStart && sound->getCueTime(t)<(saveStart+saveLength))
+				markIDs[cueCount]=cueCount++;
 		}
-		else
+		if(cueCount>0)
 		{
-
-			afInitMarkIDs(initialSetup,AF_DEFAULT_TRACK,markIDs,(int)cueCount);
-			size_t temp=0;
-			for(size_t t=0;t<sound->getCueCount();t++)
+			if(!afQueryLong(AF_QUERYTYPE_MARK,AF_QUERY_SUPPORTED,fileFormatType,0,0))
 			{
-				if(sound->getCueTime(t)>=saveStart && sound->getCueTime(t)<(saveStart+saveLength))
-				{
-						// to indicate if the cue is anchored we append to the name:
-						// "|+" or "|-" whether it is or isn't
-						const string name=sound->getCueName(t)+"|"+(sound->isCueAnchored(t) ? "+" : "-");
-						afInitMarkName(initialSetup,AF_DEFAULT_TRACK,markIDs[temp++],name.c_str());
+				if(!useLastUserPrefs) /* don't warn user if they've probably already been warned */
+					Warning(_("This format does not support saving cues"));
+			}
+			else
+			{
 
-						// can't save position yet because that function requires a file handle, but
-						// we can't move this code after the afOpenFile, or it won't save cues at all
-						//afSetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[temp++],sound->getCueTime(t));
+				afInitMarkIDs(initialSetup,AF_DEFAULT_TRACK,markIDs,(int)cueCount);
+				size_t temp=0;
+				for(size_t t=0;t<sound->getCueCount();t++)
+				{
+					if(sound->getCueTime(t)>=saveStart && sound->getCueTime(t)<(saveStart+saveLength))
+					{
+							// to indicate if the cue is anchored we append to the name:
+							// "|+" or "|-" whether it is or isn't
+							const string name=sound->getCueName(t)+"|"+(sound->isCueAnchored(t) ? "+" : "-");
+							afInitMarkName(initialSetup,AF_DEFAULT_TRACK,markIDs[temp++],name.c_str());
+
+							// can't save position yet because that function requires a file handle, but
+							// we can't move this code after the afOpenFile, or it won't save cues at all
+							//afSetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[temp++],sound->getCueTime(t));
+					}
 				}
 			}
 		}
@@ -491,7 +494,7 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,con
 	const string userNotes=sound->getUserNotes();
 	int userNotesMiscID=1;
 	const int userNotesMiscType=getUserNotesMiscType(fileFormatType);
-	if(userNotes.length()>0)
+	if(saveUserNotes && userNotes.length()>0)
 	{
 		/* this is not implemented in libaudiofile yet
 		 *  ??? if this is changed in cvs before the verison is bumped to 0.2.4, then I can just add this in because it would be disabled if the version wasn't >0.2.4
@@ -570,7 +573,7 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,con
 #ifdef HANDLE_CUES_AND_MISC
 			
 			// write the cue's positions
-			if(afQueryLong(AF_QUERYTYPE_MARK,AF_QUERY_SUPPORTED,fileFormatType,0,0))
+			if(saveCues && afQueryLong(AF_QUERYTYPE_MARK,AF_QUERY_SUPPORTED,fileFormatType,0,0))
 			{
 				size_t temp=0;
 				for(size_t t=0;t<sound->getCueCount();t++)
@@ -581,7 +584,7 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,con
 			}
 
 			// write the user notes
-			if(userNotes.length()>0)
+			if(saveUserNotes && userNotes.length()>0)
 			{
 				/* this is not implemented in libaudiofile yet
 				if(!afQueryLong(AF_QUERYTYPE_MISC,AF_QUERY_SUPPORTED,fileFormatType,0,0))

@@ -51,7 +51,7 @@ protected:
 	bool onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs) const;
 
 	bool loadSoundGivenSetup(const string filename,CSound *sound,AFfilesetup initialSetup) const;
-	bool saveSoundGivenSetup(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,AFfilesetup initialSetup,int fileFormatType,bool useLastUserPrefs) const;
+	bool saveSoundGivenSetup(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,AFfilesetup initialSetup,int fileFormatType,bool useLastUserPrefs,bool saveCues,bool saveUserNotes) const;
 
 private:
 

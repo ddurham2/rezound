@@ -64,6 +64,10 @@ ClibaudiofileSaveParametersDialog::ClibaudiofileSaveParametersDialog(FXWindow *m
 		vector<string> compressionTypes;
 			// will be populated with values later
 		addComboTextEntry(p,N_("Compression Type"),compressionTypes,CActionParamDialog::cpvtAsInteger,"");
+
+		addCheckBoxEntry(p,N_("Save Cues"),true,_("Enable or Disable the saving of cues to the file if the format supports it"));
+		addCheckBoxEntry(p,N_("Save User Notes"),true,_("Enable or Disable the saving of user notes to the file if the format supports it"));
+		new FXLabel(p,_("Some software may not handle files containing cues or user notes.\nSo, you can disable their being saved to the file."));
 }
 
 #ifdef HAVE_LIBAUDIOFILE
@@ -131,6 +135,8 @@ bool ClibaudiofileSaveParametersDialog::show(AFrontendHooks::libaudiofileSavePar
 		parameters.sampleFormat=indexTo_AF_SAMPFMT_xxx(actionParameters.getValue<unsigned>("Sample Format"));
 		parameters.sampleWidth=indexToSampleWidth(actionParameters.getValue<unsigned>("Sample Width"));
 		parameters.compressionType=parameters.supportedCompressionTypes[actionParameters.getValue<unsigned>("Compression Type")].second;
+		parameters.saveCues=actionParameters.getValue<bool>("Save Cues");
+		parameters.saveUserNotes=actionParameters.getValue<bool>("Save User Notes");
 		return true;
 	}
 	else
