@@ -27,5 +27,6 @@
 #include "CUnclipAction.h"
 #include "CRemoveDCAction.h"
 #include "CNoiseGateAction.h"
+#include "CCompressorAction.h"
 
 #endif

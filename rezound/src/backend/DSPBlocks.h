@@ -190,6 +190,8 @@ private:
  *   and using its return value.  This is because we don't really know the level before 
  *   enough sample have been observed.
  *
+ * Info reference: http://www.harmony-central.com/Effects/Articles/Expansion/
+ *
  */
 class CDSPNoiseGate
 {
@@ -226,6 +228,7 @@ public:
 		else if(level>threshold && gain<1.0)
 			gain= min(gain+gainReleaseVelocity,(float)1.0);
 
+			// ??? should be able to make this 3 return statements in the 2 cases+else above
 		return(gain!=1.0 ? (mix_sample_t)(s*gain) : s);
 	}
 
@@ -245,6 +248,96 @@ public:
 private:
 	const unsigned windowTime;
 	const mix_sample_t threshold;
+	const float gainAttackVelocity;
+	const float gainReleaseVelocity;
+
+	float gain;
+	CDSPLevelDetector levelDetector;
+};
+
+
+/* --- CDSPCompressor ----------------------------------------
+ *
+ * - This DSP block begins to change the gain from 1.0 to the given 'compressGain' 
+ *   on the sound when the level of the audio rises above the given 'threshold'.  
+ *   The rate at which it begins to change this gain is given by the 'gainAttackTime' 
+ *   and the rate at which it begins to return to a gain of 1.0 once the level is 
+ *   again below the threshold is given by 'gainReleaseTime'.  The level is detected 
+ *   with a moving average (performed by CDSPLevelDetector) the width of the moving 
+ *   window is given by 'windowTime'
+ *
+ * - To use simply construct the block with the desired parameters and repeatedly call 
+ *   processSample() which returns the sample that was given but adjusted by the 
+ *   calculated gain.
+ *
+ * - Note: it may be desirable to initialize the level detector within the algorithm
+ *   by calling initSample() for 'windowTime' samples before calling processSample() 
+ *   and using its return value.  This is because we don't really know the level before 
+ *   enough sample have been observed.
+ *
+ * Info reference: http://www.harmony-central.com/Effects/Articles/Compression/
+ *
+ */
+class CDSPCompressor
+{
+public:
+	// all times are in samples
+	CDSPCompressor(unsigned _windowTime,sample_t _threshold,float _compressGain,unsigned _gainAttackTime,unsigned _gainReleaseTime) :
+		windowTime(_windowTime),
+		threshold(_threshold),
+		compressGain(_compressGain),
+		gainAttackVelocity(1.0/(float)_gainAttackTime),
+		gainReleaseVelocity(1.0/(float)_gainReleaseTime),
+	
+		gain(1.0),
+		levelDetector(windowTime)
+	{
+		// ??? verify parameters?
+	}
+
+	virtual ~CDSPCompressor()
+	{
+	}
+
+	// using this is optional -- it is used to initialize the level detector -- see Note above
+	void initSample(const mix_sample_t s)
+	{
+		levelDetector.readLevel(s);
+	}
+
+	// ??? could also do duck/cross limiting by having two input samples.. one that's used for level detection and one that's the signal to adjust
+	const mix_sample_t processSample(const mix_sample_t s)
+	{
+		const mix_sample_t level=levelDetector.readLevel(s);
+		
+		if(level>=threshold && gain!=compressGain)
+			gain= max(gain-gainAttackVelocity,compressGain);
+		else if(level<threshold && gain!=1.0)
+			gain= min(gain+gainReleaseVelocity,(float)1.0);
+
+		// ??? I need to be able to allow _compressGain to be any value.. then I should check the bounds of the gain here.. just one time
+
+			// ??? should be able to make this 3 return statements in the 2 cases+else above
+		return(gain!=1.0 ? (mix_sample_t)(s*gain) : s);
+	}
+
+
+	// can be used to reset the internal gain if desired
+	void resetGain(const float _gain=1.0)
+	{
+		gain=_gain;
+	}
+
+	const unsigned getWindowTime() const
+	{
+		return(windowTime); // the value this was constructed with
+	}
+
+
+private:
+	const unsigned windowTime;
+	const mix_sample_t threshold;
+	const float compressGain;
 	const float gainAttackVelocity;
 	const float gainReleaseVelocity;
 

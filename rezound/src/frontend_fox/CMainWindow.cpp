@@ -279,6 +279,7 @@ void CMainWindow::createToolbars()
 	setupButton(new CActionButton(new CUnclipActionFactory(gChannelSelectDialog),remasterTabFrame,"unclp",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
 	setupButton(new CActionButton(new CRemoveDCActionFactory(gChannelSelectDialog),remasterTabFrame,"-DC",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
 	setupButton(new CActionButton(new CNoiseGateActionFactory(gChannelSelectDialog,new CNoiseGateDialog(this)),remasterTabFrame,"ng",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
+	setupButton(new CActionButton(new CCompressorActionFactory(gChannelSelectDialog),remasterTabFrame,"comp",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
 }
 
 
