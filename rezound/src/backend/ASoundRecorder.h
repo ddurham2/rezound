@@ -70,7 +70,7 @@ public:
 	virtual void deinitialize();
 
 
-	void start();
+	void start(const sample_pos_t maxDuration=NIL_SAMPLE_POS);
 	void stop();
 	virtual void redo();
 
@@ -83,6 +83,8 @@ public:
 	const sample_pos_t getRecordedLength() const;
 	string getRecordedLengthS() const;
 	string getRecordedSizeS() const;
+
+	const ASound *getSound() const { return(sound); }
 
 	void addCueNow(const string name,bool isAnchored);
 
@@ -100,6 +102,7 @@ private:
 	sample_pos_t prealloced;
 	sample_pos_t origLength;
 	sample_pos_t writePos;
+	sample_pos_t stopPosition;
 
 	vector<ASound::RCue> addedCues;
 

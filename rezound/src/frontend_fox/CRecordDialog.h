@@ -51,6 +51,8 @@ public:
 
 		ID_CLEAR_CLIP_COUNT_BUTTON,
 
+		ID_DURATION_SPINNER,
+
 		ID_STATUS_UPDATE,
 
 		ID_LAST
@@ -65,6 +67,8 @@ public:
 	long onStatusUpdate(FXObject *sender,FXSelector sel,void *ptr);
 
 	long onClearClipCountButton(FXObject *sender,FXSelector sel,void *ptr);
+
+	long onDurationSpinner(FXObject *sender,FXSelector sel,void *ptr);
 
 protected:
 	CRecordDialog() {}
@@ -84,6 +88,7 @@ private:
 
 	FXCheckButton *setDurationButton;
 	FXTextField *durationEdit;
+	FXSpinner *durationSpinner;
 
 	FXTextField *cueNamePrefix;
 	FXSpinner *cueNameNumber;

@@ -38,7 +38,7 @@ ASoundRecorder::~ASoundRecorder()
 {
 }
 
-void ASoundRecorder::start()
+void ASoundRecorder::start(const sample_pos_t maxDuration)
 {
 	mutex.EnterMutex();
 	try
@@ -46,7 +46,10 @@ void ASoundRecorder::start()
 		if(!started)
 		{
 			started=true;
-
+			if(maxDuration!=NIL_SAMPLE_POS && (MAX_LENGTH-writePos)>maxDuration)
+				stopPosition=writePos+maxDuration;
+			else
+				stopPosition=NIL_SAMPLE_POS;
 		}
 
 		mutex.LeaveMutex();
@@ -188,8 +191,9 @@ void ASoundRecorder::deinitialize()
 }
 
 
-void ASoundRecorder::onData(const sample_t *samples,const size_t sampleFramesRecorded)
+void ASoundRecorder::onData(const sample_t *samples,const size_t _sampleFramesRecorded)
 {
+	size_t sampleFramesRecorded=_sampleFramesRecorded;
 	mutex.EnterMutex();
 	try
 	{
@@ -241,6 +245,9 @@ void ASoundRecorder::onData(const sample_t *samples,const size_t sampleFramesRec
 				}
 			}
 
+			if(stopPosition!=NIL_SAMPLE_POS && (this->writePos+sampleFramesRecorded)>stopPosition)
+				sampleFramesRecorded=stopPosition-this->writePos;
+
 			sample_pos_t writePos=0;
 			for(unsigned i=0;i<channelCount;i++)
 			{
@@ -252,10 +259,18 @@ void ASoundRecorder::onData(const sample_t *samples,const size_t sampleFramesRec
 					a[writePos++]=*_samples;
 					_samples+=channelCount;
 				}
+
 			}
 
 			prealloced-=sampleFramesRecorded;
 			this->writePos=writePos;
+
+			if(stopPosition!=NIL_SAMPLE_POS && writePos>=stopPosition)
+			{
+				mutex.LeaveMutex();
+				stop();
+				return;
+			}
 		}
 		mutex.LeaveMutex();
 	}

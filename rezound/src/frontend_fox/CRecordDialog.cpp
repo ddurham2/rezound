@@ -40,6 +40,8 @@ FXDEFMAP(CRecordDialog) CRecordDialogMap[]=
 	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_ADD_CUE_BUTTON,	CRecordDialog::onAddCueButton),
 	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_ADD_ANCHORED_CUE_BUTTON,CRecordDialog::onAddCueButton),
 
+	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_DURATION_SPINNER,	CRecordDialog::onDurationSpinner),
+
 	FXMAPFUNC(SEL_TIMEOUT,		CRecordDialog::ID_STATUS_UPDATE,	CRecordDialog::onStatusUpdate),
 
 	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_CLEAR_CLIP_COUNT_BUTTON,CRecordDialog::onClearClipCountButton),
@@ -74,11 +76,11 @@ CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
 				frame4=new FXHorizontalFrame(frame3,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
 					new FXLabel(frame4,"   Cue Prefix:");
 					cueNamePrefix=new FXTextField(frame4,10);
-						cueNamePrefix->setText("cue");
+					cueNamePrefix->setText("cue");
 				frame4=new FXHorizontalFrame(frame3,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
 					new FXLabel(frame4,"Cue Number:");
 					cueNameNumber=new FXSpinner(frame4,3,NULL,0,SPIN_NORMAL|FRAME_NORMAL);
-						cueNameNumber->setRange(-1,1000);
+					cueNameNumber->setRange(-1,1000);
 				new FXButton(frame3,"Add Cue",NULL,this,ID_ADD_CUE_BUTTON);
 				new FXButton(frame3,"Add Anchored Cue",NULL,this,ID_ADD_ANCHORED_CUE_BUTTON);
 					// but what name shall I give the cues
@@ -107,7 +109,8 @@ CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
 			setDurationButton=new FXCheckButton(frame2,"Limit Duration to ");
 			durationEdit=new FXTextField(frame2,12);
 			durationEdit->setText("MM:SS.sss");
-				
+			durationSpinner=new FXSpinner(frame2,0,this,ID_DURATION_SPINNER, SPIN_NOTEXT);
+			durationSpinner->setRange(-10,10);
 		
 }
 
@@ -195,7 +198,26 @@ bool CRecordDialog::show(ASoundRecorder *_recorder)
 long CRecordDialog::onStartButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	clearClipCount();
-	recorder->start();
+	if(setDurationButton->getCheck())
+	{
+		bool wasInvalid;
+		const sample_pos_t d=recorder->getSound()->getPositionFromTime(durationEdit->getText().text(),wasInvalid);
+		if(wasInvalid)
+		{
+			Error("Invalid record time limit -- Should be in the form of HH:MM:SS.sss, MM:SS.sss or SS.sss");
+			return(1);
+		}
+
+		if(d==0)
+		{
+			setDurationButton->setCheck(false);
+			recorder->start();
+		}
+		else
+			recorder->start(d);
+	}
+	else
+		recorder->start();
 	return 1;
 }
 
@@ -245,3 +267,22 @@ long CRecordDialog::onClearClipCountButton(FXObject *sender,FXSelector sel,void 
 	return 1;
 }
 
+long CRecordDialog::onDurationSpinner(FXObject *sender,FXSelector sel,void *ptr)
+{
+	bool wasInvalid;
+	sample_fpos_t d=recorder->getSound()->getPositionFromTime(durationEdit->getText().text(),wasInvalid);
+	if(wasInvalid)
+		d=0;
+
+	d+=((sample_fpos_t)durationSpinner->getValue()*(sample_fpos_t)recorder->getSound()->getSampleRate());
+	if(d<0.0)
+		d=0;
+
+	durationSpinner->setValue(0);
+
+	durationEdit->setText(recorder->getSound()->getTimePosition((sample_pos_t)d,3,false).c_str());
+	if(d!=0)
+		setDurationButton->setCheck(true);
+
+	return 1;
+}
