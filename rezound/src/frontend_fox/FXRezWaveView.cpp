@@ -23,6 +23,7 @@
 #include <math.h>
 
 #include <string>
+#include <algorithm>
 
 #include "settings.h"
 
@@ -717,6 +718,10 @@ long FXWaveScrollArea::onMouseUp(FXObject*,FXSelector,void *ptr)
 
 void FXWaveScrollArea::handleMouseMoveSelectChange(FXint X)
 {
+	// ??? I don't think should should cause any problems... 
+	// I put it here so that when shift is held to stop the autoscrolling that it doesn't select anything off screen even if the mouse is outside the wave view
+	X=max((int)0,min((int)X,(int)(getSupposedCanvasWidth()-1)));
+
 	if(draggingSelectStart)
 	{
 		if(X>(FXint)getDrawSelectStop())
@@ -758,9 +763,12 @@ long FXWaveScrollArea::onMouseMove(FXObject*,FXSelector,void *ptr)
 		// Here we detect if the mouse is against the side walls and scroll that way if the mouse is down
 		if(draggingSelectStart || draggingSelectStop)
 		{
-			if(startAutoScroll(ev->win_x,ev->win_y))
-				return(1); // QQQ
-				//return(0);
+			if(!(ev->state&SHIFTMASK))
+			{
+				if(startAutoScroll(ev->win_x,ev->win_y))
+					return(1); // QQQ
+					//return(0);
+			}
 		}
 
 		handleMouseMoveSelectChange(ev->win_x);
