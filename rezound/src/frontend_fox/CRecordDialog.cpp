@@ -104,7 +104,7 @@ CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
 		frame2=new FXHorizontalFrame(frame1,LAYOUT_CENTER_X);
 			new FXButton(frame2,"Record/\nResume",NULL,this,ID_START_BUTTON);
 			new FXButton(frame2,"Stop/\nPause",NULL,this,ID_STOP_BUTTON);
-			new FXButton(frame2,"Redo",NULL,this,ID_REDO_BUTTON);
+			new FXButton(frame2,"Redo/\nReset",NULL,this,ID_REDO_BUTTON);
 		frame2=new FXHorizontalFrame(frame1,LAYOUT_CENTER_X);
 			setDurationButton=new FXCheckButton(frame2,"Limit Duration to ");
 			durationEdit=new FXTextField(frame2,12);
