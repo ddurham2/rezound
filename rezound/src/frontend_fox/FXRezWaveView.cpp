@@ -745,7 +745,7 @@ long FXWaveRuler::onKeyPress(FXObject *object,FXSelector sel,void *ptr)
 		focusLastCue();
 	}
 	else if(event->code==KEY_Delete || event->code==KEY_KP_Delete)
-	{
+	{ // delete a cue
 		if(focusedCueIndex>=sound->getCueCount())
 			return 0;
 
@@ -767,6 +767,13 @@ long FXWaveRuler::onKeyPress(FXObject *object,FXSelector sel,void *ptr)
 		parent->waveScrollArea->redraw();
 		update();
 		return 1; // handled
+	}
+	else if(event->code==KEY_Return)
+	{ // edit a cue
+		if(focusedCueIndex>=sound->getCueCount())
+			return 0;
+		else
+			return onEditCue(object,sel,(void *)focusedCueIndex);
 	}
 	else
 	{
