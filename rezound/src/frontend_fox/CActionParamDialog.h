@@ -133,6 +133,8 @@ private:
 	string origTitle;
 	const CActionSound *actionSound;
 
+	bool showPresetPanel;
+
 	bool explanationButtonCreated;
 
 	enum ParamTypes
