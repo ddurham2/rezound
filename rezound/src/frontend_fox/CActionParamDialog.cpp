@@ -108,7 +108,7 @@ long CActionParamDialog::onExplainButton(FXObject *sender,FXSelector sel,void *p
 	return 1;
 }
 
-FXPacker *CActionParamDialog::newHorzPanel(void *parent,bool createBorder)
+FXPacker *CActionParamDialog::newHorzPanel(void *parent,bool createMargin,bool createFrame)
 {
 	if(parent==NULL)
 	{
@@ -116,13 +116,13 @@ FXPacker *CActionParamDialog::newHorzPanel(void *parent,bool createBorder)
 			throw runtime_error(string(__func__)+" -- this method has already been called with a NULL parameter");
 		parent=controlsFrame;
 	}
-	if(createBorder)
-		return new FXHorizontalFrame((FXPacker *)parent,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 2,2,2,2, 0,0);
+	if(createMargin)
+		return new FXHorizontalFrame((FXPacker *)parent,(createFrame ? FRAME_RAISED : FRAME_NONE) | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 2,2,2,2, 0,0);
 	else
-		return new FXHorizontalFrame((FXPacker *)parent,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0);
+		return new FXHorizontalFrame((FXPacker *)parent,(createFrame ? FRAME_RAISED : FRAME_NONE) | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0);
 }
 
-FXPacker *CActionParamDialog::newVertPanel(void *parent,bool createBorder)
+FXPacker *CActionParamDialog::newVertPanel(void *parent,bool createMargin,bool createFrame)
 {
 	if(parent==NULL)
 	{
@@ -130,10 +130,10 @@ FXPacker *CActionParamDialog::newVertPanel(void *parent,bool createBorder)
 			throw runtime_error(string(__func__)+" -- this method has already been called with a NULL parameter");
 		parent=controlsFrame;
 	}
-	if(createBorder)
-		return new FXVerticalFrame((FXPacker *)parent,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 2,2,2,2, 0,0);
+	if(createMargin)
+		return new FXVerticalFrame((FXPacker *)parent,(createFrame ? FRAME_RAISED : FRAME_NONE) | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 2,2,2,2, 0,0);
 	else
-		return new FXVerticalFrame((FXPacker *)parent,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0);
+		return new FXVerticalFrame((FXPacker *)parent,(createFrame ? FRAME_RAISED : FRAME_NONE) | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0);
 }
 
 FXConstantParamValue *CActionParamDialog::addSlider(void *parent,const string name,const string units,AActionParamMapper *valueMapper,f_at_x optRetValueConv,bool showInverseButton)
@@ -897,6 +897,9 @@ void CActionParamDialog::buildPresetLists()
 	{
 		bool firstTime=presetsFrame==NULL;
 
+		FXint currentNativePresetItem=nativePresetList ? nativePresetList->getCurrentItem() : 0;
+		FXint currentUserPresetItem=userPresetList ? userPresetList->getCurrentItem() : 0;
+
 		// delete previous stuff
 		delete presetsFrame;
 			nativePresetList=NULL;
@@ -940,6 +943,8 @@ void CActionParamDialog::buildPresetLists()
 			try
 			{
 				buildPresetList(gSysPresetsFile,nativePresetList);
+				if(currentNativePresetItem<nativePresetList->getNumItems())
+					nativePresetList->setCurrentItem(currentNativePresetItem);
 			}
 			catch(exception &e)
 			{
@@ -951,6 +956,8 @@ void CActionParamDialog::buildPresetLists()
 		try
 		{
 			buildPresetList(gUserPresetsFile,userPresetList);
+			if(currentUserPresetItem<userPresetList->getNumItems())
+				userPresetList->setCurrentItem(currentUserPresetItem);
 		}
 		catch(exception &e)
 		{

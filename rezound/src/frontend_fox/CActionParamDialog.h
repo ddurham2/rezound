@@ -61,8 +61,8 @@ public:
 	// these are used to create new parents for the controls
 	// or something to lay other FOX widgets on (but not controls since they won't be saved in presets)
 	// 	pass NULL the first time
-	FXPacker *newHorzPanel(void *parent,bool createBorder=true);
-	FXPacker *newVertPanel(void *parent,bool createBorder=true);
+	FXPacker *newHorzPanel(void *parent,bool createMargin=true,bool createFrame=false);
+	FXPacker *newVertPanel(void *parent,bool createMargin=true,bool createFrame=false);
 
 	FXConstantParamValue *addSlider(void *parent,const string name,const string units,AActionParamMapper *valueMapper,f_at_x optRetValueConv,bool showInverseButton);
 		FXConstantParamValue *getSliderParam(const string name);
