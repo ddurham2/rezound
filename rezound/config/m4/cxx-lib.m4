@@ -84,6 +84,16 @@ EOF
 		rm -f ajv_chk_cxx_lib_$1.err
 	else
 		AC_MSG_RESULT(no)
+
+		echo
+		echo compile line was: $CXX -l$1 $5 $ajv_lib$1_path $ajv_inc$1_path ajv_chk_cxx_lib_$1.cc
+		echo compiled file was: ajv_chk_cxx_lib_$1.cc
+		cat ajv_chk_cxx_lib_$1.cc
+		echo
+		echo compile errors were:
+		cat ajv_chk_cxx_lib_$1.err
+		echo
+
 		rm -f ajv_chk_cxx_lib_$1.cc
 		rm -f ajv_chk_cxx_lib_$1.err
 		[AC_MSG_ERROR([ 
@@ -170,6 +180,16 @@ EOF
 		rm -f ajv_ck_lib_$1.c
 		rm -f ajv_ck_lib_$1.err
 	else
+
+		echo 
+		echo compile line was: $CPP $ajv_lib$1_path $ajv_inc$1_path ajv_ck_lib_$1.c
+		echo file compiled was: ajv_ck_lib_$1.c
+		cat ajv_ck_lib_$1.c
+		echo
+		echo compile errors were:
+		cat ajv_chk_cxx_lib_$1.err
+		echo
+
 		rm -f ajv_ck_lib_$1.c
 		rm -f ajv_ck_lib_$1.err
 		[AC_MSG_ERROR([ 
