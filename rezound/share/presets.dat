@@ -1,0 +1,457 @@
+Flange
+{
+	names[]={"Simple Flange","Deep Flange","Warble","Through a Straw","Throaty","How Low"}
+	Simple\ Flange
+	{
+		Delay
+		{
+			scalar=5.000000;
+			value=2.000000;
+		}
+		Dry\ Gain
+		{
+			scalar=1.000000;
+			value=0.750000;
+		}
+		Feedback
+		{
+			value=0.700000;
+		}
+		LFO\ Depth
+		{
+			scalar=1.000000;
+			value=4.000000;
+		}
+		LFO\ Freq
+		{
+			scalar=1.000000;
+			value=0.500000;
+		}
+		LFO\ Phase
+		{
+			value=270.000000;
+		}
+		Wet\ Gain
+		{
+			scalar=1.000000;
+			value=0.300000;
+		}
+	}
+
+	Deep\ Flange
+	{
+		Delay
+		{
+			scalar=10.000000;
+			value=5.000000;
+		}
+		Dry\ Gain
+		{
+			scalar=1.000000;
+			value=0.50000;
+		}
+		Feedback
+		{
+			value=0.360000;
+		}
+		LFO\ Depth
+		{
+			scalar=20.000000;
+			value=10.000000;
+		}
+		LFO\ Freq
+		{
+			scalar=1.000000;
+			value=0.200000;
+		}
+		LFO\ Phase
+		{
+			value=270.000000;
+		}
+		Wet\ Gain
+		{
+			scalar=1.000000;
+			value=0.700000;
+		}
+	}
+
+	Warble
+	{
+		Delay
+		{
+			scalar=5.000000;
+			value=2.000000;
+		}
+		Dry\ Gain
+		{
+			scalar=1.000000;
+			value=0.750000;
+		}
+		Feedback
+		{
+			value=0.460000;
+		}
+		LFO\ Depth
+		{
+			scalar=8.000000;
+			value=4.000000;
+		}
+		LFO\ Freq
+		{
+			scalar=9.000000;
+			value=7.200000;
+		}
+		LFO\ Phase
+		{
+			value=270.000000;
+		}
+		Wet\ Gain
+		{
+			scalar=1.000000;
+			value=0.500000;
+		}
+	}
+
+	Through\ a\ Straw
+	{
+		Delay
+		{
+			scalar=1.000000;
+			value=0.025500;
+		}
+		Dry\ Gain
+		{
+			scalar=1.000000;
+			value=0.480000;
+		}
+		Feedback
+		{
+			value=-0.93000;
+		}
+		LFO\ Depth
+		{
+			scalar=2.000000;
+			value=0.900000;
+		}
+		LFO\ Freq
+		{
+			scalar=1.000000;
+			value=0.350000;
+		}
+		LFO\ Phase
+		{
+			value=270.000000;
+		}
+		Wet\ Gain
+		{
+			scalar=-1.000000;
+			value=-0.410000;
+		}
+	}
+
+	Throaty
+	{
+		Delay
+		{
+			scalar=2.000000;
+			value=1.000000;
+		}
+		Dry\ Gain
+		{
+			scalar=1.000000;
+			value=0.480000;
+		}
+		Feedback
+		{
+			value=-0.93000;
+		}
+		LFO\ Depth
+		{
+			scalar=8.000000;
+			value=3.100000;
+		}
+		LFO\ Freq
+		{
+			scalar=1.000000;
+			value=0.203000;
+		}
+		LFO\ Phase
+		{
+			value=90.000000;
+		}
+		Wet\ Gain
+		{
+			scalar=-1.000000;
+			value=-0.310000;
+		}
+	}
+
+	How\ Low
+	{
+		Delay
+		{
+			scalar=6.000000;
+			value=3.000000;
+		}
+		Dry\ Gain
+		{
+			scalar=1.000000;
+			value=0.550000;
+		}
+		Feedback
+		{
+			value=-0.93000;
+		}
+		LFO\ Depth
+		{
+			scalar=16.000000;
+			value=12.03000;
+		}
+		LFO\ Freq
+		{
+			scalar=1.000000;
+			value=0.070000;
+		}
+		LFO\ Phase
+		{
+			value=270.000000;
+		}
+		Wet\ Gain
+		{
+			scalar=-1.000000;
+			value=-0.355000;
+		}
+	}
+
+}
+
+Simple\ Delay
+{
+	names[]={"Simple Echo","Subtle Box","Tunnel","Bucket","Ring","Paging John"}
+	Simple\ Echo
+	{
+		Delay
+		{
+			scalar=600.000;
+			value=250.000;
+		}
+		Gain
+		{
+			scalar=1;
+			value=0.5;
+		}
+		Feedback
+		{
+			scalar=1;
+			value=0.5;
+		}
+	}
+
+	Subtle\ Box
+	{
+		Delay
+		{
+			scalar=20.000;
+			value=10.000;
+		}
+		Gain
+		{
+			scalar=1;
+			value=0.4;
+		}
+		Feedback
+		{
+			scalar=1;
+			value=0.5;
+		}
+	}
+
+	Tunnel
+	{
+		Delay
+		{
+			scalar=20.000;
+			value=15.000;
+		}
+		Gain
+		{
+			scalar=1;
+			value=0.3575;
+		}
+		Feedback
+		{
+			scalar=1;
+			value=0.85;
+		}
+	}
+
+	Bucket
+	{
+		Delay
+		{
+			scalar=10.000;
+			value=3.94;
+		}
+		Gain
+		{
+			scalar=1;
+			value=0.86;
+		}
+		Feedback
+		{
+			scalar=1;
+			value=0.75;
+		}
+	}
+
+	Ring
+	{
+		Delay
+		{
+			scalar=1.000;
+			value=0.1;
+		}
+		Gain
+		{
+			scalar=-2;
+			value=-0.7;
+		}
+		Feedback
+		{
+			scalar=-2;
+			value=-0.98;
+		}
+	}
+
+	Paging\ John
+	{
+		Delay
+		{
+			scalar=75.000;
+			value=50.0;
+		}
+		Gain
+		{
+			scalar=-2;
+			value=-0.45;
+		}
+		Feedback
+		{
+			scalar=-1;
+			value=-0.416;
+		}
+	}
+
+}
+
+Change\ Rate
+{
+	names[]={"Half","Double"};
+
+	Double
+	{
+		Rate\ Change
+		{
+			value=2;
+			scalar=4;
+		}
+	}
+
+	Half
+	{
+		Rate\ Change
+		{
+			value=0.5;
+			scalar=4;
+		}
+	}
+}
+
+Change\ Amplitude\ According\ to\ a\ Curve
+{
+	Curved\ Fade\ In
+	{
+		Gain\ Curve
+		{
+			node_positions[]={"0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1"};
+			node_values[]={"0", "0.005", "0.02", "0.045", "0.08", "0.125", "0.18", "0.245", "0.32", "0.405", "0.5"};
+			scalar="2";
+		}
+
+	}
+
+	Curved\ Fade\ Out
+	{
+		Gain\ Curve
+		{
+			node_positions[]={"0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1"};
+			node_values[]={"0.5", "0.405", "0.32", "0.245", "0.18", "0.125", "0.08", "0.045", "0.02", "0.005", "0.0"};
+			scalar="2";
+		}
+
+	}
+
+	Linear\ Fade\ In
+	{
+		Gain\ Curve
+		{
+			node_positions[]={"0", "1"};
+			node_values[]={"0", "0.5"};
+			scalar="2";
+		}
+
+	}
+
+	Linear\ Fade\ Out
+	{
+		Gain\ Curve
+		{
+			node_positions[]={"0", "1"};
+			node_values[]={"0.5", "0"};
+			scalar="2";
+		}
+
+	}
+
+	Mute\ Very\ Edges
+	{
+		Gain\ Curve
+		{
+			node_positions[]={"0", "0.001", "0.999", "1"};
+			node_values[]={"0", "0.5", "0.5", "0"};
+			scalar="2";
+		}
+
+	}
+
+	Invert\ Phase
+	{
+		Gain\ Curve
+		{
+			node_positions[]={"0", "1"};
+			node_values[]={"0.5", "0.5"};
+			scalar="-2";
+		}
+
+	}
+
+	names[]={"Curved Fade In", "Curved Fade Out", "Linear Fade In", "Linear Fade Out","Mute Very Edges","Invert Phase"};
+}
+
+Crossfade\ Edges\ Settings
+{
+	names[]={"Default"};
+	Default
+	{
+		Crossfade\ Start\ Edge
+		{
+			value="10";
+		}
+
+		Crossfade\ Stop\ Edge
+		{
+			value="10";
+		}
+
+	}
+}
