@@ -455,7 +455,6 @@ const size_t ASoundPlayer::getFrequencyAnalysisOctaveStride() const
 
 // ----------------------------
 
-// one of ENABLE_OSS, ENABLE_PORTAUDIO or ENABLE_JACK will be defined
 #include "COSSSoundPlayer.h"
 #include "CPortAudioSoundPlayer.h"
 #include "CJACKSoundPlayer.h"

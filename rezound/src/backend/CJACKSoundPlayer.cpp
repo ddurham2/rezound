@@ -80,6 +80,7 @@ void CJACKSoundPlayer::initialize()
 			// tell the JACK server to call `processAudio()' whenever there is work to be done
 			jack_set_process_callback(client,processAudio,this);
 
+// I would like to put an #if version < 0.5 here but those #defines don't exist
 			// tell the JACK server to call `maxToProcessChanged()' whenever the maximum number of frames that 
 			// will be passed to `processAudio()' changes
 			jack_set_buffer_size_callback(client,maxToProcessChanged,this);

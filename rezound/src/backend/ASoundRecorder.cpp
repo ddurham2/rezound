@@ -426,7 +426,6 @@ void ASoundRecorder::removeStatusTrigger(TriggerFunc triggerFunc,void *data)
 
 // ------------------------
 
-// one of ENABLE_OSS, ENABLE_PORTAUDIO or ENABLE_JACK will be defined
 #include "COSSSoundRecorder.h"
 #include "CPortAudioSoundRecorder.h"
 #include "CJACKSoundRecorder.h"
