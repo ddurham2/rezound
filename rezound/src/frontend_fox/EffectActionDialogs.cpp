@@ -155,7 +155,7 @@ static const double interpretValue_quantizeGain(const double x,const int s) { re
 static const double uninterpretValue_quantizeGain(const double x,const int s) { return(bipolarRange_to_unitRange_exp(x,s)); }
 
 CQuantizeDialog::CQuantizeDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Quantize the Number of Possible Sample Values")
+	CActionParamDialog(mainWindow,"Quantize")
 {
 	addSlider("Input Gain","x",interpretValue_quantizeGain,uninterpretValue_quantizeGain,NULL,1.0,2,100,2,true);
 	addSlider("Quantum Count","",interpretValue_quantize,uninterpretValue_quantize,NULL,8,4,1000000,32,false);
