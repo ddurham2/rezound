@@ -35,6 +35,10 @@ dnl 3: header file defining the tested class. This will be included in the test
 dnl 	program. 
 dnl 4: A URL to link to a download to find the latest version of a library 
 dnl 	should the test fail. 
+dnl 5: Extra -l flags to pass to linker for link check. Obviously this is an 
+dnl		optional argument, but should you need to pass extra link flags (as 
+dnl		with ccgnu) then you can pass them here. Make sure to pass a list of 
+dnl		flags, and not just library names( eq: -lpthread -ldl )
 dnl
 dnl By checking for specific classes this check can be used to check if a 
 dnl library version is compatible with the classes used in the application.
@@ -57,7 +61,7 @@ if test "$enable_$1_check" = "yes"; then
 int main()
 { $2 xxx; }
 EOF
-	$CXX -l$1 ajv_chk_cxx_lib_$1.cc >/dev/null 2>ajv_chk_cxx_lib_$1.err
+	$CXX -l$1 $5 ajv_chk_cxx_lib_$1.cc >/dev/null 2>ajv_chk_cxx_lib_$1.err
 	if test $? = 0; then
 		AC_MSG_RESULT(yes)
 		rm -f ajv_chk_cxx_lib_$1.cc

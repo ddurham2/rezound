@@ -49,8 +49,9 @@
 # define REZOUND_VERSION	"vx.xxx" /* just in case it wasn't defined. */
 #endif
 
-/* Taken out of CXXFLAGS from am_include.mk (I think ccgnu wants this */
+/* I'm trying to move this here instead if as CXXFLAGS from am_include.mk (I think ccgnu wants this). For some reason It's not happy with this here, but until I figure it out it will remain as a CXXFLAG  */
+/*
 #define _GNU_SOURCE (1)
-
+*/
 
 #endif /* COMMON_H */

@@ -1,25 +1,25 @@
-# vim:tw=78
-## Process this file with autoconf to build a configure script
-##
-# ReZound configure.in Written by Anthony Ventimiglia
-#
-# Copyright (C) 2002 - Anthony Ventimiglia
-# 
-# This file is part of ReZound, an audio editing application, 
-# 
-# ReZound is free software; you can redistribute it and/or modify it under the
-# terms of the GNU General Public License as published by the Free Software
-# Foundation; either version 2 of the License, or (at your option) any later
-# version.
-# 
-# ReZound is distributed in the hope that it will be useful, but WITHOUT ANY
-# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-# details.
-# 
-# You should have received a copy of the GNU General Public License along with
-# this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-# Place - Suite 330, Boston, MA  02111-1307, USA
+dnl vim:tw=78
+dnl Process this file with autoconf to build a configure script
+dnl
+dnl ReZound configure.in Written by Anthony Ventimiglia
+dnl
+dnl Copyright (C) 2002 - Anthony Ventimiglia
+dnl 
+dnl This file is part of ReZound, an audio editing application, 
+dnl 
+dnl ReZound is free software; you can redistribute it and/or modify it under the
+dnl terms of the GNU General Public License as published by the Free Software
+dnl Foundation; either version 2 of the License, or (at your option) any later
+dnl version.
+dnl 
+dnl ReZound is distributed in the hope that it will be useful, but WITHOUT ANY
+dnl WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+dnl FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+dnl details.
+dnl 
+dnl You should have received a copy of the GNU General Public License along with
+dnl this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+dnl Place - Suite 330, Boston, MA  02111-1307, USA
 
 
 dnl Process this file with autoconf to produce a configure script.
@@ -37,7 +37,6 @@ dnl These are some custom checks to see if cc accepts some extra warning flags
 dnl see config/cxx.m4 for macro definition
 ajv_CXX_FLAG(-Wno-unused-function)
 ajv_CXX_FLAG(-Wno-unused-variable)
-AC_PROG_RANLIB
 AM_PROG_LIBTOOL
 AC_PROG_CPP
 
@@ -58,18 +57,12 @@ dnl This is a check for a class in a C++ library. To pinpoint
 dnl the specific version we need we could change what class is linked.
 ajv_CXX_CHECK_LIB([FOX],FXApp,fox/fx.h,[http://fox-toolkit.org])
 
-dnl I'm commenting this out. Until a test can be made.
-dnl AC_CHECK_LIB(ccgnu, main)
-dnl -- Mutex is what I'd like to check for, but the output of the test compile complains about
-dnl symbols not found because we didn't link with -lpthread... but actually, commonc++ has a 
-dnl ccgnu-config script it installs to specify the flags to link with so that's handy.. Perhaps 
-dnl add another parameter to your macro which says, add this to the command line.  
-dnl -- Also, ost:: may or may not be valid depending on wether the compiler supports namespaces or not
-dnl if it doesn't then commonc++ would have compiled with no ost namespace and this test will fail.  Is
-dnl there a way to have it try something else if this doesn't fail?  I can't test in the ReZound code for 
-dnl whether ost is necessary or not by using the define from cc++/config.h (there is a define in there 
-dnl which says to wrap all the classes in a namespace or not.)
-dnl ajv_CXX_CHECK_LIB([ccgnu],ost::Mutex,cc++/thread.h,[http://www.gnu.org/directory/commoncpp.html])
+dnl I added an extra argument to ajv_CXX_CHECK_LIB which allows us to pass
+dnl extra -l flags so this test (as suggested by Davy) would work. 
+dnl As for potential problems with a compiler not recognizing namespaces:
+dnl For now let's worry about g++, and sooner or later everything should
+dnl become ANSI and recognize namespaces.
+ajv_CXX_CHECK_LIB([ccgnu],ost::Mutex,cc++/thread.h,[http://www.gnu.org/directory/commoncpp.html],[-lpthread -ldl])
 
 
 dnl Checks for header files.

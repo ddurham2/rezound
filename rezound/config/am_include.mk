@@ -48,7 +48,7 @@ INCLUDES=\
 ##
 ## The Debian gcc chokes on -Wno-unused-variable and -Wno-unused-function
 ## so I'm removing it for now.
-CXXFLAGS=-Wall 
+CXXFLAGS=-Wall -g -D_GNU_SOURCE
 
 ## LDFLAGS will be added at link time
 LDFLAGS= -lFOX -laudiofile -lccgnu -ldl -lm -lpthread

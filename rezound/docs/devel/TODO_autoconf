@@ -1,99 +1,13 @@
+Add options to manually precify -I paths of -L paths for required libs and headers. That way if my test fails, overrides will work.
 
-1. Put in a check for gnucc, AC_CHECK_HEADER isn't working, so I'll have to
-write a macro. Also I want to put an option to override the check similar to
-the other override options.
 
 2. Look for other possible trouble spots such as stdint.h int32_t int16_t etc
 and set up a common.h header to deal with these problems. 
 
 
-- How is the best way to enable the -g flag for the compiler? Is it a flag to
-  configure?  I didn't see a --enable-debug option or anything in configure
-	- the -g, of course, is necessary for being able to use gdb to debug
-	  the application
-	- I would be happy to always have it enabled, even on releases unless
-	  they configure it with --strip-debug (which is a flag in configure,
-	  so I suppose that's what it does, that is strips the debug info out
-	  of the binary at the end)
 
-- THE MOST IMPORTANT -
-	- Does it do this on yours (btw- I'm running on a 1.2ghz... I feel for
-	  ya man).. After I compile, it was failing because of not finding
-	  /usr/X11R6/lib/libGL.so, but then if I immediately did 'make' again
-	  it would recompile the whole thing.. Perhaps some global dependancy
-	  is getting touched with the current date?
-
-
---------------------------------------------------------
---------------------------------------------------------
---------------------------------------------------------
-
-- for all CommonC++ compiler flags (these are: -D_GNU_SOURCE for compiling and
-  for linking: -lccgnu -ldl -pthread) I would say to use the ccgnu-config
-  binary out there, except that it puts -O3 on the compile line.. perhaps cut
-  out any -O# flags... however, I think whatever the last -O flag is will take
-  precidence.. so you could put -O0 at the end of the compiler command line to
-  disable all optimizations that -O3 turned on
-	- this will ensure that the right libs and compile flags will be used
-	  for the particular release of commonc++ in use
-- fox may or may not have this, but if so, we should probably use it too... 
-	- I'll encourage them to do this.. it's a pretty reliable way for a
-	  library to specify its needed compiler flags
-- OOOOOOOOORRRRRRRR...... Does libtool take care of all the linker flags?  I
-  saw that it does some crazy things in there to figure out which library it
-  needs to link with
-	- then the only issue is compiler flags.. but those are mostly set from
-	  the package (the only somewhat weird one is -D_GNU_SOURCE)
-
-- I tried using the fox rpms created for mandrake, and the only probably I ran
-  into was /usr/X11R6/lib/libGL.la not existing, but it's probably a problem
-  with the libfox0 package not depending on libMesaGLU1 as it should
-	- I don't guess it's something we should concern outselves with, except
-	  it may not be obvious to another user
-	- one thing I think is stupid about fox is that they made some of these
-	  opengl widgets... and this it requires opengl to be configured on the
-	  machine which is often not the case... But I'm not even using any of
-	  these widgets, but unfortunatly the GL stuff has to be contended with
-		- libtool determined that ReZound needs to be linked with
-		  libGL.la ... 
-		- again.. I developed rezound completly off a self compiled fox
-		  tar bar configured with --with-opengl=no (or some flag very
-		  close to that)
-
-	- Also.. it wanted libGL.so which must have existed on the fox rpm
-	  packager's machine, but it doesn't exist on mine.. I have libGL.so.1
-	  tho
-		- perhaps we should suggest downloading and compiling it
-		  yourself... 
-		- With access to the compiler farms I may be able to make
-		  binary releases of the stuff too ugh.. 
-
-	- Perhaps we could put a comment during the FOX check to just recommend
-	  manually installing fox if there are any linker problem durring this
-	  period where not all machines come configured with opengl support
-		- recommend running fox's configure script with the
-		  "--with-opengl=no" flag
-
-- if at all possible I would like those other two -Wno-... flags on the compile
-  command line if it is determinted that a gcc of an adequate version is being
-  used.... 
-	- if its not gcc or not gcc >= 2.96 then I suppose don't even put -Wall
-	  so no warnings should be given..... I use -Wall for being notified of
-	  accidents while developing.. it's not so necessary for someone else
-	  just building it
 
 - might ought to verify that bootstrap is running within the toplevel directory
-
-- Are the softlinks within the config directory regenerated at configure time?
-  Because it's not necessarily true that /usr/share/automake/ would even exist
-  on some other machine.
-	- is this okay? Or does it only concern a machine which was gonna
-	  regenerate the configure script?
-
-
-- In common.h where you say "just in case it wasn't defined" I'd say put some
-  #error directive giving a message of maybe why this happened... because
-  shouldn't they always be defined?
 
 
 - when I temporarily uninstalled fox to see what happend it said I could use
@@ -102,19 +16,6 @@ and set up a common.h header to deal with these problems.
   which allows someone to specify an alternate include and link path to fox
   (and any other libraries we rely on)?
 
-
-- in the docs/INSTALL you named commonc++ as gnucc... if you download the tar
-  file from gnu.org it's commonc++-...tar.gz was it called gnucc++ for you?
-  Right now, I just put (aka commonc++) next to your note 
-
-- See the notes in configure.in about getting commonc++ to detect.. I did get
-  it to detect it but not in the best way
-
-- we probably need to up front (before fox, commonc++, etc) verify that a
-  certain level of libstdc++ is being used.. probably that version on your
-  stable debian release would be the minimum, unless it has some bugs in it
-  that we run into...
-
 - question: why do I have to configure to do a make dist... I understand that
   there has to be the make file.. but does any of the stuff configure found out
   go into actually making the tar ball?
@@ -122,21 +23,5 @@ and set up a common.h header to deal with these problems.
 	  about my machine's configuration affects the distro tar ball
 
 
-- This isn't your fault.... but I tell ya... I went to use the mandrake fox
-  packages.. and I ended up having to upgrade all the XFree86 packages (which
-  isn't terrible difficult with urpmi (similar to appget on debian)).. And this
-  shouldn't at all be an issue with the new Mandrake 8.2 coming out any day now
-  (that is, I think the libfox0 package is included with it)... But it really
-  is easier just to build fox yourself and let it install in /usr/local/include
-  and let it pick it up from there.. now I haven't tried having both the rpm
-  and the selfinstalled copies exist simultaneously ... I guess it would just
-  find one before the other.. 
 
-
-- since I seemed to have found a buncha files that are also script generated
-  but not are not removed by bootstrap --clean I didn't know if you want to add
-  them to be removed also.  If you do want to see just which files these were
-  (i.e.  the symlinks too) just do a cvs checkout to another top level
-  directory and you'll see all the files that aren't in there that are in the
-  normal cvs repository (after doing a bootstrap --clean)
 
