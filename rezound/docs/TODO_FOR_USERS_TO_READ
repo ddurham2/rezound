@@ -8,12 +8,10 @@
 - There is a slight drawing bug in which the the area on screen which is selected is drawn shifted to the left just slightly
 	- I always zoom in to make selections which are that important to get just exactly right
 
-- Many more effect actions, several more edit actions, and a few more play controls are planned
-
 - As more experienced users make suggestions, there will probably be changes to how the frontend dialogs express units and ranges of parameters to the effect and edit actions
 	- This is aimed at making the frontend controls act and feel more like professional hardware products
 
-- The author of FOX (the frontend library) says that skinning is a real possibility, and does plan to implement it sometime in the future.
+- The author of FOX (the frontend library) says that skinning/theming is a real possibility, and does plan to implement it sometime in the future.
 
 
 
