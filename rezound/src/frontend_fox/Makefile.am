@@ -56,6 +56,7 @@ libfrontend_la_SOURCES= \
 			EditActionDialogs.cpp \
 			EffectActionDialogs.cpp \
 			FilterActionDialogs.cpp \
+			GenerateActionDialogs.cpp \
 			RemasterActionDialogs.cpp \
 			LoopingActionDialogs.cpp \
 			CAboutDialog.cpp \
@@ -97,6 +98,7 @@ rezound_LDADD= libfrontend.la\
 	$(top_builddir)/src/backend/Filters/libFilters.la \
 	$(top_builddir)/src/backend/Looping/libLooping.la \
 	$(top_builddir)/src/backend/Remaster/libRemaster.la \
+	$(top_builddir)/src/backend/Generate/libGenerate.la \
 	$(top_builddir)/src/misc/CNestedDataFile/libmiscCN.la \
 	$(top_builddir)/src/PoolFile/libPoolFile.la @FOX_LIBS@ @LTLIBINTL@
 
@@ -131,6 +133,7 @@ noinst_HEADERS=\
 	EditActionDialogs.h \
 	EffectActionDialogs.h \
 	FilterActionDialogs.h \
+	GenerateActionDialogs.h \
 	RemasterActionDialogs.h \
 	LoopingActionDialogs.h \
 	CAboutDialog.h \

@@ -32,6 +32,7 @@ SUBDIRS=\
 	Effects \
 	Filters \
 	Looping \
+	Generate \
 	Remaster
 
 noinst_HEADERS= \

@@ -456,6 +456,7 @@ AC_CONFIG_FILES([
 			src/backend/Effects/Makefile
 			src/backend/Filters/Makefile
 			src/backend/Looping/Makefile
+			src/backend/Generate/Makefile
 			src/backend/Remaster/Makefile
 		src/frontend_fox/Makefile
 	po/Makefile.in

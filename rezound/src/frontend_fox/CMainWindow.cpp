@@ -689,6 +689,9 @@ void CMainWindow::actionMenuCommandTriggered(CActionMenuCommand *actionMenuComma
 #include "../backend/Remaster/RemasterActions.h"
 #include "RemasterActionDialogs.h"
 
+#include "../backend/Generate/GenerateActions.h"
+#include "GenerateActionDialogs.h"
+
 static const string stripAmpersand(const string str)
 {
 	string stripped;
@@ -877,6 +880,9 @@ void CMainWindow::buildActionMap()
 	addToActionMap(new CActionMenuCommand(new CRemoveDCActionFactory(gChannelSelectDialog),dummymenu,""),menuItemRegistry);
 	// -
 	addToActionMap(new CActionMenuCommand(new CUnclipActionFactory(gChannelSelectDialog),dummymenu,""),menuItemRegistry);
+
+	// Generate
+	addToActionMap(new CActionMenuCommand(new CGenerateNoiseActionFactory(gChannelSelectDialog,new CGenerateNoiseDialog(this)),dummymenu,""),menuItemRegistry);
 }
 
 #define DOT string(CNestedDataFile::delimChar)
