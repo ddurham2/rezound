@@ -313,7 +313,7 @@ bool handleMoreBackendArgs(ASoundFileManager *fileManager,int argc,char *argv[])
 			const string filename=argv[t];
 			try
 			{
-				fileManager->open(filename,true);
+				fileManager->open(filename);
 			}
 			catch(exception &e)
 			{
