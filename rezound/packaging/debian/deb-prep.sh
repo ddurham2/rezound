@@ -9,6 +9,6 @@
 #
 # For more info read packaging/debian/README.cvs
 
-./bootstrap
-./configure
-make dist
+test -f configure || ./bootstrap ;
+test -f Makefile || ./configure ;
+make dist ;
