@@ -37,8 +37,6 @@ Here are the steps to making a debian package.
 2.	A clean distribution tar ball and directory will now be in 
 	packaging/debian/build:
 		$ cd packaging/debian/build/rezound-*
-		$ mkdir debian 
-		$ cp ../../* debian/
 		$ dh_make -s -e email@foo.org -f ../rezound*.tar.gz \
 		   -c gpl -a
 	You'll have to replace the wildcards above. All relative 
