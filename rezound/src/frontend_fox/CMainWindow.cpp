@@ -442,12 +442,13 @@ void CMainWindow::createMenus()
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&Remaster",NULL,menu);
-		new CActionMenuCommand(new CUnclipActionFactory(gChannelSelectDialog),menu,"");
 		new CActionMenuCommand(new CRemoveDCActionFactory(gChannelSelectDialog),menu,"");
 		new CActionMenuCommand(new CNoiseGateActionFactory(gChannelSelectDialog,new CNoiseGateDialog(this)),menu,"");
 		new CActionMenuCommand(new CCompressorActionFactory(gChannelSelectDialog,new CCompressorDialog(this)),menu,"");
 		new CActionMenuCommand(new CNormalizeActionFactory(gChannelSelectDialog,new CNormalizeDialog(this)),menu,"");
 		new CActionMenuCommand(new CResampleActionFactory(gChannelSelectDialog,new CResampleDialog(this)),menu,"");
+
+		new CActionMenuCommand(new CUnclipActionFactory(gChannelSelectDialog),menu,"");
 
 
 	create(); // re-call create for this window which will call it for all new child windows
