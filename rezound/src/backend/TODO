@@ -1,6 +1,8 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- Added a "Lock Channels" check box feature to the noise gate, also it would be better if noise gate has a choice of dBFS or percent for the threshold
+
 	DONE - create separate CDSPLevelDetectorRMS and CDSPPeakLevelDetectorPeak dsp blocks
 		- now I need to make a choice of peak or RMS in the NoiseGate and Compressor blocks
 
