@@ -37,7 +37,7 @@ Here are the steps to making a debian package.
 2.	A clean distribution tar ball and directory will now be in 
 	packaging/debian/build:
 		$ cd packaging/debian/build/rezound-*
-		$ dh_make -a -e email@foo.org -f ../rezound*.tar.gz 
+		$ dh_make -a -s -e email@foo.org -f ../rezound*.tar.gz 
 		   
 	You'll have to replace the wildcards above. All relative 
 	paths will refer to this new working directory you are in.
