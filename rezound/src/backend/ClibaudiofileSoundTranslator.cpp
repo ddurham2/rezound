@@ -205,7 +205,7 @@ void ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 		TAutoBuffer<sample_t> buffer((size_t)(afGetVirtualFrameSize(h,AF_DEFAULT_TRACK,1)*4096/sizeof(sample_t)));
 		sample_pos_t pos=0;
 		AFframecount count=size/4096+1;
-		BEGIN_PROGRESS_BAR("Loading Sound",0,count);
+		BEGIN_PROGRESS_BAR("Loading Sound",0,size);
 		for(AFframecount t=0;t<count;t++)
 		{
 			const int chunkSize=  (t==count-1 ) ? size%4096 : 4096;
@@ -226,7 +226,7 @@ void ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 				pos+=chunkSize;
 			}
 
-			UPDATE_PROGRESS_BAR(t);
+			UPDATE_PROGRESS_BAR(pos);
 		}
 
 		END_PROGRESS_BAR();
@@ -386,7 +386,7 @@ void ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 		TAutoBuffer<sample_t> buffer((size_t)(channelCount*4096));
 		sample_pos_t pos=0;
 		AFframecount count=size/4096+1;
-		BEGIN_PROGRESS_BAR("Saving Sound",0,count);
+		BEGIN_PROGRESS_BAR("Saving Sound",0,size);
 		for(AFframecount t=0;t<count;t++)
 		{
 			const int chunkSize=  (t==count-1 ) ? size%4096 : 4096;
@@ -402,7 +402,7 @@ void ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 				pos+=chunkSize;
 			}
 
-			UPDATE_PROGRESS_BAR(t);
+			UPDATE_PROGRESS_BAR(pos);
 		}
 
 		END_PROGRESS_BAR();
