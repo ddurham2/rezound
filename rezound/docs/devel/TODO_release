@@ -22,14 +22,14 @@ distro tarball(eg: removing warning flags)
 
 7. update the rpm spec file
 
-8. rebuild FOX with all the possible --disable flags, --with-opengl=no, and probably CPPFLAGS=-DN_XIM
+8. rebuild FOX with all the possible --disable flags, --with-opengl=no, and probably CPPFLAGS=-NO_XIM
 
 9. run build_packages_for_release.sh (which is only local to me -- not in CVS)
 
 --- OR -----------------
 
 7. 'make distcheck'
-8. rebuild FOX with all the possible --disable flags, --with-opengl=no, and probably CPPFLAGS=-DN_XIM then 'make_standalone.sh'
+8. rebuild FOX with all the possible --disable flags, --with-opengl=no, and probably CPPFLAGS=-NO_XIM then 'make_standalone.sh'
 9. create .rpm as standalone
 	- update the rpm spec file
 	- copy the source tarball to /usr/src/RPM/SOURCES
