@@ -76,9 +76,9 @@ VAnswer Question(const string &message,VQuestion options)
 
 
 
-int beginProgressBar(const string &title)
+int beginProgressBar(const string &title,bool showCancelButton)
 {
-	return(gStatusComm->beginProgressBar(title));
+	return(gStatusComm->beginProgressBar(title,showCancelButton));
 }
 
 void endProgressBar(int handle)

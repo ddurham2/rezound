@@ -130,7 +130,7 @@ void CStatusComm::beep()
 	mainWindow->getApp()->beep();
 }
 
-int CStatusComm::beginProgressBar(const string &title)
+int CStatusComm::beginProgressBar(const string &title,bool showCancelButton)
 {
 	//printf("begin progress bar: %s\n",title.c_str());
 
@@ -141,16 +141,9 @@ int CStatusComm::beginProgressBar(const string &title)
 		{
 			try
 			{
-				progressDialogs[handle]=new CProgressDialog(mainWindow,title.c_str());
+				progressDialogs[handle]=new CProgressDialog(mainWindow,title.c_str(),showCancelButton);
 				progressDialogs[handle]->create();
 				progressDialogs[handle]->show();
-
-				/* ??? how can I get the stuff that needs to be repainted done so?
-				progressDialogs[handle]->update();
-				progressDialogs[handle]->repaint();
-				progressDialogs[handle]->getApp()->flush();
-				*/
-
 				return(handle);
 			}
 			catch(exception &e)
@@ -165,7 +158,7 @@ int CStatusComm::beginProgressBar(const string &title)
 	return(-1);
 }
 
-void CStatusComm::updateProgressBar(int handle,int progress)
+bool CStatusComm::updateProgressBar(int handle,int progress)
 {
 	////printf("update progress bar: %d\n",progress);
 
@@ -175,6 +168,7 @@ void CStatusComm::updateProgressBar(int handle,int progress)
 		{
 			progressDialogs[handle]->setProgress(progress);
 			progressDialogs[handle]->getApp()->repaint();
+			return progressDialogs[handle]->isCancelled;
 		}
 		catch(exception &e)
 		{ // oh well

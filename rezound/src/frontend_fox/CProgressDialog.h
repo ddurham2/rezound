@@ -26,38 +26,28 @@
 
 #include <fox/fx.h>
 
-// used to place an invisible FXFrame in another widget to make sure it has a minimum height or width
-#define ASSURE_HEIGHT(parent,height) new FXFrame(parent,FRAME_NONE|LAYOUT_SIDE_LEFT | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT,0,0,0,height);
-#define ASSURE_WIDTH(parent,width) new FXFrame(parent,FRAME_NONE|LAYOUT_SIDE_BOTTOM | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT,0,0,width,0);
-
-/*
- * This is meant to be a base class for a modal dialog
- *
- * It goes ahead and creates two panels with an okay and
- * cancel button in the lower panel... The derived class
- * should put whatever is needed in the upper panel
- */
 class CProgressDialog : public FXDialogBox
 {
 	FXDECLARE(CProgressDialog);
 
 public:
-	CProgressDialog(FXWindow *owner,const FXString &title/*,bool showCancelButton*/);
+	CProgressDialog(FXWindow *owner,const FXString &title,bool showCancelButton);
 
 	virtual void show(FXuint placement=PLACEMENT_OWNER);
 	virtual void hide();
 
 	void setProgress(int progress); // 0 to 100
 
-/*
 	long onCancelButton(FXObject *sender,FXSelector sel,void *ptr);
+	long onCloseWindow(FXObject *sender,FXSelector sel,void *ptr);
 
 	enum 
 	{
 		ID_CANCEL_BUTTON=FXDialogBox::ID_LAST,
 		ID_LAST
 	};
-*/
+
+	bool isCancelled;
 
 protected:
 	CProgressDialog() {}
@@ -65,9 +55,7 @@ protected:
 private:
 	FXHorizontalFrame *contents;
 		FXProgressBar *progressBar;
-		//FXButton *cancelButton;
-
-
+		FXButton *cancelButton;
 };
 
 #endif

@@ -65,8 +65,8 @@ public:
 
 	virtual void beep()=0;
 
-	virtual int beginProgressBar(const string &title)=0;
-	virtual void updateProgressBar(int handle,int progress)=0; // progress is 0 to 100
+	virtual int beginProgressBar(const string &title,bool showCancelButton=false)=0;
+	virtual bool updateProgressBar(int handle,int progress)=0; // progress is 0 to 100 .. returns if 'cancel' was pressed
 	virtual void endProgressBar(int handle)=0;
 	virtual void endAllProgressBars()=0;
 
@@ -82,8 +82,8 @@ void Warning(const string &message);
 void Message(const string &message);
 VAnswer Question(const string &message,VQuestion options);
 
-int beginProgressBar(const string &title);
-inline static void updateProgressBar(int handle,int progress) { gStatusComm->updateProgressBar(handle,progress); }
+int beginProgressBar(const string &title,bool showCancelButton=false);
+inline static bool updateProgressBar(int handle,int progress) { return gStatusComm->updateProgressBar(handle,progress); }
 void endProgressBar(int handle);
 void endAllProgressBars();
 
@@ -107,12 +107,21 @@ void endAllProgressBars();
 	also be given to the BEGIN_PROGRESS_BAR() macro
  */
 
-#define BEGIN_PROGRESS_BAR(title,firstValue,lastValue)				\
-	const int __progressHandle=beginProgressBar(title);			\
-	const sample_pos_t __progressSub= firstValue;				\
-	const sample_pos_t __valueDiff= ((lastValue)-(firstValue));		\
-	const sample_pos_t __progressDiv= __valueDiff<100 ? 1 : ((__valueDiff+100-1)/100); \
-	const float __progressMul= __valueDiff<100 ? (100.0/__valueDiff) : 100.0/(__valueDiff/__progressDiv); \
+#define BEGIN_PROGRESS_BAR(title,firstValue,lastValue)								\
+	const int __progressHandle=beginProgressBar(title,false);						\
+	const sample_pos_t __progressSub= firstValue;								\
+	const sample_pos_t __valueDiff= ((lastValue)-(firstValue));						\
+	const sample_pos_t __progressDiv= __valueDiff<100 ? 1 : ((__valueDiff+100-1)/100);			\
+	const float __progressMul= __valueDiff<100 ? (100.0/__valueDiff) : 100.0/(__valueDiff/__progressDiv);	\
+	sample_pos_t __lastProgress=0;
+
+/* this should be a copy of BEGIN_PROGRESS_BAR except for passing true to beginProgressBar */
+#define BEGIN_CANCEL_PROGRESS_BAR(title,firstValue,lastValue)							\
+	const int __progressHandle=beginProgressBar(title,true);						\
+	const sample_pos_t __progressSub= firstValue;								\
+	const sample_pos_t __valueDiff= ((lastValue)-(firstValue));						\
+	const sample_pos_t __progressDiv= __valueDiff<100 ? 1 : ((__valueDiff+100-1)/100);			\
+	const float __progressMul= __valueDiff<100 ? (100.0/__valueDiff) : 100.0/(__valueDiff/__progressDiv);	\
 	sample_pos_t __lastProgress=0;
 
 #define RESET_PROGRESS_BAR()							\
@@ -124,7 +133,14 @@ void endAllProgressBars();
 	if(__progress!=__lastProgress)						\
 		gStatusComm->updateProgressBar(__progressHandle,(int)((__lastProgress=__progress)*__progressMul));
 
-#define END_PROGRESS_BAR()							\
+/* this should be a copy of UPDATE_PROGRESS_BAR except for adding an if to the return of updateProgressBar */
+#define UPDATE_PROGRESS_BAR__IF_CANCEL(value)					\
+	const sample_pos_t __progress=((value)-__progressSub)/__progressDiv;	\
+	if(__progress!=__lastProgress && gStatusComm->updateProgressBar(__progressHandle,(int)((__lastProgress=__progress)*__progressMul)))
+		// ... and the statement following the macro invokation will be conditional
+		
+
+#define END_PROGRESS_BAR()			\
 	endProgressBar(__progressHandle);
 
 

@@ -51,8 +51,8 @@ public:
 
 	virtual void beep();
 
-	virtual int beginProgressBar(const string &title);
-	virtual void updateProgressBar(int handle,int progress);
+	virtual int beginProgressBar(const string &title,bool showCancelButton=false);
+	virtual bool updateProgressBar(int handle,int progress);
 	virtual void endProgressBar(int handle);
 	virtual void endAllProgressBars();
 

@@ -25,7 +25,8 @@
 FXDEFMAP(CProgressDialog) CProgressDialogMap[]=
 {
 //	Message_Type			ID					Message_Handler
-	//FXMAPFUNC(SEL_COMMAND,		CProgressDialog::ID_CANCEL_BUTTON,	CProgressDialog::onCancelButton),
+	FXMAPFUNC(SEL_CLOSE,		0,					CProgressDialog::onCloseWindow),
+	FXMAPFUNC(SEL_COMMAND,		CProgressDialog::ID_CANCEL_BUTTON,	CProgressDialog::onCancelButton),
 };
 		
 
@@ -35,28 +36,35 @@ FXIMPLEMENT(CProgressDialog,FXDialogBox,CProgressDialogMap,ARRAYNUMBER(CProgress
 
 // ----------------------------------------
 
-CProgressDialog::CProgressDialog(FXWindow *owner,const FXString &title/*,bool showCancelButton*/) :
+CProgressDialog::CProgressDialog(FXWindow *owner,const FXString &title,bool showCancelButton) :
 	FXDialogBox(owner,title,DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE, 0,0,250+6*2,25+6*2, 0,0,0,0, 0,0),
-
-	contents(new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_RAISED|FRAME_THICK, 0,0,0,0, 6,6,6,6, 2,2)),
-		progressBar(new FXProgressBar(contents,NULL,0,PROGRESSBAR_NORMAL | LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,250,25))//,
-		//cancelButton(!showCancelButton ? NULL : new FXButton(buttonPacker,"&Cancel",FOXIcons->RedX1,this,ID_CANCEL,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2))
+	isCancelled(false),
+	contents(new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_RAISED|FRAME_THICK, 0,0,0,0, 6,6,6,6, 6,2)),
+		progressBar(new FXProgressBar(contents,NULL,0,PROGRESSBAR_NORMAL | LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,250,26)),
+		cancelButton(!showCancelButton ? NULL : new FXButton(contents,"&Cancel",/*FOXIcons->RedX1*/NULL,this,ID_CANCEL_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2))
 {
 	progressBar->setTotal(100);
 	progressBar->showNumber();
 }
 
 
-/*
 long CProgressDialog::onCancelButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-	return(1);
+	isCancelled=true;
+	return 1;
 }
-*/
+
+long CProgressDialog::onCloseWindow(FXObject *sender,FXSelector sel,void *ptr)
+{
+	// don't close
+	return 1;
+}
 
 void CProgressDialog::setProgress(int progress)
 {
 	progressBar->setProgress(progress);
+	if(cancelButton)
+		getApp()->runWhileEvents(cancelButton); // give cancel button an oppertunity to be clicked
 }
 
 void CProgressDialog::show(FXuint placement)
