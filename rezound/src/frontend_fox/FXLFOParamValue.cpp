@@ -105,8 +105,8 @@ FXLFOParamValue::FXLFOParamValue(FXComposite *p,int opts,const char *_name,const
 	phaseSlider->setUnits("deg");
 
 
-	LFOTypeComboBox->setWidth(180);
-	LFOTypeComboBox->setNumVisible(16);
+	LFOTypeComboBox->setWidth(280); // ??? I really would like call something that sets it to the width of the widest item added
+	LFOTypeComboBox->setNumVisible(16); 
 	for(size_t t=0;t<gLFORegistry.getCount();t++)
 	{
 		if(!hideBipolarLFOs || !gLFORegistry.isBipolar(t))
