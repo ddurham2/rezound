@@ -50,12 +50,14 @@
  *
  */
 
-//#define DO_IMPLEMENT // just define this to implement or not the effect (incase I want to play with it later
+#define DO_IMPLEMENT // just define this to implement or not the effect (incase I want to play with it later
 
+/*
 #ifdef DO_IMPLEMENT
 	#define IMPULSE_LENGTH (sizeof(impulse)/sizeof(*impulse))
 	#include "/home/ddurham/impulse/impulse.h"
 #endif
+*/
 
 CStaticReverbEffect::CStaticReverbEffect(const CActionSound &actionSound) :
 	AAction(actionSound)
@@ -68,6 +70,7 @@ bool CStaticReverbEffect::doActionSizeSafe(CActionSound &actionSound,bool prepar
 	const sample_pos_t stop=actionSound.stop;
 	const sample_pos_t selectionLength=actionSound.selectionLength();
 
+
 #ifndef DO_IMPLEMENT
 	throw(EUserMessage(("check "+string(__FILE__)+" for a message about this disabled effect").c_str()));
 #endif
@@ -75,11 +78,32 @@ bool CStaticReverbEffect::doActionSizeSafe(CActionSound &actionSound,bool prepar
 	if(prepareForUndo)
 		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
 
+	/*
 #ifdef DO_IMPLEMENT
 	for(size_t t=0;t<IMPULSE_LENGTH;t++)
 		//impulse[t]=fabs(impulse[t]);
 		impulse[t]=(impulse[t]);
 #endif
+	*/
+
+	// create the time-domain filter kernel
+	const float freq=(float)100/(float)actionSound.sound->getSampleRate(); // cutoff frequency of this low-pass filter (fraction of the sample rate 0..0.5)
+	const sample_pos_t IMPULSE_LENGTH=200; // length of filter kernel
+	float impulse[IMPULSE_LENGTH];
+	for(sample_pos_t i=0;i<IMPULSE_LENGTH;i++) 
+	{
+		if(i!=IMPULSE_LENGTH/2)
+			impulse[i]=sin(2*M_PI*freq*(i-IMPULSE_LENGTH/2))/(i-IMPULSE_LENGTH/2)*(0.42-0.5*cos(2*M_PI*i/IMPULSE_LENGTH)+0.08*cos(4*M_PI*i/IMPULSE_LENGTH));
+		else // avoid div by 0
+			impulse[i]=2*M_PI*freq;
+	}
+	// normalize the time-domain filter kernel
+	double sum=0;
+	for(sample_pos_t i=0;i<IMPULSE_LENGTH;i++)
+		sum+=impulse[i];
+	for(sample_pos_t i=0;i<IMPULSE_LENGTH;i++)
+		impulse[i]/=sum;
+
 
 	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 	{
@@ -94,8 +118,26 @@ bool CStaticReverbEffect::doActionSizeSafe(CActionSound &actionSound,bool prepar
 
 #ifdef DO_IMPLEMENT
 			// brute force: for each sample, multiply it by the impulse response
-			#define GAIN   3
+			#define GAIN   1
 			static float xv[IMPULSE_LENGTH+1]={0};
+
+			/*
+			TAutoBuffer<float> temp(selectionLength);
+			for(sample_pos_t t=0;t<IMPULSE_LENGTH;t++)
+				temp[t]=0;
+			for(sample_pos_t j=start+IMPULSE_LENGTH;j<=stop;j++)
+			{
+				temp[j]=0;
+				for(sample_pos_t i=0;i<IMPULSE_LENGTH;i++)
+				{
+					temp[j]+=a[j-i]*impulse[i];
+				}
+			}
+
+			for(sample_pos_t t=start;t<stop;t++)
+				a[t]=ClipSample(temp[t-start]);
+			*/
+
 
 			for(sample_pos_t t=start;t<=stop;t++)
 			{

@@ -1052,7 +1052,7 @@ void CSound::silenceSound(unsigned channel,sample_pos_t where,sample_pos_t lengt
 		invalidatePeakData(channel,where,where+length);
 }
 
-#include "TSoundStretcher.h"
+#include "DSP/TSoundStretcher.h"
 
 void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser src,sample_pos_t srcWhere,unsigned srcSampleRate,sample_pos_t length,MixMethods mixMethod,bool doInvalidatePeakData,bool showProgressBar)
 {

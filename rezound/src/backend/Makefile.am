@@ -27,6 +27,7 @@ include $(top_srcdir)/config/am_include.mk
 ## first we'll dive into the subs to make everything in there
 ##
 SUBDIRS=\
+	DSP  \
 	Edits  \
 	Effects \
 	Filters \
@@ -66,8 +67,6 @@ noinst_HEADERS= \
 	   Cold_rezSoundTranslator.h \
 	   CrawSoundTranslator.h \
 	   CrezSoundTranslator.h \
-	   DSPBlocks.h \
-	   TSoundStretcher.h \
 	   initialize.h \
 	   main_controls.h \
 	   settings.h \

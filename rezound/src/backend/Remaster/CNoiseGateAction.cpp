@@ -23,7 +23,7 @@
 #include "../CActionSound.h"
 #include "../CActionParameters.h"
 
-#include "../DSPBlocks.h"
+#include "../DSP/NoiseGate.h"
 #include "../unit_conv.h"
 
 CNoiseGateAction::CNoiseGateAction(const CActionSound &actionSound,const float _windowTime,const float _threshold,const float _gainAttackTime,const float _gainReleaseTime) :

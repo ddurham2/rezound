@@ -27,7 +27,7 @@
 #include "../CActionParameters.h"
 #include "../CActionSound.h"
 
-#include "../DSPBlocks.h"
+#include "../DSP/DelayEffect.h"
 #include "../unit_conv.h"
 
 

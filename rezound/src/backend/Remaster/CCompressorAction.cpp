@@ -2,7 +2,9 @@
 
 #include <algorithm>
 
-#include "../DSPBlocks.h"
+#include "../DSP/Compressor.h"
+#include "../unit_conv.h"
+
 #include "../CActionParameters.h"
 
 CCompressorAction::CCompressorAction(const CActionSound &actionSound,float _windowTime,float _threshold,float _ratio,float _attackTime,float _releaseTime,float _inputGain,float _outputGain,bool _syncChannels) :

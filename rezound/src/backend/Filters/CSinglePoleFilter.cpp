@@ -25,7 +25,8 @@
 #include "../CActionSound.h"
 #include "../CActionParameters.h"
 
-#include "../DSPBlocks.h"
+#include "../DSP/SinglePoleFilters.h"
+#include "../unit_conv.h"
 
 CSinglePoleFilter::CSinglePoleFilter(const CActionSound &actionSound,FilterTypes _filterType,float _gain,float _frequency,float _bandwidth) :
 	AAction(actionSound),

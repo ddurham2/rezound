@@ -27,7 +27,7 @@
 #include "../CActionParameters.h"
 #include "../CActionSound.h"
 
-#include "../DSPBlocks.h"
+#include "../DSP/Quantizer.h"
 
 
 CQuantizeEffect::CQuantizeEffect(const CActionSound &actionSound,unsigned _quantumCount,float _inputGain,float _outputGain) :

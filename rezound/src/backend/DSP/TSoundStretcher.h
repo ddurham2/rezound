@@ -18,11 +18,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __TSoundStretcher_H__
-#define __TSoundStretcher_H__
+#ifndef __DSP_SoundStretcher_H__
+#define __DSP_SoundStretcher_H__
 
-#include "CSound_defs.h"
+#include "../../config/common.h"
 
+#include "../CSound_defs.h"
 
 template<class src_type> class TSoundStretcher
 {

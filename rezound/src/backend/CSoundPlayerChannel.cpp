@@ -30,7 +30,7 @@
 
 #include "CSound.h"
 #include "ASoundPlayer.h"
-#include "TSoundStretcher.h"
+#include "DSP/TSoundStretcher.h"
 
 #define PREBUFFERED_CHUNK_SIZE 1024 // in frames
 #define CHUNK_COUNT_TO_PREBUFFER 6

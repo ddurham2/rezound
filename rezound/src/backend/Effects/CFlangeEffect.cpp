@@ -23,7 +23,7 @@
 #include <stdexcept>
 #include <memory>
 
-#include "../DSPBlocks.h"
+#include "../DSP/FlangeEffect.h"
 #include "../unit_conv.h"
 
 #include "../CActionParameters.h"
