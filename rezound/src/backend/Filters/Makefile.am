@@ -28,12 +28,14 @@ include $(top_srcdir)/config/am_include.mk
 ## see PoolFile Makefile.am for explanation here out
 ## 
 noinst_HEADERS= \
+		CConvolutionFilter.h \
 		CSinglePoleFilter.h \
 		CBiquadResFilter.h \
 		FilterActions.h
 
 noinst_LTLIBRARIES=libFilters.la
 libFilters_la_SOURCES= \
+			CConvolutionFilter.cpp \
 			CSinglePoleFilter.cpp \
 			CBiquadResFilter.cpp 
 

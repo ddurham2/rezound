@@ -24,6 +24,7 @@
 #include "../../../config/common.h"
 
 
+#include "CConvolutionFilter.h"
 #include "CSinglePoleFilter.h"
 #include "CBiquadResFilter.h"
 
