@@ -23,34 +23,19 @@
 ## I used config/am_include.mk for common definitions
 include $(top_srcdir)/config/am_include.mk
 
+pkgdoc_DATA=\
+		AUTHORS\
+		COPYING\
+		NEWS\
+		README_DOCS\
+		FrontendFoxFeatures.txt
 
-
-##This works in Automake 1.5, but not 1.4
-##
-##dist_pkgdoc_DATA=\
-##		AUTHORS\
-##		COPYING\
-##		NEWS\
-##		README_DOCS\
-##		FrontendFoxFeatures.txt
-
-## Here's the Automake 1.4 fix
-install-data-local: 
-	for DOC in DOCS; do \
-		$(INSTALL_DATA) $(DOC) $(pkgdocdir)/$DOC \
-	done
-
-
-DOCS=\
+EXTRA_DIST=\
 	AUTHORS\
 	COPYING\
 	NEWS\
 	README_DOCS\
 	FrontendFoxFeatures.txt
-
-
-
-EXTRA_DIST=\
 	CVS-INSTALL\
 	INSTALL\
 	code\
