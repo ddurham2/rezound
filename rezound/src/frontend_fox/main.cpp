@@ -136,6 +136,14 @@ int main(int argc,char *argv[])
 
 		mainWindow->show();
 
+		/*
+		{
+			FXFontDialog *d=new FXFontDialog(mainWindow,"Font");
+			d->create();
+			d->show();
+		}
+		*/
+
 		application->run();
 
 #if 0
