@@ -2251,7 +2251,9 @@ template<class l_addr_t,class p_addr_t>
 			pools[poolId].size+=newLogicalBlock.size;
 		}
 		makeBlockFileSmallest();
-		backupSAT();
+
+		// ZZZ ??? Takes too long in a real-time situation (i.e. Recording in ReZound)
+		//backupSAT();
 
 		//writeStructureInfoUnlock();
 	}

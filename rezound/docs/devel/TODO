@@ -84,7 +84,7 @@
 
 	- need to make front and backend provisions for letting the user specify the export format parameters... some of the parameters depend on the export format... Perhaps I could have a dialog with a tabbed bar which has different parameters on each... which ever bar was activated would be the export format type... Either use the tabbar or radio buttons (real buttons) and a switcher like the switcher test that comes with fox
 
-	- write a little document in Tools/PoolFile that explains simply the layout of how PoolFileAccessors do their thing and perhaps a very simplified explination of how CPoolFile does what it does
+	- write a little document in PoolFile that explains simply the layout of how PoolFileAccessors do their thing and perhaps a very simplified explination of how TPoolFile does what it does
 
 	- it is evidently invalid to call ftruncate to make a file bigger if it's on a fat32 mounted device
 		- There is a specific errno that comes back from this, I should test for it and fwrite zeros to make the file bigger
@@ -111,7 +111,7 @@
 	- I could probably move most of initializeReZound into the backend
 
 	- I could add an advanced mode for copy/cut/paste where the user can choose from multiple clipboards
-		- perhaps one way to implement this would be to have multiple instantiated ASoundClipboard objects in an array one may point to a system clipboard and others to CPoolFile clipboard
+		- perhaps one way to implement this would be to have multiple instantiated ASoundClipboard objects in an array one may point to a system clipboard and others to TPoolFile clipboard
 		- interface:
 			- either advanced mode for copy/cut/paste
 			- or a dropdown list somewhere on the mainform
