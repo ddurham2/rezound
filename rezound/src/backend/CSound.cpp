@@ -2262,11 +2262,16 @@ template TStaticPoolAccesser<int16_t,TPoolFile<sample_pos_t,uint64_t> > TPoolFil
 template TStaticPoolAccesser<int16_t,TPoolFile<sample_pos_t,uint64_t> > const TPoolFile<sample_pos_t,uint64_t>::getPoolAccesser<int16_t>(const string) const;
 
 
+#include <TStaticPoolAccesser.h>
+#include <TPoolAccesser.h>
 
-template const TStaticPoolAccesser<int,TPoolFile<sample_pos_t,uint64_t> > TPoolFile<sample_pos_t,uint64_t>::getPoolAccesser<int>(const string) const;
-template TStaticPoolAccesser<int,TPoolFile<sample_pos_t,uint64_t> > TPoolFile<sample_pos_t,uint64_t>::getPoolAccesser<int>(const string);
-
-template void TPoolFile<sample_pos_t,uint64_t>::cacheBlock(sample_pos_t,const TStaticPoolAccesser<int,TPoolFile<sample_pos_t,uint64_t> > *);
-
-template TStaticPoolAccesser<int,TPoolFile<sample_pos_t,uint64_t> > TPoolFile<sample_pos_t,uint64_t>::createPool<int>(const string,bool) const;
+// I fairly certain that these are from calls to getGeneralDataAccesser<int>
+template void TPoolFile<sample_pos_t,uint64_t>::addAccesser<int>(TStaticPoolAccesser<int, TPoolFile<sample_pos_t,uint64_t> > const *);
+template void TPoolFile<sample_pos_t,uint64_t>::unreferenceCachedBlock<int>(TStaticPoolAccesser<int, TPoolFile<sample_pos_t,uint64_t> > const *);
+template void TPoolFile<sample_pos_t,uint64_t>::removeAccesser<int>(TStaticPoolAccesser<int, TPoolFile<sample_pos_t,uint64_t> > const *);
+template void TStaticPoolAccesser<int, TPoolFile<sample_pos_t,uint64_t> >::cacheBlock(const sample_pos_t) const;
+template void TPoolFile<sample_pos_t,uint64_t>::cacheBlock<int>(sample_pos_t, TStaticPoolAccesser<int, TPoolFile<sample_pos_t,uint64_t> > const *);
+template TStaticPoolAccesser<int, TPoolFile<sample_pos_t,uint64_t> > TPoolFile<sample_pos_t,uint64_t>::getPoolAccesser<int>(const string);
+template TStaticPoolAccesser<int, TPoolFile<sample_pos_t,uint64_t> > const TPoolFile<sample_pos_t,uint64_t>::getPoolAccesser<int>(const string) const;
+template TStaticPoolAccesser<int, TPoolFile<sample_pos_t,uint64_t> > TPoolFile<sample_pos_t,uint64_t>::createPool<int>(const string, const bool);
 
