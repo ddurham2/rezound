@@ -246,6 +246,11 @@ public:
 		return S_ISLNK(statBuf.st_mode);
 	}
 
+	bool isDevice() const
+	{
+		return S_ISCHR(statBuf.st_mode) || S_ISBLK(statBuf.st_mode);
+	}
+
 private:
 	char *path;
 	bool _exists;
