@@ -61,4 +61,4 @@ LDFLAGS=@LDFLAGS@
 
 
 # doc directory
-pkgdocdir=$(prefix)/doc/rezound
+pkgdocdir=$(prefix)/doc/@PACKAGE@
