@@ -26,6 +26,7 @@
 //#define THREAD_SAFE_CSCOPE
 
 #include <string>
+#include <vector>
 #include <map>
 
 #ifdef THREAD_SAFE_CSCOPE
@@ -47,9 +48,12 @@ public:
 
 	const string getValue(const char *key,bool throwIfNotExists=false) const;
 
+	const string getArrayValue(const char *key,size_t index,bool throwIfNotExists=false) const;
+	const size_t getArraySize(const char *key,bool throwIfNotExists=false) const;
+
 	// will create the parents of key as necessary
-	void createKey(const char *key,const double value);
-	void createKey(const char *key,const string value);
+	void createKey(const char *key,const string value);		// string
+	void createKey(const char *key,const double value);		// double
 
 	// CAUTION: collapses all arithmetic expressions to the evaluated value and throws away all comments from the original file
 	void writeFile(const string filename);
@@ -67,7 +71,8 @@ private:
 		vtInvalid,
 		vtScope,
 		vtString,
-		vtFloat
+		vtFloat,
+		vtArray
 	};
 
 	class CVariant
@@ -77,6 +82,7 @@ private:
 		CVariant(const string name);			// vtScope
 		CVariant(const string name,const string value);	// vtString
 		CVariant(const string name,const double value);	// vtFloat
+		CVariant(const vector<CVariant> &value);	// vtArray
 		CVariant(const CVariant &src);
 		virtual ~CVariant();
 
@@ -89,13 +95,17 @@ private:
 		map<string,CVariant> members; // I could be a bit more efficient if I were to use CVariant *'s, but this is a quick implementation right now
 		string stringValue;
 		double floatValue;
+		vector<CVariant> arrayValue;
 	};
 
 	// I would have to implement this if I were to allow qualified idents in the input file which aren't always fully qualified... I would also need to have a parent * in CVariant to be able to implement this (unless I suppose I wanted to search more than I had to.. which I would do.. okay.. ya)
 	//CVariant *upwardsScopeLookup(const char *key) const;
 
 	// this could be a method of CVariant
-	bool prvGetValue(CVariant *&retValue,const char *key,int offset,bool throwOnError,const CVariant *variant) const;
+	bool findVariantNode(CVariant *&retValue,const char *key,int offset,bool throwOnError,const CVariant *variant) const;
+
+
+	void createKey(const char *key,const vector<CVariant> &value);	// array
 
 	// this could be a method of CVariant
 	void prvCreateKey(const char *key,int offset,CVariant &value,CVariant *variant);

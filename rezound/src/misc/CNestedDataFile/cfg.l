@@ -81,6 +81,8 @@ string currentFilename;
 			return(TRUE);
 		else if(strcmp(yytext,"false")==0)
 			return(FALSE);
+		else if(strcmp(yytext,":")==0)
+			return(':');
 		else
 		{
 			yylval.stringValue=strdup(yytext); 
@@ -114,6 +116,9 @@ string currentFilename;
 
 "."					{ return(*yytext); }
 
+"["					{ return(*yytext); }
+"]"					{ return(*yytext); }
+
 "("					{ return(*yytext); }
 ")"					{ return(*yytext); }
 
@@ -135,7 +140,6 @@ string currentFilename;
 "&&"					{ return(AND); }
 
 "?"					{ return(*yytext); }
-":"					{ return(*yytext); }
 
 . 					{ /* this rule matches any unexpected chars */ return(*yytext); }
 

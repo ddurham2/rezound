@@ -11,6 +11,9 @@ int main()
 		s.createKey("foo.bar.bill.ester","15");
 		s.createKey("foo.x",200.123);
 
+		printf("jim.size %u\n",s.getArraySize("jim"));
+		printf("%s\n",s.getArrayValue("jim",2).c_str());
+
 		s.writeFile("test.dat");
 
 	}

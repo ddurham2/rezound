@@ -79,6 +79,7 @@ int myyynerrs=0;
 	double				floatValue;
 	int 				intValue;
 	CNestedDataFile::CVariant *	variant;
+	vector<CNestedDataFile::CVariant> *variantList;
 }
 
 %token 	<stringValue> 	IDENT
@@ -111,6 +112,9 @@ int myyynerrs=0;
 
 //%type	<variant>	scope;
 //%type	<keyValue>	scope_body_item;
+
+%type	<variantList>	array_body;
+%type	<variantList>	array_body2;
 
 // numeric expression stuff
 %type	<variant>	primary_expr
@@ -197,6 +201,14 @@ scope_body_item
 		free($3);
 		free($1);
 	}
+	| IDENT '[' ']' ASSIGN '{' array_body '}'
+	{
+		checkForDupMember(@1.first_line,$1);
+		CNestedDataFile::parseTree->createKey((getCurrentScope()+$1).c_str(),*$6);
+
+		delete $6;
+		free($1);
+	}
 	| INCLUDE LIT_STRING
 	{
 		cfg_includeFile($2);
@@ -205,7 +217,63 @@ scope_body_item
 	| ';' // allow stray ';'s
 	;
 
+array_body
+	: /* empty */
+	{
+		$$=new vector<CNestedDataFile::CVariant>;
+	}
+	| array_body2
+	{
+		$$=$1;
+	}
+	;
 
+array_body2
+	: expr
+	{
+		$$=new vector<CNestedDataFile::CVariant>;
+
+		VERIFY_TYPE(@1,$1)
+		$$->push_back(CNestedDataFile::CVariant("",$1->floatValue));
+
+		delete $1;
+	}
+	| string_expr
+	{
+		$$=new vector<CNestedDataFile::CVariant>;
+		$$->push_back(CNestedDataFile::CVariant("",$1));
+		free($1);
+	}
+	| array_body ',' expr
+	{
+		$$=$1;
+
+		VERIFY_TYPE(@3,$3)
+		$$->push_back(CNestedDataFile::CVariant("",$3->floatValue));
+
+		delete $3;
+	}
+	| array_body ',' string_expr
+	{
+		$$=$1;
+
+		$$->push_back(CNestedDataFile::CVariant("",$3));
+
+		free($3);
+	}
+
+	// ERROR CASES
+	| error
+	{
+		$$=new vector<CNestedDataFile::CVariant>;
+	}
+	| array_body ',' error
+	{
+		$$=$1;
+	}
+	;
+	
+	
 
 
 primary_expr
@@ -219,7 +287,7 @@ primary_expr
 	| qualified_ident
 	{
 		CNestedDataFile::CVariant *value;
-		if(!CNestedDataFile::parseTree->prvGetValue(value,$1,0,false,CNestedDataFile::parseTree->root))
+		if(!CNestedDataFile::parseTree->findVariantNode(value,$1,0,false,CNestedDataFile::parseTree->root))
 		{
 			cfg_error(@1,("symbol not found: '"+string($1)+"'").c_str());
 			value=new CNestedDataFile::CVariant("",0.0);

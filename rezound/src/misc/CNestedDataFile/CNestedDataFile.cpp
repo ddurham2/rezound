@@ -80,7 +80,7 @@ CNestedDataFile::~CNestedDataFile()
 const string CNestedDataFile::getValue(const char *key,bool throwIfNotExists) const
 {
 	CVariant *value;
-	if(!prvGetValue(value,key,0,true,root))
+	if(!findVariantNode(value,key,0,true,root))
 	{
 		if(throwIfNotExists)
 			throw(runtime_error("CNestedDataFile::getValue -- key '"+string(key)+"' does not exist from file: "+filename));
@@ -101,13 +101,73 @@ const string CNestedDataFile::getValue(const char *key,bool throwIfNotExists) co
 	}
 }
 
+const string CNestedDataFile::getArrayValue(const char *key,size_t index,bool throwIfNotExists) const
+{
+	CVariant *value;
+	if(!findVariantNode(value,key,0,true,root))
+	{
+		if(throwIfNotExists)
+			throw(runtime_error("CNestedDataFile::getArrayValue -- key '"+string(key)+"' does not exist from file: "+filename));
+		else
+			return("");
+	}
+
+	if(value->type!=vtArray)
+	{
+		if(throwIfNotExists)
+			throw(runtime_error("CNestedDataFile::getArrayValue -- '"+string(key)+"' is not an array from file: "+filename));
+		else
+			return("");
+	}
+
+	if(index>=value->arrayValue.size())
+	{
+		if(throwIfNotExists)
+			throw(runtime_error("CNestedDataFile::getArrayValue -- '"+string(key)+"["+istring(index)+"]' array index is out of bounds (+"+istring(value->arrayValue.size())+"+) from file: "+filename));
+		else
+			return("");
+	}
+
+	switch(value->arrayValue[index].type)
+	{
+	case vtString:
+		return(value->arrayValue[index].stringValue);
+	case vtFloat:
+		return(istring(value->arrayValue[index].floatValue));
+	default:
+		throw(runtime_error("CNestedDataFile::getArrayValue -- internal error: unhandled type: '"+istring(value->arrayValue[index].type)+"' from file: "+filename));
+	}
+}
+
+const size_t CNestedDataFile::getArraySize(const char *key,bool throwIfNotExists) const
+{
+	CVariant *value;
+	if(!findVariantNode(value,key,0,true,root))
+	{
+		if(throwIfNotExists)
+			throw(runtime_error("CNestedDataFile::getArraySize -- key '"+string(key)+"' does not exist from file: "+filename));
+		else
+			return(0);
+	}
+
+	if(value->type!=vtArray)
+	{
+		if(throwIfNotExists)
+			throw(runtime_error("CNestedDataFile::getArraySize -- '"+string(key)+"' is not an array from file: "+filename));
+		else
+			return(0);
+	}
+
+	return(value->arrayValue.size());
+}
+
 bool CNestedDataFile::keyExists(const char *key) const
 {
 	CVariant *value;
-	return(prvGetValue(value,key,0,false,root));
+	return(findVariantNode(value,key,0,false,root));
 }
 
-bool CNestedDataFile::prvGetValue(CVariant *&retValue,const char *key,int offset,bool throwOnError,const CVariant *variant) const
+bool CNestedDataFile::findVariantNode(CVariant *&retValue,const char *key,int offset,bool throwOnError,const CVariant *variant) const
 {
 	if(variant->type!=vtScope)
 	{
@@ -136,7 +196,7 @@ bool CNestedDataFile::prvGetValue(CVariant *&retValue,const char *key,int offset
 		if(i==variant->members.end())
 			return(false);
 		else
-			return(prvGetValue(retValue,key,offset+pos+1,throwOnError,&i->second));
+			return(findVariantNode(retValue,key,offset+pos+1,throwOnError,&i->second));
 	}
 }
 
@@ -173,7 +233,7 @@ CNestedDataFile::CVariant *CNestedDataFile::upwardsScopeLookup(const char *key) 
 	while(scope!=NULL)
 	{
 		CVariant *value;
-		if(scope->prvGetValue(value,key,0,false))
+		if(scope->findVariantNode(value,key,0,false))
 			return(value);
 
 		scope=scope->parentScope;
@@ -192,6 +252,12 @@ void CNestedDataFile::createKey(const char *key,const double value)
 void CNestedDataFile::createKey(const char *key,const string value)
 {
 	CVariant newVariant("",value);
+	prvCreateKey(key,0,newVariant,root);
+}
+
+void CNestedDataFile::createKey(const char *key,const vector<CVariant> &value)
+{
+	CVariant newVariant(value);
 	prvCreateKey(key,0,newVariant,root);
 }
 
@@ -291,8 +357,29 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant)
 		{
 			for(int t=0;t<indent;t++)
 				fprintf(f,"\t");
-			fprintf(f,"}\n");
+			fprintf(f,"}\n\n");
 		}
+		break;
+
+	case vtArray:
+		fprintf(f,"%s[]={",name.c_str());
+		for(size_t t=0;t<variant->arrayValue.size();t++)
+		{
+			if(t!=0)
+				fprintf(f,", ");
+			switch(variant->arrayValue[t].type)
+			{
+			case vtString:
+				fprintf(f,"\"%s\"",variant->arrayValue[t].stringValue.c_str());
+				break;
+			case vtFloat:
+				fprintf(f,"%f",variant->arrayValue[t].floatValue);
+				break;
+			default:
+				throw(runtime_error("CNestedDataFile::prvWriteData -- internal error: unhandled type while writing array: "+istring(variant->arrayValue[t].type)+" from file: "+filename));
+			}
+		}
+		fprintf(f,"};\n");
 		break;
 
 	default:
@@ -328,22 +415,34 @@ CNestedDataFile::CVariant::CVariant(const string _name,const double value) :
 {
 }
 
-CNestedDataFile::CVariant::CVariant(const CVariant &src) :
-	name(src.name),
-	type(src.type),
-	members(src.members),
-	stringValue(src.stringValue),
-	floatValue(src.floatValue)
+CNestedDataFile::CVariant::CVariant(const vector<CVariant> &value) :
+	type(vtArray),
+	arrayValue(value)
 {
+}
+
+CNestedDataFile::CVariant::CVariant(const CVariant &src) :
+	type(vtInvalid)
+{
+	operator=(src);
 }
 
 const CNestedDataFile::CVariant &CNestedDataFile::CVariant::operator=(const CVariant &rhs)
 {
+	if(this==&rhs)	
+		return(*this);
+
 	name=rhs.name;
 	type=rhs.type;
-	members=rhs.members;
-	stringValue=rhs.stringValue;
-	floatValue=rhs.floatValue;
+
+	if(type==vtScope)
+		members=rhs.members;
+	else if(type==vtString)
+		stringValue=rhs.stringValue;
+	else if(type==vtFloat)
+		floatValue=rhs.floatValue;
+	else if(type==vtArray)
+		arrayValue=rhs.arrayValue;
 
 	return(*this);
 }
@@ -351,5 +450,4 @@ const CNestedDataFile::CVariant &CNestedDataFile::CVariant::operator=(const CVar
 CNestedDataFile::CVariant::~CVariant()
 {
 }
-
 
