@@ -43,11 +43,12 @@ bool CChangeAmplitudeEffect::doActionSizeSafe(CActionSound &actionSound,bool pre
 	const sample_pos_t start=actionSound.start;
 	const sample_pos_t selectionLength=actionSound.selectionLength();
 
+	unsigned channelsDoneCount=0;
 	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 	{
 		if(actionSound.doChannel[i])
 		{
-			CStatusBar statusBar("Changing Amplitude -- Channel "+istring(i),0,selectionLength,true);
+			CStatusBar statusBar("Changing Amplitude -- Channel "+istring(channelsDoneCount+1)+"/"+istring(actionSound.countChannels()),0,selectionLength,true);
 
 			sample_pos_t srcPos=prepareForUndo ? 0 : start;
 			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
@@ -69,6 +70,8 @@ bool CChangeAmplitudeEffect::doActionSizeSafe(CActionSound &actionSound,bool pre
 					return false;
 				}
 			}
+
+			channelsDoneCount++;
 		}
 	}
 
