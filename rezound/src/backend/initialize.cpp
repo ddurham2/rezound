@@ -451,7 +451,7 @@ static bool checkForVersionFlag(int argc,char *argv[])
 			printf("This is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n");
 			printf("\n");
 			printf("Project homepage\n\thttp://rezound.sourceforge.net\n");
-			printf("Please report bugs to\n\thttp://sourceforge.net/tracker/?group_id=5056&atid=105056\n");
+			printf("Please report bugs to\n\thttp://sourceforge.net/tracker/?atid=105056&group_id=5056\n");
 			printf("\n");
 			return true;
 		}
@@ -477,7 +477,7 @@ static void printUsage(const string app)
 
 	printf("\n");
 	printf("Project homepage\n\thttp://rezound.sourceforge.net\n");
-	printf("Please report bugs to\n\thttp://sourceforge.net/tracker/?group_id=5056&atid=105056\n");
+	printf("Please report bugs to\n\thttp://sourceforge.net/tracker/?atid=105056&group_id=5056\n");
 	
 	printf("\n");
 }

@@ -1,4 +1,4 @@
-ReZound 0.3.0alpha Installation instructions 
+ReZound 0.4.0beta Installation instructions 
 
 	
 REQUIRED LIBRARIES AND APPLICATIONS:
@@ -53,7 +53,7 @@ ReZound.
 
 If you encounter any errors in the build process and you think you have all the 
 required libraries, please send a bug report to: 
-	http://sourceforge.net/tracker/?group_id=5056&atid=105056
+	http://sourceforge.net/tracker/?atid=105056&group_id=5056
 
 If at all possible try to send details, preferably a screen dump or script file.
 

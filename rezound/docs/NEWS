@@ -1,3 +1,26 @@
+rezound-0.4.0beta
+	This is a new-feature and bug-fix release.  I am making this release simply 
+	because it has been a month since the last one.  I have bumped ReZound to
+	the beta stage now that I've received relatively few reports concerning
+	compiling issues.
+	- Added a Normalize action under the Remaster menu per feature-request, and it includes an experimental feature
+	- Added a Quantize action under the Effects menu
+	- Added portaudio support per feature-request (enabled via a configure flag)
+	- Added 'cancel' for loading and saving audio files (all except loading mp3 for now)
+	- Added some command line support (run with --help for details)
+	- Added support for opening multiple audio files with open dialog
+	- Fixed the (lack of) redrawing issue while an action is running
+	- Created an LFO frontend widget for any action that uses an LFO, now the LFOs have several common parameters including 'shape'
+	- The Flange and Varied Repeat actions now make use of the new LFO functionality
+	- Rewrote some of the frontend waveform drawing code to be more efficient with X
+	- Added a small margin on the right side of the waveform view
+	- Fixed a bug where the progress bars sometimes ran too fast hitting the end too soon
+	- Added a module for doing FFT based convolution.  I haven't added any frontend means to filter kernels yet, but hopefully soon I will get a chance to.  For now, the Test Effect does a simple bandpass filter using the module
+	- Improved compile time a little
+	- Many changes/cleanups were made to the code that would not be so interesting to the user
+	- Various other bug fixes and changes
+
+
 rezound-0.3.0alpha
 	This is a new-feature and bug-fix release -- As some totally new code now exists
 	I ask that you please report any bugs or crashes that you may have.  Please try
