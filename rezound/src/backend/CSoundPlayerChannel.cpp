@@ -393,31 +393,8 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 
 		const size_t deviceIndex=0; // ??? would loop through all devices later
 
-		if(playSelectionOnly)
-		{
-			// pos1 is selectStart; pos2 is selectStop
-			pos1=startPosition;
-			pos2=stopPosition;
-		}
-		else
-		{
-			// Pos1 is 0; Pos2 is Length-1
-			pos1=0;
-			pos2=sound.getLength()-1;
-		}
-
-		// use a local variable instead of looking up the data member each time
-		register sample_fpos_t fPlayPosition=this->playPosition;
-
-		// assure that playPosition is in range
-		if(fPlayPosition<0.0)
-			fPlayPosition=0.0;
-		else if(fPlayPosition>pos2)
-			fPlayPosition=pos2;
-
 		// heed the sampling rate of the sound also when adjusting the play position (??? only have device 0 for now)
 		const sample_fpos_t tPlaySpeed=playSpeed  *  (((sample_fpos_t)sound.getSampleRate())/((sample_fpos_t)player->devices[deviceIndex].sampleRate));
-		const sample_fpos_t origPlayPosition=fPlayPosition;
 
 		// Right now, I only interpolate samples when the playSpeed is >0 because 
 		// doing it in reverse causes me to have to adjust the bounds checking on 
@@ -429,13 +406,40 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 		// And I could then separate the outer most two cases in MOVE_PLAY_POSITION
 
 		const bool doInterpolate= (tPlaySpeed>=0.0 && sample_fpos_floor(tPlaySpeed)!=tPlaySpeed); // non-integer playSpeed and playing forward
-		const int fudge= doInterpolate ? 1 : 0; // fudge factor for macro MOVE_PLAY_POSITION since we look ahead one sample
+		const int fudge= doInterpolate ? 1 : 0; // fudge factor since we might look ahead one sample
+
+		if(playSelectionOnly)
+		{
+			// pos1 is selectStart; pos2 is selectStop
+			pos1=startPosition;
+			pos2=stopPosition-fudge;
+		}
+		else
+		{
+			// Pos1 is 0; Pos2 is Length-1
+			pos1=0;
+			pos2=(sound.getLength()-1)-fudge;
+		}
+
+
+		// use a local variable instead of looking up the data member each time
+		register sample_fpos_t fPlayPosition=this->playPosition;
+
+
+		// assure that playPosition is in range
+		if(fPlayPosition<0.0)
+			fPlayPosition=0.0;
+		else if(fPlayPosition>pos2)
+			fPlayPosition=pos2;
+
+
+		const sample_fpos_t origPlayPosition=fPlayPosition;
 
 		#define MOVE_PLAY_POSITION								\
 			if(tPlaySpeed>0.0)								\
 			{										\
 				fPlayPosition+=tPlaySpeed;						\
-				if(fPlayPosition>(pos2-fudge))						\
+				if(fPlayPosition>pos2)							\
 				{									\
 					if(loop)							\
 						fPlayPosition=pos1;					\
