@@ -28,10 +28,8 @@ EXTRA_DIST=path.h \
 
 ## see PoolFile Makefile.am for explanation here out
 ## 
-noinst_LTLIBRARIES=libmisc.la
-libmisc_la_SOURCES=path.cpp
-## LDFLAGS needed for libmisc.la
-##libmisc_la_LDFLAGS=-lccgnu -ldl -lpthread
+noinst_LTLIBRARIES=libmiscCC.la
+libmiscCC_la_SOURCES=path.cpp
 
 path.o:path.cpp \
 	path.h 

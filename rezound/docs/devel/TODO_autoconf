@@ -31,3 +31,6 @@ and move it into config
     If that causes a problem, I can easily modify it to behave normally
     And, the clean target for this Makefile needs to delete those two .c files
     since they are actually generated
+
+
+    --provide substitute functions for strerror, strdup and strtol (These may be missing for some platforms)  Check GNU libiberty (ftp://sourceware.cygnus.com/pub/binutils/) or libit(http://www.iro.umontreal.ca/~pinard/libit/) for fallback functions.

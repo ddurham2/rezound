@@ -45,6 +45,8 @@ ajv_CXX_FLAG(-Wno-unused-function)
 ajv_CXX_FLAG(-Wno-unused-variable)
 AM_PROG_LIBTOOL
 AC_PROG_CPP
+AM_PROG_LEX
+AC_PROG_YACC
 
 dnl ---------------------|
 dnl Checks for libraries.|
@@ -91,6 +93,6 @@ AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
 
 dnl Checks for library functions.
-AC_CHECK_FUNCS(strerror)
+AC_CHECK_FUNCS(strerror strdup strtol)
 
-AC_OUTPUT(Makefile src/Makefile src/misc/Makefile src/misc/cc++/Makefile src/PoolFile/Makefile src/backend/Makefile src/backend/Edits/Makefile src/backend/Effects/Makefile src/backend/Remaster/Makefile  src/frontend_fox/Makefile) 
+AC_OUTPUT(Makefile src/Makefile src/misc/Makefile src/misc/cc++/Makefile  src/PoolFile/Makefile src/backend/Makefile src/backend/Edits/Makefile src/backend/Effects/Makefile src/backend/Remaster/Makefile  src/frontend_fox/Makefile) 

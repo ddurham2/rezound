@@ -72,7 +72,7 @@ ReZound_SOURCES= main.cpp
 ## notice we use $(top_builddir) for the modules. This allows building in a 
 ## separate directory
 ReZound_LDADD= libfrontend.la\
-	$(top_builddir)/src/misc/cc++/libmisc.la \
+	$(top_builddir)/src/misc/cc++/libmiscCC.la \
 	$(top_builddir)/src/PoolFile/libPoolFile.la \
 	$(top_builddir)/src/backend/Edits/libEdits.la \
 	$(top_builddir)/src/backend/Effects/libEffects.la \
