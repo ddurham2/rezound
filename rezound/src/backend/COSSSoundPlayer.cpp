@@ -247,6 +247,14 @@ void COSSSoundPlayer::initialize()
 		}
 		catch(...)
 		{
+			if(playThread.isRunning())
+			{
+				playThread.kill=true;
+				playThread.wait();
+			}
+			close(audio_fd);
+			audio_fd=-1;
+
 			ASoundPlayer::deinitialize();
 			throw;
 		}

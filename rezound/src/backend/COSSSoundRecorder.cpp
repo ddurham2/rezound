@@ -46,10 +46,13 @@
 // ??? edit this to be able to detect necessary parameters from the typeof sample_t
 // 	or I need to convert to 16bit 
 // needs to match for what is above and type of sample_t ???
-// ??? BTW- on a big endian machine, AFMT_S16_BE is available
 // 	also now existing the OSS documenation I was reading are AFMT_MPEG 
 // 	and AFMT_AC3 which would be nice for more than stereo
-#define OSS_PCM_FORMAT AFMT_S16_LE
+#ifdef WORDS_BIGENDIAN
+	#define OSS_PCM_FORMAT AFMT_S16_BE
+#else
+	#define OSS_PCM_FORMAT AFMT_S16_LE
+#endif
 
 // ??? as the sample rate is lower these need to be lower so that onData is called more often and the view meters on the record dialog don't seem to lag
 
@@ -194,6 +197,14 @@ void COSSSoundRecorder::initialize(CSound *sound)
 		}
 		catch(...)
 		{
+			if(recordThread.isRunning())
+			{
+				recordThread.kill=true;
+				recordThread.wait();
+			}
+			close(audio_fd);
+			audio_fd=-1;
+
 			ASoundRecorder::deinitialize();
 			throw;
 		}
