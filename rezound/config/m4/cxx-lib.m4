@@ -66,7 +66,7 @@ ajv_lib$1_path="")]
 LIBS="-l$1 $LIBS"
 LDFLAGS="$ajv_lib$1_path $LDFLAGS"
 CXXFLAGS="$ajv_inc$1_path $CXXFLAGS"
-if test "$enable_$1_check" = "yes"; then
+if test x"$enable_$1_check" = x"yes"; then
 	[AC_MSG_CHECKING(for $2 class in -l$1)] 
 	cat > ajv_chk_cxx_lib_$1.cc << EOF
 #include <$3>
@@ -74,7 +74,7 @@ int main()
 { $2 xxx; }
 EOF
 	$CXX -l$1 $5 $ajv_lib$1_path $ajv_inc$1_path ajv_chk_cxx_lib_$1.cc >/dev/null 2>ajv_chk_cxx_lib_$1.err
-	if test $? = 0; then
+	if test x"$?" = x"0"; then
 		AC_MSG_RESULT(yes)
 		rm -f ajv_chk_cxx_lib_$1.cc
 		rm -f ajv_chk_cxx_lib_$1.err
@@ -151,7 +151,7 @@ ajv_inc$1_path="")] dnl
 ajv_lib$1_path="")] 
 LDFLAGS="$ajv_lib$1_path $LDFLAGS"
 CXXFLAGS="$ajv_inc$1_path $CXXFLAGS"
-if test "$enable_$1_check" = "yes"; then
+if test x"$enable_$1_check" = x"yes"; then
 	[AC_CHECK_LIB($1, $2)]
 	cat > ajv_ck_lib_$1.c <<EOF
 #include "confdefs.h"
@@ -160,7 +160,7 @@ if test "$enable_$1_check" = "yes"; then
 #endif
 EOF
 	$CPP $ajv_lib$1_path $ajv_inc$1_path ajv_ck_lib_$1.c >/dev/null 2>ajv_ck_lib_$1.err
-	if test $? = 0; then
+	if test x"$?" = x"0"; then
 		LDFLAGS="$ajv_lib$1_path $LDFLAGS"
 		CXXFLAGS="$ajv_inc$1_path $CXXFLAGS"
 		rm -f ajv_ck_lib_$1.c

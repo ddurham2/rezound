@@ -35,6 +35,8 @@ dnl --------------------|
 AC_PROG_AWK
 AC_PROG_INSTALL
 AC_PROG_LN_S
+AM_PROG_LIBTOOL
+AC_PROG_CPP
 dnl AC_PROG_CXX automatically sets CXXFLAGS to -g -O2 if g++ is c++ compiler
 dnl and CXXFLAGS hasn't been set, so by setting CXXFLAGS, we can avoid this.
 CXXFLAGS=
@@ -43,8 +45,7 @@ dnl These are some custom checks to see if cc accepts some extra warning flags
 dnl see config/cxx.m4 for macro definition
 ajv_CXX_FLAG(-Wno-unused-function)
 ajv_CXX_FLAG(-Wno-unused-variable)
-AM_PROG_LIBTOOL
-AC_PROG_CPP
+AC_PROG_CXXCPP
 AM_PROG_LEX
 AC_PROG_YACC
 
@@ -95,4 +96,4 @@ AC_TYPE_SIZE_T
 dnl Checks for library functions.
 AC_CHECK_FUNCS(strerror strdup strtol)
 
-AC_OUTPUT(Makefile src/Makefile src/misc/Makefile src/misc/cc++/Makefile  src/PoolFile/Makefile src/backend/Makefile src/backend/Edits/Makefile src/backend/Effects/Makefile src/backend/Remaster/Makefile  src/frontend_fox/Makefile) 
+AC_OUTPUT(Makefile src/Makefile src/misc/Makefile src/misc/cc++/Makefile src/misc/CNestedDataFile/Makefile src/PoolFile/Makefile src/backend/Makefile src/backend/Edits/Makefile src/backend/Effects/Makefile src/backend/Remaster/Makefile  src/frontend_fox/Makefile) 

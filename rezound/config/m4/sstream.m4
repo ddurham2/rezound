@@ -25,12 +25,13 @@ dnl systems, (specifically Debian 2.2r4) I perform the check by trying to
 dnl preprocess $include <sstream>. if the test passes 
 dnl we define HAVE_SSTREAM which is undefined by default in acconfig.h
 AC_DEFUN(ajv_CHECK_HEADER_SSTREAM, dnl
-[AC_MSG_CHECKING(for STL sstream header)] dnl
+[AC_MSG_CHECKING(for STL sstream header)] 
 cat > chk_hdr_sstr.cc <<EOF
+#include <sstream>
 int main(){}
 EOF
-$ac_cpp chk_hdr_sstr.cc >/dev/null 2>chk_hdr_sstr.err
-if test $? = 0; then
+$CXXCPP chk_hdr_sstr.cc >/dev/null 2>chk_hdr_sstr.err
+if test x"$?" = x"0"; then
 	AC_MSG_RESULT(yes)
 	AC_DEFINE(HAVE_SSTREAM)
 else

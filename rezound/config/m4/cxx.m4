@@ -34,7 +34,7 @@ cat > ajv_cxx_flag.cc << EOF
 int main(){}
 EOF
 $CXX $1 ajv_cxx_flag.cc >/dev/null 2>ajv_cxx_flag.err
-if test $? = 0; then
+if test x"$?" = x"0"; then
 	AC_MSG_RESULT(yes)
 	CXXFLAGS="$CXXFLAGS $1"
 else
