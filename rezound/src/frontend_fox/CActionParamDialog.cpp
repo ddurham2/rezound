@@ -34,6 +34,8 @@
 
 #include "CFOXIcons.h"
 
+#warning pluginRouting or pluginMapping .. which is it
+
 FXDEFMAP(CActionParamDialog) CActionParamDialogMap[]=
 {
 //	Message_Type			ID							Message_Handler
@@ -60,7 +62,7 @@ FXIMPLEMENT(CActionParamDialog,FXModalDialogBox,CActionParamDialogMap,ARRAYNUMBE
 // work the same what.. I'll work on figuring that out and then both 
 // parameters should be unnecessary
 
-CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,bool _showPresetPanel,FXModalDialogBox::ShowTypes showType) :
+CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,bool _showPresetPanel,const string _presetPrefix,FXModalDialogBox::ShowTypes showType) :
 	FXModalDialogBox(mainWindow,"",0,0,FXModalDialogBox::ftVertical,showType),
 
 	showPresetPanel(_showPresetPanel),
@@ -74,7 +76,9 @@ CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,bool _showPresetPane
 			rightMargin(new FXFrame(topPanel,FRAME_NONE|LAYOUT_FILL_Y|LAYOUT_FIX_WIDTH,0,0,0,0, 0,0,0,0)),
 		presetsFrame(NULL),
 			nativePresetList(NULL),
-			userPresetList(NULL)
+			userPresetList(NULL),
+
+	presetPrefix(_presetPrefix=="" ? "" : _presetPrefix DOT "")
 {
 	disableFrameDecor();
 
@@ -303,6 +307,25 @@ FXLFOParamValue *CActionParamDialog::getLFOParam(const string name)
 	throw runtime_error(string(__func__)+" -- widget with name, "+name+", is not an LFO");
 }
 
+FXPluginRoutingParamValue *CActionParamDialog::addPluginRoutingParam(void *parent,const string name,const LADSPA_Descriptor *desc)
+{
+	if(parent==NULL)
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+	FXPluginRoutingParamValue *pluginRoutingEntry=new FXPluginRoutingParamValue((FXPacker *)parent,0,name.c_str(),desc);
+	parameters.push_back(make_pair(ptPluginRouting,pluginRoutingEntry));
+	retValueConvs.push_back(NULL);
+
+	return pluginRoutingEntry;
+}
+
+FXPluginRoutingParamValue *CActionParamDialog::getPluginRoutingParam(const string name)
+{
+	const unsigned index=findParamByName(name);
+	if(parameters[index].first==ptPluginRouting);
+		return (FXPluginRoutingParamValue *)parameters[index].second;
+	throw runtime_error(string(__func__)+" -- widget with name, "+name+", is not a Plugin Routing");
+}
+
 void CActionParamDialog::setMargin(FXint margin)
 {
 	leftMargin->setWidth(margin);
@@ -346,83 +369,16 @@ void CActionParamDialog::setValue(size_t index,const double value)
 		break;
 		*/
 
-	default:
-		throw runtime_error(string(__func__)+" -- unhandled or unimplemented parameter type: "+istring(parameters[index].first));
-	}
-}
-
-#if 0
-void CActionParamDialog::setControlHeight(size_t index,const size_t height)
-{
-	switch(parameters[index].first)
-	{
-	case ptConstant:
-		((FXConstantParamValue *)parameters[index].second)->setHeight(height);
-		break;
-
-	case ptNumericText:
-	case ptStringText:
-		((FXTextParamValue *)parameters[index].second)->setHeight(height);
-		break;
-
-	case ptDiskEntity:
-		((FXDiskEntityParamValue *)parameters[index].second)->setHeight(height);
-		break;
-
-	case ptComboText:
-		((FXComboTextParamValue *)parameters[index].second)->setHeight(height);
-		break;
-
-	case ptCheckBox:
-		((FXCheckBoxParamValue *)parameters[index].second)->setHeight(height);
-		break;
-
-	case ptGraph:
-	case ptGraphWithWaveform:
-		((FXGraphParamValue *)parameters[index].second)->setHeight(height);
-		break;
-
-	case ptLFO:
-		((FXGraphParamValue *)parameters[index].second)->setHeight(height);
-		break;
+	case ptPluginRouting:
+		/*
+		((FXGraphParamValue *)parameters[index].second)->setValue(value);
+		 break;
+		 */
 
 	default:
 		throw runtime_error(string(__func__)+" -- unhandled or unimplemented parameter type: "+istring(parameters[index].first));
 	}
 }
-
-const size_t CActionParamDialog::getControlHeight(size_t index) const
-{
-	switch(parameters[index].first)
-	{
-	case ptConstant:
-		return ((FXConstantParamValue *)parameters[index].second)->getHeight();
-
-	case ptNumericText:
-	case ptStringText:
-		return ((FXTextParamValue *)parameters[index].second)->getHeight();
-
-	case ptDiskEntity:
-		return ((FXDiskEntityParamValue *)parameters[index].second)->getHeight();
-
-	case ptComboText:
-		return ((FXComboTextParamValue *)parameters[index].second)->getHeight();
-
-	case ptCheckBox:
-		return ((FXCheckBoxParamValue *)parameters[index].second)->getHeight();
-
-	case ptGraph:
-	case ptGraphWithWaveform:
-		return ((FXGraphParamValue *)parameters[index].second)->getHeight();
-
-	case ptLFO:
-		return ((FXGraphParamValue *)parameters[index].second)->getHeight();
-
-	default:
-		throw runtime_error(string(__func__)+" -- unhandled or unimplemented parameter type: "+istring(parameters[index].first));
-	}
-}
-#endif
 
 void CActionParamDialog::setTipText(const string name,const string tipText)
 {
@@ -460,7 +416,13 @@ void CActionParamDialog::setTipText(const string name,const string tipText)
 
 	case ptLFO:
 /*
-		((FXGraphParamValue *)parameters[index].second)->setTipText(tipText.c_str());
+		((FXLFOParamValue *)parameters[index].second)->setTipText(tipText.c_str());
+		break;
+*/
+
+	case ptPluginRouting:
+/*
+		((FXPluginRoutingParamValue *)parameters[index].second)->setTipText(tipText.c_str());
 		break;
 */
 
@@ -521,9 +483,16 @@ void CActionParamDialog::showControl(const string name,bool show)
 
 	case ptLFO:
 		if(show)
-			((FXGraphParamValue *)parameters[index].second)->show();
+			((FXLFOParamValue *)parameters[index].second)->show();
 		else
-			((FXGraphParamValue *)parameters[index].second)->hide();
+			((FXLFOParamValue *)parameters[index].second)->hide();
+		break;
+
+	case ptPluginRouting:
+		if(show)
+			((FXPluginRoutingParamValue *)parameters[index].second)->show();
+		else
+			((FXPluginRoutingParamValue *)parameters[index].second)->hide();
 		break;
 
 	default:
@@ -544,7 +513,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 	buildPresetLists();
 
 	// restore the splitter's position
-	const FXint h=gSettingsRegistry->getValue<int>("FOX" DOT "SplitterPositions" DOT getOrigTitle());
+	const FXint h=gSettingsRegistry->getValue<int>("FOX" DOT "SplitterPositions" DOT presetPrefix+getOrigTitle());
 	if(presetsFrame!=NULL)
 		presetsFrame->setHeight(h);
 
@@ -554,6 +523,8 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 	{
 		if(parameters[t].first==ptGraphWithWaveform)
 			((FXGraphParamValue *)parameters[t].second)->setSound(actionSound->sound,actionSound->start,actionSound->stop);
+		else if(parameters[t].first==ptPluginRouting)
+			((FXPluginRoutingParamValue *)parameters[t].second)->setSound(actionSound->sound);
 	}
 
 	if(execute(PLACEMENT_CURSOR))
@@ -647,6 +618,13 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 				}
 				break;
 
+			case ptPluginRouting:
+				{
+					FXPluginRoutingParamValue *pluginRoutingEntry=(FXPluginRoutingParamValue *)parameters[t].second;
+					actionParameters->addPluginMapping(pluginRoutingEntry->getName(),pluginRoutingEntry->getValue());
+				}
+				break;
+
 			default:
 				throw runtime_error(string(__func__)+" -- unhandled parameter type: "+istring(parameters[t].first));
 			}
@@ -659,7 +637,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 	if(presetsFrame!=NULL)
 	{
 		FXint h2=presetsFrame->getHeight();
-		gSettingsRegistry->createValue<string>("FOX" DOT "SplitterPositions" DOT getOrigTitle(),istring(h2));
+		gSettingsRegistry->createValue<string>("FOX" DOT "SplitterPositions" DOT presetPrefix+getOrigTitle(),istring(h2));
 	}
 
 	hide(); // hide now and ... 
@@ -699,7 +677,7 @@ long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void 
 		}
 		
 		const string name=string(listBox->getItemText(listBox->getCurrentItem()).text()).substr(4);
-		const string title=getOrigTitle() DOT name;
+		const string title=presetPrefix+getOrigTitle() DOT name;
 
 		for(unsigned t=0;t<parameters.size();t++)
 		{
@@ -733,6 +711,10 @@ long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void 
 
 			case ptLFO:
 				((FXLFOParamValue *)parameters[t].second)->readFromFile(title,presetsFile);
+				break;
+
+			case ptPluginRouting:
+				((FXPluginRoutingParamValue *)parameters[t].second)->readFromFile(title,presetsFile);
 				break;
 
 			default:
@@ -775,7 +757,7 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 			CNestedDataFile *presetsFile=gUserPresetsFile;
 
 
-			const string title=getOrigTitle() DOT name;
+			const string title=presetPrefix+getOrigTitle() DOT name;
 
 			bool alreadyExists=false;
 			if(presetsFile->keyExists(title))
@@ -819,6 +801,10 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 					((FXLFOParamValue *)parameters[t].second)->writeToFile(title,presetsFile);
 					break;
 
+				case ptPluginRouting:
+					((FXPluginRoutingParamValue *)parameters[t].second)->writeToFile(title,presetsFile);
+					break;
+
 				default:
 					throw runtime_error(string(__func__)+" -- unhandled parameter type: "+istring(parameters[t].first));
 				}
@@ -826,7 +812,7 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 
 			if(!alreadyExists)
 			{
-				const string key=getOrigTitle() DOT "names";
+				const string key=presetPrefix+getOrigTitle() DOT "names";
 				vector<string> names=presetsFile->getValue<vector<string> >(key);
 				names.push_back(name);
 				presetsFile->createValue<vector<string> >(key,names);
@@ -853,15 +839,15 @@ long CActionParamDialog::onPresetRemoveButton(FXObject *sender,FXSelector sel,vo
 		{
 			CNestedDataFile *presetsFile=gUserPresetsFile;
 
-			const string key=getOrigTitle() DOT name;
+			const string key=presetPrefix+getOrigTitle() DOT name;
 
 			// remove preset's values
 			presetsFile->removeKey(key);
 
 			// remove preset's name from the names array
-			vector<string> names=presetsFile->getValue<vector<string> >(getOrigTitle() DOT "names");
+			vector<string> names=presetsFile->getValue<vector<string> >(presetPrefix+getOrigTitle() DOT "names");
 			names.erase(names.begin()+userPresetList->getCurrentItem());
-			presetsFile->createValue<vector<string> >(getOrigTitle() DOT "names",names);
+			presetsFile->createValue<vector<string> >(presetPrefix+getOrigTitle() DOT "names",names);
 
 			buildPresetList(presetsFile,userPresetList);
 			presetsFile->save();
@@ -888,7 +874,7 @@ void CActionParamDialog::buildPresetLists()
 		presetsFrame=new FXHorizontalFrame(splitter,FRAME_RAISED|FRAME_THICK | LAYOUT_FILL_X, 0,0,0,0, 2,2,2,2);
 		try
 		{
-			if(gSysPresetsFile->getValue<vector<string> >(getOrigTitle() DOT "names").size()>0)
+			if(gSysPresetsFile->getValue<vector<string> >(presetPrefix+getOrigTitle() DOT "names").size()>0)
 			{
 				// native preset stuff
 				FXPacker *listFrame=new FXPacker(presetsFrame,FRAME_SUNKEN|FRAME_THICK|LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y, 0,0,210,0, 0,0,0,0, 0,0); // had to do this because FXList won't take that frame style
@@ -946,7 +932,7 @@ void CActionParamDialog::buildPresetLists()
 
 void CActionParamDialog::buildPresetList(CNestedDataFile *f,FXList *list)
 {
-	const vector<string> names=f->getValue<vector<string> >(getOrigTitle() DOT "names");
+	const vector<string> names=f->getValue<vector<string> >(presetPrefix+getOrigTitle() DOT "names");
 	list->clearItems();
 	for(size_t t=0;t<names.size();t++)
 		list->appendItem((istring(t,3,true)+" "+names[t]).c_str());
@@ -993,6 +979,11 @@ unsigned CActionParamDialog::findParamByName(const string name) const
 
 		case ptLFO:
 			if(((FXLFOParamValue *)parameters[t].second)->getName()==name)
+				return t;
+			break;
+
+		case ptPluginRouting:
+			if(((FXPluginRoutingParamValue *)parameters[t].second)->getName()==name)
 				return t;
 			break;
 

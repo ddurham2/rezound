@@ -39,10 +39,10 @@ class CActionParamDialog;
 #include "FXCheckBoxParamValue.h"
 #include "FXGraphParamValue.h"
 #include "FXLFOParamValue.h"
+#include "FXPluginRoutingParamValue.h"
 
 #include "../backend/AActionDialog.h"
 #include "../backend/CGraphParamValueNode.h"
-
 
 class CNestedDataFile;
 
@@ -52,7 +52,8 @@ class CActionParamDialog : public FXModalDialogBox, public AActionDialog
 public:
 	typedef const double (*f_at_x)(const double x);
 
-	CActionParamDialog(FXWindow *mainWindow,bool showPresetPanel=true,FXModalDialogBox::ShowTypes showType=FXModalDialogBox::stRememberSizeAndPosition);
+	// the presetPrefix value will get prefixed to all the read/writes on the presets file
+	CActionParamDialog(FXWindow *mainWindow,bool showPresetPanel=true,const string presetPrefix="",FXModalDialogBox::ShowTypes showType=FXModalDialogBox::stRememberSizeAndPosition);
 	virtual ~CActionParamDialog();
 
 	// these are used to create new parents for the controls
@@ -78,6 +79,8 @@ public:
 	FXGraphParamValue *addGraphWithWaveform(void *parent,const string name,const string vertAxisLabel,const string vertUnits,FXGraphParamValue::f_at_xs vertInterpretValue,FXGraphParamValue::f_at_xs vertUninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar);
 	FXLFOParamValue *addLFO(void *parent,const string name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs);
 		FXLFOParamValue *getLFOParam(const string name); 
+	FXPluginRoutingParamValue *addPluginRoutingParam(void *parent,const string name,const LADSPA_Descriptor *desc);
+		FXPluginRoutingParamValue *getPluginRoutingParam(const string name); 
 
 	// show or hide a control
 	void showControl(const string name,bool show);
@@ -149,7 +152,8 @@ private:
 		ptCheckBox,
 		ptGraph,
 		ptGraphWithWaveform,
-		ptLFO
+		ptLFO,
+		ptPluginRouting
 	};
 
 	// the void * points to either an FXConstantParamValue, FXTextParamValue, FXComboTextParamValue, FXCheckBoxParamValue or an FXGraphParamValue
@@ -165,7 +169,7 @@ private:
 			FXList *nativePresetList;
 			FXList *userPresetList;
 
-	bool shrinkPresetsFrame;
+	const string presetPrefix;
 
 	void buildPresetLists();
 	void buildPresetList(CNestedDataFile *f,FXList *list);
