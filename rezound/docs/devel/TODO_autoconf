@@ -6,6 +6,9 @@ and move it into config
 -- See if things might possibly work with -O2 set. Decide if we should be using 
 -O2 or not.
 
+--simplify the AUTHORS File
+
+--possibly revert frontend Makefile to NOT build .la library the vote is still out on this one.
 
 --------------The stuff below this line can wait, because I don't expect to
 --------------See a problem with GNU/Linux systems related to thiese.
