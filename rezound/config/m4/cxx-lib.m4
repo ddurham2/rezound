@@ -50,6 +50,8 @@ dnl
 dnl This macro will also #define HAVE_LIBXXX where XXX is the capitalized
 dnl normalized name if arg 1
 AC_DEFUN(ajv_CXX_CHECK_LIB, dnl
+[AC_ARG_WITH($1-path,[  --with-$1-path	  Specify path to $1 libraries], dnl
+ajv_lib$1_path=-L$withval, ajv_lib$1_path="")] dnl
 [AC_ARG_ENABLE($1-check, dnl
 [  --disable-$1-check	  Override the check for $1 library], dnl
 [ enable_$1_check=$enableval ], dnl
@@ -64,6 +66,7 @@ EOF
 	$CXX -l$1 $5 ajv_chk_cxx_lib_$1.cc >/dev/null 2>ajv_chk_cxx_lib_$1.err
 	if test $? = 0; then
 		AC_MSG_RESULT(yes)
+		LDFLAGS="$LDFLAGS $ajv_lib$1_path"
 		rm -f ajv_chk_cxx_lib_$1.cc
 		rm -f ajv_chk_cxx_lib_$1.err
 	else
@@ -79,6 +82,9 @@ EOF
    If you don't have $1, or need a more recent version, download 
    the latest version at: $4
  
+   If you have $1 installed and the linker couldn't find it, you can specify
+   the path by passing --with-$1-path=/path/to/$1 to configure.
+
    If you have $1 and you believe it is up to date, you can override 
    this check by passing --disable-$1-check as an option to configure. 
    
@@ -104,6 +110,7 @@ dnl This is used to check the results of an AC_CHECK_LIB test. By running
 dnl confdefs.h through cpp after the check we can abort if the test failed
 dnl and print a message similar to the above. First it runs AC_CHECK_LIB
 dnl then checks the result. It also gives an option to override the test.
+dnl AS well as an option to pass the path to the library.
 dnl
 dnl arguments:
 dnl	1. Library name with lib prefix stripped
@@ -115,6 +122,8 @@ dnl 	like it.
 dnl
 dnl 4. URL to download library given in abort message.
 AC_DEFUN(ajv_CHECK_LIB_ABORT, dnl
+[AC_ARG_WITH($1-path,[  --with-$1-path	  Specify path to $1 libraries], dnl
+ajv_lib$1_path=-L$withval, ajv_lib$1_path="")] dnl
 [AC_ARG_ENABLE($1-check, dnl
 [  --disable-$1-check     Override the check for $1 library ], dnl
 [enable_$1_check=$enableval], dnl
@@ -127,8 +136,9 @@ if test "$enable_$1_check" = "yes"; then
 #error $1 library check failed
 #endif
 EOF
-	$CPP ajv_ck_lib_$1.c >/dev/null 2>ajv_ck_lib_$1.err
+	$CPP $ajv_lib_path ajv_ck_lib_$1.c >/dev/null 2>ajv_ck_lib_$1.err
 	if test $? = 0; then
+		LDFLAGS="$LDFLAGS $ajv_lib$1_path"
 		rm -f ajv_ck_lib_$1.c
 		rm -f ajv_ck_lib_$1.err
 	else
@@ -142,6 +152,9 @@ EOF
    
    If you don't have $1, or need a more recent version, download 
    the latest version at: $4
+
+   If you have $1 installed and the linker couldn't find it, you can specify
+   the path by passing --with-$1-path=/path/to/$1 to configure.
  
    If you have $1 and you believe it is up to date, you can override 
    this check by passing --disable-$1-check as an option to configure. 

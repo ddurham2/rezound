@@ -1,27 +1,13 @@
-Add options to manually precify -I paths of -L paths for required libs and
-headers. That way if my test fails, overrides will work.
-
 
 2. Look for other possible trouble spots such as stdint.h int32_t int16_t etc
 and set up a common.h header to deal with these problems. 
 
 
-
-
 - might ought to verify that bootstrap is running within the toplevel directory
+and move it into config
 
 
-- when I temporarily uninstalled fox to see what happend it said I could use
-  --disable-FOX-check if I thought it was installed.   Maybe you just haven't
-  gotten around to it yet (which is fine), but aren't we going to have a flag
-  which allows someone to specify an alternate include and link path to fox
-  (and any other libraries we rely on)?
+-- See if things might possibly work with -O2 set. Decide if we should be using 
+-O2 or not.
 
-- question: why do I have to configure to do a make dist... I understand that
-  there has to be the make file.. but does any of the stuff configure found out
-  go into actually making the tar ball?
-	- I'm not asking for anything to change.. just curious if something
-	  about my machine's configuration affects the distro tar ball
-
-
-
+-Get libfrontend_fox.la to work. 

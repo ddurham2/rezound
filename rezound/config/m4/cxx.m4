@@ -29,7 +29,7 @@ dnl ajv_CXX_FLAG
 dnl Usage - Pass one argument- the Compiler flag to check for. If the falg is
 dnl found to be valid, it is included in CXXFLAGS otherwise, it's left out
 AC_DEFUN(ajv_CXX_FLAG, dnl
-[AC_MSG_CHECKING(if if $CXX accepts $1 )] dnl
+[AC_MSG_CHECKING(if $CXX accepts $1 )] dnl
 cat > ajv_cxx_flag.cc << EOF
 int main(){}
 EOF

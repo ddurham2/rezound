@@ -21,7 +21,8 @@
 ## Place - Suite 330, Boston, MA  02111-1307, USA
 
 ## These are common definitions used in all Makefiles
-## 
+## It is actually included when a makefile.am is coverted to Makefile.in
+## by automake, so it's ok to have @MACROS@ that will be set by configure
 
 ## These are options which have to be passed to build autotools files
 ## the macros covered with @@ are replaced by values in the creation of the
@@ -48,7 +49,7 @@ INCLUDES=\
 ##
 ## The Debian gcc chokes on -Wno-unused-variable and -Wno-unused-function
 ## so I'm removing it for now.
-CXXFLAGS=-Wall -g -D_GNU_SOURCE
+CXXFLAGS=-Wall -g -D_GNU_SOURCE @CXXFLAGS@
 
 ## LDFLAGS will be added at link time
-LDFLAGS= -lFOX -laudiofile -lccgnu -ldl -lm -lpthread
+LDFLAGS= -lFOX -laudiofile -lccgnu -ldl -lm -lpthread @LDFLAGS@

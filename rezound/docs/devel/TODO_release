@@ -1,4 +1,7 @@
-This is a todo list for things we need to do do for an official release. In other words. It's what we'll want to change between the cvs sources and a distro tarball(eg: removing warning flags)
+This is a todo list for things we need to do do for an official release. In
+other words. It's what we'll want to change between the cvs sources and a
+distro tarball(eg: removing warning flags)
 
-1. Remove -Wall and all -W flags from CXXFLAGS -- comment out checks for -Wno... flags in configure.in and remove -Wall from am_include.mk CXXFLAGS
+1. Remove -Wall and all -W flags from CXXFLAGS -- comment out checks for
+-Wno... flags in configure.in and remove -Wall from am_include.mk CXXFLAGS
 

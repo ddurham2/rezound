@@ -25,7 +25,8 @@ http://www.gnu.org/software/commonc++
 
 You should also have a working c++ compiler (gcc is preferred) as well as the normal group of regular libraries and headers for compiling packages. 
 
-See the end of this file for information on configure options specific to ReZound.
+See the end of this file for information on configure options specific to
+ReZound.
 
 If you encounter any errors in the build process and you think you have all the required libraries, please send a bug report to: 
 	http://sourceforge.net/tracker/?group_id=5056&atid=105056
@@ -34,6 +35,8 @@ If at all possible try to send details, preferably a screen dump or script file.
 
 The ReZound homepage is at http://rezound.sourceforge.net/
 
+
+To strip the rezound binary, use `make install-strip' as the final installation step.
 
 
 Below is the Generic GNU Installation Bit:
@@ -223,7 +226,13 @@ operates.
 
 
 ADDITIONAL CONFIGURE FLAGS:
+--------------------------------------------------------------------------------
 
 --disable-audiofile-check	Skips the check for the audiofile package. 
 --disable-FOX-check		Skips the check for the FOX package.
+--disable-ccgnuheck		Skips the check for the Commonc++ library
 
+--with-audiofile-path		Allows you to manually pass the path to
+--with-FOX-path			libraries that may not be in default linker 
+--with-ccgnu-path		path. Pass the path to lirary directory
+				(eg: --with-FOX-path=/usr/lib gets -L/usr/lib)

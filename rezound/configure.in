@@ -28,10 +28,15 @@ AC_CONFIG_AUX_DIR(config)
 AM_CONFIG_HEADER(config/config.h)
 AM_INIT_AUTOMAKE(ReZound, 0.1prealpha)
 
-dnl Checks for programs.
+dnl --------------------|
+dnl Checks for programs.|
+dnl --------------------|
 AC_PROG_AWK
 AC_PROG_INSTALL
 AC_PROG_LN_S
+dnl AC_PROG_CXX automatically sets CXXFLAGS to -g -O2 if g++ is c++ compiler
+dnl and CXXFLAGS hasn't been set, so by setting CXXFLAGS, we can avoid this.
+CXXFLAGS=
 AC_PROG_CXX
 dnl These are some custom checks to see if cc accepts some extra warning flags
 dnl see config/cxx.m4 for macro definition
@@ -40,22 +45,21 @@ ajv_CXX_FLAG(-Wno-unused-variable)
 AM_PROG_LIBTOOL
 AC_PROG_CPP
 
-dnl Checks for libraries.
+dnl ---------------------|
+dnl Checks for libraries.|
+dnl ---------------------|
 AC_CHECK_LIB(m, sqrt)
 AC_CHECK_LIB(dl, dlopen)
 AC_CHECK_LIB(pthread, pthread_create)
 
+dnl see config/cxx-lib.m4 for ajv_ macro definitions. 
+dnl
 dnl I found that afSetVirtualSampleFormat() was missing from earlier versions
 dnl of audifile, so this is a little better than checking for a random
 dnl function in libaudiofile. I still have to work this so configure will
 dnl abort if the test fails.
 ajv_CHECK_LIB_ABORT(audiofile, afSetVirtualSampleFormat,
 AUDIOFILE,[http://oss.sgi.com/projects/audiofile/])
-
-dnl see config/cxx-lib.m4 for macro definitions. 
-dnl This is a check for a class in a C++ library. To pinpoint
-dnl the specific version we need we could change what class is linked.
-ajv_CXX_CHECK_LIB([FOX],FXApp,fox/fx.h,[http://fox-toolkit.org])
 
 dnl I added an extra argument to ajv_CXX_CHECK_LIB which allows us to pass
 dnl extra -l flags so this test (as suggested by Davy) would work. 
@@ -64,8 +68,14 @@ dnl For now let's worry about g++, and sooner or later everything should
 dnl become ANSI and recognize namespaces.
 ajv_CXX_CHECK_LIB([ccgnu],ost::Mutex,cc++/thread.h,[http://www.gnu.org/directory/commoncpp.html],[-lpthread -ldl])
 
+dnl This is a check for a class in a C++ library. To pinpoint
+dnl the specific version we need we could change what class is linked.
+ajv_CXX_CHECK_LIB([FOX],FXApp,fox/fx.h,[http://fox-toolkit.org])
 
-dnl Checks for header files.
+
+dnl ------------------------|
+dnl Checks for header files.|
+dnl ------------------------|
 AC_HEADER_STDC
 dnl This is defined in config/sstream.m4 it checks for a native sstream 
 dnl header and sets config.h so we'll use missing/sstream-missing if it's 
