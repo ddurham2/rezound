@@ -573,7 +573,7 @@ const string CMultiFile::buildFilename(size_t which,const string &initialFilenam
 		return initialFilename+"."+istring(which);
 }
 
-int CMultiFile::RFileHeader::read(int fd)
+ssize_t CMultiFile::RFileHeader::read(int fd)
 {
 	if(::read(fd,&signature,sizeof(signature))!=sizeof(signature))
 		return 0;
@@ -617,7 +617,7 @@ int CMultiFile::RFileHeader::read(int fd)
 	return HEADER_SIZE;
 }
 
-int CMultiFile::RFileHeader::write(int fd)
+ssize_t CMultiFile::RFileHeader::write(int fd)
 {
 	if(::write(fd,&signature,sizeof(signature))!=sizeof(signature))
 		return 0;
