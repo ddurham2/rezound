@@ -1,6 +1,4 @@
 
-2. Look for other possible trouble spots such as stdint.h int32_t int16_t etc
-and set up a common.h header to deal with these problems.  -- I'll wait until these things come up before I worry about them.
 
 - might ought to verify that bootstrap is running within the toplevel directory
 and move it into config
@@ -8,31 +6,13 @@ and move it into config
 -- See if things might possibly work with -O2 set. Decide if we should be using 
 -O2 or not.
 
-- Don't get mad at me.... :)   But, I added another directory under misc called
-  CNestedDataFile.  This is the class I talked about for storing information
-  about an action's parameters so the same parameters can be used at a later
-  date.  I guess it needs to have a convenience library built for it too.  
-  The only thing out of the ordinary is that it uses flex and bison... I would
-  be really surprised if there aren't already automake macros that test for
-  these.  I checked in a t.cpp and little script 'a' which compiles t.cpp (the
-  test) just so you can see how it needs to compile.  I don't mean to leave
-  these two little files in for long.. Just so long as you see what needs to be
-  done.  And if you run 'a' to compile and then run the resulting binary, 't'
-  it will give an error that it cannot open the data file... That is to be 
-  expected.  
-  I went ahead and added this because using I didn't even see a way in CommonC++'s
-  XML classes to write data files, only read them.  Plus it would have required
-  linking with yet another library, libxml2.  So this was already written and
-  has been tested for some time and I'll use it.
-  And one more note, the makefile (as does 'a') needs to run bison on the .y
-  and flex on the .l but there is no need to compile or add to the library the
-  resulting cfg.lex.c file from flex because I actually #include that .c file in 
-  the .y file which thus gets included in bison's resulting cfg.tab.c file.
-    If that causes a problem, I can easily modify it to behave normally
-    And, the clean target for this Makefile needs to delete those two .c files
-    since they are actually generated
 
 
+--------------The stuff below this line can wait, because I don't expect to
+--------------See a problem with GNU/Linux systems related to thiese.
+ Look for other possible trouble spots such as stdint.h int32_t int16_t etc
+and set up a common.h header to deal with these problems.  -- I'll wait until these things come up before I worry about them.
     
     --provide substitute functions for strerror, strdup and strtol (These may be missing for some platforms)  Check GNU libiberty (ftp://sourceware.cygnus.com/pub/binutils/) or libit(http://www.iro.umontreal.ca/~pinard/libit/) for fallback functions.
     --also make sure tests for above are working properly. I suspect mine are broken.
+    -- The default AC_CHECK_FUNCS() macro isn't detecting any of these, (nor is it finding printf, time or rand). So for now I'll ignore these checks, and worry about it when (and if) we get a bug report related to this problem.

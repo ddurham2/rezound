@@ -94,6 +94,9 @@ AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
 
 dnl Checks for library functions.
-AC_CHECK_FUNCS(strerror strdup strtol)
+dnl These tests aren't working at all, so until we have a complaint 
+dnl from someone who can't build due to a missing function, I won't worry
+dnl about it
+dnl AC_CHECK_FUNCS(strerror strdup strtol)
 
 AC_OUTPUT(Makefile src/Makefile src/misc/Makefile src/misc/cc++/Makefile src/misc/CNestedDataFile/Makefile src/PoolFile/Makefile src/backend/Makefile src/backend/Edits/Makefile src/backend/Effects/Makefile src/backend/Remaster/Makefile  src/frontend_fox/Makefile) 
