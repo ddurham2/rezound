@@ -3,7 +3,7 @@
 ## Process this file with automake to create Makefile.in
 ##
 ##
-## Copyright (C) 2002 - David W. Durham
+## Copyright (C) 2002 - Anthony Ventimiglia
 ## 
 ## This file is part of ReZound, an audio editing application, 
 ## 
@@ -49,7 +49,7 @@ INCLUDES=\
 ## The Debian gcc chokes on -Wno-unused-variable and -Wno-unused-function
 ## so I'm removing it for now.
 ##CXXFLAGS=-Wall -Wno-unused-function -Wno-unused-variable -D_GNU_SOURCE
-CXXFLAGS=-Wall -D_GNU_SOURCE
+CXXFLAGS=-Wall 
 
 ## LDFLAGS will be added at link time
 LDFLAGS= -lFOX -laudiofile -lccgnu -ldl -lm -lpthread

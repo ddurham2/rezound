@@ -2,7 +2,7 @@
 dnl sstream.m4 
 dnl Written by Anthony Ventimiglia
 dnl
-dnl Copyright (C) 2002 - David W. Durham
+dnl Copyright (C) 2002 - Anthony Ventimiglia
 dnl 
 dnl This file is part of ReZound, an audio editing application, 
 dnl 

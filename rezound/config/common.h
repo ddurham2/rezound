@@ -1,7 +1,7 @@
 /* 
  * common.h Written by Anthony Ventimiglia
  * 
- * Copyright (C) 2002 - David W. Durham
+ * Copyright (C) 2002 - Anthony Ventimiglia
  * 
  * This file is part of ReZound, an audio editing application.
  * 
@@ -38,7 +38,8 @@
 # define REZOUND_PACKAGE	PACKAGE
 # undef PACKAGE
 #else
-# define REZOUND_PACKAGE "ReZound"	/* Just in case it wasn't defined */
+# define REZOUND_PACKAGE "ReZound"	
+/* Just in case it wasn't defined, the only time this should happen if for some reason someone would decide to compile without an automake built Makefile*/
 #endif
 
 /* do the same thing for VERSION */
@@ -48,6 +49,9 @@
 #else
 # define REZOUND_VERSION	"vx.xxx" /* just in case it wasn't defined. */
 #endif
+
+/* Taken out of CXXFLAGS from am_include.mk (I think ccgnu wants this */
+#define _GNU_SOURCE
 
 
 #endif /* COMMON_H */
