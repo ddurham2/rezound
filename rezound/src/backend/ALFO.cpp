@@ -309,6 +309,7 @@ public:
 
 // --- CLFORegistry definition --------------------------------------------
 
+/* ??? I should make this a real registry where each ALFO has to return a name, an the registry searches thru a vector instead fo hardcoding... then I could possibly load LFOs dynamically */
 const CLFORegistry gLFORegistry;
 
 CLFORegistry::CLFORegistry()
@@ -331,9 +332,9 @@ const string CLFORegistry::getName(const size_t index) const
 	case 0:
 		return("Constant");
 	case 1:
-		return("Sin Wave [-1,1]");
+		return("Sine Wave [-1,1]");
 	case 2:
-		return("Sin Wave [ 0,1]");
+		return("Sine Wave [ 0,1]");
 	case 3:
 		return("Rising Sawtooth Wave [-1,1]");
 	case 4:
@@ -372,9 +373,9 @@ const size_t CLFORegistry::getIndexByName(const string name) const
 {
 	if(name=="Constant")
 		return(0);
-	else if(name=="Sin Wave [-1,1]")
+	else if(name=="Sine Wave [-1,1]")
 		return(1);
-	else if(name=="Sin Wave [ 0,1]")
+	else if(name=="Sine Wave [ 0,1]")
 		return(2);
 	else if(name=="Rising Sawtooth Wave [-1,1]")
 		return(3);
