@@ -1,45 +1,45 @@
-layouts[]={"default"};
+layouts={"default"};
 
 default
 {
-	menuitems[]={"&File", "&Control", "&Edit", "Effec&ts", "F&ilters", "&Looping", "&Remaster", "&Generate"};
+	menuitems={"&File", "&Control", "&Edit", "Effec&ts", "F&ilters", "&Looping", "&Remaster", "&Generate"};
 
 	Control
 	{
-		menuitems[]={"Zoom Out F&ull", "Zoom &Out", "Zoom &In", "Zoom &Fit Selection", "-", "Find &Start Position", "Find Sto&p Position", "-", "&Redraw", "-", "Record...", "Play All Once", "Play All Looped", "Play Selection Once", "Play Selection Looped", "Loop Selection but Skip Most of the Middle", "Loop Selection and Play a Gap Before Repeating", "Stop", "Pause", "Jump to Beginning", "Jump to Selection Start", "Jump to Previous Cue", "Jump to Next Cue", "Shuttle Rewind", "Shuttle Amount", "Shuttle Forward", "-", "Toggle &Level Meters", "Toggle &Stereo Phase Meters", "Toggle Frequency &Analyzer", "-", "View Loaded File 1", "View Loaded File 2", "...", "View Loaded File 9", "View Loaded File 10", "Previously Viewed File"};
+		menuitems={"Zoom Out F&ull", "Zoom &Out", "Zoom &In", "Zoom &Fit Selection", "-", "Find &Start Position", "Find Sto&p Position", "-", "&Redraw", "-", "Record...", "Play All Once", "Play All Looped", "Play Selection Once", "Play Selection Looped", "Loop Selection but Skip Most of the Middle", "Loop Selection and Play a Gap Before Repeating", "Stop", "Pause", "Jump to Beginning", "Jump to Selection Start", "Jump to Previous Cue", "Jump to Next Cue", "Shuttle Rewind", "Shuttle Amount", "Shuttle Forward", "-", "Toggle &Level Meters", "Toggle &Stereo Phase Meters", "Toggle Frequency &Analyzer", "-", "View Loaded File 1", "View Loaded File 2", "...", "View Loaded File 9", "View Loaded File 10", "Previously Viewed File"};
 	}
 	Edit
 	{
-		menuitems[]={"Undo", "Clear Undo History", "Recent Actions", "-", "Copy", "Copy to New", "Cut", "Cut to New", "Delete", "Crop", "-", "Insert Paste", "Replace Paste", "Overwrite Paste", "Limited Overwrite Paste", "Mix Paste", "Limited Mix Paste", "Fit Mix Paste", "Paste As New", "-", "Insert Silence...", "Mute", "-", "Add Channels...", "Remove Channels...", "Swap Channels...", "-", "<< Rotate Left...", ">> Rotate Right...", "-", "Selection"};
+		menuitems={"Undo", "Clear Undo History", "Recent Actions", "-", "Copy", "Copy to New", "Cut", "Cut to New", "Delete", "Crop", "-", "Insert Paste", "Replace Paste", "Overwrite Paste", "Limited Overwrite Paste", "Mix Paste", "Limited Mix Paste", "Fit Mix Paste", "Paste As New", "-", "Insert Silence...", "Mute", "-", "Add Channels...", "Remove Channels...", "Swap Channels...", "-", "<< Rotate Left...", ">> Rotate Right...", "-", "Selection"};
 
 		Selection
 		{
-			menuitems[]={"Select All", "Grow or Slide Selection...", "Select to Beginning", "Select to End", "Flip to Beginning", "Flip to End", "Move Stop to Start Position", "Move Start to Stop Position"};
+			menuitems={"Select All", "Grow or Slide Selection...", "Select to Beginning", "Select to End", "Flip to Beginning", "Flip to End", "Move Stop to Start Position", "Move Start to Stop Position"};
 		}
 	}
 	Effects
 	{
-		menuitems[]={"Reverse", "-", "Change Volume...", "Gain...", "Curved Gain...", "-", "Change Rate...", "Curved Change Rate...", "-", "Flange...", "Simple Delay (Echo)...", "Quantize...", "Distortion...", "Varied Repeat...", "-", "Test"};
+		menuitems={"Reverse", "-", "Change Volume...", "Gain...", "Curved Gain...", "-", "Change Rate...", "Curved Change Rate...", "-", "Flange...", "Simple Delay (Echo)...", "Quantize...", "Distortion...", "Varied Repeat...", "-", "Test"};
 	}
 	File
 	{
-		menuitems[]={"&New", "&Open", "&Reopen", "&Save", "Save &As...", "Save Selection As...", "Save As Multiple Files...", "&Close", "Re&vert", "-", "User No&tes...", "-", "&About ReZound...", "-", "- Just for testing", "Defrag", "PrintSAT", "VerifySAT", "-", "&Quit"};
+		menuitems={"&New", "&Open", "&Reopen", "&Save", "Save &As...", "Save Selection As...", "Save As Multiple Files...", "&Close", "Re&vert", "-", "User No&tes...", "-", "&About ReZound...", "-", "- Just for testing", "Defrag", "PrintSAT", "VerifySAT", "-", "&Quit"};
 	}
 	Filters
 	{
-		menuitems[]={"Convolution Filter...", "Arbitrary FIR Filter...", "-", "Single Pole Lowpass Filter...", "Single Pole Highpass Filter...", "Bandpass Filter...", "Notch Filter...", "-", "Biquad Resonant Lowpass Filter...", "Biquad Resonant Highpass Filter...", "Biquad Resonant Bandpass Filter..."};
+		menuitems={"Convolution Filter...", "Arbitrary FIR Filter...", "-", "Single Pole Lowpass Filter...", "Single Pole Highpass Filter...", "Bandpass Filter...", "Notch Filter...", "-", "Biquad Resonant Lowpass Filter...", "Biquad Resonant Highpass Filter...", "Biquad Resonant Bandpass Filter..."};
 	}
 	Looping
 	{
-		menuitems[]={"Make Symetric", "-", "Add N Cues...", "Add Timed Cues..."};
+		menuitems={"Make Symetric", "-", "Add N Cues...", "Add Timed Cues..."};
 	}
 	Remaster
 	{
-		menuitems[]={"Balance...", "Curved Balance...", "-", "Monoize...", "-", "Noise Gate...", "Dynamic Range Compressor...", "Normalize...", "-", "Resample...", "-", "Remove DC Component", "-", "Unclip (just messing around)"};
+		menuitems={"Balance...", "Curved Balance...", "-", "Monoize...", "-", "Noise Gate...", "Dynamic Range Compressor...", "Normalize...", "-", "Resample...", "-", "Remove DC Component", "-", "Unclip (just messing around)"};
 	}
 	Generate
 	{
-		menuitems[]={"Generate Noise..."};
+		menuitems={"Generate Noise..."};
 	}
 }
 
