@@ -90,9 +90,11 @@ public:
 protected:
 	FXGraphParamValue() {}
 
+
 private:
 	friend class FXGraphParamNode;
 	friend class CVertRuler;
+	friend class CHorzRuler;
 
 	string title;
 
@@ -106,6 +108,7 @@ private:
 	FXComposite *buttonPanel;
 		FXLabel *scalarLabel;
 		FXSpinner *scalarSpinner;
+	FXComposite *hRuler;
 	FXComposite *vRuler;
 	FXComposite *statusPanel;
 		FXLabel *positionLabel;
@@ -120,6 +123,7 @@ private:
 	CGraphParamValueNodeList nodes;
 	mutable CGraphParamValueNodeList retNodes; // a copy of nodes that is returned
 
+	int getGraphPanelWidth() const; // always returns an even value
 	int getGraphPanelHeight() const; // always returns an even value
 
 	// returns the index where it was inserted
@@ -135,6 +139,9 @@ private:
 
 	void updateStatus();
 	void clearStatus();
+
+	const string getXValue(double xPos) const;
+	const string getYValue(double yPos) const;
 
 	f_at_xs interpretValue;
 	f_at_xs uninterpretValue;
