@@ -23,18 +23,22 @@
 
 #include "../../config/common.h"
 
+#include <string>
 
 /*
  * This is a repository to which settings can be saved
  */
 class CNestedDataFile;
 extern CNestedDataFile *gSettingsRegistry;
+#define GET_SETTING(key,variable,type)					\
+	if(gSettingsRegistry->keyExists((key)))				\
+		variable= gSettingsRegistry->getValue<type>((key));
+
 
 
 /*
  * This is the directory that a open/save dialog should open to
  */
-#include <string>
 extern string gPromptDialogDirectory;
 
 
@@ -107,27 +111,6 @@ extern size_t gMaxReopenHistory; 		// defaulted to 16
 
 
 /*
- * These are the parameters of whether or not to snap the selection positions
- * to the cue position, and if so, how far from a cue to does the position have
- * to be before it snaps to it.
- */
-extern bool gSnapToCues;
-extern unsigned gSnapToCueDistance;
-
-
-/*
- * True if the sound windows should follow the play position
- */
-extern bool gFollowPlayPosition;
-
-
-/*
- * True if the wave view rendering should color max-valued samples brightly
- */
-extern bool gRenderClippingWarning;
-
-
-/*
  * dealing when loopType is ltLoopSkipMost
  * Specifies how much time should be played before skipping past the middle to (this much also before) the loop point
  */
@@ -137,12 +120,6 @@ extern float gSkipMiddleMarginSeconds;
  * Specifies how long the skip is when skipping the middle when looping or how long the gap is when inserting a gap before repeating
  */
 extern float gLoopGapLengthSeconds;
-
-
-/*
- * The initial about of audio to show on screen in a newly created sound window
- */
-extern double gInitialLengthToShow;
 
 
 /*
@@ -192,5 +169,11 @@ extern float gCrossfadeStartTime;
 extern float gCrossfadeStopTime;
 enum CrossfadeFadeMethods { cfmLinear=0, cfmParabolic=1 };
 extern CrossfadeFadeMethods gCrossfadeFadeMethod;
+
+/*
+ * Functions to call to read/write these vars to stable storage
+ */
+void readBackendSettings();
+void writeBackendSettings();
 
 #endif

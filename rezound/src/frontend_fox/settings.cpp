@@ -20,10 +20,43 @@
 
 #include "settings.h"
 
+#include <CNestedDataFile/CNestedDataFile.h>
 
-#warning need to make these read from the config file.. perhaps put them under a "FOX" scope so they wouldnt be confused with other frontends that might exist one day
-#warning move frontend specific vars into here.  I know that two frontends might have some of the same settings, but I would rather the code be separated than slightly mixed
 
 bool gDrawVerticalCuePositions=true;
+bool gSnapToCues=true;
+unsigned gSnapToCueDistance=5;
 
+bool gFollowPlayPosition=true;
+
+bool gRenderClippingWarning=true;
+
+double gInitialLengthToShow=120.0; // default 120 seconds
+
+
+void readFrontendSettings()
+{
+	GET_SETTING("FOX" DOT "drawVerticalCuePositions",gDrawVerticalCuePositions,bool)
+	GET_SETTING("FOX" DOT "snapToCues",gSnapToCues,bool)
+	GET_SETTING("FOX" DOT "snapToCueDistance",gSnapToCueDistance,unsigned)
+
+	GET_SETTING("FOX" DOT "followPlayPosition",gFollowPlayPosition,bool)
+
+	GET_SETTING("FOX" DOT "renderClippingWarning",gRenderClippingWarning,bool)
+
+	GET_SETTING("FOX" DOT "initialLengthToShow",gInitialLengthToShow,double)
+}
+
+void writeFrontendSettings()
+{
+	gSettingsRegistry->createValue<bool>("FOX" DOT "drawVerticalCuePositions",gDrawVerticalCuePositions);
+	gSettingsRegistry->createValue<bool>("FOX" DOT "snapToCues",gSnapToCues);
+	gSettingsRegistry->createValue<unsigned>("FOX" DOT "snapToCueDistance",gSnapToCueDistance);
+
+	gSettingsRegistry->createValue<bool>("FOX" DOT "followPlayPosition",gFollowPlayPosition);
+
+	gSettingsRegistry->createValue<bool>("FOX" DOT "renderClippingWarning",gRenderClippingWarning);
+
+	gSettingsRegistry->createValue<double>("FOX" DOT "initialLengthToShow",gInitialLengthToShow);
+}
 
