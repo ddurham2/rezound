@@ -34,5 +34,6 @@ SUBDIRS=src
 ## changes to the configure scripts or makefiles.
 EXTRA_DIST= \
 	config \
+	share \
 	docs \
 	bootstrap
