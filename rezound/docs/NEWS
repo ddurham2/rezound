@@ -1,3 +1,9 @@
+rezound-0.11.0beta -- 10/21/2004
+	- Added native ALSA support so as not to rely on ALSA's OSS emulation
+	- Added a '-p/--play' flag that causes ReZound to play all the files that are loaded from the command line
+	- Double clicking between two cues on the horizontal ruler will select what is between them
+	- Fixed a compiler error that everyone was having
+
 rezound-0.10.0beta -- 7/19/2004
 	- Added support for libSoundTouch which gives decent results for changing the speed and pitch independantly
 	- Added a Change Pitch action

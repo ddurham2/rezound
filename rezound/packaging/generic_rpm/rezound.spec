@@ -1,5 +1,5 @@
 %define name	rezound
-%define version	0.10.0beta
+%define version	0.11.0beta
 %define release 1
 
 Summary:	ReZound is a sound file editor and recorder
@@ -60,6 +60,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Oct 21 2004 Davy Durham <ddurham@users.sourceforge.com> 0.11.0beta-1
+- twelvth rpm release
+
 * Mon Jul 19 2004 Davy Durham <ddurham@users.sourceforge.com> 0.10.0beta-1
 - eleventh rpm release
 

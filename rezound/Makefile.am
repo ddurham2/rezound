@@ -30,12 +30,12 @@ SUBDIRS= \
 	po
 
 pkgdoc_DATA=\
-		docs/AUTHORS\
-		docs/COPYING\
-		docs/NEWS\
-		docs/README\
-		docs/FrontendFoxFeatures.txt\
-		docs/Features.txt
+	docs/AUTHORS\
+	docs/COPYING\
+	docs/NEWS\
+	docs/README\
+	docs/FrontendFoxFeatures.txt\
+	docs/Features.txt
 
 pkgdata_DATA= \
 	share/presets.dat \

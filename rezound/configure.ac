@@ -23,7 +23,7 @@
 # Place - Suite 330, Boston, MA  02111-1307, USA
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT(rezound, 0.10.0beta, [http://sourceforge.net/tracker/?atid=105056&group_id=5056])
+AC_INIT(rezound, 0.11.0beta, [http://sourceforge.net/tracker/?atid=105056&group_id=5056])
 AC_CONFIG_AUX_DIR(config)
 AM_CONFIG_HEADER([config/config.h])
 AM_INIT_AUTOMAKE
@@ -708,6 +708,13 @@ AC_ARG_ENABLE(
 # Final                                                                    #
 ############################################################################
 
+#AC_CONFIG_FILES([
+#	Makefile
+#	src/Makefile
+#		src/misc/Makefile
+#			src/misc/CNestedDataFile/Makefile
+#	po/Makefile.in
+#])
 AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
