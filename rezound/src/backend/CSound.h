@@ -36,14 +36,6 @@
 typedef TStaticPoolAccesser<sample_t,TPoolFile<sample_pos_t,uint64_t> > CRezPoolAccesser;
 
 
-enum MixMethods
-{
-    mmOverwrite,
-    mmAdd,
-    mmMultiply,
-    mmAverage 
-};
-
 struct RPeakChunk
 { 
 public:

@@ -107,4 +107,14 @@ static const sample_pos_t NIL_SAMPLE_POS=~((sample_pos_t)0);
 static mix_sample_t _SSS;
 #define ClipSample(s) ((sample_t)(_SSS=((mix_sample_t)(s)), _SSS>MAX_SAMPLE ? MAX_SAMPLE : ( _SSS<MIN_SAMPLE ? MIN_SAMPLE : _SSS ) ) )
 
+
+enum MixMethods
+{
+    mmOverwrite,
+    mmAdd,
+    mmMultiply,
+    mmAverage 
+};
+
+
 #endif
