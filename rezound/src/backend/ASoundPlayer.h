@@ -125,6 +125,7 @@ public:
 	// will represent as many bands as will fit from 20Hz up to half the sample rate, not going over.
 	// the labels on the bands corrispond to its being the center frequency in the band (except perhaps the first and last band)
 	const vector<float> getFrequencyAnalysis() const;
+	const size_t getFrequency(size_t index) const; // returns the frequency of the value at the index within the vector return from getFrequencyAnalysis
 	const size_t getFrequencyAnalysisOctaveStride() const; // return the number of bands per octave returned by getFrequencyAnalysis
 
 protected:

@@ -222,8 +222,8 @@ const sample_t ASoundPlayer::getPeakLevel(unsigned channel) const
 // multiple of deltaOctave (i.e when deltaOctave is 0.5, then 
 // the bands are defined as octaves: 0, 0.5, 1.0, 1.5, 2.0, 2.5, etc)
 
-static const float baseOctave=20;	// bottom frequency of analyzer  (actually the first band contains from 0Hz to upperFreqAtOctave(0) )
-static const size_t octaveStride=3;	// 3 bands per octave
+static const float baseOctave=40;	// bottom frequency of analyzer  (actually the first band contains from 0Hz to upperFreqAtOctave(0) )
+static const size_t octaveStride=3;	// 4 bands per octave
 static const float deltaOctave=1.0/octaveStride;
 
 // returns the frequency (in Hz) given the octave
@@ -294,10 +294,10 @@ void ASoundPlayer::calculateAnalyzerBandIndexRanges() const
 		bandUpperIndexes.push_back(0);
 	}
 
-/*
+	/*
 	for(size_t t=0;t<bandLowerIndexes.size();t++)
 		printf("%d .. %d\n",bandLowerIndexes[t],bandUpperIndexes[t]);
-*/
+	*/
 }
 
 TAutoBuffer<fftw_real> *ASoundPlayer::createHammingWindow(size_t windowSize)
@@ -429,6 +429,15 @@ for(int t=0;t<ASP_ANALYSIS_BUFFER_SIZE;t++)
 	return temp;
 #else
 	return v;
+#endif
+}
+
+const size_t ASoundPlayer::getFrequency(size_t index) const
+{
+#ifdef HAVE_LIBRFFTW
+	return (size_t)freqAtOctave((float)index/(float)octaveStride);
+#else
+	return 0;
 #endif
 }
 
