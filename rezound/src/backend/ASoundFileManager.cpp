@@ -252,7 +252,8 @@ askAgain:
 			{
 				if(Question("Overwrite Existing File:\n"+filename,yesnoQues)!=yesAns)
 				{
-					registerFilename(filename);
+					if(reregisterFilenameOnError)
+						registerFilename(filename);
 					goto askAgain;
 				}
 			}
@@ -274,7 +275,8 @@ askAgain:
 		}
 		catch(...)
 		{
-			registerFilename(filename);
+			if(reregisterFilenameOnError)
+				registerFilename(filename);
 			throw;
 		}
 	}
