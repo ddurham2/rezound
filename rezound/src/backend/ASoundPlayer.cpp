@@ -72,12 +72,37 @@ void ASoundPlayer::mixSoundPlayerChannels(const unsigned nChannels,sample_t * co
 
 	for(set<CSoundPlayerChannel *>::iterator i=soundPlayerChannels.begin();i!=soundPlayerChannels.end();i++)
 		(*i)->mixOntoBuffer(nChannels,buffer,bufferSize);
+
+
+	// calculate the peak levels for this chunk
+	for(unsigned i=0;i<nChannels;i++)
+	{
+		size_t p=i;
+		sample_t m=0;
+		for(size_t t=0;t<bufferSize;t++)
+		{
+			// m = max(m,abs(buffer[p]);
+			sample_t s=buffer[p];
+			s= s<0 ? -s : s;
+			m= m>s ? m : s;
+
+			p+=nChannels;
+		}
+		peakLevels[i]=m;
+	}
+	for(unsigned i=nChannels;i<MAX_CHANNELS;i++)
+		peakLevels[i]=0;
 }
 
 void ASoundPlayer::stopAll()
 {
 	for(set<CSoundPlayerChannel *>::iterator i=soundPlayerChannels.begin();i!=soundPlayerChannels.end();i++)
 		(*i)->stop();
+}
+
+const sample_t ASoundPlayer::getPeakLevel(unsigned channel) const
+{
+	return peakLevels[channel];
 }
 
 

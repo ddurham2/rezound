@@ -91,6 +91,9 @@ public:
 
 	CSoundPlayerChannel *newSoundPlayerChannel(CSound *sound);
 
+	// gets the most recent peak level (??? needs to be enhanced to know the max since the last call to this function or something like that)
+	const sample_t getPeakLevel(unsigned channel) const;
+
 protected:
 
 	ASoundPlayer();
@@ -106,6 +109,7 @@ private:
 	void addSoundPlayerChannel(CSoundPlayerChannel *soundPlayerChannel);
 	void removeSoundPlayerChannel(CSoundPlayerChannel *soundPlayerChannel);
 
+	sample_t peakLevels[MAX_CHANNELS];
 };
 
 
