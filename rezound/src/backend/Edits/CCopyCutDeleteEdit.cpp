@@ -37,6 +37,9 @@ CCopyCutDeleteEdit::~CCopyCutDeleteEdit()
 
 bool CCopyCutDeleteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
+	if(actionSound.countChannels()<=0)
+		return(false); // no channels to do
+
 	// ??? cut could be optimized if the clipboard were abstracted in such a way that I could use moveData to move to a pool in the same pool file as the sound
 	if(type==ccdtCopy || type==ccdtCut)
 	{
