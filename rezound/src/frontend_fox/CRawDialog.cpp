@@ -90,11 +90,12 @@ CRawDialog::CRawDialog(FXWindow *mainWindow) :
 		dataOffsetTextBox->setText("0");
 		new FXLabel(t,"in bytes");
 
-	new FXLabel(main,"Data Length:");
+	(new FXLabel(main,"Data Length:"))->setTipText("normally leave this 0");
 	t=new FXHorizontalFrame(main,0, 0,0,0,0, 0,0,0,0);
 		dataLengthTextBox=new FXTextField(t,10,NULL,0,TEXTFIELD_NORMAL|TEXTFIELD_INTEGER);
 		dataLengthTextBox->setText("0");
-		new FXLabel(t,"in audio frames");
+		dataLengthTextBox->setTipText("normally leave this 0");
+		(new FXLabel(t,"in audio frames"))->setTipText("normally leave this 0");
 }
 
 
