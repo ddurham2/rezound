@@ -1,6 +1,8 @@
 #ifndef __utils_h__
 #define __utils_h__
 
+#include "fox_compat.h"
+
 static void setFontOfAllChildren(FXComposite *w,FXFont *f)
 {
 	if(w)
@@ -30,8 +32,10 @@ static void setFontOfAllChildren(FXComposite *w,FXFont *f)
 				static_cast<FXMenuCaption *>(c)->setFont(f);
 			else if(dynamic_cast<FXProgressBar *>(c))
 				static_cast<FXProgressBar *>(c)->setFont(f);
+#if REZ_FOX_VERSION>=101013
 			else if(dynamic_cast<FXRuler *>(c))
 				static_cast<FXRuler *>(c)->setFont(f);
+#endif
 			else if(dynamic_cast<FXSpinner *>(c))
 				static_cast<FXSpinner *>(c)->setFont(f);
 			else if(dynamic_cast<FXStatusLine *>(c))
