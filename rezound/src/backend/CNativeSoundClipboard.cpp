@@ -24,6 +24,8 @@
 
 #include <istring>
 
+#include "AStatusComm.h"
+
 typedef TPoolAccesser<sample_t,CSound::PoolFile_t > CClipboardPoolAccesser;
 
 CNativeSoundClipboard::CNativeSoundClipboard(const string description,const string _workingFilename) :
@@ -48,8 +50,16 @@ CNativeSoundClipboard::~CNativeSoundClipboard()
 
 void CNativeSoundClipboard::copyFrom(const CSound *sound,const bool whichChannels[MAX_CHANNELS],sample_pos_t start,sample_pos_t length)
 {
+	int channelCount=0;
+	for(unsigned i=0;i<sound->getChannelCount();i++)
+	{
+		if(whichChannels[i])
+			channelCount++;
+	}
+
 	clearWhichChannels();
 	workingFile.clear();
+	unsigned channelsDoneCount=0;
 	for(unsigned i=0;i<sound->getChannelCount();i++)
 	{
 		if(whichChannels[i])
@@ -57,8 +67,16 @@ void CNativeSoundClipboard::copyFrom(const CSound *sound,const bool whichChannel
 			const string poolName="Channel "+istring(i);
 			CClipboardPoolAccesser dest=workingFile.createPool<sample_t>(poolName);
 
-			// ??? progress bar.. either call this in 100 chunks or have a call back function
-			dest.copyData(0,sound->getAudio(i),start,length,true);
+			if((length/100)>0)
+			{
+				CStatusBar statusBar(_("Copying to Clipboard -- Channel ")+istring(++channelsDoneCount)+"/"+istring(channelCount),0,100,false);
+				for(sample_pos_t t=0;t<100;t++)
+				{
+					dest.copyData(t*(length/100),sound->getAudio(i),start+(t*(length/100)),length/100,true);
+					statusBar.update(t);
+				}
+			}
+			dest.copyData(100*(length/100),sound->getAudio(i),start+(100*(length/100)),length%100,true);
 
 			this->whichChannels[i]=true;
 			this->length=length;
