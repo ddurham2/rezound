@@ -712,7 +712,7 @@ long FXGraphParamValue::onDestroyNode(FXObject *sender,FXSelector sel,void *ptr)
 {
 	FXEvent *ev=(FXEvent *)ptr;
 	int nodeIndex=findNodeAt(ev->win_x,ev->win_y);
-	if(nodeIndex!=-1)
+	if(nodeIndex!=-1 && nodeIndex!=0 && nodeIndex!=nodes.size()-1) // not the first or the last node
 	{
 		nodes.erase(nodes.begin()+nodeIndex);
 		draggingNode=-1;
