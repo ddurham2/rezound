@@ -514,7 +514,7 @@ public:
 		FXColor *data=(FXColor *)canvas->getBackBufferData();
 
 		// the w and h that we're going to render to (minus some borders and tick marks)
-		const size_t canvasSize=canvas->getWidth();  // w==h is guarenteed in onResize()
+		const FXint canvasSize=canvas->getWidth();  // w==h is guarenteed in onResize()
 
 		if(clear)
 		{
@@ -527,14 +527,14 @@ public:
 			return 1;
 
 		// fade previous frame (so we get a ghosting history)
-		for(size_t t=0;t<canvasSize*canvasSize;t++)
+		for(FXint t=0;t<canvasSize*canvasSize;t++)
 		{
 			const FXColor c=data[t];
 			data[t]= c==0 ? 0 : FXRGB( FXREDVAL(c)*7/8, FXGREENVAL(c)*7/8, FXBLUEVAL(c)*7/8 );
 		}
 
 		// draw the axies
-		for(size_t t=0;t<canvasSize;t++)
+		for(FXint t=0;t<canvasSize;t++)
 		{
 			data[t+(canvasSize*canvasSize/2)]=M_METER_OFF; // horz
 			data[(t*canvasSize)+canvasSize/2]=M_METER_OFF; // vert
