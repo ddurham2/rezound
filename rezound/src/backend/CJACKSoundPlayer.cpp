@@ -33,9 +33,13 @@
 
 #include "settings.h"
 #include "AFrontendHooks.h"
+#include "AStatusComm.h"
 
 /*
  * Ask the mailing list about the hangup signal and I probably want to catch it and not die
+ * 
+ * Further testing needs to be done about the jackd process dieing while ReZound is running and what to do in that situation
+ *
  */ 
 
 
@@ -49,6 +53,8 @@ CJACKSoundPlayer::CJACKSoundPlayer() :
 
 	tempBuffer(1)
 {
+	for(unsigned t=0;t<MAX_CHANNELS;t++)
+		output_ports[t]=NULL;
 }
 
 CJACKSoundPlayer::~CJACKSoundPlayer()
@@ -65,84 +71,81 @@ void CJACKSoundPlayer::initialize()
 {
 	if(!initialized)
 	{
-		// try to become a client of the JACK server
-		if((client=jack_client_new(REZOUND_PACKAGE))==0) 
-			throw runtime_error(string(__func__)+" -- error connecting to jack server -- jackd not running?");
-
-		// tell the JACK server to call `processAudio()' whenever there is work to be done
-		jack_set_process_callback(client,processAudio,this);
-
-		// tell the JACK server to call `maxToProcessChanged()' whenever the maximum number of frames that 
-		// will be passed to `processAudio()' changes
-		jack_set_buffer_size_callback(client,maxToProcessChanged,this);
-
-		// tell the JACK server to call `sampleRateChanged()' whenever the sample rate of the system changes
-		jack_set_sample_rate_callback(client,sampleRateChanged,this);
-
-		// tell the JACK server to call `jackShutdown()' if it ever shuts down, either entirely, 
-		// or if it just decides to stop calling us
-		jack_on_shutdown(client,jackShutdown,this);
-
-
-		sampleRateChanged(jack_get_sample_rate(client),this); // make note of the sample rate for this device
-		devices[0].channelCount=gDesiredOutputChannelCount;
-
-		maxToProcessChanged(jack_get_buffer_size(client),this); // initially set tempBuffer to the right size
-
-
-		// create two ports
-		for(unsigned t=0;t<devices[0].channelCount;t++)
-			output_ports[t]=jack_port_register(client,("output_"+istring(t+1)).c_str(),JACK_DEFAULT_AUDIO_TYPE,JackPortIsOutput,0);
-
-
-		// tell the JACK server that we are ready to roll
-		if(jack_activate(client)) 
+		try
 		{
-			jack_client_close(client); client=NULL;
-			throw runtime_error(string(__func__)+" -- cannot activate client");
-		}
+			// try to become a client of the JACK server
+			if((client=jack_client_new(REZOUND_PACKAGE))==0) 
+				throw runtime_error(string(__func__)+" -- error connecting to jack server -- jackd not running?");
+
+			// tell the JACK server to call `processAudio()' whenever there is work to be done
+			jack_set_process_callback(client,processAudio,this);
+
+			// tell the JACK server to call `maxToProcessChanged()' whenever the maximum number of frames that 
+			// will be passed to `processAudio()' changes
+			jack_set_buffer_size_callback(client,maxToProcessChanged,this);
+
+			// tell the JACK server to call `sampleRateChanged()' whenever the sample rate of the system changes
+			jack_set_sample_rate_callback(client,sampleRateChanged,this);
+
+			// tell the JACK server to call `jackShutdown()' if it ever shuts down, either entirely, 
+			// or if it just decides to stop calling us
+			jack_on_shutdown(client,jackShutdown,this);
 
 
-		// gather input port names in case we need to prompt for them
-		vector<string> inputPortNames;
-		const char **ports=jack_get_ports(client,NULL,NULL,JackPortIsInput);
-		while(ports && *ports)
-			inputPortNames.push_back(*(ports++));
-		ports-=inputPortNames.size();
-		free(ports);
+			sampleRateChanged(jack_get_sample_rate(client),this); // make note of the sample rate for this device
+			devices[0].channelCount=gDesiredOutputChannelCount;
+
+			maxToProcessChanged(jack_get_buffer_size(client),this); // initially set tempBuffer to the right size
 
 
-		// connect the ports
-		for(unsigned t=0;t<devices[0].channelCount;t++)
-		{
-			if(gJACKOutputPortNames[t]=="")
-			{ // never asked before
-				if(inputPortNames.size()<=0)
-					throw runtime_error(string(__func__)+" -- no input ports are defined within the JACK server to connect to for audio playback");
+			// create two ports
+			for(unsigned t=0;t<devices[0].channelCount;t++)
+				output_ports[t]=jack_port_register(client,("output_"+istring(t+1)).c_str(),JACK_DEFAULT_AUDIO_TYPE,JackPortIsOutput,0);
 
-				try
-				{
+
+			// tell the JACK server that we are ready to roll
+			if(jack_activate(client)) 
+				throw runtime_error(string(__func__)+" -- cannot activate client");
+
+
+			// gather input port names in case we need to prompt for them
+			vector<string> inputPortNames;
+			const char **ports=jack_get_ports(client,NULL,NULL,JackPortIsInput);
+			while(ports && *ports)
+				inputPortNames.push_back(*(ports++));
+			ports-=inputPortNames.size();
+			free(ports);
+
+
+			// connect the ports
+			for(unsigned t=0;t<devices[0].channelCount;t++)
+			{
+				askAgain:
+				if(gJACKOutputPortNames[t]=="")
+				{ // never asked before
+					if(inputPortNames.size()<=0)
+						throw runtime_error(string(__func__)+" -- no input ports are defined within the JACK server to connect to for audio playback");
+
 					gJACKOutputPortNames[t]=gFrontendHooks->promptForJACKPort("Choose Port for Output Channel "+istring(t+1),inputPortNames);
 				}
-				catch(...)
+
+				const string portName=gJACKOutputPortNames[t];
+				if(jack_connect(client,jack_port_name(output_ports[t]),portName.c_str())) 
 				{
-					// this causes a hangup signal... is this oaky or should I ignore it?
-					//jack_client_close(client); client=NULL;
-					throw;
+					Warning("Cannot connect to JACK port, "+portName+", please choose a different one");
+					gJACKOutputPortNames[t]="";
+					goto askAgain;
 				}
 			}
 
-			const string portName=gJACKOutputPortNames[t];
-			if(jack_connect(client,jack_port_name(output_ports[t]),portName.c_str())) 
-			{
-				// this causes a hangup signal... is this oaky or should I ignore it?
-				//jack_client_close(client); client=NULL;
-				throw runtime_error(string(__func__)+" -- cannot connect output port: "+portName);
-			}
+			ASoundPlayer::initialize();
+			initialized=true;
 		}
-
-		ASoundPlayer::initialize();
-		initialized=true;
+		catch(...)
+		{
+			deinitialize();
+			throw;
+		}
 	}
 	else
 		throw(runtime_error(string(__func__)+" -- already initialized"));
@@ -150,14 +153,22 @@ void CJACKSoundPlayer::initialize()
 
 void CJACKSoundPlayer::deinitialize()
 {
-	if(initialized)
+	ASoundPlayer::deinitialize();
+
+	if(client!=NULL)
 	{
-		ASoundPlayer::deinitialize();
-
-		jack_client_close(client); client=NULL;
-
-		initialized=false;
+		for(unsigned t=0;t<devices[0].channelCount;t++) // device zero only for now
+		{
+			if(output_ports[t]!=NULL)
+				jack_port_unregister(client,output_ports[t]);
+			output_ports[t]=NULL;
+		}
+		jack_deactivate(client);
+		jack_client_close(client); 
+		client=NULL;
 	}
+
+	initialized=false;
 }
 
 void CJACKSoundPlayer::aboutToRecord()

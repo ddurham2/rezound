@@ -46,6 +46,7 @@ private:
 	bool initialized;
 	jack_client_t *client;
 	jack_port_t *input_ports[MAX_CHANNELS];
+	unsigned channelCount;
 
 	TAutoBuffer<sample_t> tempBuffer;
 

@@ -33,6 +33,7 @@
 
 #include "settings.h"
 #include "AFrontendHooks.h"
+#include "AStatusComm.h"
 
 
 CJACKSoundRecorder::CJACKSoundRecorder() :
@@ -43,6 +44,8 @@ CJACKSoundRecorder::CJACKSoundRecorder() :
 
 	tempBuffer(1)
 {
+	for(unsigned t=0;t<MAX_CHANNELS;t++)
+		input_ports[t]=NULL;
 }
 
 CJACKSoundRecorder::~CJACKSoundRecorder()
@@ -58,7 +61,7 @@ void CJACKSoundRecorder::initialize(CSound *sound)
 		try
 		{
 			// try to become a client of the JACK server
-			if((client=jack_client_new((REZOUND_PACKAGE+string("_recording")).c_str()))==0) 
+			if((client=jack_client_new((REZOUND_PACKAGE+string("_recording")).c_str()))==NULL) 
 				throw runtime_error(string(__func__)+" -- error connecting to jack server -- jackd not running?");
 
 			// tell the JACK server to call `processAudio()' whenever there is work to be done
@@ -81,16 +84,14 @@ void CJACKSoundRecorder::initialize(CSound *sound)
 
 
 			// create two ports
-			for(unsigned t=0;t<sound->getChannelCount();t++)
+			channelCount=sound->getChannelCount(); // saved for later in deinitialize too
+			for(unsigned t=0;t<channelCount;t++)
 				input_ports[t]=jack_port_register(client,("input_"+istring(t+1)).c_str(),JACK_DEFAULT_AUDIO_TYPE,JackPortIsInput,0);
 
 
 			// tell the JACK server that we are ready to roll
 			if(jack_activate(client)) 
-			{
-				jack_client_close(client); client=NULL;
 				throw runtime_error(string(__func__)+" -- cannot activate client");
-			}
 			
 
 			// gather output port names in case we need to prompt for them
@@ -103,29 +104,23 @@ void CJACKSoundRecorder::initialize(CSound *sound)
 
 
 			// connect the ports
-			for(unsigned t=0;t<sound->getChannelCount();t++)
+			for(unsigned t=0;t<channelCount;t++)
 			{
+				askAgain:
 				if(gJACKInputPortNames[t]=="")
 				{ // never asked before
 					if(outputPortNames.size()<=0)
 						throw runtime_error(string(__func__)+" -- no output ports are defined within the JACK server to connect to for audio recording");
 
-					try
-					{
-						gJACKInputPortNames[t]=gFrontendHooks->promptForJACKPort("Choose Port for Input Channel "+istring(t+1),outputPortNames);
-					}
-					catch(...)
-					{
-						jack_client_close(client); client=NULL;
-						throw;
-					}
+					gJACKInputPortNames[t]=gFrontendHooks->promptForJACKPort("Choose Port for Input Channel "+istring(t+1),outputPortNames);
 				}
 
 				const string portName=gJACKInputPortNames[t];
 				if(jack_connect(client,portName.c_str(),jack_port_name(input_ports[t]))) 
 				{
-					jack_client_close(client); client=NULL;
-					throw runtime_error(string(__func__)+" -- cannot connect input port: "+portName);
+					Warning("Cannot connect to JACK port, "+portName+", please choose a different one");
+					gJACKInputPortNames[t]="";
+					goto askAgain;
 				}
 			}
 
@@ -134,7 +129,7 @@ void CJACKSoundRecorder::initialize(CSound *sound)
 		}
 		catch(...)
 		{
-			ASoundRecorder::deinitialize();
+			deinitialize();
 			throw;
 		}
 	}
@@ -144,14 +139,21 @@ void CJACKSoundRecorder::initialize(CSound *sound)
 
 void CJACKSoundRecorder::deinitialize()
 {
-	if(initialized)
+	if(client)
 	{
-		jack_client_close(client); client=NULL;
-
-		ASoundRecorder::deinitialize();
-
-		initialized=false;
+		for(unsigned t=0;t<channelCount;t++)
+		{
+			if(input_ports[t]!=NULL)
+				jack_port_unregister(client,input_ports[t]);
+			input_ports[t]=NULL;
+		}
+		jack_deactivate(client);
+		jack_client_close(client); 
 	}
+	client=NULL;
+
+	initialized=false;
+	ASoundRecorder::deinitialize();
 }
 
 void CJACKSoundRecorder::redo()
