@@ -10,8 +10,6 @@
 
 - I have not imeplemented 'redo' yet, but provisions are mostly in place for implementing it.
 
-- Need to improve file format exporting... Right now the only way to convert between formats is to 'edit copy' from one sound window and 'edit paste' into a 'file new' sound window where the filename of the new sound has an extension of the file format you want
-
 - Only the native ReZound (.rez) file format can save cues.  So if you create a cue in a .wav file sound, and save it, it won't be there when you open it again
 	- I will fix this when I change to using a different sound file format library (one that can store arbitrary data sections, namely .wav)
 	- FIXED: I have patched SGI's libaudiofile to support this, but they have yet to respond whether it will make it into the release, it should
