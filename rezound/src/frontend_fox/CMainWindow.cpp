@@ -378,6 +378,7 @@ void CMainWindow::createMenus()
 		new CActionMenuCommand(new CLimitedOverwritePasteEditFactory(gPasteChannelsDialog),menu,"",FOXIcons->edit_paste);
 		new CActionMenuCommand(new CMixPasteEditFactory(gPasteChannelsDialog),menu,"",FOXIcons->edit_paste);
 		new CActionMenuCommand(new CLimitedMixPasteEditFactory(gPasteChannelsDialog),menu,"",FOXIcons->edit_paste);
+		new CActionMenuCommand(new CFitMixPasteEditFactory(gPasteChannelsDialog),menu,"",FOXIcons->edit_paste);
 
 		new FXMenuSeparator(menu);
 		new CActionMenuCommand(new CInsertSilenceEditFactory(gChannelSelectDialog,new CInsertSilenceDialog(this)),menu,"");

@@ -88,7 +88,7 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 	case ptInsert:
 		// insert the space into the channels we need to
 		actionSound.sound->addSpace(whichChannels,actionSound.start,clipboardLength);
-		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,false,mmOverwrite,mmAdd);
+		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,false,mmOverwrite,mmAdd,sftNone);
 		break;
 
 	case ptReplace:
@@ -106,7 +106,7 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 			actionSound.sound->addSpace(whichChannels,actionSound.start,clipboardLength);
 		}
 
-		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,false,mmOverwrite,mmAdd);
+		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,false,mmOverwrite,mmAdd,sftNone);
 		break;
 
 	case ptMix:
@@ -156,7 +156,7 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 		if(extraLength>0)
 			actionSound.sound->addSpace(whichChannels,actionSound.sound->getLength(),extraLength,true);
 
-		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,prepareForUndo,mixMethod,mixMethod);
+		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,!prepareForUndo,mixMethod,mixMethod,sftNone);
 
 	}
 		break;
@@ -184,8 +184,31 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 			}
 		}
 
-		pasteData(clipboard,pasteChannels,actionSound,undoRemoveLength,prepareForUndo,mixMethod,mixMethod);
+		pasteData(clipboard,pasteChannels,actionSound,undoRemoveLength,!prepareForUndo,mixMethod,mixMethod,sftNone);
+		break;
 
+	case ptFitMix:
+		if(prepareForUndo)
+		{
+			CActionSound _actionSound(actionSound);
+			for(unsigned t=0;t<MAX_CHANNELS;t++)
+				_actionSound.doChannel[t]=whichChannels[t];
+
+			// reassign this value for undo
+			undoRemoveLength=actionSound.selectionLength();
+
+			// move the data that is going to be affected into a temp pool and replace the space
+			moveSelectionToTempPools(_actionSound,mmSelection,actionSound.selectionLength());
+
+			// copy the data back after moving it to the temp pool to mix on top of
+			for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+			{
+				if(whichChannels[i])
+					actionSound.sound->getAudio(i).copyData(actionSound.start,actionSound.sound->getTempAudio(tempAudioPoolKey,i),0,_actionSound.selectionLength());
+			}
+		}
+
+		pasteData(clipboard,pasteChannels,actionSound,actionSound.selectionLength(),!prepareForUndo,mixMethod,mixMethod,sftChangeRate);
 		break;
 
 	default:
@@ -202,7 +225,7 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
  * 	pasteChannels came from the user
  */
 //                                                          const bool pasteChannels[MAX_CHANNELS][MAX_CHANNELS]
-void CPasteEdit::pasteData(const ASoundClipboard *clipboard,const vector<vector<bool> > &pasteChannels,const CActionSound &actionSound,const sample_pos_t srcLength,bool invalidatePeakData,MixMethods initialMixMethod,MixMethods nonInitialMixMethod)
+void CPasteEdit::pasteData(const ASoundClipboard *clipboard,const vector<vector<bool> > &pasteChannels,const CActionSound &actionSound,const sample_pos_t srcLength,bool invalidatePeakData,MixMethods initialMixMethod,MixMethods nonInitialMixMethod,SourceFitTypes fitSrc)
 {
 	for(unsigned y=0;y<actionSound.sound->getChannelCount();y++)
 	{
@@ -211,7 +234,7 @@ void CPasteEdit::pasteData(const ASoundClipboard *clipboard,const vector<vector<
 		{
 			if(pasteChannels[y][x])
 			{
-				clipboards[gWhichClipboard]->copyTo(actionSound.sound,y,x,actionSound.start,srcLength,first ? initialMixMethod : nonInitialMixMethod,first && invalidatePeakData);
+				clipboards[gWhichClipboard]->copyTo(actionSound.sound,y,x,actionSound.start,srcLength,first ? initialMixMethod : nonInitialMixMethod,fitSrc,first && invalidatePeakData);
 				first=false;
 			}
 		}
@@ -237,6 +260,7 @@ void CPasteEdit::undoActionSizeSafe(const CActionSound &actionSound)
 	case ptReplace:
 	case ptMix:
 	case ptLimitedMix:
+	case ptFitMix:
 		{
 		// I have to create undoActionSound (a copy of actionSound) and change its doChannel according 
 		// to pasteChannels (actually from whichChannels which came originally from pasteChannels)
@@ -267,6 +291,7 @@ bool CPasteEdit::getResultingCrossfadePoints(const CActionSound &actionSound,sam
 		break;
 
 	case ptReplace:
+	case ptFitMix:
 		stop=min(actionSound.stop+1,actionSound.sound->getLength()-1);
 		break;
 
@@ -275,6 +300,9 @@ bool CPasteEdit::getResultingCrossfadePoints(const CActionSound &actionSound,sam
 		break;
 
 	case ptLimitedMix:
+		stop=min(start+clipboardLength,start+actionSound.selectionLength());
+		break;
+
 		stop=min(start+clipboardLength,start+actionSound.selectionLength());
 		break;
 
@@ -433,4 +461,20 @@ CPasteEdit *CLimitedMixPasteEditFactory::manufactureAction(const CActionSound &a
 }
 
 CHECK_FOR_DATA(CLimitedMixPasteEditFactory)
+
+// -----------------------------------
+
+
+CFitMixPasteEditFactory::CFitMixPasteEditFactory(AActionDialog *channelSelectDialog) :
+	AActionFactory("Fit Mix Paste","Mix Starting at the Start Position But Change the Rate of the Clipboard to Fit Within the Selection",false,channelSelectDialog,NULL,NULL)
+{
+}
+
+CPasteEdit *CFitMixPasteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+{
+		// ??? get mix method from dialog
+	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptFitMix,mmAdd));
+}
+
+CHECK_FOR_DATA(CFitMixPasteEditFactory)
 

@@ -33,7 +33,8 @@ public:
 		ptInsert,
 		ptReplace,
 		ptMix, // is overwrite with mixMethod of mmOverwrite
-		ptLimitedMix // is limited overwrite with mixMethod of mmOverwrite
+		ptLimitedMix, // is limited overwrite with mixMethod of mmOverwrite
+		ptFitMix // mix clipboard onto selection but make the clipboard fit into selection by changing its rate (or in the future, possible changing speed without pitch)
 	};
 
 	//                                        const bool pasteChannels[MAX_CHANNELS][MAX_CHANNELS]
@@ -56,7 +57,7 @@ private:
 
 
 	//                                              const bool pasteChannels[MAX_CHANNELS][MAX_CHANNELS]
-	void pasteData(const ASoundClipboard *clipboard,const vector<vector<bool> > &pasteChannels,const CActionSound &actionSound,const sample_pos_t srcLength,bool invalidatePeakData,MixMethods initialMixMethod,MixMethods nonInitialMixMethod);
+	void pasteData(const ASoundClipboard *clipboard,const vector<vector<bool> > &pasteChannels,const CActionSound &actionSound,const sample_pos_t srcLength,bool invalidatePeakData,MixMethods initialMixMethod,MixMethods nonInitialMixMethod,SourceFitTypes fitSrc);
 
 	// --- undo information --------
 	sample_pos_t undoRemoveLength;
@@ -118,6 +119,16 @@ class CLimitedMixPasteEditFactory : public AActionFactory
 {
 public:
 	CLimitedMixPasteEditFactory(AActionDialog *channelSelectDialog);
+
+	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+
+	bool doPreActionSetup(CLoadedSound *loadedSound);
+};
+
+class CFitMixPasteEditFactory : public AActionFactory
+{
+public:
+	CFitMixPasteEditFactory(AActionDialog *channelSelectDialog);
 
 	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 
