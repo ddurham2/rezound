@@ -492,11 +492,7 @@ void CSoundWindow::updatePlayPositionStatusInfo()
 	{ // draw new play position
 		const string label=_("Playing: ")+getLengthString(loadedSound->channel->getPosition(),tuSeconds);
 
-#if REZ_FOX_VERSION<10117	
-		dc.setTextFont(statusFont);
-#else
-		dc.setFont(statusFont);
-#endif
+		dc.compat_setFont(statusFont);
 		dc.setForeground(FXRGB(0,0,0));
 		dc.drawText(2,(playPositionLabel->getHeight()/2)+(statusFont->getFontHeight()/2),label.c_str(),label.size());
 

@@ -832,11 +832,7 @@ public:
 #ifndef HAVE_LIBRFFTW
 		else
 		{
-#if REZ_FOX_VERSION<10117
-			dc.setFont(getApp()->getNormalFont());
-#else
-			dc.setTextFont(getApp()->getNormalFont());
-#endif
+			dc.compat_setFont(getApp()->getNormalFont());
 			dc.drawText(3,3+12,_("Configure with FFTW"),19);
 			dc.drawText(3,20+12,_("for Freq. Analysis"),18);
 		}
@@ -862,11 +858,7 @@ public:
 			dc.setForeground(M_METER_OFF);
 			dc.fillRectangle(0,0,w+3,statusFont->getFontHeight()+2);
 			dc.setForeground(M_TEXT_COLOR);
-#if REZ_FOX_VERSION<10117
-			dc.setTextFont(statusFont);
-#else
-			dc.setFont(statusFont);
-#endif
+			dc.compat_setFont(statusFont);
 			dc.drawText(1,statusFont->getFontHeight(),f.c_str(),f.length());
 		}
 
