@@ -32,8 +32,8 @@
 #include "CSound_defs.h"
 
 // volume
-static inline const double scalar_to_dB(const double scalar) { return(10.0*log10(scalar)); }
-static inline const double dB_to_scalar(const double dB) { return(pow(10.0,dB/10.0)); }
+static inline const double scalar_to_dB(const double scalar) { return(20.0*log10(scalar)); }
+static inline const double dB_to_scalar(const double dB) { return(pow(10.0,dB/20.0)); }
 
 static inline const mix_sample_t percent_to_amp(const double percent) { return((mix_sample_t)floor((percent*MAX_SAMPLE/100.0)+0.5)); }
 									// ??? if I use this function should I abs the amp value?
