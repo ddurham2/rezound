@@ -66,7 +66,7 @@ COggDialog::COggDialog(FXWindow *mainWindow) :
 	CBRButton=new FXRadioButton(main,"Constant Bit Rate",this,ID_WHICH_BUTTON);
 		CBRFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RIDGE|LAYOUT_FILL_X);
 			new FXLabel(CBRFrame,"Bit Rate: ");
-			bitRateComboBox=new FXComboBox(CBRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK);
+			bitRateComboBox=new FXComboBox(CBRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
 			fillBitRateComboBox(bitRateComboBox);
 
 
@@ -74,13 +74,13 @@ COggDialog::COggDialog(FXWindow *mainWindow) :
 	VBRButton=new FXRadioButton(main,"Variable Bit Rate",this,ID_WHICH_BUTTON);
 		VBRFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RIDGE|LAYOUT_FILL_X);
 			new FXLabel(VBRFrame,"Minimum Bit Rate: ");
-			minRateComboBox=new FXComboBox(VBRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK);
+			minRateComboBox=new FXComboBox(VBRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
 			fillBitRateComboBox(minRateComboBox);
 			new FXLabel(VBRFrame,"Normal Bit Rate: ");
-			normRateComboBox=new FXComboBox(VBRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK);
+			normRateComboBox=new FXComboBox(VBRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
 			fillBitRateComboBox(normRateComboBox);
 			new FXLabel(VBRFrame,"Maximum Bit Rate: ");
-			maxRateComboBox=new FXComboBox(VBRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK);
+			maxRateComboBox=new FXComboBox(VBRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
 			fillBitRateComboBox(maxRateComboBox);
 
 
