@@ -37,7 +37,7 @@ static FXColor selectedBackGroundColor=FXRGB(46,98,110);
 
 static FXColor waveformColor=FXRGB(255,255,255);
 
-#define DARKENED_WAVE_ADD (-128)
+#define DARKENED_WAVE_ADD (-192)
 static FXColor darkenedWaveformColor=FXRGB(min(255, FXREDVAL(waveformColor)+DARKENED_WAVE_ADD),min(255,FXGREENVAL(waveformColor)+DARKENED_WAVE_ADD),min(255,FXBLUEVAL(waveformColor)+DARKENED_WAVE_ADD)); // waveformColor + DARKENED_WAVE_ADD
 
 
