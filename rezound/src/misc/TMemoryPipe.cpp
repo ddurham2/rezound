@@ -56,7 +56,7 @@ template <class type> void TMemoryPipe<type>::setSize(int pipeSize)
 	if(pipeSize<=0)
 		throw runtime_error(string(__func__)+" -- invalid pipeSize: "+istring(pipeSize));
 
-#warning need to do something to prevent this data from getting swapped to disk
+#warning need to do something to prevent this data from getting swapped to disk (for JACK)
 	type *temp=new type[pipeSize+1];
 	delete [] buffer;
 	buffer=temp;
