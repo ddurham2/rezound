@@ -1,9 +1,10 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- I really need to do something different in TPoolFile::isExclusiveLocked and also TPoolFile::getSharedLockCount because right now, the isExclusiveLocked returns true if it's shared locked obviously because the tryLock fails so it assumes wrongly that there's an exclusive lock obtained
+	- When it's possible, I really need to do something different in TPoolFile::isExclusiveLocked and also TPoolFile::getSharedLockCount because right now, the isExclusiveLocked returns true if it's shared locked obviously because the tryLock fails so it assumes wrongly that there's an exclusive lock obtained
 
 	- warn the user if he's saving an exported file format and information such as cues and user notes will not be exported (for now)
+		- problem should somewhat go away with a different audio file library
 
 	- rename MAX_CHANNELS and MAX_LENGTH in ASound.h to something a little more ReZound specific like REZ_MAX_CHANNELS REZ_MAX_LENGTH
 
@@ -20,6 +21,9 @@
 
 		- I just don't have a good grip that there is a reason for everything I did in the backend as far as these managers... 
 
+	- When pasting data, there is no heeding of the differences in sample rate of the src data when pasting to the destination
+		- I should fix this problem when I implement a real clipboard system and I would have to supply the PCM parameters to the clipboard when I copied the data there, then pasting could do something to resolve any differances when reading from it
+
 	- the clip board that the edit actions use is not set up to allow it to paste and copy from other applications
 		- when/if I want to allow that, I should create a base class clipboard which has the platform specific
 		  implementation that reads from the system clipboard.
@@ -31,13 +35,9 @@
 		- DONE the default (when a sound is loaded) should be just to assign each channel to the lesser number of sound card channels in a rotating fashion
 		- DONE the routing should be assigned per CSoundPlayerChannel object, but the routing information should also be saved in a pool in the sound object
 
-	- If saving a sound to a format that doesn't support saving cues or user-notes ask and warn the user
 
 	- use progress bars when doing TPoolAccesser::copyData and TPoolAccesser::zeroData 
 		- PoolFile::copyToFile is still without a progress bar
-
-	- When pasting data, there is no heeding of the differences in sample rate of the src data when pasting to the destination
-		- I should fix this problem when I implement a real clipboard system and I would have to supply the PCM parameters to the clipboard when I copied the data there, then pasting could do something to resolve any differances when reading from it
 
 	- I need to eventually handle command line arguments.
 		- I should implement handling them in the backend so that I wouldn't have to reimplement parsing them for each frontend.
@@ -45,10 +45,11 @@
 		- --help should be detected by all processers of command line arguement and add to the stdout the arguments that they handle.
 		- I suppose I should use popt because it is packaged for most all rpm abd deb based distros.. I need to find URL of popt's homepage and refer to that on error in configure
 
-	- I need to think thru and handle problems with the data becoming to large for whatever address space is currently active
+	- I need to think thru and handle problems with the data becoming too large for whatever address space is currently active
 		- if ASound is about to change the space, if the total space is about to cross some threshhold, I shouldn't proceed to do the action
 
 	- need to eventually use a different sound file library which can also retrieve and store arbitrary data sections in the formats that support it (namely .wav).. So I can store and load cues
+		- I'd like to use libst (lib form of SOX), but there is no documentation or common API I don't think
 
 
 
@@ -61,7 +62,7 @@
 		- Right now, if I play a bunch of sounds and run top, each time top updates it causes a break in the sound.  This shouldn't happen though if I were to prebuffer more data, I only need to over come the play position problem.  Perhaps there is a schedule that the play position could be on, each time a buffer is mixed it records a rather precise time-of-day and each time them method is called that asks for the play position it knows how much time has passed since then and returns where it should be playing... There would be a problem with positions after a loop point, but perhaps I could keep a list of times when the loop point should have been crossed and factor in those times
 
 
-	- THIS is partially complete... I could go further to do it to all actions possible (for the realtime value later)
+	- This is partially complete... I could go further to do it to all actions possible (for the realtime value later)
 		- I could make the noise-gate/exciter(done) and compresser/limiter(doesn't exist yet) CDSPBlocks so their abilities would be easily used in other effects
 			- Plus, it would be possible to use in realtime applications eventually
 			- I could do the same for the rate change (I could construct the CDSPBlock with the graph parameter object, and the length of the sound)

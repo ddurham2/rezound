@@ -1,6 +1,17 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- I need to make some predefiner buttons on the dialogs of any graph param of common curves, and in flange and delay dialogs
+		- have some predines that come with rezound and a way for the user to save them
+
+	- the 'active' sound window is not staying raised and I don't know why (when focus method is fmActiveButton)
+
+	- set any "stay on top" flags that need to be for dialogs 
+		- I don't see anything in the DECOR flags, ask the fox user list about there being any "stay on top" flags
+
+	- I need to display the sample rate (and perhaps the number of channels) in the status info of CSoundWindow
+	- I could also, put the name of each channel horizontally along the left of the channels so that if the sound is 5 channels you label the first 2 'left' and 'right' then the next ones 'center', 'rear left' and 'rear right' 
+
 	- if the sound is playing and a certain button is pressed (or key also bound to that button) I should place a marker with a given name "cue #" where the number is an integer being kept up with
 
 	- before the first public release, I should create an about dialog:
@@ -13,16 +24,6 @@
 
 		- either list these things themselves, or give URLs or file paths of where to find the information
 			- could I actually #include the file from the docs directory ?
-
-	- the 'active' sound window is not staying raised and I don't know why (when focus method is fmActiveButton)
-
-	- set any "stay on top" flags that need to be for dialogs 
-		- I don't see anything in the DECOR flags, ask the fox user list about there being any "stay on top" flags
-
-	- I need to display the sample rate (and perhaps the number of channels) in the status info of CSoundWindow
-	- I could also, put the name of each channel horizontally along the left of the channels so that if the sound is 5 channels you label the first 2 'left' and 'right' then the next ones 'center', 'rear left' and 'rear right' 
-
-	- I need to make some predefiner buttons on the dialogs of any graph param of common curves, and in flange and delay dialogs
 
 	- right now all the play control buttons are activated on mouse_button_release events, where it might be good to active on mouse button down.... perhaps I could derive my own button class... or get a feature added to FXButton to selected which way it should behave
 
