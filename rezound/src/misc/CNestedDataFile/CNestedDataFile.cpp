@@ -202,24 +202,31 @@ const vector<string> CNestedDataFile::getChildKeys(const char *parentKey,bool th
 {
 	vector<string> childKeys;
 	CVariant *scope;
-	if(!findVariantNode(scope,parentKey,0,true,root))
-	{
-		if(throwIfNotExists)
-			throw(runtime_error(string(__func__)+" -- parent key '"+string(parentKey)+"' does not exist from file: "+filename));
-		else
-			return(childKeys);
-	}
 
-	if(scope->type!=vtScope)
+	if(parentKey==NULL || parentKey[0]==0)
+		scope=root;
+	else
 	{
-		if(throwIfNotExists) // it DID actually exist, but it wasn't a scope containing more child values
-			throw(runtime_error(string(__func__)+" -- parent key '"+string(parentKey)+"' resolved to a value from file: "+filename));
-		else
-			return(childKeys);
+		if(!findVariantNode(scope,parentKey,0,true,root))
+		{
+			if(throwIfNotExists)
+				throw(runtime_error(string(__func__)+" -- parent key '"+string(parentKey)+"' does not exist from file: "+filename));
+			else
+				return(childKeys);
+		}
 
+		if(scope->type!=vtScope)
+		{
+			if(throwIfNotExists) // it DID actually exist, but it wasn't a scope containing more child values
+				throw(runtime_error(string(__func__)+" -- parent key '"+string(parentKey)+"' resolved to a value from file: "+filename));
+			else
+				return(childKeys);
+
+		}
 	}
 	
 	for(map<string,CVariant>::const_iterator i=scope->members.begin();i!=scope->members.end();i++)
+		//childKeys.push_back(scope==root ? i->first.substr(1) : i->first);
 		childKeys.push_back(i->first);
 	
 	return(childKeys);
