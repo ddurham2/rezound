@@ -86,6 +86,12 @@ bool gFollowPlayPosition=true;
 double gInitialLengthToShow=10.0; // default 10 seconds
 
 
+unsigned gMeterUpdateTime=50;
+unsigned gMeterRMSWindowTime=200;
+unsigned gMaxPeakFallDelayTime=500;
+double gMaxPeakFallRate=0.02;
+
+
 CrossfadeEdgesTypes gCrossfadeEdges=cetInner;
 float gCrossfadeStartTime=10.0;	 // default 20ms crossfade time
 float gCrossfadeStopTime=10.0;

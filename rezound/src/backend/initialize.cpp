@@ -34,7 +34,7 @@
 
 #include <CNestedDataFile/CNestedDataFile.h>
 
-
+#define DOT string(CNestedDataFile::delimChar)
 
 // one or the other of these two will ifdef itself in or out based on HAVE_LIBPORTAUDIO
 #include "CPortAudioSoundPlayer.h"
@@ -219,6 +219,15 @@ bool initializeBackend(ASoundPlayer *&_soundPlayer,int argc,char *argv[])
 		if(gSettingsRegistry->keyExists("initialLengthToShow"))
 			gInitialLengthToShow= atof(gSettingsRegistry->getValue("initialLengthToShow").c_str());
 
+		if(gSettingsRegistry->keyExists(("meters"+DOT+"meterUpdateTime").c_str()))
+			gMeterUpdateTime= atoi(gSettingsRegistry->getValue(("meters"+DOT+"meterUpdateTime").c_str()).c_str());
+		if(gSettingsRegistry->keyExists(("meters"+DOT+"RMSWindowTime").c_str()))
+			gMeterRMSWindowTime= atoi(gSettingsRegistry->getValue(("meters"+DOT+"RMSWindowTime").c_str()).c_str());
+		if(gSettingsRegistry->keyExists(("meters"+DOT+"maxPeakFallDelayTime").c_str()))
+			gMaxPeakFallDelayTime= atoi(gSettingsRegistry->getValue(("meters"+DOT+"maxPeakFallDelayTime").c_str()).c_str());
+		if(gSettingsRegistry->keyExists(("meters"+DOT+"maxPeakFallRate").c_str()))
+			gMaxPeakFallRate= atof(gSettingsRegistry->getValue(("meters"+DOT+"maxPeakFallRate").c_str()).c_str());
+
 
 		if(gSettingsRegistry->keyExists("crossfadeEdges"))
 		{
@@ -371,6 +380,11 @@ void deinitializeBackend()
 	gSettingsRegistry->createKey("whichClipboard",gWhichClipboard);
 	gSettingsRegistry->createKey("followPlayPosition",gFollowPlayPosition ? "true" : "false");
 	gSettingsRegistry->createKey("initialLengthToShow",gInitialLengthToShow);
+
+	gSettingsRegistry->createKey(("meters"+DOT+"meterUpdateTime").c_str(),gMeterUpdateTime);
+	gSettingsRegistry->createKey(("meters"+DOT+"RMSWindowTime").c_str(),gMeterRMSWindowTime);
+	gSettingsRegistry->createKey(("meters"+DOT+"maxPeakFallDelayTime").c_str(),gMaxPeakFallDelayTime);
+	gSettingsRegistry->createKey(("meters"+DOT+"maxPeakFallRate").c_str(),gMaxPeakFallRate);
 
 	gSettingsRegistry->createKey("crossfadeEdges",(float)gCrossfadeEdges);
 		gSettingsRegistry->createKey("crossfadeStartTime",gCrossfadeStartTime);
