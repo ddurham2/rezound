@@ -366,7 +366,7 @@ const vector<string> ASoundFileManager::loadFilesInRegistry()
 		try
 		{
 			filename=loadedRegistryFile->getArrayValue(LOADED_REG_KEY,t);
-			printf("--- reopening file: %s\n",filename.c_str()); // ??? should be dprintf
+			dprintf("--- reopening file: %s\n",filename.c_str());
 
 			if(Question("Load sound from previous session?\n   "+filename,yesnoQues)==yesAns)
 			{
