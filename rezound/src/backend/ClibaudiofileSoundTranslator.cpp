@@ -86,6 +86,8 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 	AFfilehandle h=afOpenFile(filename.c_str(),"r",initialSetup);
 	if(h==AF_NULL_FILEHANDLE)
 		throw runtime_error(string(__func__)+_(" -- error opening")+" '"+filename+"' -- "+errorMessage);
+
+	CRezPoolAccesser *accessers[MAX_CHANNELS]={0};
 	try
 	{
 
@@ -114,22 +116,7 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 			throw runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate)+" probably indicates a corrupt file and SGI's libaudiofile has been known to miss these");
 
 		
-		// ??? make sure it's not more than MAX_LENGTH
-			// ??? just truncate the length
-		sample_pos_t size=afGetFrameCount(h,AF_DEFAULT_TRACK);
-		if(size<0)
-			throw runtime_error(string(__func__)+" -- libaudiofile reports the data length as "+istring(size));
-
-		const sample_pos_t fileSize=CPath(filename).getSize(false)/(channelCount*sizeof(sample_t));
-		if(fileSize<(size/25)) // ??? possibly 1/25th compression... really just trying to check for a sane value
-		{
-			Warning("libaudiofile reports that "+filename+" contains "+istring(size)+" sample frames yet the file is most likely not large enough to contain that many samples.\nLoading what can be loaded.");
-			//size=fileSize; not doing this because I once ran across a situation where you could read more from the file that stat said it was... even ls showed it smaller than I could actually read
-			//		??? however ^^^ on the other hand, I don't want the length to be 8 gigs worth of space...   Perhaps I should always ignore the given size, and add space in large units until I run out of file... I should apply cues last then
-			//throw runtime_error(string(__func__)+" -- libaudiofile is not seeing this as a corrupt file -- it thinks the data length is "+istring(size)+" yet when the file is only "+istring(fileSize)+" bytes");
-		}
-
-		sound->createWorkingPoolFile(filename,sampleRate,channelCount,size);
+		sound->createWorkingPoolFile(filename,sampleRate,channelCount,10*sampleRate); // start out with 10 seconds of space
 
 		// remember information for how to save the file if libaudiofile is also used to save it
 		{
@@ -217,72 +204,56 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 
 		// load the audio data
 
-		CRezPoolAccesser *accessers[MAX_CHANNELS]={0};
-		try
+		for(unsigned t=0;t<channelCount;t++)
+			accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
+
+		TAutoBuffer<sample_t> buffer((size_t)(afGetVirtualFrameSize(h,AF_DEFAULT_TRACK,1)*4096/sizeof(sample_t)));
+		sample_pos_t pos=0;
+		CStatusBar statusBar(_("Loading Sound"),0,afGetFrameCount(h,AF_DEFAULT_TRACK),true);
+		for(;;)
 		{
-			for(unsigned t=0;t<channelCount;t++)
-				accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
-
-
-			TAutoBuffer<sample_t> buffer((size_t)(afGetVirtualFrameSize(h,AF_DEFAULT_TRACK,1)*4096/sizeof(sample_t)));
-			sample_pos_t pos=0;
-			AFframecount count=size/4096;
-			CStatusBar statusBar(_("Loading Sound"),0,size,true);
-			unsigned total=0;
-			for(AFframecount t=0;t<=count;t++)
+			const int read=afReadFrames(h,AF_DEFAULT_TRACK,(void *)buffer,4096);
+			if(read>0)
 			{
-				const int chunkSize= (t==count) ? ((size%4096)-1/* substracting one because libaudiofile is reporting 1 more than it will read*/) : 4096;
-				if(chunkSize!=0)
+				// increase length of file by 10 seconds if necessary
+				if((pos+read)>accessers[0]->getSize())
+					sound->addSpace(sound->getLength(),10*sampleRate);
+
+				for(unsigned c=0;c<channelCount;c++)
 				{
-					const int read=afReadFrames(h,AF_DEFAULT_TRACK,(void *)buffer,chunkSize);
-					if(read>0)
-					{
-						total+=read;
-						for(unsigned c=0;c<channelCount;c++)
-						{
-							for(int i=0;i<read;i++)
-								(*(accessers[c]))[pos+i]=buffer[i*channelCount+c];
-						}
-						pos+=read;
-					}
-
-					if(read!=chunkSize)
-					{
-						Error("Error reading audio data from "+filename+" -- "+errorMessage+" -- keeping what was read");
-						// remove unnecessary silence
-						if(sound->getLength()>pos)
-							sound->removeSpace(pos,sound->getLength()-pos);
-						break;
-					}
+					for(int i=0;i<read;i++)
+						(*(accessers[c]))[pos+i]=buffer[i*channelCount+c];
 				}
-
-				if(statusBar.update(pos))
-				{ // cancelled
-					ret=false;
-					goto cancelled;
-				}
+				pos+=read;
 			}
+			else
+				break; // done reading
 
-			cancelled:
-
-			afCloseFile(h);
-
-			for(unsigned t=0;t<MAX_CHANNELS;t++)
-			{
-				delete accessers[t];
-				accessers[t]=NULL;
+			if(statusBar.update(pos))
+			{ // cancelled
+				ret=false;
+				goto cancelled;
 			}
 		}
-		catch(...)
+
+		cancelled:
+
+		// remove unnecessary space
+		if(sound->getLength()>pos)
+			sound->removeSpace(pos,sound->getLength()-pos);
+
+		afCloseFile(h);
+
+		for(unsigned t=0;t<MAX_CHANNELS;t++)
 		{
-			for(unsigned t=0;t<MAX_CHANNELS;t++)
-				delete accessers[t];
-			afCloseFile(h);
-			throw;
+			delete accessers[t];
+			accessers[t]=NULL;
 		}
 	}
 	catch(...)
 	{
+		for(unsigned t=0;t<MAX_CHANNELS;t++)
+			delete accessers[t];
 		afCloseFile(h);
 		throw;
 	}
