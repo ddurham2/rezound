@@ -39,7 +39,7 @@
 
 #include <istring>
 
-#include "AStatusComm.h"
+#include "settings.h"
 
 
 // ??? edit this to be able to detect necessary parameters from the typeof sample_t
@@ -86,10 +86,11 @@ void COSSSoundPlayer::initialize()
 		ASoundPlayer::initialize();
 
 		// open OSS device
-		const char *device="/dev/dsp";
-		if((audio_fd=open(device,O_WRONLY,0)) == -1) 
-			throw(runtime_error(string(__func__)+" -- error opening OSS device '"+string(device)+" -- "+strerror(errno)));
-		//printf("OSS: device: %s\n","/dev/dsp");
+		const string device=gOSSOutputDevice;
+		if((audio_fd=open(device.c_str(),O_WRONLY,0)) == -1) 
+			throw(runtime_error(string(__func__)+" -- error opening OSS device '"+device+" -- "+strerror(errno)));
+		//printf("OSS: device: %s\n",device.c_str());
+
 
 		// set the bit rate and endianness
 		int format=OSS_PCM_FORMAT; // signed 16-bit little endian

@@ -53,6 +53,10 @@ extern CNestedDataFile *gSysPresetsFile;	// opened to gSysPresetsFilename
 
 
 
+// the OSS devices to use
+extern string gOSSOutputDevice;			// default to "/dev/dsp"
+extern string gOSSInputDevice;			// default to "/dev/dsp"
+
 
 // This specifies the directory to fall back to if we cannot write
 // to the directory where we're loading a file from, or if it's 

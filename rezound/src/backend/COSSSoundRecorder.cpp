@@ -39,6 +39,8 @@
 
 #include <istring>
 
+#include "settings.h"
+
 // ??? edit this to be able to detect necessary parameters from the typeof sample_t
 // 	or I need to convert to 16bit 
 // needs to match for what is above and type of sample_t ???
@@ -74,11 +76,12 @@ void COSSSoundRecorder::initialize(CSound *sound)
 	{
 		ASoundRecorder::initialize(sound);
 
+
 		// open OSS device
-		const char *device="/dev/dsp";
-		if((audio_fd=open(device,O_RDONLY,0)) == -1) 
-			throw(runtime_error(string(__func__)+" -- error opening OSS device '"+string(device)+" -- "+strerror(errno)));
-		//printf("OSS: device: %s\n","/dev/dsp");
+		const string device=gOSSInputDevice;
+		if((audio_fd=open(device.c_str(),O_RDONLY,0)) == -1) 
+			throw(runtime_error(string(__func__)+" -- error opening OSS device '"+device+" -- "+strerror(errno)));
+		//printf("OSS: device: %s\n",device.c_str());
 
 		// set the bit rate and endianness
 		int format=OSS_PCM_FORMAT; // signed 16-bit little endian
