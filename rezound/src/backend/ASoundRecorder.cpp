@@ -22,6 +22,8 @@
 
 #include <algorithm>
 
+#define PREALLOC_SECONDS 5
+
 ASoundRecorder::ASoundRecorder() :
 	clipCount(0),
 	sound(NULL)
@@ -36,31 +38,30 @@ ASoundRecorder::~ASoundRecorder()
 
 void ASoundRecorder::start()
 {
-	if(!started)
+	mutex.EnterMutex();
+	try
 	{
-		mutex.EnterMutex();
-		try
+		if(!started)
 		{
-			//prealloced=sound->getLength()-origLength;
-			//writePos=origLength;
 			started=true;
 
-			mutex.LeaveMutex();
 		}
-		catch(...)
-		{
-			mutex.LeaveMutex();
-			throw;
-		}
+
+		mutex.LeaveMutex();
+	}
+	catch(...)
+	{
+		mutex.LeaveMutex();
+		throw;
 	}
 }
 
 void ASoundRecorder::stop()
 {
-	if(started)
+	mutex.EnterMutex();
+	try
 	{
-		mutex.EnterMutex();
-		try
+		if(started)
 		{
 			started=false;
 
@@ -80,14 +81,14 @@ void ASoundRecorder::stop()
 				sound->unlockForResize();
 				throw;
 			}
+		}
 
-			mutex.LeaveMutex();
-		}
-		catch(...)
-		{
-			mutex.LeaveMutex();
-			throw;
-		}
+		mutex.LeaveMutex();
+	}
+	catch(...)
+	{
+		mutex.LeaveMutex();
+		throw;
 	}
 }
 
@@ -149,6 +150,13 @@ void ASoundRecorder::initialize(ASound *_sound)
 	sound=_sound;
 	clipCount=0;
 
+	/*
+	// insert 15 mins worth of space (for testing as if recording has been going for 15 mins)
+	sound->lockForResize();
+	sound->addSpace(0,44100*15*60,true);
+	sound->unlockForResize();
+	*/
+
 	prealloced=0;
 	origLength=sound->getLength();
 	writePos=origLength; // ??? - 1?
@@ -202,7 +210,7 @@ void ASoundRecorder::onData(const sample_t *samples,const size_t sampleFramesRec
 
 		if(started)
 		{
-			// we preallocate space in the sound in 5 second chunks
+			// we preallocate space in the sound in PREALLOC_SECONDS second chunks
 			if(prealloced<sampleFramesRecorded)
 			{
 				sound->lockForResize();
@@ -210,8 +218,8 @@ void ASoundRecorder::onData(const sample_t *samples,const size_t sampleFramesRec
 				{
 					while(prealloced<sampleFramesRecorded)
 					{
-						sound->addSpace(sound->getLength(),5*sound->getSampleRate(),false);
-						prealloced+=(5*sound->getSampleRate());
+						sound->addSpace(sound->getLength(),PREALLOC_SECONDS*sound->getSampleRate(),false);
+						prealloced+=(PREALLOC_SECONDS*sound->getSampleRate());
 					}
 					sound->unlockForResize();
 				}
