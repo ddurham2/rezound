@@ -1,158 +1,140 @@
+--- THINGS TO DO FOR SURE ---
 
-- When it's up on sourceforge (and ready to debut) announce to:
-	- demudi
-	- demudi-users
-	- sox-users
-	- foxgui-users
-	- kurzlist [OT]
-	- the individuals who emailed me from kurzlist: "any linux users out there"
-	- the few individuals that reponded to my developer call on demudi
+	- When it's up on sourceforge (and ready to debut) announce to:
+		- demudi
+		- demudi-users
+		- sox-users
+		- foxgui-users
+		- kurzlist [OT]
+		- the individuals who emailed me from kurzlist: "any linux users out there"
+		- the few individuals that reponded to my developer call on demudi
 
-	- note: (something like this)
-		   I'm annoucing the release of my sound editor, ReZound, on sourceforge now.  This message is going to many people
-		and lists which I posted messages concerning it over the past few months.  Any developers out there interested in
-		developing for it, I have written a document which explains the basics of creating new actions for it.  And any 
-		one else out there willing to run it, please do.  However, you can make a personal note of any bugs, but I have
-		compiled a list of the most obvious ones here: _url_ .  
+		- note: (something like this)
+			   I'm annoucing the release of my sound editor, ReZound, on sourceforge now.  This message is going to many people
+			and lists which I posted messages concerning it over the past few months.  Any developers out there interested in
+			developing for it, I have written a document which explains the basics of creating new actions for it.  And any 
+			one else out there willing to run it, please do.  However, you can make a personal note of any bugs, but I have
+			compiled a list of the most obvious ones here: _url_ .  
 
-		   Please enjoy it, and I hope that ReZound blossoms into a popular sound editing tool primarily for, but not
-		limited to, linux.
+			   Please enjoy it, and I hope that ReZound blossoms into a popular sound editing tool primarily for, but not
+			limited to, linux.
 
-- Need to make all actions have the ability to blend the edges of the affected audio with the existing audio
-	- let there be a parameter which says in milliseconds how long the blend takes
-	- if not every action, at least paste for editing
+	- Need to make all actions have the ability to blend the edges of the affected audio with the existing audio
+		- let there be a parameter which says in milliseconds how long the blend takes
+		- if not every action, at least paste for editing
 
-- need to use a different sound file library which can also retrieve and store arbitrary data sections in the formats that support it (namely .wav).. So I can store and load cues
+	- need to use a different sound file library which can also retrieve and store arbitrary data sections in the formats that support it (namely .wav).. So I can store and load cues
 
-- need to make a type parameter in the "new sound" dialog... Allow the user to choose amoung wave, rezound, etc types
-	- right now it will do it by file extension
+	- create selection edits which:
+		- grow or shrink the selection by a given duration
+			- either symetically
+			- by moving the start position
+			- by moving the stop position
 
-- change the ClipSample macro to an inline function so _SSS is no longer a static global... verify that the assembler for the inline is no less efficient than the macro
+		- grow or shrink the selection by detecting with the audio level rises above or falls below a threshold
+			- either symetrically 
+			- by moving the start position
+			- by moving the stop position
 
-- create selection edits which:
-	- grow or shrink the selection by a given duration
-		- either symetically
-		- by moving the start position
-		- by moving the stop position
+			- and be able to set the window width of the moving average which detects the audio level
 
-	- grow or shrink the selection by detecting with the audio level rises above or falls below a threshold
-		- either symetrically 
-		- by moving the start position
-		- by moving the stop position
+		- frontend: 
+			- grow/shrink(radio buttons)     
+			- symtetrically/start/stop(radio buttons)
+			- time duration with seconds as the unit (editable slider)
+			- threshold with percent as the unit (editable slider)
+			- window size in ms as the unit (editable slider)
+			
 
-		- and be able to set the window width of the moving average which detects the audio level
+	- always make sure that the actions accessers are const so that it's not causing the data to be written back to disk
+		- infact, grep for Accesser and make sure than any are const whenever possible to avoid writing that data back to disk
 
-	- frontend: 
-		- grow/shrink(radio buttons)     
-		- symtetrically/start/stop(radio buttons)
-		- time duration with seconds as the unit (editable slider)
-		- threshold with percent as the unit (editable slider)
-		- window size in ms as the unit (editable slider)
-		
+	- in ddd, step thru a copy/insert action to make sure nothing unexpected is happening
+		- when I was taking a file up above 2gb, I copied a 1.2g selection and it seemed to do something for a long time before growing the clipboard file during the copy action
 
-- use progress bars when doing TPoolAccesser::copyData and TPoolAccesser::zeroData 
-	- PoolFile::copyToFile is still without a progress bar
+	- need to make front and backend provisions for letting the user specify the export format parameters... some of the parameters depend on the export format... Perhaps I could have a dialog with a tabbed bar which has different parameters on each... which ever bar was activated would be the export format type... Either use the tabbar or radio buttons (real buttons) and a switcher like the switcher test that comes with fox
 
-- always make sure that the actions accessers are const so that it's not causing the data to be written back to disk
-	- infact, grep for Accesser and make sure than any are const whenever possible to avoid writing that data back to disk
+	- I need to think thru and handle problems with the data becoming to large for whatever address space is currently active
+		- if ASound is about to change the space, if the total space is about to cross some threshhold, I shouldn't proceed to do the action
 
-- When pasting data, there is no heeding of the differences in sample rate of the src data when pasting to the destination
-	- I should fix this problem when I implement a real clip board and I would have to supply the PCM parameters to the clipboard when I copied the data there, then pasting could do something to resolve any differances when reading from it
+	- supply icons for all the windows
+		- just new FXIcon(...) instead of passing NULL
 
-- in ddd, step thru a copy/insert action to make sure nothing unexpected is happening
-	- when I was taking a file up above 2gb, I copied a 1.2g selection and it seemed to do something for a long time before growing the clipboard file during the copy action
+	- make the open file dialog have resizable borders.... 
+		- I think its up to the window manager to allow this or not
 
-- need to make front and backend provisions for letting the user specify the export format parameters... some of the parameters depend on the export format... Perhaps I could have a dialog with a tabbed bar which has different parameters on each... which ever bar was activated would be the export format type... Either use the tabbar or radio buttons (real buttons) and a switcher like the switcher test that comes with fox
+	- write a little document in Tools/PoolFile that explains simply the layout of how PoolFileAccessors do their thing and perhaps a very simplified explination of how CPoolFile does what it does
 
-- I need to think thru and handle problems with the data becoming to large for whatever address space is currently active
-	- if ASound is about to change the space, if the total space is about to cross some threshhold, I shouldn't proceed to do the action
+	- it is evidently invalid to call ftruncate to make a file bigger if it's on a fat32 mounted device
+		- There is a specific errno that comes back from this, I should test for it and fwrite zeros to make the file bigger
 
-- could easily make the play buttons stop if playing and then do their action so that they don't do nothing while it's playing
-	- plus you have to hit stop and play to make it do something else... stop needs to be nice and big anyway
+	- right now, if you copy/cut from not all the channels, (by hitting ctrl-cut/copy and deselecting some checkboxes)
+		- then when you ctrl-click to paste, the pasteChannels dialog shows up with all the channels that were cut/copied shifted down to lower channel numbers 
+		- perhaps I could create pools but not put data into them, for the un-included copy/cut channels, but know to disable the check boxes in the GUI if the pool is zero length
 
-- I could probably move most of initializeReZound into the backend
 
-- I could add an advanced mode for copy/cut/paste where the user can choose from multiple clipboards
-	- perhaps one way to implement this would be to have multiple instantiated ASoundClipboard objects in an array one may point to a system clipboard and others to CPoolFile clipboard
-	- interface:
-		- either advanced mode for copy/cut/paste
-		- or a dropdown list somewhere on the mainform
 
-- it may be more intutive/user-friendly/athetically-pleasing to have the channel select dialog start out all unchecked so I acutally clikc on the channels I want to apply the action to, rather than the inverse of the channels...
-	- I should also probably add a button that selects all chanels or unselects all changes
-		- this would be stupid right now, but more useful if I support 5 channel sounds or something
-	- I should put a button on the channel select dialog (and paste channel dialog) which set it to a normal state
+--- POSSIBLE THINGS TO DO ---
 
-- I could create a method in TPoolFileAccessor that can copy from another TPoolFileAccessor of the same type... It could do memcpys from the cachedBuffers instead of manually having to do a for loop calling operator[] and being enefficient
-	- do some timing tests before and after to see the speed increase
+	- could easily make the play buttons stop if playing and then do their action so that they don't do nothing while it's playing
+		- plus you have to hit stop and play to make it do something else... stop needs to be nice and big anyway
 
-	- places to use it epecially are:
-		- AAction::backup/restoreUndoSelection
-		- CCopyCutDeleteEdit::doActionSizeSafe
+	- I could probably move most of initializeReZound into the backend
 
-- supply icons for all the windows
-	- just new FXIcon(...) instead of passing NULL
+	- I could add an advanced mode for copy/cut/paste where the user can choose from multiple clipboards
+		- perhaps one way to implement this would be to have multiple instantiated ASoundClipboard objects in an array one may point to a system clipboard and others to CPoolFile clipboard
+		- interface:
+			- either advanced mode for copy/cut/paste
+			- or a dropdown list somewhere on the mainform
 
-- probably want to add an bool AAction::showAllDataCheckbox() so that the channel select dialog may or may not have that checkbox if it's an action like crop, or trim
+	- it may be more intutive/user-friendly/athetically-pleasing to have the channel select dialog start out all unchecked so I acutally clikc on the channels I want to apply the action to, rather than the inverse of the channels...
+		- I should also probably add a button that selects all chanels or unselects all changes
+			- this would be stupid right now, but more useful if I support 5 channel sounds or something
+		- I should put a button on the channel select dialog (and paste channel dialog) which set it to a normal state
 
-- maybe change fox's built in icons for the standard file dialog, they don't fit the rest of fox's theme
-	- this will probably be a patch submitted to them
+	- I could create a method in TPoolFileAccessor that can copy from another TPoolFileAccessor of the same type... It could do memcpys from the cachedBuffers instead of manually having to do a for loop calling operator[] and being enefficient
+		- do some timing tests before and after to see the speed increase
 
-- make the open file dialog have resizable borders.... 
-	- I think its up to the window manager to allow this or not
+		- places to use it epecially are:
+			- AAction::backup/restoreUndoSelection
+			- CCopyCutDeleteEdit::doActionSizeSafe
 
-- perhaps make pool file have a readonly mode where it won't create SAT files and modify it in any way, then even a copy wouldn't need to be made
+	- when making loops, it may be cool to have a play button that loops the selection, but skips the bulk of the middle for time's sake
 
-- write a little document in Tools/PoolFile that explains simply the layout of how PoolFileAccessors do their thing and perhaps a very simplified explination of how CPoolFile does what it does
+	- probably want to add an bool AAction::showAllDataCheckbox() so that the channel select dialog may or may not have that checkbox if it's an action like crop, or trim
 
-- create selection functions that just move the start or stop position forward or backwards by X time or X samples
-	- also create one that changes the selection size by X time or X sames where it expands or shrinks proportionally on each side
+	- perhaps make pool file have a readonly mode where it won't create SAT files and modify it in any way, then even a copy wouldn't need to be made
 
-- could create an event manager that could act as a multitrack editor, by just knowing when and where to stop and start sounds
-	- then how to scale their volume... or more generally, what filter(s) to sent the data-buffers thru before playing
-		- the filters should be instantiated AFilter objects that are attatched to the sound, in a chain and they were instantiated with parameters on how to do their realtime processing
-		- if I thought it would be that beneficial, I could make all the non-realtime actions use the filters to do their work
-	- it would then be just a matter of GUI creation to have resound be something like audacity
+	- perhaps actions that change the length of the sound could possibly know how much to change the play position if it's playing just so when the action returns it continues at roughly the same place
 
-- when making loops, it may be cool to have a play button that loops the selection, but skips the bulk of the middle for time's sake
+	- maybe change fox's built in icons for the standard file dialog, they don't fit the rest of fox's theme
+		- this will probably be a patch submitted to them
+		- or I can wait until fox is themeable and this might be fixed because the theme would supply these icons
 
-- make some checkbox on the mainWindow that allows the user not to do undo incase they know they don't want it
-	 - the backend already supports this (although it hasn't been tested yet since there's been no frontend means)
-
-- it is evidently invalid to call ftruncate to make a file bigger if it's on a fat32 mounted device
-
-- right now, if you copy/cut from not all the channels, (by hitting ctrl-cut/copy and deselecting some checkboxes)
-	- then when you ctrl-click to paste, the pasteChannels dialog shows up with all the channels that were cut/copied shifted down to lower channel numbers 
-	- perhaps I could create pools but not put data into them, for the un-included copy/cut channels, but know to disable the check boxes in the GUI if the pool is zero length
-
-- perhaps actions that change the length of the sound could possibly know how much to change the play position if it's playing just so when the action returns it continues at roughly the same place
-
-- a very nice project called 'ardour' on sourceforge.net has setup a paypal account to receive donations, perhaps I should do the same
+	- a very nice project called 'ardour' on sourceforge.net has setup a paypal account to receive donations, perhaps I should do the same
 
 
 
 
 --- KNOWN BUGS/GLITCHES ---
 	- OUTSTANDING -
-		- clicking the right button while dragging a node after creation of the FXGraphParamValue widget messing things up... I think it's a bug in FOX 
-		- goofy stuff happens with the graph param value widget... orphaned nodes and stuff
 		- I've seen it once hang when closing the application... I attached to the process with the debugger and it was stuck waiting on a mutex of loaded->getSound()->lockForResize() in ASoundFileManager::close ... so perhaps some condition happened which left a mutex unlocked
-		- pressing the space bar key on the loaded sound listbox while it's empty causes a segfault.. I think it's a problem with fox itself
-			- I think it's trying to focus an item that doesn't exist
-
 		- It's not reproducable, but I've seen Xlib return something which causes the application to lock up; fox even prints an 'unexpected ...' message, VERY seldom though
 
 	- FIXED - 
 		- glitches occurr at the beginning and/or end of a CChangeRateEffects... 
 		- determining the 'active' window has not been resolved yet... For now, it's just the last sound that was loaded... and if you close that sound... there is no active window until you open another sound... Hence there is no advantage at the moment of having more than one sound loaded
 		- closing sound windows with the top left button doesn't work right yet... it simply hides the window
+		- clicking the right button while dragging a node after creation of the FXGraphParamValue widget messing things up... I think it's a bug in FOX 
+		- goofy stuff happens with the graph param value widget... orphaned nodes and stuff
+		- pressing the space bar key on the loaded sound listbox while it's empty causes a segfault.. I think it's a problem with fox itself
+			- I think it's trying to focus an item that doesn't exist (Jeroen fixed it in fox)
 
 
 
 
 
-
-- EXPERIMENTS THAT MIGHT LEAD TO SOMETHING COOLER -
+--- EXPERIMENTS THAT MIGHT LEAD TO SOMETHING COOLER ---
 	- try a little effect that reverse little chunks of data ... say every x samples... what would that sound like?
 
 	- see if I could determine the tempo of a selection from an impulse analysis
@@ -163,9 +145,15 @@
 
 
 
-- FUTURE IDEAS -
+--- FUTURE IDEAS ---
 	- if pool file is 64bit and just that stable, I could load all sounds into a single pool file each with they're different pools and some how have that as an advantage for being able to move data from one pool to another instantaneously
 		- but that may not be much of an advantage
+
+	- I could create an event manager that could act as a multitrack editor, by just knowing when and where to stop and start sounds
+		- then how to scale their volume... or more generally, what filter(s) to sent the data-buffers thru before playing
+			- the filters should be instantiated AFilter objects that are attatched to the sound, in a chain and they were instantiated with parameters on how to do their realtime processing
+			- if I thought it would be that beneficial, I could make all the non-realtime actions use the filters to do their work
+		- it would then be just a matter of GUI creation to have ReZound act something like audacity
 
 	- I could determine the most recent cue passed while playing at the beginning of each time I go to mix some sound... and set just an integer index in the ASoundPlayerChannel object for the frontend to read and display the current playing cue name in a status bar
 		- I'm not implementing this right away because I don't know how useful it would be... But there were lots of off screen cues, it could be useful to have an idea of where the sound was playing 
@@ -232,91 +220,91 @@
 
 --- DONE ---
 
-- perhaps if the undo information were in the CPoolFile of the loaded sound, we could handle undo of deletes very quickly by simpling moving those blocks to the undo pool
+	- perhaps if the undo information were in the CPoolFile of the loaded sound, we could handle undo of deletes very quickly by simpling moving those blocks to the undo pool
 
-- I need to give options of:
-	- when a pool file was detected upon loading... ask the user if they want to use that "Would you like to resume editing ... ?" or delete it
+	- I need to give options of:
+		- when a pool file was detected upon loading... ask the user if they want to use that "Would you like to resume editing ... ?" or delete it
 
-- I really need to create peak data and render that, because it takes forever to redraw the screen for a big file when the waveform is 'fit' into the window
-	- I should probably show a status bar whenever I'm recalculating render data
+	- I really need to create peak data and render that, because it takes forever to redraw the screen for a big file when the waveform is 'fit' into the window
+		- I should probably show a status bar whenever I'm recalculating render data
 
-- fix any problems with zero or 1 length sounds
-	- very small sounds attempt to set the range of the horz zoom control where the hi is less than the lo
-	- FIXED by never allowing an ASound object to become less than one sample in length
+	- fix any problems with zero or 1 length sounds
+		- very small sounds attempt to set the range of the horz zoom control where the hi is less than the lo
+		- FIXED by never allowing an ASound object to become less than one sample in length
 
-- well.. I went to all the trouble of creating CPoolFile which quickly adds and remove space from th emiddle of the data... but
-	- ...but doing undo requires me to copy the data when deleting or cuting...
-	- if the undo information was in the same CPoolFile as the sound itself.. then perhaps CPoolFile could make a moveData method which just moves data from one pool to another
-	- this would at least speed up delete and cut
+	- well.. I went to all the trouble of creating CPoolFile which quickly adds and remove space from th emiddle of the data... but
+		- ...but doing undo requires me to copy the data when deleting or cuting...
+		- if the undo information was in the same CPoolFile as the sound itself.. then perhaps CPoolFile could make a moveData method which just moves data from one pool to another
+		- this would at least speed up delete and cut
 
-- I could put a defrag button just like there is a redraw button
+	- I could put a defrag button just like there is a redraw button
 
-- need to do two very important but unfun things before continuing much further
-	- typedef the sizes and positions for accessing audio so that 64bit sizes will be no problem
-		- need type for integral sample position
-		- need type for decimal sample position
-		- need a type for integal sample count
-	- create a MIX_SAMPLE_TYPE (or CALC_SAMPLE_TYPE) which can hold multiple mixed SAMPLE_TYPES for use when holding values while processing that will later be truncated when written to the real audio output
-		- I could probably rename it to sample_t and mix_sample_t
+	- need to do two very important but unfun things before continuing much further
+		- typedef the sizes and positions for accessing audio so that 64bit sizes will be no problem
+			- need type for integral sample position
+			- need type for decimal sample position
+			- need a type for integal sample count
+		- create a MIX_SAMPLE_TYPE (or CALC_SAMPLE_TYPE) which can hold multiple mixed SAMPLE_TYPES for use when holding values while processing that will later be truncated when written to the real audio output
+			- I could probably rename it to sample_t and mix_sample_t
 
-- need to make an isModified flag in the CLoadedSound structure.. perhaps actually in the ASound class... then AAction will set it to true while saveSound will set it to false
-- right now, I always ask if to save the file... I should have a flag in CLoadedSound which is set whenever an AAction does something to that file
+	- need to make an isModified flag in the CLoadedSound structure.. perhaps actually in the ASound class... then AAction will set it to true while saveSound will set it to false
+	- right now, I always ask if to save the file... I should have a flag in CLoadedSound which is set whenever an AAction does something to that file
 
-- test a *.rez file with an invalid signature and see what happens
-	- it threw an exception as it should have, however when I compiled on my machine at work, the throwing of an except cause a segfault.. but I believe it was compiler/library problems and not my fault
+	- test a *.rez file with an invalid signature and see what happens
+		- it threw an exception as it should have, however when I compiled on my machine at work, the throwing of an except cause a segfault.. but I believe it was compiler/library problems and not my fault
 
-- make progress bar when loading a sound, because a copy is always made, unless it's opened as read only
+	- make progress bar when loading a sound, because a copy is always made, unless it's opened as read only
 
-- add status bars to all the actions.. use CStatusComm to communicate with a front end status bar
-	- on copy/cut actions, when I'm using TPoolAccesser::copyData or TPoolAccesser::zeroData, divide the length to do into 100 parts and call the copyData or zeroData methods 100 times... but don't divide it into sections smaller than say 1 million samples or so
+	- add status bars to all the actions.. use CStatusComm to communicate with a front end status bar
+		- on copy/cut actions, when I'm using TPoolAccesser::copyData or TPoolAccesser::zeroData, divide the length to do into 100 parts and call the copyData or zeroData methods 100 times... but don't divide it into sections smaller than say 1 million samples or so
 
-- put some 'mute channel' check boxes for each channel of a loaded sound in the frontend and and be able to mute channels within CSoundPlayerChannel
+	- put some 'mute channel' check boxes for each channel of a loaded sound in the frontend and and be able to mute channels within CSoundPlayerChannel
 
-- create TStaticPoolAccesser::copyData(from another accesser of same alignement) and TStaticPoolAccesser::zeroData() 
-	- which will use memcpy to speed up data copying and initialization by removing the overhead of calling operator[] so much
+	- create TStaticPoolAccesser::copyData(from another accesser of same alignement) and TStaticPoolAccesser::zeroData() 
+		- which will use memcpy to speed up data copying and initialization by removing the overhead of calling operator[] so much
 
-- I should also probably have a 'clear undo history' button that frees up used space in the pool file... 
+	- I should also probably have a 'clear undo history' button that frees up used space in the pool file... 
 
-- CPoolFile may need a flush method.. (if it doesn't already have one.. ) then after every action, we should flush the pool file incase of a subsequent crash
+	- CPoolFile may need a flush method.. (if it doesn't already have one.. ) then after every action, we should flush the pool file incase of a subsequent crash
 
-- it segfaulted once upon closing while playing... but calling deinitialize should fix that 
+	- it segfaulted once upon closing while playing... but calling deinitialize should fix that 
 
-- there are some unfortunate side effects of the way I currently do peak chunk rendering
-	- either there is a flaw in my idea
-	- or I didn't implement my idea quite correctly
-		- perhaps the implementation of ASound::addSpaceToChannel,removeSpaceFromChannel,moveSpaceOutOfChannel where it handles the peak chunk accessers isn't quite right
-	- but I suspect that it has to do with my not recalculating all the peak chunks
-	XXX - sometimes if you delete data from a sound, then hit redraw, the rendering changes slightly
-	XXX - also, when I mute some space, then have that muted space at the end of a crop, there is sometimes a sample that shows up at the end of the new selection that will go away if I just hit redraw, so it's a peak chunk data inconsistancy rather than non-muted audio data being there
+	- there are some unfortunate side effects of the way I currently do peak chunk rendering
+		- either there is a flaw in my idea
+		- or I didn't implement my idea quite correctly
+			- perhaps the implementation of ASound::addSpaceToChannel,removeSpaceFromChannel,moveSpaceOutOfChannel where it handles the peak chunk accessers isn't quite right
+		- but I suspect that it has to do with my not recalculating all the peak chunks
+		XXX - sometimes if you delete data from a sound, then hit redraw, the rendering changes slightly
+		XXX - also, when I mute some space, then have that muted space at the end of a crop, there is sometimes a sample that shows up at the end of the new selection that will go away if I just hit redraw, so it's a peak chunk data inconsistancy rather than non-muted audio data being there
 
-- use home directory / .rezound instead of the current directory for settings registry
+	- use home directory / .rezound instead of the current directory for settings registry
 
-- When it's on sourceforge put out a call for icon artists and for someone to autoconfiscate it
+	- When it's on sourceforge put out a call for icon artists and for someone to autoconfiscate it
 
-- When it's on sourceforge create mailing lists or forums for:
-	- bugs
-	- feature requests
-	- users
-	- developers
-
-
-- make sure I've run dos2unix on all the code before checking it into any version control system
-
-- for additional bookmark niceness... make a way to set either the start or stop position to a bookmark choosen from a drop down menu
-	- also make a seek button that cycles to the next nearest book bark forward or backward from the current play position
-
-- need a shuttle control
-
-- the right click on the horz ruler bar should have
-	- start pos, stop pos, start, end, AND play pos
-	- and perhaps all the markers too
+	- When it's on sourceforge create mailing lists or forums for:
+		- bugs
+		- feature requests
+		- users
+		- developers
 
 
-- make sure you can't open the same file twice
-	- what about hardlinks?
+	- make sure I've run dos2unix on all the code before checking it into any version control system
 
-- have seek buttons that move the play pointer, start and stop positions to the markers set within the audio...
-	- the play position seek should:
-		- on forward, go to the nearest marker forward
-		- on backward go to the nearest marker backward if the play position is more than .25 secs from it.. or 2 markers back if more
+	- for additional bookmark niceness... make a way to set either the start or stop position to a bookmark choosen from a drop down menu
+		- also make a seek button that cycles to the next nearest book bark forward or backward from the current play position
+
+	- need a shuttle control
+
+	- the right click on the horz ruler bar should have
+		- start pos, stop pos, start, end, AND play pos
+		- and perhaps all the markers too
+
+
+	- make sure you can't open the same file twice
+		- what about hardlinks?
+
+	- have seek buttons that move the play pointer, start and stop positions to the markers set within the audio...
+		- the play position seek should:
+			- on forward, go to the nearest marker forward
+			- on backward go to the nearest marker backward if the play position is more than .25 secs from it.. or 2 markers back if more
 

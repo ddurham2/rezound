@@ -32,6 +32,10 @@
 
 	- I should probably put whatever code in the frontend (i.e. button handlers in CMainWindow) that could be put in the backend (i.e. would be done by any frontend) into the backend like the file operations already are
 
+	- need to make a type parameter in the "new sound" dialog... Allow the user to choose among wave, rezound, etc types
+		- it can be done with the given extension right now, but the user may not know the extensions... or perhaps the open dialog should have separate filetype entries and it will add the extension chosen
+		- right now the backend knows it by file extension, and the backend may need to pop up a subsequent dialog to ask for format specifiy parametesr
+
 	- move the undo/redo buttons off of the file tab and to an always visible location (play controls)
 
 	- add tip text support to the reusable slider and graph widget to and allow a way to set it in the base class dialogs
@@ -50,6 +54,9 @@
 		- I'm not sure why it's not a problem and perhaps it will be in the future...
 			- But, while the pogress dialog is showing, the sound object being worked on is usually locked for resize so if a paint message tried to be processed for the sound window's waveform view it would cause the applicaiton to lock up
 			- Perhaps fox doesn't process paint messages in a sparate thread, which is fortunate at the moment, however if he changes this behavior, I would need to probably trylock and just paint the background color if it couldn't lock... Actions usually call refresh after the action is completed, so that should redraw any places where we couldn't update
+
+	- make some checkbox on the mainWindow that allows the user not to do undo incase they know they don't want it
+		 - the backend already supports this (although it hasn't been tested yet since there's been no frontend means)
 
 
 
@@ -86,14 +93,14 @@
 
 
 --- DONE ---
-		- there are still some issues with scaling I think
+	- there are still some issues with scaling I think
 
-		- perhaps create a base class for some of the windows to derive from that remember their locations when last the application was run
-			- ??? however fox seems to have a problem with top windows relative coordinates
+	- perhaps create a base class for some of the windows to derive from that remember their locations when last the application was run
+		- ??? however fox seems to have a problem with top windows relative coordinates
 
-		- right now the PWD of the open dialog is not maintained across showings of it... I think this is becase teh method I'm using is recreating the open dialog each tiem
-			- if CSoundFileManager were to opene it differently, it should fix that
-			- ??? however it doesn't maintain the same scroll position in the file listing which would be nice too
+	- right now the PWD of the open dialog is not maintained across showings of it... I think this is becase teh method I'm using is recreating the open dialog each tiem
+		- if CSoundFileManager were to opene it differently, it should fix that
+		- ??? however it doesn't maintain the same scroll position in the file listing which would be nice too
 
 	- create a dialog which shows a list of the cues and their times.... perhaps have buttons which set the start or stop position, add remove, etc
 

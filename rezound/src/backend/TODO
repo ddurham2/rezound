@@ -7,6 +7,8 @@
 
 	- rename MAX_CHANNELS and MAX_LENGTH in ASound.h to something a little more ReZound specific like REZ_MAX_CHANNELS REZ_MAX_LENGTH
 
+	- change the ClipSample macro to an inline function so _SSS is no longer a static global... verify that the assembler for the inline is no less efficient than the macro
+
 	- I need to go thru these backend classes and make sure of what they all do... 
 		- I have the concept that a sound can be loaded that does have a window: i.e. it's been registered with CSoundManager but not thru ASoundFileManager
 		- I should think thru just exactly what my requirements are and base the classes on that... I shouldn't have to rewrite much code.. it's all there
@@ -30,6 +32,12 @@
 		- DONE the routing should be assigned per CSoundPlayerChannel object, but the routing information should also be saved in a pool in the sound object
 
 	- If saving a sound to a format that doesn't support saving cues or user-notes ask and warn the user
+
+	- use progress bars when doing TPoolAccesser::copyData and TPoolAccesser::zeroData 
+		- PoolFile::copyToFile is still without a progress bar
+
+	- When pasting data, there is no heeding of the differences in sample rate of the src data when pasting to the destination
+		- I should fix this problem when I implement a real clipboard system and I would have to supply the PCM parameters to the clipboard when I copied the data there, then pasting could do something to resolve any differances when reading from it
 
 
 
