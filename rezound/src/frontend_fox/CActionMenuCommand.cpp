@@ -27,7 +27,7 @@
 
 #include "../backend/CActionParameters.h"
 #include "../backend/AAction.h"
-#include "../images/images.h"
+#include "images.h"
 
 FXDEFMAP(CActionMenuCommand) CActionMenuCommandMap[]=
 {

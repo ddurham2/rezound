@@ -20,7 +20,7 @@
 
 #include "FXModalDialogBox.h"
 
-#include "../images/images.h"
+#include "images.h"
 
 #include "rememberShow.h"
 

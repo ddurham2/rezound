@@ -1,3 +1,4 @@
+#!/bin/bash
 
 RESWRAP=$1
 IMAGE_PATH=$2
@@ -10,7 +11,7 @@ echo >> images.cpp
 # reswrap should have come with the fox package
 for i in $IMAGE_PATH/*.gif
 do
-	$RESWRAP -n ${i%\.gif}_gif $i >> images.cpp
+	$RESWRAP -n `basename ${i%\.gif}_gif` $i >> images.cpp
 done
 
 

@@ -32,7 +32,7 @@
 #include "../backend/initialize.h"
 #include "settings.h"
 
-#include "../images/images.cpp"
+#include "images.cpp"
 
 void setupWindows(CMainWindow *mainWindow);
 void setupAccels(CMainWindow *mainWindow);

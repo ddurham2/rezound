@@ -25,7 +25,7 @@
 #include <string>
 #include <map>
 
-#include "../images/images.h"
+#include "images.h"
 
 #include "rememberShow.h"
 

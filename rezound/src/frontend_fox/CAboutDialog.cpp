@@ -20,7 +20,7 @@
 
 #include "CAboutDialog.h"
 
-#include "../images/images.h"
+#include "images.h"
 
 CAboutDialog *gAboutDialog=NULL;
 

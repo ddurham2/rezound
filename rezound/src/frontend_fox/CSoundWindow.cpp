@@ -49,7 +49,7 @@ static void playTrigger(void *Pthis);
 #include "CCueDialog.h"
 #include "CCueListDialog.h"
 
-#include "../images/images.h"
+#include "images.h"
 
 #include "settings.h"
 

@@ -29,7 +29,7 @@
 
 #include "settings.h"
 
-#include "../images/images.h"
+#include "images.h"
 
 #include "CAboutDialog.h"
 

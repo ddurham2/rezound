@@ -22,7 +22,7 @@
 
 #include "../backend/ASoundRecorder.h"
 #include "../backend/AStatusComm.h"
-#include "../images/images.h"
+#include "images.h"
 
 
 #include <istring>

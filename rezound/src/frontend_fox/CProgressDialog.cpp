@@ -20,7 +20,7 @@
 
 #include "CProgressDialog.h"
 
-//#include "../images/images.h"
+//#include "images.h"
 
 FXDEFMAP(CProgressDialog) CProgressDialogMap[]=
 {
