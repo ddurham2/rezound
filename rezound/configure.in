@@ -269,7 +269,7 @@ dnl AC_CHECK_LIB(FOX,fxfindfox)
 dnl Check for FOX's reswrap program. 
 AC_PATH_PROG(RESWRAP, reswrap)
 	if test -z "$RESWRAP"; then
-		AC_MSG_ERROR([reswrap not found (it comes with fox)])
+		AC_MSG_ERROR([reswrap not found (it comes with fox) -- perhaps you need to add reswrap's location to your PATH])
 	fi
 
 
