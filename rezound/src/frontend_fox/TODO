@@ -1,6 +1,12 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- perhaps a 'view' pull-down ... possible menu items...
+		- zoom controls.. increase/decrease zoom both vert and horz
+		- redraw
+		- find start/stop positions (really, just to show key bindings)
+		- maybe one for the next or previous file that's loaded
+
 	- add file operation icons for all the file operations
 	
 	- improve the two icons, normal_action and advanced_action 12x12 should be a good size
