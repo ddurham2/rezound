@@ -71,12 +71,16 @@ public:
 
 	long onFrequencyRangeChange(FXObject *sender,FXSelector sel,void *ptr);
 	long onUseLFOCheckBox(FXObject *sender,FXSelector sel,void *ptr);
+	long on1To2Button(FXObject *sender,FXSelector sel,void *ptr); // handles several operations between response1 and response2
 
 	enum
 	{
 		ID_BASE_FREQUENCY=CActionParamDialog::ID_LAST,
 		ID_NUMBER_OF_OCTAVES,
 		ID_USE_LFO_CHECKBOX,
+		ID_COPY_1_TO_2,
+		ID_COPY_2_TO_1,
+		ID_SWAP_1_AND_2,
 		ID_LAST
 	};
 

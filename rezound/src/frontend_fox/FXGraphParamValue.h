@@ -84,6 +84,9 @@ public:
 
 	const CGraphParamValueNodeList &getNodes() const;
 
+	void copyFrom(const FXGraphParamValue *src);
+	void swapWith(FXGraphParamValue *src);
+
 	const int getScalar() const;
 	void setScalar(const int scalar);
 

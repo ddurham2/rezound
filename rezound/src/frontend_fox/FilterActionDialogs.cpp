@@ -176,11 +176,14 @@ long CArbitraryFIRFilterDialog::onFrequencyRangeChange(FXObject *sender,FXSelect
 
 FXDEFMAP(CMorphingArbitraryFIRFilterDialog) CMorphingArbitraryFIRFilterDialogMap[]=
 {
-	//Message_Type			ID							Message_Handler
+	//Message_Type			ID								Message_Handler
 
 	FXMAPFUNC(SEL_COMMAND,		CMorphingArbitraryFIRFilterDialog::ID_BASE_FREQUENCY,		CMorphingArbitraryFIRFilterDialog::onFrequencyRangeChange),
 	FXMAPFUNC(SEL_COMMAND,		CMorphingArbitraryFIRFilterDialog::ID_NUMBER_OF_OCTAVES,	CMorphingArbitraryFIRFilterDialog::onFrequencyRangeChange),
 	FXMAPFUNC(SEL_COMMAND,		CMorphingArbitraryFIRFilterDialog::ID_USE_LFO_CHECKBOX,		CMorphingArbitraryFIRFilterDialog::onUseLFOCheckBox),
+	FXMAPFUNC(SEL_COMMAND,		CMorphingArbitraryFIRFilterDialog::ID_COPY_1_TO_2,		CMorphingArbitraryFIRFilterDialog::on1To2Button),
+	FXMAPFUNC(SEL_COMMAND,		CMorphingArbitraryFIRFilterDialog::ID_COPY_2_TO_1,		CMorphingArbitraryFIRFilterDialog::on1To2Button),
+	FXMAPFUNC(SEL_COMMAND,		CMorphingArbitraryFIRFilterDialog::ID_SWAP_1_AND_2,		CMorphingArbitraryFIRFilterDialog::on1To2Button),
 };
 
 FXIMPLEMENT(CMorphingArbitraryFIRFilterDialog,CActionParamDialog,CMorphingArbitraryFIRFilterDialogMap,ARRAYNUMBER(CMorphingArbitraryFIRFilterDialogMap))
@@ -193,6 +196,10 @@ CMorphingArbitraryFIRFilterDialog::CMorphingArbitraryFIRFilterDialog(FXWindow *m
 	p0=newVertPanel(NULL);
 		p1=newHorzPanel(p0,false);
 			addGraph(p1,N_("Frequency Response 1"),N_("Frequency"),"Hz",interpretValue_freq,uninterpretValue_freq,N_("Change"),"dB",interpretValue_FIR_change,uninterpretValue_FIR_change,dB_to_scalar,-100,100,20);
+			p2=new FXVerticalFrame(p1,LAYOUT_CENTER_Y, 0,0,0,0, 0,0,0,0, 0,0);
+				new FXButton(p2,FXString("->\t")+_("Copy Response 1 to Response 2"),NULL,this,ID_COPY_1_TO_2,BUTTON_NORMAL|LAYOUT_FILL_X);
+				new FXButton(p2,FXString("<>\t")+_("Swap Response 1 and Response 2"),NULL,this,ID_SWAP_1_AND_2,BUTTON_NORMAL|LAYOUT_FILL_X);
+				new FXButton(p2,FXString("<-\t")+_("Copy Response 2 to Response 1"),NULL,this,ID_COPY_2_TO_1,BUTTON_NORMAL|LAYOUT_FILL_X);
 			addGraph(p1,N_("Frequency Response 2"),N_("Frequency"),"Hz",interpretValue_freq,uninterpretValue_freq,N_("Change"),"dB",interpretValue_FIR_change,uninterpretValue_FIR_change,dB_to_scalar,-100,100,20);
 			
 		p1=newHorzPanel(p0,false);
@@ -248,6 +255,25 @@ long CMorphingArbitraryFIRFilterDialog::onUseLFOCheckBox(FXObject *sender,FXSele
 	else
 		getLFOParam("Sweep LFO")->disable();
 	return 1;
+}
+
+long CMorphingArbitraryFIRFilterDialog::on1To2Button(FXObject *sender,FXSelector sel,void *ptr)
+{
+	switch(FXSELID(sel))
+	{
+	case ID_COPY_1_TO_2:
+		getGraphParam("Frequency Response 2")->copyFrom(getGraphParam("Frequency Response 1"));
+		break;
+	case ID_COPY_2_TO_1:
+		getGraphParam("Frequency Response 1")->copyFrom(getGraphParam("Frequency Response 2"));
+		break;
+	case ID_SWAP_1_AND_2:
+		getGraphParam("Frequency Response 1")->swapWith(getGraphParam("Frequency Response 2"));
+		break;
+	default:
+		throw runtime_error(string(__func__)+" -- unhandled selector");
+	}
+	return 0;
 }
 
 bool CMorphingArbitraryFIRFilterDialog::validateOnOkay()

@@ -947,6 +947,65 @@ const CGraphParamValueNodeList &FXGraphParamValue::getNodes() const
 	return retNodes;
 }
 
+/*
+ * only copies nodes and deformation parameters and scalars, but not interpret functions and such
+ */
+void FXGraphParamValue::copyFrom(const FXGraphParamValue *src)
+{
+	// make undo stack copy when implemented ???
+	
+	// copy deformation values
+	horzDeformSlider->setValue(src->horzDeformSlider->getValue());
+	vertDeformSlider->setValue(src->vertDeformSlider->getValue());
+
+	// copy scalar values
+	setScalar(src->getScalar());
+
+	// copy nodes
+	nodes.clear();
+	for(size_t t=0;t<src->nodes.size();t++)
+		nodes.push_back(src->nodes[t]);
+
+	// cause everything to refresh
+	updateNumbers();
+	update();
+	graphCanvas->update();
+}
+
+void FXGraphParamValue::swapWith(FXGraphParamValue *src)
+{
+	int t;
+
+	// make undo stack copy (for both) when implemented ???
+	
+	// swap deformation values
+	t=horzDeformSlider->getValue();
+	horzDeformSlider->setValue(src->horzDeformSlider->getValue());
+	src->horzDeformSlider->setValue(t);
+
+	t=vertDeformSlider->getValue();
+	vertDeformSlider->setValue(src->vertDeformSlider->getValue());
+	src->vertDeformSlider->setValue(t);
+
+
+	// copy scalar values
+	t=getScalar();
+	setScalar(src->getScalar());
+	src->setScalar(t);
+
+	// copy nodes
+	swap(nodes,src->nodes);
+
+	// cause everything to refresh
+	updateNumbers();
+	update();
+	graphCanvas->update();
+
+	src->updateNumbers();
+	src->update();
+	src->graphCanvas->update();
+}
+
 const string FXGraphParamValue::getVertValueString(double vertValue) const
 {
 	return istring(vertInterpretValue(vertValue,getScalar()),5,3);
