@@ -51,7 +51,55 @@
  *   enough sample have been observed.
  *
  * Info reference: http://www.harmony-central.com/Effects/Articles/Compression/
- * 		   and newsgroup: comp.dsp  my thread, 'compressor question'
+ * 		   and newsgroup: comp.dsp  my thread, 'Compressor Question #2'
+ *
+ * Formula for the gain when the level is above the threshold: (Thanks to amolitor's notes)
+ * 	
+ * R is the ratio in XdB:YdB -- for an X dB increase in the input there should be only a Y dB increase in the ouput
+ * D is the measured level in dB
+ * T is the threshold in dB
+ *
+ * g = -((R-1)*(D-T))/R   that is g is the output change in dB given D in dB
+ *
+ * Now to avoid so much math per sample I need to convert this to the unites of my actual audio data (sample values):
+ *
+ * We want to find g as a gain scalar instead of dB change.
+ *
+ * Using the formula for dB to gain scalar:   scalar=10^(dB/20)
+ *
+ * g = 10 ^ (-((R-1)*(D-T))/(20*R))
+ *
+ * Now we can avoid the negation of the exponent: 
+ *
+ * g = .1 ^ (((R-1)*(D-T))/(20*R))
+ *
+ * Now we want to have D as a sample value and not a value in dB.  We will call the measured level in sample value units L instead of D in dB
+ *
+ * The formula for converting a sample value to dB (dBFS actually)
+ *
+ * D = 20*log10(abs(S)/MAX)    (where MAX is the maximum sample value)
+ *
+ * substituting D in our gain calulation:
+ *
+ * g = .1 ^ (((R-1)*((20*log10(abs(S)/MAX))-T))/(20*R))
+ *
+ * since R is constant we can define
+ *
+ * Q = 20*(R-1) / (20*R)
+ *
+ * and simplify the gain calulation to:
+ *
+ * g = .1 ^ (Q*log10(abs(L)/MAX)-(T/20))
+ *
+ * since T is constant we can define
+ *
+ * K = T/20
+ *
+ * and again simplify the gain calculation to:
+ *
+ * g = .1 ^ (Q*log10(abs(L)/MAX)-K)
+ *
+ * and this is as simple as I can get it
  *
  */
 class CDSPCompressor
@@ -129,7 +177,10 @@ public:
 
 		if(bouncingRatio>1.0)
 		{
-			const double g=pow((double)threshold/(double)level,(bouncingRatio-1.0)/bouncingRatio);
+			double g=pow((double)threshold/(double)level,(bouncingRatio-1.0)/bouncingRatio);
+			//printf("%f=(%d/%d)**(%f/%f)\n",g,threshold,level,bouncingRatio-1.0,bouncingRatio);
+			if(g>1.0)
+				g=1.0;
 			for(unsigned t=0;t<frameSize;t++)
 				inputFrame[t]=(mix_sample_t)(inputFrame[t]*g);
 		}
