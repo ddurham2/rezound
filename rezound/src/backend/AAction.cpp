@@ -56,6 +56,10 @@ AActionFactory::AActionFactory(const string _actionName,const string _actionDesc
 {
 }
 
+AActionFactory::~AActionFactory()
+{
+}
+
 // ??? need to pass a flag for 'allowUndo'
 bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *actionParameters,bool showChannelSelectDialog,bool advancedMode)
 {

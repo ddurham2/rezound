@@ -94,8 +94,6 @@ public:
 
 protected:
 
-
-
 	// - hasAdvancedMode can be passed as true if something is to be done when performAction's advancedMode parameter is true
 	// - Otherwise, it will say "this action has no advanced mode" so the user doesn't think something different than normal is
 	//   happening
@@ -155,7 +153,6 @@ class EUserMessage : public runtime_error { public: EUserMessage(const string ms
 class AAction
 {
 public:
-
 	virtual ~AAction();
 
 	// - undoes the action (if canUndo()==curYes && prepareForUndo was true)
@@ -167,7 +164,6 @@ public:
 	static vector<ASoundClipboard *> clipboards;
 
 protected:
-
 	AAction(const CActionSound &actionSound);
 
 	enum CanUndoResults

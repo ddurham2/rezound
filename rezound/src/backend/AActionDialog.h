@@ -43,6 +43,9 @@ class CActionSound;
 class AActionDialog
 {
 public:
+	AActionDialog();
+	virtual ~AActionDialog();
+
 	virtual bool show(CActionSound *actionSound,CActionParameters *actionParameters)=0;
 
 	// can be implemented to get data from the dialog which does not fit the normal model of passing parameters to actions

@@ -20,3 +20,10 @@
 
 #include "AActionDialog.h"
 
+AActionDialog::AActionDialog()
+{
+}
+
+AActionDialog::~AActionDialog()
+{
+}
