@@ -189,7 +189,7 @@ EOF
 		echo compile errors were:
 		cat ajv_ck_lib_$1.err
 		echo
-		echo Also check config.log for the source file that failed to compile
+		echo Also check config.log for the source file that failed to compile which probably caused the compile error above
 		echo
 		rm -f ajv_ck_lib_$1.c
 		rm -f ajv_ck_lib_$1.err
