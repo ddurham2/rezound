@@ -122,3 +122,6 @@ noinst_HEADERS=\
 
 images.cpp: ../images/*.gif
 	./convert_images.sh ${RESWRAP} ../images
+
+clean-local: 
+	-rm -f images.cpp images.h
