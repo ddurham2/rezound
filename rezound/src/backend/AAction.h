@@ -53,7 +53,7 @@ class ASoundClipboard;
 class AActionFactory
 {
 public:
-	virtual ~AActionFactory() { }
+	virtual ~AActionFactory();
 
 	// Invoked on this factory action object, sets in motion what needs to be done to perform the associated action.
 	// The invoker of the action should provide the CLoadedSound object and a CActionParameters object to use to put

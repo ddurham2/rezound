@@ -33,6 +33,7 @@ class CTestEffect : public AAction
 {
 public:
 	CTestEffect(const CActionSound &actionSound);
+	virtual ~CTestEffect();
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
@@ -45,6 +46,7 @@ class CTestEffectFactory : public AActionFactory
 {
 public:
 	CTestEffectFactory(AActionDialog *channelSelectDialog);
+	virtual ~CTestEffectFactory();
 
 	CTestEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

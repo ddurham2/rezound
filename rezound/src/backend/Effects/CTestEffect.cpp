@@ -30,6 +30,10 @@ CTestEffect::CTestEffect(const CActionSound &actionSound) :
 {
 }
 
+CTestEffect::~CTestEffect()
+{
+}
+
 bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
 	const sample_pos_t start=actionSound.start;
@@ -194,9 +198,13 @@ void CTestEffect::undoActionSizeSafe(const CActionSound &actionSound)
 
 
 // --------------------------------------------------
-//
+
 CTestEffectFactory::CTestEffectFactory(AActionDialog *channelSelectDialog) :
 	AActionFactory("Test","Test",false,channelSelectDialog,NULL,NULL)
+{
+}
+
+CTestEffectFactory::~CTestEffectFactory()
 {
 }
 
