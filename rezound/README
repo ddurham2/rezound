@@ -1,19 +1,21 @@
 
-
-
-see docs/INSTALL for installation instructions.
+See docs/INSTALL for installation instructions.
 
 If you are installing from CVS sources read docs/CVS-INSTALL first.
 
-see docs/README_DOCS for document summary.
+See docs/README_DOCS for document summary.
 
 Potential hackers should look at the docs/devel and docs/class directories. 
 
 
+
      This Project is still in it's Alpha phase, the developers would really
      like to get as much feedback as possible. We would really like to get any
-     bug reports. Please visit the ReZound homepage. 
+     bug reports and other suggestions. Please visit the ReZound Homepage. 
 
-ReZound home page: http://rezound.sourceforge.net/
+ReZound Homepage:	http://rezound.sourceforge.net/
+Support:		http://sourceforge.net/tracker/?group_id=5056&atid=205056
+Bug Reports:		http://sourceforge.net/tracker/?func=add&group_id=5056&atid=105056
+Feature Requests:	http://sourceforge.net/tracker/?atid=355056&group_id=5056&func=browse
+Open Discussions:	http://sourceforge.net/forum/forum.php?forum_id=15508
 
-Bug Tracker: http://sourceforge.net/tracker/?func=add&group_id=5056&atid=105056
