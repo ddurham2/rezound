@@ -1,7 +1,12 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- enhance TSoundStretcher to do interpolation
+	- use TSoundStretcher in CSoundPlayerChannel
+		- the checks in the inner loop are not necessary... I should be able to determine before hand, how many loops to do and when the loop point will be.... just use TSoundStretcher in the mean time of each loop
+		- handling the amplitudes and envelopes is still a matter of scaling the result of TSoundStretcher::getSample()
+
+		- before  do this.. check the CPU usage when playing 5 sounds... after changing it, check 5 sounds again
+
 
 	- figure out what to do with the 4 bogus cues that appear in an aiff file when the file had no cues in it, itself
 
@@ -209,4 +214,7 @@
 	- need to do a better job than CRecordClipboard just calling ASoundFileManager for prompting for recording parameters and the recording dialog
 		- perhaps have a backend abstract class which has virtual methods for all that the frontend will actually be responsible for doing.
 		- all prompting functions would be pure virtual and one of these would be constructed by the frontend
+
+	- enhance TSoundStretcher to do interpolation
+		- done... used a pointer to a method to dynamically choose an implementation based on how it needs to be stretched
 

@@ -23,9 +23,12 @@
 
 #include "CSound_defs.h"
 
+
 template<class src_type> class TSoundStretcher
 {
 public:
+
+
 	/*
 	 * src is the data to read
 	 * srcOffset is the first sample that this class will look at
@@ -35,27 +38,68 @@ public:
 	TSoundStretcher(const src_type &_src,const sample_pos_t _srcOffset,const sample_pos_t _srcLength,const sample_pos_t _toLength) :
 		src(_src),
 		srcOffset(_srcOffset),
-		srcLength(_srcLength),
+		srcLength(_srcLength>0 ? _srcLength-1 : _srcLength),
 		toLength(_toLength),
+		step(_srcLength/_toLength),
+
 		pos(0)
 	{
+		if(_srcLength==_toLength)
+		{
+			pos=srcOffset;
+			_getSample= &TSoundStretcher<src_type>::copy_GetSample;
+		}
+		else if((_srcLength%_toLength)==0)
+		{
+			pos=srcOffset;
+			_getSample= &TSoundStretcher<src_type>::step_GetSample;
+		}
+		else if(_srcLength<=1)
+			_getSample= &TSoundStretcher<src_type>::scale_GetSample;
+		else
+			_getSample= &TSoundStretcher<src_type>::linearInterpolate_GetSample;
 	}
 
-// ??? when I would copy 1 sample from a lower sample rate and paste into a higher this seemed to return bogus
+	const sample_t getSample() { return (this->*_getSample)(); }
 
-	const sample_t getSample()
-	{
-		// ??? temporary simple implementation
-		return(src[(sample_pos_t)(((sample_fpos_t)(pos++)*(sample_fpos_t)srcLength/(sample_fpos_t)toLength)+srcOffset)]);
-	}
 
 private:
 	const src_type src;
 	const sample_pos_t srcOffset;
-	const sample_pos_t srcLength;
-	const sample_pos_t toLength;
+	const sample_fpos_t srcLength;
+	const sample_fpos_t toLength;
+	const sample_pos_t step;
 
 	sample_pos_t pos;
+
+	const sample_t copy_GetSample()
+	{
+		return(src[pos++]);
+	}
+
+	const sample_t step_GetSample()
+	{
+		const sample_t s=src[pos];
+		pos+=step;
+		return(s);
+	}
+
+	const sample_t scale_GetSample()
+	{ // only used for border condition cases
+		return(src[(sample_pos_t)(((sample_fpos_t)(pos++)/toLength*(srcLength+1.0))+srcOffset)]);
+	}
+
+	const sample_t linearInterpolate_GetSample()
+	{
+		const sample_fpos_t fPos=((sample_fpos_t)(pos++))/toLength*srcLength;
+		const sample_pos_t iPos=(sample_pos_t)fPos;
+		const float p2=fPos-iPos;
+		const float p1=1.0-p2;
+		return((sample_t)(p1*src[srcOffset+iPos]+p2*src[srcOffset+iPos+1]));
+	}
+
+	typedef const sample_t (TSoundStretcher<src_type>::*getSample_t)();
+	getSample_t _getSample;
 
 };
 
