@@ -34,6 +34,9 @@
 #include "../backend/Effects/EffectActions.h"
 #include "../backend/Remaster/RemasterActions.h"
 
+#include "../backend/AAction.h"
+#include "../backend/ASoundClipboard.h"
+
 #include "../backend/CSoundPlayerChannel.h"
 
 #include "CEditToolbar.h"
@@ -107,8 +110,11 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_MOTION,			CMainWindow::ID_ACTIONCONTROL_TAB,		CMainWindow::onActionControlTabMouseMove),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FOLLOW_PLAY_POSITION_BUTTON,	CMainWindow::onFollowPlayPositionButton),
+
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CROSSFADE_EDGES_COMBOBOX,	CMainWindow::onCrossfadeEdgesComboBox),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CROSSFADE_EDGES_SETTINGS,	CMainWindow::onCrossfadeEdgesSettings),
+
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CLIPBOARD_COMBOBOX,		CMainWindow::onClipboardComboBox),
 };
 
 FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
@@ -163,6 +169,7 @@ CMainWindow::CMainWindow(FXApp* a) :
 				crossfadeEdgesComboBox->appendItem("Crossfade Outer Edges");
 				crossfadeEdgesComboBox->setCurrentItem(0);
 			new FXButton(t,"...\tChange Crossfade Times",NULL,this,ID_CROSSFADE_EDGES_SETTINGS, BUTTON_NORMAL & ~FRAME_THICK);
+		clipboardComboBox=new FXComboBox(miscControlsFrame,8,8, this,ID_CLIPBOARD_COMBOBOX, FRAME_SUNKEN|FRAME_THICK | COMBOBOX_NORMAL|COMBOBOX_STATIC);
 
 	/* ??? it is not necessary to have all these data members for all the buttons */
 
@@ -218,6 +225,17 @@ void CMainWindow::show()
 		crossfadeEdgesComboBox->setCurrentItem((FXint)gCrossfadeEdges);
 	else
 		crossfadeEdgesComboBox->setCurrentItem(0);
+
+
+	// populate combo box to select clipboard
+	for(size_t t=0;t<AAction::clipboards.size();t++)
+		clipboardComboBox->appendItem(AAction::clipboards[t]->getDescription().c_str());
+
+	if(gWhichClipboard>=AAction::clipboards.size())
+		gWhichClipboard=1;
+
+	clipboardComboBox->setCurrentItem(gWhichClipboard);
+
 }
 
 void CMainWindow::hide()
@@ -310,6 +328,14 @@ long CMainWindow::onCrossfadeEdgesSettings(FXObject *sender,FXSelector sel,void 
 	gCrossfadeEdgesDialog->showIt();
 	return 1;
 }
+
+
+long CMainWindow::onClipboardComboBox(FXObject *sender,FXSelector sel,void *ptr)
+{
+	gWhichClipboard=clipboardComboBox->getCurrentItem();
+	return 1;
+}
+
 
 // file action events
 long CMainWindow::onFileButton(FXObject *sender,FXSelector sel,void *ptr)

@@ -125,8 +125,12 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 
 		// -- 2
 						// ??? this base filename needs to be an application setting just as in CSound.cpp
-		AAction::clipboards.push_back(new CNativeSoundClipboard("Native Clipboard A","/tmp/rezound.clipboard.record"));
-		AAction::clipboards.push_back(new CRecordSoundClipboard("Record Clipboard","/tmp/rezound.clipboard1"));
+		AAction::clipboards.push_back(new CNativeSoundClipboard("Native Clipboard 1","/tmp/rezound.clipboard1"));
+		AAction::clipboards.push_back(new CNativeSoundClipboard("Native Clipboard 2","/tmp/rezound.clipboard2"));
+		AAction::clipboards.push_back(new CNativeSoundClipboard("Native Clipboard 3","/tmp/rezound.clipboard3"));
+		AAction::clipboards.push_back(new CRecordSoundClipboard("Record Clipboard 1","/tmp/rezound.record1"));
+		AAction::clipboards.push_back(new CRecordSoundClipboard("Record Clipboard 2","/tmp/rezound.record2"));
+		AAction::clipboards.push_back(new CRecordSoundClipboard("Record Clipboard 3","/tmp/rezound.record3"));
 
 			// make sure the global clipboard selector index is in range
 		if(gWhichClipboard>=AAction::clipboards.size())

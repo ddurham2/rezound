@@ -49,6 +49,8 @@ public:
 	long onCrossfadeEdgesComboBox(FXObject *sender,FXSelector sel,void *ptr);
 	long onCrossfadeEdgesSettings(FXObject *sender,FXSelector sel,void *ptr);
 
+	long onClipboardComboBox(FXObject *sender,FXSelector sel,void *ptr);
+
 	// file action events
 	long onFileButton(FXObject *sender,FXSelector sel,void *ptr);
 
@@ -125,6 +127,8 @@ public:
 		ID_CROSSFADE_EDGES_COMBOBOX,
 		ID_CROSSFADE_EDGES_SETTINGS,
 
+		ID_CLIPBOARD_COMBOBOX,
+
 		ID_LAST
 	};
 							  
@@ -142,6 +146,7 @@ private:
 	FXPacker		*miscControlsFrame;	// frame that contains the undo/redo buttons, follow-play-position checkbox, etc
 		FXCheckButton	*followPlayPositionButton;
 		FXComboBox	*crossfadeEdgesComboBox;
+		FXComboBox	*clipboardComboBox; // ??? it would however make sense to put this on the edit dialog.. it's just a little wide
 	FXTabBook   		*actionControlsFrame;	// frame that is the tab layout for the other actions
 		FXTabItem 	*fileTab;	
 			FXPacker *fileTabFrame;

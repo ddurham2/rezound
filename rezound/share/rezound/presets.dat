@@ -424,7 +424,18 @@ Change\ Amplitude\ According\ to\ a\ Curve
 
 	}
 
-	names[]={"Curved Fade In", "Curved Fade Out", "Linear Fade In", "Linear Fade Out","Mute Very Edges"};
+	Invert\ Phase
+	{
+		Gain\ Curve
+		{
+			node_positions[]={"0", "1"};
+			node_values[]={"0.5", "0.5"};
+			scalar="-2";
+		}
+
+	}
+
+	names[]={"Curved Fade In", "Curved Fade Out", "Linear Fade In", "Linear Fade Out","Mute Very Edges","Invert Phase"};
 }
 
 Crossfade\ Edges\ Settings
