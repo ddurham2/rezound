@@ -2,14 +2,7 @@
 --- THINGS TO DO FOR SURE ---
 
 	- images.h is causing a problem because 'make dist' deletes images.h but images.cpp goes with it and when someone does make, images.cpp isn't too old so images.h isn't recreated
-
-	- on jack's machine it complained that presets.dat was not found.. it should be detecting it in the build directory tho
-	- on jack's machine it complained that the registry.dat was not found.. it shouldn't have complained, but should have just touched the file before opening
-	- on jack's machine using CommonC++ 2.0 wouldn't compile
-
-	- resolved
-		- on jack's machine reswrap did not come with the libfox0-devel package (it comes with the fox package)
-		- on jack's machine using libfox0-1.0.11 wouldn't compile (best I can tell is that libfox0-1.0.11 is really messed up)
+		- I think this got fixed now
 
 	- perhaps a 'view' pull-down ... possible menu items...
 		- zoom controls.. increase/decrease zoom both vert and horz
@@ -226,4 +219,11 @@
 	- add file operation icons for all the file operations
 	
 	- improve the two icons, normal_action and advanced_action 12x12 should be a good size
+
+	- testing -
+		- on jack's machine reswrap did not come with the libfox0-devel package (it comes with the fox package)
+		- on jack's machine using libfox0-1.0.11 wouldn't compile (best I can tell is that libfox0-1.0.11 is really messed up)
+		- on jack's machine it complained that the registry.dat was not found.. it shouldn't have complained, but should have just touched the file before opening
+		- on jack's machine it complained that presets.dat was not found.. it should be detecting it in the build directory tho
+		- on jack's machine using CommonC++ 2.0 wouldn't compile (2.x is quite different and can coexist with a 1.x install sort of like libpng2 and 3 can)
 
