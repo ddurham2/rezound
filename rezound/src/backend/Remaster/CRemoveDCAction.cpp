@@ -64,7 +64,7 @@ bool CRemoveDCAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 			}
 			avgValue/=(double)count;
 
-			const mix_sample_t DCOffset=(mix_sample_t)round(avgValue);
+			const mix_sample_t DCOffset=(mix_sample_t)avgValue;
 
 			if(DCOffset==0)
 			{ // no effect
