@@ -1218,7 +1218,7 @@ const string findWorkDir(const string filename)
 			}
 
 			const int64_t fsSize= (int64_t)s.f_bsize * (int64_t)s.f_bfree;
-			const int64_t fileSize=CPath(filename).getSize();
+			const int64_t fileSize=CPath(filename).getSize(false);
 
 			if(fsSize<(fileSize+(fileSize/10)))
 			{
