@@ -119,10 +119,9 @@ void CSoundFileManager::updateAfterEdit()
 	CSoundWindow *activeSoundWindow=getActiveWindow();
 	if(activeSoundWindow)
 	{
-		activeSoundWindow->setTitle(activeSoundWindow->loadedSound->getFilename().c_str());
 		activeSoundWindow->updateFromEdit();
 		if(gFocusMethod==fmSoundWindowList)
-			gSoundListWindow->updateWindowName(activeSoundWindow);
+			gSoundListWindow->updateWindowName(activeSoundWindow); // incase the filename changed
 
 	}
 }
