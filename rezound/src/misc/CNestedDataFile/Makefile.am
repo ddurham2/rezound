@@ -43,7 +43,8 @@ CFG_Y=$(top_srcdir)/src/misc/CNestedDataFile/cfg.y
 cfg.tab.o: cfg.tab.cc
 	
 cfg.tab.cc: cfg.lex.c $(CFG_Y) CNestedDataFile.h
-	$(YACC) -p cfg_ -b cfg_ $(CFG_Y) -o cfg.tab.cc
+	$(YACC) -p cfg_ -b cfg $(CFG_Y)
+	mv cfg.tab.c cfg.tab.cc
 	
 cfg.lex.c: $(CFG_L) CNestedDataFile.h
 	$(LEX) -Pcfg_ -t $(CFG_L) > cfg.lex.c
