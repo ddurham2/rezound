@@ -29,7 +29,7 @@
 #include "AStatusComm.h"
 #include "AFrontendHooks.h"
 
-// one or the other of these two will ifdef itself in or out based on HAVE_LIBPORTAUDIO
+// one of ENABLE_OSS, or ENABLE_PORTAUDIO will be defined
 #include "CPortAudioSoundRecorder.h"
 #include "COSSSoundRecorder.h"
 
@@ -74,9 +74,10 @@ bool CRecordSoundClipboard::prepareForCopyTo()
 	clearWhichChannels();
 	delete workingFile;workingFile=NULL;
 
-#ifdef HAVE_LIBPORTAUDIO
+// ??? a better system would probably be to have a function or method in some class that returns an ASoundRecorder * so that I don't have to repeat this code also in ASoundFileManager.cpp
+#if defined(ENABLE_PORTAUDIO)
 	CPortAudioSoundRecorder recorder;
-#else
+#elif defined(ENABLE_OSS)
 	COSSSoundRecorder recorder;
 #endif
 	try

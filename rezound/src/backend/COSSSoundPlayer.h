@@ -23,7 +23,7 @@
 
 #include "../../config/common.h"
 
-#ifndef HAVE_LIBPORTAUDIO
+#ifdef ENABLE_OSS
 
 #include "ASoundPlayer.h"
 
@@ -69,6 +69,6 @@ private:
 	friend class CPlayThread;
 };
 
-#endif // HAVE_LIBPORTAUDIO
+#endif // ENABLE_OSS
 
 #endif

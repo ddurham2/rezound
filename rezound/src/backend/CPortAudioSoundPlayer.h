@@ -23,7 +23,7 @@
 
 #include "../../config/common.h"
 
-#ifdef HAVE_LIBPORTAUDIO
+#ifdef ENABLE_PORTAUDIO
 
 #include "ASoundPlayer.h"
 
@@ -52,6 +52,6 @@ private:
 
 };
 
-#endif // HAVE_LIBPORTAUDIO
+#endif // ENABLE_PORTAUDIO
 
 #endif

@@ -20,7 +20,7 @@
 
 #include "COSSSoundRecorder.h"
 
-#ifndef HAVE_LIBPORTAUDIO
+#ifdef ENABLE_OSS
 
 #include <errno.h>
 #include <string.h>
@@ -345,4 +345,4 @@ void COSSSoundRecorder::CRecordThread::main()
 	}
 }
 
-#endif // HAVE_LIBPORTAUDIO
+#endif // ENABLE_OSS

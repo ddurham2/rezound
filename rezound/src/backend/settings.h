@@ -64,14 +64,16 @@ extern int gDesiredOutputBufferCount;		// defaulted to 2
 extern unsigned gDesiredOutputBufferSize;	// defaulted to 2048 (in frames)
 
 
-#ifdef HAVE_LIBPORTAUDIO
+#if defined(ENABLE_PORTAUDIO)
 // the PortAudio devices to use
 extern int gPortAudioOutputDevice;		// defaulted to 0
 extern int gPortAudioInputDevice;		// defaulted to 0
-#else
+#elif defined(ENABLE_OSS)
 // the OSS devices to use (when not using libportaudio)
 extern string gOSSOutputDevice;			// defaulted to "/dev/dsp"
 extern string gOSSInputDevice;			// defaulted to "/dev/dsp"
+#else
+#error enable one of the audio I/O systems with the --enable-XXX flags to the configure script
 #endif 
 
 

@@ -61,10 +61,10 @@ int gDesiredOutputBufferCount=2;
 unsigned gDesiredOutputBufferSize=2048; // in frames (must be a power of 2)
 
 
-#ifdef HAVE_LIBPORTAUDIO
+#if defined(ENABLE_PORTAUDIO)
 int gPortAudioOutputDevice=0;
 int gPortAudioInputDevice=0;
-#else
+#elif defined(ENABLE_OSS)
 string gOSSOutputDevice="/dev/dsp";
 string gOSSInputDevice="/dev/dsp";
 #endif

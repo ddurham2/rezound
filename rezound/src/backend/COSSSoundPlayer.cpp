@@ -20,7 +20,7 @@
 
 #include "COSSSoundPlayer.h"
 
-#ifndef HAVE_LIBPORTAUDIO
+#ifdef ENABLE_OSS
 
 #include <errno.h>
 #include <string.h>
@@ -341,4 +341,4 @@ void COSSSoundPlayer::CPlayThread::main()
 	}
 }
 
-#endif // HAVE_LIBPORTAUDIO
+#endif // ENABLE_OSS

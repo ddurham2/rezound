@@ -20,7 +20,7 @@
 
 #include "CPortAudioSoundRecorder.h"
 
-#ifdef HAVE_LIBPORTAUDIO
+#ifdef ENABLE_PORTAUDIO
 
 #include <stdexcept>
 #include <typeinfo>
@@ -152,4 +152,4 @@ int CPortAudioSoundRecorder::PortAudioCallback(void *inputBuffer,void *outputBuf
 	return 0;
 }
 
-#endif // HAVE_LIBPORTAUDIO
+#endif // ENABLE_PORTAUDIO

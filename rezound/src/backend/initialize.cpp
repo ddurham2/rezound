@@ -36,7 +36,7 @@
 
 #define DOT string(CNestedDataFile::delimChar)
 
-// one or the other of these two will ifdef itself in or out based on HAVE_LIBPORTAUDIO
+// one of ENABLE_OSS, or ENABLE_PORTAUDIO will be defined
 #include "CPortAudioSoundPlayer.h"
 #include "COSSSoundPlayer.h"
 static ASoundPlayer *soundPlayer=NULL;
@@ -192,13 +192,13 @@ bool initializeBackend(ASoundPlayer *&_soundPlayer,int argc,char *argv[])
 			throw runtime_error(string(__func__)+" -- DesiredOutputBufferSize in "+registryFilename+" must be a power of 2 and >= than 256");
 
 
-#ifdef HAVE_LIBPORTAUDIO
+#if defined(ENABLE_PORTAUDIO)
 		if(gSettingsRegistry->keyExists("PortAudioOutputDevice"))
 			gPortAudioOutputDevice= atoi(gSettingsRegistry->getValue("PortAudioOutputDevice").c_str());
 
 		if(gSettingsRegistry->keyExists("PortAudioInputDevice"))
 			gPortAudioInputDevice= atoi(gSettingsRegistry->getValue("PortAudioInputDevice").c_str());
-#else
+#elif defined(ENABLE_OSS)
 		if(gSettingsRegistry->keyExists("OSSOutputDevice"))
 			gOSSOutputDevice= gSettingsRegistry->getValue("OSSOutputDevice");
 
@@ -274,9 +274,9 @@ bool initializeBackend(ASoundPlayer *&_soundPlayer,int argc,char *argv[])
 
 
 		// -- 3
-#ifdef HAVE_LIBPORTAUDIO
+#if defined(ENABLE_PORTAUDIO)
 		_soundPlayer=soundPlayer=new CPortAudioSoundPlayer();
-#else
+#elif defined(ENABLE_OSS)
 		_soundPlayer=soundPlayer=new COSSSoundPlayer();
 #endif
 
@@ -389,10 +389,10 @@ void deinitializeBackend()
 	gSettingsRegistry->createKey("DesiredOutputBufferSize",gDesiredOutputBufferSize);
 
 
-#ifdef HAVE_LIBPORTAUDIO
+#if defined(ENABLE_PORTAUDIO)
 	gSettingsRegistry->createKey("PortAudioOutputDevice",gPortAudioOutputDevice);
 	gSettingsRegistry->createKey("PortAudioInputDevice",gPortAudioInputDevice);
-#else
+#elif defined(ENABLE_OSS)
 	gSettingsRegistry->createKey("OSSOutputDevice",gOSSOutputDevice);
 	gSettingsRegistry->createKey("OSSInputDevice",gOSSInputDevice);
 #endif

@@ -23,7 +23,7 @@
 
 #include "../../config/common.h"
 
-#ifdef HAVE_LIBPORTAUDIO
+#ifdef ENABLE_PORTAUDIO
 
 #include "ASoundRecorder.h"
 
@@ -48,6 +48,6 @@ private:
 	static int PortAudioCallback(void *inputBuffer,void *outputBuffer,unsigned long framesPerBuffer,PaTimestamp outTime,void *userData);
 };
 
-#endif // HAVE_LIBPORTAUDIO
+#endif // ENABLE_PORTAUDIO
 
 #endif
