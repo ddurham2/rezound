@@ -31,7 +31,7 @@
 #endif
 
 #if REZ_FOX_VERSION<10110
-	#define getModality() modalModality
+	#define getModality modalModality
 #endif
 
 
