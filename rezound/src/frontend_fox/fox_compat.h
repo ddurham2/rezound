@@ -24,6 +24,7 @@
 	#define FXToolBarGrip FXToolbarGrip
 	#define horizontalScrollBar horizontalScrollbar
 	#define verticalScrollBar verticalScrollbar
+	#define getRootWindow getRoot
 #else
 	
 	#define FOX_RESTORE_WINDOW_POSITIONS
