@@ -524,7 +524,7 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant) 
 	// convert non-alnum to '\'non-alnum (and also don't make '_' into '\_')
 	for(size_t t=0;t<name.length();t++)
 	{
-		if(!isalnum(name[t]) && name[t]!='_')
+		if((!isalnum(name[t]) && name[t]!='_') || (t==0 && isdigit(name[t])))
 		{
 			name.insert(t,"\\");
 			t++;
