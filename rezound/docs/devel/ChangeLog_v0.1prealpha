@@ -70,7 +70,11 @@ That's really all I'll do for now. Still some stuff to do, but I think we're
 ready to release on my end. 
 ----------------------------------------------------
 Following are CVS Log entries
+
 $Log$
+Revision 1.3  2002/03/26 02:32:38  lergnom
+Wrote AUTHORS file. I looked at a few different packages and kind of copied the style of BASH's AUTHORS file.
+
 Revision 1.2  2002/03/22 20:57:43  lergnom
 Added some cvs keywords (see Keywords in index of cvs info pages) tracks revision and other stuff.
 

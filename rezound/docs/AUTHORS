@@ -1,0 +1,259 @@
+$Id$
+#
+# Master author manifest for ReZound
+# 
+# ReZound was originally designed and developed by David W. Durham.
+#
+# Package Development and Maintainence is led by David W. Durham.
+#
+# David W. Durham <ddurham@sourceforge.net>
+# Anthony J. Ventimiglia <lergnom@sourceforge.net>
+# 
+# Any files appearing in ReZound distribution not Listed in this file were 
+# created by David W. Durham, unless credited otherwise internally.
+# 
+# Small changes or add ons may be credited internally.
+# 
+# ReZound is free software; you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 2 of the License, or (at your option) any later
+# version.
+#
+#FileName		original author
+Makefile.am		Anthony Ventimiglia
+README			Anthony Ventimiglia, David W. Durham 
+bootstrap		Anthony Ventimiglia 
+configure.in		Anthony Ventimiglia 
+libtool.add		David W. Durham 
+libtool.patch		David W. Durham 
+
+config/acconfig.h	Anthony Ventimiglia  
+config/am_include.mk	Anthony Ventimiglia  
+config/common.h		Anthony Ventimiglia  
+
+config/m4/cxx-lib.m4	Anthony Ventimiglia  
+config/m4/cxx.m4	Anthony Ventimiglia  
+config/m4/sstream.m4	Anthony Ventimiglia  
+
+./docs:
+docs/AUTHORS			Anthony Ventimiglia  
+docs/COPYING			**Free Software Foundation**
+docs/CVS-INSTALL		Anthony Ventimiglia  
+docs/FrontendFoxFeatures.txt	David W. Durham 
+docs/INSTALL			*FSF*, Anthony Ventimiglia  
+docs/NEWS			
+docs/README_DOCS		Anthony Ventimiglia  
+docs/TODO_FOR_USERS_TO_READ	David W. Durham 
+
+docs/code/AudioIO		David W. Durham 
+docs/code/CVS			David W. Durham 
+docs/code/PlayPauseLEDs		David W. Durham 
+docs/code/SoundChannels		David W. Durham 
+docs/code/SoundFileFormats	David W. Durham 
+docs/code/TheActiveSoundWindow	David W. Durham 
+docs/code/WaveformRendering	David W. Durham 
+docs/code/actions		David W. Durham 
+
+docs/devel/AutoMake-guide		Anthony Ventimiglia  
+docs/devel/ChangeLog_autotools.txt	Anthony Ventimiglia  
+docs/devel/ChangeLog_v0.1prealpha	Anthony Ventimiglia  
+docs/devel/README_1st			Anthony Ventimiglia  	
+docs/devel/TODO				David W. Durham 
+docs/devel/TODO_autoconf		Anthony Ventimiglia, David W. Durham 
+docs/devel/TODO_release			Anthony Ventimiglia  
+
+src/Makefile.am		Anthony Ventimiglia  
+
+src/PoolFile/CMultiFile.cpp		David W. Durham 
+src/PoolFile/CMultiFile.h		David W. Durham 
+src/PoolFile/Makefile.am		Anthony Ventimiglia  
+src/PoolFile/TPoolAccesser.cpp		David W. Durham 
+src/PoolFile/TPoolAccesser.h		David W. Durham 
+src/PoolFile/TPoolFile.cpp		David W. Durham 
+src/PoolFile/TPoolFile.h		David W. Durham 
+src/PoolFile/TStaticPoolAccesser.cpp	David W. Durham 
+src/PoolFile/TStaticPoolAccesser.h	David W. Durham 
+
+./src/PoolFile/DiskTable:
+src/PoolFile/DiskTable/CStringDiskTable.h	David W. Durham 
+src/PoolFile/DiskTable/TDiskTable.h		David W. Durham 
+
+./src/backend:
+src/backend/AAction.cpp			David W. Durham 
+src/backend/AAction.h			David W. Durham 
+src/backend/ALFO.h			David W. Durham 
+src/backend/ASound.cpp			David W. Durham 
+src/backend/ASound.h			David W. Durham 
+src/backend/ASoundFileManager.cpp	David W. Durham 
+src/backend/ASoundFileManager.h		David W. Durham 
+src/backend/ASoundPlayer.cpp		David W. Durham 
+src/backend/ASoundPlayer.h		David W. Durham 
+src/backend/ASoundRecorder.cpp		David W. Durham 
+src/backend/ASoundRecorder.h		David W. Durham 
+src/backend/AStatusComm.cpp		David W. Durham 
+src/backend/AStatusComm.h		David W. Durham 
+src/backend/CEnvelope.cpp		David W. Durham 
+src/backend/CEnvelope.h			David W. Durham 
+src/backend/CGraphParamValueNode.cpp	David W. Durham 
+src/backend/CGraphParamValueNode.h	David W. Durham 
+src/backend/CLoadedSound.cpp		David W. Durham 
+src/backend/CLoadedSound.h		David W. Durham 
+src/backend/COSSSoundPlayer.cpp		David W. Durham 
+src/backend/COSSSoundPlayer.h		David W. Durham 
+src/backend/CSoundManager.cpp		David W. Durham 
+src/backend/CSoundManager.h		David W. Durham 
+src/backend/CSoundManagerClient.cpp	David W. Durham 
+src/backend/CSoundManagerClient.h	David W. Durham 
+src/backend/CSoundPlayerChannel.cpp	David W. Durham 
+src/backend/CSoundPlayerChannel.h	David W. Durham 
+src/backend/CTrigger.cpp		David W. Durham 
+src/backend/CTrigger.h			David W. Durham 
+src/backend/ClibaudiofileSound.cpp	David W. Durham 
+src/backend/ClibaudiofileSound.h	David W. Durham 
+src/backend/Cold_rezSound.cpp		David W. Durham 
+src/backend/Cold_rezSound.h		David W. Durham 
+src/backend/CrezSound.cpp		David W. Durham 
+src/backend/CrezSound.h			David W. Durham 
+src/backend/CrezSoundRecorder.cpp	David W. Durham 
+src/backend/CrezSoundRecorder.h		David W. Durham 
+src/backend/DSPBlocks.h			David W. Durham 
+src/backend/Makefile.am			Anthony Ventimiglia  
+src/backend/TODO			David W. Durham 
+src/backend/file.cpp			David W. Durham 
+src/backend/file.h			David W. Durham 
+src/backend/playcontrols.cpp		David W. Durham 
+src/backend/playcontrols.h		David W. Durham 
+src/backend/unit_conv.h			David W. Durham 
+		
+src/backend/Edits/CCopyCutDeleteEdit.cpp	David W. Durham 
+src/backend/Edits/CCopyCutDeleteEdit.h		David W. Durham 
+src/backend/Edits/CCropEdit.cpp			David W. Durham 
+src/backend/Edits/CCropEdit.h			David W. Durham	
+src/backend/Edits/CCueAction.cpp		David W. Durham 
+src/backend/Edits/CCueAction.h			David W. Durham 
+src/backend/Edits/CInsertSilenceEdit.cpp	David W. Durham 
+src/backend/Edits/CInsertSilenceEdit.h		David W. Durham 
+src/backend/Edits/CMuteEdit.cpp			David W. Durham 
+src/backend/Edits/CMuteEdit.h			David W. Durham 
+src/backend/Edits/CPasteEdit.cpp		David W. Durham 
+src/backend/Edits/CPasteEdit.h			David W. Durham 
+src/backend/Edits/CRotateEdit.cpp		David W. Durham 
+src/backend/Edits/CRotateEdit.h			David W. Durham 
+src/backend/Edits/CSelectionEdit.cpp		David W. Durham 
+src/backend/Edits/CSelectionEdit.h		David W. Durham 
+src/backend/Edits/EditActions.h			David W. Durham 
+src/backend/Edits/Makefile.am			Anthony Ventimiglia  
+
+src/backend/Effects/CChangeAmplitudeEffect.cpp	David W. Durham 
+src/backend/Effects/CChangeAmplitudeEffect.h	David W. Durham 
+src/backend/Effects/CChangeRateEffect.cpp	David W. Durham 
+src/backend/Effects/CChangeRateEffect.h		David W. Durham 
+src/backend/Effects/CDelayEffect.cpp		David W. Durham 
+src/backend/Effects/CDelayEffect.h              David W. Durham 
+src/backend/Effects/CFlangeEffect.cpp		David W. Durham 
+src/backend/Effects/CFlangeEffect.h		David W. Durham 
+src/backend/Effects/CReverseEffect.cpp		David W. Durham 	
+src/backend/Effects/CReverseEffect.h		David W. Durham 	
+src/backend/Effects/CStaticReverbEffect.cpp 	David W. Durham 
+src/backend/Effects/CStaticReverbEffect.h	David W. Durham 
+src/backend/Effects/CTestEffect.cpp		David W. Durham 
+src/backend/Effects/CTestEffect.h		David W. Durham 
+src/backend/Effects/EffectActions.h		David W. Durham 
+src/backend/Effects/Makefile.am			Anthony Ventimiglia  
+
+src/backend/Remaster/CNoiseGateAction.cpp	David W. Durham 
+src/backend/Remaster/CNoiseGateAction.h		David W. Durham 
+src/backend/Remaster/CRemoveDCAction.cpp	David W. Durham 
+src/backend/Remaster/CRemoveDCAction.h		David W. Durham 
+src/backend/Remaster/CUnclipAction.cpp		David W. Durham 
+src/backend/Remaster/CUnclipAction.h		David W. Durham 
+src/backend/Remaster/Makefile.am		Anthony Ventimiglia  
+src/backend/Remaster/RemasterActions.h		David W. Durham 
+
+src/frontend_fox/CActionButton.cpp 		David W. Durham 
+src/frontend_fox/CActionButton.h		David W. Durham 	
+src/frontend_fox/CChannelSelectDialog.cpp	David W. Durham 
+src/frontend_fox/CChannelSelectDialog.h		David W. Durham 
+src/frontend_fox/CConstantParamActionDialog.cpp	David W. Durham 
+src/frontend_fox/CConstantParamActionDialog.h	David W. Durham 
+src/frontend_fox/CCueDialog.cpp			David W. Durham 
+src/frontend_fox/CCueDialog.h			David W. Durham 	
+src/frontend_fox/CCueListDialog.cpp		David W. Durham 	
+src/frontend_fox/CCueListDialog.h		David W. Durham 
+src/frontend_fox/CEditToolbar.cpp		David W. Durham 
+src/frontend_fox/CEditToolbar.h			David W. Durham 
+src/frontend_fox/CGraphParamActionDialog.cpp	David W. Durham 
+src/frontend_fox/CGraphParamActionDialog.h	David W. Durham 
+src/frontend_fox/CMainWindow.cpp		David W. Durham 
+src/frontend_fox/CMainWindow.h			David W. Durham 
+src/frontend_fox/CNewSoundDialog.cpp		David W. Durham 
+src/frontend_fox/CNewSoundDialog.h		David W. Durham 
+src/frontend_fox/CPasteChannelsDialog.cpp	David W. Durham 
+src/frontend_fox/CPasteChannelsDialog.h		David W. Durham 
+src/frontend_fox/CProgressDialog.cpp		David W. Durham 
+src/frontend_fox/CProgressDialog.h		David W. Durham 
+src/frontend_fox/CSoundFileManager.cpp		David W. Durham 
+src/frontend_fox/CSoundFileManager.h		David W. Durham 
+src/frontend_fox/CSoundListWindow.cpp		David W. Durham 
+src/frontend_fox/CSoundListWindow.h		David W. Durham 
+src/frontend_fox/CSoundWindow.cpp		David W. Durham 
+src/frontend_fox/CSoundWindow.h			David W. Durham 
+src/frontend_fox/CStatusComm.cpp		David W. Durham 
+src/frontend_fox/CStatusComm.h			David W. Durham 
+src/frontend_fox/CUserNotesDialog.cpp		David W. Durham 
+src/frontend_fox/CUserNotesDialog.h		David W. Durham 
+src/frontend_fox/EditActionDialogs.cpp		David W. Durham 
+src/frontend_fox/EditActionDialogs.h		David W. Durham 
+src/frontend_fox/EffectActionDialogs.cpp	David W. Durham 
+src/frontend_fox/EffectActionDialogs.h		David W. Durham 
+src/frontend_fox/FXConstantParamValue.cpp	David W. Durham 
+src/frontend_fox/FXConstantParamValue.h		David W. Durham 
+src/frontend_fox/FXGraphParamValue.cpp		David W. Durham 
+src/frontend_fox/FXGraphParamValue.h		David W. Durham 
+src/frontend_fox/FXModalDialogBox.cpp		David W. Durham 
+src/frontend_fox/FXModalDialogBox.h		David W. Durham 
+src/frontend_fox/FXRezWaveView.cpp		David W. Durham 
+src/frontend_fox/FXRezWaveView.h		David W. Durham 
+src/frontend_fox/Makefile.am			Anthony Ventimiglia 
+src/frontend_fox/RemasterActionDialogs.cpp	David W. Durham 
+src/frontend_fox/RemasterActionDialogs.h	David W. Durham 
+src/frontend_fox/TODO				David W. Durham 
+src/frontend_fox/drawPortion.cpp		David W. Durham 
+src/frontend_fox/drawPortion.h			David W. Durham 
+src/frontend_fox/initialize.cpp			David W. Durham 
+src/frontend_fox/initialize.h			David W. Durham 
+src/frontend_fox/main.cpp			David W. Durham 
+src/frontend_fox/rememberShow.cpp		David W. Durham 
+src/frontend_fox/rememberShow.h			David W. Durham 
+src/frontend_fox/settings.cpp			David W. Durham 
+src/frontend_fox/settings.h			David W. Durham 
+	
+src/images/GreenCheck1.gif	David W. Durham 
+src/images/GreenLED1.gif	David W. Durham 
+src/images/GreenPlus1.gif	David W. Durham 
+src/images/OffLED1.gif		David W. Durham 
+src/images/RedLED1.gif		David W. Durham 
+src/images/RedMinus1.gif	David W. Durham 
+src/images/RedX1.gif		David W. Durham 
+src/images/YellowLED1.gif	David W. Durham 
+src/images/convert.sh		David W. Durham 
+src/images/images.cpp		David W. Durham 
+src/images/images.h		David W. Durham 
+
+src/misc/Makefile.am		Anthony Ventimiglia 
+src/misc/README			David W. Durham 
+src/misc/istring		David W. Durham 
+
+src/misc/CNestedDataFile/CNestedDataFile.cpp		David W. Durham 
+src/misc/CNestedDataFile/CNestedDataFile.h		David W. Durham 
+src/misc/CNestedDataFile/Makefile.am			Anthony Ventimiglia 
+src/misc/CNestedDataFile/cfg.l				David W. Durham 
+src/misc/CNestedDataFile/cfg.y				David W. Durham 
+src/misc/CNestedDataFile/test_CNestedDataFile.cpp	David W. Durham 
+
+src/misc/cc++/Makefile.am	Anthony Ventimiglia 
+src/misc/cc++/TAutoBuffer.h	David W. Durham 
+src/misc/cc++/path.cpp		David W. Durham 
+src/misc/cc++/path.h		David W. Durham 
+
+src/misc/missing/sstream-missing	Magnus Fromreide
