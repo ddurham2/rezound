@@ -27,8 +27,9 @@ class ASoundPlayer;
 
 #include <set>
 
-#ifdef HAVE_LIBRFFTW
 #include <vector>
+
+#ifdef HAVE_LIBRFFTW
 #include <map>
 #include <rfftw.h>
 #include <CMutex.h>

@@ -90,7 +90,6 @@ void ASoundPlayer::deinitialize()
 CSoundPlayerChannel *ASoundPlayer::newSoundPlayerChannel(CSound *sound)
 {
 	return(new CSoundPlayerChannel(this,sound));
-	frequencyAnalysisBufferPrepared=false;
 }
 
 void ASoundPlayer::addSoundPlayerChannel(CSoundPlayerChannel *soundPlayerChannel)
@@ -443,6 +442,10 @@ const size_t ASoundPlayer::getFrequency(size_t index) const
 
 const size_t ASoundPlayer::getFrequencyAnalysisOctaveStride() const
 {
+#ifdef HAVE_LIBRFFTW
 	return octaveStride;
+#else
+	return 1;
+#endif
 }
 
