@@ -111,6 +111,7 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 
 		MAKE_TEXT(t,"Alexandre Prokoudine",_("Russian Translation"));
 		MAKE_TEXT(t,"Joost Andrae",_("German Translation"));
+		MAKE_TEXT(t,"Guenter Geiger",_("Testing/Porting"));
 		MAKE_TEXT(t,"Richard Lovison",_("Bug Finding"));
 		MAKE_TEXT(t,"Veres Imre",_("Bug Finding"));
 		MAKE_TEXT(t,"Götz Waschk",_("Bug Finding"));
