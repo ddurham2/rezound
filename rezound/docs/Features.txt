@@ -1,13 +1,14 @@
 - File Formats:
 	- (soon support for libsndfile in place of libaudiofile)
 	- Native ReZound
-	- WAVE			(libaudiofile)
-	- AIFF/AIFF-C		(libaudiofile)
-	- NeXT/Sun 		(libaudiofile)
-	- Berkeley/IRCAM/CARL	(libaudiofile)
-	- raw			(libaudiofile)
-	- Ogg Vorbis		(libogg and libvorbis)
-	- MPEG Layer-3,2,1	(lame)
+	- WAVE				(libaudiofile)
+	- AIFF/AIFF-C			(libaudiofile)
+	- NeXT/Sun 			(libaudiofile)
+	- Berkeley/IRCAM/CARL		(libaudiofile)
+	- raw				(libaudiofile)
+	- Ogg Vorbis			(libogg and libvorbis)
+	- MPEG Layer-3,2,1		(lame)
+	- MIDI Sample Dump Standard	(/dev/midi)
 
 - Audio I/O Interfaces
 	- OSS (default)
