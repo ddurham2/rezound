@@ -60,6 +60,45 @@ static inline const sample_pos_t s_to_samples(const sample_fpos_t s,const unsign
 static inline const sample_fpos_t samples_to_ms(const sample_pos_t samples,const unsigned sampleRate) { return (sample_fpos_t)samples/(sample_fpos_t)sampleRate*1000.0; }
 static inline const sample_fpos_t samples_to_s(const sample_pos_t samples,const unsigned sampleRate) { return (sample_fpos_t)samples/(sample_fpos_t)sampleRate; }
 
+// sTime is in seconds
+static inline const string seconds_to_string(const sample_fpos_t sTime,int secondsDecimalPlaces=0,bool includeUnits=false)
+{
+	string time;
+
+	if(sTime>=3600)
+	{ // make it HH:MM:SS.sss
+		const int hours=(int)(sTime/3600);
+		const int mins=(int)((sTime-(hours*3600))/60);
+		const double secs=sTime-((hours*3600)+(mins*60));
+
+		time=istring(hours,2,true)+":"+istring(mins,2,true)+":"+istring(secs,(secondsDecimalPlaces>0 ? 3+secondsDecimalPlaces : 2),secondsDecimalPlaces,true);
+	}
+	else
+	{ // make it MM:SS.sss
+		int mins=(int)(sTime/60);
+		double secs=sTime-(mins*60);
+
+		/* 
+		 * if it's going to render (because of rounding in istring) as 3:60.000 
+		 * then make that 4:00.000 which would happen if the seconds had come out 
+		 * to 59.995 or more so that's (60 - .005) which is (60 - 5/(10^deciplaces))
+		 * (this probably needs to be done slimiarly in the HH:MM:SS.sss case too)
+		 */
+		if(secs >= 60.0-(5.0/pow(10.0,secondsDecimalPlaces)))
+		{
+			mins++;
+			secs=0;
+		}
+
+		time=istring(mins,2,true)+":"+istring(secs,(secondsDecimalPlaces>0 ? 3+secondsDecimalPlaces : 2),secondsDecimalPlaces,true);
+	}
+
+	if(includeUnits)
+		return(time+"s");
+	else
+		return(time);
+}
+
 
 // angles
 static inline const double degrees_to_radians(const double degrees) { return degrees*(2.0*M_PI)/360.0; }
