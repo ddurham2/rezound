@@ -755,7 +755,6 @@ void AAction::crossfadeEdges(CActionSound &actionSound)
 
 	if(crossfadeTime>0)
 	{
-		printf("crossfadeTime1: %d\n",crossfadeTime);
 		// we don't look at actionSound.whichChannels so that when we 
 		// make the sound slightly shorter, it keeps the channels in sync
 
@@ -813,7 +812,6 @@ void AAction::crossfadeEdges(CActionSound &actionSound)
 
 		if(crossfadeTime>0)
 		{
-		printf("crossfadeTime2: %d\n",crossfadeTime);
 			// move cues just as we did in the start case
 			for(size_t t=0;t<actionSound.sound->getCueCount();t++)
 			{
