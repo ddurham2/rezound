@@ -56,6 +56,15 @@ public:
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 	void *getUserData();
 
+	enum
+	{
+		ID_DEFAULT_BUTTON=FXModalDialogBox::ID_LAST,
+		ID_CLEAR_BUTTON,
+	};
+
+	long onDefaultButton(FXObject *sender,FXSelector sel,void *ptr);
+	long onClearButton(FXObject *sender,FXSelector sel,void *ptr);
+
 protected:
 	CPasteChannelsDialog() {}
 
@@ -71,7 +80,6 @@ private:
 			FXCheckButton *checkBoxes[MAX_CHANNELS][MAX_CHANNELS];
 
 	vector<vector<bool> > pasteChannels;
-
 };
 
 #endif

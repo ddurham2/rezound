@@ -36,8 +36,9 @@ CPasteChannelsDialog *gPasteChannelsDialog=NULL;
 
 FXDEFMAP(CPasteChannelsDialog) CPasteChannelsDialogMap[]=
 {
-//	Message_Type			ID					Message_Handler
-	//FXMAPFUNC(SEL_COMMAND,		CPasteChannelsDialog::ID_OKAY_BUTTON,	CPasteChannelsDialog::onOkayButton),
+//	Message_Type			ID						Message_Handler
+	FXMAPFUNC(SEL_COMMAND,		CPasteChannelsDialog::ID_DEFAULT_BUTTON,	CPasteChannelsDialog::onDefaultButton),
+	FXMAPFUNC(SEL_COMMAND,		CPasteChannelsDialog::ID_CLEAR_BUTTON,		CPasteChannelsDialog::onClearButton),
 };
 		
 
@@ -55,6 +56,10 @@ CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
 {
 	getFrame()->setVSpacing(1);
 	getFrame()->setHSpacing(1);
+
+	FXPacker *buttonPacker=new FXHorizontalFrame(getFrame(),LAYOUT_BOTTOM|LAYOUT_FILL_X);
+		new FXButton(buttonPacker,"Default",NULL,this,ID_DEFAULT_BUTTON,BUTTON_NORMAL);
+		new FXButton(buttonPacker,"Clear",NULL,this,ID_CLEAR_BUTTON,BUTTON_NORMAL);
 
 	new FXLabel(contents,"");
 	sourceLabel=new FXLabel(contents,"Source",NULL,LAYOUT_CENTER_X);
@@ -77,8 +82,10 @@ CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
 	}
 }
 
-bool CPasteChannelsDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
+bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *actionParameters)
 {
+	actionSound=_actionSound; // save for use in the reset and default handler buttons
+
 	const ASoundClipboard *clipboard=AAction::clipboards[gWhichClipboard];
 	if(clipboard->isEmpty())
 		return(false);
@@ -164,4 +171,24 @@ void *CPasteChannelsDialog::getUserData()
 	return(&pasteChannels);
 }
 
+
+long CPasteChannelsDialog::onDefaultButton(FXObject *sender,FXSelector sel,void *ptr)
+{
+	for(unsigned y=0;y<MAX_CHANNELS;y++)
+	for(unsigned x=0;x<MAX_CHANNELS;x++)
+		checkBoxes[y][x]->setCheck(FALSE);
+
+	for(unsigned y=0;y<actionSound->sound->getChannelCount();y++)
+		checkBoxes[y][y]->setCheck(TRUE);
+
+	return 1;
+}
+
+long CPasteChannelsDialog::onClearButton(FXObject *sender,FXSelector sel,void *ptr)
+{
+	for(unsigned y=0;y<MAX_CHANNELS;y++)
+	for(unsigned x=0;x<MAX_CHANNELS;x++)
+		checkBoxes[y][x]->setCheck(FALSE);
+	return 1;
+}
 
