@@ -164,7 +164,7 @@ void CCompressorAction::undoActionSizeSafe(const CActionSound &actionSound)
 // --------------------------------------------------
 //
 CCompressorActionFactory::CCompressorActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Compressor","Compressor",false,channelSelectDialog,normalDialog,NULL)
+	AActionFactory("Dynamic Range Compressor","Dynamic Range Compressor",false,channelSelectDialog,normalDialog,NULL)
 {
 }
 

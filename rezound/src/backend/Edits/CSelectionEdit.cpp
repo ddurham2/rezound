@@ -24,6 +24,17 @@
 
 #include <istring>
 
+static const char *gSelectionNames[]=
+{
+	"Select All",
+	"Select to Beginning",
+	"Select to End",
+	"Flip to Beginning",
+	"Flip to End",
+	"Move Stop to Start Position",
+	"Move Start to Stop Position"
+};
+
 static const char *gSelectionDescriptions[]=
 {
 	"Select All",
@@ -140,8 +151,7 @@ void CSelectionEdit::undoActionSizeSafe(const CActionSound &actionSound)
 // -----------------------------------
 
 CSelectionEditFactory::CSelectionEditFactory(Selections _selection) :
-		// ??? set this name from the _selection parameter
-	AActionFactory("Selection Change",gSelectionDescriptions[_selection],false,NULL,NULL,NULL,false,false),
+	AActionFactory(gSelectionNames[_selection],gSelectionDescriptions[_selection],false,NULL,NULL,NULL,false,false),
 
 	selection(_selection)
 {

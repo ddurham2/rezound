@@ -130,7 +130,7 @@ void CDelayEffect::undoActionSizeSafe(const CActionSound &actionSound)
 // ??? else it will be a "Tapped Delay"
 
 CSimpleDelayEffectFactory::CSimpleDelayEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Simple Delay","Simple Delay Effect",false,channelSelectDialog,normalDialog,NULL)
+	AActionFactory("Simple Delay (Echo)","Simple Delay Effect",false,channelSelectDialog,normalDialog,NULL)
 {
 }
 

@@ -37,7 +37,7 @@ enum Selections
 	sSelectToSelectStart=5,		// move the start position forward to the stop position
 	sSelectToSelectStop=6,		// move the stop position backward to the start position
 
-		// !!! If I add more... change gSelectionDescriptions in CSelectionEdit.cpp !!!
+		// !!! If I add more... change gSelectionNames AND gSelectionDescriptions in CSelectionEdit.cpp !!!
 };
 
 

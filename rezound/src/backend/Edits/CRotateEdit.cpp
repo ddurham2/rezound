@@ -70,7 +70,7 @@ void CRotateEdit::rotate(const CActionSound &actionSound,const RotateTypes rotat
 
 
 CRotateLeftEditFactory::CRotateLeftEditFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Rotate Left","Rotate Left",false,channelSelectDialog,normalDialog,NULL)
+	AActionFactory("<< Rotate Left","Rotate Left",false,channelSelectDialog,normalDialog,NULL)
 {
 }
 
@@ -82,7 +82,7 @@ CRotateEdit *CRotateLeftEditFactory::manufactureAction(const CActionSound &actio
 
 
 CRotateRightEditFactory::CRotateRightEditFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Rotate Right","Rotate Right",false,channelSelectDialog,normalDialog,NULL)
+	AActionFactory(">> Rotate Right","Rotate Right",false,channelSelectDialog,normalDialog,NULL)
 {
 }
 
