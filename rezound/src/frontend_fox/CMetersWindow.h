@@ -44,12 +44,15 @@ public:
 	{
 		ID_UPDATE_CHORE=FXTopWindow::ID_LAST,
 		ID_UPDATE_TIMEOUT,
+		ID_LABEL_FRAME,
 
 		ID_LAST
 	};
 
 	long onUpdateMeters(FXObject *sender,FXSelector,void*);
 	long onUpdateMetersSetChore(FXObject *sender,FXSelector,void*);
+
+	long onLabelFrameConfigure(FXObject *sender,FXSelector,void*);
 	
 protected:
 	CMetersWindow() {}
@@ -57,6 +60,7 @@ protected:
 private:
 	FXFont *statusFont;
 	FXPacker *metersFrame;
+		FXPacker *labelFrame;
 
 	vector<CMeter *> meters;
 
