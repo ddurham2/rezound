@@ -28,6 +28,7 @@
 #include "../backend/CActionParameters.h"
 #include "../backend/AAction.h"
 #include "CFOXIcons.h"
+#include "CMainWindow.h" // for CMainWindow::actionMenuCommandTriggered()
 
 FXDEFMAP(CActionMenuCommand) CActionMenuCommandMap[]=
 {
@@ -63,6 +64,21 @@ CActionMenuCommand::CActionMenuCommand(AActionFactory *_actionFactory,FXComposit
 	prevEvent.click_button=0;
 }
 
+CActionMenuCommand::CActionMenuCommand(FXComposite *p,const CActionMenuCommand &src) :
+	FXMenuCommand(
+		p,
+		src.actionFactory->getName().c_str(),
+		src.getIcon(),
+		this,
+		src.getSelector(),
+		src.getLayoutHints() /* I can't get the original options from src */
+		),
+	actionFactory(src.actionFactory),
+	tip(src.tip),
+	prevEvent(src.prevEvent)
+{
+}
+
 CActionMenuCommand::~CActionMenuCommand()
 {
 }
@@ -84,6 +100,8 @@ long CActionMenuCommand::onCommand(FXObject *sender,FXSelector sel,void *ptr)
 	CLoadedSound *activeSound=gSoundFileManager->getActive();
 	if(activeSound)
 	{
+		gSoundFileManager->getMainWindow()->actionMenuCommandTriggered(this);
+
 			// ??? let action parameters contain actionSound and the two bool parameters
 			// they should have some flag which says that they would not be streamed to disk (if that were ever something I do with action parameters)
 		CActionParameters actionParameters(gSoundFileManager);

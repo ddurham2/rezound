@@ -594,6 +594,77 @@ public:
 	vector<FXMenuCommand *> items;
 };
 
+/*
+   This is the class for the recent action submenu.  It intercepts calls to FXMenuPane::popup ()
+   so it can create the menu items which can change between each popup.
+*/
+class CRecentActionsPopup : public FXMenuPane
+{
+public:
+	CRecentActionsPopup(FXWindow *owner) :
+		FXMenuPane(owner)
+	{
+		mainWindow=(CMainWindow *)owner;
+	}
+
+	virtual ~CRecentActionsPopup()
+	{
+	}
+
+	virtual void popup(FXWindow* grabto, FXint x, FXint y, FXint w=0, FXint h=0)
+	{
+		// clear from previous popup 
+		// I can't do this on popdown because the event won't have happened yet needing the menu item's text for the filename)
+		for(size_t t=0;t<items.size();t++)
+			delete items[t];
+		items.clear();
+
+		// create menu items
+		const vector<CActionMenuCommand *> &recentActions=mainWindow->recentActions;
+		if(recentActions.size()<=0)
+			return;
+		for(size_t t=0;t<recentActions.size();t++)
+		{
+			CActionMenuCommand *item=new CActionMenuCommand(this,*recentActions[t]);
+			item->create();
+			items.push_back(item);
+		}
+
+		FXMenuPane::popup(grabto,x,y,w,h);
+	}
+
+	vector<CActionMenuCommand *> items;
+	CMainWindow *mainWindow;
+};
+
+void CMainWindow::actionMenuCommandTriggered(CActionMenuCommand *actionMenuCommand)
+{
+	/*
+	if(actionMenuCommand->getParent()==recentActionsMenu)
+	{ // this actionMenuCommand came from the recentActions menu
+		//only move the item to the top
+
+
+		return; // avoid adding ourself back to the menu
+	}
+	*/
+
+	for(vector<CActionMenuCommand *>::iterator i=recentActions.begin();i!=recentActions.end();i++)
+	{
+		if((*i)->getText()==actionMenuCommand->getText())
+		{
+			CActionMenuCommand *t=*i;
+			recentActions.erase(i);
+			recentActions.insert(recentActions.begin(),t);
+			return;
+		}
+	}
+
+	if(recentActions.size()>=10)
+		recentActions.erase(--recentActions.end());
+	recentActions.insert(recentActions.begin(),actionMenuCommand);
+}
+
 #include "CChannelSelectDialog.h"
 #include "CPasteChannelsDialog.h"
 
@@ -699,12 +770,14 @@ void CMainWindow::createMenus()
 
 		// ??? in CActionMenuItem I should be able to do something intelligent to 
 		// have it figure out (based on past entries it its parent) what letter in
-		// the name should have a & in front
+		// the name should have an & in front
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&Edit",NULL,menu);
 		new FXMenuCommand(menu,"Undo\tCtrl+Z",FOXIcons->edit_undo,this,ID_UNDO_EDIT);
 		new FXMenuCommand(menu,"Clear Undo History",NULL,this,ID_CLEAR_UNDO_HISTORY);
+		recentActionsMenu=new CRecentActionsPopup(this);
+		new FXMenuCascade(menu,"&Recent Actions",NULL,recentActionsMenu);
 
 		// ??? perhaps I could avoid hard coding all of this by having a list of registered action factories which define the menu path, and hot keys are user definable anyway.. but then the frontend would have to be more abstracted or done more the way that Frontend Hooks are done
 		// a few things to think about:  the order of the registered list (when each action specifies it's menu path) and the visual menu separators as well as how the frontend code gets bound to the right backend code

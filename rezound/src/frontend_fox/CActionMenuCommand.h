@@ -45,6 +45,8 @@ class CActionMenuCommand : public FXMenuCommand
 	FXDECLARE(CActionMenuCommand)
 public:
 	CActionMenuCommand(AActionFactory *_actionFactory,FXComposite* p, const FXString& accelKeyText, FXIcon* ic=NULL, FXuint opts=0);
+	CActionMenuCommand(FXComposite *p,const CActionMenuCommand &src);
+
 	virtual ~CActionMenuCommand();
 
 	long onMouseClick(FXObject *sender,FXSelector sel,void *ptr);

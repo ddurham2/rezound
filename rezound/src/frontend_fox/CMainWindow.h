@@ -25,12 +25,14 @@
 #include "fox_compat.h"
 
 #include <map>
+#include <vector>
 #include <string>
 
 #include <fox/fx.h>
 
 class CSoundWindow;
 class CMetersWindow;
+class CActionMenuCommand;
 
 class CMainWindow : public FXMainWindow
 {
@@ -96,6 +98,8 @@ public:
 		ID_REVERT_FILE,
 
 		ID_EDIT_USERNOTES,
+
+		ID_RECENT_ACTION,
 
 		ID_SHOW_ABOUT,
 
@@ -166,6 +170,8 @@ public:
 
 	CMetersWindow *getMetersWindow() { return metersWindow; }
 
+	void actionMenuCommandTriggered(CActionMenuCommand *actionMenuCommand);
+
 protected:
 
 	CMainWindow() {}
@@ -196,6 +202,11 @@ private:
 
 	FXMenuCommand *toggleLevelMetersMenuItem;
 	FXMenuCommand *toggleFrequencyAnalyzerMenuItem;
+
+	FXMenuPane *recentActionsMenu;
+
+	friend class CRecentActionsPopup;
+	vector<CActionMenuCommand *> recentActions;
 
 };
 
