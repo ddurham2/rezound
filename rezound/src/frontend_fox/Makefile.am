@@ -73,7 +73,7 @@ ReZound_SOURCES= main.cpp
 ## separate directory
 ReZound_LDADD= libfrontend.la\
 	$(top_builddir)/src/misc/cc++/libmiscCC.la \
-	$(top_builddir)/src/misc/CNewSoundDialog/libmiscCN.la \
+	$(top_builddir)/src/misc/CNestedDataFile/libmiscCN.la \
 	$(top_builddir)/src/PoolFile/libPoolFile.la \
 	$(top_builddir)/src/backend/Edits/libEdits.la \
 	$(top_builddir)/src/backend/Effects/libEffects.la \

@@ -33,4 +33,6 @@ and move it into config
     since they are actually generated
 
 
+    
     --provide substitute functions for strerror, strdup and strtol (These may be missing for some platforms)  Check GNU libiberty (ftp://sourceware.cygnus.com/pub/binutils/) or libit(http://www.iro.umontreal.ca/~pinard/libit/) for fallback functions.
+    --also make sure tests for above are working properly. I suspect mine are broken.
