@@ -41,10 +41,18 @@ private:
 };
 
 
-class CChangeAmplitudeEffectFactory : public AActionFactory
+class CChangeVolumeEffectFactory : public AActionFactory
 {
 public:
-	CChangeAmplitudeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog,AActionDialog *advancedDialog);
+	CChangeVolumeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+
+	CChangeAmplitudeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+};
+
+class CGainEffectFactory : public AActionFactory
+{
+public:
+	CGainEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog,AActionDialog *advancedDialog);
 
 	CChangeAmplitudeEffect *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

@@ -29,16 +29,22 @@
 
 // --- volume ----------------------------
 
-class CNormalAmplitudeChangeDialog : public CActionParamDialog
+class CNormalVolumeChangeDialog : public CActionParamDialog
 {
 public:
-	CNormalAmplitudeChangeDialog(FXWindow *mainWindow);
+	CNormalVolumeChangeDialog(FXWindow *mainWindow);
 };
 
-class CAdvancedAmplitudeChangeDialog : public CActionParamDialog
+class CNormalGainDialog : public CActionParamDialog
 {
 public:
-	CAdvancedAmplitudeChangeDialog(FXWindow *mainWindow);
+	CNormalGainDialog(FXWindow *mainWindow);
+};
+
+class CAdvancedGainDialog : public CActionParamDialog
+{
+public:
+	CAdvancedGainDialog(FXWindow *mainWindow);
 };
 
 

@@ -365,7 +365,8 @@ void CMainWindow::createMenus()
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"Effec&ts",NULL,menu);
 		new CActionMenuCommand(new CReverseEffectFactory(gChannelSelectDialog),menu,"");
-		new CActionMenuCommand(new CChangeAmplitudeEffectFactory(gChannelSelectDialog,new CNormalAmplitudeChangeDialog(this),new CAdvancedAmplitudeChangeDialog(this)),menu,"");
+		new CActionMenuCommand(new CChangeVolumeEffectFactory(gChannelSelectDialog,new CNormalVolumeChangeDialog(this)),menu,"");
+		new CActionMenuCommand(new CGainEffectFactory(gChannelSelectDialog,new CNormalGainDialog(this),new CAdvancedGainDialog(this)),menu,"");
 		new CActionMenuCommand(new CChangeRateEffectFactory(gChannelSelectDialog,new CNormalRateChangeDialog(this),new CAdvancedRateChangeDialog(this)),menu,"");
 		new CActionMenuCommand(new CFlangeEffectFactory(gChannelSelectDialog,new CFlangeDialog(this)),menu,"");
 		new CActionMenuCommand(new CSimpleDelayEffectFactory(gChannelSelectDialog,new CSimpleDelayDialog(this)),menu,"");

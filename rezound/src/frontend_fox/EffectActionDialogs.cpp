@@ -35,19 +35,30 @@ static const double uninterpretValue_amp(const double x,const int scalar)
 	return(otherRange_to_unitRange_linear(x,-scalar,scalar));
 }
 
-static const double interpretValue_gain_amp(const double x,const int s) { return(x*s); }
-static const double uninterpretValue_gain_amp(const double x,const int s) { return(x/s); }
-
-CNormalAmplitudeChangeDialog::CNormalAmplitudeChangeDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Change Amplitude",180,400)
+CNormalVolumeChangeDialog::CNormalVolumeChangeDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Change Volume",180,400)
 {
 	addSlider("Volume Change","dB",interpretValue_amp,uninterpretValue_amp,dB_to_scalar,3.0,1,50,3,true);
 }
 
-CAdvancedAmplitudeChangeDialog::CAdvancedAmplitudeChangeDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Change Amplitude According to a Curve",600,400)
+
+
+static const double interpretValue_gain(const double x,const int s) { return(unitRange_to_bipolarRange_exp(x,s)); }
+static const double uninterpretValue_gain(const double x,const int s) { return(bipolarRange_to_unitRange_exp(x,s)); }
+
+static const double interpretValue_gain_curve(const double x,const int s) { return(x*s); }
+static const double uninterpretValue_gain_curve(const double x,const int s) { return(x/s); }
+
+CNormalGainDialog::CNormalGainDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Change Gain",180,400)
 {
-	addGraph("Gain Curve","x",interpretValue_gain_amp,uninterpretValue_gain_amp,NULL,-10,10,2);
+	addSlider("Gain","x",interpretValue_gain,uninterpretValue_gain,NULL,2.0,2,50,2,true);
+}
+
+CAdvancedGainDialog::CAdvancedGainDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Change Gain According to a Curve",600,400)
+{
+	addGraph("Gain Curve","x",interpretValue_gain_curve,uninterpretValue_gain_curve,NULL,-10,10,2);
 }
 
 

@@ -111,12 +111,28 @@ void CChangeAmplitudeEffect::undoActionSizeSafe(const CActionSound &actionSound)
 
 // ---------------------------------------------
 
-CChangeAmplitudeEffectFactory::CChangeAmplitudeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog,AActionDialog *advancedDialog) :
-	AActionFactory("Change Amplitude","Change Amplitude",true,channelSelectDialog,normalDialog,advancedDialog)
+CChangeVolumeEffectFactory::CChangeVolumeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
+	AActionFactory("Change Volume","Change Volume",false,channelSelectDialog,normalDialog,NULL)
 {
 }
 
-CChangeAmplitudeEffect *CChangeAmplitudeEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+CChangeAmplitudeEffect *CChangeVolumeEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+{
+	if(actionParameters->getGraphParameter(0).size()<2)
+		throw(runtime_error(string(__func__)+" -- graph parameter 0 contains less than 2 nodes"));
+
+	return(new CChangeAmplitudeEffect(actionSound,actionParameters->getGraphParameter(0)));
+}
+
+
+// ---------------------------------------------
+
+CGainEffectFactory::CGainEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog,AActionDialog *advancedDialog) :
+	AActionFactory("Gain","Gain",true,channelSelectDialog,normalDialog,advancedDialog)
+{
+}
+
+CChangeAmplitudeEffect *CGainEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	if(actionParameters->getGraphParameter(0).size()<2)
 		throw(runtime_error(string(__func__)+" -- graph parameter 0 contains less than 2 nodes"));
