@@ -22,11 +22,6 @@
 	- let there be a parameter which says in milliseconds how long the blend takes
 	- if not every action, at least paste for editing
 
-- have seek buttons that move the play pointer, start and stop positions to the markers set within the audio...
-	- the play position seek should:
-		- on forward, go to the nearest marker forward
-		- on backward go to the nearest marker backward if the play position is more than .25 secs from it.. or 2 markers back if more
-
 - need to use a different sound file library which can also retrieve and store arbitrary data sections in the formats that support it (namely .wav).. So I can store and load cues
 
 - need to make a type parameter in the "new sound" dialog... Allow the user to choose amoung wave, rezound, etc types
@@ -172,6 +167,9 @@
 	- if pool file is 64bit and just that stable, I could load all sounds into a single pool file each with they're different pools and some how have that as an advantage for being able to move data from one pool to another instantaneously
 		- but that may not be much of an advantage
 
+	- I could determine the most recent cue passed while playing at the beginning of each time I go to mix some sound... and set just an integer index in the ASoundPlayerChannel object for the frontend to read and display the current playing cue name in a status bar
+		- I'm not implementing this right away because I don't know how useful it would be... But there were lots of off screen cues, it could be useful to have an idea of where the sound was playing 
+
 	- for multi-track editing, I could create a derivation of ASound that wraps around a given ASound that returns peak data according to the volume envelopes
 		- I would need to address how real-time effects get inserted into the play queue, perhaps ASoundPlayer could support that or CSoundPlayerChannel could contain the logic to mixData onto the buffer...
 			- then different playback rates and formats could be handled by just having an initial convertion to the native format that ASoundPlayer was created with
@@ -316,4 +314,9 @@
 
 - make sure you can't open the same file twice
 	- what about hardlinks?
+
+- have seek buttons that move the play pointer, start and stop positions to the markers set within the audio...
+	- the play position seek should:
+		- on forward, go to the nearest marker forward
+		- on backward go to the nearest marker backward if the play position is more than .25 secs from it.. or 2 markers back if more
 

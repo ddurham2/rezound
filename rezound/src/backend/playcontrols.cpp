@@ -186,3 +186,101 @@ void jumpToStartPosition(ASoundFileManager *soundFileManager)
 	}
 }
 
+void jumpToPreviousCue(ASoundFileManager *soundFileManager)
+{
+	try
+	{
+		CLoadedSound *loaded=soundFileManager->getActive();
+		if(loaded!=NULL && loaded->channel->isPlaying())
+		{
+			CSoundPlayerChannel *channel=loaded->channel;
+
+			// find the previous cue relative to the current play position
+			const sample_pos_t playPosition=channel->getPosition();
+			ASound *sound=loaded->getSound();
+		
+			sample_pos_t smallestDistance=MAX_LENGTH;
+			size_t previousCueIndex=0; // zero means not found yet, and we always store the index+1 when we do find one
+
+			// For each cue whose time is in front of the current play position, find the nearest one.
+			// But since the play position is always advancing, I also ignore cues that aren't more than
+			// 0.4 of a second from the play position so that a user can click faster than 0.4 of a second
+			// to go back, back, back on the cues.
+			const size_t cueCount=sound->getCueCount();
+			for(size_t t=0;t<cueCount;t++)
+			{
+				const sample_pos_t cueTime=sound->getCueTime(t);
+				if(cueTime<playPosition)
+				{
+					const sample_pos_t distance=playPosition-cueTime;
+					const sample_fpos_t distanceInTime=((sample_fpos_t)distance)/(sample_fpos_t)sound->getSampleRate();
+					if(previousCueIndex==0 || (distance<smallestDistance && distanceInTime>0.4))
+					{
+						smallestDistance=distanceInTime>0.4 ? distance : smallestDistance;
+						previousCueIndex=t+1;
+					}
+				}
+			}
+
+			if(previousCueIndex!=0)
+			{
+				previousCueIndex--;
+				channel->setPosition(sound->getCueTime(previousCueIndex));
+			}
+			else
+				gStatusComm->beep();
+		}
+	}
+	catch(exception &e)
+	{
+		Error(e.what());
+	}
+}
+
+void jumpToNextCue(ASoundFileManager *soundFileManager)
+{
+	try
+	{
+		CLoadedSound *loaded=soundFileManager->getActive();
+		if(loaded!=NULL && loaded->channel->isPlaying())
+		{
+			CSoundPlayerChannel *channel=loaded->channel;
+
+			// find the previous cue relative to the current play position
+			const sample_pos_t playPosition=channel->getPosition();
+			ASound *sound=loaded->getSound();
+		
+			sample_pos_t smallestDistance=MAX_LENGTH;
+			size_t nextCueIndex=0; // zero means not found yet, and we always store the index+1 when we do find one
+
+			// For each cue whose time is beyond of the current play position, find the nearest one.
+			const size_t cueCount=sound->getCueCount();
+			for(size_t t=0;t<cueCount;t++)
+			{
+				const sample_pos_t cueTime=sound->getCueTime(t);
+				if(cueTime>playPosition)
+				{
+					const sample_pos_t distance=cueTime-playPosition;
+					if(nextCueIndex==0 || distance<smallestDistance)
+					{
+						smallestDistance=distance;
+						nextCueIndex=t+1;
+					}
+				}
+			}
+
+			if(nextCueIndex!=0)
+			{
+				nextCueIndex--;
+				channel->setPosition(sound->getCueTime(nextCueIndex));
+			}
+			else
+				gStatusComm->beep();
+		}
+	}
+	catch(exception &e)
+	{
+		Error(e.what());
+	}
+}
+

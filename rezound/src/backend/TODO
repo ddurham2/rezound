@@ -1,5 +1,9 @@
 - I really need to do something different in TPoolFile::isExclusiveLocked and also TPoolFile::getSharedLockCount because right now, the isExclusiveLocked returns true if it's shared locked obviously because the tryLock fails so it assumes wrongly that there's an exclusive lock obtained
 
+- warn the user if he's saving an exported file format and information such as cues and user notes will not be exported (for now)
+
+- rename MAX_CHANNELS and MAX_LENGTH in ASound.h to something a little more ReZound specific like REZ_MAX_CHANNELS REZ_MAX_LENGTH
+
 - also, it may be benefitial to have a flag for each cue which says wether that cue is achored or not meaning it would move as the space changes within the sound or not
 	- these would probably be a different color and/or symbol
 

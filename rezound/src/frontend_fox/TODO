@@ -1,8 +1,6 @@
 
 - if the sound is playing and a certain button is pressed (or key also bound to that button) I should place a marker with a given name "cue #" where the number is an integer being kept up with
 
-- add seek buttons that move the play position forward to the next cue or backwards to the prior cue
-
 - in order to create multiple taps for an echo effect... I could have the dialog have tabs and each tap could be tap.. there would be buttons outside the tab bar to insert, remove, move left/right the tabs to rearrange the taps
 
 - the 'active' sound window is not staying raised and I don't know why (when focus method is fmActiveButton)
@@ -84,3 +82,6 @@
 - allow the user to make notes and store them within a pool... use a pool of chars
 
 - in the documentation mention that the right mouse button often does things... whether clicking a button or dragging a scroll bar
+
+- add seek buttons that move the play position forward to the next cue or backwards to the prior cue
+

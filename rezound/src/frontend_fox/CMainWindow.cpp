@@ -87,6 +87,9 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_BEGINNING_BUTTON,	CMainWindow::onPlayControlButton),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_START_POSITION_BUTTON,	CMainWindow::onPlayControlButton),
 
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_NEXT_CUE_BUTTON,	CMainWindow::onPlayControlButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_PREV_CUE_BUTTON,	CMainWindow::onPlayControlButton),
+
 	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	CMainWindow::ID_SHUTTLE_DIAL,			CMainWindow::onShuttleReturn),
 	FXMAPFUNC(SEL_CHANGED,			CMainWindow::ID_SHUTTLE_DIAL,			CMainWindow::onShuttleChange),
 
@@ -143,7 +146,10 @@ CMainWindow::CMainWindow(FXApp* a) :
 		new FXButton(playControlsFrame,"||<<\tJump to Beginning",NULL,this,ID_JUMP_TO_BEGINNING_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32+32,32+32,16);
 		new FXButton(playControlsFrame,"|<<\tJump to Start Position",NULL,this,ID_JUMP_TO_START_POSITION_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32+32,32+32,16);
 
-		shuttleDial=new FXDial(playControlsFrame,this,ID_SHUTTLE_DIAL,DIAL_HORIZONTAL|DIAL_HAS_NOTCH|LAYOUT_EXPLICIT, 0,32+32+16,32+32+32+32,20);
+		new FXButton(playControlsFrame,"Q<<\tJump to Previous Cue",NULL,this,ID_JUMP_TO_PREV_CUE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32+32+16,32+32,16);
+		new FXButton(playControlsFrame,">>Q\tJump to Next Cue",NULL,this,ID_JUMP_TO_NEXT_CUE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32+32+16,32+32,16);
+
+		shuttleDial=new FXDial(playControlsFrame,this,ID_SHUTTLE_DIAL,DIAL_HORIZONTAL|DIAL_HAS_NOTCH|LAYOUT_EXPLICIT, 0,32+32+16+16,32+32+32+32,20);
 		shuttleDial->setRange(-((shuttleDial->getWidth())/2),(shuttleDial->getWidth())/2);
 		shuttleDial->setRevolutionIncrement(shuttleDial->getWidth()*2-1);
 		shuttleDial->setTipText("Shuttle Seek While Playing\n(Hint: try the mouse wheel as well as dragging)");
@@ -356,42 +362,42 @@ long CMainWindow::onPlayControlButton(FXObject *sender,FXSelector sel,void *ptr)
 	{
 	case ID_PLAY_ALL_ONCE_BUTTON:
 		play(gSoundFileManager,false,false);
-		//printf("play all once\n");
 		break;
 
 	case ID_PLAY_ALL_LOOPED_BUTTON:
 		play(gSoundFileManager,true,false);
-		//printf("play all looped\n");
 		break;
 
 	case ID_PLAY_SELECTION_ONCE_BUTTON:
 		play(gSoundFileManager,false,true);
-		//printf("play selection once\n");
 		break;
 
 	case ID_PLAY_SELECTION_LOOPED_BUTTON:
 		play(gSoundFileManager,true,true);
-		//printf("play selection looped\n");
 		break;
 
 	case ID_STOP_BUTTON:
 		stop(gSoundFileManager);
-		//printf("stop\n");
 		break;
 
 	case ID_PAUSE_BUTTON:
 		pause(gSoundFileManager);
-		//printf("pause\n");
 		break;
 
 	case ID_JUMP_TO_BEGINNING_BUTTON:
 		jumpToBeginning(gSoundFileManager);
-		//printf("jump to beginning\n");
 		break;
 
 	case ID_JUMP_TO_START_POSITION_BUTTON:
 		jumpToStartPosition(gSoundFileManager);
-		//printf("jump to start position\n");
+		break;
+
+	case ID_JUMP_TO_PREV_CUE_BUTTON:
+		jumpToPreviousCue(gSoundFileManager);
+		break;
+
+	case ID_JUMP_TO_NEXT_CUE_BUTTON:
+		jumpToNextCue(gSoundFileManager);
 		break;
 
 	default:

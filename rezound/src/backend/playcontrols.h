@@ -44,4 +44,7 @@ void selectSeekForward(ASoundFileManager *soundFileManager,int distance=DEFAULT_
 void jumpToBeginning(ASoundFileManager *soundFileManager);
 void jumpToStartPosition(ASoundFileManager *soundFileManager);
 
+void jumpToPreviousCue(ASoundFileManager *soundFileManager);
+void jumpToNextCue(ASoundFileManager *soundFileManager);
+
 #endif
