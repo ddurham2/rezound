@@ -69,6 +69,7 @@ public:
 
 	void parseFile(const string filename,bool clearExisting=true);
 	void setFilename(const string filename);
+	const string getFilename() const { return filename; }
 
 private:
 
