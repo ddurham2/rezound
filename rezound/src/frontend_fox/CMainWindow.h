@@ -203,6 +203,7 @@ private:
 	FXFont *soundListHeaderFont;
 
 	FXDial *shuttleDial;
+	FXLabel *shuttleLabel;
 	FXToggleButton *shuttleDialSpringButton;
 	FXButton *shuttleDialScaleButton;
 
