@@ -5,9 +5,8 @@
 		- I haven't seen it since, but with the limit label I should know when it is at least going to happen
 
 	- Other commercial audio editors do this, and now I think I know why...
-		- When loading a sound it doesn't start zoomed out to see the whole thing.. 
+		XXX - When loading a sound it doesn't start zoomed out to see the whole thing.. 
 		- if I had a thread always running in the background low priority, I could be calculating peak chunk information while the user isn't looking
-		- Also, I would only want to not start zoomed out depending on the file size and the average computer speed
 
 	- inquire to jeroen if FXLabel could become an FXComposite so that the label would go beside, above, below, etc, whatever any child objects there were
 
