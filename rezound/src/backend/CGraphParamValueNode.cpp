@@ -28,14 +28,14 @@
 
 CGraphParamValueNode::CGraphParamValueNode()
 {
-	position=value=0.0;
+	x=y=0.0;
 	userData=NULL;
 }
 
-CGraphParamValueNode::CGraphParamValueNode(double _position,double _value,void *_userData)
+CGraphParamValueNode::CGraphParamValueNode(double _x,double _y,void *_userData)
 {
-	position=_position;
-	value=_value;
+	x=_x;
+	y=_y;
 	userData=_userData;
 }
 
@@ -46,15 +46,15 @@ CGraphParamValueNode::CGraphParamValueNode(const CGraphParamValueNode &src)
 
 CGraphParamValueNode &CGraphParamValueNode::operator=(const CGraphParamValueNode &rhs)
 {
-	position=rhs.position;
-	value=rhs.value;
+	x=rhs.x;
+	y=rhs.y;
 	userData=rhs.userData;
 	return(*this);
 }
 
 
 
-// - Simply creates a list of two nodes, (position: 0.0, value: v) and (position: 1.0, value: v)
+// - Simply creates a list of two nodes, (x: 0.0, y: v) and (x: 1.0, y: v)
 //
 // - Useful if a simple, single value input dialog needs to create an input parameter for 
 //   an action which accepts a CGraphParamValueNodeList as that input paramter.  Hence the
@@ -87,8 +87,8 @@ void interpretGraphNodes(const CGraphParamValueNodeList &nodes,const unsigned i,
 	//   there's nothing left to do by returning segmentLength as 0
 	if(i>=totalLength)
 	{ 
-		segmentStartValue=startNode.value;
-		segmentStopValue=stopNode.value;
+		segmentStartValue=startNode.y;
+		segmentStopValue=stopNode.y;
 
 		segmentStartPosition=1;
 		segmentStopPosition=0;
@@ -98,20 +98,20 @@ void interpretGraphNodes(const CGraphParamValueNodeList &nodes,const unsigned i,
 	}
 
 	/*
-	if(startNode.position==stopNode.position)
+	if(startNode.x==stopNode.x)
 	{
-		segmentStartPosition=segmentStopPosition=(sample_pos_t)ceil(startNode.position*(totalLength-1));
+		segmentStartPosition=segmentStopPosition=(sample_pos_t)ceil(startNode.x*(totalLength-1));
 		segmentLength=0;
 	}
-	else if(startNode.position>stopNode.position)
-		throw(runtime_error(string(__func__)+" -- invalid node list -- node "+istring(i)+"'s position is greater than node "+istring(i+1)+"'s"));
+	else if(startNode.x>stopNode.x)
+		throw(runtime_error(string(__func__)+" -- invalid node list -- node "+istring(i)+"'s x is greater than node "+istring(i+1)+"'s"));
 	*/
 
-	segmentStartValue=startNode.value;
-	segmentStopValue=stopNode.value;
+	segmentStartValue=startNode.y;
+	segmentStopValue=stopNode.y;
 
-	segmentStartPosition=(sample_pos_t)floor(startNode.position*(totalLength));
-	segmentStopPosition=(sample_pos_t)floor(stopNode.position*(totalLength))-1;
+	segmentStartPosition=(sample_pos_t)floor(startNode.x*(totalLength));
+	segmentStopPosition=(sample_pos_t)floor(stopNode.x*(totalLength))-1;
 	segmentLength=(segmentStopPosition-segmentStartPosition+1);
 }
 

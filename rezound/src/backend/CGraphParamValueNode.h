@@ -31,13 +31,13 @@
 class CGraphParamValueNode
 {
 public:
-	double position;
-	double value; // ??? could be float -- need to change to typedef probably
+	double x;
+	double y; // ??? could be float -- need to change to typedef probably
 
 	void *userData; // for use in the front-end code for the graphical representation of this node
 
 	CGraphParamValueNode();
-	CGraphParamValueNode(double _position,double _value,void *_userData=NULL);
+	CGraphParamValueNode(double _x,double _y,void *_userData=NULL);
 	CGraphParamValueNode(const CGraphParamValueNode &src);
 
 	CGraphParamValueNode &operator=(const CGraphParamValueNode &rhs);
@@ -48,7 +48,7 @@ typedef vector<CGraphParamValueNode> CGraphParamValueNodeList;
 
 
 
-// - Simply creates a list of two nodes, (position: 0.0, value: v) and (position: 1.0, value: v)
+// - Simply creates a list of two nodes, (x: 0.0, y: v) and (x: 1.0, y: v)
 //
 // - Useful if a simple, single value input dialog needs to create an input parameter for 
 //   an action which accepts a CGraphParamValueNodeList as that input paramter.  Hence the

@@ -46,8 +46,8 @@ CChangeRateEffect::CChangeRateEffect(const CActionSound &actionSound,const CGrap
 	// truncate <0.01 to 0.01
 	for(unsigned t=0;t<rateCurve.size();t++)
 	{
-		if(rateCurve[t].value<0.01)
-			rateCurve[t].value=0.01;
+		if(rateCurve[t].y<0.01)
+			rateCurve[t].y=0.01;
 	}
 }
 
@@ -88,14 +88,14 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 				const CGraphParamValueNode &rateNode1=rateCurve[x];
 				const CGraphParamValueNode &rateNode2=rateCurve[x+1];
 
-				const sample_fpos_t readStart=(rateNode1.position*oldLength);
-				const sample_fpos_t readStop=(rateNode2.position*oldLength);
+				const sample_fpos_t readStart=(rateNode1.x*oldLength);
+				const sample_fpos_t readStop=(rateNode2.x*oldLength);
 
 				if(readStart==readStop)
 					continue; // vertical rate change
 
-				const double s1=rateNode1.value;
-				const double s2=rateNode2.value;
+				const double s1=rateNode1.y;
+				const double s2=rateNode2.y;
 
 				const sample_fpos_t m=(s2-s1)/(readStop-readStart);
 
@@ -183,10 +183,10 @@ bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 
 sample_fpos_t CChangeRateEffect::getWriteLength(sample_pos_t oldLength,const CGraphParamValueNode &rateNode1,const CGraphParamValueNode &rateNode2) const
 {
-	double s1=rateNode1.value;
-	double s2=rateNode2.value;
-	sample_fpos_t readStart=rateNode1.position*oldLength;
-	sample_fpos_t readStop=rateNode2.position*oldLength;
+	double s1=rateNode1.y;
+	double s2=rateNode2.y;
+	sample_fpos_t readStart=rateNode1.x*oldLength;
+	sample_fpos_t readStop=rateNode2.x*oldLength;
 	if(readStart==readStop) // vertical rate change
 		return(0.0);
 

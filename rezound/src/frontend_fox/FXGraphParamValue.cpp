@@ -60,9 +60,6 @@
  *         - blit only the sections between the nodes involving the change
  *         	I think I do now ???
  *
- *      - Maybe make the variable naming more consistant instead of having: position, value, x, y, vert, horz, etc
- *      	- rename CGraphParamValueNode's data members to x and y instead of position and value
- *
  */
 
 
@@ -587,8 +584,8 @@ int FXGraphParamValue::insertIntoNodes(const CGraphParamValueNode &node)
 	// sanity checks
 	if(nodes.size()<2)
 		throw(runtime_error(string(__func__)+" -- nodes doesn't already contain at least 2 items"));
-	if(node.position<0.0 || node.position>1.0)
-		throw(runtime_error(string(__func__)+" -- node's position is out of range: "+istring(node.position)));
+	if(node.x<0.0 || node.x>1.0)
+		throw(runtime_error(string(__func__)+" -- node's x is out of range: "+istring(node.x)));
 
 	int insertedIndex=-1;
 
@@ -598,7 +595,7 @@ int FXGraphParamValue::insertIntoNodes(const CGraphParamValueNode &node)
 	for(size_t t1=1;t1<nodes.size();t1++)
 	{
 		CGraphParamValueNode &temp=nodes[t1];
-		if(temp.position>=node.position)
+		if(temp.x>=node.x)
 		{
 			nodes.insert(nodes.begin()+t1,node);
 			insertedIndex=t1;
@@ -653,8 +650,8 @@ long FXGraphParamValue::onDragNode(FXObject *sender,FXSelector sel,void *ptr)
 		CGraphParamValueNode node=nodes[draggingNode];
 
 		// calculate the new positions
-		node.position=	lockX ? node.position : screenToNodeHorzValue(ev->win_x-dragOffsetX);
-		node.value=	lockY ? node.value : screenToNodeVertValue(ev->win_y-dragOffsetY);
+		node.x=	lockX ? node.x : screenToNodeHorzValue(ev->win_x-dragOffsetX);
+		node.y=	lockY ? node.y : screenToNodeVertValue(ev->win_y-dragOffsetY);
 
 		// update the node within the vector
 		if(draggingNode!=0 && draggingNode!=(int)nodes.size()-1)
@@ -732,12 +729,12 @@ double FXGraphParamValue::screenToNodeVertValue(int y)
 
 int FXGraphParamValue::nodeToScreenX(const CGraphParamValueNode &node)
 {
-	return((int)(node.position*(graphPanel->getWidth()-1)));
+	return((int)(node.x*(graphPanel->getWidth()-1)));
 }
 
 int FXGraphParamValue::nodeToScreenY(const CGraphParamValueNode &node)
 {
-	return((int)((1.0-node.value)*(getGraphPanelHeight())));
+	return((int)((1.0-node.y)*(getGraphPanelHeight())));
 }
 
 void FXGraphParamValue::updateNumbers()
@@ -749,9 +746,9 @@ void FXGraphParamValue::updateNumbers()
 const CGraphParamValueNodeList &FXGraphParamValue::getNodes() const
 {
 	retNodes=nodes;
-	// adjust the value by the given function
+	// adjust the y by the given function
 	for(size_t t=0;t<retNodes.size();t++)
-		retNodes[t].value=vertInterpretValue(nodes[t].value,getScalar());
+		retNodes[t].y=vertInterpretValue(nodes[t].y,getScalar());
 
 	return(retNodes);
 }
@@ -778,8 +775,8 @@ void FXGraphParamValue::updateStatus()
 	const CGraphParamValueNode &n=nodes[draggingNode];
 
 	// draw status
-	horzValueLabel->setText((horzAxisLabel+": "+getHorzValueString(n.position)+horzUnits).c_str());
-	vertValueLabel->setText((vertAxisLabel+": "+getVertValueString(n.value)+vertUnits).c_str());
+	horzValueLabel->setText((horzAxisLabel+": "+getHorzValueString(n.x)+horzUnits).c_str());
+	vertValueLabel->setText((vertAxisLabel+": "+getVertValueString(n.y)+vertUnits).c_str());
 }
 
 void FXGraphParamValue::clearStatus()
@@ -841,7 +838,7 @@ void FXGraphParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 	{
 		const string k2=key+"node_values";
 		const size_t count=f->getArraySize(k1.c_str());
-		// ??? I could either save the node positions and values as [0,1], or I could use save the actual values ( <-- currently)
+		// ??? I could either save the node x and values as [0,1], or I could use save the actual values ( <-- currently)
 		for(size_t t=0;t<count;t++)
 			nodes.push_back(CGraphParamValueNode(atof(f->getArrayValue(k1.c_str(),t).c_str()),atof(f->getArrayValue(k2.c_str(),t).c_str())));
 	}
@@ -867,12 +864,12 @@ void FXGraphParamValue::writeToFile(const string &prefix,CNestedDataFile *f) con
 		// ??? I could implement a createArrayKey which takes a double so I wouldn't have to convert to string here
 	f->removeKey(k1.c_str());
 	for(size_t t=0;t<nodes.size();t++)
-		f->createArrayKey(k1.c_str(),t,istring(nodes[t].position).c_str());
+		f->createArrayKey(k1.c_str(),t,istring(nodes[t].x).c_str());
 
 	const string k2=key+"node_values";
 	f->removeKey(k2.c_str());
 	for(size_t t=0;t<nodes.size();t++)
-		f->createArrayKey(k2.c_str(),t,istring(nodes[t].value).c_str());
+		f->createArrayKey(k2.c_str(),t,istring(nodes[t].y).c_str());
 
 	if(getMinScalar()!=getMaxScalar())
 		f->createKey((key+"scalar").c_str(),istring(getScalar()));

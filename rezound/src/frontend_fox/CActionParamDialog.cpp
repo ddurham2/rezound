@@ -458,7 +458,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 					if(retValueConvs[t]!=NULL)
 					{
 						for(size_t i=0;i<nodes.size();i++)
-							nodes[i].value=retValueConvs[t](nodes[i].value);
+							nodes[i].y=retValueConvs[t](nodes[i].y);
 					}
 
 					actionParameters->addGraphParameter(graph->getTitle(),nodes);
