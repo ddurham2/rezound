@@ -1,9 +1,6 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- I need to make some predefiner buttons on the dialogs of any graph param of common curves, and in flange and delay dialogs
-		- have some predines that come with rezound and a way for the user to save them
-
 	- the 'active' sound window is not staying raised and I don't know why (when focus method is fmActiveButton)
 
 	- set any "stay on top" flags that need to be for dialogs 
@@ -124,4 +121,7 @@
 	- in the documentation mention that the right mouse button often does things... whether clicking a button or dragging a scroll bar
 
 	- add seek buttons that move the play position forward to the next cue or backwards to the prior cue
+
+	- I need to make some predefiner buttons on the dialogs of any graph param of common curves, and in flange and delay dialogs
+		- have some predines that come with rezound and a way for the user to save them
 
