@@ -366,8 +366,6 @@ const vector<string> ASoundFileManager::loadFilesInRegistry()
 		try
 		{
 			filename=loadedRegistryFile->getArrayValue(LOADED_REG_KEY,t);
-			dprintf("--- reopening file: %s\n",filename.c_str());
-
 			if(Question("Load sound from previous session?\n   "+filename,yesnoQues)==yesAns)
 			{
 						// ??? readOnly (really needs to be whatever the last value was, when it was originally loaded)
