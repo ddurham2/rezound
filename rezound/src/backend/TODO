@@ -48,8 +48,12 @@ or sample values to follow
 	- There is an issue with falling back to OSS for recording.  In ASoundFileManager and CRecordClipboard there are #ifdef checks for ENABLE_JACK which are used to know the sample rate of the recorder since I need to know the sample rate before I created the sound and I need to create the sound before I initialize the recorder.
 		- Probably what I need to do is have a method in CJACKSoundRecorder which will do its best to determine the sample rate and return it.. ENABLE_JACK is enabled if this method succeeds then I use the returned value, otherwise prompt for the sample rate
 
+	- Do some testing with copy/cut/delete to/from files with different sample rates and a selection size of 1 to make sure flooring errors don't cause problems
+
 
 --- POSSIBLE THINGS TO DO ---
+
+	- The ASoundClipboard::temporarilyShortenLength() method could be removed (and it's a significant implemenation) if CSound::mixSound() had a srcLength parameter telling it how much of the src to regard instead of my having to use the method of the clipboard in fit mix paste when there is a non-integer repeat count
 
 	- add a "antialias" check button to the gain or volume change effects
 		- this would just make it add random noise to the sound when making the sound louder
