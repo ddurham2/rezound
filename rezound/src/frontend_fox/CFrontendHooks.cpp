@@ -143,6 +143,7 @@ const string CFrontendHooks::getFOXFileTypes() const
 
 bool CFrontendHooks::promptForOpenSoundFilename(string &filename,bool &readOnly)
 {
+	openDialog->setFilename("");
 	if(openDialog->getDirectory()!=gPromptDialogDirectory.c_str())
 		openDialog->setDirectory(gPromptDialogDirectory.c_str());
 	openDialog->setSelectMode(SELECTFILE_EXISTING);
@@ -161,6 +162,7 @@ bool CFrontendHooks::promptForOpenSoundFilename(string &filename,bool &readOnly)
 
 bool CFrontendHooks::promptForOpenSoundFilenames(vector<string> &filenames,bool &readOnly)
 {
+	openDialog->setFilename("");
 	if(openDialog->getDirectory()!=gPromptDialogDirectory.c_str())
 		openDialog->setDirectory(gPromptDialogDirectory.c_str());
 	openDialog->setSelectMode(SELECTFILE_MULTIPLE);
