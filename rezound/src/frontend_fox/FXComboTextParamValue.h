@@ -65,6 +65,9 @@ public:
 	void setTipText(const FXString &text);
 	FXString getTipText() const;
 
+	void enable();
+	void disable();
+
 	void readFromFile(const string &prefix,CNestedDataFile *f);
 	void writeToFile(const string &prefix,CNestedDataFile *f);
 

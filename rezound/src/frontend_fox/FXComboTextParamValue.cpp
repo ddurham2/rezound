@@ -154,6 +154,18 @@ FXString FXComboTextParamValue::getTipText() const
 	return titleLabel->getTipText();
 }
 
+void FXComboTextParamValue::enable()
+{
+	titleLabel->enable();
+	valueComboBox->enable();
+}
+
+void FXComboTextParamValue::disable()
+{
+	titleLabel->disable();
+	valueComboBox->disable();
+}
+
 void FXComboTextParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
 	const string key=prefix DOT getName() DOT "index";
