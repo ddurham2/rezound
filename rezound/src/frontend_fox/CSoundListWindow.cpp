@@ -137,9 +137,9 @@ void CSoundListWindow::updateWindowName(CSoundWindow *window)
 
 void CSoundListWindow::hideOrShow()
 {
-	if(soundList->getNumItems()>1)
+	if(soundList->getNumItems()>1 && !shown())
 		show();
-	else if(shown())
+	else if(soundList->getNumItems()<=0 && shown())
 		hide();
 }
 
