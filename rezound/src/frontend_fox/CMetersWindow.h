@@ -29,6 +29,7 @@
 #include <fox/fx.h>
 
 class CMeter;
+class CAnalyzer;
 class ASoundPlayer;
 
 class CMetersWindow : public FXHorizontalFrame
@@ -68,16 +69,13 @@ private:
 			FXPacker *labelFrame;
 			FXLabel *grandMaxPeakLevelLabel;
 
-	FXPacker *analyzerFrame;
-		FXCanvas *analysisCanvas;
+	CAnalyzer *analyzer;
 
 	vector<CMeter *> meters;
 
 	ASoundPlayer *soundPlayer;
 
 	FXTimer *timeout;
-
-	void renderFrequencyAnalysis();
 };
 
 

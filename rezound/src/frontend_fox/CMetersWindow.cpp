@@ -31,6 +31,13 @@
 
 #include "settings.h"
 
+/*
+??? I need to make this more general so I can use it for recording or playback
+I need to make the analyzer a separate widget
+and for both the meter and the analyzer I need to push the information to it rather than have it pull from ASoundPlayer
+so that the meter and analyzer widgets are not tied to using ASoundPlayer
+*/
+
 
 // color definitions
 #define M_BACKGROUND (FXRGB(0,0,0))
@@ -49,6 +56,7 @@
 #define MIN_METERS_WINDOW_HEIGHT 75
 
 
+// --- CMeter ----------------------------------------------------------------
 
 class CMeter : public FXHorizontalFrame
 {
@@ -280,7 +288,162 @@ FXIMPLEMENT(CMeter,FXHorizontalFrame,CMeterMap,ARRAYNUMBER(CMeterMap))
 
 
 
-// ----------------------------------------------------------
+// --- CAnalyzer -------------------------------------------------------------
+
+class CAnalyzer : public FXPacker
+{
+	FXDECLARE(CAnalyzer);
+public:
+	CAnalyzer::CAnalyzer(FXComposite *parent) :
+		FXPacker(parent,LAYOUT_FIX_WIDTH|LAYOUT_RIGHT|LAYOUT_FILL_Y|FRAME_SUNKEN|FRAME_THICK,0,0,0,0, 0,0,0,0, 0,0),
+		canvas(new FXCanvas(this,this,ID_CANVAS,LAYOUT_FILL_X|LAYOUT_FILL_Y)),
+
+		statusFont(getApp()->getNormalFont())
+	{
+		setBackColor(M_BACKGROUND);
+
+		// create the font to use for numbers
+		FXFontDesc d;
+		statusFont->getFontDesc(d);
+		d.size=60;
+		d.weight=FONTWEIGHT_NORMAL;
+		statusFont=new FXFont(getApp(),d);
+	}
+
+	CAnalyzer::~CAnalyzer()
+	{
+		delete statusFont;
+	}
+
+	long CAnalyzer::onCanvasPaint(FXObject *sender,FXSelector sel,void *ptr)
+	{
+		FXDCWindow dc(canvas);
+		dc.begin(canvas);  // ??? ask J if it's better to do this or if it's not necessary
+
+		dc.setForeground(M_BACKGROUND);
+		dc.fillRectangle(0,0,canvas->getWidth(),canvas->getHeight());
+
+		// the w and h that we're going to render to (minus some borders and tick marks)
+		const size_t canvasWidth=canvas->getWidth()-6; // 2 pixel border on left and right plus tick marks on the left
+		const size_t canvasHeight=canvas->getHeight()-4; // 2 pixel border on top and bottom
+		
+		const size_t barWidth=max((size_t)2,(size_t)canvasWidth/analysis.size());
+
+
+		// draw vertical octave separator lines
+		dc.setForeground(M_METER_OFF);
+		if(octaveStride>0)
+		{
+			for(size_t x=4;x<canvasWidth;x+=(barWidth*octaveStride))
+				dc.drawLine(x,2,x,canvasHeight+2);
+		}
+
+		// ??? also probably want some dB labels 
+		// draw 5 horz lines up the panel
+		dc.setForeground(M_TEXT_COLOR);
+		for(size_t t=0;t<4;t++)
+		{
+			size_t y=2+((((canvasHeight+2-1)-2)*t)/(4-1));
+			dc.drawLine(4,y,canvasWidth+4,y);
+		}
+			
+
+		// draw frequency analysis bars  (or render text if fftw wasn't installed)
+		dc.setForeground(M_GREEN);
+		if(analysis.size()>0)
+		{
+			size_t x=4;
+			for(size_t t=0;t<analysis.size();t++)
+			{
+				const size_t barHeight=(size_t)floor(analysis[t]*canvasHeight);
+				dc.fillRectangle(x+1,canvasHeight-barHeight+2,barWidth-1,barHeight);
+				x+=barWidth;
+			}
+		}
+		else
+		{
+			dc.drawText(3,3+12,"Configure with FFTW",19);
+			dc.drawText(3,20+12,"for Freq. Analysis",18);
+		}
+
+		dc.end();
+		return 1;
+	}
+
+	void setAnalysis(const vector<float> &_analysis,size_t _octaveStride)
+	{
+		analysis=_analysis;
+		octaveStride=_octaveStride;
+
+		// resize the analyzer frame if needed
+		FXint desiredWidth;
+		if(analysis.size()>0)
+			desiredWidth=(analysis.size()*5)+2/*on left*/+2/*on right*/+2/*for ticks*/+4/*for sunken frame*/;
+		else
+			desiredWidth=150;  // big enough to render a message about installing fftw
+
+		if(getWidth()!=desiredWidth)
+			setWidth(desiredWidth);
+
+
+/*
+		// start decreasing the max peak level after maxPeakFallTimer falls below zero
+		if((--maxPeakFallTimer)<0)
+		{
+			//maxPeakLevel=0;
+			maxPeakLevel=maxPeakLevel-(sample_t)(MAX_SAMPLE*gMaxPeakFallRate);
+			maxPeakLevel=maxPeakLevel<0 ? 0 : maxPeakLevel;
+			maxPeakFallTimer=0;
+		}
+
+		// if the peak level is >= the maxPeakLevel then set a new maxPeakLevel and reset the peak file timer
+		if(peakLevel>=maxPeakLevel)
+		{
+			maxPeakLevel=peakLevel;
+			maxPeakFallTimer=gMaxPeakFallDelayTime/gMeterUpdateTime;
+		}
+
+		if(peakLevel>grandMaxPeakLevel)
+			setGrandMaxPeakLevel(peakLevel); // sets the label and everything
+*/
+
+		canvas->update(); // flag for repainting
+	}
+
+	enum
+	{
+		ID_CANVAS=FXPacker::ID_LAST,
+	};
+
+protected:
+	CAnalyzer() { }
+
+private:
+	friend class CMetersWindow;
+
+	FXCanvas *canvas;
+	FXFont *statusFont;
+
+	vector<float> analysis;
+	size_t octaveStride;
+};
+
+FXDEFMAP(CAnalyzer) CAnalyzerMap[]=
+{
+	//	  Message_Type			ID					Message_Handler
+	FXMAPFUNC(SEL_PAINT,			CAnalyzer::ID_CANVAS,			CAnalyzer::onCanvasPaint),
+};
+
+FXIMPLEMENT(CAnalyzer,FXPacker,CAnalyzerMap,ARRAYNUMBER(CAnalyzerMap))
+
+
+
+
+
+
+
+
+// --- CMetersWindow ---------------------------------------------------------
 
 FXDEFMAP(CMetersWindow) CMetersWindowMap[]=
 {
@@ -304,8 +467,7 @@ CMetersWindow::CMetersWindow(FXComposite *parent) :
 		headerFrame(new FXHorizontalFrame(levelMetersFrame,LAYOUT_FILL_X|FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0)),
 			labelFrame(new FXPacker(headerFrame,LAYOUT_FILL_X|LAYOUT_BOTTOM|FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0)),
 			grandMaxPeakLevelLabel(new FXLabel(headerFrame,"max",NULL,LABEL_NORMAL|LAYOUT_FIX_WIDTH|LAYOUT_RIGHT,0,0,0,0, 1,1,0,0)),
-	analyzerFrame(new FXPacker(this,LAYOUT_FIX_WIDTH|LAYOUT_RIGHT|LAYOUT_FILL_Y|FRAME_SUNKEN|FRAME_THICK,0,0,0,0, 0,0,0,0, 0,0)),
-		analysisCanvas(new FXCanvas(analyzerFrame,NULL,0,LAYOUT_FILL_X|LAYOUT_FILL_Y)),
+	analyzer(new CAnalyzer(this)),
 	soundPlayer(NULL)
 {
 	// create the font to use for meters
@@ -339,8 +501,6 @@ CMetersWindow::CMetersWindow(FXComposite *parent) :
 			grandMaxPeakLevelLabel->setFont(statusFont);
 			grandMaxPeakLevelLabel->setTextColor(M_TEXT_COLOR);
 			grandMaxPeakLevelLabel->setBackColor(M_BACKGROUND);
-
-	analyzerFrame->setBackColor(M_BACKGROUND);
 
 
 	// schedule the first update meters event
@@ -378,7 +538,7 @@ long CMetersWindow::onUpdateMeters(FXObject *sender,FXSelector sel,void *ptr)
 				meters[t]->grandMaxPeakLevelLabel->setWidth(maxGrandMaxPeakLabelWidth);
 		}
 
-		renderFrequencyAnalysis();
+		analyzer->setAnalysis(soundPlayer->getFrequencyAnalysis(),soundPlayer->getFrequencyAnalysisOctaveStride());
 	}
 
 	// schedule another update again in METER_UPDATE_RATE milliseconds
@@ -428,59 +588,5 @@ void CMetersWindow::resetGrandMaxPeakLevels()
 {
 	for(size_t t=0;t<meters.size();t++)
 		meters[t]->setGrandMaxPeakLevel(0);
-}
-
-void CMetersWindow::renderFrequencyAnalysis()
-{
-	FXDCWindow dc(analysisCanvas);
-	dc.begin(analysisCanvas);  // ??? ask J if it's better to do this or if it's not necessary
-
-	dc.setForeground(M_BACKGROUND);
-	dc.fillRectangle(0,0,analysisCanvas->getWidth(),analysisCanvas->getHeight());
-
-	const size_t canvasWidth=analysisCanvas->getWidth()-6; // 2 pixel border on left and right plus tick marks on the left
-	const size_t canvasHeight=analysisCanvas->getHeight()-4; // 2 pixel border on top and bottom
-	
-	// draw 5 tick marks up the left side
-	dc.setForeground(M_TEXT_COLOR);
-	for(size_t t=0;t<4;t++)
-	{
-		size_t y=2+((((canvasHeight+2-1)-2)*t)/(4-1));
-		dc.drawLine(2,y,3,y);
-	}
-		
-
-	// draw frequency analysis bars  (or render text if fftw wasn't installed)
-	dc.setForeground(M_GREEN);
-	const vector<float> v=soundPlayer->getFrequencyAnalysis();
-	if(v.size()>0)
-	{
-		// resize the analyzer frame if needed
-		{
-			const FXint desiredWidth=(v.size()*5)+2/*on left*/+2/*on right*/+2/*for ticks*/+4/*for sunken frame*/;
-			if(analyzerFrame->getWidth()!=desiredWidth)
-				analyzerFrame->setWidth(desiredWidth);
-		}
-
-		const size_t barWidth=max((size_t)2,(size_t)canvasWidth/v.size());
-		size_t x=4;
-		for(size_t t=0;t<v.size();t++)
-		{
-			const size_t barHeight=(size_t)floor(v[t]*canvasHeight);
-			dc.fillRectangle(x+1,canvasHeight-barHeight+2,barWidth-1,barHeight);
-			x+=barWidth;
-		}
-	}
-	else
-	{
-		const FXint desiredWidth=150;
-		if(analyzerFrame->getWidth()!=desiredWidth)
-			analyzerFrame->setWidth(desiredWidth);
-
-		dc.drawText(3,3+12,"Configure with FFTW",19);
-		dc.drawText(3,20+12,"for Freq. Analysis",18);
-	}
-
-	dc.end();
 }
 
