@@ -18,6 +18,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
+/*
+ * This SoundTranslator class handles mp3 I/O by interfacing with the 
+ * lame executable.  They do have a lame library, but the API is not
+ * documented and the library itself does not deal with mp3 files only
+ * with mp3 chunks.  Plus, doing it this way should avoid any possible
+ * patent issues even though there's not supposed to be any with lame.
+ * 
+ * This class may be generalized later as a base class to support
+ * other applications where the derived classes would handle the 
+ * specifics of each application.
+ */
+
 #include "ClameSoundTranslator.h"
 
 #include <stdio.h>
