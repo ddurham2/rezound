@@ -59,3 +59,6 @@ CXXFLAGS=-Wall -g -D_GNU_SOURCE @CXXFLAGS@
 ## but I'm leaving here as a place to add LDFLAGS if so desired
 LDFLAGS=@LDFLAGS@
 
+
+# doc directory
+pkgdocdir=$(prefix)/doc/rezound
