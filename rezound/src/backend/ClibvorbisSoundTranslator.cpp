@@ -28,7 +28,10 @@
 #include <errno.h>
 #include <string.h>
 #include "vorbis/codec.h"
+
+#ifdef HAVE_LIBVORBISFILE
 #include "vorbis/vorbisfile.h"
+#endif
 
 
 #include <stdexcept>
@@ -49,23 +52,6 @@
 	#define ENDIAN 0
 #endif
 
-#if 0
-#include <unistd.h> // for unlink
-
-#include "AStatusComm.h"
-
-static int getUserNotesMiscType(int type)
-{
-	if(type==AF_FILE_AIFFC || type==AF_FILE_AIFF)
-		return(AF_MISC_ANNO);
-	else if(type==AF_FILE_WAVE)
-		return(AF_MISC_ICMT);
-
-	return(0);
-}
-
-#endif
-
 ClibvorbisSoundTranslator::ClibvorbisSoundTranslator()
 {
 }
@@ -84,6 +70,7 @@ static void errorFunction(long code,const char *msg)
 	// ??? but, then how would I be able to have createWorkingPoolFileIfExists
 void ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 {
+#ifdef HAVE_LIBVORBISFILE
 	FILE *f=fopen(filename.c_str(),"rb");
 	int err=errno;
 	if(f==NULL)
@@ -205,6 +192,9 @@ void ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 	ov_clear(&vf); // closes file too
 
 	sound->setIsModified(false);
+#else
+	throw(runtime_error(string(__func__)+" -- saving not enabled missing libvorbisfile"));
+#endif
 }
 
 void ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound) const
