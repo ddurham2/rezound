@@ -46,6 +46,7 @@ if test "$1" = "--clean"; then
 	exit
 fi
 
+libtoolize -f
 aclocal -I config/m4
 autoheader -l config
 automake --add-missing --foreign
