@@ -23,7 +23,7 @@
 # Place - Suite 330, Boston, MA  02111-1307, USA
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT(rezound, 0.8.3beta, [http://sourceforge.net/tracker/?atid=105056&group_id=5056])
+AC_INIT(rezound, 0.9.0beta, [http://sourceforge.net/tracker/?atid=105056&group_id=5056])
 AC_CONFIG_AUX_DIR(config)
 AM_CONFIG_HEADER([config/config.h])
 AM_INIT_AUTOMAKE
@@ -198,7 +198,7 @@ AC_ARG_ENABLE(
 	[ # action if flag was not given
 	 	# default to signed 16 bit
 		AC_DEFINE(SAMPLE_TYPE_S16)
-		AC_MSG_RESULT([*** (default) setting the internal sample type to signed 16 bit])
+		AC_MSG_RESULT([*** setting the internal sample type to signed 16 bit by default])
 	]
 )
 
@@ -225,12 +225,17 @@ AC_LANG_POP(C)
 
 
 # check for -lpthread being valid
+AH_TEMPLATE(NO_POSIX_RWLOCKS)
 AC_CHECK_LIB(
 	pthread,
 	pthread_create,
 	[ # -lpthread is valid, so check for mutexes and rwlocks to be implemented
 		AC_CHECK_LIB(pthread, pthread_mutex_init,,AC_MSG_ERROR([compatible posix thread library not found containing mutexes]))
+		AC_CHECK_LIB(pthread, pthread_cond_init,,AC_MSG_ERROR([compatible posix thread library not found containing condition variables]))
 		AC_CHECK_LIB(pthread, pthread_rwlock_init,,AC_MSG_ERROR([compatible posix thread library not found containing rwlocks]))
+
+		AC_CHECK_HEADER(pthread.h,,AC_MSG_ERROR([pthread.h not found for use with libpthread]))
+
 		# until libtool gets its act together and decides to correctly support -pthread or not, I am forcing the -lpthread to link with
 		LDFLAGS="$LDFLAGS -Xlinker -lpthread"
 	],
@@ -240,12 +245,46 @@ AC_CHECK_LIB(
 			pthread_create,
 			[ # -lc_r is valid, so check for mutexes and rwlocks to be implemented
 				AC_CHECK_LIB(c_r, pthread_mutex_init,,AC_MSG_ERROR([compatible posix thread library not found containing mutexes]))
+				AC_CHECK_LIB(c_r, pthread_cond_init,,AC_MSG_ERROR([compatible posix thread library not found containing condition variables]))
 				AC_CHECK_LIB(c_r, pthread_rwlock_init,,AC_MSG_ERROR([compatible posix thread library not found containing rwlocks]))
+
+				AC_CHECK_HEADER(pthread.h,,AC_MSG_ERROR([pthread.h not found for use with libc_r]))
+
 				# until libtool gets its act together and decides to correctly support -pthread or not, I am forcing the -lc_r to link with
 				LDFLAGS="$LDFLAGS -Xlinker -lc_r"
 			],
-			[ # -lc_r is also NOT valid, so we can't find a pthread lib
-				AC_MSG_ERROR([compatible posix thread library not found])
+			[ # -lc_r is also NOT valid, so check for PTL (portable thread library)
+				AC_CHECK_LIB(
+					PTL,
+					pthread_create,
+					[ # -lPTL is valid, so check for mutexes and rwlocks to be implemented
+						AC_CHECK_LIB(PTL, pthread_mutex_init,,AC_MSG_ERROR([compatible posix thread library not found containing mutexes]))
+						AC_CHECK_LIB(PTL, pthread_cond_init,,AC_MSG_ERROR([compatible posix thread library not found containing condition variables]))
+						AC_CHECK_LIB(PTL, pthread_rwlock_init,,
+							[
+							 	AC_MSG_WARN([partially compatible posix thread library found not containing rwlocks.. using less efficient custom implementation]) 
+								AC_DEFINE(NO_POSIX_RWLOCKS)
+							]
+						)
+
+						AC_ARG_WITH(PTL-prefix,
+							AC_HELP_STRING([--with-PTL-prefix],[set prefix path to PTL library if it is necessary for ReZound to use PTL]),
+							[
+								CPPFLAGS="$CPPFLAGS -I$withval/include"
+								CXXFLAGS="$CXXFLAGS -I$withval/include"
+								LDFLAGS="$LDFLAGS -L$withval/lib -Xlinker -lPTL"
+							],
+							[
+								LDFLAGS="$LDFLAGS -Xlinker -lPTL"
+							]
+						)
+
+						AC_CHECK_HEADER(pthread.h,,AC_MSG_ERROR([pthread.h header file not found for use with libPTL.  Use the --with-PTL-prefix=path to specify the prefix where libPTL is installed]))
+					],
+					[ # -lPTL is also NOT valid, so we can't find a pthread lib
+						AC_MSG_ERROR([compatible posix thread library not found])
+					]
+				)
 			]
 		)
 	]
@@ -299,14 +338,44 @@ AC_ARG_ENABLE(
 
 # handle the --enable-portaudio flag
 AH_TEMPLATE(ENABLE_PORTAUDIO)
-AC_ARG_ENABLE(
-	portaudio,
-	AC_HELP_STRING([--enable/disable-portaudio],[enable/disable ReZound to use PortAudio for audio I/O]),
-	[
-		if [[ "$enableval" = "yes" ]]
-		then 
-			# --enable-portaudio was given
-			# Require that the portaudio library can be found
+if test -z "$enable_standalone"; then
+	AC_ARG_ENABLE(
+		portaudio,
+		AC_HELP_STRING([--enable/disable-portaudio],[enable/disable ReZound to use PortAudio for audio I/O]),
+		[
+			if [[ "$enableval" = "yes" ]]
+			then 
+				# --enable-portaudio was given
+				# Require that the portaudio library can be found
+				AC_CHECK_LIB(
+					portaudio,
+					Pa_Initialize,
+
+					origLIBS="$LIBS"
+					LIBS="-lportaudio $LIBS"
+					
+					# libportaudio found, now check for portaudio header file
+					[AC_CHECK_HEADER(
+						portaudio.h,
+						[
+							AC_DEFINE(ENABLE_PORTAUDIO)
+							AC_MSG_RESULT([*** enabling libportaudio for audio I/O])
+							using_portaudio=1
+						],
+						[
+							LIBS="$origLIBS"
+							AC_MSG_ERROR([***** portaudio.h header file not found (http://www.portaudio.com) *****])
+						]
+					)], 
+
+					AC_MSG_ERROR([***** libportaudio.a not found (http://www.portaudio.com) *****])
+				)
+			else
+				AC_MSG_RESULT([*** disabling libportaudio for audio I/O])
+			fi
+		],
+		[ # action if neither enable or disable flag was given
+			# if libportaudio and portaudio.h are found, then enable it
 			AC_CHECK_LIB(
 				portaudio,
 				Pa_Initialize,
@@ -320,42 +389,18 @@ AC_ARG_ENABLE(
 					[
 						AC_DEFINE(ENABLE_PORTAUDIO)
 						AC_MSG_RESULT([*** enabling libportaudio for audio I/O])
+						using_portaudio=1
 					],
 					[
 						LIBS="$origLIBS"
-						AC_MSG_ERROR([***** portaudio.h header file not found (http://www.portaudio.com) *****])
 					]
-				)], 
-
-				AC_MSG_ERROR([***** libportaudio.a not found (http://www.portaudio.com) *****])
+				)]
 			)
-		else
-			AC_MSG_RESULT([*** disabling libportaudio for audio I/O])
-		fi
-	],
-	[ # action if neither enable or disable flag was given
-		# if libportaudio and portaudio.h are found, then enable it
-		AC_CHECK_LIB(
-			portaudio,
-			Pa_Initialize,
-
-			origLIBS="$LIBS"
-			LIBS="-lportaudio $LIBS"
-			
-			# libportaudio found, now check for portaudio header file
-			[AC_CHECK_HEADER(
-				portaudio.h,
-				[
-					AC_DEFINE(ENABLE_PORTAUDIO)
-					AC_MSG_RESULT([*** enabling libportaudio for audio I/O])
-				],
-				[
-					LIBS="$origLIBS"
-				]
-			)]
-		)
-	]
-)
+		]
+	)
+else
+	AC_MSG_NOTICE([*** Not checking for portaudio with the --enable-standalone option given because portaudio does not build a static library])
+fi
 
 # handle the --enable-jack flag
 AH_TEMPLATE(ENABLE_JACK)
@@ -479,7 +524,7 @@ AC_CHECK_HEADER(
 	rfftw.h,
 	AC_CHECK_LIB(rfftw, rfftw_create_plan, , AC_MSG_WARN([***** librfftw.a not found -- any FFT based actions will be disabled (http://www.fftw.org) *****]),-lrfftw),
 	AC_MSG_WARN([***** rfftw.h header file not found -- any FFT based actions will be disabled (http://www.fftw.org) *****])
-	)
+)
 
 
 
@@ -487,30 +532,33 @@ AC_CHECK_HEADER(
 
 
 
-dnl ############################################################################
-dnl # detect if we should be able to compile the LADSPA code                   #
-dnl ############################################################################
-
-dnl Here I check if we're on the linux platform, and if so, then "@MAYBE_LADSPA_DIR@" gets substituted 
-dnl with "LADSPA" in the SUBDIRS variable in src/backend/Makefile.  And "@MAYBE_LADSPA_LIB@" gets 
-dnl substituted with libLADSPA.la in the frontend's Makefile.
-dnl However this makes it invalid to created a dist tarball on a non-linux platform (which will cause 
-dnl LADSPA not to be included in the dist).  Newer versions of autoconf and automake fix this issue and
-dnl I will change this when they are mainstream
+############################################################################
+# detect if we should be able to compile the LADSPA code                   #
+############################################################################
 AH_TEMPLATE(USE_LADSPA)
-if test `uname -a | grep -i linux | wc -l` -ge 1
-then
-	MAYBE_LADSPA_DIR='LADSPA'
-	MAYBE_LADSPA_LIB='$(top_builddir)/src/backend/LADSPA/libLADSPA.la'
-	AC_DEFINE(USE_LADSPA)
-else
-	MAYBE_LADSPA_DIR=
-	MAYBE_LADSPA_LIB=
-
-	# make dummy file to make the dependancy check happy (when it will not exist for the frontend's makefile)
-	#mkdir -p src/backend/LADSPA
-	#echo > src/backend/LADSPA/libLADSPA.la 
-fi
+AC_ARG_ENABLE(
+	ladspa,
+	AC_HELP_STRING([--disable-ladspa],[disable LADSPA plugin support (enabled by default; disable if it causes problems when building)]),
+	[ # action if flag was given
+		if [[ "$enableval" = "yes" ]]
+		then
+			MAYBE_LADSPA_DIR='LADSPA'
+			MAYBE_LADSPA_LIB='$(top_builddir)/src/backend/LADSPA/libLADSPA.la'
+			AC_DEFINE(USE_LADSPA)
+			AC_MSG_NOTICE([enabling LADSPA support])
+		else
+			MAYBE_LADSPA_DIR=''
+			MAYBE_LADSPA_LIB=''
+			AC_MSG_NOTICE([disabling LADSPA support])
+		fi
+	],
+	[ # action if flag was not given
+		MAYBE_LADSPA_DIR='LADSPA'
+		MAYBE_LADSPA_LIB='$(top_builddir)/src/backend/LADSPA/libLADSPA.la'
+		AC_DEFINE(USE_LADSPA)
+		AC_MSG_NOTICE([enabling LADSPA support by default])
+	]
+)
 AC_SUBST(MAYBE_LADSPA_DIR)
 AC_SUBST(MAYBE_LADSPA_LIB)
 
@@ -571,6 +619,7 @@ AC_DEFINE_DIR(DATA_DIR,datadir,[ This the --datadir (share) set by configure ])
 # Internationalization and Localization                                    #
 ############################################################################
 
+AC_CHECK_HEADERS(libintl.h)
 AM_GNU_GETTEXT_VERSION([0.11.5])
 AM_GNU_GETTEXT([external])
 
@@ -596,13 +645,11 @@ AC_ARG_ENABLE(
 		AC_MSG_NOTICE([*** NOTICE *** stand-alone build enabled -- now static versions of all the dependancy libraries will be required.  If final linking fails, then make sure a static version of the failed library is installed.])
 
 		# warn about needing static libs if using FOX and statically linking
-		if ! test -z "$FOX_LIBS"; then
+		if test "$FOX_LIBS" != "" -o "$FOX_1_1_LIBS" != "" ; then
 			AC_MSG_NOTICE([*** NOTICE *** since static linking is enabled, FOX will require static versions of libjpeg, libpng, libtiff, XFree86-libs, and maybe others (Also, I have found it necessary to configure FOX as: "CPPFLAGS=-DNO_XIM configure --with-opengl=no" when statically linking)])
 		fi
-
-		
 	]
-	)
+)
 
 
 
