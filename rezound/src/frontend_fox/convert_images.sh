@@ -24,8 +24,8 @@ C_FILE=CFOXIcons.cpp
 
 # create the CFOXIcons.h file 
 echo "/* script generated source code */" > $H_FILE
-echo "#ifndef __Images_H__" >> $H_FILE
-echo "#define __Images_H__" >> $H_FILE
+echo "#ifndef __CFOXIcons_H__" >> $H_FILE
+echo "#define __CFOXIcons_H__" >> $H_FILE
 echo "#include \"../../config/common.h\"" >> $H_FILE
 echo  >> $H_FILE
 echo "#include <fox/fx.h>" >> $H_FILE
