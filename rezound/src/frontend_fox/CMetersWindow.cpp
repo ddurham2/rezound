@@ -114,7 +114,6 @@ public:
 	long CMeter::onCanvasPaint(FXObject *sender,FXSelector sel,void *ptr)
 	{
 		FXDCWindow dc(canvas);
-		dc.begin(canvas);  // ??? ask J if it's better to do this or if it's not necessary
 
 		const FXint width=canvas->getWidth();
 		const FXint height=canvas->getHeight();
@@ -204,8 +203,6 @@ public:
 			dc.setForeground(M_BRT_GREEN);
 		dc.fillRectangle(x-1,2,2,height-3);
 			
-
-		dc.end();
 		return 1;
 	}
 
@@ -289,6 +286,7 @@ FXIMPLEMENT(CMeter,FXHorizontalFrame,CMeterMap,ARRAYNUMBER(CMeterMap))
 
 // --- CAnalyzer -------------------------------------------------------------
 
+#include <fox/FXBackBufferedCanvas.h>
 class CAnalyzer : public FXHorizontalFrame
 {
 	FXDECLARE(CAnalyzer);
@@ -296,7 +294,7 @@ public:
 	CAnalyzer::CAnalyzer(FXComposite *parent) :
 		FXHorizontalFrame(parent,LAYOUT_RIGHT|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0),
 		canvasFrame(new FXPacker(this,LAYOUT_FIX_WIDTH|LAYOUT_FILL_Y|FRAME_SUNKEN|FRAME_THICK,0,0,0,0, 0,0,0,0, 0,0)),
-			canvas(new FXCanvas(canvasFrame,this,ID_CANVAS,LAYOUT_FILL_X|LAYOUT_FILL_Y)),
+			canvas(new FXBackBufferedCanvas(canvasFrame,this,ID_CANVAS,LAYOUT_FILL_X|LAYOUT_FILL_Y)),
 
 		zoomDial(new FXDial(this,this,ID_ZOOM_DIAL,DIAL_VERTICAL|DIAL_HAS_NOTCH|LAYOUT_FILL_Y|LAYOUT_FIX_WIDTH,0,0,18,0)),
 
@@ -339,8 +337,8 @@ public:
 
 	long CAnalyzer::onCanvasPaint(FXObject *sender,FXSelector sel,void *ptr)
 	{
-		FXDCWindow dc(canvas);
-		dc.begin(canvas);  // ??? ask J if it's better to do this or if it's not necessary
+		FXDC &dc=*((FXDC*)ptr); // back buffered canvases send the DC to draw onto in ptr
+		//FXDCWindow dc(canvas);
 
 		// I could elimenat any flick by drawing to a back buffer and blitting.. but I thought that's what begin might effectively do
 
@@ -401,7 +399,6 @@ public:
 			x+=barWidth;
 		}
 
-		dc.end();
 		return 1;
 	}
 
