@@ -132,7 +132,7 @@ FXPacker *CActionParamDialog::newVertPanel(void *parent,bool createBorder)
 		return new FXVerticalFrame((FXPacker *)parent,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0);
 }
 
-void CActionParamDialog::addSlider(void *parent,const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton)
+FXConstantParamValue *CActionParamDialog::addSlider(void *parent,const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton)
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
@@ -141,9 +141,19 @@ void CActionParamDialog::addSlider(void *parent,const string name,const string u
 	slider->setValue(initialValue);
 	parameters.push_back(make_pair(ptConstant,slider));
 	retValueConvs.push_back(optRetValueConv);
+
+	return slider;
 }
 
-void CActionParamDialog::addNumericTextEntry(void *parent,const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsTipText)
+FXConstantParamValue *CActionParamDialog::getSliderParam(const string name)
+{
+	const unsigned index=findParamByName(name);
+	if(parameters[index].first==ptConstant);
+		return (FXConstantParamValue *)parameters[index].second;
+	throw runtime_error(string(__func__)+" -- widget with name, "+name+", is not a slider");
+}
+
+FXTextParamValue *CActionParamDialog::addNumericTextEntry(void *parent,const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsTipText)
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
@@ -151,15 +161,19 @@ void CActionParamDialog::addNumericTextEntry(void *parent,const string name,cons
 	textEntry->setUnits(units.c_str(),unitsTipText.c_str());
 	parameters.push_back(make_pair(ptNumericText,textEntry));
 	retValueConvs.push_back(NULL);
+
+	return textEntry;
 }
 
-void CActionParamDialog::addStringTextEntry(void *parent,const string name,const string initialValue,const string unitsTipText)
+FXTextParamValue *CActionParamDialog::addStringTextEntry(void *parent,const string name,const string initialValue,const string unitsTipText)
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
 	FXTextParamValue *textEntry=new FXTextParamValue((FXPacker *)parent,0,name.c_str(),initialValue);
 	parameters.push_back(make_pair(ptStringText,textEntry));
 	retValueConvs.push_back(NULL);
+
+	return textEntry;
 }
 
 FXTextParamValue *CActionParamDialog::getTextParam(const string name)
@@ -172,7 +186,7 @@ FXTextParamValue *CActionParamDialog::getTextParam(const string name)
 	throw runtime_error(string(__func__)+" -- no text param found named "+name);
 }
 
-void CActionParamDialog::addDiskEntityEntry(void *parent,const string name,const string initialEntityName,FXDiskEntityParamValue::DiskEntityTypes entityType,const string tipText)
+FXDiskEntityParamValue *CActionParamDialog::addDiskEntityEntry(void *parent,const string name,const string initialEntityName,FXDiskEntityParamValue::DiskEntityTypes entityType,const string tipText)
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
@@ -180,10 +194,12 @@ void CActionParamDialog::addDiskEntityEntry(void *parent,const string name,const
 	diskEntityEntry->setTipText(tipText.c_str());
 	parameters.push_back(make_pair(ptDiskEntity,diskEntityEntry));
 	retValueConvs.push_back(NULL);
+
+	return diskEntityEntry;
 }
 
 
-void CActionParamDialog::addComboTextEntry(void *parent,const string name,const vector<string> &items,const string tipText,bool isEditable)
+FXComboTextParamValue *CActionParamDialog::addComboTextEntry(void *parent,const string name,const vector<string> &items,const string tipText,bool isEditable)
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
@@ -191,20 +207,20 @@ void CActionParamDialog::addComboTextEntry(void *parent,const string name,const 
 	comboTextEntry->setTipText(tipText.c_str());
 	parameters.push_back(make_pair(ptComboText,comboTextEntry));
 	retValueConvs.push_back(NULL);
+
+	return comboTextEntry;
 }
 
 FXComboTextParamValue *CActionParamDialog::getComboText(const string name)
 {
-	for(size_t t=0;t<parameters.size();t++)
-	{
-		if(parameters[t].first==ptComboText && ((FXComboTextParamValue *)parameters[t].second)->getName()==name)
-			return (FXComboTextParamValue *)parameters[t].second;
-	}
-	throw runtime_error(string(__func__)+" -- no combo text param found named "+name);
+	const unsigned index=findParamByName(name);
+	if(parameters[index].first==ptComboText);
+		return (FXComboTextParamValue *)parameters[index].second;
+	throw runtime_error(string(__func__)+" -- widget with name, "+name+", is not a combobox");
 }
 
 
-void CActionParamDialog::addCheckBoxEntry(void *parent,const string name,const bool checked,const string tipText)
+FXCheckBoxParamValue *CActionParamDialog::addCheckBoxEntry(void *parent,const string name,const bool checked,const string tipText)
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
@@ -212,9 +228,19 @@ void CActionParamDialog::addCheckBoxEntry(void *parent,const string name,const b
 	checkBoxEntry->setTipText(tipText.c_str());
 	parameters.push_back(make_pair(ptCheckBox,checkBoxEntry));
 	retValueConvs.push_back(NULL);
+
+	return checkBoxEntry;
 }
 
-void CActionParamDialog::addGraph(void *parent,const string name,const string horzAxisLabel,const string horzUnits,FXGraphParamValue::f_at_xs horzInterpretValue,FXGraphParamValue::f_at_xs horzUninterpretValue,const string vertAxisLabel,const string vertUnits,FXGraphParamValue::f_at_xs vertInterpretValue,FXGraphParamValue::f_at_xs vertUninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar)
+FXCheckBoxParamValue *CActionParamDialog::getCheckBoxParam(const string name)
+{
+	const unsigned index=findParamByName(name);
+	if(parameters[index].first==ptCheckBox)
+		return (FXCheckBoxParamValue *)parameters[index].second;
+	throw runtime_error(string(__func__)+" -- widget with name, "+name+", is not a checkbox");
+}
+
+FXGraphParamValue *CActionParamDialog::addGraph(void *parent,const string name,const string horzAxisLabel,const string horzUnits,FXGraphParamValue::f_at_xs horzInterpretValue,FXGraphParamValue::f_at_xs horzUninterpretValue,const string vertAxisLabel,const string vertUnits,FXGraphParamValue::f_at_xs vertInterpretValue,FXGraphParamValue::f_at_xs vertUninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar)
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
@@ -223,9 +249,11 @@ void CActionParamDialog::addGraph(void *parent,const string name,const string ho
 	graph->setVertParameters(vertAxisLabel,vertUnits,vertInterpretValue,vertUninterpretValue);
 	parameters.push_back(make_pair(ptGraph,graph));
 	retValueConvs.push_back(optRetValueConv);
+
+	return graph;
 }
 
-void CActionParamDialog::addGraphWithWaveform(void *parent,const string name,const string vertAxisLabel,const string vertUnits,FXGraphParamValue::f_at_xs vertInterpretValue,FXGraphParamValue::f_at_xs vertUninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar)
+FXGraphParamValue *CActionParamDialog::addGraphWithWaveform(void *parent,const string name,const string vertAxisLabel,const string vertUnits,FXGraphParamValue::f_at_xs vertInterpretValue,FXGraphParamValue::f_at_xs vertUninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar)
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
@@ -233,6 +261,8 @@ void CActionParamDialog::addGraphWithWaveform(void *parent,const string name,con
 	graph->setVertParameters(vertAxisLabel,vertUnits,vertInterpretValue,vertUninterpretValue);
 	parameters.push_back(make_pair(ptGraphWithWaveform,graph));
 	retValueConvs.push_back(optRetValueConv);
+
+	return graph;
 }
 
 FXGraphParamValue *CActionParamDialog::getGraphParam(const string name)
@@ -245,7 +275,7 @@ FXGraphParamValue *CActionParamDialog::getGraphParam(const string name)
 	throw runtime_error(string(__func__)+" -- no graph param found named "+name);
 }
 
-void CActionParamDialog::addLFO(void *parent,const string name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs)
+FXLFOParamValue *CActionParamDialog::addLFO(void *parent,const string name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs)
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
@@ -253,6 +283,16 @@ void CActionParamDialog::addLFO(void *parent,const string name,const string ampU
 	//LFOEntry->setTipText(tipText.c_str());
 	parameters.push_back(make_pair(ptLFO,LFOEntry));
 	retValueConvs.push_back(NULL);
+
+	return LFOEntry;
+}
+
+FXLFOParamValue *CActionParamDialog::getLFOParam(const string name)
+{
+	const unsigned index=findParamByName(name);
+	if(parameters[index].first==ptLFO);
+		return (FXLFOParamValue *)parameters[index].second;
+	throw runtime_error(string(__func__)+" -- widget with name, "+name+", is not an LFO");
 }
 
 void CActionParamDialog::setMargin(FXint margin)
