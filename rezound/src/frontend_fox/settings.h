@@ -26,6 +26,9 @@
 
 #include "../backend/settings.h"
 
+#include <vector>
+using namespace std;
+
 
 #define CUE_RADIUS 3
 #define CUE_OFF_SCREEN (-(CUE_RADIUS+1000))
@@ -60,9 +63,23 @@ extern bool gRenderClippingWarning;
 
 
 /*
- * The initial about of audio to show on screen in a newly created sound window
+ * The initial amount of audio to show on screen in a newly created sound window
  */
 extern double gInitialLengthToShow;
+
+
+/*
+ * Flags to enable/disable which units that times are shown in
+ */
+enum TimeUnits {
+	tuSeconds=0,
+	tuFrames=1,
+	tuBytes=2,
+	TIME_UNITS_COUNT=3
+};
+// the subscript into this vector is the enum TimeUnits
+extern vector<bool> gShowTimeUnits;
+void popupTimeUnitsSelectionMenu(FXWindow *owner,FXEvent *ev);
 
 
 /*

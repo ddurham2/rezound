@@ -106,6 +106,10 @@ FXDEFMAP(CSoundWindow) CSoundWindowMap[]=
 	FXMAPFUNC(FXRezWaveView::SEL_EDIT_CUE,CSoundWindow::ID_WAVEVIEW,			CSoundWindow::onEditCue),
 	FXMAPFUNC(FXRezWaveView::SEL_SHOW_CUE_LIST,CSoundWindow::ID_WAVEVIEW,			CSoundWindow::onShowCueList),
 
+
+	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	CSoundWindow::ID_TIME_UNITS_SETTING,		CSoundWindow::onTimeUnitsSetting),
+
+
 	FXMAPFUNC(SEL_CLOSE,			0,						CSoundWindow::onCloseWindow),
 };
 
@@ -179,7 +183,11 @@ CSoundWindow::CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound) :
 
 	// fill the status panel
 	// ??? If I really wanted to make sure there was a min width to each section (and I may want to) I could put an FXFrame with zero height or 1 height in each on with a fixed width.. then things can get bigger as needed... but there would be a minimum size
-	FXVerticalFrame *t;
+	FXComposite *t;
+	FXLabel *l;
+
+	statusPanel->setTarget(this);
+	statusPanel->setSelector(ID_TIME_UNITS_SETTING);
 
 	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 2,0,0,0, 0,0);
 		// add the actual LEDs to the packer for turning the LED on and off, done by raising or lowering the first child of the packer
@@ -205,26 +213,57 @@ CSoundWindow::CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound) :
 		poolFileSizeLabel->setFont(statusFont);
 
 	new FXVerticalSeparator(statusPanel);
-	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 2,0,0,0, 0,0);
-		totalLengthLabel=new FXLabel(t,_("Total: "),NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
-		totalLengthLabel->setFont(statusFont);
-		selectionLengthLabel=new FXLabel(t,_("Selection: "),NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
-		selectionLengthLabel->setFont(statusFont);
+	t=new FXMatrix(statusPanel,TIME_UNITS_COUNT+1,FRAME_NONE|MATRIX_BY_COLUMNS|LAYOUT_FILL_Y,0,0,0,0, 2,0,0,0, 2,0);
+		// total
+		(l=new FXLabel(t,_("Total: "),NULL,LAYOUT_RIGHT|LAYOUT_FILL_ROW|LAYOUT_CENTER_Y,0,0,0,0, 0,0,0,0))->setFont(statusFont);
+		l->setTarget(this);
+		l->setSelector(ID_TIME_UNITS_SETTING);
+		for(size_t i=0;i<TIME_UNITS_COUNT;i++)
+		{
+			(totalLengthLabels[i]=new FXLabel(t,"",NULL,LAYOUT_RIGHT|LAYOUT_FILL_ROW|LAYOUT_CENTER_Y,0,0,0,0, 0,0,0,0))->setFont(statusFont);
+			totalLengthLabels[i]->setTarget(this);
+			totalLengthLabels[i]->setSelector(ID_TIME_UNITS_SETTING);
+		}
+
+		// selection
+		(l=new FXLabel(t,_("Selection: "),NULL,LAYOUT_RIGHT|LAYOUT_FILL_ROW|LAYOUT_CENTER_Y,0,0,0,0, 0,0,0,0))->setFont(statusFont);
+		l->setTarget(this);
+		l->setSelector(ID_TIME_UNITS_SETTING);
+		for(size_t i=0;i<TIME_UNITS_COUNT;i++)
+		{
+			(selectionLengthLabels[i]=new FXLabel(t,"",NULL,LAYOUT_RIGHT|LAYOUT_FILL_ROW|LAYOUT_CENTER_Y,0,0,0,0, 0,0,0,0))->setFont(statusFont);
+			selectionLengthLabels[i]->setTarget(this);
+			selectionLengthLabels[i]->setSelector(ID_TIME_UNITS_SETTING);
+		}
 		
 	new FXVerticalSeparator(statusPanel);
-	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 2,0,0,0, 0,0);
-		selectStartSpinner=new FXSpinner(t,0,this,ID_SELECT_START_SPINNER, SPIN_NOTEXT|LAYOUT_FILL_Y);
+	t=new FXMatrix(statusPanel,TIME_UNITS_COUNT+2,FRAME_NONE|MATRIX_BY_COLUMNS|LAYOUT_FILL_Y,0,0,0,0, 2,0,0,0, 2,0);
+
+		selectStartSpinner=new FXSpinner(t,0,this,ID_SELECT_START_SPINNER, SPIN_NOTEXT|LAYOUT_FILL_ROW|LAYOUT_CENTER_Y);
 		selectStartSpinner->setRange(-10,10);
 		selectStartSpinner->setTipText(_("Increase/Decrease Start Position by One Sample"));
-		selectStopSpinner=new FXSpinner(t,0,this,ID_SELECT_STOP_SPINNER, SPIN_NOTEXT|LAYOUT_FILL_Y);
+		(l=new FXLabel(t,_("Start: "),NULL,LAYOUT_RIGHT|LAYOUT_FILL_ROW|LAYOUT_CENTER_Y,0,0,0,0, 0,0,0,0))->setFont(statusFont);
+		l->setTarget(this);
+		l->setSelector(ID_TIME_UNITS_SETTING);
+		for(size_t i=0;i<TIME_UNITS_COUNT;i++)
+		{
+			(selectStartLabels[i]=new FXLabel(t,"",NULL,LAYOUT_RIGHT|LAYOUT_FILL_ROW|LAYOUT_CENTER_Y,0,0,0,0, 0,0,0,0))->setFont(statusFont);
+			selectStartLabels[i]->setTarget(this);
+			selectStartLabels[i]->setSelector(ID_TIME_UNITS_SETTING);
+		}
+
+		selectStopSpinner=new FXSpinner(t,0,this,ID_SELECT_STOP_SPINNER, SPIN_NOTEXT|LAYOUT_FILL_ROW|LAYOUT_CENTER_Y);
 		selectStopSpinner->setRange(-10,10);
 		selectStopSpinner->setTipText(_("Increase/Decrease Stop Position by One Sample"));
-		
-	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0);
-		selectStartLabel=new FXLabel(t,_("Start: "),NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
-		selectStartLabel->setFont(statusFont);
-		selectStopLabel=new FXLabel(t,_("Stop: "),NULL,LAYOUT_RIGHT|LAYOUT_FILL_Y);
-		selectStopLabel->setFont(statusFont);
+		(l=new FXLabel(t,_("Stop: "),NULL,LAYOUT_RIGHT|LAYOUT_FILL_ROW|LAYOUT_CENTER_Y,0,0,0,0, 0,0,0,0))->setFont(statusFont);
+		l->setTarget(this);
+		l->setSelector(ID_TIME_UNITS_SETTING);
+		for(size_t i=0;i<TIME_UNITS_COUNT;i++)
+		{
+			(selectStopLabels[i]=new FXLabel(t,"",NULL,LAYOUT_RIGHT|LAYOUT_FILL_ROW|LAYOUT_CENTER_Y,0,0,0,0, 0,0,0,0))->setFont(statusFont);
+			selectStopLabels[i]->setTarget(this);
+			selectStopLabels[i]->setSelector(ID_TIME_UNITS_SETTING);
+		}
 
 	new FXVerticalSeparator(statusPanel);
 	playPositionLabel=new FXFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_X|LAYOUT_FILL_Y); // used to be a label, but setText was too CPU intensive
@@ -388,6 +427,31 @@ void CSoundWindow::updateFromEdit(bool undoing)
 	updateAllStatusInfo();
 }
 
+static const string commifyNumber(const string s)
+{
+	string ret;
+	ret.reserve(s.length());
+	for(size_t t=0;t<s.length();t++)
+	{
+		if(t>0 && (t%3)==0)
+			ret=","+ret;
+		ret=s[s.length()-t-1]+ret;
+	}
+
+	return ret;
+}
+
+const string CSoundWindow::getLengthString(sample_pos_t length,TimeUnits units)
+{
+	if(units==tuSeconds)
+		return gShowTimeUnits[units] ? loadedSound->sound->getTimePosition(length,getZoomDecimalPlaces()) : "";
+	else if(units==tuFrames)
+		return gShowTimeUnits[units] ? commifyNumber(istring(length))+"f" : "";
+	else if(units==tuBytes)
+		return gShowTimeUnits[units] ? commifyNumber(istring(length*sizeof(sample_t)*loadedSound->sound->getChannelCount()))+"b" : "";
+	throw runtime_error(string(__func__)+" -- unhandled units enum value: "+istring(units));
+}
+
 void CSoundWindow::updateAllStatusInfo()
 {
 	sampleRateLabel->setText((_("Rate: ")+istring(loadedSound->sound->getSampleRate())).c_str());
@@ -396,7 +460,8 @@ void CSoundWindow::updateAllStatusInfo()
 	audioDataSizeLabel->setText((_("Audio Size: ")+loadedSound->sound->getAudioDataSize()).c_str());
 	poolFileSizeLabel->setText((_("Working File: ")+loadedSound->sound->getPoolFileSize()).c_str());
 
-	totalLengthLabel->setText((_("Total: ")+loadedSound->sound->getTimePosition(loadedSound->sound->getLength(),getZoomDecimalPlaces())).c_str());
+	for(size_t t=0;t<TIME_UNITS_COUNT;t++)
+		totalLengthLabels[t]->setText(getLengthString(loadedSound->sound->getLength(),(TimeUnits)t).c_str());
 
 	updateSelectionStatusInfo();
 	updatePlayPositionStatusInfo();
@@ -404,11 +469,12 @@ void CSoundWindow::updateAllStatusInfo()
 
 void CSoundWindow::updateSelectionStatusInfo()
 {
-	const int places=getZoomDecimalPlaces();
-
-	selectionLengthLabel->setText((_("Selection: ")+loadedSound->sound->getTimePosition(loadedSound->channel->getStopPosition()-loadedSound->channel->getStartPosition()+1,places)).c_str());
-	selectStartLabel->setText((_("Start: ")+loadedSound->sound->getTimePosition(loadedSound->channel->getStartPosition(),places)).c_str());
-	selectStopLabel->setText((_("Stop: ")+loadedSound->sound->getTimePosition(loadedSound->channel->getStopPosition(),places)).c_str());
+	for(size_t t=(TimeUnits)0;t<TIME_UNITS_COUNT;t++)
+	{
+		selectionLengthLabels[t]->setText(getLengthString(loadedSound->channel->getStopPosition()-loadedSound->channel->getStartPosition()+1,(TimeUnits)t).c_str());
+		selectStartLabels[t]->setText(getLengthString(loadedSound->channel->getStartPosition(),(TimeUnits)t).c_str());
+		selectStopLabels[t]->setText(getLengthString(loadedSound->channel->getStopPosition(),(TimeUnits)t).c_str());
+	}
 }
 
 void CSoundWindow::updatePlayPositionStatusInfo()
@@ -424,9 +490,7 @@ void CSoundWindow::updatePlayPositionStatusInfo()
 
 	if(loadedSound->channel->isPlaying())
 	{ // draw new play position
-		const int places=getZoomDecimalPlaces();
-
-		const string label=_("Playing: ")+loadedSound->sound->getTimePosition(loadedSound->channel->getPosition(),places);
+		const string label=_("Playing: ")+getLengthString(loadedSound->channel->getPosition(),tuSeconds);
 
 #if REZ_FOX_VERSION<10117	
 		dc.setTextFont(statusFont);
@@ -805,6 +869,12 @@ long CSoundWindow::onCloseWindow(FXObject *sender,FXSelector sel,void *ptr)
 {
 	gSoundFileManager->close(ASoundFileManager::ctSaveYesNoCancel,loadedSound);
 	return 1;
+}
+
+long CSoundWindow::onTimeUnitsSetting(FXObject *sender,FXSelector sel,void *ptr)
+{
+	popupTimeUnitsSelectionMenu((FXWindow *)sender,(FXEvent *)ptr);
+	updateAllStatusInfo();
 }
 
 const map<string,string> CSoundWindow::getPositionalInfo() const

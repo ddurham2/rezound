@@ -33,6 +33,8 @@ bool gRenderClippingWarning=true;
 
 double gInitialLengthToShow=120.0; // default 120 seconds
 
+// the subscript into this vector is the enum TimeUnits
+vector<bool> gShowTimeUnits;
 
 void readFrontendSettings()
 {
@@ -45,6 +47,15 @@ void readFrontendSettings()
 	GET_SETTING("FOX" DOT "renderClippingWarning",gRenderClippingWarning,bool)
 
 	GET_SETTING("FOX" DOT "initialLengthToShow",gInitialLengthToShow,double)
+
+	GET_SETTING("FOX" DOT "showTimeUnits",gShowTimeUnits,vector<bool>)
+	if(gShowTimeUnits.size()!=TIME_UNITS_COUNT)
+	{	// default it
+		gShowTimeUnits.clear();
+		gShowTimeUnits.push_back(true);
+		gShowTimeUnits.push_back(false);
+		gShowTimeUnits.push_back(false);
+	}
 }
 
 void writeFrontendSettings()
@@ -58,5 +69,30 @@ void writeFrontendSettings()
 	gSettingsRegistry->createValue<bool>("FOX" DOT "renderClippingWarning",gRenderClippingWarning);
 
 	gSettingsRegistry->createValue<double>("FOX" DOT "initialLengthToShow",gInitialLengthToShow);
+
+	gSettingsRegistry->createValue<vector<bool> >("FOX" DOT "showTimeUnits",gShowTimeUnits);
 }
 
+void popupTimeUnitsSelectionMenu(FXWindow *owner,FXEvent *ev)
+{
+#if REZ_FOX_VERSION>=10119 /* nah.. don't support prior .. is pain (with setting up event handlers) */
+	FXMenuPane timeUnitsMenu(owner);
+		// ??? make sure these get deleted when timeUnitsMenu gets deleted
+		new FXMenuCaption(&timeUnitsMenu,_("Show Time Units in..."),NULL,JUSTIFY_LEFT);
+		new FXMenuSeparator(&timeUnitsMenu);
+			FXMenuCheck *secondsItem=new FXMenuCheck(&timeUnitsMenu,_("Seconds"));
+				secondsItem->setCheck(gShowTimeUnits[0]);
+			FXMenuCheck *framesItem=new FXMenuCheck(&timeUnitsMenu,_("Frames"));
+				framesItem->setCheck(gShowTimeUnits[1]);
+			FXMenuCheck *bytesItem=new FXMenuCheck(&timeUnitsMenu,_("Bytes"));
+				bytesItem->setCheck(gShowTimeUnits[2]);
+
+		timeUnitsMenu.create();
+		timeUnitsMenu.popup(NULL,ev->root_x,ev->root_y);
+		owner->getApp()->runModalWhileShown(&timeUnitsMenu);
+
+	gShowTimeUnits[0]=secondsItem->getCheck();
+	gShowTimeUnits[1]=framesItem->getCheck();
+	gShowTimeUnits[2]=bytesItem->getCheck();
+#endif
+}

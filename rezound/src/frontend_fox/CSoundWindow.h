@@ -28,6 +28,7 @@
 #include <map>
 
 #include "FXRezWaveView.h"
+#include "settings.h"
 
 class CLoadedSound;
 
@@ -85,6 +86,8 @@ public:
 		ID_INVERT_MUTE_BUTTON,
 
 		ID_REDRAW_BUTTON,
+
+		ID_TIME_UNITS_SETTING,
 
 		ID_LAST
 	};
@@ -144,6 +147,8 @@ public:
 
 	long onCloseWindow(FXObject *sender,FXSelector sel,void *ptr);
 
+	long onTimeUnitsSetting(FXObject *sender,FXSelector sel,void *ptr);
+
 	// called by CSoundFileManager::same_method_name()
 	const map<string,string> getPositionalInfo() const;
 	void setPositionalInfo(const map<string,string> info);
@@ -195,14 +200,14 @@ private:
 		FXLabel *audioDataSizeLabel;
 		FXLabel *poolFileSizeLabel;
 
-		FXLabel *totalLengthLabel;
-		FXLabel *selectionLengthLabel;
+		FXLabel *totalLengthLabels[TIME_UNITS_COUNT];
+		FXLabel *selectionLengthLabels[TIME_UNITS_COUNT];
 
 		FXSpinner *selectStartSpinner;
 		FXSpinner *selectStopSpinner;
 
-		FXLabel *selectStartLabel;
-		FXLabel *selectStopLabel;
+		FXLabel *selectStartLabels[TIME_UNITS_COUNT];
+		FXLabel *selectStopLabels[TIME_UNITS_COUNT];
 
 		//FXLabel *playPositionLabel;    used to be a simple label, but calling setText was too CPU intensive
 		FXFrame *playPositionLabel;
@@ -249,6 +254,8 @@ private:
 
 	void updateVertZoomDial();
 	void updateHorzZoomDial();
+
+	const string getLengthString(sample_pos_t length,TimeUnits units);
 };
 
 
