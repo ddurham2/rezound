@@ -28,14 +28,15 @@
 #include "../ASoundFileManager.h"
 #include "../ASoundTranslator.h"
 
-CSaveAsMultipleFilesAction::CSaveAsMultipleFilesAction(const CActionSound actionSound,ASoundFileManager *_soundFileManager,const string _directory,const string _filenamePrefix,const string _filenameSuffix,const string _extension,bool _openSavedSegments) :
+CSaveAsMultipleFilesAction::CSaveAsMultipleFilesAction(const CActionSound actionSound,ASoundFileManager *_soundFileManager,const string _directory,const string _filenamePrefix,const string _filenameSuffix,const string _extension,bool _openSavedSegments,unsigned _segmentNumberOffset) :
 	AAction(actionSound),
 	soundFileManager(_soundFileManager),
 	directory(_directory),
 	filenamePrefix(_filenamePrefix),
 	filenameSuffix(_filenameSuffix),
 	extension(_extension),
-	openSavedSegments(_openSavedSegments)
+	openSavedSegments(_openSavedSegments),
+	segmentNumberOffset(_segmentNumberOffset)
 {
 }
 
@@ -138,7 +139,7 @@ bool CSaveAsMultipleFilesAction::doActionSizeSafe(CActionSound &actionSound,bool
 
 	
 	// translate the '#'s to the track numbers
-	size_t track=1;
+	size_t track=segmentNumberOffset;
 	size_t alignBy=(size_t)floor(log10((float)segments.size()))+1;
 	for(vector<pair<string,pair<sample_pos_t,sample_pos_t> > >::iterator i=segments.begin();i!=segments.end();i++)
 	{
@@ -207,7 +208,8 @@ CSaveAsMultipleFilesAction *CSaveAsMultipleFilesActionFactory::manufactureAction
 		actionParameters->getStringParameter("Filename Prefix"),
 		actionParameters->getStringParameter("Filename Suffix"),
 		"."+formatName.substr(0,formatName.find(" ")), // cut out only the first few chars (which is the extension
-		actionParameters->getBoolParameter("Open Saved Segments")
+		actionParameters->getBoolParameter("Open Saved Segments"),
+		actionParameters->getUnsignedParameter("Segment Number Start")
 	);
 }
 

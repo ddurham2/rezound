@@ -111,7 +111,8 @@ CSaveAsMultipleFilesDialog::CSaveAsMultipleFilesDialog(FXWindow *mainWindow) :
 			addComboTextEntry(p1,"Format",ASoundTranslator::getFlatFormatList(),"The format to save each segment as",false);
 		p1=newVertPanel(p);
 			addCheckBoxEntry(p1,"Open Saved Segments",false,"Open the Segments After Saving Them");
-
+		p1=newVertPanel(p);
+			addNumericTextEntry(p1,"Segment Number Start","",1,0,1000,"The Number to Start With When Substituting the Track Number For '#' in the Filenames");
 
 	
 }
