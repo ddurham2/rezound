@@ -21,24 +21,29 @@
 ## Place - Suite 330, Boston, MA  02111-1307, USA
 include $(top_srcdir)/config/am_include.mk
 
-EXTRA_DIST=CNestedDataFile.h
+EXTRA_DIST=CNestedDataFile.h \
+		cfg.l \
+		cfg.y 
 ##bin_PROGRAMS=test_CNestedDataFile
 ##test_CNestedDataFile_SOURCES=test_CNestedDataFile.cpp CNestedDataFile.cpp cfg.tab.cc
 
-noinst_LTLIBRARIES=libmiscCN.la
+noinst_LTLIBRARIES=libmiscCN.la 
 libmiscCN_la_SOURCES=CNestedDataFile.cpp \
 		     cfg.tab.cc
+
+CFG_L=$(top_srcdir)/src/misc/CNestedDataFile/cfg.l
+CFG_Y=$(top_srcdir)/src/misc/CNestedDataFile/cfg.y
 		     
 #CNestedDataFile.o:CNestedDataFile.cpp CNestedDataFile.h
 #test_CNestedDataFile.o:test_CNestedDataFile.cpp CNestedDataFile.h
 
 cfg.tab.o: cfg.tab.cc
 	
-cfg.tab.cc: cfg.lex.c cfg.y CNestedDataFile.h
-	$(YACC) -pcfg_ -bcfg_ cfg.y -o cfg.tab.cc
+cfg.tab.cc: cfg.lex.c $(CFG_Y) CNestedDataFile.h
+	$(YACC) -pcfg_ -bcfg_ $(CFG_Y) -o cfg.tab.cc
 	
-cfg.lex.c: cfg.l CNestedDataFile.h
-	$(LEX) -Pcfg_ -t cfg.l > cfg.lex.c
+cfg.lex.c: $(CFG_L) CNestedDataFile.h
+	$(LEX) -Pcfg_ -t $(CFG_L) > cfg.lex.c
 
 clean-local: 
 	-rm -f cfg.tab.cc cfg.lex.c
