@@ -23,7 +23,7 @@
 
 #include "../../config/common.h"
 
-#ifdef HAVE_LIBVORBIS
+#if defined(HAVE_LIBOGG) && defined(HAVE_LIBVORBIS)
 
 #include "ASoundTranslator.h"
 
@@ -48,6 +48,6 @@ private:
 
 };
 
-#endif // HAVE_LIBVORBIS
+#endif // HAVE_LIBOGG && HAVE_LIBVORBIS
 
 #endif

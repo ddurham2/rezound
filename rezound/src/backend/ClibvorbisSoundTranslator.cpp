@@ -29,7 +29,7 @@
 
 #include "ClibvorbisSoundTranslator.h"
 
-#ifdef HAVE_LIBVORBIS
+#if defined(HAVE_LIBOGG) && defined(HAVE_LIBVORBIS)
 
 #include <stdio.h>	// for fopen/fclose
 #include <errno.h>
@@ -41,14 +41,8 @@
 #include <stdlib.h>	// for rand() and atoll
 
 #include "vorbis/codec.h"
-
-#ifdef HAVE_LIBVORBISFILE
 #include "vorbis/vorbisfile.h"
-#endif
-
-#ifdef HAVE_LIBVORBISENC
 #include "vorbis/vorbisenc.h"
-#endif
 
 
 #include <stdexcept>
@@ -632,4 +626,4 @@ const vector<vector<string> > ClibvorbisSoundTranslator::getFormatExtensions() c
 	return(list);
 }
 
-#endif // HAVE_LIBVORBIS
+#endif // HAVE_LIBOGG && HAVE_LIBVORBIS
