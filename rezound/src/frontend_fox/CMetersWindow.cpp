@@ -139,6 +139,12 @@ public:
 		dc.setForeground(M_METER_OFF);
 		dc.fillRectangle(0,2,width,height-3);
 
+
+		// if the global setting is disabled, stop drawing right here
+		if(!gLevelMetersEnabled)
+			return 1;
+
+
 		// draw RMS level indication
 		FXint x=(RMSLevel*width/MAX_SAMPLE);
 		dc.setFillStyle(FILL_STIPPLED);
@@ -243,6 +249,7 @@ public:
 		const FXint w=statusFont->getTextWidth(grandMaxPeakLevelLabel->getText().text(),grandMaxPeakLevelLabel->getText().length());
 		if(grandMaxPeakLevelLabel->getWidth()<w+2)
 			grandMaxPeakLevelLabel->setWidth(w+2);
+
 	}
 
 	long onResetGrandMaxPeakLevel(FXObject *sender,FXSelector,void*)
@@ -321,6 +328,8 @@ public:
 		zoomDial->setRevolutionIncrement(200*2);
 		zoomDial->setTipText("Adjust Zoom Factor for Analyzer\nRight-click for Default");
 		zoom=zoomDial->getValue();
+
+		canvasFrame->setWidth(150);
 	}
 
 	CAnalyzer::~CAnalyzer()
@@ -348,6 +357,12 @@ public:
 		dc.setForeground(M_BACKGROUND);
 		dc.fillRectangle(0,0,canvas->getWidth(),canvas->getHeight());
 
+
+		// if the global setting is disabled, stop drawing right here
+		if(!gFrequencyAnalyzerEnabled)
+			return 1;
+
+
 		// the w and h that we're going to render to (minus some borders and tick marks)
 		const size_t canvasWidth=canvas->getWidth(); 
 		const size_t canvasHeight=canvas->getHeight();
@@ -371,7 +386,6 @@ public:
 			dc.drawLine(0,y,canvasWidth,y);
 		}
 			
-
 		// draw frequency analysis bars  (or render text if fftw wasn't installed)
 		dc.setForeground(M_GREEN);
 		if(analysis.size()>0)
@@ -504,8 +518,10 @@ public:
 	void rebuildLabels(const vector<size_t> _frequencies,size_t octaveStride)
 	{
 		frequencies=_frequencies;
-		for(FXint t=0;t<labelFrame->numChildren();t++)
-			delete labelFrame->childAtIndex(t);
+
+		while(labelFrame->numChildren()>0)
+			delete labelFrame->childAtIndex(0);
+
 		for(size_t t=0;t<analysis.size()/octaveStride;t++)
 		{
 			string text;
@@ -524,6 +540,15 @@ public:
 				l->setWidth((ANALYZER_BAR_WIDTH*octaveStride)+(ANALYZER_BAR_WIDTH*(analysis.size()%octaveStride))); // make the last one the remaining width
 			l->create();
 		}
+	}
+
+	void clearCanvas()
+	{
+		vector<float> d2;
+		setAnalysis(d2,1);
+
+		vector<size_t> d1;
+		rebuildLabels(d1,1);
 	}
 
 	enum
@@ -653,35 +678,41 @@ long CMetersWindow::onUpdateMeters(FXObject *sender,FXSelector sel,void *ptr)
 {
 	if(soundPlayer!=NULL && meters.size()>0 && soundPlayer->isInitialized())
 	{
-		for(size_t t=0;t<meters.size();t++)
-			meters[t]->setLevel(soundPlayer->getRMSLevel(t),soundPlayer->getPeakLevel(t));
-
-		// make sure all the meters' grandMaxPeakLabels are the same width
-		int maxGrandMaxPeakLabelWidth=grandMaxPeakLevelLabel->getWidth();
-		bool resize=false;
-		for(size_t t=0;t<meters.size();t++)
+		if(gLevelMetersEnabled)
 		{
-			if(maxGrandMaxPeakLabelWidth<meters[t]->grandMaxPeakLevelLabel->getWidth())
+			for(size_t t=0;t<meters.size();t++)
+				meters[t]->setLevel(soundPlayer->getRMSLevel(t),soundPlayer->getPeakLevel(t));
+
+			// make sure all the meters' grandMaxPeakLabels are the same width
+			int maxGrandMaxPeakLabelWidth=grandMaxPeakLevelLabel->getWidth();
+			bool resize=false;
+			for(size_t t=0;t<meters.size();t++)
 			{
-				maxGrandMaxPeakLabelWidth=meters[t]->grandMaxPeakLevelLabel->getWidth();
-				resize=true;
+				if(maxGrandMaxPeakLabelWidth<meters[t]->grandMaxPeakLevelLabel->getWidth())
+				{
+					maxGrandMaxPeakLabelWidth=meters[t]->grandMaxPeakLevelLabel->getWidth();
+					resize=true;
+				}
+			}
+
+			if(resize)
+			{
+				grandMaxPeakLevelLabel->setWidth(maxGrandMaxPeakLabelWidth);
+				for(size_t t=0;t<meters.size();t++)
+					meters[t]->grandMaxPeakLevelLabel->setWidth(maxGrandMaxPeakLabelWidth);
 			}
 		}
 
-		if(resize)
+		if(gFrequencyAnalyzerEnabled)
 		{
-			grandMaxPeakLevelLabel->setWidth(maxGrandMaxPeakLabelWidth);
-			for(size_t t=0;t<meters.size();t++)
-				meters[t]->grandMaxPeakLevelLabel->setWidth(maxGrandMaxPeakLabelWidth);
-		}
-
-		if(analyzer->setAnalysis(soundPlayer->getFrequencyAnalysis(),soundPlayer->getFrequencyAnalysisOctaveStride()))
-		{
-			const vector<float> a=soundPlayer->getFrequencyAnalysis();
-			vector<size_t> frequencies;
-			for(size_t t=0;t<a.size();t++)
-				frequencies.push_back(soundPlayer->getFrequency(t));
-			analyzer->rebuildLabels(frequencies,soundPlayer->getFrequencyAnalysisOctaveStride());
+			if(analyzer->setAnalysis(soundPlayer->getFrequencyAnalysis(),soundPlayer->getFrequencyAnalysisOctaveStride()))
+			{
+				const vector<float> a=soundPlayer->getFrequencyAnalysis();
+				vector<size_t> frequencies;
+				for(size_t t=0;t<a.size();t++)
+					frequencies.push_back(soundPlayer->getFrequency(t));
+				analyzer->rebuildLabels(frequencies,soundPlayer->getFrequencyAnalysisOctaveStride());
+			}
 		}
 	}
 
@@ -732,5 +763,32 @@ void CMetersWindow::resetGrandMaxPeakLevels()
 {
 	for(size_t t=0;t<meters.size();t++)
 		meters[t]->setGrandMaxPeakLevel(0);
+}
+
+bool CMetersWindow::isLevelMetersEnabled() const
+{
+	return gLevelMetersEnabled;
+}
+
+void CMetersWindow::enableLevelMeters(bool enable)
+{
+	gLevelMetersEnabled=enable;
+	if(!enable)
+	{
+		for(size_t t=0;t<meters.size();t++)
+			meters[t]->setLevel(0,0); // just to cause a canvas update
+	}
+}
+
+bool CMetersWindow::isFrequencyAnalyzerEnabled() const
+{
+	return gFrequencyAnalyzerEnabled;
+}
+
+void CMetersWindow::enableFrequencyAnalyzer(bool enable)
+{
+	gFrequencyAnalyzerEnabled=enable;
+	if(!enable)
+		analyzer->clearCanvas();
 }
 

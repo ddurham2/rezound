@@ -119,6 +119,7 @@ void ASoundPlayer::mixSoundPlayerChannels(const unsigned nChannels,sample_t * co
 
 
 	// calculate the peak levels and max RMS levels for this chunk
+	if(gLevelMetersEnabled)
 	{
 		for(unsigned i=0;i<nChannels;i++)
 		{
@@ -156,6 +157,7 @@ void ASoundPlayer::mixSoundPlayerChannels(const unsigned nChannels,sample_t * co
 	}
 
 #ifdef HAVE_LIBRFFTW
+	if(gFrequencyAnalyzerEnabled)
 	{
 		CMutexLocker l(frequencyAnalysisBufferMutex);
 
@@ -183,8 +185,8 @@ void ASoundPlayer::mixSoundPlayerChannels(const unsigned nChannels,sample_t * co
 		frequencyAnalysisBufferPrepared=false;
 		frequencyAnalysisBufferLength=copyAmount;
 	}
-		
 #endif
+	
 }
 
 void ASoundPlayer::stopAll()

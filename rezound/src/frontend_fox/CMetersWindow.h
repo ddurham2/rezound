@@ -43,6 +43,12 @@ public:
 
 	void resetGrandMaxPeakLevels();
 
+	bool isLevelMetersEnabled() const;
+	void enableLevelMeters(bool enable);
+
+	bool isFrequencyAnalyzerEnabled() const;
+	void enableFrequencyAnalyzer(bool enable);
+
 	enum
 	{
 		ID_UPDATE_CHORE=FXTopWindow::ID_LAST,
@@ -76,6 +82,7 @@ private:
 	ASoundPlayer *soundPlayer;
 
 	FXTimer *timeout;
+
 };
 
 
