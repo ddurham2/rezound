@@ -91,6 +91,10 @@ long CActionMenuCommand::onCommand(FXObject *sender,FXSelector sel,void *ptr)
 
 		gSoundFileManager->updateAfterEdit();
 
+		// now, in case a newly created window has taken the place of the previously active window, it still may be necessary to update the previous active sound window 
+		if(gSoundFileManager->getActive()!=activeSound && gSoundFileManager->isValidLoadedSound(activeSound))
+			gSoundFileManager->updateAfterEdit(activeSound);
+
 		prevEvent.state=0;
 		prevEvent.click_button=0;
 	}
