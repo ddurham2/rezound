@@ -50,7 +50,7 @@ public:
 	void createNew();
 	CLoadedSound *createNew(const string filename,unsigned channelCount,unsigned sampleRate,unsigned length=1,bool rawFormat=false);
 	void open(const string filename="",bool openAsRaw=false);
-	// ??? should rename these to, saveActive... 
+	// ??? should rename these to, saveActive...  or pass them a CSound * (I prefer that), perhaps optionally pass saveAs a filename which can be ""
 	void save();
 	void saveAs();
 	void savePartial(const CSound *sound,const string filename,const sample_pos_t saveStart,const sample_pos_t saveLength);
@@ -89,7 +89,7 @@ protected:
 
 
 	// invoked whenever a file is successfully opened, new file created, file recorded, saveAs-ed, etc
-	void updateReopenHistory(const string &filename);
+	void updateReopenHistory(const string filename);
 
 private:
 
@@ -97,7 +97,7 @@ private:
 
 	CNestedDataFile *loadedRegistryFile;
 
-	void prvOpen(const string &filename,bool readOnly,bool registerFilename,bool asRaw=false,const ASoundTranslator *translatorToUse=NULL);
+	void prvOpen(const string filename,bool readOnly,bool registerFilename,bool asRaw=false,const ASoundTranslator *translatorToUse=NULL);
 	void registerFilename(const string filename);
 	void unregisterFilename(const string filename);
 	bool isFilenameRegistered(const string filename);

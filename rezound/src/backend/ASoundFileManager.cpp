@@ -130,7 +130,7 @@ void ASoundFileManager::open(const string _filename,bool openAsRaw)
  * when we are loading the registered files from a previous sessions, so they would already be
  * in the registry
  */
-void ASoundFileManager::prvOpen(const string &filename,bool readOnly,bool doRegisterFilename,bool asRaw,const ASoundTranslator *translatorToUse)
+void ASoundFileManager::prvOpen(const string filename,bool readOnly,bool doRegisterFilename,bool asRaw,const ASoundTranslator *translatorToUse)
 {
 	if(doRegisterFilename && isFilenameRegistered(filename))
 		throw(runtime_error(string(__func__)+" -- file already opened"));
@@ -249,7 +249,7 @@ askAgain:
 
 		try
 		{
-			if(CPath(filename).exists())
+			if(CPath(filename).exists() && !CPath(filename).isDevice())
 			{
 				if(Question("Overwrite Existing File:\n"+filename,yesnoQues)!=yesAns)
 				{
@@ -301,7 +301,7 @@ askAgain:
 	if(isFilenameRegistered(filename))
 		throw(runtime_error(string(__func__)+" -- file is currently opened: '"+filename+"'"));
 
-	if(CPath(filename).exists())
+	if(CPath(filename).exists() && !CPath(filename).isDevice())
 	{
 		if(Question("Overwrite Existing File:\n"+filename,yesnoQues)!=yesAns)
 			goto askAgain;
@@ -545,7 +545,7 @@ bool ASoundFileManager::isFilenameRegistered(const string filename)
 	return(false);
 }
 
-void ASoundFileManager::updateReopenHistory(const string &filename)
+void ASoundFileManager::updateReopenHistory(const string filename)
 {
 	// rewrite the reopen history to the gSettingsRegistry
 	vector<string> reopenFilenames;
