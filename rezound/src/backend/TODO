@@ -4,9 +4,15 @@
 	- a newly recorded sound needs to be !saved
 	- a new sounds need to be !saved
 
+	- in CrezSound::saveSound, copyToFile unnecessarily copies any temp pools and peak chunk pools...  thus making the saved file way too big
+		- so I should manually copy the pools... TPoolAccessor should have a method for copying pool efficiently
+
 	- use a registry setting for knowing where to put working files and the clipboard instead of always /tmp
 
 	- When it's possible, I really need to do something different in TPoolFile::isExclusiveLocked and also TPoolFile::getSharedLockCount because right now, the isExclusiveLocked returns true if it's shared locked obviously because the tryLock fails so it assumes wrongly that there's an exclusive lock obtained
+		- perhaps I could keep a counter for the shared locks and bool for the exclusive lock myself in TPoolFile to count the number of locks
+			- I would set and increment/decrement these myself when the lock was obtained
+
 
 	- warn the user if he's saving an exported file format and information such as cues and user notes will not be exported (for now)
 		- problem should somewhat go away with a different audio file library
@@ -135,4 +141,9 @@
 		- these would probably be a different color and/or symbol
 
 	- Change CSoundPlayerChannel to do interpolation for sample rate conversion
+
+	- on revert, a newly recorded sound has not been saved, so we shouldn't even let the user revert... possibly, just test for the file's existance, and if it doesn't exist, revert should beep
+
+	- something wasn't handled right when I did a recording to filename 'A' and hit okay.. then recorded to filename 'A' again.. I need to check is registrered after I get the new filename before I popup the record dialog
+
 
