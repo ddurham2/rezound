@@ -211,7 +211,7 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 	t=new FXVerticalFrame(statusPanel,FRAME_NONE, 0,0,200,0, 0,8,0,0, 0,0);
 		audioDataSizeLabel=new FXLabel(t,"Audio Size; ",NULL,LAYOUT_RIGHT);
 		audioDataSizeLabel->setFont(statusFont);
-		poolFileSizeLabel=new FXLabel(t,"File Size: ",NULL,LAYOUT_RIGHT);
+		poolFileSizeLabel=new FXLabel(t,"Working File: ",NULL,LAYOUT_RIGHT);
 		poolFileSizeLabel->setFont(statusFont);
 
 	new FXVerticalSeparator(statusPanel);
@@ -366,7 +366,7 @@ void CSoundWindow::updateFromEdit()
 void CSoundWindow::updateAllStatusInfo()
 {
 	audioDataSizeLabel->setText(("Audio Size: "+loadedSound->getSound()->getAudioDataSize()).c_str());
-	poolFileSizeLabel->setText(("File Size: "+loadedSound->getSound()->getPoolFileSize()).c_str());
+	poolFileSizeLabel->setText(("Working File: "+loadedSound->getSound()->getPoolFileSize()).c_str());
 
 	// ??? this should depend on the FXRezWaveView's actual horzZoomFactor value because the FXDial doesn't represent how many samples a pixel represents
 	int places;
