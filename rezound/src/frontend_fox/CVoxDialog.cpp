@@ -39,7 +39,7 @@ FXIMPLEMENT(CVoxDialog,FXModalDialogBox,CVoxDialogMap,ARRAYNUMBER(CVoxDialogMap)
 
 
 CVoxDialog::CVoxDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"Vox Loading Parameters",0,0,FXModalDialogBox::ftVertical)
+	FXModalDialogBox(mainWindow,"Vox Parameters",0,0,FXModalDialogBox::ftVertical)
 {
 	FXComposite *main=new FXMatrix(getFrame(),2,MATRIX_BY_COLUMNS,LAYOUT_FILL_X|LAYOUT_FILL_Y);
 	FXComboBox *combo;
