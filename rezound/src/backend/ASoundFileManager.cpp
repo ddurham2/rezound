@@ -283,6 +283,36 @@ askAgain:
 	}
 }
 
+void ASoundFileManager::savePartial(const CSound *sound,const string _filename,const sample_pos_t saveStart,const sample_pos_t saveLength)
+{
+	string filename=_filename;
+	bool first=true;
+
+askAgain:
+	bool saveAsRaw=false;
+	if(filename=="" || !first)
+	{
+		if(!gFrontendHooks->promptForSaveSoundFilename(filename,saveAsRaw))
+			return;
+	}
+
+	first=false;
+
+	if(isFilenameRegistered(filename))
+		throw(runtime_error(string(__func__)+" -- file is currently opened: '"+filename+"'"));
+
+	if(CPath(filename).exists())
+	{
+		if(Question("Overwrite Existing File:\n"+filename,yesnoQues)!=yesAns)
+			goto askAgain;
+	}
+
+	const ASoundTranslator *translator=getTranslator(filename,saveAsRaw);
+
+	if(translator->saveSound(filename,sound,saveStart,saveLength))
+		updateReopenHistory(filename);
+}
+
 void ASoundFileManager::close(CloseTypes closeType,CLoadedSound *closeWhichSound)
 {
 	CLoadedSound *loaded=closeWhichSound==NULL ? getActive() : closeWhichSound;

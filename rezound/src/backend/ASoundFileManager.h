@@ -33,6 +33,8 @@ class CNestedDataFile;
 class ASoundPlayer;
 class ASoundTranslator;
 
+#include "CSound_defs.h"
+
 struct EStopClosing { };
 
 
@@ -50,6 +52,7 @@ public:
 	// ??? should rename these to, saveActive... 
 	void save();
 	void saveAs();
+	void savePartial(const CSound *sound,const string filename,const sample_pos_t saveStart,const sample_pos_t saveLength);
 	enum CloseTypes { ctSaveYesNoStop,ctSaveYesNoCancel,ctSaveNone };
 	void close(CloseTypes closeType,CLoadedSound *closeWhichSound=NULL); // if nothing is passed for closeWhichSound, then the active sound is closed
 	void revert();
