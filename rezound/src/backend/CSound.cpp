@@ -1119,8 +1119,16 @@ void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 		}
 		else
 		{
-			// ??? need a progress bar
-			dest.copyData(destOffset,src,srcWhere,length);
+			if((length/100)>0)
+			{
+				CStatusBar statusBar(_("Copying Data -- Channel ")+istring(channel),0,100,false);
+				for(sample_pos_t t=0;t<100;t++)
+				{
+					dest.copyData(destOffset+(t*(length/100)),src,srcWhere+(t*(length/100)),length/100);
+					statusBar.update(t);
+				}
+			}
+			dest.copyData(destOffset+(100*(length/100)),src,srcWhere+(100*(length/100)),length%100);
 		}
 
 		break;
