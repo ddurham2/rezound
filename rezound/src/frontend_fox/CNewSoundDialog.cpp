@@ -50,9 +50,9 @@ FXIMPLEMENT(CNewSoundDialog,FXModalDialogBox,CNewSoundDialogMap,ARRAYNUMBER(CNew
 CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 	FXModalDialogBox(mainWindow,"New Sound",395,210,FXModalDialogBox::ftVertical),
 	
-	filenameFrame(new FXHorizontalFrame(getFrame())),
+	filenameFrame(new FXHorizontalFrame(getFrame(),LAYOUT_FILL_X)),
 		filenameLabel(new FXLabel(filenameFrame,"(.rez)Filename:")),
-		filenameTextBox(new FXTextField(filenameFrame,30)),
+		filenameTextBox(new FXTextField(filenameFrame,30,NULL,0,TEXTFIELD_NORMAL | LAYOUT_FILL_X)),
 		browseButton(new FXButton(filenameFrame,"&Browse",NULL,this,ID_BROWSE_BUTTON)),
 	channelsFrame(new FXHorizontalFrame(getFrame())),
 		channelsLabel(new FXLabel(channelsFrame,"      Channels:")),
