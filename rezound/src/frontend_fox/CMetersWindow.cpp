@@ -18,6 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
+#define METER_UPDATE_RATE 50	 // update every <this value> milliseconds
+
 #include "CMetersWindow.h"
 
 #include "../backend/CSound_defs.h"
@@ -29,10 +31,21 @@ class CMeter : public FXPacker
 public:
 	CMeter::CMeter(FXComposite *parent) :
 		FXPacker(parent,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0),
-		canvas(new FXCanvas(this,this,ID_CANVAS,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y))
+		canvas(new FXCanvas(this,this,ID_CANVAS,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,400,0)),
+		//grandMaxPeakLevelLabel(new FXLabel(this,"0 dBFS",NULL,LABEL_NORMAL|LAYOUT_RIGHT|LAYOUT_FIX_WIDTH,0,0,25,0)),
+		RMSLevel(0),
+		peakLevel(0),
+		maxPeakLevel(0),
+		grandMaxPeakLevel(0),
+		maxPeakFallTimer(0),
+		stipplePattern(NULL)
 	{
-		static char pix[]={0x55,0x2a};
+		//static char pix[]={0x55,0x2a};
+		//stipplePattern=new FXBitmap(getApp(),pix,0,8,2);
+		
+		static char pix[]={0xaa,0x55};
 		stipplePattern=new FXBitmap(getApp(),pix,0,8,2);
+
 		stipplePattern->create();
 	}
 
@@ -40,47 +53,131 @@ public:
 	{
 	}
 
-	long CMeter::onPaint(FXObject *sender,FXSelector sel,void *ptr)
+	long CMeter::onCanvasPaint(FXObject *sender,FXSelector sel,void *ptr)
 	{
-		FXint x=1+(level*getWidth()/MAX_SAMPLE);
-
 		FXDCWindow dc(canvas);
 		dc.begin(canvas);  // ??? ask J if it's better to do this or if it's not necessary
 
+		const FXint width=canvas->getWidth();
+		const FXint height=canvas->getHeight();
+
 		// draw 11 tick marks above level indication
 		dc.setForeground(FXRGB(0,0,0));
-		dc.fillRectangle(0,0,getWidth(),2);
+		dc.fillRectangle(0,0,width,2);
 		dc.setForeground(FXRGB(128,128,128));
 		#define NUM 11
 		for(int t=0;t<NUM;t++)
 		{
-			const int x=(getWidth()-1)*t/(NUM-1);
+			const int x=(width-1)*t/(NUM-1);
 			dc.drawLine(x,0,x,1);
 		}
 
 		// draw horz line below level indication
 		dc.setForeground(FXRGB(128,128,128));
-		dc.drawLine(0,getHeight()-1,getWidth(),getHeight()-1);
+		dc.drawLine(0,height-1,width,height-1);
 
 		// draw gray background underneath the stippled level indication 
 		dc.setForeground(FXRGB(48,48,48));
-		dc.fillRectangle(0,2,getWidth(),getHeight()-3);
+		dc.fillRectangle(0,2,width,height-3);
 
-		// draw level indication
+		// draw RMS level indication
+		FXint x=(RMSLevel*width/MAX_SAMPLE);
 		dc.setFillStyle(FILL_STIPPLED);
 		dc.setStipple(stipplePattern);
-		dc.setForeground(FXRGB(0,255,0));
-		dc.fillRectangle(0,2,x,getHeight()-3);
+		if(x>(width*3/4))
+		{
+			dc.setForeground(FXRGB(80,255,32)); // green
+			dc.fillRectangle(0,2,width/2,height-3);
+			dc.setForeground(FXRGB(255,212,48)); // yellow
+			dc.fillRectangle(width/2,2,width/4,height-3);
+			dc.setForeground(FXRGB(255,38,0)); // red
+			dc.fillRectangle(width*3/4,2,x-(width*3/4),height-3);
+		}
+		else if(x>(width/2))
+		{
+			dc.setForeground(FXRGB(80,255,32)); // green
+			dc.fillRectangle(0,2,width/2,height-3);
+			dc.setForeground(FXRGB(255,212,48)); // yellow
+			dc.fillRectangle(width/2,2,x-width/2,height-3);
+		}
+		else
+		{
+			dc.setForeground(FXRGB(80,255,32)); // green
+			dc.fillRectangle(0,2,x,height-3);
+		}
 
+		// draw peak indication
+		FXint y=height/2;
+		x=(peakLevel*width/MAX_SAMPLE);
+		dc.setFillStyle(FILL_SOLID);
+		if(x>(width*3/4))
+		{
+			dc.setForeground(FXRGB(80,255,32)); // green
+			//dc.drawLine(0,y,width/2,y);
+			dc.fillRectangle(0,y,width/2,2);
+			dc.setForeground(FXRGB(255,212,48)); // yellow
+			//dc.drawLine(width/2,y,width*3/4,y);
+			dc.fillRectangle(width/2,y,width/4,2);
+			dc.setForeground(FXRGB(255,38,0)); // red
+			//dc.drawLine(width*3/4,y,x,y);
+			dc.fillRectangle(width*3/4,y,x-(width*3/4),2);
+		}
+		else if(x>(width/2))
+		{
+			dc.setForeground(FXRGB(80,255,32)); // green
+			//dc.drawLine(0,y,width/2,y);
+			dc.fillRectangle(0,y,width/2,2);
+			dc.setForeground(FXRGB(255,212,48)); // yellow
+			//dc.drawLine(width/2,y,x,y);
+			dc.fillRectangle(width/2,y,x-width/2,2);
+		}
+		else
+		{
+			dc.setForeground(FXRGB(80,255,32)); // green
+			//dc.drawLine(0,y,x,y);
+			dc.fillRectangle(0,y,x,2);
+		}
+
+		// draw the max peak indicator
+		x=(maxPeakLevel*width/MAX_SAMPLE);
+		dc.setFillStyle(FILL_SOLID);
+		if(x>(width*3/4))
+			dc.setForeground(FXRGB(255,38,0)); // brighter red
+		else if(x>(width/2))
+			dc.setForeground(FXRGB(255,255,112)); // brighter yellow
+		else
+			dc.setForeground(FXRGB(144,255,96)); // brighter green
+		dc.fillRectangle(x-1,2,2,height-3);
 			
 
 		dc.end();
 		return 1;
 	}
 
-	void setLevel(sample_t _level)
+	void setLevel(sample_t _RMSLevel,sample_t _peakLevel)
 	{
-		level=_level;
+		RMSLevel=_RMSLevel;
+		peakLevel=_peakLevel;
+
+		// start decreasing the max peak level after maxPeakFallTimer falls below zero
+		if((--maxPeakFallTimer)<0)
+		{
+			//maxPeakLevel=0;
+			maxPeakLevel=maxPeakLevel-MAX_SAMPLE/50; // fall 2% of the max sample
+			maxPeakLevel=maxPeakLevel<0 ? 0 : maxPeakLevel;
+			maxPeakFallTimer=0;
+		}
+
+		// if the peak level is >= the maxPeakLevel then set a new maxPeakLevel and reset the peak file timer
+		if(peakLevel>=maxPeakLevel)
+		{
+			maxPeakLevel=peakLevel;
+			maxPeakFallTimer=10;
+		}
+
+		if(maxPeakLevel>grandMaxPeakLevel)
+			grandMaxPeakLevel=maxPeakLevel;
+
 		canvas->update(); // flag for repainting
 	}
 
@@ -93,8 +190,12 @@ protected:
 	CMeter() { }
 
 private:
+	friend class CMetersWindow;
+
 	FXCanvas *canvas;
-	mix_sample_t level;
+	FXLabel *grandMaxPeakLevelLabel;
+	mix_sample_t RMSLevel,peakLevel,maxPeakLevel,grandMaxPeakLevel;
+	int maxPeakFallTimer;
 	FXBitmap *stipplePattern;
 	
 };
@@ -102,7 +203,7 @@ private:
 FXDEFMAP(CMeter) CMeterMap[]=
 {
 	//	  Message_Type			ID					Message_Handler
-	FXMAPFUNC(SEL_PAINT,			CMeter::ID_CANVAS,			CMeter::onPaint),
+	FXMAPFUNC(SEL_PAINT,			CMeter::ID_CANVAS,			CMeter::onCanvasPaint),
 };
 
 FXIMPLEMENT(CMeter,FXPacker,CMeterMap,ARRAYNUMBER(CMeterMap))
@@ -128,15 +229,17 @@ FXIMPLEMENT(CMetersWindow,FXPacker,CMetersWindowMap,ARRAYNUMBER(CMetersWindowMap
  * When I receive that message I add a chore which gets processed when all other
  * messages have been processed and at the end of the chore I set up the timeout 
  * again.
+ * the cycle is
+ * -construction-> AAA -N ms-> BBB -chore-> CCC -N ms-> BBB -chore-> CCC -N ms-> BBB -chore-> CCC -> ...
  */
 
-#define METER_UPDATE_RATE 50	 // update every <this value> milliseconds
+
 
 CMetersWindow::CMetersWindow(FXComposite *parent) :
 	FXPacker(parent,LAYOUT_BOTTOM|LAYOUT_FILL_X|LAYOUT_FIX_HEIGHT|FRAME_RIDGE,0,0,0,55, 3,3,3,3, 0,0),
 	statusFont(getApp()->getNormalFont()),
 	metersFrame(new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_SUNKEN|FRAME_THICK,0,0,0,0, 2,2,0,2, 0,1)),
-		labelFrame(new FXPacker(metersFrame,LAYOUT_FILL_X|FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0)),
+		labelFrame(new FXPacker(metersFrame,LAYOUT_FIX_WIDTH|FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0)),
 	soundPlayer(NULL)
 {
 	// create the font to use for meters
@@ -164,7 +267,9 @@ CMetersWindow::CMetersWindow(FXComposite *parent) :
 
 	metersFrame->setBackColor(FXRGB(0,0,0));
 
+	// AAA
 	chore=NULL;
+	// schedule the first update meters event
 	timeout=getApp()->addTimeout(METER_UPDATE_RATE,this,ID_UPDATE_TIMEOUT);
 }
 
@@ -174,22 +279,32 @@ CMetersWindow::~CMetersWindow()
 	getApp()->removeTimeout(timeout);
 }
 
+// BBB
+long CMetersWindow::onUpdateMetersSetChore(FXObject *sender,FXSelector sel,void *ptr)
+{
+	// now schedule an event to update the meters when everything else is finished
+	chore=getApp()->addChore(this,ID_UPDATE_CHORE);
+	return 1;
+}
+
+// CCC
 long CMetersWindow::onUpdateMeters(FXObject *sender,FXSelector sel,void *ptr)
 {
 	if(soundPlayer!=NULL)
 	{
 		// ??? getPeakLevel needs to keep a max since the last time I called it and if possible do mid chunk analysis so I can even do faster meter updates than the buffers might be being processed
 		for(size_t t=0;t<meters.size();t++)
-			meters[t]->setLevel(soundPlayer->getPeakLevel(t));
+		{
+			// make sure the label frame is the same width as the meters 
+			if(t==0 && labelFrame->getWidth()!=meters[0]->canvas->getWidth())
+				labelFrame->setWidth(meters[0]->canvas->getWidth());
+
+			meters[t]->setLevel(soundPlayer->getRMSLevel(t),soundPlayer->getPeakLevel(t));
+		}
 	}
 
+	// don't draw again for another METER_UPDATE_RATE milliseconds
 	timeout=getApp()->addTimeout(METER_UPDATE_RATE,this,ID_UPDATE_TIMEOUT);
-	return 1;
-}
-
-long CMetersWindow::onUpdateMetersSetChore(FXObject *sender,FXSelector sel,void *ptr)
-{
-	chore=getApp()->addChore(this,ID_UPDATE_CHORE);
 	return 1;
 }
 
@@ -197,13 +312,13 @@ long CMetersWindow::onLabelFrameConfigure(FXObject *sender,FXSelector,void*)
 {
 	for(FXint t=0;t<labelFrame->numChildren();t++)
 	{
-		const int x=(getWidth()/*-1 should be needed, except for the comment below*/)*t/(labelFrame->numChildren()-1);
+		const int x=(labelFrame->getWidth()-1)*t/(labelFrame->numChildren()-1);
 
 		int w= t==0 ? 0 : labelFrame->childAtIndex(t)->getWidth();
 		if(t!=labelFrame->numChildren()-1)
 			w/=2;
 
-		labelFrame->childAtIndex(t)->setX((x-w)-(t*2)); // ??? I have NO earthly idea why '-(t*2)' is required except that the labels are not being placed where I'm placing them
+		labelFrame->childAtIndex(t)->setX((x-w));
 	}
 	return 1;
 }
