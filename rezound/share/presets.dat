@@ -255,6 +255,31 @@ Flange
 
 }
 
+Quantize
+{
+	names[]={"17 Values"};
+
+	17\ Values
+	{
+
+		Input\ Gain
+		{
+			scalar="2";
+			value="1";
+		}
+		Output\ Gain
+		{
+			scalar="2";
+			value="0.9";
+		}
+		Quantum\ Count
+		{
+			scalar="16";
+			value="8";
+		}
+	}
+}
+
 Simple\ Delay
 {
 	names[]={"Simple Echo","Subtle Box","Tunnel","Bucket","Ring","Paging John"}
