@@ -49,12 +49,12 @@ CRecordSoundClipboard::~CRecordSoundClipboard()
 
 void CRecordSoundClipboard::copyFrom(const CSound *sound,const bool whichChannels[MAX_CHANNELS],sample_pos_t start,sample_pos_t length)
 {
-	throw(runtime_error(string(__func__)+" -- this clipboard is read-only"));
+	throw runtime_error(string(__func__)+" -- this clipboard is read-only");
 }
 
 bool CRecordSoundClipboard::isReadOnly() const
 {
-	return(true);
+	return true;
 }
 
 
@@ -65,9 +65,9 @@ bool CRecordSoundClipboard::prepareForCopyTo()
 	{
 		VAnswer ans=Question("There is already data on this recording clipboard.  Do you want to record something new?",cancelQues);
 		if(ans==noAns)
-			return(true);
+			return true;
 		else if(ans==cancelAns)
-			return(false);
+			return false;
 		//else go ahead and record
 	}
 
@@ -84,7 +84,7 @@ bool CRecordSoundClipboard::prepareForCopyTo()
 		unsigned channelCount;
 		unsigned sampleRate;
 		if(!gFrontendHooks->promptForNewSoundParameters(channelCount,sampleRate))
-			return(false);
+			return false;
 
 		remove(workingFilename.c_str());
 		workingFile=new CSound(workingFilename,sampleRate,channelCount,1); // at least 1 sample is manditory
@@ -96,7 +96,7 @@ bool CRecordSoundClipboard::prepareForCopyTo()
 		{
 			recorder.deinitialize();
 			delete workingFile;workingFile=NULL;
-			return(false);
+			return false;
 		}
 
 		// recorded for each channel
@@ -115,22 +115,22 @@ bool CRecordSoundClipboard::prepareForCopyTo()
 		throw;
 	}
 
-	return(true);
+	return true;
 }
 
 void CRecordSoundClipboard::copyTo(CSound *sound,unsigned destChannel,unsigned srcChannel,sample_pos_t start,sample_pos_t length,MixMethods mixMethod,SourceFitTypes fitSrc,bool invalidatePeakData)
 {
 	if(isEmpty())
-		throw(runtime_error(string(__func__)+" -- this clipboard has not been recorded to yet"));
+		throw runtime_error(string(__func__)+" -- this clipboard has not been recorded to yet");
 
 	if(destChannel>sound->getChannelCount())
-		throw(runtime_error(string(__func__)+" -- destChannel (+"+istring(destChannel)+") out of range ("+istring(sound->getChannelCount())+")"));
+		throw runtime_error(string(__func__)+" -- destChannel (+"+istring(destChannel)+") out of range ("+istring(sound->getChannelCount())+")");
 	if(srcChannel>workingFile->getChannelCount())
-		throw(runtime_error(string(__func__)+" -- srcChannel (+"+istring(srcChannel)+") out of range ("+istring(workingFile->getChannelCount())+")"));
+		throw runtime_error(string(__func__)+" -- srcChannel (+"+istring(srcChannel)+") out of range ("+istring(workingFile->getChannelCount())+")");
 	if(!whichChannels[srcChannel])
-		throw(runtime_error(string(__func__)+" -- data does not exist in clipboard for srcChannel (+"+istring(srcChannel)+")"));
+		throw runtime_error(string(__func__)+" -- data does not exist in clipboard for srcChannel (+"+istring(srcChannel)+")");
 	if(length>getLength(sound->getSampleRate()) && fitSrc==sftNone)
-		throw(runtime_error(string(__func__)+" -- length ("+istring(length)+")is greater than the amount of data in the clipboard ("+istring(getLength(sound->getSampleRate())+")")));
+		throw runtime_error(string(__func__)+" -- length ("+istring(length)+")is greater than the amount of data in the clipboard ("+istring(getLength(sound->getSampleRate())+")"));
 
 
 	// ??? I perhaps need to copy the cues also... as long as the names don't conflict
@@ -143,14 +143,19 @@ void CRecordSoundClipboard::copyTo(CSound *sound,unsigned destChannel,unsigned s
 sample_pos_t CRecordSoundClipboard::getLength(unsigned _sampleRate) const
 {
 	if(workingFile==NULL || workingFile->getLength()<=1)
-		return(0);
+		return 0;
 	else
 			// ??? probably want to divide first
-		return((sample_pos_t)((sample_fpos_t)workingFile->getLength()*(sample_fpos_t)_sampleRate/(sample_fpos_t)workingFile->getSampleRate()));
+		return (sample_pos_t)((sample_fpos_t)workingFile->getLength()*(sample_fpos_t)_sampleRate/(sample_fpos_t)workingFile->getSampleRate());
 }
 
 bool CRecordSoundClipboard::isEmpty() const
 {
-	return(workingFile==NULL || workingFile->getLength()<=1);
+	return workingFile==NULL || workingFile->getLength()<=1;
+}
+
+unsigned CRecordSoundClipboard::getSampleRate() const
+{
+	return workingFile==NULL ? 0 : workingFile->getSampleRate();
 }
 

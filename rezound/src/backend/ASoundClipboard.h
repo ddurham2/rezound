@@ -62,6 +62,7 @@ public:
 		// returns a pointer to an array of MAX_CHANNELS bools which are true for each channel there is data for in the clipboard
 	const bool *getWhichChannels() const;
 
+	virtual unsigned getSampleRate() const=0;
 	
 
 protected:

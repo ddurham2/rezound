@@ -68,7 +68,7 @@ void CNativeSoundClipboard::copyFrom(const CSound *sound,const bool whichChannel
 
 bool CNativeSoundClipboard::isReadOnly() const
 {
-	return(false);
+	return false;
 }
 
 
@@ -76,13 +76,13 @@ bool CNativeSoundClipboard::isReadOnly() const
 void CNativeSoundClipboard::copyTo(CSound *sound,unsigned destChannel,unsigned srcChannel,sample_pos_t start,sample_pos_t length,MixMethods mixMethod,SourceFitTypes fitSrc,bool invalidatePeakData)
 {
 	if(destChannel>sound->getChannelCount())
-		throw(runtime_error(string(__func__)+" -- destChannel (+"+istring(destChannel)+") out of range ("+istring(sound->getChannelCount())+")"));
+		throw runtime_error(string(__func__)+" -- destChannel (+"+istring(destChannel)+") out of range ("+istring(sound->getChannelCount())+")");
 	if(srcChannel>channelCount)
-		throw(runtime_error(string(__func__)+" -- srcChannel (+"+istring(srcChannel)+") out of range ("+istring(channelCount)+")"));
+		throw runtime_error(string(__func__)+" -- srcChannel (+"+istring(srcChannel)+") out of range ("+istring(channelCount)+")");
 	if(!whichChannels[srcChannel])
-		throw(runtime_error(string(__func__)+" -- data does not exist in clipboard for srcChannel (+"+istring(srcChannel)+")"));
+		throw runtime_error(string(__func__)+" -- data does not exist in clipboard for srcChannel (+"+istring(srcChannel)+")");
 	if(length>getLength(sound->getSampleRate()) && fitSrc==sftNone)
-		throw(runtime_error(string(__func__)+" -- length ("+istring(length)+")is greater than the amount of data in the clipboard ("+istring(getLength(sound->getSampleRate())+")")));
+		throw runtime_error(string(__func__)+" -- length ("+istring(length)+")is greater than the amount of data in the clipboard ("+istring(getLength(sound->getSampleRate())+")"));
 
 
 	const string poolName="Channel "+istring(srcChannel);
@@ -94,11 +94,16 @@ void CNativeSoundClipboard::copyTo(CSound *sound,unsigned destChannel,unsigned s
 sample_pos_t CNativeSoundClipboard::getLength(unsigned _sampleRate) const
 {
 			// ??? probably want to divide first
-	return((sample_pos_t)((sample_fpos_t)length*(sample_fpos_t)_sampleRate/(sample_fpos_t)sampleRate));
+	return (sample_pos_t)((sample_fpos_t)length*(sample_fpos_t)_sampleRate/(sample_fpos_t)sampleRate);
 }
 
 bool CNativeSoundClipboard::isEmpty() const
 {
-	return(length<=0);
+	return length<=0;
+}
+
+unsigned CNativeSoundClipboard::getSampleRate() const
+{
+	return sampleRate;
 }
 

@@ -41,6 +41,8 @@ public:
 	sample_pos_t getLength(unsigned sampleRate) const;
 	bool isEmpty() const;
 
+	unsigned getSampleRate() const;
+
 private:
 	const string workingFilename;
 
