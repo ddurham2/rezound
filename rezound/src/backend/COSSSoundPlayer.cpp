@@ -47,11 +47,10 @@
 
 #include "settings.h"
 
-#define BUFFER_SIZE_FRAMES 1024							// buffer size in frames (MUST be a power of 2)
-#define BUFFER_COUNT 4
-
+#define BUFFER_COUNT gDesiredOutputBufferCount
+#define BUFFER_SIZE_FRAMES gDesiredOutputBufferSize
 #define BUFFER_SIZE_BYTES (BUFFER_SIZE_FRAMES*sizeof(sample_t)*gDesiredOutputChannelCount)	// buffer size in bytes
-#define BUFFER_SIZE_BYTES_LOG2 ((size_t)(log((double)BUFFER_SIZE_BYTES)/log(2.0)))	// log2(BUFFER_SIZE_BYTES) -- that is 2^this is BUFFER_SIZE_BYTES
+#define BUFFER_SIZE_BYTES_LOG2 ((size_t)(log((double)BUFFER_SIZE_BYTES)/log(2.0)))		// log2(BUFFER_SIZE_BYTES) -- that is 2^this is BUFFER_SIZE_BYTES
 
 
 COSSSoundPlayer::COSSSoundPlayer() :

@@ -31,9 +31,6 @@
 
 #include "settings.h"
 
-#define BUFFER_SIZE_FRAMES 1024
-#define BUFFER_COUNT 4
-
 
 
 CPortAudioSoundPlayer::CPortAudioSoundPlayer() :
@@ -86,8 +83,8 @@ void CPortAudioSoundPlayer::initialize()
 			sampleFormat,
 			NULL,
 			gDesiredOutputSampleRate,
-			BUFFER_SIZE_FRAMES,
-			BUFFER_COUNT,
+			gDesiredOutputBufferSize,
+			gDesiredOutputBufferCount,
 			paClipOff|paDitherOff,
 			CPortAudioSoundPlayer::PortAudioCallback,
 			this);
