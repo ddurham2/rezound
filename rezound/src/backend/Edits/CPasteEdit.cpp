@@ -64,6 +64,7 @@ CPasteEdit::~CPasteEdit()
 {
 }
 
+#include <stdio.h> // ??? just for the printf below
 bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
 	for(unsigned y=0;y<MAX_CHANNELS;y++)

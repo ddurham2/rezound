@@ -21,6 +21,8 @@
 #include "Cold_rezSoundTranslator.h"
 #include "CSound.h"
 
+#include <stdio.h>
+
 #include <stdexcept>
 
 #include <CPath.h>

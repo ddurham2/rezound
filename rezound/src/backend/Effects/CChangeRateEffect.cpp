@@ -51,6 +51,7 @@ CChangeRateEffect::CChangeRateEffect(const CActionSound &actionSound,const CGrap
 	}
 }
 
+#include <stdio.h> // ??? just for the printf below
 bool CChangeRateEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
 	const sample_pos_t oldLength=actionSound.selectionLength();

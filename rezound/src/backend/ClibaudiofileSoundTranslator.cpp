@@ -483,7 +483,7 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 	}
 
 	if(!ret)
-		remove(filename.c_str()); // remove the cancelled file
+		unlink(filename.c_str()); // remove the cancelled file
 
 	return ret;
 }

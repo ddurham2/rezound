@@ -45,6 +45,7 @@
 #include <stdexcept>
 
 #include <CPath.h>
+#include <TAutoBuffer.h>
 
 #include "CSound.h"
 #include "AStatusComm.h"
@@ -430,7 +431,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 	}
 
 	if(!ret)
-		remove(filename.c_str()); // remove the cancelled file
+		unlink(filename.c_str()); // remove the cancelled file
 
 	return ret;
 }

@@ -35,6 +35,7 @@
 #include <errno.h>
 #include <string.h>	// for strerror()
 #include <ctype.h>
+#include <unistd.h>	// for unlink
 
 #include <time.h>	// for time()
 #include <stdlib.h>	// for rand() and atoll
@@ -581,7 +582,7 @@ bool ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound)
 	}
 
 	if(!ret)
-		remove(filename.c_str()); // remove the cancelled file
+		unlink(filename.c_str()); // remove the cancelled file
 
 	return ret;
 #else
