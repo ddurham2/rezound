@@ -190,20 +190,24 @@ void CCueListDialog::rebuildCueList()
 	cueList->clearItems();
 
 	// insert into a map and then extract (sorted) into the list box
-	multimap<string,size_t> cues;
+	multimap<sample_pos_t,size_t> cues;
 	CSound *sound=loadedSound->sound;
 	for(size_t t=0;t<loadedSound->sound->getCueCount();t++)
 	{
 		cues.insert(
-			multimap<string,size_t>::value_type(
-				sound->getTimePosition(sound->getCueTime(t),5)+(sound->isCueAnchored(t) ? " + " : " - ")+sound->getCueName(t),
+			multimap<sample_pos_t,size_t>::value_type(
+				sound->getCueTime(t),
 				t
 			)
 		);
 	}
 
-	for(multimap<string,size_t>::iterator i=cues.begin();i!=cues.end();i++)
-		cueList->appendItem(i->first.c_str(),NULL,(void *)i->second);
+	for(multimap<sample_pos_t,size_t>::iterator i=cues.begin();i!=cues.end();i++)
+	{
+		const size_t t=i->second;
+		const string str=sound->getTimePosition(sound->getCueTime(t),5)+(sound->isCueAnchored(t) ? " + " : " - ")+sound->getCueName(t);
+		cueList->appendItem(str.c_str(),NULL,(void *)i->second);
+	}
 
 
 	// restore the selected item
