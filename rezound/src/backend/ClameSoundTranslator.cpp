@@ -123,7 +123,7 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 			throw(runtime_error(string(__func__)+" -- invalid number of channels in audio file: "+istring(channelCount)+" -- you could simply increase MAX_CHANNELS in CSound.h"));
 
 		unsigned sampleRate=waveHeader.sampleRate;
-		if(sampleRate<4000 || sampleRate>96000)
+		if(sampleRate<100 || sampleRate>196000)
 			throw(runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate)));
 
 		unsigned bits=waveHeader.bitsPerSample;
@@ -157,7 +157,7 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 				if(chunkSize<=0)
 					break;
 
-				if((pos+REALLOC_FILE_SIZE)>sound->getLength())
+				if((pos+chunkSize)>sound->getLength())
 					sound->addSpace(sound->getLength(),REALLOC_FILE_SIZE);
 
 				for(unsigned c=0;c<channelCount;c++)
