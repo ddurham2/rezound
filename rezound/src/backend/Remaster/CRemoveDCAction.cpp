@@ -96,13 +96,13 @@ bool CRemoveDCAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 		}
 	}
 
-	return(true);
+	return true;
 }
 
 AAction::CanUndoResults CRemoveDCAction::canUndo(const CActionSound &actionSound) const
 {
 	// should check some size constraint
-	return(curYes);
+	return curYes;
 }
 
 void CRemoveDCAction::undoActionSizeSafe(const CActionSound &actionSound)
@@ -125,7 +125,7 @@ CRemoveDCActionFactory::~CRemoveDCActionFactory()
 
 CRemoveDCAction *CRemoveDCActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
-	return(new CRemoveDCAction(actionSound));
+	return new CRemoveDCAction(actionSound);
 }
 
 const string CRemoveDCActionFactory::getExplanation() const

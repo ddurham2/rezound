@@ -104,7 +104,7 @@ bool CReverseEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 						}
 					}
 
-					return(false);
+					return false;
 				}
 			}
 
@@ -112,12 +112,12 @@ bool CReverseEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 		}
 	}
 
-	return(true);
+	return true;
 }
 
 AAction::CanUndoResults CReverseEffect::canUndo(const CActionSound &actionSound) const
 {
-	return(curYes);
+	return curYes;
 }
 
 void CReverseEffect::undoActionSizeSafe(const CActionSound &actionSound)
@@ -151,7 +151,7 @@ CReverseEffectFactory::~CReverseEffectFactory()
 
 CReverseEffect *CReverseEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
-	return(new CReverseEffect(actionSound));
+	return new CReverseEffect(actionSound);
 }
 
 
