@@ -156,7 +156,7 @@ public:
 
 
 		// draw RMS level indication
-		FXint x=(RMSLevel*width/MAX_SAMPLE);
+		FXint x=(FXint)(RMSLevel*width/MAX_SAMPLE);
 		dc.setFillStyle(FILL_STIPPLED);
 		dc.setStipple(stipplePattern);
 		if(x>(width*3/4))
@@ -183,7 +183,7 @@ public:
 
 		// draw peak indication
 		FXint y=height/2;
-		x=(peakLevel*width/MAX_SAMPLE);
+		x=(FXint)(peakLevel*width/MAX_SAMPLE);
 		dc.setFillStyle(FILL_SOLID);
 		if(x>(width*3/4))
 		{
@@ -211,7 +211,7 @@ public:
 		}
 
 		// draw the max peak indicator
-		x=(maxPeakLevel*width/MAX_SAMPLE);
+		x=(FXint)(maxPeakLevel*width/MAX_SAMPLE);
 		dc.setFillStyle(FILL_SOLID);
 		if(x>(width*3/4))
 			dc.setForeground(M_BRT_RED);
