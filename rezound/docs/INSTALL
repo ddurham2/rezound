@@ -237,9 +237,3 @@ ADDITIONAL CONFIGURE FLAGS:
 				you would use 
 				--with-FOX-includes=/home/ant/include
 
-	Using the --with-LIB-path or --with-LIB-include options will override
-	the library check. Also these -I and -L flags will be passed to all
-	Makefiles, so if 2 of the libraries are under /home/l/le/lergnom/lib, 
-	you'll only need to pass one --with-LIB-path
-	option.
-
