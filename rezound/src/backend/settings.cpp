@@ -61,12 +61,15 @@ int gDesiredOutputBufferCount=2;
 unsigned gDesiredOutputBufferSize=2048; // in frames (must be a power of 2)
 
 
-#if defined(ENABLE_PORTAUDIO)
-int gPortAudioOutputDevice=0;
-int gPortAudioInputDevice=0;
-#elif defined(ENABLE_OSS)
+#if defined(ENABLE_OSS)
 string gOSSOutputDevice="/dev/dsp";
 string gOSSInputDevice="/dev/dsp";
+#elif defined(ENABLE_PORTAUDIO)
+int gPortAudioOutputDevice=0;
+int gPortAudioInputDevice=0;
+#elif defined(ENABLE_JACK)
+string gJACKOutputPortNames[64];
+string gJACKInputPortNames[64];
 #endif
 
 
