@@ -1,4 +1,10 @@
 
+-------------------------------------------------------------------------------
+ReZound aims to be a stable, open source, and graphical audio file editor 
+primarily for but not limited to the Linux operating system.  More description
+will be added here as ReZound matures.
+-------------------------------------------------------------------------------
+
 See docs/INSTALL for installation instructions.
 
 If you are installing from CVS sources read docs/CVS-INSTALL first.
