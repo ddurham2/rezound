@@ -22,6 +22,7 @@
 
 #include <stdexcept>
 #include <algorithm>
+#include <map>
 #include <string>
 
 #include <CPath.h>
@@ -669,6 +670,8 @@ void CMainWindow::actionMenuCommandTriggered(CActionMenuCommand *actionMenuComma
 #include "../backend/Remaster/RemasterActions.h"
 #include "RemasterActionDialogs.h"
 
+#include "../backend/LADSPA/LADSPAActions.h"
+
 #include "../backend/Generate/GenerateActions.h"
 #include "GenerateActionDialogs.h"
 
@@ -1020,6 +1023,76 @@ void CMainWindow::createMenus()
 		if(i->second->getParent()==dummymenu)
 			printf("NOTE: registered menu item '%s' was not mapped anywhere in '%s' in layout '%s'\n",i->first.c_str(),menuLayoutFilename.c_str(),menuLayout.c_str());
 	}
+
+#ifdef USE_LADSPA
+	// now stick the LADSPA menu in there if it needs to be
+	// ??? (with dynamic menus, maybe let the layout define WHERE the ladspa submenu goes, (except it might not always be compiled for ladspa, so we wouldn't want to add it to the map if USE_LADSPA wasn't defined)
+	FXMenuPane *menu=new FXMenuPane(this);
+	new FXMenuTitle(menubar,"L&ADSPA",NULL,menu);
+		const vector<CLADSPAActionFactory *> LADSPAActionFactories=getLADSPAActionFactories();
+		if(LADSPAActionFactories.size()<=0)
+		{
+			new FXMenuCaption(menu,"No LADSPA Plugins Found");
+			new FXMenuSeparator(menu);
+			new FXMenuCaption(menu,"Like PATH, set LADSPA_PATH to point");
+			new FXMenuCaption(menu,"to a directory(s) containing LADSPA");
+			new FXMenuCaption(menu,"plugin .so files");
+		}
+		else
+		{
+			if(LADSPAActionFactories.size()>20)
+			{
+				// add a submenu grouped by manufacturer
+				map<const string,map<const string,CLADSPAActionFactory *> > makerGrouped;
+				for(size_t t=0;t<LADSPAActionFactories.size();t++)
+				{
+					const string maker= LADSPAActionFactories[t]->getDescriptor()->Maker;
+					makerGrouped[maker][LADSPAActionFactories[t]->getName()]=LADSPAActionFactories[t];
+				}
+
+				if(makerGrouped.size()>1)
+				{ // more than one maker 
+					FXMenuPane *makerMenu=new FXMenuPane(this);
+					new FXMenuCascade(menu,"By Maker",NULL,makerMenu);
+
+					for(map<const string,map<const string,CLADSPAActionFactory *> >::iterator i=makerGrouped.begin();i!=makerGrouped.end();i++)
+					{
+						FXMenuPane *submenu=new FXMenuPane(this);
+						new FXMenuCascade(makerMenu,i->first.c_str(),NULL,submenu);
+	
+						for(map<const string,CLADSPAActionFactory *>::iterator t=i->second.begin();t!=i->second.end();t++)
+							new CActionMenuCommand(t->second,submenu,"");
+					}
+				}
+
+				new FXMenuSeparator(menu);
+
+				
+
+				// group by the first letter
+				map<const char,map<const string,CLADSPAActionFactory *> > nameGrouped;
+				for(size_t t=0;t<LADSPAActionFactories.size();t++)
+				{
+					const char letter= *(istring(LADSPAActionFactories[t]->getName()).upper()).begin();
+					nameGrouped[letter][LADSPAActionFactories[t]->getName()]=LADSPAActionFactories[t];
+				}
+
+				for(map<const char,map<const string,CLADSPAActionFactory *> >::iterator i=nameGrouped.begin();i!=nameGrouped.end();i++)
+				{
+					FXMenuPane *submenu=new FXMenuPane(this);
+					new FXMenuCascade(menu,string(&(i->first),1).c_str(),NULL,submenu);
+
+					for(map<const string,CLADSPAActionFactory *>::iterator t=i->second.begin();t!=i->second.end();t++)
+						new CActionMenuCommand(t->second,submenu,"");
+				}
+			}
+			else
+			{
+				for(size_t t=0;t<LADSPAActionFactories.size();t++)
+					new CActionMenuCommand(LADSPAActionFactories[t],menu,"");
+			}
+		}
+#endif
 
 	create(); // it is necessary to call create again which will call it for all new child windows
 }
