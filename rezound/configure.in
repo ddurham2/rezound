@@ -127,13 +127,13 @@ dnl AC_CHECK_LIB(rfftw, rfftw_create_plan)
 AC_CHECK_HEADER(
 	fftw.h,
 	AC_CHECK_LIB(fftw, fftw_create_plan, , AC_MSG_WARN([***** libfftw.a not found -- any FFT based actions will be disabled (http://www.fftw.org) *****]),-lfftw),
-	AC_MSG_WARN([***** fftw.h header file not found -- and FFT based actions will be disabled (http://www.fftw.org) *****])
+	AC_MSG_WARN([***** fftw.h header file not found -- any FFT based actions will be disabled (http://www.fftw.org) *****])
 	)
 
 AC_CHECK_HEADER(
 	rfftw.h,
 	AC_CHECK_LIB(rfftw, rfftw_create_plan, , AC_MSG_WARN([***** librfftw.a not found -- any FFT based actions will be disabled (http://www.fftw.org) *****]),-lrfftw),
-	AC_MSG_WARN([***** rfftw.h header file not found -- and FFT based actions will be disabled (http://www.fftw.org) *****])
+	AC_MSG_WARN([***** rfftw.h header file not found -- any FFT based actions will be disabled (http://www.fftw.org) *****])
 	)
 
 
