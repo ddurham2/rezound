@@ -98,7 +98,7 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 		MAKE_TEXT(t,_("Artistic Consultant"),"Will Jayroe");
 		MAKE_LINK(t,_("Home Page"),"http://rezound.sourceforge.net");
 		MAKE_LINK(t,_("Mailing List"),"http://lists.sourceforge.net/lists/listinfo/rezound-users");
-		MAKE_LINK(t,_("Bug Reports"),"http://sourceforge.net/tracker/?atid=105056&group_id=5056");
+		MAKE_LINK(t,_("Bug Reports"),PACKAGE_BUGREPORT);
 		MAKE_LINK(t,_("Support Requests"),"http://sourceforge.net/tracker/?atid=205056&group_id=5056");
 		MAKE_LINK(t,_("Feature Requests"),"http://sourceforge.net/tracker/?atid=355056&group_id=5056");
 		MAKE_LINK(t,"","");
