@@ -117,6 +117,8 @@ static const string fixEscapes(const string _filename)
 	// ??? but, then how would I be able to have createWorkingPoolFileIfExists
 bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 {
+	bool ret=true;
+
 	if(gPathToLame=="")
 		throw(runtime_error(string(__func__)+" -- path to 'lame' not set"));
 
@@ -127,7 +129,8 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 
 	fprintf(stderr,"lame command line: '%s'\n",cmdLine.c_str());
 
-	FILE *p=mypopen(cmdLine.c_str(),"r");
+	FILE *errStream=NULL;
+	FILE *p=mypopen(cmdLine.c_str(),"r",&errStream);
 	if(p==NULL)
 	{
 		int err=errno;
@@ -196,15 +199,19 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 			accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
 
 		#define BUFFER_SIZE 4096
+
+		// print initial stderr from lame
+		char errBuffer[BUFFER_SIZE+1];
+		while(fgets(errBuffer,BUFFER_SIZE,errStream)!=NULL) // non-blocking i/o set by mypopen on this stream
+			printf("%s",errBuffer);
+
 		if(bits==16 && typeid(sample_t)==typeid(int16_t))
 		{
 
 			TAutoBuffer<sample_t> buffer(BUFFER_SIZE*channelCount);
 			sample_pos_t pos=0;
 
-				// ??? in order to do a status bar I would need to be able to capture the stderr from the process (which I could do by using and modifying my own popen)
-				// ??? or I could tell peopen to redirect the ouptut to a temp file and maybe read that temp file
-			//CStatusBar statusBar("Loading Sound",ftell(f),count);
+			CStatusBar statusBar("Loading Sound",0,100,true);
 			for(;;)
 			{
 				size_t chunkSize=fread((void *)((sample_t *)buffer),sizeof(sample_t)*channelCount,BUFFER_SIZE,p);
@@ -221,8 +228,21 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 				}
 				pos+=chunkSize;
 
-				//statusBar.update(ftell(f));
+				// read and parse the stderr of 'lame' to determine the progress of the load
+				while(fgets(errBuffer,BUFFER_SIZE,errStream)!=NULL) // non-blocking i/o set by mypopen on this stream
+				{
+					int frameNumber,totalFrames;
+					sscanf(errBuffer,"%*s %d%*c%d ",&frameNumber,&totalFrames);
+					printf("%s",errBuffer);
+					if(statusBar.update(frameNumber*100/totalFrames))
+					{ // cancelled
+						ret=false;
+						goto cancelled;
+					}
+				}
+
 			}
+			printf("\n"); // after lame stderr output
 
 			// remove any extra allocated space
 			if(sound->getLength()>pos)
@@ -230,6 +250,8 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 		}
 		else
 			throw(runtime_error(string(__func__)+" -- an unhandled bit rate of "+istring(bits)));
+
+		cancelled:
 
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 			delete accessers[t];
@@ -246,7 +268,7 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 		throw;
 	}
 
-	return true;
+	return ret;
 }
 
 bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) const
