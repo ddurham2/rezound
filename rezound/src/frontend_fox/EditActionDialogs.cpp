@@ -121,6 +121,7 @@ CSaveAsMultipleFilesDialog::CSaveAsMultipleFilesDialog(FXWindow *mainWindow) :
 			items.push_back(N_("Entire File"));
 			items.push_back(N_("Selection Only"));
 		addComboTextEntry(p1,N_("Applies to"),items);
+		addCheckBoxEntry(p1,N_("Prompt Only Once for Save Parameters"),false,_("Some formats require parameters from the user (i.e. compression type, audio format, etc).  Checking this checkbox will make it only prompt on the first file if necessary.  All other saved files will use the previous parameters if possible."));
 }
 
 const string CSaveAsMultipleFilesDialog::getExplanation() const

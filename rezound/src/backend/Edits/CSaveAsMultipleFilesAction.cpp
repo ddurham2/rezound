@@ -30,7 +30,7 @@
 
 #include "parse_segment_cues.h"
 
-CSaveAsMultipleFilesAction::CSaveAsMultipleFilesAction(const CActionSound &actionSound,ASoundFileManager *_soundFileManager,const string _directory,const string _filenamePrefix,const string _filenameSuffix,const string _extension,bool _openSavedSegments,unsigned _segmentNumberOffset,bool _selectionOnly) :
+CSaveAsMultipleFilesAction::CSaveAsMultipleFilesAction(const CActionSound &actionSound,ASoundFileManager *_soundFileManager,const string _directory,const string _filenamePrefix,const string _filenameSuffix,const string _extension,bool _openSavedSegments,unsigned _segmentNumberOffset,bool _selectionOnly,bool _promptOnlyOnce) :
 	AAction(actionSound),
 	soundFileManager(_soundFileManager),
 	directory(_directory),
@@ -39,7 +39,8 @@ CSaveAsMultipleFilesAction::CSaveAsMultipleFilesAction(const CActionSound &actio
 	extension(_extension),
 	openSavedSegments(_openSavedSegments),
 	segmentNumberOffset(_segmentNumberOffset),
-	selectionOnly(_selectionOnly)
+	selectionOnly(_selectionOnly),
+	promptOnlyOnce(_promptOnlyOnce)
 {
 }
 
@@ -94,10 +95,11 @@ bool CSaveAsMultipleFilesAction::doActionSizeSafe(CActionSound &actionSound,bool
 #warning need to i18n this but it probably needs to be done better than just putting _() around each string literal
 	// show the results and ask the user if they want to continue
 	{
-		string msg="These are the files about to be created...\n\n";
+		string msg=_("These are the files about to be created...");
+		msg+="\n\n";
 		for(segments_t::iterator i=segments.begin();i!=segments.end();i++)
 			msg+="from "+sound.getTimePosition(i->second.first)+" to "+sound.getTimePosition(i->second.second)+" ("+sound.getTimePosition(i->second.second-i->second.first)+") as '"+i->first+"'\n";
-		msg+="\nDo you want to continue?";
+		msg+=string("\n")+_("Do you want to continue?");
 
 		if(Question(msg,yesnoQues,false)!=yesAns)
 			return false;
@@ -105,12 +107,20 @@ bool CSaveAsMultipleFilesAction::doActionSizeSafe(CActionSound &actionSound,bool
 
 
 	// proceed to save files
+	bool useLastUserPrefs=false;
 	for(segments_t::iterator i=segments.begin();i!=segments.end();i++)
 	{
-		soundFileManager->savePartial(&sound,i->first,i->second.first,i->second.second-i->second.first);
-
-		if(openSavedSegments)
-			soundFileManager->open(i->first);
+		if(!soundFileManager->savePartial(&sound,i->first,i->second.first,i->second.second-i->second.first,useLastUserPrefs))
+		{ // error saving file
+			if(Question(i->first+"\n"+_("The file was not saved successfully.  Do you wish to abort saving any other files?"),yesnoQues)==yesAns)
+				return false;
+		}
+		else
+		{ // success saving file
+			if(openSavedSegments)
+				soundFileManager->open(i->first);
+		}
+		useLastUserPrefs=promptOnlyOnce;
 	}
 	
 	return true;
@@ -153,6 +163,7 @@ After a segment's filename is formed by putting together, [directory]/[prefix][x
 The \"Segment Number Start\" parameter can be changed from '1' to start the '#' substitutions at something different.\n\
 The \"Open Saved Segments\" can be selected simply if you want to open the segments after they have been saved.\n\
 The \"Applies to\" parameter indicates if the action should regard only the current selection or the entire file.\n\
+The \"Prompt Only Once for Save Parameters\" can be selected if you want the same save parameters to be applied to all files (i.e compression type, audio format, etc).\n\
 ");
 }
 
@@ -180,7 +191,8 @@ CSaveAsMultipleFilesAction *CSaveAsMultipleFilesActionFactory::manufactureAction
 		"."+formatName.substr(0,formatName.find(" ")), // cut out only the first few chars (which is the extension
 		actionParameters->getBoolParameter("Open Saved Segments"),
 		actionParameters->getUnsignedParameter("Segment Number Start"),
-		(actionParameters->getUnsignedParameter("Applies to")==1) // 0 -> "Entire File", 1 -> "Selection Only"
+		(actionParameters->getUnsignedParameter("Applies to")==1), // 0 -> "Entire File", 1 -> "Selection Only"
+		actionParameters->getBoolParameter("Prompt Only Once for Save Parameters")
 	);
 }
 
