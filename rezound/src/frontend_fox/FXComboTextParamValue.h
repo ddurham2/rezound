@@ -44,6 +44,13 @@ public:
 	FXComboTextParamValue(FXComposite *p,int opts,const char *name,const vector<string> &items,bool isEditable);
 	virtual ~FXComboTextParamValue();
 
+	enum {
+		ID_COMBOBOX=FXHorizontalFrame::ID_LAST,
+		ID_LAST,
+	};
+
+	long onComboBoxChange(FXObject *object,FXSelector sel,void *ptr);
+
 	const FXint getValue(); // returns the index into the items given at construction of the selected item (or if isEditable it returns the numeric representation of the current string value in the combo box.. this needs to be changed really)
 	void setValue(const FXint value);
 
@@ -77,6 +84,7 @@ private:
 	FXFont *textFont;
 
 	vector<string> items;
+
 };
 
 #endif

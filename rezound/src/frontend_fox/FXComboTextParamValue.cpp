@@ -39,7 +39,7 @@ FXDEFMAP(FXComboTextParamValue) FXComboTextParamValueMap[]=
 {
 	//Message_Type				ID					Message_Handler
 
-	//FXMAPFUNC(SEL_COMMAND,			FXComboTextParamValue::ID_VALUE_SPINNER,	FXComboTextParamValue::onValueSpinnerChange),
+	FXMAPFUNC(SEL_COMMAND,			FXComboTextParamValue::ID_COMBOBOX,	FXComboTextParamValue::onComboBoxChange),
 	//FXMAPFUNC(SEL_COMMAND,			FXComboTextParamValue::ID_VALUE_TEXTBOX,	FXComboTextParamValue::onValueTextBoxChange),
 };
 
@@ -53,7 +53,7 @@ FXComboTextParamValue::FXComboTextParamValue(FXComposite *p,int opts,const char 
 	isEditable(_isEditable),
 
 	titleLabel(new FXLabel(this,gettext(_name),NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
-	valueComboBox(new FXComboBox(this,8,min((size_t)items.size(),(size_t)8),NULL,0, COMBOBOX_NORMAL|(!isEditable ? COMBOBOX_STATIC : 0) | FRAME_SUNKEN|FRAME_THICK | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
+	valueComboBox(new FXComboBox(this,8,min((size_t)items.size(),(size_t)8),this,ID_COMBOBOX, COMBOBOX_NORMAL|(!isEditable ? COMBOBOX_STATIC : 0) | FRAME_SUNKEN|FRAME_THICK | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
 
 	textFont(getApp()->getNormalFont())
 {
@@ -71,6 +71,11 @@ FXComboTextParamValue::FXComboTextParamValue(FXComposite *p,int opts,const char 
 FXComboTextParamValue::~FXComboTextParamValue()
 {
 	delete textFont;
+}
+
+long FXComboTextParamValue::onComboBoxChange(FXObject *object,FXSelector sel,void *ptr)
+{
+	return target && target->handle(object,FXSEL(SEL_CHANGED,getSelector()),ptr);
 }
 
 const FXint FXComboTextParamValue::getValue()
