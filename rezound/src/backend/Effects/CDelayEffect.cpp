@@ -87,7 +87,7 @@ bool CDelayEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUnd
 	{
 		if(actionSound.doChannel[i])
 		{
-			CStatusBar statusBar("Delay -- Channel "+istring(i),start,stop); 
+			CStatusBar statusBar("Delay -- Channel "+istring(i),start,stop,true); 
 
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
@@ -103,7 +103,12 @@ bool CDelayEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUnd
 			for(sample_pos_t t=start;t<=stop;t++)
 			{
 				dest[t]=ClipSample(delayEffect.processSample(src[srcP++]));
-				statusBar.update(t);
+				if(statusBar.update(t))
+				{ // cancelled
+					if(prepareForUndo)
+						undoActionSizeSafe(actionSound);
+					return false;
+				}
 			}
 		}
 	}
