@@ -12,7 +12,7 @@ distro tarball(eg: removing warning flags)
 3. Revise docs/NEWS and docs/Features.txt (use cvs2cl.pl to determine what significant things have changed since the previous release)
 
 4. Update the version number in configure.ac and docs/INSTALL
-	- and then do a bootstrap ; configure
+	- and then do a bootstrap && configure
 
 5. PROOF-READ ALL CHANGES YOU JUST MADE!
 
