@@ -151,7 +151,7 @@ private:
 	mutable bool resetPeakLevels[MAX_CHANNELS]; // a bool that is flagged if the next buffer processed should start with a new max or max with the current one (since it hasn't been obtained from the get method yet)
 
 #ifdef HAVE_LIBRFFTW
-	#define ASP_ANALYSIS_BUFFER_SIZE 1024
+	#define ASP_ANALYSIS_BUFFER_SIZE 8192
 	mutable CMutex frequencyAnalysisBufferMutex;
 	mutable bool frequencyAnalysisBufferPrepared;
 	mutable fftw_real frequencyAnalysisBuffer[ASP_ANALYSIS_BUFFER_SIZE];

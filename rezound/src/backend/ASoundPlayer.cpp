@@ -196,6 +196,9 @@ void ASoundPlayer::stopAll()
 
 const sample_t ASoundPlayer::getRMSLevel(unsigned channel) const
 {
+	if(!isInitialized())
+		return 0;
+
 	//return RMSLevelDetectors[channel].readCurrentLevel();
 	const sample_t r=maxRMSLevels[channel];
 	resetMaxRMSLevels[channel]=true;
@@ -204,6 +207,9 @@ const sample_t ASoundPlayer::getRMSLevel(unsigned channel) const
 
 const sample_t ASoundPlayer::getPeakLevel(unsigned channel) const
 {
+	if(!isInitialized())
+		return 0;
+
 	const sample_t p=peakLevels[channel];
 	resetPeakLevels[channel]=true;
 	return p;
@@ -213,6 +219,9 @@ const sample_t ASoundPlayer::getPeakLevel(unsigned channel) const
 const vector<float> ASoundPlayer::getFrequencyAnalysis() const
 { 
 	vector<float> v;
+
+	if(!isInitialized())
+		return v;
 
 #ifdef HAVE_LIBRFFTW
 	CMutexLocker l(frequencyAnalysisBufferMutex);
@@ -270,20 +279,31 @@ for(size_t t=0;t<ASP_ANALYSIS_BUFFER_SIZE;t++)
 		const size_t u=bandUpperIndexes[t];
 
 		float sum=0;
-		for(size_t i=l;i<=u;i++)
+		for(size_t i=l;i<u;i++)
 		{
 			const fftw_real re=data[i];
 			const fftw_real im= (i==ASP_ANALYSIS_BUFFER_SIZE/2) ? 0 : data[ASP_ANALYSIS_BUFFER_SIZE-i];
 
 // avoid the square by removing the sqrt
-			const fftw_real power=sqrt(re*re+im*im)/52; /* only by experimentation have I found 52 (actually 51.something) to divide by to normalize the spectral analysis output */
+			//const fftw_real power=sqrt(re*re+im*im)/52; /* only by experimentation have I found 52 to divide by to normalize the spectral analysis output */
+			const fftw_real power=sqrt(re*re+im*im)/512; /* only by experimentation have I found 822 (for 8192 buffer length) to divide by to normalize the spectral analysis output */
+					// ??> somehow 822 needs to be relased to ASP_ANALYSIS_BUFFER_SIZE
 
-			sum+=power;
+			//printf("%07d\n",(int)(power*1000));
+			//printf("%f\n",power);
+
+			//sum+=power*power;
+			
+			// find max magnitude of a frequency within band i
+			if(sum<power)
+				sum=power;
 		}
-		sum/=(u-l)+1;
+		//sum/=(u-l);
 		//sum=sqrt(sum);
+		//v.push_back(sum);
+		//printf("%07d\n",(int)(sum*1000));
 		
-		v.push_back(sum);
+		v.push_back(min((float)1.0,sqrt(sum)));
 	}
 
 #if 0
@@ -305,7 +325,24 @@ for(size_t t=0;t<ASP_ANALYSIS_BUFFER_SIZE;t++)
 #endif
 #endif
 
+#if 0 // returns an average of the past 4 frames.. works rather nicely
+	static vector<float> prevV1;
+	static vector<float> prevV2;
+	static vector<float> prevV3;
+	vector<float> temp;
+	if(prevV1.size()==v.size() && prevV2.size()==v.size() && prevV3.size()==v.size())
+	{
+		for(size_t t=0;t<v.size();t++)
+			temp.push_back((prevV1[t]+prevV2[t]+prevV3[t]+v[t])/4.0);
+	}
+	prevV3=prevV2;
+	prevV2=prevV1;
+	prevV1=v;
+
+	return temp;
+#else
 	return v;
+#endif
 }
 
 
@@ -317,7 +354,7 @@ for(size_t t=0;t<ASP_ANALYSIS_BUFFER_SIZE;t++)
 // the bands are defined as octaves: 0, 0.5, 1.0, 1.5, 2.0, 2.5, etc)
 
 static const float baseOctave=20;	// bottom frequency of analyzer  (actually the first band contains from 0Hz to upperFreqAtOctave(0) )
-static const float deltaOctave=0.5;	// 1/2 octave bands
+static const float deltaOctave=1.0/2.0;	// 1/2 octave bands
 
 // returns the frequency (in Hz) given the octave
 static float freqAtOctave(float octave)
@@ -352,7 +389,7 @@ static size_t lowerIndexAtOctave(float octave,unsigned sampleRate)
 // returns the (integer) upper index of the given band (expressed as an octave) into a frequency domain array
 static size_t upperIndexAtOctave(float octave,unsigned sampleRate)
 {
-	return (size_t)(floor(indexAtFreq(upperFreqAtOctave(octave),sampleRate))-1);
+	return (size_t)(floor(indexAtFreq(upperFreqAtOctave(octave),sampleRate)));
 }
 
 void ASoundPlayer::calculateAnalyzerBandIndexRanges() const
