@@ -1,6 +1,8 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- fix the dotted lines when the phase scope meter is rotated .. it should look solid
+
 	- The pause button has no effect when the shuttle mode is 'free' since the backend doesn't pause if the play speed isn't 1.0 (since it things you're shuttling while paused so it should play except that the wheel doesn't spring back)
 
 	- The CGarphParamValue widget should darken even more the channels that aren't being affected by the action
