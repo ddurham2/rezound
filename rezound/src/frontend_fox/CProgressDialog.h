@@ -24,6 +24,9 @@
 #include "../../config/common.h"
 #include "fox_compat.h"
 
+#include <string>
+using namespace std;
+
 class CProgressDialog : public FXDialogBox
 {
 	FXDECLARE(CProgressDialog);
@@ -35,7 +38,8 @@ public:
 	virtual void show(FXuint placement=PLACEMENT_OWNER);
 	virtual void hide();
 
-	void setProgress(int progress); // 0 to 100
+	//                   0 to 100
+	void setProgress(int progress,const string timeElapsed,const string timeRemaining); 
 
 	long onCancelButton(FXObject *sender,FXSelector sel,void *ptr);
 	long onCloseWindow(FXObject *sender,FXSelector sel,void *ptr);
@@ -52,9 +56,12 @@ protected:
 	CProgressDialog() {}
 
 private:
-	FXHorizontalFrame *contents;
-		FXProgressBar *progressBar;
-		FXButton *cancelButton;
+	FXVerticalFrame *vContents;
+		FXHorizontalFrame *hContents;
+			FXProgressBar *progressBar;
+			FXButton *cancelButton;
+		FXLabel *timeElapsedLabel;
+		FXLabel *timeRemainingLabel;
 };
 
 #endif

@@ -94,13 +94,23 @@ void endAllProgressBars()
 
 // --- CStatusBar --------------------------------------
 
+#include <sys/timeb.h>
+static unsigned long getCurrentMilliseconds()
+{
+	struct timeb tb;
+	ftime(&tb);
+	return (unsigned long)tb.time*1000UL+(unsigned long)tb.millitm;
+}
+
 CStatusBar::CStatusBar(const string title,const sample_pos_t firstValue,const sample_pos_t lastValue,const bool showCancelButton) :
 	handle(gStatusComm->beginProgressBar(title,showCancelButton)),
 	sub(firstValue),
 	valueDiff(lastValue-firstValue),
 	div( valueDiff<100 ? 1 : ((valueDiff+100-1)/100) ),
 	mul( valueDiff<100 ? (100.0/valueDiff) : 100.0/(valueDiff/div) ),
-	lastProgress(0)
+	lastProgress(0),
+	// set initial time in milliseconds since epoch
+	initialTime(getCurrentMilliseconds())
 {
 }
 
@@ -112,7 +122,8 @@ CStatusBar::~CStatusBar()
 void CStatusBar::reset()
 {
 	lastProgress=0;
-	gStatusComm->updateProgressBar(handle,0);
+	initialTime=getCurrentMilliseconds();
+	gStatusComm->updateProgressBar(handle,0,"","");
 }
 
 void CStatusBar::hide()
@@ -122,5 +133,34 @@ void CStatusBar::hide()
 		gStatusComm->endProgressBar(handle);
 		handle=-1;
 	}
+}
+
+#include "unit_conv.h" // for seconds_to_string
+
+const string CStatusBar::getTimeRemaining()
+{
+	if(lastProgress>0)
+	{
+		/* NOTE: lastProgress will have been set to the current progress by the time this function is called */
+
+		unsigned long millisecondsPassed=getCurrentMilliseconds()-initialTime;
+	
+		//                   remaining progress * seconds per progress unit
+		unsigned long millisecondsRemaining=(100-lastProgress) * millisecondsPassed/lastProgress;
+
+		//printf("remaining: %s\n",seconds_to_string(millisecondsRemaining/1000,0,false).c_str());
+
+		//printf("estimated total: %s (currentProgress: %d)\n",seconds_to_string((millisecondsPassed+millisecondsRemaining)/1000,0,false).c_str(),lastProgress);
+		return seconds_to_string(millisecondsRemaining/1000,0,false);
+	}
+	else
+		return "";
+}
+
+const string CStatusBar::getTimeElapsed()
+{
+	unsigned long millisecondsPassed=getCurrentMilliseconds()-initialTime;
+	//printf("elapsed: %s\n",seconds_to_string(millisecondsPassed/1000,0,false).c_str());
+	return seconds_to_string(millisecondsPassed/1000,0,false);
 }
 

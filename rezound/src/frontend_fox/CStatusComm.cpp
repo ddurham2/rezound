@@ -156,7 +156,7 @@ int CStatusComm::beginProgressBar(const string &title,bool showCancelButton)
 	return(-1);
 }
 
-bool CStatusComm::updateProgressBar(int handle,int progress)
+bool CStatusComm::updateProgressBar(int handle,int progress,const string timeElapsed,const string timeRemaining)
 {
 	////printf("update progress bar: %d\n",progress);
 
@@ -164,7 +164,7 @@ bool CStatusComm::updateProgressBar(int handle,int progress)
 	{
 		try
 		{
-			progressDialogs[handle]->setProgress(progress);
+			progressDialogs[handle]->setProgress(progress,timeElapsed,timeRemaining);
 #if FOX_MAJOR>0
 			progressDialogs[handle]->getApp()->repaint();
 #endif

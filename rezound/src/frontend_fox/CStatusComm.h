@@ -52,7 +52,7 @@ public:
 	virtual void beep();
 
 	virtual int beginProgressBar(const string &title,bool showCancelButton=false);
-	virtual bool updateProgressBar(int handle,int progress);
+	virtual bool updateProgressBar(int handle,int progress,const string timeElapsed,const string timeRemaining);
 	virtual void endProgressBar(int handle);
 	virtual void endAllProgressBars();
 

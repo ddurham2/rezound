@@ -36,13 +36,19 @@ FXIMPLEMENT(CProgressDialog,FXDialogBox,CProgressDialogMap,ARRAYNUMBER(CProgress
 
 // ----------------------------------------
 
+#define ASSURE_WIDTH(parent,width) new FXFrame(parent,FRAME_NONE|LAYOUT_SIDE_BOTTOM | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT,0,0,width,1);
+
 CProgressDialog::CProgressDialog(FXWindow *owner,const FXString &title,bool showCancelButton) :
-	FXDialogBox(owner,title,DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE, 0,0,270+6*2,25+6*2, 0,0,0,0, 0,0),
+	FXDialogBox(owner,title,DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE, 0,0,0,0, 0,0,0,0, 0,0),
 	isCancelled(false),
-	contents(new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_RAISED|FRAME_THICK, 0,0,0,0, 6,6,6,6, 6,2)),
-		progressBar(new FXProgressBar(contents,NULL,0,PROGRESSBAR_NORMAL | LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,250,26)),
-		cancelButton(!showCancelButton ? NULL : new FXButton(contents,_("&Cancel"),/*FOXIcons->RedX1*/NULL,this,ID_CANCEL_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2))
+	vContents(new FXVerticalFrame(this,FRAME_RAISED|FRAME_THICK | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 6,6,6,6, 0,2)),
+		hContents(new FXHorizontalFrame(vContents,LAYOUT_FILL_X | FRAME_NONE, 0,0,0,0, 0,0,0,0, 6,0)),
+			progressBar(new FXProgressBar(hContents,NULL,0,PROGRESSBAR_NORMAL | LAYOUT_FILL_X,0,0,250,20)),
+			cancelButton(!showCancelButton ? NULL : new FXButton(hContents,_("&Cancel"),/*FOXIcons->RedX1*/NULL,this,ID_CANCEL_BUTTON,LAYOUT_CENTER_Y | FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT, 0,0,0,0, 10,10,2,2)),
+		timeElapsedLabel(new FXLabel(vContents,"Elapsed Time xxx:xx:xx",NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT)),
+		timeRemainingLabel(new FXLabel(vContents,"Estimated Time Remaining xxx:xx:xx",NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT))
 {
+	ASSURE_WIDTH(this,260)
 	progressBar->setTotal(100);
 	progressBar->showNumber();
 }
@@ -63,9 +69,33 @@ long CProgressDialog::onCloseWindow(FXObject *sender,FXSelector sel,void *ptr)
 	return 1;
 }
 
-void CProgressDialog::setProgress(int progress)
+void CProgressDialog::setProgress(int progress,const string timeElapsed,const string timeRemaining)
 {
 	progressBar->setProgress(progress);
+	if(timeElapsed=="")
+	{
+		if(timeElapsedLabel->shown())
+			timeElapsedLabel->hide();
+	}
+	else
+	{
+		if(!timeElapsedLabel->shown())
+			timeElapsedLabel->show();
+		timeElapsedLabel->setText((_("Time Elapsed ")+timeElapsed).c_str());
+	}
+
+	if(timeRemaining=="")
+	{
+		if(timeRemainingLabel->shown())
+			timeRemainingLabel->hide();
+	}
+	else
+	{
+		if(!timeRemainingLabel->shown())
+			timeRemainingLabel->show();
+		timeRemainingLabel->setText((_("Estimated Time Remaining ")+timeRemaining).c_str());
+	}
+
 	if(cancelButton)
 		getApp()->runModalWhileEvents(cancelButton); // give cancel button an oppertunity to be clicked
 }
@@ -73,6 +103,7 @@ void CProgressDialog::setProgress(int progress)
 void CProgressDialog::show(FXuint placement)
 {
 	FXDialogBox::show(placement);
+	resize(vContents->getDefaultWidth(),vContents->getDefaultHeight());
 }
 
 void CProgressDialog::hide()

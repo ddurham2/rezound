@@ -66,7 +66,7 @@ public:
 	virtual void beep()=0;
 
 	virtual int beginProgressBar(const string &title,bool showCancelButton=false)=0;
-	virtual bool updateProgressBar(int handle,int progress)=0; // progress is 0 to 100 .. returns if 'cancel' was pressed
+	virtual bool updateProgressBar(int handle,int progress,const string timeElapsed,const string timeRemaining)=0; // progress is 0 to 100 .. returns if 'cancel' was pressed
 	virtual void endProgressBar(int handle)=0;
 	virtual void endAllProgressBars()=0;
 
@@ -94,13 +94,14 @@ VAnswer Question(const string &message,VQuestion options,bool reformatIfNeeded=t
 	progress bar will go away when the destructor is invoked.
 */
 #include "CSound_defs.h" // just for sample_pos_t
+#include <time.h> // for time_t
 class CStatusBar
 {
 public:
 	CStatusBar(const string title,const sample_pos_t firstValue,const sample_pos_t lastValue,const bool showCancelButton=false);
 	virtual ~CStatusBar();
 
-	inline bool update(const sample_pos_t value) { const sample_pos_t progress=(value-sub)/div; return progress!=lastProgress && handle!=-1 && gStatusComm->updateProgressBar(handle,(int)((lastProgress=progress)*mul)); }
+	inline bool update(const sample_pos_t value) { const sample_pos_t progress=(value-sub)/div; return progress!=lastProgress && handle!=-1 && gStatusComm->updateProgressBar(handle,(int)((lastProgress=progress)*mul),getTimeElapsed(),getTimeRemaining()); }
 
 	void reset();
 	void hide();
@@ -112,6 +113,10 @@ private:
 	const sample_pos_t div;
 	const float mul;
 	sample_pos_t lastProgress;
+	unsigned long initialTime;
+
+	const string getTimeElapsed();
+	const string getTimeRemaining();
 };
 
 #endif
