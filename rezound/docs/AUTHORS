@@ -9,8 +9,9 @@ $Id$
 # Anthony J. Ventimiglia performed the original autoconfiscation process.
 #  	David W. Durham performed the conversion from autoconf-2.1x to 2.5   
 #
-# David W. Durham <ddurham@users.sourceforge.net>
-# Anthony J. Ventimiglia <lergnom@users.sourceforge.net> 
+#            Primary Author: David W. Durham <ddurham@users.sourceforge.net>
+# Packager/Autoconfiscation: Anthony J. Ventimiglia <lergnom@users.sourceforge.net> 
+#    Additional Development: Marc R. J. Brevoort
 # 
 # Please refer to individual Files for author credit
 # 
@@ -20,3 +21,5 @@ $Id$
 # terms of the GNU General Public License as published by the Free Software
 # Foundation; either version 2 of the License, or (at your option) any later
 # version.
+
+# Marc R. J. Brevoort - Initial development of dynamic menu configuration
