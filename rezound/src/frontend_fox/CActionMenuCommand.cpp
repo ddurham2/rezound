@@ -80,6 +80,8 @@ long CActionMenuCommand::onCommand(FXObject *sender,FXSelector sel,void *ptr)
 	CLoadedSound *activeSound=gSoundFileManager->getActive();
 	if(activeSound)
 	{
+			// ??? let action parameters contain actionSound and the two bool parameters
+			// they should have some flag which says that they would not be streamed to disk (if that were ever something I do with action parameters)
 		CActionParameters actionParameters;
 		actionFactory->performAction(activeSound,&actionParameters,prevEvent.state&SHIFTMASK,prevEvent.click_button==RIGHTBUTTON);
 
