@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ReZound 0.8.3beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-07-18 19:54-0500\n"
+"POT-Creation-Date: 2004-07-19 00:26-0500\n"
 "PO-Revision-Date: 2003-09-30 12:02+CST\n"
 "Last-Translator: Joost Andrae <Joost.Andrae@gmx.de>\n"
 "Language-Team: German <de@li.org>\n"
@@ -553,7 +553,7 @@ msgstr ""
 "Möchten Sie fortfahren ?"
 
 #: src/backend/ClameSoundTranslator.cpp:354
-#: src/backend/ClibaudiofileSoundTranslator.cpp:545
+#: src/backend/ClibaudiofileSoundTranslator.cpp:547
 #: src/backend/CFLACSoundTranslator.cpp:219
 msgid "Saving Sound"
 msgstr "Speichere Sound"
@@ -818,7 +818,7 @@ msgstr " -- Fehler beim Öffnen"
 msgid "Loading Sound"
 msgstr "Lade Sound"
 
-#: src/backend/ClibaudiofileSoundTranslator.cpp:463
+#: src/backend/ClibaudiofileSoundTranslator.cpp:465
 msgid "This format does not support saving cues"
 msgstr "Diese Format unterstützt keine Marker"
 

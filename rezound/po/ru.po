@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-07-18 19:54-0500\n"
+"POT-Creation-Date: 2004-07-19 00:26-0500\n"
 "PO-Revision-Date: 2003-08-28 18:45+0400\n"
 "Last-Translator: Alexandre Prokoudine <avp@altlinux.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -482,7 +482,7 @@ msgstr ""
 "Вы всё равно хотите сохранить файл?"
 
 #: src/backend/ClameSoundTranslator.cpp:354
-#: src/backend/ClibaudiofileSoundTranslator.cpp:545
+#: src/backend/ClibaudiofileSoundTranslator.cpp:547
 #: src/backend/CFLACSoundTranslator.cpp:219
 msgid "Saving Sound"
 msgstr "Звуковой файл сохраняется"
@@ -747,7 +747,7 @@ msgstr " -- ошибка при открытии"
 msgid "Loading Sound"
 msgstr "Загружается звуковой файл"
 
-#: src/backend/ClibaudiofileSoundTranslator.cpp:463
+#: src/backend/ClibaudiofileSoundTranslator.cpp:465
 msgid "This format does not support saving cues"
 msgstr "Этот формат не поддерживает сохранение маркеров"
 
