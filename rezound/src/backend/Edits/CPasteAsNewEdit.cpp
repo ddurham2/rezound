@@ -51,7 +51,7 @@ bool CPasteAsNewEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 		clipboard->getSampleRate(),
 		clipboardLength);
 
-	newSound->sound->lockForResize();
+	newSound->sound->lockSize();
 	try
 	{
 		unsigned k=0;
@@ -60,11 +60,11 @@ bool CPasteAsNewEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 			if(clipboard->getWhichChannels()[t])
 				clipboard->copyTo(newSound->sound,k++,t,0,clipboardLength,mmOverwrite,sftNone,false);
 		}
-		newSound->sound->unlockForResize();
+		newSound->sound->unlockSize();
 	}
 	catch(...)
 	{
-		newSound->sound->unlockForResize();
+		newSound->sound->unlockSize();
 		soundFileManager->close(ASoundFileManager::ctSaveNone,newSound);
 		throw;
 	}
