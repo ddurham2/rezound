@@ -33,6 +33,8 @@ TOP_DIRECTORY/make
 		  PoolFile/make -- libPoolFile.la
 		  |
 		  backend/make--|
+		  |		backend/DSP/make 
+		  |		|
 		  |		backend/Edits/make -- libEdits.la
 		  |		|
 		  |		backend/Effects/make -- libEffects.la

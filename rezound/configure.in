@@ -82,6 +82,12 @@ AC_CHECK_LIB(pthread, pthread_create)
 AC_CHECK_LIB(pthread, pthread_mutex_init)
 AC_CHECK_LIB(pthread, pthread_rwlock_init)
 
+dnl check for the rfftw library installed.  Eventually this macro call
+dnl should define HAVE_FFTW and enable or disable the FFT based actions
+dnl if it's not found, then I should print a noticable warning that FFT
+dnl actions will be disabled and why
+AC_CHECK_LIB(fftw, fftw_create_plan)
+AC_CHECK_LIB(rfftw, rfftw_create_plan)
 
 dnl see config/cxx-lib.m4 for ajv_ macro definitions. 
 dnl
@@ -295,6 +301,7 @@ AC_OUTPUT( \
 			src/misc/CNestedDataFile/Makefile \
 		src/PoolFile/Makefile \
 		src/backend/Makefile \
+			src/backend/DSP/Makefile \
 			src/backend/Edits/Makefile \
 			src/backend/Effects/Makefile \
 			src/backend/Filters/Makefile \
