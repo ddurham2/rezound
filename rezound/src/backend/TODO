@@ -1,11 +1,9 @@
 
 --- THINGS TO DO FOR SURE ---
+	
+	- definiately look into prebuffering a lot more data to the card, but knowing the sample rate (and remembering past chunks' positions written to the card) and the time passed since last redrawing the play position estimate the current output position in the file.  This will allow much more data to be buffered and remove those pesky audio output glitches people are complaining about.
 
 	- possibly rename ClibvorbisSoundTranslator.* to COggVorbisSoundTranslator.*
-
-	- I should make an f(x) feature for CGraphParamValueNodes which will return y given x and it should be implemented for line segments, cos, or bicubic interpretation of the nodes
-		- I should reimplement the Distortion module to use this
-		- But I don't guess I should implement f(x) unless anything else were already going to use it
 
 	- Added a "Lock Channels" check box feature to the noise gate, also it would be better if noise gate has a choice of dBFS or percent for the threshold
 
@@ -302,4 +300,9 @@ or sample values to follow
 	- Add a feature to ASoundRecorder that tells it to start when a certain threshold is hit in percent or dBFS
 
 	- in order to implement a "Save Selection" under the editing menu, I should make the sound translator objects accept a start and stop paramater in the save methods (and even later, a vector of starts and stops for multiple selected regions or something)
+
+	- I ended up implementing an iterator class for this job:
+		- I should make an f(x) feature for CGraphParamValueNodes which will return y given x and it should be implemented for line segments, cos, or bicubic interpretation of the nodes
+			- I should reimplement the Distortion module to use this
+			- But I don't guess I should implement f(x) unless anything else were already going to use it
 
