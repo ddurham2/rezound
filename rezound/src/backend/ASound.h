@@ -460,23 +460,6 @@ private:
 	};
 	typedef TPoolAccesser<RFormatInfo1,PoolFile_t > CFormat1InfoPoolAccesser;
 
-	struct RFormatInfo0
-	{
-		sample_pos_t size;
-		unsigned sampleRate;
-		unsigned channelCount;
-		unsigned bits;
-
-		void operator=(const RFormatInfo0 &src)
-		{
-			size=src.size;
-			sampleRate=src.sampleRate;
-			channelCount=src.channelCount;
-			bits=src.bits;
-		}
-	};
-	typedef TPoolAccesser<RFormatInfo0,PoolFile_t > CFormatInfo0PoolAccesser;
-
 	int metaInfoPoolID;
 	int channelPoolIDs[MAX_CHANNELS];
 

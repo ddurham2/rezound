@@ -1216,14 +1216,17 @@ void ASound::saveMetaInfo()
 	{
 		RFormatInfo1 &r=b[0];
 
+		// always write the newest format
+		r.version=CURRENT_VERSION;
 		r.size=size;
 		r.sampleRate=sampleRate;
 		r.channelCount=channelCount;
 	}
 	else
 	{
-		// always write the newest format
 		RFormatInfo1 r;
+
+		// always write the newest format
 		r.version=CURRENT_VERSION;
 		r.size=size;
 		r.sampleRate=sampleRate;
