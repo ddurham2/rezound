@@ -39,6 +39,8 @@
 	- When pasting data, there is no heeding of the differences in sample rate of the src data when pasting to the destination
 		- I should fix this problem when I implement a real clipboard system and I would have to supply the PCM parameters to the clipboard when I copied the data there, then pasting could do something to resolve any differances when reading from it
 
+	- Change CSoundPlayerChannel to do interpolation for sample rate conversion
+
 
 
 
