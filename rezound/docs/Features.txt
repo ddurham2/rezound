@@ -1,0 +1,80 @@
+- File Formats:
+	- Native ReZound
+	- WAVE			(libaudiofile)
+	- AIFF/AIFF-C		(libaudiofile)
+	- NeXT/Sun 		(libaudiofile)
+	- Berkeley/IRCAM/CARL	(libaudiofile)
+	- raw			(libaudiofile)
+	- Ogg Vorbis		(libogg)
+
+- Fast Editing of Large Files
+
+- Undo
+
+- Cue Positions
+
+- Automatic Crossfading of Selection Edges on All Applicable Actions to Create Smooth Transitions
+
+- Ability to Save User Notes on Formats that Support them
+
+- Recording
+	- Realtime Level Meters (display also when not recording)
+	- Record Time Limit Setting
+	- Start and Pause Recording
+	- Can Reset the Record Position to the Beginning While Recording
+	- Add Cue Positions While Recording
+
+- Play Controls
+	- Play All Once
+	- Play All Looped
+	- Play Selection Once
+	- Play Selection Looped
+	- Stop
+	- Pause
+	- Jump to Beginning
+	- Jump to Selection Start
+	- Jump to Previous Cue
+	- Jump to Next Cue
+	- Shuttle Play Position Control
+
+- Full Featured Editing Tools
+	- Copy
+	- Cut
+	- Delete
+	- Crop
+	- Paste
+		- Insert
+		- Replace
+		- Overwrite
+		- Limited Overwrite
+		- Mix
+		- Limited Mix
+	- Insert Silence
+	- Mute
+	- Rotate Selection Left
+	- Rotate Selection Right
+	- Various Selection Tools
+
+- Various Effects/Manipulations
+	- Reverse
+	- Change Volume
+	- Gain (by constant or curve)
+	- Change Rate (by constant or curve)
+	- Flange
+	- Delay (Echo)
+	- Varied Repeat
+
+- IIR Single Pole Filters
+	- Lowpass
+	- Highpass
+	- Bandpass
+	- Notch
+
+- Looping Tools (much more to come)
+	- Make Selection Symetric
+
+- Mastering/Remastering Tools (more to come)
+	- Remove DC Component
+	- Noise Gate
+	- Dynamic Range Compression
+
