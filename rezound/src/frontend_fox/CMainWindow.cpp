@@ -305,7 +305,7 @@ void CMainWindow::show()
 {
 	FXint wantedWidth=getDefaultWidth();
 	FXint wantedHeight=getDefaultHeight();
-	rememberShow(this);
+	rememberShow(this,"ReZound");
 	resize(max(getWidth(),wantedWidth),max(getHeight(),wantedHeight));
 
 	FXMainWindow::show();
@@ -348,7 +348,7 @@ void CMainWindow::show()
 
 void CMainWindow::hide()
 {
-	rememberHide(this);
+	rememberHide(this,"ReZound");
 	FXMainWindow::hide();
 }
 
