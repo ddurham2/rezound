@@ -97,7 +97,7 @@ void ASoundRecorder::stop()
 	}
 }
 
-void ASoundRecorder::redo()
+void ASoundRecorder::redo(const sample_pos_t maxDuration)
 {
 	// redo only resets the start position but doesn't cleanup extra space added
 	// because we will need space right back again... So, the done() method removes
@@ -112,6 +112,11 @@ void ASoundRecorder::redo()
 
 		writePos=origLength;
 		prealloced=sound->getLength()-origLength;
+
+		if(maxDuration!=NIL_SAMPLE_POS && (MAX_LENGTH-writePos)>maxDuration)
+			stopPosition=writePos+maxDuration;
+		else
+			stopPosition=NIL_SAMPLE_POS;
 
 		mutex.LeaveMutex();
 	}
@@ -311,6 +316,13 @@ string ASoundRecorder::getRecordedSizeS() const
 	return(sound->getAudioDataSize(writePos-origLength));
 }
 
+string ASoundRecorder::getRecordLimitS() const
+{
+	if(stopPosition!=NIL_SAMPLE_POS)
+		return(sound->getTimePosition(stopPosition-origLength));
+	else
+		return("memory");
+}
 
 bool ASoundRecorder::cueNameExists(const string name) const
 {

@@ -2,8 +2,7 @@
 --- THINGS TO DO FOR SURE ---
 
 	- figure out why the limit isn't always working.. twice I entered 90:00.00 and it didn't stop
-
-	- on the record dialog, put a red-led while recording, and put a lable that says what the recording is limited to by actually asking the recorder for the limit it's using
+		- I haven't seen it since, but with the limit label I should know when it is at least going to happen
 
 	- Other commercial audio editors do this, and now I think I know why...
 		- When loading a sound it doesn't start zoomed out to see the whole thing.. 
@@ -16,6 +15,7 @@
 
 	- need a real default value in the newSound dialog's filename edit, either a temporary name that is incremented each time the dialog shows and check agains the FS, or just 'untitled0.rez'
 		- increment a number on "untitled#.rez" until a file doesn't exist
+		- this code should actually be in the backend so I don't have to rewrite that code for a different frontend
 
 	- need to design a record dialog that has the format selection, real-time level meters, start, redo, stop buttons, create cue buttons (one for anchored, one not), check mark to add cues at the beginning and end of the recorded section, (more useful for insert record)
 		- need to modify the ASoundRecorder public interface some, because I need the record dialog to have a start, stop, redo buttons, if you start, then stop, then start again, the second start should void the previous recorded data, but stop should just leave whats there tact
@@ -147,4 +147,6 @@
 		- have some predines that come with rezound and a way for the user to save them
 
 	- doing a save as needs to update the CLoadedSoundWindow's filename
+
+	- on the record dialog, put a red-led while recording, and put a lable that says what the recording is limited to by actually asking the recorder for the limit it's using
 

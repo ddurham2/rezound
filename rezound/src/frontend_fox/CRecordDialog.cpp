@@ -21,6 +21,7 @@
 #include "CRecordDialog.h"
 
 #include "../backend/ASoundRecorder.h"
+#include "../images/images.h"
 
 #include "CStatusComm.h"
 
@@ -55,7 +56,7 @@ FXIMPLEMENT(CRecordDialog,FXModalDialogBox,CRecordDialogMap,ARRAYNUMBER(CRecordD
 // ----------------------------------------
 
 CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"Record",350,320,FXModalDialogBox::ftVertical),
+	FXModalDialogBox(mainWindow,"Record",350,360,FXModalDialogBox::ftVertical),
 
 	recorder(NULL),
 	showing(false),
@@ -86,15 +87,21 @@ CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
 					// but what name shall I give the cues
 					// the checkbox should indicate that cues will be placed at each time the sound is stopped and started
 				//surroundWithCuesButton=new FXCheckButton(frame3,"Surround With Cues");
+			frame3=new FXHorizontalFrame(frame2,FRAME_RAISED | LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
+				recordingLED=new FXPacker(frame3,LAYOUT_CENTER_X|LAYOUT_CENTER_Y, 0,0,0,0, 0,0,0,0, 0,0);
+					new FXLabel(recordingLED,"Recording:",new FXGIFIcon(getApp(),RedLED1),JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0);
+					new FXLabel(recordingLED,"Recording:",new FXGIFIcon(getApp(),OffLED1),JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0);
 			frame3=new FXHorizontalFrame(frame2,FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_FILL_Y);
 				frame3->setHSpacing(0);
 				frame3->setVSpacing(0);
 				frame4=new FXVerticalFrame(frame3,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
 					new FXLabel(frame4,"Rec Length: ",NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT);
 					new FXLabel(frame4,"Rec Size: ",NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT);
+					new FXLabel(frame4,"Rec Limit: ",NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT);
 				frame4=new FXVerticalFrame(frame3,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
 					recordedLengthStatusLabel=new FXLabel(frame4,"00:00.000",NULL,LAYOUT_FILL_X|JUSTIFY_LEFT);
 					recordedSizeStatusLabel=new FXLabel(frame4,"0",NULL,LAYOUT_FILL_X|JUSTIFY_LEFT);
+					recordLimitLabel=new FXLabel(frame4,"",NULL,LAYOUT_FILL_X|JUSTIFY_LEFT);
 		frame2=new FXVerticalFrame(frame1,FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_FILL_Y);
 			frame3=new FXHorizontalFrame(frame2);
 				new FXButton(frame3,"Reset",NULL,this,ID_CLEAR_CLIP_COUNT_BUTTON);
@@ -150,6 +157,16 @@ long CRecordDialog::onStatusUpdate(FXObject *sender,FXSelector sel,void *ptr)
 	recordedLengthStatusLabel->setText(recorder->getRecordedLengthS().c_str());
 	recordedSizeStatusLabel->setText(recorder->getRecordedSizeS().c_str());
 
+	if(recorder->isStarted())
+		recordLimitLabel->setText(recorder->getRecordLimitS().c_str());
+	else
+		recordLimitLabel->setText("");
+
+	if(recorder->isStarted())
+		recordingLED->getFirst()->raise();
+	else
+		recordingLED->getFirst()->lower();
+
 	// schedule for the next status update
 	timerHandle=getApp()->addTimeout(STATUS_UPDATE_TIME,this,CRecordDialog::ID_STATUS_UPDATE);
 	return(1);
@@ -195,9 +212,8 @@ bool CRecordDialog::show(ASoundRecorder *_recorder)
 	}
 }
 
-long CRecordDialog::onStartButton(FXObject *sender,FXSelector sel,void *ptr)
+const sample_pos_t CRecordDialog::getMaxDuration()
 {
-	clearClipCount();
 	if(setDurationButton->getCheck())
 	{
 		bool wasInvalid;
@@ -211,26 +227,30 @@ long CRecordDialog::onStartButton(FXObject *sender,FXSelector sel,void *ptr)
 		if(d==0)
 		{
 			setDurationButton->setCheck(false);
-			recorder->start();
+			return(NIL_SAMPLE_POS);
 		}
 		else
-			recorder->start(d);
+			return(d);
 	}
-	else
-		recorder->start();
+	return(NIL_SAMPLE_POS);
+}
+
+long CRecordDialog::onStartButton(FXObject *sender,FXSelector sel,void *ptr)
+{
+	clearClipCount();
+	recorder->start(getMaxDuration());
 	return 1;
 }
 
 long CRecordDialog::onStopButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	recorder->stop();
-
 	return 1;
 }
 
 long CRecordDialog::onRedoButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-	recorder->redo();
+	recorder->redo(getMaxDuration());
 	clearClipCount();
 	return 1;
 }

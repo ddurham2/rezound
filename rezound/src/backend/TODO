@@ -1,6 +1,9 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- I might want to at least touch a file (and remove if closed) when a new file is created so that it will at least exist on disk if I every try to determine a default filename for the CNewSoundDialog
+		- this functionality which determines the default filename should be in the backend so I don't have to rewrite that code for a different frontend
+
 	- Add a feature to ASoundRecorder that tells it to start when a certain threshold is hit in percent
 
 	- Need to purge waiting audio input when COSSSoundRecorder does a redo()

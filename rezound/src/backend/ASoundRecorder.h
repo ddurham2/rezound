@@ -72,7 +72,7 @@ public:
 
 	void start(const sample_pos_t maxDuration=NIL_SAMPLE_POS);
 	void stop();
-	virtual void redo();
+	virtual void redo(const sample_pos_t maxDuration=NIL_SAMPLE_POS);
 
 
 	size_t clipCount;
@@ -83,6 +83,7 @@ public:
 	const sample_pos_t getRecordedLength() const;
 	string getRecordedLengthS() const;
 	string getRecordedSizeS() const;
+	string getRecordLimitS() const;
 
 	const ASound *getSound() const { return(sound); }
 

@@ -27,6 +27,8 @@ class CRecordDialog;
 #include "FXModalDialogBox.h"
 #include <vector>
 
+#include "../backend/ASound.h"
+
 extern CRecordDialog *gRecordDialog;
 
 class ASoundRecorder;
@@ -83,6 +85,9 @@ private:
 
 	FXLabel *recordedLengthStatusLabel;
 	FXLabel *recordedSizeStatusLabel;
+	FXLabel *recordLimitLabel;
+
+	FXPacker *recordingLED;
 
 	FXLabel *clipCountLabel;
 
@@ -98,6 +103,8 @@ private:
 	vector<FXProgressBar *> meters;
 
 	void clearClipCount();
+
+	const sample_pos_t getMaxDuration();
 
 };
 
