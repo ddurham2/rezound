@@ -156,7 +156,7 @@ long FXConstantParamValue::onSliderChange(FXObject *sender,FXSelector sel,void *
 long FXConstantParamValue::onScalarSpinnerChange(FXObject *sender,FXSelector sel,void *ptr)
 {
 	valueMapper->setScalar(GET_SCALAR_VALUE);
-	slider->setValue((int)(valueMapper->uninterpretValue(retValue)*10000.0));
+	slider->setValue((int)round(valueMapper->uninterpretValue(retValue)*10000.0));
 	retValue=valueMapper->interpretValue((double)slider->getValue()/10000.0);
 	valueTextBox->setText((istring(retValue,7,4)).c_str());
 	updateNumbers();
