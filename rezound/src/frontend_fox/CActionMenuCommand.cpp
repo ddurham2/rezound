@@ -119,7 +119,7 @@ long CActionMenuCommand::onCommand(FXObject *sender,FXSelector sel,void *ptr)
 	else
 		getApp()->beep();
 
-	return(1);
+	return 1;
 }
 
 long CActionMenuCommand::onQueryTip(FXObject* sender,FXSelector sel,void *ptr)

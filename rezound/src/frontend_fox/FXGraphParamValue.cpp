@@ -791,7 +791,7 @@ long FXGraphParamValue::onDragNode(FXObject *sender,FXSelector sel,void *ptr)
 		updateStatus();
 		graphCanvas->update();
 	}
-	return 1;
+	return 0;
 }
 
 long FXGraphParamValue::onStopDragNode(FXObject *sender,FXSelector sel,void *ptr)
