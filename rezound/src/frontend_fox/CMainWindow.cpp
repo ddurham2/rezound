@@ -62,95 +62,97 @@
 
 FXDEFMAP(CMainWindow) CMainWindowMap[]=
 {
-	//Message_Type				ID						Message_Handler
-	FXMAPFUNC(SEL_CLOSE,			0,						CMainWindow::onQuit),
+	//Message_Type				ID							Message_Handler
+	FXMAPFUNC(SEL_CLOSE,			0,							CMainWindow::onQuit),
 
 		// file actions
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_NEW_FILE,			CMainWindow::onFileAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_OPEN_FILE,			CMainWindow::onFileAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REOPEN_FILE,			CMainWindow::onFileAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SAVE_FILE,			CMainWindow::onFileAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SAVE_FILE_AS,			CMainWindow::onFileAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CLOSE_FILE,			CMainWindow::onFileAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REVERT_FILE,			CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_NEW_FILE,				CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_OPEN_FILE,				CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REOPEN_FILE,				CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SAVE_FILE,				CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SAVE_FILE_AS,				CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CLOSE_FILE,				CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REVERT_FILE,				CMainWindow::onFileAction),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_EDIT_USERNOTES,			CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_EDIT_USERNOTES,				CMainWindow::onFileAction),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHOW_ABOUT,			CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHOW_ABOUT,				CMainWindow::onFileAction),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_QUIT,				CMainWindow::onQuit),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_QUIT,					CMainWindow::onQuit),
 	
 
 		// play/record/transport controls
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_RECORD,				CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_RECORD,					CMainWindow::onControlAction),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_ALL_ONCE,			CMainWindow::onControlAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_ALL_LOOPED,		CMainWindow::onControlAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_SELECTION_ONCE,		CMainWindow::onControlAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_SELECTION_LOOPED,		CMainWindow::onControlAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_SELECTION_LOOPED_SKIP_MOST,CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_ALL_ONCE,				CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_ALL_LOOPED,			CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_SELECTION_ONCE,			CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_SELECTION_LOOPED,			CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_SELECTION_LOOPED_SKIP_MOST,	CMainWindow::onControlAction),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_SELECTION_LOOPED_GAP_BEFORE_REPEAT,CMainWindow::onControlAction),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_STOP,				CMainWindow::onControlAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PAUSE,				CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_STOP,					CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PAUSE,					CMainWindow::onControlAction),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_BEGINNING,		CMainWindow::onControlAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_SELECTION_START,	CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_BEGINNING,			CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_SELECTION_START,		CMainWindow::onControlAction),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_NEXT_CUE,		CMainWindow::onControlAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_PREV_CUE,		CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_NEXT_CUE,			CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_PREV_CUE,			CMainWindow::onControlAction),
 
-	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	CMainWindow::ID_SHUTTLE_DIAL,			CMainWindow::onShuttleReturn),
-	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	CMainWindow::ID_SHUTTLE_DIAL,			CMainWindow::onShuttleReturn),
-	FXMAPFUNC(SEL_CHANGED,			CMainWindow::ID_SHUTTLE_DIAL,			CMainWindow::onShuttleChange),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_DIAL_SPRING_BUTTON,	CMainWindow::onShuttleDialSpringButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_DIAL_SCALE_BUTTON,	CMainWindow::onShuttleDialScaleButton),
+	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	CMainWindow::ID_SHUTTLE_DIAL,				CMainWindow::onShuttleReturn),
+	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	CMainWindow::ID_SHUTTLE_DIAL,				CMainWindow::onShuttleReturn),
+	FXMAPFUNC(SEL_CHANGED,			CMainWindow::ID_SHUTTLE_DIAL,				CMainWindow::onShuttleChange),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_DIAL_SPRING_BUTTON,		CMainWindow::onShuttleDialSpringButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_DIAL_SCALE_BUTTON,		CMainWindow::onShuttleDialScaleButton),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_RETURN,			CMainWindow::onShuttleReturn),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_BACKWARD,		CMainWindow::onKeyboardShuttle),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_INCREASE_RATE,		CMainWindow::onKeyboardShuttle),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_FORWARD,		CMainWindow::onKeyboardShuttle),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_RETURN,				CMainWindow::onShuttleReturn),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_BACKWARD,			CMainWindow::onKeyboardShuttle),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_INCREASE_RATE,			CMainWindow::onKeyboardShuttle),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_FORWARD,			CMainWindow::onKeyboardShuttle),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FIND_SELECTION_START,		CMainWindow::onControlAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FIND_SELECTION_STOP,		CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FIND_SELECTION_START,			CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FIND_SELECTION_STOP,			CMainWindow::onControlAction),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_ZOOM_IN,			CMainWindow::onControlAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_ZOOM_FIT_SELECTION,		CMainWindow::onControlAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_ZOOM_OUT,			CMainWindow::onControlAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_ZOOM_OUT_FULL,			CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_ZOOM_IN,				CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_ZOOM_FIT_SELECTION,			CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_ZOOM_OUT,				CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_ZOOM_OUT_FULL,				CMainWindow::onControlAction),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_TOGGLE_LEVEL_METERS,		CMainWindow::onControlAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_TOGGLE_STEREO_PHASE_METERS,	CMainWindow::onControlAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_TOGGLE_FREQUENCY_ANALYZER,	CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_TOGGLE_LEVEL_METERS,			CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_TOGGLE_STEREO_PHASE_METERS,		CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_TOGGLE_FREQUENCY_ANALYZER,		CMainWindow::onControlAction),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_UNDO_EDIT,			CMainWindow::onControlAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CLEAR_UNDO_HISTORY,		CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_UNDO_EDIT,				CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CLEAR_UNDO_HISTORY,			CMainWindow::onControlAction),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REDRAW,				CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REDRAW,					CMainWindow::onControlAction),
 	
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_DEFRAG_MENUITEM,		CMainWindow::onDebugButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PRINT_SAT_MENUITEM,		CMainWindow::onDebugButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_VERIFY_SAT_MENUITEM,		CMainWindow::onDebugButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_DEFRAG_MENUITEM,			CMainWindow::onDebugButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PRINT_SAT_MENUITEM,			CMainWindow::onDebugButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_VERIFY_SAT_MENUITEM,			CMainWindow::onDebugButton),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FOLLOW_PLAY_POSITION_TOGGLE,	CMainWindow::onFollowPlayPositionButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FOLLOW_PLAY_POSITION_TOGGLE,		CMainWindow::onFollowPlayPositionButton),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_RENDER_CLIPPING_WARNING_TOGGLE,	CMainWindow::onRenderClippingWarningButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_RENDER_CLIPPING_WARNING_TOGGLE,		CMainWindow::onRenderClippingWarningButton),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CROSSFADE_EDGES_COMBOBOX,	CMainWindow::onCrossfadeEdgesComboBox),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CROSSFADE_EDGES_SETTINGS_BUTTON,CMainWindow::onCrossfadeEdgesSettings),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_DRAW_VERTICAL_CUE_POSITIONS_TOGGLE,	CMainWindow::onDrawVerticalCuePositionsButton),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CLIPBOARD_COMBOBOX,		CMainWindow::onClipboardComboBox),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CROSSFADE_EDGES_COMBOBOX,		CMainWindow::onCrossfadeEdgesComboBox),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CROSSFADE_EDGES_SETTINGS_BUTTON,	CMainWindow::onCrossfadeEdgesSettings),
 
-	FXMAPFUNC(SEL_CHANGED,			CMainWindow::ID_SOUND_LIST,			CMainWindow::onSoundListChange),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SOUND_LIST_HOTKEY,		CMainWindow::onSoundListHotKey),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CLIPBOARD_COMBOBOX,			CMainWindow::onClipboardComboBox),
 
-	FXMAPFUNC(SEL_KEYPRESS,			CMainWindow::ID_SOUND_LIST,			CMainWindow::onHotKeyFocusFixup),
-	FXMAPFUNC(SEL_KEYPRESS,			CMainWindow::ID_CROSSFADE_EDGES_COMBOBOX,	CMainWindow::onHotKeyFocusFixup),
-	FXMAPFUNC(SEL_KEYPRESS,			CMainWindow::ID_CLIPBOARD_COMBOBOX,		CMainWindow::onHotKeyFocusFixup),
+	FXMAPFUNC(SEL_CHANGED,			CMainWindow::ID_SOUND_LIST,				CMainWindow::onSoundListChange),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SOUND_LIST_HOTKEY,			CMainWindow::onSoundListHotKey),
 
-	FXMAPFUNC(SEL_KEYPRESS,			0,						CMainWindow::onKeyPress),
-	FXMAPFUNC(SEL_KEYRELEASE,		0,						CMainWindow::onKeyRelease),
-	FXMAPFUNC(SEL_ENTER,			0,						CMainWindow::onMouseEnter),
+	FXMAPFUNC(SEL_KEYPRESS,			CMainWindow::ID_SOUND_LIST,				CMainWindow::onHotKeyFocusFixup),
+	FXMAPFUNC(SEL_KEYPRESS,			CMainWindow::ID_CROSSFADE_EDGES_COMBOBOX,		CMainWindow::onHotKeyFocusFixup),
+	FXMAPFUNC(SEL_KEYPRESS,			CMainWindow::ID_CLIPBOARD_COMBOBOX,			CMainWindow::onHotKeyFocusFixup),
+
+	FXMAPFUNC(SEL_KEYPRESS,			0,							CMainWindow::onKeyPress),
+	FXMAPFUNC(SEL_KEYRELEASE,		0,							CMainWindow::onKeyRelease),
+	FXMAPFUNC(SEL_ENTER,			0,							CMainWindow::onMouseEnter),
 };
 
 FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
@@ -244,7 +246,8 @@ CMainWindow::CMainWindow(FXApp* a) :
 		followPlayPositionButton->setPadLeft(0); followPlayPositionButton->setPadRight(0); followPlayPositionButton->setPadTop(0); followPlayPositionButton->setPadBottom(0);
 		renderClippingWarningButton=new FXCheckButton(miscControlsFrame,_("Clipping Warning"),this,ID_RENDER_CLIPPING_WARNING_TOGGLE);
 		renderClippingWarningButton->setPadLeft(0); renderClippingWarningButton->setPadRight(0); renderClippingWarningButton->setPadTop(0); renderClippingWarningButton->setPadBottom(0);
-		//followPlayPositionButton->setPadLeft(0); followPlayPositionButton->setPadRight(0); followPlayPositionButton->setPadTop(0); followPlayPositionButton->setPadBottom(0);
+		drawVerticalCuePositionsButton=new FXCheckButton(miscControlsFrame,_("Draw Vertical Cue Positions"),this,ID_DRAW_VERTICAL_CUE_POSITIONS_TOGGLE);
+		drawVerticalCuePositionsButton->setPadLeft(0); drawVerticalCuePositionsButton->setPadRight(0); drawVerticalCuePositionsButton->setPadTop(0); drawVerticalCuePositionsButton->setPadBottom(0);
 		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
 			crossfadeEdgesComboBox=new FXComboBox(t,8,3, this,ID_CROSSFADE_EDGES_COMBOBOX, FRAME_SUNKEN|FRAME_THICK | COMBOBOX_NORMAL|COMBOBOX_STATIC | LAYOUT_CENTER_Y);
 				crossfadeEdgesComboBox->setTipText(_("After Most Actions a Crossfade can be Performed at the Start and Stop \nPositions to Give a Smoother Transition in to and out of the Modified Selection"));
@@ -309,6 +312,8 @@ void CMainWindow::show()
 	followPlayPositionButton->setCheck(gFollowPlayPosition);
 
 	renderClippingWarningButton->setCheck(gRenderClippingWarning);
+
+	drawVerticalCuePositionsButton->setCheck(gDrawVerticalCuePositions);
 
 	if(gCrossfadeEdges>=cetNone && gCrossfadeEdges<=cetOuter)
 		crossfadeEdgesComboBox->setCurrentItem((FXint)gCrossfadeEdges);
@@ -1036,6 +1041,13 @@ long CMainWindow::onFollowPlayPositionButton(FXObject *sender,FXSelector sel,voi
 long CMainWindow::onRenderClippingWarningButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	gRenderClippingWarning=renderClippingWarningButton->getCheck();
+	gSoundFileManager->getActiveWindow()->updateFromEdit();
+	return 1;
+}
+
+long CMainWindow::onDrawVerticalCuePositionsButton(FXObject *sender,FXSelector sel,void *ptr)
+{
+	gDrawVerticalCuePositions=drawVerticalCuePositionsButton->getCheck();
 	gSoundFileManager->getActiveWindow()->updateFromEdit();
 	return 1;
 }
