@@ -84,7 +84,8 @@ FXWaveCanvas::FXWaveCanvas(CLoadedSound *_loadedSound,FXComposite *p,FXObject *t
 
 	lastHorzZoom(-1.0),lastVertZoom(-1.0),
 
-	lastChangedPosition(lcpStart)
+	lastChangedPosition(lcpStart),
+	lastDrawWasUnsuccessful(false)
 {
 }
 
@@ -345,7 +346,28 @@ void FXWaveCanvas::drawPortion(int left,int width,FXDCWindow *dc)
 	if(!shown())
 		return;
 
-	loadedSound->getSound()->lockSize();
+
+	// Here is where while an action may be processing that it has the sound locked 
+	// for resize so if a redraw occurs that this would deadlock if used a waiting 
+	// lock instead of a try-lock.
+	// so, I just draw an empty background on the whole thing until a real redraw 
+	// can succeed.  
+	//
+	// ??? One better solution would be to arrange for a back buffer to be saved 
+	// before the action started, and I could blit from that for updates
+	if(!loadedSound->getSound()->trylockSize())
+	{ // can't lock.. just paint with background.. whole thing first time the lock fails.. just do updated part on not-the-first time
+		dc->setForeground(backGroundColor);
+		if(lastDrawWasUnsuccessful)
+			dc->fillRectangle(left,0,width,getHeight());
+		else
+			update();
+		lastDrawWasUnsuccessful=true;
+		return;
+	}
+	else
+		lastDrawWasUnsuccessful=false;
+
 	try
 	{
 		renderedStartPosition=loadedSound->channel->getStartPosition();

@@ -127,6 +127,7 @@ private:
 	double lastHorzZoom,lastVertZoom;
 
 	LastChangedPositions lastChangedPosition;
+	bool lastDrawWasUnsuccessful;
 };
 
 #endif

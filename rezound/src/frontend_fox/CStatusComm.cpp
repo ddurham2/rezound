@@ -174,6 +174,7 @@ void CStatusComm::updateProgressBar(int handle,int progress)
 		try
 		{
 			progressDialogs[handle]->setProgress(progress);
+			progressDialogs[handle]->getApp()->repaint();
 		}
 		catch(exception &e)
 		{ // oh well

@@ -62,15 +62,6 @@
 		- Also if there's  an error creating perhaps the CSoundPlayerChannel that the ASound is deleted and all temp data is cleaned up
 		- use valgrind for this
 
-	- some of the stuff with repaints after action dialogs show isn't pretty, but its at least functional
-		- I tried, but one place to fix some of the problems is to handle all repaint events after an FXModalDialog hide's in its hide() method
-		- I called app->flush() but in there, but it didn't seem to help... perhaps X hadn't sent repaint messages yet... but then I called repaint on mainWindow but it didn't help either
-		- These issues I may figure out on my own as I learn more about fox, but perhaps it would be nice if the fox author could look at my app and tell me just how to fix it
-
-		- I'm not sure why it's not a problem and perhaps it will be in the future...
-			- But, while the pogress dialog is showing, the sound object being worked on is usually locked for resize so if a paint message tried to be processed for the sound window's waveform view it would cause the applicaiton to lock up
-			- Perhaps fox doesn't process paint messages in a sparate thread, which is fortunate at the moment, however if he changes this behavior, I would need to probably trylock and just paint the background color if it couldn't lock... Actions usually call refresh after the action is completed, so that should redraw any places where we couldn't update
-
 	- make some checkbox on the mainWindow that disable undo functionality incase they know they don't want it or don't want to incurr the overhead of undo resources
 		- the backend already supports this (although it hasn't been tested yet since there's been no frontend means)
 		- when an action is done after undo is disabled, I must clear all previous undo history
@@ -277,4 +268,14 @@
 	- the FXCanvas::copyArea doesn't do right, when part of the window is off-screen.. I don't know if X needs to handle this.. or if I can tell if it's exposed or not.. if it's not exposed then I do need to draw instead of copyArea
 
 	- rename setHelpText in my FX...ParamValues to setTipText since that's what it's known as in FOX
+
+	- FIXED: with FXApp::repaint()
+		- some of the stuff with repaints after action dialogs show isn't pretty, but its at least functional
+			- I tried, but one place to fix some of the problems is to handle all repaint events after an FXModalDialog hide's in its hide() method
+			- I called app->flush() but in there, but it didn't seem to help... perhaps X hadn't sent repaint messages yet... but then I called repaint on mainWindow but it didn't help either
+			- These issues I may figure out on my own as I learn more about fox, but perhaps it would be nice if the fox author could look at my app and tell me just how to fix it
+
+			- I'm not sure why it's not a problem and perhaps it will be in the future...
+				- But, while the pogress dialog is showing, the sound object being worked on is usually locked for resize so if a paint message tried to be processed for the sound window's waveform view it would cause the applicaiton to lock up
+				- Perhaps fox doesn't process paint messages in a sparate thread, which is fortunate at the moment, however if he changes this behavior, I would need to probably trylock and just paint the background color if it couldn't lock... Actions usually call refresh after the action is completed, so that should redraw any places where we couldn't update
 

@@ -355,6 +355,9 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 	FXint h2=presetsFrame->getHeight();
 	gSettingsRegistry->createKey((FXString("SplitterPositions")+DOT+getTitle()).text(),istring(h2));
 
+	hide(); // hide now and ... 
+	getApp()->repaint(); // force redraws from disappearing dialogs now
+
 	return(retval);
 }
 
