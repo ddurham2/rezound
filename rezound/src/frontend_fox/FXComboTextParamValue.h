@@ -44,10 +44,16 @@ public:
 	FXComboTextParamValue(FXComposite *p,int opts,const char *title,const vector<string> &items,bool isEditable);
 	virtual ~FXComboTextParamValue();
 
-	const FXint getValue(); // returns the index into the items given at construction of the selected item
+	const FXint getValue(); // returns the index into the items given at construction of the selected item (or if isEditable it returns the numeric representation of the current string value in the combo box.. this needs to be changed really)
 	void setValue(const FXint value);
 
 	void setItems(const vector<string> &items);
+	const vector<string> getItems() const;
+
+	//void setIcons(const vector<FXIcon *> icons); can't do because that's what FXListBox does, but it doesn't allow editing
+
+
+	void setCurrentItem(const unsigned current);
 
 	const string getTitle() const;
 

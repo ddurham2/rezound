@@ -103,6 +103,32 @@ void FXComboTextParamValue::setItems(const vector<string> &items)
 	valueComboBox->setNumVisible(min((size_t)8,(size_t)items.size()));
 }
 
+const vector<string> FXComboTextParamValue::getItems() const
+{
+	vector<string> items;
+
+	for(int t=0;t<valueComboBox->getNumItems();t++)
+		items.push_back(valueComboBox->getItemText(t).text());
+
+	return items;
+}
+
+/*
+void FXComboTextParamValue::setIcons(const vector<FXIcon *> icons)
+{
+	if(icons.size()!=(size_t)valueComboBox->getNumItems())
+		throw runtime_error(string(__func__)+" -- number of icons does not match number of items");
+
+	for(size_t t=0;t<icons.size();t++)
+		valueComboBox->setItemIcon(t,icons[t]);
+}
+*/
+
+void FXComboTextParamValue::setCurrentItem(const unsigned current)
+{
+	valueComboBox->setCurrentItem(current);
+}
+
 const string FXComboTextParamValue::getTitle() const
 {
 	return(titleLabel->getText().text());
