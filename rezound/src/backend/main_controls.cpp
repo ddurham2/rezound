@@ -45,6 +45,7 @@ bool openSound(ASoundFileManager *soundFileManager,const string filename)
 	catch(exception &e)
 	{
 		Error(e.what());
+		return false;
 	}
 }
 
