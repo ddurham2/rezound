@@ -50,7 +50,7 @@ CChannelSelectDialog::CChannelSelectDialog(FXWindow *mainWindow) :
 	getFrame()->setHSpacing(1);
 
 	for(unsigned t=0;t<MAX_CHANNELS;t++)			    // ??? could map it to some name like "Left, Right, Center, Bass... etc"
-		checkBoxes[t]=new FXCheckButton(getFrame(),("Channel "+istring(t+1)).c_str(),NULL,0,CHECKBUTTON_NORMAL | LAYOUT_CENTER_X);
+		checkBoxes[t]=new FXCheckButton(getFrame(),("Channel "+istring(t)).c_str(),NULL,0,CHECKBUTTON_NORMAL | LAYOUT_CENTER_X);
 }
 
 bool CChannelSelectDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
