@@ -1,28 +1,23 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- Add a feature to ASoundRecorder that tells it to start when a certain threshold is hit in percent
-
-	- in CrezSoundTranslator::onSaveSound, copyToFile unnecessarily copies any temp pools and peak chunk pools...  thus making the saved file way too big
-		- so I should manually copy the pools... TPoolAccessor should have a method for copying pool efficiently
-
-	- use a registry setting for knowing where to put working files and the clipboard instead of always /tmp
-
-	- warn the user if he's saving an exported file format and information such as cues and user notes will not be exported (for now)
-		- implement in the derivations from ASoundTranslator
-
-	- rename MAX_CHANNELS and MAX_LENGTH in CSound_dehs.h to something a little more ReZound specific like REZ_MAX_CHANNELS REZ_MAX_LENGTH
-
-	- change the ClipSample macro to an inline function so _SSS is no longer a static global... verify that the assembler for the inline is no less efficient than the macro
-
-	- When pasting data, there is no heeding of the differences in sample rate of the src data when pasting to the destination
-		- I should fix this problem when I implement a real clipboard system and I would have to supply the PCM parameters to the clipboard when I copied the data there, then pasting could do something to resolve any differances when reading from it
+	- Need to make all actions have the ability to blend the edges of the affected audio with the existing audio
+		- let there be a parameter which says in milliseconds how long the blend takes
+		- if not every action, at least paste for editing
 
 	- the clip board that the edit actions use is not set up to allow it to paste and copy from other applications
 		- when/if I want to allow that, I should create a base class clipboard which has the platform specific
 		  implementation that reads from the system clipboard.
 		- this base class would probably have some sort of accesser class with a operator[] defined because I need
 		  to support all the mixing methods when pasting...
+
+	- Add a feature to ASoundRecorder that tells it to start when a certain threshold is hit in percent
+
+	- in CrezSoundTranslator::onSaveSound, copyToFile unnecessarily copies any temp pools and peak chunk pools...  thus making the saved file way too big
+		- so I should manually copy the pools... TPoolAccessor should have a method for copying pool efficiently
+
+	- When pasting data, there is no heeding of the differences in sample rate of the src data when pasting to the destination
+		- I should fix this problem when I implement a real clipboard system and I would have to supply the PCM parameters to the clipboard when I copied the data there, then pasting could do something to resolve any differances when reading from it
 
 	- need to make 'add channel' and remove channel actions so I can test more than stereo number of channels... 
 		- DONE (but no frontend control yet): when I do implement the more than 2 channels, I need to have a way to route the multiple channels of a sound to the 2 (or more) channels of sound card output
@@ -33,31 +28,40 @@
 	- use progress bars when doing TPoolAccesser::copyData and TPoolAccesser::zeroData 
 		- PoolFile::copyToFile is still without a progress bar, this is used when loading native .rez files
 
+	- rename MAX_CHANNELS and MAX_LENGTH in CSound_defs.h to something a little more ReZound specific like REZ_MAX_CHANNELS REZ_MAX_LENGTH
+
+	- change the ClipSample macro to an inline function so _SSS is no longer a static global... verify that the assembler for the inline is no less efficient than the macro
+
+	- I need to think thru and handle problems with the data becoming too large for whatever address space is currently active
+		- if CSound is about to change the space, if the total space is about to cross some threshhold, I shouldn't proceed to do the action
+
+	- warn the user if he's saving an exported file format and information such as cues and user notes will not be exported (for now)
+		- implement in the derivations from ASoundTranslator
+	- use a registry setting for knowing where to put working files and the clipboard instead of always /tmp
+
+	- Need to handle duplicate named cues when loading a file.. I don't allow them, but a file format might
+
+	- Truncate file formats that don't save more than 32bits worth of sound and the sound file is longer than that
+
 	- I need to eventually handle command line arguments.
 		- I should implement handling them in the backend so that I wouldn't have to reimplement parsing them for each frontend.
 		- I need to check that when I pass argv to fox's initialize function that it either does or does not remove the X arguments.
 		- --help should be detected by all processers of command line arguement and add to the stdout the arguments that they handle.
 		- I suppose I should use popt because it is packaged for most all rpm abd deb based distros.. I need to find URL of popt's homepage and refer to that on error in configure
 
-	- I need to think thru and handle problems with the data becoming too large for whatever address space is currently active
-		- if CSound is about to change the space, if the total space is about to cross some threshhold, I shouldn't proceed to do the action
 
-	- Need to handle duplicate named cues when loading a file.. I don't allow them, but a file format might
 
-	- Truncate file formats that don't save more than 32bits worth of sound and the sound file is longer than that
 
 
 
 --- POSSIBLE THINGS TO DO ---
 
 	- To speed up initial work upon loading a large file (>100mb) I could have the loading functions calculate the peak chunk info instead of loading then calcing the peak chunk on the first draw which causes it to have to read and write the data twice instead of once
-
-	- move the typedefs at the top of CSound.h to its own file so we don't have to include it in so many places
+		- or use the background fage as I'm leaning toward
 
 	- The only reason I don't prebuffer more data than I do is because the play position drawn in the front end is always a little ahead of the acutal playing sound... I could buffer a lot of data if I were to know the approximate delay time of processing to sound card I might be able to overcome the problem...
 		- One possibility is to be able to know which buffer is playing, then I could tag each buffer with a play position for the start of that buffer... then I would just render the play position on screen as the start position of the currently playing buffer
 		- Right now, if I play a bunch of sounds and run top, each time top updates it causes a break in the sound.  This shouldn't happen though if I were to prebuffer more data, I only need to over come the play position problem.  Perhaps there is a schedule that the play position could be on, each time a buffer is mixed it records a rather precise time-of-day and each time them method is called that asks for the play position it knows how much time has passed since then and returns where it should be playing... There would be a problem with positions after a loop point, but perhaps I could keep a list of times when the loop point should have been crossed and factor in those times
-
 
 	- This is partially complete... I could go further to do it to all actions possible (for the realtime value later)
 		- I could make the noise-gate/exciter(done) and compresser/limiter(doesn't exist yet) CDSPBlocks so their abilities would be easily used in other effects
@@ -155,4 +159,6 @@
 
 	- need to do a backup of the SAT after recording because right now, all the insertSpace calls didn't do it
 		- do this AFTER backupSAT is faster
+
+	- move the typedefs at the top of CSound.h to its own file so we don't have to include it in so many places
 

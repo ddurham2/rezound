@@ -37,10 +37,6 @@
 
 		- also, put up on IOTD on flipcode and other announcement places like that
 
-	- Need to make all actions have the ability to blend the edges of the affected audio with the existing audio
-		- let there be a parameter which says in milliseconds how long the blend takes
-		- if not every action, at least paste for editing
-
 	- I've said that I want to support another audio file libary in the future, but I did find that libaudiofile's API at least has support for loop points, cues, notes and arbitrary data, but it doesn't seem to even be implemented on wave save.
 		- Perhaps I will work to patch libaudiofile to get this functionality working.  Because SOX's lib form is far from existing
 		- libsndfile has more formats than libaudiofile but has no API provisions for arbitrary data. AND it isn't packaged on hardly any distroes
