@@ -92,7 +92,7 @@ protected:
 
 private:
 	friend class FXGraphParamNode;
-	friend class FXValueRuler;
+	friend class CVertRuler;
 
 	string title;
 

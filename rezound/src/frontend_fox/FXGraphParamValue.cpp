@@ -67,15 +67,15 @@
  */
 
 
-// --- declaration of FXValueRuler -----------------------------------------------
+// --- declaration of CVertRuler -----------------------------------------------
 
 #warning need to also have a horizontal axis.. perhaps use FXRezWaveRuler be derived from an interface so this can use it and same with any other ruler dBFS for example
 
-class FXValueRuler : public FXHorizontalFrame
+class CVertRuler : public FXHorizontalFrame
 {
-	FXDECLARE(FXValueRuler)
+	FXDECLARE(CVertRuler)
 public:
-	FXValueRuler(FXComposite *p,FXGraphParamValue *_parent) :
+	CVertRuler(FXComposite *p,FXGraphParamValue *_parent) :
 		FXHorizontalFrame(p,FRAME_RAISED | LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH | LAYOUT_SIDE_LEFT, 0,0,30),
 
 		parent(_parent),
@@ -92,7 +92,7 @@ public:
 		font=new FXFont(getApp(),d);
 	}
 
-	virtual ~FXValueRuler()
+	virtual ~CVertRuler()
 	{
 		delete font;
 	}
@@ -158,7 +158,7 @@ public:
 	}
 
 protected:
-	FXValueRuler() {}
+	CVertRuler() {}
 
 private:
 	FXGraphParamValue *parent;
@@ -167,13 +167,13 @@ private:
 
 };
 
-FXDEFMAP(FXValueRuler) FXValueRulerMap[]=
+FXDEFMAP(CVertRuler) CVertRulerMap[]=
 {
 	//Message_Type				ID				Message_Handler
-	FXMAPFUNC(SEL_PAINT,			0,				FXValueRuler::onPaint),
+	FXMAPFUNC(SEL_PAINT,			0,				CVertRuler::onPaint),
 };
 
-FXIMPLEMENT(FXValueRuler,FXHorizontalFrame,FXValueRulerMap,ARRAYNUMBER(FXValueRulerMap))
+FXIMPLEMENT(CVertRuler,FXHorizontalFrame,CVertRulerMap,ARRAYNUMBER(CVertRulerMap))
 
 
 
@@ -209,15 +209,15 @@ FXGraphParamValue::FXGraphParamValue(const string _title,f_at_xs _interpretValue
 	start(0),
 	stop(0),
 
-	buttonPanel(new FXHorizontalFrame(this,FRAME_NONE | LAYOUT_SIDE_BOTTOM | LAYOUT_FILL_X)),
+	buttonPanel(new FXHorizontalFrame(this,FRAME_NONE | LAYOUT_SIDE_BOTTOM | LAYOUT_FILL_X, 0,0,0,0, 0,0,2,0)),
 		scalarLabel(NULL),
 		scalarSpinner(NULL),
-	vRuler(new FXValueRuler(this,this)),
+	vRuler(new CVertRuler(this,this)),
 	statusPanel(new FXHorizontalFrame(this,FRAME_RAISED | LAYOUT_SIDE_BOTTOM | LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 4,0)),
 		positionLabel(new FXLabel(statusPanel,"Time: ",NULL,LAYOUT_LEFT)),
 		valueLabel(new FXLabel(statusPanel,"Value: ",NULL)),
 		unitsLabel(new FXLabel(statusPanel,"x",NULL)),
-	graphPanelParent(new FXPacker(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,2,2)),
+	graphPanelParent(new FXPacker(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0)),
 	graphPanel(new FXCanvas(graphPanelParent,this,ID_GRAPH_PANEL,LAYOUT_FILL_X|LAYOUT_FILL_Y)),
 
 	draggingNode(-1),
@@ -234,8 +234,8 @@ FXGraphParamValue::FXGraphParamValue(const string _title,f_at_xs _interpretValue
 
 	if(minScalar!=maxScalar)
 	{
-		scalarLabel=new FXLabel(buttonPanel,"Scalar",NULL);
-		scalarSpinner=new FXSpinner(buttonPanel,5,this,ID_SCALAR_SPINNER);
+		scalarLabel=new FXLabel(buttonPanel,"Scalar",NULL,LABEL_NORMAL|LAYOUT_CENTER_Y);
+		scalarSpinner=new FXSpinner(buttonPanel,5,this,ID_SCALAR_SPINNER,SPIN_NORMAL|FRAME_SUNKEN|FRAME_THICK);
 		scalarSpinner->setRange(minScalar,maxScalar);
 		scalarSpinner->setValue(initScalar);
 	}
