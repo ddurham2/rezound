@@ -639,16 +639,6 @@ public:
 
 void CMainWindow::actionMenuCommandTriggered(CActionMenuCommand *actionMenuCommand)
 {
-	/*
-	if(actionMenuCommand->getParent()==recentActionsMenu)
-	{ // this actionMenuCommand came from the recentActions menu
-		//only move the item to the top
-
-
-		return; // avoid adding ourself back to the menu
-	}
-	*/
-
 	for(vector<CActionMenuCommand *>::iterator i=recentActions.begin();i!=recentActions.end();i++)
 	{
 		if((*i)->getText()==actionMenuCommand->getText())
@@ -661,7 +651,7 @@ void CMainWindow::actionMenuCommandTriggered(CActionMenuCommand *actionMenuComma
 	}
 
 	if(recentActions.size()>=10)
-		recentActions.erase(--recentActions.end());
+		recentActions.pop_back();
 	recentActions.insert(recentActions.begin(),actionMenuCommand);
 }
 
