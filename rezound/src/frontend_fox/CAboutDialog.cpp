@@ -96,6 +96,7 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 		MAKE_TEXT(t,"Autoconfiscator","Anthony Ventimiglia");
 		MAKE_TEXT(t,"Artistic Consultant","Will Jayroe");
 		MAKE_LINK(t,"Home Page","http://rezound.sourceforge.net");
+		MAKE_LINK(t,"Mailing List","http://lists.sourceforge.net/lists/listinfo/rezound-users");
 		MAKE_LINK(t,"Bug Reports","http://sourceforge.net/tracker/?atid=105056&group_id=5056");
 		MAKE_LINK(t,"Support Requests","http://sourceforge.net/tracker/?atid=205056&group_id=5056");
 		MAKE_LINK(t,"Feature Requests","http://sourceforge.net/tracker/?atid=355056&group_id=5056");
