@@ -24,6 +24,7 @@
 #include "../../../config/common.h"
 
 
+#include "CBalanceAction.h"
 #include "CUnclipAction.h"
 #include "CRemoveDCAction.h"
 #include "CNoiseGateAction.h"

@@ -28,6 +28,7 @@ include $(top_srcdir)/config/am_include.mk
 ## see PoolFile Makefile.am for explanation here out
 ## 
 noinst_HEADERS= \
+		CBalanceAction.h \
 		CNoiseGateAction.h \
 		CRemoveDCAction.h \
 		CUnclipAction.h \
@@ -38,6 +39,7 @@ noinst_HEADERS= \
 
 noinst_LTLIBRARIES=libRemaster.la
 libRemaster_la_SOURCES= \
+			CBalanceAction.cpp \
 			CNoiseGateAction.cpp \
 			CRemoveDCAction.cpp \
 			CUnclipAction.cpp \
