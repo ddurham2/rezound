@@ -32,7 +32,7 @@ static void setFontOfAllChildren(FXComposite *w,FXFont *f)
 				static_cast<FXMenuCaption *>(c)->setFont(f);
 			else if(dynamic_cast<FXProgressBar *>(c))
 				static_cast<FXProgressBar *>(c)->setFont(f);
-#if REZ_FOX_VERSION>=101013
+#if REZ_FOX_VERSION>=10113
 			else if(dynamic_cast<FXRuler *>(c))
 				static_cast<FXRuler *>(c)->setFont(f);
 #endif
