@@ -1,6 +1,11 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- With the new way of doing audio output, I can enhance the output routing info where it can actually play a mono file in both speakers
+		- I will need to rename the pool "OutputRoutes" to "OutputRoutes_v2"
+
+	- change ASoundFileManager to cancel closing if the close asks to save an mp3 file.. then it asks for the save parameters, then they hit cancel on the mp3 parameters dialog... just return the bool value back up.. this should also top a close all on exit and stop the exit
+
 	- create separate CDSPLevelDetectorRMS and CDSPPeakLevelDetectorPeak dsp blocks
 
 	- create a template method in DSPBlocks which is a mean finder given an accessor and a range to find the mean for removing DC
@@ -57,14 +62,6 @@
 
 	- in order to implement a "Save Selection" under the editing menu, I should make the sound translator objects accept a start and stop paramater in the save methods (and even later, a vector of starts and stops for multiple selected regions or something)
 
-	- use TSoundStretcher in CSoundPlayerChannel
-		- the checks in the inner loop are not necessary... I should be able to determine before hand, how many loops to do and when the loop point will be.... just use TSoundStretcher in the mean time of each loop
-		- handling the amplitudes and envelopes is still a matter of scaling the result of TSoundStretcher::getSample()
-		- I'm not sure how I would handle reverse direction
-
-		- before  do this.. check the CPU usage when playing 5 sounds... after changing it, check 5 sounds again
-
-
 	- I could easily remember native clipboards between runs by not deleting removing the pool file's file
 
 	- Implement a CFileClipboard which can paste to/from a file
@@ -75,10 +72,6 @@
 
 	- To speed up initial work upon loading a large file (>100mb) I could have the loading functions calculate the peak chunk info instead of loading then calcing the peak chunk on the first draw which causes it to have to read and write the data twice instead of once
 		- or use the background fage as I'm leaning toward
-
-	- The only reason I don't prebuffer more data than I do is because the play position drawn in the front end is always a little ahead of the acutal playing sound... I could buffer a lot of data if I were to know the approximate delay time of processing to sound card I might be able to overcome the problem...
-		- One possibility is to be able to know which buffer is playing, then I could tag each buffer with a play position for the start of that buffer... then I would just render the play position on screen as the start position of the currently playing buffer
-		- Right now, if I play a bunch of sounds and run top, each time top updates it causes a break in the sound.  This shouldn't happen though if I were to prebuffer more data, I only need to over come the play position problem.  Perhaps there is a schedule that the play position could be on, each time a buffer is mixed it records a rather precise time-of-day and each time them method is called that asks for the play position it knows how much time has passed since then and returns where it should be playing... There would be a problem with positions after a loop point, but perhaps I could keep a list of times when the loop point should have been crossed and factor in those times
 
 	- This is partially complete... I could go further to do it to all actions possible (for the realtime value later)
 		- I could make the noise-gate/exciter(done) and compresser/limiter(doesn't exist yet) CDSPBlocks so their abilities would be easily used in other effects
@@ -242,6 +235,18 @@
 
 	- need to put some #if version_checks in ClibaudiofileSoundTranslator when the patch is in production
 		- and unstick the 1.9 revision number on ClibaudiofileSoundTranslator (cvs update -A)
+
+	- DONE BY REWRITING CSoundPlayerChannel
+		- use TSoundStretcher in CSoundPlayerChannel
+			- the checks in the inner loop are not necessary... I should be able to determine before hand, how many loops to do and when the loop point will be.... just use TSoundStretcher in the mean time of each loop
+			- handling the amplitudes and envelopes is still a matter of scaling the result of TSoundStretcher::getSample()
+			- I'm not sure how I would handle reverse direction
+			- before  do this.. check the CPU usage when playing 5 sounds... after changing it, check 5 sounds again
+
+		- The only reason I don't prebuffer more data than I do is because the play position drawn in the front end is always a little ahead of the acutal playing sound... I could buffer a lot of data if I were to know the approximate delay time of processing to sound card I might be able to overcome the problem...
+			- One possibility is to be able to know which buffer is playing, then I could tag each buffer with a play position for the start of that buffer... then I would just render the play position on screen as the start position of the currently playing buffer
+			- Right now, if I play a bunch of sounds and run top, each time top updates it causes a break in the sound.  This shouldn't happen though if I were to prebuffer more data, I only need to over come the play position problem.  Perhaps there is a schedule that the play position could be on, each time a buffer is mixed it records a rather precise time-of-day and each time them method is called that asks for the play position it knows how much time has passed since then and returns where it should be playing... There would be a problem with positions after a loop point, but perhaps I could keep a list of times when the loop point should have been crossed and factor in those times
+
 
 	- use a registry setting for knowing where to put the working file for a loaded file instead of always /tmp
 
