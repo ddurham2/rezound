@@ -41,6 +41,7 @@
 #include <istring>
 
 #include "settings.h"
+#include "AStatusComm.h"
 
 // ??? edit this to be able to detect necessary parameters from the typeof sample_t
 // 	or I need to convert to 16bit 
@@ -139,7 +140,9 @@ void COSSSoundRecorder::initialize(CSound *sound)
 			} 
 			if (sampleRate!=sound->getSampleRate())
 			{ 
-				fprintf(stderr,("warning: OSS used a different sample rate ("+istring(sampleRate)+") than what was asked for ("+istring(sound->getSampleRate())+")\n").c_str());
+				// ??? need to translate
+				Message("OSS used a different sample rate ("+istring(sampleRate)+") than what was asked for ("+istring(sound->getSampleRate())+")");
+				sound->setSampleRate(sampleRate);
 				//close(audio_fd);
 				//throw(runtime_error(string(__func__)+" -- error setting the sample rate -- the sample rate is not supported"));
 			} 

@@ -116,6 +116,7 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 		MAKE_TEXT(t,"Jason Lyons",_("Bug Finding"));
 		MAKE_TEXT(t,"Stakker",_("Feature Suggestions"));
 		MAKE_TEXT(t,"Dave Phillips",_("Bug Finding/Fixing"));
+		MAKE_TEXT(t,"Pilagá",_("Bug Finding"));
 	}
 
 	tab=new FXTabItem(tabs,"License",NULL,TAB_TOP_NORMAL);
