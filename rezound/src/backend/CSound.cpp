@@ -1576,10 +1576,12 @@ const string findWorkDir(const string filename)
 				continue; // couldn't stat the fs for some reason
 			}
 
+				// ??? this would only be true if it's an uncompressed format
+				// I really need a way to know how big the working file will be after loading
 			const int64_t fsSize= (int64_t)s.f_bsize * (int64_t)s.f_bfree;
 			const int64_t fileSize=CPath(filename).getSize(false);
 
-			if(fsSize<(fileSize+(fileSize/10)))
+			if(fsSize<(fileSize+(fileSize/10))) // ??? 10% overhead
 			{
 				fprintf(stderr,"insufficient free space in working directory candidate: %s\n",workDir.c_str());
 				continue; // not enough free space on that partition
