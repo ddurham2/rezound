@@ -66,6 +66,7 @@
 		- Mix
 		- Limited Mix
 		- Fit Mix
+		- Paste to New
 	- Insert Silence
 	- Mute
 	- Add Channels
