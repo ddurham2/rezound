@@ -75,7 +75,7 @@ FXComboTextParamValue::~FXComboTextParamValue()
 
 long FXComboTextParamValue::onComboBoxChange(FXObject *object,FXSelector sel,void *ptr)
 {
-	return target && target->handle(object,FXSEL(SEL_CHANGED,getSelector()),ptr);
+	return target && target->handle(this,FXSEL(SEL_CHANGED,getSelector()),ptr);
 }
 
 const FXint FXComboTextParamValue::getValue()
@@ -165,6 +165,8 @@ void FXComboTextParamValue::readFromFile(const string &prefix,CNestedDataFile *f
 	}
 	else
 		setValue(0); // ??? would use initialIndex if there were such a thing
+
+	onComboBoxChange(NULL,0,NULL);
 }
 
 void FXComboTextParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
