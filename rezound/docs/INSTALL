@@ -1,4 +1,4 @@
-ReZound 0.8.1beta Installation instructions 
+ReZound 0.8.2beta Installation instructions 
 
 If building/installing directly from the CVS repository see CVS-INSTALL
 	
@@ -12,9 +12,8 @@ Before attempting to build ReZound you will need to have (or are encouraged to h
 	Development was done with v0.2.3, but earlier versions above than v0.1.9-0.1 
 	may work as well. audiofile is available on most distributions. 
 
-	- libfox v0.99.193 (or later) -- http://www.fox-toolkit.org/ -- The fox GUI 
-	toolkit, ReZound should build fine with v0.99.193, but versions earlier that 
-	0.99.87-2 may not work. 
+	- libfox v1.0.0 (or later) -- http://www.fox-toolkit.org/ -- The FOX GUI 
+	toolkit, (earlier version may work)
 		- NOTE: reswrap comes with fox.  If you install from the fox tarball
 			then you should not have any problems.  If your distro's fox
 			package is split into more than 1 package, then you made need
