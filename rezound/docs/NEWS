@@ -1,3 +1,6 @@
+rezound-0.8.3beta -- 7/14/2003
+	- Fixed a bug that broke Ogg/Vorbis
+
 rezound-0.8.2beta -- 7/8/2003
 	This is mostly a quick bug-fix release
 	- Added a feature to the shuttle wheel to change rate by semitones (Thanks Gerhard Zintel)
