@@ -65,7 +65,7 @@ public:
 	};
 
 protected:
-	CActionMenuCommand() {}
+	CActionMenuCommand() : actionFactory(NULL) {}
 
 private:
 	AActionFactory * const actionFactory;
