@@ -43,6 +43,19 @@
  *   except, a loaded mono sound can only play out of one speaker... Perhaps I could handle
  *   them separately or alter the route defining structure to be more of a list of destiations
  *   instead of 1 value.
+ *
+ *   Okay!!! I figured out how to be able to prebuffer more data which will help a lot for 
+ *   clicks in the playback... Basically I will use this class to prebuffer chunks of data
+ *   which will each have a play position assigned to them so that the play position on screen
+ *   can be more accurate.  I need to make mixOntoBuffer simply read from these prebuffered
+ *   chunks and mixOntoBuffer's code will go elsewhere in creating these chunks..   
+ *   Now, the question is when do I prebuffer this data.... It does cause more memory copying
+ *   since I will have to write it onto prebuffer chunks and then mix from there onto the 
+ *   real audio buffer... but hopefully this will be inconsequential... the CPU time is already
+ *   not too demanding for mixing data..... the code that gets move will no longer need to 
+ *   ClipSample and mix onto the buffer since it will always be overwriting whatever is there
+ *   And I can allow these prebuffered chunks to be small in size and thus better show where
+ *   in the sound is being played because I will have finer granularity
  */
 
 CSoundPlayerChannel::CSoundPlayerChannel(ASoundPlayer *_player,CSound *_sound) :
