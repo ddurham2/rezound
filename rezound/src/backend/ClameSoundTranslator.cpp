@@ -37,6 +37,8 @@
 #include <string.h>
 #include <errno.h>
 
+#include <signal.h>
+
 #include <typeinfo>
 #include <stdexcept>
 
@@ -44,6 +46,14 @@
 
 #include "CSound.h"
 #include "AStatusComm.h"
+#include "AFrontendHooks.h"
+
+sighandler_t prevSIGPIPE_Handler;
+bool gAbortSave;
+static void SIGPIPE_Handler(int sig)
+{
+	gAbortSave=true;
+}
 
 
 static string gPathToLame="";
@@ -96,6 +106,8 @@ void ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 
 	const string cmdLine=gPathToLame+" --decode "+filename+" -";
 
+	fprintf(stderr,"lame command line: '%s'\n",cmdLine.c_str());
+
 	FILE *p=popen(cmdLine.c_str(),"r");
 	if(p==NULL)
 	{
@@ -132,7 +144,7 @@ void ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 
 		// verify some stuff about the output of lame
 		if(waveHeader.fmtSize!=16)
-			throw(runtime_error(string(__func__)+" -- internal error -- it looks as if either an error has occuring executing lame or your version of lame has started to output a different wave file header when decoding mp3 files to wave files.  Changes will have to be made to this source to handle the new wave file output"));
+			throw(runtime_error(string(__func__)+" -- it looks as if either there is an error in the input file -- or an error has occuring executing lame -- or your version of lame has started to output a different wave file header when decoding MPEG Layer-1,2,3 files to wave files.  Changes will have to be made to this source to handle the new wave file output -- check stderr for more information"));
 		if(strncmp(waveHeader.RIFF_ID,"RIFF",4)!=0)
 			throw(runtime_error(string(__func__)+" -- internal error -- 'RIFF' expected in lame output"));
 		if(strncmp(waveHeader.WAVE_ID,"WAVE",4)!=0)
@@ -225,6 +237,11 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 	if(CPath(filename).extension()!="mp3")
 		throw(runtime_error(string(__func__)+" -- can only encode in MPEG Layer-3"));
 
+	AFrontendHooks::Mp3CompressionParameters parameters;
+	if(!gFrontendHooks->promptForMp3CompressionParameters(parameters))
+		return(false);
+	
+
 	if(CPath(filename).exists())
 	{
 		if(unlink(filename.c_str())!=0)
@@ -240,9 +257,37 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 			return(false);
 	}
 
-	// ??? need to prompt the user for compression parameters
+	
+	string cmdLine=gPathToLame+" ";
 
-	const string cmdLine=gPathToLame+" -h - "+filename;
+	if(!parameters.useFlagsOnly)
+	{
+		if(parameters.method==AFrontendHooks::Mp3CompressionParameters::brCBR)
+		{
+			cmdLine+=" -b "+istring(parameters.constantBitRate/1000)+" ";
+		}
+		else if(parameters.method==AFrontendHooks::Mp3CompressionParameters::brABR)
+		{
+			cmdLine+=" --abr "+istring(parameters.normBitRate/1000)+" -b "+istring(parameters.minBitRate/1000)+" -B "+istring(parameters.maxBitRate/1000)+" ";
+		}
+		else if(parameters.method==AFrontendHooks::Mp3CompressionParameters::brQuality)
+		{
+			cmdLine+=" -V "+istring(parameters.quality)+" ";
+		}
+		else
+			throw(runtime_error(string(__func__)+" -- internal error -- unhandle bit rate method "+istring(parameters.method)));
+	}
+
+	cmdLine+=" "+parameters.additionalFlags+" ";
+
+	cmdLine+=" - "+filename;
+
+	fprintf(stderr,"lame command line: '%s'\n",cmdLine.c_str());
+
+	// setup a signal handler to handle a SIGPIPE in case lame crashes or doesn't like something
+	gAbortSave=false;
+	prevSIGPIPE_Handler=signal(SIGPIPE,SIGPIPE_Handler);
+
 	FILE *p=popen(cmdLine.c_str(),"w");
 	if(p==NULL)
 	{
@@ -294,6 +339,8 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 		strncpy(waveHeader.data_ID,"data",4);
 		waveHeader.dataLength=size*(channelCount*(BITS/8));
 
+		if(gAbortSave)
+			throw(runtime_error(string(__func__)+" -- lame aborted -- check stderr for more information"));
 		fwrite(&waveHeader,1,sizeof(waveHeader),p);
 
 
@@ -320,6 +367,8 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 				}
 				pos+=chunkSize;
 
+				if(gAbortSave)
+					throw(runtime_error(string(__func__)+" -- lame aborted -- check stderr for more information"));
 				if(fwrite((void *)((sample_t *)buffer),sizeof(sample_t)*channelCount,chunkSize,p)!=chunkSize)
 					fprintf(stderr,"%s -- dropped some data while writing\n",__func__);
 
@@ -334,6 +383,9 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 			delete accessers[t];
 
 		pclose(p);
+
+		if(prevSIGPIPE_Handler!=NULL && prevSIGPIPE_Handler!=SIG_ERR)
+			signal(SIGPIPE,prevSIGPIPE_Handler);
 	}
 	catch(...)
 	{
@@ -342,6 +394,9 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 
 		pclose(p);
 	
+		if(prevSIGPIPE_Handler!=NULL && prevSIGPIPE_Handler!=SIG_ERR)
+			signal(SIGPIPE,prevSIGPIPE_Handler);
+
 		throw;
 	}
 

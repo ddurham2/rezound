@@ -30,6 +30,7 @@
 #include "CNewSoundDialog.h"
 #include "CRecordDialog.h"
 #include "COggDialog.h"
+#include "CMp3Dialog.h"
 
 #include "../backend/ASoundTranslator.h"
 
@@ -76,6 +77,7 @@ void CFrontendHooks::doSetupAfterBackendIsSetup()
 	newSoundDialog=new CNewSoundDialog(mainWindow);
 	recordDialog=new CRecordDialog(mainWindow);
 	oggDialog=new COggDialog(mainWindow);
+	mp3Dialog=new CMp3Dialog(mainWindow);
 	
 }
 
@@ -234,5 +236,10 @@ bool CFrontendHooks::promptForRecord(ASoundRecorder *recorder)
 bool CFrontendHooks::promptForOggCompressionParameters(OggCompressionParameters &parameters)
 {
 	return(oggDialog->show(parameters));
+}
+
+bool CFrontendHooks::promptForMp3CompressionParameters(Mp3CompressionParameters &parameters)
+{
+	return(mp3Dialog->show(parameters));
 }
 

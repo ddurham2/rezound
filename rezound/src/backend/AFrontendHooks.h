@@ -78,6 +78,32 @@ public:
 	};
 	virtual bool promptForOggCompressionParameters(OggCompressionParameters &parameters)=0;
 
+	// called when the user is saving an mp3 file and compression parameters are needed
+	struct Mp3CompressionParameters
+	{
+		enum 
+		{
+			brCBR, 
+			brABR, 
+			brQuality 
+		} method;
+
+		// method==brCBR
+		int constantBitRate;
+
+		// method==brABR
+		int minBitRate;
+		int normBitRate;
+		int maxBitRate;
+
+		// method==brQuality
+		int quality; // 0(highest quality) -> 9(lowest quality)
+
+		bool useFlagsOnly;
+		string additionalFlags;
+	};
+	virtual bool promptForMp3CompressionParameters(Mp3CompressionParameters &parameters)=0;
+
 };
 
 #endif

@@ -38,6 +38,7 @@
 class CNewSoundDialog;
 class CRecordDialog;
 class COggDialog;
+class CMp3Dialog;
 
 class CFrontendHooks : public AFrontendHooks
 {
@@ -61,6 +62,7 @@ public:
 	bool promptForRecord(ASoundRecorder *recorder);
 
 	bool promptForOggCompressionParameters(OggCompressionParameters &parameters);
+	bool promptForMp3CompressionParameters(Mp3CompressionParameters &parameters);
 
 private:
 	FXWindow *mainWindow;
@@ -72,6 +74,7 @@ private:
 	CNewSoundDialog *newSoundDialog;
 	CRecordDialog *recordDialog;
 	COggDialog *oggDialog;
+	CMp3Dialog *mp3Dialog;
 };
 
 #endif

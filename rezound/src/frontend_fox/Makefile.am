@@ -47,6 +47,7 @@ libfrontend_la_SOURCES= \
 			CStatusComm.cpp \
 			CUserNotesDialog.cpp \
 			COggDialog.cpp \
+			CMp3Dialog.cpp \
 			drawPortion.cpp \
 			EditActionDialogs.cpp \
 			EffectActionDialogs.cpp \
@@ -110,6 +111,7 @@ noinst_HEADERS=\
 	CStatusComm.h \
 	CUserNotesDialog.h \
 	COggDialog.h \
+	CMp3Dialog.h \
 	EditActionDialogs.h \
 	EffectActionDialogs.h \
 	FilterActionDialogs.h \
