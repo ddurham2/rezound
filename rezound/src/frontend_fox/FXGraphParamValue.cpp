@@ -129,27 +129,24 @@ public:
 		const int s=0;
 		const int e=parent->getGraphPanelHeight()-1;
 
-		// y actually goes from the event's min-10 to max+10 incase part of some text needs be be redrawn (and we limit it to 0..height-1)
-		const int maxY=max(parent->getGraphPanelHeight()-1,(ev->rect.h+ev->rect.y)+10);
+		// y actually goes from the event's min-10 to max+10 incase part of some text needs be be redrawn (and we limit it to 0..height)
+		const int maxY=min(parent->getGraphPanelHeight(),(ev->rect.h+ev->rect.y)+10);
 		for(int y=max(0,(ev->rect.y)-10);y<=maxY;y++)
 		{
-			// this is, y=s+(((e-s)*t)/(N-1)) [0..N interpolated across s..e] solved for t, and then we get the remainder of the resulting division instead of the acutal quotient)
+			// this is, y=s+(((e-s)*t)/(N-1)) [0..N interpolated across s..e] solved for t, and then we get the remainder of the resulting division instead of the actual quotient)
 			const double t=fmod((double)((y-s)*(N-1)),(double)(e-s));
 			const int renderY=y+(((FXPacker *)(parent->graphPanel->getParent()))->getPadTop());
 
 			if(t<(N-1))
 			{ // draw and label this tick
 				dc.drawLine(getWidth()-2,renderY,getWidth()-10,renderY);
+				printf("renderY: %d\n",renderY);
 
 				double value=parent->interpretValue(parent->screenToNodeValue(y),GET_SCALAR_VALUE(parent));
 
 				const string sValue=istring(value,5,3);
 
-				int offset;
-				if(y==parent->getGraphPanelHeight()-1)
-					offset=-2; // put text above the tick mark
-				else
-					offset=font->getFontHeight(); // put text below the tick mark
+				int offset=font->getFontHeight(); // put text below the tick mark
 
 				dc.drawText(3,renderY+offset,sValue.c_str(),sValue.length());
 			}
@@ -353,13 +350,13 @@ long FXGraphParamValue::onGraphPanelResize(FXObject *sender,FXSelector sel,void 
 	return(1);
 }
 
-// always returns an even value >=2
+// always returns an odd value >=1
 int FXGraphParamValue::getGraphPanelHeight() const
 {
 	int h=graphPanel->getHeight();
-	if(h%2==1)
+	if(h%2==0)
 		h--;
-	return(max(h,2));
+	return(max(h,1));
 }
 
 int FXGraphParamValue::insertIntoNodes(const CGraphParamValueNode &node)
@@ -502,7 +499,7 @@ double FXGraphParamValue::screenToNodePosition(int x)
 
 double FXGraphParamValue::screenToNodeValue(int y)
 {
-	double v=(1.0-((double)y/(double)(getGraphPanelHeight())));
+	double v=(1.0-((double)y/(double)(getGraphPanelHeight()-1)));
 	if(v<0.0)
 		v=0.0;
 	else if(v>1.0)
