@@ -193,9 +193,6 @@
 				- AAction::backup/restoreUndoSelection
 				- CCopyCutDeleteEdit::doActionSizeSafe
 
-	- when making loops, it may be cool to have a play button that loops the selection, but skips the bulk of the middle for time's sake
-	- when editing large files it would be nice to have play selection buttons (once and looped), but it plays a few seconds before the start to a few seconds after the stop so that you don't have to play from the beginning and seek forward to or play the selection and seek backwards a little bit
-
 	- probably want to add a bool AAction::showAllDataCheckbox() so that the channel select dialog may or may not have that checkbox if it's an action like crop, or trim
 
 	- perhaps make pool file have a readonly mode where it won't create SAT files and modify it in any way, then even a copy wouldn't need to be made
@@ -523,4 +520,7 @@
 			- threshold with percent as the unit (editable slider)
 			- window size in ms as the unit (editable slider)
 			
+
+	- when making loops, it may be cool to have a play button that loops the selection, but skips the bulk of the middle for time's sake
+	- when editing large files it would be nice to have play selection buttons (once and looped), but it plays a few seconds before the start to a few seconds after the stop so that you don't have to play from the beginning and seek forward to or play the selection and seek backwards a little bit
 
