@@ -370,6 +370,7 @@ public:
 	void insertCue(size_t index,const string &name,const sample_pos_t time,const bool isAnchored);
 	void removeCue(size_t index);
 	void clearCues();
+	void enableCueAdjustmentsOnSpaceChanges(bool enabled);
 
 	static size_t __default_cue_index;
 	bool containsCue(const string &name,size_t &index=__default_cue_index) const;
@@ -490,6 +491,7 @@ private:
 	typedef TPoolAccesser<RCue,PoolFile_t> CCuePoolAccesser;
 	CCuePoolAccesser *cueAccesser;
 	map<sample_pos_t,size_t> cueIndex; // index into cueAccesser by time
+	bool adjustCuesOnSpaceChanges;
 
 	void adjustCues(const sample_pos_t pos1,const sample_pos_t pos2);
 	void createCueAccesser();
