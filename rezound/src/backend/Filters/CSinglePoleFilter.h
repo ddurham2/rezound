@@ -25,7 +25,10 @@
 
 
 class CSinglePoleFilter;
-class CSinglePoleFilterFactory;
+class CSinglePoleLowpassFilterFactory;
+class CSinglePoleHighpassFilterFactory;
+class CBandpassFilterFactory;
+class CNotchFilterFactory;
 
 #include "../AAction.h"
 
