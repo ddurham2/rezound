@@ -60,6 +60,12 @@ extern CNestedDataFile *gSysPresetsFile;	// opened to gSysPresetsFilename
 extern string gFallbackWorkDir;			// default to /tmp
 
 
+// This specifies where to open the clipboard poolfiles
+extern string gClipboardDir;			// default to /tmp
+
+// This specifies the prefix on the filename used for the clipboard pool files
+extern string gClipboardFilenamePrefix;
+
 // specifies an index into AAction::clipboards which specifies which clipboard 
 // should be used for the subsequent edit operations which use a clipboard
 extern size_t gWhichClipboard;

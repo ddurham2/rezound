@@ -38,10 +38,11 @@ string gSysPresetsFilename="";
 CNestedDataFile *gSysPresetsFile=NULL;
 
 
-	// ??? would be something else on non-unix platforms
-string gFallbackWorkDir="/tmp";
+string gFallbackWorkDir="/tmp"; // ??? would be something else on non-unix platforms
 
 
+string gClipboardDir="/tmp"; // ??? would be something else on non-unix platforms
+string gClipboardFilenamePrefix="rezclip";
 size_t gWhichClipboard=0;
 
 
