@@ -300,7 +300,7 @@ FXIMPLEMENT(CMetersWindow,FXHorizontalFrame,CMetersWindowMap,ARRAYNUMBER(CMeters
  */
 
 CMetersWindow::CMetersWindow(FXComposite *parent) :
-	FXHorizontalFrame(parent,LAYOUT_BOTTOM|LAYOUT_FILL_X|LAYOUT_FIX_HEIGHT|FRAME_RAISED|FRAME_THICK,0,0,0,0, 3,3,3,3, 2,0),
+	FXHorizontalFrame(parent,LAYOUT_BOTTOM|LAYOUT_FILL_X|LAYOUT_FIX_HEIGHT|FRAME_RAISED|FRAME_THICK,0,0,0,0, 4,4,2,2, 2,0),
 	statusFont(getApp()->getNormalFont()),
 	levelMetersFrame(new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_SUNKEN|FRAME_THICK,0,0,0,0, 2,2,0,2, 0,1)),
 		headerFrame(new FXHorizontalFrame(levelMetersFrame,LAYOUT_FILL_X|FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0)),
