@@ -1,5 +1,7 @@
 --- THINGS TO DO FOR SURE ---
 
+	- add a 'Resampling' action where it's basically just a rate change with a constant value, but also sets the sample rate to a new value afterwards
+
 	- I might want to make sure that gcc is some minimum version in configure.in.. I really don't think gcc2.8 will cut it
 
 	- create a 'paste to new' edit action
@@ -128,6 +130,29 @@
 
 
 --- POSSIBLE THINGS TO DO ---
+
+	- add a draw function so that if the user is zoomed in full, he can use the mouse to draw in the values he wants
+		- it's probably a good idea to actually add random values to what is drawn so that you don't get quanitization
+		- I could either implement this as something in FXWaveCanvas or maybe in a frontend dialog for an action, and it sends it to the backend to actually insert the data
+			- this would be better, because after I work out preview the user will be able to hear the results
+				- because if I did it in FXWaveCanvas I would probably want to allow undo each time the user let's go of the mouse button or something..
+				- so the frontend could handle all this in one action to be undone
+
+	- since I use my DAT to record long concerts, it would be nice if either while dumping after dumping, to have it create multiple sounds each time a certain length of silence has been encountered
+		- then I wouldn't have to go find the tracks myself
+		- OR, I could just have the record function automatically add markers after a what it thinks is a track delimeter
+			- then I could create an action that says to cut/copy-to-new the selection as a new sound file... so the user would select the beginning, then snap to the next cue, then to the cut/copy-to-new action, then select the stop to the next cue and repeat
+				- the user is going to have to choose a name for each track anyway.. so it can never really be fully automatic.. the user in this case just has an extra mouse click and menu click before typing in each name
+
+	- add a feature which allows the user to have it save the selection to a file, runs a given or predefinied command line on that file and loads it back in and replaces the region
+		- these could be predefined in a CNestedDataFile somewhere 
+			- potentially, the definition could include how to show and label input widgets (sliders, text entries, etc)
+			- I could predefine some to support sox functionality
+			- the user should be able to define their own and them appear in a "Custom" menu
+
+	- allow displaying of rulers input widgets in other units... after implementing more stuff, I should be able to determine that there are just a handleful of paramter classes, some that determine length or amplitude or time etc.. so these classes of parameter types could have changable units on the frontend, but the backend would always be dealing with a single unit type
+
+	- add an edit->enter-selection which brings up a dialog for the user to type in exactly the selection to make.. the start would be typed in and the stop would either be typed in, or a length beyond the start would be typed in
 
 	- Create sliders or knobs next to the VU meters in the record dialog to be able to set a gain on the recording source per channel
 
