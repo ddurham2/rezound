@@ -34,8 +34,10 @@
  * datafile... But, currently I see no reason for that to happen (unless I one day
  * implement array subscripting in the arithmetic expression stuff.)
  */
+#include "../../../config/common.h"
 
 #include <math.h>
+#include <string.h>
 
 #include <stack>
 #include <stdexcept>
