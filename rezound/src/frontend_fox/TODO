@@ -78,6 +78,8 @@
 
 --- POSSIBLE THINGS TO DO ---
 
+	- may not want misc to be on the include -I list.. (except maybe istring) simply because I will know the paths to include things
+
 	- If I continue with the FXGraphParamValue, then I should make an undo stack (limited to some number of saves) where every time a preset is selected or a mouse button is pressed for dragging, removing or creating a node that I push the current node list on a stack.. ctrl-z should pull from the history.. even ctrl-r could pull from a redo stack (which gets emptied when the user does anything except undo
 
 	- Add a popup menu to the frequency slider of the LFO widget and make it have items like.. 1/4, 1/2 1, 2, 3, 4 cyles time per selected area
