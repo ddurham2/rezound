@@ -1403,7 +1403,7 @@ const string CSound::getTimePosition(sample_pos_t samplePos,int secondsDecimalPl
 
 	string time;
 
-	if(sTime>3600)
+	if(sTime>=3600)
 	{ // make it HH:MM:SS.sss
 		const int hours=(int)(sTime/3600);
 		const int mins=(int)((sTime-(hours*3600))/60);
@@ -1413,8 +1413,20 @@ const string CSound::getTimePosition(sample_pos_t samplePos,int secondsDecimalPl
 	}
 	else
 	{ // make it MM:SS.sss
-		const int mins=(int)(sTime/60);
-		const double secs=sTime-(mins*60);
+		int mins=(int)(sTime/60);
+		double secs=sTime-(mins*60);
+
+		/* 
+		 * if it's going to render (because of rounding in istring) as 3:60.000 
+		 * then make that 4:00.000 which would happen if the seconds had come out 
+		 * to 59.995 or more so that's (60 - .005) which is (60 - 5/(10^deciplaces))
+		 * (this probably needs to be done slimiarly in the HH:MM:SS.sss case too)
+		 */
+		if(secs >= 60.0-(5.0/pow(10.0,secondsDecimalPlaces)))
+		{
+			mins++;
+			secs=0;
+		}
 
 		time=istring(mins,2,true)+":"+istring(secs,3+secondsDecimalPlaces,secondsDecimalPlaces,true);
 	}
