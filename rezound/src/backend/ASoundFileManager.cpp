@@ -143,6 +143,9 @@ void ASoundFileManager::prvOpen(const string filename,bool readOnly,bool doRegis
 
 	try
 	{
+		if(!CPath(filename).exists())
+			throw runtime_error(string(__func__)+" -- file does not exist: "+filename);
+
 		if(translatorToUse==NULL)
 			translatorToUse=ASoundTranslator::findTranslator(filename,asRaw);
 		sound=new CSound;
