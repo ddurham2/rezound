@@ -61,6 +61,8 @@
 
 --- POSSIBLE THINGS TO DO ---
 
+	- To speed up initial work upon loading a large file (>100mb) I could have the loading functions calculate the peak chunk info instead of loading then calcing the peak chunk on the first draw which causes it to have to read and write the data twice instead of once
+
 	- The only reason I don't prebuffer more data than I do is because the play position drawn in the front end is always a little ahead of the acutal playing sound... I could buffer a lot of data if I were to know the approximate delay time of processing to sound card I might be able to overcome the problem...
 		- One possibility is to be able to know which buffer is playing, then I could tag each buffer with a play position for the start of that buffer... then I would just render the play position on screen as the start position of the currently playing buffer
 		- Right now, if I play a bunch of sounds and run top, each time top updates it causes a break in the sound.  This shouldn't happen though if I were to prebuffer more data, I only need to over come the play position problem.  Perhaps there is a schedule that the play position could be on, each time a buffer is mixed it records a rather precise time-of-day and each time them method is called that asks for the play position it knows how much time has passed since then and returns where it should be playing... There would be a problem with positions after a loop point, but perhaps I could keep a list of times when the loop point should have been crossed and factor in those times
