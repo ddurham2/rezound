@@ -1,11 +1,35 @@
 
+- When it's up on sourceforge (and ready to debut) announce to:
+	- demudi
+	- demudi-users
+	- sox-users
+	- foxgui-users
+	- kurzlist [OT]
+	- the individuals who emailed me from kurzlist: "any linux users out there"
+	- the few individuals that reponded to my developer call on demudi
+
+	- note: (something like this)
+		   I'm annoucing the release of my sound editor, ReZound, on sourceforge now.  This message is going to many people
+		and lists which I posted messages concerning it over the past few months.  Any developers out there interested in
+		developing for it, I have written a document which explains the basics of creating new actions for it.  And any 
+		one else out there willing to run it, please do.  However, you can make a personal note of any bugs, but I have
+		compiled a list of the most obvious ones here: _url_ .  
+
+		   Please enjoy it, and I hope that ReZound blossoms into a popular sound editing tool primarily for, but not
+		limited to, linux.
+
+
+- have seek buttons that move the play pointer, start and stop positions to the markers set within the audio...
+	- the play position seek should:
+		- on forward, go to the nearest marker forward
+		- on backward go to the nearest marker backward if the play position is more than .25 secs from it.. or 2 markers back if more
+
 - need to use a different sound file library which can also retrieve and store arbitrary data sections in the formats that support it (namely .wav).. So I can store and load cues
 
 - need to make a type parameter in the "new sound" dialog... Allow the user to choose amoung wave, rezound, etc types
+	- right now it will do it by file extension
 
 - change the ClipSample macro to an inline function so _SSS is no longer a static global... verify that the assembler for the inline is no less efficient than the macro
-
-- use home directory / .rezound instead of the current directory for settings registry
 
 - create selection edits which:
 	- grow or shrink the selection by a given duration
@@ -37,52 +61,13 @@
 - When pasting data, there is no heeding of the differences in sample rate of the src data when pasting to the destination
 	- I should fix this problem when I implement a real clip board and I would have to supply the PCM parameters to the clipboard when I copied the data there, then pasting could do something to resolve any differances when reading from it
 
-- When it's up on sourceforge announce to:
-	- demudi
-	- demudi-users
-	- sox-users
-	- foxgui-users
-	- kurzlist [OT]
-	- the individuals who emailed me from kurzlist: "any linux users out there"
-	- the few individuals that reponded to my developer call on demudi
-
-	- note: (something like this)
-		   I'm annoucing the release of my sound editor, ReZound, on sourceforge now.  This message is going to many people
-		and lists which I posted messages concerning it over the past few months.  Any developers out there interested in
-		developing for it, I have written a document which explains the basics of creating new actions for it.  And any 
-		one else out there willing to run it, please do.  However, you can make a personal note of any bugs, but I have
-		compiled a list of the most obvious ones here: _url_ .  
-
-		   Please enjoy it, and I hope that ReZound blossoms into a popular sound editing tool primarily for, but not
-		limited to, linux.
-
-- When it's on sourceforge put out a call for icon artists and for someone to autoconfiscate it
-
-- When it's on sourceforge create mailing lists or forums for:
-	- bugs
-	- feature requests
-	- users
-	- developers
-
-
-
 - in ddd, step thru a copy/insert action to make sure nothing unexpected is happening
 	- when I was taking a file up above 2gb, I copied a 1.2g selection and it seemed to do something for a long time before growing the clipboard file during the copy action
 
-- have seek buttons that move the play pointer, start and stop positions to the markers set within the audio...
-	- the play position seek should:
-		- on forward, go to the nearest marker forward
-		- on backward go to the nearest marker backward if the play position is more than .25 secs from it.. or 2 markers back if more
-
 - need to make front and backend provisions for letting the user specify the export format parameters... some of the parameters depend on the export format... Perhaps I could have a dialog with a tabbed bar which has different parameters on each... which ever bar was activated would be the export format type... Either use the tabbar or radio buttons (real buttons) and a switcher like the switcher test that comes with fox
-
-- make sure I've run dos2unix on all the code before checking it into any version control system
 
 - I need to think thru and handle problems with the data becoming to large for whatever address space is currently active
 	- if ASound is about to change the space, if the total space is about to cross some threshhold, I shouldn't proceed to do the action
-
-- for additional bookmark niceness... make a way to set either the start or stop position to a bookmark choosen from a drop down menu
-	- also make a seek button that cycles to the next nearest book bark forward or backward from the current play position
 
 - could easily make the play buttons stop if playing and then do their action so that they don't do nothing while it's playing
 	- plus you have to hit stop and play to make it do something else... stop needs to be nice and big anyway
@@ -113,21 +98,15 @@
 - supply icons for all the windows
 	- just new FXIcon(...) instead of passing NULL
 
-- need a shuttle control
-
 - probably want to add an bool AAction::showAllDataCheckbox() so that the channel select dialog may or may not have that checkbox if it's an action like crop, or trim
 
-- change fox's built in icons for the standard file dialog, they don't fit the rest of fox's theme
+- maybe change fox's built in icons for the standard file dialog, they don't fit the rest of fox's theme
 	- this will probably be a patch submitted to them
 
 - make the open file dialog have resizable borders.... 
 	- I think its up to the window manager to allow this or not
 
 - perhaps make pool file have a readonly mode where it won't create SAT files and modify it in any way, then even a copy wouldn't need to be made
-
-- the right click on the horz ruler bar should have
-	- start pos, stop pos, start, end, AND play pos
-	- and perhaps all the markers too
 
 - write a little document in Tools/PoolFile that explains simply the layout of how PoolFileAccessors do their thing and perhaps a very simplified explination of how CPoolFile does what it does
 
@@ -143,6 +122,7 @@
 - when making loops, it may be cool to have a play button that loops the selection, but skips the bulk of the middle for time's sake
 
 - make some checkbox on the mainWindow that allows the user not to do undo incase they know they don't want it
+	 - the backend already supports this (although it hasn't been tested yet since there's been no frontend means)
 
 - it is evidently invalid to call ftruncate to make a file bigger if it's on a fat32 mounted device
 
@@ -311,4 +291,27 @@
 	- but I suspect that it has to do with my not recalculating all the peak chunks
 	XXX - sometimes if you delete data from a sound, then hit redraw, the rendering changes slightly
 	XXX - also, when I mute some space, then have that muted space at the end of a crop, there is sometimes a sample that shows up at the end of the new selection that will go away if I just hit redraw, so it's a peak chunk data inconsistancy rather than non-muted audio data being there
+
+- use home directory / .rezound instead of the current directory for settings registry
+
+- When it's on sourceforge put out a call for icon artists and for someone to autoconfiscate it
+
+- When it's on sourceforge create mailing lists or forums for:
+	- bugs
+	- feature requests
+	- users
+	- developers
+
+
+- make sure I've run dos2unix on all the code before checking it into any version control system
+
+- for additional bookmark niceness... make a way to set either the start or stop position to a bookmark choosen from a drop down menu
+	- also make a seek button that cycles to the next nearest book bark forward or backward from the current play position
+
+- need a shuttle control
+
+- the right click on the horz ruler bar should have
+	- start pos, stop pos, start, end, AND play pos
+	- and perhaps all the markers too
+
 
