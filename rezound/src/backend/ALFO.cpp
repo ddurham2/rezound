@@ -604,6 +604,6 @@ void CLFODescription::readFromFile(const CNestedDataFile *f,const string key)
 	amp=f->getValue<float>(key DOT "amp");
 	freq=f->getValue<float>(key DOT "freq");
 	phase=f->getValue<float>(key DOT "phase");
-	LFOType=f->getValue<size_t>(key DOT "LFOType");
+	LFOType=f->getValue<size_t>(key DOT "type");
 }
 
