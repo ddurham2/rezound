@@ -66,7 +66,7 @@ bool CResampleAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempAudioPoolKey,i);
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 
-			TSoundStretcher<CRezPoolAccesser> stretcher(src,0,oldLength,newLength,1,0,true);
+			TSoundStretcher<const CRezPoolAccesser> stretcher(src,0,oldLength,newLength,1,0,true);
 			for(sample_pos_t t=0;t<newLength;t++)
 			{
 				dest[t]=stretcher.getSample();

@@ -184,7 +184,7 @@ bool CBurnToCDAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 				if(channelCount==1)
 				{	/* write 1 channel as stereo */
 					const CRezPoolAccesser t_src=sound.getAudio(0);
-					TSoundStretcher<CRezPoolAccesser> src(t_src,srcStart,srcLength,fDestLength,1,0,paddedForInterpolation);
+					TSoundStretcher<const CRezPoolAccesser> src(t_src,srcStart,srcLength,fDestLength,1,0,paddedForInterpolation);
 
 					for(sample_pos_t t=0;t<destLength;t++)
 					{
@@ -205,8 +205,8 @@ bool CBurnToCDAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 				{
 					const CRezPoolAccesser t_srcL=sound.getAudio(0);
 					const CRezPoolAccesser t_srcR=sound.getAudio(1);
-					TSoundStretcher<CRezPoolAccesser> srcL(t_srcL,srcStart,srcLength,fDestLength,1,0,paddedForInterpolation);
-					TSoundStretcher<CRezPoolAccesser> srcR(t_srcR,srcStart,srcLength,fDestLength,1,0,paddedForInterpolation);
+					TSoundStretcher<const CRezPoolAccesser> srcL(t_srcL,srcStart,srcLength,fDestLength,1,0,paddedForInterpolation);
+					TSoundStretcher<const CRezPoolAccesser> srcR(t_srcR,srcStart,srcLength,fDestLength,1,0,paddedForInterpolation);
 
 					for(sample_pos_t t=0;t<destLength;t++)
 					{
@@ -231,9 +231,9 @@ bool CBurnToCDAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 					for(unsigned t=0;t<channelCount;t++)
 						t_src[t]=new CRezPoolAccesser(sound.getAudio(t));
 
-					TSoundStretcher<CRezPoolAccesser> *src[MAX_CHANNELS]={0};
+					TSoundStretcher<const CRezPoolAccesser> *src[MAX_CHANNELS]={0};
 					for(unsigned t=0;t<channelCount;t++)
-						src[t]=new TSoundStretcher<CRezPoolAccesser>(*(t_src[t]),srcStart,srcLength,fDestLength,1,0,paddedForInterpolation);
+						src[t]=new TSoundStretcher<const CRezPoolAccesser>(*(t_src[t]),srcStart,srcLength,fDestLength,1,0,paddedForInterpolation);
 
 					try /* ??? really need two separate try/catches .. or a master one around the whole thing and deallocate these objects there (declaring src[] and t_src[] outside that try (or figure out how to do it with a smart pointer */
 					{

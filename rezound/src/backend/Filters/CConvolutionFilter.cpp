@@ -106,7 +106,7 @@ bool CConvolutionFilter::doActionSizeSafe(CActionSound &actionSound,bool prepare
 					const sample_pos_t filterKernelLength=(sample_pos_t)(filterKernelAccesser.getSize()*rateAdjustment/filterKernelRate);
 					TAutoBuffer<float> filterKernel(filterKernelLength);
 
-					TSoundStretcher<CRezPoolAccesser> filterKernelStretcher(filterKernelAccesser,0,filterKernelAccesser.getSize(),filterKernelLength);
+					TSoundStretcher<const CRezPoolAccesser> filterKernelStretcher(filterKernelAccesser,0,filterKernelAccesser.getSize(),filterKernelLength);
 
 					TDSPSinglePoleLowpassFilter<float,float> filterKernelLowpassFilter(freq_to_fraction(filterKernelLowpassFreq,filterKernelFile.getSampleRate()));
 					for(sample_pos_t t=0;t<filterKernelLength;t++)
