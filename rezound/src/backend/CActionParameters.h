@@ -52,6 +52,7 @@ public:
 	void clear();
 
 	const bool containsParameter(const string name) const;
+	bool removeParameter(const string name,bool throwIfNotExists=false);
 
 	// I would avoid implementing all these different types by using a template method
 	// but I need to be able to copy construct the values in the copy constructor,
