@@ -488,6 +488,38 @@ AC_CHECK_HEADER(
 
 
 
+dnl ############################################################################
+dnl # detect if we should be able to compile the LADSPA code                   #
+dnl ############################################################################
+
+dnl Here I check if we're on the linux platform, and if so, then "@MAYBE_LADSPA_DIR@" gets substituted 
+dnl with "LADSPA" in the SUBDIRS variable in src/backend/Makefile.  And "@MAYBE_LADSPA_LIB@" gets 
+dnl substituted with libLADSPA.la in the frontend's Makefile.
+dnl However this makes it invalid to created a dist tarball on a non-linux platform (which will cause 
+dnl LADSPA not to be included in the dist).  Newer versions of autoconf and automake fix this issue and
+dnl I will change this when they are mainstream
+AH_TEMPLATE(USE_LADSPA)
+if test `uname -a | grep -i linux | wc -l` -ge 1
+then
+	MAYBE_LADSPA_DIR='LADSPA'
+	MAYBE_LADSPA_LIB='$(top_builddir)/src/backend/LADSPA/libLADSPA.la'
+	AC_DEFINE(USE_LADSPA)
+else
+	MAYBE_LADSPA_DIR=
+	MAYBE_LADSPA_LIB=
+
+	# make dummy file to make the dependancy check happy (when it will not exist for the frontend's makefile)
+	#mkdir -p src/backend/LADSPA
+	#echo > src/backend/LADSPA/libLADSPA.la 
+fi
+AC_SUBST(MAYBE_LADSPA_DIR)
+AC_SUBST(MAYBE_LADSPA_LIB)
+
+
+
+
+
+
 ############################################################################
 # Check for the Frontend GUI Library                                       #
 ############################################################################
@@ -597,6 +629,7 @@ AC_CONFIG_FILES([
 			src/backend/Looping/Makefile
 			src/backend/Generate/Makefile
 			src/backend/Remaster/Makefile
+			src/backend/LADSPA/Makefile
 		src/frontend_fox/Makefile
 	po/Makefile.in
 ])
