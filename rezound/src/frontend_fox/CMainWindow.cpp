@@ -110,8 +110,9 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_UNDO_MENUITEM,			CMainWindow::onUndoButton),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CLEAR_UNDO_HISTORY_MENUITEM,	CMainWindow::onClearUndoHistoryButton),
 	
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_DEFRAG_MENUITEM,		CMainWindow::onDefragButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PRINT_SAT_MENUITEM,		CMainWindow::onPrintSATButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_DEFRAG_MENUITEM,		CMainWindow::onDebugButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PRINT_SAT_MENUITEM,		CMainWindow::onDebugButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_VERIFY_SAT_MENUITEM,		CMainWindow::onDebugButton),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FOLLOW_PLAY_POSITION_BUTTON,	CMainWindow::onFollowPlayPositionButton),
 
@@ -321,6 +322,7 @@ void CMainWindow::createMenus()
 		new FXMenuCaption(menu,"- Just for testing");
 		new FXMenuCommand(menu,"Defrag",NULL,this,ID_DEFRAG_MENUITEM);
 		new FXMenuCommand(menu,"PrintSAT",NULL,this,ID_PRINT_SAT_MENUITEM);
+		new FXMenuCommand(menu,"VerifySAT",NULL,this,ID_VERIFY_SAT_MENUITEM);
 
 		new FXMenuSeparator(menu);
 		new FXMenuCommand(menu,"&Quit\tCtrl+Q",NULL,this,ID_FILE_QUIT_MENUITEM);
@@ -658,25 +660,21 @@ long CMainWindow::onViewKey(FXObject *sender,FXSelector sel,void *ptr)
 	return 1;
 }
 
-long CMainWindow::onDefragButton(FXObject *sender,FXSelector sel,void *ptr)
+long CMainWindow::onDebugButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	CLoadedSound *s=gSoundFileManager->getActive();
 	if(s!=NULL)
 	{
-		s->getSound()->defragPoolFile();
-		gSoundFileManager->updateAfterEdit();
+		if(SELID(sel)==ID_DEFRAG_MENUITEM)
+		{
+			s->getSound()->defragPoolFile();
+			gSoundFileManager->updateAfterEdit();
+		}
+		else if(SELID(sel)==ID_PRINT_SAT_MENUITEM)
+			s->getSound()->printSAT();
+		else if(SELID(sel)==ID_VERIFY_SAT_MENUITEM)
+			s->getSound()->verifySAT();
 	}
-	else
-		getApp()->beep();
-	
-	return(1);
-}
-
-long CMainWindow::onPrintSATButton(FXObject *sender,FXSelector sel,void *ptr)
-{
-	CLoadedSound *s=gSoundFileManager->getActive();
-	if(s!=NULL)
-		s->getSound()->printSAT();
 	else
 		getApp()->beep();
 	

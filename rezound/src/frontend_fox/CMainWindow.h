@@ -70,8 +70,7 @@ public:
 
 	long onViewKey(FXObject *sender,FXSelector sel,void *ptr); // main window gets view-change key presses because the sound window changes and we can't bind a key to any particualar object pointer
 
-	long onDefragButton(FXObject *sender,FXSelector sel,void *ptr);
-	long onPrintSATButton(FXObject *sender,FXSelector sel,void *ptr);
+	long onDebugButton(FXObject *sender,FXSelector sel,void *ptr);
 
 
 	enum
@@ -123,6 +122,7 @@ public:
 
 		ID_DEFRAG_MENUITEM,
 		ID_PRINT_SAT_MENUITEM,
+		ID_VERIFY_SAT_MENUITEM,
 
 		ID_FOLLOW_PLAY_POSITION_BUTTON,
 
