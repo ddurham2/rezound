@@ -27,6 +27,7 @@
 
 	- warn the user if he's saving an exported file format and information such as cues and user notes will not be exported (for now)
 		- implement in the derivations from ASoundTranslator
+		- in ClibaudiosoundTranslator, I should probably query the capabilities of a format
 
 	- use a registry setting for knowing where to put working files and the clipboard instead of always /tmp
 

@@ -26,6 +26,7 @@
 #include "../backend/AFrontendHooks.h"
 
 class FXWindow;
+class FXFileDialog;
 
 class CFrontendHooks : public AFrontendHooks
 {
@@ -35,9 +36,8 @@ public:
 
 	const string getFOXFileTypes() const; // returns a string to pass as the file types drop-down in FOX file dialogs
 
-	bool promptForOpen(string &filename,bool &readOnly);
-
-	bool promptForSave(string &filename,const string extension);
+	bool promptForOpenSoundFilename(string &filename,bool &readOnly);
+	bool promptForSaveSoundFilename(string &filename);
 
 	bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length);
 	bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate);
@@ -48,6 +48,8 @@ public:
 private:
 	FXWindow *mainWindow;
 
+	FXFileDialog *openDialog;
+	FXFileDialog *saveDialog;
 };
 
 #endif

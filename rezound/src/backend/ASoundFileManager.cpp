@@ -102,7 +102,7 @@ void ASoundFileManager::open(const string _filename)
 	bool readOnly=false;
 	if(filename=="")
 	{
-		if(!gFrontendHooks->promptForOpen(filename,readOnly))
+		if(!gFrontendHooks->promptForOpenSoundFilename(filename,readOnly))
 			return;
 	}
 
@@ -176,7 +176,7 @@ void ASoundFileManager::saveAs()
 	if(loaded)
 	{
 		string filename=loaded->getFilename();
-		if(!gFrontendHooks->promptForSave(filename,ost::Path(loaded->getFilename()).Extension()))
+		if(!gFrontendHooks->promptForSaveSoundFilename(filename))
 			return;
 
 		if(loaded->getFilename()==filename)

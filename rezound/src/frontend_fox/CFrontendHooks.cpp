@@ -39,10 +39,22 @@
 CFrontendHooks::CFrontendHooks(FXWindow *_mainWindow) :
 	mainWindow(_mainWindow)
 {
+	openDialog=new FXFileDialog(mainWindow,"Open File");
+	openDialog->setSelectMode(SELECTFILE_EXISTING);
+	openDialog->setPatternList(getFOXFileTypes().c_str());
+	openDialog->setCurrentPattern(0);
+
+	saveDialog=new FXFileDialog(mainWindow,"Save File");
+	saveDialog->setSelectMode(SELECTFILE_ANY);
+	saveDialog->setPatternList(getFOXFileTypes().c_str());
+	saveDialog->setCurrentPattern(0);
+
 }
 
 CFrontendHooks::~CFrontendHooks()
 {
+	delete openDialog;
+	delete saveDialog;
 }
 
 const string CFrontendHooks::getFOXFileTypes() const
@@ -85,43 +97,34 @@ const string CFrontendHooks::getFOXFileTypes() const
 	return(types);
 }
 
-bool CFrontendHooks::promptForOpen(string &filename,bool &readOnly)
+bool CFrontendHooks::promptForOpenSoundFilename(string &filename,bool &readOnly)
 {
-	// I can do getOpenFilenames to be able to open multiple files ??? then the parameter would need to be a vector<string>
-	FXString _filename=FXFileDialog::getOpenFilename(mainWindow,"Open file",gPromptDialogDirectory.c_str(),getFOXFileTypes().c_str(),0);
-	if(_filename!="")
+	openDialog->setDirectory(gPromptDialogDirectory.c_str());
+	if(openDialog->execute())
 	{
 		// save directory to open the opendialog to next time
-		gPromptDialogDirectory=ost::Path(_filename.text()).DirName();
-		gPromptDialogDirectory.append(&ost::Path::dirDelim,1);
+		gPromptDialogDirectory=openDialog->getDirectory().text();
 
-		filename=_filename.text();
-		readOnly=false; // can do it.. but I need to invoke the open dialog differently
+		filename=openDialog->getFilename().text();
+		readOnly=false;
+
 		return(true);
 	}
 	return(false);
 }
 
-bool CFrontendHooks::promptForSave(string &filename,const string _extension)
+bool CFrontendHooks::promptForSaveSoundFilename(string &filename)
 {
-	istring extension=_extension;
-	extension.lower();
+	if(filename=="")
+		saveDialog->setDirectory(gPromptDialogDirectory.c_str());
+	else
+		saveDialog->setFilename(filename.c_str());
 
-	string _filename=FXFileDialog::getSaveFilename(mainWindow,"Save file",filename=="" ? gPromptDialogDirectory.c_str() : filename.c_str(),("Save Type (*."+istring(extension).lower()+",*."+istring(extension).upper()+")\n"+getFOXFileTypes()).c_str(),0).text();
-	if(_filename!="")
+	if(saveDialog->execute())
 	{
-/*
-		// add the extension if the user didn't type it
-		if(ost::Path(_filename).Extension()=="")
-			_filename.append("."+extension);
-*/
+		gPromptDialogDirectory=saveDialog->getDirectory().text();
 
-		// save directory to open the opendialog to next time
-		gPromptDialogDirectory=ost::Path(_filename).DirName();
-		gPromptDialogDirectory.append(&ost::Path::dirDelim,1);
-
-
-		filename=_filename;
+		filename=saveDialog->getFilename().text();
 		return(true);
 	}
 	return(false);

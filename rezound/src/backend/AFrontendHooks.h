@@ -41,10 +41,10 @@ public:
 	virtual ~AFrontendHooks() { }
 
 	// prompt with an open file dialog (return false if the prompt was cancelled)
-	virtual bool promptForOpen(string &filename,bool &readOnly)=0;
+	virtual bool promptForOpenSoundFilename(string &filename,bool &readOnly)=0;
 
 	// prompt with a save file dialog (return false if the prompt was cancelled)
-	virtual bool promptForSave(string &filename,const string extension)=0;
+	virtual bool promptForSaveSoundFilename(string &filename)=0;
 
 	// prompt for a new sound to be created asking for the given parameters (return false if the prompt was cancelled)
 	virtual bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length)=0;

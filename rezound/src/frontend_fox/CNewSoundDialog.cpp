@@ -27,7 +27,6 @@
 
 #include <istring>
 
-#include "settings.h"
 #include "CFrontendHooks.h"
 #include "../backend/AStatusComm.h"
 
@@ -51,7 +50,7 @@ CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 	FXModalDialogBox(mainWindow,"New Sound",395,210,FXModalDialogBox::ftVertical),
 	
 	filenameFrame(new FXHorizontalFrame(getFrame(),LAYOUT_FILL_X)),
-		filenameLabel(new FXLabel(filenameFrame,"(.rez)Filename:")),
+		filenameLabel(new FXLabel(filenameFrame,"Filename:")),
 		filenameTextBox(new FXTextField(filenameFrame,30,NULL,0,TEXTFIELD_NORMAL | LAYOUT_FILL_X)),
 		browseButton(new FXButton(filenameFrame,"&Browse",NULL,this,ID_BROWSE_BUTTON)),
 	channelsFrame(new FXHorizontalFrame(getFrame(),LAYOUT_CENTER_X)),
@@ -95,15 +94,9 @@ CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 
 long CNewSoundDialog::onBrowseButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-	FXString filename=FXFileDialog::getSaveFilename(this,"New file",gPromptDialogDirectory.c_str(),((CFrontendHooks *)gFrontendHooks)->getFOXFileTypes().c_str(),0);
-	if(filename!="")
-	{
-		// save directory to open the opendialog to next time
-		gPromptDialogDirectory=ost::Path(filename.text()).DirName();
-		gPromptDialogDirectory.append(&ost::Path::dirDelim,1);
-
-		filenameTextBox->setText(filename);
-	}
+	string filename;
+	if(gFrontendHooks->promptForSaveSoundFilename(filename))
+		filenameTextBox->setText(filename.c_str());
 
 	return(1);
 }
