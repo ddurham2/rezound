@@ -116,6 +116,7 @@ private:
 
 	const l_addr_t calcTotalSize() const;
 
+	void prvSetSize(const l_addr_t newSize,const l_addr_t forWriteSize);
 	void setFileSize(const int fileHandle,const f_addr_t newFileSize);
 
 	const string buildFilename(size_t which);

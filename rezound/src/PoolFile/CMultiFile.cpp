@@ -87,6 +87,8 @@
  *
  */
 
+// TODO need to check return values of lseek
+
 CMultiFile::CMultiFile() :
 	opened(false),
 	initialFilename(""),
@@ -227,9 +229,9 @@ void CMultiFile::write(const void *buffer,const l_addr_t count,RHandle &handle)
 	if((getAvailableSize()-handle.position)<count)
 		throw(runtime_error(string(__func__)+" -- insufficient space to write "+istring(count)+" more bytes"));
 
-	// grow file(s) if necessary
+	// grow file(s) if necessary 
 	if(totalSize<(handle.position+count))
-		setSize(handle.position+count);
+		prvSetSize(handle.position+count,count);
 
 	size_t whichFile=handle.position/LOGICAL_MAX_FILE_SIZE;
 	f_addr_t whereFile=(handle.position%LOGICAL_MAX_FILE_SIZE)+sizeof(RFileHeader);
@@ -264,10 +266,16 @@ void CMultiFile::write(const void *buffer,const l_addr_t count,const l_addr_t _p
 
 void CMultiFile::setSize(const l_addr_t newSize)
 {
+	prvSetSize(newSize,0);
+}
+
+void CMultiFile::prvSetSize(const l_addr_t newSize,const l_addr_t forWriteSize)
+{
 	if(newSize>totalSize && getAvailableSize()<newSize)
 		throw(runtime_error(string(__func__)+" -- insufficient space to grow data size to: "+istring(newSize)));
 
 	size_t neededFileCount=(newSize/LOGICAL_MAX_FILE_SIZE)+1;
+	const f_addr_t currentLastFilesSize=(totalSize%LOGICAL_MAX_FILE_SIZE)+sizeof(RFileHeader);
 	const f_addr_t lastFilesSize=(newSize%LOGICAL_MAX_FILE_SIZE)+sizeof(RFileHeader);
 
 	if(neededFileCount>openFileCount)
@@ -307,7 +315,8 @@ void CMultiFile::setSize(const l_addr_t newSize)
 		
 
 	// set size of last file
-	setFileSize(openFiles[openFileCount-1],lastFilesSize);
+	if(newSize<totalSize || ((l_addr_t)lastFilesSize-forWriteSize)>(l_addr_t)currentLastFilesSize)
+		setFileSize(openFiles[openFileCount-1],lastFilesSize-forWriteSize);
 	totalSize=newSize;
 }
 
