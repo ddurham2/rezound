@@ -55,7 +55,7 @@ so that the meter and analyzer widgets are not tied to using ASoundPlayer
 #define MIN_METER_HEIGHT 15
 #define MIN_METERS_WINDOW_HEIGHT 75
 
-#define ANALYZER_BAR_WIDTH 6
+#define ANALYZER_BAR_WIDTH 3
 
 
 // --- CMeter ----------------------------------------------------------------
@@ -377,10 +377,11 @@ public:
 		if(analysis.size()>0)
 		{
 			size_t x=0;
+			const size_t drawBarWidth=max(1,(int)barWidth-1);
 			for(size_t t=0;t<analysis.size();t++)
 			{
 				const size_t barHeight=(size_t)floor(analysis[t]*canvasHeight);
-				dc.fillRectangle(x+1,canvasHeight-barHeight,barWidth-1,barHeight);
+				dc.fillRectangle(x+1,canvasHeight-barHeight,drawBarWidth,barHeight);
 				x+=barWidth;
 			}
 		}

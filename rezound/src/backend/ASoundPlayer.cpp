@@ -222,7 +222,7 @@ const sample_t ASoundPlayer::getPeakLevel(unsigned channel) const
 // the bands are defined as octaves: 0, 0.5, 1.0, 1.5, 2.0, 2.5, etc)
 
 static const float baseOctave=40;	// bottom frequency of analyzer  (actually the first band contains from 0Hz to upperFreqAtOctave(0) )
-static const size_t octaveStride=3;	// 4 bands per octave
+static const size_t octaveStride=6;	// 6 bands per octave
 static const float deltaOctave=1.0/octaveStride;
 
 // returns the frequency (in Hz) given the octave
