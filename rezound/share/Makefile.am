@@ -23,4 +23,6 @@
 ## I used config/am_include.mk for common definitions
 include $(top_srcdir)/config/am_include.mk
 
-pkgdata_DATA=presets.dat
+pkgdata_DATA= \
+	presets.dat \
+	impulse_hall1.wav
