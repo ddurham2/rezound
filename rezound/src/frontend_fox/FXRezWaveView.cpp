@@ -588,6 +588,14 @@ FXint FXWaveScrollArea::getContentHeight()
 
 void FXWaveScrollArea::moveContents(FXint x,FXint y)
 {
+	/*
+	 * I have seen a bug with the way this works... basically if there is a window on top
+	 * of the window that we're going to call dc.drawArea which copies from the screen 
+	 * buffer, if that buffer hasn't been updated because there was a window on top the 
+	 * the last tiem something happened so X didn't tell it to redraw that part of the buffer
+	 * then old data gets copied... 
+	 */
+
 	const FXint oldX=getXPosition();
 	const FXint oldY=getYPosition();
 	const FXint newX=x;
