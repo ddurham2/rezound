@@ -27,13 +27,15 @@ include $(top_srcdir)/config/am_include.mk
 
 ## see PoolFile Makefile.am for explanation here out
 ## 
-EXTRA_DIST=CNoiseGateAction.h \
-	   CRemoveDCAction.h \
-	   CUnclipAction.h \
-	   RemasterActions.h
+noinst_HEADERS= \
+		CNoiseGateAction.h \
+		CRemoveDCAction.h \
+		CUnclipAction.h \
+		RemasterActions.h
 
 noinst_LTLIBRARIES=libRemaster.la
-libRemaster_la_SOURCES= CNoiseGateAction.cpp \
+libRemaster_la_SOURCES= \
+			CNoiseGateAction.cpp \
 			CRemoveDCAction.cpp \
 			CUnclipAction.cpp 
 
