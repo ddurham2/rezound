@@ -78,21 +78,54 @@ ClibvorbisSoundTranslator::~ClibvorbisSoundTranslator()
 {
 }
 
+const string OVstrerror(int e)
+{
+	switch(e)
+	{
+	case OV_FALSE:
+		return("not true, or no data available");
+	case OV_HOLE:
+		return("vorbisfile encoutered missing or corrupt data in the bitstream. Recovery is normally automatic and this return code is for informational purposes only");
+	case OV_EREAD:
+		return("read error while fetching compressed data for decode");
+	case OV_EFAULT:
+		return("internal inconsistency in decode state. Continuing is likely not possible.");
+	case OV_EIMPL:
+		return("feature not implemented");
+	case OV_EINVAL:
+		return("either an invalid argument, or incompletely initialized argument passed to libvorbisfile call");
+	case OV_ENOTVORBIS:
+		return("the given file/data was not recognized as Ogg Vorbis data");
+	case OV_EBADHEADER:
+		return("the file/data is apparently an Ogg Vorbis stream, but contains a corrupted or undecipherable header");
+	case OV_EVERSION:
+		return("the bitstream format revision of the given stream is not supported.");
+	case OV_EBADLINK:
+		return("the given link exists in the Vorbis data stream, but is not decipherable due to garbacge or corruption");
+	case OV_ENOSEEK:
+		return("the given stream is not seekable");
+	default:
+		return("undocumented/unknown Ogg/Vorbis error code: "+istring(e));
+	}
+}
+
+
 	// ??? could just return a CSound object an have used the one constructor that takes the meta info
 	// ??? but, then how would I be able to have createWorkingPoolFileIfExists
 void ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 {
 #ifdef HAVE_LIBVORBISFILE
+	int e;
 	FILE *f=fopen(filename.c_str(),"rb");
 	int err=errno;
 	if(f==NULL)
 		throw(runtime_error(string(__func__)+" -- error opening '"+filename+"' -- "+strerror(err)));
 	
 	OggVorbis_File vf;
-	if(ov_open(f, &vf, NULL, 0) < 0)
+	if((e=ov_open(f, &vf, NULL, 0))<0)
 	{
 		fclose(f);
-		throw(runtime_error(string(__func__)+" -- input does not appear to be an Ogg bitstream"));
+		throw(runtime_error(string(__func__)+" -- error opening ogg file or may not be an Ogg bitstream -- "+OVstrerror(e)));
 	}
 
 	CRezPoolAccesser *accessers[MAX_CHANNELS]={0};
@@ -312,6 +345,7 @@ bool ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound)
 	vorbis_info vi;
 
 
+	int e;
 	const unsigned channelCount=sound->getChannelCount();
 	const unsigned sampleRate=sound->getSampleRate();
 	const sample_pos_t size=sound->getLength();
@@ -324,13 +358,13 @@ bool ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound)
 
 	if(parameters.method==AFrontendHooks::OggCompressionParameters::brVBR)
 	{
-		if(vorbis_encode_init(&vi,channelCount,sampleRate,parameters.maxBitRate,parameters.normBitRate,parameters.minBitRate)<0)
-			throw(runtime_error(string(__func__)+" -- error initializing the Ogg Vorbis encoder engine"));
+		if((e=vorbis_encode_init(&vi,channelCount,48000,parameters.maxBitRate,parameters.normBitRate,parameters.minBitRate))<0)
+			throw(runtime_error(string(__func__)+" -- error initializing the Ogg Vorbis encoder engine; perhaps try different compression parameters -- "+OVstrerror(e)));
 	}
 	else if(parameters.method==AFrontendHooks::OggCompressionParameters::brQuality)
 	{
-		if(vorbis_encode_init_vbr(&vi,channelCount,sampleRate,parameters.quality)<0)
-			throw(runtime_error(string(__func__)+" -- error initializing the Ogg Vorbis encoder engine"));
+		if((e=vorbis_encode_init_vbr(&vi,channelCount,sampleRate,parameters.quality))<0)
+			throw(runtime_error(string(__func__)+" -- error initializing the Ogg Vorbis encoder engine -- "+OVstrerror(e)));
 	}
 	else
 		throw(runtime_error(string(__func__)+" -- internal error -- unhandle bit rate method "+istring(parameters.method)));
