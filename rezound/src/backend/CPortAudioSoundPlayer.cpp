@@ -166,12 +166,12 @@ int CPortAudioSoundPlayer::PortAudioCallback(void *inputBuffer,void *outputBuffe
 	}
 	catch(exception &e)
 	{
-		fprintf(stderr,"exception caught in play thread: %s\n",e.what());
+		fprintf(stderr,"exception caught in play callback: %s\n",e.what());
 		abort();
 	}
 	catch(...)
 	{
-		fprintf(stderr,"unknown exception caught in play thread\n");
+		fprintf(stderr,"unknown exception caught in play callback\n");
 		abort();
 	}
 	return 0;
