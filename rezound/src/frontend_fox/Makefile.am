@@ -100,7 +100,7 @@ rezound_LDADD= libfrontend.la\
 	$(top_builddir)/src/backend/Remaster/libRemaster.la \
 	$(top_builddir)/src/backend/Generate/libGenerate.la \
 	$(top_builddir)/src/misc/CNestedDataFile/libmiscCN.la \
-	$(top_builddir)/src/PoolFile/libPoolFile.la @FOX_LIBS@ @LTLIBINTL@
+	$(top_builddir)/src/PoolFile/libPoolFile.la @FOX_LIBS@
 
 rezound_CXXFLAGS=@FOX_CXXFLAGS@
 
