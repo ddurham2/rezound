@@ -113,6 +113,7 @@
 
 - Mastering/Remastering Tools (more to come)
 	- Balance/Pan (by constant or curve)
+	- Monoize (mix down channels or make all the channels the same)
 	- Remove DC Component
 	- Noise Gate
 	- Dynamic Range Compression
