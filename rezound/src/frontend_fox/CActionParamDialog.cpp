@@ -134,7 +134,7 @@ long CActionParamDialog::onExplainButton(FXObject *sender,FXSelector sel,void *p
 	return 1;
 }
 
-void *CActionParamDialog::newHorzPanel(void *parent,bool createBorder)
+FXPacker *CActionParamDialog::newHorzPanel(void *parent,bool createBorder)
 {
 	if(parent==NULL)
 	{
@@ -148,7 +148,7 @@ void *CActionParamDialog::newHorzPanel(void *parent,bool createBorder)
 		return new FXHorizontalFrame((FXPacker *)parent,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0);
 }
 
-void *CActionParamDialog::newVertPanel(void *parent,bool createBorder)
+FXPacker *CActionParamDialog::newVertPanel(void *parent,bool createBorder)
 {
 	if(parent==NULL)
 	{

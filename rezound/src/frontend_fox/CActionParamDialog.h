@@ -56,9 +56,10 @@ public:
 	virtual ~CActionParamDialog();
 
 	// these are used to create new parents for the controls
+	// or something to lay other FOX widgets on (but not controls since they won't be saved in presets)
 	// 	pass NULL the first time
-	void *newHorzPanel(void *parent,bool createBorder=true);
-	void *newVertPanel(void *parent,bool createBorder=true);
+	FXPacker *newHorzPanel(void *parent,bool createBorder=true);
+	FXPacker *newVertPanel(void *parent,bool createBorder=true);
 
 	void addSlider(void *parent,const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton);
 	void addNumericTextEntry(void *parent,const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsTipText="");
