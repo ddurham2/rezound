@@ -449,7 +449,6 @@ void AAction::prepareForInnerCrossfade(const CActionSound &actionSound)
 			throw(EUserMessage("Cannot anticipate certain information necessary to do an inner crossfade for action"));
 
 		sample_pos_t crossfadeStartTime=(sample_pos_t)(gCrossfadeStartTime*actionSound.sound->getSampleRate()/1000.0);
-		//sample_pos_t wantedCrossfadeStartTime=crossfadeStartTime;
 		sample_pos_t crossfadeStopTime=(sample_pos_t)(gCrossfadeStopTime*actionSound.sound->getSampleRate()/1000.0);
 
 		// don't go off the end of the sound
@@ -458,28 +457,36 @@ void AAction::prepareForInnerCrossfade(const CActionSound &actionSound)
 		// don't read before the beginning of the sound
 		crossfadeStopTime=min(crossfadeStopTime,stopPos);
 
-		printf("backking up: %d %d -- %d %d\n",startPos,crossfadeStartTime,stopPos-crossfadeStopTime,crossfadeStopTime);
 
-/*
-		if(actionSound.selectionLength()<(crossfadeStartTime+crossfadeStopTime))
-			// crossfades would overlap.. fall back to selectionLength/2 as the start and stop crossfade times
-			crossfadeStartTime=crossfadeStopTime= actionSound.selectionLength()/2;
 
-		// special case
-		if(startPos==stopPos)
-			// min of what's possible and how much the user setting is
-			crossfadeStartTime=min(actionSound.sound->getLength()-startPos,wantedCrossfadeStartTime);
-*/
 
 		// backup the area to crossfade after the start position
-		tempCrossfadePoolKeyStart=actionSound.sound->copyDataToTemp(allChannels,startPos,crossfadeStartTime);
 		crossfadeStart=startPos;
-		crossfadeStartLength=crossfadeStartTime;
+
+		if(startPos>0)
+			crossfadeStartLength=crossfadeStartTime;
+		else
+			// since the crossfade will be with the very first sample, just let it start and not do the crossfade
+			crossfadeStartLength=0;
+
+		tempCrossfadePoolKeyStart=actionSound.sound->copyDataToTemp(allChannels,startPos,crossfadeStartLength);
+
+
+
+
+
 
 		// backup the area to crossfade before the stop position
-		tempCrossfadePoolKeyStop=actionSound.sound->copyDataToTemp(allChannels,stopPos-crossfadeStopTime,crossfadeStopTime);
 		crossfadeStop=stopPos-crossfadeStopTime;
-		crossfadeStopLength=crossfadeStopTime;
+
+		if(stopPos<actionSound.sound->getLength()-1)
+			crossfadeStopLength=crossfadeStopTime;
+		else
+			// since the crossfade will be with the very last sample, just let it end and not do the crossfade
+			crossfadeStopLength=0;
+
+		tempCrossfadePoolKeyStop=actionSound.sound->copyDataToTemp(allChannels,stopPos-crossfadeStopTime,crossfadeStopLength);
+
 	}
 }
 
@@ -502,13 +509,11 @@ void AAction::crossfadeEdgesInner(const CActionSound &actionSound)
 	crossfadeStopTime=min(crossfadeStopTime,crossfadeStopLength);
 
 
+	// ??? I don't like this... it's would be better if were just correct from the normal logic
 	// special case
 	if(actionSound.start==actionSound.stop)
 		// min of what's possible and how much prepareForInnerCrossfade backed up
 		crossfadeStartTime=min(actionSound.sound->getLength()-actionSound.start,crossfadeStartLength);
-
-	printf("blending from: %d %d -- %d %d\n",actionSound.start,crossfadeStartTime,actionSound.stop-crossfadeStopTime,crossfadeStopTime);
-	
 
 	// crossfade at the start position
 	{

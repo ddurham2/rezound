@@ -266,9 +266,15 @@ bool CPasteEdit::getResultingCrossfadePoints(const CActionSound &actionSound,sam
 		break;
 
 	case ptReplace:
+		stop=min(actionSound.stop+1,actionSound.sound->getLength()-1);
+		break;
+
 	case ptMix:
+		stop=min(start+clipboardLength,actionSound.sound->getLength()-1);
+		break;
+
 	case ptLimitedMix:
-		stop=start+clipboardLength-1;
+		stop=min(start+clipboardLength,start+actionSound.selectionLength());
 		break;
 
 	default:
