@@ -1,6 +1,8 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- Need to remember openAsRaw when doing reopen's 
+
 	- Add a button to the FXGraphParamValue which smoothes out angles by making it many nodes to approximate curve.. call it 'approximate'
 
 	- need make sure there is a virtual destructor for all the classes

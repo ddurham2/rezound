@@ -93,8 +93,10 @@ CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 long CNewSoundDialog::onBrowseButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	string filename;
-	if(gFrontendHooks->promptForSaveSoundFilename(filename))
+	bool saveAsRaw;
+	if(gFrontendHooks->promptForSaveSoundFilename(filename,saveAsRaw))
 		filenameTextBox->setText(filename.c_str());
+#warning use saveAsRaw 
 
 	return(1);
 }

@@ -119,6 +119,7 @@ bool CrawSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 bool CrawSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 {
 	throw(runtime_error(string(__func__)+" -- unimplemented -- I need to create a frontend to allow the user to choose the export parameters"));
+	//probabaly can just use the open's dialog except don't show the data offset and data length parameters
 }
 
 
