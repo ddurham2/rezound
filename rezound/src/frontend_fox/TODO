@@ -1,6 +1,8 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- the FXCanvas::copyArea doesn't do right, when part of the window is off-screen.. I don't know if X needs to handle this.. or if I can tell if it's exposed or not.. if it's not exposed then I do need to draw instead of copyArea
+
 	- add a quick (shortcut to) fading in or out the selection use x^2 for the algorithm
 
 	- put a dBFS scale indicator next to the record level meters
