@@ -41,6 +41,11 @@
 
 	- Change CSoundPlayerChannel to do interpolation for sample rate conversion
 
+	- I need to eventually handle command line arguments.
+		- I should implement handling them in the backend so that I wouldn't have to reimplement parsing them for each frontend.
+		- I need to check that when I pass argv to fox's initialize function that it either does or does not remove the X arguments.
+		- --help should be detected by all processers of command line arguement and add to the stdout the arguments that they handle.
+		- I suppose I should use popt because it is packaged for most all rpm abd deb based distros.. I need to find URL of popt's homepage and refer to that on error in configure
 
 
 
