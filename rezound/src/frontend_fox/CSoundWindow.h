@@ -101,6 +101,7 @@ public:
 	// mute button
 	long onMuteButton(FXObject *sender,FXSelector sel,void *ptr);
 	long onInvertMuteButton(FXObject *sender,FXSelector sel,void *ptr);
+	long onResize(FXObject *sender,FXSelector sel,void *ptr);
 
 	// horz zoom handlers
 	long onHorzZoomDialChange(FXObject *sender,FXSelector,void*);

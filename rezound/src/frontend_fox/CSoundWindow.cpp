@@ -60,6 +60,7 @@ FXDEFMAP(CSoundWindow) CSoundWindowMap[]=
 	FXMAPFUNC(SEL_COMMAND,			CSoundWindow::ID_MUTE_BUTTON,			CSoundWindow::onMuteButton),
 	FXMAPFUNC(SEL_COMMAND,			CSoundWindow::ID_INVERT_MUTE_BUTTON,		CSoundWindow::onInvertMuteButton),
 	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	CSoundWindow::ID_INVERT_MUTE_BUTTON,		CSoundWindow::onInvertMuteButton),
+	FXMAPFUNC(SEL_CONFIGURE,		0,						CSoundWindow::onResize),
 
 		// invoked when horz zoom dial is changed
 	FXMAPFUNC(SEL_CHANGED,			CSoundWindow::ID_HORZ_ZOOM_DIAL,		CSoundWindow::onHorzZoomDialChange),
@@ -137,9 +138,9 @@ CSoundWindow::CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound) :
 			vertZoomDial(new FXDial(vertZoomPanel,this,LAYOUT_SIDE_TOP | ID_VERT_ZOOM_DIAL,DIAL_VERTICAL|DIAL_HAS_NOTCH | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0,0,0,100, 0,0,0,0)),
 			vertZoomMinusInd(new FXButton(vertZoomPanel,"-\tZoom Out Full",NULL,this,ID_VERT_ZOOM_DIAL_MINUS,FRAME_RAISED | LAYOUT_SIDE_TOP | LAYOUT_FILL_X)),
 		mutePanel(new FXPacker(waveViewPanel,LAYOUT_SIDE_LEFT | FRAME_NONE | LAYOUT_FILL_Y, 0,0,0,0, 2,2,2,2, 0,0)),
-			upperMuteLabel(mutePanel==NULL ? NULL : new FXLabel(mutePanel,"M\tMute Channels",NULL,LABEL_NORMAL|LAYOUT_SIDE_TOP|LAYOUT_FIX_HEIGHT)),
-			invertMuteButton(mutePanel==NULL ? NULL : new FXButton(mutePanel,"!\tInvert the Muted State of Each Channel or (right click) Unmute All Channels",NULL,this,ID_INVERT_MUTE_BUTTON,LAYOUT_FILL_X | FRAME_RAISED|FRAME_THICK | LAYOUT_SIDE_BOTTOM|LAYOUT_FIX_HEIGHT)),
-			muteContents(mutePanel==NULL ? NULL : new FXVerticalFrame(mutePanel,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
+			upperMuteLabel(new FXLabel(mutePanel,"M\tMute Channels",NULL,LABEL_NORMAL|LAYOUT_SIDE_TOP|LAYOUT_FIX_HEIGHT)),
+			invertMuteButton(new FXButton(mutePanel,"!\tInvert the Muted State of Each Channel or (right click) Unmute All Channels",NULL,this,ID_INVERT_MUTE_BUTTON,LAYOUT_FILL_X | FRAME_RAISED|FRAME_THICK | LAYOUT_SIDE_BOTTOM|LAYOUT_FIX_HEIGHT)),
+			muteContents(new FXVerticalFrame(mutePanel,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
 		waveView(new FXRezWaveView(waveViewPanel,_loadedSound)),
 
 	statusFont(getApp()->getNormalFont()),
@@ -357,17 +358,9 @@ void CSoundWindow::updateFromEdit()
 {
 	// see if the number of channels changed
 	if(loadedSound->sound->getChannelCount()!=muteButtonCount)
-	{
 		recreateMuteButtons(true);
-		/* ??? not necessary anymore... FXWaveViewCanvas::updateFromEdit() handles it
-			// sort of a hack to get it to redisplay properly
-		onVertZoomDialPlusIndClick(NULL,0,NULL);
-		onVertZoomDialMinusIndClick(NULL,0,NULL);
-		*/
-	}
 
 	waveView->updateFromEdit();
-	//onHorzZoomDialChange(NULL,0,NULL);
 	updateAllStatusInfo();
 }
 
@@ -381,11 +374,11 @@ void CSoundWindow::updateAllStatusInfo()
 
 	// ??? this should depend on the FXRezWaveView's actual horzZoomFactor value because the FXDial doesn't represent how many samples a pixel represents
 	int places;
-	if(horzZoomDial->getValue()>90*ZOOM_MUL)
+	if(horzZoomDial->getValue()>75*ZOOM_MUL)
 		places=5;
-	else if(horzZoomDial->getValue()>80*ZOOM_MUL)
-		places=4;
 	else if(horzZoomDial->getValue()>60*ZOOM_MUL)
+		places=4;
+	else if(horzZoomDial->getValue()>40*ZOOM_MUL)
 		places=3;
 	else
 		places=2;
@@ -400,11 +393,11 @@ void CSoundWindow::updateSelectionStatusInfo()
 {
 	// ??? this should depend on the FXRezWaveView's actual horzZoomFactor value because the FXDial doesn't represent how many samples a pixel represents
 	int places;
-	if(horzZoomDial->getValue()>90*ZOOM_MUL)
+	if(horzZoomDial->getValue()>75*ZOOM_MUL)
 		places=5;
-	else if(horzZoomDial->getValue()>80*ZOOM_MUL)
-		places=4;
 	else if(horzZoomDial->getValue()>60*ZOOM_MUL)
+		places=4;
+	else if(horzZoomDial->getValue()>40*ZOOM_MUL)
 		places=3;
 	else 
 		places=2;
@@ -417,11 +410,11 @@ void CSoundWindow::updateSelectionStatusInfo()
 void CSoundWindow::updatePlayPositionStatusInfo()
 {
 	int places;
-	if(horzZoomDial->getValue()>90*ZOOM_MUL)
+	if(horzZoomDial->getValue()>75*ZOOM_MUL)
 		places=5;
-	else if(horzZoomDial->getValue()>80*ZOOM_MUL)
-		places=4;
 	else if(horzZoomDial->getValue()>60*ZOOM_MUL)
+		places=4;
+	else if(horzZoomDial->getValue()>40*ZOOM_MUL)
 		places=3;
 	else
 		places=2;
@@ -450,15 +443,6 @@ void CSoundWindow::create()
 	FXPacker::create();
 
 	updateAllStatusInfo();
-
-	if(mutePanel!=NULL)
-	{
-		// set the proper height of the labels above and below the panel with the mute checkboxes in it
-		int top,height;
-		waveView->getWaveSize(top,height);
-		upperMuteLabel->setHeight(top);
-		invertMuteButton->setHeight(waveView->getHeight()-(height+top)-2);
-	}
 }
 
 // --- event handlers I setup  --------------------------------------------
@@ -489,6 +473,17 @@ long CSoundWindow::onInvertMuteButton(FXObject *sender,FXSelector sel,void *ptr)
 	}
 
 	onMuteButton(sender,sel,ptr);
+
+	return 1;
+}
+
+long CSoundWindow::onResize(FXObject *sender,FXSelector sel,void *ptr)
+{
+	// set the proper height of the labels above and below the panel with the mute checkboxes in it
+	int top,height;
+	waveView->getWaveSize(top,height);
+	upperMuteLabel->setHeight(top);
+	invertMuteButton->setHeight(waveView->getHeight()-(height+top)-2);
 
 	return 1;
 }
