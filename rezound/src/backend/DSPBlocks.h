@@ -144,7 +144,7 @@ private:
 };
 
 
-/* --- CDSPLevelDetector --------------------------------------
+/* --- CDSPRMSLevelDetector --------------------------------------
  *
  *	- This class can be used to determine the level or volume of an audio source.
  *	- It uses a progressing window of past samples to calculate an RMS (root-mean-square which is sqrt((s1^2 + s2^2 + ... Sn^2)/N) ) versus using a normal average or 'mean'
@@ -152,10 +152,10 @@ private:
  *	- It is often necessary to initialize the object with 'windowTime' samples before even using the value from readLevel()
  *		- To do this, simply call readLevel() for the first 'windowTime' samples in the audio stream
  */
-class CDSPLevelDetector
+class CDSPRMSLevelDetector
 {
 public:
-	CDSPLevelDetector(const unsigned _windowTime) :
+	CDSPRMSLevelDetector(const unsigned _windowTime) :
 		window(_windowTime),
 		sumOfSquaredSamples(0.0),
 		windowTime(_windowTime),
@@ -164,7 +164,7 @@ public:
 		// ??? based on windowTotals type and sample_t's type there is a maximum time I should impose on windowTime
 	}
 
-	virtual ~CDSPLevelDetector()
+	virtual ~CDSPRMSLevelDetector()
 	{
 	}
 
@@ -205,7 +205,7 @@ private:
  *   below the given 'threshold'.  The rate at which it begins to mute the data is
  *   given by the 'gainAttackTime' and the rate at which it begins to come out of the
  *   mute once the level is again above the threshold is given by 'gainReleaseTime'.
- *   The level is detected with a moving average (performed by CDSPLevelDetector) 
+ *   The level is detected with a moving average (performed by CDSPRMSLevelDetector) 
  *   the width of the moving window is given by 'windowTime'
  *
  * - To use simply construct the block with the desired parameters and repeatedly call 
@@ -279,7 +279,7 @@ private:
 	const float gainReleaseVelocity;
 
 	float gain;
-	CDSPLevelDetector levelDetector;
+	CDSPRMSLevelDetector levelDetector;
 };
 
 
@@ -290,7 +290,7 @@ private:
  *   'threshold'.  The rate at which it begins to change this gain is given by the 
  *   'attackTime' and the rate at which it begins to return to a gain of 1.0 once 
  *   the level is again below the threshold is given by 'releaseTime'.  The level 
- *   is detected with a moving average (performed by CDSPLevelDetector) the width
+ *   is detected with a moving average (performed by CDSPRMSLevelDetector) the width
  *   of the moving window is given by 'windowTime'
  *
  * - To use simply construct the block with the desired parameters and repeatedly call 
@@ -406,7 +406,7 @@ private:
 	// release times as the level goes above and below the threshold
 	float bouncingRatio;
 
-	CDSPLevelDetector levelDetector;
+	CDSPRMSLevelDetector levelDetector;
 };
 
 
