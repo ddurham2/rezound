@@ -124,6 +124,8 @@ private:
 
 	FXPopupHint *dragCueHint;
 
+	bool draggingSelectionToo; // true when a cue to be dragged was on the start or stop position
+
 	CMoveCueActionFactory *moveCueActionFactory;
 	CRemoveCueActionFactory *removeCueActionFactory;
 };
@@ -239,6 +241,12 @@ void FXRezWaveView::getWaveSize(int &top,int &height)
 #include "../backend/CLoadedSound.h"
 #include "../backend/CSound.h"
 #include "../backend/CSoundPlayerChannel.h"
+
+/*
+ * ??? Split this widget into a base class and a derived class so that the base class could be easily
+ * used above other wave renderings the challenge will be eliminating the need for relying on parent
+ * in the base class
+ */
 
 FXDEFMAP(FXWaveRuler) FXWaveRulerMap[]=
 {
@@ -598,6 +606,11 @@ long FXWaveRuler::onLeftBtnPress(FXObject *object,FXSelector sel,void *ptr)
 		{
 			origCueClickedTime=sound->getCueTime(cueClicked);
 
+			draggingSelectionToo=
+				!(event->state&SHIFTMASK) && 
+				(origCueClickedTime==loadedSound->channel->getStartPosition() || 
+				origCueClickedTime==loadedSound->channel->getStopPosition());
+
 			dragCueHint->setText(sound->getTimePosition(origCueClickedTime,gSoundFileManager->getSoundWindow(loadedSound)->getZoomDecimalPlaces()).c_str());
 			dragCueHint->show();
 			dragCueHint->autoplace();
@@ -618,6 +631,7 @@ long FXWaveRuler::onMouseMove(FXObject *object,FXSelector sel,void *ptr)
 	{	// dragging a cue around
 
 		const string cueName=sound->getCueName(cueClicked);
+		const sample_pos_t cueTime=sound->getCueTime(cueClicked);
 		const FXint cueTextWidth=font->getTextWidth(cueName.data(),cueName.length());
 
 		// last_x is where the cue is on the screen now (possibly after autoscrolling)
@@ -641,9 +655,45 @@ long FXWaveRuler::onMouseMove(FXObject *object,FXSelector sel,void *ptr)
 		}
 
 
-
 		sample_pos_t newTime=parent->waveScrollArea->getCueTimeFromX(event->win_x-cueClickedOffset);
 		
+		if(draggingSelectionToo)
+		{
+			const sample_pos_t start=loadedSound->channel->getStartPosition();
+			const sample_pos_t stop=loadedSound->channel->getStopPosition();
+
+			if(cueTime==start)
+			{	// move start position with cue drag
+				if(newTime>stop)
+				{ // dragged cue past stop position 
+					loadedSound->channel->setStopPosition(newTime);
+					loadedSound->channel->setStartPosition(stop);
+					parent->updateFromSelectionChange(FXWaveCanvas::lcpStop);
+				}
+				else
+				{
+					loadedSound->channel->setStartPosition(newTime);
+					parent->updateFromSelectionChange(FXWaveCanvas::lcpStart);
+				}
+
+			}
+			else if(cueTime==stop)
+			{	// move stop position with cue drag
+				if(newTime<start)
+				{ // dragged cue before start position 
+					loadedSound->channel->setStartPosition(newTime);
+					loadedSound->channel->setStopPosition(start);
+					parent->updateFromSelectionChange(FXWaveCanvas::lcpStart);
+				}
+				else
+				{
+					loadedSound->channel->setStopPosition(newTime);
+					parent->updateFromSelectionChange(FXWaveCanvas::lcpStop);
+				}
+
+			}
+		}
+
 		// update cue position
 		sound->setCueTime(cueClicked,newTime);
 		if(cueClicked==focusedCueIndex)
@@ -723,6 +773,12 @@ long FXWaveRuler::onFocusOut(FXObject* sender,FXSelector sel,void* ptr){
 	update();
 	return 1;
 }
+
+/* ???
+ * If possible, make plus and minus nudge the cue to the left and right.. add acceleration 
+ * if possible and make the undo action pertain the to last time the key was release for 
+ * some given time I guess (because I dont want every little nudge to be undoable)
+ */
 
 #include <fox/fxkeys.h>
 long FXWaveRuler::onKeyPress(FXObject *object,FXSelector sel,void *ptr)
