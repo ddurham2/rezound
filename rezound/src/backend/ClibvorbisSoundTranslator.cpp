@@ -18,19 +18,34 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
+/*
+ * Much of this source code is adapted from the ogg/vorbis example source code files
+ *
+ * Something I found to be a bad thing is that if you load and save the same ogg file
+ * over and over with a bit of a low bit rate compression, then the artifacts of the
+ * compression noise become quite louder and louder.
+ *
+ */
+
 #include "ClibvorbisSoundTranslator.h"
 
 #ifdef HAVE_LIBVORBIS
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include <stdio.h>	// for fopen/fclose
 #include <errno.h>
-#include <string.h>
+#include <string.h>	// for strerror()
+
+#include <time.h>	// for time()
+#include <stdlib.h>	// for rand()
+
 #include "vorbis/codec.h"
 
 #ifdef HAVE_LIBVORBISFILE
 #include "vorbis/vorbisfile.h"
+#endif
+
+#ifdef HAVE_LIBVORBISENC
+#include "vorbis/vorbisenc.h"
 #endif
 
 
@@ -58,12 +73,6 @@ ClibvorbisSoundTranslator::ClibvorbisSoundTranslator()
 
 ClibvorbisSoundTranslator::~ClibvorbisSoundTranslator()
 {
-}
-
-static string errorMessage;
-static void errorFunction(long code,const char *msg)
-{
-	errorMessage=msg;
 }
 
 	// ??? could just return a CSound object an have used the one constructor that takes the meta info
@@ -97,7 +106,7 @@ void ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 		if(sampleRate<4000 || sampleRate>96000)
 			throw(runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate)));
 
-#define REALLOC_FILE_SIZE (1024*1024)
+#define REALLOC_FILE_SIZE (1024*1024/4)
 
 		// ??? make sure it's not more than MAX_LENGTH
 			// ??? just truncate the length
@@ -108,7 +117,7 @@ void ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 		sound->createWorkingPoolFile(filename,sampleRate,channelCount,size);
 
 
-
+			// ??? I should use the comment_get_tag or something
 		// load the user notes
 		char **userNotes=ov_comment(&vf,-1)->user_comments;
 		string _userNotes;
@@ -193,192 +202,194 @@ void ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 
 	sound->setIsModified(false);
 #else
-	throw(runtime_error(string(__func__)+" -- saving not enabled missing libvorbisfile"));
+	throw(runtime_error(string(__func__)+" -- loading ogg/vorbis is not enabled -- missing libvorbisfile"));
 #endif
 }
 
 void ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound) const
 {
-	throw(runtime_error(string(__func__)+" unimplemented"));
-#if 0
-	int fileType;
+#ifdef HAVE_LIBVORBISENC
 
-	const string extension=istring(CPath(filename).extension()).lower();
-	if(extension=="aiff")
-		fileType=AF_FILE_AIFF;
-	else if(extension=="wav")
-		fileType=AF_FILE_WAVE;
-	else if(extension=="snd" || extension=="au")
-		fileType=AF_FILE_NEXTSND;
-	else if(extension=="sf")
-		fileType=AF_FILE_BICSF;
-	else
-		throw(runtime_error(string(__func__)+" -- unhandled extension for filename: "+filename));
+	vorbis_info vi;
 
-	AFfilesetup setup=afNewFileSetup();
-	try
-	{
-		// ??? all the following parameters need to be passed in somehow as the export format
-		// 	??? can easily do it with AFrontendHooks
-		afInitFileFormat(setup,fileType); 
-		afInitByteOrder(setup,AF_DEFAULT_TRACK,AF_BYTEORDER_LITTLEENDIAN); 			// ??? I would actually want to pass how the user wants to export the data...
-		afInitChannels(setup,AF_DEFAULT_TRACK,sound->getChannelCount());
-		afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,sizeof(int16_t)*8); 	// ??? I would actually want to pass how the user wants to export the data... int16_t matching AF_SAMPFMT_TWOSCOMP
-		afInitRate(setup,AF_DEFAULT_TRACK,sound->getSampleRate()); 				// ??? I would actually want to pass how the user wants to export the data... doesn't actual do any conversion right now (perhaps I could patch it for them)
-		afInitCompression(setup,AF_DEFAULT_TRACK,AF_COMPRESSION_NONE);
-			//afInitInitCompressionParams(setup,AF_DEFAULT_TRACK, ... );
-		afInitFrameCount(setup,AF_DEFAULT_TRACK,sound->getLength());				// ??? I suppose I could allow the user to specify something shorter on the dialog
-
-		saveSoundGivenSetup(filename,sound,setup,fileType);
-
-		afFreeFileSetup(setup);
-	}
-	catch(...)
-	{
-		afFreeFileSetup(setup);
-		throw;
-	}
-
-	errorMessage="";
-	afSetErrorHandler(errorFunction);
 
 	const unsigned channelCount=sound->getChannelCount();
 	const unsigned sampleRate=sound->getSampleRate();
 	const sample_pos_t size=sound->getLength();
 
-	// setup for saving the cues (except for positions)
-	TAutoBuffer<int> markIDs(sound->getCueCount());
-	if(sound->getCueCount()>0)
+	vorbis_info_init(&vi);
+
+	/*  constant bit rate 
+	int maxEncBitRate,normEncBitRate,minEncBitRate;
+	maxEncBitRate=normEncBitRate=minEncBitRate=128000; // ??? need to prompt the user for these settings
+	if(vorbis_encode_init(&vi,channelCount,sampleRate,maxEncBitRate,normEncBitRate,minEncBitRate)<0) // constant bitrate
+	*/
+	/* or variable bitrate (with .7 quality) */
+	if(vorbis_encode_init_vbr(&vi,channelCount,sampleRate,0.7)<0)
+		throw(runtime_error(string(__func__)+" -- error initializing the ogg/vorbis encoder engine"));
+
+	// ??? could save cue positions this way too (in the comments or thru use of tagged comments)
+	// save user notes
+	vorbis_comment vc;
+	vorbis_comment_init(&vc);
+	vorbis_comment_add(&vc,(char * /*cause they need const*/)sound->getUserNotes().c_str()); // ??? perhaps multiple lines need to be multiple calls to this function
+	
+
+	/* set up the analysis state and auxiliary encoding storage */
+	vorbis_dsp_state vd;
+	vorbis_block vb;
+	vorbis_analysis_init(&vd,&vi);
+	vorbis_block_init(&vd,&vb);
+
+	ogg_page og; // one raw packet of data for decode
+
+	/* set up our packet->stream encoder */
+	/* pick a random serial number; that way we can more likely build chained streams just by concatenation */
+	ogg_stream_state os; // take physical pages, weld into a logical stream of packets
+	srand(time(NULL));
+	ogg_stream_init(&os,rand());
+
+	FILE *f=fopen(filename.c_str(),"wb");
+	int err=errno;
+	if(f==NULL)
+		throw(runtime_error(string(__func__)+" -- error opening '"+filename+"' -- "+strerror(err)));
+
+	/* 
+	 * Vorbis streams begin with three headers; the initial header 
+	 * (with most of the codec setup parameters) which is mandated 
+	 * by the Ogg bitstream spec.  The second header holds any 
+	 * comment fields.  The third header holds the bitstream 
+	 * codebook.  We merely need to make the headers, then pass 
+	 * them to libvorbis one at a time; libvorbis handles the 
+	 * additional Ogg bitstream constraints 
+	 */
 	{
-		if(!afQueryLong(AF_QUERYTYPE_MARK,AF_QUERY_SUPPORTED,fileFormatType,0,0))
-			Warning("This format does not support saving cues");
-		else
+		ogg_packet header;
+		ogg_packet header_comm;
+		ogg_packet header_code;
+
+		vorbis_analysis_headerout(&vd,&vc,&header,&header_comm,&header_code);
+		ogg_stream_packetin(&os,&header); /* automatically placed in its own page */
+		ogg_stream_packetin(&os,&header_comm);
+		ogg_stream_packetin(&os,&header_code);
+
+		/* 
+		 * We don't have to write out here, but doing so makes streaming 
+		 * much easier, so we do, flushing ALL pages. This ensures the actual
+		 * audio data will start on a new page
+		 */
+		for(;;)
 		{
-			for(size_t t=0;t<sound->getCueCount();t++)
-				markIDs[t]=t;
-
-			afInitMarkIDs(initialSetup,AF_DEFAULT_TRACK,markIDs,(int)sound->getCueCount());
-			for(size_t t=0;t<sound->getCueCount();t++)
-			{
-				// to indicate if the cue is anchored we append to the name:
-				// "|+" or "|-" whether it is or isn't
-				const string name=sound->getCueName(t)+"|"+(sound->isCueAnchored(t) ? "+" : "-");
-				afInitMarkName(initialSetup,AF_DEFAULT_TRACK,markIDs[t],name.c_str());
-
-				// can't save position yet because that function requires a file handle, but
-				// we can't move this code after the afOpenFile, or it won't save cues at all
-				//afSetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[t],sound->getCueTime(t));
-			}
+			if(ogg_stream_flush(&os,&og)==0)
+				break;
+			fwrite(og.header,1,og.header_len,f);
+			fwrite(og.body,1,og.body_len,f);
 		}
 	}
 
-
-
-	// prepare to save the user notes
-	const string userNotes=sound->getUserNotes();
-	int userNotesMiscID=1;
-	const int userNotesMiscType=getUserNotesMiscType(fileFormatType);
-	if(userNotes.length()>0)
-	{
-		/* this is not implemented in libvorbis yet
-		if(!afQueryLong(AF_QUERYTYPE_MISC,AF_QUERY_SUPPORTED,fileFormatType,0,0))
-			Warning("This format does not support saving user notes");
-		else
-		*/
-		{
-			afInitMiscIDs(initialSetup,&userNotesMiscID,1);
-			afInitMiscType(initialSetup,userNotesMiscID,userNotesMiscType);
-			afInitMiscSize(initialSetup,userNotesMiscID,userNotes.length());
-		}
-	}
-
-	unlink(filename.c_str());
-	AFfilehandle h=afOpenFile(filename.c_str(),"w",initialSetup);
-	if(h==AF_NULL_FILEHANDLE)
-		throw(runtime_error(string(__func__)+" -- error opening '"+filename+"' for writing -- "+errorMessage));
-
-	// ??? this if set may not completly handle all possibilities
-	int ret;
-	if(typeid(sample_t)==typeid(int16_t))
-		ret=afSetVirtualSampleFormat(h,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,sizeof(sample_t)*8);
-	else if(typeid(sample_t)==typeid(float))
-		ret=afSetVirtualSampleFormat(h,AF_DEFAULT_TRACK,AF_SAMPFMT_FLOAT,sizeof(sample_t)*8);
-	else
-	{
-		afCloseFile(h);
-		throw(runtime_error(string(__func__)+" -- unhandled sample_t format"));
-	}
-
-	if(ret!=0)
-		throw(runtime_error(string(__func__)+" -- error setting virtual format -- "+errorMessage));
-
-	if(afSetVirtualByteOrder(h,AF_DEFAULT_TRACK,AF_BYTEORDER_LITTLEENDIAN))
-		throw(runtime_error(string(__func__)+" -- error setting virtual byte order -- "+errorMessage));
-	afSetVirtualChannels(h,AF_DEFAULT_TRACK,channelCount);
 
 	CRezPoolAccesser *accessers[MAX_CHANNELS]={0};
+	for(unsigned t=0;t<channelCount;t++)
+		accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
+
 	try
 	{
-		for(unsigned t=0;t<channelCount;t++)
-			accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
+		#define CHUNK_SIZE 4096
 
-		// save the audio data
-		TAutoBuffer<sample_t> buffer((size_t)(channelCount*4096));
+		ogg_packet op; // one Ogg bitstream page.  Vorbis packets are inside
+
 		sample_pos_t pos=0;
-		AFframecount count=size/4096+1;
-		BEGIN_PROGRESS_BAR("Saving Sound",0,count);
-		for(AFframecount t=0;t<count;t++)
+
+		const sample_pos_t chunkCount= (size/CHUNK_SIZE) + ((size%CHUNK_SIZE)!=0 ? 1 : 0);
+
+		BEGIN_PROGRESS_BAR("Saving Sound",0,chunkCount);
+
+		for(sample_pos_t t=0;t<=chunkCount;t++)
 		{
-			const int chunkSize=  (t==count-1 ) ? size%4096 : 4096;
-			if(chunkSize!=0)
-			{
+			if(t==chunkCount)
+			{ // after last chunk
+				/* 
+				 * Tell the library we're at end of stream so that it can handle 
+				 * the last frame and mark end of stream in the output properly 
+				 */
+				vorbis_analysis_wrote(&vd,0);
+			}
+			else
+			{ // give some data to the encoder
+
+				// get the buffer to submit data
+				float **buffer=vorbis_analysis_buffer(&vd,CHUNK_SIZE);
+
+				// copy data into buffer
+				const unsigned chunkSize= (t==chunkCount-1) ? (size%CHUNK_SIZE) : CHUNK_SIZE;
 				for(unsigned c=0;c<channelCount;c++)
-				{
-					for(int i=0;i<chunkSize;i++)
-						buffer[i*channelCount+c]=(*(accessers[c]))[pos+i];
-				}
-				if(afWriteFrames(h,AF_DEFAULT_TRACK,(void *)buffer,chunkSize)!=chunkSize)
-					throw(runtime_error(string(__func__)+" -- error writing audio data -- "+errorMessage));
+				for(unsigned i=0;i<chunkSize;i++)
+					buffer[c][i]=(float)((*(accessers[c]))[pos+i])/(float)MAX_SAMPLE;
 				pos+=chunkSize;
+
+				// tell the library how much we actually submitted
+				vorbis_analysis_wrote(&vd,chunkSize);
+			}
+
+			/* 
+			 * vorbis does some data preanalysis, then divvies up blocks for 
+			 * more involved (potentially parallel) processing.  Get a single 
+			 * block for encoding now 
+			 */
+			while(vorbis_analysis_blockout(&vd,&vb)==1)
+			{
+				// analysis, assume we want to use bitrate management
+				vorbis_analysis(&vb,NULL);
+				vorbis_bitrate_addblock(&vb);
+
+				while(vorbis_bitrate_flushpacket(&vd,&op))
+				{
+					// weld the packet into the bitstream
+					ogg_stream_packetin(&os,&op);
+
+					// write out pages (if any)
+					for(;;)
+					{
+						if(ogg_stream_pageout(&os,&og)==0)
+							break;
+						fwrite(og.header,1,og.header_len,f);
+						fwrite(og.body,1,og.body_len,f);
+
+						if(ogg_page_eos(&og))
+							break;
+					}
+				}
 			}
 
 			UPDATE_PROGRESS_BAR(t);
 		}
 
 		END_PROGRESS_BAR();
-		
-		// write the cue's positions
-		if(afQueryLong(AF_QUERYTYPE_MARK,AF_QUERY_SUPPORTED,fileFormatType,0,0))
-		{
-			for(size_t t=0;t<sound->getCueCount();t++)
-				afSetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[t],sound->getCueTime(t));
-		}
-
-		// write the user notes
-		if(userNotes.length()>0)
-		{
-			/* this is not implemented in libvorbis yet
-			if(!afQueryLong(AF_QUERYTYPE_MISC,AF_QUERY_SUPPORTED,fileFormatType,0,0))
-				Warning("This format does not support saving user notes");
-			else
-			*/
-			{
-				afWriteMisc(h,userNotesMiscID,(void *)userNotes.c_str(),userNotes.length());
-			}
-		}
-
-
-		afCloseFile(h);
 
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 		{
 			delete accessers[t];
 			accessers[t]=NULL;
 		}
+
+		/* clean up.  vorbis_info_clear() must be called last */
+		ogg_stream_clear(&os);
+		vorbis_block_clear(&vb);
+		vorbis_dsp_clear(&vd);
+		vorbis_comment_clear(&vc);
+		vorbis_info_clear(&vi);
+
+		fclose(f);
 	}
 	catch(...)
 	{
-		// attempt to close the file ??? and free the setup???
+		ogg_stream_clear(&os);
+		vorbis_block_clear(&vb);
+		vorbis_dsp_clear(&vd);
+		vorbis_comment_clear(&vc);
+		vorbis_info_clear(&vi);
+
+		fclose(f);
 
 		endAllProgressBars();
 
@@ -387,6 +398,9 @@ void ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound)
 
 		throw;
 	}
+
+#else
+	throw(runtime_error(string(__func__)+" -- saving ogg/vorbis is not enabled -- missing libvorbisenc"));
 #endif
 }
 
@@ -398,20 +412,23 @@ bool ClibvorbisSoundTranslator::handlesExtension(const string extension) const
 
 bool ClibvorbisSoundTranslator::supportsFormat(const string filename) const
 {
-#if 0
-	int fd=open(filename.c_str(),O_RDONLY);
-	int _e=errno;
-	if(fd==-1)
-		throw(runtime_error(string(__func__)+" -- error opening file '"+filename+"' -- "+strerror(_e)));
+#ifdef HAVE_LIBVORBISFILE
+	FILE *f=fopen(filename.c_str(),"rb");
+	if(f==NULL)
+		return(false);
+	
+	OggVorbis_File vf;
+	if(ov_open(f, &vf, NULL, 0) < 0)
+	{
+		fclose(f);
+		return(false);
+	}
 
-	int implemented=0;
-	int id=afIdentifyNamedFD(fd,filename.c_str(),&implemented);
-	close(fd);
-
-	return(implemented);
-#endif
-	printf("need to implement this if possible\n");
+	ov_clear(&vf);
+	return(true);
+#else
 	return(false);
+#endif
 }
 
 const vector<string> ClibvorbisSoundTranslator::getFormatNames() const
