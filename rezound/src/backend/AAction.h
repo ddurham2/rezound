@@ -222,6 +222,9 @@ protected:
 	// this method can be overloaded to return false, if the action does not warrent saving the file (i.e. the user will not be prompted)
 	virtual bool doesWarrantSaving() const;
 
+	// this method can be overloaded to return false, if the isModified flag should not be affected by the undoing of the action (only used for macro undoing now, which is really a meta-undo.. the flag will be handled by the actions that take place within the macro)
+	virtual bool restoreIsModifiedAfterUndo() const;
+
 	// This can be overridden to return something other than it's default implementation.
 	// It can return false if this is not possibly known and it will tell the user than an inner crossfade cannot be done for that particular action
 	// It is necessary for an inner crossfade to know from where to backup data to be able to crossfade with the new selection after the action.

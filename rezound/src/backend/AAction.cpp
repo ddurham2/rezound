@@ -251,6 +251,11 @@ bool AAction::doesWarrantSaving() const
 	return true; // by default
 }
 
+bool AAction::restoreIsModifiedAfterUndo() const
+{
+	return true; // by default
+}
+
 bool AAction::getResultingCrossfadePoints(const CActionSound *actionSound,sample_pos_t &start,sample_pos_t &stop)
 {
 	start=actionSound->start;
@@ -531,7 +536,9 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 		throw;
 	}
 	undoActionRecursionCount--;
-	actionSound->sound->setIsModified(origIsModified);
+
+	if(restoreIsModifiedAfterUndo())
+		actionSound->sound->setIsModified(origIsModified);
 }
 
 AAction::CanUndoResults AAction::canUndo() const
