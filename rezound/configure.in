@@ -92,13 +92,45 @@ dnl abort if the test fails.
 ajv_CHECK_LIB_ABORT(audiofile, afSetVirtualSampleFormat, AUDIOFILE,[http://oss.sgi.com/projects/audiofile/])
 
 
-dnl check for libvorbis to be installed, if it isn't then I should print
-dnl a big warning lib for fox and audiofile saying that ogg will not be
-dnl supported and where to go get it if their distro doesn't package it.
-AC_CHECK_LIB(ogg, ogg_stream_init)
-AC_CHECK_LIB(vorbis, vorbis_info_init)
-AC_CHECK_LIB(vorbisfile, ov_read)
-AC_CHECK_LIB(vorbisenc, vorbis_encode_init)
+dnl check for necessary ogg vorbis libraries and header files to be installed, 
+dnl if they are not then I should print a big warning lib for fox and audiofile 
+dnl saying that ogg files will not be supported and where to go get it if their 
+dnl distro doesn't package it.
+AC_CHECK_LIB(
+	ogg,
+	ogg_stream_init,
+
+	LIBS="-logg $LIBS"
+	AC_DEFINE(HAVE_LIBOGG)
+	
+	dnl libogg found, now check for libvorbis
+	AC_CHECK_LIB(
+		vorbis, 
+		vorbis_info_init,
+		[
+
+		LIBS="-lvorbis $LIBS"
+		AC_DEFINE(HAVE_LIBVORBIS)
+
+		dnl libvorbis found, now check for vorbisfile and vorbisenc header files and libraries
+		AC_CHECK_HEADER(
+			vorbis/vorbisfile.h,
+			AC_CHECK_LIB(vorbisfile, ov_read, , AC_MSG_WARN([***** libvorbisenc.a not found; LOADING ogg vorbis support will be disabled *****]),-lvorbis),
+			AC_MSG_WARN([***** vorbisfile.h header file not found -- LOADING ogg vorbis support will be disabled *****])
+			)
+
+		AC_CHECK_HEADER(
+			vorbis/vorbisenc.h,
+			AC_CHECK_LIB(vorbisenc, vorbis_encode_init, , AC_MSG_WARN([***** libvorbisenc.a not found; SAVING ogg vorbis support will be disabled *****]),-lvorbis),
+			AC_MSG_WARN([***** vorbisenc.h header file not found -- SAVING ogg vorbis support will be disabled *****])
+			)
+		],
+
+		AC_MSG_WARN([***** libvorbis.a not found -- ogg vorbis support will be disabled *****])
+	),
+
+	AC_MSG_WARN([***** libogg.a not found -- ogg vorbis support will be disabled *****])
+)
 
 
 dnl This is a check for a class in a C++ library. To pinpoint
