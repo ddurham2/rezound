@@ -151,7 +151,7 @@ void ClibaudiofileSound::loadSound(const string _filename)
 		if(fileSize<size)
 		{
 			Warning("libaudiofile reports that "+filename+" contains "+istring(size)+" samples yet the file is not large enough to contain that many samples.\nLoading what can be loaded.");
-			size=fileSize;
+			//size=fileSize; not doing this because I once ran across a situation where you could read more from the file that stat said it was... even ls showed it smaller than I could actually read
 			//throw(runtime_error(string(__func__)+" -- libaudiofile is not seeing this as a corrupt file -- it thinks the data length is "+istring(size)+" yet when the file is only "+istring(fileSize)+" bytes"));
 		}
 
