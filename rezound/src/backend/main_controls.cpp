@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#include "playcontrols.h"
+#include "main_controls.h"
 
 #include <exception>
 
@@ -27,6 +27,126 @@
 #include "ASoundFileManager.h"
 #include "CSoundPlayerChannel.h"
 #include "CLoadedSound.h"
+#include "AAction.h"
+
+
+
+
+// -----------------------------------------------------------------------------------
+// --- File Operations ---------------------------------------------------------------
+// -----------------------------------------------------------------------------------
+
+void openSound(ASoundFileManager *soundFileManager,const string filename)
+{
+	try
+	{
+		soundFileManager->open(filename);
+	}
+	catch(exception &e)
+	{
+		Error(e.what());
+	}
+}
+
+void newSound(ASoundFileManager *soundFileManager)
+{
+	try
+	{
+		soundFileManager->createNew();
+	}
+	catch(exception &e)
+	{
+		Error(e.what());
+	}
+}
+
+void closeSound(ASoundFileManager *soundFileManager)
+{
+	try
+	{
+		soundFileManager->close(ASoundFileManager::ctSaveYesNoCancel);
+	}
+	catch(exception &e)
+	{
+		Error(e.what());
+	}
+}
+
+void saveSound(ASoundFileManager *soundFileManager)
+{
+	try
+	{
+		soundFileManager->save();
+	}
+	catch(exception &e)
+	{
+		Error(e.what());
+	}
+}
+
+void saveAsSound(ASoundFileManager *soundFileManager)
+{
+	try
+	{
+		soundFileManager->saveAs();
+	}
+	catch(exception &e)
+	{
+		Error(e.what());
+	}
+}
+
+void revertSound(ASoundFileManager *soundFileManager)
+{
+	try
+	{
+		soundFileManager->revert();
+	}
+	catch(exception &e)
+	{
+		Error(e.what());
+	}
+}
+
+void recordSound(ASoundFileManager *soundFileManager)
+{
+	try
+	{
+		soundFileManager->recordToNew();
+	}
+	catch(exception &e)
+	{
+		Error(e.what());
+	}
+}
+
+//---------------------------------------------------------------------------
+
+const bool exitReZound(ASoundFileManager *soundFileManager)
+{
+	try
+	{
+		while(soundFileManager->getActive()!=NULL)
+			soundFileManager->close(ASoundFileManager::ctSaveYesNoStop);
+		return(true);
+	}
+	catch(EStopClosing &e)
+	{
+		return(false);
+	}
+	catch(exception &e)
+	{
+		Error(e.what());
+		return(false);
+	}
+}
+
+
+
+
+// -----------------------------------------------------------------------------------
+// --- Play Control Operations -------------------------------------------------------
+// -----------------------------------------------------------------------------------
 
 void play(ASoundFileManager *soundFileManager,bool looped,bool selectionOnly)
 {
@@ -69,90 +189,6 @@ void stop(ASoundFileManager *soundFileManager)
 		Error(e.what());
 	}
 }
-
-/*
-// this below may ALL need to load the sound's size befor proceeding
-
-void seekBack(ASoundFileManager *soundFileManager,int distance)
-{
-	try
-	{
-		CLoadedSound *loaded=soundFileManager->getActive();
-		if(loaded!=NULL && loaded->channel->isPlaying())
-		{
-			CSoundPlayerChannel *channel=loaded->channel;
-			if((channel->getPosition()-distance)>=0)
-				channel->setPosition(channel->getPosition()-distance);
-			else
-				channel->setPosition(0);
-		}
-	}
-	catch(exception &e)
-	{
-		Error(e.what());
-	}
-}
-
-void seekForward(ASoundFileManager *soundFileManager,int distance)
-{
-	try
-	{
-		CLoadedSound *loaded=soundFileManager->getActive();
-		if(loaded!=NULL && loaded->channel->isPlaying())
-		{
-			CSoundPlayerChannel *channel=loaded->channel;
-			if(channel->getPosition()+distance<channel->sound->getLength())
-				channel->setPosition(channel->getPosition()+distance);
-			else
-				channel->setPosition(channel->sound->getLength()-1);
-		}
-	}
-	catch(exception &e)
-	{
-		Error(e.what());
-	}
-}
-
-void selectSeekBack(ASoundFileManager *soundFileManager,int distance)
-{
-	try
-	{
-		CLoadedSound *loaded=soundFileManager->getActive();
-		if(loaded!=NULL && loaded->channel->isPlaying())
-		{
-			CSoundPlayerChannel *channel=loaded->channel;
-			if((channel->getPosition()-distance)>=channel->getStartPosition())
-				channel->setPosition(channel->getPosition()-distance);
-			else
-				channel->setPosition(channel->getStartPosition());
-		}
-	}
-	catch(exception &e)
-	{
-		Error(e.what());
-	}
-}
-
-void selectSeekForward(ASoundFileManager *soundFileManager,int distance)
-{
-	try
-	{
-		CLoadedSound *loaded=soundFileManager->getActive();
-		if(loaded!=NULL && loaded->channel->isPlaying())
-		{
-			CSoundPlayerChannel *channel=loaded->channel;
-			if(channel->getPosition()+distance<channel->getStopPosition())
-				channel->setPosition(channel->getPosition()+distance);
-			else
-				channel->setPosition(channel->getStopPosition()-1);
-		}
-	}
-	catch(exception &e)
-	{
-		Error(e.what());
-	}
-}
-*/
 
 void jumpToBeginning(ASoundFileManager *soundFileManager)
 {
@@ -287,4 +323,62 @@ void jumpToNextCue(ASoundFileManager *soundFileManager)
 		Error(e.what());
 	}
 }
+
+
+ 
+
+
+
+// -----------------------------------------------------------------------------------
+// --- Undo Operations ---------------------------------------------------------------
+// -----------------------------------------------------------------------------------
+
+void undo(ASoundFileManager *soundFileManager)
+{
+	try
+	{
+		CLoadedSound *s=soundFileManager->getActive();
+		if(s!=NULL)
+		{
+			if(!s->actions.empty())
+			{
+				AAction *a=s->actions.top();
+				s->actions.pop();
+
+				a->undoAction(s->channel);
+				delete a; // ??? what ever final logic is implemented for undo, it should probably push it onto a redo stack
+				soundFileManager->updateAfterEdit();
+			}
+			else
+				gStatusComm->beep();
+		}
+		else
+			gStatusComm->beep();
+	}
+	catch(exception &e)
+	{
+		Error(e.what());
+	}
+}
+
+void clearUndoHistory(ASoundFileManager *soundFileManager)
+{
+	try
+	{
+		CLoadedSound *s=soundFileManager->getActive();
+		if(s!=NULL)
+		{
+			s->clearUndoHistory();
+			soundFileManager->updateAfterEdit();
+		}
+		else
+			gStatusComm->beep();
+	}
+	catch(exception &e)
+	{
+		Error(e.what());
+	}
+}
+
+
 

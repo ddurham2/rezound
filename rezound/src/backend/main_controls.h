@@ -24,13 +24,15 @@
 
 #include "../../config/common.h"
 
-// this file is used just for the front end to simply invoke a function and not worry about it succeding or not... 
+// this file is used just for the frontend to simply invoke a function and not worry about it succeeding or not... 
 // all exceptions will be popped up as error messages
 
 #include <string>
 
 class ASoundFileManager;
 
+
+// --- file operations ---
 void openSound(ASoundFileManager *soundFileManager,const string filename="");
 void newSound(ASoundFileManager *soundFileManager);
 void closeSound(ASoundFileManager *soundFileManager);
@@ -40,5 +42,25 @@ void revertSound(ASoundFileManager *soundFileManager);
 void recordSound(ASoundFileManager *soundFileManager);
 
 const bool exitReZound(ASoundFileManager *soundFileManager);
+
+
+
+// --- play control operations ---
+void play(ASoundFileManager *soundFileManager,bool looped,bool selectionOnly);
+void pause(ASoundFileManager *soundFileManager);
+void stop(ASoundFileManager *soundFileManager);
+
+void jumpToBeginning(ASoundFileManager *soundFileManager);
+void jumpToStartPosition(ASoundFileManager *soundFileManager);
+
+void jumpToPreviousCue(ASoundFileManager *soundFileManager);
+void jumpToNextCue(ASoundFileManager *soundFileManager);
+
+
+// --- undo operations ---
+
+void undo(ASoundFileManager *soundFileManager);
+void clearUndoHistory(ASoundFileManager *soundFileManager);
+
 
 #endif

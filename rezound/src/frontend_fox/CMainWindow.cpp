@@ -30,8 +30,7 @@
 
 #include "../images/images.h"
 
-#include "../backend/file.h"
-#include "../backend/playcontrols.h"
+#include "../backend/main_controls.h"
 
 #include "../backend/Effects/EffectActions.h"
 #include "../backend/Remaster/RemasterActions.h"
@@ -482,52 +481,13 @@ long CMainWindow::onRedrawButton(FXObject *sender,FXSelector sel,void *ptr)
 
 long CMainWindow::onUndoButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-	try
-	{
-		// ??? this code should actually be put in the backend if it isn't already there and become just a call to undo() in file.h
-		CLoadedSound *s=gSoundFileManager->getActive();
-		if(s!=NULL)
-		{
-			if(!s->actions.empty())
-			{
-				AAction *a=s->actions.top();
-				s->actions.pop();
-
-				a->undoAction(s->channel);
-				delete a; // ??? what ever final logic is implemented for undo, it should probably push it onto a redo stack
-				gSoundFileManager->updateAfterEdit();
-			}
-			else
-				gStatusComm->beep();
-		}
-		else
-			getApp()->beep();
-	}
-	catch(exception &e)
-	{
-		Error(e.what());
-	}
-	
+	undo(gSoundFileManager);
 	return(1);
 }
 
 long CMainWindow::onClearUndoHistoryButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-	try
-	{
-		CLoadedSound *s=gSoundFileManager->getActive();
-		if(s!=NULL)
-		{
-			s->clearUndoHistory();
-			gSoundFileManager->updateAfterEdit();
-		}
-		else
-			getApp()->beep();
-	}
-	catch(exception &e)
-	{
-		Error(e.what());
-	}
+	clearUndoHistory(gSoundFileManager);
 	return(1);
 }
 

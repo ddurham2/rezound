@@ -63,9 +63,8 @@ noinst_HEADERS= \
 	   CrezSoundTranslator.h \
 	   DSPBlocks.h \
 	   TSoundStretcher.h \
-	   file.h \
 	   initialize.h \
-	   playcontrols.h \
+	   main_actions.h \
 	   settings.h \
 	   unit_conv.h 
 	   
@@ -94,8 +93,7 @@ libbackend_la_SOURCES= \
 			COSSSoundRecorder.cpp \
 			CSoundPlayerChannel.cpp \
 			CTrigger.cpp \
-			file.cpp  \
-			playcontrols.cpp \
+			main_actions.cpp \
 		        settings.cpp \
 			ASoundTranslator.cpp \
 			CrezSoundTranslator.cpp \
