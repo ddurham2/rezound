@@ -96,6 +96,22 @@ bool ClameSoundTranslator::checkForLame()
 	return(gPathToLame!="");
 }
 
+/* translate \ to \\ and " to \" in the given filename */
+// ??? This would probably need to behave a little differently on WIN32 unless it can use " and \ in pathnames
+static const string fixEscapes(const string _filename)
+{
+	string filename=_filename;
+	for(size_t t=0;t<filename.size();t++)
+	{
+		if(filename[t]=='\\' || filename[t]=='"')
+		{
+			filename.insert(t,"\\");
+			t++;
+		}
+	}
+	return(filename);
+}
+
 	// ??? could just return a CSound object an have used the one constructor that takes the meta info
 	// ??? but, then how would I be able to have createWorkingPoolFileIfExists
 void ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) const
@@ -106,7 +122,7 @@ void ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 	if(!CPath(filename).exists())
 		throw(runtime_error(string(__func__)+" -- file not found, '"+filename+"'"));
 
-	const string cmdLine=gPathToLame+" --decode \""+filename+"\" -";
+	const string cmdLine=gPathToLame+" --decode \""+fixEscapes(filename)+"\" -";
 
 	fprintf(stderr,"lame command line: '%s'\n",cmdLine.c_str());
 
@@ -282,7 +298,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 
 	cmdLine+=" "+parameters.additionalFlags+" ";
 
-	cmdLine+=" - \""+filename+"\"";
+	cmdLine+=" - \""+fixEscapes(filename)+"\"";
 
 	fprintf(stderr,"lame command line: '%s'\n",cmdLine.c_str());
 

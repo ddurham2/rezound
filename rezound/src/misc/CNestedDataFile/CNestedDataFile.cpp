@@ -497,6 +497,21 @@ void CNestedDataFile::writeFile(const string filename) const
 	}
 }
 
+/* translate \ to \\ and " to \" in the given filename */
+static const string fixEscapes(const string _s)
+{
+	string s=_s;
+	for(size_t t=0;t<s.size();t++)
+	{
+		if(s[t]=='\\' || s[t]=='"')
+		{
+			s.insert(t,"\\");
+			t++;
+		}
+	}
+	return(s);
+}
+
 void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant) const
 {
 	FILE *f=(FILE *)_f; // to avoid including stdio.h in the .h file
@@ -519,7 +534,7 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant) 
 	switch(variant->type)
 	{
 	case ktString:
-		fprintf(f,"%s=\"%s\";\n",name.c_str(),variant->stringValue.c_str());
+		fprintf(f,"%s=\"%s\";\n",name.c_str(),fixEscapes(variant->stringValue).c_str());
 		break;
 
 	case ktFloat:
