@@ -47,10 +47,10 @@
 
 static int getUserNotesMiscType(int type)
 {
-	if(type==AF_FILE_AIFFC || type==AF_FILE_AIFF)
-		return(AF_MISC_ANNO);
-	else if(type==AF_FILE_WAVE)
+	if(type==AF_FILE_WAVE)
 		return(AF_MISC_ICMT);
+	else if(type==AF_FILE_AIFFC || type==AF_FILE_AIFF)
+		return(AF_MISC_ANNO);
 
 	return(0);
 }
@@ -260,8 +260,6 @@ void ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 			delete accessers[t];
 		throw;
 	}
-
-	sound->setIsModified(false);
 }
 
 void ClibaudiofileSoundTranslator::onSaveSound(const string filename,CSound *sound) const
@@ -269,10 +267,10 @@ void ClibaudiofileSoundTranslator::onSaveSound(const string filename,CSound *sou
 	int fileType;
 
 	const string extension=istring(CPath(filename).extension()).lower();
-	if(extension=="aiff")
-		fileType=AF_FILE_AIFF;
-	else if(extension=="wav")
+	if(extension=="wav")
 		fileType=AF_FILE_WAVE;
+	else if(extension=="aiff")
+		fileType=AF_FILE_AIFF;
 	else if(extension=="snd" || extension=="au")
 		fileType=AF_FILE_NEXTSND;
 	else if(extension=="sf")
@@ -495,8 +493,8 @@ const vector<string> ClibaudiofileSoundTranslator::getFormatNames() const
 {
 	vector<string> names;
 
-	names.push_back("AIFF");
 	names.push_back("Wave/RIFF");
+	names.push_back("AIFF");
 	names.push_back("NeXT/Sun");
 	names.push_back("Berkeley/IRCAM/CARL");
 
@@ -509,11 +507,11 @@ const vector<vector<string> > ClibaudiofileSoundTranslator::getFormatExtensions(
 	vector<string> extensions;
 
 	extensions.clear();
-	extensions.push_back("aiff");
+	extensions.push_back("wav");
 	list.push_back(extensions);
 
 	extensions.clear();
-	extensions.push_back("wav");
+	extensions.push_back("aiff");
 	list.push_back(extensions);
 
 	extensions.clear();

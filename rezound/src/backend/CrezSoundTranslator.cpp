@@ -202,8 +202,6 @@ void CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 			throw(runtime_error(string(__func__)+" -- unhandled format conversion while loading"));
 	}
 
-
-	sound->setIsModified(false);
 	loadFromFile.closeFile(false,false);
 }
 

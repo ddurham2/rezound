@@ -347,6 +347,7 @@ protected:
 
 private:
 
+	friend class ASoundTranslator; // so it can verify some things
 	friend class CrezSoundTranslator;
 	friend class ASoundRecorder; // so it can backupSAT() on the pool file when recording is done
 

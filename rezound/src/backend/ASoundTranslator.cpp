@@ -41,7 +41,14 @@ void ASoundTranslator::loadSound(const string filename,CSound *sound) const
 	{
 		// use working file if it exists
 		if(!sound->createFromWorkingPoolFileIfExists(filename))
+		{
 			onLoadSound(filename,sound);
+			sound->setIsModified(false);
+		}
+
+		// ??? could check various other things
+		if(!sound->poolFile->isOpen())
+			throw(runtime_error(string(__func__)+" -- internal error -- no pool file was open after loading file"));
 
 		sound->unlockForResize();
 	}

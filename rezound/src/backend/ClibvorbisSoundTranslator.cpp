@@ -299,8 +299,6 @@ void ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 	}
 
 	ov_clear(&vf); // closes file too
-
-	sound->setIsModified(false);
 #else
 	throw(runtime_error(string(__func__)+" -- loading Ogg Vorbis is not enabled -- missing libvorbisfile"));
 #endif
