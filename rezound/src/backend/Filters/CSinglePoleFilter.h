@@ -40,7 +40,7 @@ public:
 		ftNotch // aka band-reject
 	};
 
-	CSinglePoleFilter(const CActionSound &actionSound,FilterTypes filterType,float frequency,float bandwidth=0.0);
+	CSinglePoleFilter(const CActionSound &actionSound,FilterTypes filterType,float gain,float frequency,float bandwidth=0.0);
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
@@ -49,6 +49,7 @@ protected:
 
 private:
 	const FilterTypes filterType;
+	const float gain;
 	const float frequency; // cut-off frequency or band frequency
 	const float bandwidth; // only applies to bandpass and notch
 

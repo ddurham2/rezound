@@ -27,12 +27,15 @@
 static const double interpretValue_filter(const double x,const int s) { return(x*s); }
 static const double uninterpretValue_filter(const double x,const int s) { return(x/s); }
 
+static const double interpretValue_gain(const double x,const int s) { return(unitRange_to_bipolarRange_exp(x,s)); }
+static const double uninterpretValue_gain(const double x,const int s) { return(bipolarRange_to_unitRange_exp(x,s)); }
 
 // --- single pole lowpass ---------------
 
 CSinglePoleLowpassFilterDialog::CSinglePoleLowpassFilterDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Single Pole Lowpass Filter")
 {
+	addSlider("Gain","x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
 	addSlider("Cutoff Frequency","Hz",interpretValue_filter,uninterpretValue_filter,NULL,500.0,5,100000,5000,false);
 }
 
@@ -41,6 +44,7 @@ CSinglePoleLowpassFilterDialog::CSinglePoleLowpassFilterDialog(FXWindow *mainWin
 CSinglePoleHighpassFilterDialog::CSinglePoleHighpassFilterDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Single Pole Highpass Filter")
 {
+	addSlider("Gain","x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
 	addSlider("Cutoff Frequency","Hz",interpretValue_filter,uninterpretValue_filter,NULL,1000.0,5,100000,10000,false);
 }
 
@@ -49,6 +53,7 @@ CSinglePoleHighpassFilterDialog::CSinglePoleHighpassFilterDialog(FXWindow *mainW
 CBandpassFilterDialog::CBandpassFilterDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Bandpass Filter")
 {
+	addSlider("Gain","x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
 	addSlider("Cutoff Frequency","Hz",interpretValue_filter,uninterpretValue_filter,NULL,1000.0,5,100000,10000,false);
 	addSlider("Band Width","Hz",interpretValue_filter,uninterpretValue_filter,NULL,500.0,5,100000,1000,false);
 }
@@ -58,6 +63,7 @@ CBandpassFilterDialog::CBandpassFilterDialog(FXWindow *mainWindow) :
 CNotchFilterDialog::CNotchFilterDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Notch Filter")
 {
+	addSlider("Gain","x",interpretValue_gain,uninterpretValue_gain,NULL,1.0,2,50,2,true);
 	addSlider("Cutoff Frequency","Hz",interpretValue_filter,uninterpretValue_filter,NULL,1000.0,5,100000,10000,false);
 	addSlider("Band Width","Hz",interpretValue_filter,uninterpretValue_filter,NULL,500.0,5,100000,1000,false);
 }

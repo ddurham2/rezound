@@ -27,9 +27,10 @@
 
 #include "../DSPBlocks.h"
 
-CSinglePoleFilter::CSinglePoleFilter(const CActionSound &actionSound,FilterTypes _filterType,float _frequency,float _bandwidth) :
+CSinglePoleFilter::CSinglePoleFilter(const CActionSound &actionSound,FilterTypes _filterType,float _gain,float _frequency,float _bandwidth) :
 	AAction(actionSound),
 	filterType(_filterType),
+	gain(_gain),
 	frequency(_frequency),
 	bandwidth(_bandwidth)
 {
@@ -51,6 +52,7 @@ bool CSinglePoleFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
 			sample_pos_t srcOffset=prepareForUndo ? start : 0;
+			const register float gain=this->gain;
 
 			switch(filterType)
 			{
@@ -60,7 +62,7 @@ bool CSinglePoleFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 				TDSPSinglePoleLowpassFilter<mix_sample_t> filter(freq_to_fraction(frequency,actionSound.sound->getSampleRate()));
 				for(sample_pos_t t=start;t<=stop;t++)
 				{
-					dest[t]=filter.processSample(src[t-srcOffset]);
+					dest[t]=ClipSample(filter.processSample((mix_sample_t)(gain*src[t-srcOffset])));
 					UPDATE_PROGRESS_BAR(t);
 				}
 				END_PROGRESS_BAR();
@@ -73,7 +75,7 @@ bool CSinglePoleFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 				TDSPSinglePoleHighpassFilter<mix_sample_t> filter(freq_to_fraction(frequency,actionSound.sound->getSampleRate()));
 				for(sample_pos_t t=start;t<=stop;t++)
 				{
-					dest[t]=filter.processSample(src[t-srcOffset]);
+					dest[t]=ClipSample(filter.processSample((mix_sample_t)(gain*src[t-srcOffset])));
 					UPDATE_PROGRESS_BAR(t);
 				}
 				END_PROGRESS_BAR();
@@ -86,7 +88,7 @@ bool CSinglePoleFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 				TDSPBandpassFilter<mix_sample_t> filter(freq_to_fraction(frequency,actionSound.sound->getSampleRate()),freq_to_fraction(bandwidth,actionSound.sound->getSampleRate()));
 				for(sample_pos_t t=start;t<=stop;t++)
 				{
-					dest[t]=filter.processSample(src[t-srcOffset]);
+					dest[t]=ClipSample(filter.processSample((mix_sample_t)(gain*src[t-srcOffset])));
 					UPDATE_PROGRESS_BAR(t);
 				}
 				END_PROGRESS_BAR();
@@ -99,7 +101,7 @@ bool CSinglePoleFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 				TDSPNotchFilter<mix_sample_t> filter(freq_to_fraction(frequency,actionSound.sound->getSampleRate()),freq_to_fraction(bandwidth,actionSound.sound->getSampleRate()));
 				for(sample_pos_t t=start;t<=stop;t++)
 				{
-					dest[t]=filter.processSample(src[t-srcOffset]);
+					dest[t]=ClipSample(filter.processSample((mix_sample_t)(gain*src[t-srcOffset])));
 					UPDATE_PROGRESS_BAR(t);
 				}
 				END_PROGRESS_BAR();
@@ -139,7 +141,7 @@ CSinglePoleLowpassFilterFactory::CSinglePoleLowpassFilterFactory(AActionDialog *
 
 CSinglePoleFilter *CSinglePoleLowpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CSinglePoleFilter(actionSound,CSinglePoleFilter::ftLowpass,(float)actionParameters->getDoubleParameter(0)));
+	return(new CSinglePoleFilter(actionSound,CSinglePoleFilter::ftLowpass,(float)actionParameters->getDoubleParameter(0),(float)actionParameters->getDoubleParameter(1)));
 }
 
 
@@ -150,7 +152,7 @@ CSinglePoleHighpassFilterFactory::CSinglePoleHighpassFilterFactory(AActionDialog
 
 CSinglePoleFilter *CSinglePoleHighpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CSinglePoleFilter(actionSound,CSinglePoleFilter::ftHighpass,(float)actionParameters->getDoubleParameter(0)));
+	return(new CSinglePoleFilter(actionSound,CSinglePoleFilter::ftHighpass,(float)actionParameters->getDoubleParameter(0),(float)actionParameters->getDoubleParameter(1)));
 }
 
 
@@ -161,7 +163,7 @@ CBandpassFilterFactory::CBandpassFilterFactory(AActionDialog *channelSelectDialo
 
 CSinglePoleFilter *CBandpassFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CSinglePoleFilter(actionSound,CSinglePoleFilter::ftBandpass,(float)actionParameters->getDoubleParameter(0),(float)actionParameters->getDoubleParameter(1)));
+	return(new CSinglePoleFilter(actionSound,CSinglePoleFilter::ftBandpass,(float)actionParameters->getDoubleParameter(0),(float)actionParameters->getDoubleParameter(1),(float)actionParameters->getDoubleParameter(2)));
 }
 
 
@@ -172,7 +174,7 @@ CNotchFilterFactory::CNotchFilterFactory(AActionDialog *channelSelectDialog,AAct
 
 CSinglePoleFilter *CNotchFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CSinglePoleFilter(actionSound,CSinglePoleFilter::ftNotch,(float)actionParameters->getDoubleParameter(0),(float)actionParameters->getDoubleParameter(1)));
+	return(new CSinglePoleFilter(actionSound,CSinglePoleFilter::ftNotch,(float)actionParameters->getDoubleParameter(0),(float)actionParameters->getDoubleParameter(1),(float)actionParameters->getDoubleParameter(2)));
 }
 
 
