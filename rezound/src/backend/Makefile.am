@@ -88,6 +88,7 @@ libbackend_la_SOURCES= \
 			ASoundPlayer.cpp  \
 			ASoundRecorder.cpp \
 			AStatusComm.cpp \
+	   		ALFO.cpp \
 			ASoundClipboard.cpp \
 			CNativeSoundClipboard.cpp \
 			CRecordSoundClipboard.cpp \
