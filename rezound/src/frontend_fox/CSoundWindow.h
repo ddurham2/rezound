@@ -82,6 +82,8 @@ public:
 
 		ID_ACTIVE_TOGGLE_BUTTON,
 
+		ID_REDRAW_BUTTON,
+
 		ID_LAST
 	};
 
@@ -117,6 +119,8 @@ public:
 
 
 	long onBothZoomDialMinusIndClick(FXObject *sender,FXSelector sel,void *ptr);
+
+	long onRedrawButton(FXObject *sender,FXSelector sel,void *ptr);
 
 	// selection position spinner handlers
 	long onSelectStartSpinnerChange(FXObject *sender,FXSelector sel,void *ptr);

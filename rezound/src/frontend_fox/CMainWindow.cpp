@@ -104,8 +104,6 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CENTER_START_POS,		CMainWindow::onViewKey),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CENTER_STOP_POS,		CMainWindow::onViewKey),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REDRAW_BUTTON,			CMainWindow::onRedrawButton),
-
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_NOTES_MENUITEM,			CMainWindow::onUserNotesButton),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_UNDO_MENUITEM,			CMainWindow::onUndoButton),
@@ -166,8 +164,6 @@ CMainWindow::CMainWindow(FXApp* a) :
 	// build miscellaneous buttons
 	FXPacker *miscControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 3,2);
 		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
-				// ??? move this to a "View" dropdown menu except I can't think of anything else to go under view right now
-		new FXButton(miscControlsFrame,"&Redraw",NULL,this,ID_REDRAW_BUTTON,FRAME_RAISED);
 		followPlayPositionButton=new FXCheckButton(miscControlsFrame,"Follow Play Position",this,ID_FOLLOW_PLAY_POSITION_BUTTON);
 		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
 			//new FXLabel(t,"Crossfade Edges: ");
@@ -509,21 +505,6 @@ long CMainWindow::onPlayControlButton(FXObject *sender,FXSelector sel,void *ptr)
 		throw(runtime_error(string(__func__)+" -- unhandled play button selector"));
 	}
 	return 1;
-}
-
-long CMainWindow::onRedrawButton(FXObject *sender,FXSelector sel,void *ptr)
-{
-	CLoadedSound *s=gSoundFileManager->getActive();
-	if(s!=NULL)
-	{
-		for(unsigned t=0;t<s->getSound()->getChannelCount();t++)
-			s->getSound()->invalidateAllPeakData();
-		gSoundFileManager->updateAfterEdit();
-	}
-	else
-		getApp()->beep();
-	
-	return(1);
 }
 
 long CMainWindow::onUserNotesButton(FXObject *sender,FXSelector sel,void *ptr)

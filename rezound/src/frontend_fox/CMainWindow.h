@@ -56,8 +56,6 @@ public:
 	// play control events
 	long onPlayControlButton(FXObject *sender,FXSelector sel,void *ptr);
 
-	long onRedrawButton(FXObject *sender,FXSelector sel,void *ptr);
-
 	long onUserNotesButton(FXObject *sender,FXSelector sel,void *ptr);
 
 	long onUndoButton(FXObject *sender,FXSelector sel,void *ptr);
@@ -116,8 +114,6 @@ public:
 
 		ID_CENTER_START_POS,
 		ID_CENTER_STOP_POS,
-
-		ID_REDRAW_BUTTON,
 
 		ID_NOTES_MENUITEM,
 

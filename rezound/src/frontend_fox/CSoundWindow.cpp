@@ -79,6 +79,8 @@ FXDEFMAP(CSoundWindow) CSoundWindowMap[]=
 
 	FXMAPFUNC(SEL_COMMAND,			CSoundWindow::ID_BOTH_ZOOM_DIAL_MINUS,		CSoundWindow::onBothZoomDialMinusIndClick),
 
+	FXMAPFUNC(SEL_COMMAND,			CSoundWindow::ID_REDRAW_BUTTON,			CSoundWindow::onRedrawButton),
+
 		// timer event to draw the play status position
 	FXMAPFUNC(SEL_TIMEOUT,			CSoundWindow::ID_DRAW_PLAY_POSITION,		CSoundWindow::onDrawPlayPosition),
 
@@ -136,7 +138,7 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 	statusPanel(new FXHorizontalFrame(this,FRAME_RIDGE | LAYOUT_SIDE_BOTTOM | LAYOUT_FILL_X, 0,0,0,0, 2,2,3,3, 1,0)),
 
 	waveViewPanel(new FXPacker(this,FRAME_RIDGE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
-		horzZoomPanel(new FXPacker(waveViewPanel,LAYOUT_SIDE_BOTTOM | FRAME_NONE | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0,0,0,20, 2,2,2,2, 2,2)),
+		horzZoomPanel(new FXPacker(waveViewPanel,LAYOUT_SIDE_BOTTOM | FRAME_NONE | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT, 0,0,0,22, 2,2,2,2, 2,2)),
 			horzZoomMinusInd(new FXButton(horzZoomPanel," - \tZoom Out Full",NULL,this,ID_HORZ_ZOOM_DIAL_MINUS,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
 			horzZoomDial(new FXDial(horzZoomPanel,this,ID_HORZ_ZOOM_DIAL,LAYOUT_SIDE_LEFT | DIAL_HORIZONTAL|DIAL_HAS_NOTCH | LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH, 0,0,150,0, 0,0,0,0)),
 			horzZoomPlusInd(new FXButton(horzZoomPanel," + \tZoom In Full",NULL,this,ID_HORZ_ZOOM_DIAL_PLUS,FRAME_RAISED | LAYOUT_SIDE_LEFT | LAYOUT_FILL_Y)),
@@ -162,6 +164,8 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 {
 	delete getAccelTable(); // delete the existing one to setup a new one
 	setAccelTable(mainWindow->getAccelTable());
+
+	new FXButton(horzZoomPanel,"Redraw",NULL,this,ID_REDRAW_BUTTON,FRAME_RAISED | LAYOUT_SIDE_RIGHT | LAYOUT_FILL_Y);
 
 	waveView->setTarget(this);
 	waveView->setSelector(ID_WAVEVIEW);
@@ -370,6 +374,7 @@ void CSoundWindow::drawPlayPosition(bool justErasing)
 
 void CSoundWindow::updateFromEdit()
 {
+	setTitle(loadedSound->getFilename().c_str()); // incase the filename changed
 	waveView->updateFromEdit();
 	onHorzZoomDialChange(NULL,0,NULL);
 	updateAllStatusInfo();
@@ -700,6 +705,13 @@ long CSoundWindow::onBothZoomDialMinusIndClick(FXObject *sender,FXSelector sel,v
 	onVertZoomDialChange(NULL,0,NULL);
 
 	waveView->redraw();
+	return 1;
+}
+
+long CSoundWindow::onRedrawButton(FXObject *sender,FXSelector sel,void *ptr)
+{
+	loadedSound->getSound()->invalidateAllPeakData();
+	updateFromEdit(); // to cause everything to redraw even if not necessary
 	return 1;
 }
 
