@@ -68,6 +68,11 @@ void CFrontendHooks::doSetupAfterBackendIsSetup()
 	openDialog->setCurrentPattern(0);
 	openDialog->showReadOnly(false); // would be true if I supported it
 	openDialog->setReadOnly(false);
+	{ // add the "Open as Raw" check button
+		FXVerticalFrame *f=new FXVerticalFrame(openDialog,LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 0,0,0,0, 0,0);
+		openDialog->childAtIndex(0)->reparent(f);
+		openAsRawCheckButton=new FXCheckButton(new FXPacker(f,0, 0,0,0,0, DEFAULT_SPACING*2,0,0),"Open as Raw",NULL,0,CHECKBUTTON_NORMAL);
+	}
 	if(openDialog->getDirectory()!=gPromptDialogDirectory.c_str())
 		openDialog->setDirectory(gPromptDialogDirectory.c_str());
 
@@ -76,6 +81,11 @@ void CFrontendHooks::doSetupAfterBackendIsSetup()
 	saveDialog->setPatternList(getFOXFileTypes().c_str());
 	saveDialog->setCurrentPattern(0);
 	saveDialog->setDirectory(gPromptDialogDirectory.c_str());
+	{ // add the "Save as Raw" check button
+		FXVerticalFrame *f=new FXVerticalFrame(saveDialog,LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 0,0,0,0, 0,0);
+		saveDialog->childAtIndex(0)->reparent(f);
+		saveAsRawCheckButton=new FXCheckButton(new FXPacker(f,0, 0,0,0,0, DEFAULT_SPACING*2,0,0),"Save as Raw",NULL,0,CHECKBUTTON_NORMAL);
+	}
 
 	newSoundDialog=new CNewSoundDialog(mainWindow);
 	recordDialog=new CRecordDialog(mainWindow);
@@ -141,12 +151,13 @@ const string CFrontendHooks::getFOXFileTypes() const
 	return(types);
 }
 
-bool CFrontendHooks::promptForOpenSoundFilename(string &filename,bool &readOnly)
+bool CFrontendHooks::promptForOpenSoundFilename(string &filename,bool &readOnly,bool &openAsRaw)
 {
 	openDialog->setFilename("");
 	if(openDialog->getDirectory()!=gPromptDialogDirectory.c_str())
 		openDialog->setDirectory(gPromptDialogDirectory.c_str());
 	openDialog->setSelectMode(SELECTFILE_EXISTING);
+	openAsRawCheckButton->setCheck(openAsRaw);
 	if(openDialog->execute())
 	{
 		// save directory to open the opendialog to next time
@@ -154,18 +165,20 @@ bool CFrontendHooks::promptForOpenSoundFilename(string &filename,bool &readOnly)
 
 		filename=openDialog->getFilename().text();
 		readOnly=openDialog->getReadOnly();
+		openAsRaw=openAsRawCheckButton->getCheck();
 
 		return(true);
 	}
 	return(false);
 }
 
-bool CFrontendHooks::promptForOpenSoundFilenames(vector<string> &filenames,bool &readOnly)
+bool CFrontendHooks::promptForOpenSoundFilenames(vector<string> &filenames,bool &readOnly,bool &openAsRaw)
 {
 	openDialog->setFilename("");
 	if(openDialog->getDirectory()!=gPromptDialogDirectory.c_str())
 		openDialog->setDirectory(gPromptDialogDirectory.c_str());
 	openDialog->setSelectMode(SELECTFILE_MULTIPLE);
+	openAsRawCheckButton->setCheck(openAsRaw);
 	if(openDialog->execute())
 	{
 		// save directory to open the opendialog to next time
@@ -179,25 +192,28 @@ bool CFrontendHooks::promptForOpenSoundFilenames(vector<string> &filenames,bool 
 			_filenames++;
 		}
 		readOnly=openDialog->getReadOnly();
+		openAsRaw=openAsRawCheckButton->getCheck();
 
 		return(true);
 	}
 	return(false);
 }
 
-bool CFrontendHooks::promptForSaveSoundFilename(string &filename)
+bool CFrontendHooks::promptForSaveSoundFilename(string &filename,bool &saveAsRaw)
 {
 	if(filename!="")
 	{
 		saveDialog->setFilename(CPath(filename).baseName().c_str());
 		saveDialog->setDirectory(gPromptDialogDirectory.c_str());
 	}
+	saveAsRawCheckButton->setCheck(saveAsRaw);
 
 	if(saveDialog->execute())
 	{
 		gPromptDialogDirectory=saveDialog->getDirectory().text();
 
 		filename=saveDialog->getFilename().text();
+		saveAsRaw=saveAsRawCheckButton->getCheck();
 
 		return(true);
 	}

@@ -46,7 +46,7 @@ public:
 	virtual ~ASoundFileManager() { }
 
 	void createNew();
-	void open(const string filename="",bool asRaw=false);
+	void open(const string filename="",bool openAsRaw=false);
 	// ??? should rename these to, saveActive... 
 	void save();
 	void saveAs();

@@ -30,8 +30,9 @@
 	class FXWindow;
 	class FXFileDialog;
 	class FXDirDialog;
+	class FXCheckButton;
 #else
-	namespace FX { class FXWindow; class FXFileDialog; class FXDirDialog; }
+	namespace FX { class FXWindow; class FXFileDialog; class FXDirDialog; class FXCheckButton; }
 	using namespace FX;
 #endif
 
@@ -51,9 +52,9 @@ public:
 
 	const string getFOXFileTypes() const; // returns a string to pass as the file types drop-down in FOX file dialogs
 
-	bool promptForOpenSoundFilename(string &filename,bool &readOnly);
-	bool promptForOpenSoundFilenames(vector<string> &filenames,bool &readOnly);
-	bool promptForSaveSoundFilename(string &filename);
+	bool promptForOpenSoundFilename(string &filename,bool &readOnly,bool &openAsRaw);
+	bool promptForOpenSoundFilenames(vector<string> &filenames,bool &readOnly,bool &openAsRaw);
+	bool promptForSaveSoundFilename(string &filename,bool &saveAsRaw);
 
 	bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length);
 	bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate);
@@ -71,7 +72,9 @@ private:
 	FXWindow *mainWindow;
 
 	FXFileDialog *openDialog;
+		FXCheckButton *openAsRawCheckButton;
 	FXFileDialog *saveDialog;
+		FXCheckButton *saveAsRawCheckButton;
 	FXDirDialog *dirDialog;
 
 	CNewSoundDialog *newSoundDialog;

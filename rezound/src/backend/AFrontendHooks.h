@@ -42,11 +42,11 @@ public:
 	virtual ~AFrontendHooks() { }
 
 	// prompt with an open file dialog (return false if the prompt was cancelled)
-	virtual bool promptForOpenSoundFilename(string &filename,bool &readOnly)=0;
-	virtual bool promptForOpenSoundFilenames(vector<string> &filenames,bool &readOnly)=0;
+	virtual bool promptForOpenSoundFilename(string &filename,bool &readOnly,bool &openAsRaw)=0;
+	virtual bool promptForOpenSoundFilenames(vector<string> &filenames,bool &readOnly,bool &openAsRaw)=0;
 
 	// prompt with a save file dialog (return false if the prompt was cancelled)
-	virtual bool promptForSaveSoundFilename(string &filename)=0;
+	virtual bool promptForSaveSoundFilename(string &filename,bool &saveAsRaw)=0;
 
 	// prompt for a new sound to be created asking for the given parameters (return false if the prompt was cancelled)
 	virtual bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length)=0;

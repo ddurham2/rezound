@@ -97,14 +97,14 @@ CLoadedSound *ASoundFileManager::prvCreateNew(bool askForLength)
 	return(NULL);
 }
 
-void ASoundFileManager::open(const string _filename,bool asRaw)
+void ASoundFileManager::open(const string _filename,bool openAsRaw)
 {
 	vector<string> filenames;
 	string filename=_filename;
 	bool readOnly=false;
 	if(filename=="")
 	{
-		if(!gFrontendHooks->promptForOpenSoundFilenames(filenames,readOnly))
+		if(!gFrontendHooks->promptForOpenSoundFilenames(filenames,readOnly,openAsRaw))
 			return;
 	}
 	else
@@ -114,7 +114,7 @@ void ASoundFileManager::open(const string _filename,bool asRaw)
 	{
 		try
 		{
-			prvOpen(filenames[t],readOnly,true,asRaw);
+			prvOpen(filenames[t],readOnly,true,openAsRaw);
 			updateReopenHistory(filenames[t]);
 		}
 		catch(runtime_error &e)
@@ -225,8 +225,9 @@ void ASoundFileManager::saveAs()
 	if(loaded)
 	{
 		string filename=loaded->getFilename();
+		bool saveAsRaw=false;
 askAgain:
-		if(!gFrontendHooks->promptForSaveSoundFilename(filename))
+		if(!gFrontendHooks->promptForSaveSoundFilename(filename,saveAsRaw))
 			return;
 
 		if(loaded->getFilename()==filename)
@@ -244,7 +245,7 @@ askAgain:
 				goto askAgain;
 		}
 
-		const ASoundTranslator *translator=getTranslator(filename,/*isRaw*/false);
+		const ASoundTranslator *translator=getTranslator(filename,saveAsRaw);
 
 		if(translator->saveSound(filename,loaded->sound))
 		{
