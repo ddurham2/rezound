@@ -40,7 +40,7 @@ FXIMPLEMENT(CAboutDialog,FXDialogBox,CAboutDialogMap,ARRAYNUMBER(CAboutDialogMap
 // ----------------------------------------
 
 CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
-	FXDialogBox(mainWindow,_("About ReZound"),DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE,0,0,620,452, 0,0,0,0, 0,0)
+	FXDialogBox(mainWindow,_("About ReZound"),DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE,0,0,640,452, 0,0,0,0, 0,0)
 {
 	FXPacker *contents=new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 2,2,2,2, 0,0);
 
@@ -93,7 +93,8 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 		FXMatrix *t=new FXMatrix(tabs,2,MATRIX_BY_COLUMNS | LAYOUT_FILL_X | FRAME_RAISED|FRAME_THICK);
 
 		MAKE_TEXT(t,_("Author"),"Davy Durham, ddurham@users.sourceforge.net");
-		MAKE_TEXT(t,"Autoconfiscator","Anthony Ventimiglia");
+		MAKE_TEXT(t,_("Original Autoconfiscation"),"Anthony Ventimiglia");
+		MAKE_TEXT(t,_("Additional Programming"),"Marc Brevoort");
 		MAKE_TEXT(t,_("Artistic Consultant"),"Will Jayroe");
 		MAKE_LINK(t,_("Home Page"),"http://rezound.sourceforge.net");
 		MAKE_LINK(t,_("Mailing List"),"http://lists.sourceforge.net/lists/listinfo/rezound-users");
