@@ -561,7 +561,7 @@ void CMainWindow::createMenus()
 		new CActionMenuCommand(new CTestEffectFactory(gChannelSelectDialog),menu,"");
 
 	menu=new FXMenuPane(this);
-	new FXMenuTitle(menubar,"&F&ilters",NULL,menu);
+	new FXMenuTitle(menubar,"F&ilters",NULL,menu);
 		new CActionMenuCommand(new CConvolutionFilterFactory(gChannelSelectDialog,new CConvolutionFilterDialog(this)),menu,"");
 
 		new FXMenuSeparator(menu);
