@@ -1163,6 +1163,9 @@ void CMetersWindow::setSoundPlayer(ASoundPlayer *_soundPlayer)
 {
 	if(soundPlayer!=NULL)
 		throw runtime_error(string(__func__)+" -- internal error -- sound player already set -- perhaps I need to allow this");
+	if(_soundPlayer==NULL)
+		return;
+
 	soundPlayer=_soundPlayer;
 
 	for(size_t t=0;t<soundPlayer->devices[0].channelCount;t++)
