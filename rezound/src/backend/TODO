@@ -98,6 +98,11 @@
 		- I did this, and the inlined function is just as good as the macro, but it won't get inlined unless -O1 is given
 		- -O1 does make ReZound run much faster but takes a LONG time to compile and I haven't tested it to know that it doesn't introduce bugs
 
+	- evenutually I should have a fage that runs in the back ground... or perhaps do it ever so often on frontend calls to AAction that it determines the fragmentation level and calls defrag about a certain level
+		- it's really not necessary unless I think that the fragmentation is really going to affect performance
+		- the fragmentation level should probably be calculated as a ratio of the number of logical blocks that a perfectly defragged pool would take to the number of logical blocks that it is taking.. and it might be good to take into accound how long it's going to take to defrag based on the amount of the data that will have to be copied
+		
+
 
 
 
