@@ -62,9 +62,9 @@ template<class pool_element_t,class pool_file_t> class TStaticPoolAccesser;
 template<class _l_addr_t,class _p_addr_t> class TPoolFile
 {
 public:
-	typedef _l_addr_t l_addr_t;
-	typedef _p_addr_t p_addr_t;
-	typedef size_t alignment_t;
+	typedef _l_addr_t l_addr_t;	// is written to file
+	typedef _p_addr_t p_addr_t;	// is written to file
+	typedef uint32_t alignment_t;	// is written to file
 	typedef size_t poolId_t;
 
 
