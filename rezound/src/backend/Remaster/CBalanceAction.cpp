@@ -192,7 +192,7 @@ Strict Balance: -100% means normal A and no B, 0 means normal A and normal B, 10
 // ---------------------------------------------
 
 CSimpleBalanceActionFactory::CSimpleBalanceActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory(_("Balance"),"",channelSelectDialog,dialog)
+	AActionFactory(N_("Balance"),"",channelSelectDialog,dialog)
 {
 }
 
@@ -214,7 +214,7 @@ CBalanceAction *CSimpleBalanceActionFactory::manufactureAction(const CActionSoun
 // ---------------------------------------------
 
 CCurvedBalanceActionFactory::CCurvedBalanceActionFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory(_("Curved Balance"),"",channelSelectDialog,dialog)
+	AActionFactory(N_("Curved Balance"),"",channelSelectDialog,dialog)
 {
 }
 
