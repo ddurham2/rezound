@@ -38,8 +38,6 @@
 		- the backend already supports this (although it hasn't been tested yet since there's been no frontend means)
 		- when an action is done after undo is disabled, I must clear all previous undo history
 
-	- move the undo button to the edit tool bar
-
 	- supply icons for all the windows
 		- just new FXIcon(...) instead of passing NULL
 		- Will is supposedly doing this
@@ -191,4 +189,6 @@
 	- inquire to jeroen if FXLabel could become an FXComposite so that the label would go beside, above, below, etc, whatever any child objects there were
 		- then I could go thru all the code and anywhere that I declare an FXComposite then put a widget and a lable beside it it could change that to something simpler
 		--> - actually.. I could myself derive from FXLabel and do this, except that label is not derived from composite
+
+	- move the undo button to the edit tool bar
 
