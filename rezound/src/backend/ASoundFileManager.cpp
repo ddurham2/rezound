@@ -219,45 +219,63 @@ void ASoundFileManager::save()
 	}
 }
 
+
 void ASoundFileManager::saveAs()
 {
 	CLoadedSound *loaded=getActive();
 	if(loaded)
 	{
 		string filename=loaded->getFilename();
-		bool saveAsRaw=false;
 askAgain:
+		bool saveAsRaw=false;
 		if(!gFrontendHooks->promptForSaveSoundFilename(filename,saveAsRaw))
 			return;
 
-		if(loaded->getFilename()==filename)
-		{ // the user chose the same name
+		bool reregisterFilenameOnError=false;
+		if(loaded->getFilename()==filename && compareBool(loaded->translator->handlesRaw(),saveAsRaw))
+		{ // the user chose the same name (and didn't change whether to save as raw or not)
 			save();
 			return;
+		}
+		else if(loaded->getFilename()==filename && !compareBool(loaded->translator->handlesRaw(),saveAsRaw))
+		{ // same name, but now saving as raw
+			unregisterFilename(loaded->getFilename());
+			reregisterFilenameOnError=true;
 		}
 
 		if(isFilenameRegistered(filename))
 			throw(runtime_error(string(__func__)+" -- file is currently opened: '"+filename+"'"));
 
-		if(CPath(filename).exists())
+		try
 		{
-			if(Question("Overwrite Existing File:\n"+filename,yesnoQues)!=yesAns)
-				goto askAgain;
+			if(CPath(filename).exists())
+			{
+				if(Question("Overwrite Existing File:\n"+filename,yesnoQues)!=yesAns)
+				{
+					registerFilename(filename);
+					goto askAgain;
+				}
+			}
+
+			const ASoundTranslator *translator=getTranslator(filename,saveAsRaw);
+
+			if(translator->saveSound(filename,loaded->sound))
+			{
+				loaded->translator=translator; // make save use this translator next time
+
+				unregisterFilename(loaded->getFilename());
+				loaded->changeFilename(filename);
+				registerFilename(filename);
+
+				loaded->sound->setIsModified(false);
+				updateAfterEdit();
+				updateReopenHistory(filename);
+			}
 		}
-
-		const ASoundTranslator *translator=getTranslator(filename,saveAsRaw);
-
-		if(translator->saveSound(filename,loaded->sound))
+		catch(...)
 		{
-			loaded->translator=translator; // make save use this translator next time
-
-			unregisterFilename(loaded->getFilename());
-			loaded->changeFilename(filename);
 			registerFilename(filename);
-
-			loaded->sound->setIsModified(false);
-			updateAfterEdit();
-			updateReopenHistory(filename);
+			throw;
 		}
 	}
 }
