@@ -170,6 +170,13 @@ template<class l_addr_t,class p_addr_t>
 
 template<class l_addr_t,class p_addr_t>
 	TPoolFile<l_addr_t,p_addr_t>::TPoolFile(const TPoolFile<l_addr_t,p_addr_t> &src) :
+
+		// just initializing these const data-members
+	formatSignature(""),
+	maxBlockSize(0),
+	maxLogicalAddress(0),
+	maxPhysicalAddress(0),
+
 	pasm(blockFile)
 {
 	throw runtime_error(string(__func__)+" -- copy constructor invalid");
