@@ -1,4 +1,4 @@
-/* 
+/*/
  * Copyright (C) 2002 - David W. Durham
  * 
  * This file is part of ReZound, an audio editing application, but
@@ -473,7 +473,7 @@ template<class l_addr_t,class p_addr_t>
 
 
 template<class l_addr_t,class p_addr_t>
-	size_t TPoolFile<l_addr_t,p_addr_t>::readPoolRaw(const poolId_t poolId,void *buffer,size_t readSize)
+	l_addr_t TPoolFile<l_addr_t,p_addr_t>::readPoolRaw(const poolId_t poolId,void *buffer,l_addr_t readSize)
 {
 	if(!opened)
 		throw runtime_error(string(__func__)+" -- no file is open");
@@ -487,7 +487,7 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	size_t TPoolFile<l_addr_t,p_addr_t>::readPoolRaw(const string poolName,void *buffer,size_t readSize)
+	l_addr_t TPoolFile<l_addr_t,p_addr_t>::readPoolRaw(const string poolName,void *buffer,l_addr_t readSize)
 {
 	return readPoolRaw(getPoolIdByName(poolName),buffer,readSize);
 }
