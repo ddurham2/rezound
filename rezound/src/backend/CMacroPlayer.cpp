@@ -45,6 +45,7 @@ bool CMacroPlayer::doMacro(ASoundFileManager *soundFileManager)
 	{
 		// for each action in the macro
 		unsigned actionCount=macroStore->getValue<unsigned>(macroName DOT "actionCount");
+		bool ret=true;
 		for(unsigned actionIndex=0;actionIndex<actionCount;actionIndex++)
 		{
 			const string key=macroName DOT "action"+istring(actionIndex,3,true);
@@ -58,7 +59,8 @@ bool CMacroPlayer::doMacro(ASoundFileManager *soundFileManager)
 				if(activeSoundIndex>=soundFileManager->getOpenedCount())
 				{ // index is out of range (could prompt for which sound to set to active at this point rather than bailing completely)
 					Error(_("At this point when the macro was recorded the selected sound was changed to position: ")+istring(activeSoundIndex+1)+"\n\n"+_("No audio file is loaded in this position now as the macro is being played back.\n\nThe macro playback is bailing."));
-					return false;
+					ret=false;
+					break;
 				}
 
 				soundFileManager->setActiveSound(activeSoundIndex);
@@ -226,10 +228,16 @@ bool CMacroPlayer::doMacro(ASoundFileManager *soundFileManager)
 					if((actionIndex+1)<actionCount)
 					{ // there are still more actions to go
 						if(Question(_("The action did not succeed.\n\nDo you want to continue running the macro's remaining actions?"),yesnoQues)!=yesAns)
-							return false;
+						{
+							ret=false;
+							break;
+						}
 					}
 					else
-						return false;
+					{
+						ret=false;
+						break;
+					}
 				}
 			}
 
@@ -237,36 +245,29 @@ bool CMacroPlayer::doMacro(ASoundFileManager *soundFileManager)
 				actionCountsPerSound[loadedSound]++;
 		}
 
-		// for each sound that was affected by the macro more than once
-		for(map<CLoadedSound *,unsigned>::const_iterator i=actionCountsPerSound.begin(); i!=actionCountsPerSound.end(); i++)
-		{
-			if(i->second>1)
-			{ // "run" a CRanMacroAction on the sound so that undo will prompt for undoing all the macro's actions or just one
-				CActionParameters actionParameters(soundFileManager);
-				actionParameters.setValue<string>("Macro Name",macroName);
-				actionParameters.setValue<unsigned>("ActionCount",i->second);
-				
-				ranMacroActionFactory.performAction(i->first,&actionParameters,true);
-			}
-		}
+		addRanMacroActions(actionCountsPerSound,soundFileManager,macroName);
+		return ret;
 	}
 	catch(...)
 	{
-		for(map<CLoadedSound *,unsigned>::const_iterator i=actionCountsPerSound.begin(); i!=actionCountsPerSound.end(); i++)
-		{
-			if(i->second>1)
-			{ // "run" a CRanMacroAction on the sound so that undo will prompt for undoing all the macro's actions or just one
-				CActionParameters actionParameters(soundFileManager);
-				actionParameters.setValue<string>("Macro Name",macroName);
-				actionParameters.setValue<unsigned>("ActionCount",i->second);
-				
-				ranMacroActionFactory.performAction(i->first,&actionParameters,true);
-			}
-		}
-
+		addRanMacroActions(actionCountsPerSound,soundFileManager,macroName);
 		throw;
 	}
 
 	return true;
 }
 
+void CMacroPlayer::addRanMacroActions(const map<CLoadedSound *,unsigned> &actionCountsPerSound,ASoundFileManager *soundFileManager,const string macroName)
+{
+	for(map<CLoadedSound *,unsigned>::const_iterator i=actionCountsPerSound.begin(); i!=actionCountsPerSound.end(); i++)
+	{
+		if(i->second>1)
+		{ // "run" a CRanMacroAction on the sound so that undo will prompt for undoing all the macro's actions or just one
+			CActionParameters actionParameters(soundFileManager);
+			actionParameters.setValue<string>("Macro Name",macroName);
+			actionParameters.setValue<unsigned>("ActionCount",i->second);
+			
+			ranMacroActionFactory.performAction(i->first,&actionParameters,true);
+		}
+	}
+}

@@ -7,6 +7,7 @@ using namespace std;
 
 class ASoundFileManager;
 class CNestedDataFile;
+class CLoadedSound;
 
 #include "CRunMacroAction.h"
 
@@ -24,6 +25,8 @@ private:
 	const CNestedDataFile *macroStore;
 	const string macroName;
 	CRanMacroActionFactory ranMacroActionFactory;
+
+	void addRanMacroActions(const map<CLoadedSound *,unsigned> &actionCountsPerSound,ASoundFileManager *soundFileManager,const string macroName);
 };
 
 #endif
