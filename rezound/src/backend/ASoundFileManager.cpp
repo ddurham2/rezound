@@ -202,7 +202,7 @@ static void iterateUndoStackAndUnsetSavedState(CLoadedSound *loaded)
 	}
 }
 
-void ASoundFileManager::save()
+bool ASoundFileManager::save()
 {
 	// get active sound
 	// if it has no filename, then call save As and be done
@@ -221,11 +221,14 @@ void ASoundFileManager::save()
 			updateAfterEdit();
 			updateReopenHistory(filename);
 		}
+		else
+			return false;
 	}
+	return true;
 }
 
 
-void ASoundFileManager::saveAs()
+bool ASoundFileManager::saveAs()
 {
 	CLoadedSound *loaded=getActive();
 	if(loaded)
@@ -234,13 +237,12 @@ void ASoundFileManager::saveAs()
 askAgain:
 		bool saveAsRaw=false;
 		if(!gFrontendHooks->promptForSaveSoundFilename(filename,saveAsRaw))
-			return;
+			return false;
 
 		bool reregisterFilenameOnError=false;
 		if(loaded->getFilename()==filename && compareBool(loaded->translator->handlesRaw(),saveAsRaw))
 		{ // the user chose the same name (and didn't change whether to save as raw or not)
-			save();
-			return;
+			return save();
 		}
 		else if(loaded->getFilename()==filename && !compareBool(loaded->translator->handlesRaw(),saveAsRaw))
 		{ // same name, but now saving as raw
@@ -277,6 +279,8 @@ askAgain:
 				updateAfterEdit();
 				updateReopenHistory(filename);
 			}
+			else
+				return false;
 		}
 		catch(...)
 		{
@@ -285,6 +289,7 @@ askAgain:
 			throw;
 		}
 	}
+	return true;
 }
 
 bool ASoundFileManager::savePartial(const CSound *sound,const string _filename,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs)
@@ -321,7 +326,7 @@ askAgain:
 	return false;
 }
 
-void ASoundFileManager::close(CloseTypes closeType,CLoadedSound *closeWhichSound)
+bool ASoundFileManager::close(CloseTypes closeType,CLoadedSound *closeWhichSound)
 {
 	CLoadedSound *loaded=closeWhichSound==NULL ? getActive() : closeWhichSound;
 	if(loaded)
@@ -340,7 +345,7 @@ void ASoundFileManager::close(CloseTypes closeType,CLoadedSound *closeWhichSound
 			{
 				VAnswer a=Question(_("Save Modified Sound")+string(":\n")+loaded->getFilename(),cancelQues);
 				if(a==cancelAns)
-					return;
+					return false;
 				doSave=(a==yesAns);
 			}
 			// else closeType==ctSaveNone  (no question to ask; just don't save)
@@ -361,7 +366,12 @@ void ASoundFileManager::close(CloseTypes closeType,CLoadedSound *closeWhichSound
 		// save before we start deconstructing everything so that if there
 		// is an error saving, the user hasn't lost all when it closes below
 		if(doSave)
-			save();
+		{
+			if(!save())
+			{ // cancelled
+				return false;
+			}
+		}
 
 		unregisterFilename(loaded->getFilename());
 
@@ -370,6 +380,7 @@ void ASoundFileManager::close(CloseTypes closeType,CLoadedSound *closeWhichSound
 		loaded->sound->closeSound();
 		delete loaded; // also deletes channel
 	}
+	return true;
 }
 
 void ASoundFileManager::revert()
@@ -402,6 +413,7 @@ void ASoundFileManager::revert()
 
 void ASoundFileManager::recordToNew()
 {
+#warning this really needs to be a run-time check because we might not use a CJACKSoundRecorder after all it fails to initialize
 #ifdef ENABLE_JACK /* this really needs to be a run-time check because we might not use a CJACKSoundRecorder after all it fails to initialize */
 	// since we can't set the sample rate for the JACK audio system, then I don't ask for a sample rate
 								// ??? device zero is the only one right now

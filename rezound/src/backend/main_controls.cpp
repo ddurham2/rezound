@@ -130,21 +130,24 @@ const bool exitReZound(ASoundFileManager *soundFileManager)
 		if(soundFileManager->getOpenedCount()>1)
 		{
 			if(Question(_("Are you sure you want to quit?"),yesnoQues)!=yesAns)
-				return(false);
+				return false;
 		}
 
 		while(soundFileManager->getActive()!=NULL)
-			soundFileManager->close(ASoundFileManager::ctSaveYesNoStop);
-		return(true);
+		{
+			if(!soundFileManager->close(ASoundFileManager::ctSaveYesNoStop))
+				throw EStopClosing();
+		}
+		return true;
 	}
 	catch(EStopClosing &e)
 	{
-		return(false);
+		return false;
 	}
 	catch(exception &e)
 	{
 		Error(e.what());
-		return(false);
+		return false;
 	}
 }
 

@@ -52,12 +52,19 @@ public:
 	CLoadedSound *createNew(const string filename,unsigned channelCount,unsigned sampleRate,unsigned length=1,bool rawFormat=false);
 		// returns false if a prompt for filename was cancelled or if there was an error loading
 	bool open(const string filename="",bool openAsRaw=false);
+
 	// ??? should rename these to, saveActive...  or pass them a CSound * (I prefer that), perhaps optionally pass saveAs a filename which can be ""
-	void save();
-	void saveAs();
+		// returns false if something was cancelled
+	bool save();
+		// returns false if something was cancelled
+	bool saveAs();
+		// returns false if something was cancelled
 	bool savePartial(const CSound *sound,const string filename,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs);
+
 	enum CloseTypes { ctSaveYesNoStop,ctSaveYesNoCancel,ctSaveNone };
-	void close(CloseTypes closeType,CLoadedSound *closeWhichSound=NULL); // if nothing is passed for closeWhichSound, then the active sound is closed
+		// returns false if something was cancelled
+	bool close(CloseTypes closeType,CLoadedSound *closeWhichSound=NULL); // if nothing is passed for closeWhichSound, then the active sound is closed
+
 	void revert();
 	void recordToNew();
 
