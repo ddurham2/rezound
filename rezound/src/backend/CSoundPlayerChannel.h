@@ -31,6 +31,7 @@ class CSoundPlayerChannel;
 #include <CConditionVariable.h>
 #include <AThread.h>
 #include <TMemoryPipe.h>
+#include <TAutoBuffer.h>
 
 #include "CTrigger.h"
 #include "CSound_defs.h"
@@ -97,7 +98,10 @@ private:
 	// - bufferSize is in sample frames
 	void mixOntoBuffer(const unsigned nChannels,sample_t * const buffer,const size_t bufferSize);
 
-	mutable CMutex prebufferPositionMutex;
+	volatile mutable bool somethingWantsToClearThePrebufferQueue;
+				// ??? perhaps everywhere that I set the prebufferPosition I also write/clear the pipe
+	mutable CMutex prebufferPositionMutex;	// restricts critical sections that write to the prebuffer queue
+	mutable CMutex prebufferReadingMutex;	// restricts critical sections that read from the prebuffer queue
 	sample_pos_t prebufferPosition;
 	bool prebufferChunk();
 
@@ -117,36 +121,29 @@ private:
 
 	friend class CPrebufferThread;
 
-	struct RPrebufferedChunk
+
+	// two fifos for prebuffering audio and play positions
+	sample_pos_t framesConsumedFromAudioPipe;	// keeps track of the amount of data that has been consumed from the audio pipe since so we know when to read another prebuffered play position.  This value gets reset whenever the prebuffering starts over
+	TMemoryPipe<sample_t> prebufferedAudioPipe;
+	struct RChunkPosition
 	{
-		RPrebufferedChunk(const unsigned channelCount,const unsigned sampleRate);
-		virtual ~RPrebufferedChunk();
-
-		const unsigned channelCount;
-		const unsigned sampleRate;
-		sample_t *data;
-		sample_fpos_t offset; // how many sample frames have already been used from data (should always be less than size)
-		unsigned size; // how many sample frames are in data (does not depend on offset)
-
-		bool isGap; // if this is true, then disregard 'data' and use the signal in the gap buffer (defined in the .cpp)
-		sample_pos_t gapSignalBufferOffset; // the offset into the gapSignalBuffer to use if isGap is true
-
-		sample_pos_t playPosition; // this is the play position of the first sample in this chunk
-
-		vector<bool> outputRouting[MAX_CHANNELS];
+		sample_pos_t position;
+		bool produceGapSignal;
 	};
+	TMemoryPipe<RChunkPosition> prebufferedPositionsPipe;
 
-	CRWLock chunkObjectsMutex;
-	size_t prebufferedChunksIndex; // this is the index of the next chunk to use from prebufferedChunks;
-	vector<RPrebufferedChunk *> prebufferedChunks;
-	TMemoryPipe<RPrebufferedChunk *> prebufferedChunkPipe;
 
-	sample_t prevFrame[MAX_CHANNELS];
 
-	sample_pos_t gapSignalBufferLength; // in frames
-	sample_t *gapSignalBuffer;
-	void createPrebufferedChunks();
-	void destroyPrebufferedChunks();
+	sample_t prevLast2Frames[2][MAX_CHANNELS]; // ??? for JACK, this needs to be locked from swapping
+	sample_fpos_t prevLastFrameOffset; // ??? for JACK, this needs to be locked from swapping
+
+	unsigned prepared_channelCount;
+	unsigned prepared_sampleRate;
+
+	sample_pos_t gapSignalPosition;
+	sample_pos_t gapSignalLength; // in frames
+	TAutoBuffer<sample_t> gapSignalBuffer;
+	void createGapSignal();
 
 	ASoundPlayer *player;
 	CSoundPlayerChannel(ASoundPlayer *_player,CSound *_sound);
@@ -154,10 +151,10 @@ private:
 	// Playing Status and Play Positions
 	volatile bool prebuffering,playing,paused,playSelectionOnly;
 	volatile LoopTypes loopType;
-	bool lastBufferWasGapSignal; // true if the last buffer that was processed in mixOntoBuffer had its isGap flag turned on (if this is the case, then I have to handle setting the play position in the setSeekSpeed() method a l;ttle different)
+	bool lastBufferWasGapSignal; // true if the last buffer that was processed in mixOntoBuffer had its isGap flag turned on (if this is the case, then I have to handle setting the play position in the setSeekSpeed() method a little different)
 	sample_pos_t playPosition;
 	float seekSpeed;
-		float playSpeedForMixer; int playSpeedForChunker;
+		float playSpeedForMixer; int playSpeedForPrebuffering;
 	volatile sample_pos_t startPosition,stopPosition;
 
 	// Mute
@@ -171,10 +168,15 @@ private:
 	void deinit();
 	void init();
 
+	// by examining the data currently in queue, this returns the most likely position of the oldest frame in the prebuffered pipe.  It is best to call this method with the prebufferReadingMutex locked
+	sample_pos_t estimateOldestPrebufferedPosition(float origSeekSpeed,sample_pos_t origStartPosition,sample_pos_t origStopPosition);
+	void estimateLowestAndHighestPrebufferedPosition(sample_pos_t &lowestPosition,sample_pos_t &highestPosition,float origSeekSpeed,sample_pos_t origStartPosition,sample_pos_t origStopPosition);
+
+	// clears the prebuffered data and [attempts to] sets the prebuffer position to the position that produced the oldest sample that was in the prebuffer
+	void unprebuffer(float origSeekSpeed,sample_pos_t origStartPosition,sample_pos_t origStopPosition,sample_pos_t setNewPosition=MAX_LENGTH);
+
 	void createInitialOutputRoute();
 	const vector<bool> getOutputRoute(unsigned deviceIndex,unsigned audioChannel) const;
-
-	RPrebufferedChunk *getPrebufferChunk();
 };
 
 #endif

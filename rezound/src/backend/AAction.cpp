@@ -292,8 +292,6 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 	
 		if(channel!=NULL)
 		{
-			setSelection(_actionSound.start,_actionSound.stop,channel);
-
 			vector<int16_t> dummy;
 			channel->updateAfterEdit(dummy);
 		}
@@ -304,6 +302,9 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 			actionSound.sound->unlockSize();
 
 		actionSound.sound->flush();
+
+		if(channel!=NULL)
+			setSelection(_actionSound.start,_actionSound.stop,channel);
 
 		return ret;
 	}
@@ -377,6 +378,13 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 			channel->updateAfterEdit(restoreOutputRoutes);
 
 
+		if(willResize)
+			actionSound.sound->unlockForResize();
+		else
+			actionSound.sound->unlockSize();
+
+		actionSound.sound->flush();
+
 		// restore the selection position
 		if(channel!=NULL)
 		{
@@ -387,15 +395,6 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 			else
 				setSelection(_actionSound.start,_actionSound.stop,channel);
 		}
-
-
-		if(willResize)
-			actionSound.sound->unlockForResize();
-		else
-			actionSound.sound->unlockSize();
-
-
-		actionSound.sound->flush();
 
 		done=false;
 	}

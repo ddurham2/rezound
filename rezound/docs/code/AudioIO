@@ -3,8 +3,8 @@
 implementation to perform actual sound playback.  The derived class is to 
 implement the platform specific code.  CSoundPlayerChannels are logically 
 attached to an ASoundPlayer object and when the protected method,
-ASoundPlayer::mixSoundPlayerChannels is called by the derived class for more 
-data to output, all these outstanding objects in a playing state perform 
+ASoundPlayer::mixSoundPlayerChannels(), is called by the derived class for 
+more data to output, all these outstanding objects in a playing state perform 
 software mixing onto the given buffer.  
 
    The derived class is supposed to constantly feed audio to the playback 
@@ -16,64 +16,80 @@ currently playing audio data.
 --------------------------
 
 
-   Now, here's how I prebuffer a data for each CSoundPlayerChannel object
-and still know where the current playing position is.  Normally, if you just
-wrote 2 seconds of sound to the card the known play position would be 2 seconds 
-ahead of what's coming out of the sound card.  However one might say to just 
-always subtract 2 seconds from the known play position.  However, this would not
-be able to handle looped sections of sound without some more complicated fixups.  
-Finally, from looking at the source, the Linux emu10k driver seems to limit the 
-amount of prebuffered data to a maximum of 64k -- only allowing about 1/3 of a 
-second worth of CD quality sound.  Since ReZound does heavy disk reading while 
-playing, this would sometimes causes a momentary gap in the audio, especially 
-when playing several channels of sound simultaneously.  Perhaps other sound 
-card drives don't have this limit.  And alsa may not have that problem either.
+Now, here's how I prebuffer a data for each CSoundPlayerChannel object and 
+still know where the current playing position is.  Normally, if you just wrote 
+2 seconds of sound to the card the known play position would be 2 seconds ahead 
+of what's coming out of the sound card.  One might say just to always subtract 
+2 seconds from the known play position.  However, this would not be able to 
+handle looped sections of sound and skipped sections of sound without some very
+ complicated fixups.  
 
-   However, to be able to prebuffer data and still be able to sufficiently
-know the play position (actually, you can never know exactly what's coming out
-of the speakers unless you know the exactly hardware latency of the card as 
-well) I prebuffer little chunks of data and know the play position that 
-produced the first sample in each little chunk.  Then the play thread reads
-these from these queued chunks and I can know play position of the most 
-recently used of these queued smaller chunk by having a relatively small 
-buffering setting for the output device.
+Furthermore, from looking at the source, the Linux emu10k driver seems to limit 
+the amount of prebuffered data to a maximum of 64k -- only allowing about 1/3 of 
+a second worth of CD quality sound.  
 
-   Doing it this way allows me to control just how much data is actually 
-prebuffered.
+Since ReZound does heavy disk reading while playing, this would sometimes causes 
+a momentary gap in the audio, especially when playing several channels of sound 
+simultaneously.  Perhaps other sound card drives don't have this limit, and ALSA 
+may not have that problem either.
 
-   If I prebuffer too much data, then any changes in loop positions or the data 
-itself may happen annoyingly later than desired.  I could fix this by having 
-data edits invalidate all prebuffered data.  Perhaps this could be captured 
-in CSound::setModified() which should be responsibly called by any code 
-which makes a modification to the audio data.
+However, to be able to prebuffer data and still be able to know the play position 
+(actually, you can never know exactly what's coming out of the speakers unless you 
+know the exactly hardware latency of the card as well) I have two fifos:
+
+	The 'audio' fifo contains the actual prebuffered audio data and the other 
+	'play position' fifo contains a play position for every N samples (where 
+	N is something like 1000 so the second fifo passes 1000th the data of the 
+	first).  
+
+The general idea is that I consume the 'play position' fifo at 1/Nth the rate at 
+which I consume data from the audio fifo.  And each time I read an element from the 
+'play position' fifo I update the play position value being read by the frontend.  
+
+The frontend calls CSoundPlayerChannel::getPlayPostion() which returns 
+CSoundPlayerChannel::playPosition while CSoundPlayerChannel::prebufferPosition is 
+the pointer into the audio where we prebuffer from.
+
+Then the play thread reads from the fifos and the prebuffer thread (per 
+CSoundPlayerChannel object) writes to these fifos.  The writing to the fifo is 
+will block, while the reading from the fifo does not.  The read is non-blocked for 
+the sake of JACK.  Its rules state that you aren't to do anything that could block 
+in your callback.  This also means that the memory allocated to the fifo also has 
+to be locked into RAM.
+
+Doing it this way allows me to control just how much data is actually 
+prebuffered beyond what the audio driver allows.
 
    
-   The ASoundPlayer object knows of each CSoundPlayerChannel object (it 
+The ASoundPlayer object knows of each CSoundPlayerChannel object (it 
 instantiated them).  Each CSoundPlayerChannel object has a thread running which 
-is constantly feeding the write end of a TMemoryPipe object which does blocked 
-i/o on reads and on writes when the pipe is full.  The pipe is used to hold 
-pointers to entire prebuffered chunks data (not individual samples).  Care must 
-be taken to invalidate the prebuffered data whenever a change is made to the 
-data or changes in loop positions.  The prebuffered data is invalidated by simply 
-calling a method that clears the pipe.  It may sound ludicris at first to have 
-one thread per CSoundPlayerChannel object, but most of the time these threads 
-should be in a wait-state while the prebuffer pipe is full or while the channel
-is not playing.  
+is constantly feeding the write end of the fifos which does block on writes when 
+pipe is full. Care must be taken to invalidate the prebuffered data whenever a 
+change is made to the data, loop positions, or the prebuffer position.  The 
+prebuffered data is invalidated by simply calling a method that clears the fifos.  
+It may sound ludicris at first to have one thread per CSoundPlayerChannel object, 
+but most of the time these threads should be in a wait-state while the prebuffer 
+pipe is full or while the channel is not playing.  
 
-   I have to also use a condition variable waiting mechanism to cause 
-non-playing channels to wait.  Hopefully, the thread library on whatever platform 
-should be decent enough to schedule well.  The thread which is actually reading 
-the data from the read end of each CSoundPlayerChannel's object should 
-non-blocking reads so that if the data is not available for a channel, then it 
-will simply be silent for that chunk of data.  Furthermore, having a separate 
-thread for each object will make better use of multiple CPUs if they're available 
-(i.e. two channels could be calculating their data at exactly the same time).
 
-   All the calculation of sample-rate-conversion/play-speed are calculated based on 
+
+Also, I use a condition variable waiting mechanism to cause non-playing channels 
+to wait.  Hopefully, the thread library on whatever platform should be decent 
+enough to schedule well.  
+
+The thread which is actually reading the data from a CSoundPlayerChannel's audio 
+fifo (by calling CSoundPlayerChannel::mixOntoBuffer()) is doing non-blocking reads 
+so that if the data is not available for a channel, then it will simply be silent 
+for that chunk of data (again, to follow JACK's rules).  Furthermore, having a 
+separate thread for each object will make better use of multiple CPUs if they're 
+available (i.e. two channels could be calculating their data at exactly the same 
+time).
+
+All the calculation of sample-rate-conversion/play-speed are calculated based on 
 the data read from the pipe instead of calculating it before writing to the pipe.  
 This allows a more real-time control of these parameters.  
 
-   Someday I will probably have a configurable signal bus that the data being written 
+Someday I will probably have a configurable signal bus that the data being written 
 to the pipe should be passed through so that I could have non-destructive effects 
 on the sound, however *these* signal modifications would be prebuffered calculations.  
 
