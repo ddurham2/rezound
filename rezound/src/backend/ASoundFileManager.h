@@ -40,7 +40,7 @@ class ASoundFileManager
 {
 public:
 
-	ASoundFileManager(CSoundManager &soundManager,ASoundPlayer &soundPlayer,CNestedDataFile &loadedRegistryFile);
+	ASoundFileManager(CSoundManager *soundManager,ASoundPlayer *soundPlayer,CNestedDataFile *loadedRegistryFile);
 	// should a destructor be responsible for closing all files???
 	virtual ~ASoundFileManager() { }
 
@@ -56,14 +56,18 @@ public:
 
 	static const string getUntitledFilename(const string directory,const string extension);
 
+	const size_t getReopenHistorySize() const;
+	const string getReopenHistoryItem(const size_t index) const;
+
 	// return the CLoadedSound object associated with the sound window which is currently 'focused'
 	// return NULL if there is no focused window
 	virtual CLoadedSound *getActive()=0;
 
-	// is called after an action is performed to update the screen or when the title bar of a loaded sound window needs to be modified
-	virtual void redrawActive()=0;
+	// is called after an action is performed to update the screen or when the title
+	// bar and other status information of a loaded sound window needs to be modified
+	virtual void updateAfterEdit()=0;
 
-	// returns a list of errored loads
+	// returns a list of error messages
 	const vector<string> loadFilesInRegistry();
 
 protected:
@@ -82,6 +86,8 @@ protected:
 	// since it will probably show level meters and be able to insert cues while recording etc
 	virtual bool promptForRecord(ASoundRecorder *recorder)=0;
 
+
+
 	// should create a new sound window with the given CLoadedSound object
 	virtual void createWindow(CLoadedSound *loaded)=0;
 
@@ -90,16 +96,16 @@ protected:
 	virtual void destroyWindow(CLoadedSound *loaded)=0;
 
 
-	// invoked whenever a file is successfully opened from a call to open()
-	virtual void updateReopenHistory(const string &filename)=0;
 
+	// invoked whenever a file is successfully opened, new file created, file recorded, saveAs-ed, etc
+	void updateReopenHistory(const string &filename);
 
 private:
 
-	CSoundManager &soundManager;
-	ASoundPlayer &soundPlayer;
+	CSoundManager *soundManager;
+	ASoundPlayer *soundPlayer;
 
-	CNestedDataFile &loadedRegistryFile;
+	CNestedDataFile *loadedRegistryFile;
 
 	void prvOpen(const string &filename,bool readOnly,bool registerFilename);
 	void registerFilename(const string filename);

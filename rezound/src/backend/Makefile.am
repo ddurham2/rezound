@@ -36,6 +36,8 @@ SUBDIRS=\
 noinst_HEADERS= \
 	   file.h \
 	   playcontrols.h \
+	   initialize.h \
+	   settings.h \
 	   unit_conv.h \
 	   AAction.h \
 	   ALFO.h \
@@ -82,4 +84,6 @@ libbackend_la_SOURCES= \
 			Cold_rezSound.cpp \
 			CrezSound.cpp \
 			file.cpp  \
-			playcontrols.cpp 
+			playcontrols.cpp \
+		        settings.cpp \
+		        initialize.cpp

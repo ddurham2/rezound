@@ -1,12 +1,6 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- move to the backend what can be from intializations
-		- have two initializations, one for the backend and one for the front
-
-	- move reopen history code (writting to the registry) to the backend
-		- create a method in the backend for getting the reopen history items rather than the front end reading directly from the registry
-
 	- figure out why the limit isn't always working.. twice I entered 90:00.00 and it didn't stop
 		- I haven't seen it since, but with the limit label I should know when it is at least going to happen
 
@@ -18,10 +12,6 @@
 	- inquire to jeroen if FXLabel could become an FXComposite so that the label would go beside, above, below, etc, whatever any child objects there were
 
 	- make the cue list dialog's list box have a fixed width font
-
-	- need a real default value in the newSound dialog's filename edit, either a temporary name that is incremented each time the dialog shows and check agains the FS, or just 'untitled0.rez'
-		- increment a number on "untitled#.rez" until a file doesn't exist
-		- this code should actually be in the backend so I don't have to rewrite that code for a different frontend
 
 	- the 'active' sound window is not staying raised and I don't know why (when focus method is fmActiveButton)
 
@@ -50,8 +40,6 @@
 		- I guess that should go for any load of a sound... that upon having an error (unsupported format perhaps) that nothing be left around...
 		- Also if there's  an error creating perhaps the CSoundPlayerChannel that the ASound is deleted and all temp data is cleaned up
 
-	- I should probably put whatever code in the frontend (i.e. button handlers in CMainWindow) that could be put in the backend (i.e. would be done by any frontend) into the backend like the file operations already are
-
 	- need to make a type parameter in the "new sound" dialog... Allow the user to choose among wave, rezound, etc types
 		- it can be done with the given extension right now, but the user may not know the extensions... or perhaps the open dialog should have separate filetype entries and it will add the extension chosen
 		- right now the backend knows it by file extension, and the backend may need to pop up a subsequent dialog to ask for format specifiy parametesr
@@ -79,6 +67,7 @@
 
 	- supply icons for all the windows
 		- just new FXIcon(...) instead of passing NULL
+		- Will is supposedly doing this
 
 	- the front end needs a way to tell COSSSoundPlayer and COSSSoundRecorder which device to use
 		- I should be able to test this at home since I have 2 sound cards installed
@@ -156,4 +145,16 @@
 	- it is possible to close the application while a modal dialog is opened... this probably should not be permitted
 
 	- move the undo/redo buttons off of the file tab and to an always visible location (play controls)
+
+	- move to the backend what can be from intializations
+		- have two initializations, one for the backend and one for the front
+
+	- move reopen history code (writting to the registry) to the backend
+		- create a method in the backend for getting the reopen history items rather than the front end reading directly from the registry
+
+	- need a real default value in the newSound dialog's filename edit, either a temporary name that is incremented each time the dialog shows and check agains the FS, or just 'untitled0.rez'
+		- increment a number on "untitled#.rez" until a file doesn't exist
+		- this code should actually be in the backend so I don't have to rewrite that code for a different frontend
+
+	- I should probably put whatever code in the frontend (i.e. button handlers in CMainWindow) that could be put in the backend (i.e. would be done by any frontend) into the backend like the file operations already are
 

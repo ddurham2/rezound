@@ -21,9 +21,9 @@
 #include "CRecordDialog.h"
 
 #include "../backend/ASoundRecorder.h"
+#include "../backend/AStatusComm.h"
 #include "../images/images.h"
 
-#include "CStatusComm.h"
 
 #include <istring>
 

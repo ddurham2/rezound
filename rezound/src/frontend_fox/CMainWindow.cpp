@@ -20,16 +20,11 @@
 
 #include "CMainWindow.h"
 #include "CActionButton.h"
-#include "CChannelSelectDialog.h"
-
-#include <math.h>
 
 #include <stdexcept>
 #include <string>
 
 #include "CSoundFileManager.h"
-
-#include <CNestedDataFile/CNestedDataFile.h>
 
 #include "settings.h"
 
@@ -45,14 +40,10 @@
 
 #include "rememberShow.h"
 
-#define SEEK_INTERVAL 100
-
-CMainWindow *gMainWindow;
-
 /* TODO:
  * 	- make a button that brings back the editing toolbar incase they closed it
  *
- * 	- Lookup at FXToggleButton for instead of checkboxes for do-undo , put gap after repeating and other toggles
+ * 	- put gap after repeating and other toggles
  * 
  *	- remove all the data members for controls that don't need to have their value saved for any reason
  *
@@ -108,28 +99,15 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_MOTION,			CMainWindow::ID_ACTIONCONTROL_TAB,		CMainWindow::onActionControlTabMouseMove),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FOLLOW_PLAY_POSITION_BUTTON,	CMainWindow::onFollowPlayPositionButton),
-
-	/*
-	FXMAPFUNC(SEL_PAINT,             CMainWindow::ID_CANVAS, CMainWindow::onPaint),
-	FXMAPFUNC(SEL_LEFTBUTTONPRESS,   CMainWindow::ID_CANVAS, CMainWindow::onMouseDown),
-	FXMAPFUNC(SEL_LEFTBUTTONRELEASE, CMainWindow::ID_CANVAS, CMainWindow::onMouseUp),
-	FXMAPFUNC(SEL_MOTION,            CMainWindow::ID_CANVAS, CMainWindow::onMouseMove),
-	FXMAPFUNC(SEL_COMMAND,           CMainWindow::ID_CLEAR,  CMainWindow::onCmdClear),
-	FXMAPFUNC(SEL_UPDATE,            CMainWindow::ID_CLEAR,  CMainWindow::onUpdClear),
-	*/
 };
 
 FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
-
-#include "FXGraphParamValue.h"
 
 CMainWindow::CMainWindow(FXApp* a) :
 	FXMainWindow(a,"ReZound",NULL,NULL,DECOR_ALL,0,0,800,0),
 
 	mouseMoveLastTab(NULL)
 {
-	//new FXGraphParamValue(this,LAYOUT_FIX_HEIGHT|LAYOUT_FIX_WIDTH,0,0,400,300);
-
 	// you have to do this for hints to be activated
 	new FXTooltip(getApp());
 
@@ -249,6 +227,7 @@ void setupButton(CActionButton *b)
 }
 
 // ??? perhaps this could be a function placed else where that wouldn't require a recompile of CMainWindow everytime we change a dialog
+#include "CChannelSelectDialog.h"
 #include "EffectActionDialogs.h"
 #include "RemasterActionDialogs.h"
 void CMainWindow::createToolbars()
@@ -257,19 +236,19 @@ void CMainWindow::createToolbars()
 
 	// effects
 	setupButton(new CActionButton(new CReverseEffectFactory(gChannelSelectDialog),effectsTabFrame,"rev",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
-	setupButton(new CActionButton(new CChangeAmplitudeEffectFactory(gChannelSelectDialog,new CNormalAmplitudeChangeDialog(gMainWindow),new CAdvancedAmplitudeChangeDialog(gMainWindow)),effectsTabFrame,"vol",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
-	setupButton(new CActionButton(new CChangeRateEffectFactory(gChannelSelectDialog,new CNormalRateChangeDialog(gMainWindow),new CAdvancedRateChangeDialog(gMainWindow)),effectsTabFrame,"rate",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
-	setupButton(new CActionButton(new CFlangeEffectFactory(gChannelSelectDialog,new CFlangeDialog(gMainWindow)),effectsTabFrame,"flng",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
-	setupButton(new CActionButton(new CSimpleDelayEffectFactory(gChannelSelectDialog,new CSimpleDelayDialog(gMainWindow)),effectsTabFrame,"dly",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
+	setupButton(new CActionButton(new CChangeAmplitudeEffectFactory(gChannelSelectDialog,new CNormalAmplitudeChangeDialog(this),new CAdvancedAmplitudeChangeDialog(this)),effectsTabFrame,"vol",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
+	setupButton(new CActionButton(new CChangeRateEffectFactory(gChannelSelectDialog,new CNormalRateChangeDialog(this),new CAdvancedRateChangeDialog(this)),effectsTabFrame,"rate",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
+	setupButton(new CActionButton(new CFlangeEffectFactory(gChannelSelectDialog,new CFlangeDialog(this)),effectsTabFrame,"flng",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
+	setupButton(new CActionButton(new CSimpleDelayEffectFactory(gChannelSelectDialog,new CSimpleDelayDialog(this)),effectsTabFrame,"dly",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
 	setupButton(new CActionButton(new CStaticReverbEffectFactory(gChannelSelectDialog),effectsTabFrame,"rvrb",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
-	setupButton(new CActionButton(new CVariedRepeatEffectFactory(gChannelSelectDialog,new CVariedRepeatDialog(gMainWindow)),effectsTabFrame,"vrep",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
+	setupButton(new CActionButton(new CVariedRepeatEffectFactory(gChannelSelectDialog,new CVariedRepeatDialog(this)),effectsTabFrame,"vrep",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
 
 	setupButton(new CActionButton(new CTestEffectFactory(gChannelSelectDialog),effectsTabFrame,"test",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
 
 	// remaster
 	setupButton(new CActionButton(new CUnclipActionFactory(gChannelSelectDialog),remasterTabFrame,"unclp",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
 	setupButton(new CActionButton(new CRemoveDCActionFactory(gChannelSelectDialog),remasterTabFrame,"-DC",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
-	setupButton(new CActionButton(new CNoiseGateActionFactory(gChannelSelectDialog,new CNoiseGateDialog(gMainWindow)),remasterTabFrame,"ng",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
+	setupButton(new CActionButton(new CNoiseGateActionFactory(gChannelSelectDialog,new CNoiseGateDialog(this)),remasterTabFrame,"ng",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
 }
 
 
@@ -317,7 +296,6 @@ long CMainWindow::onFollowPlayPositionButton(FXObject *sender,FXSelector sel,voi
 // file action events
 long CMainWindow::onFileButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-	//(new FXModalDialogBox(this,"test",200,200))->execute();
 	switch(SELID(sel))
 	{
 	case ID_FILE_NEW_BUTTON:
@@ -361,19 +339,14 @@ long CMainWindow::onReopenMenuPopup(FXObject *sender,FXSelector sel,void *ptr)
 
 	FXEvent *event=(FXEvent*)ptr;
 
-	bool hasSome=false;
-	FXMenuPane reopenMenu(this);
-		size_t t=0;
-		while(gSettingsRegistry->keyExists(("ReopenHistory.item"+istring(t)).c_str()))
-		{
-			// ??? make sure that these get deleted when reopenMenu is deleted
-			new FXMenuCommand(&reopenMenu,gSettingsRegistry->getValue(("ReopenHistory.item"+istring(t)).c_str()).c_str(),NULL,this,ID_REOPEN_MENU_SELECT);
-			t++;
-			hasSome=true;
-		}
-
-	if(!hasSome)
+	size_t reopenSize=gSoundFileManager->getReopenHistorySize();
+	if(reopenSize<=0)
 		return(0);
+
+	FXMenuPane reopenMenu(this);
+
+	for(size_t t=0;t<reopenSize;t++)
+		new FXMenuCommand(&reopenMenu,gSoundFileManager->getReopenHistoryItem(t).c_str(),NULL,this,ID_REOPEN_MENU_SELECT);
 
 	reopenMenu.create();
 	reopenMenu.popup(NULL,event->root_x,event->root_y);
@@ -383,8 +356,6 @@ long CMainWindow::onReopenMenuPopup(FXObject *sender,FXSelector sel,void *ptr)
 
 long CMainWindow::onReopenMenuSelect(FXObject *sender,FXSelector sel,void *ptr)
 {
-	//printf("reopening %s\n",((FXMenuCommand *)sender)->getText().text());
-
 	openSound(gSoundFileManager,((FXMenuCommand *)sender)->getText().text());
 
 	return(1);
@@ -393,12 +364,6 @@ long CMainWindow::onReopenMenuSelect(FXObject *sender,FXSelector sel,void *ptr)
 // play control events
 long CMainWindow::onPlayControlButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-/*
-	position(getX()+1,getY(),getWidth(),getHeight());
-	hide();
-	show();
-*/
-
 	switch(SELID(sel))
 	{
 	case ID_PLAY_ALL_ONCE_BUTTON:
@@ -454,7 +419,7 @@ long CMainWindow::onRedrawButton(FXObject *sender,FXSelector sel,void *ptr)
 	{
 		for(unsigned t=0;t<s->getSound()->getChannelCount();t++)
 			s->getSound()->invalidateAllPeakData();
-		gSoundFileManager->redrawActive();
+		gSoundFileManager->updateAfterEdit();
 	}
 	else
 		getApp()->beep();
@@ -477,7 +442,7 @@ long CMainWindow::onUndoButton(FXObject *sender,FXSelector sel,void *ptr)
 
 				a->undoAction(s->channel);
 				delete a; // ??? what ever final logic is implemented for undo, it should probably push it onto a redo stack
-				gSoundFileManager->redrawActive();
+				gSoundFileManager->updateAfterEdit();
 			}
 			else
 				gStatusComm->beep();
@@ -501,7 +466,7 @@ long CMainWindow::onClearUndoHistoryButton(FXObject *sender,FXSelector sel,void 
 		if(s!=NULL)
 		{
 			s->clearUndoHistory();
-			gSoundFileManager->redrawActive();
+			gSoundFileManager->updateAfterEdit();
 		}
 		else
 			getApp()->beep();
@@ -567,7 +532,7 @@ long CMainWindow::onDefragButton(FXObject *sender,FXSelector sel,void *ptr)
 	if(s!=NULL)
 	{
 		s->getSound()->defragPoolFile();
-		gSoundFileManager->redrawActive();
+		gSoundFileManager->updateAfterEdit();
 	}
 	else
 		getApp()->beep();

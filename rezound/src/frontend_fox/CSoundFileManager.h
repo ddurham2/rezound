@@ -23,22 +23,22 @@
 
 #include "../../config/common.h"
 
-
 #include "../backend/ASoundFileManager.h"
 
 #include <vector>
 class CSoundWindow;
 class CNestedDataFile;
+class FXWindow;
 
 class CSoundFileManager : public ASoundFileManager
 {
 public:
-	CSoundFileManager(CSoundManager &soundManager,ASoundPlayer &soundPlayer,CNestedDataFile &loadedRegistryFile);
+	CSoundFileManager(FXWindow *mainWindow,CSoundManager *soundManager,ASoundPlayer *soundPlayer,CNestedDataFile *loadedRegistryFile);
 
 	void untoggleActiveForAllSoundWindows(CSoundWindow *exceptThisOne);
 	
 	CLoadedSound *getActive();
-	void redrawActive();
+	void updateAfterEdit();
 
 protected:
 	bool promptForOpen(string &filename,bool &readOnly);
@@ -51,10 +51,9 @@ protected:
 	void createWindow(CLoadedSound *loaded);
 	void destroyWindow(CLoadedSound *loaded);
 
-	// filename was just saved or opened
-	void updateReopenHistory(const string &filename);
-	
 private:
+	FXWindow *mainWindow;
+
 	vector<CSoundWindow *> soundWindows; // all the existing windows created by createWindow()
 
 	CSoundWindow *getActiveWindow();

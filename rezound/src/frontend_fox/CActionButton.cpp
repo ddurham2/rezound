@@ -56,7 +56,7 @@ long CActionButton::onButtonClick(FXObject *sender,FXSelector sel,void *ptr)
 		{
 			CActionParameters actionParameters;
 			if(actionFactory->performAction(activeSound,&actionParameters,ev->state&CONTROLMASK,ev->click_button==RIGHTBUTTON))
-				gSoundFileManager->redrawActive();
+				gSoundFileManager->updateAfterEdit();
 		}
 		else
 			getApp()->beep();

@@ -27,10 +27,6 @@
 
 #include <fox/fx.h>
 
-class CMainWindow;
-extern CMainWindow *gMainWindow;
-
-
 class CMainWindow : public FXMainWindow
 {
 	FXDECLARE(CMainWindow)

@@ -59,8 +59,8 @@
 COSSSoundPlayer::COSSSoundPlayer() :
 	ASoundPlayer(),
 
-	audio_fd(-1),
 	initialized(false),
+	audio_fd(-1),
 
 	playThread(this),
 	threadFinishedSem(1)

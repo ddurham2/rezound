@@ -50,10 +50,9 @@ libfrontend_la_SOURCES= \
 			FXGraphParamValue.cpp \
 			FXModalDialogBox.cpp \
 			FXRezWaveView.cpp \
-			initialize.cpp \
 			RemasterActionDialogs.cpp \
 			rememberShow.cpp \
-			settings.cpp 
+			settings.cpp
 
 ## bin_PROGRAMS is the macro that tells automake the name of the programs to
 ## install in the bin directory (/usr/local/bin) by default. By setting
@@ -73,13 +72,13 @@ ReZound_SOURCES= main.cpp
 ## notice we use $(top_builddir) for the modules. This allows building in a 
 ## separate directory
 ReZound_LDADD= libfrontend.la\
-	$(top_builddir)/src/misc/cc++/libmiscCC.la \
-	$(top_builddir)/src/misc/CNestedDataFile/libmiscCN.la \
-	$(top_builddir)/src/PoolFile/libPoolFile.la \
+	$(top_builddir)/src/backend/libbackend.la \
 	$(top_builddir)/src/backend/Edits/libEdits.la \
 	$(top_builddir)/src/backend/Effects/libEffects.la \
 	$(top_builddir)/src/backend/Remaster/libRemaster.la \
-	$(top_builddir)/src/backend/libbackend.la
+	$(top_builddir)/src/misc/CNestedDataFile/libmiscCN.la \
+	$(top_builddir)/src/PoolFile/libPoolFile.la \
+	$(top_builddir)/src/misc/cc++/libmiscCC.la 
 
 noinst_HEADERS=\
 	CActionButton.h \
@@ -106,6 +105,5 @@ noinst_HEADERS=\
 	FXRezWaveView.h \
 	RemasterActionDialogs.h \
 	drawPortion.h \
-	initialize.h \
 	rememberShow.h \
 	settings.h 

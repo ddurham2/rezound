@@ -26,10 +26,10 @@
 
 #include <fox/fx.h>
 
-#include "CMainWindow.h"
 #include "CProgressDialog.h"
 
-CStatusComm::CStatusComm()
+CStatusComm::CStatusComm(FXWindow *_mainWindow) :
+	mainWindow(_mainWindow)
 {
 	for(size_t t=0;t<MAX_PROGRESS_DIALOGS;t++)
 		progressDialogs[t]=NULL;
@@ -47,27 +47,27 @@ void CStatusComm::error(const string &message,VSeverity severity)
 	{
 	case none:
 		fprintf(stderr,"error - %s\n",message.c_str());
-		FXMessageBox::error(gMainWindow,MBOX_OK,"Error",message.c_str());
+		FXMessageBox::error(mainWindow,MBOX_OK,"Error",message.c_str());
 		break;
 	case light:
 		fprintf(stderr,"light error - %s\n",message.c_str());
-		FXMessageBox::error(gMainWindow,MBOX_OK,"Light Error",message.c_str());
+		FXMessageBox::error(mainWindow,MBOX_OK,"Light Error",message.c_str());
 		break;
 	case medium:
 		fprintf(stderr,"medium error - %s\n",message.c_str());
-		FXMessageBox::error(gMainWindow,MBOX_OK,"Medium Error",message.c_str());
+		FXMessageBox::error(mainWindow,MBOX_OK,"Medium Error",message.c_str());
 		break;
 	case hard:
 		fprintf(stderr,"hard error - %s\n",message.c_str());
-		FXMessageBox::error(gMainWindow,MBOX_OK,"Hard Error",message.c_str());
+		FXMessageBox::error(mainWindow,MBOX_OK,"Hard Error",message.c_str());
 		break;
 	case fatal:
 		fprintf(stderr,"fatal error - %s\n",message.c_str());
-		FXMessageBox::error(gMainWindow,MBOX_OK,"Fatal Error!",message.c_str());
+		FXMessageBox::error(mainWindow,MBOX_OK,"Fatal Error!",message.c_str());
 		break;
 	default:
 		fprintf(stderr,"unknwon severity error - %s\n",message.c_str());
-		FXMessageBox::error(gMainWindow,MBOX_OK,"Error -- unknown severity",message.c_str());
+		FXMessageBox::error(mainWindow,MBOX_OK,"Error -- unknown severity",message.c_str());
 		break;
 	}
 }
@@ -75,12 +75,12 @@ void CStatusComm::error(const string &message,VSeverity severity)
 void CStatusComm::warning(const string &message)
 {
 	fprintf(stderr,"warning -- %s\n",message.c_str());
-	FXMessageBox::warning(gMainWindow,MBOX_OK,"Warning",message.c_str());
+	FXMessageBox::warning(mainWindow,MBOX_OK,"Warning",message.c_str());
 }
 
 void CStatusComm::message(const string &message)
 {
-	FXMessageBox::information(gMainWindow,MBOX_OK,"Note",message.c_str());
+	FXMessageBox::information(mainWindow,MBOX_OK,"Note",message.c_str());
 }
 
 VAnswer CStatusComm::question(const string &message,VQuestion options)
@@ -95,7 +95,7 @@ VAnswer CStatusComm::question(const string &message,VQuestion options)
 	if(flags==0)
 		flags=MBOX_OK;
 
-	switch(FXMessageBox::question(gMainWindow,flags,"Question",message.c_str()))
+	switch(FXMessageBox::question(mainWindow,flags,"Question",message.c_str()))
 	{
 	case MBOX_CLICKED_YES:
 		return(yesAns);
@@ -110,7 +110,7 @@ VAnswer CStatusComm::question(const string &message,VQuestion options)
 
 void CStatusComm::beep()
 {
-	gMainWindow->getApp()->beep();
+	mainWindow->getApp()->beep();
 }
 
 int CStatusComm::beginProgressBar(const string &title)
@@ -124,7 +124,7 @@ int CStatusComm::beginProgressBar(const string &title)
 		{
 			try
 			{
-				progressDialogs[handle]=new CProgressDialog(gMainWindow,title.c_str());
+				progressDialogs[handle]=new CProgressDialog(mainWindow,title.c_str());
 				progressDialogs[handle]->create();
 				progressDialogs[handle]->show();
 

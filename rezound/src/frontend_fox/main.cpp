@@ -21,31 +21,19 @@
 #include "../../config/common.h"
 
 #include <fox/fx.h>
+#include <stdexcept>
 
 #include "CMainWindow.h"
-#include "CEditToolbar.h"
-#include "CSoundListWindow.h"
-
-#include "CCueDialog.h"
-
-#include "CChannelSelectDialog.h"
-#include "CPasteChannelsDialog.h"
-#include "CNewSoundDialog.h"
-#include "CRecordDialog.h"
-
-#include "CCueListDialog.h"
-
-#include "CUserNotesDialog.h"
-
 #include "CStatusComm.h"
 
-#include "initialize.h"
+#include "CSoundFileManager.h"
+#include "../backend/initialize.h"
 #include "settings.h"
 
 #include "../images/images.cpp"
 
-#include "../backend/AAction.h"
-#include "CSoundFileManager.h"
+void setupWindows(CMainWindow *mainWindow);
+
 
 int main(int argc,char *argv[])
 {
@@ -55,63 +43,32 @@ int main(int argc,char *argv[])
 		application->init(argc,argv);
 
 		/*
-		// set applicaiton wide colors
+		// set application wide colors
 		application->setBaseColor(FXRGB(193,163,102));
 		... there are others that could be set ...
 		*/
 
-		// create the main window and set the global gMainWindow variable
-		gMainWindow=new CMainWindow(application);
+		// create the main window 
+		CMainWindow *mainWindow=new CMainWindow(application);
 		application->create();
 
 		// unfortunately we have to create main window before we can pop up error messages
 		// which means we will have to load plugins and add their buttons to an already
 		// created window... because there could be errors while loading
 		// ??? I could fix this by delaying the creation of buttons after the creation of the main window.. and I should do this, since if I ever support loading plugins, I need to be able to popup error dialogs while loading them
-		gStatusComm=new CStatusComm;
+		gStatusComm=new CStatusComm(mainWindow);
 
 		// from here on we can create error messages
 		//   ??? I suppose I could atleast print to strerr if gStatusComm was not created yet
 
-		initializeReZound();
+		ASoundPlayer *soundPlayer=NULL;
+		CSoundManager *soundManager=NULL;
+		initializeBackend(soundPlayer,soundManager);
 
-		// create the channel select dialog that AActionFactory is given to use often
-		gChannelSelectDialog=new CChannelSelectDialog(gMainWindow);
+		gSoundFileManager=new CSoundFileManager(mainWindow,soundManager,soundPlayer,gSettingsRegistry);
 
-		// create the channel select dialog that AActionFactory uses for selecting channels to paste to
-		gPasteChannelsDialog=new CPasteChannelsDialog(gMainWindow);
 
-		// create the dialog used to select parameters when the use creates a new sound
-		gNewSoundDialog=new CNewSoundDialog(gMainWindow);
-
-		// create the dialog used to record to a new sound
-		gRecordDialog=new CRecordDialog(gMainWindow);
-
-		// create the dialog used to obtain the name for a new cue
-		gCueDialog=new CCueDialog(gMainWindow);
-
-		// create the dialog used to manipulate a list of cues
-		gCueListDialog=new CCueListDialog(gMainWindow);
-
-		// create the dialog used to make user notes saved with the sound
-		gUserNotesDialog=new CUserNotesDialog(gMainWindow);
-
-		// create the editing toolbar and set the global gEditToolbar variable
-		gEditToolbar=new CEditToolbar(gMainWindow);
-		gEditToolbar->create();
-
-		if(gFocusMethod==fmSoundWindowList)
-		{
-			gSoundListWindow=new CSoundListWindow(gMainWindow);
-			gSoundListWindow->create();
-		}
-
-		// create the tool bars in CMainWindow
-		gMainWindow->createToolbars();
-
-		gMainWindow->show();
-		gEditToolbar->show();
-
+		setupWindows(mainWindow);
 
 		// load any sounds that were from the previous session
 		const vector<string> errors=gSoundFileManager->loadFilesInRegistry();
@@ -119,12 +76,12 @@ int main(int argc,char *argv[])
 			Error(errors[t]);
 
 
-
 		application->run();
 
-		// ??? if an error dialogs is popped up after application->run() what happens?
-		// ??? I probably need to deinitializeReZound() in the quit handler of CMainWindow()
-		deinitializeReZound();
+
+		delete gSoundFileManager;
+
+		deinitializeBackend();
 
 		// ??? delete CStatusComm;
 	}
@@ -134,6 +91,8 @@ int main(int argc,char *argv[])
 			Error(e.what());
 		else
 			fprintf(stderr,"exception -- %s\n",e.what());
+
+		return(1);
 	}
 	catch(...)
 	{
@@ -141,7 +100,63 @@ int main(int argc,char *argv[])
 			Error("unknown exception caught\n");
 		else
 			fprintf(stderr,"unknown exception caught\n");
+
+		return(1);
 	}
 
 	return(0);
 }
+
+
+
+#include "CChannelSelectDialog.h"
+#include "CPasteChannelsDialog.h"
+#include "CNewSoundDialog.h"
+#include "CRecordDialog.h"
+#include "CCueDialog.h"
+#include "CCueListDialog.h"
+#include "CUserNotesDialog.h"
+#include "CEditToolbar.h"
+#include "CSoundListWindow.h"
+
+void setupWindows(CMainWindow *mainWindow)
+{
+		// create the channel select dialog that AActionFactory is given to use often
+		gChannelSelectDialog=new CChannelSelectDialog(mainWindow);
+
+		// create the channel select dialog that AActionFactory uses for selecting channels to paste to
+		gPasteChannelsDialog=new CPasteChannelsDialog(mainWindow);
+
+		// create the dialog used to select parameters when the use creates a new sound
+		gNewSoundDialog=new CNewSoundDialog(mainWindow);
+
+		// create the dialog used to record to a new sound
+		gRecordDialog=new CRecordDialog(mainWindow);
+
+		// create the dialog used to obtain the name for a new cue
+		gCueDialog=new CCueDialog(mainWindow);
+
+		// create the dialog used to manipulate a list of cues
+		gCueListDialog=new CCueListDialog(mainWindow);
+
+		// create the dialog used to make user notes saved with the sound
+		gUserNotesDialog=new CUserNotesDialog(mainWindow);
+
+		// create the editing toolbar and set the global gEditToolbar variable
+		gEditToolbar=new CEditToolbar(mainWindow);
+		gEditToolbar->create();
+
+		if(gFocusMethod==fmSoundWindowList)
+		{
+			gSoundListWindow=new CSoundListWindow(mainWindow);
+			gSoundListWindow->create();
+		}
+
+		// create the tool bars in CMainWindow
+		mainWindow->createToolbars();
+
+		mainWindow->show();
+		gEditToolbar->show();
+}
+
+

@@ -20,26 +20,5 @@
 
 #include "settings.h"
 
-#include <stddef.h>
-
-CNestedDataFile *gSettingsRegistry=NULL;
-
-
-string gPromptDialogDirectory="";
-
-string gUserDataDirectory="";
-string gSysDataDirectory="";
-
-string gUserPresetsFile="";
-string gSysPresetsFile="";
-
 FocusMethods gFocusMethod=fmSoundWindowList;
-
-bool gSnapToCues=true;
-unsigned gSnapToCueDistance=5;
-
-bool gFollowPlayPosition=true;
-
-double gInitialLengthToShow=10.0;
-
 

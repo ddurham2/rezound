@@ -39,13 +39,12 @@
 
 #include <fox/fx.h>
 
-#define MAX_REOPEN_HISTORY 16 // needs to be a preference ???
-
 CSoundFileManager *gSoundFileManager=NULL;
 
 
-CSoundFileManager::CSoundFileManager(CSoundManager &_soundManager,ASoundPlayer &_soundPlayer,CNestedDataFile &_loadedRegistryFile) :
-	ASoundFileManager(_soundManager,_soundPlayer,_loadedRegistryFile)
+CSoundFileManager::CSoundFileManager(FXWindow *_mainWindow,CSoundManager *_soundManager,ASoundPlayer *_soundPlayer,CNestedDataFile *_loadedRegistryFile) :
+	ASoundFileManager(_soundManager,_soundPlayer,_loadedRegistryFile),
+	mainWindow(_mainWindow)
 {
 }
 
@@ -53,7 +52,7 @@ bool CSoundFileManager::promptForOpen(string &filename,bool &readOnly)
 {
 	// I can do getOpenFilenames to be able to open multiple files ??? then the parameter would need to be a vector<string>
 																// this list could be build programatically from all the ASound derivations
-	FXString _filename=FXFileDialog::getOpenFilename(gMainWindow,"Open file",gPromptDialogDirectory.c_str(),"Supported Files (*.wav,*.WAV,*.rez,*.aiff,*.AIFF,*.au,*.AU,*.snd,*.SND,*.sf,*.SF,*.raw)\nAll Files(*)",0);
+	FXString _filename=FXFileDialog::getOpenFilename(mainWindow,"Open file",gPromptDialogDirectory.c_str(),"Supported Files (*.wav,*.WAV,*.rez,*.aiff,*.AIFF,*.au,*.AU,*.snd,*.SND,*.sf,*.SF,*.raw)\nAll Files(*)",0);
 	if(_filename!="")
 	{
 		// save directory to open the opendialog to next time
@@ -72,7 +71,7 @@ bool CSoundFileManager::promptForSave(string &filename,const string _extension)
 	istring extension=_extension;
 	extension.lower();
 
-	string _filename=FXFileDialog::getSaveFilename(gMainWindow,"Save file",filename=="" ? gPromptDialogDirectory.c_str() : filename.c_str(),("Save Type (*."+istring(extension).lower()+",*."+istring(extension).upper()+")\nAll Files(*)").c_str(),0).text();
+	string _filename=FXFileDialog::getSaveFilename(mainWindow,"Save file",filename=="" ? gPromptDialogDirectory.c_str() : filename.c_str(),("Save Type (*."+istring(extension).lower()+",*."+istring(extension).upper()+")\nAll Files(*)").c_str(),0).text();
 	if(_filename!="")
 	{
 		// add the extension if the user didn't type it
@@ -131,7 +130,7 @@ bool CSoundFileManager::promptForRecord(ASoundRecorder *recorder)
 
 void CSoundFileManager::createWindow(CLoadedSound *loaded)
 {
-	CSoundWindow *win=new CSoundWindow(gMainWindow,loaded);
+	CSoundWindow *win=new CSoundWindow(mainWindow,loaded);
 	win->create();
 
 	soundWindows.push_back(win);
@@ -195,18 +194,7 @@ CSoundWindow *CSoundFileManager::getActiveWindow()
 	return(NULL);
 }
 
-/*
-// recursively call update for all descendants of a given window
-void updateAll(FXWindow *w)
-{
-	w->update();
-	for(int t=0;t<w->numChildren();t++)
-		updateAll(w->childAtIndex(t));
-}
-*/
-
-// ??? rename this to updateFromEdit
-void CSoundFileManager::redrawActive()
+void CSoundFileManager::updateAfterEdit()
 {
 	CSoundWindow *activeSoundWindow=getActiveWindow();
 	if(activeSoundWindow)
@@ -217,26 +205,5 @@ void CSoundFileManager::redrawActive()
 			gSoundListWindow->updateWindowName(activeSoundWindow);
 
 	}
-}
-
-void CSoundFileManager::updateReopenHistory(const string &filename)
-{
-	// rewrite the reopen history to the gSettingsRegistry
-	vector<string> reopenFilenames;
-	
-	for(size_t t=0;gSettingsRegistry->keyExists(("ReopenHistory.item"+istring(t)).c_str());t++)
-	{
-		const string h=gSettingsRegistry->getValue(("ReopenHistory.item"+istring(t)).c_str());
-		if(h!=filename)
-			reopenFilenames.push_back(h);
-	}
-
-	if(reopenFilenames.size()>=MAX_REOPEN_HISTORY)
-		reopenFilenames.erase(reopenFilenames.begin()+reopenFilenames.size()-1);
-		
-	reopenFilenames.insert(reopenFilenames.begin(),filename);
-
-	for(size_t t=0;t<reopenFilenames.size();t++)
-		gSettingsRegistry->createKey(("ReopenHistory.item"+istring(t)).c_str(),reopenFilenames[t]);
 }
 

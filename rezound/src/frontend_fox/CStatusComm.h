@@ -27,13 +27,14 @@
 #include "../backend/AStatusComm.h"
 
 class CProgressDialog;
+class FXWindow;
 
 #define MAX_PROGRESS_DIALOGS 8
 
 class CStatusComm : public AStatusComm
 {
 public:
-	CStatusComm();
+	CStatusComm(FXWindow *mainWindow);
 	virtual ~CStatusComm();
 
 	virtual void error(const string &message,VSeverity severity=none);
@@ -50,6 +51,7 @@ public:
 
 private:
 	
+	FXWindow *mainWindow;
 	CProgressDialog *progressDialogs[MAX_PROGRESS_DIALOGS];
 };
 

@@ -21,6 +21,7 @@
 #include "ASoundFileManager.h"
 
 #include "AStatusComm.h"
+#include "settings.h"
 
 #include <stdexcept>
 
@@ -28,7 +29,11 @@
 
 #include <CNestedDataFile/CNestedDataFile.h>
 
-ASoundFileManager::ASoundFileManager(CSoundManager &_soundManager,ASoundPlayer &_soundPlayer,CNestedDataFile &_loadedRegistryFile) :
+#define MAX_REOPEN_HISTORY 16 // needs to be a preference ???
+
+
+					// ??? should be pointers really
+ASoundFileManager::ASoundFileManager(CSoundManager *_soundManager,ASoundPlayer *_soundPlayer,CNestedDataFile *_loadedRegistryFile) :
 	soundManager(_soundManager),
 	soundPlayer(_soundPlayer),
 	loadedRegistryFile(_loadedRegistryFile)
@@ -60,8 +65,8 @@ CLoadedSound *ASoundFileManager::prvCreateNew(bool askForLength)
 
 		try
 		{
-				client=new CSoundManagerClient(soundManager.newSound(filename,sampleRate,channelCount,length));
-				channel=soundPlayer.newSoundPlayerChannel(client->sound);
+				client=new CSoundManagerClient(soundManager->newSound(filename,sampleRate,channelCount,length));
+				channel=soundPlayer->newSoundPlayerChannel(client->sound);
 				loaded=new CLoadedSound(client,channel);
 
 				createWindow(loaded);
@@ -114,8 +119,8 @@ void ASoundFileManager::prvOpen(const string &filename,bool readOnly,bool doRegi
 
 	try
 	{
-		client=new CSoundManagerClient(soundManager.openSound(filename,readOnly));
-		channel=soundPlayer.newSoundPlayerChannel(client->sound);
+		client=new CSoundManagerClient(soundManager->openSound(filename,readOnly));
+		channel=soundPlayer->newSoundPlayerChannel(client->sound);
 		loaded=new CLoadedSound(client,channel);
 
 		createWindow(loaded);
@@ -164,7 +169,7 @@ void ASoundFileManager::save()
 		
 		loaded->getSound()->saveSound(filename);
 		loaded->getSound()->setIsModified(false);
-		redrawActive();
+		updateAfterEdit();
 		updateReopenHistory(filename);
 	}
 }
@@ -202,7 +207,7 @@ void ASoundFileManager::saveAs()
 		registerFilename(loaded->client->sound->getFilename());
 
 		loaded->getSound()->setIsModified(false);
-		redrawActive();
+		updateAfterEdit();
 		updateReopenHistory(filename);
 	}
 }
@@ -258,7 +263,7 @@ void ASoundFileManager::close(CloseTypes closeType,CLoadedSound *closeWhichSound
 		}
 
 		destroyWindow(loaded);
-		soundManager.closeSound(*(loaded->client));
+		soundManager->closeSound(*(loaded->client));
 		delete loaded;
 	}
 }
@@ -329,7 +334,7 @@ void ASoundFileManager::recordToNew()
 		loaded->channel->setStopPosition(loaded->getSound()->getLength()/2+loaded->getSound()->getLength()/4);
 		loaded->channel->setStartPosition(loaded->getSound()->getLength()/2-loaded->getSound()->getLength()/4);
 
-		redrawActive();
+		updateAfterEdit();
 	}
 }
 
@@ -366,12 +371,12 @@ const string ASoundFileManager::getUntitledFilename(const string directory,const
 const vector<string> ASoundFileManager::loadFilesInRegistry()
 {
 	vector<string> errors;
-	for(size_t t=0;t<loadedRegistryFile.getArraySize(LOADED_REG_KEY);t++)
+	for(size_t t=0;t<loadedRegistryFile->getArraySize(LOADED_REG_KEY);t++)
 	{
 		string filename;
 		try
 		{
-			filename=loadedRegistryFile.getArrayValue(LOADED_REG_KEY,t);
+			filename=loadedRegistryFile->getArrayValue(LOADED_REG_KEY,t);
 			printf("--- reopening file: %s\n",filename.c_str()); // ??? should be dprintf
 
 			if(Question("Load sound from previous session?\n   "+filename,yesnoQues)==yesAns)
@@ -404,17 +409,17 @@ void ASoundFileManager::registerFilename(const string filename)
 	if(isFilenameRegistered(filename))
 		throw(runtime_error(string(__func__)+" -- file already registered"));
 
-	loadedRegistryFile.createArrayKey(LOADED_REG_KEY,loadedRegistryFile.getArraySize(LOADED_REG_KEY),filename);
+	loadedRegistryFile->createArrayKey(LOADED_REG_KEY,loadedRegistryFile->getArraySize(LOADED_REG_KEY),filename);
 }
 
 void ASoundFileManager::unregisterFilename(const string filename)
 {
-	size_t l=loadedRegistryFile.getArraySize(LOADED_REG_KEY);
+	size_t l=loadedRegistryFile->getArraySize(LOADED_REG_KEY);
 	for(size_t t=0;t<l;t++)
 	{
-		if(loadedRegistryFile.getArrayValue(LOADED_REG_KEY,t)==filename);
+		if(loadedRegistryFile->getArrayValue(LOADED_REG_KEY,t)==filename);
 		{
-			loadedRegistryFile.removeArrayKey(LOADED_REG_KEY,t);
+			loadedRegistryFile->removeArrayKey(LOADED_REG_KEY,t);
 			break;
 		}
 	}
@@ -422,12 +427,50 @@ void ASoundFileManager::unregisterFilename(const string filename)
 
 bool ASoundFileManager::isFilenameRegistered(const string filename)
 {
-	size_t l=loadedRegistryFile.getArraySize(LOADED_REG_KEY);
+	size_t l=loadedRegistryFile->getArraySize(LOADED_REG_KEY);
 	for(size_t t=0;t<l;t++)
 	{
-		if(loadedRegistryFile.getArrayValue(LOADED_REG_KEY,t)==filename)
+		if(loadedRegistryFile->getArrayValue(LOADED_REG_KEY,t)==filename)
 			return(true);
 	}
 	return(false);
+}
+
+void ASoundFileManager::updateReopenHistory(const string &filename)
+{
+	// rewrite the reopen history to the gSettingsRegistry
+	vector<string> reopenFilenames;
+	
+	for(size_t t=0;gSettingsRegistry->keyExists(("ReopenHistory.item"+istring(t)).c_str());t++)
+	{
+		const string h=gSettingsRegistry->getValue(("ReopenHistory.item"+istring(t)).c_str());
+		if(h!=filename)
+			reopenFilenames.push_back(h);
+	}
+
+	if(reopenFilenames.size()>=MAX_REOPEN_HISTORY)
+		reopenFilenames.erase(reopenFilenames.begin()+reopenFilenames.size()-1);
+		
+	reopenFilenames.insert(reopenFilenames.begin(),filename);
+
+	for(size_t t=0;t<reopenFilenames.size();t++)
+		gSettingsRegistry->createKey(("ReopenHistory.item"+istring(t)).c_str(),reopenFilenames[t]);
+}
+
+const size_t ASoundFileManager::getReopenHistorySize() const
+{
+	size_t t;
+	for(t=0;gSettingsRegistry->keyExists(("ReopenHistory.item"+istring(t)).c_str());t++);
+
+	return(t);
+}
+
+const string ASoundFileManager::getReopenHistoryItem(const size_t index) const
+{
+	const string key="ReopenHistory.item"+istring(index);
+	if(gSettingsRegistry->keyExists(key.c_str()))
+		return(gSettingsRegistry->getValue(key.c_str()));
+	else
+		return("");
 }
 
