@@ -1,6 +1,9 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- need to put some #if version_checks in ClibaudiofileSoundTranslator when the patch is in production
+		- and unstick the 1.9 revision number on ClibaudiofileSoundTranslator (cvs update -A)
+
 	- create separate CDSPLevelDetectorRMS and CDSPPeakLevelDetectorPeak dsp blocks
 
 	- create a template method in DSPBlocks which is a mean finder given an accessor and a range to find the mean for removing DC
