@@ -326,6 +326,7 @@ public:
 
 	void defragPoolFile();
 	void printSAT(); // temporary for debugging ???
+	void verifySAT(); // temporary for debugging ???
 
 protected:
 

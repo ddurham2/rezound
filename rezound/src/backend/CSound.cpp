@@ -1169,6 +1169,11 @@ void CSound::printSAT()
 	poolFile.printSAT();
 }
 
+void CSound::verifySAT()
+{
+	poolFile.verifyAllBlockInfo(false);
+}
+
 
 
 void CSound::flush()
