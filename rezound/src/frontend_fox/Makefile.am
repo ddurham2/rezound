@@ -125,6 +125,8 @@ noinst_HEADERS=\
 
 EXTRA_DIST=convert_images.sh
 
+
+
 $(top_srcdir)/src/frontend_fox/CFOXIcons.h: $(top_srcdir)/src/frontend_fox/CFOXIcons.cpp
 $(top_srcdir)/src/frontend_fox/CFOXIcons.cpp: $(top_srcdir)/src/images/*.gif
 	cd $(top_srcdir)/src/frontend_fox && ./convert_images.sh ${RESWRAP} $(top_srcdir)/src/images
@@ -132,7 +134,18 @@ $(top_srcdir)/src/frontend_fox/CFOXIcons.cpp: $(top_srcdir)/src/images/*.gif
 CFOXIcons.cpp: $(top_srcdir)/src/frontend_fox/CFOXIcons.cpp
 CFOXIcons.h: $(top_srcdir)/src/frontend_fox/CFOXIcons.h
 
-
 clean-local: 
 	-rm -f CFOXIcons.cpp CFOXIcons.h
+
+
+
+# Have some rules to manage creating and removing a soft-link 
+# called 'rezound' to the 'ReZound' binary because lower case 
+# is the norm.
+LINK_NAME=rezound
+
+install-exec-local:
+	cd $(bindir) && rm -f $(LINK_NAME) && $(LN_S) ReZound $(LINK_NAME)
+uninstall-local:
+	cd $(bindir) && rm -f $(LINK_NAME)
 
