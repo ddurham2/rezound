@@ -71,7 +71,8 @@ public:
 
 	CPath(const string &_path="") :
 		path(NULL),
-		_exists(false)
+		_exists(false),
+		_permDenied(false)
 	{
 		setPath(_path);
 	}
@@ -96,11 +97,15 @@ public:
 		if(stat(path,&statBuf)!=0)
 		{
 			_exists=false;
-			if(errno!=ENOENT)
+			_permDenied= (errno==EACCES);
+			if(errno!=ENOENT && errno!=EACCES)
 				throw runtime_error(string(__func__)+" -- error stat-ing path name -- '"+path+"' -- "+strerror(errno));
 		}
 		else
+		{
 			_exists=true;
+			_permDenied=false;
+		}
 	}
 
 	/*
@@ -113,10 +118,19 @@ public:
 
 	/*
 		returns true iff the pathname exists and we could access it
+		hence, permission denied makes this returned false even if it did exist :-/
 	*/
 	bool exists() const
 	{
 		return(_exists);
+	}
+
+	/*
+		returns true if the maybe some of the pathname exists but we couldn't access it
+	*/
+	bool permDenied() const
+	{
+		return(_permDenied);
 	}
 
 	/*
@@ -254,6 +268,7 @@ public:
 private:
 	char *path;
 	bool _exists;
+	bool _permDenied;
 	struct stat statBuf;
 
 };
