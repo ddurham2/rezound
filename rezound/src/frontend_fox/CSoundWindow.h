@@ -53,8 +53,6 @@ public:
 
 	virtual void show();
 
-	void drawPlayPosition(bool justErasing);
-
 	void updateFromEdit();
 
 	void centerStartPos();
@@ -151,7 +149,6 @@ protected:
 private:
 
 	friend void playTrigger(void *Pthis);
-	friend void pauseTrigger(void *Pthis);
 
 	FXTimer *timerHandle; // used to draw play position
 	bool firstTimeShowing;
@@ -229,6 +226,11 @@ private:
 	CAddCueActionFactory * addCueActionFactory;
 	CRemoveCueActionFactory * removeCueActionFactory;
 	CReplaceCueActionFactory * replaceCueActionFactory;
+
+	bool playingLEDOn;
+	bool pausedLEDOn;
+
+	void drawPlayPosition(bool justErasing);
 
 	void updateAllStatusInfo();
 	void updateSelectionStatusInfo();

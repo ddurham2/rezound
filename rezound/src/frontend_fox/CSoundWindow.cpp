@@ -19,7 +19,6 @@
  */
 
 static void playTrigger(void *Pthis);
-static void pauseTrigger(void *Pthis);
 
 /*
  * TODO
@@ -112,36 +111,10 @@ FXIMPLEMENT(CSoundWindow,FXTopWindow,CSoundWindowMap,ARRAYNUMBER(CSoundWindowMap
 
 void playTrigger(void *Pthis)
 {
-	// ??? may need to lock the app because this is called in another thread
-	// this could be the cause of a rare crash
-
-	//printf("play trigger\n");
 	CSoundWindow *that=(CSoundWindow *)Pthis;
-
-	if(that->loadedSound->channel->isPlaying())
-		that->playingLED->getFirst()->raise();
-	else
-		that->playingLED->getFirst()->lower();
-	
-	if(that->loadedSound->channel->isPlaying())
-		// start the play status timer
-		that->timerHandle=that->getApp()->addTimeout(DRAW_PLAY_POSITION_TIME,that,CSoundWindow::ID_DRAW_PLAY_POSITION);
+	// ??? this is called from another thread.. I don't know if it will cause a problem in FOX
+	that->timerHandle=that->getApp()->addTimeout(DRAW_PLAY_POSITION_TIME,that,CSoundWindow::ID_DRAW_PLAY_POSITION);
 }
-
-void pauseTrigger(void *Pthis)
-{
-	// ??? may need to lock the app because this is called in another thread
-	// this could be the cause of a rare crash
-
-	//printf("pause trigger\n");
-	CSoundWindow *that=(CSoundWindow *)Pthis;
-	if(that->loadedSound->channel->isPaused())
-		that->pausedLED->getFirst()->raise();
-	else
-		that->pausedLED->getFirst()->lower();
-}
-
-
 
 // ----------------------------------------------------------
 
@@ -181,7 +154,10 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 	statusFont(getApp()->getNormalFont()),
 
 	addCueActionFactory(NULL),
-	removeCueActionFactory(NULL)
+	removeCueActionFactory(NULL),
+
+	playingLEDOn(false),
+	pausedLEDOn(false)
 {
 	delete getAccelTable(); // delete the existing one to setup a new one
 	setAccelTable(mainWindow->getAccelTable());
@@ -263,9 +239,9 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 		playPositionLabel=new FXLabel(t,"Playing: ",NULL,LAYOUT_LEFT|LAYOUT_FILL_Y);
 		playPositionLabel->setFont(statusFont);
 
-	// register to know when the sound start/stops and pauses/unpauses playing
+	// register to know when the sound start/stops so we can know when it is necessary
+	// to draw the play position and when to change the state of the playing/paused LEDs
 	loadedSound->channel->addOnPlayTrigger(playTrigger,this);
-	loadedSound->channel->addOnPauseTrigger(pauseTrigger,this);
 
 
 	// set the ranges and initial values of the vertical and horiztonal zoom dials
@@ -290,17 +266,7 @@ CSoundWindow::~CSoundWindow()
 	if(timerHandle!=NULL)
 		getApp()->removeTimeout(timerHandle);
 
-	/* looks like it wasn't going to fire after destruction has started
-	closing=true;
-	while(timerHandle!=NULL)
-	{
-		printf("waiting on timerHandle to fire\n");
-		fxsleep(1000); // sleep for 1 millisecond
-	}
-	*/
-
 	loadedSound->channel->removeOnPlayTrigger(playTrigger,this);
-	loadedSound->channel->removeOnPauseTrigger(pauseTrigger,this);
 
 	delete addCueActionFactory;
 	delete removeCueActionFactory;
@@ -392,24 +358,11 @@ void CSoundWindow::drawPlayPosition(bool justErasing)
 		waveView->drawPlayPosition(position,true,false);
 }
 
-/*
-// recursively call update for all descendants of a given window
-void updateAll(FXWindow *w)
-{
-	w->update();
-	for(int t=0;t<w->numChildren();t++)
-		updateAll(w->childAtIndex(t));
-}
-*/
-
 void CSoundWindow::updateFromEdit()
 {
 	waveView->updateFromEdit();
 	onHorzZoomDialChange(NULL,0,NULL);
-	//onVertZoomDialChange(NULL,0,NULL);
 	updateAllStatusInfo();
-	//updateAll(this);
-	//layout();
 }
 
 void CSoundWindow::updateAllStatusInfo()
@@ -580,6 +533,29 @@ long CSoundWindow::onDrawPlayPosition(FXObject *sender,FXSelector,void*)
 		return 1;
 
 	updatePlayPositionStatusInfo();
+
+	if(loadedSound->channel->isPlaying() && !playingLEDOn)
+	{
+		playingLED->getFirst()->raise();
+		playingLEDOn=true;
+	}
+	else if(!loadedSound->channel->isPlaying() && playingLEDOn)
+	{
+		playingLED->getFirst()->lower();
+		playingLEDOn=false;
+	}
+
+	if(loadedSound->channel->isPaused() && !pausedLEDOn)
+	{
+		pausedLED->getFirst()->raise();
+		pausedLEDOn=true;
+	}
+	else if(!loadedSound->channel->isPaused() && pausedLEDOn)
+	{
+		pausedLED->getFirst()->lower();
+		pausedLEDOn=false;
+	}
+
 
 	if(loadedSound->channel->isPlaying())
 	{
