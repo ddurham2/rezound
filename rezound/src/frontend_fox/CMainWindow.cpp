@@ -1501,8 +1501,11 @@ long CMainWindow::onControlAction(FXObject *sender,FXSelector sel,void *ptr)
 		break;
 
 	case ID_PLAY_LEFT_EDGE_OF_SCREEN_TO_END:
-		metersWindow->resetGrandMaxPeakLevels();
-		play(gSoundFileManager,gSoundFileManager->getActiveWindow()->getLeftEdgePosition());
+		if(gSoundFileManager->getActiveWindow())
+		{
+			metersWindow->resetGrandMaxPeakLevels();
+			play(gSoundFileManager,gSoundFileManager->getActiveWindow()->getLeftEdgePosition());
+		}
 		break;
 
 	case ID_STOP:
