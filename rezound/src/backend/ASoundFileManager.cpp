@@ -38,6 +38,8 @@
 #include "ASoundTranslator.h"
 #include "AFrontendHooks.h"
 
+#include "ASoundRecorder.h"
+
 ASoundFileManager::ASoundFileManager(ASoundPlayer *_soundPlayer,CNestedDataFile *_loadedRegistryFile) :
 	soundPlayer(_soundPlayer),
 	loadedRegistryFile(_loadedRegistryFile)
@@ -390,14 +392,10 @@ void ASoundFileManager::revert()
 	}
 }
 
-// one of ENABLE_OSS, ENABLE_PORTAUDIO or ENABLE_JACK will be defined
-#include "COSSSoundRecorder.h"
-#include "CPortAudioSoundRecorder.h"
-#include "CJACKSoundRecorder.h"
 
 void ASoundFileManager::recordToNew()
 {
-#ifdef ENABLE_JACK
+#ifdef ENABLE_JACK /* this really needs to be a run-time check because we might not use a CJACKSoundRecorder after all it fails to initialize */
 	// since we can't set the sample rate for the JACK audio system, then I don't ask for a sample rate
 								// ??? device zero is the only one right now
 	CLoadedSound *loaded=prvCreateNew(1,false,soundPlayer->devices[0].sampleRate,false);
@@ -411,34 +409,30 @@ void ASoundFileManager::recordToNew()
 	try
 	{
 
-// ??? a better system would probably be to have a function or method in some class that returns an ASoundRecorder * so that I don't have to repeat this code also in CRecordSoundClipboard.cpp
-#if defined(ENABLE_OSS)
-		COSSSoundRecorder recorder;
-#elif defined(ENABLE_PORTAUDIO)
-		CPortAudioSoundRecorder recorder;
-#elif defined(ENABLE_JACK)
-		CJACKSoundRecorder recorder;
-#endif
+		ASoundRecorder *recorder=NULL;
 		try
 		{
-			recorder.initialize(loaded->sound);
+			recorder=ASoundRecorder::createInitializedSoundRecorder(loaded->sound);
 		}
 		catch(...)
 		{
 			close(ctSaveNone,loaded);
-			recorder.deinitialize();
 			throw;
 		}
 
 		bool ret=true;
 		try
 		{
-			ret=gFrontendHooks->promptForRecord(&recorder);
-			recorder.deinitialize();
+			ret=gFrontendHooks->promptForRecord(recorder);
+			delete recorder;
 		}
 		catch(...)
 		{
-			recorder.deinitialize();
+			delete recorder;
+
+			if(loaded->sound->getLength()<=1) // don't close if something did seem to get recorded
+				close(ctSaveNone,loaded);
+
 			throw;
 		}
 

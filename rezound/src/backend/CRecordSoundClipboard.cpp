@@ -29,17 +29,16 @@
 #include "AStatusComm.h"
 #include "AFrontendHooks.h"
 
-// one of ENABLE_OSS, ENABLE_PORTAUDIO or ENABLE_JACK will be defined
-#include "COSSSoundRecorder.h"
-#include "CPortAudioSoundRecorder.h"
-#include "CJACKSoundRecorder.h"
+#include "ASoundRecorder.h"
+#include "ASoundPlayer.h" // to be able to call aboutToRecord and doneRecording
 
 typedef TPoolAccesser<sample_t,CSound::PoolFile_t > CClipboardPoolAccesser;
 
-CRecordSoundClipboard::CRecordSoundClipboard(const string description,const string _workingFilename) :
+CRecordSoundClipboard::CRecordSoundClipboard(const string description,const string _workingFilename,ASoundPlayer *_soundPlayer) :
 	ASoundClipboard(description),
 	workingFilename(_workingFilename),
-	workingFile(NULL)
+	workingFile(NULL),
+	soundPlayer(_soundPlayer)
 {
 }
 
@@ -63,6 +62,7 @@ bool CRecordSoundClipboard::isReadOnly() const
 
 bool CRecordSoundClipboard::prepareForCopyTo()
 {
+	// --- possibly cleanup from previous ----
 	if(!isEmpty())
 	{
 		VAnswer ans=Question("There is already data on this recording clipboard.  Do you want to record something new?",cancelQues);
@@ -75,15 +75,11 @@ bool CRecordSoundClipboard::prepareForCopyTo()
 
 	clearWhichChannels();
 	delete workingFile;workingFile=NULL;
+	// ---------------------------------------
 
-// ??? a better system would probably be to have a function or method in some class that returns an ASoundRecorder * so that I don't have to repeat this code also in ASoundFileManager.cpp
-#if defined(ENABLE_OSS)
-	COSSSoundRecorder recorder;
-#elif defined(ENABLE_PORTAUDIO)
-	CPortAudioSoundRecorder recorder;
-#elif defined(ENABLE_JACK)
-	CJACKSoundRecorder recorder;
-#endif
+
+	ASoundRecorder *recorder=NULL;
+	soundPlayer->aboutToRecord();
 	try
 	{
 		string dummyFilename="";
@@ -95,22 +91,29 @@ bool CRecordSoundClipboard::prepareForCopyTo()
 #ifdef ENABLE_JACK
 		sampleRate=CJACKSoundPlayer::hack_sampleRate;
 		if(!gFrontendHooks->promptForNewSoundParameters(dummyFilename,dummyRaw,true,channelCount,false,sampleRate,true,dummyLength,true))
+		{
+			soundPlayer->doneRecording();
 			return false;
+		}
 #else
 		if(!gFrontendHooks->promptForNewSoundParameters(dummyFilename,dummyRaw,true,channelCount,false,sampleRate,false,dummyLength,true))
+		{
+			soundPlayer->doneRecording();
 			return false;
+		}
 #endif
 
 		remove(workingFilename.c_str());
 		workingFile=new CSound(workingFilename,sampleRate,channelCount,1); // at least 1 sample is manditory
 		this->sampleRate=sampleRate;
 
-		recorder.initialize(workingFile);
+		recorder=ASoundRecorder::createInitializedSoundRecorder(workingFile);
 
-		if(!gFrontendHooks->promptForRecord(&recorder))
+		if(!gFrontendHooks->promptForRecord(recorder))
 		{
-			recorder.deinitialize();
+			delete recorder; recorder=NULL;
 			delete workingFile;workingFile=NULL;
+			soundPlayer->doneRecording();
 			return false;
 		}
 
@@ -121,12 +124,14 @@ bool CRecordSoundClipboard::prepareForCopyTo()
 		// ??? temporary until CSound can have zero lenth
 		workingFile->lockForResize(); try { workingFile->removeSpace(0,1); workingFile->unlockForResize(); } catch(...) { workingFile->unlockForResize(); throw; }
 
-		recorder.deinitialize();
+		delete recorder; recorder=NULL;
+		soundPlayer->doneRecording();
 	}
 	catch(...)
 	{
 		delete workingFile;workingFile=NULL;
-		recorder.deinitialize();
+		delete recorder; recorder=NULL;
+		soundPlayer->doneRecording();
 		throw;
 	}
 

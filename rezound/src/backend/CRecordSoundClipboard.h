@@ -28,10 +28,12 @@ class CRecordSoundClipboard;
 #include "ASoundClipboard.h"
 #include "CSound.h"
 
+class ASoundPlayer;
+
 class CRecordSoundClipboard : public ASoundClipboard
 {
 public:
-	CRecordSoundClipboard(const string description,const string workingFilename);
+	CRecordSoundClipboard(const string description,const string workingFilename,ASoundPlayer *soundPlayer);
 	virtual ~CRecordSoundClipboard();
 
 	void copyFrom(const CSound *sound,const bool whichChannels[MAX_CHANNELS],sample_pos_t start,sample_pos_t length);
@@ -49,6 +51,8 @@ private:
 	unsigned sampleRate;
 
 	CSound *workingFile;
+
+	ASoundPlayer *soundPlayer;
 };
 
 #endif
