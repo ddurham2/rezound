@@ -1,3 +1,7 @@
+rezound-0.5.1beta
+	I fixed a nasty bug with ReZound crashing RedHat 8.0 with some other specific sound card and drivers.
+	Thanks goes to Jason Lyons for detecting this.
+
 rezound-0.5.0beta
 	This is mostly a new-feature release, but some bugs also have been fixed.
 	- Added a Convolution filter and some presets for reverbs
