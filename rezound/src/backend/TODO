@@ -7,6 +7,10 @@
 		- this base class would probably have some sort of accesser class with a operator[] defined because I need
 		  to support all the mixing methods when pasting...
 
+	- need a method that can make an available cue name which isn't already used
+		- use whenever the new-cue-dialog is shown
+		- or when a button is pressed while playing (hmm.. latency of play position might matter.. maybe I could work with COSSSoundPlayer to know where the real play position is by subtracting the amount of prebuffered samples from the CSoundPlayerChannel's playPosition... looping would be an issue and so would sample rate... )
+
 	- Add a feature to ASoundRecorder that tells it to start when a certain threshold is hit in percent
 
 	- in CrezSoundTranslator::onSaveSound, copyToFile unnecessarily copies any temp pools and peak chunk pools...  thus making the saved file way too big
@@ -72,7 +76,9 @@
 		  to do the action again with the same parameters.  But, the sound, stop and start positions, and doChannels of CActionSound would not be the same later, so I figured I should have one part of the parameters parameters that was fixed (CActionParameters) and one part that changes later (CActionSound)
 		- Now, granted, there may be some parameters to actions within CActionParameters which don't necessarily work later on a different sound, namely any values which indicate positions within the sound or channel numbers within the sound... For these situations, I either should disallow this saving functionality make the parameters more relative to the sound not absolute
 
-
+	- Truthfully, a good implementation of the action should also adjust the cues if it is change the size of a selection, if a cue is tied to a particular sample, then that cue should go with that sample's new position
+		- reverse would reverse the cues in the selection, changing the rate would adjust their positions, etc.. Most actions wouldn't really have to worry about it, but it would seem that it should follow that the cues should change as the audio changes
+		- if I see myself using cues a lot or other users wanting new cue features I may just implement this.
 
 
 

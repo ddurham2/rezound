@@ -745,6 +745,18 @@ void AAction::crossfadeEdges(CActionSound &actionSound)
 		// we don't look at actionSound.whichChannels so that when we 
 		// make the sound slightly shorter, it keeps the channels in sync
 
+		// The two areas to be crossfaded are consecutive in the at start-crossfadeTime and spans for
+		// 2*crossfade-time.  The second half of this regions is going to 'overlap' the first half and
+		// a crossfade will be from one overlapping area to the other.  So, we need to move any cues 
+		// existing in the second half of this region leftward by the crossfade-time
+	
+		for(size_t t=0;t<actionSound.sound->getCueCount();t++)
+		{
+			const sample_pos_t cueTime=actionSound.sound->getCueTime(t);
+			if(cueTime>=actionSound.start && cueTime<actionSound.start+crossfadeTime)
+				actionSound.sound->setCueTime(t,cueTime-crossfadeTime);
+		}
+
 		// backup the area to crossfade around the start position
 		tempCrossfadePoolKeyStart=actionSound.sound->moveDataToTempAndReplaceSpace(allChannels,actionSound.start-crossfadeTime,crossfadeTime*2,crossfadeTime);
 
@@ -787,6 +799,14 @@ void AAction::crossfadeEdges(CActionSound &actionSound)
 
 		if(crossfadeTime>0)
 		{
+			// move cues just as we did in the start case
+			for(size_t t=0;t<actionSound.sound->getCueCount();t++)
+			{
+				const sample_pos_t cueTime=actionSound.sound->getCueTime(t);
+				if(cueTime>=actionSound.stop && cueTime<actionSound.stop+crossfadeTime)
+					actionSound.sound->setCueTime(t,cueTime-crossfadeTime);
+			}
+
 			// backup the area to crossfade around the stop position
 			tempCrossfadePoolKeyStop=actionSound.sound->moveDataToTempAndReplaceSpace(allChannels,actionSound.stop-crossfadeTime,crossfadeTime*2,crossfadeTime);
 
