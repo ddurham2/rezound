@@ -1,6 +1,44 @@
+rezound-0.6.0beta
+	This is a big new feature release.  This being the case, please report 
+	any bugs as you might find to the bug reporting system on the SourceForge 
+	project page.  Also, I have created a mailing list with SourceForge so 
+	please subscribe if you have anything to communicate.
+	Many major and minor changes have been made:
+	** Major **
+	- Changed the GUI to a single window layout instead of multiple windows
+	- Added an Arbitrary FIR Filter (plot your own frequency response)
+	- Added audio level playback meters that measures the current audio output in both RMS and Peak Levels
+	- Added a frequency analyzer that analyzes the current audio output
+	- Now Alt-[0-9] switches between the opened files, and Alt-` switches to the previous opened file
+	- Holding Ctrl and Left clicking in a sound window starts playing from the clicked position
+	- Holding Ctrl and holding the Right mouse button in a sound window starts playing from the clicked position until the mouse button is released
+	- Added a "Save Selection as" feature
+	- Added a "Save as Multiple Files" feature that can save an audio file into several peices based on properly defined cues
+	- Added a "Paste as New" Edit action
+	- Added "Copy to New" and "Cut to New" Edit actions
+	- Added a "Control" Menu which is mostly for just displaying the keyboard mappings for various actions and play controls
+	- Added an action that creates N equally spaced cues within the selection
+	- Added an action that creates a cue every X seconds within the selection
+	- Added some horizontal and vertical deformation sliders to the widget for drawing curves
+	- Added a feature which zooms to fit the selection in the window
+	- Recording can be cued up to start when the input hits a given threshold
+	** Minor **
+	- When a sound is playing the play controls no longer require a stop to have an effect
+	- Tweaked the dynamic range compressor algorithm
+	- Added a button for recording rather than hiding it in the "File" menu
+	- Removed the concept of Right-Clicking menu items for advanced features; now there are just two menu items listed on the menu for such actions
+	- Cues no longer must have unique names
+	- Made the reopen history size a setting (in ~/.rezound/registry.dat")
+	- Added an 'Explain' button to a few action dialogs which hopefully explain some of the less obvious features
+	- Added a resizable header to the loaded sounds list box
+	- Fixed some backwards compatibility compiling issues with frontend FOX code
+	- Numerous other cosmetic tweaks and changes
+
+
 rezound-0.5.1beta
 	I fixed a nasty bug with ReZound crashing RedHat 8.0 with some other specific sound card and drivers.
 	Thanks goes to Jason Lyons for detecting this.
+
 
 rezound-0.5.0beta
 	This is mostly a new-feature release, but some bugs also have been fixed.
