@@ -68,14 +68,14 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 			throw(runtime_error(string(__func__)+" -- error creating "+gUserDataDirectory+" -- "+strerror(mkdirErrno)));
 
 
-		// determine where /usr/share/ReZound has been placed (try the install-from directory first)
+		// determine where /usr/share/rezound has been placed (try the install-from directory first)
 		if(getenv("REZ_SHARE_DIR")!=NULL && CPath(getenv("REZ_SHARE_DIR")).exists())
 			gSysDataDirectory=getenv("REZ_SHARE_DIR");
 		else
 		{
 			gSysDataDirectory=SOURCE_DIR"/share";
 			if(!CPath(gSysDataDirectory).exists()) 
-				gSysDataDirectory=DATA_DIR"/ReZound";
+				gSysDataDirectory=DATA_DIR"/rezound";
 		}
 
 
