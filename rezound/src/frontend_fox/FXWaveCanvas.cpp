@@ -518,7 +518,7 @@ const sample_pos_t FXWaveCanvas::getCueTimeFromX(FXint screenX) const
 
 const sample_pos_t FXWaveCanvas::getSamplePosForScreenX(FXint X) const
 {
-	sample_fpos_t p=sample_fpos_floor(((sample_fpos_t)(X+horzOffset))*horzZoomFactor);
+	sample_fpos_t p=sample_fpos_floor((X+(sample_fpos_t)horzOffset)*horzZoomFactor);
 	if(p<0)
 		p=0.0;
 	else if(p>=loadedSound->sound->getLength())
@@ -535,8 +535,8 @@ void FXWaveCanvas::setSelectStartFromScreen(FXint X)
 	// and--if there were a next pixel--and selecting that
 	// would select >= sound's length, we make newSelectStart
 	// be the sound's length - 1
-	// 							??? why X+1?			??? may beed to check >=len-1
-	if(X>=((FXint)getWidth()-1) && (sample_pos_t)((sample_fpos_t)(X+horzOffset+1)*horzZoomFactor)>=loadedSound->sound->getLength())
+	// 								??? why X+1?		??? may need to check >=len-1
+	if(X>=((FXint)getWidth()-1) && (sample_pos_t)((X+(sample_fpos_t)horzOffset+1)*horzZoomFactor)>=loadedSound->sound->getLength())
 		newSelectStart=loadedSound->sound->getLength()-1;
 
 
@@ -558,7 +558,7 @@ void FXWaveCanvas::setSelectStopFromScreen(FXint X)
 	// would select >= sound's length, we make newSelectStop
 	// be the sound's length - 1
 	// 											??? may beed to check >=len-1
-	if(X>=((FXint)getWidth()-1) && (sample_pos_t)((sample_fpos_t)(X+horzOffset+1)*horzZoomFactor)>=loadedSound->sound->getLength())
+	if(X>=((FXint)getWidth()-1) && (sample_pos_t)((X+(sample_fpos_t)horzOffset+1)*horzZoomFactor)>=loadedSound->sound->getLength())
 		newSelectStop=loadedSound->sound->getLength()-1;
 
 	if(newSelectStop<0)
