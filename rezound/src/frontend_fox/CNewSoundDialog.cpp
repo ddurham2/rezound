@@ -28,6 +28,7 @@
 #include <istring>
 
 #include "settings.h"
+#include "CFrontendHooks.h"
 #include "../backend/AStatusComm.h"
 
 CNewSoundDialog *gNewSoundDialog=NULL;
@@ -94,8 +95,7 @@ CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 
 long CNewSoundDialog::onBrowseButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-													// ??? need to add other extensions
-	FXString filename=FXFileDialog::getSaveFilename(this,"New file",gPromptDialogDirectory.c_str(),"New File Type (*.rez)\nAll Files(*)",0);
+	FXString filename=FXFileDialog::getSaveFilename(this,"New file",gPromptDialogDirectory.c_str(),((CFrontendHooks *)gFrontendHooks)->getFOXFileTypes().c_str(),0);
 	if(filename!="")
 	{
 		// save directory to open the opendialog to next time

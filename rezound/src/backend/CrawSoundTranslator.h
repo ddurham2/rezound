@@ -33,8 +33,10 @@ public:
 
 	bool handlesExtension(const string extension) const;
 	bool supportsFormat(const string filename) const;
-
 	bool handlesRaw() const { return(true); }
+
+	const vector<string> getFormatNames() const;
+	const vector<vector<string> > getFormatExtensions() const;
 
 protected:
 

@@ -154,3 +154,22 @@ bool Cold_rezSoundTranslator::supportsFormat(const string filename) const
 	return(oldFormat);
 }
 
+const vector<string> Cold_rezSoundTranslator::getFormatNames() const
+{
+	vector<string> names;
+	names.push_back("Old ReZound Format");
+
+	return(names);
+}
+
+const vector<vector<string> > Cold_rezSoundTranslator::getFormatExtensions() const
+{
+	vector<vector<string> > list;
+
+	vector<string> extensions;
+	extensions.push_back("rez");
+	list.push_back(extensions);
+
+	return(list);
+}
+

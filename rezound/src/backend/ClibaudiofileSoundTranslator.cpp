@@ -217,13 +217,14 @@ void ClibaudiofileSoundTranslator::onSaveSound(const string filename,CSound *sou
 {
 	int fileType;
 
-	if(istring(ost::Path(filename).Extension()).lower()=="wav")
-		fileType=AF_FILE_WAVE;
-	else if(istring(ost::Path(filename).Extension()).lower()=="aiff")
+	const string extension=istring(ost::Path(filename).Extension()).lower();
+	if(extension=="aiff")
 		fileType=AF_FILE_AIFF;
-	else if(istring(ost::Path(filename).Extension()).lower()=="snd" || istring(ost::Path(filename).Extension()).lower()=="au")
+	else if(extension=="wav")
+		fileType=AF_FILE_WAVE;
+	else if(extension=="snd" || extension=="au")
 		fileType=AF_FILE_NEXTSND;
-	else if(istring(ost::Path(filename).Extension()).lower()=="sf")
+	else if(extension=="sf")
 		fileType=AF_FILE_BICSF;
 	else
 		throw(runtime_error(string(__func__)+" -- unhandled extension for filename: "+filename));
@@ -232,6 +233,7 @@ void ClibaudiofileSoundTranslator::onSaveSound(const string filename,CSound *sou
 	try
 	{
 		// ??? all the following parameters need to be passed in somehow as the export format
+		// 	??? can easily do it with AFrontendHooks
 		afInitFileFormat(setup,fileType); 
 		afInitByteOrder(setup,AF_DEFAULT_TRACK,AF_BYTEORDER_LITTLEENDIAN); 			// ??? I would actually want to pass how the user wants to export the data...
 		afInitChannels(setup,AF_DEFAULT_TRACK,sound->getChannelCount());
@@ -391,4 +393,42 @@ bool ClibaudiofileSoundTranslator::supportsFormat(const string filename) const
 
 	return(implemented);
 }
+
+const vector<string> ClibaudiofileSoundTranslator::getFormatNames() const
+{
+	vector<string> names;
+
+	names.push_back("AIFF");
+	names.push_back("Wave/RIFF");
+	names.push_back("NeXT/Sun");
+	names.push_back("Berkeley/IRCAM/CARL");
+
+	return(names);
+}
+
+const vector<vector<string> > ClibaudiofileSoundTranslator::getFormatExtensions() const
+{
+	vector<vector<string> > list;
+	vector<string> extensions;
+
+	extensions.clear();
+	extensions.push_back("aiff");
+	list.push_back(extensions);
+
+	extensions.clear();
+	extensions.push_back("wav");
+	list.push_back(extensions);
+
+	extensions.clear();
+	extensions.push_back("snd");
+	extensions.push_back("au");
+	list.push_back(extensions);
+
+	extensions.clear();
+	extensions.push_back("sf");
+	list.push_back(extensions);
+
+	return(list);
+}
+
 

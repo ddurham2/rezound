@@ -47,6 +47,7 @@ void CrawSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 	AFfilesetup setup=afNewFileSetup();
 	try
 	{
+		// ??? I should be able to do this now with frontend hooks
 		afInitFileFormat(setup,AF_FILE_RAWDATA);
 		afInitByteOrder(setup,AF_DEFAULT_TRACK,AF_BYTEORDER_LITTLEENDIAN); 	// ??? should be a parameter
 		afInitChannels(setup,AF_DEFAULT_TRACK,2);				// ??? should be a parameter
@@ -85,3 +86,22 @@ bool CrawSoundTranslator::supportsFormat(const string filename) const
 	return(false); // to keep it from catching all formats
 }
 
+const vector<string> CrawSoundTranslator::getFormatNames() const
+{
+	vector<string> names;
+
+	names.push_back("Raw PCM Data");
+
+	return(names);
+}
+
+const vector<vector<string> > CrawSoundTranslator::getFormatExtensions() const
+{
+	vector<vector<string> > list;
+
+	vector<string> extensions;
+	extensions.push_back("raw");
+	list.push_back(extensions);
+
+	return(list);
+}

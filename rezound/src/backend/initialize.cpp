@@ -195,9 +195,9 @@ void deinitializeBackend()
 }
 
 #include "CrezSoundTranslator.h"
-#include "Cold_rezSoundTranslator.h"
 #include "ClibaudiofileSoundTranslator.h"
 #include "CrawSoundTranslator.h"
+#include "Cold_rezSoundTranslator.h"
 void setupSoundTranslators()
 {
 	ASoundTranslator::registeredTranslators.clear();
@@ -205,14 +205,15 @@ void setupSoundTranslators()
 	static const CrezSoundTranslator rezSoundTranslator;
 	ASoundTranslator::registeredTranslators.push_back(&rezSoundTranslator);
 
-	static const Cold_rezSoundTranslator old_rezSoundTranslator;
-	ASoundTranslator::registeredTranslators.push_back(&old_rezSoundTranslator);
-	
 	static const ClibaudiofileSoundTranslator libaudiofileSoundTranslator;
 	ASoundTranslator::registeredTranslators.push_back(&libaudiofileSoundTranslator);
 
 	static const CrawSoundTranslator rawSoundTranslator;
 	ASoundTranslator::registeredTranslators.push_back(&rawSoundTranslator);
+
+	static const Cold_rezSoundTranslator old_rezSoundTranslator;
+	ASoundTranslator::registeredTranslators.push_back(&old_rezSoundTranslator);
+	
 }
 
 

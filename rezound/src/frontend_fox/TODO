@@ -1,16 +1,7 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- need to make a type parameter in the "new sound" dialog... Allow the user to choose among wave, rezound, etc types
-		- it can be done with the given extension right now, but the user may not know the extensions... or perhaps the open dialog should have separate filetype entries and it will add the extension chosen
-		- right now the backend knows it by file extension, and the backend may need to pop up a subsequent dialog to ask for format specifiy parametesr
-		- should be easier now that the code has be reorganized
-		- make a dropdown box which is the type to explicitly use or its first item is 'by filename extension'
-
-	- Somehow the registered Translators need to convey a list of file extensions to the frontend.. the front end can turn that into whatever format the frontend needs to make it work for the file dialog
-		- an extension and a format name needs to be given (i.e. Wave .wav  Sun/Next .au )
-		- in the frontend create a conglomerated list called all file types that includes all the extensions as well as a *.* entry
-
+	- I still probably need to instatiate a FXFileDialog to use for saving and opening because it doesn't remember the size, view mode, etc.. when it opens each time
 
 	- Other commercial audio editors do this, and now I think I know why...
 		XXX - When loading a sound it doesn't start zoomed out to see the whole thing.. 
@@ -103,8 +94,6 @@
 		- This would probably be a useful example of implementing a flag which makes a preset mean some percentage of the input value
 			- the question is, can I get that input value? or how can I specify it?  Perhaps there would be some defined like: sound length, channel count, sample rate, selection length
 
-	- I still probably need to instatiate a FXFileDialog to use for saving and opening because it doesn't remember the size, view mode, etc.. when it opens each time
-
 	- all the dialogs are based on fixed widths and heights (of the dialog itself)
 		- I would rather these widths and heights that I'm passing the dialogs, be minimums
 		- I added remember support so it wouldn't be as much of a problem, but perhaps ask the fox people how to get the dialog to make itself large enough for all the inner widgets
@@ -183,4 +172,16 @@
 
 	- there needs to be a key binding for "center" start position or "center" stop position, list this key in the drop down from the CSoundWindow ruler too
 		- ??? this binding should be read from a list of bindings.... but I don't have that yet
+
+	- NAH.... just let them choose it by extensions in the file dialog
+		- need to make a type parameter in the "new sound" dialog... Allow the user to choose among wave, rezound, etc types
+			- it can be done with the given extension right now, but the user may not know the extensions... or perhaps the open dialog should have separate filetype entries and it will add the extension chosen
+			- right now the backend knows it by file extension, and the backend may need to pop up a subsequent dialog to ask for format specifiy parametesr
+			- should be easier now that the code has be reorganized
+			- make a dropdown box which is the type to explicitly use or its first item is 'by filename extension'
+
+	- Somehow the registered Translators need to convey a list of file extensions to the frontend.. the front end can turn that into whatever format the frontend needs to make it work for the file dialog
+		- an extension and a format name needs to be given (i.e. Wave .wav  Sun/Next .au )
+		- in the frontend create a conglomerated list called all file types that includes all the extensions as well as a *.* entry
+
 

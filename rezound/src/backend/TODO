@@ -30,10 +30,6 @@
 
 	- use a registry setting for knowing where to put working files and the clipboard instead of always /tmp
 
-	- need to do a better job than CRecordClipboard just calling ASoundFileManager for prompting for recording parameters and the recording dialog
-		- perhaps have a backend abstract class which has virtual methods for all that the frontend will actually be responsible for doing.
-		- all prompting functions would be pure virtual and one of these would be constructed by the frontend
-
 	- Need to handle duplicate named cues when loading a file.. I don't allow them, but a file format might
 
 	- Warn the user if saving to a file format that doesn't save more than 31bits worth of sound and the sound file is longer than that
@@ -47,7 +43,8 @@
 
 	- Eventually, I need to have the frontend make use of the backend's ability for some of the actions to use different LFO implementations
 
-
+	- There may be some more formats that libaudiofile supports... I just didn't see them in the docs... work with the author to include any others
+	
 
 
 --- POSSIBLE THINGS TO DO ---
@@ -207,4 +204,8 @@
 		- or when a button is pressed while playing (hmm.. ??? latency of play position might matter.. maybe I could work with COSSSoundPlayer to know where the real play position is by subtracting the amount of prebuffered samples from the CSoundPlayerChannel's playPosition... looping would be an issue and so would sample rate... )
 
 	- have CRecordClipboard ask for recording parameters
+
+	- need to do a better job than CRecordClipboard just calling ASoundFileManager for prompting for recording parameters and the recording dialog
+		- perhaps have a backend abstract class which has virtual methods for all that the frontend will actually be responsible for doing.
+		- all prompting functions would be pure virtual and one of these would be constructed by the frontend
 

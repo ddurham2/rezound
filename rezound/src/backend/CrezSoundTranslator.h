@@ -34,6 +34,10 @@ public:
 	bool handlesExtension(const string extension) const;
 	bool supportsFormat(const string filename) const;
 
+	const vector<string> getFormatNames() const;
+	const vector<vector<string> > getFormatExtensions() const;
+
+
 protected:
 
 	void onLoadSound(const string filename,CSound *sound) const;

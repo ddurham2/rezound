@@ -83,3 +83,22 @@ bool CrezSoundTranslator::supportsFormat(const string filename) const
 	return(false);
 }
 
+const vector<string> CrezSoundTranslator::getFormatNames() const
+{
+	vector<string> names;
+	names.push_back("Native ReZound");
+
+	return(names);
+}
+
+const vector<vector<string> > CrezSoundTranslator::getFormatExtensions() const
+{
+	vector<vector<string> > list;
+
+	vector<string> extensions;
+	extensions.push_back("rez");
+	list.push_back(extensions);
+
+	return(list);
+}
+

@@ -82,6 +82,7 @@
 
 	- need to make front and backend provisions for letting the user specify the export format parameters... some of the parameters depend on the export format... Perhaps I could have a dialog with a tabbed bar which has different parameters on each... which ever bar was activated would be the export format type... Either use the tabbar or radio buttons (real buttons) and a switcher like the switcher test that comes with fox
 		- should be somewhat easier now with the code reorganization
+		- I should quite easily be able to do with with the existance of AFrontendHooks
 
 	- write a little document in PoolFile that explains simply the layout of how PoolFileAccessors do their thing and perhaps a very simplified explination of how TPoolFile does what it does
 
@@ -89,15 +90,12 @@
 		- There is a specific errno that comes back from this, I should test for it and fwrite zeros to make the file bigger
 		- this would be fixed in src/PoolFile/CMultiFile.cpp
 
-	- right now, if you copy/cut from not all the channels, (by hitting ctrl-cut/copy and deselecting some checkboxes)
-		- then when you ctrl-click to paste, the pasteChannels dialog shows up with all the channels that were cut/copied shifted down to lower channel numbers 
-		- perhaps I could create pools but not put data into them, for the un-included copy/cut channels, but know to disable the check boxes in the GUI if the pool is zero length
-
 	- Need someone like a sound engineer/hobbiest who can create interesting names and settings for presets of the effect
 		- He would also be good to suggest new parameters for the effects
 
 	- I want to add a gain or volume parameter for pasting data... Be able to apply that gain to the sound... 
 		- it'd probably come up when you right click on the paste buttons
+
 	- There needs to be a dialog for choosing the mix method for mix pasting
 
 
@@ -109,12 +107,12 @@
 
 	- needs some compressor action(s)
 
-	- AAction would need some more availability to ASoundFileManager, but it would be neat if I could create an action which could break a long sound into multiple tracks when there is silence for a given amount of time... Each track would be opened as a new file based on an initial filename
+	- AAction would need some more availability to ASoundFileManager, because it would be neat if I could create an action which could break a long sound into multiple tracks when there is silence for a given amount of time... Each track would be opened as a new file based on an initial filename
 
 	- could easily make the play buttons stop if playing and then do their action so that they don't do nothing while it's playing
 		- plus you have to hit stop and play to make it do something else... stop needs to be nice and big anyway
 
-	- it may be more intutive/user-friendly/athetically-pleasing to have the channel select dialog start out all unchecked so I acutally clikc on the channels I want to apply the action to, rather than the inverse of the channels...
+	- it may be more intutive/user-friendly/athetically-pleasing to have the channel select dialog start out all unchecked so I acutally click on the channels I want to apply the action to, rather than the inverse of the channels...
 		- I should also probably add a button that selects all chanels or unselects all changes
 			- this would be stupid right now, but more useful if I support 5 channel sounds or something
 		- I should put a button on the channel select dialog (and paste channel dialog) which set it to a normal state
@@ -143,7 +141,7 @@
 
 	- look at sox's code for more effect algorithms
 
-	- I think it's fine for now, but gWhichChannels is essentially a global which specifies which clipboard to use from the time the pasteChannelSelect dialog shows, to the time the factory is constructed, to the time the action runs
+	- I think it's fine for now, but gWhichClipboard is essentially a global which specifies which clipboard to use from the time the pasteChannelSelect dialog shows, to the time the factory is constructed, to the time the action runs
 		- it would be better if this were something passed on the action parameters or action sound to make SURE it would be consitant through out each stage
 
 
@@ -204,13 +202,9 @@
 		- I'm not implementing this right away because I don't know how useful it would be... But there were lots of off screen cues, it could be useful to have an idea of where the sound was playing 
 		- If I do implement this, I should create a method in ASound which returns the most recent cue, and call it at each mix buffer call... This method should use the cue index in ASound for effient finding of this value
 
-	- for multi-track editing, I could create a derivation of ASound that wraps around a given ASound that returns peak data according to the volume envelopes
-		- I would need to address how real-time effects get inserted into the play queue, perhaps ASoundPlayer could support that or CSoundPlayerChannel could contain the logic to mixData onto the buffer...
-			- then different playback rates and formats could be handled by just having an initial convertion to the native format that ASoundPlayer was created with
-
-	- I could implement a C++ base class which was a 'value generator' which would have dervations for constant, sin, trangle, etc... Then a frontend widget could be created to select which dervation to use and what parameters... then this class could be used as action parameters to more generalize how they work... Somethings probably couldn't be these because the parameter may have to be constant or is just too complex to figure out with such generality... however I'm thinking about rate changes and the rate curve... perhaps if the value generator could give it's first derivative it could be done
-
-	- see the sub-notes under multi-track editing for a way to playback non-native sample rates
+	- for multi-track editing, I could create a derivation of CSound that wraps around a given CSound that returns peak data according to the volume envelopes
+		- I would need to address how real-time effects get inserted into the play queue, perhaps CSoundPlayerChannel would pull data from a module chain
+			- then different playback rates and formats could be handled by just having an initial sample rate conversion module to the native sample rate
 
 	- I could have copy and cut's copy to the clipboard delayed until a non-paste function and a not a paste function to the same range and sound that we cut/copied from
 		- that way, a copy from one sound and an immediate paste into another would not require but one copy
@@ -251,8 +245,7 @@
 		- have a set of buttons that place a tone or other sample over the selected sound
 		- or one that quickly fade out and in the selection
 
-	- if I had a class which encompassed the parameters to any AAction, then if I made this object streamable I could stream it to a file and have repeatable actions where the user could save them
-		- so, some complicated envelope for amplitude or pitch could be apply to a sound once today, and again tomorrow after the whole application has been re-run
+	- be able to stream CActionParameters to a file and then be able to recall them in a batch type fasion...
 
 	- I could conceive of a dialog for rate and/or pitch changes that has a place for you to enter the original frequency of the sound (could be detected with fft), and then allow you do select a particular pitch/freq/note value (i.e. Bb) to transpose it to
 		- this would be useful for making sampled patches for a synthesizer
@@ -379,4 +372,8 @@
 			- either advanced mode for copy/cut/paste
 			- or a dropdown list somewhere on the mainform
 		- even a clipboard with is a recording source is quite feasible
+
+	- right now, if you copy/cut from not all the channels, (by hitting ctrl-cut/copy and deselecting some checkboxes)
+		- then when you ctrl-click to paste, the pasteChannels dialog shows up with all the channels that were cut/copied shifted down to lower channel numbers 
+		- perhaps I could create pools but not put data into them, for the un-included copy/cut channels, but know to disable the check boxes in the GUI if the pool is zero length
 

@@ -39,8 +39,10 @@ public:
 
 	virtual bool handlesExtension(const string extension) const=0;
 	virtual bool supportsFormat(const string filename) const=0;
+	virtual bool handlesRaw() const { return(false); }	// only the raw translator implementation should override this to return true
 
-	virtual bool handlesRaw() const { return(false); } // only the raw translator implementation should override this to return true
+	virtual const vector<string> getFormatNames() const=0;			// return a list of format names than this derivation handles
+	virtual const vector<vector<string> > getFormatExtensions() const=0;	// return a group of filename extensions for each format name that is supported
 
 
 	static vector<const ASoundTranslator *> registeredTranslators;

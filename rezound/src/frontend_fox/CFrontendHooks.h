@@ -33,6 +33,8 @@ public:
 	CFrontendHooks(FXWindow *mainWindow);
 	virtual ~CFrontendHooks();
 
+	const string getFOXFileTypes() const; // returns a string to pass as the file types drop-down in FOX file dialogs
+
 	bool promptForOpen(string &filename,bool &readOnly);
 
 	bool promptForSave(string &filename,const string extension);
