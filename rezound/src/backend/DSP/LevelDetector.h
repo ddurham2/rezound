@@ -40,7 +40,7 @@
 class CDSPRMSLevelDetector
 {
 public:
-	CDSPRMSLevelDetector(const unsigned _windowTime) :
+	CDSPRMSLevelDetector(const unsigned _windowTime=1) :
 		window(_windowTime),
 		sumOfSquaredSamples(0.0),
 		windowTime(_windowTime),
@@ -53,34 +53,54 @@ public:
 	{
 	}
 
-	// every time you read the level, you have to supply the next sample in the audio stream
-		// ??? I could avoid using sqrt by saying that I return the 'power' and not the 'level' and I would then have to square the value I compare this return value with, instead
-	const mix_sample_t readLevel(mix_sample_t newSample)
+	const mix_sample_t readCurrentLevel() const
 	{
-		const mix_sample_t currentAmplitude=(mix_sample_t)sqrt(sumOfSquaredSamples/windowTime);
+		// ??? I could avoid using sqrt by saying that I return the 'power' and not the 'level' and I would then have to square the value I compare this return value with, instead
+		return (mix_sample_t)sqrt(sumOfSquaredSamples/windowTime);
+	}
 
+	void updateLevel(mix_sample_t newSample)
+	{
 		// remove oldest sample from running statistic
 		sumOfSquaredSamples-=window.getSample();
 
 		// add new sample to running statistic
 		const mix_sample_t temp=newSample*newSample;
-		sumOfSquaredSamples+=(temp);
+		sumOfSquaredSamples+=temp;
 		window.putSample(temp);
-		
-		return(currentAmplitude);
 	}
+
+	// every time you read the level, you have to supply the next sample in the audio stream
+	const mix_sample_t readLevel(mix_sample_t newSample)
+	{
+		const mix_sample_t currentAmplitude=readCurrentLevel();
+		updateLevel(newSample);
+		return currentAmplitude;
+	}
+
 
 	const unsigned getWindowTime() const
 	{
-		return(iWindowTime); // the value this was constructed with
+		return iWindowTime; // the value this was constructed with
+	}
+
+	// will invalidate any previous information collected about the moving RMS
+	void setWindowTime(unsigned _windowTime) // in samples
+	{
+		window.setDelayTime(_windowTime);
+		windowTime=_windowTime;
+		iWindowTime=_windowTime;
+
+		sumOfSquaredSamples=0;
+		window.clear();
 	}
 
 private:
 
 	TDSPDelay<mix_sample_t> window; // used to know a past set of samples
 	double sumOfSquaredSamples;
-	const double windowTime;
-	const unsigned iWindowTime;
+	double windowTime;
+	unsigned iWindowTime;
 };
 
 
