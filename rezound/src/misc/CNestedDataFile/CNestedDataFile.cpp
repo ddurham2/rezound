@@ -25,11 +25,14 @@
  * -- Davy
  */
 
+/* ??? I could consider using string instead of any char *'s passing strings seems to be quote efficient */
+
 #include "CNestedDataFile.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
 
 #include <stdexcept>
 #include <algorithm>
@@ -392,6 +395,8 @@ void CNestedDataFile::removeArrayKey(const char *key,size_t index,bool throwOnEr
 
 void CNestedDataFile::prvCreateKey(const char *key,int offset,CVariant &value,CVariant *variant)
 {
+	verifyKey(key);
+
 	// look for a dot in the key
 	int pos=strchr(key+offset,'.')-(key+offset);
 	if(pos<0)
@@ -523,6 +528,22 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant) 
 		throw(runtime_error(string(__func__)+" -- internal error: unhandled type: "+istring(variant->type)+" from file: "+filename));
 	}
 }
+
+/*
+ * This method makes sure that when creating a key in the file that it 
+ * does not contain invalid characters that would cause a parse error
+ * if the file were parsed again with this supposed invalid key.
+ */
+void CNestedDataFile::verifyKey(const char *key)
+{
+	size_t l=strlen(key);
+	for(size_t t=0;t<l;t++)
+	{
+		if((!isalnum(key[t]) && key[t]!=' ' && key[t]!=':' && key[t]!='_' && key[t]!='.') || (t==0 && isdigit(key[t]))) 
+			throw(runtime_error(string(__func__)+" -- invalid character in key: '"+key+"' or first character is a digit for creating key in file: "+filename));
+	}
+}
+
 
 
 

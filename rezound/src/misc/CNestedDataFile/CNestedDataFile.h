@@ -125,6 +125,8 @@ private:
 	// this could be a method of CVariant
 	void prvWriteData(void *f,int indent,const CVariant *variant) const;
 
+	void verifyKey(const char *key);
+
 	// used in cfg_parse
 	static CNestedDataFile *parseTree;
 	static const char *initialFilename;
