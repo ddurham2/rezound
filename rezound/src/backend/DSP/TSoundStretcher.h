@@ -48,7 +48,7 @@ public:
 		toLength(_toLength),
 		frameSize(_frameSize),
 		frameOffset(_frameOffset),
-		step((int)floor(_srcLength/_toLength)),
+		step((int)sample_fpos_floor(_srcLength/_toLength)),
 
 		pos(0)
 	{
@@ -59,20 +59,20 @@ public:
 
 		// determine which actual implementation we can use based on the given parameters
 		// use less expensive scaling methods when possible, else use 2-point sample interpolation
-		if(srcLength==floor(srcLength) && toLength==floor(toLength))
+		if(srcLength==sample_fpos_floor(srcLength) && toLength==sample_fpos_floor(toLength))
 		{ // both srcLength and toLength are integers
-			if(srcOffset==floor(srcOffset) && _srcLength==_toLength)
+			if(srcOffset==sample_fpos_floor(srcOffset) && _srcLength==_toLength)
 			{ // srcOffset is an integer and the scaling is 1.0
-				pos=(long)floor(srcOffset);
+				pos=(long)sample_fpos_floor(srcOffset);
 				if(frameSize==1)
 					_getSample= &TSoundStretcher<src_type>::copy_frameSize1_GetSample;
 				else
 					_getSample= &TSoundStretcher<src_type>::copy_frameSizeN_GetSample;
 				_getCurrentSrcPosition= &TSoundStretcher<src_type>::copy_GetCurrentSrcPosition;
 			}
-			else if(srcOffset==floor(srcOffset) && ((long)floor(_srcLength)%(long)floor(_toLength))==0)
+			else if(srcOffset==sample_fpos_floor(srcOffset) && ((long)sample_fpos_floor(_srcLength)%(long)sample_fpos_floor(_toLength))==0)
 			{ // srcOffset is an integer and srcLength is an integral multiple of toLength
-				pos=(long)floor(srcOffset);
+				pos=(long)sample_fpos_floor(srcOffset);
 				if(frameSize==1)
 					_getSample= &TSoundStretcher<src_type>::step_frameSize1_GetSample;
 				else
