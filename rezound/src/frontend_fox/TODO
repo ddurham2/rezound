@@ -9,6 +9,19 @@
 
 	- create some useful presets for the new filter actions
 
+	- on the standard action dialog I could put a "applies to" button so that the user can change the selection after the fact.. this would not be as useful until I implement preview for all actions
+		- this selection button would bring up another standard dialog that would allow the user to choose: all, selected region, before selected region, after selected region, beginning to end of selected region, beginning of selected region to end
+		- I should make icons demonstrating all of these to make it easier to look at
+		- if the possible selection choice is zero length, then I should probably gray it out
+		- the dialog should have been passed the CActionSound and it should be able to change the start and stop positions of the sound... 
+			- perhaps tho, since the size will not be locked until the action is about to happen, so I could still leave start and stop the way they are.. then when I'm really ready to do whatever, I would have an enum set to what the user chose here and base it on the actual then size of the sound
+		- it could also have functions like.. look for next zero crossing and such.. perhaps this should be reflected in the underlying sound window beneth the dialog
+		- also, the user should be able to reselect the doChannels values
+			- but this would only be possible if the doChannels were applicable to the action.. pressing the 'channels' button should make a call back to the backend for it to reshow the channelSelectDialog, so that would work if the channelSelectDialog is not the generic one
+				- gray out this button if no channelSelectDialog was given
+			- this should probably be a function of AActionDialog so that the frontend just knows that the button was pressed, but doesn't have to do anything about it.
+			- there should probably be a flag to disable this functionality when it's known not to even try to make this work (I'm thinking swapping channels)
+
 	- perhaps a 'view' pull-down ... possible menu items...
 		- zoom controls.. increase/decrease zoom both vert and horz
 		- redraw

@@ -9,6 +9,9 @@
 		- it would handle avoiding overflow by use of recursion and also should be give an accuracy parameter to avoid looking at every value
 
 	- distortion would be an easy effect
+		- create the same widget as the curved amplitude or rate change has and make both axies dBFS and the user can create a mapping for sample values to follow
+
+	- create a pan action do where two chosen channels (or default if stereo) can be crossfaded/mixed in every combination I can think of
 
 	- figure out what to do with the 4 bogus cues that appear in an aiff file when the file had no cues in it, itself
 		- libaudiofile is doing this and the author insists that it's correct for some reason
