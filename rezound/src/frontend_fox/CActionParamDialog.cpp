@@ -451,6 +451,68 @@ void CActionParamDialog::setTipText(const string name,const string tipText)
 	}
 }
 
+void CActionParamDialog::showControl(const string name,bool show)
+{
+	const unsigned index=findParamByName(name);
+	
+	switch(parameters[index].first)
+	{
+	case ptConstant:
+		if(show)
+			((FXConstantParamValue *)parameters[index].second)->show();
+		else
+			((FXConstantParamValue *)parameters[index].second)->hide();
+		break;
+
+	case ptNumericText:
+	case ptStringText:
+		if(show)
+			((FXTextParamValue *)parameters[index].second)->show();
+		else
+			((FXTextParamValue *)parameters[index].second)->hide();
+		break;
+
+	case ptDiskEntity:
+		if(show)
+			((FXDiskEntityParamValue *)parameters[index].second)->show();
+		else
+			((FXDiskEntityParamValue *)parameters[index].second)->hide();
+		break;
+
+	case ptComboText:
+		if(show)
+			((FXComboTextParamValue *)parameters[index].second)->show();
+		else
+			((FXComboTextParamValue *)parameters[index].second)->hide();
+		break;
+
+	case ptCheckBox:
+		if(show)
+			((FXCheckBoxParamValue *)parameters[index].second)->show();
+		else
+			((FXCheckBoxParamValue *)parameters[index].second)->hide();
+		break;
+
+	case ptGraph:
+	case ptGraphWithWaveform:
+		if(show)
+			((FXGraphParamValue *)parameters[index].second)->show();
+		else
+			((FXGraphParamValue *)parameters[index].second)->hide();
+		break;
+
+	case ptLFO:
+		if(show)
+			((FXGraphParamValue *)parameters[index].second)->show();
+		else
+			((FXGraphParamValue *)parameters[index].second)->hide();
+		break;
+
+	default:
+		throw runtime_error(string(__func__)+" -- unhandled or unimplemented parameter type: "+istring(parameters[index].first));
+	}
+}
+
 bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
 	bool retval=false;

@@ -75,6 +75,9 @@ public:
 	void addGraphWithWaveform(void *parent,const string name,const string vertAxisLabel,const string vertUnits,FXGraphParamValue::f_at_xs vertInterpretValue,FXGraphParamValue::f_at_xs vertUninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar);
 	void addLFO(void *parent,const string name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs);
 
+	// show or hide a control
+	void showControl(const string name,bool show);
+
 	/* 
 	 * index corrisponds to the order that the add...() methods were called 
 	 * and this can only be called for sliders, text entries, check boxes, and
