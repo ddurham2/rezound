@@ -138,6 +138,9 @@ CSoundWindow::CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound) :
 
 	loadedSound(_loadedSound),
 
+#if REZ_FOX_VERSION<10322
+	timerHandle(NULL),
+#endif
 	firstTimeShowing(true),
 	closing(false),
 
