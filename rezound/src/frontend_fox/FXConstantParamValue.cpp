@@ -83,7 +83,7 @@ FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _unin
 	initScalar(_initScalar)
 
 {
-	ASSURE_HEIGHT(middleFrame,200);
+	ASSURE_HEIGHT(middleFrame,180);
 
 	halfLabel->setTarget(this);
 	halfLabel->setSelector(ID_MIDDLE_LABEL);
