@@ -1,6 +1,12 @@
 --- THINGS TO DO FOR SURE ---
 
+	- need a prefix flag for fftw libs in configure.ac
+		- or see if there's an .m4 that comes with the lib
+
+
 	- Create a crossfade feature when pasting and a gain parameter.
+
+	- change --with-FOX-path and include to just --with-FOX-prefix like the rest
 
 	- When they're all implemented, I need to update the description to something like: 
 		... Including features such as: Recording, Effects Previews, Realistic Reverbs, Convolution, Custom FIR Filters, Several IIR Filters, Many Supported Audio Formats, LADSPA Support, Undo/Redo, Level Meters & Frequency Analyzer, Seek Shuttle Wheel, Loads of Editing Tools, Dynamic Range Compressor, and Many Other Tools
