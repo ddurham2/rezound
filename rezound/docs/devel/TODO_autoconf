@@ -5,6 +5,10 @@ and move it into config
 
 - sorta trivial I would think, but about the flags --with-FOX-includes and --with-FOX-path, wouldn't you think that ...-path should be changed to ...-libs ?  same for the other library specific flags
 
+- I don't know the exact version yet, until he releases it, but I created a patch for SGI's libaudiofile to let wave files write cues
+	- if possible, warn the user in the configure process if their libaudiofile version is less than this minimum
+	- another solution is to query the capabilities of the library and warn the user
+
 -- See if things might possibly work with -O2 set. Decide if we should be using 
 -O2 or not.
 
