@@ -23,6 +23,7 @@
 
 #include "../../config/common.h"
 
+#include <map>
 
 #include <fox/fx.h>
 
@@ -57,6 +58,8 @@ public:
 	*/
 
 	long onQuit(FXObject *sender,FXSelector sel,void *ptr);
+
+	long onActionControlTabMouseMove(FXObject *sender,FXSelector sel,void *ptr);
 
 	// file action events
 	long onFileButton(FXObject *sender,FXSelector sel,void *ptr);
@@ -114,6 +117,8 @@ public:
 		ID_DEFRAG_BUTTON,
 		ID_PRINT_SAT_BUTTON,
 
+		ID_ACTIONCONTROL_TAB,
+
 		ID_LAST
 	};
 							  
@@ -144,6 +149,10 @@ private:
 			FXPacker *loopingTabFrame;
 		FXTabItem 	*remasterTab;	
 			FXPacker *remasterTabFrame;
+
+
+	map<void *,int> actionControlTabOrdering; // is a mapping from FXTabItem pointers to the index for FXTabBar::setCurrent() needing to give it the object created
+	void *mouseMoveLastTab; // contains the last tab for which the mouse move even was called, onActionControlTabMouseMove
 
 };
 

@@ -49,11 +49,11 @@
 CMainWindow *gMainWindow;
 
 /* TODO:
- * 	- make the mouse over event popup the tabs for the tool bar
- *
  * 	- make a button that brings back the editing toolbar incase they closed it
  *
  * 	- Lookup at FXToggleButton for instead of checkboxes for do-undo , put gap after repeating and other toggles
+ * 
+ *	- remove all the data members for controls that don't need to have their value saved for any reason
  *
  */
 
@@ -100,6 +100,8 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_DEFRAG_BUTTON,			CMainWindow::onDefragButton),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PRINT_SAT_BUTTON,		CMainWindow::onPrintSATButton),
 
+	FXMAPFUNC(SEL_MOTION,			CMainWindow::ID_ACTIONCONTROL_TAB,		CMainWindow::onActionControlTabMouseMove),
+
 	/*
 	FXMAPFUNC(SEL_PAINT,             CMainWindow::ID_CANVAS, CMainWindow::onPaint),
 	FXMAPFUNC(SEL_LEFTBUTTONPRESS,   CMainWindow::ID_CANVAS, CMainWindow::onMouseDown),
@@ -115,7 +117,9 @@ FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
 #include "FXGraphParamValue.h"
 
 CMainWindow::CMainWindow(FXApp* a) :
-	FXMainWindow(a,"ReZound",NULL,NULL,DECOR_ALL,0,0,800,0)
+	FXMainWindow(a,"ReZound",NULL,NULL,DECOR_ALL,0,0,800,0),
+
+	mouseMoveLastTab(NULL)
 {
 	//new FXGraphParamValue(this,LAYOUT_FIX_HEIGHT|LAYOUT_FIX_WIDTH,0,0,400,300);
 
@@ -146,8 +150,12 @@ CMainWindow::CMainWindow(FXApp* a) :
 
 	/* ??? it is not necessary to have all these data members for all the buttons */
 
+	int actionControlTabOrder=0;
 	actionControlsFrame=new FXTabBook(contents,NULL,0,TABBOOK_NORMAL|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_RIDGE, 0,0,0,0, 2,2,2,2);
 		fileTab=new FXTabItem(actionControlsFrame,"&File",NULL,TAB_TOP_NORMAL);
+		fileTab->setTarget(this);
+		fileTab->setSelector(ID_ACTIONCONTROL_TAB);
+		actionControlTabOrdering[fileTab]=actionControlTabOrder++;
 			fileTabFrame=new FXHorizontalFrame(actionControlsFrame,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|FRAME_RAISED, 0,0,0,0, 4,4,4,4, 3,1);
 				fileNewButton=new FXButton(fileTabFrame,"&New",NULL,this,ID_FILE_NEW_BUTTON,FRAME_RAISED);
 				fileOpenButton=new FXButton(fileTabFrame,"&Open/\nReopen\t(Right Click for Reopen History)",NULL,this,ID_FILE_OPEN_BUTTON,FRAME_RAISED);
@@ -167,10 +175,21 @@ CMainWindow::CMainWindow(FXApp* a) :
 				new FXButton(fileTabFrame,"&PrintSAT",NULL,this,ID_PRINT_SAT_BUTTON,FRAME_RAISED);
 
 		effectsTab=new FXTabItem(actionControlsFrame,"&Effects",NULL,TAB_TOP_NORMAL);
+		effectsTab->setTarget(this);
+		effectsTab->setSelector(ID_ACTIONCONTROL_TAB);
+		actionControlTabOrdering[effectsTab]=actionControlTabOrder++;
 			effectsTabFrame=new FXHorizontalFrame(actionControlsFrame,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|FRAME_RAISED, 0,0,0,0, 4,4,4,4, 3,1);
+
 		loopingTab=new FXTabItem(actionControlsFrame,"&Looping",NULL,TAB_TOP_NORMAL);
+		loopingTab->setTarget(this);
+		loopingTab->setSelector(ID_ACTIONCONTROL_TAB);
+		actionControlTabOrdering[loopingTab]=actionControlTabOrder++;
 			loopingTabFrame=new FXHorizontalFrame(actionControlsFrame,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|FRAME_RAISED);
+
 		remasterTab=new FXTabItem(actionControlsFrame,"&Remaster",NULL,TAB_TOP_NORMAL);
+		remasterTab->setTarget(this);
+		remasterTab->setSelector(ID_ACTIONCONTROL_TAB);
+		actionControlTabOrdering[remasterTab]=actionControlTabOrder++;
 			remasterTabFrame=new FXHorizontalFrame(actionControlsFrame,LAYOUT_SIDE_TOP|LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_THICK|FRAME_RAISED);
 }
 
@@ -238,6 +257,24 @@ long CMainWindow::onQuit(FXObject *sender,FXSelector sel,void *ptr)
 		getApp()->exit(0);
 	}
 	return(1);
+}
+
+long CMainWindow::onActionControlTabMouseMove(FXObject *sender,FXSelector sel,void *ptr)
+{
+	// This even is invoked when the mouse is moved over one of the tabs containing
+	// action buttons.  It is used to auto raise the tab when the mouse is moved over
+	// it to save the user from having to click on it.
+
+	if(dynamic_cast<FXTabItem *>(sender)==NULL)
+		return(0);
+
+	if(mouseMoveLastTab!=sender)
+	{
+		mouseMoveLastTab=sender;
+		actionControlsFrame->setCurrent(actionControlTabOrdering[sender]);
+	}
+
+	return 1;
 }
 
 // file action events
