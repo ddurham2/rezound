@@ -43,6 +43,7 @@ libfrontend_la_SOURCES= \
 			CSoundFileManager.cpp \
 			CFrontendHooks.cpp \
 			CSoundWindow.cpp \
+			CMetersWindow.cpp \
 			CStatusComm.cpp \
 			CUserNotesDialog.cpp \
 			CRawDialog.cpp \
@@ -114,6 +115,7 @@ noinst_HEADERS=\
 	CSoundFileManager.h \
 	CFrontendHooks.h \
 	CSoundWindow.h \
+	CMetersWindow.h \
 	CStatusComm.h \
 	CUserNotesDialog.h \
 	CRawDialog.h \
