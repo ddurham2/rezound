@@ -699,6 +699,7 @@ void CMainWindow::createMenus()
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"F&ilters",NULL,menu);
 		new CActionMenuCommand(new CConvolutionFilterFactory(gChannelSelectDialog,new CConvolutionFilterDialog(this)),menu,"");
+		new CActionMenuCommand(new CArbitraryFIRFilterFactory(gChannelSelectDialog,new CArbitraryFIRFilterDialog(this)),menu,"",FOXIcons->filter_custom);
 
 		new FXMenuSeparator(menu);
 		new CActionMenuCommand(new CSinglePoleLowpassFilterFactory(gChannelSelectDialog,new CSinglePoleLowpassFilterDialog(this)),menu,"",FOXIcons->filter_lowpass);
