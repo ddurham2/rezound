@@ -187,7 +187,7 @@ EOF
 		cat ajv_ck_lib_$1.c
 		echo
 		echo compile errors were:
-		cat ajv_ck_cxx_lib_$1.err
+		cat ajv_ck_lib_$1.err
 		echo
 
 		rm -f ajv_ck_lib_$1.c
