@@ -130,9 +130,8 @@ private:
 class CMoveCueAction : public AAction
 {
 public:
-	CMoveCueAction(const CActionSound actionSound,const size_t cueIndex,const sample_pos_t cueTime);
+	CMoveCueAction(const CActionSound actionSound,const size_t cueIndex,const sample_pos_t cueTime,const sample_pos_t restoreStartPosition,const sample_pos_t restoreStopPosition);
 	virtual ~CMoveCueAction();
-
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
@@ -142,6 +141,10 @@ protected:
 private:
 	const size_t cueIndex;
 	const sample_pos_t cueTime;
+
+	// if any, this says to restore either the start and/or stop positions upon undo
+	const sample_pos_t restoreStartPosition;
+	const sample_pos_t restoreStopPosition;
 };
 
 

@@ -189,11 +189,14 @@ CReplaceCueAction *CReplaceCueActionFactory::manufactureAction(const CActionSoun
 
 
 // -----------------------------------
-CMoveCueAction::CMoveCueAction(const CActionSound actionSound,const size_t _cueIndex,const sample_pos_t _cueTime) :
+CMoveCueAction::CMoveCueAction(const CActionSound actionSound,const size_t _cueIndex,const sample_pos_t _cueTime,const sample_pos_t _restoreStartPosition,const sample_pos_t _restoreStopPosition) :
 	AAction(actionSound),
 	
 	cueIndex(_cueIndex),
-	cueTime(_cueTime)
+	cueTime(_cueTime),
+
+	restoreStartPosition(_restoreStartPosition),
+	restoreStopPosition(_restoreStopPosition)
 {
 }
 
@@ -210,7 +213,15 @@ bool CMoveCueAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 
 void CMoveCueAction::undoActionSizeSafe(const CActionSound &actionSound)
 {
-	// it is not necessary to do anything here because AAction handles restoring all the cues
+	// it is not necessary to do anything with cues here because AAction handles restoring all the cues
+	
+	clearSavedSelectionPositions(); // so it won't restore them after this function is called
+
+	if(restoreStartPosition!=NIL_SAMPLE_POS)
+		actionSound.start=restoreStartPosition;
+
+	if(restoreStopPosition!=NIL_SAMPLE_POS)
+		actionSound.stop=restoreStopPosition;
 }
 
 AAction::CanUndoResults CMoveCueAction::canUndo(const CActionSound &actionSound) const
@@ -235,7 +246,13 @@ CMoveCueAction *CMoveCueActionFactory::manufactureAction(const CActionSound &act
 	return new CMoveCueAction(
 		actionSound,
 		actionParameters->getUnsignedParameter("index"),
-		actionParameters->getSamplePosParameter("position")
+		actionParameters->getSamplePosParameter("position"),
+		
+		(actionParameters->containsParameter("restoreStartPosition") ? 
+			actionParameters->getSamplePosParameter("restoreStartPosition") : NIL_SAMPLE_POS),
+
+		(actionParameters->containsParameter("restoreStopPosition") ? 
+			actionParameters->getSamplePosParameter("restoreStopPosition") : NIL_SAMPLE_POS)
 	);
 }
 
