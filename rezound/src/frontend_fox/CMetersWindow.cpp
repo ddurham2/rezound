@@ -425,13 +425,13 @@ public:
 	long CAnalyzer::onCanvasEnter(FXObject *sender,FXSelector sel,void *ptr)
 	{
 		drawBarFreq=true;
-		return 1;
+		return onCanvasMotion(sender,sel,ptr);
 	}
 
 	long CAnalyzer::onCanvasLeave(FXObject *sender,FXSelector sel,void *ptr)
 	{
 		drawBarFreq=false;
-		return 1;
+		return onCanvasMotion(sender,sel,ptr);
 	}
 
 	long CAnalyzer::onCanvasMotion(FXObject *sender,FXSelector sel,void *ptr)
