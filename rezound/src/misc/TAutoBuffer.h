@@ -73,6 +73,16 @@ public:
 		return buffer;
 	}
 
+	type *operator+(size_t offset)
+	{
+		return buffer+offset;
+	}
+
+	const type *operator+(size_t offset) const
+	{
+		return buffer+offset;
+	}
+
 #if 0 // I don't know why these cause so many warnings, but it should still be automatically castable to void* thru the type* operators
 	// cast to void *
 	operator void * const ()
