@@ -5,7 +5,7 @@
 #include "../DSPBlocks.h"
 #include "../CActionParameters.h"
 
-CCompressorAction::CCompressorAction(const CActionSound &actionSound,float _windowTime,float _threshold,float _ratio,float _attackTime,float _releaseTime,bool _syncChannels) :
+CCompressorAction::CCompressorAction(const CActionSound &actionSound,float _windowTime,float _threshold,float _ratio,float _attackTime,float _releaseTime,float _inputGain,float _outputGain,bool _syncChannels) :
 	AAction(actionSound),
 
 	windowTime(_windowTime),
@@ -13,6 +13,8 @@ CCompressorAction::CCompressorAction(const CActionSound &actionSound,float _wind
 	ratio(_ratio),
 	attackTime(_attackTime),
 	releaseTime(_releaseTime),
+	inputGain(_inputGain),
+	outputGain(_outputGain),
 	syncChannels(_syncChannels)
 {
 }
@@ -58,8 +60,8 @@ bool CCompressorAction::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 				while(destPos<=stop)
 				{
 					
-					const sample_t s=src[srcPos++];
-					dest[destPos]=ClipSample(compressor.processSample(s,s));
+					const mix_sample_t s=(mix_sample_t)(src[srcPos++]*inputGain);
+					dest[destPos]=ClipSample(compressor.processSample(s,s)*outputGain);
 					UPDATE_PROGRESS_BAR(destPos);
 					destPos++;
 				}
@@ -110,13 +112,13 @@ bool CCompressorAction::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 			while(destPos<=stop)
 			{
 				for(unsigned t=0;t<channelCount;t++)
-					inputFrame[t]=(*(srces[t]))[srcPos];
+					inputFrame[t]=(mix_sample_t)((*(srces[t]))[srcPos]*inputGain);
 				srcPos++;
 
 				compressor.processSampleFrame(inputFrame,channelCount);
 
 				for(unsigned t=0;t<channelCount;t++)
-					(*(dests[t]))[destPos]=ClipSample(inputFrame[t]);
+					(*(dests[t]))[destPos]=ClipSample(inputFrame[t]*outputGain);
 		
 				UPDATE_PROGRESS_BAR(destPos);
 				destPos++;
@@ -172,12 +174,14 @@ CCompressorAction *CCompressorActionFactory::manufactureAction(const CActionSoun
 {
 	return(new CCompressorAction(
 		actionSound,
-		actionParameters->getDoubleParameter(0),
-		actionParameters->getDoubleParameter(1),
-		actionParameters->getDoubleParameter(2),
-		actionParameters->getDoubleParameter(3),
-		actionParameters->getDoubleParameter(4),
-		true//actionParameters->getBoolParameter(5)
+		actionParameters->getDoubleParameter(0),	// windowTime
+		actionParameters->getDoubleParameter(1),	// threshold
+		actionParameters->getDoubleParameter(2),	// ratio
+		actionParameters->getDoubleParameter(3),	// attackTime
+		actionParameters->getDoubleParameter(4),	// releaseTime
+		actionParameters->getDoubleParameter(5),	// inputGain
+		actionParameters->getDoubleParameter(6),	// outputGain
+		true//actionParameters->getBoolParameter(7) ??? need to implement a checkbox parameter on the frontend
 		));
 }
 
