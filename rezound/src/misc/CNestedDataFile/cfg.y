@@ -101,7 +101,7 @@ int myyynerrs=0;
 %type	<variantList>	array_body;
 %type	<variantList>	array_body2;
 
-// numeric expression stuff
+/* numeric expression stuff */
 %type	<variant>	primary_expr
 %type	<variant>	unary_expr
 %type	<intValue>	unary_op
@@ -143,7 +143,7 @@ scope
 
 		free($1);
 
-		// now continue parsing for new scope's body
+		/* now continue parsing for new scope's body */
 	} scope_body '}' {
 		scopeStack.pop();
 	}
@@ -153,7 +153,7 @@ scope_body
 	: /* empty */
 	| scope_body scope_body_item
 
-	// ERROR CASES
+	/* ERROR CASES */
 	| error ';'
 	{
 		cfg_error(@1,"syntax error");
@@ -193,7 +193,7 @@ scope_body_item
 		cfg_includeFile($2);
 		free($2);
 	}
-	| ';' // allow stray ';'s
+	| ';' /* allow stray ';'s */
 	;
 
 array_body
@@ -236,7 +236,7 @@ array_body2
 		delete $3;
 	}
 
-	// ERROR CASES
+	/* ERROR CASES */
 	| error
 	{
 		$$=new vector<CNestedDataFile::CVariant>;
@@ -251,7 +251,7 @@ array_body2
 
 
 primary_expr
-	// literal values
+	/* literal values */
 	: LIT_NUMBER
 	{
 		$$=new CNestedDataFile::CVariant("",$1);
@@ -270,7 +270,7 @@ primary_expr
 		$$=new CNestedDataFile::CVariant("","false");
 	}
 
-	// symbol lookups
+	/* symbol lookups */
 	| qualified_ident
 	{
 		CNestedDataFile::CVariant *value;
@@ -300,14 +300,14 @@ primary_expr
 		free($1);
 	}
 
-	// parenthesis
+	/* parenthesis */
 	| '(' expr ')'
 	{
 		$$=$2;
 	}
 
 
-	// ERROR CASES
+	/* ERROR CASES */
 	| '(' error ')'
 	{
 		yyclearin;
