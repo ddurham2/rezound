@@ -27,6 +27,7 @@
 #include <map>
 
 #include "CSound_defs.h"
+#include <endian_util.h>
 
 // it would be nice if I didn't have to include all this ???
 #include <TPoolFile.h>
@@ -34,7 +35,6 @@
 #define REZOUND_POOLFILE_BLOCKSIZE 32768
 #define REZOUND_POOLFILE_SIGNATURE "ReZoundF"
 #define REZOUND_WORKING_POOLFILE_SIGNATURE "ReZoundW"
-
 
 typedef TStaticPoolAccesser<sample_t,TPoolFile<sample_pos_t,CMultiFile::l_addr_t> > CRezPoolAccesser;
 
@@ -285,8 +285,16 @@ public:
 			return *this;
 		}
 
-		// ??? char better remain 8 bits
+		/* 
+		 * Instead of char I would like to have int8_t
+		 * I have a test in configure.ac that makes SURE char is 1 byte, if there's
+		 * ever a platform with char size other than 1, I will deal with it then 
+		 * because making this int8_t causes the string class and strxxx() functions 
+		 * to be incompatible
+		 */
 		char name[MAX_SOUND_CUE_NAME_LENGTH+1];
+
+
 		// If for some reason, this isn't enough space in the future,
 		// I could just go with a new pool name and when loading an
 		// older version, just update to the new pool name and convert
@@ -294,6 +302,58 @@ public:
 		uint8_t reserved[58];
 		uint8_t isAnchored;
 		uint64_t time;
+
+		typedef uint8_t PackedChunk[
+			MAX_SOUND_CUE_NAME_LENGTH+1+	//sizeof(name)+
+			58+				//sizeof(reserved)+
+			1+				//sizeof(isAnchored)+
+			8				//sizeof(time)
+		];
+
+		void pack(PackedChunk &r) const
+		{
+			// pack the values of the data members into r in little-endian
+			
+			register unsigned offset=0;
+
+			memcpy(r+offset,name,sizeof(name));
+			offset+=sizeof(name);
+
+			memset(r+offset,0,sizeof(reserved));
+			offset+=sizeof(reserved);
+
+			memcpy(r+offset,&isAnchored,sizeof(isAnchored));
+			offset+=sizeof(isAnchored);
+
+			typeof(time) tTime=hetle(time);
+			memcpy(r+offset,&tTime,sizeof(time));
+			offset+=sizeof(time);
+		}
+
+		void unpack(const PackedChunk &r)
+		{
+			// unpack the little-endian values from r into the data members
+
+			register unsigned offset=0;
+
+			memcpy(&name,r+offset,sizeof(name));
+			offset+=sizeof(name);
+
+			// no need to copy reserved
+			offset+=sizeof(reserved);
+
+			memcpy(&isAnchored,r+offset,sizeof(isAnchored));
+			offset+=sizeof(isAnchored);
+			
+			memcpy(&time,r+offset,sizeof(time));
+			lethe(&time);
+			offset+=sizeof(time);
+		}
+
+	private:
+		friend class CrezSoundTranslator;
+		RCue() {}
+
 	};
 
 	const size_t getCueCount() const;
@@ -411,6 +471,7 @@ private:
 			sampleRate=src.sampleRate;
 			channelCount=src.channelCount;
 		}
+
 	};
 	typedef TPoolAccesser<RFormatInfo,PoolFile_t > CFormatInfoPoolAccesser;
 
@@ -425,7 +486,7 @@ private:
 	bool _isModified;
 
 
-	typedef TPoolAccesser<RCue,PoolFile_t > CCuePoolAccesser;
+	typedef TPoolAccesser<RCue,PoolFile_t> CCuePoolAccesser;
 	CCuePoolAccesser *cueAccesser;
 	map<sample_pos_t,size_t> cueIndex; // index into cueAccesser by time
 

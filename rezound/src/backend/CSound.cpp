@@ -1560,7 +1560,18 @@ void CSound::flush()
 	directory should be writable and have free 
 	space of 110% of the given file's size
 */
-#include <sys/vfs.h>
+#if defined(rez_OS_SOLARIS)
+        #include <sys/statvfs.h>
+        #define statfs statvfs
+#elif defined(rez_OS_BSD)
+	#include <sys/param.h> /* I think there's a bug in sys/ucred.h because NGROUPS isn't defined by any previous include, so I include this to get it defined */
+        #include <sys/mount.h>
+#elif defined(rez_OS_LINUX)
+        #include <sys/statfs.h>
+#else
+	#error complier error imminent no xxxfs.h has been included
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -2208,21 +2219,19 @@ const string CSound::getUserNotes() const
 {
 	if(poolFile.containsPool(NOTES_POOL_NAME))
 	{
-		const TStaticPoolAccesser<int8_t,PoolFile_t> a=poolFile.getPoolAccesser<int8_t>(NOTES_POOL_NAME);
+		const TStaticPoolAccesser<char,PoolFile_t> a=poolFile.getPoolAccesser<char>(NOTES_POOL_NAME);
 
 		string s;
 
 		char buffer[101];
 		for(size_t t=0;t<a.getSize()/100;t++)
 		{
-				// ??? here we need to assert that char and int8_t are the same
-			a.read((int8_t *)buffer,100);
+			a.read(buffer,100);
 			buffer[100]=0;
 			s+=buffer;
 		}
 		
-			// ??? here we need to assert that char and int8_t are the same
-		a.read((int8_t *)buffer,a.getSize()%100);
+		a.read(buffer,a.getSize()%100);
 		buffer[a.getSize()%100]=0;
 		s+=buffer;
 
@@ -2234,11 +2243,10 @@ const string CSound::getUserNotes() const
 
 void CSound::setUserNotes(const string &notes)
 {
-	TPoolAccesser<int8_t,PoolFile_t> a=poolFile.containsPool(NOTES_POOL_NAME) ? poolFile.getPoolAccesser<int8_t>(NOTES_POOL_NAME) : poolFile.createPool<int8_t>(NOTES_POOL_NAME);
+	TPoolAccesser<char,PoolFile_t> a=poolFile.containsPool(NOTES_POOL_NAME) ? poolFile.getPoolAccesser<char>(NOTES_POOL_NAME) : poolFile.createPool<char>(NOTES_POOL_NAME);
 
 	a.clear();
-		// ??? here we need to assert that char and int8_t are the same
-	a.write((int8_t *)notes.c_str(),notes.size());
+	a.write(notes.c_str(),notes.size());
 }
 
 
