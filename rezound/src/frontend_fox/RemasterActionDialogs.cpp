@@ -39,3 +39,32 @@ CNoiseGateDialog::CNoiseGateDialog(FXWindow *mainWindow) :
 	addSlider("Gain Release Time","ms",interpretValue_noiseGate,uninterpretValue_noiseGate,NULL,10.0,5,1000,30,false);
 }
 
+
+
+// --- compressor --------------------------
+
+static const double interpretValue_compressorWindowTime(const double x,const int s) { return(unitRange_to_otherRange_linear(x,.1,100)*s); }
+static const double uninterpretValue_compressorWindowTime(const double x,const int s) { return(otherRange_to_unitRange_linear(x/s,.1,100)); }
+
+static const double interpretValue_dBFS(const double x,const int s) { return(amp_to_dBFS(x,1.0)); }
+static const double uninterpretValue_dBFS(const double x,const int s) { return(dBFS_to_amp(x,1.0)); }
+
+static const double interpretValue_compressionRatio(const double x,const int s) { return(unitRange_to_otherRange_linear(x,1,s)); }
+static const double uninterpretValue_compressionRatio(const double x,const int s) { return(otherRange_to_unitRange_linear(x,1,s)); }
+
+static const double interpretValue_compressAttack(const double x,const int s) { return(unitRange_to_otherRange_linear(unitRange_to_unitRange_squared(x),.1,100)); }
+static const double uninterpretValue_compressAttack(const double x,const int s) { return(unitRange_to_unitRange_unsquared(otherRange_to_unitRange_linear(x,.1,100))); }
+
+static const double interpretValue_compressRelease(const double x,const int s) { return(unitRange_to_otherRange_linear(unitRange_to_unitRange_squared(x),1,1000)); }
+static const double uninterpretValue_compressRelease(const double x,const int s) { return(unitRange_to_unitRange_unsquared(otherRange_to_unitRange_linear(x,1,1000))); }
+
+CCompressorDialog::CCompressorDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Compressor",550,400)
+{
+	addSlider("Window Time","ms",interpretValue_compressorWindowTime,uninterpretValue_compressorWindowTime,NULL,35.0,1,10,1,false);
+	addSlider("Threshold","dBFS",interpretValue_dBFS,uninterpretValue_dBFS,NULL,-12.0,0,0,1,false);
+	addSlider("Ratio",":1",interpretValue_compressionRatio,uninterpretValue_compressionRatio,NULL,2.0,2,20,6,false);
+	addSlider("Gain Attack Time","ms",interpretValue_compressAttack,uninterpretValue_compressAttack,NULL,10.0,0,0,0,false);
+	addSlider("Gain Release Time","ms",interpretValue_compressRelease,uninterpretValue_compressRelease,NULL,50.0,0,0,0,false);
+}
+

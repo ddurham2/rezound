@@ -37,4 +37,14 @@ public:
 
 
 
+// --- compressor ------------------------
+
+class CCompressorDialog : public CActionParamDialog
+{
+public:
+	CCompressorDialog(FXWindow *mainWindow);
+};
+
+
+
 #endif

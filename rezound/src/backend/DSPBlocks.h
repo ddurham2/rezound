@@ -323,9 +323,13 @@ public:
 		else if(level<threshold && bouncingRatio!=1.0)
 			bouncingRatio= max(bouncingRatio-releaseVelocity,(float)1.0);
 
-		if(bouncingRatio>1.0)
+		// attempt to smooth out the way the attack sounds
+		//const float _bouncingRatio=unitRange_to_otherRange_linear(unitRange_to_unitRange_squared(otherRange_to_unitRange_linear(bouncingRatio,1.0,compressionRatio)),1.0,compressionRatio);
+		#define _bouncingRatio bouncingRatio
+
+		if(_bouncingRatio>1.0)
 			//return (mix_sample_t)(s * ((threshold*(bouncingRatio-1.0)+level)/(bouncingRatio*level)) );
-			return (mix_sample_t)(s * pow((double)threshold/(double)level,(bouncingRatio-1.0)/bouncingRatio) );
+			return (mix_sample_t)(s * pow((double)threshold/(double)level,(_bouncingRatio-1.0)/_bouncingRatio) );
 		else
 			return s;
 		

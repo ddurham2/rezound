@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "../DSPBlocks.h"
+#include "../CActionParameters.h"
 
 CCompressorAction::CCompressorAction(const CActionSound &actionSound,float _windowTime,float _threshold,float _ratio,float _attackTime,float _releaseTime) :
 	AAction(actionSound),
@@ -85,15 +86,24 @@ void CCompressorAction::undoActionSizeSafe(const CActionSound &actionSound)
 
 // --------------------------------------------------
 //
-CCompressorActionFactory::CCompressorActionFactory(AActionDialog *channelSelectDialog) :
-	AActionFactory("Compressor","Compressor",false,channelSelectDialog,NULL,NULL)
+CCompressorActionFactory::CCompressorActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
+	AActionFactory("Compressor","Compressor",false,channelSelectDialog,normalDialog,NULL)
 {
 }
 
 CCompressorAction *CCompressorActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
+	return(new CCompressorAction(
+		actionSound,
+		actionParameters->getDoubleParameter(0),
+		actionParameters->getDoubleParameter(1),
+		actionParameters->getDoubleParameter(2),
+		actionParameters->getDoubleParameter(3),
+		actionParameters->getDoubleParameter(4)
+		));
+
 	//return(new CCompressorAction(actionSound,20,-14.75,2,500,1000));
-	return(new CCompressorAction(actionSound,40,-19.75,2,10,50));
+	//return(new CCompressorAction(actionSound,40,-19.75,2,10,50));
 	//return(new CCompressorAction(actionSound,2,-19.75,2,2,50));
 }
 

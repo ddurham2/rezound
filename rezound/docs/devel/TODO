@@ -107,6 +107,10 @@
 
 --- POSSIBLE THINGS TO DO ---
 
+	- There is a something which exists called LADSPA for writing reusable plugins for linux audio applications
+		- http://www.ladspa.org/ 
+		- I could probably support it pretty easily
+
 	- I thought of a cool way to do hints and warnings... If it's not an error where we want the user to really acknowledge the message, and it's not a question requiring feedback from the user.
 		- We could have Warning() and Note(), accept an optional MSG_ID where there would be a sound file associated with that ID, and we would play that warning message or note message out of the speakers... Temporarily, the ASoundPlayerChannel should know that if one of these is playing then it should cut the volume by 50%, by including that in the amplitude parameter
 

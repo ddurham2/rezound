@@ -28,7 +28,7 @@ private:
 class CCompressorActionFactory : public AActionFactory
 {
 public:
-	CCompressorActionFactory(AActionDialog *channelSelectDialog);
+	CCompressorActionFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
 
 	CCompressorAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };
