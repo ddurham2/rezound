@@ -82,6 +82,11 @@ void ApipedSoundTranslator::removeExistingFile(const string filename)
 	}
 }
 
+/* this wasn't defined on solaris or bsd using gcc when I ported the code */
+#if defined(rez_OS_SOLARIS) || defined(rez_OS_BSD)
+	typedef void (*sighandler_t) (int);
+#endif
+
 static sighandler_t origSIGPIPE_Handler;
 bool ApipedSoundTranslator::SIGPIPECaught;
 void SIGPIPE_Handler(int sig)
