@@ -32,7 +32,7 @@ class CConvolutionFilterFactory;
 class CConvolutionFilter : public AAction
 {
 public:
-	CConvolutionFilter(const CActionSound &actionSound,const float wetdryMix,const float inputGain,const float outputGain,const float inputLowpassFreq,const float predelay,const string filterKernelFilename,const float filterKernelGain,const float filterKernelLowpassFreq,const float filterKernelRate,const bool reverseFilterKernel,const bool warpDecay);
+	CConvolutionFilter(const CActionSound &actionSound,const float wetdryMix,const float inputGain,const float outputGain,const float inputLowpassFreq,const float predelay,const string filterKernelFilename,const bool openFilterKernelAsRaw,const float filterKernelGain,const float filterKernelLowpassFreq,const float filterKernelRate,const bool reverseFilterKernel,const bool warpDecay);
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
@@ -47,6 +47,7 @@ private:
 	const float predelay; // ms
 
 	const string filterKernelFilename;
+	const bool openFilterKernelAsRaw;
 	const float filterKernelGain;
 	const float filterKernelLowpassFreq;
 	const float filterKernelRate;

@@ -37,7 +37,7 @@
 
 #include "../settings.h"
 
-CConvolutionFilter::CConvolutionFilter(const CActionSound &actionSound,const float _wetdryMix,const float _inputGain,const float _outputGain,const float _inputLowpassFreq,const float _predelay,const string _filterKernelFilename,const float _filterKernelGain,const float _filterKernelLowpassFreq,const float _filterKernelRate,const bool _reverseFilterKernel,const bool _wrapDecay) :
+CConvolutionFilter::CConvolutionFilter(const CActionSound &actionSound,const float _wetdryMix,const float _inputGain,const float _outputGain,const float _inputLowpassFreq,const float _predelay,const string _filterKernelFilename,const bool _openFilterKernelAsRaw,const float _filterKernelGain,const float _filterKernelLowpassFreq,const float _filterKernelRate,const bool _reverseFilterKernel,const bool _wrapDecay) :
 	AAction(actionSound),
 
 	wetdryMix(_wetdryMix),
@@ -47,6 +47,7 @@ CConvolutionFilter::CConvolutionFilter(const CActionSound &actionSound,const flo
 	predelay(_predelay),
 
 	filterKernelFilename(_filterKernelFilename),
+	openFilterKernelAsRaw(_openFilterKernelAsRaw),
 	filterKernelGain(_filterKernelGain),
 	filterKernelLowpassFreq(_filterKernelLowpassFreq),
 	filterKernelRate(_filterKernelRate),
@@ -74,7 +75,7 @@ bool CConvolutionFilter::doActionSizeSafe(CActionSound &actionSound,bool prepare
 	symlink(filename.c_str(),tempFilename.c_str());
 	try
 	{
-		const ASoundTranslator *translator=ASoundFileManager::getTranslator(tempFilename,false);
+		const ASoundTranslator *translator=ASoundFileManager::getTranslator(tempFilename,openFilterKernelAsRaw);
 
 		CSound filterKernelFile;
 		try
@@ -266,6 +267,7 @@ CConvolutionFilter *CConvolutionFilterFactory::manufactureAction(const CActionSo
 		actionParameters->getDoubleParameter("Predelay"),
 
 		actionParameters->getStringParameter("Filter Kernel"),
+		actionParameters->getBoolParameter("Filter Kernel OpenAsRaw"),
 		actionParameters->getDoubleParameter("FK Gain"),
 		actionParameters->getDoubleParameter("FK Lowpass"),
 		actionParameters->getDoubleParameter("FK Rate"),
