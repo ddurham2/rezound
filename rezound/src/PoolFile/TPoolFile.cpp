@@ -137,11 +137,11 @@ template<class l_addr_t,class p_addr_t>
 	maxPhysicalAddress(~((p_addr_t)0))
 {
 	if(maxBlockSize<2)
-		throw(runtime_error(string(__func__)+" -- maxBlockSize is less than 2"));
+		throw runtime_error(string(__func__)+" -- maxBlockSize is less than 2");
 	if(maxLogicalAddress>maxPhysicalAddress)
-		throw(runtime_error(string(__func__)+" -- the logical address space is greater than the physical address space"));
+		throw runtime_error(string(__func__)+" -- the logical address space is greater than the physical address space");
 	if(maxBlockSize>maxLogicalAddress)
-		throw(runtime_error(string(__func__)+" -- the maxBlockSize is bigger than the logical address space"));
+		throw runtime_error(string(__func__)+" -- the maxBlockSize is bigger than the logical address space");
 
 	init();
 }
@@ -149,7 +149,7 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	TPoolFile<l_addr_t,p_addr_t>::TPoolFile(const TPoolFile<l_addr_t,p_addr_t> &src)
 {
-	throw(runtime_error(string(__func__)+" -- copy constructor invalid"));
+	throw runtime_error(string(__func__)+" -- copy constructor invalid");
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -188,9 +188,8 @@ template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::openFile(const string _filename,const bool canCreate)
 {
  	if(opened)
- 		throw(runtime_error(string(__func__)+" -- file already opened"));
+ 		throw runtime_error(string(__func__)+" -- file already opened");
 
-	//writeStructureInfoLock();
 	try
 	{
 		init();
@@ -199,60 +198,15 @@ template<class l_addr_t,class p_addr_t>
 		filename=_filename;
 
         	setup();
-
-        //writeStructureInfoUnlock();
 	}
 	catch(...)
 	{
-		//writeStructureInfoUnlock();
 		blockFile.close(false);
 		throw;
 	}
 
 
 }
-
-/* LLL -- could implement this if I need it
-template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::createTemp()
-{
-   	if(opened)
-   		throw(runtime_error(string(__func__)+" -- file already opened"));
-
-	//writeStructureInfoLock();
-
-	fileHandle=-1;
-	blockFile=NULL;
-	try
-	{
-		init();
-
-        if((blockFile=tmpfile())==NULL)
-            throw(runtime_error(string(__func__)+" -- could not create temp file"));
-
-        openedTemp=true;
-
-        setup();
-
-        //writeStructureInfoUnlock();
-	}
-	catch(...)
-	{
-		//writeStructureInfoUnlock();
-
-		if(fileHandle!=-1)
-			close(fileHandle);
-
-		if(blockFile)
-		{
-			fclose(blockFile);
-			blockFile=NULL;
-		}
-		throw;
-	}
-}
-*/
-
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::removeFile(const string filename)
@@ -275,13 +229,13 @@ template<class l_addr_t,class p_addr_t>
 			char buffer[8]={0};
 			blockFile.read(buffer,8,SIGNATURE_OFFSET);
 			if(strncmp(buffer,FORMAT_SIGNATURE,8))
-				throw(runtime_error("invalid format signature"));
+				throw runtime_error("invalid format signature");
 
 			// check format version
 			uint32_t formatVersion;
 			blockFile.read(&formatVersion,sizeof(formatVersion),FORMAT_VERSION_OFFSET);
 			if(formatVersion!=FORMAT_VERSION)
-				throw(runtime_error("invalid or unsupported format version: "+istring((int)formatVersion)));
+				throw runtime_error("invalid or unsupported format version: "+istring((int)formatVersion));
 
 			int8_t dirty;
 			blockFile.read(&dirty,sizeof(dirty),DIRTY_INDICATOR_OFFSET);
@@ -305,7 +259,7 @@ template<class l_addr_t,class p_addr_t>
 				uint64_t metaDataOffset;
 				blockFile.read(&metaDataOffset,sizeof(metaDataOffset),META_DATA_OFFSET);
 				if(metaDataOffset<LEADING_DATA_SIZE)
-					throw(runtime_error("invalid meta data offset"));
+					throw runtime_error("invalid meta data offset");
 
 				buildSATFromFile(&blockFile,metaDataOffset);
 				joinAllAdjacentBlocks();
@@ -330,7 +284,7 @@ template<class l_addr_t,class p_addr_t>
 		opened=false;
 		closeSATFiles(false);
 		init();
-		throw(runtime_error(string(__func__)+" -- "+string(e.what())));
+		throw runtime_error(string(__func__)+" -- "+string(e.what()));
 	}
 }
 
@@ -343,59 +297,47 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::copyToFile(const string _filename)
 {
-	//readStructureInfoLock();
+	if(!opened)
+		throw runtime_error(string(__func__)+" -- no file is open");
+	if(_filename==getFilename())
+		throw runtime_error(string(__func__)+" -- attempting to copy to the file which is open");
+
+	invalidateAllCachedBlocks();
+
+	CMultiFile copyFile;
+	copyFile.open(_filename,true);
+
+	CMultiFile::RHandle multiFileHandle1;
+	CMultiFile::RHandle multiFileHandle2;
+
 	try
 	{
-		if(!opened)
-			throw(runtime_error(string(__func__)+" -- no file is open"));
-		if(_filename==getFilename())
-			throw(runtime_error(string(__func__)+" -- attempting to copy to the file which is open"));
+		TAutoBuffer<int8_t> temp(maxBlockSize);
 
-		invalidateAllCachedBlocks();
+		const p_addr_t length=blockFile.getSize();
 
-		CMultiFile copyFile;
-		copyFile.open(_filename,true);
-
-		CMultiFile::RHandle multiFileHandle1;
-		CMultiFile::RHandle multiFileHandle2;
-
-		try
+		blockFile.seek(0,multiFileHandle1);
+		copyFile.seek(0,multiFileHandle2);
+	
+		for(l_addr_t t=0;t<length/maxBlockSize;t++)
 		{
-			TAutoBuffer<int8_t> temp(maxBlockSize);
-			//auto_ptr<int8_t> temp(new int8_t[maxBlockSize]);
-
-			const p_addr_t length=blockFile.getSize();
-
-			blockFile.seek(0,multiFileHandle1);
-			copyFile.seek(0,multiFileHandle2);
-		
-			for(l_addr_t t=0;t<length/maxBlockSize;t++)
-			{
-				blockFile.read(temp,maxBlockSize,multiFileHandle1);
-				copyFile.write(temp,maxBlockSize,multiFileHandle2);
-			}
-			if((length%maxBlockSize)!=0)
-			{
-				blockFile.read(temp,length%maxBlockSize,multiFileHandle1);
-				copyFile.write(temp,length%maxBlockSize,multiFileHandle2);
-			}
-
-			writeMetaData(&copyFile);
-			writeDirtyIndicator(false,&copyFile);
-			copyFile.close(false);
+			blockFile.read(temp,maxBlockSize,multiFileHandle1);
+			copyFile.write(temp,maxBlockSize,multiFileHandle2);
 		}
-		catch(exception &e)
+		if((length%maxBlockSize)!=0)
 		{
-			copyFile.close(true);
-			throw(runtime_error(string(__func__)+" -- error copying to file -- "+e.what()));
+			blockFile.read(temp,length%maxBlockSize,multiFileHandle1);
+			copyFile.write(temp,length%maxBlockSize,multiFileHandle2);
 		}
 
-		//readStructureInfoUnlock();
+		writeMetaData(&copyFile);
+		writeDirtyIndicator(false,&copyFile);
+		copyFile.close(false);
 	}
-	catch(...)
+	catch(exception &e)
 	{
-		//readStructureInfoUnlock();
-		throw;
+		copyFile.close(true);
+		throw runtime_error(string(__func__)+" -- error copying to file -- "+e.what());
 	}
 }
 
@@ -405,73 +347,48 @@ template<class l_addr_t,class p_addr_t>
 	if(!opened)
 		return;
 
-	//writeStructureInfoLock();
-	try
+	invalidateAllCachedBlocks();
+
+	// need to probably wait for any outstanding accessers to deallocate
+	if(_removeFile)
 	{
-		invalidateAllCachedBlocks();
-
-		// need to probably wait for any outstanding accessers to deallocate
-		if(_removeFile)
-		{
-			closeSATFiles();
-			blockFile.close(true);
-		}
-		else
-		{
-			if(_defrag)
-				defrag();
-
-			writeMetaData(&blockFile);
-			writeDirtyIndicator(false,&blockFile);
-
-			closeSATFiles();
-
-			blockFile.sync();
-			blockFile.close(false);
-		}
-		init();
-
-		//writeStructureInfoUnlock();
+		closeSATFiles();
+		blockFile.close(true);
 	}
-	catch(...)
+	else
 	{
-		//writeStructureInfoUnlock();
-		throw;
-	}
-}
+		if(_defrag)
+			defrag();
 
-template<class l_addr_t,class p_addr_t>
-	const bool TPoolFile<l_addr_t,p_addr_t>::isTemp() const
-{
-	return(openedTemp);
+		writeMetaData(&blockFile);
+		writeDirtyIndicator(false,&blockFile);
+
+		closeSATFiles();
+
+		blockFile.sync();
+		blockFile.close(false);
+	}
+	init();
 }
 
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::isOpen() const
 {
-	return(opened);
+	return opened;
 }
 
 template<class l_addr_t,class p_addr_t>
 	const p_addr_t TPoolFile<l_addr_t,p_addr_t>::getFileSize() const
 {
-	return(blockFile.getActualSize());
+	return blockFile.getActualSize();
 }
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::rename(const string newFilename)
 {
 	if(!opened)
-		throw(runtime_error(string(__func__)+" -- no file is open"));
+		throw runtime_error(string(__func__)+" -- no file is open");
 
-	/*
-	const string currentFilename=getFilename();
-
-	closeFile(false,false);
-	// ??? need to call this on blockFile to rename all the files in the multifile set
-	rename(currentFilename.c_str(),filename.c_str());
-	openFile(filename,false);
-	*/
 	blockFile.rename(newFilename);
 	SATFiles[0].rename(newFilename+".SAT1");
 	SATFiles[1].rename(newFilename+".SAT2");
@@ -481,64 +398,40 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::flushData()
 {
-	//writeStructureInfoLock();
-	try
-	{
-		invalidateAllCachedBlocks();
+	invalidateAllCachedBlocks();
 
-		backupSAT();
+	backupSAT();
 
-		SATFiles[0].sync();
-		SATFiles[1].sync();
-		blockFile.sync();
-
-		//writeStructureInfoUnlock();
-	}
-	catch(...)
-	{
-		//writeStructureInfoUnlock();
-		throw;
-	}
+	SATFiles[0].sync();
+	SATFiles[1].sync();
+	blockFile.sync();
 }
 
 template<class l_addr_t,class p_addr_t>
 	const string TPoolFile<l_addr_t,p_addr_t>::getFilename() const
 {
-	if(isTemp())
-		throw(runtime_error(string(__func__)+"() -- file is opened as temp"));
-
-	return(filename);
+	return filename;
 }
 
 // Non-Const Pool Accesser Methods
 template<class l_addr_t,class p_addr_t>
 	template<class pool_element_t> TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > TPoolFile<l_addr_t,p_addr_t>::getPoolAccesser(const poolId_t poolId)
 {
-	//readStructureInfoLock();
-	try
-	{
-		if(!opened)
-			throw(runtime_error(string(__func__)+" -- no file is open"));
-		if(!isValidPoolId(poolId))
-			throw(runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId)));
-		if(sizeof(pool_element_t)!=pools[poolId].alignment)
-			throw(runtime_error(string(__func__)+" -- method instantiated with a type whose size does not match the pool's alignment: sizeof(pool_element_t): "+istring(sizeof(pool_element_t))+" -- "+getPoolDescription(poolId)));
+	if(!opened)
+		throw runtime_error(string(__func__)+" -- no file is open");
+	if(!isValidPoolId(poolId))
+		throw runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId));
+	if(sizeof(pool_element_t)!=pools[poolId].alignment)
+		throw runtime_error(string(__func__)+" -- method instantiated with a type whose size does not match the pool's alignment: sizeof(pool_element_t): "+istring(sizeof(pool_element_t))+" -- "+getPoolDescription(poolId));
 
-		TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > accesser(this,poolId);
-		//readStructureInfoUnlock();
-		return(accesser);
-	}
-	catch(exception &e)
-	{
-		//readStructureInfoUnlock();
-		throw;
-	}
+	TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > accesser(this,poolId);
+	return accesser;
 }
 
 template<class l_addr_t,class p_addr_t>
 	template<class pool_element_t> TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > TPoolFile<l_addr_t,p_addr_t>::getPoolAccesser(const string poolName)
 {
-	return(getPoolAccesser<pool_element_t>(getPoolIdByName(poolName)));
+	return getPoolAccesser<pool_element_t>(getPoolIdByName(poolName));
 }
 
 
@@ -546,33 +439,21 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	template<class pool_element_t> const TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > TPoolFile<l_addr_t,p_addr_t>::getPoolAccesser(const poolId_t poolId) const
 {
-	//readStructureInfoLock();
-	try
-	{
-		if(!opened)
-			throw(runtime_error(string(__func__)+" -- no file is open"));
-		if(!isValidPoolId(poolId))
-			throw(runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId)));
-		if(sizeof(pool_element_t)!=pools[poolId].alignment)
-			throw(runtime_error(string(__func__)+" -- method instantiated with a type whose size does not match the pool's alignment: sizeof(pool_element_t): "+istring(sizeof(pool_element_t))+" -- "+getPoolDescription(poolId)));
+	if(!opened)
+		throw runtime_error(string(__func__)+" -- no file is open");
+	if(!isValidPoolId(poolId))
+		throw runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId));
+	if(sizeof(pool_element_t)!=pools[poolId].alignment)
+		throw runtime_error(string(__func__)+" -- method instantiated with a type whose size does not match the pool's alignment: sizeof(pool_element_t): "+istring(sizeof(pool_element_t))+" -- "+getPoolDescription(poolId));
 
-		//const alignment_t alignment=pools[poolId].alignment;
-
-		const TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > accesser(const_cast<TPoolFile<l_addr_t,p_addr_t> *>(this),poolId);
-		//readStructureInfoUnlock();
-		return(accesser);
-	}
-	catch(exception &e)
-	{
-		//readStructureInfoUnlock();
-		throw;
-	}
+	const TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > accesser(const_cast<TPoolFile<l_addr_t,p_addr_t> *>(this),poolId);
+	return accesser;
 }
 
 template<class l_addr_t,class p_addr_t>
 	template<class pool_element_t> const TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > TPoolFile<l_addr_t,p_addr_t>::getPoolAccesser(const string poolName) const
 {
-	return(getPoolAccesser<pool_element_t>(getPoolIdByName(poolName)));
+	return getPoolAccesser<pool_element_t>(getPoolIdByName(poolName));
 }
 
 
@@ -581,39 +462,30 @@ template<class l_addr_t,class p_addr_t>
 	size_t TPoolFile<l_addr_t,p_addr_t>::readPoolRaw(const poolId_t poolId,void *buffer,size_t readSize)
 {
 	if(!opened)
-		throw(runtime_error(string(__func__)+" -- no file is open"));
+		throw runtime_error(string(__func__)+" -- no file is open");
 	if(!isValidPoolId(poolId))
-		throw(runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId)));
+		throw runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId));
 
 	const TStaticPoolAccesser<uint8_t,TPoolFile<l_addr_t,p_addr_t> > accesser(const_cast<TPoolFile<l_addr_t,p_addr_t> *>(this),poolId);
 	readSize=min(readSize,accesser.getSize());
 	accesser.read((uint8_t *)buffer,readSize);
-	return(readSize);
+	return readSize;
 }
 
 template<class l_addr_t,class p_addr_t>
 	size_t TPoolFile<l_addr_t,p_addr_t>::readPoolRaw(const string poolName,void *buffer,size_t readSize)
 {
-	return(readPoolRaw(getPoolIdByName(poolName),buffer,readSize));
+	return readPoolRaw(getPoolIdByName(poolName),buffer,readSize);
 }
 
 template<class l_addr_t,class p_addr_t>
 	template<class pool_element_t> TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > TPoolFile<l_addr_t,p_addr_t>::createPool(const string poolName,const bool throwOnExistance)
 {
-	//writeStructureInfoLock();
-	try
-	{
-		if(!opened)
-			throw(runtime_error(string(__func__)+" -- no file is open"));
-		prvCreatePool(poolName,sizeof(pool_element_t),throwOnExistance);
-		//writeStructureInfoUnlock();
-	}
-	catch(...)
-	{
-		//writeStructureInfoUnlock();
-		throw;
-	}
-	return(getPoolAccesser<pool_element_t>(poolName));
+	if(!opened)
+		throw runtime_error(string(__func__)+" -- no file is open");
+	prvCreatePool(poolName,sizeof(pool_element_t),throwOnExistance);
+
+	return getPoolAccesser<pool_element_t>(poolName);
 }
 
 
@@ -622,7 +494,7 @@ template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::clear()
 {
 	if(!accessers.empty())
-		throw(runtime_error(string(__func__)+" -- there are outstanding accessors"));
+		throw runtime_error(string(__func__)+" -- there are outstanding accessors");
 
 	invalidateAllCachedBlocks();
 	poolNames.clear();
@@ -636,51 +508,40 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::removePool(const poolId_t poolId)
 {
-	//writeStructureInfoLock();
-	try
+	if(!opened)
+		throw runtime_error(string(__func__)+" -- no file is open");
+	if(!isValidPoolId(poolId))
+		throw runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId));
+
+	invalidateAllCachedBlocks();
+
+	// remove poolName with poolId of the parameter
+	for(map<string,poolId_t>::const_iterator t=poolNames.begin();t!=poolNames.end();t++)
 	{
-		if(!opened)
-			throw(runtime_error(string(__func__)+" -- no file is open"));
-		if(!isValidPoolId(poolId))
-			throw(runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId)));
-
-		invalidateAllCachedBlocks();
-        
-		// remove poolName with poolId of the parameter
-		for(map<string,poolId_t>::const_iterator t=poolNames.begin();t!=poolNames.end();t++)
+		if(t->second==poolId)
 		{
-			if(t->second==poolId)
-			{
-				poolNames.erase(t->first);
-				break;
-			}
+			poolNames.erase(t->first);
+			break;
 		}
-
-		// mark pool as not valid
-		pools[poolId].size=0;
-		pools[poolId].alignment=0;
-		pools[poolId].isValid=false;
-
-		for(size_t t=0;t<SAT[poolId].size();t++)
-		{
-			RLogicalBlock &block=SAT[poolId][t];
-				// could just call physicalBLockList.erase(serach...)
-			const size_t index=findPhysicalBlockContaining(block.physicalStart);
-			physicalBlockList.erase(physicalBlockList.begin()+index);
-		}
-		SAT[poolId].clear();
-
-		makeBlockFileSmallest();
-
-		backupSAT();
-
-		//writeStructureInfoUnlock();
 	}
-	catch(...)
+
+	// mark pool as not valid
+	pools[poolId].size=0;
+	pools[poolId].alignment=0;
+	pools[poolId].isValid=false;
+
+	for(size_t t=0;t<SAT[poolId].size();t++)
 	{
-		//writeStructureInfoUnlock();
-		throw;
+		RLogicalBlock &block=SAT[poolId][t];
+			// could just call physicalBLockList.erase(serach...)
+		const size_t index=findPhysicalBlockContaining(block.physicalStart);
+		physicalBlockList.erase(physicalBlockList.begin()+index);
 	}
+	SAT[poolId].clear();
+
+	makeBlockFileSmallest();
+
+	backupSAT();
 }
 
 
@@ -706,43 +567,33 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	const typename TPoolFile<l_addr_t,p_addr_t>::alignment_t TPoolFile<l_addr_t,p_addr_t>::getPoolAlignment(const poolId_t poolId) const
 {
-	//readStructureInfoLock();
-	try
-	{
-		if(!opened)
-			throw(runtime_error(string(__func__)+" -- no file is open"));
-		if(!isValidPoolId(poolId))
-			throw(runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId)));
+	if(!opened)
+		throw runtime_error(string(__func__)+" -- no file is open");
+	if(!isValidPoolId(poolId))
+		throw runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId));
 
-		const alignment_t alignment=pools[poolId].alignment;
+	const alignment_t alignment=pools[poolId].alignment;
 
-		//readStructureInfoUnlock();
-		return(alignment);
-	}
-	catch(...)
-	{
-		//readStructureInfoUnlock();
-		throw;
-	}
+	return alignment;
 }
 
 template<class l_addr_t,class p_addr_t>
 	const typename TPoolFile<l_addr_t,p_addr_t>::alignment_t TPoolFile<l_addr_t,p_addr_t>::getPoolAlignment(const string poolName) const
 {
-	return(getPoolAlignment(getPoolIdByName(poolName)));
+	return getPoolAlignment(getPoolIdByName(poolName));
 }
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::setPoolAlignment(const poolId_t poolId,size_t alignment)
 {
 		if(!opened)
-			throw(runtime_error(string(__func__)+" -- no file is open"));
+			throw runtime_error(string(__func__)+" -- no file is open");
 		if(!isValidPoolId(poolId))
-			throw(runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId)));
+			throw runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId));
 		if(pools[poolId].size>0)
-			throw(runtime_error(string(__func__)+" -- pool must be empty to change alignment"));
+			throw runtime_error(string(__func__)+" -- pool must be empty to change alignment");
 		if(alignment==0 ||alignment>maxBlockSize)
-			throw(runtime_error(string(__func__)+" -- invalid alignment: "+istring(alignment)+" alignment must be 0 < alignment <= maxBlockSize (which is: "+istring(maxBlockSize)+")"));
+			throw runtime_error(string(__func__)+" -- invalid alignment: "+istring(alignment)+" alignment must be 0 < alignment <= maxBlockSize (which is: "+istring(maxBlockSize)+")");
 
 		invalidateAllCachedBlocks();
 
@@ -761,40 +612,26 @@ template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::swapPools(const poolId_t poolId1,const poolId_t poolId2)
 {
 	if(!opened)
-		throw(runtime_error(string(__func__)+" -- no file is open"));
+		throw runtime_error(string(__func__)+" -- no file is open");
 
-	//writeStructureInfoLock();
-	try
-	{
-		if(!isValidPoolId(poolId1))
-			throw(runtime_error(string(__func__)+" -- invalid poolId1 parameter: "+istring(poolId1)));
-		if(!isValidPoolId(poolId2))
-			throw(runtime_error(string(__func__)+" -- invalid poolId2 parameter: "+istring(poolId2)));
-		if(poolId1==poolId2)
-		{
-			//writeStructureInfoUnlock();
-			return;
-		}
+	if(!isValidPoolId(poolId1))
+		throw runtime_error(string(__func__)+" -- invalid poolId1 parameter: "+istring(poolId1));
+	if(!isValidPoolId(poolId2))
+		throw runtime_error(string(__func__)+" -- invalid poolId2 parameter: "+istring(poolId2));
+	if(poolId1==poolId2)
+		return;
 
-		invalidateAllCachedBlocks();
+	invalidateAllCachedBlocks();
 
-		// swap SATs for two pools
-		vector<RLogicalBlock> tempSAT=SAT[poolId1];
-		SAT[poolId1]=SAT[poolId2];
-		SAT[poolId2]=tempSAT;
+	// swap SATs for two pools
+	vector<RLogicalBlock> tempSAT=SAT[poolId1];
+	SAT[poolId1]=SAT[poolId2];
+	SAT[poolId2]=tempSAT;
 
-		// swap pool size info
-		const RPoolInfo tempPool=pools[poolId1];
-		pools[poolId1]=pools[poolId2];
-		pools[poolId2]=tempPool;
-
-		//writeStructureInfoUnlock();
-	}
-	catch(...)
-	{
-		//writeStructureInfoUnlock();
-		throw;
-	}
+	// swap pool size info
+	const RPoolInfo tempPool=pools[poolId1];
+	pools[poolId1]=pools[poolId2];
+	pools[poolId2]=tempPool;
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -810,72 +647,71 @@ template<class l_addr_t,class p_addr_t>
 {
 	map<const string,poolId_t>::const_iterator i=poolNames.find(poolName);
 	if(i==poolNames.end())
-		return(false);
+		return false;
 
 	poolId=i->second;
-	return(true);
+	return true;
 }
 
 template<class l_addr_t,class p_addr_t>
 	const typename TPoolFile<l_addr_t,p_addr_t>::poolId_t TPoolFile<l_addr_t,p_addr_t>::getPoolIdByName(const string poolName) const
 {
 	if(!opened)
-		throw(runtime_error(string(__func__)+" -- no file is open"));
+		throw runtime_error(string(__func__)+" -- no file is open");
 
 	poolId_t poolId=0;
 	if(prvGetPoolIdByName(poolName,poolId))
-		return(poolId);
+		return poolId;
 	else
-		throw(runtime_error(string(__func__)+" -- name not found: "+poolName));
+		throw runtime_error(string(__func__)+" -- name not found: "+poolName);
 }
 
 template<class l_addr_t,class p_addr_t>
 	const size_t TPoolFile<l_addr_t,p_addr_t>::getPoolIndexCount() const
 {
 	if(!opened)
-		throw(runtime_error(string(__func__)+" -- no file is open"));
-	return(poolNames.size());
+		throw runtime_error(string(__func__)+" -- no file is open");
+	return poolNames.size();
 }
 
 template<class l_addr_t,class p_addr_t>
 	const typename TPoolFile<l_addr_t,p_addr_t>::poolId_t TPoolFile<l_addr_t,p_addr_t>::getPoolIdByIndex(const size_t index) const // where index is 0 to getPoolIndexCount()-1
 {
 	if(index>=poolNames.size())
-		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(index)));
+		throw runtime_error(string(__func__)+" -- index out of bounds: "+istring(index));
 
 	map<const string,poolId_t>::const_iterator i=poolNames.begin();
 	advance(i,index);
-	return(i->second);
+	return i->second;
 }
 
 template<class l_addr_t,class p_addr_t>
 	const string TPoolFile<l_addr_t,p_addr_t>::getPoolNameById(const poolId_t poolId) const
 {
 	if(!isValidPoolId(poolId))
-		throw(runtime_error(string(__func__)+" -- poolId parameter out of bounds: "+istring(poolId)));
+		throw runtime_error(string(__func__)+" -- poolId parameter out of bounds: "+istring(poolId));
 
 	for(map<const string,poolId_t>::const_iterator i=poolNames.begin();i!=poolNames.end();i++)
 	{
 		if(i->second==poolId)
-			return(i->first);
+			return i->first;
 	}
 
 	printf("uh oh.. pool name not found for pool id: %u\n",poolId);
 	exit(0);
-	return("");
+	return "";
 }
 template<class l_addr_t,class p_addr_t>
 	const bool  TPoolFile<l_addr_t,p_addr_t>::isValidPoolId(const poolId_t poolId) const
 {
-	return(poolId<pools.size() && pools[poolId].isValid);
+	return poolId<pools.size() && pools[poolId].isValid;
 }
 
 
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::containsPool(const string poolName) const
 {
-	//return(poolNames.findItem(poolName)!=DL_NOT_FOUND);
-	return(poolNames.find(poolName)!=poolNames.end());
+	return poolNames.find(poolName)!=poolNames.end();
 }
 
 
@@ -891,7 +727,7 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::sharedTrylock() const
 {
-	return(structureMutex.tryReadLock());
+	return structureMutex.tryReadLock();
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -903,7 +739,7 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	const size_t TPoolFile<l_addr_t,p_addr_t>::getSharedLockCount() const
 {
-	return(structureMutex.getReadLockCount());
+	return structureMutex.getReadLockCount();
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -915,7 +751,7 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::exclusiveTrylock() const
 {
-	return(structureMutex.tryWriteLock());
+	return structureMutex.tryWriteLock();
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -927,27 +763,14 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::isExclusiveLocked() const
 {
-	return(structureMutex.isLockedForWrite());
+	return structureMutex.isLockedForWrite();
 }
 
 
 
 
 
-// Private Methods
-
-template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::lockAccesserInfo() const
-{
-	accesserInfoMutex.lock();
-}
-
-template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::unlockAccesserInfo() const
-{
-	accesserInfoMutex.unlock();
-}
-
+// --- Private Methods --------------------------------------------------------
 
 // Misc
 template<class l_addr_t,class p_addr_t>
@@ -1000,20 +823,18 @@ template<class l_addr_t,class p_addr_t>
 	}
 
 	opened=false;
-    	openedTemp=false;
 }
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::verifyBlockInfo(const poolId_t poolId) const
 {
 	if(!isValidPoolId(poolId))
-		throw(runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId)));
+		throw runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId));
 
 		// this didn't seem to catch some errors I put in on purpose, so I wrote verifyAllBlockInfo()
 	p_addr_t start=0;
 	for(size_t t=0;t<SAT[poolId].size();t++)
 	{
-		//RLogicalBlock block=SAT[poolId][t];
 		const RLogicalBlock &block=SAT[poolId][t];
 
 		if(block.logicalStart!=start)
@@ -1129,7 +950,6 @@ template<class l_addr_t,class p_addr_t>
 						printf("pool: %u -- two blocks are occupying the same physical space\n",poolId);
 						logicalBlock.print();
 						physicalBlock.print();
-						//physicalBlockList[i+1]->print();
 
 						exit(1);
 					}
@@ -1186,31 +1006,31 @@ template<class l_addr_t,class p_addr_t>
 		if(pools[t].isValid) // wouldn't really matter cause size of invalids is supposed to be zero
 			proceedingPoolSizes+=pools[t].size;
 	}
-	return(proceedingPoolSizes);
+	return proceedingPoolSizes;
 }
 
 template<class l_addr_t,class p_addr_t>
 	const l_addr_t TPoolFile<l_addr_t,p_addr_t>::getMaxBlockSizeFromAlignment(const alignment_t alignment) const
 {
 	if(maxBlockSize<=(maxBlockSize%alignment))
-		throw(runtime_error(string(__func__)+" -- alignment size is too big"));
+		throw runtime_error(string(__func__)+" -- alignment size is too big");
 
-	return(maxBlockSize-(maxBlockSize%alignment));
+	return maxBlockSize-(maxBlockSize%alignment);
 }
 
 template<class l_addr_t,class p_addr_t>
 	const l_addr_t TPoolFile<l_addr_t,p_addr_t>::getPoolSize(const poolId_t poolId) const
 {
 	if(!isValidPoolId(poolId))
-		throw(runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId)));
+		throw runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId));
 
-	return(pools[poolId].size);
+	return pools[poolId].size;
 }
 
 template<class l_addr_t,class p_addr_t>
 	const l_addr_t TPoolFile<l_addr_t,p_addr_t>::getPoolSize(const string poolName) const
 {
-	return(getPoolSize(getPoolIdByName(poolName)));
+	return getPoolSize(getPoolIdByName(poolName));
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -1255,7 +1075,7 @@ template<class l_addr_t,class p_addr_t>
 	if(poolName=="__internal_invalid_pool" || !prvGetPoolIdByName(poolName,poolId))
 	{	// poolName not found
 		if(poolName.length()>MAX_POOL_NAME_LENGTH)
-			throw(runtime_error(string(__func__)+" -- pool name too long: "+poolName));
+			throw runtime_error(string(__func__)+" -- pool name too long: "+poolName);
 
 		// this is where the poolId get's created.. either pools.size() or a recycled element in the pools vector
 		
@@ -1283,7 +1103,7 @@ template<class l_addr_t,class p_addr_t>
 	{
 		// pool name already exists
 		if(throwOnExistance)
-			throw(runtime_error(string(__func__)+" -- pool name already exists: "+poolName));
+			throw runtime_error(string(__func__)+" -- pool name already exists: "+poolName);
 	}
 }
 
@@ -1293,7 +1113,7 @@ template<class l_addr_t,class p_addr_t>
 	invalidateAllCachedBlocks();
 
 	if((isValid && alignment==0) || alignment>maxBlockSize)
-		throw(runtime_error(string(__func__)+" -- invalid alignment: "+istring(alignment)+" alignment must be 0 < alignment <= maxBlockSize (which is: "+istring(maxBlockSize)+")"));
+		throw runtime_error(string(__func__)+" -- invalid alignment: "+istring(alignment)+" alignment must be 0 < alignment <= maxBlockSize (which is: "+istring(maxBlockSize)+")");
 
 	if(poolId<pools.size() && !pools[poolId].isValid)
 	{ // reusing existing element the SAT vector
@@ -1307,14 +1127,14 @@ template<class l_addr_t,class p_addr_t>
 		pools.push_back(RPoolInfo(0,alignment,isValid));
 	}
 	else
-		throw(runtime_error(string(__func__)+" -- invalid new pool id or pool already exists: "+istring(poolId)));
+		throw runtime_error(string(__func__)+" -- invalid new pool id or pool already exists: "+istring(poolId));
 }
 
 
 template<class l_addr_t,class p_addr_t>
 	const string TPoolFile<l_addr_t,p_addr_t>::getPoolDescription(const poolId_t poolId) const
 {
-	return("poolId: "+istring(poolId)+" name: '"+getPoolNameById(poolId)+"' byte size: "+istring(getPoolSize(poolId))+" byte alignment: "+istring(getPoolAlignment(poolId)));
+	return "poolId: "+istring(poolId)+" name: '"+getPoolNameById(poolId)+"' byte size: "+istring(getPoolSize(poolId))+" byte alignment: "+istring(getPoolAlignment(poolId));
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -1350,9 +1170,6 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::openSATFiles(const bool mustExist)
 {
-	if(isTemp())
-		return;
-
 	SATFiles[0].open(SATFilename+"1",!mustExist);
 	SATFiles[1].open(SATFilename+"2",!mustExist);
 }
@@ -1360,9 +1177,6 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::closeSATFiles(const bool removeFiles)
 {
-	if(isTemp())
-		return;
-
 	SATFiles[0].sync();
 	SATFiles[1].sync();
 
@@ -1373,9 +1187,6 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::writeWhichSATFile()
 {
-	if(isTemp())
-		return;
-
 	uint8_t buffer[1];
 	buffer[0]=whichSATFile;
 	blockFile.write(buffer,sizeof(*buffer),WHICH_SAT_FILE_OFFSET);
@@ -1384,9 +1195,6 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::backupSAT()
 {
-	if(isTemp())
-		return;
-
 	whichSATFile= ((whichSATFile==0) ? 1 : 0);
 
 	writeSATToFile(&SATFiles[whichSATFile],0);
@@ -1425,7 +1233,6 @@ template<class l_addr_t,class p_addr_t>
 		// write each SAT entry
 		size_t offset=0;
 		for(size_t t=0;t<SAT[poolId].size();t++)
-		//for(set<RLogicalBlock>::const_iterator t=SAT[poolId].begin();t!=SAT[poolId].end();t++)
 			SAT[poolId][t].writeToMem(mem,offset);
 
 		f->write(mem,mem.getSize(),multiFileHandle);
@@ -1435,9 +1242,6 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::restoreSAT()
 {
-    if(isTemp())
-        return;
-
 	invalidateAllCachedBlocks();
 
 
@@ -1456,9 +1260,6 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::buildSATFromFile(CMultiFile *f,const p_addr_t readWhere)
 {
-	if(isTemp())
-		return;
-
 	CMultiFile::RHandle multiFileHandle;
 	f->seek(readWhere,multiFileHandle);
 
@@ -1544,135 +1345,22 @@ template<class l_addr_t,class p_addr_t>
 
 
 // SAT operations
-/*
 template<class l_addr_t,class p_addr_t>
 	const size_t TPoolFile<l_addr_t,p_addr_t>::findSATBlockContaining(const poolId_t poolId,const l_addr_t where,bool &atStartOfBlock) const
 {
 	if(SAT[poolId].empty())
-		throw(runtime_error(string(__func__)+" -- SAT is empty"));
-
-	atStartOfBlock=false;
-	size_t previousBlockIndex=NIL_INDEX;
-	for(size_t logicalBlockIndex=0;logicalBlockIndex<SAT[poolId].getSize();logicalBlockIndex++)
-	{
-		// ??? Optimization: speed up by doing a binary search or using a heap
-		if(SAT[poolId][logicalBlockIndex].logicalStart>=where)
-		{	// on it or just passed it
-			if(SAT[poolId][logicalBlockIndex].logicalStart==where)
-			{
-				atStartOfBlock=true;
-				return(logicalBlockIndex);
-			}
-
-			logicalBlockIndex=previousBlockIndex;
-			if(logicalBlockIndex==NIL_INDEX)
-			{
-				printf("invalid...\n");
-				exit(1);
-			}
-			return(logicalBlockIndex);
-		}
-		previousBlockIndex=logicalBlockIndex;
-	}
-
-	if(previousBlockIndex!=NIL_INDEX && where>=SAT[poolId][previousBlockIndex].logicalStart && where<=(SAT[poolId][previousBlockIndex].logicalStart+SAT[poolId][previousBlockIndex].size-1))
-	{
-		if(where==SAT[poolId][previousBlockIndex].logicalStart)
-			atStartOfBlock=true;
-		return(previousBlockIndex);
-	}
-
-	printf("shouldn't have gotten here\n");
-	exit(1);
-	return(NIL_INDEX);
-}
-*/
-
-/*
-template<class l_addr_t,class p_addr_t>
-	const set<TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock>::iterator TPoolFile<l_addr_t,p_addr_t>::findSATBlockContaining(const poolId_t poolId,const l_addr_t where,bool &atStartOfBlock)
-{
-	if(SAT[poolId].empty())
-		throw(runtime_error(string(__func__)+" -- SAT is empty"));
-
-	const set<RLogicalBlock>::iterator i=(--SAT[poolId].upper_bound(where));
-	atStartOfBlock=(i->logicalStart==where);
-	return(i);
-}
-*/
-
-/*
-template<class l_addr_t,class p_addr_t>
-	const set<TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock>::const_iterator TPoolFile<l_addr_t,p_addr_t>::findSATBlockContaining(const poolId_t poolId,const l_addr_t where,bool &atStartOfBlock) const
-{
-	if(SAT[poolId].empty())
-		throw(runtime_error(string(__func__)+" -- SAT is empty"));
-
-	const set<RLogicalBlock>::const_iterator i=(--SAT[poolId].upper_bound(where));
-	atStartOfBlock=(i->logicalStart==where);
-	return(i);
-}
-*/
-template<class l_addr_t,class p_addr_t>
-	const size_t TPoolFile<l_addr_t,p_addr_t>::findSATBlockContaining(const poolId_t poolId,const l_addr_t where,bool &atStartOfBlock) const
-{
-	if(SAT[poolId].empty())
-		throw(runtime_error(string(__func__)+" -- SAT is empty"));
+		throw runtime_error(string(__func__)+" -- SAT is empty");
 
 	const size_t i=(upper_bound(SAT[poolId].begin(),SAT[poolId].end(),RLogicalBlock(where))-1)-SAT[poolId].begin();
 	atStartOfBlock=(SAT[poolId][i].logicalStart==where);
-	return(i);
+	return i;
 }
 
 
-/*
 template<class l_addr_t,class p_addr_t>
 	const size_t TPoolFile<l_addr_t,p_addr_t>::findPhysicalBlockContaining(const p_addr_t physicalWhere) const
 {
-	size_t previousPhysicalBlockIndex=NIL_INDEX;
-	for(size_t physicalBlockIndex=0;physicalBlockIndex<physicalBlockList.getSize();physicalBlockIndex++)
-	{
-		// speed up by doing a binary search or using a heap
-		if(physicalBlockList[physicalBlockIndex].physicalStart>=physicalWhere)
-		{	// on it or just passed it
-			if(physicalBlockList[physicalBlockIndex].physicalStart==physicalWhere)
-				return(physicalBlockIndex);
-
-			physicalBlockIndex=previousPhysicalBlockIndex;
-			if(physicalBlockIndex==NIL_INDEX)
-			{
-				printf("invalid...\n");
-				exit(1);
-			}
-			return(physicalBlockIndex);
-		}
-		previousPhysicalBlockIndex=physicalBlockIndex;
-	}
-
-	printf("shouldn't have gotten here\n");
-	exit(1);
-	return(NIL_INDEX);
-}
-*/
-/*
-template<class l_addr_t,class p_addr_t>
-	const set<TPoolFile<l_addr_t,p_addr_t>::RPhysicalBlock>::iterator TPoolFile<l_addr_t,p_addr_t>::findPhysicalBlockContaining(const p_addr_t physicalWhere)
-{
-	return(--physicalBlockList.upper_bound(physicalWhere));
-}
-*/
-
-/*
-template<class l_addr_t,class p_addr_t>
-	const set<TPoolFile<l_addr_t,p_addr_t>::RPhysicalBlock>::const_iterator TPoolFile<l_addr_t,p_addr_t>::findPhysicalBlockContaining(const p_addr_t physicalWhere) const
-{
-	return(--physicalBlockList.upper_bound(physicalWhere));
-}
-*/
-template<class l_addr_t,class p_addr_t>
-	const size_t TPoolFile<l_addr_t,p_addr_t>::findPhysicalBlockContaining(const p_addr_t physicalWhere) const
-{
-	return((upper_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(physicalWhere))-1)-physicalBlockList.begin());
+	return (upper_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(physicalWhere))-1)-physicalBlockList.begin();
 }
 
 
@@ -1694,7 +1382,7 @@ template<class l_addr_t,class p_addr_t>
 			printf("optional parameters specified and no spaces exists yet\n");
 			exit(1);
 		}
-		return(0);
+		return 0;
 	}
 
 	if(size==0)
@@ -1708,21 +1396,17 @@ template<class l_addr_t,class p_addr_t>
 
 	// search all existing file space for the maximum size hole
 	p_addr_t largestHoleSize=0;
-	//set<RPhysicalBlock>::const_iterator largestHoleBlockIndex=physicalBlockList.end();
 	size_t largestHoleBlockIndex=physicalBlockList.size();
 	const RPhysicalBlock start(0,0);
 	const RPhysicalBlock *prev_block=&start;
 	for(size_t t=0;t<physicalBlockList.size();t++)
-	//for(set<RPhysicalBlock>::const_iterator t=physicalBlockList.begin();t!=physicalBlockList.end();t++)
 	{
-		//const RPhysicalBlock &block=(*t);
 		const RPhysicalBlock &block=physicalBlockList[t];
 
 		const p_addr_t hole_size=block.physicalStart-(prev_block->physicalStart+prev_block->size);
 		if(hole_size>largestHoleSize && (not_in_start>not_in_stop || !isInWindow(prev_block->physicalStart+prev_block->size,block.physicalStart-1,not_in_start,not_in_stop)))
 		{
 			largestHoleSize=hole_size;
-			//largestHoleBlockIndex=prev(t);
 			largestHoleBlockIndex=t-1;
 		}
 
@@ -1736,17 +1420,15 @@ template<class l_addr_t,class p_addr_t>
 		// before the first block, thus the t-1 done in the loop above really is trying to point 
 		// before phyicalBlockList even starts
 		if(largestHoleBlockIndex==(((size_t)0)-1))
-			return(0);
+			return 0;
 
-		//const RPhysicalBlock &block=*largestHoleBlockIndex;
 		const RPhysicalBlock &block=physicalBlockList[largestHoleBlockIndex];
-		return(block.physicalStart+block.size);
+		return block.physicalStart+block.size;
 	}
 
 	// put new space after the last physical block
-	//const RPhysicalBlock &lastBlock=*(--physicalBlockList.end());
 	const RPhysicalBlock &lastBlock=physicalBlockList[physicalBlockList.size()-1];
-	return(lastBlock.physicalStart+lastBlock.size);
+	return lastBlock.physicalStart+lastBlock.size;
 }
 
 // returns the physical address of the beginning of the hole
@@ -1757,19 +1439,19 @@ template<class l_addr_t,class p_addr_t>
 	// space is represented in the file yet
 	// need to make sure that there are not cached blocks not written to disk
 
-	return(blockFile.getSize());
+	return blockFile.getSize();
 }
 
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::isInWindow(const p_addr_t start,const p_addr_t end,const p_addr_t windowStart,const p_addr_t windowEnd) const
 {
 	if(start<=windowStart && end>=windowStart)
-		return(true);
+		return true;
 	if(end>=windowEnd && start<=windowEnd)
-		return(true);
+		return true;
 	if(start>=windowStart && end<=windowEnd)
-		return(true);
-	return(false);
+		return true;
+	return false;
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -1883,463 +1565,315 @@ template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::insertSpace(const poolId_t poolId,const l_addr_t peWhere,const l_addr_t peCount)
 {
 	if(!opened)
-		throw(runtime_error(string(__func__)+" -- no file is open"));
+		throw runtime_error(string(__func__)+" -- no file is open");
 	if(peCount==0)
 		return;
 
-	//writeStructureInfoLock();
-	try
-	{
-		if(!isValidPoolId(poolId))
-			throw(runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId)));
+	if(!isValidPoolId(poolId))
+		throw runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId));
 
-		const alignment_t bAlignment=pools[poolId].alignment;
-		const l_addr_t bPoolSize=pools[poolId].size;
-		const l_addr_t pePoolSize=bPoolSize/bAlignment;
-		const l_addr_t pePoolMaxSize=maxLogicalAddress/bAlignment;
-		
-		if(pePoolMaxSize-pePoolSize<peCount)
-			throw(runtime_error(string(__func__)+" -- insufficient logical address space to insert "+istring(peCount)+" elements into pool ("+getPoolDescription(poolId)+")"));
-		if(peWhere>pePoolSize)
-			throw(runtime_error(string(__func__)+" -- out of range peWhere "+istring(peWhere)+" for pool ("+getPoolDescription(poolId)+")"));
+	const alignment_t bAlignment=pools[poolId].alignment;
+	const l_addr_t bPoolSize=pools[poolId].size;
+	const l_addr_t pePoolSize=bPoolSize/bAlignment;
+	const l_addr_t pePoolMaxSize=maxLogicalAddress/bAlignment;
+	
+	if(pePoolMaxSize-pePoolSize<peCount)
+		throw runtime_error(string(__func__)+" -- insufficient logical address space to insert "+istring(peCount)+" elements into pool ("+getPoolDescription(poolId)+")");
+	if(peWhere>pePoolSize)
+		throw runtime_error(string(__func__)+" -- out of range peWhere "+istring(peWhere)+" for pool ("+getPoolDescription(poolId)+")");
 
-		invalidateAllCachedBlocks();
+	invalidateAllCachedBlocks();
 
-		const l_addr_t bWhere=peWhere*bAlignment;
-		const l_addr_t bCount=peCount*bAlignment;
+	const l_addr_t bWhere=peWhere*bAlignment;
+	const l_addr_t bCount=peCount*bAlignment;
 
-		const l_addr_t maxBlockSize=getMaxBlockSizeFromAlignment(bAlignment);
-		const size_t newLogicalBlockCount=(bCount/maxBlockSize);
-		bool didSplitOne=false;
+	const l_addr_t maxBlockSize=getMaxBlockSizeFromAlignment(bAlignment);
+	const size_t newLogicalBlockCount=(bCount/maxBlockSize);
+	bool didSplitOne=false;
 
-		//size_t logicalBlockIndex=NIL_INDEX;
-		size_t logicalBlockIndex=SAT[poolId].size();
-		if(bWhere<bPoolSize)
-		{ // in the middle (not appending)
-			bool atStartOfBlock;
-			logicalBlockIndex=findSATBlockContaining(poolId,bWhere,atStartOfBlock);
+	size_t logicalBlockIndex=SAT[poolId].size();
+	if(bWhere<bPoolSize)
+	{ // in the middle (not appending)
+		bool atStartOfBlock;
+		logicalBlockIndex=findSATBlockContaining(poolId,bWhere,atStartOfBlock);
 
-			if(!atStartOfBlock)
-			{ // split the block at logicalBlockIndex since where isn't exacly at the beginning of the block
-				didSplitOne=true;
+		if(!atStartOfBlock)
+		{ // split the block at logicalBlockIndex since where isn't exacly at the beginning of the block
+			didSplitOne=true;
 
 
-				// sanity check
-				//if(bWhere<=logicalBlockIndex->logicalStart)
-				if(bWhere<=SAT[poolId][logicalBlockIndex].logicalStart)
-				{ // logical impossibility since atStartOfBlock wasn't true (unless it was wrong)
-					printf("oops...\n");
-					exit(1);
-				}
-
-				// modify block at logicalBlockIndex and create a new RLogicalBlock for the second part of the split block
-				//const l_addr_t firstPartSize=bWhere-logicalBlockIndex->logicalStart;
-				//const l_addr_t secondPartSize=logicalBlockIndex->size-firstPartSize;
-				const l_addr_t firstPartSize=bWhere-SAT[poolId][logicalBlockIndex].logicalStart;
-				const l_addr_t secondPartSize=SAT[poolId][logicalBlockIndex].size-firstPartSize;
-
-
-				// find the physical block for this logical block
-				/*
-				RPhysicalBlock searchPhysicalBlock;
-				size_t physicalBlockIndex;
-				searchPhysicalBlock.physicalStart=logicalBlockIndex->physicalStart;
-				if(!physicalBlockList.contains(searchPhysicalBlock,physicalBlockIndex))
-				{
-					printf("physical block list inconsistancies...\n");
-					exit(1);
-				}
-				*/
-				/*
-				set<RPhysicalBlock>::const_iterator physicalBlockIndex=physicalBlockList.find(RPhysicalBlock(logicalBlockIndex->physicalStart));
-				if(physicalBlockIndex==physicalBlockList.end())
-				{
-					printf("physical block list inconsistancies...\n");
-					exit(1);
-				}
-				*/
-				const size_t physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(SAT[poolId][logicalBlockIndex].physicalStart))-physicalBlockList.begin();
-				
-
-
-				// shrink the logical and physical blocks' sizes
-				//const_cast<l_addr_t &>(physicalBlockIndex->size)=const_cast<l_addr_t &>(logicalBlockIndex->size)=firstPartSize;
-				physicalBlockList[physicalBlockIndex].size=SAT[poolId][logicalBlockIndex].size=firstPartSize;
-
-				// create the new logical and physical blocks which are the second part of the old blocks
-				RLogicalBlock newLogicalBlock;
-				newLogicalBlock.logicalStart=SAT[poolId][logicalBlockIndex].logicalStart+firstPartSize;
-				newLogicalBlock.physicalStart=SAT[poolId][logicalBlockIndex].physicalStart+firstPartSize;
-				newLogicalBlock.size=secondPartSize;
-
-				// add the new logical block
-				/*
-				if(!SAT[poolId].insert(newLogicalBlock).second)
-				{	// inconsistancies
-					printf("error adding to SAT\n");
-					exit(1);
-				}
-				*/
-				sortedInsert(SAT[poolId],newLogicalBlock);
-
-				// add the new physical block
-				/*
-				if(!physicalBlockList.insert(RPhysicalBlock(newLogicalBlock)).second)
-				{	// error
-					printf("error adding to physical block list\n");
-					exit(1);
-				}
-				*/
-				sortedInsert(physicalBlockList,RPhysicalBlock(newLogicalBlock));
-
-				// alter the logical mapping by increasing all blocks' logicalStarts after the insertion point
-						// ??? bad
-				//for(logicalBlockIndex++;logicalBlockIndex!=SAT[poolId].end();logicalBlockIndex++)
-				for(size_t t=logicalBlockIndex+1;t<SAT[poolId].size();t++)
-					SAT[poolId][t].logicalStart+=bCount;
-			}
-			else
-			{ // increase all blocks at and after insertion point
-				for(size_t t=logicalBlockIndex;t<SAT[poolId].size();t++)
-						// ??? mistakes
-				//for(;logicalBlockIndex!=SAT[poolId].end();logicalBlockIndex++)
-				//for(;logicalBlockIndex<SAT[poolId].size();logicalBlockIndex++)
-					SAT[poolId][t].logicalStart+=bCount;
-				if(logicalBlockIndex>0)
-					logicalBlockIndex--;
-				else
-					didSplitOne=true;
-			}
-		}
-		else if(bWhere==bPoolSize)
-		{ // at the end (or just starting)
-			if(bPoolSize>0)
-			{
-				logicalBlockIndex=SAT[poolId].size()-1;
-				//logicalBlockIndex=prev(SAT[poolId].end());
-				//if((SAT[poolId][logicalBlockIndex].logicalStart+SAT[poolId][logicalBlockIndex].size)!=bWhere)
-				if((SAT[poolId][logicalBlockIndex].logicalStart+SAT[poolId][logicalBlockIndex].size)!=bWhere)
-				{
-					printf("huh??\n");
-					exit(0);
-				}
-			}
-		}
-
-
-		// create all the new logical and physical blocks needed to fill the gap from the split of the old block
-
-		RLogicalBlock newLogicalBlock;
-		bool finalOne=false;
-		bool previousReturnedEOF=false;
-		p_addr_t _blockFileSize=blockFile.getSize();//this->blockFileSize;
-		for(size_t t=0;t<=newLogicalBlockCount;t++)
-		{
-			if(t<newLogicalBlockCount)
-				newLogicalBlock.size=maxBlockSize;
-			else
-			{
-				newLogicalBlock.size=bCount%maxBlockSize;
-				if(newLogicalBlock.size==0)
-					break;
-
-				//if(t==0 && !didSplitOne && logicalBlockIndex!=physicalBlockList.end() && bPoolSize>0)
-				if(t==0 && !didSplitOne && logicalBlockIndex!=physicalBlockList.size() && bPoolSize>0)
-				{
-					// if this less-than-max block is the only block being added
-					// and it didn't cause a split up above, then lets see if it
-					// can fit at the end of the block it didn't split. (appending optimization)
-
-					RLogicalBlock &logicalBlock=SAT[poolId][logicalBlockIndex];
-					if((logicalBlock.size+newLogicalBlock.size)<=maxBlockSize)
-					{	// can fit IF there is room after the hole after this logicalBlock
-						/*
-						size_t physicalBlockIndex;
-						if(!physicalBlockList.contains(RPhysicalBlock(logicalBlock.physicalStart,0),physicalBlockIndex))
-						{
-							printf("error finding physical block\n");
-							exit(0);
-						}
-						*/
-						//set<RPhysicalBlock>::iterator physicalBlockIndex=physicalBlockList.find(RPhysicalBlock(logicalBlock.physicalStart));
-						const size_t physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(logicalBlock.physicalStart))-physicalBlockList.begin();
-						/*
-						if(physicalBlockIndex==physicalBlockList.end())
-						{
-							printf("error finding physical block\n");
-							exit(0);
-						}
-						*/
-
-						/*
-						if(	physicalBlockIndex==physicalBlockList.end() || 
-							next(physicalBlockIndex)==physicalBlockList.end() || 
-							((next(physicalBlockIndex)->physicalStart-physicalBlockIndex->physicalStart)-physicalBlockIndex->size)>=newLogicalBlock.size
-						)
-						*/
-						if( (physicalBlockIndex+1)>=physicalBlockList.size() ||
-						    ((physicalBlockList[physicalBlockIndex+1].physicalStart-physicalBlockList[physicalBlockIndex].physicalStart)-physicalBlockList[physicalBlockIndex].size)>=newLogicalBlock.size
-						  )
-						{	// we can use this block
-							logicalBlock.size+=newLogicalBlock.size;
-							physicalBlockList[physicalBlockIndex].size+=newLogicalBlock.size;
-							pools[poolId].size+=newLogicalBlock.size;
-							break;
-						}
-					}
-				}
-				finalOne=true;
-			}
-
-			newLogicalBlock.logicalStart=bWhere+(t*maxBlockSize);
-
-			// This optimization says that if we aren't doing the last piece of the insertion
-			// and the previous call to findHole failed to return a hole within the blockFile
-			// the assume it's gonna do it again, so don't call findHole
-			if(!finalOne && previousReturnedEOF)
-				newLogicalBlock.physicalStart=_blockFileSize;
-			else
-			{
-				newLogicalBlock.physicalStart=findHole(newLogicalBlock.size);
-
-				if(newLogicalBlock.physicalStart==_blockFileSize )
-					previousReturnedEOF=true;
-			}
-
-			/*
-			// && some ratio is too high
-			{ // having to create more file space and file is getting too big, so coeless
-				newLogicalBlock.physicalStart=makeHole(newLogicalBlock.size);
-			}
-			*/
-
-			// overflow??? (probably shouldn't if I know that I didn't let the file get past maxLogicalAddress in the initial bounds checking
-			if((newLogicalBlock.physicalStart+newLogicalBlock.size)>_blockFileSize)
-				_blockFileSize+=(newLogicalBlock.physicalStart+newLogicalBlock.size)-_blockFileSize;
-			// we should check if the file will be able to grow bigger actually on disk later... ???
-
-
-			/*
-			if(!SAT[poolId].insert(newLogicalBlock).second)
-			{
-				printf("error adding to SAT\n");
+			// sanity check
+			if(bWhere<=SAT[poolId][logicalBlockIndex].logicalStart)
+			{ // logical impossibility since atStartOfBlock wasn't true (unless it was wrong)
+				printf("oops...\n");
 				exit(1);
 			}
-			*/
+
+			// modify block at logicalBlockIndex and create a new RLogicalBlock for the second part of the split block
+			const l_addr_t firstPartSize=bWhere-SAT[poolId][logicalBlockIndex].logicalStart;
+			const l_addr_t secondPartSize=SAT[poolId][logicalBlockIndex].size-firstPartSize;
+
+
+			// find the physical block for this logical block
+			const size_t physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(SAT[poolId][logicalBlockIndex].physicalStart))-physicalBlockList.begin();
+			
+
+
+			// shrink the logical and physical blocks' sizes
+			physicalBlockList[physicalBlockIndex].size=SAT[poolId][logicalBlockIndex].size=firstPartSize;
+
+			// create the new logical and physical blocks which are the second part of the old blocks
+			RLogicalBlock newLogicalBlock;
+			newLogicalBlock.logicalStart=SAT[poolId][logicalBlockIndex].logicalStart+firstPartSize;
+			newLogicalBlock.physicalStart=SAT[poolId][logicalBlockIndex].physicalStart+firstPartSize;
+			newLogicalBlock.size=secondPartSize;
+
+			// add the new logical block
 			sortedInsert(SAT[poolId],newLogicalBlock);
 
-			/*
-			if(!physicalBlockList.insert(RPhysicalBlock(newLogicalBlock)).second)
-			{
-				// if this error occurs.. we need to remove from SAT list or something
-				printf("error adding to physicalBlockList\n");
-				exit(1);
-			}
-			*/
+			// add the new physical block
 			sortedInsert(physicalBlockList,RPhysicalBlock(newLogicalBlock));
 
-			pools[poolId].size+=newLogicalBlock.size;
+			// alter the logical mapping by increasing all blocks' logicalStarts after the insertion point
+					// ??? bad
+			for(size_t t=logicalBlockIndex+1;t<SAT[poolId].size();t++)
+				SAT[poolId][t].logicalStart+=bCount;
 		}
-		makeBlockFileSmallest();
-
-		// ZZZ ??? Takes too long in a real-time situation (i.e. Recording in ReZound)
-		//backupSAT();
-
-		//writeStructureInfoUnlock();
+		else
+		{ // increase all blocks at and after insertion point
+			for(size_t t=logicalBlockIndex;t<SAT[poolId].size();t++)
+				SAT[poolId][t].logicalStart+=bCount;
+			if(logicalBlockIndex>0)
+				logicalBlockIndex--;
+			else
+				didSplitOne=true;
+		}
 	}
-	catch(...)
+	else if(bWhere==bPoolSize)
+	{ // at the end (or just starting)
+		if(bPoolSize>0)
+		{
+			logicalBlockIndex=SAT[poolId].size()-1;
+			if((SAT[poolId][logicalBlockIndex].logicalStart+SAT[poolId][logicalBlockIndex].size)!=bWhere)
+			{
+				printf("huh??\n");
+				exit(0);
+			}
+		}
+	}
+
+
+	// create all the new logical and physical blocks needed to fill the gap from the split of the old block
+
+	RLogicalBlock newLogicalBlock;
+	bool finalOne=false;
+	bool previousReturnedEOF=false;
+	p_addr_t _blockFileSize=blockFile.getSize();
+	for(size_t t=0;t<=newLogicalBlockCount;t++)
 	{
-		//writeStructureInfoUnlock();
-		throw;
+		if(t<newLogicalBlockCount)
+			newLogicalBlock.size=maxBlockSize;
+		else
+		{
+			newLogicalBlock.size=bCount%maxBlockSize;
+			if(newLogicalBlock.size==0)
+				break;
+
+			if(t==0 && !didSplitOne && logicalBlockIndex!=physicalBlockList.size() && bPoolSize>0)
+			{
+				// if this less-than-max block is the only block being added
+				// and it didn't cause a split up above, then lets see if it
+				// can fit at the end of the block it didn't split. (appending optimization)
+
+				RLogicalBlock &logicalBlock=SAT[poolId][logicalBlockIndex];
+				if((logicalBlock.size+newLogicalBlock.size)<=maxBlockSize)
+				{	// can fit IF there is room after the hole after this logicalBlock
+					const size_t physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(logicalBlock.physicalStart))-physicalBlockList.begin();
+
+					if( (physicalBlockIndex+1)>=physicalBlockList.size() ||
+					    ((physicalBlockList[physicalBlockIndex+1].physicalStart-physicalBlockList[physicalBlockIndex].physicalStart)-physicalBlockList[physicalBlockIndex].size)>=newLogicalBlock.size
+					  )
+					{	// we can use this block
+						logicalBlock.size+=newLogicalBlock.size;
+						physicalBlockList[physicalBlockIndex].size+=newLogicalBlock.size;
+						pools[poolId].size+=newLogicalBlock.size;
+						break;
+					}
+				}
+			}
+			finalOne=true;
+		}
+
+		newLogicalBlock.logicalStart=bWhere+(t*maxBlockSize);
+
+		// This optimization says that if we aren't doing the last piece of the insertion
+		// and the previous call to findHole failed to return a hole within the blockFile
+		// the assume it's gonna do it again, so don't call findHole
+		if(!finalOne && previousReturnedEOF)
+			newLogicalBlock.physicalStart=_blockFileSize;
+		else
+		{
+			newLogicalBlock.physicalStart=findHole(newLogicalBlock.size);
+
+			if(newLogicalBlock.physicalStart==_blockFileSize )
+				previousReturnedEOF=true;
+		}
+
+		/*
+		// && some ratio is too high
+		{ // having to create more file space and file is getting too big, so coeless
+			newLogicalBlock.physicalStart=makeHole(newLogicalBlock.size);
+		}
+		*/
+
+		// overflow??? (probably shouldn't if I know that I didn't let the file get past maxLogicalAddress in the initial bounds checking
+		if((newLogicalBlock.physicalStart+newLogicalBlock.size)>_blockFileSize)
+			_blockFileSize+=(newLogicalBlock.physicalStart+newLogicalBlock.size)-_blockFileSize;
+		// we should check if the file will be able to grow bigger actually on disk later... ???
+
+
+		sortedInsert(SAT[poolId],newLogicalBlock);
+		sortedInsert(physicalBlockList,RPhysicalBlock(newLogicalBlock));
+
+		pools[poolId].size+=newLogicalBlock.size;
 	}
+	makeBlockFileSmallest();
+
+	// ZZZ ??? Takes too long in a real-time situation (i.e. Recording in ReZound)
+	//backupSAT();
 }
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::removeSpace(const poolId_t poolId,const l_addr_t peWhere,const l_addr_t peCount)
 {
 	if(!opened)
-		throw(runtime_error(string(__func__)+" -- no file is open"));
+		throw runtime_error(string(__func__)+" -- no file is open");
 	if(peCount==0)
 		return;
 
-	//writeStructureInfoLock();
-	try
+	// validate the parameters
+	if(!isValidPoolId(poolId))
+		throw runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId));
+
+	const alignment_t bAlignment=pools[poolId].alignment;
+	const l_addr_t bPoolSize=pools[poolId].size;
+	const l_addr_t pePoolSize=bPoolSize/bAlignment;
+
+	if(peWhere>=pePoolSize)
+		throw runtime_error(string(__func__)+" -- out of range peWhere "+istring(peWhere)+" for pool ("+getPoolDescription(poolId)+")");
+	if(pePoolSize-peWhere<peCount)
+		throw runtime_error(string(__func__)+" -- out of range peWhere "+istring(peWhere)+" and peCount "+istring(peCount)+" for pool ("+getPoolDescription(poolId)+")");
+
+	invalidateAllCachedBlocks();
+
+	const l_addr_t bWhere=peWhere*bAlignment;
+	const l_addr_t bCount=peCount*bAlignment;
+
+	bool atStartOfBlock;
+	const size_t logicalBlockIndex=findSATBlockContaining(poolId,bWhere,atStartOfBlock);
+
+	l_addr_t removeSize=bCount;
+	size_t t=logicalBlockIndex;
+	while(removeSize>0 && t<SAT[poolId].size())
 	{
-		// validate the parameters
-		if(!isValidPoolId(poolId))
-			throw(runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId)));
+		RLogicalBlock &block=SAT[poolId][t];
+		const l_addr_t block_start=block.logicalStart;
+		const l_addr_t block_end=block_start+(block.size-1);
+		const l_addr_t remove_start= (bWhere<block_start) ? block_start : bWhere;
+		const l_addr_t remove_end= ((bWhere+(bCount-1))>block_end) ? block_end : (bWhere+(bCount-1));
+		const l_addr_t remove_in_block_size=remove_end-remove_start+1;
 
-		const alignment_t bAlignment=pools[poolId].alignment;
-		const l_addr_t bPoolSize=pools[poolId].size;
-		const l_addr_t pePoolSize=bPoolSize/bAlignment;
+		// ??? Optimization: I could probably most of the time assume it's the next block the previous iteration of this loop... if I checked that and it was false, then I should do a search
+		const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(block.physicalStart));
 
-		if(peWhere>=pePoolSize)
-			throw(runtime_error(string(__func__)+" -- out of range peWhere "+istring(peWhere)+" for pool ("+getPoolDescription(poolId)+")"));
-		if(pePoolSize-peWhere<peCount)
-			throw(runtime_error(string(__func__)+" -- out of range peWhere "+istring(peWhere)+" and peCount "+istring(peCount)+" for pool ("+getPoolDescription(poolId)+")"));
+		if(remove_start==block_start && remove_end==block_end)
+		{ // case 1 -- remove whole block -- on first and only block, middle or last block
+			// |[.......]|	([..] -- block ; |..| -- section to remove)
 
-		invalidateAllCachedBlocks();
-
-		const l_addr_t bWhere=peWhere*bAlignment;
-		const l_addr_t bCount=peCount*bAlignment;
-
-		//const l_addr_t maxBlockSize=getMaxBlockSizeFromAlignment(bAlignment);
-
-		bool atStartOfBlock;
-		const size_t logicalBlockIndex=findSATBlockContaining(poolId,bWhere,atStartOfBlock);
-
-		l_addr_t removeSize=bCount;
-		size_t t=logicalBlockIndex;
-		while(removeSize>0 && t<SAT[poolId].size())
-		{
-			RLogicalBlock &block=SAT[poolId][t];
-			const l_addr_t block_start=block.logicalStart;
-			const l_addr_t block_end=block_start+(block.size-1);
-			const l_addr_t remove_start= (bWhere<block_start) ? block_start : bWhere;
-			const l_addr_t remove_end= ((bWhere+(bCount-1))>block_end) ? block_end : (bWhere+(bCount-1));
-			const l_addr_t remove_in_block_size=remove_end-remove_start+1;
-
-			// ??? Optimization: I could probably most of the time assume its the next block the previous iteration of this loop... if I checked that and it was false, then I should do a search
-			/*
-			size_t physicalBlockIndex;
-			if(!physicalBlockList.contains(RPhysicalBlock(block.physicalStart,0),physicalBlockIndex))
-			{
-				printf("inconsistances in SAT and physicalBlockList\n");
-				exit(1);
-			}
-			*/
-			const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(block.physicalStart));
-
-			if(remove_start==block_start && remove_end==block_end)
-			{ // case 1 -- remove whole block -- on first and only block, middle or last block
-				// |[.......]|	([..] -- block ; |..| -- section to remove)
-
-				//SAT[poolId].remove(t);
-				SAT[poolId].erase(SAT[poolId].begin()+t);
-				//physicalBlockList.remove(physicalBlockIndex);
-				physicalBlockList.erase(physicalBlockIndex);
-			}
-			else if(remove_start==block_start && remove_end<block_end)
-			{ // case 2 -- remove a head of block -- on first and only block, last block
-				// |[.....|..]
-
-				
-				/* I think I can put this back in now that I know it wasn't the problem, instead of doing what's below (removing and adding to the list)
-				 * 	I need a testing utility that tests call methods randomly with random positions and should test this code and put it back in if it works
-				RPhysicalBlock &newPhysicalBlock=physicalBlockList[physicalBlockIndex];
-
-				block.logicalStart-=bCount-remove_in_block_size; // do this because, this block is not gonna be affected by the loop which does this later since we increment t
-				newPhysicalBlock.physicalStart=block.physicalStart=(block.physicalStart+remove_in_block_size);
-				newPhysicalBlock.size=block.size=(block.size-remove_in_block_size);
-				*/
-
-				// I remove and re-add the logical block to the SAT list because it's logical start may get out of order
-				// ??? I shouldn't have to do the physical block this way I don't think
-
-				RLogicalBlock newLogicalBlock(block);
-				newLogicalBlock.size-=remove_in_block_size;
-				newLogicalBlock.physicalStart+=remove_in_block_size;
-				newLogicalBlock.logicalStart-=bCount-remove_in_block_size; // do this because, this block is not gonna be affected by the loop which does this later since we increment t
-
-				//SAT[poolId].remove(t);
-				SAT[poolId].erase(SAT[poolId].begin()+t);
-				//physicalBlockList.remove(physicalBlockIndex);
-				physicalBlockList.erase(physicalBlockIndex);
-
-				/*
-				if(!SAT[poolId].add(newLogicalBlock))
-				{
-					printf("error adding to SAT\n");
-					exit(1);
-				}
-				*/
-				sortedInsert(SAT[poolId],newLogicalBlock);
-
-				/*
-				if(!physicalBlockList.add(RPhysicalBlock(newLogicalBlock)))
-				{
-					printf("error adding to physicalBlockList\n");
-					exit(1);
-				}
-				*/
-				sortedInsert(physicalBlockList,RPhysicalBlock(newLogicalBlock));
-
-				t++;
-			}
-			else if(remove_start>block_start && remove_end==block_end)
-			{ // case 3 -- remove a tail of block -- first and only block, first block
-				// [..|.....]|
-				block.size-=remove_in_block_size;
-				//physicalBlockList[physicalBlockIndex].size=block.size;
-				physicalBlockIndex->size=block.size;
-				t++;
-			}
-			else if(remove_start>block_start && remove_end<block_end)
-			{ // case 4 -- split block -- on first and only block
-				// [..|...|..]
-				
-				const l_addr_t newLogicalBlockSize=block_end-remove_end;
-				//physicalBlockList[physicalBlockIndex].size=block.size=remove_start-block_start;
-				physicalBlockIndex->size=block.size=remove_start-block_start;
-
-				RLogicalBlock newLogicalBlock;
-				newLogicalBlock.logicalStart=remove_start;
-				newLogicalBlock.physicalStart=block.physicalStart+block.size+remove_in_block_size;
-				newLogicalBlock.size=newLogicalBlockSize;
-				/*
-				if(!SAT[poolId].add(newLogicalBlock))
-				{
-					printf("error adding to SAT\n");
-					exit(1);
-				}
-				*/
-				sortedInsert(SAT[poolId],newLogicalBlock);
-				/*
-				if(!physicalBlockList.add(RPhysicalBlock(newLogicalBlock)))
-				{
-					printf("error adding to physicalBlockList\n");
-					exit(1);
-				}
-				*/
-				sortedInsert(physicalBlockList,RPhysicalBlock(newLogicalBlock));
-				t+=2;
-			}
-			else
-			{
-				printf("error in cases 1-4\n");
-				exit(1);
-			}
-
-			// ??? sanity check
-			if(remove_in_block_size>removeSize)
-			{
-				printf("remove_in_block_size is greater than removeSize\n");
-				exit(1);
-			}
-
-			removeSize-=remove_in_block_size;
+			SAT[poolId].erase(SAT[poolId].begin()+t);
+			physicalBlockList.erase(physicalBlockIndex);
 		}
-		
-		pools[poolId].size-=bCount;
+		else if(remove_start==block_start && remove_end<block_end)
+		{ // case 2 -- remove a head of block -- on first and only block, last block
+			// |[.....|..]
 
-		// move all the subsequent logicalStarts downward
-		for(;t<SAT[poolId].size();t++)
-			SAT[poolId][t].logicalStart-=bCount;
+			
+			/* I think I can put this back in now that I know it wasn't the problem, instead of doing what's below (removing and adding to the list)
+			 * 	I need a testing utility that tests call methods randomly with random positions and should test this code and put it back in if it works
+			RPhysicalBlock &newPhysicalBlock=physicalBlockList[physicalBlockIndex];
 
-		// join the blocks that just became adjacent if possible
-		joinAdjacentBlocks(poolId,logicalBlockIndex>0 ? logicalBlockIndex-1 : 0,1);
-		
-		makeBlockFileSmallest();
+			block.logicalStart-=bCount-remove_in_block_size; // do this because, this block is not gonna be affected by the loop which does this later since we increment t
+			newPhysicalBlock.physicalStart=block.physicalStart=(block.physicalStart+remove_in_block_size);
+			newPhysicalBlock.size=block.size=(block.size-remove_in_block_size);
+			*/
 
-		backupSAT();
+			// I remove and re-add the logical block to the SAT list because it's logical start may get out of order
+			// ??? I shouldn't have to do the physical block this way I don't think
 
-		//writeStructureInfoUnlock();
+			RLogicalBlock newLogicalBlock(block);
+			newLogicalBlock.size-=remove_in_block_size;
+			newLogicalBlock.physicalStart+=remove_in_block_size;
+			newLogicalBlock.logicalStart-=bCount-remove_in_block_size; // do this because, this block is not gonna be affected by the loop which does this later since we increment t
+
+			SAT[poolId].erase(SAT[poolId].begin()+t);
+			physicalBlockList.erase(physicalBlockIndex);
+
+			sortedInsert(SAT[poolId],newLogicalBlock);
+			sortedInsert(physicalBlockList,RPhysicalBlock(newLogicalBlock));
+
+			t++;
+		}
+		else if(remove_start>block_start && remove_end==block_end)
+		{ // case 3 -- remove a tail of block -- first and only block, first block
+			// [..|.....]|
+			block.size-=remove_in_block_size;
+			physicalBlockIndex->size=block.size;
+			t++;
+		}
+		else if(remove_start>block_start && remove_end<block_end)
+		{ // case 4 -- split block -- on first and only block
+			// [..|...|..]
+			
+			const l_addr_t newLogicalBlockSize=block_end-remove_end;
+			physicalBlockIndex->size=block.size=remove_start-block_start;
+
+			RLogicalBlock newLogicalBlock;
+			newLogicalBlock.logicalStart=remove_start;
+			newLogicalBlock.physicalStart=block.physicalStart+block.size+remove_in_block_size;
+			newLogicalBlock.size=newLogicalBlockSize;
+
+			sortedInsert(SAT[poolId],newLogicalBlock);
+			sortedInsert(physicalBlockList,RPhysicalBlock(newLogicalBlock));
+			t+=2;
+		}
+		else
+		{
+			printf("error in cases 1-4\n");
+			exit(1);
+		}
+
+		// ??? sanity check
+		if(remove_in_block_size>removeSize)
+		{
+			printf("remove_in_block_size is greater than removeSize\n");
+			exit(1);
+		}
+
+		removeSize-=remove_in_block_size;
 	}
-	catch(...)
-	{
-		//writeStructureInfoUnlock();
-		throw;
-	}
+	
+	pools[poolId].size-=bCount;
+
+	// move all the subsequent logicalStarts downward
+	for(;t<SAT[poolId].size();t++)
+		SAT[poolId][t].logicalStart-=bCount;
+
+	// join the blocks that just became adjacent if possible
+	joinAdjacentBlocks(poolId,logicalBlockIndex>0 ? logicalBlockIndex-1 : 0,1);
+	
+	makeBlockFileSmallest();
+
+	backupSAT();
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -2351,440 +1885,313 @@ template<class l_addr_t,class p_addr_t>
 	 */
 
 	if(!opened)
-		throw(runtime_error(string(__func__)+" -- no file is open"));
+		throw runtime_error(string(__func__)+" -- no file is open");
 	if(peCount==0)
 		return;
 
-	//writeStructureInfoLock();
-	try
+	// validate the parameters
+	if(!isValidPoolId(srcPoolId))
+		throw runtime_error(string(__func__)+" -- invalid srcPoolId: "+istring(srcPoolId));
+	if(!isValidPoolId(destPoolId))
+		throw runtime_error(string(__func__)+" -- invalid destPoolId: "+istring(destPoolId));
+
+	const alignment_t bAlignment=pools[srcPoolId].alignment;
+
+	// instead of implementing this separately... I move from src to temp then temp to dest
+	if(srcPoolId==destPoolId)
 	{
-		// validate the parameters
-		if(!isValidPoolId(srcPoolId))
-			throw(runtime_error(string(__func__)+" -- invalid srcPoolId: "+istring(srcPoolId)));
-		if(!isValidPoolId(destPoolId))
-			throw(runtime_error(string(__func__)+" -- invalid destPoolId: "+istring(destPoolId)));
+		const string tempPoolName="__internal_moveData_pool__";
+		removePool(tempPoolName,false);
+		prvCreatePool(tempPoolName,bAlignment,false);
+		const poolId_t tempPoolId=getPoolIdByName(tempPoolName);
 
-		const alignment_t bAlignment=pools[srcPoolId].alignment;
-
-		// instead of implementing this separately... I move from src to temp then temp to dest
-		if(srcPoolId==destPoolId)
+		try
 		{
-			const string tempPoolName="__internal_moveData_pool__";
+			moveData(tempPoolId,0,srcPoolId,peSrcWhere,peCount);
+			moveData(destPoolId,peDestWhere,tempPoolId,0,peCount);
 			removePool(tempPoolName,false);
-			prvCreatePool(tempPoolName,bAlignment,false);
-			const poolId_t tempPoolId=getPoolIdByName(tempPoolName);
-
-			try
-			{
-				moveData(tempPoolId,0,srcPoolId,peSrcWhere,peCount);
-				moveData(destPoolId,peDestWhere,tempPoolId,0,peCount);
-				removePool(tempPoolName,false);
-			}
-			catch(...)
-			{
-				removePool(tempPoolName,false);
-				throw;
-			}
-
-			backupSAT();
-			return;
 		}
-
-		if(pools[destPoolId].alignment!=bAlignment)
-			throw(runtime_error(string(__func__)+" -- alignments do not match for srcPool ("+getPoolDescription(srcPoolId)+") and destPool ("+getPoolDescription(destPoolId)+")"));
-
-		const l_addr_t bSrcPoolSize=pools[srcPoolId].size;
-		const l_addr_t peSrcPoolSize=bSrcPoolSize/bAlignment;
-
-		if(peSrcWhere>=peSrcPoolSize)
-			throw(runtime_error(string(__func__)+" -- out of range peSrcWhere "+istring(peSrcWhere)+" for srcPool ("+getPoolDescription(srcPoolId)+")"));
-		if(peSrcPoolSize-peSrcWhere<peCount)
-			throw(runtime_error(string(__func__)+" -- out of range peSrcWhere "+istring(peSrcWhere)+" and peCount "+istring(peCount)+" for pool ("+getPoolDescription(srcPoolId)+")"));
-
-
-		const l_addr_t bDestPoolSize=pools[destPoolId].size;
-		const l_addr_t peDestPoolSize=bDestPoolSize/bAlignment;
-
-		const l_addr_t pePoolMaxSize=maxLogicalAddress/bAlignment;
-
-
-		if(pePoolMaxSize-peDestPoolSize<peCount)
-			throw(runtime_error(string(__func__)+" -- insufficient logical address space to insert "+istring(peCount)+" elements into destPool ("+getPoolDescription(destPoolId)+")"));
-		if(peDestWhere>peDestPoolSize)
-			throw(runtime_error(string(__func__)+" -- out of range peDestWhere "+istring(peDestWhere)+" for pool ("+getPoolDescription(destPoolId)+")"));
-
-		invalidateAllCachedBlocks();
-
-		const l_addr_t bSrcWhere=peSrcWhere*bAlignment;
-		l_addr_t bDestWhere=peDestWhere*bAlignment;
-		const l_addr_t bCount=peCount*bAlignment;
-
-		if(bDestWhere==0 && bDestPoolSize==0 && bSrcWhere==0 && bCount==bSrcPoolSize)
-		{ // the whole src pool is moving to an empty dest pool, so just assign the whole SAT
-			// move src to dest
-			SAT[destPoolId]=SAT[srcPoolId];
-			pools[destPoolId].size=bSrcPoolSize;
-
-			// clear src
-			SAT[srcPoolId].clear();
-			pools[srcPoolId].size=0;
-		}
-		else
-		{ // only part of the src pool is moving or all of it is moving to a non-empty pool
-			bool atStartOfSrcBlock;
-			const size_t srcBlockIndex=findSATBlockContaining(srcPoolId,bSrcWhere,atStartOfSrcBlock);
-
-			size_t destBlockIndex=0;
-			if(bDestWhere<bDestPoolSize)
-			{
-				bool atStartOfDestBlock;
-				destBlockIndex=findSATBlockContaining(destPoolId,bDestWhere,atStartOfDestBlock);
-				if(!atStartOfDestBlock)
-				{ // go ahead and split the destination block so that we can simply insert new ones along the way
-
-					if(bDestWhere<=SAT[destPoolId][destBlockIndex].logicalStart)
-					{ // logcal impossibility since atStartOfBlock wasn't true (unless it was wrong)
-						printf("oops...\n");
-						exit(1);
-					}
-
-					const l_addr_t firstPartSize=bDestWhere-SAT[destPoolId][destBlockIndex].logicalStart;
-					const l_addr_t secondPartSize=SAT[destPoolId][destBlockIndex].size-firstPartSize;
-
-
-					// find the physical block for this logical block
-					/*
-					RPhysicalBlock searchPhysicalBlock;
-					size_t physicalBlockIndex;
-					searchPhysicalBlock.physicalStart=SAT[destPoolId][destBlockIndex].physicalStart;
-					if(!physicalBlockList.contains(searchPhysicalBlock,physicalBlockIndex))
-					{
-						printf("physical block list inconsistancies...\n");
-						exit(1);
-					}
-					*/
-					const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(SAT[destPoolId][destBlockIndex].physicalStart));
-
-					// shrink the logical and physical blocks' sizes
-					//physicalBlockList[physicalBlockIndex].size=SAT[destPoolId][destBlockIndex].size=firstPartSize;
-					physicalBlockIndex->size=SAT[destPoolId][destBlockIndex].size=firstPartSize;
-
-					// create the new logical and physical blocks which are the second part of the old blocks
-					RLogicalBlock newLogicalBlock;
-					newLogicalBlock.logicalStart=SAT[destPoolId][destBlockIndex].logicalStart+firstPartSize;
-					newLogicalBlock.physicalStart=SAT[destPoolId][destBlockIndex].physicalStart+firstPartSize;
-					newLogicalBlock.size=secondPartSize;
-
-					// add the new logical block
-					/*
-					if(!SAT[destPoolId].add(newLogicalBlock))
-					{	// inconsistancies
-						printf("error adding to SAT\n");
-						exit(1);
-					}
-					*/
-					sortedInsert(SAT[destPoolId],newLogicalBlock);
-
-					// add the new physical block
-					/*
-					if(!physicalBlockList.add(RPhysicalBlock(newLogicalBlock)))
-					{	// error
-						printf("error adding to physical block list\n");
-						exit(1);
-					}
-					*/
-					sortedInsert(physicalBlockList,RPhysicalBlock(newLogicalBlock));
-
-					destBlockIndex++;
-				}
-
-				// move upward all the logicalStarts in the dest pool past the destination where point
-				for(size_t t=destBlockIndex;t<SAT[destPoolId].size();t++)
-					SAT[destPoolId][t].logicalStart+=bCount;
-
-			}
-
-
-			size_t loopCount=0;
-			l_addr_t moveSize=bCount;
-			size_t src_t=srcBlockIndex;
-			while(moveSize>0 && src_t<SAT[srcPoolId].size())
-			{
-				RLogicalBlock &srcBlock=SAT[srcPoolId][src_t];
-				const l_addr_t src_block_start=srcBlock.logicalStart;
-				const l_addr_t src_block_end=src_block_start+(srcBlock.size-1);
-				const l_addr_t src_remove_start= (bSrcWhere<src_block_start) ? src_block_start : bSrcWhere;
-				const l_addr_t src_remove_end= ((bSrcWhere+(bCount-1))>src_block_end) ? src_block_end : (bSrcWhere+(bCount-1));
-				const l_addr_t remove_in_src_block_size=src_remove_end-src_remove_start+1;
-
-				// ??? Optimization: I could probably most of the time assume its the next block the previous iteration of this loop... if I checked that and it was false, then I should do a search
-				/*
-				size_t physicalBlockIndex;
-				if(!physicalBlockList.contains(RPhysicalBlock(srcBlock.physicalStart,0),physicalBlockIndex))
-				{
-					printf("inconsistances in SAT and physicalBlockList\n");
-					exit(1);
-				}
-				*/
-				const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(srcBlock.physicalStart));
-
-				if(src_remove_start==src_block_start && src_remove_end==src_block_end)
-				{ // case 1 -- remove whole block from src pool -- on first and only block, middle or last block
-					// |[.......]|	([..] -- block ; |..| -- section to remove)
-					
-					RLogicalBlock newDestLogicalBlock(srcBlock);
-					newDestLogicalBlock.logicalStart=bDestWhere;
-
-					//SAT[srcPoolId].remove(src_t);
-					SAT[srcPoolId].erase(SAT[srcPoolId].begin()+src_t);
-
-					/*
-					if(!SAT[destPoolId].add(newDestLogicalBlock))
-					{	// inconsistancies
-						printf("error adding to SAT\n");
-						exit(1);
-					}
-					*/
-					sortedInsert(SAT[destPoolId],newDestLogicalBlock);
-
-				}
-				else if(src_remove_start==src_block_start && src_remove_end<src_block_end)
-				{ // case 2 -- remove a head of block -- on first and only block, last block
-					// |[.....|..]
-
-					/* I think I can put this back in instead of doing what I do below (that is, removing and adding the block)
-					// create the new logical block in dest pool and new physical block
-					RLogicalBlock newDestLogicalBlock;
-					newDestLogicalBlock.logicalStart=bDestWhere;
-					newDestLogicalBlock.size=remove_in_src_block_size;
-					newDestLogicalBlock.physicalStart=srcBlock.physicalStart;
-
-					// simply modify the src block and physical block's sizes and starts
-					RPhysicalBlock &srcPhysicalBlock=physicalBlockList[physicalBlockIndex];
-					srcBlock.logicalStart-=bCount-remove_in_src_block_size; // do this because, this srcBlock is not gonna be affected by the loop which does this later since we increment t
-					srcPhysicalBlock.physicalStart=srcBlock.physicalStart=(srcBlock.physicalStart+remove_in_src_block_size);
-					srcPhysicalBlock.size=srcBlock.size=(srcBlock.size-remove_in_src_block_size);
-
-					// actually add the new logical and physical blocks (had to delay because of unique constraints)
-					if(!SAT[destPoolId].add(newDestLogicalBlock))
-					{
-						printf("error adding to dest SAT\n");
-						exit(1);
-					}
-					if(!physicalBlockList.add(RPhysicalBlock(newDestLogicalBlock)))
-					{
-						printf("error adding to physicalBlockList\n");
-						exit(1);
-					}
-					*/
-
-					// create the new logical block in dest pool and new physical block
-					RLogicalBlock newDestLogicalBlock; 
-					newDestLogicalBlock.logicalStart=bDestWhere;
-					newDestLogicalBlock.size=remove_in_src_block_size;
-					newDestLogicalBlock.physicalStart=srcBlock.physicalStart;
-
-
-					// I remove and re-add the logical block to the SAT list because it's logical start may get out of order
-					// ??? I shouldn't have to do the physical block this way I don't think
-
-					RLogicalBlock newSrcLogicalBlock(srcBlock);
-					newSrcLogicalBlock.size-=remove_in_src_block_size;
-					newSrcLogicalBlock.physicalStart+=remove_in_src_block_size;
-					newSrcLogicalBlock.logicalStart-=bCount-remove_in_src_block_size; // do this because, this block is not gonna be affected by the loop which does this later since we increment t
-
-					//SAT[srcPoolId].remove(src_t);
-					SAT[srcPoolId].erase(SAT[srcPoolId].begin()+src_t);
-					//physicalBlockList.remove(physicalBlockIndex);
-					physicalBlockList.erase(physicalBlockIndex);
-
-					/*
-					if(!SAT[srcPoolId].add(newSrcLogicalBlock))
-					{
-						printf("error adding to SAT\n");
-						exit(1);
-					}
-					*/
-					sortedInsert(SAT[srcPoolId],newSrcLogicalBlock);
-
-					/*
-					if(!physicalBlockList.add(RPhysicalBlock(newSrcLogicalBlock)))
-					{
-						printf("error adding to physicalBlockList\n");
-						exit(1);
-					}
-					*/
-					sortedInsert(physicalBlockList,RPhysicalBlock(newSrcLogicalBlock));
-
-					// actually add the new logical and physical blocks (had to delay because of unique constraints)
-					/*
-					if(!SAT[destPoolId].add(newDestLogicalBlock))
-					{
-						printf("error adding to dest SAT\n");
-						exit(1);
-					}
-					*/
-					sortedInsert(SAT[destPoolId],newDestLogicalBlock);
-					/*
-					if(!physicalBlockList.add(RPhysicalBlock(newDestLogicalBlock)))
-					{
-						printf("error adding to physicalBlockList\n");
-						exit(1);
-					}
-					*/
-					sortedInsert(physicalBlockList,RPhysicalBlock(newDestLogicalBlock));
-
-					src_t++;
-				}
-				else if(src_remove_start>src_block_start && src_remove_end==src_block_end)
-				{ // case 3 -- remove a tail of block -- first and only block, first block
-					// [..|.....]|
-					
-					// create the new logcal block for dest pool and a new physical block
-					RLogicalBlock newDestLogicalBlock;
-					newDestLogicalBlock.logicalStart=bDestWhere;
-					newDestLogicalBlock.size=remove_in_src_block_size;
-					newDestLogicalBlock.physicalStart=(srcBlock.physicalStart+(srcBlock.size-remove_in_src_block_size));
-
-					// actually add the new logical and physical blocks
-					/*
-					if(!SAT[destPoolId].add(newDestLogicalBlock))
-					{
-						printf("error adding to dest SAT\n");
-						exit(1);
-					}
-					*/
-					sortedInsert(SAT[destPoolId],newDestLogicalBlock);
-					/*
-					if(!physicalBlockList.add(RPhysicalBlock(newDestLogicalBlock)))
-					{
-						printf("error adding to physicalBlockList\n");
-						exit(1);
-					}
-					*/
-					sortedInsert(physicalBlockList,RPhysicalBlock(newDestLogicalBlock));
-
-					// simply modify the logcal and physcal blocks
-					srcBlock.size-=remove_in_src_block_size;
-					//physicalBlockList[physicalBlockIndex].size=srcBlock.size;
-					physicalBlockIndex->size=srcBlock.size;
-
-					src_t++;
-				}
-				else if(src_remove_start>src_block_start && src_remove_end<src_block_end)
-				{ // case 4 -- split block -- on first and only block
-					// [..|...|..]
-				
-					const l_addr_t headSize=src_remove_start-src_block_start; // part at the beginning of the block
-
-
-					// insert new logical block in dest pool and create new physical block
-					RLogicalBlock newDestLogicalBlock;
-					newDestLogicalBlock.logicalStart=bDestWhere;
-					newDestLogicalBlock.physicalStart=srcBlock.physicalStart+headSize;
-					newDestLogicalBlock.size=src_remove_end-src_remove_start+1;
-
-					/*
-					if(!SAT[destPoolId].add(newDestLogicalBlock))
-					{
-						printf("error adding to dest SAT\n");
-						exit(1);
-					}
-					*/
-					sortedInsert(SAT[destPoolId],newDestLogicalBlock);
-					/*
-					if(!physicalBlockList.add(RPhysicalBlock(newDestLogicalBlock)))
-					{
-						printf("error adding to physicalBlockList\n");
-						exit(1);
-					}
-					*/
-					sortedInsert(physicalBlockList,RPhysicalBlock(newDestLogicalBlock));
-
-					// modify logical and physical src blocks' sizes
-					//physicalBlockList[physicalBlockIndex].size=srcBlock.size=headSize;
-					physicalBlockIndex->size=srcBlock.size=headSize;
-
-					// create new block in src pool and new physical block
-					RLogicalBlock newSrcLogicalBlock;
-					newSrcLogicalBlock.logicalStart=src_remove_start;
-					newSrcLogicalBlock.physicalStart=srcBlock.physicalStart+srcBlock.size+remove_in_src_block_size;
-					newSrcLogicalBlock.size=src_block_end-src_remove_end;
-
-					/*
-					if(!SAT[srcPoolId].add(newSrcLogicalBlock))
-					{
-						printf("error adding to src SAT\n");
-						exit(1);
-					}
-					*/
-					sortedInsert(SAT[srcPoolId],newSrcLogicalBlock);
-					/*
-					if(!physicalBlockList.add(RPhysicalBlock(newSrcLogicalBlock)))
-					{
-						printf("error adding to physicalBlockList\n");
-						exit(1);
-					}
-					*/
-					sortedInsert(physicalBlockList,RPhysicalBlock(newSrcLogicalBlock));
-
-					src_t+=2;
-
-				}
-				else
-				{
-					printf("error in cases 1-4\n");
-					exit(1);
-				}
-
-				loopCount++;
-				bDestWhere+=remove_in_src_block_size;
-
-				// ??? sanity check
-				if(remove_in_src_block_size>moveSize)
-				{
-					printf("remove_in_src_block_size is greater than moveSize\n");
-					exit(1);
-				}
-
-				moveSize-=remove_in_src_block_size;
-			}
-
-			pools[srcPoolId].size-=bCount;
-			pools[destPoolId].size+=bCount;
-
-			// move all the subsequent logicalStarts of the src pool downward
-			for(;src_t<SAT[srcPoolId].size();src_t++)
-				SAT[srcPoolId][src_t].logicalStart-=bCount;
-
-
-			/* ??? don't I want to do this?
-			// join any adjacent blocks in the dest pool than could be
-			joinAdjacentBlocks(destPoolId,destBlockIndex>0 ? destBlockIndex-1 : 0,loopCount+1);
-
-			// join the blocks that just became adjacent in the src pool if possible
-			joinAdjacentBlocks(srcPoolId,srcBlockIndex>0 ? srcBlockIndex-1 : 0,1);
-			*/
+		catch(...)
+		{
+			removePool(tempPoolName,false);
+			throw;
 		}
 
 		backupSAT();
+		return;
+	}
 
-		//writeStructureInfoUnlock();
+	if(pools[destPoolId].alignment!=bAlignment)
+		throw runtime_error(string(__func__)+" -- alignments do not match for srcPool ("+getPoolDescription(srcPoolId)+") and destPool ("+getPoolDescription(destPoolId)+")");
+
+	const l_addr_t bSrcPoolSize=pools[srcPoolId].size;
+	const l_addr_t peSrcPoolSize=bSrcPoolSize/bAlignment;
+
+	if(peSrcWhere>=peSrcPoolSize)
+		throw runtime_error(string(__func__)+" -- out of range peSrcWhere "+istring(peSrcWhere)+" for srcPool ("+getPoolDescription(srcPoolId)+")");
+	if(peSrcPoolSize-peSrcWhere<peCount)
+		throw runtime_error(string(__func__)+" -- out of range peSrcWhere "+istring(peSrcWhere)+" and peCount "+istring(peCount)+" for pool ("+getPoolDescription(srcPoolId)+")");
+
+
+	const l_addr_t bDestPoolSize=pools[destPoolId].size;
+	const l_addr_t peDestPoolSize=bDestPoolSize/bAlignment;
+
+	const l_addr_t pePoolMaxSize=maxLogicalAddress/bAlignment;
+
+
+	if(pePoolMaxSize-peDestPoolSize<peCount)
+		throw runtime_error(string(__func__)+" -- insufficient logical address space to insert "+istring(peCount)+" elements into destPool ("+getPoolDescription(destPoolId)+")");
+	if(peDestWhere>peDestPoolSize)
+		throw runtime_error(string(__func__)+" -- out of range peDestWhere "+istring(peDestWhere)+" for pool ("+getPoolDescription(destPoolId)+")");
+
+	invalidateAllCachedBlocks();
+
+	const l_addr_t bSrcWhere=peSrcWhere*bAlignment;
+	l_addr_t bDestWhere=peDestWhere*bAlignment;
+	const l_addr_t bCount=peCount*bAlignment;
+
+	if(bDestWhere==0 && bDestPoolSize==0 && bSrcWhere==0 && bCount==bSrcPoolSize)
+	{ // the whole src pool is moving to an empty dest pool, so just assign the whole SAT
+		// move src to dest
+		SAT[destPoolId]=SAT[srcPoolId];
+		pools[destPoolId].size=bSrcPoolSize;
+
+		// clear src
+		SAT[srcPoolId].clear();
+		pools[srcPoolId].size=0;
 	}
-	catch(...)
-	{
-		//writeStructureInfoUnlock();
-		throw;
+	else
+	{ // only part of the src pool is moving or all of it is moving to a non-empty pool
+		bool atStartOfSrcBlock;
+		const size_t srcBlockIndex=findSATBlockContaining(srcPoolId,bSrcWhere,atStartOfSrcBlock);
+
+		size_t destBlockIndex=0;
+		if(bDestWhere<bDestPoolSize)
+		{
+			bool atStartOfDestBlock;
+			destBlockIndex=findSATBlockContaining(destPoolId,bDestWhere,atStartOfDestBlock);
+			if(!atStartOfDestBlock)
+			{ // go ahead and split the destination block so that we can simply insert new ones along the way
+
+				if(bDestWhere<=SAT[destPoolId][destBlockIndex].logicalStart)
+				{ // logcal impossibility since atStartOfBlock wasn't true (unless it was wrong)
+					printf("oops...\n");
+					exit(1);
+				}
+
+				const l_addr_t firstPartSize=bDestWhere-SAT[destPoolId][destBlockIndex].logicalStart;
+				const l_addr_t secondPartSize=SAT[destPoolId][destBlockIndex].size-firstPartSize;
+
+
+				// find the physical block for this logical block
+				const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(SAT[destPoolId][destBlockIndex].physicalStart));
+
+				// shrink the logical and physical blocks' sizes
+				physicalBlockIndex->size=SAT[destPoolId][destBlockIndex].size=firstPartSize;
+
+				// create the new logical and physical blocks which are the second part of the old blocks
+				RLogicalBlock newLogicalBlock;
+				newLogicalBlock.logicalStart=SAT[destPoolId][destBlockIndex].logicalStart+firstPartSize;
+				newLogicalBlock.physicalStart=SAT[destPoolId][destBlockIndex].physicalStart+firstPartSize;
+				newLogicalBlock.size=secondPartSize;
+
+				// add the new logical block
+				sortedInsert(SAT[destPoolId],newLogicalBlock);
+
+				// add the new physical block
+				sortedInsert(physicalBlockList,RPhysicalBlock(newLogicalBlock));
+
+				destBlockIndex++;
+			}
+
+			// move upward all the logicalStarts in the dest pool past the destination where point
+			for(size_t t=destBlockIndex;t<SAT[destPoolId].size();t++)
+				SAT[destPoolId][t].logicalStart+=bCount;
+
+		}
+
+
+		size_t loopCount=0;
+		l_addr_t moveSize=bCount;
+		size_t src_t=srcBlockIndex;
+		while(moveSize>0 && src_t<SAT[srcPoolId].size())
+		{
+			RLogicalBlock &srcBlock=SAT[srcPoolId][src_t];
+			const l_addr_t src_block_start=srcBlock.logicalStart;
+			const l_addr_t src_block_end=src_block_start+(srcBlock.size-1);
+			const l_addr_t src_remove_start= (bSrcWhere<src_block_start) ? src_block_start : bSrcWhere;
+			const l_addr_t src_remove_end= ((bSrcWhere+(bCount-1))>src_block_end) ? src_block_end : (bSrcWhere+(bCount-1));
+			const l_addr_t remove_in_src_block_size=src_remove_end-src_remove_start+1;
+
+			// ??? Optimization: I could probably most of the time assume its the next block the previous iteration of this loop... if I checked that and it was false, then I should do a search
+			const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(srcBlock.physicalStart));
+
+			if(src_remove_start==src_block_start && src_remove_end==src_block_end)
+			{ // case 1 -- remove whole block from src pool -- on first and only block, middle or last block
+				// |[.......]|	([..] -- block ; |..| -- section to remove)
+				
+				RLogicalBlock newDestLogicalBlock(srcBlock);
+				newDestLogicalBlock.logicalStart=bDestWhere;
+
+				SAT[srcPoolId].erase(SAT[srcPoolId].begin()+src_t);
+
+				sortedInsert(SAT[destPoolId],newDestLogicalBlock);
+
+			}
+			else if(src_remove_start==src_block_start && src_remove_end<src_block_end)
+			{ // case 2 -- remove a head of block -- on first and only block, last block
+				// |[.....|..]
+
+				/* I think I can put this back in instead of doing what I do below (that is, removing and adding the block)
+				// create the new logical block in dest pool and new physical block
+				RLogicalBlock newDestLogicalBlock;
+				newDestLogicalBlock.logicalStart=bDestWhere;
+				newDestLogicalBlock.size=remove_in_src_block_size;
+				newDestLogicalBlock.physicalStart=srcBlock.physicalStart;
+
+				// simply modify the src block and physical block's sizes and starts
+				RPhysicalBlock &srcPhysicalBlock=physicalBlockList[physicalBlockIndex];
+				srcBlock.logicalStart-=bCount-remove_in_src_block_size; // do this because, this srcBlock is not gonna be affected by the loop which does this later since we increment t
+				srcPhysicalBlock.physicalStart=srcBlock.physicalStart=(srcBlock.physicalStart+remove_in_src_block_size);
+				srcPhysicalBlock.size=srcBlock.size=(srcBlock.size-remove_in_src_block_size);
+
+				// actually add the new logical and physical blocks (had to delay because of unique constraints)
+				if(!SAT[destPoolId].add(newDestLogicalBlock))
+				{
+					printf("error adding to dest SAT\n");
+					exit(1);
+				}
+				if(!physicalBlockList.add(RPhysicalBlock(newDestLogicalBlock)))
+				{
+					printf("error adding to physicalBlockList\n");
+					exit(1);
+				}
+				*/
+
+				// create the new logical block in dest pool and new physical block
+				RLogicalBlock newDestLogicalBlock; 
+				newDestLogicalBlock.logicalStart=bDestWhere;
+				newDestLogicalBlock.size=remove_in_src_block_size;
+				newDestLogicalBlock.physicalStart=srcBlock.physicalStart;
+
+
+				// I remove and re-add the logical block to the SAT list because it's logical start may get out of order
+				// ??? I shouldn't have to do the physical block this way I don't think
+
+				RLogicalBlock newSrcLogicalBlock(srcBlock);
+				newSrcLogicalBlock.size-=remove_in_src_block_size;
+				newSrcLogicalBlock.physicalStart+=remove_in_src_block_size;
+				newSrcLogicalBlock.logicalStart-=bCount-remove_in_src_block_size; // do this because, this block is not gonna be affected by the loop which does this later since we increment t
+
+				SAT[srcPoolId].erase(SAT[srcPoolId].begin()+src_t);
+				physicalBlockList.erase(physicalBlockIndex);
+
+				sortedInsert(SAT[srcPoolId],newSrcLogicalBlock);
+				sortedInsert(physicalBlockList,RPhysicalBlock(newSrcLogicalBlock));
+
+				// actually add the new logical and physical blocks (had to delay because of unique constraints)
+				sortedInsert(SAT[destPoolId],newDestLogicalBlock);
+				sortedInsert(physicalBlockList,RPhysicalBlock(newDestLogicalBlock));
+
+				src_t++;
+			}
+			else if(src_remove_start>src_block_start && src_remove_end==src_block_end)
+			{ // case 3 -- remove a tail of block -- first and only block, first block
+				// [..|.....]|
+				
+				// create the new logcal block for dest pool and a new physical block
+				RLogicalBlock newDestLogicalBlock;
+				newDestLogicalBlock.logicalStart=bDestWhere;
+				newDestLogicalBlock.size=remove_in_src_block_size;
+				newDestLogicalBlock.physicalStart=(srcBlock.physicalStart+(srcBlock.size-remove_in_src_block_size));
+
+				// actually add the new logical and physical blocks
+				sortedInsert(SAT[destPoolId],newDestLogicalBlock);
+				sortedInsert(physicalBlockList,RPhysicalBlock(newDestLogicalBlock));
+
+				// simply modify the logcal and physcal blocks
+				srcBlock.size-=remove_in_src_block_size;
+				physicalBlockIndex->size=srcBlock.size;
+
+				src_t++;
+			}
+			else if(src_remove_start>src_block_start && src_remove_end<src_block_end)
+			{ // case 4 -- split block -- on first and only block
+				// [..|...|..]
+			
+				const l_addr_t headSize=src_remove_start-src_block_start; // part at the beginning of the block
+
+
+				// insert new logical block in dest pool and create new physical block
+				RLogicalBlock newDestLogicalBlock;
+				newDestLogicalBlock.logicalStart=bDestWhere;
+				newDestLogicalBlock.physicalStart=srcBlock.physicalStart+headSize;
+				newDestLogicalBlock.size=src_remove_end-src_remove_start+1;
+
+				sortedInsert(SAT[destPoolId],newDestLogicalBlock);
+				sortedInsert(physicalBlockList,RPhysicalBlock(newDestLogicalBlock));
+
+				// modify logical and physical src blocks' sizes
+				physicalBlockIndex->size=srcBlock.size=headSize;
+
+				// create new block in src pool and new physical block
+				RLogicalBlock newSrcLogicalBlock;
+				newSrcLogicalBlock.logicalStart=src_remove_start;
+				newSrcLogicalBlock.physicalStart=srcBlock.physicalStart+srcBlock.size+remove_in_src_block_size;
+				newSrcLogicalBlock.size=src_block_end-src_remove_end;
+
+				sortedInsert(SAT[srcPoolId],newSrcLogicalBlock);
+				sortedInsert(physicalBlockList,RPhysicalBlock(newSrcLogicalBlock));
+
+				src_t+=2;
+
+			}
+			else
+			{
+				printf("error in cases 1-4\n");
+				exit(1);
+			}
+
+			loopCount++;
+			bDestWhere+=remove_in_src_block_size;
+
+			// ??? sanity check
+			if(remove_in_src_block_size>moveSize)
+			{
+				printf("remove_in_src_block_size is greater than moveSize\n");
+				exit(1);
+			}
+
+			moveSize-=remove_in_src_block_size;
+		}
+
+		pools[srcPoolId].size-=bCount;
+		pools[destPoolId].size+=bCount;
+
+		// move all the subsequent logicalStarts of the src pool downward
+		for(;src_t<SAT[srcPoolId].size();src_t++)
+			SAT[srcPoolId][src_t].logicalStart-=bCount;
+
+
+		/* ??? don't I want to do this?
+		// join any adjacent blocks in the dest pool than could be
+		joinAdjacentBlocks(destPoolId,destBlockIndex>0 ? destBlockIndex-1 : 0,loopCount+1);
+
+		// join the blocks that just became adjacent in the src pool if possible
+		joinAdjacentBlocks(srcPoolId,srcBlockIndex>0 ? srcBlockIndex-1 : 0,1);
+		*/
 	}
+
+	backupSAT();
 }
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::clearPool(const poolId_t poolId)
 {
 	if(!opened)
-		throw(runtime_error(string(__func__)+" -- no file is open"));
+		throw runtime_error(string(__func__)+" -- no file is open");
 	if(!isValidPoolId(poolId))
-		throw(runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId)));
+		throw runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId));
 
 	invalidateAllCachedBlocks();
 
@@ -2810,123 +2217,101 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	template<class pool_element_t> void TPoolFile<l_addr_t,p_addr_t>::cacheBlock(const l_addr_t peWhere,const TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > *accesser)
 {
-	lockAccesserInfo();
-	//readStructureInfoLock();
-	try
+	CMutexLocker lock(accesserInfoMutex);
+
+		// assume is valid
+	const poolId_t poolId=accesser->poolId;
+
+	if(peWhere>=maxLogicalAddress/sizeof(pool_element_t))
+		throw runtime_error(string(__func__)+" -- invalid peWhere "+istring(peWhere)+" for pool ("+getPoolDescription(poolId)+")");
+
+	const l_addr_t byteWhere=peWhere*sizeof(pool_element_t);
+
+	unreferenceCachedBlock(accesser);
+
+	RCachedBlock *found=NULL;
+
+	// ??? Optimization: if there were many many pools, I could make this a TDimableList by poolId to eliminate looking through all of them
+	// look to see if this block is already cached in the active cached blocks
+	for(typename deque<RCachedBlock *>::iterator i=activeCachedBlocks.begin();i!=activeCachedBlocks.end();i++)
 	{
-			// assume is valid
-		const poolId_t poolId=accesser->poolId;
+		RCachedBlock *cachedBlock=(*i);
+		if(cachedBlock->poolId==poolId && cachedBlock->containsAddress(byteWhere))
+		{
+			found=cachedBlock;
+			break;
+		}
+	}
 
-		if(peWhere>=maxLogicalAddress/sizeof(pool_element_t))
-			throw(runtime_error(string(__func__)+" -- invalid peWhere "+istring(peWhere)+" for pool ("+getPoolDescription(poolId)+")"));
-
-		const l_addr_t byteWhere=peWhere*sizeof(pool_element_t);
-
-		unreferenceCachedBlock(accesser);
-
-		RCachedBlock *found=NULL;
-
-		// ??? Optimization: if there were many many pools, I could make this a TDimableList by poolId to eliminate looking through all of them
-		// look to see if this block is already cached in the active cached blocks
-		//STL TStackQueueIterator<RCachedBlock *> i=activeCachedBlocks.getIterator();
-		for(typename deque<RCachedBlock *>::iterator i=activeCachedBlocks.begin();i!=activeCachedBlocks.end();i++)
+	// ??? Optimization: if there were many many pools, I could make this a TDimableList by poolId to eliminate looking through all of them
+	// if not found then look to see if this block is already cached in the unreferenced cached blocks
+	if(found==NULL)
+	{
+		for(typename deque<RCachedBlock *>::iterator i=unreferencedCachedBlocks.begin();i!=unreferencedCachedBlocks.end();i++)
 		{
 			RCachedBlock *cachedBlock=(*i);
 			if(cachedBlock->poolId==poolId && cachedBlock->containsAddress(byteWhere))
 			{
 				found=cachedBlock;
+				unreferencedCachedBlocks.erase(i);
 				break;
 			}
 		}
 
-		// ??? Optimization: if there were many many pools, I could make this a TDimableList by poolId to eliminate looking through all of them
-		// if not found then look to see if this block is already cached in the unreferenced cached blocks
 		if(found==NULL)
-		{
-			//STL TStackQueueIterator<RCachedBlock *> i=unreferencedCachedBlocks.getIterator();
-			//while(!i.atEnd())
-			for(typename deque<RCachedBlock *>::iterator i=unreferencedCachedBlocks.begin();i!=unreferencedCachedBlocks.end();i++)
+		{	// use an unused block if available or take the LRUed unreferenced cached block if available or finally create a new one
+
+			// validate address
+			if(byteWhere>=getPoolSize(poolId))
 			{
-				RCachedBlock *cachedBlock=(*i);
-				if(cachedBlock->poolId==poolId && cachedBlock->containsAddress(byteWhere))
-				{
-					found=cachedBlock;
-					//i.removeCurrent();
-					unreferencedCachedBlocks.erase(i);
-					break;
-				}
+				accesser->init();
+				throw runtime_error(string(__func__)+" -- invalid peWhere "+istring(peWhere)+" for pool ("+getPoolDescription(poolId)+")");
+			}
+
+			bool dummy;
+			const size_t SATIndex=findSATBlockContaining(poolId,byteWhere,dummy);
+
+			// use an unused one if available
+			if(!unusedCachedBlocks.empty())
+			{
+				found=unusedCachedBlocks.front();
+				unusedCachedBlocks.pop();
 			}
 
 			if(found==NULL)
-			{	// use an unused block if available or take the LRUed unreferenced cached block if available or finally create a new one
-
-				// validate address
-				if(byteWhere>=getPoolSize(poolId))
-				{
-					accesser->init();
-					throw(runtime_error(string(__func__)+" -- invalid peWhere "+istring(peWhere)+" for pool ("+getPoolDescription(poolId)+")"));
-				}
-
-				bool dummy;
-				//const typename set<RLogicalBlock>::const_iterator SATIndex=findSATBlockContaining(poolId,byteWhere,dummy);
-				const size_t SATIndex=findSATBlockContaining(poolId,byteWhere,dummy);
-
-				// use an unused one if available
-				if(!unusedCachedBlocks.empty())
-				{
-					//found=unusedCachedBlocks.dequeue();
+			{	// invalidate an unreferenced one or create a new one if none are available
+				if(!unreferencedCachedBlocks.empty())
+				{	// create an unused one from the unreferencedCachedBlocks
+					invalidateCachedBlock((found=unreferencedCachedBlocks.front()));
+					// ??? sanity check
+					if(unusedCachedBlocks.empty())
+					{
+						printf("what? one's supposed to be there now...\n");
+						exit(0);
+					}
 					found=unusedCachedBlocks.front();
 					unusedCachedBlocks.pop();
 				}
-
-				if(found==NULL)
-				{	// invalidate an unreferenced one or create a new one if none are available
-					if(!unreferencedCachedBlocks.empty())
-					{	// create an unused one from the unreferencedCachedBlocks
-						invalidateCachedBlock((found=unreferencedCachedBlocks.front()));
-						// ??? sanity check
-						if(unusedCachedBlocks.empty())
-						{
-							printf("what? one's supposed to be there now...\n");
-							exit(0);
-						}
-						found=unusedCachedBlocks.front();
-						unusedCachedBlocks.pop();
-					}
-					else
-						found=new RCachedBlock(maxBlockSize);
-				}
-
-				// could check of found==NULL here... error if so
-
-				//blockFile.read(found->buffer,SATIndex->size,SATIndex->physicalStart+LEADING_DATA_SIZE);
-				blockFile.read(found->buffer,SAT[poolId][SATIndex].size,SAT[poolId][SATIndex].physicalStart+LEADING_DATA_SIZE);
-
-				// initialize the cachedBlock
-				//found->init(poolId,SATIndex->logicalStart,SATIndex->size);
-				found->init(poolId,SAT[poolId][SATIndex].logicalStart,SAT[poolId][SATIndex].size);
+				else
+					found=new RCachedBlock(maxBlockSize);
 			}
-			activeCachedBlocks.push_back(found);
+
+			// could check of found==NULL here... error if so
+
+			blockFile.read(found->buffer,SAT[poolId][SATIndex].size,SAT[poolId][SATIndex].physicalStart+LEADING_DATA_SIZE);
+
+			// initialize the cachedBlock
+			found->init(poolId,SAT[poolId][SATIndex].logicalStart,SAT[poolId][SATIndex].size);
 		}
-
-		found->referenceCount++;
-		//accesser->startAddress=(found->logicalStart)/getPoolAlignment(accesser->poolId);
-		accesser->startAddress=(found->logicalStart)/sizeof(pool_element_t);
-		//accesser->endAddress=((found->logicalStart+found->size)/getPoolAlignment(accesser->poolId))-1;
-		accesser->endAddress=((found->logicalStart+found->size)/sizeof(pool_element_t))-1;
-		accesser->cacheBuffer=(pool_element_t *)(found->buffer);
-		accesser->dirty=false;
-		accesser->cachedBlock=found;
-
-		//readStructureInfoUnlock();
-		unlockAccesserInfo();
+		activeCachedBlocks.push_back(found);
 	}
-	catch(...)
-	{
-		//readStructureInfoUnlock();
-		unlockAccesserInfo();
-		throw;
-	}
+
+	found->referenceCount++;
+	accesser->startAddress=(found->logicalStart)/sizeof(pool_element_t);
+	accesser->endAddress=((found->logicalStart+found->size)/sizeof(pool_element_t))-1;
+	accesser->cacheBuffer=(pool_element_t *)(found->buffer);
+	accesser->dirty=false;
+	accesser->cachedBlock=found;
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -2955,10 +2340,8 @@ template<class l_addr_t,class p_addr_t>
 	if(cachedBlock->dirty)
 	{
 		bool atStartOfBlock;
-		//const typename set<RLogicalBlock>::const_iterator SATIndex=findSATBlockContaining(cachedBlock->poolId,cachedBlock->logicalStart,atStartOfBlock);
 		size_t SATIndex=findSATBlockContaining(cachedBlock->poolId,cachedBlock->logicalStart,atStartOfBlock);
 		// if atStartOfBlock is not true.. problem!!!
-		//blockFile.write(cachedBlock->buffer,SATIndex->size,SATIndex->physicalStart+LEADING_DATA_SIZE);
 		blockFile.write(cachedBlock->buffer,SAT[cachedBlock->poolId][SATIndex].size,SAT[cachedBlock->poolId][SATIndex].physicalStart+LEADING_DATA_SIZE);
 	}
 
@@ -2997,79 +2380,33 @@ template<class l_addr_t,class p_addr_t>
 	}
 }
 
-/*
-template<class l_addr_t,class p_addr_t>
-	template<class pool_element_t> const size_t TPoolFile<l_addr_t,p_addr_t>::findAccesserIndex(const TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > *accesser,const bool throwIfNotFound)
-{
-	size_t foundAt;
-	if(accessers.contains(accesser,foundAt))
-		return(foundAt);
-	if(throwIfNotFound)
-		throw(runtime_error(string(__func__)+" -- error..."));
-	return(NIL_INDEX);
-}
-*/
-
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::invalidateAllCachedBlocks()
 {
-	lockAccesserInfo();
-	try
-	{
-		while(!activeCachedBlocks.empty())
-			invalidateCachedBlock(activeCachedBlocks.front());
-		while(!unreferencedCachedBlocks.empty())
-			invalidateCachedBlock(unreferencedCachedBlocks.front());
-		unlockAccesserInfo();
-	}
-	catch(...)
-	{
-		unlockAccesserInfo();
-		throw;
-	}
+	while(!activeCachedBlocks.empty())
+		invalidateCachedBlock(activeCachedBlocks.front());
+	while(!unreferencedCachedBlocks.empty())
+		invalidateCachedBlock(unreferencedCachedBlocks.front());
 }
 
 template<class l_addr_t,class p_addr_t>
 	template<class pool_element_t> void TPoolFile<l_addr_t,p_addr_t>::addAccesser(const TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > *accesser)
 {
-	lockAccesserInfo();
-	try
-	{
-		accessers.push_back((const CGenericPoolAccesser *)accesser);
+	CMutexLocker lock(accesserInfoMutex);
+	accessers.push_back((const CGenericPoolAccesser *)accesser);
 		// ??? I used to make sure that it wasn't already there
-		unlockAccesserInfo();
-	}
-	catch(...)
-	{
-		unlockAccesserInfo();
-		throw;
-	}
 }
 
 template<class l_addr_t,class p_addr_t>
 	template<class pool_element_t> void TPoolFile<l_addr_t,p_addr_t>::removeAccesser(const TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > *accesser)
 {
-	//readStructureInfoLock();
-	lockAccesserInfo();
-	try
-	{
-		invalidateAccesser(accesser);
+	CMutexLocker lock(accesserInfoMutex);
+	invalidateAccesser(accesser);
 
-		//const size_t accesserIndex=findAccesserIndex((const CGenericPoolAccesser *)accesser,false);
-		//if(accesserIndex!=NIL_INDEX)
-		//						??? see about changing this to lower_bound... figure out just if lower_bound-1 or upper_bound-1 should be used
-		typename vector<const CGenericPoolAccesser *>::iterator i=find(accessers.begin(),accessers.end(),(const CGenericPoolAccesser *)accesser);
-		if(i!=accessers.end())
-			accessers.erase(i);
-		unlockAccesserInfo();
-		//readStructureInfoUnlock();
-	}
-	catch(...)
-	{
-		unlockAccesserInfo();
-		//readStructureInfoUnlock();
-		throw;
-	}
+	//						??? see about changing this to lower_bound... figure out just if lower_bound-1 or upper_bound-1 should be used
+	typename vector<const CGenericPoolAccesser *>::iterator i=find(accessers.begin(),accessers.end(),(const CGenericPoolAccesser *)accesser);
+	if(i!=accessers.end())
+		accessers.erase(i);
 }
 
 
@@ -3098,7 +2435,6 @@ template<class l_addr_t,class p_addr_t>
 			continue;
 
 		for(size_t t=0;t<SAT[poolId].size();t++)
-	 	//for(typename set<RLogicalBlock>::const_iterator t=SAT[poolId].begin();t!=SAT[poolId].end();t++)
 			correctBlockPosition(poolId,t,getProceedingPoolSizes(poolId));
 	}
 	verifyAllBlockInfo(true);
@@ -3135,9 +2471,7 @@ template<class l_addr_t,class p_addr_t>
 			physicalBlock.physicalStart=block.physicalStart=t*maxBlockSize+accumulatePoolSize;
 			physicalBlock.size=block.size=maxBlockSize;
 
-			//SAT[poolId].insert(block);
 			sortedInsert(SAT[poolId],block);
-			//physicalBlockList.insert(physicalBlock);
 			sortedInsert(physicalBlockList,physicalBlock);
 		}
 
@@ -3149,9 +2483,7 @@ template<class l_addr_t,class p_addr_t>
 			physicalBlock.physicalStart=block.physicalStart=blockCount*maxBlockSize+accumulatePoolSize;
 			physicalBlock.size=block.size=poolSize%maxBlockSize;
 
-			//SAT[poolId].insert(block);
 			sortedInsert(SAT[poolId],block);
-			//physicalBlockList.insert(physicalBlock);
 			sortedInsert(physicalBlockList,physicalBlock);
 		}
 		accumulatePoolSize+=poolSize;
@@ -3160,7 +2492,6 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	//void TPoolFile<l_addr_t,p_addr_t>::correctBlockPosition(const poolId_t poolId,const set<RLogicalBlock>::const_iterator logicalBlockIndex,const p_addr_t previousPoolSizes)
 	void TPoolFile<l_addr_t,p_addr_t>::correctBlockPosition(const poolId_t poolId,const size_t logicalBlockIndex,const p_addr_t previousPoolSizes)
 {
 	correctionsTried.clear();
@@ -3168,13 +2499,11 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	//void TPoolFile<l_addr_t,p_addr_t>::recurCorrectBlockPosition(const poolId_t poolId,const set<RLogicalBlock>::const_iterator logicalBlockIndex,const p_addr_t previousPoolSizes)
 	void TPoolFile<l_addr_t,p_addr_t>::recurCorrectBlockPosition(const poolId_t poolId,const size_t logicalBlockIndex,const p_addr_t previousPoolSizes)
 {
 	// the correct physical start of a block is its
 	// logical start + (total of prev pools)
 
-	//const RLogicalBlock &block=*logicalBlockIndex;
 	RLogicalBlock &block=SAT[poolId][logicalBlockIndex];
 	const p_addr_t correctStart=block.logicalStart+previousPoolSizes;
 	const p_addr_t blockStart=correctStart;
@@ -3184,10 +2513,8 @@ template<class l_addr_t,class p_addr_t>
 	{
 		//size_t k;
 		typename map<poolId_t,map<l_addr_t,bool> >::iterator k;
-		//if((k=correctionsTried.findItem(poolId))==DL_NOT_FOUND || correctionsTried[k].findItem(block.logicalStart)==DL_NOT_FOUND)
 		if((k=correctionsTried.find(poolId))==correctionsTried.end() || k->second.find(block.logicalStart)==k->second.end())
 		{ // have not tried to fix this one's position
-			//correctionsTried.getOrAdd(poolId).getOrAdd(block.logicalStart);
 			correctionsTried.insert(make_pair(poolId,map<l_addr_t,bool>())).first->second.insert(make_pair(block.logicalStart,false));
 
 			// for any block in the way (and not the current block), recur
@@ -3196,10 +2523,8 @@ template<class l_addr_t,class p_addr_t>
 				if(!pools[i].isValid)
 					continue;
 
-				//for(typename set<RLogicalBlock>::const_iterator t=SAT[i].begin();t!=SAT[i].end();t++)
 				for(size_t t=0;t<SAT[i].size();t++)
 				{
-					//const RLogicalBlock &moveBlock=(*t);
 					const RLogicalBlock &moveBlock=SAT[i][t];
 					const p_addr_t moveBlockStart=moveBlock.physicalStart;
 					const p_addr_t moveBlockEnd=moveBlockStart+moveBlock.size-1;
@@ -3218,10 +2543,8 @@ template<class l_addr_t,class p_addr_t>
 					if(!pools[i].isValid)
 						continue;
 
-					//for(typename set<RLogicalBlock>::const_iterator t=SAT[i].begin();t!=SAT[i].end();t++)
 					for(size_t t=0;t<SAT[i].size();t++)
 					{
-						//const RLogicalBlock &moveBlock=(*t);
 						RLogicalBlock &moveBlock=SAT[i][t];
 						const p_addr_t moveBlockStart=moveBlock.physicalStart;
 						const p_addr_t moveBlockEnd=moveBlockStart+moveBlock.size-1;
@@ -3248,10 +2571,8 @@ template<class l_addr_t,class p_addr_t>
 				if(!pools[i].isValid)
 					continue;
 
-				//for(typename set<RLogicalBlock>::const_iterator t=SAT[i].begin();t!=SAT[i].end();t++)
 				for(size_t t=0;t<SAT[i].size();t++)
 				{
-					//const RLogicalBlock &moveBlock=(*t);
 					RLogicalBlock &moveBlock=SAT[i][t];
 					const p_addr_t moveBlockStart=moveBlock.physicalStart;
 					const p_addr_t moveBlockEnd=moveBlockStart+moveBlock.size-1;
@@ -3282,22 +2603,12 @@ template<class l_addr_t,class p_addr_t>
 	if((block.physicalStart+block.size)<=blockFile.getSize())
 	{
 		TAutoBuffer<int8_t> tempBlockSpace(maxBlockSize);
-		//auto_ptr<int8_t> tempBlockSpace(new int8_t[maxBlockSize]);
 
 		// make sure there's space to put the data onces it's read
 					// ??? could overflow
 		if(blockFile.getSize()<(physicallyWhere+block.size))
 			changeBlockFileSize(physicallyWhere+block.size);
 
-		/*
-		size_t physicalBlockIndex;
-		if(!physicalBlockList.contains(RPhysicalBlock(block.physicalStart,0),physicalBlockIndex))
-		{
-			printf("physicalBlockList and SAT inconsistancies\n");
-			exit(1);
-		}
-		*/
-		//typename set<RPhysicalBlock>::const_iterator physicalBlockIndex=physicalBlockList.find(RPhysicalBlock(block.physicalStart));
 		const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(block.physicalStart));
 		if(physicalBlockIndex==physicalBlockList.end())
 		{
@@ -3316,13 +2627,6 @@ template<class l_addr_t,class p_addr_t>
 		// update block information lists
 		physicalBlockList.erase(physicalBlockIndex);
 		sortedInsert(physicalBlockList,RPhysicalBlock(block));
-		/*
-		if(!physicalBlockList.insert(RPhysicalBlock(physicallyWhere,block.size)).second)
-		{
-			printf("error adding to physicalBlockList\n");
-			exit(1);
-		}
-		*/
 	}
 }
 
@@ -3359,7 +2663,7 @@ template<class l_addr_t,class p_addr_t>
 	size=src.size;
 	alignment=src.alignment;
 	isValid=src.alignment;
-	return(*this);
+	return *this;
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -3384,7 +2688,7 @@ template<class l_addr_t,class p_addr_t>
 	TPoolFile<l_addr_t,p_addr_t>::RCachedBlock::RCachedBlock(const size_t maxBlockSize)
 {
 	if((buffer=malloc(maxBlockSize))==NULL)
-		throw(runtime_error(string(__func__)+" -- unable to allocate buffer space"));
+		throw runtime_error(string(__func__)+" -- unable to allocate buffer space");
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -3396,7 +2700,7 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	bool TPoolFile<l_addr_t,p_addr_t>::RCachedBlock::containsAddress(l_addr_t where) const
 {
-	return(where>=logicalStart && where<(logicalStart+size));
+	return where>=logicalStart && where<(logicalStart+size);
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -3440,29 +2744,29 @@ template<class l_addr_t,class p_addr_t>
 	logicalStart=src.logicalStart;
 	size=src.size;
 	physicalStart=src.physicalStart;
-	return(*this);
+	return *this;
 }
 
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::operator==(const RLogicalBlock &src) const
 {
 	if(logicalStart==src.logicalStart)
-		return(true);
-	return(false);
+		return true;
+	return false;
 }
 
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::operator<(const RLogicalBlock &src) const
 {
 	if(src.logicalStart>logicalStart)
-		return(true);
-	return(false);
+		return true;
+	return false;
 }
 
 template<class l_addr_t,class p_addr_t>
 	const size_t TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::getMemSize()
 {
-	return(sizeof(logicalStart)+sizeof(size)+sizeof(physicalStart));
+	return sizeof(logicalStart)+sizeof(size)+sizeof(physicalStart);
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -3531,23 +2835,19 @@ template<class l_addr_t,class p_addr_t>
 {
 	physicalStart=src.physicalStart;
 	size=src.size;
-	return(*this);
+	return *this;
 }
 
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::RPhysicalBlock::operator==(const RPhysicalBlock &src) const
 {
-	if(physicalStart==src.physicalStart)
-		return(true);
-	return(false);
+	return physicalStart==src.physicalStart;
 }
 
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::RPhysicalBlock::operator<(const RPhysicalBlock &src) const
 {
-	if(src.physicalStart>physicalStart)
-		return(true);
-	return(false);
+	return src.physicalStart>physicalStart;
 }
 
 template<class l_addr_t,class p_addr_t>

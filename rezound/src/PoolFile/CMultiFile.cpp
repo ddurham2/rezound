@@ -111,7 +111,6 @@ void CMultiFile::open(const string _initialFilename,const bool canCreate)
 
 	initialFilename=_initialFilename;
 	openFileCount=0;
-	//position=0;
 
 	try
 	{
@@ -156,7 +155,6 @@ void CMultiFile::close(bool removeFiles)
 	openFileCount=0;
 
 	initialFilename="";
-	//position=0;
 	totalSize=0;
 	opened=false;
 }
@@ -182,7 +180,7 @@ void CMultiFile::seek(const l_addr_t _position,RHandle &handle)
 
 const CMultiFile::l_addr_t CMultiFile::tell(RHandle &handle) const
 {
-	return(handle.position);
+	return handle.position;
 }
 
 void CMultiFile::read(void *buffer,const l_addr_t count,RHandle &handle)
@@ -354,7 +352,7 @@ const CMultiFile::l_addr_t CMultiFile::getAvailableSize() const
 	if(!opened)
 		throw runtime_error(string(__func__)+" -- not opened");
 
-	return(MAX_OPEN_FILES*LOGICAL_MAX_FILE_SIZE);
+	return MAX_OPEN_FILES*LOGICAL_MAX_FILE_SIZE;
 }
 
 const CMultiFile::l_addr_t CMultiFile::getActualSize() const
@@ -365,14 +363,14 @@ const CMultiFile::l_addr_t CMultiFile::getActualSize() const
 	struct stat statBuf;
 	fstat(openFiles[openFileCount-1],&statBuf);
 	const l_addr_t sizeOfLastFile=statBuf.st_size;
-	return(((openFileCount-1)*PHYSICAL_MAX_FILE_SIZE)+sizeOfLastFile);
+	return ((openFileCount-1)*PHYSICAL_MAX_FILE_SIZE)+sizeOfLastFile;
 }
 
 const CMultiFile::l_addr_t CMultiFile::getSize() const
 {
 	if(!opened)
 		throw runtime_error(string(__func__)+" -- not opened");
-	return(totalSize);
+	return totalSize;
 }
 
 void CMultiFile::writeHeaderToFiles()
@@ -467,7 +465,7 @@ void CMultiFile::openFile(const string &filename,RFileHeader &header,const bool 
 
 const CMultiFile::l_addr_t CMultiFile::calcTotalSize() const
 {
-	return(getActualSize()-(openFileCount*sizeof(RFileHeader)));
+	return getActualSize()-(openFileCount*sizeof(RFileHeader));
 }
 
 
@@ -553,14 +551,14 @@ void CMultiFile::setFileSize(const int fileHandle,const f_addr_t newFileSize)
 
 const string CMultiFile::buildFilename(size_t which)
 {
-	return(buildFilename(which,initialFilename));
+	return buildFilename(which,initialFilename);
 }
 
 
 const string CMultiFile::buildFilename(size_t which,const string &initialFilename)
 {
 	if(which==0)
-		return(initialFilename);
+		return initialFilename;
 	else
-		return(initialFilename+"."+istring(which));
+		return initialFilename+"."+istring(which);
 }

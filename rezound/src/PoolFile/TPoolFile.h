@@ -75,13 +75,11 @@ public:
 
 	// open/close methods
 	void openFile(const string _filename,const bool canCreate=true);
-	//LLL void createTemp();
 
 	// removes all files that would be generated if a pool file was opened with the given name
 	// it cleans up the .SAT[12] files (and in the future should remove multiple files if mutiple files were create for a pool file larger than the 2gig limit)
 	static void removeFile(const string filename);
 
-	const bool isTemp() const;
 	const bool isOpen() const;
 
 	void copyToFile(const string filename);
@@ -116,17 +114,9 @@ public:
 	// accesser methods
 	template<class pool_element_t> TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > getPoolAccesser(const poolId_t poolId);
 	template<class pool_element_t> TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > getPoolAccesser(const string poolName);
-	/*
-	CStreamPoolAccesser getStreamPoolAccesser(const poolId_t poolId);
-	CStreamPoolAccesser getStreamPoolAccesser(const string poolName);
-	*/
 
 	template<class pool_element_t> const TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > getPoolAccesser(const poolId_t poolId) const;
 	template<class pool_element_t> const TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > getPoolAccesser(const string poolName) const;
-	/*
-	const CStreamPoolAccesser getStreamPoolAccesser(const poolId_t poolId) const;
-	const CStreamPoolAccesser getStreamPoolAccesser(const string poolName) const;
-	*/
 
 	// these methods can be used to read raw data from a pool disregarding the alignment of the pool
 	size_t readPoolRaw(const poolId_t poolId,void *buffer,size_t readSize);
@@ -138,9 +128,6 @@ public:
 	const l_addr_t getPoolSize(const string poolName) const;
 
 	template<class pool_element_t> TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > createPool(const string poolName,const bool throwOnExistance=true);
-	/*
-	CStreamPoolAccesser createStreamPool(const string poolName,const bool throwOnExistance=true);
-	*/
 
 	void removePool(const poolId_t poolId);
 	void removePool(const string poolName,const bool throwIfNotExists=true);
@@ -194,8 +181,6 @@ private:
 	mutable CRWLock structureMutex;
 
 	mutable CMutex accesserInfoMutex;
-	void lockAccesserInfo() const;
-	void unlockAccesserInfo() const;
 
 	const char *formatSignature;
 
@@ -203,7 +188,6 @@ private:
 	const l_addr_t maxLogicalAddress;
 	const p_addr_t maxPhysicalAddress;
 
-	bool openedTemp;
 	bool opened;
 	string filename,SATFilename;
 
@@ -327,11 +311,11 @@ private:
 		RLogicalBlock &operator=(const RLogicalBlock &src);
 
 		const bool operator==(const RLogicalBlock &src) const;
-		const bool operator!=(const RLogicalBlock &src) const { return(!operator==(src)); }
-		const bool operator>(const RLogicalBlock &src) const { return(!operator<=(src)); }
-		const bool operator>=(const RLogicalBlock &src) const { return(!operator<(src)); }
+		const bool operator!=(const RLogicalBlock &src) const { return !operator==(src); }
+		const bool operator>(const RLogicalBlock &src) const { return !operator<=(src); }
+		const bool operator>=(const RLogicalBlock &src) const { return !operator<(src); }
 		const bool operator<(const RLogicalBlock &src) const;
-		const bool operator<=(const RLogicalBlock &src) const { return(operator<(src) || operator==(src)); }
+		const bool operator<=(const RLogicalBlock &src) const { return operator<(src) || operator==(src); }
 
 		const size_t getMemSize();
 		void writeToMem(uint8_t *mem,size_t &offset) const;
@@ -353,11 +337,11 @@ private:
 		RPhysicalBlock &operator=(const RPhysicalBlock &src);
 
 		const bool operator==(const RPhysicalBlock &src) const;
-		const bool operator!=(const RPhysicalBlock &src) const { return(!operator==(src)); }
-		const bool operator>(const RPhysicalBlock &src) const { return(!operator<=(src)); }
-		const bool operator>=(const RPhysicalBlock &src) const { return(!operator<(src)); }
+		const bool operator!=(const RPhysicalBlock &src) const { return !operator==(src); }
+		const bool operator>(const RPhysicalBlock &src) const { return !operator<=(src); }
+		const bool operator>=(const RPhysicalBlock &src) const { return !operator<(src); }
 		const bool operator<(const RPhysicalBlock &src) const;
-		const bool operator<=(const RPhysicalBlock &src) const { return(operator<(src) || operator==(src)); }
+		const bool operator<=(const RPhysicalBlock &src) const { return operator<(src) || operator==(src); }
 
 		void print() const;
 	};

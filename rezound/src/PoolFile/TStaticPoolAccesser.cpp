@@ -67,16 +67,15 @@ template <class pool_element_t,class pool_file_t> TStaticPoolAccesser<pool_eleme
 {
 	if(poolFile!=NULL)
 	{
-		poolFile->lockAccesserInfo();
 		try
 		{
+			CMutexLocker lock(poolFile->accesserInfoMutex);
 			poolFile->unreferenceCachedBlock(this);
 		}
 		catch(...)
 		{
 			// ignore
 		}
-		poolFile->unlockAccesserInfo();
 		poolFile->removeAccesser(this);
 	}
 }

@@ -40,7 +40,7 @@ template <class pool_element_t,class pool_file_t> TPoolAccesser<pool_element_t,p
 
 template <class pool_element_t,class pool_file_t> TPoolAccesser<pool_element_t,pool_file_t> &TPoolAccesser<pool_element_t,pool_file_t>::operator=(const TPoolAccesser<pool_element_t,pool_file_t> &rhs)
 {
-	throw(runtime_error(string(__func__)+" -- it is invalid to assign TPoolAccesser<pool_element_t,pool_file_t> objects; the copy constructor must be used"));
+	throw runtime_error(string(__func__)+" -- it is invalid to assign TPoolAccesser<pool_element_t,pool_file_t> objects; the copy constructor must be used");
 }
 
 template <class pool_element_t,class pool_file_t> void TPoolAccesser<pool_element_t,pool_file_t>::insert(const l_addr_t where,const l_addr_t count)
@@ -61,14 +61,14 @@ template <class pool_element_t,class pool_file_t> void TPoolAccesser<pool_elemen
 template <class pool_element_t,class pool_file_t> void TPoolAccesser<pool_element_t,pool_file_t>::copyData(const l_addr_t destWhere,const TStaticPoolAccesser<pool_element_t,pool_file_t> &src,const l_addr_t srcWhere,const l_addr_t length,const bool appendIfShort)
 {
 	if(destWhere>getSize())
-		throw(runtime_error(string(__func__)+" -- out of range destWhere parameter: "+istring(destWhere)));
+		throw runtime_error(string(__func__)+" -- out of range destWhere parameter: "+istring(destWhere));
 		
 	if((getSize()-destWhere)<length)
 	{
 		if(appendIfShort)
 			append(length-(getSize()-destWhere));
 		else 
-			throw(runtime_error(string(__func__)+" -- invalid destWhere/length parameters: "+istring(destWhere)+"/"+istring(length)));
+			throw runtime_error(string(__func__)+" -- invalid destWhere/length parameters: "+istring(destWhere)+"/"+istring(length));
 	}
 		
 	TStaticPoolAccesser<pool_element_t,pool_file_t>::copyData(destWhere,src,srcWhere,length);
@@ -77,7 +77,7 @@ template <class pool_element_t,class pool_file_t> void TPoolAccesser<pool_elemen
 template <class pool_element_t,class pool_file_t> void TPoolAccesser<pool_element_t,pool_file_t>::moveData(const l_addr_t destWhere,TPoolAccesser<pool_element_t,pool_file_t> &srcPool,const l_addr_t srcWhere,const l_addr_t count)
 {
 	if(srcPool.poolFile!=poolFile) // ??? perhaps I could do a data copy if they weren't the same... but I should probably create another function for that, although the name wouldn't imply using a different method as is named
-		throw(runtime_error(string(__func__)+" -- srcPool's poolFile is not the same as this accesser's poolFile"));
+		throw runtime_error(string(__func__)+" -- srcPool's poolFile is not the same as this accesser's poolFile");
 	poolFile->moveData(poolId,destWhere,srcPool.poolId,srcWhere,count);
 }
 
@@ -92,7 +92,6 @@ template <class pool_element_t,class pool_file_t> void TPoolAccesser<pool_elemen
 
 template <class pool_element_t,class pool_file_t> void TPoolAccesser<pool_element_t,pool_file_t>::clear()
 {
-	//poolFile->removeSpace(poolId,0,getSize());
 	poolFile->clearPool(poolId);
 }
 

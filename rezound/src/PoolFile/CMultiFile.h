@@ -95,7 +95,6 @@ private:
 	string initialFilename;
 	uint32_t matchSignature;
 
-	//l_addr_t position; left up to the method callers to provide this data space
 	l_addr_t totalSize;
 
 	size_t openFileCount;
