@@ -35,4 +35,9 @@
 #include "CAddChannelsEdit.h"
 #include "CRemoveChannelsEdit.h"
 
+// ---------- does not appear actually under the Edit menu
+#include "CSaveSelectionAsAction.h"
+//#include "CSaveAsMultipleFilesAction.h"
+
+
 #endif
