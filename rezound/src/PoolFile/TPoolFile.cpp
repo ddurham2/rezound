@@ -26,13 +26,6 @@
 #endif
 */
 
-/* ??? 
- * something I keep thinking about is the fact that the logical space table contains duplicate information from the physical space table
- * perhaps i could combine the 2 into a single list
- * perhaps the SAT[0] would be a map to all the free space... but I need the data sorted by physicalStart too.. perhaps this is an index?
- * it may not buy me much afterall
- */
-
 /* ???
  * There are places that I have to do: container.erase(container.begin+index);  
  * see if I can eliminate this
@@ -63,11 +56,24 @@
  *	  of the logical block in the SAT for pool0
  */
 
+/* perhaps some debugging #define could be enabled to avoid all the internal verification ??? */
+
 // ??? I didn't think of this until just now, but for fault tolerancy during a space modifications operation, I could simply
 // restore to the backed up SAT just before the space modification method began if there was an error either in the logic or in
 // extending the file's length
 
 #include <stdio.h> // for the printf errors... should probably use assert (but assumably temporary)  (It's also for printSAT())
+
+#ifdef __GNUC__
+	#ifdef TESTING_TPOOLFILE
+		#define dprintf(...) printf(__VA_ARGS__)
+	#else
+		#define dprintf(...)
+	#endif
+
+#else
+	#define dprintf
+#endif
 
 #include <stdexcept>
 #include <utility>
@@ -137,13 +143,15 @@
 
 
 template<class l_addr_t,class p_addr_t>
-	TPoolFile<l_addr_t,p_addr_t>::TPoolFile(const size_t _maxBlockSize,const char *_formatSignature) :
+	TPoolFile<l_addr_t,p_addr_t>::TPoolFile(const blocksize_t _maxBlockSize,const char *_formatSignature) :
 
 	formatSignature(_formatSignature),
 
 	maxBlockSize(_maxBlockSize),
 	maxLogicalAddress(~((l_addr_t)0)),
-	maxPhysicalAddress(~((p_addr_t)0))
+	maxPhysicalAddress(~((p_addr_t)0)),
+
+	pasm(blockFile)
 {
 	if(maxBlockSize<2)
 		throw runtime_error(string(__func__)+" -- maxBlockSize is less than 2");
@@ -156,7 +164,8 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	TPoolFile<l_addr_t,p_addr_t>::TPoolFile(const TPoolFile<l_addr_t,p_addr_t> &src)
+	TPoolFile<l_addr_t,p_addr_t>::TPoolFile(const TPoolFile<l_addr_t,p_addr_t> &src) :
+	pasm(blockFile)
 {
 	throw runtime_error(string(__func__)+" -- copy constructor invalid");
 }
@@ -280,11 +289,11 @@ template<class l_addr_t,class p_addr_t>
 			}
 		}
 		else
-			createContiguousSAT();
+			clear();
 
 		SATFilename=filename+".SAT";
 
-		writeMetaData(&blockFile);
+		writeMetaData(&blockFile,false);
 
 		openSATFiles();
 		whichSATFile=1;
@@ -333,7 +342,7 @@ template<class l_addr_t,class p_addr_t>
 		blockFile.seek(0,multiFileHandle1);
 		copyFile.seek(0,multiFileHandle2);
 	
-		for(l_addr_t t=0;t<length/maxBlockSize;t++)
+		for(blocksize_t t=0;t<length/maxBlockSize;t++)
 		{
 			blockFile.read(temp,maxBlockSize,multiFileHandle1);
 			copyFile.write(temp,maxBlockSize,multiFileHandle2);
@@ -344,7 +353,7 @@ template<class l_addr_t,class p_addr_t>
 			copyFile.write(temp,length%maxBlockSize,multiFileHandle2);
 		}
 
-		writeMetaData(&copyFile);
+		writeMetaData(&copyFile,true);
 		writeDirtyIndicator(false,&copyFile);
 		copyFile.close(false);
 	}
@@ -374,7 +383,7 @@ template<class l_addr_t,class p_addr_t>
 		if(_defrag)
 			defrag();
 
-		writeMetaData(&blockFile);
+		writeMetaData(&blockFile,true);
 		writeDirtyIndicator(false,&blockFile);
 
 		closeSATFiles();
@@ -514,9 +523,10 @@ template<class l_addr_t,class p_addr_t>
 	poolNames.clear();
 	SAT.clear();
 	pools.clear();
-	physicalBlockList.clear();
-	makeBlockFileSmallest();
-	backupSAT();
+	pasm.free_all();
+	pasm.make_file_smallest();
+	if(isOpen())
+		backupSAT();
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -527,7 +537,7 @@ template<class l_addr_t,class p_addr_t>
 	if(!isValidPoolId(poolId))
 		throw runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId));
 
-	invalidateAllCachedBlocks();
+	invalidateAllCachedBlocks(false,poolId);
 
 	// remove poolName with poolId of the parameter
 	for(map<string,poolId_t>::const_iterator t=poolNames.begin();t!=poolNames.end();t++)
@@ -545,15 +555,10 @@ template<class l_addr_t,class p_addr_t>
 	pools[poolId].isValid=false;
 
 	for(size_t t=0;t<SAT[poolId].size();t++)
-	{
-		RLogicalBlock &block=SAT[poolId][t];
-			// could just call physicalBLockList.erase(search...) ???
-		const size_t index=findPhysicalBlockContaining(block.physicalStart);
-		physicalBlockList.erase(physicalBlockList.begin()+index);
-	}
+		pasm.free(SAT[poolId][t].physicalStart); // ??? there might be a more efficient way than calling free_physical for each
 	SAT[poolId].clear();
 
-	makeBlockFileSmallest();
+	pasm.make_file_smallest();
 
 	backupSAT();
 }
@@ -600,20 +605,20 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::setPoolAlignment(const poolId_t poolId,size_t alignment)
 {
-		if(!opened)
-			throw runtime_error(string(__func__)+" -- no file is open");
-		if(!isValidPoolId(poolId))
-			throw runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId));
-		if(pools[poolId].size>0)
-			throw runtime_error(string(__func__)+" -- pool must be empty to change alignment");
-		if(alignment==0 ||alignment>maxBlockSize)
-			throw runtime_error(string(__func__)+" -- invalid alignment: "+istring(alignment)+" alignment must be 0 < alignment <= maxBlockSize (which is: "+istring(maxBlockSize)+")");
+	if(!opened)
+		throw runtime_error(string(__func__)+" -- no file is open");
+	if(!isValidPoolId(poolId))
+		throw runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId));
+	if(pools[poolId].size>0)
+		throw runtime_error(string(__func__)+" -- pool must be empty to change alignment");
+	if(alignment==0 || alignment>maxBlockSize)
+		throw runtime_error(string(__func__)+" -- invalid alignment: "+istring(alignment)+" alignment must be 0 < alignment <= maxBlockSize (which is: "+istring(maxBlockSize)+")");
 
-		invalidateAllCachedBlocks();
+	invalidateAllCachedBlocks(false,poolId);
 
-		pools[poolId].alignment=alignment;
+	pools[poolId].alignment=alignment;
 
-		backupSAT();
+	backupSAT();
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -635,7 +640,8 @@ template<class l_addr_t,class p_addr_t>
 	if(poolId1==poolId2)
 		return;
 
-	invalidateAllCachedBlocks();
+	invalidateAllCachedBlocks(false,poolId1);
+	invalidateAllCachedBlocks(false,poolId2);
 
 	// swap SATs for two pools
 	vector<RLogicalBlock> tempSAT=SAT[poolId1];
@@ -795,8 +801,7 @@ template<class l_addr_t,class p_addr_t>
 	SAT.clear();
 	SAT.reserve(64);
 
-	physicalBlockList.clear();
-	physicalBlockList.reserve(1024);
+	pasm.free_all();
 
 	poolNames.clear();
 
@@ -842,47 +847,9 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::verifyBlockInfo(const poolId_t poolId) const
+	void TPoolFile<l_addr_t,p_addr_t>::verifyAllBlockInfo(bool expectContinuousPhysicalAllocs)
 {
-	if(!isValidPoolId(poolId))
-		throw runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId));
-
-		// this didn't seem to catch some errors I put in on purpose, so I wrote verifyAllBlockInfo()
-	p_addr_t start=0;
-	for(size_t t=0;t<SAT[poolId].size();t++)
-	{
-		const RLogicalBlock &block=SAT[poolId][t];
-
-		if(block.logicalStart!=start)
-		{
-			printf("Error verifying at logicalBlockIndex: %u\n",t);
-			return;
-		}
-
-		unsigned p=0;
-		for(size_t i=0;i<physicalBlockList.size();i++)
-		{
-			if(block.physicalStart>=physicalBlockList[i].physicalStart && (block.physicalStart+block.size-1)<=(physicalBlockList[i].physicalStart+physicalBlockList[i].size-1))
-			{
-				p++;
-				if(p>1)
-				{
-					printf("two blocks are occupying the same physical space\n");
-					exit(1);
-				}
-			}
-		}
-
-		start+=block.size;
-	}
-	if(start!=pools[poolId].size)
-		printf("poolSizes don't match\n");
-}
-
-template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::verifyAllBlockInfo(const bool expectContiguousPhysicalSpace) const
-{
-	// for each pool, make sure the logical space is contiguous with no gaps
+	// for each pool, make sure the logical space is continuous with no gaps
 	// and for each block in the logical space, make sure there is a physical block with the right size
 	for(size_t poolId=0;poolId<pools.size();poolId++)
 	{
@@ -891,6 +858,7 @@ template<class l_addr_t,class p_addr_t>
 
 		l_addr_t expectedStart=0;
 	
+		const blocksize_t maxBlockSize=getMaxBlockSizeFromAlignment(pools[poolId].alignment);
 		
 		for(size_t t=0;t<SAT[poolId].size();t++)
 		{
@@ -904,113 +872,70 @@ template<class l_addr_t,class p_addr_t>
 				exit(1);
 			}
 
-			size_t pbIndex=findPhysicalBlockContaining(logicalBlock.physicalStart);
-			const RPhysicalBlock &physicalBlock=physicalBlockList[pbIndex];
-			if(physicalBlock.physicalStart!=logicalBlock.physicalStart)
+			if(!pasm.isAlloced(logicalBlock.physicalStart))
 			{
 				printSAT();
-				printf("pool: %u -- physical block doesn't start the same as the logical block:\n",poolId);
+				printf("pool: %u -- physicalStart isn't allocated\n",poolId);
 				logicalBlock.print();
-				physicalBlock.print();
 				exit(1);
 			}
-			if(physicalBlock.size!=logicalBlock.size)
+
+			if(pasm.getAllocedSize(logicalBlock.physicalStart)!=logicalBlock.size)
 			{
 				printSAT();
 				printf("pool: %u physical block's size isn't the same as the logical block's:\n",poolId);
 				logicalBlock.print();
-				physicalBlock.print();
+				printf("physical block's size: %lld\n",(long long)pasm.getAllocedSize(logicalBlock.physicalStart));
 				exit(1);
+			}
+
+			if(t!=SAT[poolId].size()-1)
+			{ // check if next block could be joined with this block, just notify if this is true, it's not a serious problem
+				const RLogicalBlock &nextLogicalBlock=SAT[poolId][t+1];
+				
+				if((logicalBlock.physicalStart+logicalBlock.size)==nextLogicalBlock.physicalStart && 
+				   (logicalBlock.size+nextLogicalBlock.size)<=maxBlockSize)
+				{
+					printf("NOTE: two blocks could be joined: %u and %u\n",t,t+1);
+					logicalBlock.print();
+					nextLogicalBlock.print();
+				}
 			}
 
 			expectedStart+=logicalBlock.size;
 
-			bool startFound=false;
-			for(size_t i=0;i<physicalBlockList.size();i++)
+			// make sure no other logical block exists in any pool with an overlapping physical start
+			for(size_t x=poolId;x<pools.size();x++)
 			{
-				const RPhysicalBlock &physicalBlock=physicalBlockList[i];
-				if(logicalBlock.physicalStart==physicalBlock.physicalStart)
+				for(size_t y= (x==poolId) ? t+1 : 0;y<SAT[x].size();y++)
 				{
-					startFound=true;
-					if(logicalBlock.size!=physicalBlock.size)
-					{
-						printSAT();
-						printf("pool: %u -- physical block starting on address was found, but the size of the physical block was wrong\n",poolId);
-						logicalBlock.print();
-						physicalBlock.print();
-						exit(1);
-					}
-
-					break;
-				}
-			}
-			if(!startFound)
-			{
-				printSAT();
-				printf("pool: %u -- physical block with correct start was not found\n",poolId);
-				logicalBlock.print();
-				exit(1);
-			}
-
-
-			unsigned p=0;
-			for(size_t i=0;i<physicalBlockList.size()-1;i++)
-			{
-				const RPhysicalBlock &physicalBlock=physicalBlockList[i];
-				if(logicalBlock.physicalStart>=physicalBlock.physicalStart && (logicalBlock.physicalStart+logicalBlock.size-1)<=(physicalBlock.physicalStart+physicalBlock.size-1))
-				{
-					p++;
-					if(p>1)
+					if(CPhysicalAddressSpaceManager::overlap(logicalBlock.physicalStart,logicalBlock.size,SAT[x][y].physicalStart,SAT[x][y].size))
 					{
 						printSAT();
 						printf("pool: %u -- two blocks are occupying the same physical space\n",poolId);
 						logicalBlock.print();
-						physicalBlock.print();
-
+						printf("and pool: %u\n",x);
+						SAT[x][y].print();
 						exit(1);
 					}
 				}
 			}
 		}
-	}
 
-	// make sure that no blocks in physicalBlockList overlap (should have been found above if it's happening)
-	if(physicalBlockList.size()>0)
-	{
-		for(size_t t=0;t<physicalBlockList.size()-1;t++)
+		if(SAT[poolId].size()>0)
 		{
-			const RPhysicalBlock &physicalBlock1=physicalBlockList[t];
-			const RPhysicalBlock &physicalBlock2=physicalBlockList[t+1];
-			
-			if(physicalBlock1.physicalStart+physicalBlock1.size>physicalBlock2.physicalStart)
+			const RLogicalBlock &b=SAT[poolId][SAT[poolId].size()-1];
+			if((b.logicalStart+b.size)!=getPoolSize(poolId))
 			{
 				printSAT();
-				printf("two physical blocks are overlapping\n");
-				physicalBlock1.print();
-				physicalBlock2.print();
-				exit(0);
-			}
-		}
-	}
-
-	// verify that all the physical blocks are contiguous (not an invalid pool file if it happens, but the user may expect it)
-	if(expectContiguousPhysicalSpace)
-	{
-		p_addr_t expectedStart=0;
-		for(size_t t=0;t<physicalBlockList.size();t++)
-		{
-			const RPhysicalBlock &physicalBlock=physicalBlockList[t];
-			if(physicalBlock.physicalStart!=expectedStart)
-			{
-				printSAT();
-				printf("-- physical start wasn't what was expected in physical block: %lld\n",(long long)expectedStart);
-				physicalBlock.print();
+				printf("pool: %u -- last address doesn't equal up to poolSize\n",poolId);
 				exit(1);
 			}
 
-			expectedStart+=physicalBlock.size;
 		}
 	}
+
+	pasm.verify(expectContinuousPhysicalAllocs);
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -1026,7 +951,7 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	const l_addr_t TPoolFile<l_addr_t,p_addr_t>::getMaxBlockSizeFromAlignment(const alignment_t alignment) const
+	const typename TPoolFile<l_addr_t,p_addr_t>::blocksize_t TPoolFile<l_addr_t,p_addr_t>::getMaxBlockSizeFromAlignment(const alignment_t alignment) const
 {
 	if(maxBlockSize<=(maxBlockSize%alignment))
 		throw runtime_error(string(__func__)+" -- alignment size is too big");
@@ -1050,15 +975,19 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::writeMetaData(CMultiFile *f)
+	void TPoolFile<l_addr_t,p_addr_t>::writeMetaData(CMultiFile *f,bool writeSAT)
 {
 	if(f==&blockFile) // only do if we're working on our blockFile
-		makeBlockFileSmallest();
+		pasm.make_file_smallest();
+
+	if(blockFile.getSize()<LEADING_DATA_SIZE)
+		blockFile.setSize(LEADING_DATA_SIZE);
 
 	// write meta and user info
 	uint64_t metaDataOffset=f->getSize();
 
-	writeSATToFile(f,metaDataOffset);
+	if(writeSAT)
+		writeSATToFile(f,metaDataOffset);
 
 	// Signature
 	f->write(FORMAT_SIGNATURE,8,SIGNATURE_OFFSET);
@@ -1132,7 +1061,7 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::addPool(const poolId_t poolId,const alignment_t alignment,bool isValid)
 {
-	invalidateAllCachedBlocks();
+	invalidateAllCachedBlocks(false,poolId);
 
 	if((isValid && alignment==0) || alignment>maxBlockSize)
 		throw runtime_error(string(__func__)+" -- invalid alignment: "+istring(alignment)+" alignment must be 0 < alignment <= maxBlockSize (which is: "+istring(maxBlockSize)+")");
@@ -1168,22 +1097,26 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::makeBlockFileSmallest()
-{
-	size_t l=physicalBlockList.size();
-	if(l>0)
-		changeBlockFileSize(physicalBlockList[l-1].physicalStart+physicalBlockList[l-1].size);
-	else
-		changeBlockFileSize(0);
-}
-
-template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::appendNewSAT()
 {
 	SAT.push_back(vector<RLogicalBlock>());
 	SAT[SAT.size()-1].reserve(1024);
 }
 
+template<class l_addr_t,class p_addr_t>
+	void TPoolFile<l_addr_t,p_addr_t>::offsetLogicalAddressSpace(typename vector<RLogicalBlock>::iterator first,typename vector<RLogicalBlock>::iterator end,const l_addr_t offset,int add_or_sub)
+{
+	if(add_or_sub>0)
+	{
+		for(typename vector<RLogicalBlock>::iterator i=first;i!=end;i++)
+			i->logicalStart+=offset;
+	}
+	else
+	{
+		for(typename vector<RLogicalBlock>::iterator i=first;i!=end;i++)
+			i->logicalStart-=offset;
+	}
+}
 
 
 
@@ -1297,7 +1230,7 @@ template<class l_addr_t,class p_addr_t>
 	pools.clear();
 	poolNames.clear();
 	SAT.clear();
-	physicalBlockList.clear();
+	pasm.free_all();
 
 	// read number of pools
 	uint32_t poolCount;
@@ -1312,6 +1245,9 @@ template<class l_addr_t,class p_addr_t>
 		// read pool info structure
 		RPoolInfo poolInfo;
 		poolInfo.readFromFile(f,multiFileHandle);
+
+		if(poolInfo.alignment==0 || poolInfo.alignment>this->maxBlockSize)
+			throw runtime_error(string(__func__)+" -- invalid pool alignment read from file: "+istring(poolInfo.alignment)+" alignment must be 0 < alignment <= maxBlockSize (which is: "+istring(this->maxBlockSize)+")");
 
 		try
 		{
@@ -1332,6 +1268,8 @@ template<class l_addr_t,class p_addr_t>
 		TAutoBuffer<uint8_t> mem(SATSize*RLogicalBlock().getMemSize());
 		f->read(mem,mem.getSize(),multiFileHandle);
 
+		const blocksize_t maxBlockSize=getMaxBlockSizeFromAlignment(poolInfo.alignment);
+
 		// read each SAT entry from that mem buffer and put into the actual SAT data-member
 		size_t offset=0;
 		for(size_t t=0;t<SATSize;t++)
@@ -1341,23 +1279,19 @@ template<class l_addr_t,class p_addr_t>
 
 			// divide the size of the block just read into pieces that will fit into maxBlockSize sizes blocks
 			// just in case the maxBlockSize is smaller than it used to be
-			const l_addr_t blockSize=logicalBlock.size;
-			for(l_addr_t j=0;j<blockSize/maxBlockSize;j++)
+			const blocksize_t blockSize=logicalBlock.size;
+			for(blocksize_t j=0;j<blockSize/maxBlockSize;j++)
 			{
 				logicalBlock.size=maxBlockSize;
 
 				sortedInsert(SAT[poolId],logicalBlock);
-				sortedInsert(physicalBlockList,RPhysicalBlock(logicalBlock));
 
 				logicalBlock.logicalStart+=maxBlockSize;
 				logicalBlock.physicalStart+=maxBlockSize;
 			}
 			logicalBlock.size=blockSize%maxBlockSize;
 			if(logicalBlock.size>0)
-			{
 				sortedInsert(SAT[poolId],logicalBlock);
-				sortedInsert(physicalBlockList,RPhysicalBlock(logicalBlock));
-			}
 
 			pools[poolId].size+=blockSize;
 		}
@@ -1368,7 +1302,8 @@ template<class l_addr_t,class p_addr_t>
 			exit(0);
 		}
 	}
-	makeBlockFileSmallest();
+	pasm.buildFromSAT(SAT);
+	pasm.make_file_smallest();
 }
 
 
@@ -1388,92 +1323,7 @@ template<class l_addr_t,class p_addr_t>
 
 
 template<class l_addr_t,class p_addr_t>
-	const size_t TPoolFile<l_addr_t,p_addr_t>::findPhysicalBlockContaining(const p_addr_t physicalWhere) const
-{
-	return (upper_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(physicalWhere))-1)-physicalBlockList.begin();
-}
-
-
-// - Finds the largest hole for "size" bytes in the physical space in the file.
-// - If no hole large enough is available, then it returns the last physical block
-//   plus its size as a hole position -- implying to create more space.
-// - The optional not_in_start and not_in_stop parameters can specify a single area
-//   not to use.
-// - Returns the physical address of the beginning of the hole
-template<class l_addr_t,class p_addr_t>
-	const p_addr_t TPoolFile<l_addr_t,p_addr_t>::findHole(const l_addr_t size,const p_addr_t not_in_start,const p_addr_t not_in_stop)
-{
-	// ??? I should probably easily stop soon if I find the exact sized hole  that way, there is no fragmentation
-
-	if(physicalBlockList.empty())
-	{
-		if(not_in_start<=not_in_stop)
-		{
-			printf("optional parameters specified and no spaces exists yet\n");
-			exit(1);
-		}
-		return 0;
-	}
-
-	if(size==0)
-	{
-		printf("%s -- internal error -- size parameter is 0 -- maybe not a problem.. just return 0 or something\n",__func__);
-		exit(1);
-	}
-
-
-	// maybe keep this in a heap.. so that we can alway get the largest.. but then again the order may be the same after inserts to the heap???
-
-	// search all existing file space for the maximum size hole
-	p_addr_t largestHoleSize=0;
-	size_t largestHoleBlockIndex=physicalBlockList.size();
-	const RPhysicalBlock start(0,0);
-	const RPhysicalBlock *prev_block=&start;
-	for(size_t t=0;t<physicalBlockList.size();t++)
-	{
-		const RPhysicalBlock &block=physicalBlockList[t];
-
-		const p_addr_t hole_size=block.physicalStart-(prev_block->physicalStart+prev_block->size);
-		if(hole_size>largestHoleSize && (not_in_start>not_in_stop || !isInWindow(prev_block->physicalStart+prev_block->size,block.physicalStart-1,not_in_start,not_in_stop)))
-		{
-			largestHoleSize=hole_size;
-			largestHoleBlockIndex=t-1;
-		}
-
-		prev_block=&block;
-	}
-
-	if(largestHoleSize>=size)
-	{	// use this space
-
-		// handling the case that the first physical block is not at address 0 and there is space 
-		// before the first block, thus the t-1 done in the loop above really is trying to point 
-		// before phyicalBlockList even starts
-		if(largestHoleBlockIndex==(((size_t)0)-1))
-			return 0;
-
-		const RPhysicalBlock &block=physicalBlockList[largestHoleBlockIndex];
-		return block.physicalStart+block.size;
-	}
-
-	// put new space after the last physical block
-	const RPhysicalBlock &lastBlock=physicalBlockList[physicalBlockList.size()-1];
-	return lastBlock.physicalStart+lastBlock.size;
-}
-
-// returns the physical address of the beginning of the hole
-template<class l_addr_t,class p_addr_t>
-	const p_addr_t TPoolFile<l_addr_t,p_addr_t>::makeHole(const l_addr_t size)
-{
-	// perhaps coeless blocks to make space.. and move actual data in file IF that
-	// space is represented in the file yet
-	// need to make sure that there are not cached blocks not written to disk
-
-	return blockFile.getSize();
-}
-
-template<class l_addr_t,class p_addr_t>
-	const bool TPoolFile<l_addr_t,p_addr_t>::isInWindow(const p_addr_t start,const p_addr_t end,const p_addr_t windowStart,const p_addr_t windowEnd) const
+	const bool TPoolFile<l_addr_t,p_addr_t>::isInWindow(const p_addr_t start,const p_addr_t end,const p_addr_t windowStart,const p_addr_t windowEnd)
 {
 	if(start<=windowStart && end>=windowStart)
 		return true;
@@ -1504,8 +1354,9 @@ template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::joinAdjacentBlocks(const poolId_t poolId,const size_t firstBlockIndex,const size_t blockCount)
 {
 	const size_t totalBlocks=SAT[poolId].size();
+	const blocksize_t maxBlockSize=getMaxBlockSizeFromAlignment(pools[poolId].alignment);
 
-	for(size_t t=firstBlockIndex;t<firstBlockIndex+blockCount;t++)
+	for(size_t t=firstBlockIndex;t<=firstBlockIndex+blockCount;t++)
 	{
 		if(t==firstBlockIndex)
 			continue; // skip first iteration because we're looking at t and the one before t (also avoids t-1 being underflowing)
@@ -1523,28 +1374,10 @@ template<class l_addr_t,class p_addr_t>
 			if(newSize<=maxBlockSize)
 			{ // now join blocks blockIndex and blockIndex+1
 
-				const size_t pbIndex=findPhysicalBlockContaining(b1.physicalStart);
-
-				// sanity check
-				if(physicalBlockList[pbIndex+1].physicalStart!=(b1.physicalStart+b1.size))
-				{
-					printSAT();
-					printf("pool: %u -- expecting next physical block to have a certain position\n",poolId);
-					physicalBlockList[pbIndex].print();
-					physicalBlockList[pbIndex+1].print();
-					exit(1);
-				}
+				pasm.join_blocks(b1.physicalStart,b2.physicalStart);
 
 				b1.size=newSize;
 				SAT[poolId].erase(SAT[poolId].begin()+t);
-
-				if(physicalBlockList[pbIndex].physicalStart!=b1.physicalStart) // sanity check
-				{
-					printf("atStartOfBlock is false but should have been\n");
-					exit(1);
-				}
-				physicalBlockList[pbIndex].size=newSize;
-				physicalBlockList.erase(physicalBlockList.begin()+pbIndex+1);
 
 				// check this block again the next time around
 				t--;
@@ -1562,7 +1395,7 @@ template<class l_addr_t,class p_addr_t>
 		if(!pools[poolId].isValid)
 			continue;
 
-		printf("\t%-4u Pool: '%s' size: %lld\n",poolId,getPoolNameById(poolId).c_str(),(long long)getPoolSize(poolId));
+		printf("\t%-4u Pool: '%s' size: %lld alignment: %lld\n",poolId,getPoolNameById(poolId).c_str(),(long long)getPoolSize(poolId),(long long)getPoolAlignment(poolId));
 		for(size_t t=0;t<SAT[poolId].size();t++)
 		{
 			printf("\t\t%-4u ",t);
@@ -1570,24 +1403,208 @@ template<class l_addr_t,class p_addr_t>
 		}
 
 	}
-	printf("\nPhysicalBlockList:\n");
-	size_t p=0;
-	for(size_t t=0;t<physicalBlockList.size();t++)
-	{
-		printf("\t%-4u ",p++);
-		physicalBlockList[t].print();
-	}
+	pasm.print();
 
 	printf("\n");
 }
 
-
-// Basic I/O
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::changeBlockFileSize(const p_addr_t newSize)
+	bool TPoolFile<l_addr_t,p_addr_t>::defrag()
 {
-	blockFile.setSize(newSize+LEADING_DATA_SIZE);
+	if(!isOpen())
+		throw runtime_error(string(__func__)+" -- file not open");
+
+	invalidateAllCachedBlocks();
+
+	/* ???
+	 * Right now, defragging can happen and be much more inefficiant than it needs to be.
+	 * This is because it always makes the first poolId come first in the file.  Fragementation
+	 * should not care which order than the pools exist, only that they are contiguous on
+	 * disk.  I would do better to move as few blocks as possible, this would mean knowing
+	 * which order is best for the pools on disk.  Perhaps I could go thru each permutation of
+	 * poolId, but I'm not quite sure how do know which is the best ordering. 
+	 */
+
+
+	/*
+	 * The defragging algorithm works as follows:
+	 * From the SAT, create a list of physical blocks that are used.
+	 * This is used to determine where we can put things later.
+	 * For each pool and each block in the pool, call a function
+	 * that moves that block physically where it it tells it too.  This
+	 * function is told the correct position from this defrag method, but
+	 * it might move things out of the way to fulfil its duty.
+	 *
+	 * Finally, when everything is consecutive in a pool, a new SAT is built
+	 * and the physical address space manager is told to build it's info 
+	 * from this new SAT
+	 *
+	 * This algorithm is no less than O(n^2) where n is the number of physical 
+	 * blocks before defragging
+	 */
+
+	bool didSomething=false;
+	TAutoBuffer<int8_t> temp(maxBlockSize);
+
+	//    addr     size
+	map<p_addr_t,p_addr_t> physicalBlockList;
+
+	// build physical block list
+	for(poolId_t poolId=0;poolId<pools.size();poolId++)
+	{
+		if(!pools[poolId].isValid)
+			continue;
+
+		for(size_t t=0;t<SAT[poolId].size();t++)
+		{
+			const RLogicalBlock &b=SAT[poolId][t];
+			physicalBlockList[b.physicalStart]=b.size;
+		}
+	}
+
+	// call method to correct each block's position
+	p_addr_t physicallyWhere=0;
+	for(poolId_t poolId=0;poolId<pools.size();poolId++)
+	{
+		if(!pools[poolId].isValid)
+			continue;
+
+		for(size_t t=0;t<SAT[poolId].size();t++)
+		{
+			RLogicalBlock &b=SAT[poolId][t];
+			didSomething|=physicallyMoveBlock(b,physicallyWhere,physicalBlockList,temp);
+			physicallyWhere+=b.size;
+		}
+	}
+
+	if(didSomething)
+	{
+		pasm.make_file_smallest();
+	
+		// create new SAT
+		physicallyWhere=0;
+		for(poolId_t poolId=0;poolId<pools.size();poolId++)
+		{
+			SAT[poolId].clear();
+			if(!pools[poolId].isValid)
+				continue;
+
+			const blocksize_t maxBlockSize=getMaxBlockSizeFromAlignment(pools[poolId].alignment);
+
+			const l_addr_t blockCount=pools[poolId].size/maxBlockSize;
+			for(l_addr_t t=0;t<=blockCount;t++)
+			{
+				const l_addr_t blockSize= (t!=blockCount) ? maxBlockSize : pools[poolId].size%maxBlockSize;
+				if(blockSize>0)
+				{
+					RLogicalBlock b;
+					b.logicalStart=t*maxBlockSize;
+					b.physicalStart=physicallyWhere;
+					b.size=blockSize;
+		
+					SAT[poolId].push_back(b);
+	
+					physicallyWhere+=blockSize;
+				}
+			}
+		}
+
+		pasm.buildFromSAT(SAT);
+		backupSAT();
+	}
+
+	return didSomething;
 }
+
+
+template<class l_addr_t,class p_addr_t>
+	bool TPoolFile<l_addr_t,p_addr_t>::physicallyMoveBlock(RLogicalBlock &block,p_addr_t physicallyWhere,map<p_addr_t,p_addr_t> &physicalBlockList,int8_t *temp)
+{
+	if(block.physicalStart!=physicallyWhere)
+	{
+		// find what may exist in the location we want to move block to
+		for(poolId_t x=0;x<SAT.size();x++)
+		{
+			if(!pools[x].isValid)
+				continue;
+
+			for(size_t y=0;y<SAT[x].size();y++)
+			{
+				RLogicalBlock &b=SAT[x][y];
+
+				// see if b is in the way of where we want to put block
+				if(&b!=&block && CPhysicalAddressSpaceManager::overlap(physicallyWhere,block.size,b.physicalStart,b.size))
+				{ // b is in the way
+					p_addr_t moveTo=0;
+
+					// find a new place to put b (look backwards, because we're building up the beginning)
+					for(typename map<p_addr_t,p_addr_t>::reverse_iterator i=physicalBlockList.rbegin();i!=physicalBlockList.rend();i++)
+					{
+						typename map<p_addr_t,p_addr_t>::reverse_iterator prev_i=i; prev_i++;
+						if(prev_i!=physicalBlockList.rend())
+						{
+							const p_addr_t holeStart=prev_i->first+prev_i->second;
+							const p_addr_t holeSize=i->first - holeStart;
+							if(holeSize>=b.size)
+							{ // hole is large enough
+								// now make sure that this hole isn't where we want to put block
+								if(!CPhysicalAddressSpaceManager::overlap(physicallyWhere,block.size,holeStart,holeSize))
+								{ // move it here
+									moveTo=holeStart;
+									break;
+								}
+							}
+						}
+					}
+
+					if(moveTo==0)
+					{ // no place to move b to, so create new space
+						moveTo=pasm.get_file_size();
+						pasm.set_file_size(pasm.get_file_size()+b.size);
+						dprintf("just grew file from %lld to %lld\n",(long long)moveTo,(long long)pasm.get_file_size());
+					}
+
+					// now actually move b
+					{
+						dprintf("moving block from %lld to %lld\n",(long long)b.physicalStart,(long long)moveTo);
+
+						// read b off disk
+						blockFile.read(temp,b.size,b.physicalStart+LEADING_DATA_SIZE);
+
+						// update physicalBlockList and SAT
+						physicalBlockList.erase(physicalBlockList.find(b.physicalStart));
+						b.physicalStart=moveTo;
+						physicalBlockList[moveTo]=b.size;
+
+						// write b back out in the new location
+						blockFile.write(temp,b.size,moveTo+LEADING_DATA_SIZE);
+					}
+				}
+			}
+		}
+
+		// now nothing is in the way to move block, so move it
+		{
+			dprintf("moving block from %lld to %lld\n",(long long)block.physicalStart,(long long)physicallyWhere);
+
+			// read block off disk
+			blockFile.read(temp,block.size,block.physicalStart+LEADING_DATA_SIZE);
+
+			// update physicalBlockList and SAT
+			physicalBlockList.erase(physicalBlockList.find(block.physicalStart));
+			block.physicalStart=physicallyWhere;
+			physicalBlockList[physicallyWhere]=block.size;
+
+			// write block back out in the proper location
+			blockFile.write(temp,block.size,physicallyWhere+LEADING_DATA_SIZE);
+		}
+
+		return true;
+	}
+	return false;
+}
+
+
 
 
 // Pool Modification (pe -- pool elements, b -- bytes)
@@ -1612,12 +1629,12 @@ template<class l_addr_t,class p_addr_t>
 	if(peWhere>pePoolSize)
 		throw runtime_error(string(__func__)+" -- out of range peWhere "+istring(peWhere)+" for pool ("+getPoolDescription(poolId)+")");
 
-	invalidateAllCachedBlocks();
+	invalidateAllCachedBlocks(false,poolId);
 
 	const l_addr_t bWhere=peWhere*bAlignment;
 	const l_addr_t bCount=peCount*bAlignment;
 
-	const l_addr_t maxBlockSize=getMaxBlockSizeFromAlignment(bAlignment);
+	const blocksize_t maxBlockSize=getMaxBlockSizeFromAlignment(bAlignment);
 	const size_t newLogicalBlockCount=(bCount/maxBlockSize);
 	bool didSplitOne=false;
 
@@ -1629,50 +1646,45 @@ template<class l_addr_t,class p_addr_t>
 
 		if(!atStartOfBlock)
 		{ // split the block at logicalBlockIndex since where isn't exacly at the beginning of the block
+dprintf("insertSpace - case 1/6\n");
 			didSplitOne=true;
 
+			RLogicalBlock &logicalBlock=SAT[poolId][logicalBlockIndex];
 
 			// sanity check
-			if(bWhere<=SAT[poolId][logicalBlockIndex].logicalStart)
+			if(bWhere<=logicalBlock.logicalStart)
 			{ // logical impossibility since atStartOfBlock wasn't true (unless it was wrong)
 				printf("oops...\n");
 				exit(1);
 			}
 
 			// modify block at logicalBlockIndex and create a new RLogicalBlock for the second part of the split block
-			const l_addr_t firstPartSize=bWhere-SAT[poolId][logicalBlockIndex].logicalStart;
-			const l_addr_t secondPartSize=SAT[poolId][logicalBlockIndex].size-firstPartSize;
+			const l_addr_t firstPartSize=bWhere-logicalBlock.logicalStart;
+			const l_addr_t secondPartSize=logicalBlock.size-firstPartSize;
 
+			// inform the physical address space manager that we want to split the physical block into two parts
+			const p_addr_t newPhysicalStart=pasm.split_block(logicalBlock.physicalStart,firstPartSize);
 
-			// find the physical block for this logical block
-			const size_t physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(SAT[poolId][logicalBlockIndex].physicalStart))-physicalBlockList.begin();
-			
+			// shrink the logical block's size
+			logicalBlock.size=firstPartSize;
 
-
-			// shrink the logical and physical blocks' sizes
-			physicalBlockList[physicalBlockIndex].size=SAT[poolId][logicalBlockIndex].size=firstPartSize;
-
-			// create the new logical and physical blocks which are the second part of the old blocks
+			// create new logical block which is the second part of the old block
 			RLogicalBlock newLogicalBlock;
-			newLogicalBlock.logicalStart=SAT[poolId][logicalBlockIndex].logicalStart+firstPartSize;
-			newLogicalBlock.physicalStart=SAT[poolId][logicalBlockIndex].physicalStart+firstPartSize;
+			newLogicalBlock.logicalStart=logicalBlock.logicalStart+firstPartSize;
+			newLogicalBlock.physicalStart=newPhysicalStart;
 			newLogicalBlock.size=secondPartSize;
 
 			// add the new logical block
 			sortedInsert(SAT[poolId],newLogicalBlock);
 
-			// add the new physical block
-			sortedInsert(physicalBlockList,RPhysicalBlock(newLogicalBlock));
-
 			// alter the logical mapping by increasing all blocks' logicalStarts after the insertion point
-					// ??? bad
-			for(size_t t=logicalBlockIndex+1;t<SAT[poolId].size();t++)
-				SAT[poolId][t].logicalStart+=bCount;
+			offsetLogicalAddressSpace(SAT[poolId].begin()+logicalBlockIndex+1,SAT[poolId].end(),bCount,1);
 		}
 		else
 		{ // increase all blocks at and after insertion point
-			for(size_t t=logicalBlockIndex;t<SAT[poolId].size();t++)
-				SAT[poolId][t].logicalStart+=bCount;
+dprintf("insertSpace - case 2/6\n");
+			offsetLogicalAddressSpace(SAT[poolId].begin()+logicalBlockIndex,SAT[poolId].end(),bCount,1);
+
 			if(logicalBlockIndex>0)
 				logicalBlockIndex--;
 			else
@@ -1683,6 +1695,7 @@ template<class l_addr_t,class p_addr_t>
 	{ // at the end (or just starting)
 		if(bPoolSize>0)
 		{
+dprintf("insertSpace - case 3/6\n");
 			logicalBlockIndex=SAT[poolId].size()-1;
 			if((SAT[poolId][logicalBlockIndex].logicalStart+SAT[poolId][logicalBlockIndex].size)!=bWhere)
 			{
@@ -1696,78 +1709,53 @@ template<class l_addr_t,class p_addr_t>
 	// create all the new logical and physical blocks needed to fill the gap from the split of the old block
 
 	RLogicalBlock newLogicalBlock;
-	bool finalOne=false;
-	bool previousReturnedEOF=false;
-	p_addr_t _blockFileSize=blockFile.getSize();
 	for(size_t t=0;t<=newLogicalBlockCount;t++)
 	{
-		if(t<newLogicalBlockCount)
-			newLogicalBlock.size=maxBlockSize;
-		else
-		{
+		if(t==0)
+		{ // first block
+			dprintf("insertSpace - case 4/6\n");
 			newLogicalBlock.size=bCount%maxBlockSize;
 			if(newLogicalBlock.size==0)
-				break;
-
-			if(t==0 && !didSplitOne && logicalBlockIndex!=physicalBlockList.size() && bPoolSize>0)
-			{
-				// if this less-than-max block is the only block being added
-				// and it didn't cause a split up above, then lets see if it
-				// can fit at the end of the block it didn't split. (appending optimization)
-
-				RLogicalBlock &logicalBlock=SAT[poolId][logicalBlockIndex];
-				if((logicalBlock.size+newLogicalBlock.size)<=maxBlockSize)
-				{	// can fit IF there is room after the hole after this logicalBlock
-					const size_t physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(logicalBlock.physicalStart))-physicalBlockList.begin();
-
-					if( (physicalBlockIndex+1)>=physicalBlockList.size() ||
-					    ((physicalBlockList[physicalBlockIndex+1].physicalStart-physicalBlockList[physicalBlockIndex].physicalStart)-physicalBlockList[physicalBlockIndex].size)>=newLogicalBlock.size
-					  )
-					{	// we can use this block
-						logicalBlock.size+=newLogicalBlock.size;
-						physicalBlockList[physicalBlockIndex].size+=newLogicalBlock.size;
-						pools[poolId].size+=newLogicalBlock.size;
-						break;
-					}
-				}
-			}
-			finalOne=true;
+				continue; // it wasn't necessary to do this first iteration that handles the remainder
+			newLogicalBlock.logicalStart=bWhere;
 		}
-
-		newLogicalBlock.logicalStart=bWhere+(t*maxBlockSize);
-
-		// This optimization says that if we aren't doing the last piece of the insertion
-		// and the previous call to findHole failed to return a hole within the blockFile
-		// the assume it's gonna do it again, so don't call findHole
-		if(!finalOne && previousReturnedEOF)
-			newLogicalBlock.physicalStart=_blockFileSize;
 		else
 		{
-			newLogicalBlock.physicalStart=findHole(newLogicalBlock.size);
-
-			if(newLogicalBlock.physicalStart==_blockFileSize )
-				previousReturnedEOF=true;
+			dprintf("insertSpace - case 5/6\n");
+			newLogicalBlock.size=maxBlockSize;
+			newLogicalBlock.logicalStart=bWhere+((t-1)*maxBlockSize)+(bCount%maxBlockSize);
 		}
 
-		/*
-		// && some ratio is too high
-		{ // having to create more file space and file is getting too big, so coeless
-			newLogicalBlock.physicalStart=makeHole(newLogicalBlock.size);
+		newLogicalBlock.physicalStart=pasm.alloc(newLogicalBlock.size);
+
+		/* ??? I could perhaps move this logic in the t==0 case above and join as much
+		 * of the new space with SAT[poolId][logicalBlockIndex] as possible (if the allocator
+		 * gives us space adjacent to it's physical space.  This MIGHT (i need to work it out
+		 * more) result in fewer blocks on average */
+		if(!didSplitOne && t==0) // the below would only be true iff this is
+		{
+			if(logicalBlockIndex<SAT[poolId].size()) // false when pool is empty
+			{
+				// if we're about to create a new logical block that could just as well be joined with the one before it
+				// then don't create a new one (appending optimization)
+				RLogicalBlock &logicalBlock=SAT[poolId][logicalBlockIndex];
+				if(
+				   ((logicalBlock.physicalStart+logicalBlock.size)==newLogicalBlock.physicalStart) && 
+			   	   ((logicalBlock.size+newLogicalBlock.size)<=maxBlockSize)
+				)
+				{ 
+					dprintf("insertSpace case - 6/6\n");
+					logicalBlock.size+=newLogicalBlock.size;
+					pasm.join_blocks(logicalBlock.physicalStart,newLogicalBlock.physicalStart);
+					pools[poolId].size+=newLogicalBlock.size;
+					continue; // skip insertion of new block
+				}
+			}
 		}
-		*/
-
-		// overflow??? (probably shouldn't if I know that I didn't let the file get past maxLogicalAddress in the initial bounds checking
-		if((newLogicalBlock.physicalStart+newLogicalBlock.size)>_blockFileSize)
-			_blockFileSize+=(newLogicalBlock.physicalStart+newLogicalBlock.size)-_blockFileSize;
-		// we should check if the file will be able to grow bigger actually on disk later... ???
-
 
 		sortedInsert(SAT[poolId],newLogicalBlock);
-		sortedInsert(physicalBlockList,RPhysicalBlock(newLogicalBlock));
-
 		pools[poolId].size+=newLogicalBlock.size;
 	}
-	makeBlockFileSmallest();
 
 	// ZZZ ??? Takes too long in a real-time situation (i.e. Recording in ReZound)
 	//backupSAT();
@@ -1794,7 +1782,7 @@ template<class l_addr_t,class p_addr_t>
 	if(pePoolSize-peWhere<peCount)
 		throw runtime_error(string(__func__)+" -- out of range peWhere "+istring(peWhere)+" and peCount "+istring(peCount)+" for pool ("+getPoolDescription(poolId)+")");
 
-	invalidateAllCachedBlocks();
+	invalidateAllCachedBlocks(false,poolId);
 
 	const l_addr_t bWhere=peWhere*bAlignment;
 	const l_addr_t bCount=peCount*bAlignment;
@@ -1813,67 +1801,61 @@ template<class l_addr_t,class p_addr_t>
 		const l_addr_t remove_end= ((bWhere+(bCount-1))>block_end) ? block_end : (bWhere+(bCount-1));
 		const l_addr_t remove_in_block_size=remove_end-remove_start+1;
 
-		// ??? Optimization: I could probably most of the time assume it's the next block the previous iteration of this loop... if I checked that and it was false, then I should do a search
-		const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(block.physicalStart));
-
 		if(remove_start==block_start && remove_end==block_end)
 		{ // case 1 -- remove whole block -- on first and only block, middle or last block
 			// |[.......]|	([..] -- block ; |..| -- section to remove)
+dprintf("removeSpace - case 1/4\n");
 
+			pasm.free(block.physicalStart);
 			SAT[poolId].erase(SAT[poolId].begin()+t);
-			physicalBlockList.erase(physicalBlockIndex);
 		}
 		else if(remove_start==block_start && remove_end<block_end)
 		{ // case 2 -- remove a head of block -- on first and only block, last block
 			// |[.....|..]
-
+dprintf("removeSpace - case 2/4\n");
 			
-			/* I think I can put this back in now that I know it wasn't the problem, instead of doing what's below (removing and adding to the list)
-			 * 	I need a testing utility that tests call methods randomly with random positions and should test this code and put it back in if it works
-			RPhysicalBlock &newPhysicalBlock=physicalBlockList[physicalBlockIndex];
+			const blocksize_t new_blockSize=block.size-remove_in_block_size;
+			const p_addr_t newPhysicalStart=pasm.partial_free(block.physicalStart,block.physicalStart+remove_in_block_size,new_blockSize);
 
-			block.logicalStart-=bCount-remove_in_block_size; // do this because, this block is not gonna be affected by the loop which does this later since we increment t
-			newPhysicalBlock.physicalStart=block.physicalStart=(block.physicalStart+remove_in_block_size);
-			newPhysicalBlock.size=block.size=(block.size-remove_in_block_size);
-			*/
-
-			// I remove and re-add the logical block to the SAT list because it's logical start may get out of order
-			// ??? I shouldn't have to do the physical block this way I don't think
-
-			RLogicalBlock newLogicalBlock(block);
-			newLogicalBlock.size-=remove_in_block_size;
-			newLogicalBlock.physicalStart+=remove_in_block_size;
-			newLogicalBlock.logicalStart-=bCount-remove_in_block_size; // do this because, this block is not gonna be affected by the loop which does this later since we increment t
-
-			SAT[poolId].erase(SAT[poolId].begin()+t);
-			physicalBlockList.erase(physicalBlockIndex);
-
-			sortedInsert(SAT[poolId],newLogicalBlock);
-			sortedInsert(physicalBlockList,RPhysicalBlock(newLogicalBlock));
-
+			block.logicalStart-=bCount-remove_in_block_size; // ...-remove_in_block_size because, this block is not going to be affected by the loop which does this later since we increment t
+			block.physicalStart=newPhysicalStart;
+			block.size=new_blockSize;
 			t++;
 		}
 		else if(remove_start>block_start && remove_end==block_end)
 		{ // case 3 -- remove a tail of block -- first and only block, first block
 			// [..|.....]|
-			block.size-=remove_in_block_size;
-			physicalBlockIndex->size=block.size;
+dprintf("removeSpace - case 3/4\n");
+			const blocksize_t newBlockSize=block.size-remove_in_block_size;
+
+			pasm.partial_free(block.physicalStart,block.physicalStart,newBlockSize);
+
+			block.size=newBlockSize;
 			t++;
 		}
 		else if(remove_start>block_start && remove_end<block_end)
 		{ // case 4 -- split block -- on first and only block
 			// [..|...|..]
+			//    p1  p2
+dprintf("removeSpace - case 4/4\n");
 			
-			const l_addr_t newLogicalBlockSize=block_end-remove_end;
-			physicalBlockIndex->size=block.size=remove_start-block_start;
-
+			const blocksize_t p1=remove_start-block_start;
+			const blocksize_t p2=remove_end-block_start;
+		
+			// the phyical operation consists of a split, then a partial free of the right of the split block
+			p_addr_t newPhysicalStart=pasm.split_block(block.physicalStart,p1);
+				// now a new physical block starts at block.physicalStart+p1;
+			newPhysicalStart=pasm.partial_free(newPhysicalStart,block.physicalStart+p2+1,block.size-p2-1);
+				// now the new physical block starts at block.physicalStart+p2;
+			
+			block.size=p1;
+			
 			RLogicalBlock newLogicalBlock;
 			newLogicalBlock.logicalStart=remove_start;
-			newLogicalBlock.physicalStart=block.physicalStart+block.size+remove_in_block_size;
-			newLogicalBlock.size=newLogicalBlockSize;
+			newLogicalBlock.physicalStart=newPhysicalStart;
+			newLogicalBlock.size=block_end-remove_end;
 
 			sortedInsert(SAT[poolId],newLogicalBlock);
-			sortedInsert(physicalBlockList,RPhysicalBlock(newLogicalBlock));
 			t+=2;
 		}
 		else
@@ -1895,13 +1877,12 @@ template<class l_addr_t,class p_addr_t>
 	pools[poolId].size-=bCount;
 
 	// move all the subsequent logicalStarts downward
-	for(;t<SAT[poolId].size();t++)
-		SAT[poolId][t].logicalStart-=bCount;
+	offsetLogicalAddressSpace(SAT[poolId].begin()+t,SAT[poolId].end(),bCount,-1);
 
 	// join the blocks that just became adjacent if possible
 	joinAdjacentBlocks(poolId,logicalBlockIndex>0 ? logicalBlockIndex-1 : 0,1);
 	
-	makeBlockFileSmallest();
+	pasm.make_file_smallest();
 
 	backupSAT();
 }
@@ -1937,7 +1918,9 @@ template<class l_addr_t,class p_addr_t>
 
 		try
 		{
+dprintf("moveData -- case 1/6\n");
 			moveData(tempPoolId,0,srcPoolId,peSrcWhere,peCount);
+			printf("------------------------------------\n");
 			moveData(destPoolId,peDestWhere,tempPoolId,0,peCount);
 			removePool(tempPoolName,false);
 		}
@@ -1974,7 +1957,8 @@ template<class l_addr_t,class p_addr_t>
 	if(peDestWhere>peDestPoolSize)
 		throw runtime_error(string(__func__)+" -- out of range peDestWhere "+istring(peDestWhere)+" for pool ("+getPoolDescription(destPoolId)+")");
 
-	invalidateAllCachedBlocks();
+	invalidateAllCachedBlocks(false,srcPoolId);
+	invalidateAllCachedBlocks(false,destPoolId);
 
 	const l_addr_t bSrcWhere=peSrcWhere*bAlignment;
 	l_addr_t bDestWhere=peDestWhere*bAlignment;
@@ -1998,46 +1982,45 @@ template<class l_addr_t,class p_addr_t>
 		size_t destBlockIndex=0;
 		if(bDestWhere<bDestPoolSize)
 		{
+dprintf("moveData -- case 2/6\n");
 			bool atStartOfDestBlock;
 			destBlockIndex=findSATBlockContaining(destPoolId,bDestWhere,atStartOfDestBlock);
 			if(!atStartOfDestBlock)
 			{ // go ahead and split the destination block so that we can simply insert new ones along the way
+dprintf("moveData -- case 2.5/6\n");
 
-				if(bDestWhere<=SAT[destPoolId][destBlockIndex].logicalStart)
+				RLogicalBlock &destLogicalBlock=SAT[destPoolId][destBlockIndex];
+
+				if(bDestWhere<=destLogicalBlock.logicalStart)
 				{ // logcal impossibility since atStartOfBlock wasn't true (unless it was wrong)
 					printf("oops...\n");
 					exit(1);
 				}
 
-				const l_addr_t firstPartSize=bDestWhere-SAT[destPoolId][destBlockIndex].logicalStart;
-				const l_addr_t secondPartSize=SAT[destPoolId][destBlockIndex].size-firstPartSize;
+				const l_addr_t firstPartSize=bDestWhere-destLogicalBlock.logicalStart;
+				const l_addr_t secondPartSize=destLogicalBlock.size-firstPartSize;
 
 
-				// find the physical block for this logical block
-				const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(SAT[destPoolId][destBlockIndex].physicalStart));
+				// inform the physical address space manager that we want to split the dest physical block into two parts
+				pasm.split_block(destLogicalBlock.physicalStart,firstPartSize);
+		
+				// shrink the dest logical block's size
+				destLogicalBlock.size=firstPartSize;
 
-				// shrink the logical and physical blocks' sizes
-				physicalBlockIndex->size=SAT[destPoolId][destBlockIndex].size=firstPartSize;
-
-				// create the new logical and physical blocks which are the second part of the old blocks
+				// create the new logical block which are the second part of the old block
 				RLogicalBlock newLogicalBlock;
-				newLogicalBlock.logicalStart=SAT[destPoolId][destBlockIndex].logicalStart+firstPartSize;
-				newLogicalBlock.physicalStart=SAT[destPoolId][destBlockIndex].physicalStart+firstPartSize;
+				newLogicalBlock.logicalStart=destLogicalBlock.logicalStart+firstPartSize;
+				newLogicalBlock.physicalStart=destLogicalBlock.physicalStart+firstPartSize;
 				newLogicalBlock.size=secondPartSize;
 
 				// add the new logical block
 				sortedInsert(SAT[destPoolId],newLogicalBlock);
 
-				// add the new physical block
-				sortedInsert(physicalBlockList,RPhysicalBlock(newLogicalBlock));
-
 				destBlockIndex++;
 			}
 
 			// move upward all the logicalStarts in the dest pool past the destination where point
-			for(size_t t=destBlockIndex;t<SAT[destPoolId].size();t++)
-				SAT[destPoolId][t].logicalStart+=bCount;
-
+			offsetLogicalAddressSpace(SAT[destPoolId].begin()+destBlockIndex,SAT[destPoolId].end(),bCount,1);
 		}
 
 
@@ -2053,11 +2036,9 @@ template<class l_addr_t,class p_addr_t>
 			const l_addr_t src_remove_end= ((bSrcWhere+(bCount-1))>src_block_end) ? src_block_end : (bSrcWhere+(bCount-1));
 			const l_addr_t remove_in_src_block_size=src_remove_end-src_remove_start+1;
 
-			// ??? Optimization: I could probably most of the time assume its the next block the previous iteration of this loop... if I checked that and it was false, then I should do a search
-			const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(srcBlock.physicalStart));
-
 			if(src_remove_start==src_block_start && src_remove_end==src_block_end)
 			{ // case 1 -- remove whole block from src pool -- on first and only block, middle or last block
+dprintf("moveData -- case 3/6 -- %d\n",src_t);
 				// |[.......]|	([..] -- block ; |..| -- section to remove)
 				
 				RLogicalBlock newDestLogicalBlock(srcBlock);
@@ -2066,115 +2047,86 @@ template<class l_addr_t,class p_addr_t>
 				SAT[srcPoolId].erase(SAT[srcPoolId].begin()+src_t);
 
 				sortedInsert(SAT[destPoolId],newDestLogicalBlock);
-
 			}
 			else if(src_remove_start==src_block_start && src_remove_end<src_block_end)
 			{ // case 2 -- remove a head of block -- on first and only block, last block
+dprintf("moveData -- case 4/6 -- %d\n",src_t);
 				// |[.....|..]
 
-				/* I think I can put this back in instead of doing what I do below (that is, removing and adding the block)
-				// create the new logical block in dest pool and new physical block
-				RLogicalBlock newDestLogicalBlock;
-				newDestLogicalBlock.logicalStart=bDestWhere;
-				newDestLogicalBlock.size=remove_in_src_block_size;
-				newDestLogicalBlock.physicalStart=srcBlock.physicalStart;
+				const blocksize_t new_srcBlockSize=srcBlock.size-remove_in_src_block_size;
+				
+				// create physical block for src block now to point to
+				const p_addr_t new_srcPhysicalStart=pasm.split_block(srcBlock.physicalStart,remove_in_src_block_size);
 
-				// simply modify the src block and physical block's sizes and starts
-				RPhysicalBlock &srcPhysicalBlock=physicalBlockList[physicalBlockIndex];
-				srcBlock.logicalStart-=bCount-remove_in_src_block_size; // do this because, this srcBlock is not gonna be affected by the loop which does this later since we increment t
-				srcPhysicalBlock.physicalStart=srcBlock.physicalStart=(srcBlock.physicalStart+remove_in_src_block_size);
-				srcPhysicalBlock.size=srcBlock.size=(srcBlock.size-remove_in_src_block_size);
-
-				// actually add the new logical and physical blocks (had to delay because of unique constraints)
-				if(!SAT[destPoolId].add(newDestLogicalBlock))
-				{
-					printf("error adding to dest SAT\n");
-					exit(1);
-				}
-				if(!physicalBlockList.add(RPhysicalBlock(newDestLogicalBlock)))
-				{
-					printf("error adding to physicalBlockList\n");
-					exit(1);
-				}
-				*/
-
-				// create the new logical block in dest pool and new physical block
+				// create the new logical block in dest pool
 				RLogicalBlock newDestLogicalBlock; 
 				newDestLogicalBlock.logicalStart=bDestWhere;
 				newDestLogicalBlock.size=remove_in_src_block_size;
 				newDestLogicalBlock.physicalStart=srcBlock.physicalStart;
-
-
-				// I remove and re-add the logical block to the SAT list because it's logical start may get out of order
-				// ??? I shouldn't have to do the physical block this way I don't think
-
-				RLogicalBlock newSrcLogicalBlock(srcBlock);
-				newSrcLogicalBlock.size-=remove_in_src_block_size;
-				newSrcLogicalBlock.physicalStart+=remove_in_src_block_size;
-				newSrcLogicalBlock.logicalStart-=bCount-remove_in_src_block_size; // do this because, this block is not gonna be affected by the loop which does this later since we increment t
-
-				SAT[srcPoolId].erase(SAT[srcPoolId].begin()+src_t);
-				physicalBlockList.erase(physicalBlockIndex);
-
-				sortedInsert(SAT[srcPoolId],newSrcLogicalBlock);
-				sortedInsert(physicalBlockList,RPhysicalBlock(newSrcLogicalBlock));
-
-				// actually add the new logical and physical blocks (had to delay because of unique constraints)
 				sortedInsert(SAT[destPoolId],newDestLogicalBlock);
-				sortedInsert(physicalBlockList,RPhysicalBlock(newDestLogicalBlock));
+
+				// modify existing src block
+				srcBlock.logicalStart-=bCount-remove_in_src_block_size; // do this because, this srcBlock is not gonna be affected by the offsetLogicalAddressSpace() below
+				srcBlock.physicalStart=new_srcPhysicalStart;
+				srcBlock.size=new_srcBlockSize;
 
 				src_t++;
 			}
 			else if(src_remove_start>src_block_start && src_remove_end==src_block_end)
 			{ // case 3 -- remove a tail of block -- first and only block, first block
+dprintf("moveData -- case 5/6\n");
 				// [..|.....]|
 				
-				// create the new logcal block for dest pool and a new physical block
+				const blocksize_t new_srcBlockSize=srcBlock.size-remove_in_src_block_size;
+
+				// create physical block for new dest block
+				const p_addr_t new_destPhysicalStart=pasm.split_block(srcBlock.physicalStart,new_srcBlockSize);
+
+				// create the new logical block in dest pool
 				RLogicalBlock newDestLogicalBlock;
 				newDestLogicalBlock.logicalStart=bDestWhere;
 				newDestLogicalBlock.size=remove_in_src_block_size;
-				newDestLogicalBlock.physicalStart=(srcBlock.physicalStart+(srcBlock.size-remove_in_src_block_size));
-
-				// actually add the new logical and physical blocks
+				newDestLogicalBlock.physicalStart=new_destPhysicalStart;
 				sortedInsert(SAT[destPoolId],newDestLogicalBlock);
-				sortedInsert(physicalBlockList,RPhysicalBlock(newDestLogicalBlock));
 
-				// simply modify the logcal and physcal blocks
-				srcBlock.size-=remove_in_src_block_size;
-				physicalBlockIndex->size=srcBlock.size;
+				// modify the existing src block
+				srcBlock.size=new_srcBlockSize;
 
 				src_t++;
 			}
 			else if(src_remove_start>src_block_start && src_remove_end<src_block_end)
 			{ // case 4 -- split block -- on first and only block
+dprintf("moveData -- case 6/6\n");
 				// [..|...|..]
+				//    p1  p2
 			
-				const l_addr_t headSize=src_remove_start-src_block_start; // part at the beginning of the block
+				const blocksize_t p1=src_remove_start-src_block_start;
+				const blocksize_t p2=src_remove_end-src_block_start;
+			
+				// create new physical block by splitting existing src physical block
+				const p_addr_t new_destPhysicalStart=pasm.split_block(srcBlock.physicalStart,p1);
 
+				// modify existing src block
+				srcBlock.size=p1;
+				
+				// split the new physical block; left side -> new dest block, right side -> new src block
+				const p_addr_t new_srcPhysicalStart=pasm.split_block(new_destPhysicalStart,remove_in_src_block_size);
 
-				// insert new logical block in dest pool and create new physical block
+				// create new src block
+				RLogicalBlock newSrcLogicalBlock;
+				newSrcLogicalBlock.logicalStart=srcBlock.logicalStart+srcBlock.size;
+				newSrcLogicalBlock.physicalStart=new_srcPhysicalStart;
+				newSrcLogicalBlock.size=src_block_end-src_remove_end;
+				sortedInsert(SAT[srcPoolId],newSrcLogicalBlock);
+
+				// create new dest block
 				RLogicalBlock newDestLogicalBlock;
 				newDestLogicalBlock.logicalStart=bDestWhere;
-				newDestLogicalBlock.physicalStart=srcBlock.physicalStart+headSize;
-				newDestLogicalBlock.size=src_remove_end-src_remove_start+1;
-
+				newDestLogicalBlock.physicalStart=new_destPhysicalStart;
+				newDestLogicalBlock.size=remove_in_src_block_size;
 				sortedInsert(SAT[destPoolId],newDestLogicalBlock);
-				sortedInsert(physicalBlockList,RPhysicalBlock(newDestLogicalBlock));
-
-				// modify logical and physical src blocks' sizes
-				physicalBlockIndex->size=srcBlock.size=headSize;
-
-				// create new block in src pool and new physical block
-				RLogicalBlock newSrcLogicalBlock;
-				newSrcLogicalBlock.logicalStart=src_remove_start;
-				newSrcLogicalBlock.physicalStart=srcBlock.physicalStart+srcBlock.size+remove_in_src_block_size;
-				newSrcLogicalBlock.size=src_block_end-src_remove_end;
-
-				sortedInsert(SAT[srcPoolId],newSrcLogicalBlock);
-				sortedInsert(physicalBlockList,RPhysicalBlock(newSrcLogicalBlock));
 
 				src_t+=2;
-
 			}
 			else
 			{
@@ -2199,17 +2151,16 @@ template<class l_addr_t,class p_addr_t>
 		pools[destPoolId].size+=bCount;
 
 		// move all the subsequent logicalStarts of the src pool downward
-		for(;src_t<SAT[srcPoolId].size();src_t++)
-			SAT[srcPoolId][src_t].logicalStart-=bCount;
+		offsetLogicalAddressSpace(SAT[srcPoolId].begin()+src_t,SAT[srcPoolId].end(),bCount,-1);
 
 
-		/* ??? don't I want to do this?
-		// join any adjacent blocks in the dest pool than could be
-		joinAdjacentBlocks(destPoolId,destBlockIndex>0 ? destBlockIndex-1 : 0,loopCount+1);
+		// join blocks at first or least dest blocks delt with if possible
+		joinAdjacentBlocks(destPoolId,destBlockIndex>0 ? destBlockIndex-1 : 0,1);
+		if(loopCount>0 && SAT[destPoolId].size()>0)
+			joinAdjacentBlocks(destPoolId,(destBlockIndex+loopCount-1)<SAT[destPoolId].size() ? destBlockIndex+loopCount-2 : SAT[destPoolId].size()-1,2);
 
 		// join the blocks that just became adjacent in the src pool if possible
 		joinAdjacentBlocks(srcPoolId,srcBlockIndex>0 ? srcBlockIndex-1 : 0,1);
-		*/
 	}
 
 	backupSAT();
@@ -2223,21 +2174,18 @@ template<class l_addr_t,class p_addr_t>
 	if(!isValidPoolId(poolId))
 		throw runtime_error(string(__func__)+" -- invalid poolId: "+istring(poolId));
 
-	invalidateAllCachedBlocks();
+	invalidateAllCachedBlocks(false,poolId);
 
-	// remove all the entries in the physicalBlockList associated with this pool
+	// free all physical blocks associated with this pool
 	for(size_t t=0;t<SAT[poolId].size();t++)
-	{
-		const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(SAT[poolId][t].physicalStart));
-		physicalBlockList.erase(physicalBlockIndex);
-	}
+		pasm.free(SAT[poolId][t].physicalStart);
 
 	// remove all localBlocks in the SAT associated with this pool 
 	SAT[poolId].clear();
 
 	pools[poolId].size=0;
 
-	makeBlockFileSmallest();
+	pasm.make_file_smallest();
 
 	backupSAT();
 }
@@ -2416,19 +2364,21 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::invalidateAllCachedBlocks()
+	void TPoolFile<l_addr_t,p_addr_t>::invalidateAllCachedBlocks(bool allPools,poolId_t poolId)
 {
 	for(typename set<RCachedBlock *>::iterator i=activeCachedBlocks.begin();i!=activeCachedBlocks.end();)
 	{
 		typename set<RCachedBlock *>::iterator ii=i;
 		i++;
-		invalidateCachedBlock(*ii);
+		if(allPools || (*ii)->poolId==poolId)
+			invalidateCachedBlock(*ii);
 	}
 	for(typename set<RCachedBlock *>::iterator i=unreferencedCachedBlocks.begin();i!=unreferencedCachedBlocks.end();)
 	{
 		typename set<RCachedBlock *>::iterator ii=i;
 		i++;
-		invalidateCachedBlock(*ii);
+		if(allPools || (*ii)->poolId==poolId)
+			invalidateCachedBlock(*ii);
 	}
 }
 
@@ -2450,227 +2400,6 @@ template<class l_addr_t,class p_addr_t>
 	typename vector<const CGenericPoolAccesser *>::iterator i=find(accessers.begin(),accessers.end(),(const CGenericPoolAccesser *)accesser);
 	if(i!=accessers.end())
 		accessers.erase(i);
-}
-
-
-
-
-
-// defragging
-template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::defrag()
-{
-	invalidateAllCachedBlocks();
-
-	/* ???
-	 * Right now, defragging can happen and be much more inefficiant than it needs to be.
-	 * This is because it always makes the first poolId come first in the file.  Fragementation
-	 * should not care which order than the pools exist, only that they are contiguous on
-	 * disk.  I would do better to move as few blocks as possible, this would mean knowing
-	 * which order is best for the pools on disk.  Perhaps I could go thru each permutation of
-	 * poolId, but I'm not quite sure how do know which is the best ordering. 
-	 */
-
-	// to defrag, correct all block positions
-	for(size_t poolId=0;poolId<pools.size();poolId++)
-	{
-		if(!pools[poolId].isValid)
-			continue;
-
-		for(size_t t=0;t<SAT[poolId].size();t++)
-			correctBlockPosition(poolId,t,getProceedingPoolSizes(poolId));
-	}
-	verifyAllBlockInfo(true);
-
-	// rebuild SAT and physicalBlockList
-	createContiguousSAT();
-	backupSAT();
-}
-
-template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::createContiguousSAT()
-{
-	p_addr_t accumulatePoolSize=0;
-
-	physicalBlockList.clear();
-	SAT.clear();
-	for(size_t poolId=0;poolId<pools.size();poolId++)
-	{
-		appendNewSAT();
-
-		if(!pools[poolId].isValid)
-			continue;
-
-		const alignment_t alignment=pools[poolId].alignment;
-		const l_addr_t poolSize=pools[poolId].size;
-		const l_addr_t maxBlockSize=getMaxBlockSizeFromAlignment(alignment);
-
-		const size_t blockCount=poolSize/maxBlockSize; // ??? hope that blockCount isn't too big for size_t cause in it could be
-		for(size_t t=0;t<blockCount;t++)
-		{
-			RLogicalBlock block;
-			RPhysicalBlock physicalBlock;
-			block.logicalStart=t*maxBlockSize;
-			physicalBlock.physicalStart=block.physicalStart=t*maxBlockSize+accumulatePoolSize;
-			physicalBlock.size=block.size=maxBlockSize;
-
-			sortedInsert(SAT[poolId],block);
-			sortedInsert(physicalBlockList,physicalBlock);
-		}
-
-		if((poolSize%maxBlockSize)!=0)
-		{	// create one more block at the end
-			RLogicalBlock block;
-			RPhysicalBlock physicalBlock;
-			block.logicalStart=blockCount*maxBlockSize;
-			physicalBlock.physicalStart=block.physicalStart=blockCount*maxBlockSize+accumulatePoolSize;
-			physicalBlock.size=block.size=poolSize%maxBlockSize;
-
-			sortedInsert(SAT[poolId],block);
-			sortedInsert(physicalBlockList,physicalBlock);
-		}
-		accumulatePoolSize+=poolSize;
-	}
-	makeBlockFileSmallest();
-}
-
-template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::correctBlockPosition(const poolId_t poolId,const size_t logicalBlockIndex,const p_addr_t previousPoolSizes)
-{
-	correctionsTried.clear();
-	recurCorrectBlockPosition(poolId,logicalBlockIndex,previousPoolSizes);
-}
-
-template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::recurCorrectBlockPosition(const poolId_t poolId,const size_t logicalBlockIndex,const p_addr_t previousPoolSizes)
-{
-	// the correct physical start of a block is its
-	// logical start + (total of prev pools)
-
-	RLogicalBlock &block=SAT[poolId][logicalBlockIndex];
-	const p_addr_t correctStart=block.logicalStart+previousPoolSizes;
-	const p_addr_t blockStart=correctStart;
-	const p_addr_t blockEnd=blockStart+block.size-1;
-
-	if(block.physicalStart!=correctStart)
-	{
-		//size_t k;
-		typename map<poolId_t,map<l_addr_t,bool> >::iterator k;
-		if((k=correctionsTried.find(poolId))==correctionsTried.end() || k->second.find(block.logicalStart)==k->second.end())
-		{ // have not tried to fix this one's position
-			correctionsTried.insert(make_pair(poolId,map<l_addr_t,bool>())).first->second.insert(make_pair(block.logicalStart,false));
-
-			// for any block in the way (and not the current block), recur
-			for(size_t i=0;i<pools.size();i++)
-			{
-				if(!pools[i].isValid)
-					continue;
-
-				for(size_t t=0;t<SAT[i].size();t++)
-				{
-					const RLogicalBlock &moveBlock=SAT[i][t];
-					const p_addr_t moveBlockStart=moveBlock.physicalStart;
-					const p_addr_t moveBlockEnd=moveBlockStart+moveBlock.size-1;
-
-					if((&moveBlock)!=(&block) && isInWindow(moveBlockStart,moveBlockEnd,blockStart,blockEnd))
-						recurCorrectBlockPosition(i,t,getProceedingPoolSizes(i));
-				}
-			}
-
-			// if we didn't correct it in some recurrance.. move now into the correct position
-			if(block.physicalStart!=correctStart)
-			{
-				// for any block in the way (and not the current block), move it to the END
-				for(size_t i=0;i<pools.size();i++)
-				{
-					if(!pools[i].isValid)
-						continue;
-
-					for(size_t t=0;t<SAT[i].size();t++)
-					{
-						RLogicalBlock &moveBlock=SAT[i][t];
-						const p_addr_t moveBlockStart=moveBlock.physicalStart;
-						const p_addr_t moveBlockEnd=moveBlockStart+moveBlock.size-1;
-
-						if((&moveBlock)!=(&block) && isInWindow(moveBlockStart,moveBlockEnd,blockStart,blockEnd))
-						{
-							const p_addr_t moveToStart=blockFile.getSize();
-							changeBlockFileSize(blockFile.getSize()+moveBlock.size);
-							physicallyMoveBlock(moveBlock,moveToStart);
-						}
-					}
-				}
-				physicallyMoveBlock(block,correctStart);
-			}
-		}
-		else
-		{	// have tried to fix this one's position already
-			// physically move blocks that are in the way to other locations not in the
-			// window we wish to move "block" into.
-
-			// for any block in the way (and not the current block), move it
-			for(size_t i=0;i<pools.size();i++)
-			{
-				if(!pools[i].isValid)
-					continue;
-
-				for(size_t t=0;t<SAT[i].size();t++)
-				{
-					RLogicalBlock &moveBlock=SAT[i][t];
-					const p_addr_t moveBlockStart=moveBlock.physicalStart;
-					const p_addr_t moveBlockEnd=moveBlockStart+moveBlock.size-1;
-
-					if((&moveBlock)!=(&block) && isInWindow(moveBlockStart,moveBlockEnd,blockStart,blockEnd))
-					{
-						const p_addr_t moveToStart=findHole(moveBlock.size,blockStart,blockEnd);
-
-							// ??? could overflow
-						if(blockFile.getSize()<(moveToStart+moveBlock.size))
-							changeBlockFileSize(moveToStart+moveBlock.size);
-
-						physicallyMoveBlock(moveBlock,moveToStart);
-					}
-				}
-			}
-
-			// finally, move the block into the correct position
-			physicallyMoveBlock(block,correctStart);
-		}
-	}
-}
-
-template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::physicallyMoveBlock(RLogicalBlock &block,const p_addr_t physicallyWhere)
-{
-	// should actually move the block if the file space isn't there (mean the block wasn't even created yet)
-	if((block.physicalStart+block.size)<=blockFile.getSize())
-	{
-		TAutoBuffer<int8_t> tempBlockSpace(maxBlockSize);
-
-		// make sure there's space to put the data onces it's read
-					// ??? could overflow
-		if(blockFile.getSize()<(physicallyWhere+block.size))
-			changeBlockFileSize(physicallyWhere+block.size);
-
-		const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(block.physicalStart));
-		if(physicalBlockIndex==physicalBlockList.end())
-		{
-			printf("physicalBlockList and SAT inconsistancies\n");
-			exit(1);
-		}
-
-		// read block
-		blockFile.read(tempBlockSpace,block.size,block.physicalStart+LEADING_DATA_SIZE);
-
-		// write block
-		blockFile.write(tempBlockSpace,block.size,physicallyWhere+LEADING_DATA_SIZE);
-
-		block.physicalStart=physicallyWhere;
-
-		// update block information lists
-		physicalBlockList.erase(physicalBlockIndex);
-		sortedInsert(physicalBlockList,RPhysicalBlock(block));
-	}
 }
 
 
@@ -2735,7 +2464,7 @@ template<class l_addr_t,class p_addr_t>
 
 // ---- RCachedBlock ---------------------------------------------------
 template<class l_addr_t,class p_addr_t>
-	TPoolFile<l_addr_t,p_addr_t>::RCachedBlock::RCachedBlock(const size_t maxBlockSize)
+	TPoolFile<l_addr_t,p_addr_t>::RCachedBlock::RCachedBlock(const blocksize_t maxBlockSize)
 {
 	if((buffer=malloc(maxBlockSize))==NULL)
 		throw runtime_error(string(__func__)+" -- unable to allocate buffer space");
@@ -2754,7 +2483,7 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::RCachedBlock::init(const poolId_t _poolId,const l_addr_t _logicalStart,const l_addr_t _size)
+	void TPoolFile<l_addr_t,p_addr_t>::RCachedBlock::init(const poolId_t _poolId,const l_addr_t _logicalStart,const blocksize_t _size)
 {
 	poolId=_poolId;
 	logicalStart=_logicalStart;
@@ -2859,61 +2588,580 @@ template<class l_addr_t,class p_addr_t>
 
 
 
-// ---- RPhysicalBlock ------------------------------------------------
+// --- physical address space management ------------------------
+
+
 template<class l_addr_t,class p_addr_t>
-	TPoolFile<l_addr_t,p_addr_t>::RPhysicalBlock::RPhysicalBlock()
+	TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::CPhysicalAddressSpaceManager(CMultiFile &_file) :
+	file(_file)
 {
-	size=physicalStart=0;
 }
 
 template<class l_addr_t,class p_addr_t>
-	TPoolFile<l_addr_t,p_addr_t>::RPhysicalBlock::RPhysicalBlock(const p_addr_t _physicalStart,const l_addr_t _size)
+	p_addr_t TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::appendAlloc(const p_addr_t size)
 {
-	physicalStart=_physicalStart;
-	size=_size;
+	const p_addr_t addr=get_file_size();
+	set_file_size(addr+size);
+	alloced.insert(alloced.end(),make_pair(addr,size));
+
+	lastAllocAppended=true;
+	lastAllocSize=size;
+
+	return addr;
 }
 
 template<class l_addr_t,class p_addr_t>
-	TPoolFile<l_addr_t,p_addr_t>::RPhysicalBlock::RPhysicalBlock(const RPhysicalBlock &src)
+	p_addr_t TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::alloc(blocksize_t size)
 {
-	operator=(src);
+	if(size<=0)
+		return 0;
+
+	if(holes.empty())
+	{ // need to make more space
+dprintf("alloc: case 1\n");
+		return appendAlloc(size);
+	}
+	else
+	{
+		if(lastAllocAppended && size>=lastAllocSize) /* optimization of repeated consecutive appends */
+		{ // need to make more space
+dprintf("alloc: case 1.5\n");
+			return appendAlloc(size);
+		}
+		else
+		{
+			lastAllocAppended=false;
+
+			// check the largest hole
+			typename holeSizeIndex_t::iterator i=holeSizeIndex.end();
+			i--;
+		
+			if(i->first>size)
+			{ // hole more than big enough
+dprintf("alloc: case 2\n");
+				const p_addr_t addr=i->second->first;
+				alloced[addr]=size;
+
+				const p_addr_t newHoleSize=i->first-size;
+				const p_addr_t newHoleStart=i->second->first+size;
+
+				// update holes and holeSizeIndex
+				holes.erase(i->second);
+				holeSizeIndex.erase(i);
+				
+				typename holes_t::iterator hole_i=holes.insert(make_pair(newHoleStart,newHoleSize)).first;
+				holeSizeIndex.insert(make_pair(newHoleSize,hole_i));
+		
+				return addr;
+			}
+			else if(i->first==size)
+			{ // hole is the exact size we need
+dprintf("alloc: case 3\n");
+				const p_addr_t addr=i->second->first;
+				alloced[i->second->first]=size;
+
+				holes.erase(i->second);
+				holeSizeIndex.erase(i);
+
+				return addr;
+			}
+			else
+			{ // need to make more space
+dprintf("alloc: case 4\n");
+				return appendAlloc(size);
+			}
+		}
+	}
 }
 
 template<class l_addr_t,class p_addr_t>
-	TPoolFile<l_addr_t,p_addr_t>::RPhysicalBlock::RPhysicalBlock(const RLogicalBlock &src)
+	p_addr_t TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::split_block(p_addr_t addr,blocksize_t newBlockStartsAt)
 {
-	physicalStart=src.physicalStart;
-	size=src.size;
+dprintf("split_block: case 1\n");
+	typename alloced_t::iterator i=alloced.find(addr);
+	if(i==alloced.end())
+		throw runtime_error(string(__func__)+" -- addr is not an alloced block: "+istring(addr));
+
+	if(newBlockStartsAt<=0)
+		throw runtime_error(string(__func__)+" -- parameters don't cause a split, newBlockStartsAt is <= zero");
+
+	if(newBlockStartsAt>=i->second)
+		throw runtime_error(string(__func__)+" -- newBlockStartsAt is out of range: "+istring(i->second)+" < "+istring(newBlockStartsAt));
+
+	// create new block
+	const p_addr_t newAddr=addr+newBlockStartsAt;
+	alloced.insert(i,make_pair(newAddr,i->second-newBlockStartsAt));
+
+	// update existing block to be smaller
+	i->second=newBlockStartsAt;
+
+	return newAddr;
 }
 
 template<class l_addr_t,class p_addr_t>
-	typename TPoolFile<l_addr_t,p_addr_t>::RPhysicalBlock &TPoolFile<l_addr_t,p_addr_t>::RPhysicalBlock::operator=(const RPhysicalBlock &src)
+	p_addr_t TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::partial_free(p_addr_t addr,p_addr_t newAddr,blocksize_t newSize)
 {
-	physicalStart=src.physicalStart;
-	size=src.size;
-	return *this;
+	typename alloced_t::iterator i=alloced.find(addr);
+	if(i==alloced.end())
+		throw runtime_error(string(__func__)+" -- addr is not an alloced block: "+istring(addr));
+
+	if(newSize<=0)
+		throw runtime_error(string(__func__)+" -- newSize is <= zero");
+
+		// ??? maybe cases like this don't matter .. maybe only do if testing
+	if(newAddr==addr && newSize==i->second)
+		throw runtime_error(string(__func__)+" -- partial free does nothing");
+
+	if(newAddr+newSize>addr+i->second)
+		throw runtime_error(string(__func__)+" -- newAddr+newSize would extend beyond the originally alloced block: "+istring(newAddr)+"+"+istring(newSize)+" > "+istring(addr)+"+"+istring(i->second));
+
+
+	lastAllocAppended=false; // a new hole may be about to open up so don't do this optimization next time
+
+	if(newAddr>addr)
+	{ // freeing what's left of newAddr
+
+		// either create a new hole left of addr or join with an existing one
+		const p_addr_t newHoleSize=newAddr-addr;
+		if(i!=alloced.begin())
+		{
+			// find the hole left of i
+			typename alloced_t::iterator prev_i=i; prev_i--;
+			typename holes_t::iterator holes_i=holes.find(prev_i->first+prev_i->second);
+			if(holes_i==holes.end())
+			{ // (case 1) no hole to join with, so create one
+dprintf("partial_free: case 1\n");
+				holes_i=holes.insert(make_pair(addr,newHoleSize)).first;
+				holeSizeIndex.insert(make_pair(newHoleSize,holes_i));
+			}
+			else
+			{ // (case 2) hole found to join with
+dprintf("partial_free: case 2\n");
+				holeSizeIndex.erase(findHoleSizeIndexEntry(holes_i->second,holes_i->first));
+				holes_i->second+=newHoleSize;
+				holeSizeIndex.insert(make_pair(holes_i->second,holes_i));
+			}
+
+		}
+		else
+		{ // i is the first alloced block, so check the left most hole or create a new left-most hole
+
+			typename holes_t::iterator holes_i=holes.begin();
+			if(!holes.empty() && holes_i->first<addr)
+			{ // (case 3) join with this hole
+dprintf("partial_free: case 3\n");
+				// remove the holeSizeIndex entry for the hole at addr 0
+				typename holeSizeIndex_t::iterator holeSizeIndex_i=findHoleSizeIndexEntry(holes_i->second,0);
+				holeSizeIndex.erase(holeSizeIndex_i);
+
+				// update the hole at addr 0
+				holes_i->second+=newHoleSize;
+
+				// create new holeSizeIndex entry for hole at addr 0
+				holeSizeIndex.insert(make_pair(holes_i->second,holes_i));
+
+			}
+			else
+			{ // (case 4) create a new left-most hole
+dprintf("partial_free: case 4\n");
+				typename holes_t::iterator holes_i=holes.insert(holes.begin(),make_pair(addr,newHoleSize));
+				holeSizeIndex.insert(make_pair(newHoleSize,holes_i));
+			}
+		}
+	}
+
+	if(newAddr+newSize<addr+i->second)
+	{ // freeing something to the right of newAddr+newSize
+		// either create a new hole to the right of newAddr+newSize or join with an existing after addr+i->second
+		const p_addr_t newHoleAddr=newAddr+newSize;
+		const p_addr_t newHoleSize=(addr+i->second)-newHoleAddr;
+
+		typename holes_t::iterator holes_i=holes.find(addr+i->second);
+		if(holes_i==holes.end())
+		{ // (case 5) no hole found right of original allocated block, so create one
+dprintf("partial_free: case 5\n");
+			holes_i=holes.insert(make_pair(newHoleAddr,newHoleSize)).first;
+			holeSizeIndex.insert(make_pair(newHoleSize,holes_i));
+		}
+		else
+		{ // (case 6) hole found right of original allocated block, so join with it
+dprintf("partial_free: case 6\n");
+			const p_addr_t joinHoleAddr=holes_i->first;
+			const p_addr_t joinHoleSize=holes_i->second;
+
+			typename holes_t::iterator holes_i2=holes.insert(holes_i,make_pair(newHoleAddr,joinHoleSize+newHoleSize));
+			holeSizeIndex.insert(make_pair(joinHoleSize+newHoleSize,holes_i2));
+
+			holes.erase(holes_i);
+			holeSizeIndex.erase(findHoleSizeIndexEntry(joinHoleSize,joinHoleAddr));
+		}
+	}
+
+	// update alloced
+	alloced.erase(i);
+	alloced.insert(make_pair(newAddr,newSize));
+
+	return newAddr;
 }
 
 template<class l_addr_t,class p_addr_t>
-	const bool TPoolFile<l_addr_t,p_addr_t>::RPhysicalBlock::operator==(const RPhysicalBlock &src) const
+	typename TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::holeSizeIndex_t::iterator TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::findHoleSizeIndexEntry(const p_addr_t size,const p_addr_t addr)
 {
-	return physicalStart==src.physicalStart;
+	typename holeSizeIndex_t::iterator holeSizeIndex_i=holeSizeIndex.find(size);
+	while(holeSizeIndex_i!=holeSizeIndex.end())
+	{
+		if(holeSizeIndex_i->first!=size)
+		{
+			printf("WHAT! there is no holeSizeIndex entry for the hole we're looking for\n");
+			break;
+		}
+
+		if(holeSizeIndex_i->second->first==addr)
+		{ // found it
+			return holeSizeIndex_i;
+		}
+
+		holeSizeIndex_i++;
+	}
+
+	throw runtime_error(string(__func__)+" -- no holeSizeIndex entry found");
 }
 
 template<class l_addr_t,class p_addr_t>
-	const bool TPoolFile<l_addr_t,p_addr_t>::RPhysicalBlock::operator<(const RPhysicalBlock &src) const
+	void TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::free(p_addr_t addr)
 {
-	return src.physicalStart>physicalStart;
+	typename alloced_t::iterator alloced_i=alloced.find(addr);
+	if(alloced_i==alloced.end())
+		throw runtime_error(string(__func__)+" -- attempting to free something that was allocated");
+
+	lastAllocAppended=false; // a new hole may be about to open up so don't do this optimization next time
+
+	// attempt to find holes on either side of block being freed and join block's space with either one or both holes
+	
+	// find hole on left (set to holes.end() if there is no hole on the left)
+	typename holes_t::iterator leftwardHole;
+	if(alloced_i->first==alloced.begin()->first)
+	{ // addr is the first alloced block, so check if there is a hole left of the alloced block
+		leftwardHole=holes.begin();
+		if(leftwardHole->first!=0) 
+			// first hole is after the first alloced block
+			leftwardHole=holes.end();
+	}
+	else
+	{
+		typename alloced_t::iterator prev_i=alloced_i; prev_i--;
+		leftwardHole=holes.find(prev_i->first+prev_i->second);
+	}
+
+	// find hole on right (set to holes.end() if there is no hole on the right)
+	typename holes_t::iterator rightwardHole=holes.find(alloced_i->first+alloced_i->second);
+
+	if(leftwardHole==holes.end())
+	{ // no hole on the left
+		if(rightwardHole==holes.end())
+		{ // (case 1) no hole on the right either, so just make alloced the first hole
+dprintf("free: case 1\n");
+			typename holes_t::iterator hole_i=holes.insert(make_pair(alloced_i->first,alloced_i->second)).first;
+			holeSizeIndex.insert(make_pair(alloced_i->second,hole_i));
+		}
+		else
+		{ // (case 2) there is a hole only on the right, so join the free block with it
+dprintf("free: case 2\n");
+			// remove holeSizeIndex entry for rightward hole we just removed
+			typename holeSizeIndex_t::iterator holeSizeIndex_i=findHoleSizeIndexEntry(rightwardHole->second,rightwardHole->first);
+			holeSizeIndex.erase(holeSizeIndex_i);
+
+			const p_addr_t newHoleSize=alloced_i->second+rightwardHole->second;
+
+			typename holes_t::iterator hole_i=holes.insert(make_pair(alloced_i->first,newHoleSize)).first;
+			holeSizeIndex.insert(make_pair(newHoleSize,hole_i));
+
+			// remove rightward hole because we've created a new hole that accounts for its space
+			holes.erase(rightwardHole);
+		}
+	}
+	else
+	{ // there is a hole on the left
+		if(rightwardHole==holes.end())
+		{ // (case 3) no hole on the right, so just join the freed block with hole on the left
+dprintf("free: case 3\n");
+			const p_addr_t oldHoleSize=leftwardHole->second;
+
+			// update the size of the left hole
+			leftwardHole->second+=alloced_i->second;
+
+			// remove holeSizeIndex entry for leftward hole we just updated and re-add it with new size
+			typename holeSizeIndex_t::iterator holeSizeIndex_i=findHoleSizeIndexEntry(oldHoleSize,leftwardHole->first);
+			holeSizeIndex.erase(holeSizeIndex_i);
+			holeSizeIndex.insert(make_pair(leftwardHole->second,leftwardHole));
+		}
+		else
+		{ // (case 4) there is a hole on both sides of the alloced block, so join the freed block and the hole on the right with the hole on the left
+dprintf("free: case 4\n");
+			const p_addr_t oldHoleSize=leftwardHole->second;
+
+			// update the size of the left hole
+			leftwardHole->second+=alloced_i->second+rightwardHole->second;
+
+			// remove holeSizeIndex entry for leftward hole we just updated and re-add it with the new size
+			typename holeSizeIndex_t::iterator holeSizeIndex_i=findHoleSizeIndexEntry(oldHoleSize,leftwardHole->first);
+			holeSizeIndex.erase(holeSizeIndex_i);
+			holeSizeIndex.insert(make_pair(leftwardHole->second,leftwardHole));
+
+			// remove the holeSizeIndex entry for rightward hole we just updated
+			holeSizeIndex_i=findHoleSizeIndexEntry(rightwardHole->second,rightwardHole->first);
+			holeSizeIndex.erase(holeSizeIndex_i);
+
+			// remove the rightward hole
+			holes.erase(rightwardHole);
+		}
+	}
+
+	// remove block from the alloced list 
+	alloced.erase(alloced_i);
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::RPhysicalBlock::print() const
+	void TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::free_all()
 {
-	printf("physicalStart: %-10lld size: %-5lld\n",(long long)physicalStart,(long long)size);
+	lastAllocAppended=false;
+	alloced.clear();
+	holes.clear();
+	holeSizeIndex.clear();
+
+	if(file.isOpen())
+		holeSizeIndex.insert(make_pair(get_file_size(),holes.insert(make_pair(0,get_file_size())).first));
+}
+
+template<class l_addr_t,class p_addr_t>
+	void TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::join_blocks(p_addr_t addr1,p_addr_t addr2)
+{
+	typename alloced_t::iterator i1=alloced.find(addr1);
+	typename alloced_t::iterator i2=alloced.find(addr2);
+
+	if(i1==alloced.end())
+		throw runtime_error(string(__func__)+" -- addr1 is not allocated");
+	if(i2==alloced.end())
+		throw runtime_error(string(__func__)+" -- addr2 is not allocated");
+
+	if((i1->first+i1->second)==i2->first)
+	{ // join blocks
+		i1->second+=i2->second;
+		alloced.erase(i2);
+	}
+	else
+		throw runtime_error(string(__func__)+" -- addr1 and addr2 are not adjacent");
+}
+
+template<class l_addr_t,class p_addr_t>
+	void TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::buildFromSAT(const vector<vector<RLogicalBlock> > &SAT)
+{
+	lastAllocAppended=false;
+	alloced.clear();
+	holes.clear();
+	holeSizeIndex.clear();
+
+	// create list of just alloced stuff
+	for(size_t x=0;x<SAT.size();x++)
+	{
+		for(size_t y=0;y<SAT[x].size();y++)
+		{
+			alloced.insert(make_pair(SAT[x][y].physicalStart,SAT[x][y].size));
+		}
+	}
+
+	if(!alloced.empty())
+	{
+
+		// if first alloced block doesn't start at 0, then create a hole that accounts for this
+		if(alloced.begin()->first!=0)
+		{
+			holeSizeIndex.insert(make_pair(alloced.begin()->first,holes.insert(make_pair(0,alloced.begin()->first)).first));
+		}
+	
+		// create holes that are between any alloced blocks
+		for(typename alloced_t::const_iterator i=alloced.begin();i!=alloced.end();i++)
+		{
+			typename alloced_t::const_iterator next_i=i; next_i++;
+			if(next_i!=alloced.end())
+			{
+				const p_addr_t right_addr=i->first+i->second;
+				if(right_addr!=next_i->first)
+				{
+					const p_addr_t holeSize=right_addr-next_i->first;
+					holeSizeIndex.insert(make_pair(holeSize,holes.insert(make_pair(right_addr,holeSize)).first));
+				}
+			}
+		}
+
+		// create hole after last allocated block if necessary
+		{
+			const p_addr_t last_addr=alloced.rbegin()->first+alloced.rbegin()->second;
+			const p_addr_t last_hole_size=get_file_size()-last_addr;
+			if(last_addr<get_file_size())
+				holeSizeIndex.insert(make_pair(last_hole_size,holes.insert(make_pair(last_addr,last_hole_size)).first));
+		}
+	}
+	else
+	{
+		// create hole to account for all space if necessary
+		if(get_file_size()>0)
+			holeSizeIndex.insert(make_pair(get_file_size(),holes.insert(make_pair(0,get_file_size())).first));
+	}
+
+
+}
+
+template<class l_addr_t,class p_addr_t>
+	void TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::make_file_smallest()
+{
+	lastAllocAppended=false;
+	if(alloced.empty())
+	{
+		set_file_size(0);
+		holes.clear();
+		holeSizeIndex.clear();
+	}
+	else
+	{
+		const p_addr_t lastAddr=alloced.rbegin()->first+alloced.rbegin()->second;
+		set_file_size(lastAddr);
+
+		// update holes if necessary (by removing the last hole that was at lastAddr)
+		typename holes_t::iterator i=holes.find(lastAddr);
+		if(i!=holes.end())
+		{
+			holeSizeIndex.erase(findHoleSizeIndexEntry(i->second,i->first));
+			holes.erase(i);
+		}
+	}
+}
+
+template<class l_addr_t,class p_addr_t>
+	void TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::set_file_size(const p_addr_t newSize)
+{
+	file.setSize(newSize+LEADING_DATA_SIZE);
+}
+
+template<class l_addr_t,class p_addr_t>
+	const p_addr_t TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::get_file_size() const
+{
+	return max(file.getSize(),(CMultiFile::l_addr_t)LEADING_DATA_SIZE)-LEADING_DATA_SIZE;
 }
 
 
+template<class l_addr_t,class p_addr_t>
+	bool TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::overlap(p_addr_t addr1,p_addr_t size1,p_addr_t addr2,p_addr_t size2)
+{
+	if(addr1<addr2 && (addr1+size1)<=addr2)
+		return false;
+	if(addr2<addr1 && (addr2+size2)<=addr1)
+		return false;
+	return true;
+}
 
+template<class l_addr_t,class p_addr_t>
+	void TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::verify(bool expectContinuousPhysicalAllocs)
+{
+	// make sure no alloced blocks overlap
+	for(typename alloced_t::const_iterator alloced_i=alloced.begin();alloced_i!=alloced.end();alloced_i++)
+	{
+		typename alloced_t::const_iterator next_alloced_i=alloced_i; next_alloced_i++;
+		if(next_alloced_i!=alloced.end())
+		{
+			if(alloced_i->first+alloced_i->second>next_alloced_i->first)
+				printf("*** FAILURE alloced blocks overlap: %lld+%lld > %lld\n",(long long)alloced_i->first,(long long)alloced_i->second,(long long)next_alloced_i->first);
+		}
+	}
+	
+	// make sure no holes overlap or are consecutive(needing joining)
+	for(typename holes_t::const_iterator holes_i=holes.begin();holes_i!=holes.end();holes_i++)
+	{
+		typename holes_t::const_iterator next_holes_i=holes_i; next_holes_i++;
+		if(next_holes_i!=holes.end())
+		{
+			if(holes_i->first+holes_i->second>=next_holes_i->first)
+				printf("*** FAILURE holes overlap or are consecutive: %lld+%lld >= %lld\n",(long long)holes_i->first,(long long)holes_i->second,(long long)next_holes_i->first);
+		}
+	}
+	
+
+	// make sure no alloced block overlaps with a holes
+	for(typename alloced_t::const_iterator alloced_i=alloced.begin();alloced_i!=alloced.end();alloced_i++)
+	{
+		for(typename holes_t::const_iterator holes_i=holes.begin();holes_i!=holes.end();holes_i++)
+		{
+			if(overlap(holes_i->first,holes_i->second,alloced_i->first,alloced_i->second))
+				printf("*** FAILURE overlapping hole and alloced:\n\talloced: %lld %lld\t\n\thole:  %lld %lld\n",(long long)alloced_i->first,(long long)alloced_i->second,(long long)holes_i->first,(long long)holes_i->second);
+		}
+	}
+
+	// make sure that holes + alloced == file size
+	p_addr_t total=0;
+	for(typename alloced_t::const_iterator alloced_i=alloced.begin();alloced_i!=alloced.end();alloced_i++)
+		total+=alloced_i->second;
+	for(typename holes_t::const_iterator holes_i=holes.begin();holes_i!=holes.end();holes_i++)
+		total+=holes_i->second;
+	if(total>get_file_size())
+		printf("*** FAILURE alloced + holes > file size :   %lld>%lld\n",(long long)total,(long long)get_file_size());
+
+	// validate that holeSizeIndex is correct by building one from scratch and comparing it to the one we have
+	holeSizeIndex_t temp;
+	for(typename holes_t::iterator holes_i=holes.begin();holes_i!=holes.end();holes_i++)
+		temp.insert(make_pair(holes_i->second,holes_i));
+
+	if(temp.size()!=holeSizeIndex.size())
+		printf("*** FAILURE holeSizeIndex is out of sync (size differs)\n");
+
+		// for each element in temp, look for it in holeSizeIndex
+	for(typename holeSizeIndex_t::iterator i=temp.begin();i!=temp.end();i++)
+	{
+		try
+		{
+			findHoleSizeIndexEntry(i->first,i->second->first);
+		}
+		catch(...)
+		{
+			printf("*** FAILURE holeSizeIndex is out of sync\n");
+			break;
+		}
+	}
+
+	// verify that all the physical blocks are contiguous (not an invalid pool file if it happens, but the user may expect it)
+	if(expectContinuousPhysicalAllocs)
+	{
+		p_addr_t expectedStart=0;
+		for(typename alloced_t::iterator i=alloced.begin();i!=alloced.end();i++)
+		{
+			if(i->first!=expectedStart)
+			{
+				printf("*** FAILURE physical allocated space is not continuous\n");
+				break;
+			}
+			expectedStart+=i->second;
+		}
+	}
+
+	printf("PASSED\n");
+}
+
+template<class l_addr_t,class p_addr_t>
+	void TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::print() const
+{
+	printf("\nAllocated Physical Blocks:\n");
+	for(typename alloced_t::const_iterator t=alloced.begin();t!=alloced.end();t++)
+		printf("physicalStart: %-10lld size: %-5lld\n",(long long)t->first,(long long)t->second);
+
+	printf("\nUnallocated Physical Blocks:\n");
+	for(typename holes_t::const_iterator t=holes.begin();t!=holes.end();t++)
+		printf("physicalStart: %-10lld size: %-5lld\n",(long long)t->first,(long long)t->second);
+
+	printf("\nIndex into Unallocated Physical Blocks:\n");
+	for(typename holeSizeIndex_t::const_iterator t=holeSizeIndex.begin();t!=holeSizeIndex.end();t++)
+		printf("size: %-10lld addr: %-5lld\n",(long long)t->first,(long long)t->second->first);
+
+	printf("\n\n");
+}
 
 
 
@@ -2957,4 +3205,5 @@ template<class l_addr_t,class p_addr_t>
 /* ??? if sizeof(char) != sizeof(int8_t) then we're in trouble */
 	f->write(s.c_str(),len,multiFileHandle);
 }
+
 
