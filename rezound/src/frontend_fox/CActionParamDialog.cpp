@@ -169,6 +169,13 @@ void CActionParamDialog::addGraph(const string name,const string units,FXGraphPa
 	retValueConvs.push_back(optRetValueConv);
 }
 
+void CActionParamDialog::addLFO(const string name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs)
+{
+	FXLFOParamValue *LFOEntry=new FXLFOParamValue(controlsFrame,0,name.c_str(),ampUnits,ampTitle,maxAmp,freqUnits,maxFreq,hideBipolarLFOs);
+	//LFOEntry->setHelpText(helpText.c_str());
+	parameters.push_back(pair<ParamTypes,void *>(ptLFO,(void *)LFOEntry));
+	retValueConvs.push_back(NULL);
+}
 
 void CActionParamDialog::setMargin(FXint margin)
 {
@@ -197,6 +204,12 @@ void CActionParamDialog::setValue(size_t index,const double value)
 		break;
 
 	case ptGraph:
+		/*
+		((FXGraphParamValue *)parameters[index].second)->setValue(value);
+		break;
+		*/
+
+	case ptLFO:
 		/*
 		((FXGraphParamValue *)parameters[index].second)->setValue(value);
 		break;
@@ -286,6 +299,13 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 				}
 				break;
 
+			case ptLFO:
+				{
+					FXLFOParamValue *LFOEntry=(FXLFOParamValue *)parameters[t].second;
+					actionParameters->addLFODescription(LFOEntry->getTitle(),LFOEntry->getValue());
+				}
+				break;
+
 			default:
 				throw(runtime_error(string(__func__)+" -- unhandled parameter type: "+istring(parameters[t].first)));
 			}
@@ -349,6 +369,10 @@ long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void 
 
 			case ptGraph:
 				((FXGraphParamValue *)parameters[t].second)->readFromFile(title,presetsFile);
+				break;
+
+			case ptLFO:
+				((FXLFOParamValue *)parameters[t].second)->readFromFile(title,presetsFile);
 				break;
 
 			default:
@@ -423,6 +447,10 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 
 				case ptGraph:
 					((FXGraphParamValue *)parameters[t].second)->writeToFile(title,presetsFile);
+					break;
+
+				case ptLFO:
+					((FXLFOParamValue *)parameters[t].second)->writeToFile(title,presetsFile);
 					break;
 
 				default:

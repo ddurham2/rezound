@@ -59,6 +59,7 @@ libfrontend_la_SOURCES= \
 			FXComboTextParamValue.cpp \
 			FXCheckBoxParamValue.cpp \
 			FXGraphParamValue.cpp \
+			FXLFOParamValue.cpp \
 			FXModalDialogBox.cpp \
 			FXRezWaveView.cpp \
 			rememberShow.cpp \
@@ -123,6 +124,7 @@ noinst_HEADERS=\
 	FXComboTextParamValue.h \
 	FXCheckBoxParamValue.h \
 	FXGraphParamValue.h \
+	FXLFOParamValue.h \
 	FXModalDialogBox.h \
 	FXRezWaveView.h \
 	drawPortion.h \

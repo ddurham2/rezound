@@ -17,19 +17,24 @@ Flange
 		{
 			value=0.700000;
 		}
-		LFO\ Depth
+		Flange\ LFO
 		{
-			scalar=1.000000;
-			value=4.000000;
-		}
-		LFO\ Freq
-		{
-			scalar=1.000000;
-			value=0.500000;
-		}
-		LFO\ Phase
-		{
-			value=270.000000;
+			name="Sin Wave [ 0,1]";
+
+			Frequency
+			{
+				scalar=1.000000;
+				value=0.500000;
+			}
+			LFO\ Depth
+			{
+				scalar=1.000000;
+				value=4.000000;
+			}
+			Phase
+			{
+				value=270.000000;
+			}
 		}
 		Wet\ Gain
 		{
@@ -54,19 +59,24 @@ Flange
 		{
 			value=0.360000;
 		}
-		LFO\ Depth
+		Flange\ LFO
 		{
-			scalar=20.000000;
-			value=10.000000;
-		}
-		LFO\ Freq
-		{
-			scalar=1.000000;
-			value=0.200000;
-		}
-		LFO\ Phase
-		{
-			value=270.000000;
+			name="Sin Wave [ 0,1]";
+
+			Frequency
+			{
+				scalar=1.000000;
+				value=0.200000;
+			}
+			LFO\ Depth
+			{
+				scalar=20.000000;
+				value=10.000000;
+			}
+			Phase
+			{
+				value=270.000000;
+			}
 		}
 		Wet\ Gain
 		{
@@ -91,19 +101,24 @@ Flange
 		{
 			value=0.460000;
 		}
-		LFO\ Depth
+		Flange\ LFO
 		{
-			scalar=8.000000;
-			value=4.000000;
-		}
-		LFO\ Freq
-		{
-			scalar=9.000000;
-			value=7.200000;
-		}
-		LFO\ Phase
-		{
-			value=270.000000;
+			name="Sin Wave [ 0,1]";
+
+			Frequency
+			{
+				scalar=9.000000;
+				value=7.200000;
+			}
+			LFO\ Depth
+			{
+				scalar=8.000000;
+				value=4.000000;
+			}
+			Phase
+			{
+				value=270.000000;
+			}
 		}
 		Wet\ Gain
 		{
@@ -128,19 +143,24 @@ Flange
 		{
 			value=-0.93000;
 		}
-		LFO\ Depth
+		Flange\ LFO
 		{
-			scalar=2.000000;
-			value=0.900000;
-		}
-		LFO\ Freq
-		{
-			scalar=1.000000;
-			value=0.350000;
-		}
-		LFO\ Phase
-		{
-			value=270.000000;
+			name="Sin Wave [ 0,1]";
+
+			Frequency
+			{
+				scalar=1.000000;
+				value=0.350000;
+			}
+			LFO\ Depth
+			{
+				scalar=2.000000;
+				value=0.900000;
+			}
+			Phase
+			{
+				value=270.000000;
+			}
 		}
 		Wet\ Gain
 		{
@@ -165,19 +185,24 @@ Flange
 		{
 			value=-0.93000;
 		}
-		LFO\ Depth
+		Flange\ LFO
 		{
-			scalar=8.000000;
-			value=3.100000;
-		}
-		LFO\ Freq
-		{
-			scalar=1.000000;
-			value=0.203000;
-		}
-		LFO\ Phase
-		{
-			value=90.000000;
+			name="Sin Wave [ 0,1]";
+
+			Frequency
+			{
+				scalar=1.000000;
+				value=0.203000;
+			}
+			LFO\ Depth
+			{
+				scalar=8.000000;
+				value=3.100000;
+			}
+			Phase
+			{
+				value=90.000000;
+			}
 		}
 		Wet\ Gain
 		{
@@ -202,19 +227,24 @@ Flange
 		{
 			value=-0.93000;
 		}
-		LFO\ Depth
+		Flange\ LFO
 		{
-			scalar=16.000000;
-			value=12.03000;
-		}
-		LFO\ Freq
-		{
-			scalar=1.000000;
-			value=0.070000;
-		}
-		LFO\ Phase
-		{
-			value=270.000000;
+			name="Sin Wave [ 0,1]";
+
+			Frequency
+			{
+				scalar=1.000000;
+				value=0.070000;
+			}
+			LFO\ Depth
+			{
+				scalar=16.000000;
+				value=12.03000;
+			}
+			Phase
+			{
+				value=270.000000;
+			}
 		}
 		Wet\ Gain
 		{

@@ -37,8 +37,6 @@
 		- --help should be detected by all processers of command line arguement and add to the stdout the arguments that they handle.
 		- I suppose I should use popt because it is packaged for most all rpm abd deb based distros.. I need to find URL of popt's homepage and refer to that on error in configure
 
-	- Eventually, I need to have the frontend make use of the backend's ability for some of the actions to use different LFO implementations
-
 	- There may be some more formats that libaudiofile supports... I just didn't see them in the docs... work with the author to include any others
 	
 	- implement a windowed FFT DSP block... I'm not quite sure what the interface should be
@@ -73,6 +71,7 @@
 			- Plus, it would be possible to use in realtime applications eventually
 			- I could do the same for the rate change (I could construct the CDSPBlock with the graph parameter object, and the length of the sound)
 				 - DONE: Except for the performance hit of virtual functions or pointers to functions in the algorithm, I could create an LFO object which some of the CDSP-blocks could use... Constant LFOs would exist, and an LFO for the CGraphParameterNodes (given a length until repeat) could be given
+					- might not take a performance hit of virtual functions if I precalculate a table for the LFOs
 				 - (I did this already and the performance hit was actually quite acceptable)
 			- The same could go for CChangeAmplitudeRate, flange(done) and Echo(done) effect
 
@@ -263,4 +262,6 @@
 		- DONE (but no frontend control yet): when I do implement the more than 2 channels, I need to have a way to route the multiple channels of a sound to the 2 (or more) channels of sound card output
 		- DONE the default (when a sound is loaded) should be just to assign each channel to the lesser number of sound card channels in a rotating fashion
 		- DONE the routing should be assigned per CSoundPlayerChannel object, but the routing information should also be saved in a pool in the sound object
+
+	- Eventually, I need to have the frontend make use of the backend's ability for some of the actions to use different LFO implementations
 

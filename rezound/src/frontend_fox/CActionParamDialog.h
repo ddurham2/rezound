@@ -37,6 +37,7 @@ class CActionParamDialog;
 #include "FXComboTextParamValue.h"
 #include "FXCheckBoxParamValue.h"
 #include "FXGraphParamValue.h"
+#include "FXLFOParamValue.h"
 
 #include "../backend/AActionDialog.h"
 #include "../backend/CGraphParamValueNode.h"
@@ -58,6 +59,7 @@ public:
 		FXComboTextParamValue *getComboText(const string name); // so a derived class can set the values
 	void addCheckBoxEntry(const string name,const bool checked,const string helpText="");
 	void addGraph(const string name,const string units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar);
+	void addLFO(const string name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs);
 
 	/* 
 	 * index corrisponds to the order that the add...() methods were called 
@@ -101,7 +103,8 @@ private:
 		ptText,
 		ptComboText,
 		ptCheckBox,
-		ptGraph
+		ptGraph,
+		ptLFO
 	};
 
 	// the void * points to either an FXConstantParamValue, FXTextParamValue, FXComboTextParamValue, FXCheckBoxParamValue or an FXGraphParamValue

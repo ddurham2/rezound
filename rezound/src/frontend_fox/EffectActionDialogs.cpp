@@ -107,8 +107,10 @@ CAdvancedRateChangeDialog::CAdvancedRateChangeDialog(FXWindow *mainWindow) :
 static const double interpretValue_flange(const double x,const int s) { return(x*s); }
 static const double uninterpretValue_flange(const double x,const int s) { return(x/s); }
 
+/*
 static const double interpretValue_flange_LFO_phase(const double x,const int s) { return(unitRange_to_otherRange_linear(x,0,360)); }
 static const double uninterpretValue_flange_LFO_phase(const double x,const int s) { return(otherRange_to_unitRange_linear(x,0,360)); }
+*/
 
 static const double interpretValue_flange_feedback(const double x,const int s) { return(unitRange_to_otherRange_linear(x,-0.95,0.95)); }
 static const double uninterpretValue_flange_feedback(const double x,const int s) { return(otherRange_to_unitRange_linear(x,-0.95,0.95)); }
@@ -119,9 +121,7 @@ CFlangeDialog::CFlangeDialog(FXWindow *mainWindow) :
 	addSlider("Delay","ms",interpretValue_flange,uninterpretValue_flange,NULL,2.0,2,10,2,false);
 	addSlider("Wet Gain","x",interpretValue_flange,uninterpretValue_flange,NULL,1.0,-5,5,1,false);
 	addSlider("Dry Gain","x",interpretValue_flange,uninterpretValue_flange,NULL,1.0,-5,5,1,false);
-	addSlider("LFO Freq","Hz",interpretValue_flange,uninterpretValue_flange,NULL,1.0,1,20,1,false);
-	addSlider("LFO Depth","ms",interpretValue_flange,uninterpretValue_flange,NULL,2.0,1,20,1,false);
-	addSlider("LFO Phase","deg",interpretValue_flange_LFO_phase,uninterpretValue_flange_LFO_phase,NULL,90.0,0,0,0,true);
+	addLFO("Flange LFO","ms","LFO Depth",20,"Hz",20,true);
 	addSlider("Feedback","x",interpretValue_flange_feedback,uninterpretValue_flange_feedback,NULL,0.0,0,0,0,true);
 }
 
@@ -152,9 +152,14 @@ static const double uninterpretValue_varied_repeat(const double x,const int s) {
 static const double interpretValue_varied_repeat_LFO_phase(const double x,const int s) { return(unitRange_to_otherRange_linear(x,0,360)); }
 static const double uninterpretValue_varied_repeat_LFO_phase(const double x,const int s) { return(otherRange_to_unitRange_linear(x,0,360)); }
 
+static const double interpretValue_flange_LFO_phase(const double x,const int s) { return(unitRange_to_otherRange_linear(x,0,360)); }
+static const double uninterpretValue_flange_LFO_phase(const double x,const int s) { return(otherRange_to_unitRange_linear(x,0,360)); }
+
 CVariedRepeatDialog::CVariedRepeatDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Varied Repeat")
 {
+	// make this an LFO widget
+		// ??? need to make this an LFO widget.. but I need to be able to set initial values
 	addSlider("LFO Freq","Hz",interpretValue_varied_repeat,uninterpretValue_varied_repeat,NULL,0.1,1,20,1,false);
 	addSlider("LFO Phase","deg",interpretValue_flange_LFO_phase,uninterpretValue_flange_LFO_phase,NULL,290.0,0,0,0,true);
 	addSlider("Time","s",interpretValue_varied_repeat,uninterpretValue_varied_repeat,NULL,4.0,1,100,10,false);
