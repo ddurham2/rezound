@@ -49,7 +49,7 @@ public:
 		{
 			buffer=(type *)malloc(_size*sizeof(type));
 			if(buffer==NULL)
-				throw(runtime_error(string(__func__)+" -- error allocating memory -- "+strerror(errno)));
+				throw runtime_error(string(__func__)+" -- error allocating memory -- "+strerror(errno));
 			if(zeroContents)
 				memset(buffer,0,size*sizeof(type));
 		}
@@ -65,37 +65,38 @@ public:
 	// cast to type *
 	operator type * const ()
 	{
-		return(buffer);
+		return buffer;
 	}
 
 	operator const type * const () const 
 	{
-		return(buffer);
+		return buffer;
 	}
 
+#if 0 // I don't know why these cause so many warnings, but it should still be automatically castable to void* thru the type* operators
 	// cast to void *
 	operator void * const ()
 	{
-		return(buffer);
+		return buffer;
 	}
 
 	operator const void * const () const 
 	{
-		return(buffer);
+		return buffer;
 	}
-
+#endif
 
 
 	/* for some reason this causes ambiguities in gcc 3.2 .. so I guess it will choose to cast to pointer then subscript if I don't define this but do subscript an object of this class 
 	type &operator[](const size_t i) const
 	{
-		return(buffer[i]);
+		return buffer[i];
 	}
 	*/
 
 	const size_t getSize() const
 	{
-		return(size);
+		return size;
 	}
 
 	void setSize(const size_t newSize,bool zeroAllContents=false) // newSize is in elements not bytes
@@ -104,7 +105,7 @@ public:
 		{
 			type *temp=(type *)realloc(buffer,newSize*sizeof(type));
 			if(temp==NULL)
-				throw(runtime_error(string(__func__)+" -- error reallocating memory -- "+strerror(errno)));
+				throw runtime_error(string(__func__)+" -- error reallocating memory -- "+strerror(errno));
 			buffer=temp;
 			size=newSize;
 			if(zeroAllContents)
