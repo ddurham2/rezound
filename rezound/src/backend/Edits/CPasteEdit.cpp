@@ -22,6 +22,7 @@
 
 #include <stdexcept>
 #include <algorithm>
+#include <utility>
 
 #include <istring>
 
@@ -88,7 +89,7 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 	case ptInsert:
 		// insert the space into the channels we need to
 		actionSound.sound->addSpace(whichChannels,actionSound.start,clipboardLength);
-		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,false,mmOverwrite,mmAdd,sftNone);
+		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,false,mmOverwrite,mixMethod,sftNone);
 		break;
 
 	case ptReplace:
@@ -106,9 +107,10 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 			actionSound.sound->addSpace(whichChannels,actionSound.start,clipboardLength);
 		}
 
-		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,false,mmOverwrite,mmAdd,sftNone);
+		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,false,mmOverwrite,mixMethod,sftNone);
 		break;
 
+	case ptOverwrite:
 	case ptMix:
 	{
 		/*                    v--- start selection position
@@ -156,11 +158,12 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 		if(extraLength>0)
 			actionSound.sound->addSpace(whichChannels,actionSound.sound->getLength(),extraLength,true);
 
-		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,!prepareForUndo,mixMethod,mixMethod,sftNone);
+		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,!prepareForUndo,pasteType==ptOverwrite ? mmOverwrite : mixMethod,mixMethod,sftNone);
 
 	}
 		break;
 
+	case ptLimitedOverwrite:
 	case ptLimitedMix:
 		if(prepareForUndo)
 		{
@@ -184,7 +187,7 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 			}
 		}
 
-		pasteData(clipboard,pasteChannels,actionSound,undoRemoveLength,!prepareForUndo,mixMethod,mixMethod,sftNone);
+		pasteData(clipboard,pasteChannels,actionSound,undoRemoveLength,!prepareForUndo,pasteType==ptLimitedOverwrite ? mmOverwrite : mixMethod,mixMethod,sftNone);
 		break;
 
 	case ptFitMix:
@@ -258,6 +261,8 @@ void CPasteEdit::undoActionSizeSafe(const CActionSound &actionSound)
 		break;
 
 	case ptReplace:
+	case ptOverwrite:
+	case ptLimitedOverwrite:
 	case ptMix:
 	case ptLimitedMix:
 	case ptFitMix:
@@ -295,14 +300,13 @@ bool CPasteEdit::getResultingCrossfadePoints(const CActionSound &actionSound,sam
 		stop=min(actionSound.stop+1,actionSound.sound->getLength()-1);
 		break;
 
+	case ptOverwrite:
 	case ptMix:
 		stop=min(start+clipboardLength,actionSound.sound->getLength()-1);
 		break;
 
+	case ptLimitedOverwrite:
 	case ptLimitedMix:
-		stop=min(start+clipboardLength,start+actionSound.selectionLength());
-		break;
-
 		stop=min(start+clipboardLength,start+actionSound.selectionLength());
 		break;
 
@@ -338,8 +342,7 @@ static const vector<vector<bool> > getPasteChannels(AActionDialog *pasteChannels
 
 	if(pasteChannelsDialog->wasShown)
 	{
-
-		const vector<vector<bool> > &m=*reinterpret_cast<const vector<vector<bool > > *>(pasteChannelsDialog->getUserData());
+		const vector<vector<bool> > &m=(*reinterpret_cast<pair<MixMethods,const vector<vector<bool> > > *>(pasteChannelsDialog->getUserData())).second;
 		for(unsigned y=0;y<MAX_CHANNELS;y++)
 		{
 			pasteChannels.push_back(vector<bool>() );
@@ -367,6 +370,14 @@ static const vector<vector<bool> > getPasteChannels(AActionDialog *pasteChannels
 	return(pasteChannels);
 }
 
+static const MixMethods getMixMethod(AActionDialog *pasteChannelsDialog)
+{
+	if(pasteChannelsDialog->wasShown)
+		return reinterpret_cast<pair<MixMethods,const vector<vector<bool> > > *>(pasteChannelsDialog->getUserData())->first;
+	else
+		return mmAdd;
+}
+
 
 // ------------------------------
 
@@ -377,7 +388,7 @@ CInsertPasteEditFactory::CInsertPasteEditFactory(AActionDialog *channelSelectDia
 
 CPasteEdit *CInsertPasteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptInsert));
+	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptInsert,getMixMethod(channelSelectDialog)));
 }
 
 CHECK_FOR_DATA(CInsertPasteEditFactory)
@@ -393,7 +404,7 @@ CReplacePasteEditFactory::CReplacePasteEditFactory(AActionDialog *channelSelectD
 
 CPasteEdit *CReplacePasteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptReplace));
+	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptReplace,getMixMethod(channelSelectDialog)));
 }
 
 CHECK_FOR_DATA(CReplacePasteEditFactory)
@@ -408,7 +419,7 @@ COverwritePasteEditFactory::COverwritePasteEditFactory(AActionDialog *channelSel
 
 CPasteEdit *COverwritePasteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptMix,mmOverwrite));
+	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptOverwrite,getMixMethod(channelSelectDialog)));
 }
 
 CHECK_FOR_DATA(COverwritePasteEditFactory)
@@ -424,7 +435,7 @@ CLimitedOverwritePasteEditFactory::CLimitedOverwritePasteEditFactory(AActionDial
 
 CPasteEdit *CLimitedOverwritePasteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptLimitedMix,mmOverwrite));
+	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptLimitedOverwrite,getMixMethod(channelSelectDialog)));
 }
 
 CHECK_FOR_DATA(CLimitedOverwritePasteEditFactory)
@@ -440,8 +451,7 @@ CMixPasteEditFactory::CMixPasteEditFactory(AActionDialog *channelSelectDialog) :
 
 CPasteEdit *CMixPasteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-		// ??? get mix method from dialog
-	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptMix,mmAdd));
+	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptMix,getMixMethod(channelSelectDialog)));
 }
 
 CHECK_FOR_DATA(CMixPasteEditFactory)
@@ -456,8 +466,7 @@ CLimitedMixPasteEditFactory::CLimitedMixPasteEditFactory(AActionDialog *channelS
 
 CPasteEdit *CLimitedMixPasteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-		// ??? get mix method from dialog
-	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptLimitedMix,mmAdd));
+	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptLimitedMix,getMixMethod(channelSelectDialog)));
 }
 
 CHECK_FOR_DATA(CLimitedMixPasteEditFactory)
@@ -472,8 +481,7 @@ CFitMixPasteEditFactory::CFitMixPasteEditFactory(AActionDialog *channelSelectDia
 
 CPasteEdit *CFitMixPasteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-		// ??? get mix method from dialog
-	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptFitMix,mmAdd));
+	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptFitMix,getMixMethod(channelSelectDialog)));
 }
 
 CHECK_FOR_DATA(CFitMixPasteEditFactory)

@@ -28,7 +28,6 @@
 
 #include "../backend/AAction.h"
 #include "../backend/CActionSound.h"
-#include "../backend/CSound_defs.h"
 #include "../backend/ASoundClipboard.h"
 
 CPasteChannelsDialog *gPasteChannelsDialog=NULL;
@@ -49,7 +48,7 @@ FXIMPLEMENT(CPasteChannelsDialog,FXModalDialogBox,CPasteChannelsDialogMap,ARRAYN
 // ----------------------------------------
 
 CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"Paste Channels",700,340,FXModalDialogBox::ftVertical),
+	FXModalDialogBox(mainWindow,"Paste Channels",100,100,FXModalDialogBox::ftVertical),
 
 	label(new FXLabel(getFrame(),"Pasting Routing Information:",NULL,LAYOUT_CENTER_X)),
 	contents(new FXMatrix(getFrame(),2,MATRIX_BY_COLUMNS | LAYOUT_FILL_X|LAYOUT_FILL_Y))
@@ -57,9 +56,18 @@ CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
 	getFrame()->setVSpacing(1);
 	getFrame()->setHSpacing(1);
 
-	FXPacker *buttonPacker=new FXHorizontalFrame(getFrame(),LAYOUT_BOTTOM|LAYOUT_FILL_X);
-		new FXButton(buttonPacker,"Default",NULL,this,ID_DEFAULT_BUTTON,BUTTON_NORMAL);
-		new FXButton(buttonPacker,"Clear",NULL,this,ID_CLEAR_BUTTON,BUTTON_NORMAL);
+	// add clear and default buffers, and the dropdown list for choosing the mix type
+	FXPacker *buttonPacker=new FXHorizontalFrame((/*this cast might cause a problem in the future*/FXComposite *)(getFrame()->getParent()),LAYOUT_FILL_X | FRAME_RAISED|FRAME_THICK);
+		new FXButton(buttonPacker,"Default",NULL,this,ID_DEFAULT_BUTTON,BUTTON_NORMAL|LAYOUT_CENTER_Y);
+		new FXButton(buttonPacker,"Clear",NULL,this,ID_CLEAR_BUTTON,BUTTON_NORMAL|LAYOUT_CENTER_Y);
+		mixTypeFrame=new FXHorizontalFrame(buttonPacker,LAYOUT_CENTER_X|LAYOUT_CENTER_Y);
+			new FXLabel(mixTypeFrame,"Mix Type:",NULL,LAYOUT_CENTER_Y);
+			mixTypeComboBox=new FXComboBox(mixTypeFrame,16,4,NULL,0, COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK | COMBOBOX_STATIC | LAYOUT_CENTER_Y);
+			mixTypeComboBox->appendItem("Add",(void *)mmAdd);
+			mixTypeComboBox->appendItem("Subtract",(void *)mmSubtract);
+			mixTypeComboBox->appendItem("Multiply",(void *)mmMultiply);
+			mixTypeComboBox->appendItem("Average",(void *)mmAverage);
+			
 
 	new FXLabel(contents,"");
 	sourceLabel=new FXLabel(contents,"Source",NULL,LAYOUT_CENTER_X);
@@ -80,6 +88,7 @@ CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
 		for(unsigned x=0;x<MAX_CHANNELS;x++)
 			checkBoxes[y][x]=new FXCheckButton(checkBoxMatrix,"",NULL,0,CHECKBUTTON_NORMAL | LAYOUT_CENTER_X);
 	}
+
 }
 
 bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *actionParameters)
@@ -109,6 +118,8 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 			}
 		}
 	}
+
+	vector<vector<bool> > &pasteChannels=pasteInfo.second;
 
 	// don't show the dialog if there is only one channel in both the source and destination
 	if(actionSound->sound->getChannelCount()<=1 && isSingleClipboardChannel)
@@ -144,6 +155,9 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 	{
 		pasteChannels.clear();
 
+		// funky, gcc won't let me cast directly from void* to MixMethods.. I have to go thru int
+		pasteInfo.first=(MixMethods)(int)(mixTypeComboBox->getItemData(mixTypeComboBox->getCurrentItem()));
+
 		bool ret=false; // or all the checks together, if they're all false, it's like hitting cancel
 		for(unsigned y=0;y<MAX_CHANNELS;y++)
 		{
@@ -163,7 +177,7 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 
 void *CPasteChannelsDialog::getUserData()
 {
-	return(&pasteChannels);
+	return(&pasteInfo);
 }
 
 

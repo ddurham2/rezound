@@ -25,6 +25,7 @@
 #include "fox_compat.h"
 
 #include <vector>
+#include <utility>
 
 class CPasteChannelsDialog;
 
@@ -78,8 +79,11 @@ private:
 		FXLabel *destinationLabel;
 		FXMatrix *checkBoxMatrix;
 			FXCheckButton *checkBoxes[MAX_CHANNELS][MAX_CHANNELS];
+	
+	FXPacker *mixTypeFrame;
+		FXComboBox *mixTypeComboBox;
 
-	vector<vector<bool> > pasteChannels;
+	pair<MixMethods, vector<vector<bool> > > pasteInfo;
 };
 
 #endif

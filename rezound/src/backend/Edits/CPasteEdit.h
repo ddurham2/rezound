@@ -32,13 +32,15 @@ public:
 	{
 		ptInsert,
 		ptReplace,
-		ptMix, // is overwrite with mixMethod of mmOverwrite
-		ptLimitedMix, // is limited overwrite with mixMethod of mmOverwrite
+		ptOverwrite,
+		ptLimitedOverwrite,
+		ptMix,
+		ptLimitedMix,
 		ptFitMix // mix clipboard onto selection but make the clipboard fit into selection by changing its rate (or in the future, possible changing speed without pitch)
 	};
 
 	//                                        const bool pasteChannels[MAX_CHANNELS][MAX_CHANNELS]
-	CPasteEdit(const CActionSound actionSound,const vector<vector<bool> > &pasteChannels,PasteTypes pasteType,MixMethods mixMethod=mmOverwrite);
+	CPasteEdit(const CActionSound actionSound,const vector<vector<bool> > &pasteChannels,PasteTypes pasteType,MixMethods mixMethod);
 	virtual ~CPasteEdit();
 
 
