@@ -247,6 +247,12 @@ bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[])
 		if(gSettingsRegistry->keyExists("followPlayPosition"))
 			gFollowPlayPosition= gSettingsRegistry->getValue("followPlayPosition")=="true";
 
+		if(gSettingsRegistry->keyExists("skipMiddleMarginSeconds"))
+			gSkipMiddleMarginSeconds= atof(gSettingsRegistry->getValue("skipMiddleMarginSeconds").c_str());
+
+		if(gSettingsRegistry->keyExists("loopGapLengthSeconds"))
+			gLoopGapLengthSeconds= atof(gSettingsRegistry->getValue("loopGapLengthSeconds").c_str());
+
 		if(gSettingsRegistry->keyExists("levelMetersEnabled"))
 			gLevelMetersEnabled= gSettingsRegistry->getValue("levelMetersEnabled")=="true";
 
@@ -455,6 +461,9 @@ void deinitializeBackend()
 	gSettingsRegistry->createKey(("ReopenHistory"+DOT+"maxReopenHistory").c_str(),gMaxReopenHistory);
 
 	gSettingsRegistry->createKey("followPlayPosition",gFollowPlayPosition ? "true" : "false");
+
+	gSettingsRegistry->createKey("skipMiddleMarginSeconds",gSkipMiddleMarginSeconds);
+	gSettingsRegistry->createKey("loopGapLengthSeconds",gLoopGapLengthSeconds);
 
 	gSettingsRegistry->createKey("levelMetersEnabled",gLevelMetersEnabled ? "true" : "false");
 	gSettingsRegistry->createKey("frequencyAnalyzerEnabled",gFrequencyAnalyzerEnabled ? "true" : "false");

@@ -93,6 +93,10 @@ unsigned gSnapToCueDistance=5;
 bool gFollowPlayPosition=true;
 
 
+float gSkipMiddleMarginSeconds=2.0;
+float gLoopGapLengthSeconds=0.75;
+
+
 bool gLevelMetersEnabled=true;
 bool gFrequencyAnalyzerEnabled=true;
 

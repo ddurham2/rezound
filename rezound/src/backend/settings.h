@@ -122,6 +122,18 @@ extern bool gFollowPlayPosition;
 
 
 /*
+ * dealing when loopType is ltLoopSkipMost
+ * Specifies how much time should be played before skipping past the middle to (this much also before) the loop point
+ */
+extern float gSkipMiddleMarginSeconds;
+/*
+ * dealing when loopType is ltLoopSkipMost or ltLoopGapBeforeRepeat
+ * Specifies how long the skip is when skipping the middle when looping or how long the gap is when inserting a gap before repeating
+ */
+extern float gLoopGapLengthSeconds;
+
+
+/*
  * Flagged whether the level methods or frequency analyzer are enabled
  */
 extern bool gLevelMetersEnabled;
