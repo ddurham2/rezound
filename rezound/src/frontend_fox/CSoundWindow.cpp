@@ -113,7 +113,8 @@ void playTrigger(void *Pthis)
 {
 	CSoundWindow *that=(CSoundWindow *)Pthis;
 	// ??? this is called from another thread.. I don't know if it will cause a problem in FOX
-	that->timerHandle=that->getApp()->addTimeout(DRAW_PLAY_POSITION_TIME,that,CSoundWindow::ID_DRAW_PLAY_POSITION);
+	if(that->timerHandle==NULL)
+		that->timerHandle=that->getApp()->addTimeout(DRAW_PLAY_POSITION_TIME,that,CSoundWindow::ID_DRAW_PLAY_POSITION);
 }
 
 // ----------------------------------------------------------
@@ -267,6 +268,15 @@ CSoundWindow::~CSoundWindow()
 		getApp()->removeTimeout(timerHandle);
 
 	loadedSound->channel->removeOnPlayTrigger(playTrigger,this);
+
+	closing=true;
+/*
+	while(timerHandle!=NULL)
+	{
+		printf("waiting on timerHandle to fire\n");
+		fxsleep(1000); // sleep for 1 millisecond
+	}
+*/
 
 	delete addCueActionFactory;
 	delete removeCueActionFactory;
