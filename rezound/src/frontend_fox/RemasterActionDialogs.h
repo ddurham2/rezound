@@ -27,6 +27,28 @@
 #include "CActionParamDialog.h"
 
 
+// --- balance ------------------------
+
+class CSimpleBalanceActionDialog : public CActionParamDialog
+{
+public:
+	CSimpleBalanceActionDialog(FXWindow *mainWindow);
+	virtual ~CSimpleBalanceActionDialog(){}
+
+	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
+};
+
+class CCurvedBalanceActionDialog : public CActionParamDialog
+{
+public:
+	CCurvedBalanceActionDialog(FXWindow *mainWindow);
+	virtual ~CCurvedBalanceActionDialog(){}
+
+	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
+};
+
+
+
 // --- noise gate ------------------------
 
 class CNoiseGateDialog : public CActionParamDialog

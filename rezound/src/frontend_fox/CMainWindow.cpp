@@ -865,6 +865,8 @@ void CMainWindow::createMenus()
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&Remaster",NULL,menu);
+		new CActionMenuCommand(new CSimpleBalanceActionFactory(NULL,new CSimpleBalanceActionDialog(this)),menu,"");
+		new CActionMenuCommand(new CCurvedBalanceActionFactory(NULL,new CCurvedBalanceActionDialog(this)),menu,"");
 		new CActionMenuCommand(new CRemoveDCActionFactory(gChannelSelectDialog),menu,"");
 		new CActionMenuCommand(new CNoiseGateActionFactory(gChannelSelectDialog,new CNoiseGateDialog(this)),menu,"");
 		new CActionMenuCommand(new CCompressorActionFactory(gChannelSelectDialog,new CCompressorDialog(this)),menu,"");

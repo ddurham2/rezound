@@ -21,6 +21,119 @@
 #include "RemasterActionDialogs.h"
 #include "../backend/unit_conv.h"
 
+#include "CFOXIcons.h"
+
+#include "../backend/CActionSound.h"
+#include "../backend/CActionParameters.h"
+#include "../backend/CSound.h"
+
+
+
+// --- balance ------------------------
+
+#include "../backend/Remaster/CBalanceAction.h"
+static const double interpretValue_balance(const double x,const int s) { return unitRange_to_otherRange_linear(x,100,-100); }
+static const double uninterpretValue_balance(const double x,const int s) { return otherRange_to_unitRange_linear(x,100,-100); }
+static const double ret_balance(const double x) { return x/100.0; }
+
+CSimpleBalanceActionDialog::CSimpleBalanceActionDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Simple Balance Change")
+{
+	void *p0=newVertPanel(NULL,true);
+		void *p1=newHorzPanel(p0,false);
+			void *p2=newVertPanel(p1,false);
+				vector<string> items;
+				addComboTextEntry(p2,"Channel A",items,"");
+				addComboTextEntry(p2,"Channel B",items,"");
+
+			
+			addSlider(p1,"Balance","%",interpretValue_balance,uninterpretValue_balance,ret_balance,0.0,0,0,0,false);
+
+			vector<string> balanceTypes;
+			balanceTypes.push_back("Strict Balance");
+			balanceTypes.push_back("1x Pan");
+			balanceTypes.push_back("2x Pan");
+		addComboTextEntry(p0,"Balance Type",balanceTypes,CBalanceAction::getBalanceTypeExplaination());
+		/* not possible
+			vector<FXIcon *> balanceTypeIcons;
+			balanceTypeIcons.push_back(FOXIcons->Falling_Sawtooth_Wave___0_1_);
+			balanceTypeIcons.push_back(FOXIcons->Falling_Sawtooth_Wave___0_1_);
+			balanceTypeIcons.push_back(FOXIcons->Falling_Sawtooth_Wave___0_1_);
+		getComboText("Balance Type")->setIcons(balanceTypeIcons);
+		*/
+}
+
+bool CSimpleBalanceActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
+{
+	// exact same implementation as CCurvedBalanceActionDialog::show()
+
+	if(actionSound->sound->getChannelCount()<2)
+		return false;
+	else
+	{
+		if(getComboText("Channel A")->getItems().size()!=actionSound->sound->getChannelCount()) // don't alter selected channels if they didn't change in number
+		{
+			vector<string> items;
+			for(size_t t=0;t<actionSound->sound->getChannelCount();t++)
+				items.push_back("Channel "+istring(t));
+
+			// set the combo boxes according to actionSound
+			getComboText("Channel A")->setItems(items);
+			getComboText("Channel B")->setItems(items);
+			getComboText("Channel A")->setCurrentItem(0);
+			getComboText("Channel B")->setCurrentItem(1);
+		}
+
+		return CActionParamDialog::show(actionSound,actionParameters);
+	}
+}
+
+
+
+CCurvedBalanceActionDialog::CCurvedBalanceActionDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Curved Balance Change")
+{
+	void *p0=newVertPanel(NULL,true);
+		void *p1=newHorzPanel(p0,false);
+			void *p2=newVertPanel(p1,false);
+				vector<string> items;
+				addComboTextEntry(p2,"Channel A",items,"");
+				addComboTextEntry(p2,"Channel B",items,"");
+
+			addGraphWithWaveform(p1,"Balance Curve","Balance","%",interpretValue_balance,uninterpretValue_balance,ret_balance,0,0,0);
+
+		vector<string> balanceTypes;
+		balanceTypes.push_back("Strict Balance");
+		balanceTypes.push_back("1x Pan");
+		balanceTypes.push_back("2x Pan");
+		addComboTextEntry(p0,"Balance Type",balanceTypes,CBalanceAction::getBalanceTypeExplaination());
+}
+
+bool CCurvedBalanceActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
+{
+	// exact same implementation as CSimpleBalanceActionDialog::show()
+
+	if(actionSound->sound->getChannelCount()<2)
+		return false;
+	else
+	{
+		if(getComboText("Channel A")->getItems().size()!=actionSound->sound->getChannelCount()) // don't alter selected channels if they didn't change in number
+		{
+			vector<string> items;
+			for(size_t t=0;t<actionSound->sound->getChannelCount();t++)
+				items.push_back("Channel "+istring(t));
+
+			// set the combo boxes according to actionSound
+			getComboText("Channel A")->setItems(items);
+			getComboText("Channel B")->setItems(items);
+			getComboText("Channel A")->setCurrentItem(0);
+			getComboText("Channel B")->setCurrentItem(1);
+		}
+
+		return CActionParamDialog::show(actionSound,actionParameters);
+	}
+}
+
 
 
 
