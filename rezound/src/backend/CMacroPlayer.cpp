@@ -9,6 +9,7 @@
 #include "ASoundClipboard.h"
 
 #include <CNestedDataFile/CNestedDataFile.h>
+#include <TTempVarSetter.h>
 
 #include <algorithm>
 using namespace std;
@@ -35,7 +36,6 @@ CMacroPlayer::~CMacroPlayer()
  */
 bool CMacroPlayer::doMacro(ASoundFileManager *soundFileManager,unsigned &count)
 {
-	// ??? NOTE: crossfade edges information is not stored in the macro
 	// ??? it would be nice if it were possible only to undo the whole macro and only use one undo space rather than each action doing its own .. perhaps the prepareForUndoo flag could finally come in handy
 	printf("%s -- running macro: %s\n",__func__,macroName.c_str());
 
@@ -205,6 +205,12 @@ bool CMacroPlayer::doMacro(ASoundFileManager *soundFileManager,unsigned &count)
 					Warning(_("When the macro was recorded a clipboard existed with the description: ")+clipboardDesc+"\n\n"+_("However, now there is no clipboard with that description."));
 			}
 		}
+
+		// backup and temporarily set the crossfade settings
+		TTempVarSetter<CrossfadeEdgesTypes> t1(gCrossfadeEdges, (CrossfadeEdgesTypes)macroStore->getValue<unsigned>(key DOT "positioning" DOT "crossfadeEdges") );
+		TTempVarSetter<float> t2(gCrossfadeStartTime, macroStore->getValue<float>(key DOT "positioning" DOT "crossfadeStartTime") );
+		TTempVarSetter<float> t3(gCrossfadeStopTime, macroStore->getValue<float>(key DOT "positioning" DOT "crossfadeStopTime") );
+		TTempVarSetter<CrossfadeFadeMethods> t4(gCrossfadeFadeMethod, (CrossfadeFadeMethods)macroStore->getValue<unsigned>(key DOT "positioning" DOT "crossfadeFadeMethod") );
 
 		// do the action
 		bool wentOntoUndoStack=false;

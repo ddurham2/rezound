@@ -116,6 +116,7 @@ bool CMacroRecorder::pushAction(const string actionName,const CActionParameters 
 	file->setValue<bool>(actionKey DOT "selectionPositionsAreApplicable",actionFactory->selectionPositionsAreApplicable);
 	if(loadedSound && actionFactory->selectionPositionsAreApplicable)
 	{
+		// store info for positioning the start and stop positions at playback
 		file->setValue<sample_pos_t>(actionKey DOT "positioning" DOT "startPosition",loadedSound->channel->getStartPosition());
 		file->setValue<sample_pos_t>(actionKey DOT "positioning" DOT "stopPosition",loadedSound->channel->getStopPosition());
 		file->setValue<sample_pos_t>(actionKey DOT "positioning" DOT "audioLength",loadedSound->sound->getLength());
@@ -124,7 +125,11 @@ bool CMacroRecorder::pushAction(const string actionName,const CActionParameters 
 		file->setValue<string>(actionKey DOT "positioning" DOT "startPosCueName",macroActionParameters.startPosCueName);
 		file->setValue<string>(actionKey DOT "positioning" DOT "stopPosCueName",macroActionParameters.stopPosCueName);
 
-		// ??? NOTE: not storing the crossfade edges method that was used
+		// store info about crossfade
+		file->setValue<unsigned>(actionKey DOT "positioning" DOT "crossfadeEdges",gCrossfadeEdges);
+		file->setValue<float>(actionKey DOT "positioning" DOT "crossfadeStartTime",gCrossfadeStartTime);
+		file->setValue<float>(actionKey DOT "positioning" DOT "crossfadeStopTime",gCrossfadeStopTime);
+		file->setValue<unsigned>(actionKey DOT "positioning" DOT "crossfadeFadeMethod",gCrossfadeFadeMethod);
 	}
 
 	actionParameters->writeToFile(file,actionKey DOT "parameters");
