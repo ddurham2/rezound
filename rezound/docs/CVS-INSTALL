@@ -1,0 +1,7 @@
+
+
+   The CVS sources do not come with a configure script, but all the requirements to make configure are contained in the sources. 
+
+   In order to make the configure script you should have automake, autoconf, autoheader and libtool installed. Then, from the top source directory, run the bootstrap script. This will create the configure script. Now you can follow the instructions in INSTALL for normal build.
+
+
