@@ -45,7 +45,7 @@ protected:
 	void onSaveSound(const string filename,CSound *sound) const;
 
 	void loadSoundGivenSetup(const string filename,CSound *sound,AFfilesetup initialSetup) const;
-	void saveSoundGivenSetup(const string filename,CSound *sound,AFfilesetup initialSetup) const;
+	void saveSoundGivenSetup(const string filename,CSound *sound,AFfilesetup initialSetup,int fileFormatType) const;
 
 private:
 

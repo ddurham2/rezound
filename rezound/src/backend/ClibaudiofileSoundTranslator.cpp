@@ -243,7 +243,7 @@ void ClibaudiofileSoundTranslator::onSaveSound(const string filename,CSound *sou
 			//afInitInitCompressionParams(setup,AF_DEFAULT_TRACK, ... );
 		afInitFrameCount(setup,AF_DEFAULT_TRACK,sound->getLength());				// ??? I suppose I could allow the user to specify something shorter on the dialog
 
-		saveSoundGivenSetup(filename,sound,setup);
+		saveSoundGivenSetup(filename,sound,setup,fileType);
 
 		afFreeFileSetup(setup);
 	}
@@ -257,7 +257,7 @@ void ClibaudiofileSoundTranslator::onSaveSound(const string filename,CSound *sou
 }
 
 
-void ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSound *sound,AFfilesetup initialSetup) const
+void ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSound *sound,AFfilesetup initialSetup,int fileFormatType) const
 {
 	errorMessage="";
 	afSetErrorHandler(errorFunction);
@@ -270,32 +270,43 @@ void ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 	ost::TAutoBuffer<int> markIDs(sound->getCueCount());
 	if(sound->getCueCount()>0)
 	{
-		for(size_t t=0;t<sound->getCueCount();t++)
-			markIDs[t]=t;
-
-		afInitMarkIDs(initialSetup,AF_DEFAULT_TRACK,markIDs,(int)sound->getCueCount());
-		for(size_t t=0;t<sound->getCueCount();t++)
+		if(!afQueryLong(AF_QUERYTYPE_MARK,AF_QUERY_SUPPORTED,fileFormatType,0,0))
+			Warning("This format does not support saving cues");
+		else
 		{
-			// to indicate if the cue is anchored we append to the name:
-			// "|+" or "|-" whether it is or isn't
-			const string name=sound->getCueName(t)+"|"+(sound->isCueAnchored(t) ? "+" : "-");
-			afInitMarkName(initialSetup,AF_DEFAULT_TRACK,markIDs[t],name.c_str());
+			for(size_t t=0;t<sound->getCueCount();t++)
+				markIDs[t]=t;
 
-			// can't save position yet because that function requires a file handle, but
-			// we can't move this code after the afOpenFile, or it won't save cues at all
-			//afSetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[t],sound->getCueTime(t));
+			afInitMarkIDs(initialSetup,AF_DEFAULT_TRACK,markIDs,(int)sound->getCueCount());
+			for(size_t t=0;t<sound->getCueCount();t++)
+			{
+				// to indicate if the cue is anchored we append to the name:
+				// "|+" or "|-" whether it is or isn't
+				const string name=sound->getCueName(t)+"|"+(sound->isCueAnchored(t) ? "+" : "-");
+				afInitMarkName(initialSetup,AF_DEFAULT_TRACK,markIDs[t],name.c_str());
+
+				// can't save position yet because that function requires a file handle, but
+				// we can't move this code after the afOpenFile, or it won't save cues at all
+				//afSetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[t],sound->getCueTime(t));
+			}
 		}
 	}
 
 	// save the user notes
-		// ???
+	/* this is not implemented in libaudiofile yet
+	if(!afQueryLong(AF_QUERYTYPE_MISC,AF_QUERY_SUPPORTED,fileFormatType,0,0))
+		Warning("This format does not support saving user notes");
+	else
+	{
+	}
+	*/
 
 	unlink(filename.c_str());
 	AFfilehandle h=afOpenFile(filename.c_str(),"w",initialSetup);
 	if(h==AF_NULL_FILEHANDLE)
 		throw(runtime_error(string(__func__)+" -- error opening '"+filename+"' for writing -- "+errorMessage));
 
-	// ??? this if set may not completly handle all possilbilities
+	// ??? this if set may not completly handle all possibilities
 	int ret;
 	if(typeid(sample_t)==typeid(int16_t))
 		ret=afSetVirtualSampleFormat(h,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,sizeof(sample_t)*8);
@@ -348,8 +359,11 @@ void ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 		END_PROGRESS_BAR();
 		
 		// write the cue's positions
-		for(size_t t=0;t<sound->getCueCount();t++)
-			afSetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[t],sound->getCueTime(t));
+		if(afQueryLong(AF_QUERYTYPE_MARK,AF_QUERY_SUPPORTED,fileFormatType,0,0))
+		{
+			for(size_t t=0;t<sound->getCueCount();t++)
+				afSetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[t],sound->getCueTime(t));
+		}
 
 
 		afCloseFile(h);
