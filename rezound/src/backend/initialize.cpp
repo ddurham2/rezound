@@ -581,6 +581,9 @@ static void printUsage(const string app)
 	printf("\n");
 	printf("Project homepage\n\thttp://rezound.sourceforge.net\n");
 	printf("Please report bugs to\n\thttp://sourceforge.net/tracker/?atid=105056&group_id=5056\n");
+
+	printf("Please consider joining the ReZound-users mailing list:\n\thttp://lists.sourceforge.net/lists/listinfo/rezound-users\n");
+
 	
 	printf("\n");
 }
