@@ -59,6 +59,9 @@ AM_PROG_LIBTOOL dnl turn on using libtool
 AC_PATH_PROG(LAME, lame)
 	test -z "$LAME" && AC_MSG_WARN([lame not found on \$PATH -- this is necessary for loading and saving MP3s -- it is called 'notlame' on some distroes -- the source can be downloaded from http://lame.sourceforge.net])
 
+AC_PATH_PROG(CDRDAO, cdrdao)
+	test -z "$CDRDAO" && AC_MSG_WARN([cdrdao not found on \$PATH -- this is necessary for burning audio files to CD -- http://cdrdao.sourceforge.net])
+
 
 
 
