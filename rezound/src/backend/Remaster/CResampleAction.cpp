@@ -80,8 +80,13 @@ bool CResampleAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 		}
 	}
 
-	actionSound.stop=(sample_pos_t)((sample_fpos_t)actionSound.stop/oldSampleRate*newSampleRate);
-	actionSound.start=(sample_pos_t)((sample_fpos_t)actionSound.start/oldSampleRate*newSampleRate);
+	// adjust all cue positions (even anchored ones)
+	for(size_t t=0;t<actionSound.sound->getCueCount();t++)
+		actionSound.sound->setCueTime(t,(sample_pos_t)sample_fpos_round((sample_fpos_t)actionSound.sound->getCueTime(t)/oldSampleRate*newSampleRate));
+	
+	// adjust start and stop positions
+	actionSound.stop=(sample_pos_t)sample_fpos_round((sample_fpos_t)actionSound.stop/oldSampleRate*newSampleRate);
+	actionSound.start=(sample_pos_t)sample_fpos_round((sample_fpos_t)actionSound.start/oldSampleRate*newSampleRate);
 
 	actionSound.sound->setSampleRate(newSampleRate);
 
