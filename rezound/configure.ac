@@ -506,3 +506,7 @@ echo
 echo "Please consider joining the ReZound-users mailing list: 
 	http://lists.sourceforge.net/lists/listinfo/rezound-users"
 echo
+echo "You may also want to click the 'Monitor' icon on the 'Latest File Releases'"
+echo "section on http://sourceforge.net/projects/rezound/ to be informed when new"
+echo "releases are made."
+echo
