@@ -1,4 +1,5 @@
 - File Formats:
+	- (soon support for libsndfile in place of libaudiofile)
 	- Native ReZound
 	- WAVE			(libaudiofile)
 	- AIFF/AIFF-C		(libaudiofile)
@@ -11,6 +12,12 @@
 - Audio I/O Interfaces
 	- native OSS
 	- PortAudio ( http://www.portaudio.com )
+
+- File Operations
+	- Standard: New, Open, Save, Save As, Close, Revert
+	- Reopen History
+	- Save Selection As
+	- Save As Multiple Files
 
 - Fast Editing of Large Files
 
@@ -96,6 +103,7 @@
 
 - Looping Tools (much more to come)
 	- Make Selection Symetric
+	- Add Cues at Regular Intervals
 
 - Mastering/Remastering Tools (more to come)
 	- Remove DC Component
