@@ -562,7 +562,7 @@ long FXWaveRuler::onShowCueList(FXObject *object,FXSelector sel,void *ptr)
 	return 1;
 }
 
-#warning make it so that if you press esc while dragging a cue that it moves back to the original location
+/* ??? when I have keyboard event handling for doing something with the focused cue,  make it so that if you press esc while dragging a cue that it moves back to the original location */
 long FXWaveRuler::onLeftBtnPress(FXObject *object,FXSelector sel,void *ptr)
 {
 	FXEvent* event=(FXEvent*)ptr;
@@ -592,16 +592,18 @@ long FXWaveRuler::onMouseMove(FXObject *object,FXSelector sel,void *ptr)
 	if(event->state&LEFTBUTTONMASK && cueClicked<sound->getCueCount())
 	{	// dragging a cue around
 
-
 		const string cueName=sound->getCueName(cueClicked);
 		const FXint cueTextWidth=font->getTextWidth(cueName.data(),cueName.length());
 
+		// last_x is where the cue is on the screen now (possibly after autoscrolling)
+		const FXint last_x=parent->waveScrollArea->getCueScreenX(cueClicked);
+
 		// erase cue at old position
-		update((event->last_x-cueClickedOffset)-CUE_RADIUS-1,0,CUE_RADIUS*2+1+cueTextWidth+2,getHeight());	
+		update(last_x-CUE_RADIUS-1,0,CUE_RADIUS*2+1+cueTextWidth+2,getHeight());	
 
 		// erase vertical cue line at old position
 		if(gDrawVerticalCuePositions) 
-			parent->waveScrollArea->redraw(event->last_x-cueClickedOffset,1); 
+			parent->waveScrollArea->redraw(last_x,1); 
 
 		if(object==NULL) // simulated event from auto-scrolling
 		{
@@ -610,7 +612,7 @@ long FXWaveRuler::onMouseMove(FXObject *object,FXSelector sel,void *ptr)
 			dragCueHint->getParent()->translateCoordinatesTo(hint_win_x,hint_win_y,this,dragCueHint->getX(),dragCueHint->getY());
 	
 			// redraw what was under the dragCueHint (necessary when auto-scrolling)
-			parent->waveScrollArea->redraw(hint_win_x+(event->last_x-event->win_x),dragCueHint->getWidth());
+			parent->waveScrollArea->redraw(hint_win_x+(last_x-event->win_x),dragCueHint->getWidth()+2); /* +2 I guess because of some border? I dunno exactly, but it fixed the prob; except I did still see the problem once when dragging a cue way off to the side and wiggling it around sometimes going back over the window letting it autoscroll ??? */
 		}
 
 
