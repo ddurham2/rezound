@@ -33,6 +33,7 @@
 class CSoundWindow;
 class CMetersWindow;
 class CActionMenuCommand;
+class CNestedDataFile;
 
 class CMainWindow : public FXMainWindow
 {
@@ -185,8 +186,12 @@ protected:
 
 
 private:
+	map<const string,FXMenuCaption *> menuItemRegistry;
+	void buildActionMap();
+	void buildMenu(FXMenuPane *menu,const CNestedDataFile *menuLayoutFile,const string menuKey,const string itemName);
 
 	FXMenuBar 		*menubar;
+	FXMenuPane		*dummymenu;
 	FXPacker		*contents;		// top horizontal main frame which contains play controls and action controls
 	FXPacker 		*soundWindowFrame; 	// parent of all sound windows (only one is visible though)
 	CMetersWindow		*metersWindow;

@@ -25,4 +25,5 @@ include $(top_srcdir)/config/am_include.mk
 
 pkgdata_DATA= \
 	presets.dat \
+	menu.dat \
 	impulse_hall1.wav
