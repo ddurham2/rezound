@@ -80,6 +80,7 @@ bool CInvertPhaseAction::doActionSizeSafe(CActionSound &actionSound,bool prepare
 					return false;
 				}
 			}
+			actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
 		}
 	}
 
