@@ -1,5 +1,7 @@
 --- THINGS TO DO FOR SURE ---
 
+	- go through and remove all the unneeded commented code before making a release
+
 	- needs some compressor action(s)
 		- need a "link-channels" toggle parameter which causes all the channels to be compressed if any channel needs to be compressed
 
@@ -114,7 +116,7 @@
 
 --- POSSIBLE THINGS TO DO ---
 
-	- A simple thing that could avoid errors later... create a template class that is used (might already exist in commonc++) that locks a given mutex on construction and unlock on deconstruction... this would let me remove the try catchs that are just there to unlock the mutex and would keep me from having to remember to write code later that will unlock the mutex... just declare local variable of one of these and it will do it
+	- A simple thing that could avoid errors later... create a template class that is used that locks a given mutex on construction and unlock on deconstruction... this would let me remove the try catchs that are just there to unlock the mutex and would keep me from having to remember to write code later that will unlock the mutex... just declare local variable of one of these and it will do it
 
 	- After reading more of the DSP book about filters
 		- create a data type in CActionParameters which is the filter to apply to the sound

@@ -40,7 +40,7 @@ ASoundRecorder::~ASoundRecorder()
 
 void ASoundRecorder::start(const sample_pos_t maxDuration)
 {
-	mutex.EnterMutex();
+	mutex.lock();
 	try
 	{
 		if(!started)
@@ -52,18 +52,18 @@ void ASoundRecorder::start(const sample_pos_t maxDuration)
 				stopPosition=NIL_SAMPLE_POS;
 		}
 
-		mutex.LeaveMutex();
+		mutex.unlock();
 	}
 	catch(...)
 	{
-		mutex.LeaveMutex();
+		mutex.unlock();
 		throw;
 	}
 }
 
 void ASoundRecorder::stop()
 {
-	mutex.EnterMutex();
+	mutex.lock();
 	try
 	{
 		if(started)
@@ -88,11 +88,11 @@ void ASoundRecorder::stop()
 			}
 		}
 
-		mutex.LeaveMutex();
+		mutex.unlock();
 	}
 	catch(...)
 	{
-		mutex.LeaveMutex();
+		mutex.unlock();
 		throw;
 	}
 }
@@ -104,7 +104,7 @@ void ASoundRecorder::redo(const sample_pos_t maxDuration)
 	// any extra allocated space beyond what was recorded that doesn't need to be
 	// there
 
-	mutex.EnterMutex();
+	mutex.lock();
 	try
 	{
 		// clear all cues that were added during the last record
@@ -118,11 +118,11 @@ void ASoundRecorder::redo(const sample_pos_t maxDuration)
 		else
 			stopPosition=NIL_SAMPLE_POS;
 
-		mutex.LeaveMutex();
+		mutex.unlock();
 	}
 	catch(...)
 	{
-		mutex.LeaveMutex();
+		mutex.unlock();
 		throw;
 	}
 }
@@ -210,7 +210,7 @@ void ASoundRecorder::onData(const sample_t *samples,const size_t _sampleFramesRe
 */
 
 	size_t sampleFramesRecorded=_sampleFramesRecorded;
-	mutex.EnterMutex();
+	mutex.lock();
 	try
 	{
 		const unsigned channelCount=sound->getChannelCount();
@@ -283,16 +283,16 @@ void ASoundRecorder::onData(const sample_t *samples,const size_t _sampleFramesRe
 
 			if(stopPosition!=NIL_SAMPLE_POS && writePos>=stopPosition)
 			{
-				mutex.LeaveMutex();
+				mutex.unlock();
 				stop();
 				return;
 			}
 		}
-		mutex.LeaveMutex();
+		mutex.unlock();
 	}
 	catch(...)
 	{
-		mutex.LeaveMutex();
+		mutex.unlock();
 		throw;
 	}
 }

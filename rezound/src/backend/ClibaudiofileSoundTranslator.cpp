@@ -28,7 +28,7 @@
 #include <istring>
 #include <TAutoBuffer.h>
 
-#include <cc++/path.h>
+#include <CPath.h>
 
 #include "CSound.h"
 #include "AStatusComm.h"
@@ -100,7 +100,7 @@ void ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 	if(size<0)
 		throw(runtime_error(string(__func__)+" -- libaudiofile reports the data length as "+istring(size)));
 
-	const sample_pos_t fileSize=ost::Path(filename).getSize(false)/(channelCount*sizeof(sample_t));
+	const sample_pos_t fileSize=CPath(filename).getSize(false)/(channelCount*sizeof(sample_t));
 	if(fileSize<(size/25)) // ??? possibly 1/25th compression... really just trying to check for a sane value
 	{
 		Warning("libaudiofile reports that "+filename+" contains "+istring(size)+" samples yet the file is most likely not large enough to contain that many samples.\nLoading what can be loaded.");
@@ -117,7 +117,7 @@ void ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 	{
 		sound->clearCues();
 
-		ost::TAutoBuffer<int> markIDs(cueCount);
+		TAutoBuffer<int> markIDs(cueCount);
 		afGetMarkIDs(h,AF_DEFAULT_TRACK,markIDs);
 		for(size_t t=0;t<cueCount;t++)
 		{
@@ -164,7 +164,7 @@ void ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 			accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
 
 
-		ost::TAutoBuffer<sample_t> buffer((size_t)(afGetVirtualFrameSize(h,AF_DEFAULT_TRACK,1)*4096/sizeof(sample_t)));
+		TAutoBuffer<sample_t> buffer((size_t)(afGetVirtualFrameSize(h,AF_DEFAULT_TRACK,1)*4096/sizeof(sample_t)));
 		sample_pos_t pos=0;
 		AFframecount count=size/4096+1;
 		BEGIN_PROGRESS_BAR("Loading Sound",0,count);
@@ -217,7 +217,7 @@ void ClibaudiofileSoundTranslator::onSaveSound(const string filename,CSound *sou
 {
 	int fileType;
 
-	const string extension=istring(ost::Path(filename).Extension()).lower();
+	const string extension=istring(CPath(filename).extension()).lower();
 	if(extension=="aiff")
 		fileType=AF_FILE_AIFF;
 	else if(extension=="wav")
@@ -267,7 +267,7 @@ void ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 	const sample_pos_t size=sound->getLength();
 
 	// setup for saving the cues (except for positions)
-	ost::TAutoBuffer<int> markIDs(sound->getCueCount());
+	TAutoBuffer<int> markIDs(sound->getCueCount());
 	if(sound->getCueCount()>0)
 	{
 		if(!afQueryLong(AF_QUERYTYPE_MARK,AF_QUERY_SUPPORTED,fileFormatType,0,0))
@@ -334,7 +334,7 @@ void ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,CSo
 
 		
 		// save the audio data
-		ost::TAutoBuffer<sample_t> buffer((size_t)(channelCount*4096));
+		TAutoBuffer<sample_t> buffer((size_t)(channelCount*4096));
 		sample_pos_t pos=0;
 		AFframecount count=size/4096+1;
 		BEGIN_PROGRESS_BAR("Saving Sound",0,count);

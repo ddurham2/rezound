@@ -31,7 +31,7 @@
 #include <string>
 #include <algorithm>
 
-#include <cc++/path.h>
+#include <CPath.h>
 
 //#if defined(__SOLARIS_GNU_CPP__) || defined(__SOLARIS_SUN_CPP__) || defined(__LINUX_GNU_CPP__)
 	// ??? if windows is posix... I think it should have these necessary files... We'll see when we try to compile there
@@ -115,7 +115,7 @@ void CMultiFile::open(const string _initialFilename,const bool canCreate)
 	try
 	{
 		if(canCreate)
-			ost::Path(initialFilename).Touch();
+			CPath(initialFilename).touch();
 
 		// open first file
 		RFileHeader header;
@@ -290,7 +290,7 @@ void CMultiFile::prvSetSize(const l_addr_t newSize,const l_addr_t forWriteSize)
 		for(size_t t=openFileCount;t<neededFileCount;t++)
 		{
 			const string filename=buildFilename(t);
-			ost::Path(filename).Touch();
+			CPath(filename).touch();
 			openFile(filename,*((RFileHeader *)NULL),false,false);
 			if(t!=neededFileCount-1)
 				setFileSize(openFiles[openFileCount-1],PHYSICAL_MAX_FILE_SIZE);

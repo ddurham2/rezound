@@ -23,7 +23,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <cc++/path.h>
+#include <CPath.h>
 
 #include <istring>
 
@@ -138,10 +138,10 @@ bool CNewSoundDialog::validateOnOkay()
 
 
 		// make sure filename has some extension at the end
-		if(ost::Path(filename).Extension()=="")
+		if(CPath(filename).extension()=="")
 			filename.append(".rez");
 
-		if(ost::Path(filename).Exists())
+		if(CPath(filename).exists())
 		{
 			if(Question(string("Are you sure you want to overwrite the existing file:\n   ")+filename.c_str(),yesnoQues)!=yesAns)
 				return(false);

@@ -5,28 +5,16 @@ REQUIRED LIBRARIES:
 
 Before attempting to build ReZound you'll need the following:
 
-1. audiofile-0.2.3 - 	Development was done with v0.2.3, but earlier
+1. audiofile-0.2.3 (or later) -- Development was done with v0.2.3, but earlier
 versions above than v0.1.9-0.1 may work as well. audiofile is available
 on most distributions, if your version is not up to date, you can download 
 at http://oss.sgi.com/projects/audiofile/
 
+2. fox-0.99.193 (or later) -- The fox GUI toolkit, ReZound should build fine with v0.99.193, but versions earlier that 0.99.87-2 may not work. If you don't have fos or need to get a newer version go to http://www.fox-toolkit.org/
 
-2. gnucc-1.9.4 (a.k.a. commonc++-1.9.4 (>1.9.1-11)) - 	GNU Common C++ library,
-development was done with v1.9.4 but earlier versions may be found to work. If
-you don't have libgnucc then you can download it at
-http://www.gnu.org/software/commonc++
- ***NOTE*** commonc++2.x is usually a different series of packages than the 1.x series.
- Even the commonc++2.x tarball places its header files in /usr/.../include/cc++2 so that 
- both versions can exist on the same system.  ReZound has not been written to use the 
- version2 API, but requires a 1.x series install.  (Frankly, all I use commonc++ for is 
- mutexes and threads, and I may go to something more standard like the SDL which seems to 
- be installed on more boxes than commonc++.  Sorry for any inconvenience.)
+3. pthreads -- This is pretty much standard on all Linux systems' glibc package now. If you don't have it already, It should be available on your distribution discs.
 
-3. fox-0.99.193 -	The fox GUI toolkit, ReZound should build fine with v0.99.193, but versions earlier that 0.99.87-2 may not work. If you don't have fos or need to get a newer version go to http://www.fox-toolkit.org/
-
-4. pthreads -- This is pretty much standard on all Linux systems' glibc package now. If you don't have it already, It should be available on your distribution discs.
-
-5. libdl -- This is also common library that is most likely present with the glibc package. As with pthreads it should be avalable on your distribution discs if it's not already installed. 
+4. libdl -- This is also common library that is most likely present with the glibc package. As with pthreads it should be avalable on your distribution discs if it's not already installed. 
 
 
 You should also have a working c++ compiler (g++ is preferred) as well as the normal group of regular libraries and headers for compiling packages. 
@@ -236,22 +224,22 @@ ADDITIONAL CONFIGURE FLAGS:
 
 --disable-audiofile-check	Skips the check for the audiofile package. 
 --disable-FOX-check		Skips the check for the FOX package.
---disable-ccgnu-check		Skips the check for the Commonc++ library
 
 --with-audiofile-path		Allows you to manually pass the path to
 --with-FOX-path			libraries that may not be in default linker 
---with-ccgnu-path		path. Pass the path to lirary directory
+				path. Pass the path to lirary directory
 				(eg: --with-FOX-path=/usr/lib gets -L/usr/lib)
 
 --with-audiofile-include	Allows you to manually pass the path to 
 --with-FOX-include		header files, which may not be in a normal place
---with-ccgnu-include		The headers are #included as <fox/fx.h>, so if
+				The headers are #included as <fox/fx.h>, so if
 				your FOX headers are in /home/ant/include/fox,
 				you would use 
 				--with-FOX-includes=/home/ant/include
 
 	Using the --with-LIB-path or --with-LIB-include options will override
 	the library check. Also these -I and -L flags will be passed to all
-	Makefiles, so if your FOX and ccgnu libraries are both under
-	/home/l/le/lergnom/lib, you'll only need to pass one --with-LIB-path
+	Makefiles, so if 2 of the libraries are under /home/l/le/lergnom/lib, 
+	you'll only need to pass one --with-LIB-path
 	option.
+

@@ -26,7 +26,7 @@
 
 #include "ASoundPlayer.h"
 
-#include <cc++/thread.h>
+#include <AThread.h>
 
 class COSSSoundPlayer : public ASoundPlayer
 {
@@ -44,27 +44,23 @@ private:
 	bool initialized;
 	int audio_fd;
 
-	class CPlayThread : public ost::Thread
+	class CPlayThread : public AThread
 	{
 	public:
 		CPlayThread(COSSSoundPlayer *parent);
 		virtual ~CPlayThread();
 
-		void wait() { Terminate(); }
-
 		bool kill;
 
 	protected:
+		void main();
 
 		COSSSoundPlayer *parent;
 
-		void Run();
 
 	};
 
 	CPlayThread playThread;
-	ost::Semaphore threadFinishedSem;
-
 	friend class CPlayThread;
 };
 

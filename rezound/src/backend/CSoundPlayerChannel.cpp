@@ -299,12 +299,12 @@ void CSoundPlayerChannel::setStopPosition(sample_pos_t newPosition)
 
 void CSoundPlayerChannel::lock() const
 {
-	mutex.EnterMutex();
+	mutex.lock();
 }
 
 void CSoundPlayerChannel::unlock() const
 {
-	mutex.LeaveMutex();
+	mutex.unlock();
 }
 
 void CSoundPlayerChannel::addOnPlayTrigger(TriggerFunc triggerFunc,void *data)

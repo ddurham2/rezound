@@ -33,9 +33,8 @@
 #include <vector>
 #include <queue>
 
-//#include <CMutex.h>
-//#include <CRWMutex.h>
-#include <cc++/thread.h>
+#include <CMutex.h>
+#include <CRWLock.h>
 
 #include "CMultiFile.h"
 
@@ -187,13 +186,9 @@ private:
 	friend struct RLogicalBlock;
 	friend struct RPhysicalBlock;
 
-	//mutable CRWMutex structureMutex;
-	mutable ost::ThreadLock structureMutex;
-	mutable int _sharedLockCount;
-	mutable bool _isExclusiveLocked;
+	mutable CRWLock structureMutex;
 
-	//mutable CMutex accesserInfoMutex;
-	mutable ost::Mutex accesserInfoMutex;
+	mutable CMutex accesserInfoMutex;
 	void lockAccesserInfo() const;
 	void unlockAccesserInfo() const;
 

@@ -24,8 +24,6 @@
 
 #include <istring>
 
-#include <cc++/path.h>
-
 #include "settings.h"
 
 #include "CNewSoundDialog.h"

@@ -26,7 +26,7 @@
 
 class CSoundPlayerChannel;
 
-#include <cc++/thread.h>
+#include <CMutex.h>
 
 #include "CTrigger.h"
 #include "CEnvelope.h"
@@ -100,7 +100,7 @@ private:
 	void lock() const;
 	void unlock() const;
 
-	mutable ost::Mutex mutex;
+	mutable CMutex mutex;
 	ASoundPlayer *player;
 	CSoundPlayerChannel(ASoundPlayer *_player,CSound *_sound);
 

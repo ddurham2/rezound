@@ -24,6 +24,9 @@
 #include <fox/fx.h>
 #include <stdexcept>
 
+#include <CPath.h>
+DECLARE_STATIC_CPATH // to declare CPath::dirDelim
+
 #include "CMainWindow.h"
 #include "CStatusComm.h"
 

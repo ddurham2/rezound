@@ -23,7 +23,7 @@
 
 #include <stdexcept>
 
-#include <cc++/path.h>
+#include <CPath.h>
 
 
 #define CURRENT_FORMAT_VERSION 1
@@ -77,7 +77,7 @@ void Cold_rezSoundTranslator::onLoadSound(const string filename,CSound *sound) c
 		fread(&tmp,sizeof(tmp),1,f);
 		Data_Style=(RezDataStyles)tmp;
 
-		unsigned size=(ost::Path(filename).getSize()-ftell(f))/(channelCount*sizeof(sample_t));
+		unsigned size=(CPath(filename).getSize()-ftell(f))/(channelCount*sizeof(sample_t));
 
 
 		sound->createWorkingPoolFile(filename,sampleRate,channelCount,size);

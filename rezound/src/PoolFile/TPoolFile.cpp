@@ -141,9 +141,6 @@
 template<class l_addr_t,class p_addr_t>
 	TPoolFile<l_addr_t,p_addr_t>::TPoolFile(const size_t _maxBlockSize,const char *_formatSignature) :
 
-	_sharedLockCount(0),
-	_isExclusiveLocked(false),
-
 	formatSignature(_formatSignature),
 
 	maxBlockSize(_maxBlockSize),
@@ -366,7 +363,7 @@ template<class l_addr_t,class p_addr_t>
 
 		try
 		{
-			ost::TAutoBuffer<int8_t> temp(maxBlockSize);
+			TAutoBuffer<int8_t> temp(maxBlockSize);
 			//auto_ptr<int8_t> temp(new int8_t[maxBlockSize]);
 
 			const p_addr_t length=blockFile.getSize();
@@ -947,69 +944,49 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::sharedLock() const
 {
-	structureMutex.ReadLock();
-
-	accesserInfoMutex.EnterMutex(); // so the counter is protected
-	_sharedLockCount++;
-	accesserInfoMutex.LeaveMutex();
+	structureMutex.readLock();
 }
 
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::sharedTrylock() const
 {
-	bool l=structureMutex.TryReadLock();
-	if(l)
-	{
-		accesserInfoMutex.EnterMutex(); // so the counter is protected
-		_sharedLockCount++;
-		accesserInfoMutex.LeaveMutex();
-	}
-	return(l);
+	return(structureMutex.tryReadLock());
 }
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::sharedUnlock() const
 {
-	structureMutex.Unlock();
-
-	accesserInfoMutex.EnterMutex(); // so the counter is protected
-	_sharedLockCount--;
-	accesserInfoMutex.LeaveMutex();
+	structureMutex.unlock();
 }
 
 template<class l_addr_t,class p_addr_t>
 	const size_t TPoolFile<l_addr_t,p_addr_t>::getSharedLockCount() const
 {
-	return(_sharedLockCount);
+	return(structureMutex.getReadLockCount());
 }
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::exclusiveLock() const
 {
-	structureMutex.WriteLock();
-	_isExclusiveLocked=true;
+	structureMutex.writeLock();
 }
 
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::exclusiveTrylock() const
 {
-	bool l=structureMutex.TryWriteLock();
-	if(l)
-		_isExclusiveLocked=true;
-	return(l);
+	return(structureMutex.tryWriteLock());
 }
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::exclusiveUnlock() const
 {
-	structureMutex.Unlock();
-	_isExclusiveLocked=false;
+	structureMutex.unlock();
 }
 
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::isExclusiveLocked() const
 {
-	return(_isExclusiveLocked);
+	return(structureMutex.isLockedForWrite());
 }
 
 
@@ -1021,13 +998,13 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::lockAccesserInfo() const
 {
-	accesserInfoMutex.EnterMutex();
+	accesserInfoMutex.lock();
 }
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::unlockAccesserInfo() const
 {
-	accesserInfoMutex.LeaveMutex();
+	accesserInfoMutex.unlock();
 }
 
 
@@ -1517,7 +1494,7 @@ template<class l_addr_t,class p_addr_t>
 		const uint32_t SATSize=SAT[poolId].size();
 		f->write(&SATSize,sizeof(SATSize),multiFileHandle);
 
-		ost::TAutoBuffer<uint8_t> mem(SATSize*RLogicalBlock().getMemSize());
+		TAutoBuffer<uint8_t> mem(SATSize*RLogicalBlock().getMemSize());
 
 		// write each SAT entry
 		size_t offset=0;
@@ -1595,7 +1572,7 @@ template<class l_addr_t,class p_addr_t>
 		f->read(&SATSize,sizeof(SATSize),multiFileHandle);
 
 		// read SAT into mem buffer
-		ost::TAutoBuffer<uint8_t> mem(SATSize*RLogicalBlock().getMemSize());
+		TAutoBuffer<uint8_t> mem(SATSize*RLogicalBlock().getMemSize());
 		f->read(mem,mem.getSize(),multiFileHandle);
 
 		// read each SAT entry from that mem buffer and put into the actual SAT data-member
@@ -3360,7 +3337,7 @@ template<class l_addr_t,class p_addr_t>
 	// should actually move the block if the file space isn't there (mean the block wasn't even created yet)
 	if((block.physicalStart+block.size)<=blockFile.getSize())
 	{
-		ost::TAutoBuffer<int8_t> tempBlockSpace(maxBlockSize);
+		TAutoBuffer<int8_t> tempBlockSpace(maxBlockSize);
 		//auto_ptr<int8_t> tempBlockSpace(new int8_t[maxBlockSize]);
 
 		// make sure there's space to put the data onces it's read

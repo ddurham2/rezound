@@ -26,8 +26,6 @@
 
 #include <istring>
 
-#include <cc++/path.h>
-
 #include "settings.h"
 
 #include "../backend/CLoadedSound.h"

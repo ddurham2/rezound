@@ -49,7 +49,7 @@ static COSSSoundPlayer *soundPlayer=NULL;
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <cc++/path.h>
+#include <CPath.h>
 
 void setupSoundTranslators();
 
@@ -60,7 +60,7 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 		setupSoundTranslators();
 
 		// make sure that ~/.rezound exists
-		gUserDataDirectory=string(getenv("HOME"))+istring(ost::Path::dirDelim)+".rezound";
+		gUserDataDirectory=string(getenv("HOME"))+istring(CPath::dirDelim)+".rezound";
 		const int mkdirResult=mkdir(gUserDataDirectory.c_str(),0700);
 		const int mkdirErrno=errno;
 		if(mkdirResult!=0 && mkdirErrno!=EEXIST)
@@ -69,14 +69,14 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 
 		// determine where /usr/share/rezound has been placed (try the install-from directory first)
 		gSysDataDirectory=SOURCE_DIR"/share/rezound";
-		if(!ost::Path(gSysDataDirectory).Exists()) 
+		if(!CPath(gSysDataDirectory).exists()) 
 			gSysDataDirectory=DATA_DIR"/rezound";
 
 
-		gUserPresetsFile=gUserDataDirectory+istring(ost::Path::dirDelim)+"presets.dat";
-		gSysPresetsFile=gSysDataDirectory+istring(ost::Path::dirDelim)+"presets.dat";
+		gUserPresetsFile=gUserDataDirectory+istring(CPath::dirDelim)+"presets.dat";
+		gSysPresetsFile=gSysDataDirectory+istring(CPath::dirDelim)+"presets.dat";
 
-		ost::Path(gUserPresetsFile).Touch();
+		CPath(gUserPresetsFile).touch();
 
 
 
@@ -89,8 +89,8 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 			// still exist for all previously open files)
 		try
 		{
-			const string registryFilename=gUserDataDirectory+istring(ost::Path::dirDelim)+"registry.dat";
-			ost::Path(registryFilename).Touch();
+			const string registryFilename=gUserDataDirectory+istring(CPath::dirDelim)+"registry.dat";
+			CPath(registryFilename).touch();
 			gSettingsRegistry=new CNestedDataFile(registryFilename,true);
 		}
 		catch(exception &e)

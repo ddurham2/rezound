@@ -26,7 +26,7 @@
 
 #include "ASoundRecorder.h"
 
-#include <cc++/thread.h>
+#include <AThread.h>
 
 class COSSSoundRecorder : public ASoundRecorder
 {
@@ -45,27 +45,21 @@ private:
 	int audio_fd;
 	bool initialized;
 
-	class CRecordThread : public ost::Thread
+	class CRecordThread : public AThread
 	{
 	public:
 		CRecordThread(COSSSoundRecorder *parent);
 		virtual ~CRecordThread();
 
-		void wait() { Terminate(); }
-
 		bool kill;
 
 	protected:
+		void main();
 
 		COSSSoundRecorder *parent;
-
-		void Run();
-
 	};
 
 	CRecordThread recordThread;
-	ost::Semaphore threadFinishedSem;
-	//ost::Mutex redoMutex;
 
 	friend class CRecordThread;
 };

@@ -29,7 +29,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include <cc++/thread.h>
+#include <CMutex.h>
 
 typedef void (* TriggerFunc)(void *data);
 
@@ -76,7 +76,7 @@ private:
 	};
 
 	vector<REvent> events;
-	ost::Mutex mutex;
+	CMutex mutex;
 
 
 };

@@ -59,8 +59,7 @@ COSSSoundRecorder::COSSSoundRecorder() :
 	audio_fd(-1),
 	initialized(false),
 
-	recordThread(this),
-	threadFinishedSem(1)
+	recordThread(this)
 {
 }
 
@@ -161,13 +160,8 @@ void COSSSoundRecorder::initialize(CSound *sound)
 		
 
 		// start record thread
-		threadFinishedSem.Wait(); // will immediatly return only used to decrement Sem
 		recordThread.kill=false;
-		if(recordThread.Start())
-		{
-			threadFinishedSem.Post();
-			throw(runtime_error(string(__func__)+" -- error starting record thread"));
-		}
+		recordThread.start();
 
 		initialized=true;
 	}
@@ -181,9 +175,7 @@ void COSSSoundRecorder::deinitialize()
 	{
 		// stop record thread
 		recordThread.kill=true;
-
-		// because recordThread.wait() did nothing expected, I use a semaphore to wait on the thread to finish
-		threadFinishedSem.Wait();
+		recordThread.wait();
 
 		// close OSS audio device (which should cause the read to finish)
 		close(audio_fd);
@@ -219,7 +211,7 @@ void COSSSoundRecorder::redo()
 	loaded machine where the recording thread wouldn't be able to get
 	around to reading as readily.
 
-	redoMutex.EnterMutex();
+	redoMutex.lock();
 	try
 	{
 */
@@ -245,11 +237,11 @@ void COSSSoundRecorder::redo()
 		f&=~O_NONBLOCK;
 		fcntl(audio_fd,F_SETFL,f);
 
-		redoMutex.LeaveMutex();
+		redoMutex.unlock();
 	}
 	catch(...)
 	{
-		redoMutex.LeaveMutex();
+		redoMutex.unlock();
 		throw;
 	}
 
@@ -257,7 +249,7 @@ void COSSSoundRecorder::redo()
 }
 
 COSSSoundRecorder::CRecordThread::CRecordThread(COSSSoundRecorder *_parent) :
-	Thread(),
+	AThread(),
 
 	kill(false),
 	parent(_parent)
@@ -268,7 +260,7 @@ COSSSoundRecorder::CRecordThread::~CRecordThread()
 {
 }
 
-void COSSSoundRecorder::CRecordThread::Run()
+void COSSSoundRecorder::CRecordThread::main()
 {
 /*
 	bool redoMutexLocked=false;
@@ -279,7 +271,7 @@ void COSSSoundRecorder::CRecordThread::Run()
 		while(!kill)
 		{
 /*
-			parent->redoMutex.EnterMutex();
+			parent->redoMutex.lock();
 			redoMutexLocked=true;
 */
 
@@ -291,21 +283,16 @@ void COSSSoundRecorder::CRecordThread::Run()
 
 /*
 			redoMutexLocked=false;
-			parent->redoMutex.LeaveMutex();
+			parent->redoMutex.unlock();
 */
 		}
-
-		parent->threadFinishedSem.Post();
 	}
 	catch(exception &e)
 	{
 /*
 		if(redoMutexLocked)
-			parent->redoMutex.LeaveMutex();
+			parent->redoMutex.unlock();
 */
-
-		parent->threadFinishedSem.Post();
-
 		cerr << "exception caught in record thread: " << e.what() << endl;
 
 		abort();
@@ -314,11 +301,8 @@ void COSSSoundRecorder::CRecordThread::Run()
 	{
 /*
 		if(redoMutexLocked)
-			parent->redoMutex.LeaveMutex();
+			parent->redoMutex.unlock();
 */
-
-		parent->threadFinishedSem.Post();
-
 		cerr << "unknown exception caught in record thread" << endl;
 
 		abort();

@@ -25,7 +25,7 @@
 
 #include <stdexcept>
 
-#include <cc++/path.h>
+#include <CPath.h>
 
 #include <istring>
 
@@ -1228,7 +1228,7 @@ bool CSound::createFromWorkingPoolFileIfExists(const string originalFilename,boo
 	{
 		if(promptIfFound)
 		{
-			if(ost::Path(getWorkingFilename(originalFilename)).Exists())
+			if(CPath(getWorkingFilename(originalFilename)).exists())
 			{
 				// ??? probably have a cancel button to avoid loaded the sound at all.. probably throw an exception of a different type which is an ESkipLoadingFile
 				if(Question("File: "+getWorkingFilename(originalFilename)+"\n\nA temporary file was found indicating that this file was previously being edited when a crash occurred or the process was killed.\n\nDo you wish to attempt to recover from this temporary file (otherwise the file will be deleted)?",yesnoQues)==noAns)
@@ -1352,7 +1352,7 @@ void CSound::saveMetaInfo()
 const string CSound::getWorkingFilename(const string originalFilename)
 {
 	// ??? this directory needs to be a setting.. and perhaps in the home directory too ~/.ReZound or some other configured temp sapce directory
- 	return("/tmp/"+ost::Path(originalFilename).BaseName()+".pf$");
+ 	return("/tmp/"+CPath(originalFilename).baseName()+".pf$");
 }
 
 void CSound::createPeakChunkAccessers()

@@ -53,8 +53,9 @@
 
 */
 
-#include <cc++/thread.h>
 #include <string>
+
+#include <CMutex.h>
 
 class ASoundRecorder
 {
@@ -110,7 +111,7 @@ private:
 
 	float lastPeakValues[MAX_CHANNELS];
 
-	ost::Mutex mutex;
+	CMutex mutex;
 
 	// deinitialize invokes this to cleanup any unnecessary prealloced space
 	// and actually adds the cues to the sound if any were requested

@@ -53,7 +53,6 @@ dnl ---------------------|
 dnl Checks for libraries.|
 dnl ---------------------|
 AC_CHECK_LIB(m, sqrt)
-AC_CHECK_LIB(dl, dlopen)
 AC_CHECK_LIB(pthread, pthread_create)
 
 dnl see config/cxx-lib.m4 for ajv_ macro definitions. 
@@ -64,13 +63,6 @@ dnl function in libaudiofile. I still have to work this so configure will
 dnl abort if the test fails.
 ajv_CHECK_LIB_ABORT(audiofile, afSetVirtualSampleFormat,
 AUDIOFILE,[http://oss.sgi.com/projects/audiofile/])
-
-dnl I added an extra argument to ajv_CXX_CHECK_LIB which allows us to pass
-dnl extra -l flags so this test (as suggested by Davy) would work. 
-dnl As for potential problems with a compiler not recognizing namespaces:
-dnl For now let's worry about g++, and sooner or later everything should
-dnl become ANSI and recognize namespaces.
-ajv_CXX_CHECK_LIB([ccgnu],ost::Mutex,cc++/thread.h,[http://www.gnu.org/directory/commoncpp.html (NOTE: the version 1.x series is required)],[-lpthread -ldl])
 
 dnl This is a check for a class in a C++ library. To pinpoint
 dnl the specific version we need we could change what class is linked.
@@ -129,6 +121,6 @@ AC_DEFINE_UNQUOTED(DATA_DIR, "$ajv_data_dir",[ This the --datadir (share) set
 by configure ])
 
 
-AC_OUTPUT(Makefile src/Makefile src/misc/Makefile src/misc/cc++/Makefile src/misc/CNestedDataFile/Makefile src/PoolFile/Makefile src/backend/Makefile src/backend/Edits/Makefile src/backend/Effects/Makefile src/backend/Filters/Makefile src/backend/Looping/Makefile src/backend/Remaster/Makefile  src/frontend_fox/Makefile) 
+AC_OUTPUT(Makefile src/Makefile src/misc/Makefile src/misc/CNestedDataFile/Makefile src/PoolFile/Makefile src/backend/Makefile src/backend/Edits/Makefile src/backend/Effects/Makefile src/backend/Filters/Makefile src/backend/Looping/Makefile src/backend/Remaster/Makefile  src/frontend_fox/Makefile) 
 
 # vim:ts=4:sw=4

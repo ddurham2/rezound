@@ -26,7 +26,7 @@
 #include "settings.h"
 
 #include <stdexcept>
-#include <cc++/path.h>
+#include <CPath.h>
 
 #include <CNestedDataFile/CNestedDataFile.h>
 
@@ -189,7 +189,7 @@ askAgain:
 		if(isFilenameRegistered(filename))
 			throw(runtime_error(string(__func__)+" -- file is currently opened: '"+filename+"'"));
 
-		if(ost::Path(filename).Exists())
+		if(CPath(filename).exists())
 		{
 			if(Question("Overwrite Existing File:\n"+filename,yesnoQues)!=yesAns)
 				goto askAgain;
@@ -271,7 +271,7 @@ void ASoundFileManager::revert()
 		const bool readOnly=loaded->isReadOnly();
 		string filename=loaded->getFilename();
 
-		if(!ost::Path(filename).Exists())
+		if(!CPath(filename).exists())
 		{
 			gStatusComm->beep();
 			return;
@@ -343,11 +343,11 @@ const string ASoundFileManager::getUntitledFilename(const string directory,const
 	static const char *prefixes[]={"untitled","newfile","default"};
 	for(size_t i=0;i<(sizeof(prefixes)/sizeof(*prefixes));i++)
 	{
-		const string filename=directory+ost::Path::dirDelim+prefixes[i];
+		const string filename=directory+CPath::dirDelim+prefixes[i];
 		for(size_t t=0;t<100;t++)
 		{
 			const string temp=filename+istring(t)+"."+extension;
-			if(!ost::Path(temp).Exists() && !isFilenameRegistered(temp))
+			if(!CPath(temp).exists() && !isFilenameRegistered(temp))
 				return(filename+istring(t)+"."+extension);
 		}
 	}
@@ -480,7 +480,7 @@ const ASoundTranslator *ASoundFileManager::getTranslator(const string filename,b
 		}
 	}
 
-	if(ost::Path(filename).Exists())
+	if(CPath(filename).exists())
 	{ // try to determine from the contents of the file
 		for(size_t t=0;t<ASoundTranslator::registeredTranslators.size();t++)
 		{
@@ -490,7 +490,7 @@ const ASoundTranslator *ASoundFileManager::getTranslator(const string filename,b
 	}
 
 	// file doesn't exist or no supported signature, so attempt to determine the translater based on the file extension
-	const string extension=istring(ost::Path(filename).Extension()).lower();
+	const string extension=istring(CPath(filename).extension()).lower();
 	if(extension=="")
 		throw(runtime_error(string(__func__)+" -- cannot determine the extension on the filename: "+filename));
 	else
