@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-07-24 12:12-0500\n"
+"POT-Creation-Date: 2003-07-25 12:36-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2613,8 +2613,8 @@ msgstr ""
 msgid "&Generate"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1307 src/frontend_fox/CMainWindow.cpp:1341
-#: src/frontend_fox/CMainWindow.cpp:1401 src/frontend_fox/CMainWindow.cpp:1439
-#: src/frontend_fox/CMainWindow.cpp:1440
+#: src/frontend_fox/CMainWindow.cpp:1315 src/frontend_fox/CMainWindow.cpp:1349
+#: src/frontend_fox/CMainWindow.cpp:1409 src/frontend_fox/CMainWindow.cpp:1447
+#: src/frontend_fox/CMainWindow.cpp:1448
 msgid "semitones"
 msgstr ""
