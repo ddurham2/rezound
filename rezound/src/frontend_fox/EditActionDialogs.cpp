@@ -103,26 +103,27 @@ CAddChannelsDialog::CAddChannelsDialog(FXWindow *mainWindow) :
 CSaveAsMultipleFilesDialog::CSaveAsMultipleFilesDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Save As Multiple Files")
 {
-	void *p=newVertPanel(NULL,false);
-		void *p1=newVertPanel(p);
-			addDiskEntityEntry(p1,"Save to Directory",".",FXDiskEntityParamValue::detDirectory,"All the files will be saved into this directory");
-			addStringTextEntry(p1,"Filename Prefix","","This will be added to the front of the filename");
-			addStringTextEntry(p1,"Filename Suffix","","This will be added to the end of the filename");
-			addComboTextEntry(p1,"Format",ASoundTranslator::getFlatFormatList(),"The format to save each segment as",false);
-		p1=newVertPanel(p);
-			addNumericTextEntry(p1,"Segment Number Start","",1,0,1000,"The Number to Start With When Substituting the Track Number For '#' in the Filenames");
-		p1=newVertPanel(p);
-			addCheckBoxEntry(p1,"Open Saved Segments",false,"Open the Segments After Saving Them");
+	void *p1=newVertPanel(NULL);
+		addDiskEntityEntry(p1,"Save to Directory",".",FXDiskEntityParamValue::detDirectory,"All the files will be saved into this directory");
+		addStringTextEntry(p1,"Filename Prefix","","This will be added to the front of the filename");
+		addStringTextEntry(p1,"Filename Suffix","","This will be added to the end of the filename");
+		addComboTextEntry(p1,"Format",ASoundTranslator::getFlatFormatList(),"The format to save each segment as",false);
+		addNumericTextEntry(p1,"Segment Number Start","",1,0,1000,"The Number to Start With When Substituting the Track Number For '#' in the Filenames");
+		addCheckBoxEntry(p1,"Open Saved Segments",false,"Open the Segments After Saving Them");
+		vector<string> items;
+			items.push_back("Entire File");
+			items.push_back("Selection Only");
+		addComboTextEntry(p1,"Applies to",items);
 }
 
 const string CSaveAsMultipleFilesDialog::getExplaination() const
 {
-return "
-To save a large file as several smaller segments you can create cues that define the segments and then click on \"Save As Multiple Files\" under the \"File\" menu.
+	return "
+To save a large file (or just a selection from it) as several smaller segments you can create cues that define the segments and then click on \"Save As Multiple Files\" under the \"File\" menu.
 
 In general, cues can be named '(' and ')' to define the beginning and end of each segment to be saved.
 However, a ')' cue can be ommitted if a previous segment is to end at the beginning of the next segment.
-The very last ')' cue can also be ommitted if the last defined segment is to end at the end of the original audio file.
+The very last ')' cue can also be ommitted if the last defined segment is to end at the end of the original audio file (or the end of the selection).
 Furthermore, the '(' cue can optionally be named '(xyz' if 'xyz' is to be included in the segment's filename.
 
 There are several parameters in the dialog is displayed after selecting \"Save As Multiple Files\" under the \"File\" menu.
@@ -136,5 +137,4 @@ After a segment's filename is formed by putting together, [directory]/[prefix][x
 The \"Segment Number Start\" parameter can be changed from '1' to start the '#' substitutions at something different.
 The \"Open Saved Segments\" can be selected simply if you want to open the segments after they have been saved.
 ";
-	
 }

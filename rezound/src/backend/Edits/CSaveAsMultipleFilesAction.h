@@ -31,7 +31,7 @@ class ASoundFileManager;
 class CSaveAsMultipleFilesAction : public AAction
 {
 public:
-	CSaveAsMultipleFilesAction(const CActionSound actionSound,ASoundFileManager *soundFileManager,const string directory,const string filenamePrefix,const string filenameSuffix,const string extension,bool openSavedSegments,unsigned segmentNumberOffset);
+	CSaveAsMultipleFilesAction(const CActionSound actionSound,ASoundFileManager *soundFileManager,const string directory,const string filenamePrefix,const string filenameSuffix,const string extension,bool openSavedSegments,unsigned segmentNumberOffset,bool selectionOnly);
 	virtual ~CSaveAsMultipleFilesAction();
 
 protected:
@@ -50,6 +50,7 @@ private:
 	const string extension;
 	const bool openSavedSegments;
 	const unsigned segmentNumberOffset;
+	const bool selectionOnly;
 
 };
 

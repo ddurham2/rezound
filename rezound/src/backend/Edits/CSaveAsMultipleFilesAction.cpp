@@ -28,7 +28,7 @@
 #include "../ASoundFileManager.h"
 #include "../ASoundTranslator.h"
 
-CSaveAsMultipleFilesAction::CSaveAsMultipleFilesAction(const CActionSound actionSound,ASoundFileManager *_soundFileManager,const string _directory,const string _filenamePrefix,const string _filenameSuffix,const string _extension,bool _openSavedSegments,unsigned _segmentNumberOffset) :
+CSaveAsMultipleFilesAction::CSaveAsMultipleFilesAction(const CActionSound actionSound,ASoundFileManager *_soundFileManager,const string _directory,const string _filenamePrefix,const string _filenameSuffix,const string _extension,bool _openSavedSegments,unsigned _segmentNumberOffset,bool _selectionOnly) :
 	AAction(actionSound),
 	soundFileManager(_soundFileManager),
 	directory(_directory),
@@ -36,7 +36,8 @@ CSaveAsMultipleFilesAction::CSaveAsMultipleFilesAction(const CActionSound action
 	filenameSuffix(_filenameSuffix),
 	extension(_extension),
 	openSavedSegments(_openSavedSegments),
-	segmentNumberOffset(_segmentNumberOffset)
+	segmentNumberOffset(_segmentNumberOffset),
+	selectionOnly(_selectionOnly)
 {
 }
 
@@ -46,13 +47,20 @@ CSaveAsMultipleFilesAction::~CSaveAsMultipleFilesAction()
 
 bool CSaveAsMultipleFilesAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
+	const sample_pos_t selectionStart= selectionOnly ? actionSound.start : 0;
+	const sample_pos_t selectionLength= selectionOnly ? actionSound.selectionLength() : actionSound.sound->getLength();
+
 	// built a list of a cues ordered by the time and keeping only the cues that start with '(' or ')'
 	multimap<sample_pos_t,size_t> timeOrderedCueIndex;
 	for(size_t t=0;t<actionSound.sound->getCueCount();t++)
 	{
 		const string cueName=actionSound.sound->getCueName(t);
 		if(cueName.size()>0 && (cueName[0]=='(' || cueName[0]==')'))
-			timeOrderedCueIndex.insert(pair<sample_pos_t,size_t>(actionSound.sound->getCueTime(t),t));
+		{
+			const sample_pos_t cueTime=actionSound.sound->getCueTime(t);
+			if(cueTime>=selectionStart && (cueTime-selectionStart)<selectionLength)
+				timeOrderedCueIndex.insert(pair<sample_pos_t,size_t>(cueTime,t));
+		}
 	}
 
 	vector<pair<string,pair<sample_pos_t,sample_pos_t> > > segments;
@@ -74,7 +82,7 @@ bool CSaveAsMultipleFilesAction::doActionSizeSafe(CActionSound &actionSound,bool
 	*/
 
 	string filename="";
-	sample_pos_t start=0;
+	sample_pos_t start=selectionStart;
 	int state=0;
 	for(multimap<sample_pos_t,size_t>::iterator i=timeOrderedCueIndex.begin();i!=timeOrderedCueIndex.end();i++)
 	{
@@ -127,8 +135,21 @@ bool CSaveAsMultipleFilesAction::doActionSizeSafe(CActionSound &actionSound,bool
 	}
 
 	// if a (... was encourtered without a closing ) then we assume to save to the end of file
-	if(filename!="" && start!=0)
-		segments.push_back(pair<string,pair<sample_pos_t,sample_pos_t> >(filename,pair<sample_pos_t,sample_pos_t>(start,actionSound.sound->getLength()-1)));
+	if(filename!="" && start!=selectionStart)
+		segments.push_back(pair<string,pair<sample_pos_t,sample_pos_t> >(filename,pair<sample_pos_t,sample_pos_t>(start, (selectionOnly ? selectionStart+selectionLength-1 : actionSound.sound->getLength()-1) )));
+
+	
+	// remove segments with the same start and stop
+	startOver:
+	for(vector<pair<string,pair<sample_pos_t,sample_pos_t> > >::iterator i=segments.begin();i!=segments.end();i++)
+	{
+		if(i->second.first==i->second.second)
+		{
+			segments.erase(i);
+			goto startOver; // cause I'm not sure if it's valid to delete from vector while pointing to it
+		}
+	}
+
 
 
 	if(segments.size()<=0)
@@ -209,7 +230,8 @@ CSaveAsMultipleFilesAction *CSaveAsMultipleFilesActionFactory::manufactureAction
 		actionParameters->getStringParameter("Filename Suffix"),
 		"."+formatName.substr(0,formatName.find(" ")), // cut out only the first few chars (which is the extension
 		actionParameters->getBoolParameter("Open Saved Segments"),
-		actionParameters->getUnsignedParameter("Segment Number Start")
+		actionParameters->getUnsignedParameter("Segment Number Start"),
+		(actionParameters->getUnsignedParameter("Applies to")==1) // 0 -> "Entire File", 1 -> "Selection Only"
 	);
 }
 
