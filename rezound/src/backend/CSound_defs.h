@@ -110,6 +110,7 @@ enum MixMethods
 {
     mmOverwrite,
     mmAdd,
+    mmSubtract,
     mmMultiply,
     mmAverage 
 };
