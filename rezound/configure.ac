@@ -196,9 +196,9 @@ AC_ARG_ENABLE(
 		fi
 	],
 	[ # action if flag was not given
-	 	# default to signed 16 bit
-		AC_DEFINE(SAMPLE_TYPE_S16)
-		AC_MSG_RESULT([*** setting the internal sample type to signed 16 bit by default])
+	 	# default to 32 bit floating point
+		AC_DEFINE(SAMPLE_TYPE_FLOAT)
+		AC_MSG_RESULT([*** setting the internal sample type to 32 bit floating point default])
 	]
 )
 
