@@ -38,13 +38,10 @@ public:
 	void initialize();
 	void deinitialize();
 
-	//????This was changed from it's private status
-	//????To make gcc 2.95.2 happy -AV
-	int audio_fd;
 private:
 
-	//????audio_fd was moved from here to public
 	bool initialized;
+	int audio_fd;
 
 	class CPlayThread : public ost::Thread
 	{
@@ -67,6 +64,7 @@ private:
 	CPlayThread playThread;
 	ost::Semaphore threadFinishedSem;
 
+	friend class CPlayThread;
 };
 
 
