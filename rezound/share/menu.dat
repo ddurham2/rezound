@@ -6,7 +6,7 @@ default
 
 	Control
 	{
-		menuitems={"Zoom Out F&ull", "Zoom &Out", "Zoom &In", "Zoom &Fit Selection", "-", "Find &Start Position", "Find Sto&p Position", "-", "&Redraw", "-", "Record...", "Play All Once", "Play All Looped", "Play Selection Once", "Play Selection Looped", "Loop Selection but Skip Most of the Middle", "Loop Selection and Play a Gap Before Repeating", "Stop", "Pause", "Jump to Beginning", "Jump to Selection Start", "Jump to Previous Cue", "Jump to Next Cue", "Shuttle Rewind", "Shuttle Amount", "Shuttle Forward", "-", "Toggle &Level Meters", "Toggle &Stereo Phase Meters", "Toggle Frequency &Analyzer", "-", "View Loaded File 1", "View Loaded File 2", "...", "View Loaded File 9", "View Loaded File 10", "Previously Viewed File"};
+		menuitems={"Zoom Out F&ull", "Zoom &Out", "Zoom &In", "Zoom &Fit Selection", "-", "Find &Start Position", "Find Sto&p Position", "-", "&Redraw", "-", "Record...", "Play All Once", "Play All Looped", "Play Selection Once", "Play from Selection Start to End", "Play Selection Looped", "Loop Selection but Skip Most of the Middle", "Loop Selection and Play a Gap Before Repeating", "Stop", "Pause", "Jump to Beginning", "Jump to Selection Start", "Jump to Previous Cue", "Jump to Next Cue", "Shuttle Rewind", "Shuttle Amount", "Shuttle Forward", "-", "Toggle &Level Meters", "Toggle &Stereo Phase Meters", "Toggle Frequency &Analyzer", "-", "View Loaded File 1", "View Loaded File 2", "...", "View Loaded File 9", "View Loaded File 10", "Previously Viewed File"};
 	}
 	Edit
 	{
