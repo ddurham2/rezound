@@ -28,3 +28,10 @@ and move it into config
   XML classes to write data files, only read them.  Plus it would have required
   linking with yet another library, libxml2.  So this was already written and
   has been tested for some time and I'll use it.
+  And one more note, the makefile (as does 'a') needs to run bison on the .y
+  and flex on the .l but there is no need to compile or add to the library the
+  resulting cfg.lex.c file from flex because I actually #include that .c file in 
+  the .y file which thus gets included in bison's resulting cfg.tab.c file.
+    If that causes a problem, I can easily modify it to behave normally
+    And, the clean target for this Makefile needs to delete those two .c files
+    since they are actually generated
