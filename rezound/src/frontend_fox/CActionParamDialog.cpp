@@ -198,6 +198,13 @@ FXDiskEntityParamValue *CActionParamDialog::addDiskEntityEntry(void *parent,cons
 	return diskEntityEntry;
 }
 
+FXDiskEntityParamValue *CActionParamDialog::getDiskEntityParam(const string name)
+{
+	const unsigned index=findParamByName(name);
+	if(parameters[index].first==ptDiskEntity)
+		return (FXDiskEntityParamValue *)parameters[index].second;
+	throw runtime_error(string(__func__)+" -- widget with name, "+name+", is not a disk entity");
+}
 
 FXComboTextParamValue *CActionParamDialog::addComboTextEntry(void *parent,const string name,const vector<string> &items,const string tipText,bool isEditable)
 {

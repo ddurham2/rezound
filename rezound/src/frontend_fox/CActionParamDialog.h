@@ -67,6 +67,7 @@ public:
 	FXTextParamValue *addStringTextEntry(void *parent,const string name,const string initialValue,const string unitsTipText="");
 		FXTextParamValue *getTextParam(const string name);
 	FXDiskEntityParamValue *addDiskEntityEntry(void *parent,const string name,const string intialEntityName,FXDiskEntityParamValue::DiskEntityTypes entityType,const string tipText="");
+		FXDiskEntityParamValue *getDiskEntityParam(const string name);
 		/* is isEditable then the value is an integer of the actual value, if isEditable is false, then the integer value is the index of the items */
 	FXComboTextParamValue *addComboTextEntry(void *parent,const string name,const vector<string> &items,const string tipText="",bool isEditable=false);
 		FXComboTextParamValue *getComboText(const string name); // so a derived class can set the values
