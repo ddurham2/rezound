@@ -447,7 +447,6 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 	}
 	
 	const CSound &sound=*this->sound;
-	const unsigned channelCount=sound.getChannelCount();
 
 	const size_t deviceIndex=0; // ??? would loop through all devices later (probably actually in a more inner loop than here)
 
@@ -470,6 +469,8 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 
 		lastBufferWasGapSignal=chunk->isGap;
 		playPosition=chunk->playPosition; // update the playPosition so it will be updated on screen
+
+		const unsigned channelCount=chunk->channelCount;
 
 		const sample_fpos_t amountInChunk=(sample_fpos_t)chunk->size-chunk->offset;
 		const int maxOutputLengthToUse=(int)ceil((amountInChunk-last)/tPlaySpeed); // max that could be produced
@@ -572,8 +573,6 @@ bool CSoundPlayerChannel::prebufferChunk()
 	if(paused && seekSpeed==1.0/*not seeking*/)
 		return(false);
 
-	const unsigned channelCount=sound->getChannelCount();
-
 	// used if loopType==ltLoopSkipMost
 	const sample_pos_t skipMiddleMargin=(sample_pos_t)(gSkipMiddleMarginSeconds*sound->getSampleRate());
 	bool queueUpAGap=false;
@@ -586,9 +585,9 @@ bool CSoundPlayerChannel::prebufferChunk()
 
 	sample_pos_t pos1=0,pos2=0; // declared out here incase I need their values when queuing up a gap
 
-
 	// fill chunk with 1 chunk's worth of audio
 	sound->lockSize();
+	const unsigned channelCount=sound->getChannelCount();
 	try
 	{
 		CMutexLocker l(prebufferPositionMutex); // protect prebufferPosition from set.*Position() /// NO, NOT REALLY NECESSARY SENSE WE"RE NOT GONNA CALL prebufferChunk() NOW FROM WITHIN set.*Position(): ... and assures that we aren't past this point simultaneously trying to calculate the same 1 extra prebuffer chunk that is in the prebufferedChunks vector
@@ -831,6 +830,7 @@ const vector<int16_t> CSoundPlayerChannel::getOutputRoutes() const
 	return(v);
 }
 
+// NOTE: this is called from AAction with the size locked on the CSound object
 void CSoundPlayerChannel::updateAfterEdit(const vector<int16_t> &restoreOutputRoutes)
 {
 	if(prebufferedChunks[0]->channelCount!=sound->getChannelCount() || prebufferedChunks[0]->sampleRate!=sound->getSampleRate())
