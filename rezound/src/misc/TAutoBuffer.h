@@ -86,10 +86,12 @@ public:
 
 
 
+	/* for some reason this causes ambiguities in gcc 3.2 .. so I guess it will choose to cast to pointer then subscript if I don't define this but do subscript an object of this class 
 	type &operator[](const size_t i) const
 	{
 		return(buffer[i]);
 	}
+	*/
 
 	const size_t getSize() const
 	{
