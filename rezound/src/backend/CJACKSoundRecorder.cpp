@@ -141,13 +141,13 @@ void CJACKSoundRecorder::deinitialize()
 {
 	if(client)
 	{
+		jack_deactivate(client);
 		for(unsigned t=0;t<channelCount;t++)
 		{
 			if(input_ports[t]!=NULL)
 				jack_port_unregister(client,input_ports[t]);
 			input_ports[t]=NULL;
 		}
-		jack_deactivate(client);
 		jack_client_close(client); 
 	}
 	client=NULL;

@@ -158,13 +158,13 @@ void CJACKSoundPlayer::deinitialize()
 
 	if(client!=NULL)
 	{
+		jack_deactivate(client);
 		for(unsigned t=0;t<devices[0].channelCount;t++) // device zero only for now
 		{
 			if(output_ports[t]!=NULL)
 				jack_port_unregister(client,output_ports[t]);
 			output_ports[t]=NULL;
 		}
-		jack_deactivate(client);
 		jack_client_close(client); 
 		client=NULL;
 	}
