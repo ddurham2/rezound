@@ -156,9 +156,14 @@ CBiquadResFilter *CBiquadResLowpassFilterFactory::manufactureAction(const CActio
 	));
 }
 
+// --------------------------------------------------
 
 CBiquadResHighpassFilterFactory::CBiquadResHighpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
 	AActionFactory("Biquad Resonant Highpass Filter","Single Pole Highpass Filter",false,channelSelectDialog,normalDialog,NULL)
+{
+}
+
+CBiquadResHighpassFilterFactory::~CBiquadResHighpassFilterFactory()
 {
 }
 
@@ -173,9 +178,14 @@ CBiquadResFilter *CBiquadResHighpassFilterFactory::manufactureAction(const CActi
 	));
 }
 
+// --------------------------------------------------
 
 CBiquadResBandpassFilterFactory::CBiquadResBandpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
 	AActionFactory("Biquad Resonant Bandpass Filter","Bandpass Filter",false,channelSelectDialog,normalDialog,NULL)
+{
+}
+
+CBiquadResBandpassFilterFactory::~CBiquadResBandpassFilterFactory()
 {
 }
 
