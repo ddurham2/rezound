@@ -86,36 +86,41 @@ public:
 
 
 	// --- auto-cast to const char *
-	operator const char * const() const { return(c_str()); }
+	operator const char * const() const { return c_str(); }
 
 
 	// --- trim/pad operations
 		// remove white-space from the left side of the string
-	istring &ltrim() { const size_type len=length(); size_type i=0; while(i<len && isspace(operator[](i))) i++; erase(0,i); return(*this); }
+	istring &ltrim() { const size_type len=length(); size_type i=0; while(i<len && isspace(operator[](i))) i++; erase(0,i); return *this; }
 		// remove white-space from the right side of the string
-	istring &rtrim() { const size_type len=length(); size_type i=len; if(i>0) { i--; while(i>0 && isspace(operator[](i))) i--; if(i==0 && isspace(operator[](0))) erase(); else erase(i+1,(len-i)-1); } return(*this); }
+	istring &rtrim() { const size_type len=length(); size_type i=len; if(i>0) { i--; while(i>0 && isspace(operator[](i))) i--; if(i==0 && isspace(operator[](0))) erase(); else erase(i+1,(len-i)-1); } return *this; }
 		// remove white-space from the left and right side of the string
 	istring &trim() { return ltrim().rtrim(); }
 
 		// add pad_char characters to the left side of the string such that the string is no shorter than min_length
-	istring &lpad(const size_type min_length,const char pad_char=' ') { const size_type len=length(); if(len<min_length) insert((size_type)0,min_length-len,pad_char); return(*this); }
+	istring &lpad(const size_type min_length,const char pad_char=' ') { const size_type len=length(); if(len<min_length) insert((size_type)0,min_length-len,pad_char); return *this; }
 		// add pad_char characters to the right side of the string such that the string is no shorter than min_length
-	istring &rpad(const size_type min_length,const char pad_char=' ') { const size_type len=length(); if(len<min_length) insert(len,min_length-len,pad_char); return(*this); }
+	istring &rpad(const size_type min_length,const char pad_char=' ') { const size_type len=length(); if(len<min_length) insert(len,min_length-len,pad_char); return *this; }
 
 		// removes any character which has a position that is at or beyond max_length
-	istring &truncate(const size_type max_length) { if(size()>max_length) erase(max_length,size()-max_length); return(*this); }
+	istring &truncate(const size_type max_length) { if(size()>max_length) erase(max_length,size()-max_length); return *this; }
 
 
 	// --- case manipulation
 		// make all the characters in the string upper case
-	istring &upper(const size_type pos=0,const size_type len=npos) { const size_type last= (len==npos) ? pos+length() : pos+len; for(size_type t=pos;t<last;t++) operator[](t)=toupper(operator[](t)); return(*this); }
+	istring &upper(const size_type pos=0,const size_type len=npos) { const size_type last= (len==npos) ? pos+length() : pos+len; for(size_type t=pos;t<last;t++) operator[](t)=toupper(operator[](t)); return *this; }
 		// make all the characters in the string lower case
-	istring &lower(const size_type pos=0,const size_type len=npos) { const size_type last= (len==npos) ? pos+length() : pos+len; for(size_type t=pos;t<last;t++) operator[](t)=tolower(operator[](t)); return(*this); }
+	istring &lower(const size_type pos=0,const size_type len=npos) { const size_type last= (len==npos) ? pos+length() : pos+len; for(size_type t=pos;t<last;t++) operator[](t)=tolower(operator[](t)); return *this; }
 
 
 	// --- count characters
-		// return how many times ch appears in the string from the optional pos and len parameters
-	const size_type count(const char ch,const size_type pos=0,size_type len=npos) { if(len==npos) len=size()-pos; const size_type last=pos+len; size_type count=0; for(size_type t=pos;t<last;t++) if(operator[](t)==ch) count++; return(count); }
+		// returns how many times ch appears in the string from the optional pos and len parameters
+	const size_type count(const char ch,const size_type pos=0,size_type len=npos) { if(len==npos) len=size()-pos; const size_type last=pos+len; size_type count=0; for(size_type t=pos;t<last;t++) if(operator[](t)==ch) count++; return count; }
+
+	// --- count strings
+		// returns how many times str appears in the string from the optional pos and len parameters
+	const size_type count(const string str,const size_type pos=0,size_type len=npos) { if(len==npos) len=size()-pos; size_type last=pos+len; size_type str_len=str.length(); if(last>str_len) last-=str_len; else return 0; size_type count=0; for(size_type t=pos;t<last;t++) { if(substr(t,str_len)==str) { t+=str_len; count++; } } return count; }
+	
 };
 
 
@@ -133,7 +138,7 @@ public:
  *
  *	- nor does it make a distinction between "" and NULL which I believe it should
  */
-inline const char * const mnn(const char * const p) { return(p==NULL ? "" : p); }
+inline const char * const mnn(const char * const p) { return p==NULL ? "" : p; }
 
 
 }
