@@ -213,6 +213,7 @@ CBurnToCDDialog::CBurnToCDDialog(FXWindow *mainWindow) :
 				FXComposite *device=addStringTextEntry(p3,N_("Device"),"0,0,0");
 					new FXButton(device,_("Detect"),NULL,this,ID_DETECT_DEVICE_BUTTON,BUTTON_NORMAL|LAYOUT_RIGHT);
 			new FXLabel(p2,_("In linux >2.6, scanbus may not work and it may be\nnecessary to specify: for example: ATAPI:0,0,0"));
+			new FXLabel(p2,_("Also, cdrdao-1.1.9 has much better drive support."));
 
 		addStringTextEntry(p1,N_("Extra cdrdao Options"),"");
 		addCheckBoxEntry(p1,N_("Simulate Burn Only"),false,_("Don't Turn on Burn Laser"));

@@ -397,24 +397,35 @@ cdrdao must be installed on this system.  $PATH with be searched for 'cdrdao' wh
 #include <stdio.h>
 const string CBurnToCDAction::detectDevice(const string pathTo_cdrdao)
 {
-	string ret;
 	const string cmd="'"+pathTo_cdrdao+"' scanbus 2>&1 | grep '[0-9],[0-9],[0-9]:' | head -1 | cut -f1 -d':'";
-	printf("attemping to run command: %s\n",cmd.c_str());
-	FILE *f=popen(cmd.c_str(),"r");
-	if(f!=NULL)
+	for(int t=0;t<2;t++)
 	{
-		char buffer[1024+1];
-		if(fgets(buffer,1024,f))
+		string cmd;
+		
+		if(t==0)
+			// try this first
+			cmd="'"+pathTo_cdrdao+"' scanbus 2>&1 | grep '.\\{1,10\\}:[0-9],[0-9],[0-9]' | head -1 | cut -f1 -d' '";
+		else if(t==1)
+			// try this second
+			cmd="'"+pathTo_cdrdao+"' scanbus 2>&1 | grep '[0-9],[0-9],[0-9]:' | head -1 | cut -f1 -d':'";
+
+		printf("attemping to run command: %s\n",cmd.c_str());
+		FILE *f=popen(cmd.c_str(),"r");
+		if(f!=NULL)
 		{
-			if(strlen(buffer)>0)
-				buffer[strlen(buffer)-1]=0; // remove trailing \n
-			ret=buffer;
+			char buffer[1024+1];
+			if(fgets(buffer,1024,f))
+			{
+				if(strlen(buffer)>0)
+					buffer[strlen(buffer)-1]=0; // remove trailing \n
+				pclose(f);
+				return buffer;
+			}
+	
+			pclose(f);
 		}
-
-		pclose(f);
 	}
-
-	return ret;
+	return "";
 }
 
 
