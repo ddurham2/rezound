@@ -29,7 +29,7 @@
 
 #include "ClibvorbisSoundTranslator.h"
 
-#if defined(HAVE_LIBOGG) && defined(HAVE_LIBVORBIS)
+#if defined(HAVE_LIBVORBIS) && defined(HAVE_LIBOGG)
 
 #include <stdio.h>	// for fopen/fclose
 #include <errno.h>
@@ -109,7 +109,7 @@ static const string OVstrerror(int e)
 	// ??? but, then how would I be able to have createWorkingPoolFileIfExists
 bool ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 {
-#ifdef HAVE_LIBVORBISFILE
+#ifdef HAVE_LIBVORBIS
 	bool ret=true;
 
 	int e;
@@ -340,7 +340,7 @@ bool ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 
 bool ClibvorbisSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength) const
 {
-#ifdef HAVE_LIBVORBISENC
+#ifdef HAVE_LIBVORBIS
 	bool ret=true;
 
 	vorbis_info vi;
@@ -367,7 +367,7 @@ bool ClibvorbisSoundTranslator::onSaveSound(const string filename,const CSound *
 			throw runtime_error(string(__func__)+" -- error initializing the Ogg Vorbis encoder engine -- "+OVstrerror(e));
 	}
 	else
-		throw runtime_erro (string(__func__)+" -- internal error -- unhandle bit rate method "+istring(parameters.method));
+		throw runtime_error(string(__func__)+" -- internal error -- unhandle bit rate method "+istring(parameters.method));
 
 	vorbis_comment vc;
 	vorbis_comment_init(&vc);
@@ -586,7 +586,7 @@ bool ClibvorbisSoundTranslator::handlesExtension(const string extension,const st
 
 bool ClibvorbisSoundTranslator::supportsFormat(const string filename) const
 {
-#ifdef HAVE_LIBVORBISFILE
+#ifdef HAVE_LIBVORBIS
 	FILE *f=fopen(filename.c_str(),"rb");
 	if(f==NULL)
 		return false;
@@ -626,4 +626,4 @@ const vector<vector<string> > ClibvorbisSoundTranslator::getFormatFileMasks() co
 	return list;
 }
 
-#endif // HAVE_LIBOGG && HAVE_LIBVORBIS
+#endif // HAVE_LIBVORBIS && HAVE_LIBOGG

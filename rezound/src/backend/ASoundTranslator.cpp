@@ -209,7 +209,7 @@ void ASoundTranslator::buildRegisteredTranslatorsVector()
 	static const CrezSoundTranslator rezSoundTranslator;
 	registeredTranslators.push_back(&rezSoundTranslator);
 
-#ifdef HAVE_LIBVORBIS
+#if defined(HAVE_LIBVORBIS) && defined(HAVE_LIBOGG)
 	static const ClibvorbisSoundTranslator libvorbisSoundTranslator;
 	registeredTranslators.push_back(&libvorbisSoundTranslator);
 #endif
