@@ -65,11 +65,11 @@ libfrontend_la_SOURCES= \
 ## install in the bin directory (/usr/local/bin) by default. By setting
 ## --prefix= at configure time the user can change this (eg: ./configure
 ## --prefix=/usr will install ReZound under /usr/bin/ReZound )
-bin_PROGRAMS=ReZound
+bin_PROGRAMS=rezound
 
 ## for every name listed under bin_PROGRAMS, you have a prog_SOURCES. This lists
 ## all the sources in the current directory that are used to build ReZound.
-ReZound_SOURCES= main.cpp 
+rezound_SOURCES= main.cpp 
 
 ## ReZound_LDADD is a list of extras to pass at link time. All the objects
 ## created by the above ReZound_SOURCES are automatically linked in, so here I
@@ -78,7 +78,7 @@ ReZound_SOURCES= main.cpp
 ## It's up to each subdirectory's Makefile to build it's .la library.
 ## notice we use $(top_builddir) for the modules. This allows building in a 
 ## separate directory
-ReZound_LDADD= libfrontend.la\
+rezound_LDADD= libfrontend.la\
 	$(top_builddir)/src/backend/libbackend.la \
 	$(top_builddir)/src/backend/Edits/libEdits.la \
 	$(top_builddir)/src/backend/Effects/libEffects.la \
@@ -138,14 +138,15 @@ clean-local:
 	-rm -f CFOXIcons.cpp CFOXIcons.h
 
 
+## Commented out with namechange
 
-# Have some rules to manage creating and removing a soft-link 
-# called 'rezound' to the 'ReZound' binary because lower case 
-# is the norm.
-LINK_NAME=rezound
-
-install-exec-local:
-	cd $(bindir) && rm -f $(LINK_NAME) && $(LN_S) ReZound $(LINK_NAME)
-uninstall-local:
-	cd $(bindir) && rm -f $(LINK_NAME)
-
+## # Have some rules to manage creating and removing a soft-link 
+## # called 'rezound' to the 'ReZound' binary because lower case 
+## # is the norm.
+## LINK_NAME=rezound
+## 
+## install-exec-local:
+## 	cd $(bindir) && rm -f $(LINK_NAME) && $(LN_S) ReZound $(LINK_NAME)
+## uninstall-local:
+## 	cd $(bindir) && rm -f $(LINK_NAME)
+## 

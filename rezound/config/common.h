@@ -38,7 +38,7 @@ using namespace std;
 static const char *REZOUND_PACKAGE=PACKAGE;
 # undef PACKAGE
 #else
-# define REZOUND_PACKAGE "ReZound"	
+# define REZOUND_PACKAGE "rezound"	
 /* Just in case it wasn't defined, the only time this should happen if for some reason someone would decide to compile without an automake built Makefile*/
 #endif
 
