@@ -35,7 +35,7 @@ EXTRA_DIST=\
 	COPYING\
 	NEWS\
 	README_DOCS\
-	FrontendFoxFeatures.txt
+	FrontendFoxFeatures.txt\
 	CVS-INSTALL\
 	INSTALL\
 	code\
