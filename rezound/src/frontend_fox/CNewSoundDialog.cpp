@@ -127,14 +127,22 @@ void CNewSoundDialog::hideFilename(bool hide)
 		filenameFrame->show();
 		rawFormatCheckButton->show();
 	}
+	recalc();
 }
 
 void CNewSoundDialog::hideLength(bool hide)
 {
 	if(hide)
+	{
+		lengthLabel->hide();
 		lengthFrame->hide();
+	}
 	else
+	{
+		lengthLabel->show();
 		lengthFrame->show();
+	}
+	recalc();
 }
 
 bool CNewSoundDialog::validateOnOkay()
