@@ -18,6 +18,8 @@
 
 	- The SAT being a vector really does slow things down with VERY large files... If I didn't actually need direct indexing, then this could be changed to something more efficient to modify instead of O(n) operations
 
+	- Perhaps mmap could be used to enhanced PoolFile... 
+
 
 
 - DONE -
