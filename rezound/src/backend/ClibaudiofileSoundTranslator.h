@@ -28,6 +28,10 @@
 #include "ASoundTranslator.h"
 
 #include <audiofile.h>
+#ifndef LIBAUDIOFILE_MICRO_VERSION // this didn't start getting defined until 0.2.4
+	#define LIBAUDIOFILE_MICRO_VERSION 0
+#endif
+
 
 class ClibaudiofileSoundTranslator : public ASoundTranslator
 {

@@ -46,6 +46,7 @@ libfrontend_la_SOURCES= \
 			CSoundWindow.cpp \
 			CStatusComm.cpp \
 			CUserNotesDialog.cpp \
+			CRawDialog.cpp \
 			COggDialog.cpp \
 			CMp3Dialog.cpp \
 			drawPortion.cpp \
@@ -114,6 +115,7 @@ noinst_HEADERS=\
 	CSoundWindow.h \
 	CStatusComm.h \
 	CUserNotesDialog.h \
+	CRawDialog.h \
 	COggDialog.h \
 	CMp3Dialog.h \
 	EditActionDialogs.h \

@@ -61,13 +61,46 @@ public:
 	virtual bool promptForRecord(ASoundRecorder *recorder)=0;
 
 
+	// called when the user is loading a raw file and format parameters are needed
+	struct RawParameters
+	{
+		unsigned channelCount;
+		unsigned sampleRate;
+		
+		enum
+		{
+			f8BitSignedPCM=0,
+			f8BitUnsignedPCM=4,
+			f16BitSignedPCM=1,
+			f16BitUnsignedPCM=5,
+			f24BitSignedPCM=2,
+			f24BitUnsignedPCM=6,
+			f32BitSignedPCM=3,
+			f32BitUnsignedPCM=7,
+			f32BitFloatPCM=8,
+			f64BitFloatPCM=9
+		} sampleFormat;
+
+		enum
+		{
+			eBigEndian=0,
+			eLittleEndian=1
+		} endian;
+
+		unsigned dataOffset; // in bytes
+		unsigned dataLength; // in frames; can be 0 for no user limit
+
+	};
+	virtual bool promptForRawParameters(RawParameters &parameters)=0;
+
+
 	// called when the user is saving an ogg file and compression parameters are needed
 	struct OggCompressionParameters
 	{
 		enum 
 		{
-			brVBR, 
-			brQuality 
+			brVBR=0, 
+			brQuality=1
 		} method;
 
 		// method==brVBR
@@ -80,14 +113,15 @@ public:
 	};
 	virtual bool promptForOggCompressionParameters(OggCompressionParameters &parameters)=0;
 
+
 	// called when the user is saving an mp3 file and compression parameters are needed
 	struct Mp3CompressionParameters
 	{
 		enum 
 		{
-			brCBR, 
-			brABR, 
-			brQuality 
+			brCBR=0,
+			brABR=1, 
+			brQuality=2
 		} method;
 
 		// method==brCBR

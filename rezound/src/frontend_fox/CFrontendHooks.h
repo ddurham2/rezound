@@ -37,6 +37,7 @@
 
 class CNewSoundDialog;
 class CRecordDialog;
+class CRawDialog;
 class COggDialog;
 class CMp3Dialog;
 
@@ -62,6 +63,7 @@ public:
 
 	bool promptForRecord(ASoundRecorder *recorder);
 
+	bool promptForRawParameters(RawParameters &parameters);
 	bool promptForOggCompressionParameters(OggCompressionParameters &parameters);
 	bool promptForMp3CompressionParameters(Mp3CompressionParameters &parameters);
 
@@ -74,6 +76,7 @@ private:
 
 	CNewSoundDialog *newSoundDialog;
 	CRecordDialog *recordDialog;
+	CRawDialog *rawDialog;
 	COggDialog *oggDialog;
 	CMp3Dialog *mp3Dialog;
 };

@@ -35,10 +35,6 @@
 #include "CSound.h"
 #include "AStatusComm.h"
 
-#ifndef LIBAUDIOFILE_MICRO_VERSION // this didn't start getting defined until 0.2.4
-	#define LIBAUDIOFILE_MICRO_VERSION 0
-#endif
-
 #if (LIBAUDIOFILE_MAJOR_VERSION*10000+LIBAUDIOFILE_MINOR_VERSION*100+LIBAUDIOFILE_MICRO_VERSION) >= /*000204*/204
 	#define HANDLE_CUES_AND_MISC
 #else
