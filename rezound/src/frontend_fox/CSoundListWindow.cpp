@@ -45,7 +45,6 @@ FXIMPLEMENT(CSoundListWindow,FXToolbarShell,CSoundListWindowMap,ARRAYNUMBER(CSou
 
 
 CSoundListWindow::CSoundListWindow(FXWindow *mainWindow) :
-								// ??? ignored by enlightenment
 	FXToolbarShell(mainWindow,/*FRAME_RAISED|FRAME_THICK*/DECOR_BORDER|DECOR_TITLE|DECOR_BORDER,mainWindow->getX()+30,mainWindow->getY()+mainWindow->getDefaultHeight()+300,300,200),
 
 	contents(new FXPacker(this,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_RAISED)),
@@ -53,6 +52,8 @@ CSoundListWindow::CSoundListWindow(FXWindow *mainWindow) :
 			soundList(new FXList(soundListFrame,0,this,ID_SOUND_LIST,LIST_BROWSESELECT | LAYOUT_FILL_X|LAYOUT_FILL_Y))
 {
 	setTitle("Opened");
+
+	setAccelTable(mainWindow->getAccelTable());
 }
 
 void CSoundListWindow::create()

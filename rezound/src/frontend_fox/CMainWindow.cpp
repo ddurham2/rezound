@@ -106,14 +106,13 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 
 FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
 
+#include <fox/fxkeys.h>
+
 CMainWindow::CMainWindow(FXApp* a) :
 	FXMainWindow(a,"ReZound",NULL,NULL,DECOR_ALL,0,0,800,0),
 
 	mouseMoveLastTab(NULL)
 {
-	// you have to do this for hints to be activated
-	new FXTooltip(getApp());
-
 	contents=new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 1,1,1,1, 1,1);
 
 	#define BUTTON_STYLE FRAME_RAISED|LAYOUT_EXPLICIT
@@ -143,6 +142,7 @@ CMainWindow::CMainWindow(FXApp* a) :
 
 	miscControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,6,6),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 3,2);
 		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
+				// ??? this and redo should probably be the top two buttons on the edit panel
 			new FXButton(t,"&Undo",NULL,this,ID_UNDO_BUTTON,FRAME_RAISED);
 			new FXButton(t,"&ClrUndo",NULL,this,ID_CLEAR_UNDO_HISTORY_BUTTON,FRAME_RAISED);
 		new FXButton(miscControlsFrame,"&Redraw",NULL,this,ID_REDRAW_BUTTON,FRAME_RAISED);

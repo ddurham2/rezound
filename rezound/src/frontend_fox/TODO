@@ -62,6 +62,8 @@
 		- the backend already supports this (although it hasn't been tested yet since there's been no frontend means)
 		- when an action is done after undo is disabled, I must clear all previous undo history
 
+	- move the undo button to the edit tool bar
+
 	- supply icons for all the windows
 		- just new FXIcon(...) instead of passing NULL
 		- Will is supposedly doing this

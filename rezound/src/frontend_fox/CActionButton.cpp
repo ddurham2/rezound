@@ -30,6 +30,7 @@ FXDEFMAP(CActionButton) CActionButtonMap[]=
 	//Message_Type				ID				Message_Handler
 	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	CActionButton::ID_PRESS,	CActionButton::onButtonClick),
 	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	CActionButton::ID_PRESS,	CActionButton::onButtonClick),
+	FXMAPFUNC(SEL_COMMAND,			CActionButton::ID_KEY,		CActionButton::onButtonClick),
 };
 
 FXIMPLEMENT(CActionButton,FXButton,CActionButtonMap,ARRAYNUMBER(CActionButtonMap))
@@ -49,18 +50,25 @@ long CActionButton::onButtonClick(FXObject *sender,FXSelector sel,void *ptr)
 		throw(runtime_error(string(__func__)+" -- ptr was NULL"));
 
 	FXEvent *ev=((FXEvent *)ptr);
-	if((ev->click_button==LEFTBUTTON || (ev->click_button==RIGHTBUTTON)) && underCursor())
+
+	CLoadedSound *activeSound=gSoundFileManager->getActive();
+	if(activeSound)
 	{
-		CLoadedSound *activeSound=gSoundFileManager->getActive();
-		if(activeSound)
+		CActionParameters actionParameters;
+
+		if(SELID(sel)==ID_KEY)
 		{
-			CActionParameters actionParameters;
-			if(actionFactory->performAction(activeSound,&actionParameters,ev->state&CONTROLMASK,ev->click_button==RIGHTBUTTON))
+			if(actionFactory->performAction(activeSound,&actionParameters,ev->state&SHIFTMASK,false))
 				gSoundFileManager->updateAfterEdit();
 		}
-		else
-			getApp()->beep();
+		else if((ev->click_button==LEFTBUTTON || ev->click_button==RIGHTBUTTON) && underCursor())
+		{
+			if(actionFactory->performAction(activeSound,&actionParameters,ev->state&SHIFTMASK,ev->click_button==RIGHTBUTTON))
+				gSoundFileManager->updateAfterEdit();
+		}
 	}
+	else
+		getApp()->beep();
 
 	return(0); // since this is currently the button_release event, we have to return 0 so that FXButton will draw the button in an up state
 }

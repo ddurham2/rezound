@@ -181,6 +181,8 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 	addCueActionFactory(NULL),
 	removeCueActionFactory(NULL)
 {
+	setAccelTable(mainWindow->getAccelTable());
+
 	waveView->setTarget(this);
 	waveView->setSelector(ID_WAVEVIEW);
 

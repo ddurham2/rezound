@@ -33,6 +33,7 @@
 #include "../images/images.cpp"
 
 void setupWindows(CMainWindow *mainWindow);
+void setupAccels(CMainWindow *mainWindow);
 
 
 int main(int argc,char *argv[])
@@ -47,6 +48,9 @@ int main(int argc,char *argv[])
 		application->setBaseColor(FXRGB(193,163,102));
 		... there are others that could be set ...
 		*/
+
+		// you have to do this for hints to be activated
+		new FXTooltip(application);
 
 		// create the main window 
 		CMainWindow *mainWindow=new CMainWindow(application);
@@ -66,14 +70,16 @@ int main(int argc,char *argv[])
 
 		gSoundFileManager=new CSoundFileManager(mainWindow,soundPlayer,gSettingsRegistry);
 
-
+		// create all the dialogs 
 		setupWindows(mainWindow);
+
+		// setup an FXAccelTable which allows for keys to invoke actions
+		setupAccels(mainWindow);
 
 		// load any sounds that were from the previous session
 		const vector<string> errors=gSoundFileManager->loadFilesInRegistry();
 		for(size_t t=0;t<errors.size();t++)
 			Error(errors[t]);
-
 
 		application->run();
 
@@ -162,4 +168,34 @@ void setupWindows(CMainWindow *mainWindow)
 		gEditToolbar->show();
 }
 
+#include <fox/fxkeys.h>
+void setupAccels(CMainWindow *mainWindow)
+{
+	FXAccelTable *at=mainWindow->getAccelTable();
+
+
+	// play controls
+	at->addAccel(KEY_a ,mainWindow,MKUINT(CMainWindow::ID_PLAY_SELECTION_ONCE_BUTTON,SEL_COMMAND));
+	at->addAccel(KEY_s ,mainWindow,MKUINT(CMainWindow::ID_STOP_BUTTON,SEL_COMMAND));
+
+
+
+	// edits
+	at->addAccel(MKUINT(KEY_a,CONTROLMASK) ,gEditToolbar->selectAllButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
+	
+	at->addAccel(MKUINT(KEY_c,CONTROLMASK), gEditToolbar->copyButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_C,CONTROLMASK|SHIFTMASK), gEditToolbar->copyButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_x,CONTROLMASK), gEditToolbar->cutButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_X,CONTROLMASK|SHIFTMASK), gEditToolbar->cutButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_d,CONTROLMASK), gEditToolbar->delButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_D,CONTROLMASK|SHIFTMASK), gEditToolbar->delButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_r,CONTROLMASK), gEditToolbar->cropButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_R,CONTROLMASK|SHIFTMASK), gEditToolbar->cropButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_v,CONTROLMASK), gEditToolbar->pasteInsertButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
+	at->addAccel(MKUINT(KEY_V,CONTROLMASK|SHIFTMASK), gEditToolbar->pasteInsertButton,MKUINT(CActionButton::ID_KEY,SEL_COMMAND));
+
+	at->addAccel(MKUINT(KEY_z,CONTROLMASK) ,mainWindow,MKUINT(CMainWindow::ID_UNDO_BUTTON,SEL_COMMAND));
+
+	gEditToolbar->setAccelTable(at);
+}
 

@@ -50,7 +50,8 @@ public:
 
 	enum
 	{
-		ID_PRESS=FXButton::ID_LAST,
+		ID_PRESS=FXButton::ID_LAST,	// used by mouse events
+		ID_KEY,				// used by accelerator keys
 		ID_LAST
 	};
 

@@ -61,7 +61,7 @@ CEditToolbar::CEditToolbar(FXWindow *mainWindow) :
 	 */
 
 	// selection functions
-	new CActionButton(new CSelectionEditFactory(sSelectAll),contents,"sa",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+	selectAllButton=new CActionButton(new CSelectionEditFactory(sSelectAll),contents,"sa",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
 	MAKE_FILLER;
 	new CActionButton(new CSelectionEditFactory(sSelectToBeginning),contents,"stb",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
 	new CActionButton(new CSelectionEditFactory(sSelectToEnd),contents,"ste",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
@@ -74,10 +74,10 @@ CEditToolbar::CEditToolbar(FXWindow *mainWindow) :
 	MAKE_FILLER;
 
 	// edit functions that remove/copy
-	new CActionButton(new CCopyEditFactory(gChannelSelectDialog),contents,"copy",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-	new CActionButton(new CCutEditFactory(gChannelSelectDialog),contents,"cut",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-	new CActionButton(new CDeleteEditFactory(gChannelSelectDialog),contents,"del",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-	new CActionButton(new CCropEditFactory(gChannelSelectDialog),contents,"crop",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+	copyButton=new CActionButton(new CCopyEditFactory(gChannelSelectDialog),contents,"copy",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+	cutButton=new CActionButton(new CCutEditFactory(gChannelSelectDialog),contents,"cut",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+	delButton=new CActionButton(new CDeleteEditFactory(gChannelSelectDialog),contents,"del",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+	cropButton=new CActionButton(new CCropEditFactory(gChannelSelectDialog),contents,"crop",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
 	new CActionButton(new CRotateLeftEditFactory(gChannelSelectDialog,new CRotateDialog(mainWindow)),contents,"<<",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
 	new CActionButton(new CRotateRightEditFactory(gChannelSelectDialog,new CRotateDialog(mainWindow)),contents,">>",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
 
@@ -85,7 +85,7 @@ CEditToolbar::CEditToolbar(FXWindow *mainWindow) :
 	MAKE_FILLER;
 
 	// edit functions that paste/mute
-	new CActionButton(new CInsertPasteEditFactory(gPasteChannelsDialog),contents,"insrt",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+	pasteInsertButton=new CActionButton(new CInsertPasteEditFactory(gPasteChannelsDialog),contents,"insrt",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
 	new CActionButton(new CReplacePasteEditFactory(gPasteChannelsDialog),contents,"replc",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
 	new CActionButton(new COverwritePasteEditFactory(gPasteChannelsDialog),contents,"ovwr",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
 	new CActionButton(new CLimitedOverwritePasteEditFactory(gPasteChannelsDialog),contents,"lovr",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);

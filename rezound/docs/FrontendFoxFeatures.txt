@@ -1,4 +1,9 @@
 
+- Action buttons (IMPORTANT) (edit buttons, effect buttons, etc):
+	- Holding SHIFT while clicking the button will generally causes a dialog to be displayed which allows the user to choose which channels to apply the action to.
+	- Using the RIGHT mouse button to click the button instead of the LEFT mouse button will cause (if available) an advanced mode of the action to be performed resulting possibly in a dialog for the action with additional, more advanced parameters (i.e. the volume and rate change dialogs have a curve instead of a constant parameter)
+
+
 - On a sound window:
 	- LEFT mouse button changes start position
 	- RIGHT mouse button changes stop position
@@ -33,11 +38,6 @@
 
 - File operation buttons:
 	- RIGHT clicking the open button will display a popup menu allowing the user to select from several loaded and saved filenames from the past
-
-- Action buttons (edit buttons, effect buttons, etc):
-	- Holding CONTROL while clicking the button will generally causes a dialog to be displayed which allows the user to choose which channels to apply the action to.
-	- Using the RIGHT mouse button to click the button instead of the LEFT mouse button will cause (if available) an advanced mode of the action to be performed resulting possibly in a dialog for the action with additional, more advanced parameters (i.e. the volume and rate change dialogs have a curve instead of a constant parameter)
-
 
 - Play controls:
 	- list keyboard bindings here ...

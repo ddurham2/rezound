@@ -38,23 +38,16 @@ public:
 
 	CEditToolbar(FXWindow *mainWindow);
 
-/*
-	enum 
-	{
-		ID_SOUND_LISTBOX=FXTopWindow::ID_LAST,
-		ID_LAST
-	};
-*/
-
-	//virtual void create();
 	virtual void show();
 	virtual void hide();
 
-	/*
-	long onButtonClick(FXObject *sender,FXSelector sel,void *ptr)
-	{
-	}
-	*/
+	FXButton *selectAllButton;
+
+	FXButton *copyButton;
+	FXButton *cutButton;
+	FXButton *delButton;
+	FXButton *cropButton;
+	FXButton *pasteInsertButton;
 
 protected:
 	CEditToolbar() {}
