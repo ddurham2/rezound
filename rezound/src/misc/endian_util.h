@@ -48,15 +48,15 @@
  *
  * 4 macros are defined to do endian conversion
  *
- *   letne - given a little-endian value returns the same value in the native endian
- *   letne - given a pointer to a little-endian value modifies the value to be the native endian
+ *   lethe - given a little-endian value returns the same value in the host endian
+ *   lethe - given a pointer to a little-endian value modifies the value to be the host endian
  *
- *   netle - reverse of letne
+ *   hetle - reverse of lethe
  *
- *   betne - given a big-endian value returns the same value in the native endian
- *   betne - given a pointer to a big-endian value modifies the value to be the native endian
+ *   bethe - given a big-endian value returns the same value in the host endian
+ *   bethe - given a pointer to a big-endian value modifies the value to be the host endian
  *
- *   netbe - reverse of betne
+ *   hetbe - reverse of bethe
  *
  * These macros both call on swap_endian() which does the work.  This function will swap the
  * endian of the given value, or swap the endian of the value at the given pointer.  Again,
@@ -65,24 +65,24 @@
  */
 
 
-/* 'letne' means little-endian to native-endian */
-/* 'netle' means native-endian to little-endian */
+/* 'lethe' means little-endian to host-endian */
+/* 'hetle' means host-endian to little-endian */
 #ifdef WORDS_BIGENDIAN
-	#define letne(value) swap_endian(value)
-	#define netle(value) swap_endian(value)
+	#define lethe(value) swap_endian(value)
+	#define hetle(value) swap_endian(value)
 #else // assuming now a little-endian platform
-	#define letne(value) (value)
-	#define netle(value) (value)
+	#define lethe(value) (value)
+	#define hetle(value) (value)
 #endif
 
-/* 'betne' means big-endian to native-endian */
-/* 'netbe' means native-endian to big-endian */
+/* 'bethe' means big-endian to host-endian */
+/* 'hetbe' means host-endian to big-endian */
 #ifdef WORDS_BIGENDIAN
-	#define betne(value) (value)
-	#define netbe(value) (value)
+	#define bethe(value) (value)
+	#define hetbe(value) (value)
 #else // assuming now a little-endian platform
-	#define betne(value) swap_endian(value)
-	#define netbe(value) swap_endian(value)
+	#define bethe(value) swap_endian(value)
+	#define hetbe(value) swap_endian(value)
 #endif
 
 #ifndef __cplusplus
@@ -163,7 +163,7 @@ template<typename Type> inline static const Type swap_endian(Type value)
 
 template<typename Type> inline static void swap_endian(Type *value)
 {
-	endian_util::really_swap_endian<sizeof(Type)>(&value,sizeof(Type));
+	endian_util::really_swap_endian<sizeof(Type)>(value,sizeof(Type));
 }
 
 #endif
