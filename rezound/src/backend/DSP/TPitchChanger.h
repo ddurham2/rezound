@@ -37,6 +37,7 @@
 #include "../CSound_defs.h"
 
 #include <soundtouch/SoundTouch.h>
+using namespace soundtouch;
 
 template<class src_type> class TPitchChanger
 {
