@@ -59,7 +59,7 @@ int myyynerrs=0;
 
 #define VERIFY_TYPE(ap,a) 				\
 	if(a->type!=CNestedDataFile::ktFloat)			\
-		cfg_error(ap,"invalid operand"); 	
+		cfg_error(ap,"invalid operand; numeric type expected"); 	
 
 #define BINARY_EXPR(r,ap,a,bp,b,o)	\
 	VERIFY_TYPE(ap,a)		\
@@ -107,11 +107,6 @@ int myyynerrs=0;
 %token			OR
 %token			AND
 
-%left			'.'
-
-
-//%type	<variant>	scope;
-//%type	<keyValue>	scope_body_item;
 
 %type	<variantList>	array_body;
 %type	<variantList>	array_body2;
@@ -130,9 +125,6 @@ int myyynerrs=0;
 %type	<variant>	expr
 
 %type	<stringValue>	qualified_ident
-
-// string exprssion stuff
-%type 	<stringValue>	string_expr
 
 %start start
 
@@ -184,21 +176,18 @@ scope_body
 
 scope_body_item
 	: scope
+
 	| IDENT ASSIGN expr ';'
 	{
-		VERIFY_TYPE(@3,$3)
 		checkForDupMember(@1.first_line,$1);
-		CNestedDataFile::parseTree->createKey((getCurrentScope()+$1).c_str(),$3->floatValue);
+		if($3->type==CNestedDataFile::ktFloat)
+			CNestedDataFile::parseTree->createKey((getCurrentScope()+$1).c_str(),$3->floatValue);
+		else if($3->type==CNestedDataFile::ktString)
+			CNestedDataFile::parseTree->createKey((getCurrentScope()+$1).c_str(),$3->stringValue);
+		else
+			yyerror(@2,"assigning an invalid typed value to an identifier");
 
 		delete $3;
-		free($1);
-	}
-	| IDENT ASSIGN string_expr ';'
-	{
-		checkForDupMember(@1.first_line,$1);
-		CNestedDataFile::parseTree->createKey((getCurrentScope()+$1).c_str(),$3);
-
-		free($3);
 		free($1);
 	}
 	| IDENT '[' ']' ASSIGN '{' array_body '}'
@@ -233,33 +222,28 @@ array_body2
 	{
 		$$=new vector<CNestedDataFile::CVariant>;
 
-		VERIFY_TYPE(@1,$1)
-		$$->push_back(CNestedDataFile::CVariant("",$1->floatValue));
+		if($1->type==CNestedDataFile::ktFloat)
+			$$->push_back(CNestedDataFile::CVariant("",$1->floatValue));
+		else if($1->type==CNestedDataFile::ktString)
+			$$->push_back(CNestedDataFile::CVariant("",$1->stringValue));
+		else
+			yyerror(@1,"invalid typed value in array initializer");
 
 		delete $1;
 	}
-	| string_expr
-	{
-		$$=new vector<CNestedDataFile::CVariant>;
-		$$->push_back(CNestedDataFile::CVariant("",$1));
-		free($1);
-	}
+
 	| array_body ',' expr
 	{
 		$$=$1;
 
-		VERIFY_TYPE(@3,$3)
-		$$->push_back(CNestedDataFile::CVariant("",$3->floatValue));
+		if($3->type==CNestedDataFile::ktFloat)
+			$$->push_back(CNestedDataFile::CVariant("",$3->floatValue));
+		else if($3->type==CNestedDataFile::ktString)
+			$$->push_back(CNestedDataFile::CVariant("",$3->stringValue));
+		else
+			yyerror(@3,"invalid typed value in array initializer");
 
 		delete $3;
-	}
-	| array_body ',' string_expr
-	{
-		$$=$1;
-
-		$$->push_back(CNestedDataFile::CVariant("",$3));
-
-		free($3);
 	}
 
 	// ERROR CASES
@@ -282,6 +266,19 @@ primary_expr
 	{
 		$$=new CNestedDataFile::CVariant("",$1);
 	}
+	| LIT_STRING
+	{
+		$$=new CNestedDataFile::CVariant("",$1);
+		free($1);
+	}
+	| TRUE
+	{
+		$$=new CNestedDataFile::CVariant("","true");
+	}
+	| FALSE
+	{
+		$$=new CNestedDataFile::CVariant("","false");
+	}
 
 	// symbol lookups
 	| qualified_ident
@@ -296,7 +293,7 @@ primary_expr
 		switch(value->type)
 		{
 		case CNestedDataFile::ktString:
-			$$=new CNestedDataFile::CVariant("",atof(value->stringValue.c_str()));
+			$$=new CNestedDataFile::CVariant("",value->stringValue);
 			break;
 		case CNestedDataFile::ktFloat:
 			$$=new CNestedDataFile::CVariant("",value->floatValue);
@@ -361,7 +358,27 @@ multiplicative_expr
 
 additive_expr
 	: multiplicative_expr { $$=$1; }
-	| additive_expr ADD multiplicative_expr { BINARY_EXPR($$,@1,$1,@3,$3,+) }
+	| additive_expr ADD multiplicative_expr 
+	{ 
+		if($1->type==CNestedDataFile::ktFloat)
+		{
+			BINARY_EXPR($$,@1,$1,@3,$3,+) 
+		}
+		else if($1->type==CNestedDataFile::ktString)
+		{
+			if($3->type!=CNestedDataFile::ktString)
+				yyerror(@3,"string type expected");
+			$$=$1;
+			$$->stringValue+=$3->stringValue;
+			delete $3;
+		}
+		else
+		{
+			yyerror(@1,"invalid type");
+			$$=$1;
+			delete $3;
+		}
+	}
 	| additive_expr SUB multiplicative_expr { BINARY_EXPR($$,@1,$1,@3,$3,-) }
 	;
 
@@ -417,29 +434,6 @@ qualified_ident
 		free($3);
 	}
 	;
-
-
-
-string_expr
-	: LIT_STRING { $$=$1; }
-	| TRUE { $$=strdup("true"); }
-	| FALSE { $$=strdup("false"); }
-	| string_expr '.' string_expr
-	{ 
-		$$=$1; 
-		$$=(char *)realloc($$,strlen($$)+strlen($3)+1); 
-		strcat($$,$3); 
-		free($3);
-	}
-	;
-
-
-
-
-
-
-
-
 
 
 
