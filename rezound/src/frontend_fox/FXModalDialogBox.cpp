@@ -39,6 +39,7 @@ FXIMPLEMENT(FXModalDialogBox,FXDialogBox,FXModalDialogBoxMap,ARRAYNUMBER(FXModal
 
 // ----------------------------------------
 
+									// ??? I don't think these w and h parameters are necessary now that I use getDefault[Width,Height]() in the show() method
 FXModalDialogBox::FXModalDialogBox(FXWindow *owner,const FXString &title,int w,int h,FrameTypes frameType) :
 	FXDialogBox(owner,title,DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE, 10,20,w,h, 0,0,0,0, 0,0),
 
@@ -85,6 +86,8 @@ long FXModalDialogBox::onOkayButton(FXObject *sender,FXSelector sel,void *ptr)
 
 void FXModalDialogBox::show(FXuint placement)
 {
+	recalc();
+
 	FXint wantedWidth=getDefaultWidth();
 	FXint wantedHeight=getDefaultHeight();
 	bool wasRemembered=rememberShow(this);
