@@ -1,91 +1,108 @@
-- I really need to do something different in TPoolFile::isExclusiveLocked and also TPoolFile::getSharedLockCount because right now, the isExclusiveLocked returns true if it's shared locked obviously because the tryLock fails so it assumes wrongly that there's an exclusive lock obtained
 
-- warn the user if he's saving an exported file format and information such as cues and user notes will not be exported (for now)
+--- THINGS TO DO FOR SURE ---
 
-- rename MAX_CHANNELS and MAX_LENGTH in ASound.h to something a little more ReZound specific like REZ_MAX_CHANNELS REZ_MAX_LENGTH
+	- I really need to do something different in TPoolFile::isExclusiveLocked and also TPoolFile::getSharedLockCount because right now, the isExclusiveLocked returns true if it's shared locked obviously because the tryLock fails so it assumes wrongly that there's an exclusive lock obtained
 
-- also, it may be benefitial to have a flag for each cue which says wether that cue is achored or not meaning it would move as the space changes within the sound or not
-	- these would probably be a different color and/or symbol
+	- warn the user if he's saving an exported file format and information such as cues and user notes will not be exported (for now)
 
-- I need to go thru these backend classes and make sure of what they all do... 
-	- I have the concept that a sound can be loaded that does have a window: i.e. it's been registered with CSoundManager but not thru ASoundFileManager
-	- I should think thru just exactly what my requirements are and base the classes on that... I shouldn't have to rewrite much code.. it's all there
+	- rename MAX_CHANNELS and MAX_LENGTH in ASound.h to something a little more ReZound specific like REZ_MAX_CHANNELS REZ_MAX_LENGTH
 
-		- ASoundPlayer plays CSoundPlayerChannels (perhaps change the name from Channel to Track so as not to confuse it with the channels of PCM data)
-		- CSoundManager managers CSoundManagerClients... Now, just WHY is this necessary?  So I can have one sound loaded assigned to many CSoundPlayerTracks
-	- I think my motives were to be able to implement MIDISamplePlayer with most of ReZound's code, but a different front end
-		- while this may be feasible, I also need to think thru how multitrack editing may be accomplished... Perhaps it already can
+	- I need to go thru these backend classes and make sure of what they all do... 
+		- I have the concept that a sound can be loaded that does have a window: i.e. it's been registered with CSoundManager but not thru ASoundFileManager
+		- I should think thru just exactly what my requirements are and base the classes on that... I shouldn't have to rewrite much code.. it's all there
 
-	- I just don't have a good grip that there is a reason for everything I did in the backend as far as these managers... 
+			- ASoundPlayer plays CSoundPlayerChannels (perhaps change the name from Channel to Track so as not to confuse it with the channels of PCM data)
+			- CSoundManager managers CSoundManagerClients... Now, just WHY is this necessary?  So I can have one sound loaded assigned to many CSoundPlayerTracks
+		- I think my motives were to be able to implement MIDISamplePlayer with most of ReZound's code, but a different front end
+			- while this may be feasible, I also need to think thru how multitrack editing may be accomplished... Perhaps it already can
 
-- the clip board that the edit actions use is not set up to allow it to paste and copy from other applications
-	- when/if I want to allow that, I should create a base class clipboard which has the platform specific
-	  implementation that reads from the system clipboard.
-	- this base class would probably have some sort of accesser class with a operator[] defined because I need
-	  to support all the mixing methods when pasting...
+		- I just don't have a good grip that there is a reason for everything I did in the backend as far as these managers... 
 
-- need to make 'add channel' and remove channel actions so I can test more than stereo number of channels... 
-	- when I do implement the more than 2 channels, I need to have a way to route the multiple channels of a sound to the 2 (or more) channels of sound card output
-	- the default (when a sound is loaded) should be just to assign each channel to the lesser number of sound card channels in a rotating fassion
-	- the routing should be assigned per CSoundPlayerChannel object, but the routing information should also be saved in a pool in the sound object
+	- the clip board that the edit actions use is not set up to allow it to paste and copy from other applications
+		- when/if I want to allow that, I should create a base class clipboard which has the platform specific
+		  implementation that reads from the system clipboard.
+		- this base class would probably have some sort of accesser class with a operator[] defined because I need
+		  to support all the mixing methods when pasting...
 
-- The only reason I don't prebuffer more data than I do is because the play position drawn in the front end is always a little ahead of the acutal playing sound... I could buffer a lot of data if I were to know the approximate delay time of processing to sound card I might be able to overcome the problem...
-	- One possibility is to be able to know which buffer is playing, then I could tag each buffer with a play position for the start of that buffer... then I would just render the play position on screen as the start position of the currently playing buffer
+	- need to make 'add channel' and remove channel actions so I can test more than stereo number of channels... 
+		- DONE (but no frontend control yet): when I do implement the more than 2 channels, I need to have a way to route the multiple channels of a sound to the 2 (or more) channels of sound card output
+		- DONE the default (when a sound is loaded) should be just to assign each channel to the lesser number of sound card channels in a rotating fashion
+		- DONE the routing should be assigned per CSoundPlayerChannel object, but the routing information should also be saved in a pool in the sound object
 
-- I could make the noise-gate/exciter and compresser/limiter CDSPBlocks so their abilities would be easily used in other effects
-	- Plus, it would be possible to use in realtime applications eventually
-	- I could do the same for the rate change (I could construct the CDSPBlock with the graph parameter object, and the length of the sound)
-		 - Except for the performance hit of virtual functions or pointers to functions in the algorithm, I could create an LFO object which some of the CDSP-blocks could use... Constant LFOs would exist, and an LFO for the CGraphParameterNodes (given a length until repeat) could be given
-	- The same could go for CChangeAmplitudeRate, flange and Echo effect
+	- If saving a sound to a format that doesn't support saving cues or user-notes ask and warn the user
 
-- If saving a sound to a format that doesn't support saving cues or user-notes ask and warn the user
 
-- It would seem profitable to merge CActionSound and CActionParameters into being the same class, since the sound, start and stop positions, and doChannels of CActionSound seem to also be parameters to the action
-	- However, the reason I didn't do this right away, was because I thought that someday I might want to stream CActionParameters to disk and be able to recall it in the future to 
-	  to do the action again with the same parameters.  But, the sound, stop and start positions, and doChannels of CActionSound would not be the same later, so I figured I should have one part of the parameters parameters that was fixed (CActionParameters) and one part that changes later (CActionSound)
-	- Now, granted, there may be some parameters to actions within CActionParameters which don't necessarily work later on a different sound, namely any values which indicate positions within the sound or channel numbers within the sound... For these situations, I either should disallow this saving functionality make the parameters more relative to the sound not absolute
+
+
+
+
+--- POSSIBLE THINGS TO DO ---
+
+	- The only reason I don't prebuffer more data than I do is because the play position drawn in the front end is always a little ahead of the acutal playing sound... I could buffer a lot of data if I were to know the approximate delay time of processing to sound card I might be able to overcome the problem...
+		- One possibility is to be able to know which buffer is playing, then I could tag each buffer with a play position for the start of that buffer... then I would just render the play position on screen as the start position of the currently playing buffer
+
+
+	- THIS is partially complete... I could go further to do it to all actions possible (for the realtime value later)
+		- I could make the noise-gate/exciter(done) and compresser/limiter(doesn't exist yet) CDSPBlocks so their abilities would be easily used in other effects
+			- Plus, it would be possible to use in realtime applications eventually
+			- I could do the same for the rate change (I could construct the CDSPBlock with the graph parameter object, and the length of the sound)
+				 - DONE: Except for the performance hit of virtual functions or pointers to functions in the algorithm, I could create an LFO object which some of the CDSP-blocks could use... Constant LFOs would exist, and an LFO for the CGraphParameterNodes (given a length until repeat) could be given
+				 - (I did this already and the performance hit was actually quite acceptable)
+			- The same could go for CChangeAmplitudeRate, flange(done) and Echo(done) effect
+
+	- It would seem profitable to merge CActionSound and CActionParameters into being the same class, since the sound, start and stop positions, and doChannels of CActionSound seem to also be parameters to the action
+		- However, the reason I didn't do this right away, was because I thought that someday I might want to stream CActionParameters to disk and be able to recall it in the future to 
+		  to do the action again with the same parameters.  But, the sound, stop and start positions, and doChannels of CActionSound would not be the same later, so I figured I should have one part of the parameters parameters that was fixed (CActionParameters) and one part that changes later (CActionSound)
+		- Now, granted, there may be some parameters to actions within CActionParameters which don't necessarily work later on a different sound, namely any values which indicate positions within the sound or channel numbers within the sound... For these situations, I either should disallow this saving functionality make the parameters more relative to the sound not absolute
+
+
+
+
 
 
 
 
 --- DONE ---
 
-- create ASound::moveData which we can use to more efficiently maintain undo copies
-	- i.e. CChangeRateEffect should move the selection to an newly created undo pool, then add new space for the calculated data; upon undo, it should remove the space for the calculated data, then move from the undo pool back to the sound, then destroy the undo pool
-	- I guess this means that an array or list of C...PoolAccessers should be passed to moveData, one for each channel that whichChannels is true for
+	- create ASound::moveData which we can use to more efficiently maintain undo copies
+		- i.e. CChangeRateEffect should move the selection to an newly created undo pool, then add new space for the calculated data; upon undo, it should remove the space for the calculated data, then move from the undo pool back to the sound, then destroy the undo pool
+		- I guess this means that an array or list of C...PoolAccessers should be passed to moveData, one for each channel that whichChannels is true for
 
-	- i.e. CCropEdit should move the data before the selection to an undo pool, then the data after the selection to an undo pool
+		- i.e. CCropEdit should move the data before the selection to an undo pool, then the data after the selection to an undo pool
 
-	- if I go thru each action and figure out how to do it, I should be able to create some general methods in ASound to manager the most common undo operations
+		- if I go thru each action and figure out how to do it, I should be able to create some general methods in ASound to manager the most common undo operations
 
-	- Now using libaudiofile in anticipation of using sox's libst when it's more usable
-		- support .wav format any better?
-			- I should probably use libsndfile or SOX for loading and saving many more types of formats
-		- support sample rates or bit rates other than what I have... Use either realtime conversion or alway convert to the native format when the sound is loaded
+		- Now using libaudiofile in anticipation of using sox's libst when it's more usable
+			- support .wav format any better?
+				- I should probably use libsndfile or SOX for loading and saving many more types of formats
+			- support sample rates or bit rates other than what I have... Use either realtime conversion or alway convert to the native format when the sound is loaded
 
-- make a 'rotate' edit where 'X' samples from the beginning of the selection are moved to the end or X samples from the end are moved to the begginning... that is a left or right rotation
+	- make a 'rotate' edit where 'X' samples from the beginning of the selection are moved to the end or X samples from the end are moved to the begginning... that is a left or right rotation
 
-- ASound::bits is probably on longer necessary since we don't support anything different than sample_t's type
+	- ASound::bits is probably on longer necessary since we don't support anything different than sample_t's type
 
-- NAH.... no need right now
-	- split AAction.* into separate files for each class
+	- NAH.... no need right now
+		- split AAction.* into separate files for each class
 
-- CSoundPlayerChannel could be enhanced to read a mapping in ASound that maps each channel in the ASound with a channel in the player
-	- ??? this is done, except there is no front-end interface to edit the mapping... by default all channels in a sound are assigned, left, right, left, right, etc...
+	- CSoundPlayerChannel could be enhanced to read a mapping in ASound that maps each channel in the ASound with a channel in the player
+		- ??? this is done, except there is no front-end interface to edit the mapping... by default all channels in a sound are assigned, left, right, left, right, etc...
 
-- I need to make the CSoundPlayerChannel heed the sample rate of the ASound object... I should just use linear interpolation of the playSpeed instead of the cheap aliased way of doing it... perhaps the audio hardware could be taken advantage of???
+	- I need to make the CSoundPlayerChannel heed the sample rate of the ASound object... I should just use linear interpolation of the playSpeed instead of the cheap aliased way of doing it... perhaps the audio hardware could be taken advantage of???
 
-- change rint to nearbyint since rint raises a math exception if it did rounding and should therefore be less efficient
+	- change rint to nearbyint since rint raises a math exception if it did rounding and should therefore be less efficient
 
-- cues within an ASound object with each having their own time index also need to be subject to adding and remove space.. 
-	- any cue within the removed space needs to also be removed
-	- any cue after added space needs to be shifted down by the amount of space added
-	- and these times need to be restored if a actions is undo... Perhaps I could brute force, just save a copy of all the cues before an action is done, and restore this set of cues when an action is undo
-		- this would not have serious memory requirements if the number of cues is relatively small... And I could do it all within AAction::doAction/undoAction and within the space modifier methods of ASound
-	- actions should only affect cues if all the channels were affected
+	- cues within an ASound object with each having their own time index also need to be subject to adding and remove space.. 
+		- any cue within the removed space needs to also be removed
+		- any cue after added space needs to be shifted down by the amount of space added
+		- and these times need to be restored if a actions is undo... Perhaps I could brute force, just save a copy of all the cues before an action is done, and restore this set of cues when an action is undo
+			- this would not have serious memory requirements if the number of cues is relatively small... And I could do it all within AAction::doAction/undoAction and within the space modifier methods of ASound
+		- actions should only affect cues if all the channels were affected
 
-- If I am to make selection changes actions, I should probably have a flag to AAciton which says not to lock the sounds for resize because 
-	- both adding cues and selection changes would then cause hiccups in the sound if they are done while playing since a resize lock was unnessarily make on the data
-	- I surely be a flag passed to AActionFactory's constructor
+	- If I am to make selection changes actions, I should probably have a flag to AAciton which says not to lock the sounds for resize because 
+		- both adding cues and selection changes would then cause hiccups in the sound if they are done while playing since a resize lock was unnessarily make on the data
+		- I surely be a flag passed to AActionFactory's constructor
+
+	- also, it may be benefitial to have a flag for each cue which says wether that cue is achored or not meaning it would move as the space changes within the sound or not
+		- these would probably be a different color and/or symbol
 
 
