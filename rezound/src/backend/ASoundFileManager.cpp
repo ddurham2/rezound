@@ -347,9 +347,9 @@ const string ASoundFileManager::getUntitledFilename(const string directory,const
 		const string filename=directory+CPath::dirDelim+prefixes[i];
 		for(size_t t=0;t<100;t++)
 		{
-			const string temp=filename+istring(t)+DOT+extension;
+			const string temp=filename+istring(t)+"."+extension;
 			if(!CPath(temp).exists() && !isFilenameRegistered(temp))
-				return(filename+istring(t)+DOT+extension);
+				return(filename+istring(t)+"."+extension);
 		}
 	}
 	return("");
