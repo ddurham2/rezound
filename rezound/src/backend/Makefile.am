@@ -34,39 +34,40 @@ SUBDIRS=\
 ## EXTRA_DIST these files don't make it into make dist by default but
 ## they are required for the build
 noinst_HEADERS= \
-	   file.h \
-	   playcontrols.h \
-	   initialize.h \
-	   settings.h \
-	   unit_conv.h \
 	   AAction.h \
-	   CActionParameters.h \
 	   AActionDialog.h \
-	   CActionSound.h \
-	   TSoundStretcher.h \
+	   AFrontendHooks.h \
 	   ALFO.h \
-	   CSound.h \
+	   ASoundClipboard.h \
+	   ASoundFileManager.h \
 	   ASoundPlayer.h \
 	   ASoundRecorder.h \
-	   ASoundFileManager.h \
-	   AFrontendHooks.h \
+	   ASoundTranslator.h \
 	   AStatusComm.h \
-	   ASoundClipboard.h \
-	   CNativeSoundClipboard.h \
-	   CRecordSoundClipboard.h \
+	   CActionParameters.h \
+	   CActionSound.h \
 	   CEnvelope.h \
 	   CGraphParamValueNode.h \
 	   CLoadedSound.h \
+	   CNativeSoundClipboard.h \
 	   COSSSoundPlayer.h \
 	   COSSSoundRecorder.h \
+	   CRecordSoundClipboard.h \
+	   CSound.h \
 	   CSoundPlayerChannel.h \
+	   CSound_defs.h \
 	   CTrigger.h \
-	   ASoundTranslator.h \
-	   CrezSoundTranslator.h \
-	   Cold_rezSoundTranslator.h \
 	   ClibaudiofileSoundTranslator.h \
+	   Cold_rezSoundTranslator.h \
 	   CrawSoundTranslator.h \
-	   DSPBlocks.h 
+	   CrezSoundTranslator.h \
+	   DSPBlocks.h \
+	   TSoundStretcher.h \
+	   file.h \
+	   initialize.h \
+	   playcontrols.h \
+	   settings.h \
+	   unit_conv.h 
 	   
 
 ## see PoolFile Makefile.am for explanation here out
