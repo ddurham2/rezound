@@ -70,7 +70,8 @@ protected:
 
 private:
 	FXVerticalFrame *contents;
-		FXPacker *upperFrame;
+		FXPacker *upperFrameParent;
+			FXPacker *upperFrame;
 		FXHorizontalFrame *lowerFrame;
 			FXHorizontalFrame *buttonPacker;
 				FXButton *okayButton;
