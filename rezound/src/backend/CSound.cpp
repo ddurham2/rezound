@@ -127,9 +127,6 @@ CSound::CSound(const string &_filename,const unsigned _sampleRate,const unsigned
 
 CSound::~CSound()
 {
-    // destructor of descendent should saveSound???
-
-
     // going away, so release all read locks
     // ??? add back, but implement correctly
 /*
