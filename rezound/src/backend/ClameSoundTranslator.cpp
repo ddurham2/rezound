@@ -24,22 +24,9 @@
  * documented and the library itself does not deal with mp3 files only
  * with mp3 chunks.  Plus, doing it this way should avoid any possible
  * patent issues even though there's not supposed to be any with lame.
- * 
- * This class may be generalized later as a base class to support
- * other applications where the derived classes would handle the 
- * specifics of each application.
  */
 
 #include "ClameSoundTranslator.h"
-
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <errno.h>
-
-#include "mypopen.h"
-
-#include <signal.h>
 
 #include <typeinfo>
 #include <stdexcept>
@@ -48,20 +35,13 @@
 #include <TAutoBuffer.h>
 
 #include "CSound.h"
-#include "AStatusComm.h"
 #include "AFrontendHooks.h"
-
-sighandler_t prevSIGPIPE_Handler;
-bool gAbortSave;
-static void SIGPIPE_Handler(int sig)
-{
-	gAbortSave=true;
-}
-
+#include "AStatusComm.h"
 
 static string gPathToLame="";
 
-ClameSoundTranslator::ClameSoundTranslator()
+ClameSoundTranslator::ClameSoundTranslator() :
+	ApipedSoundTranslator()
 {
 }
 
@@ -69,48 +49,12 @@ ClameSoundTranslator::~ClameSoundTranslator()
 {
 }
 
-bool ClameSoundTranslator::checkForLame()
+bool ClameSoundTranslator::checkForApp()
 {
-	// ??? this should eventually use a registry setting which comes from user preferences and would be checked first
-
-	FILE *p=mypopen("which lame","r");
-	if(p==NULL)
-	{
-		gPathToLame="";
-		return(false);
-	}
-
-	char buffer[4096+1]={0};
-	fgets(buffer,4096,p);
-	mypclose(p);
-
-	// remove trailing \n if it's there
-	const size_t l=strlen(buffer);
-	if(l>0 && buffer[l-1]=='\n')
-		buffer[l-1]=0;
-
-	gPathToLame=buffer;
-
+	gPathToLame=findAppOnPath("lame");
 	if(gPathToLame=="")
 		fprintf(stderr,"'lame' executable not found in $PATH -- mp3 support will be disabled\n");
-
-	return(gPathToLame!="");
-}
-
-/* translate \ to \\ and " to \" in the given filename */
-// ??? This would probably need to behave a little differently on WIN32 unless it can use " and \ in pathnames
-static const string fixEscapes(const string _filename)
-{
-	string filename=_filename;
-	for(size_t t=0;t<filename.size();t++)
-	{
-		if(filename[t]=='\\' || filename[t]=='"')
-		{
-			filename.insert(t,"\\");
-			t++;
-		}
-	}
-	return(filename);
+	return gPathToLame!="";
 }
 
 	// ??? could just return a CSound object an have used the one constructor that takes the meta info
@@ -122,27 +66,22 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 	if(gPathToLame=="")
 		throw(runtime_error(string(__func__)+" -- path to 'lame' not set"));
 
-	if(!CPath(filename).exists())
+	if(!checkThatFileExists(filename))
 		throw(runtime_error(string(__func__)+" -- file not found, '"+filename+"'"));
 
-	const string cmdLine=gPathToLame+" --decode \""+fixEscapes(filename)+"\" -";
+	const string cmdLine=gPathToLame+" --decode "+escapeFilename(filename)+" -";
 
 	fprintf(stderr,"lame command line: '%s'\n",cmdLine.c_str());
 
 	FILE *errStream=NULL;
-	FILE *p=mypopen(cmdLine.c_str(),"r",&errStream);
-	if(p==NULL)
-	{
-		int err=errno;
-		throw(runtime_error(string(__func__)+" -- error creating pipe to command: '"+cmdLine+"' -- "+strerror(err)));
-	}
+	FILE *p=popen(cmdLine,"r",&errStream);
 
 	CRezPoolAccesser *accessers[MAX_CHANNELS]={0};
 	try
 	{
 		// for now lame always outputs a fixed size wave header as little 
 		// endian just specifying the format so I'll just fread this struct
-		// and later I will have to contend with endian-ness
+		// and later I will have to contend with endian-ness ???
 		struct 
 		{
 			char RIFF_ID[4];
@@ -256,14 +195,14 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 			delete accessers[t];
 
-		mypclose(p);
+		pclose(p);
 	}
 	catch(...)
 	{
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 			delete accessers[t];
 
-		mypclose(p);
+		pclose(p);
 	
 		throw;
 	}
@@ -283,25 +222,16 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 
 	AFrontendHooks::Mp3CompressionParameters parameters;
 	if(!gFrontendHooks->promptForMp3CompressionParameters(parameters))
-		return(false);
+		return false;
 	
-
-	if(CPath(filename).exists())
-	{
-		if(unlink(filename.c_str())!=0)
-		{
-			int err=errno;
-			throw(runtime_error(string(__func__)+" -- error removing file, '"+filename+"' -- "+strerror(err)));
-		}
-	}
+	removeExistingFile(filename);
 
 	if(sound->getCueCount()>0 || sound->getUserNotes()!="")
 	{
 		if(Question("MPEG Layer-3 does not support saving user notes or cues\nDo you wish to continue?",yesnoQues)!=yesAns)
-			return(false);
+			return false;
 	}
 
-	
 	string cmdLine=gPathToLame+" ";
 
 	if(!parameters.useFlagsOnly)
@@ -324,20 +254,13 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 
 	cmdLine+=" "+parameters.additionalFlags+" ";
 
-	cmdLine+=" - \""+fixEscapes(filename)+"\"";
+	cmdLine+=" - "+escapeFilename(filename);
 
 	fprintf(stderr,"lame command line: '%s'\n",cmdLine.c_str());
 
-	// setup a signal handler to handle a SIGPIPE in case lame crashes or doesn't like something
-	gAbortSave=false;
-	prevSIGPIPE_Handler=signal(SIGPIPE,SIGPIPE_Handler);
+	setupSIGPIPEHandler();
 
-	FILE *p=mypopen(cmdLine.c_str(),"w");
-	if(p==NULL)
-	{
-		int err=errno;
-		throw(runtime_error(string(__func__)+" -- error creating pipe to command: '"+cmdLine+"' -- "+strerror(err)));
-	}
+	FILE *p=popen(cmdLine,"w",NULL);
 
 	CRezPoolAccesser *accessers[MAX_CHANNELS]={0};
 	try
@@ -383,7 +306,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 		strncpy(waveHeader.data_ID,"data",4);
 		waveHeader.dataLength=size*(channelCount*(BITS/8));
 
-		if(gAbortSave)
+		if(SIGPIPECaught)
 			throw(runtime_error(string(__func__)+" -- lame aborted -- check stderr for more information"));
 		fwrite(&waveHeader,1,sizeof(waveHeader),p);
 
@@ -411,7 +334,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 				}
 				pos+=chunkSize;
 
-				if(gAbortSave)
+				if(SIGPIPECaught)
 					throw(runtime_error(string(__func__)+" -- lame aborted -- check stderr for more information"));
 				if(fwrite((void *)((sample_t *)buffer),sizeof(sample_t)*channelCount,chunkSize,p)!=chunkSize)
 					fprintf(stderr,"%s -- dropped some data while writing\n",__func__);
@@ -431,20 +354,18 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 			delete accessers[t];
 
-		mypclose(p);
+		pclose(p);
 
-		if(prevSIGPIPE_Handler!=NULL && prevSIGPIPE_Handler!=SIG_ERR)
-			signal(SIGPIPE,prevSIGPIPE_Handler);
+		restoreOrigSIGPIPEHandler();
 	}
 	catch(...)
 	{
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 			delete accessers[t];
 
-		mypclose(p);
+		pclose(p);
 	
-		if(prevSIGPIPE_Handler!=NULL && prevSIGPIPE_Handler!=SIG_ERR)
-			signal(SIGPIPE,prevSIGPIPE_Handler);
+		restoreOrigSIGPIPEHandler();
 
 		throw;
 	}
@@ -458,14 +379,14 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 
 bool ClameSoundTranslator::handlesExtension(const string extension) const
 {
-	return(extension=="mp3" || extension=="mp2" || extension=="mp1");
+	return extension=="mp3" || extension=="mp2" || extension=="mp1";
 }
 
 bool ClameSoundTranslator::supportsFormat(const string filename) const
 {
 	// I've tried and only can really get lame to know the format
 	// from the extension unless I can do some analysis on it myself
-	return(false);
+	return false;
 }
 
 const vector<string> ClameSoundTranslator::getFormatNames() const
@@ -474,7 +395,7 @@ const vector<string> ClameSoundTranslator::getFormatNames() const
 
 	names.push_back("MPEG Layer-3,2,1");
 
-	return(names);
+	return names;
 }
 
 const vector<vector<string> > ClameSoundTranslator::getFormatExtensions() const
@@ -488,6 +409,6 @@ const vector<vector<string> > ClameSoundTranslator::getFormatExtensions() const
 	extensions.push_back("mp1");
 	list.push_back(extensions);
 
-	return(list);
+	return list;
 }
 

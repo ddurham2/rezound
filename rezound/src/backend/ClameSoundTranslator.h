@@ -23,15 +23,15 @@
 
 #include "../../config/common.h"
 
-#include "ASoundTranslator.h"
+#include "ApipedSoundTranslator.h"
 
-class ClameSoundTranslator : public ASoundTranslator
+class ClameSoundTranslator : public ApipedSoundTranslator
 {
 public:
 	ClameSoundTranslator();
 	virtual ~ClameSoundTranslator();
 
-	static bool checkForLame();
+	static bool checkForApp();
 
 	bool handlesExtension(const string extension) const;
 	bool supportsFormat(const string filename) const;
@@ -43,8 +43,6 @@ protected:
 
 	bool onLoadSound(const string filename,CSound *sound) const;
 	bool onSaveSound(const string filename,CSound *sound) const;
-
-private:
 
 };
 

@@ -409,7 +409,7 @@ static void setupSoundTranslators()
 	ASoundTranslator::registeredTranslators.push_back(&rawSoundTranslator);
 #endif
 
-	if(ClameSoundTranslator::checkForLame())
+	if(ClameSoundTranslator::checkForApp())
 	{
 		static const ClameSoundTranslator lameSoundTranslator;
 		ASoundTranslator::registeredTranslators.push_back(&lameSoundTranslator);

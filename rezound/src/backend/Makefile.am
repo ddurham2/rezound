@@ -37,10 +37,11 @@ SUBDIRS=\
 ## EXTRA_DIST these files don't make it into make dist by default but
 ## they are required for the build
 noinst_HEADERS= \
-	   AAction.h \
 	   AActionDialog.h \
+	   AAction.h \
 	   AFrontendHooks.h \
 	   ALFO.h \
+	   ApipedSoundTranslator.h \
 	   ASoundClipboard.h \
 	   ASoundFileManager.h \
 	   ASoundPlayer.h \
@@ -50,29 +51,29 @@ noinst_HEADERS= \
 	   CActionParameters.h \
 	   CActionSound.h \
 	   CGraphParamValueNode.h \
-	   CLoadedSound.h \
-	   CNativeSoundClipboard.h \
-	   CPortAudioSoundPlayer.h \
-	   CPortAudioSoundRecorder.h \
-	   COSSSoundPlayer.h \
-	   COSSSoundRecorder.h \
-	   CRecordSoundClipboard.h \
-	   CSound.h \
-	   CSoundPlayerChannel.h \
-	   CSound_defs.h \
-	   CTrigger.h \
+	   ClameSoundTranslator.h \
 	   ClibaudiofileSoundTranslator.h \
 	   ClibvorbisSoundTranslator.h \
-	   ClameSoundTranslator.h \
+	   CLoadedSound.h \
+	   CNativeSoundClipboard.h \
 	   Cold_rezSoundTranslator.h \
+	   COSSSoundPlayer.h \
+	   COSSSoundRecorder.h \
+	   CPortAudioSoundPlayer.h \
+	   CPortAudioSoundRecorder.h \
 	   CrawSoundTranslator.h \
+	   CRecordSoundClipboard.h \
 	   CrezSoundTranslator.h \
+	   CSound_defs.h \
+	   CSound.h \
+	   CSoundPlayerChannel.h \
+	   CTrigger.h \
 	   initialize.h \
-	   main_controls.h \
-	   settings.h \
-	   unit_conv.h \
 	   license.h \
-	   mypopen.h 
+	   main_controls.h \
+	   mypopen.h \
+	   settings.h \
+	   unit_conv.h
 	   
 
 ## see PoolFile Makefile.am for explanation here out
@@ -80,36 +81,37 @@ noinst_HEADERS= \
 noinst_LTLIBRARIES=libbackend.la
 libbackend_la_SOURCES= \
 			AAction.cpp  \
-			CActionParameters.cpp  \
 			AActionDialog.cpp  \
-			CActionSound.cpp  \
-			CSound.cpp  \
-			ASoundFileManager.cpp \
 			AFrontendHooks.cpp \
+	   		ALFO.cpp \
+			ApipedSoundTranslator.cpp \
+			ASoundClipboard.cpp \
+			ASoundFileManager.cpp \
 			ASoundPlayer.cpp  \
 			ASoundRecorder.cpp \
-			AStatusComm.cpp \
-	   		ALFO.cpp \
-			ASoundClipboard.cpp \
-			CNativeSoundClipboard.cpp \
-			CRecordSoundClipboard.cpp \
-			CGraphParamValueNode.cpp \
-			CLoadedSound.cpp  \
-	   		CPortAudioSoundPlayer.cpp \
-	   		CPortAudioSoundRecorder.cpp \
-			COSSSoundPlayer.cpp \
-			COSSSoundRecorder.cpp \
-			CSoundPlayerChannel.cpp \
-			CTrigger.cpp \
-			main_controls.cpp \
-		        settings.cpp \
 			ASoundTranslator.cpp \
-			CrezSoundTranslator.cpp \
-			Cold_rezSoundTranslator.cpp \
+			AStatusComm.cpp \
+			CActionParameters.cpp  \
+			CActionSound.cpp  \
+			CGraphParamValueNode.cpp \
+			ClameSoundTranslator.cpp \
 			ClibaudiofileSoundTranslator.cpp \
 			ClibvorbisSoundTranslator.cpp \
-			ClameSoundTranslator.cpp \
+			CLoadedSound.cpp  \
+			CNativeSoundClipboard.cpp \
+			Cold_rezSoundTranslator.cpp \
+			COSSSoundPlayer.cpp \
+			COSSSoundRecorder.cpp \
+	   		CPortAudioSoundPlayer.cpp \
+	   		CPortAudioSoundRecorder.cpp \
 			CrawSoundTranslator.cpp \
+			CRecordSoundClipboard.cpp \
+			CrezSoundTranslator.cpp \
+			CSound.cpp  \
+			CSoundPlayerChannel.cpp \
+			CTrigger.cpp \
 		        initialize.cpp \
-		        mypopen.cpp
+			main_controls.cpp \
+		        mypopen.cpp \
+		        settings.cpp
 
