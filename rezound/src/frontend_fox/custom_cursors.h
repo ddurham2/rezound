@@ -38,9 +38,9 @@ static const char playMouseCursorMask[]={
 };
 
 
-static void *bytesToBits(const char *bytes,int bytesLength)
+static unsigned char *bytesToBits(const char *bytes,int bytesLength)
 {
-	char *bits=new char[(bytesLength/8)+1];
+	unsigned char *bits=new unsigned char[(bytesLength/8)+1];
 	for(int t=0;t<bytesLength/8+1;t++)
 		bits[t]=0; 
 	for(int t=0;t<bytesLength;t++)
