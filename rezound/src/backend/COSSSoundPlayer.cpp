@@ -39,11 +39,16 @@
 
 #include <istring>
 
-// ??? edit this to be able to detect necessary parameters from the typeof sample_t and CHANNELS defines from some global h file
 
+// ??? edit this to be able to detect necessary parameters from the typeof sample_t
+// 	or I need to convert to 16bit 
+// needs to match for what is above and type of sample_t ???
+// ??? BTW- on a big endian machine, AFMT_S16_BE is available
+// 	also now existing the OSS documenation I was reading are AFMT_MPEG 
+// 	and AFMT_AC3 which would be nice for mroe than stereo
+#define OSS_PCM_FORMAT AFMT_S16_LE
 #define SAMPLE_RATE 44100
 #define CHANNELS 2
-#define OSS_PCM_FORMAT AFMT_S16_LE // needs to match for type of sample_t ???
 
 #define BUFFER_COUNT 4
 #define BUFFER_SIZE_BYTES 4096						// buffer size in bytes
@@ -74,8 +79,9 @@ void COSSSoundPlayer::initialize()
 		ASoundPlayer::initialize();
 
 		// open OSS device
-		if((audio_fd=open("/dev/dsp",O_WRONLY,0)) == -1) 
-			throw(runtime_error(string(__func__)+" -- error opening OSS device -- "+strerror(errno)));
+		const char *device="/dev/dsp";
+		if((audio_fd=open(device,O_WRONLY,0)) == -1) 
+			throw(runtime_error(string(__func__)+" -- error opening OSS device '"+string(device)+" -- "+strerror(errno)));
 		//printf("OSS: device: %s\n","/dev/dsp");
 
 		// set the bit rate and endianness
@@ -94,37 +100,37 @@ void COSSSoundPlayer::initialize()
 
 
 		// set number of channels 
-		int stereo=CHANNELS-1;     /* 0=mono, 1=stereo */
-		if (ioctl(audio_fd, SNDCTL_DSP_STEREO, &stereo)==-1)
+		int channelCount=CHANNELS;
+		if (ioctl(audio_fd, SNDCTL_DSP_CHANNELS, &channelCount)==-1)
 		{
 			close(audio_fd);
 			throw(runtime_error(string(__func__)+" -- error setting the number of channels -- "+strerror(errno)));
 		}
-		else if (stereo!=1)
+		else if (channelCount!=CHANNELS)
 		{
 			close(audio_fd);
-			throw(runtime_error(string(__func__)+" -- error setting the number of channels -- the device does not support stereo"));
+			throw(runtime_error(string(__func__)+" -- error setting the number of channels -- the device does not support "+istring(CHANNELS)+" channel playback"));
 		}
 		//printf("OSS: channel count: %d\n",CHANNELS);
 
-		devices[0].channelCount=CHANNELS; // make note of the number of channels for this device (??? which is only device zero for now)
+		devices[0].channelCount=channelCount; // make note of the number of channels for this device (??? which is only device zero for now)
 
 		// set the sample rate
-		int speed=SAMPLE_RATE;
-		if (ioctl(audio_fd, SNDCTL_DSP_SPEED, &speed)==-1) 
+		int sampleRate=SAMPLE_RATE;
+		if (ioctl(audio_fd, SNDCTL_DSP_SPEED, &sampleRate)==-1) 
 		{
 			close(audio_fd);
 			throw(runtime_error(string(__func__)+" -- error setting the sample rate -- "+strerror(errno)));
 		} 
-		if (speed!=SAMPLE_RATE)
+		if (sampleRate!=SAMPLE_RATE)
 		{ 
-			fprintf(stderr,("warning: OSS used a different sample rate ("+istring(speed)+") than what was asked for ("+istring(SAMPLE_RATE)+")\n").c_str());
+			fprintf(stderr,("warning: OSS used a different sample rate ("+istring(sampleRate)+") than what was asked for ("+istring(SAMPLE_RATE)+")\n").c_str());
 			//close(audio_fd);
 			//throw(runtime_error(string(__func__)+" -- error setting the sample rate -- the sample rate is not supported"));
 		} 
-		//printf("OSS: sample rate: %d\n",speed);
+		//printf("OSS: sample rate: %d\n",sampleRate);
 
-		devices[0].sampleRate=speed; // make note of the sample rate for this device (??? which is only device zero for now)
+		devices[0].sampleRate=sampleRate; // make note of the sample rate for this device (??? which is only device zero for now)
 
 
 		// set the buffering parameters

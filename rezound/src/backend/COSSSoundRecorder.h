@@ -68,6 +68,7 @@ private:
 
 	CRecordThread recordThread;
 	ost::Semaphore threadFinishedSem;
+	//ost::Mutex redoMutex;
 
 };
 
