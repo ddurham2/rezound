@@ -152,7 +152,7 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 		else
 			cb->hide();
 
-		// disable it's showm, but disabled since there is no data for that channel in the clipboard
+		// let it show, but disabled since there is no data for that channel in the clipboard
 		if(!clipboard->getWhichChannels()[col])
 			cb->disable();
 	}
