@@ -31,8 +31,9 @@ public:
 		FXPacker(parent,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0),
 		canvas(new FXCanvas(this,this,ID_CANVAS,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y))
 	{
-		static char pix[]={0x55,0xaa,0x55,0xaa, 0x55,0xaa,0x55,0xaa};
-		stipplePattern=new FXBitmap(getApp(),pix,0,1,1);
+		static char pix[]={0x55,0x2a};
+		stipplePattern=new FXBitmap(getApp(),pix,0,8,2);
+		stipplePattern->create();
 	}
 
 	CMeter::~CMeter()
@@ -54,7 +55,6 @@ public:
 		for(int t=0;t<NUM;t++)
 		{
 			const int x=(getWidth()-1)*t/(NUM-1);
-			//printf("ASD %d -> %d \n",x,getWidth()-1);
 			dc.drawLine(x,0,x,1);
 		}
 
@@ -63,13 +63,12 @@ public:
 		dc.drawLine(0,getHeight()-1,getWidth(),getHeight()-1);
 
 		// draw gray background underneath the stippled level indication 
-		dc.setForeground(FXRGB(32,32,32));
+		dc.setForeground(FXRGB(48,48,48));
 		dc.fillRectangle(0,2,getWidth(),getHeight()-3);
 
 		// draw level indication
 		dc.setFillStyle(FILL_STIPPLED);
-		dc.setStipple(STIPPLE_GRAY);
-		//dc.setStipple(stipplePattern); // I'd like to make a led looking stipple pattern, but I can't figure out how to make fox accept it
+		dc.setStipple(stipplePattern);
 		dc.setForeground(FXRGB(0,255,0));
 		dc.fillRectangle(0,2,x,getHeight()-3);
 
