@@ -28,7 +28,7 @@ CCrossfadeEdgesDialog *gCrossfadeEdgesDialog=NULL;
 
 
 CCrossfadeEdgesDialog::CCrossfadeEdgesDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Crossfade Edges Settings",310,150,FXModalDialogBox::ftVertical)
+	CActionParamDialog(mainWindow,"Crossfade Edges Settings",310,300,FXModalDialogBox::ftVertical)
 {
 
 	setMargin(130);
