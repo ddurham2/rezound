@@ -59,9 +59,6 @@
 	- I need to think thru and handle problems with the data becoming too large for whatever address space is currently active
 		- if ASound is about to change the space, if the total space is about to cross some threshhold, I shouldn't proceed to do the action
 
-	- need to eventually use a different sound file library which can also retrieve and store arbitrary data sections in the formats that support it (namely .wav).. So I can store and load cues
-		- I'd like to use libst (lib form of SOX), but there is no documentation or common API I don't think
-
 	- Need to handle duplicate named cues when loading a file.. I don't allow them, but a file format might
 
 	- Truncate file formats that don't save more than 32bits worth of sound and the sound file is longer than that
@@ -153,4 +150,7 @@
 
 	- Need to purge waiting audio input when COSSSoundRecorder does a redo()
 		- coded it, but in testing (without the new code) I couldn't get it to be a problem, so I just left it commented out until it does show itself as a problem
+
+	- need to eventually use a different sound file library which can also retrieve and store arbitrary data sections in the formats that support it (namely .wav).. So I can store and load cues
+		- I'd like to use libst (lib form of SOX), but there is no documentation or common API I don't think
 

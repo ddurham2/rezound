@@ -15,7 +15,6 @@
 		- perhaps OSS can give a sequence number?  Then if one's missing it dropped something?
 
 	- Put in the documentation or application help somewhere a brief description about how recording works in linux (you have a recording source selected, then igain which is the recording gain of that source)
-	- List in the documentation (which isn't the most obvious feature) that in the recording dialog, one can use start/stop multiple times as in pausing the recording, resuming, pausing, resuming, etc
 
 	- When it's up on sourceforge (and ready to debut) announce to:
 		- demudi
@@ -90,10 +89,10 @@
 		- then when you ctrl-click to paste, the pasteChannels dialog shows up with all the channels that were cut/copied shifted down to lower channel numbers 
 		- perhaps I could create pools but not put data into them, for the un-included copy/cut channels, but know to disable the check boxes in the GUI if the pool is zero length
 
-	- Need someone like a sound engineer who can create interesting names and settings for presets of the effect
+	- Need someone like a sound engineer/hobbiest who can create interesting names and settings for presets of the effect
 		- He would also be good to suggest new parameters for the effects
 
-	- I want to a a gain or volume parameter for pasting data... Be able to apply that gain to the sound... 
+	- I want to add a gain or volume parameter for pasting data... Be able to apply that gain to the sound... 
 		- it'd probably come up when you right click on the paste buttons
 	- There needs to be a dialog for choosing the mix method for mix pasting
 
@@ -352,3 +351,4 @@
 
 	- Need a hot key or event that keeps the play position on screen.. only do something if it's not on screen
 
+	- List in the documentation (which isn't the most obvious feature) that in the recording dialog, one can use start/stop multiple times as in pausing the recording, resuming, pausing, resuming, etc
