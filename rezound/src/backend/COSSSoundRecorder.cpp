@@ -138,7 +138,7 @@ void COSSSoundRecorder::initialize(ASound *sound,const unsigned channelCount,con
 
 		// get the fragment info
 		audio_buf_info info;
-		if(ioctl(audio_fd, SNDCTL_DSP_GETOSPACE, &info)==-1)
+		if(ioctl(audio_fd, SNDCTL_DSP_GETISPACE, &info)==-1)
 		{
 			close(audio_fd);
 			throw(runtime_error(string(__func__)+" -- error getting the buffering parameters -- "+strerror(errno)));

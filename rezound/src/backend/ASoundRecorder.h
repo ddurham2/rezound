@@ -81,6 +81,7 @@ private:
 	ASound *sound;
 	sample_pos_t prealloced;
 	sample_pos_t origLength;
+	sample_pos_t writePos;
 
 };
 

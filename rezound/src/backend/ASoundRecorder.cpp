@@ -39,42 +39,82 @@ void ASoundRecorder::onInit(ASound *_sound,const unsigned _channelCount,const un
 void ASoundRecorder::onStart()
 {
 	origLength=sound->getLength();
+	writePos=origLength;
 	prealloced=0;
 }
 
 void ASoundRecorder::onData(const sample_t *samples,const size_t sampleFramesRecorded)
 {
 	// we preallocate space in the sound in 5 second chunks
-	while(prealloced<sampleFramesRecorded)
+	if(prealloced<sampleFramesRecorded)
 	{
-		sound->addSpace(sound->getLength(),5*sampleRate,false);
-		prealloced+=(5*sampleRate);
+		sound->lockForResize();
+		try
+		{
+			while(prealloced<sampleFramesRecorded)
+			{
+				sound->addSpace(sound->getLength(),5*sampleRate,false);
+				prealloced+=(5*sampleRate);
+			}
+			sound->unlockForResize();
+		}
+		catch(...)
+		{
+			sound->unlockForResize();
+			throw;
+		}
 	}
 
 	const unsigned channelCount=this->channelCount;
+	sample_pos_t writePos=0;
 	for(unsigned i=0;i<channelCount;i++)
 	{
 		CRezPoolAccesser a=sound->getAudio(i);
 		const sample_t *_samples=samples+i;
+		writePos=this->writePos;
 		for(size_t t=0;t<sampleFramesRecorded;t++)
 		{
-			a[t]=*_samples;
+			a[writePos++]=*_samples;
 			_samples+=channelCount;
 		}
 	}
+
+	prealloced-=sampleFramesRecorded;
+	this->writePos=writePos;
 }
 
 void ASoundRecorder::onStop(bool error)
 {
-	// ??? on error should I remove all recorded space back to the origLength?
-	if(prealloced>0)
-		// remove extra space
-		sound->removeSpace(sound->getLength()-prealloced,prealloced);
+	sound->lockForResize();
+	try
+	{
+		// ??? on error should I remove all recorded space back to the origLength?
+		if(prealloced>0)
+			// remove extra space
+			sound->removeSpace(sound->getLength()-prealloced,prealloced);
+
+		sound->unlockForResize();
+	}
+	catch(...)
+	{
+		sound->unlockForResize();
+		throw;
+	}
 }
 
 void ASoundRecorder::onRedo()
 {
-	if(sound->getLength()>origLength)
-		sound->removeSpace(origLength,sound->getLength()-origLength);
+	sound->lockForResize();
+	try
+	{
+		if(sound->getLength()>origLength)
+			sound->removeSpace(origLength,sound->getLength()-origLength);
+		writePos=origLength;
+	}
+	catch(...)
+	{
+		sound->unlockForResize();
+		throw;
+	}
 }
 
