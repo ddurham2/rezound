@@ -38,7 +38,7 @@ CAddChannelsEdit::~CAddChannelsEdit()
 
 bool CAddChannelsEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 {
-	actionSound.sound->addChannels(where,count);
+	actionSound.sound->addChannels(where,count,true);
 	return true;
 }
 
