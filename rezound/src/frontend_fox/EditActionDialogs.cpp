@@ -72,13 +72,18 @@ bool CSwapChannelsDialog::show(CActionSound *actionSound,CActionParameters *acti
 	}
 	else
 	{
-		vector<string> items;
-		for(size_t t=0;t<actionSound->sound->getChannelCount();t++)
-				items.push_back("Channel "+istring(t));
+		if(getComboText("Channel A")->getItems().size()!=actionSound->sound->getChannelCount())
+		{
+			vector<string> items;
+			for(size_t t=0;t<actionSound->sound->getChannelCount();t++)
+					items.push_back("Channel "+istring(t));
 
-		// set the combo boxes according to actionSound
-		getComboText("Channel A")->setItems(items);
-		getComboText("Channel B")->setItems(items);
+			// set the combo boxes according to actionSound
+			getComboText("Channel A")->setItems(items);
+			getComboText("Channel B")->setItems(items);
+			getComboText("Channel A")->setCurrentItem(0);
+			getComboText("Channel B")->setCurrentItem(1);
+		}
 
 		return(CActionParamDialog::show(actionSound,actionParameters));
 	}
