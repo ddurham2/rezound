@@ -96,7 +96,7 @@ void determineDecorSize(FXWindow *window)
 
 bool rememberShow(FXTopWindow *window)
 {
-	// ,- isn't reliable with all window managers behaving differently 
+	// .- isn't reliable with all window managers behaving differently 
 	// |
 	// V
 	//determineDecorSize(window);
@@ -107,7 +107,7 @@ bool rememberShow(FXTopWindow *window)
 		return false;
 	inThis=true;
 
-	const string title="FOT" DOT "WindowDimensions" DOT window->getTitle().text();
+	const string title="FOX" DOT "WindowDimensions" DOT window->getTitle().text();
 	if(!gSettingsRegistry->keyExists(title+"_X"))
 	{
 		inThis=false;
