@@ -52,6 +52,7 @@ libfrontend_la_SOURCES= \
 			CMp3Dialog.cpp \
 			CJACKPortChoiceDialog.cpp \
 			CMIDIDumpSampleIdDialog.cpp \
+			ClibaudiofileSaveParametersDialog.cpp \
 			drawPortion.cpp \
 			EditActionDialogs.cpp \
 			EffectActionDialogs.cpp \
@@ -130,6 +131,7 @@ noinst_HEADERS=\
 	CMp3Dialog.h \
 	CJACKPortChoiceDialog.h \
 	CMIDIDumpSampleIdDialog.h \
+	ClibaudiofileSaveParametersDialog.h \
 	EditActionDialogs.h \
 	EffectActionDialogs.h \
 	FilterActionDialogs.h \

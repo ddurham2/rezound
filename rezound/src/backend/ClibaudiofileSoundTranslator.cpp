@@ -25,6 +25,8 @@
 #include <unistd.h> // for unlink
 
 #include <stdexcept>
+#include <vector>
+#include <utility>
 
 #include <istring>
 #include <TAutoBuffer.h>
@@ -33,6 +35,7 @@
 
 #include "CSound.h"
 #include "AStatusComm.h"
+#include "AFrontendHooks.h"
 
 #if (LIBAUDIOFILE_MAJOR_VERSION*10000+LIBAUDIOFILE_MINOR_VERSION*100+LIBAUDIOFILE_MICRO_VERSION) >= /*000204*/204
 	#define HANDLE_CUES_AND_MISC
@@ -101,14 +104,12 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 #endif
 		throw runtime_error(string(__func__)+" -- error setting virtual byte order -- "+errorMessage);
 
-		// ??? I'm not sure about the 3to4 parameter, because won't it give it to me in whatever bit size I said in afSetVirtualSampleFormat ?
-	//unsigned channelCount=(unsigned)(afGetVirtualFrameSize(h,AF_DEFAULT_TRACK,1)/sizeof(sample_t));
 	unsigned channelCount=afGetChannels(h,AF_DEFAULT_TRACK);
 	if(channelCount<=0 || channelCount>MAX_CHANNELS) // ??? could just ignore the extra channels
 		throw runtime_error(string(__func__)+" -- invalid number of channels in audio file: "+istring(channelCount)+" -- you could simply increase MAX_CHANNELS in CSound.h");
 	unsigned sampleRate=(unsigned)afGetRate(h,AF_DEFAULT_TRACK);
 
-	if(sampleRate<4000 || sampleRate>96000)
+	if(sampleRate<4000 || sampleRate>196000)
 		throw runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate)+" probably indicates a corrupt file and SGI's libaudiofile has been known to miss these");
 
 	
@@ -128,6 +129,18 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 	}
 
 	sound->createWorkingPoolFile(filename,sampleRate,channelCount,size);
+
+	// remember information for how to save the file if libaudiofile is also used to save it
+	{
+		int sampleFormat,sampleWidth,compressionType;
+
+		afGetSampleFormat(h,AF_DEFAULT_TRACK,&sampleFormat,&sampleWidth);
+		compressionType=afGetCompression(h,AF_DEFAULT_TRACK);
+
+		sound->getGeneralDataAccesser<int>("AF_SAMPFMT_xxx").write(&sampleFormat,1);
+		sound->getGeneralDataAccesser<int>("AF_sample_width").write(&sampleWidth,1);
+		sound->getGeneralDataAccesser<int>("AF_COMPRESSION_xxx").write(&compressionType,1);
+	}
 
 #ifdef HANDLE_CUES_AND_MISC
 
@@ -221,7 +234,6 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 			{
 				if(afReadFrames(h,AF_DEFAULT_TRACK,(void *)buffer,chunkSize)!=chunkSize)
 				{
-					//throw runtime_error(string(__func__)+" -- error reading audio data -- "+errorMessage);
 					Error("error reading audio data from "+filename+" -- "+errorMessage+" -- keeping what was read");
 					break;
 				}
@@ -260,6 +272,41 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 	return ret;
 }
 
+static int sampleTypeToIndex(int sampleType)
+{
+	switch(sampleType)
+	{
+		case AF_SAMPFMT_TWOSCOMP: return 0;
+		case AF_SAMPFMT_UNSIGNED: return 1;
+		case AF_SAMPFMT_FLOAT: return 2;
+		case AF_SAMPFMT_DOUBLE: return 3;
+		default: throw runtime_error(string(__func__)+" -- internal error -- unhandled sampleType: "+istring(sampleType));
+	};
+}
+
+static int sampleWidthToIndex(int sampleWidth)
+{
+	switch(sampleWidth)
+	{
+		case 8: return 0;
+		case 16: return 1;
+		case 24: return 2;
+		case 32: return 3;
+		default: {printf("weird sampleWidth: %d -- returning 16bit instead\n",sampleWidth); return 1;}
+	};
+}
+
+static int compressionTypeToIndex(int compressionType,vector<pair<string,int> > supportedCompressionTypes)
+{
+	for(size_t t=0;t<supportedCompressionTypes.size();t++)
+	{
+		if(supportedCompressionTypes[t].second==compressionType)
+			return t;
+	}
+
+	return 0; // none
+}
+
 bool ClibaudiofileSoundTranslator::onSaveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs) const
 {
 	int fileType;
@@ -279,8 +326,63 @@ bool ClibaudiofileSoundTranslator::onSaveSound(const string filename,const CSoun
 	AFfilesetup setup=afNewFileSetup();
 	try
 	{
-// ??? use useLastUserPrefs here to know if to prompt the user or use the user's previous choice
+		// get user preferences for saving the file
+		static bool parametersGotten=false;
+		static AFrontendHooks::libaudiofileSaveParameters parameters;
+		useLastUserPrefs&=parametersGotten;
+		if(!useLastUserPrefs)
+		{
+			// get name of format to show
+			const char *desc=(const char *)afQueryPointer(AF_QUERYTYPE_FILEFMT,AF_QUERY_NAME,fileType,0,0);
 
+			// setup for supported compression types
+			{
+				int nCompressionTypes=afQueryLong(AF_QUERYTYPE_FILEFMT,AF_QUERY_COMPRESSION_TYPES,AF_QUERY_VALUE_COUNT,fileType,0);
+				const int *compressionTypes=(const int *)afQueryPointer(AF_QUERYTYPE_FILEFMT,AF_QUERY_COMPRESSION_TYPES,AF_QUERY_VALUES,fileType,0); // I may need to free this??? but I haven't seen in the docs that it needs to be done, ask him
+				vector<pair<string,int> > supportedCompressionTypes;
+				supportedCompressionTypes.push_back(make_pair(string("None"),(int)AF_COMPRESSION_NONE));
+				for(int t=0;t<nCompressionTypes;t++)
+				{
+					supportedCompressionTypes.push_back(make_pair(
+						(const char *)afQueryPointer(AF_QUERYTYPE_COMPRESSION,AF_QUERY_NAME,compressionTypes[t],0,0),
+						compressionTypes[t]
+					));
+				}
+			
+				parameters.supportedCompressionTypes=supportedCompressionTypes;
+			}
+
+			parameters.defaultSampleFormatIndex=
+				sound->containsGeneralDataPool("AF_SAMPFMT_xxx") 
+				? 
+					sampleTypeToIndex(sound->getGeneralDataAccesser<int>("AF_SAMPFMT_xxx")[0])
+				: 
+					sampleTypeToIndex(afQueryLong(AF_QUERYTYPE_FILEFMT,AF_QUERY_SAMPLE_FORMATS,AF_QUERY_DEFAULT,fileType,0))
+				;
+
+
+			parameters.defaultSampleWidthIndex=
+				sound->containsGeneralDataPool("AF_sample_width") 
+				? 
+					sampleWidthToIndex(sound->getGeneralDataAccesser<int>("AF_sample_width")[0])
+				: 
+					sampleWidthToIndex(afQueryLong(AF_QUERYTYPE_FILEFMT,AF_QUERY_SAMPLE_SIZES,AF_QUERY_DEFAULT,fileType,0))
+				;
+
+			parameters.defaultCompressionTypeIndex=
+				sound->containsGeneralDataPool("AF_COMPRESSION_xxx") 
+				? 
+					compressionTypeToIndex(sound->getGeneralDataAccesser<int>("AF_COMPRESSION_xxx")[0],parameters.supportedCompressionTypes)
+				: 
+					compressionTypeToIndex(AF_COMPRESSION_NONE,parameters.supportedCompressionTypes)
+				;
+
+			if(!gFrontendHooks->promptForlibaudiofileSaveParameters(parameters,desc))
+				return false;
+			parametersGotten=true;
+		}
+
+		
 		// ??? all the following parameters need to be passed in somehow as the export format
 		// 	??? can easily do it with AFrontendHooks
 		afInitFileFormat(setup,fileType); 
@@ -299,10 +401,9 @@ bool ClibaudiofileSoundTranslator::onSaveSound(const string filename,const CSoun
 #endif
 		}
 		afInitChannels(setup,AF_DEFAULT_TRACK,sound->getChannelCount());
-		afInitSampleFormat(setup,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,sizeof(int16_t)*8); 	// ??? I would actually want to pass how the user wants to export the data... int16_t matching AF_SAMPFMT_TWOSCOMP
-		afInitRate(setup,AF_DEFAULT_TRACK,sound->getSampleRate()); 				// ??? I would actually want to pass how the user wants to export the data... doesn't actual do any conversion right now (perhaps I could patch it for them)
-		afInitCompression(setup,AF_DEFAULT_TRACK,AF_COMPRESSION_NONE);
-			//afInitInitCompressionParams(setup,AF_DEFAULT_TRACK, ... );
+		afInitSampleFormat(setup,AF_DEFAULT_TRACK,parameters.sampleFormat,parameters.sampleWidth);
+		afInitRate(setup,AF_DEFAULT_TRACK,sound->getSampleRate()); // ??? would put on the dialog except the library doesn't do sample rate conversion itself currently
+		afInitCompression(setup,AF_DEFAULT_TRACK,parameters.compressionType);
 		afInitFrameCount(setup,AF_DEFAULT_TRACK,saveLength);
 
 		const bool ret=saveSoundGivenSetup(filename,sound,saveStart,saveLength,setup,fileType,useLastUserPrefs);

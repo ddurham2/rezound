@@ -35,6 +35,7 @@
 #include "CMp3Dialog.h"
 #include "CVoxDialog.h"
 #include "CMIDIDumpSampleIdDialog.h"
+#include "ClibaudiofileSaveParametersDialog.h"
 
 #include "../backend/ASoundTranslator.h"
 
@@ -53,7 +54,8 @@ CFrontendHooks::CFrontendHooks(FXWindow *_mainWindow) :
 	oggDialog(NULL),
 	mp3Dialog(NULL),
 	voxDialog(NULL),
-	MIDIDumpSampleIdDialog(NULL)
+	MIDIDumpSampleIdDialog(NULL),
+	libaudiofileSaveParametersDialog(NULL)
 {
 	dirDialog=new FXDirDialog(mainWindow,_("Select Directory"));
 
@@ -72,6 +74,7 @@ CFrontendHooks::~CFrontendHooks()
 	delete mp3Dialog;
 	delete voxDialog;
 	delete MIDIDumpSampleIdDialog;
+	delete libaudiofileSaveParametersDialog;
 }
 
 void CFrontendHooks::doSetupAfterBackendIsSetup()
@@ -108,6 +111,8 @@ void CFrontendHooks::doSetupAfterBackendIsSetup()
 	voxDialog=new CVoxDialog(mainWindow);
 	
 	MIDIDumpSampleIdDialog=new CMIDIDumpSampleIdDialog(mainWindow);
+
+	libaudiofileSaveParametersDialog=new ClibaudiofileSaveParametersDialog(mainWindow);
 }
 
 const string CFrontendHooks::getFOXFileTypes() const
@@ -322,5 +327,10 @@ bool CFrontendHooks::promptForOpenMIDISampleDump(int &sysExChannel,int &waveform
 bool CFrontendHooks::promptForSaveMIDISampleDump(int &sysExChannel,int &waveformId,int &loopType)
 {
 	return MIDIDumpSampleIdDialog->showForSave(sysExChannel,waveformId,loopType);
+}
+
+bool CFrontendHooks::promptForlibaudiofileSaveParameters(libaudiofileSaveParameters &parameters,const string formatName)
+{
+	return libaudiofileSaveParametersDialog->show(parameters,formatName);
 }
 

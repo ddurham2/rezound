@@ -2251,11 +2251,22 @@ void CSound::setUserNotes(const string &notes)
 }
 
 
-// this is the explicit instantiation of the TPoolFile for CSound's purposes
+// this is the explicit instantiation of the TPoolFile for CSound's purposes 
 #include <TPoolFile.cpp>
 template class TPoolFile<sample_pos_t,uint64_t>;
+
+// Some explicit template method instantiations (not sure why some are necessary and some aren't)
 
 /* I'm not sure why, but when I enable float instead of int16_t as the native audio type, it complains that these methods weren't instantiated anywhere when linking .. fine, but I'm not explicitly instantiating them when the type if int16_t either */
 template TStaticPoolAccesser<int16_t,TPoolFile<sample_pos_t,uint64_t> > TPoolFile<sample_pos_t,uint64_t>::createPool<int16_t>(const string, const bool);
 template TStaticPoolAccesser<int16_t,TPoolFile<sample_pos_t,uint64_t> > const TPoolFile<sample_pos_t,uint64_t>::getPoolAccesser<int16_t>(const string) const;
+
+
+
+template const TStaticPoolAccesser<int,TPoolFile<sample_pos_t,uint64_t> > TPoolFile<sample_pos_t,uint64_t>::getPoolAccesser<int>(const string) const;
+template TStaticPoolAccesser<int,TPoolFile<sample_pos_t,uint64_t> > TPoolFile<sample_pos_t,uint64_t>::getPoolAccesser<int>(const string);
+
+template void TPoolFile<sample_pos_t,uint64_t>::cacheBlock(sample_pos_t,const TStaticPoolAccesser<int,TPoolFile<sample_pos_t,uint64_t> > *);
+
+template TStaticPoolAccesser<int,TPoolFile<sample_pos_t,uint64_t> > TPoolFile<sample_pos_t,uint64_t>::createPool<int>(const string,bool) const;
 

@@ -165,6 +165,23 @@ public:
 	// if false is returned, then cancel was pressed
 	virtual bool promptForSaveMIDISampleDump(int &sysExChannel,int &waveformId,int &loopType)=0;
 
+
+	// called when the user is saving an format with libaudiofile
+	struct libaudiofileSaveParameters
+	{
+		int sampleFormat;	// AF_SAMPFMT_xxx
+			int defaultSampleFormatIndex; // of signed, unsigned, float, double
+		int sampleWidth;	// bit rate
+			int defaultSampleWidthIndex; // of 8, 16, 24, 32
+
+		// this is an input value that indicates which compression types are supported
+		// pair: name of compression type, audiofiles enum value for it
+		vector<pair<string,int> > supportedCompressionTypes; 
+
+			int defaultCompressionTypeIndex; // of the items in the vector
+		int compressionType;	// AF_COMPRESSION_xxx
+	};
+	virtual bool promptForlibaudiofileSaveParameters(libaudiofileSaveParameters &parameters,const string formatName)=0;
 };
 
 #endif
