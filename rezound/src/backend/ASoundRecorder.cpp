@@ -270,12 +270,17 @@ bool ASoundRecorder::isStarted() const
 	return(started);
 }
 
-string ASoundRecorder::getRecordedLength() const
+string ASoundRecorder::getRecordedLengthS() const
 {
 	return(sound->getTimePosition(writePos-origLength));
 }
 
-string ASoundRecorder::getRecordedSize() const
+const sample_pos_t ASoundRecorder::getRecordedLength() const
+{
+	return(writePos-origLength);
+}
+
+string ASoundRecorder::getRecordedSizeS() const
 {
 	return(sound->getAudioDataSize(writePos-origLength));
 }

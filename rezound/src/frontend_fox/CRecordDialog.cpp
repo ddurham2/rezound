@@ -131,8 +131,8 @@ long CRecordDialog::onStatusUpdate(FXObject *sender,FXSelector sel,void *ptr)
 
 	clipCountLabel->setText(("Clip Count: "+istring(recorder->clipCount)).c_str());
 
-	recordedLengthStatusLabel->setText(recorder->getRecordedLength().c_str());
-	recordedSizeStatusLabel->setText(recorder->getRecordedSize().c_str());
+	recordedLengthStatusLabel->setText(recorder->getRecordedLengthS().c_str());
+	recordedSizeStatusLabel->setText(recorder->getRecordedSizeS().c_str());
 
 	// schedule for the next status update
 	timerHandle=getApp()->addTimeout(STATUS_UPDATE_TIME,this,CRecordDialog::ID_STATUS_UPDATE);
@@ -159,10 +159,8 @@ bool CRecordDialog::show(ASoundRecorder *_recorder)
 		showing=true;
 		timerHandle=getApp()->addTimeout(STATUS_UPDATE_TIME,this,CRecordDialog::ID_STATUS_UPDATE);
 
-		if(FXDialogBox::execute(PLACEMENT_CURSOR))
+		if(FXDialogBox::execute(PLACEMENT_CURSOR) && recorder->getRecordedLength()>0)
 		{
-			// if nothing was ever recorded, I should return false
-
 			showing=false;
 			cleanupMeters();
 			return(true);

@@ -82,8 +82,9 @@ public:
 	unsigned getSampleRate() const;
 
 	bool isStarted() const;
-	string getRecordedLength() const;
-	string getRecordedSize() const;
+	const sample_pos_t getRecordedLength() const;
+	string getRecordedLengthS() const;
+	string getRecordedSizeS() const;
 
 	// This function should be called when a data chunk is recorded
 	// data should come in an interlaced format that is [sL1sR1 sL2sR2 sL3sR3 ...]
