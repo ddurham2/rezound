@@ -47,6 +47,7 @@ private:
 	bool initialized;
 	int audio_fd;
 	bool supportsFullDuplex;
+	bool wasInitializedBeforeRecording;
 
 	class CPlayThread : public AThread
 	{

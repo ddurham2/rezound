@@ -77,98 +77,122 @@ void COSSSoundRecorder::initialize(CSound *sound)
 	if(!initialized)
 	{
 		ASoundRecorder::initialize(sound);
-
-
-		// open OSS device
-		const string device=gOSSInputDevice;
-		if((audio_fd=open(device.c_str(),O_RDONLY,0)) == -1) 
-			throw(runtime_error(string(__func__)+" -- error opening OSS device '"+device+" -- "+strerror(errno)));
-		//printf("OSS: device: %s\n",device.c_str());
-
-		// set the bit rate and endianness
-		int format=OSS_PCM_FORMAT; // signed 16-bit little endian
-		if (ioctl(audio_fd, SNDCTL_DSP_SETFMT,&format)==-1)
+		try
 		{
-			close(audio_fd);
-			throw(runtime_error(string(__func__)+" -- error setting the bit rate -- "+strerror(errno)));
+			// open OSS device
+			const string device=gOSSInputDevice;
+			if((audio_fd=open(device.c_str(),O_RDONLY|O_NONBLOCK)) == -1) 
+			{
+				const string errString=strerror(errno);
+				throw(runtime_error(string(__func__)+" -- error opening OSS device '"+device+" -- "+errString));
+			}
+			//printf("OSS: device: %s\n",device.c_str());
+
+			// just did O_NONBLOCK so it wouldn't hang by waiting on the resource.. now set it back to blocking
+			int flags=fcntl(audio_fd,F_GETFL,0);
+			flags&=(~O_NONBLOCK); // turn off the O_NONBLOCK flag
+			if(fcntl(audio_fd,F_SETFL,flags)!=0)
+			{
+				const string errString=strerror(errno);
+				close(audio_fd);
+				throw(runtime_error(string(__func__)+" -- error setting OSS device '"+device+" back to blocking I/O mode -- "+errString));
+			}
+
+			// set the bit rate and endianness
+			int format=OSS_PCM_FORMAT; // signed 16-bit little endian
+			if (ioctl(audio_fd, SNDCTL_DSP_SETFMT,&format)==-1)
+			{
+				const string errString=strerror(errno);
+				close(audio_fd);
+				throw(runtime_error(string(__func__)+" -- error setting the bit rate -- "+errString));
+			}
+			else if(format!=OSS_PCM_FORMAT)
+			{
+				close(audio_fd);
+				throw(runtime_error(string(__func__)+" -- error setting the format -- the device does not support OSS_PCM_FORMAT format data"));
+			}
+			//printf("OSS: format: %d\n",format);
+
+
+			// set number of channels 
+			unsigned channelCount=sound->getChannelCount();
+			if (ioctl(audio_fd, SNDCTL_DSP_CHANNELS, &channelCount)==-1)
+			{
+				const string errString=strerror(errno);
+				close(audio_fd);
+				throw(runtime_error(string(__func__)+" -- error setting the number of channels -- "+errString));
+			}
+			else if (channelCount!=sound->getChannelCount())
+			{
+				close(audio_fd);
+				throw(runtime_error(string(__func__)+" -- error setting the number of channels -- the device does not support "+istring(sound->getChannelCount())+" channel recording"));
+			}
+			//printf("OSS: channel count: %d\n",sound->getChannelCount());
+
+
+			// set the sample rate
+			unsigned sampleRate=sound->getSampleRate();
+			if (ioctl(audio_fd, SNDCTL_DSP_SPEED, &sampleRate)==-1) 
+			{
+				const string errString=strerror(errno);
+				close(audio_fd);
+				throw(runtime_error(string(__func__)+" -- error setting the sample rate -- "+errString));
+			} 
+			if (sampleRate!=sound->getSampleRate())
+			{ 
+				fprintf(stderr,("warning: OSS used a different sample rate ("+istring(sampleRate)+") than what was asked for ("+istring(sound->getSampleRate())+")\n").c_str());
+				//close(audio_fd);
+				//throw(runtime_error(string(__func__)+" -- error setting the sample rate -- the sample rate is not supported"));
+			} 
+			//printf("OSS: sample rate: %d\n",sampleRate);
+
+
+
+			// set the buffering parameters
+			//0x7fff means I don't need any limit
+			int arg=(0x7fff<<16)|BUFFER_SIZE_BYTES_LOG2;  // 0xMMMMSSSS; where 0xMMMM is the number of buffers and 2^0xSSSS is the buffer size
+			int parm=arg;
+			if (ioctl(audio_fd, SNDCTL_DSP_SETFRAGMENT, &parm)==-1) 
+			{
+				const string errString=strerror(errno);
+				close(audio_fd);
+				throw(runtime_error(string(__func__)+" -- error setting the buffering parameters -- "+errString));
+			}
+			else if((arg&0xffff)!=(parm&0xffff))
+			{
+				close(audio_fd);
+				throw(runtime_error(string(__func__)+" -- error setting the buffering parameters -- "+istring(BUFFER_SIZE_BYTES)+" bytes long, not supported"));
+			}
+
+
+			// get the fragment info
+			audio_buf_info info;
+			if(ioctl(audio_fd, SNDCTL_DSP_GETISPACE, &info)==-1)
+			{
+				const string errString=strerror(errno);
+				close(audio_fd);
+				throw(runtime_error(string(__func__)+" -- error getting the buffering parameters -- "+errString));
+			}
+			
+			/*
+			printf("OSS record: info.fragments: %d\n",info.fragments);
+			printf("OSS record: info.fragstotal: %d\n",info.fragstotal);
+			printf("OSS record: info.fragsize: %d\n",info.fragsize);
+			printf("OSS record: info.bytes: %d\n",info.bytes);
+			*/
+			
+
+			// start record thread
+			recordThread.kill=false;
+			recordThread.start();
+
+			initialized=true;
 		}
-		else if(format!=OSS_PCM_FORMAT)
+		catch(...)
 		{
-			close(audio_fd);
-			throw(runtime_error(string(__func__)+" -- error setting the format -- the device does not support OSS_PCM_FORMAT format data"));
+			ASoundRecorder::deinitialize();
+			throw;
 		}
-		//printf("OSS: format: %d\n",format);
-
-
-		// set number of channels 
-		unsigned channelCount=sound->getChannelCount();
-		if (ioctl(audio_fd, SNDCTL_DSP_CHANNELS, &channelCount)==-1)
-		{
-			close(audio_fd);
-			throw(runtime_error(string(__func__)+" -- error setting the number of channels -- "+strerror(errno)));
-		}
-		else if (channelCount!=sound->getChannelCount())
-		{
-			close(audio_fd);
-			throw(runtime_error(string(__func__)+" -- error setting the number of channels -- the device does not support "+istring(sound->getChannelCount())+" channel recording"));
-		}
-		//printf("OSS: channel count: %d\n",sound->getChannelCount());
-
-
-		// set the sample rate
-		unsigned sampleRate=sound->getSampleRate();
-		if (ioctl(audio_fd, SNDCTL_DSP_SPEED, &sampleRate)==-1) 
-		{
-			close(audio_fd);
-			throw(runtime_error(string(__func__)+" -- error setting the sample rate -- "+strerror(errno)));
-		} 
-		if (sampleRate!=sound->getSampleRate())
-		{ 
-			fprintf(stderr,("warning: OSS used a different sample rate ("+istring(sampleRate)+") than what was asked for ("+istring(sound->getSampleRate())+")\n").c_str());
-			//close(audio_fd);
-			//throw(runtime_error(string(__func__)+" -- error setting the sample rate -- the sample rate is not supported"));
-		} 
-		//printf("OSS: sample rate: %d\n",sampleRate);
-
-
-
-		// set the buffering parameters
-		//0x7fff means I don't need any limit
-		int arg=(0x7fff<<16)|BUFFER_SIZE_BYTES_LOG2;  // 0xMMMMSSSS; where 0xMMMM is the number of buffers and 2^0xSSSS is the buffer size
-		int parm=arg;
-		if (ioctl(audio_fd, SNDCTL_DSP_SETFRAGMENT, &parm)==-1) 
-		{
-			close(audio_fd);
-			throw(runtime_error(string(__func__)+" -- error setting the buffering parameters -- "+strerror(errno)));
-		}
-		else if((arg&0xffff)!=(parm&0xffff))
-		{
-			close(audio_fd);
-			throw(runtime_error(string(__func__)+" -- error setting the buffering parameters -- "+istring(BUFFER_SIZE_BYTES)+" bytes long, not supported"));
-		}
-
-
-		// get the fragment info
-		audio_buf_info info;
-		if(ioctl(audio_fd, SNDCTL_DSP_GETISPACE, &info)==-1)
-		{
-			close(audio_fd);
-			throw(runtime_error(string(__func__)+" -- error getting the buffering parameters -- "+strerror(errno)));
-		}
-		
-		/*
-		printf("OSS record: info.fragments: %d\n",info.fragments);
-		printf("OSS record: info.fragstotal: %d\n",info.fragstotal);
-		printf("OSS record: info.fragsize: %d\n",info.fragsize);
-		printf("OSS record: info.bytes: %d\n",info.bytes);
-		*/
-		
-
-		// start record thread
-		recordThread.kill=false;
-		recordThread.start();
-
-		initialized=true;
 	}
 	else
 		throw(runtime_error(string(__func__)+" -- already initialized"));
