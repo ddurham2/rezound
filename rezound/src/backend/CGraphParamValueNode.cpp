@@ -115,3 +115,44 @@ void interpretGraphNodes(const CGraphParamValueNodeList &nodes,const unsigned i,
 	segmentLength=(segmentStopPosition-segmentStartPosition+1);
 }
 
+
+// ------------------------------------
+
+CGraphParamValueIterator::CGraphParamValueIterator(const CGraphParamValueNodeList &_nodes,const sample_pos_t _iterationLength) :
+	nodes(_nodes),
+	iterationLength(_iterationLength),
+	nodeIndex(0),
+	t(0),
+	segmentLength(0)
+{
+}
+
+CGraphParamValueIterator::~CGraphParamValueIterator()
+{
+}
+
+const double CGraphParamValueIterator::next()
+{
+	if(t<segmentLength)
+			// ??? this multiplication may cause problems when the values are very large
+		return segmentStartValue+(((segmentStopValueStartValueDiff)*(t++))/(segmentLengthSub1));
+	else
+	{
+		if(nodeIndex>nodes.size()-2)
+			return 0.0;
+
+		sample_pos_t segmentStartPosition,segmentStopPosition,_segmentLength;
+		double segmentStopValue;
+		interpretGraphNodes(nodes,nodeIndex++,iterationLength,segmentStartPosition,segmentStartValue,segmentStopPosition,segmentStopValue,_segmentLength);
+		segmentStopValueStartValueDiff=segmentStopValue-segmentStartValue;
+		segmentLength=_segmentLength;
+			// actually, only -1 when on the last segment
+		segmentLengthSub1=segmentLength-(nodeIndex==nodes.size()-1 ? 1 : 0);
+
+		t=0.0;
+		return next();
+	}
+}
+
+
+

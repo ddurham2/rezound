@@ -58,4 +58,20 @@ extern const CGraphParamValueNodeList singleValueToGraph(const double v);
 
 extern void interpretGraphNodes(const CGraphParamValueNodeList &nodes,const unsigned i,const sample_pos_t totalLength,sample_pos_t &segmentStartPosition,double &segmentStartValue,sample_pos_t &segmentStopPosition,double &segmentStopValue,sample_pos_t &segmentLength);
 
+
+class CGraphParamValueIterator
+{
+public:
+	CGraphParamValueIterator(const CGraphParamValueNodeList &nodes,const sample_pos_t iterationLength);
+	virtual ~CGraphParamValueIterator();
+
+	const double next();
+
+private:
+	const CGraphParamValueNodeList nodes;
+	const sample_pos_t iterationLength;
+	unsigned nodeIndex;
+	double t,segmentLength,segmentLengthSub1,segmentStartValue,segmentStopValueStartValueDiff;
+};
+
 #endif
