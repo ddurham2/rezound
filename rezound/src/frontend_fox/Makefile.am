@@ -117,3 +117,7 @@ noinst_HEADERS=\
 	drawPortion.h \
 	rememberShow.h \
 	settings.h 
+
+
+images.cpp: ../images/*.gif
+	./convert_images.sh ${RESWRAP} ../images

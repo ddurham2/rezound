@@ -49,6 +49,12 @@ AC_PROG_CXXCPP
 AM_PROG_LEX
 AC_PROG_YACC
 
+dnl Check for FOX's reswrap program. 
+AC_PATH_PROG(RESWRAP, reswrap)
+	if test -z "$RESWRAP"; then
+		AC_MSG_ERROR([reswrap not found])
+	fi
+
 dnl ---------------------|
 dnl Checks for libraries.|
 dnl ---------------------|
