@@ -18,12 +18,12 @@ bool CStubAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 	if(prepareForUndo)
 		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
 
-	unsigned channelDoneCount=0;
+	unsigned channelsDoneCount=0;
 	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 	{
 		if(actionSound.doChannel[i])
 		{
-			CStatusBar statusBar("Stub Action -- Channel "+istring(channelDoneCount+1)+"/"+istring(actionSound.countChannels()),start,stop,true);
+			CStatusBar statusBar("Stub Action -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true);
 
 			sample_pos_t srcPos=prepareForUndo ? 0 : start;
 			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
@@ -55,8 +55,6 @@ bool CStubAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 
 			if(!prepareForUndo)
 				actionSound.sound->invalidatePeakData(i,actionSound.start,actionSound.stop);
-
-			channelDoneCount++;
 		}
 	}
 
