@@ -88,6 +88,11 @@ const size_t CSoundFileManager::getOpenedCount() const
 	return soundWindows.size();
 }
 
+CLoadedSound *CSoundFileManager::getSound(size_t index)
+{
+	return soundWindows[index]->loadedSound;
+}
+
 CSoundWindow *CSoundFileManager::getSoundWindow(size_t index)
 {
 	return soundWindows[index];

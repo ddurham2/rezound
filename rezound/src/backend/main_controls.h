@@ -36,7 +36,8 @@ class ASoundFileManager;
 
 
 // --- file operations ---
-void openSound(ASoundFileManager *soundFileManager,const string filename="");
+ 	// returns false if a prompt for a filename was cancelled or there was an error loading
+bool openSound(ASoundFileManager *soundFileManager,const string filename="");
 void newSound(ASoundFileManager *soundFileManager);
 void closeSound(ASoundFileManager *soundFileManager);
 void saveSound(ASoundFileManager *soundFileManager);

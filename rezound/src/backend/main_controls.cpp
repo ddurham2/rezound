@@ -36,11 +36,11 @@
 // --- File Operations ---------------------------------------------------------------
 // -----------------------------------------------------------------------------------
 
-void openSound(ASoundFileManager *soundFileManager,const string filename)
+bool openSound(ASoundFileManager *soundFileManager,const string filename)
 {
 	try
 	{
-		soundFileManager->open(filename);
+		return soundFileManager->open(filename);
 	}
 	catch(exception &e)
 	{

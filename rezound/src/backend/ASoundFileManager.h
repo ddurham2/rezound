@@ -50,7 +50,8 @@ public:
 
 	void createNew();
 	CLoadedSound *createNew(const string filename,unsigned channelCount,unsigned sampleRate,unsigned length=1,bool rawFormat=false);
-	void open(const string filename="",bool openAsRaw=false);
+		// returns false if a prompt for filename was cancelled or if there was an error loading
+	bool open(const string filename="",bool openAsRaw=false);
 	// ??? should rename these to, saveActive...  or pass them a CSound * (I prefer that), perhaps optionally pass saveAs a filename which can be ""
 	void save();
 	void saveAs();
@@ -71,6 +72,10 @@ public:
 
 	// should be implemented to return the number of currently opened sound files
 	virtual const size_t getOpenedCount() const=0;
+
+	// given an index from 0 to getOpenedCount()-1 should be implemented to 
+	// run the CLoadedSound pointer
+	virtual CLoadedSound *getSound(size_t index)=0;
 
 	// is called after an action is performed to update the screen or when the title
 	// bar and other status information of a loaded sound window needs to be modified

@@ -97,7 +97,7 @@ CLoadedSound *ASoundFileManager::createNew(const string filename,unsigned channe
 	return loaded;
 }
 
-void ASoundFileManager::open(const string _filename,bool openAsRaw)
+bool ASoundFileManager::open(const string _filename,bool openAsRaw)
 {
 	vector<string> filenames;
 	string filename=_filename;
@@ -105,7 +105,7 @@ void ASoundFileManager::open(const string _filename,bool openAsRaw)
 	if(filename=="")
 	{
 		if(!gFrontendHooks->promptForOpenSoundFilenames(filenames,readOnly,openAsRaw))
-			return;
+			return false;
 	}
 	else
 		filenames.push_back(filename);
@@ -120,8 +120,10 @@ void ASoundFileManager::open(const string _filename,bool openAsRaw)
 		catch(runtime_error &e)
 		{
 			Error(e.what());
+			return false;
 		}
 	}
+	return true;
 }
 
 /*
