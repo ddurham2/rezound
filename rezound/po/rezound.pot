@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-07-07 15:23-0500\n"
+"POT-Creation-Date: 2003-07-08 14:07-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -890,23 +890,23 @@ msgstr ""
 msgid " -- file already opened"
 msgstr ""
 
-#: src/backend/ASoundFileManager.cpp:247 src/backend/ASoundFileManager.cpp:301
+#: src/backend/ASoundFileManager.cpp:250 src/backend/ASoundFileManager.cpp:304
 msgid " -- file is currently opened"
 msgstr ""
 
-#: src/backend/ASoundFileManager.cpp:253 src/backend/ASoundFileManager.cpp:305
+#: src/backend/ASoundFileManager.cpp:256 src/backend/ASoundFileManager.cpp:308
 msgid "Overwrite Existing File"
 msgstr ""
 
-#: src/backend/ASoundFileManager.cpp:325 src/backend/ASoundFileManager.cpp:332
+#: src/backend/ASoundFileManager.cpp:328 src/backend/ASoundFileManager.cpp:335
 msgid "Save Modified Sound"
 msgstr ""
 
-#: src/backend/ASoundFileManager.cpp:383
+#: src/backend/ASoundFileManager.cpp:386
 msgid "Are you sure you want to revert to the last saved copy of"
 msgstr ""
 
-#: src/backend/ASoundFileManager.cpp:490
+#: src/backend/ASoundFileManager.cpp:493
 msgid "Load sound from previous session?"
 msgstr ""
 

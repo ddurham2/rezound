@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
-"POT-Creation-Date: 2003-07-07 15:23-0500\n"
+"POT-Creation-Date: 2003-07-08 14:07-0500\n"
 "PO-Revision-Date: 2003-07-07 15:50+0400\n"
 "Last-Translator: Alexandre Prokoudine <avp@altlinux.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -925,23 +925,23 @@ msgstr "Выберите порт для входного канала "
 msgid " -- file already opened"
 msgstr " -- файл уже открывался"
 
-#: src/backend/ASoundFileManager.cpp:247 src/backend/ASoundFileManager.cpp:301
+#: src/backend/ASoundFileManager.cpp:250 src/backend/ASoundFileManager.cpp:304
 msgid " -- file is currently opened"
 msgstr " -- файл сейчас открыт"
 
-#: src/backend/ASoundFileManager.cpp:253 src/backend/ASoundFileManager.cpp:305
+#: src/backend/ASoundFileManager.cpp:256 src/backend/ASoundFileManager.cpp:308
 msgid "Overwrite Existing File"
 msgstr "Перезаписать существующий файл"
 
-#: src/backend/ASoundFileManager.cpp:325 src/backend/ASoundFileManager.cpp:332
+#: src/backend/ASoundFileManager.cpp:328 src/backend/ASoundFileManager.cpp:335
 msgid "Save Modified Sound"
 msgstr "Сохранить изменённый звук"
 
-#: src/backend/ASoundFileManager.cpp:383
+#: src/backend/ASoundFileManager.cpp:386
 msgid "Are you sure you want to revert to the last saved copy of"
 msgstr "Вы уверены, что хотите вернуться к последней сохранённой копии "
 
-#: src/backend/ASoundFileManager.cpp:490
+#: src/backend/ASoundFileManager.cpp:493
 msgid "Load sound from previous session?"
 msgstr "Загрузить звук из предыдущей сессии?"
 
