@@ -1261,7 +1261,10 @@ void CSound::deletePeakChunkAccessers()
 // returns the number of peak chunks that there needs to be for the given size
 sample_pos_t CSound::calcPeakChunkCount(sample_pos_t givenSize)
 {
-	return((sample_pos_t)ceil(((sample_fpos_t)givenSize)/((sample_fpos_t)PEAK_CHUNK_SIZE)));
+	sample_pos_t v=((sample_pos_t)ceil(((sample_fpos_t)givenSize)/((sample_fpos_t)PEAK_CHUNK_SIZE)));
+	if(v<=0)
+		v=1;
+	return(v);
 }
 
 
@@ -1336,7 +1339,7 @@ void CSound::matchUpChannelLengths(sample_pos_t maxLength)
 
 void CSound::ensureNonZeroLength()
 {
-	if(size==0)
+	if(size<=0)
 	{
 		for(unsigned t=0;t<channelCount;t++)
 		{
@@ -1344,6 +1347,9 @@ void CSound::ensureNonZeroLength()
 			a.clear();
 			a.append(1);
 			a[a.getSize()-1]=0;
+
+			// I would also do it for peakChunkAccessers, but I handled that 
+			// by always insisting on at least 1 chunk in calcPeakChunkCount
 		}
 		size=1;
 	}
