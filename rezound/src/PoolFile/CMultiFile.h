@@ -48,6 +48,7 @@ public:
 	 * - initialFilename is the filename of the first file in the possible set of multiple files 
 	 */
 	void open(const string _initialFilename,const bool canCreate);
+	bool isOpen() const { return opened; }
 	void close(bool removeFiles=false);
 
 	void rename(const string newInitialFilename);
