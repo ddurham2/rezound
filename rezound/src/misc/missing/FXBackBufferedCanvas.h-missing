@@ -71,7 +71,7 @@ public:
 	// now blit the back buffer to the screen
 	FXDCWindow screenDC(this);
 	FXEvent *ev=(FXEvent *)ptr;
-	screenDC.drawArea(backBuffer,ev->rect.x,ev->rect.y,ev->rect.w,ev->rect.h,0,0);
+	screenDC.drawArea(backBuffer,ev->rect.x,ev->rect.y,ev->rect.w,ev->rect.h,ev->rect.x,ev->rect.y);
 
 	return 1;
   }
