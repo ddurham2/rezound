@@ -55,7 +55,9 @@
 
 - Full Featured Editing Tools
 	- Copy
+	- Copy to New
 	- Cut
+	- Cut to New
 	- Delete
 	- Crop
 	- Paste

@@ -6,8 +6,6 @@
 
 	- I might want to make sure that gcc is some minimum version in configure.in.. I really don't think gcc2.8 will cut it
 
-	- create a 'paste to new' edit action
-
 	- create a "monoize" action under remaster that says: mix X% of left onto the right and X% of the right onto the left or any channel configuration for that matter
 		- the backend factory could probably make sure it's a 2 channel sound before continuing ( override AActionFactory::doPreActionSetup() and return true or false or throw an EUserMessage )
 		- this would fall under the pan function probably
@@ -512,4 +510,6 @@
 	- Possibly remove the concept of 'advanced mode' stuff for actions
 		- so far, I've only used it in two actions and don't see any reason to add it to more
 		- for gain and rate change I should just make two factories, but still use the same action code.. and I can make the procedure for adding new actions a bit more easy to understand without getting confused by the 'advanced mode' code
+
+	- create a 'paste as new', 'copy to new' and 'cut to new' edit actions
 
