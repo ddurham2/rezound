@@ -118,7 +118,7 @@ namespace endian_util
 	 */
 
 	// --- generic implementation
-	template<unsigned Size> inline static void really_swap_endian_ptr(void *_value,unsigned size)
+	template<unsigned Size> inline static void really_swap_endian_ptr(void *_value,const unsigned size)
 	{
 		uint8_t * const value=(uint8_t *)_value;
 		register int k=(size+1)/2;
@@ -131,13 +131,13 @@ namespace endian_util
 	}
 
 	// --- implementation for 1 byte quantities (nothing)
-	template<> inline static void really_swap_endian_ptr<1>(void *value,unsigned size)
+	template<> inline static void really_swap_endian_ptr<1>(void *value,const unsigned size)
 	{
 		// nothing to do
 	}
 
 	// --- implementation for 2 byte quantities
-	template<> inline static void really_swap_endian_ptr<2>(void *value,unsigned size)
+	template<> inline static void really_swap_endian_ptr<2>(void *value,const unsigned size)
 	{
 		const register uint16_t v=((uint16_t *)value)[0];
 		((uint16_t *)value)[0]=
@@ -147,7 +147,7 @@ namespace endian_util
 	}
 
 	// --- implementation for 4 byte quantities
-	template<> inline static void really_swap_endian_ptr<4>(void *value,unsigned size)
+	template<> inline static void really_swap_endian_ptr<4>(void *value,const unsigned size)
 	{
 		const register uint32_t v=((uint32_t *)value)[0];
 		((uint32_t *)value)[0]=
@@ -157,7 +157,7 @@ namespace endian_util
 	}
 
 	// --- implementation for 8 byte quantities
-	template<> inline static void really_swap_endian_ptr<8>(void *value,unsigned size)
+	template<> inline static void really_swap_endian_ptr<8>(void *value,const unsigned size)
 	{
 		const register uint64_t v=((uint64_t *)value)[0];
 		// of 8, swap upper most and lower most octets then the next two inward, and so on ..
