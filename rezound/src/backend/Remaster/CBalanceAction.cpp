@@ -82,6 +82,11 @@ bool CBalanceAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForU
 				destA[destPos]=(sample_t)(srcA[srcPos]*(1.0f-b));
 				destB[destPos]=srcB[srcPos];
 			}
+			else if(prepareForUndo) // don't copy if it's the same pool
+			{
+				destA[destPos]=srcA[srcPos];
+				destB[destPos]=srcB[srcPos];
+			}
 
 			srcPos++;
 			destPos++;
