@@ -219,7 +219,7 @@ public:
 protected:
 	void progress_callback(FLAC__uint64 bytes_written, FLAC__uint64 samples_written, unsigned frames_written, unsigned total_frames_estimate)
 	{
-		cancelled=statusBar.update(samples_written);
+		cancelled|=statusBar.update(samples_written);
 	}
 };
 
@@ -277,7 +277,13 @@ bool CFLACSoundTranslator::onSaveSound(const string filename,const CSound *sound
 					dest[t]=src[t+pos+saveStart];
 			}
 
-			f.process(_buffers,len);
+			if(!f.process(_buffers,len))
+			{
+				const int errNO=errno;
+				f.finish();
+				throw runtime_error(string(__func__)+" -- error writing FLAC file -- "+strerror(errNO));
+			}
+
 			if(f.cancelled)
 			{
 				f.finish();
