@@ -6,7 +6,6 @@ src/PoolFile/CMultiFile.cpp
 src/PoolFile/TPoolAccesser.cpp
 src/PoolFile/TPoolFile.cpp
 src/PoolFile/TStaticPoolAccesser.cpp
-src/images.bak/images.cpp
 src/backend/ASoundClipboard.cpp
 src/backend/CRecordSoundClipboard.cpp
 src/backend/ClameSoundTranslator.cpp
@@ -148,6 +147,7 @@ src/frontend_fox/FXDiskEntityParamValue.cpp
 src/frontend_fox/CActionMenuCommand.cpp
 src/frontend_fox/ClibaudiofileSaveParametersDialog.cpp
 src/frontend_fox/FXTextParamValue.cpp
+src/frontend_fox/CRezSaveParametersDialog.cpp
 src/misc/TAutoBuffer.h
 src/misc/CMutex.h
 src/misc/TMemoryPipe.h
@@ -163,7 +163,6 @@ src/PoolFile/TPoolAccesser.h
 src/PoolFile/CMultiFile.h
 src/PoolFile/TPoolFile.h
 src/PoolFile/TStaticPoolAccesser.h
-src/images.bak/images.h
 src/backend/DSP/Quantizer.h
 src/backend/DSP/BiquadResFilters.h
 src/backend/DSP/FlangeEffect.h
@@ -338,4 +337,5 @@ src/frontend_fox/custom_cursors.h
 src/frontend_fox/CLADSPAActionDialog.h
 src/frontend_fox/FXPluginRoutingParamValue.h
 src/frontend_fox/AActionParamMapper.h
+src/frontend_fox/CRezSaveParametersDialog.h
 share/menu.dat
