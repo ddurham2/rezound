@@ -3,6 +3,9 @@
 
 	- create separate CDSPLevelDetectorRMS and CDSPPeakLevelDetectorPeak dsp blocks
 
+	- create a template method in DSPBlocks which is a mean finder given an accessor and a range to find the mean in
+		- it would handle avoiding overflow by use of recursion and also should be give an accuracy parameter to avoid looking at every value
+
 	- distortion would be an easy effect
 
 	- use TSoundStretcher in CSoundPlayerChannel

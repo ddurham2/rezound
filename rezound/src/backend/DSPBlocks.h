@@ -34,6 +34,8 @@
 #include "ALFO.h"
 
 
+// ??? make these that could be a template be a template rather than fixed types
+
 /* --- CDSPDelay --------------------------------
  *	- This class is uses a circular buffer to delay the input values by a certain delay time
  *	- There are several ways of retrieving samples out of the delay line.
@@ -124,7 +126,7 @@ private:
 /* --- CDSPLevelDetector --------------------------------------
  *
  *	- This class can be used to determine the level or volume of an audio source.
- *	- It uses a moving average of past samples (except it's not an normal average, it's (I think) what is known as a root-mean-square calculation)
+ *	- It uses a progressing window of past samples to calculate an RMS (root-mean-square which is sqrt((s1^2 + s2^2 + ... Sn^2)/N) ) versus using a normal average or 'mean'
  *	- The windowTime given at construction is in samples not seconds
  *	- It is often necessary to initialize the object with 'windowTime' samples before even using the value from readLevel()
  *		- To do this, simply call readLevel() for the first 'windowTime' samples in the audio stream
@@ -133,9 +135,9 @@ class CDSPLevelDetector
 {
 public:
 	CDSPLevelDetector(const unsigned _windowTime) :
-		delay(_windowTime),
-		windowTotal(0.0),
-		windowTime((double)_windowTime),
+		window(_windowTime),
+		sumOfSquaredSamples(0.0),
+		windowTime(_windowTime),
 		iWindowTime(_windowTime)
 	{
 		// ??? based on windowTotals type and sample_t's type there is a maximum time I should impose on windowTime
@@ -146,14 +148,18 @@ public:
 	}
 
 	// every time you read the level, you have to supply the next sample in the audio stream
+		// ??? I could avoid using sqrt by saying that I return the 'power' and not the 'level' and I would then have to square the value I compare this return value with, instead
 	const mix_sample_t readLevel(mix_sample_t newSample)
 	{
-		const mix_sample_t currentAmplitude=(mix_sample_t)sqrt(windowTotal/windowTime);
-		windowTotal-=delay.getSample();
+		const mix_sample_t currentAmplitude=(mix_sample_t)sqrt(sumOfSquaredSamples/windowTime);
 
+		// remove oldest sample from running statistic
+		sumOfSquaredSamples-=window.getSample();
+
+		// add new sample to running statistic
 		const mix_sample_t temp=newSample*newSample;
-		windowTotal+=temp;
-		delay.putSample(temp);
+		sumOfSquaredSamples+=(temp);
+		window.putSample(temp);
 		
 		return(currentAmplitude);
 	}
@@ -165,8 +171,8 @@ public:
 
 private:
 
-	CDSPDelay delay;
-	double windowTotal;
+	CDSPDelay window; // used to know a past set of samples
+	double sumOfSquaredSamples;
 	const double windowTime;
 	const unsigned iWindowTime;
 };

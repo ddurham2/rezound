@@ -35,6 +35,8 @@ void CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 {
 	CSound::PoolFile_t originalPoolFile(REZOUND_POOLFILE_BLOCKSIZE,REZOUND_POOLFILE_SIGNATURE);
 
+	// ??? The user still needs to be able to choose what format the data will be saved in... whether 16bit float.. etc.. and the import/export process needs to convert to and from the working format
+
 	originalPoolFile.openFile(filename,false);
 	// ??? needs a status bar ??? perhaps I could pass a function object to it
 	originalPoolFile.copyToFile(sound->getWorkingFilename(filename));
