@@ -23,8 +23,10 @@
 #include "settings.h"
 
 #include <stdint.h>
+#include <errno.h>
+#include <string.h>
 
-#include <exception>
+#include <stdexcept>
 #include <string>
 
 #include <CStringDiskTable.h>
@@ -45,24 +47,33 @@ static COSSSoundPlayer *soundPlayer=NULL;
 #include <TPoolFile.h>
 static TPoolFile<unsigned,unsigned> *loadedRegistryPoolFile=NULL;
 
+
 #include "CSoundFileManager.h"
 
 #include "../backend/AAction.h"
 
+
+// for mkdir  --- possibly wouldn't port
+#include <sys/stat.h>
+#include <sys/types.h>
 
 
 void initializeReZound()
 {
 	try
 	{
-		// ??? I might wanna use an XML library or my CScope (please rename) clas for the registry instead of a pool file so it can be edited more easily
 
+		// make sure that ~/.rezound exists
+		const string appDirectory=string(getenv("HOME"))+"/.rezound";
+		const int mkdirResult=mkdir(appDirectory.c_str(),0700);
+		const int mkdirErrno=errno;
+		if(mkdirResult!=0 && mkdirErrno!=EEXIST)
+			throw(runtime_error(string(__func__)+" -- error creating ~/.rezound -- "+strerror(mkdirErrno)));
 
 		// -- 1
+		// ??? I might wanna use an XML library or my CScope (please rename) class for the registry instead of a pool file so it can be edited more easily
 		loadedRegistryPoolFile=new TPoolFile<unsigned,unsigned>(4096,"ReZoundR");
-		//??? mkdir(dirname(string(getenv("HOME"))+"/.rezound"))
-		//??? loadedRegistryPoolFile->openFile(string(getenv("HOME"))+"/.rezound/registry.dat",true);
-		loadedRegistryPoolFile->openFile("./registry.dat",true);
+		loadedRegistryPoolFile->openFile(appDirectory+"/registry.dat",true);
 
 
 		// -- 2
@@ -77,7 +88,7 @@ void initializeReZound()
 
 
 		// -- 3
-						// ??? this filename needs to be an application setting
+						// ??? this filename needs to be an application setting just as in ASound.cpp
 		const string clipboardPoolFilename="/tmp/rezound.clipboard";
 		remove(clipboardPoolFilename.c_str());
 		AAction::clipboardPoolFile=new ASound::PoolFile_t();

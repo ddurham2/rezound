@@ -804,8 +804,7 @@ void ASound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 	case mmAdd:
 		{
 		const sample_pos_t last=where+length;
-		sample_pos_t srcPos=srcWhere;
-
+		//sample_pos_t srcPos=srcWhere;
 		if(showProgressBar)
 		{
 			BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
@@ -829,7 +828,7 @@ void ASound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 	case mmMultiply:
 		{
 		const sample_pos_t last=where+length;
-		sample_pos_t srcPos=srcWhere;
+		//sample_pos_t srcPos=srcWhere;
 		if(showProgressBar)
 		{
 			BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
@@ -852,7 +851,7 @@ void ASound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 	case mmAverage:
 		{
 		const sample_pos_t last=where+length;
-		sample_pos_t srcPos=srcWhere;
+		//sample_pos_t srcPos=srcWhere;
 		if(showProgressBar)
 		{
 			BEGIN_PROGRESS_BAR("Mixing Data -- Channel "+istring(channel),where,last);
