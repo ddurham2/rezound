@@ -27,6 +27,7 @@
 class CSoundPlayerChannel;
 
 #include <CMutex.h>
+#include <CRWLock.h>
 #include <CConditionVariable.h>
 #include <AThread.h>
 #include <TMemoryPipe.h>
@@ -135,8 +136,11 @@ private:
 		sample_pos_t gapSignalBufferOffset; // the offset into the gapSignalBuffer to use if isGap is true
 
 		sample_pos_t playPosition; // this is the play position of the first sample in this chunk
+
+		vector<bool> outputRouting[MAX_CHANNELS];
 	};
 
+	CRWLock chunkObjectsMutex;
 	size_t prebufferedChunksIndex; // this is the index of the next chunk to use from prebufferedChunks;
 	vector<RPrebufferedChunk *> prebufferedChunks;
 	TMemoryPipe<RPrebufferedChunk *> prebufferedChunkPipe;
@@ -171,7 +175,6 @@ private:
 	void deinit();
 	void init();
 
-	mutable CMutex routingInfoMutex;
 	void createInitialOutputRoute();
 	const vector<bool> getOutputRoute(unsigned deviceIndex,unsigned audioChannel) const;
 
