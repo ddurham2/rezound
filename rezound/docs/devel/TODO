@@ -18,6 +18,9 @@
 		   Please enjoy it, and I hope that ReZound blossoms into a popular sound editing tool primarily for, but not
 		limited to, linux.
 
+- Need to make all actions have the ability to blend the edges of the affected audio with the existing audio
+	- let there be a parameter which says in milliseconds how long the blend takes
+	- if not every action, at least paste for editing
 
 - have seek buttons that move the play pointer, start and stop positions to the markers set within the audio...
 	- the play position seek should:
