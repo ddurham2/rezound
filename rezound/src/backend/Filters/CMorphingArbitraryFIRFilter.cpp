@@ -212,14 +212,14 @@ bool CMorphingArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,boo
 		}
 	}
 
-	return(true);
+	return true;
 #endif
-	throw(EUserMessage(string(__func__)+_(" -- feature disabled because the fftw/rfftw library was not installed or detected when configure was run")));
+	throw EUserMessage(string(__func__)+_(" -- feature disabled because the fftw/rfftw library was not installed or detected when configure was run"));
 }
 
 AAction::CanUndoResults CMorphingArbitraryFIRFilter::canUndo(const CActionSound &actionSound) const
 {
-	return(curYes);
+	return curYes;
 }
 
 void CMorphingArbitraryFIRFilter::undoActionSizeSafe(const CActionSound &actionSound)
@@ -229,8 +229,14 @@ void CMorphingArbitraryFIRFilter::undoActionSizeSafe(const CActionSound &actionS
 
 const string CMorphingArbitraryFIRFilter::getExplanation()
 {
-#warning need to write this
-	return _("explain this");
+	return _("\n\
+This action will begin filtering with the first frequency response and morph the filter to the second frequency response.\n\
+Both frequency reponses must have the same number of points.\n\
+The morphing is calculated as each point in the first frequency response moving toward the position of the corrisponding point in the second frequency response.  A point corrisponds to another point if it is in the same order left to right.\n\
+If 'Use LFO' is not checked, then the filter will use the entire selection's time to morph from the first to the second frequency reponse.\n\
+If 'Use LFO' is checked, then the morphing will oscillate according to the LFO.\n\
+A longer Kernel Length will have better filter frequency resolution, but too long of a Kernel Length will cause `steps` in the morphing to be audible depending on how different the two responses are.\n\
+");
 }
 
 // --------------------------------------------------
@@ -246,7 +252,7 @@ CMorphingArbitraryFIRFilterFactory::~CMorphingArbitraryFIRFilterFactory()
 
 CMorphingArbitraryFIRFilter *CMorphingArbitraryFIRFilterFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters) const
 {
-	return(new CMorphingArbitraryFIRFilter(
+	return new CMorphingArbitraryFIRFilter(
 		actionSound,
 		actionParameters->getDoubleParameter("Wet/Dry Mix"),
 		actionParameters->getGraphParameter("Frequency Response 1"),
@@ -255,6 +261,6 @@ CMorphingArbitraryFIRFilter *CMorphingArbitraryFIRFilterFactory::manufactureActi
 		actionParameters->getLFODescription("Sweep LFO"),
 		actionParameters->getUnsignedParameter("Kernel Length"),
 		actionParameters->getBoolParameter("Undelay")
-	));
+	);
 }
 
