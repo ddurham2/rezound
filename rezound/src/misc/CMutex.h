@@ -70,10 +70,11 @@ public:
 
 	void unlock()
 	{
+		if(locked>0)
+			locked--;
 		const int ret=pthread_mutex_unlock(&mutex);
 		if(ret)
 			throw(runtime_error(string(__func__)+" -- error unlocking mutex -- "+strerror(ret)));
-		locked--;
 	}
 
 	bool isLocked() const
