@@ -23,7 +23,7 @@
 #include "../ASoundFileManager.h"
 #include "../CActionParameters.h"
 
-CSaveSelectionAsAction::CSaveSelectionAsAction(const CActionSound actionSound,ASoundFileManager *_soundFileManager) :
+CSaveSelectionAsAction::CSaveSelectionAsAction(const CActionSound &actionSound,ASoundFileManager *_soundFileManager) :
 	AAction(actionSound),
 	soundFileManager(_soundFileManager)
 {

@@ -31,7 +31,7 @@ class ASoundFileManager;
 class CSaveSelectionAsAction : public AAction
 {
 public:
-	CSaveSelectionAsAction(const CActionSound actionSound,ASoundFileManager *soundFileManager);
+	CSaveSelectionAsAction(const CActionSound &actionSound,ASoundFileManager *soundFileManager);
 	virtual ~CSaveSelectionAsAction();
 
 protected:
