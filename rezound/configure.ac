@@ -105,17 +105,16 @@ AC_CHECK_HEADER(stdint.h,
 	[rm -f $builddir/src/misc/missing/generated/stdint.h],
 	[
 		mkdir -p $builddir/src/misc/missing/generated 2>/dev/null
-		cp $srcdir/src/misc/missing/stdint.h-missing $builddir/src/misc/missing/generated/stdint.h
+		sed -e "s:@srcdir@:$srcdir:" $srcdir/src/misc/missing/stdint.h-missing > $builddir/src/misc/missing/generated/stdint.h
 	]
 )
 
-# check for sstream (I would like to do it just like stdint.h except sstream is only found if c++/g++ is used to try to compile, and AC_CHECK_HEADER disregards that I used AC_LANG(C++) )
-# ajv_CHECK_HEADER_SSTREAM
+# check for sstream 
 AC_CHECK_HEADER(sstream,
 	[rm -f $builddir/src/misc/missing/generated/sstream],
 	[
 		mkdir -p $builddir/src/misc/missing/generated 2>/dev/null
-		cp $srcdir/src/misc/missing/sstream-missing $builddir/src/misc/missing/generated/sstream
+		sed -e "s:@srcdir@:$srcdir:" $srcdir/src/misc/missing/sstream-missing > $builddir/src/misc/missing/generated/sstream
 	]
 )
 
