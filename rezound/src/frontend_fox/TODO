@@ -7,6 +7,11 @@
 		- should be easier now that the code has be reorganized
 		- make a dropdown box which is the type to explicitly use or its first item is 'by filename extension'
 
+	- Somehow the registered Translators need to convay a list of file extensions to the frontend.. the front end can turn that into whatever format the frontend needs to make it work for the file dialog
+		- an extension and a format name needs to be given (i.e. Wave .wav  Sun/Next .au )
+		- in the frontend create a conglomerated list called all file types that includes all the extensions as well as a *.* entry
+
+
 	- Other commercial audio editors do this, and now I think I know why...
 		XXX - When loading a sound it doesn't start zoomed out to see the whole thing.. 
 		- if I had a thread always running in the background low priority, I could be calculating peak chunk information while the user isn't looking
