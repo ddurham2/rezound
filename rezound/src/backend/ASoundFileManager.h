@@ -59,7 +59,7 @@ public:
 	void revert();
 	void recordToNew();
 
-	static const string getUntitledFilename(const string directory,const string extension);
+	const string getUntitledFilename(const string directory,const string extension);
 
 	const size_t getReopenHistorySize() const;
 	const string getReopenHistoryItem(const size_t index) const;

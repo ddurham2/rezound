@@ -335,27 +335,18 @@ void ASoundFileManager::recordToNew()
 
 const string ASoundFileManager::getUntitledFilename(const string directory,const string extension)
 {
-	string filename=directory+"untitled";
-	for(size_t t=0;t<100;t++)
+	// return "/dir/untitled#.ext" where # is 0-99, then 'newfile#', then 'default#'
+	static const char *prefixes[]={"untitled","newfile","default"};
+	for(size_t i=0;i<(sizeof(prefixes)/sizeof(*prefixes));i++)
 	{
-		if(!ost::Path(filename+istring(t)+"."+extension).Exists())
-			return(filename+istring(t)+"."+extension);
+		const string filename=directory+prefixes[i];
+		for(size_t t=0;t<100;t++)
+		{
+			const string temp=filename+istring(t)+"."+extension;
+			if(!ost::Path(temp).Exists() && !isFilenameRegistered(temp))
+				return(filename+istring(t)+"."+extension);
+		}
 	}
-
-	filename=directory+"default";
-	for(size_t t=0;t<100;t++)
-	{
-		if(!ost::Path(filename+istring(t)+"."+extension).Exists())
-			return(filename+istring(t)+"."+extension);
-	}
-
-	filename=directory+"newfile";
-	for(size_t t=0;t<100;t++)
-	{
-		if(!ost::Path(filename+istring(t)+"."+extension).Exists())
-			return(filename+istring(t)+"."+extension);
-	}
-
 	return("");
 }
 
