@@ -1506,3 +1506,51 @@ Arbitrary\ FIR\ Filter
 	}
 }
 
+Curved\ Balance\ Change
+{
+	names[]={"Left to Right", "Right to Left"};
+
+	Left\ to\ Right
+	{
+
+		Balance\ Curve
+		{
+			node_positions[]={"0", "1"};
+			node_values[]={"1", "0"};
+		}
+		Balance\ Type
+		{
+			index="1";
+		}
+		Channel\ A
+		{
+			index="0";
+		}
+		Channel\ B
+		{
+			index="1";
+		}
+	}
+	Right\ to\ Left
+	{
+
+		Balance\ Curve
+		{
+			node_positions[]={"0", "1"};
+			node_values[]={"0", "1"};
+		}
+		Balance\ Type
+		{
+			index="1";
+		}
+		Channel\ A
+		{
+			index="0";
+		}
+		Channel\ B
+		{
+			index="1";
+		}
+	}
+}
+
