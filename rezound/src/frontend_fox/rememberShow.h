@@ -24,6 +24,8 @@
 #include "../../config/common.h"
 #include "fox_compat.h"
 
+#include <string>
+
 #ifdef FOX_NO_NAMESPACE
 	class FXTopWindow;
 #else
@@ -31,7 +33,7 @@
 	using namespace FX;
 #endif
 
-bool rememberShow(FXTopWindow *window);
-void rememberHide(FXTopWindow *window);
+bool rememberShow(FXTopWindow *window,const string windowTitle);
+void rememberHide(FXTopWindow *window,const string windowTitle);
 
 #endif

@@ -18,6 +18,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
+/*
+ * I would take the windowTitle from FXTopWindow::getTitle() except it might be translated 
+ * but I want to store the untranslated value in the registry of window positions, or
+ * the title may contain some more informative message containing perhaps a filename
+ * that we wouldn't want in the registry (since it would be different next time)
+ */
+
 #include "rememberShow.h"
 
 #include <stdlib.h>
@@ -94,7 +101,7 @@ void determineDecorSize(FXWindow *window)
 	delete testWindow;
 }
 
-bool rememberShow(FXTopWindow *window)
+bool rememberShow(FXTopWindow *window,const string windowTitle)
 {
 	// .- isn't reliable with all window managers behaving differently 
 	// |
@@ -107,7 +114,7 @@ bool rememberShow(FXTopWindow *window)
 		return false;
 	inThis=true;
 
-	const string title="FOX" DOT "WindowDimensions" DOT window->getTitle().text();
+	const string title="FOX" DOT "WindowDimensions" DOT windowTitle;
 	if(!gSettingsRegistry->keyExists(title+"_X"))
 	{
 		inThis=false;
@@ -151,9 +158,9 @@ bool rememberShow(FXTopWindow *window)
 	return true;
 }
 
-void rememberHide(FXTopWindow *window)
+void rememberHide(FXTopWindow *window,const string windowTitle)
 {
-	const string title="FOX" DOT "WindowDimensions" DOT window->getTitle().text();
+	const string title="FOX" DOT "WindowDimensions" DOT windowTitle;
 	//printf("closing window: %s %d %d\n",window->getTitle().text(),window->getX(),window->getY());
 	gSettingsRegistry->createValue<int>(title+"_X",window->getX()/*-decorWidth*/);
 	gSettingsRegistry->createValue<int>(title+"_Y",window->getY()/*-decorHeight*/);
