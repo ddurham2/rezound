@@ -173,6 +173,30 @@ void ASoundFileManager::prvOpen(const string &filename,bool readOnly,bool doRegi
 
 }
 
+/*
+ * This needs to be called after saving a file.. it sets false the saved state 
+ * on all previous actions on the undo stack which might because the current 
+ * state if the user undoes.
+ */
+#include "AAction.h"
+static void iterateUndoStackAndUnsetSavedState(CLoadedSound *loaded)
+{
+	stack<AAction *> temp;
+	
+	while(loaded->actions.empty())
+	{
+		loaded->actions.top()->setOrigIsModified();
+		temp.push(loaded->actions.top());
+		loaded->actions.pop();
+	}
+
+	while(temp.empty())
+	{
+		loaded->actions.push(temp.top());
+		temp.pop();
+	}
+}
+
 void ASoundFileManager::save()
 {
 	// get active sound

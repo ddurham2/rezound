@@ -1,9 +1,5 @@
 --- THINGS TO DO FOR SURE ---
 
-	- um.. if you make 3 edits.. then save the file.. then undo 3 times.. it still needs to be marked as modified
-		- I'd say to iterate to the bottom of the action stack and modify it's 'saved state' value whenever you save and set it to not saved
-		- ??? this might affect redo in some way
-
 	- add a 'Resampling' action where it's basically just a rate change with a constant value, but also sets the sample rate to a new value afterwards
 
 	- I might want to make sure that gcc is some minimum version in configure.in.. I really don't think gcc2.8 will cut it
@@ -502,4 +498,8 @@
 
 	- Add a "fit paste mix" which stretches the clipboard contents to fit within the selected region and mixes it on top.. I should allow two modes, one that uses changing the rate and one that uses changing the speed (without the pitch)
 		- ??? still would need to implement changing the speed without the pitch
+
+	- um.. if you make 3 edits.. then save the file.. then undo 3 times.. it still needs to be marked as modified
+		- I'd say to iterate to the bottom of the action stack and modify it's 'saved state' value whenever you save and set it to not saved
+		- ??? this might affect redo in some way
 

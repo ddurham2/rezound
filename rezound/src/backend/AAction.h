@@ -162,6 +162,8 @@ public:
 	// - if channel is passed, restores the selection positions from before the action executed if a channel was given to doAction
 	void undoAction(CSoundPlayerChannel *channel=NULL);
 
+	void setOrigIsModified() { origIsModified=true; }
+
 	static vector<ASoundClipboard *> clipboards;
 
 protected:
