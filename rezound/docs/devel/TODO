@@ -10,7 +10,6 @@
 			- or perhaps it should just use trim for any data that exceeds these amounts and add more space if necessary
 		- the silence margins on the ends should also fade in and out to/from 0
 
-
 	- Put in the documentation or application help somewhere a brief description about how recording works in linux (you have a recording source selected, then igain which is the recording gain of that source)
 
 	- When it's up on sourceforge (and ready to debut) announce to:
@@ -98,15 +97,10 @@
 
 	- needs some compressor action(s)
 
+	- AAction would need some more availability to ASoundFileManager, but it would be neat if I could create an action which could break a long sound into multiple tracks when there is silence for a given amount of time... Each track would be opened as a new file based on an initial filename
+
 	- could easily make the play buttons stop if playing and then do their action so that they don't do nothing while it's playing
 		- plus you have to hit stop and play to make it do something else... stop needs to be nice and big anyway
-
-	- I could add an advanced mode for copy/cut/paste where the user can choose from multiple clipboards
-		- perhaps one way to implement this would be to have multiple instantiated ASoundClipboard objects in an array one may point to a system clipboard and others to TPoolFile clipboard
-		- interface:
-			- either advanced mode for copy/cut/paste
-			- or a dropdown list somewhere on the mainform
-		- even a clipboard with is a recording source is quite feasible
 
 	- it may be more intutive/user-friendly/athetically-pleasing to have the channel select dialog start out all unchecked so I acutally clikc on the channels I want to apply the action to, rather than the inverse of the channels...
 		- I should also probably add a button that selects all chanels or unselects all changes
@@ -366,4 +360,11 @@
 					- it would be invalid to copy into the record clipboard, just throw an exception
 					- for efficiency's sake, perhaps let a clipboard have a method which copies the data for the user of the clipboard (given an ASound and location and length).  Then for record, we could speed things up by having recorded into the same pool file and then just do a move data method on the pool file.
 						- the other implementations would just behave as normal.
+
+	- I could add an advanced mode for copy/cut/paste where the user can choose from multiple clipboards
+		- perhaps one way to implement this would be to have multiple instantiated ASoundClipboard objects in an array one may point to a system clipboard and others to TPoolFile clipboard
+		- interface:
+			- either advanced mode for copy/cut/paste
+			- or a dropdown list somewhere on the mainform
+		- even a clipboard with is a recording source is quite feasible
 
