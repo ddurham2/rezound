@@ -100,6 +100,7 @@ CAddChannelsDialog::CAddChannelsDialog(FXWindow *mainWindow) :
 // --- save as multiple files -----------------
 
 #include "../backend/ASoundTranslator.h"
+#include "../backend/Edits/CSaveAsMultipleFilesAction.h"
 CSaveAsMultipleFilesDialog::CSaveAsMultipleFilesDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Save As Multiple Files")
 {
@@ -118,23 +119,5 @@ CSaveAsMultipleFilesDialog::CSaveAsMultipleFilesDialog(FXWindow *mainWindow) :
 
 const string CSaveAsMultipleFilesDialog::getExplaination() const
 {
-	return "
-To save a large file (or just a selection from it) as several smaller segments you can create cues that define the segments and then click on \"Save As Multiple Files\" under the \"File\" menu.
-
-In general, cues can be named '(' and ')' to define the beginning and end of each segment to be saved.
-However, a ')' cue can be ommitted if a previous segment is to end at the beginning of the next segment.
-The very last ')' cue can also be ommitted if the last defined segment is to end at the end of the original audio file (or the end of the selection).
-Furthermore, the '(' cue can optionally be named '(xyz' if 'xyz' is to be included in the segment's filename.
-
-There are several parameters in the dialog is displayed after selecting \"Save As Multiple Files\" under the \"File\" menu.
-The \"Save to Directory\" parameter that is the directory to place each segment file.
-The \"Filename Prefix\" will be placed in front of the optional 'xyz' from the '(xyz' cue name.
-The \"Filename Suffix\" will be placed after of the optional 'xyz' from the '(xyz' cue name.
-The \"Format\" parameter in specifies what audio format the segments should be saved.
-After a segment's filename is formed by putting together, [directory]/[prefix][xyz][suffix].[format extension], if it contains '#' then the '#' will be replaced with a number based on the order that the segments are defined.
-    For instance: \"/home/john/sounds/track #.wav\" will be changed to \"/home/john/sounds/track 1.wav\" for the first segment that is saved, and all the subsequent segments will contain an increasing number.
-    Thus, you should use a '#' in either the save to directory, filename prefix, xyz, or the filename suffix to create unique filenames when saving the segments.
-The \"Segment Number Start\" parameter can be changed from '1' to start the '#' substitutions at something different.
-The \"Open Saved Segments\" can be selected simply if you want to open the segments after they have been saved.
-";
+	return CSaveAsMultipleFilesAction::getExplaination();
 }

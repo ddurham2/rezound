@@ -34,6 +34,8 @@ public:
 	CSaveAsMultipleFilesAction(const CActionSound actionSound,ASoundFileManager *soundFileManager,const string directory,const string filenamePrefix,const string filenameSuffix,const string extension,bool openSavedSegments,unsigned segmentNumberOffset,bool selectionOnly);
 	virtual ~CSaveAsMultipleFilesAction();
 
+	static const string getExplaination();
+
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
 	void undoActionSizeSafe(const CActionSound &actionSound);
