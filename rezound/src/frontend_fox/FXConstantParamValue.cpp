@@ -318,7 +318,7 @@ void FXConstantParamValue::writeToFile(const string &prefix,CNestedDataFile *f) 
 {
 	const string key=prefix+DOT+getTitle()+DOT;
 
-	f->createKey((key+"value").c_str(),istring(getValue()));
+	f->createKey((key+"value").c_str(),getValue());
 	if(getMinScalar()!=getMaxScalar())
 		f->createKey((key+"scalar").c_str(),istring(getScalar()));
 }
