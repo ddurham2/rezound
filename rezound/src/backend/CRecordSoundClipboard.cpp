@@ -173,7 +173,7 @@ sample_pos_t CRecordSoundClipboard::getLength(unsigned _sampleRate) const
 
 bool CRecordSoundClipboard::isEmpty() const
 {
-	return workingFile==NULL || workingFile->getLength()<=1;
+	return workingFile==NULL || (workingFile->getLength()<=1 && tempAudioPoolKey==0);
 }
 
 void CRecordSoundClipboard::temporarilyShortenLength(unsigned sampleRate,sample_pos_t changeTo)
@@ -214,7 +214,6 @@ void CRecordSoundClipboard::undoTemporaryShortenLength()
 	{
 		if(tempAudioPoolKey!=0)
 			workingFile->moveDataFromTemp(whichChannels,tempAudioPoolKey,workingFile->getLength(),origLength-workingFile->getLength());
-
 		workingFile->unlockForResize();
 	}
 	catch(...)
