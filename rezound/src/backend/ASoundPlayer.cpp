@@ -215,6 +215,103 @@ const sample_t ASoundPlayer::getPeakLevel(unsigned channel) const
 	return p;
 }
 
+#ifdef HAVE_LIBRFFTW
+
+// NOTE: when I say 'band', a band is expressed in terms of an 
+// octave (where octave is a real number) and each band is a 
+// multiple of deltaOctave (i.e when deltaOctave is 0.5, then 
+// the bands are defined as octaves: 0, 0.5, 1.0, 1.5, 2.0, 2.5, etc)
+
+static const float baseOctave=20;	// bottom frequency of analyzer  (actually the first band contains from 0Hz to upperFreqAtOctave(0) )
+static const size_t octaveStride=3;	// 3 bands per octave
+static const float deltaOctave=1.0/octaveStride;
+
+// returns the frequency (in Hz) given the octave
+static float freqAtOctave(float octave)
+{
+	return baseOctave*pow((float)2.0,octave);
+}
+
+// return middle of the previous band's frequency and our band's frequency
+static float lowerFreqAtOctave(float octave)
+{
+	return (freqAtOctave(octave-deltaOctave)+freqAtOctave(octave))/2.0;
+}
+
+// return middle of the our band's frequency and the next band's frequency
+static float upperFreqAtOctave(float octave)
+{
+	return (freqAtOctave(octave)+freqAtOctave(octave+deltaOctave))/2.0;
+}
+
+// returns the index (into an frequency domain array) given a frequency (but doesn't always return an integer, it returns what index we would wish to be there (perhaps between two elements))
+static float indexAtFreq(float freq,unsigned sampleRate)
+{
+	return (2.0*(ASP_ANALYSIS_BUFFER_SIZE/2)*freq)/(float)sampleRate;
+}
+
+// returns the (integer) lower index of the given band (expressed as an octave) into a frequency domain array
+static size_t lowerIndexAtOctave(float octave,unsigned sampleRate)
+{
+	return (size_t)floor(indexAtFreq(lowerFreqAtOctave(octave),sampleRate));
+}
+
+// returns the (integer) upper index of the given band (expressed as an octave) into a frequency domain array
+static size_t upperIndexAtOctave(float octave,unsigned sampleRate)
+{
+	return (size_t)(floor(indexAtFreq(upperFreqAtOctave(octave),sampleRate)));
+}
+
+void ASoundPlayer::calculateAnalyzerBandIndexRanges() const
+{
+	bandLowerIndexes.clear();
+	bandUpperIndexes.clear();
+
+	float octave=0;
+	while(freqAtOctave(octave)<(devices[0].sampleRate/2))
+	{
+		bandLowerIndexes.push_back(lowerIndexAtOctave(octave,devices[0].sampleRate));
+		bandUpperIndexes.push_back(upperIndexAtOctave(octave,devices[0].sampleRate));
+
+		octave+=deltaOctave;
+	}
+	if(bandLowerIndexes.size()>0)
+	{
+		// make sure the first band includes the first element (but not actually 0Hz because that's just the DC offset)
+		bandLowerIndexes[0]=1;
+
+		// make sure all the indexes are in range
+		for(size_t t=0;t<bandUpperIndexes.size();t++)
+		{
+			bandLowerIndexes[t]=max((int)1,min((int)ASP_ANALYSIS_BUFFER_SIZE/2,(int)bandLowerIndexes[t]));
+			bandUpperIndexes[t]=max((int)1,min((int)ASP_ANALYSIS_BUFFER_SIZE/2,(int)bandUpperIndexes[t]));
+		}
+	}
+	else
+	{
+		// shouldn't happen, but if it does, do this to avoid calling this method over and over by adding soemthing to the vectors
+		bandLowerIndexes.push_back(0);
+		bandUpperIndexes.push_back(0);
+	}
+
+	for(size_t t=0;t<bandLowerIndexes.size();t++)
+		printf("%d .. %d\n",bandLowerIndexes[t],bandUpperIndexes[t]);
+}
+
+TAutoBuffer<fftw_real> *ASoundPlayer::createHammingWindow(size_t windowSize)
+{
+printf("creating for length %d\n",windowSize);
+	TAutoBuffer<fftw_real> *h=new TAutoBuffer<fftw_real>(windowSize);
+	
+	for(size_t t=0;t<windowSize;t++)
+		(*h)[t]=0.54-0.46*cos(2.0*M_PI*t/windowSize);
+
+	return h;
+}
+
+#endif
+
+
 #include <stdlib.h>
 const vector<float> ASoundPlayer::getFrequencyAnalysis() const
 { 
@@ -345,99 +442,8 @@ for(size_t t=0;t<ASP_ANALYSIS_BUFFER_SIZE;t++)
 #endif
 }
 
-
-#ifdef HAVE_LIBRFFTW
-
-// NOTE: when I say 'band', a band is expressed in terms of an 
-// octave (where octave is a real number) and each band is a 
-// multiple of deltaOctave (i.e when deltaOctave is 0.5, then 
-// the bands are defined as octaves: 0, 0.5, 1.0, 1.5, 2.0, 2.5, etc)
-
-static const float baseOctave=20;	// bottom frequency of analyzer  (actually the first band contains from 0Hz to upperFreqAtOctave(0) )
-static const float deltaOctave=1.0/2.0;	// 1/2 octave bands
-
-// returns the frequency (in Hz) given the octave
-static float freqAtOctave(float octave)
+const size_t ASoundPlayer::getFrequencyAnalysisOctaveStride() const
 {
-	return baseOctave*pow((float)2.0,octave);
+	return octaveStride;
 }
-
-// return middle of the previous band's frequency and our band's frequency
-static float lowerFreqAtOctave(float octave)
-{
-	return (freqAtOctave(octave-deltaOctave)+freqAtOctave(octave))/2.0;
-}
-
-// return middle of the our band's frequency and the next band's frequency
-static float upperFreqAtOctave(float octave)
-{
-	return (freqAtOctave(octave)+freqAtOctave(octave+deltaOctave))/2.0;
-}
-
-// returns the index (into an frequency domain array) given a frequency (but doesn't always return an integer, it returns what index we would wish to be there (perhaps between two elements))
-static float indexAtFreq(float freq,unsigned sampleRate)
-{
-	return (2.0*(ASP_ANALYSIS_BUFFER_SIZE/2)*freq)/(float)sampleRate;
-}
-
-// returns the (integer) lower index of the given band (expressed as an octave) into a frequency domain array
-static size_t lowerIndexAtOctave(float octave,unsigned sampleRate)
-{
-	return (size_t)floor(indexAtFreq(lowerFreqAtOctave(octave),sampleRate));
-}
-
-// returns the (integer) upper index of the given band (expressed as an octave) into a frequency domain array
-static size_t upperIndexAtOctave(float octave,unsigned sampleRate)
-{
-	return (size_t)(floor(indexAtFreq(upperFreqAtOctave(octave),sampleRate)));
-}
-
-void ASoundPlayer::calculateAnalyzerBandIndexRanges() const
-{
-	bandLowerIndexes.clear();
-	bandUpperIndexes.clear();
-
-	float octave=0;
-	while(freqAtOctave(octave)<(devices[0].sampleRate/2))
-	{
-		bandLowerIndexes.push_back(lowerIndexAtOctave(octave,devices[0].sampleRate));
-		bandUpperIndexes.push_back(upperIndexAtOctave(octave,devices[0].sampleRate));
-
-		octave+=deltaOctave;
-	}
-	if(bandLowerIndexes.size()>0)
-	{
-		// make sure the first band includes the first element (but not actually 0Hz because that's just the DC offset)
-		bandLowerIndexes[0]=1;
-
-		// make sure all the indexes are in range
-		for(size_t t=0;t<bandUpperIndexes.size();t++)
-		{
-			bandLowerIndexes[t]=max((int)1,min((int)ASP_ANALYSIS_BUFFER_SIZE/2,(int)bandLowerIndexes[t]));
-			bandUpperIndexes[t]=max((int)1,min((int)ASP_ANALYSIS_BUFFER_SIZE/2,(int)bandUpperIndexes[t]));
-		}
-	}
-	else
-	{
-		// shouldn't happen, but if it does, do this to avoid calling this method over and over by adding soemthing to the vectors
-		bandLowerIndexes.push_back(0);
-		bandUpperIndexes.push_back(0);
-	}
-
-	for(size_t t=0;t<bandLowerIndexes.size();t++)
-		printf("%d .. %d\n",bandLowerIndexes[t],bandUpperIndexes[t]);
-}
-
-TAutoBuffer<fftw_real> *ASoundPlayer::createHammingWindow(size_t windowSize)
-{
-printf("creating for length %d\n",windowSize);
-	TAutoBuffer<fftw_real> *h=new TAutoBuffer<fftw_real>(windowSize);
-	
-	for(size_t t=0;t<windowSize;t++)
-		(*h)[t]=0.54-0.46*cos(2.0*M_PI*t/windowSize);
-
-	return h;
-}
-
-#endif
 

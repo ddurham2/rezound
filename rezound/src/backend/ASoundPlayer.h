@@ -125,6 +125,7 @@ public:
 	// will represent as many bands as will fit from 20Hz up to half the sample rate, not going over.
 // ??? figure out and explain how the frequency band label corrisonds to the band, is the the middle frequency or the lower or upper bound of the band?
 	const vector<float> getFrequencyAnalysis() const;
+	const size_t getFrequencyAnalysisOctaveStride() const; // return the number of bands per octave returned by getFrequencyAnalysis
 
 protected:
 
