@@ -18,7 +18,7 @@ bool CStubAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 	{
 		if(actionSound.doChannel[i])
 		{
-			CStatusBar statusBar("Stub Action -- Channel "+istring(i),start,stop); 
+			CStatusBar statusBar("Stub Action -- Channel "+istring(i),start,stop,true);
 
 			sample_pos_t srcPos=prepareForUndo ? 0 : start;
 			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
@@ -34,7 +34,15 @@ bool CStubAction::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 			while(destPos<=stop)
 			{
 
-				statusBar.update(destPos);
+				if(statusBar.update(destPos))
+				{ // cancelled
+					if(prepareForUndo)
+						undoActionSizeSafe(actionSound);
+					else
+						actionSound.sound->invalidatePeakData(i,actionSound.start,destPos);
+					return false;
+				}
+
 				destPos++;
 			}
 // --- Insert your test effect here -- END ----------------------------------------------
