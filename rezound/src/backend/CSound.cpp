@@ -86,11 +86,10 @@ CSound::CSound() :
 
 	tempAudioPoolKeyCounter(1),
 
-	adjustCuesOnSpaceChanges(true),
-
 	_isModified(true),
 
-	cueAccesser(NULL)
+	cueAccesser(NULL),
+	adjustCuesOnSpaceChanges(true)
 {
 	for(unsigned t=0;t<MAX_CHANNELS;t++)
 		peakChunkAccessers[t]=NULL;
