@@ -488,7 +488,11 @@ public:
 		setBackColor(M_BACKGROUND);
 			canvasFrame->setBackColor(M_BACKGROUND);
 			
+#if REZ_FOX_VERSION<10129
 		canvas->setBackBufferOptions(IMAGE_OWNED|IMAGE_ALPHA); // IMAGE_ALPHA: the alpha channel is not used, but it's a place holder so I can work with 32bit values
+#else
+		canvas->setBackBufferOptions(IMAGE_OWNED); /* 1.1.29 and later always has 32bit image data */
+#endif
 
 		// create the font to use for numbers
 		FXFontDesc d;
