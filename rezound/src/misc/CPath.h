@@ -130,7 +130,7 @@ public:
 			if (fd == -1)
 			{	
 				if(throwIfError)
-					throw runtime_error(string(__func__)+" -- error touching path name '"+path+"'-- "+strerror(errno));
+					throw runtime_error(string(__func__)+" -- error touching path name '"+path+"' -- "+strerror(errno));
 				else
 					return(false);
 			}
