@@ -64,6 +64,7 @@ public:
 
 	long onShuttleReturn(FXObject *sender,FXSelector sel,void *ptr);
 	long onShuttleChange(FXObject *sender,FXSelector sel,void *ptr);
+	void positionShuttleGivenSpeed(double playSpeed);
 
 	// used to control the shuttle control with the keyboard
 	long onKeyboardSeek(FXObject *sender,FXSelector sel,void *ptr);

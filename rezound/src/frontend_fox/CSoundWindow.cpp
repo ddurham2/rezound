@@ -36,6 +36,7 @@ static void playTrigger(void *Pthis);
 
 #include "CSoundWindow.h"
 #include "CSoundFileManager.h"
+#include "CMainWindow.h"
 
 #include <algorithm>
 
@@ -293,6 +294,9 @@ CSoundWindow::~CSoundWindow()
 
 void CSoundWindow::setActiveState(bool isActive)
 {
+	if(isActive)
+		static_cast<CMainWindow *>(getOwner())->positionShuttleGivenSpeed(loadedSound->channel->getPlaySpeed());
+
 	if(gFocusMethod==fmFocusButton)
 	{
 		activeToggleButton->setBackColor(isActive ? FXRGB(230,230,230) : FXRGB(25,25,25));

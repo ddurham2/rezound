@@ -583,7 +583,6 @@ long CMainWindow::onShuttleReturn(FXObject *sender,FXSelector sel,void *ptr)
 
 long CMainWindow::onShuttleChange(FXObject *sender,FXSelector sel,void *ptr)
 {
-	// ??? if the active window changes.... I need to set the channel's speak back to 1x
 	CLoadedSound *s=gSoundFileManager->getActive();
 	if(s!=NULL)
 	{
@@ -603,6 +602,24 @@ long CMainWindow::onShuttleChange(FXObject *sender,FXSelector sel,void *ptr)
 	}
 
 	return 1;
+}
+
+void CMainWindow::positionShuttleGivenSpeed(double playSpeed)
+{
+	FXint minValue,maxValue;
+	shuttleDial->getRange(minValue,maxValue);
+
+	FXint shuttlePos;
+	if(playSpeed==1.0)
+		shuttlePos=0;
+	else if(playSpeed>1.0)
+		shuttlePos=maxValue*sqrt((playSpeed-1.0)/100.0);
+	else if(playSpeed<1.0)
+		shuttlePos=minValue*sqrt((playSpeed+1.0)/-100.0);
+	else // catch all
+		shuttlePos=0;
+
+	shuttleDial->setValue(shuttlePos);
 }
 
 long CMainWindow::onKeyboardSeek(FXObject *sender,FXSelector sel,void *ptr)
