@@ -11,3 +11,20 @@ and move it into config
 -Get libfrontend_fox.la to work. 
 
 --make sure this works on cf.sourceforge.net
+
+- Don't get mad at me.... :)   But, I added another directory under misc called
+  CNestedDataFile.  This is the class I talked about for storing information
+  about an action's parameters so the same parameters can be used at a later
+  date.  I guess it needs to have a convenience library built for it too.  
+  The only thing out of the ordinary is that it uses flex and bison... I would
+  be really surprised if there aren't already automake macros that test for
+  these.  I checked in a t.cpp and little script 'a' which compiles t.cpp (the
+  test) just so you can see how it needs to compile.  I don't mean to leave
+  these two little files in for long.. Just so long as you see what needs to be
+  done.  And if you run 'a' to compile and then run the resulting binary, 't'
+  it will give an error that it cannot open the data file... That is to be 
+  expected.  
+  I went ahead and added this because using I didn't even see a way in CommonC++'s
+  XML classes to write data files, only read them.  Plus it would have required
+  linking with yet another library, libxml2.  So this was already written and
+  has been tested for some time and I'll use it.
