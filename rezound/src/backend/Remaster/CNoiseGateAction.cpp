@@ -39,7 +39,7 @@ CNoiseGateAction::CNoiseGateAction(const CActionSound &actionSound,const float _
 {
 	if(windowTime<0.0)
 		throw(runtime_error(string(__func__)+" -- windowTime is negative"));
-	if(threshold<0.0)
+	if(threshold>0.0)
 		throw(runtime_error(string(__func__)+" -- threshold is negative"));
 	if(gainAttackTime<0.0)
 		throw(runtime_error(string(__func__)+" -- gainAttackTime is negative"));
@@ -75,7 +75,7 @@ bool CNoiseGateAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 
 			CDSPNoiseGate gate(
 				ms_to_samples(windowTime,actionSound.sound->getSampleRate()),
-				percent_to_amp(threshold),
+				dBFS_to_amp(threshold,MAX_SAMPLE),
 				ms_to_samples(gainAttackTime,actionSound.sound->getSampleRate()),
 				ms_to_samples(gainReleaseTime,actionSound.sound->getSampleRate())
 				);

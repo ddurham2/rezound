@@ -176,6 +176,9 @@ bool CMonoizeActionDialog::show(CActionSound *actionSound,CActionParameters *act
 
 // --- noise gate --------------------------
 
+static const double interpretValue_dBFS(const double x,const int s) { return(amp_to_dBFS(x,1.0)); }
+static const double uninterpretValue_dBFS(const double x,const int s) { return(dBFS_to_amp(x,1.0)); }
+
 static const double interpretValue_noiseGate(const double x,const int s) { return(x*s); }
 static const double uninterpretValue_noiseGate(const double x,const int s) { return(x/s); }
 
@@ -184,7 +187,7 @@ CNoiseGateDialog::CNoiseGateDialog(FXWindow *mainWindow) :
 {
 	void *p=newHorzPanel(NULL);
 		addSlider(p,N_("Window Time"),"ms",interpretValue_noiseGate,uninterpretValue_noiseGate,NULL,35.0,5,1000,30,false);
-		addSlider(p,N_("Threshold"),"%",interpretValue_noiseGate,uninterpretValue_noiseGate,NULL,3.0,5,100,20,false);
+		addSlider(p,N_("Threshold"),"dBFS",interpretValue_dBFS,uninterpretValue_dBFS,NULL,-30.0,0,0,1,false);
 		addSlider(p,N_("Gain Attack Time"),"ms",interpretValue_noiseGate,uninterpretValue_noiseGate,NULL,10.0,5,1000,30,false);
 		addSlider(p,N_("Gain Release Time"),"ms",interpretValue_noiseGate,uninterpretValue_noiseGate,NULL,10.0,5,1000,30,false);
 }
@@ -201,9 +204,6 @@ const string CNoiseGateDialog::getExplanation() const
 
 static const double interpretValue_compressorWindowTime(const double x,const int s) { return(unitRange_to_otherRange_linear(x,.1,100)*s); }
 static const double uninterpretValue_compressorWindowTime(const double x,const int s) { return(otherRange_to_unitRange_linear(x/s,.1,100)); }
-
-static const double interpretValue_dBFS(const double x,const int s) { return(amp_to_dBFS(x,1.0)); }
-static const double uninterpretValue_dBFS(const double x,const int s) { return(dBFS_to_amp(x,1.0)); }
 
 static const double interpretValue_compressionRatio(const double x,const int s) { return(unitRange_to_otherRange_linear(x,1,s)); }
 static const double uninterpretValue_compressionRatio(const double x,const int s) { return(otherRange_to_unitRange_linear(x,1,s)); }

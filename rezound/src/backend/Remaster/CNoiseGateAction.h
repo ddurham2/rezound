@@ -50,7 +50,7 @@ protected:
 
 private:
 	const float windowTime;		// in ms
-	const float threshold;		// in %
+	const float threshold;		// in dBFS
 	const float gainAttackTime;	// in ms
 	const float gainReleaseTime;	// in ms
 
