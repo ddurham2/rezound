@@ -34,8 +34,6 @@ SUBDIRS=\
 	Looping \
 	Remaster
 
-## EXTRA_DIST these files don't make it into make dist by default but
-## they are required for the build
 noinst_HEADERS= \
 	   AActionDialog.h \
 	   AAction.h \
@@ -79,8 +77,6 @@ noinst_HEADERS= \
 	   unit_conv.h
 	   
 
-## see PoolFile Makefile.am for explanation here out
-## 
 noinst_LTLIBRARIES=libbackend.la
 libbackend_la_SOURCES= \
 			AAction.cpp  \
@@ -120,4 +116,8 @@ libbackend_la_SOURCES= \
 			main_controls.cpp \
 		        mypopen.cpp \
 		        settings.cpp
+
+AM_CXXFLAGS=@AUDIOFILE_CFLAGS@ @JACK_CFLAGS@ @OGG_CFLAGS@ @VORBIS_CFLAGS@
+
+libbackend_la_LIBADD=@AUDIOFILE_LIBS@ @JACK_LIBS@ @OGG_LIBS@ @VORBIS_LIBS@ @VORBISFILE_LIBS@ @VORBISENC_LIBS@
 

@@ -25,21 +25,22 @@ include $(top_srcdir)/config/am_include.mk
 
 ## Descend into SUBDIRS and run make. Look at the Makefile.am files in the
 ## subdirectories Start at frontend_fox/Makefile.am to see how everything works.
-SUBDIRS=\
-	src \
+SUBDIRS= \
 	docs \
-	share 
+	share \
+	src
 
 ## These extra files and directories will be included in the distribution. by
 ## using make-dist by default many common filenames are automatically included
 ## such as AUTHORS, COPYING, etc the bootstrap script really shouldn't be a part
 ## of a final package, but it is useful for developers who might want to make
 ## changes to the configure scripts or makefiles.
+	## dnl since some of this is in SUBDIRS see if this is not necessary
 EXTRA_DIST= \
-	bootstrap \
+	config \
 	docs \
 	share \
-	config \
+	bootstrap \
 	libtool.GL.patch \
 	README.GL_PROBLEMS
 
@@ -50,5 +51,8 @@ dist-hook:
 	rm -rf `find $(distdir) -type f -name Makefile` # from including docs and share on the EXTRA_DIST line
 	echo rm -rf `find $(distdir) -type f -name \.\#\*`	# CVS revision files left around for some reason
 	rm -rf $(distdir)/src/images/WORK		# makes the tarball much smaller
+	rm -rf $(distdir)/src/images/.xvpics		# created by ee I think
 	rm -rf $(distdir)/src/misc/missing/generated	# doesn't need to go with the distro
 
+
+ACLOCAL_AMFLAGS = -I config/m4

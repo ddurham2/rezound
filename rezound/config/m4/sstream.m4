@@ -1,4 +1,3 @@
-# vim:sw=4:ts=4
 dnl sstream.m4 
 dnl Written by Anthony Ventimiglia
 dnl    modified by David W. Durham 6/22/2002
@@ -31,23 +30,28 @@ dnl generated, src/misc/missing/generated and src/misc/missing/sstream-missing
 dnl is copied into that directory.  If the test passes we remove any existing
 dnl sstream file in that directory.
 
-AC_DEFUN(ajv_CHECK_HEADER_SSTREAM, dnl
-[AC_MSG_CHECKING(for STL sstream header)] 
-cat > chk_hdr_sstr.cc <<EOF
-#include <sstream>
-int main(){}
+AC_DEFUN(ajv_CHECK_HEADER_SSTREAM,
+
+	[AC_MSG_CHECKING(for STL sstream header)] 
+
+	cat > chk_hdr_sstr.cc <<EOF
+	#include <sstream>
+	int main(){}
 EOF
-$CXXCPP chk_hdr_sstr.cc >/dev/null 2>chk_hdr_sstr.err
-if test x"$?" = x"0"; then
-	AC_MSG_RESULT(yes)
-	rm -f $srcdir/src/misc/missing/generated/sstream
-	rmdir $srcdir/src/misc/missing/generated 2>/dev/null
-else
-	mkdir $srcdir/src/misc/missing/generated 2>/dev/null
-	cp $srcdir/src/misc/missing/sstream-missing $srcdir/src/misc/missing/generated/sstream
-	AC_MSG_RESULT(no)
-fi
-rm -rf chk_hdr_sstr.err
-rm -rf chk_hdr_sstr.cc
-rm -rf a.out dnl
+
+	$CXXCPP chk_hdr_sstr.cc >/dev/null 2>chk_hdr_sstr.err
+	if test x"$?" = x"0"; then
+		AC_MSG_RESULT(yes)
+		rm -f $builddir/src/misc/missing/generated/sstream
+		rmdir $builddir/src/misc/missing/generated 2>/dev/null
+	else
+		mkdir $builddir/src/misc/missing/generated 2>/dev/null
+		cp $srcdir/src/misc/missing/sstream-missing $builddir/src/misc/missing/generated/sstream
+		AC_MSG_RESULT(no)
+	fi
+
+	rm -rf chk_hdr_sstr.err
+	rm -rf chk_hdr_sstr.cc
+	rm -rf a.out
 )
+

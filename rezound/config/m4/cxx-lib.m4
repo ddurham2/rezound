@@ -1,6 +1,6 @@
-# vim:sw=4:ts=4
 dnl cxx-lib.m4 
 dnl Written by Anthony Ventimiglia
+dnl Modified by David W. Durham -- enahanced and now uses autoconf-2.5x concepts
 dnl
 dnl Copyright (C) 2002 - Anthony Ventimiglia
 dnl 
@@ -20,6 +20,8 @@ dnl You should have received a copy of the GNU General Public License along
 dnl with this program; if not, write to 
 dnl the Free Software Foundation, Inc., 59 Temple
 dnl Place - Suite 330, Boston, MA  02111-1307, USA
+
+
 
 dnl ajv_CXX_CHECK_LIB(Library Name, Class, header, URL, -l flags)
 dnl This is a check for a class contained in a C++ library. The test is 
@@ -43,61 +45,99 @@ dnl
 dnl By checking for specific classes this check can be used to check if a 
 dnl library version is compatible with the classes used in the application.
 dnl
-dnl This macro also sets the option --disable-LIB-check to optionally
+dnl This macro sets the option --disable-LIB-check to optionally
 dnl override the check. The error report given should the test fail is 
 dnl meant to help a user with the installation process. 
 dnl 
+dnl This macro defines some args that define the include or lib paths
+dnl 
 dnl This macro will also #define HAVE_LIBXXX where XXX is the capitalized
 dnl normalized name if arg 1
-AC_DEFUN(ajv_CXX_CHECK_LIB, dnl
-[AC_ARG_ENABLE($1-check, dnl
-[
-  --disable-$1-check     Override the check for $1 library ], dnl
-[enable_$1_check=$enableval], dnl
-[enable_$1_check="yes" ])]
-[AC_ARG_WITH($1-include, dnl
-[  --with-$1-include	  Specify path to $1 header files], dnl
-[ 	ajv_inc$1_path=-I$withval
-# I'm commenting this out, so passing the with option won't override check.
-#	enable_$1_check="no"  
-],
-ajv_inc$1_path="")] dnl
-[AC_ARG_WITH($1-path,[  --with-$1-path	  Specify path to $1 libraries], dnl
-[	ajv_lib$1_path=-L$withval
-# I'm commenting this out, so passing the with option won't override check.
-#	enable_$1_check="no" 
-], dnl
-ajv_lib$1_path="")] 
-LIBS="-l$1 $LIBS"
-LDFLAGS="$ajv_lib$1_path $LDFLAGS"
-CXXFLAGS="$ajv_inc$1_path $CXXFLAGS"
-if test x"$enable_$1_check" = x"yes"; then
-	[AC_MSG_CHECKING(for $2 class in -l$1)] 
-	cat > ajv_chk_cxx_lib_$1.cc << EOF
-#include <$3>
-int main()
-{ $2 xxx; }
+dnl
+AC_DEFUN(ajv_CXX_CHECK_LIB,
+
+	dnl prepare to beable to AC_DEFINE the HAVE_LIBXXX #define
+	[AH_TEMPLATE(AS_TR_CPP(HAVE_LIB$1),[defined by $0])]
+
+	dnl create a --disable-LIB-check flag to configure
+	[AC_ARG_ENABLE($1-check,
+		[  --disable-$1-check     Override the check for $1 library],
+		[
+			enable_$1_check="$enableval"
+		],
+		[
+			enable_$1_check="yes"
+		]
+	)]
+
+	dnl create a --with-LIB-include flag to configure (which sets the -I flags to the lib's headers)
+	[AC_ARG_WITH($1-include,
+		[  --with-$1-include	  Specify path to $1 header files],
+		[ 	
+			ajv_inc$1_path=-I$withval
+			# I'm commenting this out, so passing the with option won't override check.
+			# enable_$1_check="no"  
+		],
+		[
+			ajv_inc$1_path=""
+		]
+	)]
+
+	dnl create a --with-LIB-path flag to configure (which sets the -L flags to the lib)
+	[AC_ARG_WITH($1-path,
+		[  --with-$1-path	  Specify path to $1 libraries],
+		[	
+			ajv_lib$1_path=-L$withval
+			# I'm commenting this out, so passing the with option won't override check.
+			# enable_$1_check="no" 
+		],
+		[
+			ajv_lib$1_path=""
+		]
+	)]
+
+	$1_CXXFLAGS="$ajv_inc$1_path"
+	$1_LIBS="$ajv_lib$1_path -l$1 $5"
+
+	if test x"$enable_$1_check" = x"yes"; then
+		[AC_MSG_CHECKING(for $2 class in -l$1)]
+		cat > ajv_chk_cxx_lib_$1.cc << EOF
+			#include <$3>
+			int main() { $2 xxx; }
 EOF
-	$CXX -l$1 $5 $ajv_lib$1_path $ajv_inc$1_path ajv_chk_cxx_lib_$1.cc >/dev/null 2>ajv_chk_cxx_lib_$1.err
-	if test x"$?" = x"0"; then
-		AC_MSG_RESULT(yes)
-		rm -f ajv_chk_cxx_lib_$1.cc
-		rm -f ajv_chk_cxx_lib_$1.err
-	else
-		AC_MSG_RESULT(no)
+		dnl these are not procedures, but are a statement to definately make a substitution later
+		AC_SUBST(FOX_CXXFLAGS)
+		AC_SUBST(FOX_LIBS)
 
-		echo
-		echo compile line was: $CXX -l$1 $5 $ajv_lib$1_path $ajv_inc$1_path ajv_chk_cxx_lib_$1.cc
-		echo compiled file was: ajv_chk_cxx_lib_$1.cc
-		cat ajv_chk_cxx_lib_$1.cc
-		echo
-		echo compile errors were:
-		cat ajv_chk_cxx_lib_$1.err
-		echo
+		CXX_CMDLINE="$CXX ${$1_CXXFLAGS} ${$1_LIBS} ajv_chk_cxx_lib_$1.cc"
+		$CXX_CMDLINE >/dev/null 2>ajv_chk_cxx_lib_$1.err
+		if test x"$?" = x"0"; then
+			AC_MSG_RESULT(yes)
 
-		rm -f ajv_chk_cxx_lib_$1.cc
-		rm -f ajv_chk_cxx_lib_$1.err
-		[AC_MSG_ERROR([ 
+			[AC_DEFINE_UNQUOTED(AS_TR_CPP(HAVE_LIB$1))]
+
+			rm -f ajv_chk_cxx_lib_$1.cc
+			rm -f ajv_chk_cxx_lib_$1.err
+		else
+			AC_MSG_RESULT(no)
+
+			dnl so the later substitution (via AC_SUBST) will substitude empty values
+			$1_CXXFLAGS=""
+			$1_LIBS=""
+
+			echo
+			echo "** compile line was: $CXX_CMDLINE"
+			echo "** compiled file was: ajv_chk_cxx_lib_$1.cc ..."
+			cat ajv_chk_cxx_lib_$1.cc
+			echo
+			echo "** compile errors were ..."
+			cat ajv_chk_cxx_lib_$1.err
+			echo
+
+			rm -f ajv_chk_cxx_lib_$1.cc
+			rm -f ajv_chk_cxx_lib_$1.err
+
+			[AC_MSG_ERROR([ 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    !!!!! Fatal Error:  lib$1 missing, broken or outdated !!!!!
    
@@ -129,111 +169,9 @@ EOF
 
    ReZound home page http://rezound.sourceforge.net
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-])]
+			])]
+
+		fi
 	fi
-fi
 )
 
-dnl ajv_CHECK_LIB_ABORT(Lib name, function, define, URL)
-dnl This is used to check the results of an AC_CHECK_LIB test. By running 
-dnl confdefs.h through cpp after the check we can abort if the test failed
-dnl and print a message similar to the above. First it runs AC_CHECK_LIB
-dnl then checks the result. It also gives an option to override the test.
-dnl AS well as an option to pass the path to the library.
-dnl
-dnl arguments:
-dnl	1. Library name with lib prefix stripped
-dnl 2. Funciton to check for
-dnl 3. cpp macro to test for, this will be a capitalized library name, eg
-dnl		if testing for libaudiofile, the macro would be LIBAUDIOFILE
-dnl 	I'm sure I could have used sed or tr to do this, but I didn't feel
-dnl 	like it. 
-dnl
-dnl 4. URL to download library given in abort message.
-AC_DEFUN(ajv_CHECK_LIB_ABORT, dnl
-[AC_ARG_ENABLE($1-check, dnl
-[
-  --disable-$1-check     Override the check for $1 library ], dnl
-[enable_$1_check=$enableval], dnl
-[enable_$1_check="yes" ])]
-[AC_ARG_WITH($1-include, dnl
-[  --with-$1-include	  Specify path to $1 header files], dnl
-[ 	ajv_inc$1_path=-I$withval
-# I'm commenting this out, so passing the with option won't override check.
-#	enable_$1_check="no"  
-],
-ajv_inc$1_path="")] dnl
-[AC_ARG_WITH($1-path,[  --with-$1-path	  Specify path to $1 libraries], dnl
-[	ajv_lib$1_path=-L$withval
-# I'm commenting this out, so passing the with option won't override check.
-#	enable_$1_check="no" 
-], dnl
-ajv_lib$1_path="")] 
-LDFLAGS="$ajv_lib$1_path $LDFLAGS"
-CXXFLAGS="$ajv_inc$1_path $CXXFLAGS"
-if test x"$enable_$1_check" = x"yes"; then
-	[AC_CHECK_LIB($1, $2)]
-	cat > ajv_ck_lib_$1.c <<EOF
-#include "confdefs.h"
-#ifndef HAVE_LIB$3
-#error $1 library check failed
-#endif
-EOF
-	$CPP $ajv_lib$1_path $ajv_inc$1_path ajv_ck_lib_$1.c >/dev/null 2>ajv_ck_lib_$1.err
-	if test x"$?" = x"0"; then
-		LDFLAGS="$ajv_lib$1_path $LDFLAGS"
-		CXXFLAGS="$ajv_inc$1_path $CXXFLAGS"
-		rm -f ajv_ck_lib_$1.c
-		rm -f ajv_ck_lib_$1.err
-	else
-
-		echo 
-		echo compile line was: $CPP $ajv_lib$1_path $ajv_inc$1_path ajv_ck_lib_$1.c
-		echo file compiled was: ajv_ck_lib_$1.c
-		cat ajv_ck_lib_$1.c
-		echo
-		echo compile errors were:
-		cat ajv_ck_lib_$1.err
-		echo
-		echo Also check config.log for the source file that failed to compile which probably caused the compile error above
-		echo
-		rm -f ajv_ck_lib_$1.c
-		rm -f ajv_ck_lib_$1.err
-		[AC_MSG_ERROR([ 
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   !!!!! Fatal Error:  lib$1 missing, broken or outdated !!!!!
-   
-   My test couldn't link the function $2() in lib$1
-   
-   If you don't have $1, or need a more recent version, download 
-   the latest version at: $4
-
-   If you have $1 installed and the linker couldn't find it, you can specify
-   the path by passing --with-$1-path=/path/to/$1 to configure.
-   You may also have to pass the $1 header path with the 
-   --with-$1-include=   option. Setting these flags overrides the library 
-   test.
- 
-   If you have $1 and you believe it is up to date, you can override 
-   this check by passing --disable-$1-check as an option to configure. 
-   specifying --with-$1-path or --with-$1-include will override the
-   test for lib$1
-   
-   If you believe this  error message is a result of a bug in the 
-   configure script, please report the bug to the Package Maintainers. 
-   See docs/INSTALL for information on submitting bug-reports.
- 
-   When submitting a bug report about this issue, please choose: 
-		\"... Compile/Configure Issue\"
-   as the category of the bug.  Also, it would really help us if you 
-   include a screendump or script file of the error, see script(1) man 
-   page for info on how to record a script file.
-
-   ReZound home page http://rezound.sourceforge.net
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-])]
-	fi
-else
-	LIBS="-l$1 $LIBS"
-fi
-)
