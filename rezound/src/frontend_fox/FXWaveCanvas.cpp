@@ -216,6 +216,13 @@ const int FXWaveCanvas::getVertSize() const
 }
 
 
+/*
+There is actaully a bug with using drawArea, when using Xinerama for dual monitors 
+If you scroll while the window is stretched across two screens FXCanvas::drawArea
+fails to copy from the other screen.  I suppose it would be possibly to fix in X or
+it could be fixed in fox's drawArea() method.  But as of now, I have no way of 
+knowing of this condition of the window.  
+*/
 void FXWaveCanvas::setHorzOffset(sample_pos_t v)
 {
 	if(v!=horzOffset)
