@@ -28,15 +28,6 @@
 			- this should probably be a function of AActionDialog so that the frontend just knows that the button was pressed, but doesn't have to do anything about it.
 			- there should probably be a flag to disable this functionality when it's known not to even try to make this work (I'm thinking swapping channels)
 
-	- perhaps a 'view' pull-down ... possible menu items...
-		- zoom controls.. increase/decrease zoom both vert and horz (and showing the hot-keys)
-		- redraw
-		- find start/stop positions (really, just to show key bindings)
-		- a few for the loaded files
-		- one for the flash-back features (to show key binding)
-		- toggle on/off the level meters 
-		- toggle on/off the analyzer 
-
 	- perhaps adjust the 10000 ticks that I put in the FXActionConstantParam to something based on the range
 	- the scalar spinner box does not update the slider's labels when you press enter or leave the edit box
 		- it also needs a border around it
@@ -299,4 +290,13 @@
 		- I just removed all splitter positions and window dimensions whenever the version changes
 
 	- need make sure there is a virtual destructor for all the classes
+
+	- perhaps a 'view' pull-down ... possible menu items...
+		- zoom controls.. increase/decrease zoom both vert and horz (and showing the hot-keys)
+		- redraw
+		- find start/stop positions (really, just to show key bindings)
+		- a few for the loaded files
+		- one for the flash-back features (to show key binding)
+		- toggle on/off the level meters 
+		- toggle on/off the analyzer 
 

@@ -62,36 +62,40 @@
 FXDEFMAP(CMainWindow) CMainWindowMap[]=
 {
 	//Message_Type				ID						Message_Handler
-
 	FXMAPFUNC(SEL_CLOSE,			0,						CMainWindow::onQuit),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_QUIT_MENUITEM,		CMainWindow::onQuit),
-	
+
 		// file actions
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_NEW_MENUITEM,		CMainWindow::onFileAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_OPEN_MENUITEM,		CMainWindow::onFileAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_REOPEN_MENUITEM,		CMainWindow::onFileAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_SAVE_MENUITEM,		CMainWindow::onFileAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_SAVE_AS_MENUITEM,		CMainWindow::onFileAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_CLOSE_MENUITEM,		CMainWindow::onFileAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_REVERT_MENUITEM,		CMainWindow::onFileAction),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_RECORD_MENUITEM,		CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_NEW_FILE,			CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_OPEN_FILE,			CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REOPEN_FILE,			CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SAVE_FILE,			CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SAVE_FILE_AS,			CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CLOSE_FILE,			CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REVERT_FILE,			CMainWindow::onFileAction),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_ABOUT_MENUITEM,			CMainWindow::onFileAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_EDIT_USERNOTES,			CMainWindow::onFileAction),
 
-		// play controls
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_ALL_ONCE_BUTTON,		CMainWindow::onPlayControlButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_ALL_LOOPED_BUTTON,		CMainWindow::onPlayControlButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_SELECTION_ONCE_BUTTON,	CMainWindow::onPlayControlButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_SELECTION_LOOPED_BUTTON,	CMainWindow::onPlayControlButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHOW_ABOUT,			CMainWindow::onFileAction),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_STOP_BUTTON,			CMainWindow::onPlayControlButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PAUSE_BUTTON,			CMainWindow::onPlayControlButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_QUIT,				CMainWindow::onQuit),
+	
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_BEGINNING_BUTTON,	CMainWindow::onPlayControlButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_START_POSITION_BUTTON,	CMainWindow::onPlayControlButton),
+		// play/record/transport controls
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_RECORD,				CMainWindow::onControlAction),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_NEXT_CUE_BUTTON,	CMainWindow::onPlayControlButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_PREV_CUE_BUTTON,	CMainWindow::onPlayControlButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_ALL_ONCE,			CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_ALL_LOOPED,		CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_SELECTION_ONCE,		CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PLAY_SELECTION_LOOPED,		CMainWindow::onControlAction),
+
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_STOP,				CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PAUSE,				CMainWindow::onControlAction),
+
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_BEGINNING,		CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_SELECTION_START,	CMainWindow::onControlAction),
+
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_NEXT_CUE,		CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_PREV_CUE,		CMainWindow::onControlAction),
 
 	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	CMainWindow::ID_SHUTTLE_DIAL,			CMainWindow::onShuttleReturn),
 	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	CMainWindow::ID_SHUTTLE_DIAL,			CMainWindow::onShuttleReturn),
@@ -99,27 +103,35 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_DIAL_SPRING_BUTTON,	CMainWindow::onShuttleDialSpringButton),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_DIAL_SCALE_BUTTON,	CMainWindow::onShuttleDialScaleButton),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SEEK_NORMAL,			CMainWindow::onShuttleReturn),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SEEK_LEFT,			CMainWindow::onKeyboardSeek),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SEEK_MODIFY,			CMainWindow::onKeyboardSeek),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SEEK_RIGHT,			CMainWindow::onKeyboardSeek),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_RETURN,			CMainWindow::onShuttleReturn),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_BACKWARD,		CMainWindow::onKeyboardShuttle),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_INCREASE_RATE,		CMainWindow::onKeyboardShuttle),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_FORWARD,		CMainWindow::onKeyboardShuttle),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CENTER_START_POS,		CMainWindow::onViewKey),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CENTER_STOP_POS,		CMainWindow::onViewKey),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FIND_SELECTION_START,		CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FIND_SELECTION_STOP,		CMainWindow::onControlAction),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_NOTES_MENUITEM,			CMainWindow::onUserNotesButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_ZOOM_IN,			CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_ZOOM_FIT_SELECTION,		CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_ZOOM_OUT,			CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_ZOOM_OUT_FULL,			CMainWindow::onControlAction),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_UNDO_MENUITEM,			CMainWindow::onUndoButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CLEAR_UNDO_HISTORY_MENUITEM,	CMainWindow::onClearUndoHistoryButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_TOGGLE_LEVEL_METERS,		CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_TOGGLE_FREQUENCY_ANALYZER,	CMainWindow::onControlAction),
+
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_UNDO_EDIT,			CMainWindow::onControlAction),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CLEAR_UNDO_HISTORY,		CMainWindow::onControlAction),
+
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REDRAW,				CMainWindow::onControlAction),
 	
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_DEFRAG_MENUITEM,		CMainWindow::onDebugButton),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_PRINT_SAT_MENUITEM,		CMainWindow::onDebugButton),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_VERIFY_SAT_MENUITEM,		CMainWindow::onDebugButton),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FOLLOW_PLAY_POSITION_BUTTON,	CMainWindow::onFollowPlayPositionButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FOLLOW_PLAY_POSITION_TOGGLE,	CMainWindow::onFollowPlayPositionButton),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CROSSFADE_EDGES_COMBOBOX,	CMainWindow::onCrossfadeEdgesComboBox),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CROSSFADE_EDGES_SETTINGS,	CMainWindow::onCrossfadeEdgesSettings),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CROSSFADE_EDGES_SETTINGS_BUTTON,CMainWindow::onCrossfadeEdgesSettings),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CLIPBOARD_COMBOBOX,		CMainWindow::onClipboardComboBox),
 
@@ -149,7 +161,10 @@ CMainWindow::CMainWindow(FXApp* a) :
 	soundListFont(NULL),
 	soundListHeaderFont(NULL),
 
-	playMouseCursor(NULL)
+	playMouseCursor(NULL),
+
+	toggleLevelMetersMenuItem(NULL),
+	toggleFrequencyAnalyzerMenuItem(NULL)
 {
 					// I'm aware of these two memory leaks, but I'm not concerned
 	playMouseCursor=new FXCursor(a,bytesToBits(playMouseCursorSource,16*16),bytesToBits(playMouseCursorMask,16*16),16,16,14,8);
@@ -171,21 +186,21 @@ CMainWindow::CMainWindow(FXApp* a) :
 	// build play control buttons
 	FXPacker *playControlsFrame=new FXPacker(new FXPacker(s,LAYOUT_FILL_Y,0,0,0,0, 4,4,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
 		#define PLAY_CONTROLS_BUTTON_STYLE BUTTON_STYLE
-		new FXButton(playControlsFrame,"\tPlay All Once",FOXIcons->play_all_once,this,ID_PLAY_ALL_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,0,32,32);
-		new FXButton(playControlsFrame,"\tPlay Selection Once",FOXIcons->play_selection_once,this,ID_PLAY_SELECTION_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32,0,32,32);
-		new FXButton(playControlsFrame,"\tPlay All Looped",FOXIcons->play_all_looped,this,ID_PLAY_ALL_LOOPED_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32,32,32);
-		new FXButton(playControlsFrame,"\tPlay Selection Looped",FOXIcons->play_selection_looped,this,ID_PLAY_SELECTION_LOOPED_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32,32,32,32);
+		new FXButton(playControlsFrame,"\tPlay All Once",FOXIcons->play_all_once,this,ID_PLAY_ALL_ONCE,PLAY_CONTROLS_BUTTON_STYLE, 0,0,32,32);
+		new FXButton(playControlsFrame,"\tPlay Selection Once",FOXIcons->play_selection_once,this,ID_PLAY_SELECTION_ONCE,PLAY_CONTROLS_BUTTON_STYLE, 32,0,32,32);
+		new FXButton(playControlsFrame,"\tPlay All Looped",FOXIcons->play_all_looped,this,ID_PLAY_ALL_LOOPED,PLAY_CONTROLS_BUTTON_STYLE, 0,32,32,32);
+		new FXButton(playControlsFrame,"\tPlay Selection Looped",FOXIcons->play_selection_looped,this,ID_PLAY_SELECTION_LOOPED,PLAY_CONTROLS_BUTTON_STYLE, 32,32,32,32);
 
-		new FXButton(playControlsFrame,"\tStop",FOXIcons->stop,this,ID_STOP_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,0,32,32),
-		new FXButton(playControlsFrame,"\tPause",FOXIcons->pause,this,ID_PAUSE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32,32,32),
+		new FXButton(playControlsFrame,"\tStop",FOXIcons->stop,this,ID_STOP,PLAY_CONTROLS_BUTTON_STYLE, 32+32,0,32,32),
+		new FXButton(playControlsFrame,"\tPause",FOXIcons->pause,this,ID_PAUSE,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32,32,32),
 
-		new FXButton(playControlsFrame,"\tRecord",FOXIcons->record,this,ID_FILE_RECORD_MENUITEM,PLAY_CONTROLS_BUTTON_STYLE, 32+32+32+32,32+32,32,32),
+		new FXButton(playControlsFrame,"\tRecord",FOXIcons->record,this,ID_RECORD,PLAY_CONTROLS_BUTTON_STYLE, 32+32+32+32,32+32,32,32),
 
-		new FXButton(playControlsFrame,"\tJump to Beginning",FOXIcons->jump_to_beginning,this,ID_JUMP_TO_BEGINNING_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32+32,32+32,16);
-		new FXButton(playControlsFrame,"\tJump to Start Position",FOXIcons->jump_to_selection,this,ID_JUMP_TO_START_POSITION_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32+32,32+32,16);
+		new FXButton(playControlsFrame,"\tJump to Beginning",FOXIcons->jump_to_beginning,this,ID_JUMP_TO_BEGINNING,PLAY_CONTROLS_BUTTON_STYLE, 0,32+32,32+32,16);
+		new FXButton(playControlsFrame,"\tJump to Start Position",FOXIcons->jump_to_selection,this,ID_JUMP_TO_SELECTION_START,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32+32,32+32,16);
 
-		new FXButton(playControlsFrame,"\tJump to Previous Cue",FOXIcons->jump_to_previous_q,this,ID_JUMP_TO_PREV_CUE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32+32+16,32+32,16);
-		new FXButton(playControlsFrame,"\tJump to Next Cue",FOXIcons->jump_to_next_q,this,ID_JUMP_TO_NEXT_CUE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32+32+16,32+32,16);
+		new FXButton(playControlsFrame,"\tJump to Previous Cue",FOXIcons->jump_to_previous_q,this,ID_JUMP_TO_PREV_CUE,PLAY_CONTROLS_BUTTON_STYLE, 0,32+32+16,32+32,16);
+		new FXButton(playControlsFrame,"\tJump to Next Cue",FOXIcons->jump_to_next_q,this,ID_JUMP_TO_NEXT_CUE,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32+32+16,32+32,16);
 
 		// shuttle controls
 		t=new FXHorizontalFrame(playControlsFrame,FRAME_NONE|LAYOUT_FIX_X|LAYOUT_FIX_Y,0,32+32+16+16,0,0, 0,0,0,0, 0,0);
@@ -215,7 +230,7 @@ CMainWindow::CMainWindow(FXApp* a) :
 	// build miscellaneous buttons
 	FXPacker *miscControlsFrame=new FXPacker(new FXPacker(s,LAYOUT_FILL_Y,0,0,0,0, 4,4,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 3,2);
 		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
-		followPlayPositionButton=new FXCheckButton(miscControlsFrame,"Follow Play Position",this,ID_FOLLOW_PLAY_POSITION_BUTTON);
+		followPlayPositionButton=new FXCheckButton(miscControlsFrame,"Follow Play Position",this,ID_FOLLOW_PLAY_POSITION_TOGGLE);
 		followPlayPositionButton->setPadLeft(0); followPlayPositionButton->setPadRight(0); followPlayPositionButton->setPadTop(0); followPlayPositionButton->setPadBottom(0);
 		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
 			//new FXLabel(t,"Crossfade Edges: ");
@@ -225,7 +240,7 @@ CMainWindow::CMainWindow(FXApp* a) :
 				crossfadeEdgesComboBox->appendItem("Crossfade Inner Edges");
 				crossfadeEdgesComboBox->appendItem("Crossfade Outer Edges");
 				crossfadeEdgesComboBox->setCurrentItem(0);
-			new FXButton(t,"...\tChange Crossfade Times",NULL,this,ID_CROSSFADE_EDGES_SETTINGS, BUTTON_NORMAL & ~FRAME_THICK);
+			new FXButton(t,"...\tChange Crossfade Times",NULL,this,ID_CROSSFADE_EDGES_SETTINGS_BUTTON, BUTTON_NORMAL & ~FRAME_THICK);
 		clipboardComboBox=new FXComboBox(miscControlsFrame,8,8, this,ID_CLIPBOARD_COMBOBOX, FRAME_SUNKEN|FRAME_THICK | COMBOBOX_NORMAL|COMBOBOX_STATIC);
 
 	new FXVerticalSeparator(s);
@@ -295,6 +310,11 @@ void CMainWindow::show()
 		gWhichClipboard=1;
 
 	clipboardComboBox->setCurrentItem(gWhichClipboard);
+
+	if(gLevelMetersEnabled)
+		toggleLevelMetersMenuItem->check();
+	if(gFrequencyAnalyzerEnabled)
+		toggleFrequencyAnalyzerMenuItem->check();
 
 }
 
@@ -557,7 +577,7 @@ public:
 			return;
 		for(size_t t=0;t<reopenSize;t++)
 		{
-			FXMenuCommand *item=new FXMenuCommand(this,escapeAmpersand(gSoundFileManager->getReopenHistoryItem(t)).c_str(),NULL,getOwner(),CMainWindow::ID_FILE_REOPEN_MENUITEM);
+			FXMenuCommand *item=new FXMenuCommand(this,escapeAmpersand(gSoundFileManager->getReopenHistoryItem(t)).c_str(),NULL,getOwner(),CMainWindow::ID_REOPEN_FILE);
 			item->create();
 			items.push_back(item);
 		}
@@ -595,24 +615,21 @@ void CMainWindow::createMenus()
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&File",NULL,menu);
-		new FXMenuCommand(menu,"&New",FOXIcons->file_new,this,ID_FILE_NEW_MENUITEM);
-		new FXMenuCommand(menu,"&Open\tCtrl+O",FOXIcons->file_open,this,ID_FILE_OPEN_MENUITEM);
+		new FXMenuCommand(menu,"&New",FOXIcons->file_new,this,ID_NEW_FILE);
+		new FXMenuCommand(menu,"&Open\tCtrl+O",FOXIcons->file_open,this,ID_OPEN_FILE);
 		new FXMenuCascade(menu,"&Reopen",FOXIcons->file_open,new CReopenPopup(this));
-		new FXMenuCommand(menu,"&Save\tCtrl+S",FOXIcons->file_save,this,ID_FILE_SAVE_MENUITEM);
-		new FXMenuCommand(menu,"Save &As",FOXIcons->file_save_as,this,ID_FILE_SAVE_AS_MENUITEM);
+		new FXMenuCommand(menu,"&Save\tCtrl+S",FOXIcons->file_save,this,ID_SAVE_FILE);
+		new FXMenuCommand(menu,"Save &As",FOXIcons->file_save_as,this,ID_SAVE_FILE_AS);
 		new CActionMenuCommand(new CSaveSelectionAsActionFactory(),menu,"",FOXIcons->file_save_as);
 		new CActionMenuCommand(new CSaveAsMultipleFilesActionFactory(new CSaveAsMultipleFilesDialog(this)),menu,"",FOXIcons->file_save_as);
-		new FXMenuCommand(menu,"&Close\tCtrl+W",FOXIcons->file_close,this,ID_FILE_CLOSE_MENUITEM);
-		new FXMenuCommand(menu,"Re&vert",FOXIcons->file_revert,this,ID_FILE_REVERT_MENUITEM);
+		new FXMenuCommand(menu,"&Close\tCtrl+W",FOXIcons->file_close,this,ID_CLOSE_FILE);
+		new FXMenuCommand(menu,"Re&vert",FOXIcons->file_revert,this,ID_REVERT_FILE);
 
 		new FXMenuSeparator(menu);
-		new FXMenuCommand(menu,"Record",FOXIcons->small_record,this,ID_FILE_RECORD_MENUITEM);
+		new FXMenuCommand(menu,"User No&tes"/*\tUser notes about the sound (and preserved in the file if the format supports it)"*/,FOXIcons->notes,this,ID_EDIT_USERNOTES);
 
 		new FXMenuSeparator(menu);
-		new FXMenuCommand(menu,"User No&tes"/*\tUser notes about the sound (and preserved in the file if the format supports it)"*/,FOXIcons->notes,this,ID_NOTES_MENUITEM);
-
-		new FXMenuSeparator(menu);
-		new FXMenuCommand(menu,"&About ReZound\tF1",NULL,this,ID_ABOUT_MENUITEM);
+		new FXMenuCommand(menu,"&About ReZound\tF1",NULL,this,ID_SHOW_ABOUT);
 
 		// just for testing ???
 		new FXMenuSeparator(menu);
@@ -622,7 +639,51 @@ void CMainWindow::createMenus()
 		new FXMenuCommand(menu,"VerifySAT",NULL,this,ID_VERIFY_SAT_MENUITEM);
 
 		new FXMenuSeparator(menu);
-		new FXMenuCommand(menu,"&Quit\tCtrl+Q",FOXIcons->exit,this,ID_FILE_QUIT_MENUITEM);
+		new FXMenuCommand(menu,"&Quit\tCtrl+Q",FOXIcons->exit,this,ID_QUIT);
+
+
+	menu=new FXMenuPane(this);
+	new FXMenuTitle(menubar,"&Control",NULL,menu);
+		new FXMenuCommand(menu,"Zoom Out F&ull\tCtrl-1",FOXIcons->zoom_out_full,this,ID_ZOOM_OUT_FULL);
+		new FXMenuCommand(menu,"Zoom &Out\tCtrl-2",FOXIcons->zoom_out,this,ID_ZOOM_OUT);
+		new FXMenuCommand(menu,"Zoom &In\tCtrl-3",FOXIcons->zoom_in,this,ID_ZOOM_IN);
+		new FXMenuCommand(menu,"Zoom &Fit Selection\tCtrl-4",FOXIcons->zoom_fit,this,ID_ZOOM_FIT_SELECTION);
+
+		new FXMenuSeparator(menu);
+		new FXMenuCommand(menu,"Find &Start Position\tz",FOXIcons->normal_action_buff,this,ID_FIND_SELECTION_START);
+		new FXMenuCommand(menu,"Find Sto&p Position\tx",FOXIcons->normal_action_buff,this,ID_FIND_SELECTION_STOP);
+
+		new FXMenuSeparator(menu);
+		toggleLevelMetersMenuItem=new FXMenuCommand(menu,"Toggle &Level Meters",NULL,this,ID_TOGGLE_LEVEL_METERS);
+		toggleFrequencyAnalyzerMenuItem=new FXMenuCommand(menu,"Toggle Frequency &Analyzer",NULL,this,ID_TOGGLE_FREQUENCY_ANALYZER);
+
+		new FXMenuSeparator(menu);
+		new FXMenuCommand(menu,"&Redraw",FOXIcons->normal_action_buff,this,ID_REDRAW);
+
+		new FXMenuSeparator(menu);
+		new FXMenuCommand(menu,"Record",FOXIcons->small_record,this,ID_RECORD);
+		new FXMenuCommand(menu,"Play All Once",FOXIcons->small_play_all_once,this,ID_PLAY_ALL_ONCE);
+		new FXMenuCommand(menu,"Play All Looped",FOXIcons->small_play_all_looped,this,ID_PLAY_ALL_LOOPED);
+		new FXMenuCommand(menu,"Play Selection Once\ta",FOXIcons->small_play_selection_once,this,ID_PLAY_SELECTION_ONCE);
+		new FXMenuCommand(menu,"Play Selection Looped",FOXIcons->small_play_selection_looped,this,ID_PLAY_SELECTION_LOOPED);
+		new FXMenuCommand(menu,"Stop\ts",FOXIcons->small_stop,this,ID_STOP);
+		new FXMenuCommand(menu,"Pause",FOXIcons->small_pause,this,ID_PAUSE);
+		new FXMenuCommand(menu,"Jump to Beginning",FOXIcons->small_jump_to_beginning,this,ID_JUMP_TO_BEGINNING);
+		new FXMenuCommand(menu,"Jump to Selection Start",FOXIcons->small_jump_to_selection,this,ID_JUMP_TO_SELECTION_START);
+		new FXMenuCommand(menu,"Jump to Previous Cue",FOXIcons->small_jump_to_previous_q,this,ID_JUMP_TO_PREV_CUE);
+		new FXMenuCommand(menu,"Jump to Next Cue",FOXIcons->small_jump_to_next_q,this,ID_JUMP_TO_NEXT_CUE);
+		new FXMenuCommand(menu,"Shuttle Rewind\t1",FOXIcons->shuttle_backward,this,ID_SHUTTLE_BACKWARD);
+		new FXMenuCommand(menu,"Shuttle Amount\t2",FOXIcons->shuttle_normal,this,ID_SHUTTLE_INCREASE_RATE);
+		new FXMenuCommand(menu,"Shuttle Forward\t3",FOXIcons->shuttle_forward,this,ID_SHUTTLE_FORWARD);
+
+		new FXMenuSeparator(menu);
+		new FXMenuCommand(menu,"View Loaded File 1\tAlt+1");
+		new FXMenuCommand(menu,"View Loaded File 2\tAlt+2");
+		new FXMenuCaption(menu,"...");
+		new FXMenuCommand(menu,"View Loaded File 9\tAlt+9");
+		new FXMenuCommand(menu,"View Loaded File 10\tAlt+0");
+		new FXMenuCommand(menu,"Previously Viewed File\tAlt+`");
+
 
 
 		// ??? in CActionMenuItem I should be able to do something intelligent to 
@@ -631,8 +692,8 @@ void CMainWindow::createMenus()
 
 	menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"&Edit",NULL,menu);
-		new FXMenuCommand(menu,"Undo\tCtrl+Z",FOXIcons->edit_undo,this,ID_UNDO_MENUITEM);
-		new FXMenuCommand(menu,"Clear Undo History",NULL,this,ID_CLEAR_UNDO_HISTORY_MENUITEM);
+		new FXMenuCommand(menu,"Undo\tCtrl+Z",FOXIcons->edit_undo,this,ID_UNDO_EDIT);
+		new FXMenuCommand(menu,"Clear Undo History",NULL,this,ID_CLEAR_UNDO_HISTORY);
 
 		// ??? perhaps I could avoid hard coding all of this by having a list of registered action factories which define the menu path, and hot keys are user definable anyway.. but then the frontend would have to be more abstracted or done more the way that Frontend Hooks are done
 		// a few things to think about:  the order of the registered list (when each action specifies it's menu path) and the visual menu separators as well as how the frontend code gets bound to the right backend code
@@ -779,40 +840,52 @@ long CMainWindow::onFileAction(FXObject *sender,FXSelector sel,void *ptr)
 {
 	switch(FXSELID(sel))
 	{
-	case ID_FILE_NEW_MENUITEM:
+	case ID_NEW_FILE:
 		newSound(gSoundFileManager);
 		break;
 	
-	case ID_FILE_OPEN_MENUITEM:
+	case ID_OPEN_FILE:
 		openSound(gSoundFileManager);
 		break;
 
-	case ID_FILE_REOPEN_MENUITEM:
+	case ID_REOPEN_FILE:
 		openSound(gSoundFileManager,dynamic_cast<FXMenuCommand *>(sender)->getText().text());
 		break;
 	
-	case ID_FILE_SAVE_MENUITEM:
+	case ID_SAVE_FILE:
 		saveSound(gSoundFileManager);
 		break;
 
-	case ID_FILE_SAVE_AS_MENUITEM:
+	case ID_SAVE_FILE_AS:
 		saveAsSound(gSoundFileManager);
 		break;
 
-	case ID_FILE_CLOSE_MENUITEM:
+	case ID_CLOSE_FILE:
 		closeSound(gSoundFileManager);
 		break;
 
-	case ID_FILE_REVERT_MENUITEM:
+	case ID_REVERT_FILE:
 		revertSound(gSoundFileManager);
 		break;
 
-	case ID_FILE_RECORD_MENUITEM:
-		recordSound(gSoundFileManager);
+	case ID_SHOW_ABOUT:
+		gAboutDialog->execute(PLACEMENT_SCREEN);
 		break;
 
-	case ID_ABOUT_MENUITEM:
-		gAboutDialog->execute(PLACEMENT_SCREEN);
+
+	case ID_EDIT_USERNOTES:
+		try
+		{
+			CLoadedSound *s=gSoundFileManager->getActive();
+			if(s!=NULL)
+				gUserNotesDialog->show(s,PLACEMENT_CURSOR);
+			else
+				getApp()->beep();
+		}
+		catch(exception &e)
+		{
+			Error(e.what());
+		}
 		break;
 
 	default:
@@ -822,87 +895,126 @@ long CMainWindow::onFileAction(FXObject *sender,FXSelector sel,void *ptr)
 }
 
 // play control events
-long CMainWindow::onPlayControlButton(FXObject *sender,FXSelector sel,void *ptr)
+long CMainWindow::onControlAction(FXObject *sender,FXSelector sel,void *ptr)
 {
 	switch(FXSELID(sel))
 	{
-	case ID_PLAY_ALL_ONCE_BUTTON:
+	case ID_PLAY_ALL_ONCE:
 		metersWindow->resetGrandMaxPeakLevels();
 		play(gSoundFileManager,false,false);
 		break;
 
-	case ID_PLAY_ALL_LOOPED_BUTTON:
+	case ID_PLAY_ALL_LOOPED:
 		metersWindow->resetGrandMaxPeakLevels();
 		play(gSoundFileManager,true,false);
 		break;
 
-	case ID_PLAY_SELECTION_ONCE_BUTTON:
+	case ID_PLAY_SELECTION_ONCE:
 		metersWindow->resetGrandMaxPeakLevels();
 		play(gSoundFileManager,false,true);
 		break;
 
-	case ID_PLAY_SELECTION_LOOPED_BUTTON:
+	case ID_PLAY_SELECTION_LOOPED:
 		metersWindow->resetGrandMaxPeakLevels();
 		play(gSoundFileManager,true,true);
 		break;
 
-	case ID_STOP_BUTTON:
+	case ID_STOP:
 		stop(gSoundFileManager);
 		break;
 
-	case ID_PAUSE_BUTTON:
+	case ID_PAUSE:
 		pause(gSoundFileManager);
 		break;
 
-	case ID_JUMP_TO_BEGINNING_BUTTON:
+	case ID_RECORD:
+		recordSound(gSoundFileManager);
+		break;
+
+	case ID_JUMP_TO_BEGINNING:
 		jumpToBeginning(gSoundFileManager);
 		break;
 
-	case ID_JUMP_TO_START_POSITION_BUTTON:
+	case ID_JUMP_TO_SELECTION_START:
 		jumpToStartPosition(gSoundFileManager);
 		break;
 
-	case ID_JUMP_TO_PREV_CUE_BUTTON:
+	case ID_JUMP_TO_PREV_CUE:
 		jumpToPreviousCue(gSoundFileManager);
 		break;
 
-	case ID_JUMP_TO_NEXT_CUE_BUTTON:
+	case ID_JUMP_TO_NEXT_CUE:
 		jumpToNextCue(gSoundFileManager);
+		break;
+
+
+	case ID_UNDO_EDIT:
+		undo(gSoundFileManager);
+		break;
+
+	case ID_CLEAR_UNDO_HISTORY:
+		clearUndoHistory(gSoundFileManager);
+		break;
+
+
+	case ID_FIND_SELECTION_START:
+		if(gSoundFileManager->getActiveWindow())
+			gSoundFileManager->getActiveWindow()->centerStartPos();
+		break;
+
+	case ID_FIND_SELECTION_STOP:
+		if(gSoundFileManager->getActiveWindow())
+			gSoundFileManager->getActiveWindow()->centerStopPos();
+		break;
+
+
+	case ID_TOGGLE_LEVEL_METERS:
+		if(dynamic_cast<FXMenuCommand *>(sender)->isChecked())
+			dynamic_cast<FXMenuCommand *>(sender)->uncheck();
+		else
+			dynamic_cast<FXMenuCommand *>(sender)->check();
+		metersWindow->enableLevelMeters(dynamic_cast<FXMenuCommand *>(sender)->isChecked());
+		break;
+
+	case ID_TOGGLE_FREQUENCY_ANALYZER:
+		if(dynamic_cast<FXMenuCommand *>(sender)->isChecked())
+			dynamic_cast<FXMenuCommand *>(sender)->uncheck();
+		else
+			dynamic_cast<FXMenuCommand *>(sender)->check();
+		metersWindow->enableFrequencyAnalyzer(dynamic_cast<FXMenuCommand *>(sender)->isChecked());
+		break;
+
+
+	case ID_ZOOM_IN:
+		if(gSoundFileManager->getActiveWindow())
+			gSoundFileManager->getActiveWindow()->horzZoomInSome();
+		break;
+
+	case ID_ZOOM_FIT_SELECTION:
+		if(gSoundFileManager->getActiveWindow())
+			gSoundFileManager->getActiveWindow()->horzZoomSelectionFit();
+		break;
+
+	case ID_ZOOM_OUT:
+		if(gSoundFileManager->getActiveWindow())
+			gSoundFileManager->getActiveWindow()->horzZoomOutSome();
+		break;
+
+	case ID_ZOOM_OUT_FULL:
+		if(gSoundFileManager->getActiveWindow())
+			gSoundFileManager->getActiveWindow()->horzZoomOutFull();
+		break;
+
+
+	case ID_REDRAW:
+		if(gSoundFileManager->getActiveWindow())
+			gSoundFileManager->getActiveWindow()->onRedrawButton(NULL,0,NULL);
 		break;
 
 	default:
 		throw(runtime_error(string(__func__)+" -- unhandled play button selector"));
 	}
 	return 1;
-}
-
-long CMainWindow::onUserNotesButton(FXObject *sender,FXSelector sel,void *ptr)
-{
-	try
-	{
-		CLoadedSound *s=gSoundFileManager->getActive();
-		if(s!=NULL)
-			gUserNotesDialog->show(s,PLACEMENT_CURSOR);
-		else
-			getApp()->beep();
-	}
-	catch(exception &e)
-	{
-		Error(e.what());
-	}
-	return(1);
-}
-
-long CMainWindow::onUndoButton(FXObject *sender,FXSelector sel,void *ptr)
-{
-	undo(gSoundFileManager);
-	return(1);
-}
-
-long CMainWindow::onClearUndoHistoryButton(FXObject *sender,FXSelector sel,void *ptr)
-{
-	clearUndoHistory(gSoundFileManager);
-	return(1);
 }
 
 long CMainWindow::onShuttleReturn(FXObject *sender,FXSelector sel,void *ptr)
@@ -1043,7 +1155,7 @@ long CMainWindow::onShuttleDialScaleButton(FXObject *sender,FXSelector sel,void 
 	return 1;
 }
 
-long CMainWindow::onKeyboardSeek(FXObject *sender,FXSelector sel,void *ptr)
+long CMainWindow::onKeyboardShuttle(FXObject *sender,FXSelector sel,void *ptr)
 {
 	FXint lo,hi;
 	shuttleDial->getRange(lo,hi);
@@ -1052,17 +1164,17 @@ long CMainWindow::onKeyboardSeek(FXObject *sender,FXSelector sel,void *ptr)
 
 	FXint pos=shuttleDial->getValue();
 
-	if(pos==0 && FXSELID(sel)==ID_SEEK_LEFT)
+	if(pos==0 && FXSELID(sel)==ID_SHUTTLE_BACKWARD)
 	{
 		shuttleDial->setValue(pos-inc);
 		onShuttleChange(sender,sel,ptr);
 	}
-	else if(pos==0 && FXSELID(sel)==ID_SEEK_RIGHT)
+	else if(pos==0 && FXSELID(sel)==ID_SHUTTLE_FORWARD)
 	{
 		shuttleDial->setValue(pos+inc);
 		onShuttleChange(sender,sel,ptr);
 	}
-	else if(pos!=0 && FXSELID(sel)==ID_SEEK_MODIFY)
+	else if(pos!=0 && FXSELID(sel)==ID_SHUTTLE_INCREASE_RATE)
 	{
 		if(pos<0)
 		{ // go more leftward
@@ -1074,26 +1186,6 @@ long CMainWindow::onKeyboardSeek(FXObject *sender,FXSelector sel,void *ptr)
 		}
 		onShuttleChange(sender,sel,ptr);
 	}
-
-
-	return 1;
-}
-
-long CMainWindow::onViewKey(FXObject *sender,FXSelector sel,void *ptr)
-{
-	switch(FXSELID(sel))
-	{
-	case ID_CENTER_START_POS:
-		if(gSoundFileManager->getActiveWindow())
-			gSoundFileManager->getActiveWindow()->centerStartPos();
-		break;
-
-	case ID_CENTER_STOP_POS:
-		if(gSoundFileManager->getActiveWindow())
-			gSoundFileManager->getActiveWindow()->centerStopPos();
-		break;
-	}
-
 
 	return 1;
 }

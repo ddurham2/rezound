@@ -59,13 +59,8 @@ public:
 	// file action events
 	long onFileAction(FXObject *sender,FXSelector sel,void *ptr);
 
-	// play control events
-	long onPlayControlButton(FXObject *sender,FXSelector sel,void *ptr);
-
-	long onUserNotesButton(FXObject *sender,FXSelector sel,void *ptr);
-
-	long onUndoButton(FXObject *sender,FXSelector sel,void *ptr);
-	long onClearUndoHistoryButton(FXObject *sender,FXSelector sel,void *ptr);
+	// play/record/transport/misc control events
+	long onControlAction(FXObject *sender,FXSelector sel,void *ptr);
 
 	long onShuttleReturn(FXObject *sender,FXSelector sel,void *ptr);
 	long onShuttleChange(FXObject *sender,FXSelector sel,void *ptr);
@@ -79,7 +74,7 @@ public:
 	long onHotKeyFocusFixup(FXObject *sender,FXSelector sel,void *ptr);
 
 	// used to control the shuttle control with the keyboard
-	long onKeyboardSeek(FXObject *sender,FXSelector sel,void *ptr);
+	long onKeyboardShuttle(FXObject *sender,FXSelector sel,void *ptr);
 
 	long onViewKey(FXObject *sender,FXSelector sel,void *ptr); // main window gets view-change key presses because the sound window changes and we can't bind a key to any particualar object pointer
 
@@ -92,61 +87,71 @@ public:
 
 	enum
 	{
-		ID_FILE_NEW_MENUITEM=FXMainWindow::ID_LAST,
-		ID_FILE_OPEN_MENUITEM,
-		ID_FILE_REOPEN_MENUITEM,
-		ID_FILE_SAVE_MENUITEM,
-		ID_FILE_SAVE_AS_MENUITEM,
-		ID_FILE_CLOSE_MENUITEM,
-		ID_FILE_REVERT_MENUITEM,
-		ID_FILE_RECORD_MENUITEM,
+		ID_NEW_FILE=FXMainWindow::ID_LAST,
+		ID_OPEN_FILE,
+		ID_REOPEN_FILE,
+		ID_SAVE_FILE,
+		ID_SAVE_FILE_AS,
+		ID_CLOSE_FILE,
+		ID_REVERT_FILE,
 
-		ID_FILE_QUIT_MENUITEM,
+		ID_EDIT_USERNOTES,
 
-		ID_ABOUT_MENUITEM,
+		ID_SHOW_ABOUT,
 
+		ID_QUIT,
 
-		ID_PLAY_ALL_ONCE_BUTTON,
-		ID_PLAY_ALL_LOOPED_BUTTON,
-		ID_PLAY_SELECTION_ONCE_BUTTON,
-		ID_PLAY_SELECTION_LOOPED_BUTTON,
+		ID_RECORD,
 
-		ID_STOP_BUTTON,
-		ID_PAUSE_BUTTON,
+		ID_PLAY_ALL_ONCE,
+		ID_PLAY_ALL_LOOPED,
+		ID_PLAY_SELECTION_ONCE,
+		ID_PLAY_SELECTION_LOOPED,
 
-		ID_JUMP_TO_BEGINNING_BUTTON,
-		ID_JUMP_TO_START_POSITION_BUTTON,
+		ID_STOP,
+		ID_PAUSE,
+
+		ID_JUMP_TO_BEGINNING,
+		ID_JUMP_TO_SELECTION_START,
 	
-		ID_JUMP_TO_PREV_CUE_BUTTON,
-		ID_JUMP_TO_NEXT_CUE_BUTTON,
+		ID_JUMP_TO_PREV_CUE,
+		ID_JUMP_TO_NEXT_CUE,
 	
 		ID_SHUTTLE_DIAL,
 		ID_SHUTTLE_DIAL_SPRING_BUTTON,
 		ID_SHUTTLE_DIAL_SCALE_BUTTON,
 
 		// used for key bindings
-		ID_SEEK_NORMAL,
-		ID_SEEK_LEFT,
-		ID_SEEK_MODIFY,
-		ID_SEEK_RIGHT,
+		ID_SHUTTLE_RETURN,
+		ID_SHUTTLE_BACKWARD,
+		ID_SHUTTLE_INCREASE_RATE,
+		ID_SHUTTLE_FORWARD,
 
 
-		ID_CENTER_START_POS,
-		ID_CENTER_STOP_POS,
+		ID_FIND_SELECTION_START,
+		ID_FIND_SELECTION_STOP,
 
-		ID_NOTES_MENUITEM,
+		ID_ZOOM_IN,
+		ID_ZOOM_FIT_SELECTION,
+		ID_ZOOM_OUT,
+		ID_ZOOM_OUT_FULL,
 
-		ID_UNDO_MENUITEM,
-		ID_CLEAR_UNDO_HISTORY_MENUITEM,
+		ID_TOGGLE_LEVEL_METERS,
+		ID_TOGGLE_FREQUENCY_ANALYZER,
+
+		ID_UNDO_EDIT,
+		ID_CLEAR_UNDO_HISTORY,
+
+		ID_REDRAW,
 
 		ID_DEFRAG_MENUITEM,
 		ID_PRINT_SAT_MENUITEM,
 		ID_VERIFY_SAT_MENUITEM,
 
-		ID_FOLLOW_PLAY_POSITION_BUTTON,
+		ID_FOLLOW_PLAY_POSITION_TOGGLE,
 
 		ID_CROSSFADE_EDGES_COMBOBOX,
-		ID_CROSSFADE_EDGES_SETTINGS,
+		ID_CROSSFADE_EDGES_SETTINGS_BUTTON,
 
 		ID_CLIPBOARD_COMBOBOX,
 
@@ -188,6 +193,9 @@ private:
 	FXIconList *soundList;
 
 	FXCursor *playMouseCursor;
+
+	FXMenuCommand *toggleLevelMetersMenuItem;
+	FXMenuCommand *toggleFrequencyAnalyzerMenuItem;
 
 };
 
