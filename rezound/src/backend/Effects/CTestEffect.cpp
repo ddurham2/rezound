@@ -114,7 +114,7 @@ bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 #endif
 
 #ifdef HAVE_LIBRFFTW
-	TFFTConvolver<sample_t,float> c(filter_kernel,M);
+	TFFTConvolverTimeDomainKernel<sample_t,float> c(filter_kernel,M);
 
 	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 	{
