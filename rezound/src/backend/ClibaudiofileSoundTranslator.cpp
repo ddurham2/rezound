@@ -86,194 +86,202 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 	AFfilehandle h=afOpenFile(filename.c_str(),"r",initialSetup);
 	if(h==AF_NULL_FILEHANDLE)
 		throw runtime_error(string(__func__)+_(" -- error opening")+" '"+filename+"' -- "+errorMessage);
-
+	try
+	{
 
 #if defined(SAMPLE_TYPE_S16)
-	if(afSetVirtualSampleFormat(h,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,sizeof(sample_t)*8)!=0)
+		if(afSetVirtualSampleFormat(h,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,sizeof(sample_t)*8)!=0)
 #elif defined(SAMPLE_TYPE_FLOAT)
-	if(afSetVirtualSampleFormat(h,AF_DEFAULT_TRACK,AF_SAMPFMT_FLOAT,sizeof(sample_t)*8)!=0)
+		if(afSetVirtualSampleFormat(h,AF_DEFAULT_TRACK,AF_SAMPFMT_FLOAT,sizeof(sample_t)*8)!=0)
 #else
-	#error unhandled SAMPLE_TYPE_xxx define
+		#error unhandled SAMPLE_TYPE_xxx define
 #endif
-		throw runtime_error(string(__func__)+" -- error setting virtual format -- "+errorMessage);
-		
+			throw runtime_error(string(__func__)+" -- error setting virtual format -- "+errorMessage);
+			
 #ifdef WORDS_BIGENDIAN
-	if(afSetVirtualByteOrder(h,AF_DEFAULT_TRACK,AF_BYTEORDER_BIGENDIAN))
+		if(afSetVirtualByteOrder(h,AF_DEFAULT_TRACK,AF_BYTEORDER_BIGENDIAN))
 #else
-	if(afSetVirtualByteOrder(h,AF_DEFAULT_TRACK,AF_BYTEORDER_LITTLEENDIAN))
+		if(afSetVirtualByteOrder(h,AF_DEFAULT_TRACK,AF_BYTEORDER_LITTLEENDIAN))
 #endif
-		throw runtime_error(string(__func__)+" -- error setting virtual byte order -- "+errorMessage);
+			throw runtime_error(string(__func__)+" -- error setting virtual byte order -- "+errorMessage);
 
-	unsigned channelCount=afGetChannels(h,AF_DEFAULT_TRACK);
-	if(channelCount<=0 || channelCount>MAX_CHANNELS) // ??? could just ignore the extra channels
-		throw runtime_error(string(__func__)+" -- invalid number of channels in audio file: "+istring(channelCount)+" -- you could simply increase MAX_CHANNELS in CSound.h");
-	unsigned sampleRate=(unsigned)afGetRate(h,AF_DEFAULT_TRACK);
+		unsigned channelCount=afGetChannels(h,AF_DEFAULT_TRACK);
+		if(channelCount<=0 || channelCount>MAX_CHANNELS) // ??? could just ignore the extra channels
+			throw runtime_error(string(__func__)+" -- invalid number of channels in audio file: "+istring(channelCount)+" -- you could simply increase MAX_CHANNELS in CSound.h");
+		unsigned sampleRate=(unsigned)afGetRate(h,AF_DEFAULT_TRACK);
 
-	if(sampleRate<4000 || sampleRate>196000)
-		throw runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate)+" probably indicates a corrupt file and SGI's libaudiofile has been known to miss these");
+		if(sampleRate<4000 || sampleRate>196000)
+			throw runtime_error(string(__func__)+" -- an unlikely sample rate of "+istring(sampleRate)+" probably indicates a corrupt file and SGI's libaudiofile has been known to miss these");
 
-	
-	// ??? make sure it's not more than MAX_LENGTH
-		// ??? just truncate the length
-	sample_pos_t size=afGetFrameCount(h,AF_DEFAULT_TRACK);
-	if(size<0)
-		throw runtime_error(string(__func__)+" -- libaudiofile reports the data length as "+istring(size));
+		
+		// ??? make sure it's not more than MAX_LENGTH
+			// ??? just truncate the length
+		sample_pos_t size=afGetFrameCount(h,AF_DEFAULT_TRACK);
+		if(size<0)
+			throw runtime_error(string(__func__)+" -- libaudiofile reports the data length as "+istring(size));
 
-	const sample_pos_t fileSize=CPath(filename).getSize(false)/(channelCount*sizeof(sample_t));
-	if(fileSize<(size/25)) // ??? possibly 1/25th compression... really just trying to check for a sane value
-	{
-		Warning("libaudiofile reports that "+filename+" contains "+istring(size)+" sample frames yet the file is most likely not large enough to contain that many samples.\nLoading what can be loaded.");
-		//size=fileSize; not doing this because I once ran across a situation where you could read more from the file that stat said it was... even ls showed it smaller than I could actually read
-		//		??? however ^^^ on the other hand, I don't want the length to be 8 gigs worth of space...   Perhaps I should always ignore the given size, and add space in large units until I run out of file... I should apply cues last then
-		//throw runtime_error(string(__func__)+" -- libaudiofile is not seeing this as a corrupt file -- it thinks the data length is "+istring(size)+" yet when the file is only "+istring(fileSize)+" bytes");
-	}
+		const sample_pos_t fileSize=CPath(filename).getSize(false)/(channelCount*sizeof(sample_t));
+		if(fileSize<(size/25)) // ??? possibly 1/25th compression... really just trying to check for a sane value
+		{
+			Warning("libaudiofile reports that "+filename+" contains "+istring(size)+" sample frames yet the file is most likely not large enough to contain that many samples.\nLoading what can be loaded.");
+			//size=fileSize; not doing this because I once ran across a situation where you could read more from the file that stat said it was... even ls showed it smaller than I could actually read
+			//		??? however ^^^ on the other hand, I don't want the length to be 8 gigs worth of space...   Perhaps I should always ignore the given size, and add space in large units until I run out of file... I should apply cues last then
+			//throw runtime_error(string(__func__)+" -- libaudiofile is not seeing this as a corrupt file -- it thinks the data length is "+istring(size)+" yet when the file is only "+istring(fileSize)+" bytes");
+		}
 
-	sound->createWorkingPoolFile(filename,sampleRate,channelCount,size);
+		sound->createWorkingPoolFile(filename,sampleRate,channelCount,size);
 
-	// remember information for how to save the file if libaudiofile is also used to save it
-	{
-		int sampleFormat,sampleWidth,compressionType;
+		// remember information for how to save the file if libaudiofile is also used to save it
+		{
+			int sampleFormat,sampleWidth,compressionType;
 
-		afGetSampleFormat(h,AF_DEFAULT_TRACK,&sampleFormat,&sampleWidth);
-		compressionType=afGetCompression(h,AF_DEFAULT_TRACK);
+			afGetSampleFormat(h,AF_DEFAULT_TRACK,&sampleFormat,&sampleWidth);
+			compressionType=afGetCompression(h,AF_DEFAULT_TRACK);
 
-		sound->getGeneralDataAccesser<int>("AF_SAMPFMT_xxx").write(&sampleFormat,1);
-		sound->getGeneralDataAccesser<int>("AF_sample_width").write(&sampleWidth,1);
-		sound->getGeneralDataAccesser<int>("AF_COMPRESSION_xxx").write(&compressionType,1);
-	}
+			sound->getGeneralDataAccesser<int>("AF_SAMPFMT_xxx").write(&sampleFormat,1);
+			sound->getGeneralDataAccesser<int>("AF_sample_width").write(&sampleWidth,1);
+			sound->getGeneralDataAccesser<int>("AF_COMPRESSION_xxx").write(&compressionType,1);
+		}
 
 #ifdef HANDLE_CUES_AND_MISC
 
-	// load the cues
-	const size_t cueCount=afGetMarkIDs(h,AF_DEFAULT_TRACK,NULL);
-	if(cueCount<4096) // check for a sane amount
-	{
-		sound->clearCues();
-
-		TAutoBuffer<int> markIDs(cueCount);
-		afGetMarkIDs(h,AF_DEFAULT_TRACK,markIDs);
-		for(size_t t=0;t<cueCount;t++)
+		// load the cues
+		const size_t cueCount=afGetMarkIDs(h,AF_DEFAULT_TRACK,NULL);
+		if(cueCount<4096) // check for a sane amount
 		{
-			string name=afGetMarkName(h,AF_DEFAULT_TRACK,markIDs[t]);
-			if(name=="")
-				name=sound->getUnusedCueName("cue"); // give it a unique name
+			sound->clearCues();
 
-			const sample_pos_t time=afGetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[t]);
-
-			// to determine if the cue is anchored or not, name will be:
-			// "asdf|+" if anchored, or "asdf|-" or "asdf" if not anchored
-			const size_t delimPos=name.rfind("|");
-			bool isAnchored=false;
-			if(delimPos!=string::npos)
+			TAutoBuffer<int> markIDs(cueCount);
+			afGetMarkIDs(h,AF_DEFAULT_TRACK,markIDs);
+			for(size_t t=0;t<cueCount;t++)
 			{
-				isAnchored=name.substr(delimPos+1)=="+";
-				name.erase(delimPos);
-			}
+				string name=afGetMarkName(h,AF_DEFAULT_TRACK,markIDs[t]);
+				if(name=="")
+					name=sound->getUnusedCueName("cue"); // give it a unique name
 
-			try
-			{
-				sound->addCue(name,time,isAnchored);
-			}
-			catch(exception &e)
-			{ // don't make an error adding a cue cause the whole file not to load
-				Warning("file: '"+filename+"' -- "+e.what());
-			}
-		}
-	}
-	else
-		Warning("Insane amount of markers so they were ignored: "+istring(cueCount)+" -- "+filename);
-	
+				const sample_pos_t time=afGetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[t]);
 
-	// load the user notes
-	if(afGetMiscIDs(h,NULL)>0 /*this is not implemented in libaudiofile yet && afQueryLong(AF_QUERYTYPE_MISC,AF_QUERY_SUPPORTED,fileFormatType,0,0)*/)
-	{
-		// ??? actually there are probably several AF_MISC_XXX that I would want to include in the user notes... just separate each one found with a newline
-		// find the misc ID of the user notes
-		int _v;
-		const int userNotesMiscType=getUserNotesMiscType(afGetFileFormat(h,&_v));
-		TAutoBuffer<int> miscIDs(afGetMiscIDs(h,NULL));
-		const int miscIDCount=afGetMiscIDs(h,miscIDs);
-		int userNotesMiscID=-1;
-		for(int t=0;t<miscIDCount;t++)
-		{
-			if(afGetMiscType(h,miscIDs[t])==userNotesMiscType)
-			{
-				userNotesMiscID=miscIDs[t];
-				break;
-			}
-		}
-
-		if(userNotesMiscID!=-1) // was found
-		{
-			const int userNotesLength=afGetMiscSize(h,userNotesMiscID);
-			TAutoBuffer<int8_t> buf(userNotesLength);
-			afReadMisc(h,userNotesMiscID,(void *)buf,userNotesLength);
-			sound->setUserNotes(string((char *)((void *)buf),userNotesLength));
-		}
-	}
-	
-#endif // HANDLE_CUES_AND_MISC
-
-	// load the audio data
-
-	CRezPoolAccesser *accessers[MAX_CHANNELS]={0};
-	try
-	{
-		for(unsigned t=0;t<channelCount;t++)
-			accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
-
-
-		TAutoBuffer<sample_t> buffer((size_t)(afGetVirtualFrameSize(h,AF_DEFAULT_TRACK,1)*4096/sizeof(sample_t)));
-		sample_pos_t pos=0;
-		AFframecount count=size/4096+1;
-		CStatusBar statusBar(_("Loading Sound"),0,size,true);
-		for(AFframecount t=0;t<count;t++)
-		{
-			const int chunkSize=  (t==count-1 ) ? size%4096 : 4096;
-			if(chunkSize!=0)
-			{
-				const int read=afReadFrames(h,AF_DEFAULT_TRACK,(void *)buffer,chunkSize);
-				if(read>0)
+				// to determine if the cue is anchored or not, name will be:
+				// "asdf|+" if anchored, or "asdf|-" or "asdf" if not anchored
+				const size_t delimPos=name.rfind("|");
+				bool isAnchored=false;
+				if(delimPos!=string::npos)
 				{
-					for(unsigned c=0;c<channelCount;c++)
-					{
-						for(int i=0;i<read;i++)
-							(*(accessers[c]))[pos+i]=buffer[i*channelCount+c];
-					}
-					pos+=read;
+					isAnchored=name.substr(delimPos+1)=="+";
+					name.erase(delimPos);
 				}
 
-				if(read!=chunkSize)
+				try
 				{
-					Error("Error reading audio data from "+filename+" -- "+errorMessage+" -- keeping what was read");
-					// remove unnecessary silence
-					if(sound->getLength()>pos)
-						sound->removeSpace(pos,sound->getLength()-pos);
+					sound->addCue(name,time,isAnchored);
+				}
+				catch(exception &e)
+				{ // don't make an error adding a cue cause the whole file not to load
+					Warning("file: '"+filename+"' -- "+e.what());
+				}
+			}
+		}
+		else
+			Warning("Insane amount of markers so they were ignored: "+istring(cueCount)+" -- "+filename);
+		
+
+		// load the user notes
+		if(afGetMiscIDs(h,NULL)>0 /*this is not implemented in libaudiofile yet && afQueryLong(AF_QUERYTYPE_MISC,AF_QUERY_SUPPORTED,fileFormatType,0,0)*/)
+		{
+			// ??? actually there are probably several AF_MISC_XXX that I would want to include in the user notes... just separate each one found with a newline
+			// find the misc ID of the user notes
+			int _v;
+			const int userNotesMiscType=getUserNotesMiscType(afGetFileFormat(h,&_v));
+			TAutoBuffer<int> miscIDs(afGetMiscIDs(h,NULL));
+			const int miscIDCount=afGetMiscIDs(h,miscIDs);
+			int userNotesMiscID=-1;
+			for(int t=0;t<miscIDCount;t++)
+			{
+				if(afGetMiscType(h,miscIDs[t])==userNotesMiscType)
+				{
+					userNotesMiscID=miscIDs[t];
 					break;
 				}
 			}
 
-			if(statusBar.update(pos))
-			{ // cancelled
-				ret=false;
-				goto cancelled;
+			if(userNotesMiscID!=-1) // was found
+			{
+				const int userNotesLength=afGetMiscSize(h,userNotesMiscID);
+				TAutoBuffer<int8_t> buf(userNotesLength);
+				afReadMisc(h,userNotesMiscID,(void *)buf,userNotesLength);
+				sound->setUserNotes(string((char *)((void *)buf),userNotesLength));
 			}
 		}
+		
+#endif // HANDLE_CUES_AND_MISC
 
-		cancelled:
+		// load the audio data
 
-		afCloseFile(h);
-
-		for(unsigned t=0;t<MAX_CHANNELS;t++)
+		CRezPoolAccesser *accessers[MAX_CHANNELS]={0};
+		try
 		{
-			delete accessers[t];
-			accessers[t]=NULL;
+			for(unsigned t=0;t<channelCount;t++)
+				accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
+
+
+			TAutoBuffer<sample_t> buffer((size_t)(afGetVirtualFrameSize(h,AF_DEFAULT_TRACK,1)*4096/sizeof(sample_t)));
+			sample_pos_t pos=0;
+			AFframecount count=size/4096+1;
+			CStatusBar statusBar(_("Loading Sound"),0,size,true);
+			for(AFframecount t=0;t<count;t++)
+			{
+				const int chunkSize=  (t==count-1 ) ? size%4096 : 4096;
+				if(chunkSize!=0)
+				{
+					const int read=afReadFrames(h,AF_DEFAULT_TRACK,(void *)buffer,chunkSize);
+					if(read>0)
+					{
+						for(unsigned c=0;c<channelCount;c++)
+						{
+							for(int i=0;i<read;i++)
+								(*(accessers[c]))[pos+i]=buffer[i*channelCount+c];
+						}
+						pos+=read;
+					}
+
+					if(read!=chunkSize)
+					{
+						Error("Error reading audio data from "+filename+" -- "+errorMessage+" -- keeping what was read");
+						// remove unnecessary silence
+						if(sound->getLength()>pos)
+							sound->removeSpace(pos,sound->getLength()-pos);
+						break;
+					}
+				}
+
+				if(statusBar.update(pos))
+				{ // cancelled
+					ret=false;
+					goto cancelled;
+				}
+			}
+
+			cancelled:
+
+			afCloseFile(h);
+
+			for(unsigned t=0;t<MAX_CHANNELS;t++)
+			{
+				delete accessers[t];
+				accessers[t]=NULL;
+			}
+		}
+		catch(...)
+		{
+			for(unsigned t=0;t<MAX_CHANNELS;t++)
+				delete accessers[t];
+			afCloseFile(h);
+			throw;
 		}
 	}
 	catch(...)
 	{
-		for(unsigned t=0;t<MAX_CHANNELS;t++)
-			delete accessers[t];
+		afCloseFile(h);
 		throw;
 	}
 	return ret;
@@ -504,109 +512,116 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,con
 	AFfilehandle h=afOpenFile(filename.c_str(),"w",initialSetup);
 	if(h==AF_NULL_FILEHANDLE)
 		throw runtime_error(string(__func__)+" -- error opening '"+filename+"' for writing -- "+errorMessage);
-
-	// ??? this if set may not completly handle all possibilities
-#if defined(SAMPLE_TYPE_S16)
-	if(afSetVirtualSampleFormat(h,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,sizeof(sample_t)*8)!=0)
-#elif defined(SAMPLE_TYPE_FLOAT)
-	if(afSetVirtualSampleFormat(h,AF_DEFAULT_TRACK,AF_SAMPFMT_FLOAT,sizeof(sample_t)*8)!=0)
-#else
-	#error unhandled SAMPLE_TYPE_xxx define
-#endif
-		throw runtime_error(string(__func__)+" -- error setting virtual format -- "+errorMessage);
-
-#ifdef WORDS_BIGENDIAN
-	if(afSetVirtualByteOrder(h,AF_DEFAULT_TRACK,AF_BYTEORDER_BIGENDIAN))
-#else
-	if(afSetVirtualByteOrder(h,AF_DEFAULT_TRACK,AF_BYTEORDER_LITTLEENDIAN))
-#endif
-		throw runtime_error(string(__func__)+" -- error setting virtual byte order -- "+errorMessage);
-	afSetVirtualChannels(h,AF_DEFAULT_TRACK,channelCount);
-
-	CRezPoolAccesser *accessers[MAX_CHANNELS]={0};
 	try
 	{
-		for(unsigned t=0;t<channelCount;t++)
-			accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
-		
-		// save the audio data
-		TAutoBuffer<sample_t> buffer((size_t)(channelCount*4096));
-		sample_pos_t pos=0;
-		AFframecount count=saveLength/4096+1;
-		CStatusBar statusBar(_("Saving Sound"),0,saveLength,true);
-		for(AFframecount t=0;t<count;t++)
-		{
-			const int chunkSize=  (t==count-1 ) ? saveLength%4096 : 4096;
-			if(chunkSize!=0)
-			{
-				for(unsigned c=0;c<channelCount;c++)
-				{
-					for(int i=0;i<chunkSize;i++)
-						buffer[i*channelCount+c]=(*(accessers[c]))[pos+i+saveStart];
-				}
-				if(afWriteFrames(h,AF_DEFAULT_TRACK,(void *)buffer,chunkSize)!=chunkSize)
-					throw runtime_error(string(__func__)+" -- error writing audio data -- "+errorMessage);
-				pos+=chunkSize;
-			}
+		// ??? this if set may not completly handle all possibilities
+#if defined(SAMPLE_TYPE_S16)
+		if(afSetVirtualSampleFormat(h,AF_DEFAULT_TRACK,AF_SAMPFMT_TWOSCOMP,sizeof(sample_t)*8)!=0)
+#elif defined(SAMPLE_TYPE_FLOAT)
+		if(afSetVirtualSampleFormat(h,AF_DEFAULT_TRACK,AF_SAMPFMT_FLOAT,sizeof(sample_t)*8)!=0)
+#else
+		#error unhandled SAMPLE_TYPE_xxx define
+#endif
+			throw runtime_error(string(__func__)+" -- error setting virtual format -- "+errorMessage);
 
-			if(statusBar.update(pos))
-			{ // cancelled
-				ret=false;
-				goto cancelled;
+#ifdef WORDS_BIGENDIAN
+		if(afSetVirtualByteOrder(h,AF_DEFAULT_TRACK,AF_BYTEORDER_BIGENDIAN))
+#else
+		if(afSetVirtualByteOrder(h,AF_DEFAULT_TRACK,AF_BYTEORDER_LITTLEENDIAN))
+#endif
+			throw runtime_error(string(__func__)+" -- error setting virtual byte order -- "+errorMessage);
+		afSetVirtualChannels(h,AF_DEFAULT_TRACK,channelCount);
+
+		CRezPoolAccesser *accessers[MAX_CHANNELS]={0};
+		try
+		{
+			for(unsigned t=0;t<channelCount;t++)
+				accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
+			
+			// save the audio data
+			TAutoBuffer<sample_t> buffer((size_t)(channelCount*4096));
+			sample_pos_t pos=0;
+			AFframecount count=saveLength/4096+1;
+			CStatusBar statusBar(_("Saving Sound"),0,saveLength,true);
+			for(AFframecount t=0;t<count;t++)
+			{
+				const int chunkSize=  (t==count-1 ) ? saveLength%4096 : 4096;
+				if(chunkSize!=0)
+				{
+					for(unsigned c=0;c<channelCount;c++)
+					{
+						for(int i=0;i<chunkSize;i++)
+							buffer[i*channelCount+c]=(*(accessers[c]))[pos+i+saveStart];
+					}
+					if(afWriteFrames(h,AF_DEFAULT_TRACK,(void *)buffer,chunkSize)!=chunkSize)
+						throw runtime_error(string(__func__)+" -- error writing audio data -- "+errorMessage);
+					pos+=chunkSize;
+				}
+
+				if(statusBar.update(pos))
+				{ // cancelled
+					ret=false;
+					goto cancelled;
+				}
 			}
-		}
 
 #ifdef HANDLE_CUES_AND_MISC
-		
-		// write the cue's positions
-		if(afQueryLong(AF_QUERYTYPE_MARK,AF_QUERY_SUPPORTED,fileFormatType,0,0))
-		{
-			size_t temp=0;
-			for(size_t t=0;t<sound->getCueCount();t++)
+			
+			// write the cue's positions
+			if(afQueryLong(AF_QUERYTYPE_MARK,AF_QUERY_SUPPORTED,fileFormatType,0,0))
 			{
-				if(sound->getCueTime(t)>=saveStart && sound->getCueTime(t)<(saveStart+saveLength))
-					afSetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[temp++],sound->getCueTime(t)-saveStart);
+				size_t temp=0;
+				for(size_t t=0;t<sound->getCueCount();t++)
+				{
+					if(sound->getCueTime(t)>=saveStart && sound->getCueTime(t)<(saveStart+saveLength))
+						afSetMarkPosition(h,AF_DEFAULT_TRACK,markIDs[temp++],sound->getCueTime(t)-saveStart);
+				}
 			}
-		}
 
-		// write the user notes
-		if(userNotes.length()>0)
-		{
-			/* this is not implemented in libaudiofile yet
-			if(!afQueryLong(AF_QUERYTYPE_MISC,AF_QUERY_SUPPORTED,fileFormatType,0,0))
-				Warning("This format does not support saving user notes");
-			else
-			*/
-			if(fileFormatType==AF_FILE_WAVE || fileFormatType==AF_FILE_AIFF)
+			// write the user notes
+			if(userNotes.length()>0)
 			{
-				afWriteMisc(h,userNotesMiscID,(void *)userNotes.c_str(),userNotes.length());
+				/* this is not implemented in libaudiofile yet
+				if(!afQueryLong(AF_QUERYTYPE_MISC,AF_QUERY_SUPPORTED,fileFormatType,0,0))
+					Warning("This format does not support saving user notes");
+				else
+				*/
+				if(fileFormatType==AF_FILE_WAVE || fileFormatType==AF_FILE_AIFF)
+				{
+					afWriteMisc(h,userNotesMiscID,(void *)userNotes.c_str(),userNotes.length());
+				}
 			}
-		}
 
 #endif // HANDLE_CUES_AND_MISC
 
-		cancelled:
+			cancelled:
 
-		afCloseFile(h);
+			afCloseFile(h);
 
-		for(unsigned t=0;t<MAX_CHANNELS;t++)
-		{
-			delete accessers[t];
-			accessers[t]=NULL;
+			for(unsigned t=0;t<MAX_CHANNELS;t++)
+			{
+				delete accessers[t];
+				accessers[t]=NULL;
+			}
 		}
+		catch(...)
+		{
+			// attempt to close the file ??? and free the setup???
+
+			for(unsigned t=0;t<MAX_CHANNELS;t++)
+				delete accessers[t];
+
+			throw;
+		}
+
+		if(!ret)
+			unlink(filename.c_str()); // remove the cancelled file
 	}
 	catch(...)
 	{
-		// attempt to close the file ??? and free the setup???
-
-		for(unsigned t=0;t<MAX_CHANNELS;t++)
-			delete accessers[t];
-
+		afCloseFile(h);
 		throw;
 	}
-
-	if(!ret)
-		unlink(filename.c_str()); // remove the cancelled file
 
 	return ret;
 }
