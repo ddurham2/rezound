@@ -289,13 +289,16 @@ FXIMPLEMENT(CMeter,FXHorizontalFrame,CMeterMap,ARRAYNUMBER(CMeterMap))
 
 // --- CAnalyzer -------------------------------------------------------------
 
-class CAnalyzer : public FXPacker
+class CAnalyzer : public FXHorizontalFrame
 {
 	FXDECLARE(CAnalyzer);
 public:
 	CAnalyzer::CAnalyzer(FXComposite *parent) :
-		FXPacker(parent,LAYOUT_FIX_WIDTH|LAYOUT_RIGHT|LAYOUT_FILL_Y|FRAME_SUNKEN|FRAME_THICK,0,0,0,0, 0,0,0,0, 0,0),
-		canvas(new FXCanvas(this,this,ID_CANVAS,LAYOUT_FILL_X|LAYOUT_FILL_Y)),
+		FXHorizontalFrame(parent,LAYOUT_RIGHT|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0),
+		canvasFrame(new FXPacker(this,LAYOUT_FIX_WIDTH|LAYOUT_FILL_Y|FRAME_SUNKEN|FRAME_THICK,0,0,0,0, 0,0,0,0, 0,0)),
+			canvas(new FXCanvas(canvasFrame,this,ID_CANVAS,LAYOUT_FILL_X|LAYOUT_FILL_Y)),
+
+		zoomDial(new FXDial(this,this,ID_ZOOM_DIAL,DIAL_VERTICAL|DIAL_HAS_NOTCH|LAYOUT_FILL_Y|LAYOUT_FIX_WIDTH,0,0,18,0)),
 
 		statusFont(getApp()->getNormalFont())
 	{
@@ -307,11 +310,31 @@ public:
 		d.size=60;
 		d.weight=FONTWEIGHT_NORMAL;
 		statusFont=new FXFont(getApp(),d);
+
+		zoomDial->setRange(1,200);
+		zoomDial->setValue(25);
+		zoomDial->setRevolutionIncrement(200*2);
+		zoomDial->setTipText("Adjust Zoom Factor for Analyzer\nRight-click for Default");
+		zoom=zoomDial->getValue();
+
 	}
 
 	CAnalyzer::~CAnalyzer()
 	{
 		delete statusFont;
+	}
+
+	long CAnalyzer::onZoomDial(FXObject *sender,FXSelector sel,void *ptr)
+	{
+		zoom=zoomDial->getValue();
+		canvas->update(); // not really necessary since we're doing it several times a second anyway
+		return 1;
+	}
+
+	long CAnalyzer::onZoomDialDefault(FXObject *sender,FXSelector sel,void *ptr)
+	{
+		zoomDial->setValue(25);
+		return onZoomDial(sender,sel,ptr);
 	}
 
 	long CAnalyzer::onCanvasPaint(FXObject *sender,FXSelector sel,void *ptr)
@@ -329,7 +352,6 @@ public:
 		const size_t canvasHeight=canvas->getHeight()-4; // 2 pixel border on top and bottom
 		
 		const size_t barWidth=analysis.size()>0 ? max((size_t)2,(size_t)canvasWidth/analysis.size()) : 1;
-
 
 		// draw vertical octave separator lines
 		dc.setForeground(M_METER_OFF);
@@ -387,19 +409,19 @@ public:
 	{
 		analysis=_analysis;
 		for(size_t t=0;t<analysis.size();t++)
-			analysis[t]*=25.0; // should be a zoom factor I guess
+			analysis[t]*=zoom;
 
 		octaveStride=_octaveStride;
 
-		// resize the analyzer frame if needed
+		// resize the canvas frame if needed
 		FXint desiredWidth;
 		if(analysis.size()>0)
 			desiredWidth=(analysis.size()*5)+2/*on left*/+2/*on right*/+2/*for ticks*/+4/*for sunken frame*/;
 		else
 			desiredWidth=150;  // big enough to render a message about installing fftw
 
-		if(getWidth()!=desiredWidth)
-			setWidth(desiredWidth);
+		if(canvasFrame->getWidth()!=desiredWidth)
+			canvasFrame->setWidth(desiredWidth);
 
 		
 		// rebuild peaks if the number of elements in analysis changed from the last time this was called  (should really only do anything the first time this is called)
@@ -438,7 +460,8 @@ public:
 
 	enum
 	{
-		ID_CANVAS=FXPacker::ID_LAST,
+		ID_CANVAS=FXHorizontalFrame::ID_LAST,
+		ID_ZOOM_DIAL,
 	};
 
 protected:
@@ -447,22 +470,27 @@ protected:
 private:
 	friend class CMetersWindow;
 
-	FXCanvas *canvas;
+	FXPacker *canvasFrame;
+		FXCanvas *canvas;
+	FXDial *zoomDial;
 	FXFont *statusFont;
 
 	vector<float> analysis;
 	vector<float> peaks;
 	vector<int> peakFallDelayTimers;
 	size_t octaveStride;
+	float zoom;
 };
 
 FXDEFMAP(CAnalyzer) CAnalyzerMap[]=
 {
 	//	  Message_Type			ID					Message_Handler
 	FXMAPFUNC(SEL_PAINT,			CAnalyzer::ID_CANVAS,			CAnalyzer::onCanvasPaint),
+	FXMAPFUNC(SEL_CHANGED ,			CAnalyzer::ID_ZOOM_DIAL,		CAnalyzer::onZoomDial),
+	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	CAnalyzer::ID_ZOOM_DIAL,		CAnalyzer::onZoomDialDefault),
 };
 
-FXIMPLEMENT(CAnalyzer,FXPacker,CAnalyzerMap,ARRAYNUMBER(CAnalyzerMap))
+FXIMPLEMENT(CAnalyzer,FXHorizontalFrame,CAnalyzerMap,ARRAYNUMBER(CAnalyzerMap))
 
 
 
@@ -571,7 +599,7 @@ long CMetersWindow::onUpdateMeters(FXObject *sender,FXSelector sel,void *ptr)
 
 	// schedule another update again in METER_UPDATE_RATE milliseconds
 	timeout=getApp()->addTimeout(gMeterUpdateTime,this,ID_UPDATE_TIMEOUT);
-	return 1;
+	return 0;
 }
 
 long CMetersWindow::onLabelFrameConfigure(FXObject *sender,FXSelector,void*)
