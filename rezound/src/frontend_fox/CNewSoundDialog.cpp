@@ -65,7 +65,7 @@ CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 		lengthComboBox(new FXComboBox(lengthFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK)),
 		lengthUnitsLabel(new FXLabel(lengthFrame,"second(s)"))
 {
-	filenameTextBox->setText("untitled0.rez");
+	filenameTextBox->setText((gPromptDialogDirectory+"untitled0.rez").c_str());
 
 	for(size_t t=0;t<MAX_CHANNELS;t++)
 		channelsComboBox->appendItem(istring(t+1).c_str());
