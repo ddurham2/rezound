@@ -131,3 +131,25 @@ CSimpleDelayDialog::CSimpleDelayDialog(FXWindow *mainWindow) :
 	addSlider("Feedback","x",interpretValue_delay,uninterpretValue_delay,NULL,0.35,-5,5,1,false);
 }
 
+
+
+
+// --- varied repeat -----------------------
+
+static const double interpretValue_varied_repeat(const double x,const int s) { return(x*s); }
+static const double uninterpretValue_varied_repeat(const double x,const int s) { return(x/s); }
+static const double interpretValue_varied_repeat_LFO_phase(const double x,const int s) { return(unitRange_to_otherRange_linear(x,0,360)); }
+static const double uninterpretValue_varied_repeat_LFO_phase(const double x,const int s) { return(otherRange_to_unitRange_linear(x,0,360)); }
+
+CVariedRepeatDialog::CVariedRepeatDialog(FXWindow *mainWindow) :
+	CConstantParamActionDialog(mainWindow,"Varied Repeat",450,400)
+{
+	addSlider("LFO Freq","Hz",interpretValue_varied_repeat,uninterpretValue_varied_repeat,NULL,0.1,1,20,1,false);
+	addSlider("LFO Phase","deg",interpretValue_flange_LFO_phase,uninterpretValue_flange_LFO_phase,NULL,290.0,0,0,0,true);
+	addSlider("Time","s",interpretValue_varied_repeat,uninterpretValue_varied_repeat,NULL,4.0,1,100,10,false);
+}
+
+
+
+
+

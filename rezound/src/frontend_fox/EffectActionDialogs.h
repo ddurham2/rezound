@@ -84,4 +84,16 @@ public:
 
 
 
+
+
+// --- varied repeat ---------------------
+
+class CVariedRepeatDialog : public CConstantParamActionDialog
+{
+public:
+	CVariedRepeatDialog(FXWindow *mainWindow);
+};
+
+
+
 #endif

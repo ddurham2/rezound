@@ -244,6 +244,7 @@ void CMainWindow::createToolbars()
 	setupButton(new CActionButton(new CFlangeEffectFactory(gChannelSelectDialog,new CFlangeDialog(gMainWindow)),effectsTabFrame,"flng",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
 	setupButton(new CActionButton(new CSimpleDelayEffectFactory(gChannelSelectDialog,new CSimpleDelayDialog(gMainWindow)),effectsTabFrame,"dly",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
 	setupButton(new CActionButton(new CStaticReverbEffectFactory(gChannelSelectDialog),effectsTabFrame,"rvrb",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
+	setupButton(new CActionButton(new CVariedRepeatEffectFactory(gChannelSelectDialog,new CVariedRepeatDialog(gMainWindow)),effectsTabFrame,"vrep",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
 
 	setupButton(new CActionButton(new CTestEffectFactory(gChannelSelectDialog),effectsTabFrame,"test",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
 
