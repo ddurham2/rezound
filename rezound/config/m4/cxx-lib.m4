@@ -62,7 +62,8 @@ AC_DEFUN(ajv_CXX_CHECK_LIB, dnl
 ajv_inc$1_path="")] dnl
 [AC_ARG_WITH($1-path,[  --with-$1-path	  Specify path to $1 libraries], dnl
 [	ajv_lib$1_path=-L$withval
-	enable_$1_check="no" ], dnl
+#	enable_$1_check="no" 
+], dnl
 ajv_lib$1_path="")] 
 LIBS="-l$1 $LIBS"
 LDFLAGS="$ajv_lib$1_path $LDFLAGS"
