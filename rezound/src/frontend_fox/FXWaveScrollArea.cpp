@@ -166,6 +166,12 @@ void FXWaveScrollArea::redraw()
 	canvas->update();
 }
 
+void FXWaveScrollArea::redraw(FXint x,FXint w)
+{
+	update(x,0,w,getHeight());
+	canvas->update(x,0,w,canvas->getHeight());
+}
+
 //??? here is one problematic area if I support >31-bit length files
 	// FXint is only 31bit (at least it's typedef-ed from int)
 	// when zoomed in, the content length is more than 2^31
@@ -345,8 +351,11 @@ long FXWaveScrollArea::onMouseMove(FXObject*,FXSelector,void *ptr)
 
 long FXWaveScrollArea::onAutoScroll(FXObject *object,FXSelector sel,void *ptr)
 {
+	const int orig_pos_x=pos_x;
 	long ret=FXScrollArea::onAutoScroll(object,sel,ptr);
 	handleMouseMoveSelectChange(((FXEvent *)ptr)->win_x);
+
+	parent->updateRulerFromScroll(pos_x-orig_pos_x,(FXEvent *)ptr);
 
 	return ret;
 }
