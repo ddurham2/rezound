@@ -52,6 +52,8 @@ public:
 
 		ID_CLEAR_CLIP_COUNT_BUTTON,
 
+		ID_STATUS_UPDATE,
+
 		ID_LAST
 	};
 
@@ -62,14 +64,18 @@ public:
 
 	long onAddCueButton(FXObject *sender,FXSelector sel,void *ptr);
 
+	long onStatusUpdate(FXObject *sender,FXSelector sel,void *ptr);
+
+	long onClearClipCountButton(FXObject *sender,FXSelector sel,void *ptr);
+
 protected:
 	CRecordDialog() {}
 
 private:
 
-	friend void onLevelMeter(void *);
-
 	ASoundRecorder *recorder;
+	bool showing;
+	FXTimer *timerHandle;
 
 	FXHorizontalFrame *meterFrame;
 
@@ -82,12 +88,11 @@ private:
 	FXCheckButton *setDurationButton;
 	FXTextField *durationEdit;
 
+
 	void cleanupMeters();
 	void setMeterValue(unsigned channel,float value); // value is 0 to 1
 	vector<FXProgressBar *> meters;
 
-	size_t clipCount;
-	void incClipCount();
 	void clearClipCount();
 
 };

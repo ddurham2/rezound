@@ -28,6 +28,7 @@
 #include "CTrigger.h"
 
 /*
+
  - This class should be derived from to do sound recording for a specific
  platform.  The platform specific code should call the onData
  protected method when data is recorded.
@@ -41,9 +42,18 @@
  class's implementation, and deinitialize() should be called at the botton of
  the derived class's implementation.
 
+ - The derived class should not cause onData() to be called before the base 
+ class's initialize() method has be called and not call onData() method after
+ deinitialize() has been called (or until initialize is called again).
+
  - This class appends the recorded data to the given ASound object
 
+ - It should not be an error to deinitialize() while not initialize()
+
 */
+
+#include <cc++/thread.h>
+
 class ASoundRecorder
 {
 public:
@@ -51,17 +61,22 @@ public:
 	ASoundRecorder();
 	virtual ~ASoundRecorder();
 
-	void setPeakReadTrigger(TriggerFunc triggerFunc,void *data);
-	void removePeakReadTrigger(TriggerFunc triggerFunc,void *data);
+	void setStatusTrigger(TriggerFunc triggerFunc,void *data);
+	void removeStatusTrigger(TriggerFunc triggerFunc,void *data);
 	float getLastPeakValue(unsigned channel) const;
 
 	virtual void initialize(ASound *sound);
-	// it should not be an error to deinitialize while not initialize
 	virtual void deinitialize();
 
-	void start();
-	virtual void redo();
 
+	void start();
+	void stop();
+	virtual void redo();
+	void done(); // should be called while initialized, but after stop to do extra-space-cleanup
+
+
+
+	size_t clipCount;
 	unsigned getChannelCount() const;
 	unsigned getSampleRate() const;
 
@@ -78,9 +93,11 @@ private:
 	sample_pos_t origLength;
 	sample_pos_t writePos;
 
-	CTrigger peakReadTrigger;
+	CTrigger statusTrigger;
 
 	float lastPeakValues[MAX_CHANNELS];
+
+	ost::Mutex mutex;
 
 };
 

@@ -23,6 +23,7 @@
 #include <algorithm>
 
 ASoundRecorder::ASoundRecorder() :
+	clipCount(0),
 	sound(NULL)
 {
 	for(unsigned i=0;i<MAX_CHANNELS;i++)
@@ -35,27 +36,102 @@ ASoundRecorder::~ASoundRecorder()
 
 void ASoundRecorder::start()
 {
-	origLength=sound->getLength();
-	writePos=origLength;
-	started=true;
+	mutex.EnterMutex();
+	try
+	{
+		prealloced=sound->getLength()-origLength;
+		writePos=origLength;
+		started=true;
+
+		mutex.LeaveMutex();
+	}
+	catch(...)
+	{
+		mutex.LeaveMutex();
+		throw;
+	}
+}
+
+void ASoundRecorder::stop()
+{
+	mutex.EnterMutex();
+	try
+	{
+		started=false;
+
+		// remove extra prealloceded space
+		sound->lockForResize();
+		try
+		{
+			if(prealloced>0)
+				// remove extra space
+				sound->removeSpace(sound->getLength()-prealloced,prealloced);
+			prealloced=0;
+
+			sound->unlockForResize();
+		}
+		catch(...)
+		{
+			sound->unlockForResize();
+			throw;
+		}
+
+		mutex.LeaveMutex();
+	}
+	catch(...)
+	{
+		mutex.LeaveMutex();
+		throw;
+	}
 }
 
 void ASoundRecorder::redo()
 {
-	// do I want to clear out the buffers already recorded??? Cause it may cause a hiccup in the input containig some of the already buffered data
-	// there may be a way to do this with OSS
+	// redo only resets the start position but doesn't cleanup extra space added
+	// because we will need space right back again... So, the done() method removes
+	// any extra allocated space beyond what was recorded that doesn't need to be
+	// there
+
+	mutex.EnterMutex();
+	try
+	{
+
+		// do I want to clear out the buffers already recorded??? Cause it may cause a hiccup in the input containig some of the already buffered data
+		// there may be a way to do this with OSS
+		writePos=origLength;
+
+		mutex.LeaveMutex();
+	}
+	catch(...)
+	{
+		mutex.LeaveMutex();
+		throw;
+	}
+}
+
+void ASoundRecorder::done()
+{
+	// this method removes extra space in the sound beyond what was recorded since the last start()/stop()
+	if(started)
+		throw(string(__func__)+" -- done should not be called while the recorder is start()-ed");
+
 	sound->lockForResize();
 	try
 	{
-		if(sound->getLength()>origLength)
-			sound->removeSpace(origLength,sound->getLength()-origLength);
-		writePos=origLength;
+		if(sound->getLength()>writePos)
+			// remove extra space
+			sound->removeSpace(writePos,sound->getLength()-writePos);
+
+		sound->unlockForResize();
 	}
 	catch(...)
 	{
 		sound->unlockForResize();
+		sound=NULL;
 		throw;
 	}
+
+	
 }
 
 
@@ -63,7 +139,11 @@ void ASoundRecorder::initialize(ASound *_sound)
 {
 	started=false;
 	sound=_sound;
+	clipCount=0;
+
 	prealloced=0;
+	origLength=sound->getLength();
+	writePos=origLength; // ??? - 1?
 }
 
 
@@ -71,85 +151,91 @@ void ASoundRecorder::deinitialize()
 {
 	if(sound!=NULL)
 	{
-		started=false;
-		sound->lockForResize();
-		try
-		{
-			// ??? on error should I remove all recorded space back to the origLength?
-			if(prealloced>0)
-				// remove extra space
-				sound->removeSpace(sound->getLength()-prealloced,prealloced);
+		if(started)
+			stop();
 
-			sound->unlockForResize();
-			sound=NULL;
-		}
-		catch(...)
-		{
-			sound->unlockForResize();
-			sound=NULL;
-			throw;
-		}
+		done();
+		sound=NULL;
+		clipCount=0;
 	}
 }
 
 
 void ASoundRecorder::onData(const sample_t *samples,const size_t sampleFramesRecorded)
 {
-	const unsigned channelCount=sound->getChannelCount();
-
-	for(unsigned i=0;i<channelCount;i++)
+	mutex.EnterMutex();
+	try
 	{
-		sample_t maxSample=0;
-		const sample_t *_samples=samples+i;
-		for(size_t t=0;t<sampleFramesRecorded;t++)
-		{
-			sample_t s=*_samples;
-			if(s<0)
-				s=-s; // only use positive values
-			maxSample=max(maxSample,s);
-			_samples+=channelCount;
-		}
-		lastPeakValues[i]=(float)maxSample/(float)MAX_SAMPLE;
-	}
-	peakReadTrigger.trip();
+		const unsigned channelCount=sound->getChannelCount();
 
-	if(started)
-	{
-		// we preallocate space in the sound in 5 second chunks
-		if(prealloced<sampleFramesRecorded)
-		{
-			sound->lockForResize();
-			try
-			{
-				while(prealloced<sampleFramesRecorded)
-				{
-					sound->addSpace(sound->getLength(),5*sound->getSampleRate(),false);
-					prealloced+=(5*sound->getSampleRate());
-				}
-				sound->unlockForResize();
-			}
-			catch(...)
-			{
-				sound->unlockForResize();
-				throw;
-			}
-		}
-
-		sample_pos_t writePos=0;
+		// give realtime peak data updates
 		for(unsigned i=0;i<channelCount;i++)
 		{
-			CRezPoolAccesser a=sound->getAudio(i);
+			mix_sample_t maxSample=0;
 			const sample_t *_samples=samples+i;
-			writePos=this->writePos;
 			for(size_t t=0;t<sampleFramesRecorded;t++)
 			{
-				a[writePos++]=*_samples;
+				mix_sample_t s=*_samples;
+
+				if(s>=MAX_SAMPLE || s<=MIN_SAMPLE)
+					clipCount++;
+
+				if(s<0)
+					s=-s; // only use positive values
+
+				maxSample=max(maxSample,s);
+
+				// next sample in interleaved format
 				_samples+=channelCount;
 			}
+			lastPeakValues[i]=(float)maxSample/(float)MAX_SAMPLE;
 		}
+		statusTrigger.trip();
 
-		prealloced-=sampleFramesRecorded;
-		this->writePos=writePos;
+		if(started)
+		{
+			// we preallocate space in the sound in 5 second chunks
+			if(prealloced<sampleFramesRecorded)
+			{
+				sound->lockForResize();
+				try
+				{
+					while(prealloced<sampleFramesRecorded)
+					{
+						sound->addSpace(sound->getLength(),5*sound->getSampleRate(),false);
+						prealloced+=(5*sound->getSampleRate());
+					}
+					sound->unlockForResize();
+				}
+				catch(...)
+				{
+					sound->unlockForResize();
+					throw;
+				}
+			}
+
+			sample_pos_t writePos=0;
+			for(unsigned i=0;i<channelCount;i++)
+			{
+				CRezPoolAccesser a=sound->getAudio(i);
+				const sample_t *_samples=samples+i;
+				writePos=this->writePos;
+				for(size_t t=0;t<sampleFramesRecorded;t++)
+				{
+					a[writePos++]=*_samples;
+					_samples+=channelCount;
+				}
+			}
+
+			prealloced-=sampleFramesRecorded;
+			this->writePos=writePos;
+		}
+		mutex.LeaveMutex();
+	}
+	catch(...)
+	{
+		mutex.LeaveMutex();
+		throw;
 	}
 }
 
@@ -168,13 +254,13 @@ float ASoundRecorder::getLastPeakValue(unsigned channel) const
 	return(lastPeakValues[channel]);
 }
 
-void ASoundRecorder::setPeakReadTrigger(TriggerFunc triggerFunc,void *data)
+void ASoundRecorder::setStatusTrigger(TriggerFunc triggerFunc,void *data)
 {
-	peakReadTrigger.set(triggerFunc,data);
+	statusTrigger.set(triggerFunc,data);
 }
 
-void ASoundRecorder::removePeakReadTrigger(TriggerFunc triggerFunc,void *data)
+void ASoundRecorder::removeStatusTrigger(TriggerFunc triggerFunc,void *data)
 {
-	peakReadTrigger.unset(triggerFunc,data);
+	statusTrigger.unset(triggerFunc,data);
 }
 

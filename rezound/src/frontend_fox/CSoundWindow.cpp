@@ -108,6 +108,8 @@ FXIMPLEMENT(CSoundWindow,FXTopWindow,CSoundWindowMap,ARRAYNUMBER(CSoundWindowMap
 
 void playTrigger(void *Pthis)
 {
+	// ??? may need to lock the app because this is called in another thread
+
 	//printf("play trigger\n");
 	CSoundWindow *that=(CSoundWindow *)Pthis;
 
@@ -123,6 +125,8 @@ void playTrigger(void *Pthis)
 
 void pauseTrigger(void *Pthis)
 {
+	// ??? may need to lock the app because this is called in another thread
+
 	//printf("pause trigger\n");
 	CSoundWindow *that=(CSoundWindow *)Pthis;
 	if(that->loadedSound->channel->isPaused())
