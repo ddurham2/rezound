@@ -320,6 +320,8 @@ public:
 		FXDCWindow dc(canvas);
 		dc.begin(canvas);  // ??? ask J if it's better to do this or if it's not necessary
 
+		// I could elimenat any flick by drawing to a back buffer and blitting.. but I thought that's what begin might effectively do
+
 		dc.setForeground(M_BACKGROUND);
 		dc.fillRectangle(0,0,canvas->getWidth(),canvas->getHeight());
 
@@ -327,7 +329,7 @@ public:
 		const size_t canvasWidth=canvas->getWidth()-6; // 2 pixel border on left and right plus tick marks on the left
 		const size_t canvasHeight=canvas->getHeight()-4; // 2 pixel border on top and bottom
 		
-		const size_t barWidth=max((size_t)2,(size_t)canvasWidth/analysis.size());
+		const size_t barWidth=analysis.size()>0 ? max((size_t)2,(size_t)canvasWidth/analysis.size()) : 1;
 
 
 		// draw vertical octave separator lines
@@ -366,6 +368,18 @@ public:
 			dc.drawText(3,20+12,"for Freq. Analysis",18);
 		}
 
+
+		// draw the peaks
+		dc.setForeground(M_BRT_YELLOW);
+		size_t x=4;
+		for(size_t t=0;t<peaks.size();t++)
+		{
+			const size_t peakHeight=(size_t)floor(peaks[t]*canvasHeight);
+			const FXint y=canvasHeight-peakHeight+2;
+			dc.drawLine(x+1,y,x+barWidth-1,y);
+			x+=barWidth;
+		}
+
 		dc.end();
 		return 1;
 	}
@@ -385,28 +399,38 @@ public:
 		if(getWidth()!=desiredWidth)
 			setWidth(desiredWidth);
 
-
-/*
-		// start decreasing the max peak level after maxPeakFallTimer falls below zero
-		if((--maxPeakFallTimer)<0)
+		
+		// rebuild peaks if the number of elements in analysis changed from the last time this was called  (should really only do anything the first time this is called)
+		if(peaks.size()!=analysis.size())
 		{
-			//maxPeakLevel=0;
-			maxPeakLevel=maxPeakLevel-(sample_t)(MAX_SAMPLE*gMaxPeakFallRate);
-			maxPeakLevel=maxPeakLevel<0 ? 0 : maxPeakLevel;
-			maxPeakFallTimer=0;
+			peaks.clear();
+			for(size_t t=0;t<analysis.size();t++)
+			{
+				peaks.push_back(0.0);
+				peakFallDelayTimers.push_back(0);
+			}
 		}
 
-		// if the peak level is >= the maxPeakLevel then set a new maxPeakLevel and reset the peak file timer
-		if(peakLevel>=maxPeakLevel)
+
+		// make peaks fall
+		for(size_t t=0;t<peaks.size();t++)
 		{
-			maxPeakLevel=peakLevel;
-			maxPeakFallTimer=gMaxPeakFallDelayTime/gMeterUpdateTime;
+			peakFallDelayTimers[t]=max(0,peakFallDelayTimers[t]-1);
+			if(peakFallDelayTimers[t]==0) // only decrease the peak when the fall timer has reached zero
+				peaks[t]=max((float)0.0,(float)(peaks[t]-gAnalyzerPeakFallRate));
 		}
 
-		if(peakLevel>grandMaxPeakLevel)
-			setGrandMaxPeakLevel(peakLevel); // sets the label and everything
-*/
 
+		// update peaks if there is a new max
+		for(size_t t=0;t<analysis.size();t++)
+		{
+			if(peaks[t]<analysis[t])
+			{
+				peaks[t]=analysis[t];
+				peakFallDelayTimers[t]=gAnalyzerPeakFallDelayTime/gMeterUpdateTime;
+			}
+		}
+		
 		canvas->update(); // flag for repainting
 	}
 
@@ -425,6 +449,8 @@ private:
 	FXFont *statusFont;
 
 	vector<float> analysis;
+	vector<float> peaks;
+	vector<int> peakFallDelayTimers;
 	size_t octaveStride;
 };
 
