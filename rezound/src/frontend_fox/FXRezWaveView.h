@@ -38,6 +38,7 @@ enum ViewTypes { vtNormal, vtLoopSplit };
 */
 
 class FXWaveScrollArea;
+class FXWaveRuler;
 
 class FXRezWaveView : public FXPacker
 {
@@ -62,6 +63,7 @@ public:
 	void updateFromEdit();
 
 	void updateRuler();
+	void updateRulerFromScroll(int deltaX,FXEvent *event);
 
 	enum
 	{
@@ -92,7 +94,7 @@ private:
 	friend class FXWaveScrollArea;
 	friend class FXWaveRuler;
 
-	FXWindow *rulerPanel;
+	FXWaveRuler *rulerPanel;
 
 	FXWaveScrollArea *waveScrollArea;
 

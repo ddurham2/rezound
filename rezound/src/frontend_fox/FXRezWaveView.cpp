@@ -21,8 +21,18 @@
 #include "FXRezWaveView.h"
 
 #include "FXWaveScrollArea.h"
+#include "FXPopupHint.h"
+
+#include "CSoundFileManager.h"
+#include "CSoundWindow.h"
+
+#include "../backend/CActionParameters.h"
+#include "../backend/Edits/CCueAction.h"
 
 #include <string>
+#include <algorithm>
+
+#include <istring>
 
 #include "settings.h"
 
@@ -54,7 +64,13 @@ public:
 	long onEditCue(FXObject *object,FXSelector sel,void *ptr);
 	long onShowCueList(FXObject *object,FXSelector sel,void *ptr);
 
+	long onLeftBtnPress(FXObject *object,FXSelector sel,void *ptr);
+	long onMouseMove(FXObject *object,FXSelector sel,void *ptr);
 	long onLeftBtnRelease(FXObject *object,FXSelector sel,void *ptr);
+
+	// methods get information about and for altering which cue is focused
+	void focusNextCue();
+	void focusPrevCue();
 
 	enum
 	{
@@ -89,8 +105,16 @@ private:
 	FXFont *font;
 
 	size_t cueClicked; // the index of the cue clicked on holding the value between the click event and the menu item event
+	int cueClickedOffset; // used when dragging cues to know how far from the middle a cue was clicked
+	sample_pos_t origCueClickedTime;
 	sample_pos_t addCueTime; // the time in the audio where the mouse was clicked to add a cue if that's what they choose
 
+	size_t focusedCueIndex; // 0xffff,ffff if none focused
+	sample_pos_t focusedCueTime;
+
+	FXPopupHint *dragCueHint;
+
+	CMoveCueActionFactory *moveCueActionFactory;
 };
 
 
@@ -181,6 +205,13 @@ void FXRezWaveView::updateRuler()
 	rulerPanel->update();
 }
 
+void FXRezWaveView::updateRulerFromScroll(int deltaX,FXEvent *event)
+{
+	FXEvent e(*event);
+	e.last_x+=deltaX;
+	rulerPanel->onMouseMove(NULL,0,&e);
+}
+
 void FXRezWaveView::getWaveSize(int &top,int &height)
 {
 	top=waveScrollArea->getY();
@@ -197,6 +228,8 @@ void FXRezWaveView::getWaveSize(int &top,int &height)
 #include "../backend/CLoadedSound.h"
 #include "../backend/CSound.h"
 #include "../backend/CSoundPlayerChannel.h"
+
+#warning I might try making the zoom action zoom in and center the focused cue; then I would probably want to make clicking an un-cued area on the ruler make no cue focused so it would behave as before (with the start and stop positions)
 
 FXDEFMAP(FXWaveRuler) FXWaveRulerMap[]=
 {
@@ -219,9 +252,10 @@ FXDEFMAP(FXWaveRuler) FXWaveRulerMap[]=
 
 	FXMAPFUNC(SEL_COMMAND,			FXWaveRuler::ID_SHOW_CUE_LIST,			FXWaveRuler::onShowCueList),
 
-		// double click handler
+	// these handle drag, mouse click for focus, and mouse double click for edit cue(s)
+	FXMAPFUNC(SEL_LEFTBUTTONPRESS,		0,						FXWaveRuler::onLeftBtnPress),
+	FXMAPFUNC(SEL_MOTION,			0,						FXWaveRuler::onMouseMove),
 	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	0,						FXWaveRuler::onLeftBtnRelease),
-
 };
 
 FXIMPLEMENT(FXWaveRuler,FXComposite,FXWaveRulerMap,ARRAYNUMBER(FXWaveRulerMap))
@@ -235,7 +269,11 @@ FXWaveRuler::FXWaveRuler(FXComposite *p,FXRezWaveView *_parent,CLoadedSound *_lo
 	loadedSound(_loadedSound),
 	sound(_loadedSound->sound),
 
-	font(getApp()->getNormalFont())
+	font(getApp()->getNormalFont()),
+
+	dragCueHint(new FXPopupHint(p->getApp())),
+
+	moveCueActionFactory(NULL)
 {
 	enable();
 	flags|=FLAG_SHOWN; // I have to do this, or it will not show up.. like height is 0 or something
@@ -245,6 +283,13 @@ FXWaveRuler::FXWaveRuler(FXComposite *p,FXRezWaveView *_parent,CLoadedSound *_lo
 	d.weight=FONTWEIGHT_LIGHT;
 	d.size=65;
 	font=new FXFont(getApp(),d);
+
+	focusedCueIndex=0xffffffff;
+	focusNextCue(); // to make it focus the first one if there is one
+
+	dragCueHint->create();
+
+	moveCueActionFactory=new CMoveCueActionFactory;
 }
 
 FXWaveRuler::~FXWaveRuler()
@@ -314,7 +359,7 @@ long FXWaveRuler::onPaint(FXObject *object,FXSelector sel,void *ptr)
 	const size_t cueCount=sound->getCueCount();
 	for(size_t t=0;t<cueCount;t++)
 	{
-		// ??? I could figure out the min and max screen viable time and make sure that is in range before testing every cue
+		// ??? I could figure out the min and max screen-visible time and make sure that is in range before testing every cue
 		FXint cueXPosition=parent->waveScrollArea->getCueScreenX(t);
 
 		if(cueXPosition!=CUE_OFF_SCREEN)
@@ -329,6 +374,18 @@ long FXWaveRuler::onPaint(FXObject *object,FXSelector sel,void *ptr)
 			dc.drawLine(cueXPosition-1,height-4,cueXPosition-1,CUE_Y-1);
 			dc.drawLine(cueXPosition,height-1,cueXPosition,CUE_Y);
 			dc.drawLine(cueXPosition+1,height-4,cueXPosition+1,CUE_Y-1);
+
+			if(focusedCueIndex!=0xffffffff && focusedCueTime==sound->getCueTime(t))
+			{	// draw focus rectangle
+				const int textWidth=font->getTextWidth(cueName.data(),cueName.size());
+				const int textHeight=font->getTextHeight(cueName.data(),cueName.size());
+
+				const int x=cueXPosition-CUE_RADIUS;
+				const int y=min(height-1-textHeight,CUE_Y-CUE_RADIUS);
+				const int w=CUE_RADIUS*2+1+textWidth;
+				const int h=height-y;
+				dc.drawFocusRectangle(x-1,y+1,w+2,h-1);
+			}
 		}
 	}
 
@@ -352,8 +409,9 @@ size_t FXWaveRuler::getClickedCue(FXint x,FXint y)
 				FXint Y=CUE_Y;
 
 				// check distance from clicked point to the cue's position
-				if( ((x-X)*(x-X))+((y-Y)*(y-Y)) <= (CUE_RADIUS*CUE_RADIUS) )
+				if( ((x-X)*(x-X))+((y-Y)*(y-Y)) <= ((CUE_RADIUS+1)*(CUE_RADIUS+1)) )
 				{
+					cueClickedOffset=x-X;
 					cueClicked=t-1;
 					break;
 				}
@@ -504,21 +562,155 @@ long FXWaveRuler::onShowCueList(FXObject *object,FXSelector sel,void *ptr)
 	return 1;
 }
 
+#warning make it so that if you press esc while dragging a cue that it moves back to the original location
+long FXWaveRuler::onLeftBtnPress(FXObject *object,FXSelector sel,void *ptr)
+{
+	FXEvent* event=(FXEvent*)ptr;
+	if(event->click_count==1)
+	{
+		cueClicked=getClickedCue(event->win_x,event->win_y); // setting data member
+		if(cueClicked<sound->getCueCount())
+		{
+			origCueClickedTime=sound->getCueTime(cueClicked);
+
+			dragCueHint->setText(sound->getTimePosition(origCueClickedTime,gSoundFileManager->getSoundWindow(loadedSound)->getZoomDecimalPlaces()).c_str());
+			dragCueHint->show();
+			dragCueHint->autoplace();
+			
+			// set focused cue
+			focusedCueIndex=cueClicked;
+			focusedCueTime=sound->getCueTime(focusedCueIndex);
+			update();
+		}
+	}
+	return 0;
+}
+
+long FXWaveRuler::onMouseMove(FXObject *object,FXSelector sel,void *ptr)
+{
+	FXEvent* event=(FXEvent*)ptr;
+	if(event->state&LEFTBUTTONMASK && cueClicked<sound->getCueCount())
+	{	// dragging a cue around
+
+
+		const string cueName=sound->getCueName(cueClicked);
+		const FXint cueTextWidth=font->getTextWidth(cueName.data(),cueName.length());
+
+		// erase cue at old position
+		update((event->last_x-cueClickedOffset)-CUE_RADIUS-1,0,CUE_RADIUS*2+1+cueTextWidth+2,getHeight());	
+
+		// erase vertical cue line at old position
+		if(gDrawVerticalCuePositions) 
+			parent->waveScrollArea->redraw(event->last_x-cueClickedOffset,1); 
+
+		if(object==NULL) // simulated event from auto-scrolling
+		{
+			// get where the dragCueHint appears on the wave view canvas
+			FXint hint_win_x,hint_win_y;
+			dragCueHint->getParent()->translateCoordinatesTo(hint_win_x,hint_win_y,this,dragCueHint->getX(),dragCueHint->getY());
+	
+			// redraw what was under the dragCueHint (necessary when auto-scrolling)
+			parent->waveScrollArea->redraw(hint_win_x+(event->last_x-event->win_x),dragCueHint->getWidth());
+		}
+
+
+
+		sample_pos_t newTime=parent->waveScrollArea->getCueTimeFromX(event->win_x-cueClickedOffset);
+		
+		// update cue position
+		sound->setCueTime(cueClicked,newTime);
+		if(cueClicked==focusedCueIndex)
+			focusedCueTime=newTime;
+
+		// draw cue at new position
+		update((event->win_x-cueClickedOffset)-CUE_RADIUS-1,0,CUE_RADIUS*2+1+cueTextWidth+2,getHeight());
+
+		// draw vertical cue line at new position
+		if(gDrawVerticalCuePositions) 
+			parent->waveScrollArea->redraw(event->win_x-cueClickedOffset,1); 
+
+		dragCueHint->setText(sound->getTimePosition(newTime,gSoundFileManager->getSoundWindow(loadedSound)->getZoomDecimalPlaces()).c_str());
+		dragCueHint->autoplace();
+
+		// have to call canvas->repaint() on real mouse moves because if while autoscrolling a real (that is, object!=NULL) mouse move event occurs, then the window may or may not have been blitted leftward or rightward yet and we will erase the vertical cue position at the wrong position (or something like that, I really had a hard time figuring out the problem that shows up if you omit this call to repaint() )
+		if(object && gDrawVerticalCuePositions)
+			parent->waveScrollArea->canvas->repaint();
+
+		if(event->win_x<0 || event->win_x>=width)
+		{ // scroll parent window leftwards or rightwards if mouse is beyond the window edges
+#if REZ_FOX_VERSION>=10125
+			parent->waveScrollArea->startAutoScroll(event);
+#else
+			parent->waveScrollArea->startAutoScroll(event->win_x,event->win_y);
+#endif
+		}
+
+	}
+	return 0;
+}
+
 long FXWaveRuler::onLeftBtnRelease(FXObject *object,FXSelector sel,void *ptr)
 {
 	FXComposite::handle(object,sel,ptr); // if FXComposite ever starts sending SEL_DOUBLECLICKED events, then the event will happen twice because I'm doing what's below.. detect the version and remove this handler
 
 	FXEvent* event=(FXEvent*)ptr;
-	if(event->click_count==2) // <-- double click
+	if(event->click_count==1) //	<-- single click
 	{
-			// setting data member
-		cueClicked=getClickedCue(event->win_x,event->win_y);
+
+		if(cueClicked<sound->getCueCount() && sound->getCueTime(cueClicked)!=origCueClickedTime)
+		{	// was dragging a cue around
+			const sample_pos_t newCueTime=sound->getCueTime(cueClicked);
+
+			// set back to the orig position
+			sound->setCueTime(cueClicked,origCueClickedTime);
+
+			// set cue to new position except use an AAction object so it goes on the undo stack
+			CActionParameters actionParameters(NULL);
+			actionParameters.addUnsignedParameter("index",cueClicked);
+			actionParameters.addSamplePosParameter("position",newCueTime);
+			moveCueActionFactory->performAction(loadedSound,&actionParameters,false);
+		}
+
+		dragCueHint->hide();
+		parent->waveScrollArea->stopAutoScroll();
+	}
+	else if(event->click_count==2) //	<-- double click
+	{
+		cueClicked=getClickedCue(event->win_x,event->win_y); // setting data member
 		if(cueClicked<sound->getCueCount())
 			return onEditCue(object,sel,(void *)cueClicked);
 		else
 			return onShowCueList(object,sel,ptr);
 	}
+	return 0;
+}
+
+void FXWaveRuler::focusNextCue()
+{
+	if(focusedCueIndex==0xffffffff)
+	{
+		size_t dummy;
+		if(!sound->findNearestCue(0,focusedCueIndex,dummy))
+			focusedCueIndex=0xffffffff;
+		else
+			focusedCueTime=sound->getCueTime(focusedCueIndex);
+	}
 	else
-		return 0;
+	{
+		if(sound->findNextCue(focusedCueTime,focusedCueIndex))
+			focusedCueTime=sound->getCueTime(focusedCueIndex);
+	}
+}
+
+void FXWaveRuler::focusPrevCue()
+{
+	if(focusedCueIndex==0xffffffff)
+		focusNextCue(); // would implement the same thing here, so just call it
+	else
+	{
+		size_t dummy;
+		if(sound->findPrevCue(focusedCueTime,focusedCueIndex))
+			focusedCueTime=sound->getCueTime(focusedCueIndex);
+	}
 }
 
