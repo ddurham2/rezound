@@ -25,7 +25,7 @@
 
 #include <algorithm>
 
-#define PREALLOC_SECONDS 5
+#define PREALLOC_SECONDS 1
 
 ASoundRecorder::ASoundRecorder() :
 	clipCount(0),
@@ -41,66 +41,47 @@ ASoundRecorder::~ASoundRecorder()
 
 void ASoundRecorder::start(const double _startThreshold,const sample_pos_t maxDuration)
 {
-	mutex.lock();
-	try
+	CMutexLocker l(mutex);
+	if(!started)
 	{
-		if(!started)
-		{
-			if(_startThreshold>0)
-				startThreshold=-1; // no threshold asked for
-			else
-				startThreshold=dBFS_to_amp(_startThreshold); // translate dBFS into an actual sample value
+		if(_startThreshold>0)
+			startThreshold=-1; // no threshold asked for
+		else
+			startThreshold=dBFS_to_amp(_startThreshold); // translate dBFS into an actual sample value
 
-			started=true;
-			if(maxDuration!=NIL_SAMPLE_POS && (MAX_LENGTH-writePos)>maxDuration)
-				stopPosition=writePos+maxDuration;
-			else
-				stopPosition=NIL_SAMPLE_POS;
-		}
-
-		mutex.unlock();
-	}
-	catch(...)
-	{
-		mutex.unlock();
-		throw;
+		started=true;
+		if(maxDuration!=NIL_SAMPLE_POS && (MAX_LENGTH-writePos)>maxDuration)
+			stopPosition=writePos+maxDuration;
+		else
+			stopPosition=NIL_SAMPLE_POS;
 	}
 }
 
 void ASoundRecorder::stop()
 {
-	mutex.lock();
-	try
+	CMutexLocker l(mutex);
+	if(started)
 	{
-		if(started)
+		started=false;
+
+		// remove extra prealloceded space
+		sound->lockForResize();
+		try
 		{
-			started=false;
+			if(prealloced>0)
+				// remove extra space
+				sound->removeSpace(sound->getLength()-prealloced,prealloced);
+			prealloced=0;
 
-			// remove extra prealloceded space
-			sound->lockForResize();
-			try
-			{
-				if(prealloced>0)
-					// remove extra space
-					sound->removeSpace(sound->getLength()-prealloced,prealloced);
-				prealloced=0;
-
-				sound->unlockForResize();
-			}
-			catch(...)
-			{
-				sound->unlockForResize();
-				throw;
-			}
+			sound->unlockForResize();
 		}
+		catch(...)
+		{
+			sound->unlockForResize();
+			throw;
+		}
+	}
 
-		mutex.unlock();
-	}
-	catch(...)
-	{
-		mutex.unlock();
-		throw;
-	}
 }
 
 void ASoundRecorder::redo(const sample_pos_t maxDuration)
@@ -110,27 +91,17 @@ void ASoundRecorder::redo(const sample_pos_t maxDuration)
 	// any extra allocated space beyond what was recorded that doesn't need to be
 	// there
 
-	mutex.lock();
-	try
-	{
-		// clear all cues that were added during the last record
-		addedCues.clear();
+	CMutexLocker l(mutex);
+	// clear all cues that were added during the last record
+	addedCues.clear();
 
-		writePos=origLength;
-		prealloced=sound->getLength()-origLength;
+	writePos=origLength;
+	prealloced=sound->getLength()-origLength;
 
-		if(maxDuration!=NIL_SAMPLE_POS && (MAX_LENGTH-writePos)>maxDuration)
-			stopPosition=writePos+maxDuration;
-		else
-			stopPosition=NIL_SAMPLE_POS;
-
-		mutex.unlock();
-	}
-	catch(...)
-	{
-		mutex.unlock();
-		throw;
-	}
+	if(maxDuration!=NIL_SAMPLE_POS && (MAX_LENGTH-writePos)>maxDuration)
+		stopPosition=writePos+maxDuration;
+	else
+		stopPosition=NIL_SAMPLE_POS;
 }
 
 void ASoundRecorder::done()
@@ -216,7 +187,7 @@ void ASoundRecorder::onData(const sample_t *samples,const size_t _sampleFramesRe
 */
 
 	size_t sampleFramesRecorded=_sampleFramesRecorded;
-	mutex.lock();
+	CMutexLocker l(mutex);
 	try
 	{
 		const unsigned channelCount=sound->getChannelCount();
@@ -267,13 +238,12 @@ void ASoundRecorder::onData(const sample_t *samples,const size_t _sampleFramesRe
 							samples+=(t*channelCount);
 							sampleFramesRecorded-=t;
 
-							goto goAheadAndSave; // using 'goto', because 'break' can go past two loops
+							goto goAheadAndSave; // using 'goto', because 'break' can't go past two loops
 						}
 						_samples+=channelCount;
 					}
 
 				}
-				mutex.unlock();
 				return;
 			}
 
@@ -321,16 +291,13 @@ void ASoundRecorder::onData(const sample_t *samples,const size_t _sampleFramesRe
 
 			if(stopPosition!=NIL_SAMPLE_POS && writePos>=stopPosition)
 			{
-				mutex.unlock();
 				stop();
 				return;
 			}
 		}
-		mutex.unlock();
 	}
 	catch(...)
 	{
-		mutex.unlock();
 		throw;
 	}
 }
