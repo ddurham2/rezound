@@ -30,8 +30,9 @@ CChannelSelectDialog *gChannelSelectDialog=NULL;
 
 FXDEFMAP(CChannelSelectDialog) CChannelSelectDialogMap[]=
 {
-//	Message_Type			ID					Message_Handler
-	//FXMAPFUNC(SEL_COMMAND,		CChannelSelectDialog::ID_OKAY_BUTTON,	CChannelSelectDialog::onOkayButton),
+//	Message_Type			ID						Message_Handler
+	FXMAPFUNC(SEL_COMMAND,		CChannelSelectDialog::ID_DEFAULT_BUTTON,	CChannelSelectDialog::onDefaultButton),
+	FXMAPFUNC(SEL_COMMAND,		CChannelSelectDialog::ID_CLEAR_BUTTON,		CChannelSelectDialog::onClearButton),
 };
 		
 
@@ -51,10 +52,16 @@ CChannelSelectDialog::CChannelSelectDialog(FXWindow *mainWindow) :
 
 	for(unsigned t=0;t<MAX_CHANNELS;t++)			    // ??? could map it to some name like "Left, Right, Center, Bass... etc"
 		checkBoxes[t]=new FXCheckButton(getFrame(),("Channel "+istring(t)).c_str(),NULL,0,CHECKBUTTON_NORMAL | LAYOUT_CENTER_X);
+
+	FXPacker *buttonPacker=new FXHorizontalFrame(getFrame(),LAYOUT_BOTTOM|LAYOUT_FILL_X);
+		new FXButton(buttonPacker,"Default",NULL,this,ID_DEFAULT_BUTTON,BUTTON_NORMAL);
+		new FXButton(buttonPacker,"Clear",NULL,this,ID_CLEAR_BUTTON,BUTTON_NORMAL);
 }
 
 bool CChannelSelectDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
+	this->actionSound=actionSound;
+
 	// don't show the dialog if there is only one channel
 	if(actionSound->sound->getChannelCount()<=1)
 	{
@@ -89,5 +96,23 @@ bool CChannelSelectDialog::show(CActionSound *actionSound,CActionParameters *act
 	}
 	return(false);
 
+}
+
+long CChannelSelectDialog::onDefaultButton(FXObject *sender,FXSelector sel,void *ptr)
+{
+	for(unsigned x=0;x<MAX_CHANNELS;x++)
+		checkBoxes[x]->setCheck(FALSE);
+
+	for(unsigned x=0;x<actionSound->sound->getChannelCount();x++)
+		checkBoxes[x]->setCheck(actionSound->doChannel[x] ? TRUE : FALSE);
+
+	return 1;
+}
+
+long CChannelSelectDialog::onClearButton(FXObject *sender,FXSelector sel,void *ptr)
+{
+	for(unsigned x=0;x<MAX_CHANNELS;x++)
+		checkBoxes[x]->setCheck(FALSE);
+	return 1;
 }
 
