@@ -28,6 +28,7 @@
 
 #include "CStatusComm.h"
 
+#warning add an endian dropdown or toggle button
 
 FXDEFMAP(CRawDialog) CRawDialogMap[]=
 {
@@ -84,23 +85,40 @@ CRawDialog::CRawDialog(FXWindow *mainWindow) :
 
 	FXComposite *t;
 
-	new FXLabel(main,"Data Start:");
-	t=new FXHorizontalFrame(main,0, 0,0,0,0, 0,0,0,0);
-		dataOffsetTextBox=new FXTextField(t,10,NULL,0,TEXTFIELD_NORMAL|TEXTFIELD_INTEGER);
+	offsetLabel=new FXLabel(main,"Data Start:");
+	offsetFrame=new FXHorizontalFrame(main,0, 0,0,0,0, 0,0,0,0);
+		dataOffsetTextBox=new FXTextField(offsetFrame,10,NULL,0,TEXTFIELD_NORMAL|TEXTFIELD_INTEGER);
 		dataOffsetTextBox->setText("0");
-		new FXLabel(t,"in bytes");
+		new FXLabel(offsetFrame,"in bytes");
 
-	(new FXLabel(main,"Data Length:"))->setTipText("normally leave this 0");
-	t=new FXHorizontalFrame(main,0, 0,0,0,0, 0,0,0,0);
-		dataLengthTextBox=new FXTextField(t,10,NULL,0,TEXTFIELD_NORMAL|TEXTFIELD_INTEGER);
+	lengthLabel=new FXLabel(main,"Data Length:");
+		lengthLabel->setTipText("normally leave this 0");
+	lengthFrame=new FXHorizontalFrame(main,0, 0,0,0,0, 0,0,0,0);
+		dataLengthTextBox=new FXTextField(lengthFrame,10,NULL,0,TEXTFIELD_NORMAL|TEXTFIELD_INTEGER);
 		dataLengthTextBox->setText("0");
 		dataLengthTextBox->setTipText("normally leave this 0");
-		(new FXLabel(t,"in audio frames"))->setTipText("normally leave this 0");
+		(new FXLabel(lengthFrame,"in audio frames"))->setTipText("normally leave this 0");
 }
 
 
-bool CRawDialog::show(AFrontendHooks::RawParameters &parameters)
+bool CRawDialog::show(AFrontendHooks::RawParameters &parameters,bool showOffsetAndLengthParameters)
 {
+	if(showOffsetAndLengthParameters)
+	{
+		offsetLabel->show();
+		offsetFrame->show();
+		lengthLabel->show();
+		lengthFrame->show();
+	}
+	else
+	{
+		offsetLabel->hide();
+		offsetFrame->hide();
+		lengthLabel->hide();
+		lengthFrame->hide();
+	}
+	recalc();
+
 	if(execute(PLACEMENT_SCREEN))
 	{
 		parameters.channelCount=atoi(channelsCountComboBox->getText().text());

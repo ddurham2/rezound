@@ -65,7 +65,7 @@ public:
 
 	bool promptForRecord(ASoundRecorder *recorder);
 
-	bool promptForRawParameters(RawParameters &parameters);
+	bool promptForRawParameters(RawParameters &parameters,bool showOffsetAndLengthParameters);
 	bool promptForOggCompressionParameters(OggCompressionParameters &parameters);
 	bool promptForMp3CompressionParameters(Mp3CompressionParameters &parameters);
 	bool promptForVoxParameters(VoxParameters &parameters);

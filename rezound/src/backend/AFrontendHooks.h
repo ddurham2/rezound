@@ -67,7 +67,7 @@ public:
 		unsigned channelCount;
 		unsigned sampleRate;
 		
-		enum
+		enum SampleFormats
 		{
 			f8BitSignedPCM=0,
 			f8BitUnsignedPCM=4,
@@ -91,7 +91,7 @@ public:
 		unsigned dataLength; // in frames; can be 0 for no user limit
 
 	};
-	virtual bool promptForRawParameters(RawParameters &parameters)=0;
+	virtual bool promptForRawParameters(RawParameters &parameters,bool showOffsetAndLengthParameters)=0;
 
 
 	// called when the user is saving an ogg file and compression parameters are needed

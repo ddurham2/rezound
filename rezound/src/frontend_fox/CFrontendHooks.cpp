@@ -288,9 +288,9 @@ bool CFrontendHooks::promptForRecord(ASoundRecorder *recorder)
 	return(false);
 }
 
-bool CFrontendHooks::promptForRawParameters(RawParameters &parameters)
+bool CFrontendHooks::promptForRawParameters(RawParameters &parameters,bool showOffsetAndLengthParameters)
 {
-	return(rawDialog->show(parameters));
+	return(rawDialog->show(parameters,showOffsetAndLengthParameters));
 }
 
 bool CFrontendHooks::promptForOggCompressionParameters(OggCompressionParameters &parameters)

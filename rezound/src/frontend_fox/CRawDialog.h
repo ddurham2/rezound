@@ -37,7 +37,7 @@ public:
 
 	CRawDialog(FXWindow *mainWindow);
 
-	bool show(AFrontendHooks::RawParameters &parameters);
+	bool show(AFrontendHooks::RawParameters &parameters,bool showOffsetAndLengthParameters);
 
 	//long onRadioButton(FXObject *sender,FXSelector sel,void *ptr);
 
@@ -57,8 +57,12 @@ private:
 	FXComboBox *channelsCountComboBox;
 	FXComboBox *sampleRateComboBox;
 	FXComboBox *sampleFormatComboBox;
-	FXTextField *dataOffsetTextBox;
-	FXTextField *dataLengthTextBox;
+	FXLabel *offsetLabel;
+	FXHorizontalFrame *offsetFrame;
+		FXTextField *dataOffsetTextBox;
+	FXLabel *lengthLabel;
+	FXHorizontalFrame *lengthFrame;
+		FXTextField *dataLengthTextBox;
 };
 
 #endif
