@@ -50,6 +50,8 @@ public:
 	const size_t getOpenedCount() const;
 	CSoundWindow *getSoundWindow(size_t index);
 
+	CSoundWindow *getSoundWindow(CLoadedSound *loadedSound);
+
 	CLoadedSound *getActive();
 	CSoundWindow *getActiveWindow();
 	void updateAfterEdit(CLoadedSound *soundToUpdate=NULL); // if NULL, then use the active one

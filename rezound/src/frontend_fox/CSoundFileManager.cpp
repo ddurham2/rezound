@@ -125,25 +125,23 @@ CSoundWindow *CSoundFileManager::getActiveWindow()
 	return NULL;
 }
 
+CSoundWindow *CSoundFileManager::getSoundWindow(CLoadedSound *loadedSound)
+{
+	for(size_t t=0;t<soundWindows.size();t++)
+	{
+		if(soundWindows[t]->loadedSound==loadedSound)
+			return soundWindows[t];
+	}
+	throw runtime_error(string(__func__)+" -- given soundToUpdate was not found in the list of loaded sounds");
+}
+
 void CSoundFileManager::updateAfterEdit(CLoadedSound *soundToUpdate)
 {
 	CSoundWindow *activeSoundWindow=getActiveWindow();
 
 	// however, if soundToUpdate was passed, then find that sound window
 	if(soundToUpdate!=NULL)
-	{
-		activeSoundWindow=NULL;
-		for(size_t t=0;t<soundWindows.size();t++)
-		{
-			if(soundWindows[t]->loadedSound==soundToUpdate)
-			{
-				activeSoundWindow=soundWindows[t];
-				break;
-			}
-		}
-		if(activeSoundWindow==NULL)
-			throw runtime_error(string(__func__)+" -- given soundToUpdate was not found in the list of loaded sounds");
-	}
+		activeSoundWindow=getSoundWindow(soundToUpdate);
 
 	if(activeSoundWindow)
 	{
