@@ -1,0 +1,41 @@
+
+I have some ideas about the way clipboards and editing would work...
+
+Utopian Ideal:
+
+There would be one single pool file for all working space.  All CSound objects would use this one pool file.  All non-system clipboards
+would use this pool file to store data.  What this would allow, is being able to use TPoolFile::moveData in the cases of cut then paste.
+And it would speed copy/paste except the copy could be delayed until the region that was copied needs to be modified.  But a copy 
+followed by a paste would only take as long as the paste.
+
+Another advantage would be a single working space rather than multiple files scattered out with the input files.
+
+---------------------------------------
+
+Something I could do for the moment to at least speed cut/paste would be for the clipboard class to gain a reference to the CSound
+object and would be able to probe into it's temp audio pools to get 'cutted' data.  The reference would imply a reference count so
+that if they cut from then close the file, the data would still be available.  The clipboard would release the reference when something
+else was copied to it, or the clipboard was destroyed.  Also CSoundWindow should then use this reference idea.
+
+
+--------------------------------------
+
+But, currently, ASoundClipboard is the base class for all clipboards it has pure virtual methods,
+		// read data out of the CSound object and put onto the clipboard
+	copyFrom(CSound *, start, length)
+		// write data in to the CSound object from existing clipboard data
+	copyTo(CSound *, start, length, mixMethod)
+		// returns true if copyFrom can be called
+	bool isReadOnly() const
+
+	which are overloaded to use whatever resource that derivation is for.
+
+	Some derivations might be:
+		use the system clipboard area for copying data between applications
+		use a application specific clipboard for having multiple application clipboards to choose from
+		use a recording source as the clipboard data to paste from
+		use a file/url as the clipboard data to paste from
+
+	Also, in this generic interface to the idea of a clipboard should be sample rate conversion when reading from the clipboard
+
+
