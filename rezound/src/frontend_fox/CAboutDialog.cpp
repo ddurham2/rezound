@@ -39,7 +39,7 @@ FXIMPLEMENT(CAboutDialog,FXDialogBox,CAboutDialogMap,ARRAYNUMBER(CAboutDialogMap
 // ----------------------------------------
 
 CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
-	FXDialogBox(mainWindow,"About ReZound",DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE,0,0,620,400, 0,0,0,0, 0,0)
+	FXDialogBox(mainWindow,"About ReZound",DECOR_TITLE|DECOR_BORDER|DECOR_RESIZE,0,0,620,450, 0,0,0,0, 0,0)
 {
 	FXPacker *contents=new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 2,2,2,2, 0,0);
 
@@ -64,6 +64,22 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 		tf->setBackColor(t->getBackColor()); \
 		}
 
+	// ??? temporary for the alpha stage
+	tab=new FXTabItem(tabs,"Please Read",NULL,TAB_TOP_NORMAL);
+	{
+		FXPacker *t=new FXPacker(tabs, LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_RAISED|FRAME_THICK);
+
+		(new FXText(t,NULL,0,TEXT_READONLY|TEXT_WORDWRAP|LAYOUT_FILL_X|LAYOUT_FILL_Y))->setText("*** PLEASE READ ***
+
+   Welcome to this alpha stage release of ReZound.  The primary goal for this alpha stage is to get feedback on what problems ReZound has compiling on different linux distros and such.  Please report any problems you had with the configure/compiling process to me through the bug report link on the next tab in this about dialog.
+   There aren't a huge number of features yet, but they are growing.  I plan to write a brief document on how to implement new actions/effects/edits.  I specifically designed ReZound so that it would be easy to create new actions.
+   If you have any suggestions about the UI or other functionality then please report them also to me.  Thank you for giving ReZound a try.  I hope your experience is a good one and that you will find this application useful when you need to edit audio as I find it useful.
+
+   -- Davy
+		");								   
+
+	}
+
 	tab=new FXTabItem(tabs,"About",NULL,TAB_TOP_NORMAL);
 	{
 		FXMatrix *t=new FXMatrix(tabs,2,MATRIX_BY_COLUMNS | LAYOUT_FILL_X | FRAME_RAISED|FRAME_THICK);
@@ -75,7 +91,7 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 		MAKE_LINK(t,"Bug Reports","http://sourceforge.net/tracker/?group_id=5056&atid=105056");
 		MAKE_LINK(t,"Feature Requests","http://sourceforge.net/tracker/?atid=355056&group_id=5056&func=browse");
 		MAKE_LINK(t,"","");
-		MAKE_LINK(t,"Please Read","http://sourceforge.net/docman/display_doc.php?docid=9886&group_id=5056");
+		MAKE_LINK(t,"Also Please Read","http://sourceforge.net/docman/display_doc.php?docid=9886&group_id=5056");
 	}
 
 	tab=new FXTabItem(tabs,"Thanks To",NULL,TAB_TOP_NORMAL);

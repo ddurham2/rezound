@@ -203,6 +203,30 @@ void CMainWindow::hide()
 	FXMainWindow::hide();
 }
 
+#include <CNestedDataFile/CNestedDataFile.h>
+#include <stdlib.h>
+void CMainWindow::showAbout()
+{
+	// this is called whenever the application starts
+	// I do it to make sure the user at least knows *why* this release was made for the alpha and beta stages
+	// make the about dialog show up some fixed number of times every time the version changes
+	string version=gSettingsRegistry->getValue("SeenAboutDialogVersion");
+	string count=gSettingsRegistry->getValue("SeenAboutDialogCount");
+	if(version!=REZOUND_VERSION)
+	{ // different version
+		gSettingsRegistry->createKey("SeenAboutDialogVersion",REZOUND_VERSION);
+		gSettingsRegistry->createKey("SeenAboutDialogCount","1");
+	}
+	else
+	{ // same version, now check count or increment count
+		if(atoi(count.c_str())>2)
+			return; // been seen 3 times already
+		else
+			gSettingsRegistry->createKey("SeenAboutDialogCount",istring(atoi(count.c_str())+1));
+	}
+	gAboutDialog->execute(PLACEMENT_SCREEN);
+}
+
 /*
    This is the class for the reopen submenu.  It intercepts calls to FXMenuPane::popup ()
    so it can create the menu items which can change between each popup.

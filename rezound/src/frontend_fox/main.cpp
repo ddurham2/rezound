@@ -85,6 +85,8 @@ int main(int argc,char *argv[])
 		for(size_t t=0;t<errors.size();t++)
 			Error(errors[t]);
 
+		mainWindow->showAbout();
+
 		application->run();
 
 
