@@ -1,3 +1,9 @@
+rezound-0.8.1beta -- 6/26/2003
+	This is mostly a quick bug-fix release
+	- Made some i18n improvements (including font and error fixes)
+	- Fixed several compile errors that people were having with 0.8.0beta
+	- Fixed a pthread_rwlock_t compile error
+
 rezound-0.8.0beta -- 6/24/2003
 	This is a major new feature release, and it has been a while
 	- Added a new play mode: Loop Selection but Skip Most of the Middle
