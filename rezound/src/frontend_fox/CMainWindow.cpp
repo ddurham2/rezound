@@ -1038,7 +1038,8 @@ void CMainWindow::createMenus()
 			new FXMenuSeparator(menu);
 			new FXMenuCaption(menu,"Like PATH, set LADSPA_PATH to point");
 			new FXMenuCaption(menu,"to a directory(s) containing LADSPA");
-			new FXMenuCaption(menu,"plugin .so files");
+			new FXMenuCaption(menu,"plugin .so file at least once.  Or");
+			new FXMenuCaption(menu,"edit the value in ~/.rezound/registry.dat");
 		}
 		else
 		{

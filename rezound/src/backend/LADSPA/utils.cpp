@@ -35,6 +35,8 @@
 #include <string>
 #include <CPath.h>
 
+#include "../settings.h"
+
 
 
 
@@ -48,11 +50,9 @@ const vector<const LADSPA_Descriptor *> findLADSPAPlugins() {
   const char * pcLADSPAPath;
   const char * pcStart;
 
-  pcLADSPAPath = getenv("LADSPA_PATH");
-  if (!pcLADSPAPath) {
-    fprintf(stderr,"Warning: You do not have a LADSPA_PATH environment variable set.\n");
+  pcLADSPAPath = gLADSPAPath.c_str();
+  if (pcLADSPAPath=="")
     return list;
-  }
 
   set<string> alreadySearched;
   

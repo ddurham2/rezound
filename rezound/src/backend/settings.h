@@ -85,6 +85,8 @@ extern string gJACKOutputPortNames[64];
 extern string gJACKInputPortNames[64];
 #endif
 
+extern string gLADSPAPath;
+
 
 // This specifies the directory to fall back to if we cannot write
 // to the directory where we're loading a file from, or if it's 

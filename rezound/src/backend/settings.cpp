@@ -21,7 +21,9 @@
 #include "settings.h"
 
 #include <stddef.h>
-#include <string>
+#include <stdlib.h> // for getenv
+
+#include <istring>
 
 CNestedDataFile *gSettingsRegistry=NULL;
 
@@ -76,6 +78,9 @@ int gPortAudioInputDevice=0;
 string gJACKOutputPortNames[64];
 string gJACKInputPortNames[64];
 #endif
+
+
+string gLADSPAPath="";
 
 
 string gFallbackWorkDir="/tmp"; // ??? would be something else on non-unix platforms
@@ -236,6 +241,14 @@ void readBackendSettings()
 	}
 #endif
 
+	GET_SETTING("LADSPA_PATH",gLADSPAPath,string)
+	if(gLADSPAPath=="")
+	{
+		if(getenv("LADSPA_PATH")==NULL)
+    			fprintf(stderr,"Warning: You do not have a LADSPA_PATH environment variable set.\n");
+		else
+			gLADSPAPath=mnn(getenv("LADSPA_PATH"));
+	}
 
 	// where ReZound should fallback to put working files if it can't write to where it loaded a file from
 		// ??? This could be a vector where it would try multiple locations finding one that isn't full or close to full relative to the loaded file size
@@ -324,6 +337,8 @@ void writeBackendSettings()
 		}
 	}
 #endif
+
+	gSettingsRegistry->createValue<string>("LADSPA_PATH",gLADSPAPath);
 
 	gSettingsRegistry->createValue<string>("fallbackWorkDir",gFallbackWorkDir);
 
