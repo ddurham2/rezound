@@ -221,6 +221,7 @@ const sample_t ASoundPlayer::getPeakLevel(unsigned channel) const
 // multiple of deltaOctave (i.e when deltaOctave is 0.5, then 
 // the bands are defined as octaves: 0, 0.5, 1.0, 1.5, 2.0, 2.5, etc)
 
+// ??? these need to be settings in the registry and have enforced limits
 static const float baseOctave=40;	// bottom frequency of analyzer  (actually the first band contains from 0Hz to upperFreqAtOctave(0) )
 static const size_t octaveStride=6;	// 6 bands per octave
 static const float deltaOctave=1.0/octaveStride;
