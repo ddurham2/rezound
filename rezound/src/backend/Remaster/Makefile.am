@@ -29,6 +29,7 @@ include $(top_srcdir)/config/am_include.mk
 ## 
 noinst_HEADERS= \
 		CBalanceAction.h \
+		CMonoizeAction.h \
 		CNoiseGateAction.h \
 		CRemoveDCAction.h \
 		CUnclipAction.h \
@@ -40,6 +41,7 @@ noinst_HEADERS= \
 noinst_LTLIBRARIES=libRemaster.la
 libRemaster_la_SOURCES= \
 			CBalanceAction.cpp \
+			CMonoizeAction.cpp \
 			CNoiseGateAction.cpp \
 			CRemoveDCAction.cpp \
 			CUnclipAction.cpp \

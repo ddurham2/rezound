@@ -25,6 +25,7 @@
 
 
 #include "CBalanceAction.h"
+#include "CMonoizeAction.h"
 #include "CUnclipAction.h"
 #include "CRemoveDCAction.h"
 #include "CNoiseGateAction.h"

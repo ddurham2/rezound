@@ -49,6 +49,19 @@ public:
 
 
 
+// --- monoize ------------------------
+
+class CMonoizeActionDialog : public CActionParamDialog
+{
+public:
+	CMonoizeActionDialog(FXWindow *mainWindow);
+	virtual ~CMonoizeActionDialog(){}
+
+	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
+};
+
+
+
 // --- noise gate ------------------------
 
 class CNoiseGateDialog : public CActionParamDialog
