@@ -1,14 +1,6 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- go ahead and implement a frontend for raw.. parameters should be:
-		- sample rate
-		- number of channels
-			- interleaved or non-interleaved channels
-		- several sample format choices.. use all of audiofile's abilities
-			- big or little endian
-		- bytes to skip at the beginning
-
 	- need to have a hot-key that centers the cue's by seeing the right or left most one on screen and centering the one after that.. might include the start and stop positions in that too
 
 	- add a quick (shortcut to) fading in or out the selection use x^2 for the algorithm
@@ -88,8 +80,6 @@
 	- If I did every want to get rid of using reswrap, then I could have CFOXIcons go out and manually load from disk the icon files by looking in the share directory.. this would allow the user to replace the icons if they wanted and it would still avoid loading a reused icon over and over since it's abstracted in the CFOXIcon class
 
 	- like a webbrowser... if the program is already running and they run it again with a filename... just open it in the existing process... 
-
-	- in subsequent versions when a default width/height of a dialog changes, I should have stored the version in the registry, if that's older, then I should remove the WindowDimensions key from the registry
 
 	- in order to create multiple taps for an echo effect... I could have the dialog have tabs and each tap could be tap.. there would be buttons outside the tab bar to insert, remove, move left/right the tabs to rearrange the taps
 
@@ -282,4 +272,15 @@
 			- I'm not sure why it's not a problem and perhaps it will be in the future...
 				- But, while the pogress dialog is showing, the sound object being worked on is usually locked for resize so if a paint message tried to be processed for the sound window's waveform view it would cause the applicaiton to lock up
 				- Perhaps fox doesn't process paint messages in a sparate thread, which is fortunate at the moment, however if he changes this behavior, I would need to probably trylock and just paint the background color if it couldn't lock... Actions usually call refresh after the action is completed, so that should redraw any places where we couldn't update
+
+	- go ahead and implement a frontend for raw.. parameters should be:
+		- sample rate
+		- number of channels
+			- interleaved or non-interleaved channels
+		- several sample format choices.. use all of audiofile's abilities
+			- big or little endian
+		- bytes to skip at the beginning
+
+	- in subsequent versions when a default width/height of a dialog changes, I should have stored the version in the registry, if that's older, then I should remove the WindowDimensions key from the registry
+		- I just removed all splitter positions and window dimensions whenever the version changes
 

@@ -31,11 +31,6 @@
 
 	- There may be some more formats that libaudiofile supports... I just didn't see them in the docs... work with the author to include any others
 	
-	- implement a windowed FFT DSP block... I'm not quite sure what the interface should be
-		- I think it should be that you initialize the DSPBlock with some number of samples and then you can use a outputSample=block.processSample(inputSample) type scheme where internally it is windowing the data and doing the window-and-add method
-			- well, actually, this is probably what the interface to an FFT convolver would look like, except I wouldn't call it FFT, that would just be the implementation it used
-			- oooooo I can't wait to hear what a reverb will sound like using FFT convolution
-
 	- add   PCM to PWM  and  PWM to PCM  actions... I'm not sure if they would really fall under Effects... Maybe a new category should be created.  If a new one, then plan other new actions related to these.
 
 
@@ -63,15 +58,6 @@
 	- To speed up initial work upon loading a large file (>100mb) I could have the loading functions calculate the peak chunk info instead of loading then calcing the peak chunk on the first draw which causes it to have to read and write the data twice instead of once
 		- or use the background fage as I'm leaning toward
 
-	- This is partially complete... I could go further to do it to all actions possible (for the realtime value later)
-		- I could make the noise-gate/exciter(done) and compresser/limiter(doesn't exist yet) CDSPBlocks so their abilities would be easily used in other effects
-			- Plus, it would be possible to use in realtime applications eventually
-			- I could do the same for the rate change (I could construct the CDSPBlock with the graph parameter object, and the length of the sound)
-				 - DONE: Except for the performance hit of virtual functions or pointers to functions in the algorithm, I could create an LFO object which some of the CDSP-blocks could use... Constant LFOs would exist, and an LFO for the CGraphParameterNodes (given a length until repeat) could be given
-					- might not take a performance hit of virtual functions if I precalculate a table for the LFOs
-				 - (I did this already and the performance hit was actually quite acceptable)
-			- The same could go for CChangeAmplitudeRate, flange(done) and Echo(done) effect
-
 	- It would seem profitable to merge CActionSound and CActionParameters into being the same class, since the sound, start and stop positions, and doChannels of CActionSound seem to also be parameters to the action
 		- However, the reason I didn't do this right away, was because I thought that someday I might want to stream CActionParameters to disk and be able to recall it in the future to 
 		  to do the action again with the same parameters.  But, the sound, stop and start positions, and doChannels of CActionSound would not be the same later, so I figured I should have one part of the parameters parameters that was fixed (CActionParameters) and one part that changes later (CActionSound)
@@ -97,7 +83,7 @@
 		- I did this, and the inlined function is just as good as the macro, but it won't get inlined unless -O1 is given
 		- -O1 does make ReZound run much faster but takes a LONG time to compile and I haven't tested it to know that it doesn't introduce bugs
 
-	- evenutually I should have a fage that runs in the back ground... or perhaps do it ever so often on frontend calls to AAction that it determines the fragmentation level and calls defrag about a certain level
+	- evenutually I should have a fage that runs in the background... or perhaps do it ever so often on frontend calls to AAction that it determines the fragmentation level and calls defrag about a certain level
 		- it's really not necessary unless I think that the fragmentation is really going to affect performance
 		- the fragmentation level should probably be calculated as a ratio of the number of logical blocks that a perfectly defragged pool would take to the number of logical blocks that it is taking.. and it might be good to take into accound how long it's going to take to defrag based on the amount of the data that will have to be copied
 		
@@ -283,3 +269,16 @@
 
 	- change ASoundFileManager to cancel closing if the close asks to save an mp3 file.. then it asks for the save parameters, then they hit cancel on the mp3 parameters dialog... just return the bool value back up.. this should also top a close all on exit and stop the exit
 	
+	- implement a windowed FFT DSP block... I'm not quite sure what the interface should be
+		- I think it should be that you initialize the DSPBlock with some number of samples and then you can use a outputSample=block.processSample(inputSample) type scheme where internally it is windowing the data and doing the window-and-add method
+			- well, actually, this is probably what the interface to an FFT convolver would look like, except I wouldn't call it FFT, that would just be the implementation it used
+			- oooooo I can't wait to hear what a reverb will sound like using FFT convolution
+
+	- I could make the noise-gate/exciter and compresser/limiter CDSPBlocks so their abilities would be easily used in other effects
+		- Plus, it would be possible to use in realtime applications eventually
+		- I could do the same for the rate change (I could construct the CDSPBlock with the graph parameter object, and the length of the sound)
+			 - DONE: Except for the performance hit of virtual functions or pointers to functions in the algorithm, I could create an LFO object which some of the CDSP-blocks could use... Constant LFOs would exist, and an LFO for the CGraphParameterNodes (given a length until repeat) could be given
+				- might not take a performance hit of virtual functions if I precalculate a table for the LFOs
+			 - (I did this already and the performance hit was actually quite acceptable)
+		- The same could go for CChangeAmplitudeRate, flange(done) and Echo(done) effect
+
