@@ -48,7 +48,7 @@ class ASoundPlayer;
    the player is not initialized.
 
  - overriding initialize and deinitialize methods should invoke the overridden method
- 	- this class's initialize() method should be called after the derived class 
+ 	- this class's initialize() method should be called AFTER the derived class 
 	has finished its initialization
 
  - the derived class's destructor needs to call deinitialize because if this base
@@ -63,6 +63,7 @@ class ASoundPlayer;
 class CSoundPlayerChannel;
 
 #include "DSP/LevelDetector.h"
+#include "../misc/TRingBuffer.h"
 	
 #define MAX_OUTPUT_DEVICES 16
 class ASoundPlayer
@@ -107,11 +108,20 @@ public:
 
 	CSoundPlayerChannel *newSoundPlayerChannel(CSound *sound);
 
-	// gets the max RMS level since the last call to this method for the same channel (hence to sub-systems could not currently use this method at the same time sinc they would interfere with each other's last-time-this-method was called)
+
+	// gets the max RMS level since the last call to this method for the same channel (hence two unrelated sub-systems could not currently use this method at the same time since they would interfere with each other's last-time-this-method-was-called)
 	const sample_t getRMSLevel(unsigned channel) const;
 
-	// gets the maximum peak level since the last call to this method for the same channel (hence two sub-systems could not currently use this method at the same time since they would interfere with each other's last-time-this-method-was-called)
+	// gets the maximum peak level since the last call to this method for the same channel (hence two unrelated sub-systems could not currently use this method at the same time since they would interfere with each other's last-time-this-method-was-called)
 	const sample_t getPeakLevel(unsigned channel) const;
+
+	// gets a sampling of the data that has been played back since the last time this method was called
+	//    At most bufferSizeInSamples samples (not frames) of data get copied into the buffer (this is in case the number of channels (not supposed to) increases in the ASoundPlayer object)
+	//    The number of channels in each frame is devices[0].channelCount // ??? only device zero
+	//    The data will be sample frames where each frame contains nChannels of data
+	//    The reason for returning all channels in the same buffer is to ensure that the phase difference can be accurately determined (because asking for data at two different times (once for the left channel and again for the right) might return data represented from two different points in playback time)
+	//    The number of sample FRAMES is returned
+	const size_t getSamplingForStereoPhaseMeters(sample_t *buffer,size_t bufferSizeInSamples) const;
 
 	// Returns the frequency analysis of the most recent buffer played (if ReZound was configured and found fftw installed)
 	// It returns a result that is not useful for careful analysis because for 
@@ -169,6 +179,8 @@ private:
 	void calculateAnalyzerBandIndexRanges() const; // const because it is called from getFrequencyAnalysis
 	static TAutoBuffer<fftw_real> *createHammingWindow(size_t windowSize);
 #endif
+
+	mutable TRingBuffer<sample_t> samplingForStereoPhaseMeters;
 };
 
 
