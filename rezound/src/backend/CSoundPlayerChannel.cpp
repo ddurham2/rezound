@@ -80,6 +80,12 @@
  *
  * - I might be able to benifit by adding parameters to TMemoryPipe::read that says whether to block for audio 
  *   and another that was to wait for other reads to finish
+ *
+ * - One issue still remains with FOX in that seeking backwards with the keyboard (by holding '1' down) causes 
+ *   hiccups because the key-press/release event is repeating and there's no way at the present to distinguish a 
+ *   real keypress from a software generated one.  This repeated call to setSeekSpeed is causing it to clear and 
+ *   re-calculate the prebufferd data, perhaps I can detect the situation in CSoundPlayerChannel and avoid 
+ *   recalculating anything.
  */
 
 CSoundPlayerChannel::CSoundPlayerChannel(ASoundPlayer *_player,CSound *_sound) :
