@@ -16,11 +16,18 @@ distro tarball(eg: removing warning flags)
 
 5. check any modified files in (docs/AUTHORS, docs/NEWS, docs/Features.txt, configure.in, docs/INSTALL, etc)
 
-6. 'make distcheck'
-7. rebuild FOX with all the --disable flags then 'make_standalone.sh'
+6. PROOF-READ ALL CHANGES YOU JUST MADE!
 
-8. Make a cvs release tag
+7. 'make distcheck'
+8. rebuild FOX with all the --disable flags then 'make_standalone.sh'
+9. get .deb from Anthony
+
+10. Make a cvs release tag
 	- cvs tag rezound-1_2_3alpha
 
-9. make release on sourceforge.net, add a news blurb in the news section, and announce on freshmeat.net
+11. announce:
+	- make release on sourceforge.net
+	- add a news blurb in the news section at sourceforge
+	- freshmeat.net
+	- demudi mailing lists
 
