@@ -62,6 +62,7 @@ public:
 		free(buffer);
 	}
 
+
 	// cast to type *
 	operator type * const ()
 	{
@@ -96,6 +97,20 @@ public:
 	const size_t getSize() const
 	{
 		return(size);
+	}
+
+	void setSize(const size_t newSize,bool zeroAllContents=false) // newSize is in elements not bytes
+	{
+		if(newSize>0)
+		{
+			type *temp=(type *)realloc(buffer,newSize*sizeof(type));
+			if(temp==NULL)
+				throw(runtime_error(string(__func__)+" -- error reallocating memory -- "+strerror(errno)));
+			buffer=temp;
+			size=newSize;
+			if(zeroAllContents)
+				memset(buffer,0,size*sizeof(type));
+		}
 	}
 
 private:
