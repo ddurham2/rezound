@@ -1,19 +1,31 @@
 
 --- THINGS TO DO FOR SURE ---
 
-	- figure out why the limit isn't always working.. twice I entered 90:00.00 and it didn't stop
-		- I haven't seen it since, but with the limit label I should know when it is at least going to happen
+	- need to make a type parameter in the "new sound" dialog... Allow the user to choose among wave, rezound, etc types
+		- it can be done with the given extension right now, but the user may not know the extensions... or perhaps the open dialog should have separate filetype entries and it will add the extension chosen
+		- right now the backend knows it by file extension, and the backend may need to pop up a subsequent dialog to ask for format specifiy parametesr
+		- should be easier now that the code has be reorganized
+		- make a dropdown box which is the type to explicitly use or its first item is 'by filename extension'
 
 	- Other commercial audio editors do this, and now I think I know why...
 		XXX - When loading a sound it doesn't start zoomed out to see the whole thing.. 
 		- if I had a thread always running in the background low priority, I could be calculating peak chunk information while the user isn't looking
 
-	- inquire to jeroen if FXLabel could become an FXComposite so that the label would go beside, above, below, etc, whatever any child objects there were
+	- I should use FXAccelTable so that I can make key bindings to things like 
+		- (ctrl-a)select all (space)play, (space)stop, (p)pause, (a,z)seek, (ctrl-c)copy, (ctrl-x)cut, (ctrl-d,del)delete, (ctrl-v)paste, etc
+		- this should be relatively simple I think... 
+
+	- figure out why the limit isn't always working.. twice I entered 90:00.00 and it didn't stop
+		- I haven't seen it since, but with the limit label I should know when it is at least going to happen
 
 	- the 'active' sound window is not staying raised and I don't know why (when focus method is fmActiveButton)
 
 	- set any "stay on top" flags that need to be for dialogs 
 		- I don't see anything in the DECOR flags, ask the fox user list about there being any "stay on top" flags
+
+	- inquire to jeroen if FXLabel could become an FXComposite so that the label would go beside, above, below, etc, whatever any child objects there were
+		- then I could go thru all the code and anywhere that I declare an FXComposite then put a widget and a lable beside it it could change that to something simpler
+		- actually.. I could myself derive from FXLabel and do this, except that label is not derived from composite
 
 	- if the sound is playing and a certain button is pressed (or key also bound to that button) I should place a marker with a given name "cue #" where the number is an integer being kept up with
 
@@ -32,15 +44,6 @@
 		- I guess that should go for any load of a sound... that upon having an error (unsupported format perhaps) that nothing be left around...
 		- Also if there's  an error creating perhaps the CSoundPlayerChannel that the ASound is deleted and all temp data is cleaned up
 
-	- need to make a type parameter in the "new sound" dialog... Allow the user to choose among wave, rezound, etc types
-		- it can be done with the given extension right now, but the user may not know the extensions... or perhaps the open dialog should have separate filetype entries and it will add the extension chosen
-		- right now the backend knows it by file extension, and the backend may need to pop up a subsequent dialog to ask for format specifiy parametesr
-		- should be easier now that the code has be reorganized
-
-	- I should use FXAccelTable so that I can make key bindings to things like 
-		- (ctrl-a)select all (space)play, (space)stop, (p)pause, (a,z)seek, (ctrl-c)copy, (ctrl-x)cut, (ctrl-d,del)delete, (ctrl-v)paste, etc
-		- this should be relatively simple I think... 
-
 	- some of the stuff with repaints after action dialogs show isn't pretty, but its at least functional
 		- I tried, but one place to fix some of the problems is to handle all repaint events after an FXModalDialog hide's in its hide() method
 		- I called app->flush() but in there, but it didn't seem to help... perhaps X hadn't sent repaint messages yet... but then I called repaint on mainWindow but it didn't help either
@@ -50,8 +53,9 @@
 			- But, while the pogress dialog is showing, the sound object being worked on is usually locked for resize so if a paint message tried to be processed for the sound window's waveform view it would cause the applicaiton to lock up
 			- Perhaps fox doesn't process paint messages in a sparate thread, which is fortunate at the moment, however if he changes this behavior, I would need to probably trylock and just paint the background color if it couldn't lock... Actions usually call refresh after the action is completed, so that should redraw any places where we couldn't update
 
-	- make some checkbox on the mainWindow that allows the user not to do undo incase they know they don't want it
-		 - the backend already supports this (although it hasn't been tested yet since there's been no frontend means)
+	- make some checkbox on the mainWindow that disable undo functionality incase they know they don't want it or don't want to incurr the overhead of undo resources
+		- the backend already supports this (although it hasn't been tested yet since there's been no frontend means)
+		- when an action is done after undo is disabled, I must clear all previous undo history
 
 	- supply icons for all the windows
 		- just new FXIcon(...) instead of passing NULL
@@ -82,9 +86,10 @@
 
 	- I should probably pass the factory objects to the channelSelect dialog, since I could use the NxN matrix of radio buttons for the paste edits' channel select dialog and the others could have the default one
 
-
 	- perhaps put some buttons on the shift dialogs meaning, half, quarter, eight of the selection length
 		- I could probably think of other things of this nature for the other actions
+		- This would probably be a useful example of implementing a flag which makes a preset mean some percentage of the input value
+			- the question is, can I get that input value? or how can I specify it?  Perhaps there would be some defined like: sound length, channel count, sample rate, selection length
 
 	- I still probably need to instatiate a FXFileDialog to use for saving and opening because it doesn't remember the size, view mode, etc.. when it opens each time
 
