@@ -34,8 +34,8 @@ class CRawDialog : public FXModalDialogBox
 {
 	FXDECLARE(CRawDialog);
 public:
-
 	CRawDialog(FXWindow *mainWindow);
+	virtual ~CRawDialog();
 
 	bool show(AFrontendHooks::RawParameters &parameters,bool showOffsetAndLengthParameters);
 

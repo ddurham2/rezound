@@ -49,6 +49,9 @@ CUserNotesDialog::CUserNotesDialog(FXWindow *mainWindow) :
 {
 }
 
+CUserNotesDialog::~CUserNotesDialog()
+{
+}
 
 void CUserNotesDialog::show(CLoadedSound *loadedSound,FXint placement)
 {

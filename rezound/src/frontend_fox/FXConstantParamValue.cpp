@@ -108,6 +108,10 @@ FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _unin
 	updateNumbers();
 }
 
+FXConstantParamValue::~FXConstantParamValue()
+{
+}
+
 void FXConstantParamValue::setUnits(const FXString _units)
 {
 	units=_units;

@@ -74,6 +74,10 @@ CRotateLeftEditFactory::CRotateLeftEditFactory(AActionDialog *channelSelectDialo
 {
 }
 
+CRotateLeftEditFactory::~CRotateLeftEditFactory()
+{
+}
+
 CRotateEdit *CRotateLeftEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	return(new CRotateEdit(
@@ -83,10 +87,15 @@ CRotateEdit *CRotateLeftEditFactory::manufactureAction(const CActionSound &actio
 	));
 }
 
+// ---------------------------------------------
 
 
 CRotateRightEditFactory::CRotateRightEditFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
 	AActionFactory(">> Rotate Right","Rotate Right",false,channelSelectDialog,normalDialog,NULL)
+{
+}
+
+CRotateRightEditFactory::~CRotateRightEditFactory()
 {
 }
 

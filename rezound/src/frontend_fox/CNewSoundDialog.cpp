@@ -94,6 +94,10 @@ CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 	lengthComboBox->setCurrentItem(3);
 }
 
+CNewSoundDialog::~CNewSoundDialog()
+{
+}
+
 long CNewSoundDialog::onBrowseButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	string filename;

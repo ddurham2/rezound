@@ -79,6 +79,7 @@ class CSelectionEditFactory : public AActionFactory
 {
 public:
 	CSelectionEditFactory(Selections selection);
+	virtual ~CSelectionEditFactory();
 
 	CSelectionEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 
@@ -94,6 +95,7 @@ class CSelectionEditPositionFactory : public AActionFactory
 {
 public:
 	CSelectionEditPositionFactory();
+	virtual ~CSelectionEditPositionFactory();
 
 	CSelectionEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 

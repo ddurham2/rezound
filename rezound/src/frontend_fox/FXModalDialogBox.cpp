@@ -69,6 +69,9 @@ FXModalDialogBox::FXModalDialogBox(FXWindow *owner,const FXString &title,int w,i
 	//ASSURE_WIDTH(contents,160);
 }
 
+FXModalDialogBox::~FXModalDialogBox()
+{
+}
 
 void FXModalDialogBox::disableFrameDecor()
 {

@@ -47,8 +47,8 @@ class CChannelSelectDialog : public FXModalDialogBox, public AActionDialog
 {
 	FXDECLARE(CChannelSelectDialog);
 public:
-
 	CChannelSelectDialog(FXWindow *mainWindow);
+	virtual ~CChannelSelectDialog();
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 

@@ -58,6 +58,7 @@ class CCopyEditFactory : public AActionFactory
 {
 public:
 	CCopyEditFactory(AActionDialog *channelSelectDialog);
+	virtual ~CCopyEditFactory();
 
 	CCopyCutDeleteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };
@@ -66,6 +67,7 @@ class CCutEditFactory : public AActionFactory
 {
 public:
 	CCutEditFactory(AActionDialog *channelSelectDialog);
+	virtual ~CCutEditFactory();
 
 	CCopyCutDeleteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };
@@ -74,6 +76,7 @@ class CDeleteEditFactory : public AActionFactory
 {
 public:
 	CDeleteEditFactory(AActionDialog *channelSelectDialog);
+	virtual ~CDeleteEditFactory();
 
 	CCopyCutDeleteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

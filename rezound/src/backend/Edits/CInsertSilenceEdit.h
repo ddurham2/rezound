@@ -47,6 +47,7 @@ class CInsertSilenceEditFactory : public AActionFactory
 {
 public:
 	CInsertSilenceEditFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	virtual ~CInsertSilenceEditFactory();
 
 	CInsertSilenceEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

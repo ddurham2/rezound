@@ -101,6 +101,9 @@ CRawDialog::CRawDialog(FXWindow *mainWindow) :
 		(new FXLabel(lengthFrame,"in audio frames"))->setTipText("normally leave this 0");
 }
 
+CRawDialog::~CRawDialog()
+{
+}
 
 bool CRawDialog::show(AFrontendHooks::RawParameters &parameters,bool showOffsetAndLengthParameters)
 {

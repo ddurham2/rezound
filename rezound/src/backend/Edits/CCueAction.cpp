@@ -64,6 +64,10 @@ CAddCueActionFactory::CAddCueActionFactory(AActionDialog *normalDialog) :
 {
 }
 
+CAddCueActionFactory::~CAddCueActionFactory()
+{
+}
+
 CAddCueAction *CAddCueActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	return(new CAddCueAction(
@@ -108,6 +112,10 @@ AAction::CanUndoResults CRemoveCueAction::canUndo(const CActionSound &actionSoun
 
 CRemoveCueActionFactory::CRemoveCueActionFactory() :
 	AActionFactory("Remove Cue","Remove Cue",false,NULL,NULL,NULL,false,false)
+{
+}
+
+CRemoveCueActionFactory::~CRemoveCueActionFactory()
 {
 }
 
@@ -161,6 +169,10 @@ AAction::CanUndoResults CReplaceCueAction::canUndo(const CActionSound &actionSou
 
 CReplaceCueActionFactory::CReplaceCueActionFactory(AActionDialog *normalDialog) :
 	AActionFactory("Replace Cue","Replace Cue",false,NULL,normalDialog,NULL,false,false)
+{
+}
+
+CReplaceCueActionFactory::~CReplaceCueActionFactory()
 {
 }
 

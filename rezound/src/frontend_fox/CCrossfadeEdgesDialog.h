@@ -38,6 +38,7 @@ class CCrossfadeEdgesDialog : public CActionParamDialog
 {
 public:
 	CCrossfadeEdgesDialog(FXWindow *mainWindow);
+	virtual ~CCrossfadeEdgesDialog();
 
 	void showIt();
 };

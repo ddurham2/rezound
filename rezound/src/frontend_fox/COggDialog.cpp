@@ -98,6 +98,9 @@ COggDialog::COggDialog(FXWindow *mainWindow) :
 
 }
 
+COggDialog::~COggDialog()
+{
+}
 
 bool COggDialog::show(AFrontendHooks::OggCompressionParameters &parameters)
 {

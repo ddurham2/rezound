@@ -157,6 +157,10 @@ CSelectionEditFactory::CSelectionEditFactory(Selections _selection) :
 {
 }
 
+CSelectionEditFactory::~CSelectionEditFactory()
+{
+}
+
 CSelectionEdit *CSelectionEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	return(new CSelectionEdit(actionSound,selection));
@@ -171,6 +175,10 @@ CSelectionEditPositionFactory::CSelectionEditPositionFactory() :
 
 	selectStart(0),
 	selectStop(0)
+{
+}
+
+CSelectionEditPositionFactory::~CSelectionEditPositionFactory()
 {
 }
 

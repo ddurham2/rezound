@@ -47,6 +47,7 @@ class CRemoveChannelsEditFactory : public AActionFactory
 {
 public:
 	CRemoveChannelsEditFactory(AActionDialog *normalDialog);
+	virtual ~CRemoveChannelsEditFactory();
 
 	CRemoveChannelsEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 

@@ -61,6 +61,10 @@ CCueDialog::CCueDialog(FXWindow *mainWindow) :
 {
 }
 
+CCueDialog::~CCueDialog()
+{
+}
+
 bool CCueDialog::show(CActionSound *_actionSound,CActionParameters *actionParameters)
 {
 	actionSound=_actionSound;

@@ -64,6 +64,9 @@ CVoxDialog::CVoxDialog(FXWindow *mainWindow) :
 		combo->setCurrentItem(5);
 }
 
+CVoxDialog::~CVoxDialog()
+{
+}
 
 bool CVoxDialog::show(AFrontendHooks::VoxParameters &parameters)
 {

@@ -119,6 +119,10 @@ CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
 		
 }
 
+CRecordDialog::~CRecordDialog()
+{
+}
+
 void CRecordDialog::cleanupMeters()
 {
 	while(!meters.empty())

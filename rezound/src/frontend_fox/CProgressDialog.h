@@ -32,6 +32,7 @@ class CProgressDialog : public FXDialogBox
 
 public:
 	CProgressDialog(FXWindow *owner,const FXString &title,bool showCancelButton);
+	virtual ~CProgressDialog();
 
 	virtual void show(FXuint placement=PLACEMENT_OWNER);
 	virtual void hide();

@@ -43,6 +43,7 @@ class CMuteEditFactory : public AActionFactory
 {
 public:
 	CMuteEditFactory(AActionDialog *channelSelectDialog);
+	virtual ~CMuteEditFactory();
 
 	CMuteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

@@ -109,6 +109,10 @@ CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title
 	//ASSURE_WIDTH(this,200);
 }
 
+CActionParamDialog::~CActionParamDialog()
+{
+}
+
 void *CActionParamDialog::newHorzPanel(void *parent,bool createBorder)
 {
 	if(parent==NULL)

@@ -34,8 +34,8 @@ class CMp3Dialog : public FXModalDialogBox
 {
 	FXDECLARE(CMp3Dialog);
 public:
-
 	CMp3Dialog(FXWindow *mainWindow);
+	virtual ~CMp3Dialog();
 
 	bool show(AFrontendHooks::Mp3CompressionParameters &parameters);
 

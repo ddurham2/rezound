@@ -32,7 +32,6 @@ public:
 	CAddCueAction(const CActionSound actionSound,const string cueName,const sample_pos_t cueTime,const bool isAnchored);
 	virtual ~CAddCueAction();
 
-
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
 	void undoActionSizeSafe(const CActionSound &actionSound);
@@ -50,6 +49,7 @@ class CAddCueActionFactory : public AActionFactory
 {
 public:
 	CAddCueActionFactory(AActionDialog *normalDialog);
+	virtual ~CAddCueActionFactory();
 
 	CAddCueAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 
@@ -66,7 +66,6 @@ public:
 	CRemoveCueAction(const CActionSound actionSound,const size_t cueIndex);
 	virtual ~CRemoveCueAction();
 
-
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
 	void undoActionSizeSafe(const CActionSound &actionSound);
@@ -82,6 +81,7 @@ class CRemoveCueActionFactory : public AActionFactory
 {
 public:
 	CRemoveCueActionFactory();
+	virtual ~CRemoveCueActionFactory();
 
 	CRemoveCueAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 
@@ -115,6 +115,7 @@ class CReplaceCueActionFactory : public AActionFactory
 {
 public:
 	CReplaceCueActionFactory(AActionDialog *normalDialog);
+	virtual ~CReplaceCueActionFactory();
 
 	CReplaceCueAction *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 

@@ -122,6 +122,9 @@ CMp3Dialog::CMp3Dialog(FXWindow *mainWindow) :
 
 }
 
+CMp3Dialog::~CMp3Dialog()
+{
+}
 
 bool CMp3Dialog::show(AFrontendHooks::Mp3CompressionParameters &parameters)
 {

@@ -71,6 +71,7 @@ class CInsertPasteEditFactory : public AActionFactory
 {
 public:
 	CInsertPasteEditFactory(AActionDialog *channelSelectDialog);
+	virtual ~CInsertPasteEditFactory();
 
 	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 
@@ -81,6 +82,7 @@ class CReplacePasteEditFactory : public AActionFactory
 {
 public:
 	CReplacePasteEditFactory(AActionDialog *channelSelectDialog);
+	virtual ~CReplacePasteEditFactory();
 
 	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 
@@ -91,6 +93,7 @@ class COverwritePasteEditFactory : public AActionFactory
 {
 public:
 	COverwritePasteEditFactory(AActionDialog *channelSelectDialog);
+	virtual ~COverwritePasteEditFactory();
 
 	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 
@@ -101,6 +104,7 @@ class CLimitedOverwritePasteEditFactory : public AActionFactory
 {
 public:
 	CLimitedOverwritePasteEditFactory(AActionDialog *channelSelectDialog);
+	virtual ~CLimitedOverwritePasteEditFactory();
 
 	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 
@@ -111,6 +115,7 @@ class CMixPasteEditFactory : public AActionFactory
 {
 public:
 	CMixPasteEditFactory(AActionDialog *channelSelectDialog);
+	virtual ~CMixPasteEditFactory();
 
 	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 
@@ -121,6 +126,7 @@ class CLimitedMixPasteEditFactory : public AActionFactory
 {
 public:
 	CLimitedMixPasteEditFactory(AActionDialog *channelSelectDialog);
+	virtual ~CLimitedMixPasteEditFactory();
 
 	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 
@@ -131,6 +137,7 @@ class CFitMixPasteEditFactory : public AActionFactory
 {
 public:
 	CFitMixPasteEditFactory(AActionDialog *channelSelectDialog);
+	virtual ~CFitMixPasteEditFactory();
 
 	CPasteEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 

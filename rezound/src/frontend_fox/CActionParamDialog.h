@@ -53,6 +53,7 @@ public:
 	typedef const double (*f_at_x)(const double x);
 
 	CActionParamDialog(FXWindow *mainWindow,const FXString title,bool showPresetPanel=true);
+	virtual ~CActionParamDialog();
 
 	// these are used to create new parents for the controls
 	// 	pass NULL the first time

@@ -33,6 +33,7 @@ class CInsertSilenceDialog : public CActionParamDialog
 {
 public:
 	CInsertSilenceDialog(FXWindow *mainWindow);
+	virtual ~CInsertSilenceDialog(){}
 };
 
 
@@ -43,6 +44,7 @@ class CRotateDialog : public CActionParamDialog
 {
 public:
 	CRotateDialog(FXWindow *mainWindow);
+	virtual ~CRotateDialog(){}
 };
 
 
@@ -53,6 +55,7 @@ class CSwapChannelsDialog : public CActionParamDialog
 {
 public:
 	CSwapChannelsDialog(FXWindow *mainWindow);
+	virtual ~CSwapChannelsDialog(){}
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 };
@@ -65,6 +68,7 @@ class CAddChannelsDialog : public CActionParamDialog
 {
 public:
 	CAddChannelsDialog(FXWindow *mainWindow);
+	virtual ~CAddChannelsDialog(){}
 };
 
 

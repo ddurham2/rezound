@@ -124,4 +124,8 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 		FXButton *okayButton=new FXButton(lowerFrame,"&Close",FOXIcons->GreenCheck1,this,ID_ACCEPT,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_BEFORE_TEXT | LAYOUT_CENTER_X|LAYOUT_CENTER_Y, 0,0,0,0, 10,10,5,5);
 }
 
+CAboutDialog::~CAboutDialog()
+{
+}
+
 

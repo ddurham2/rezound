@@ -37,8 +37,8 @@ class CRecordDialog : public FXModalDialogBox
 {
 	FXDECLARE(CRecordDialog);
 public:
-
 	CRecordDialog(FXWindow *mainWindow);
+	virtual ~CRecordDialog();
 
 	bool show(ASoundRecorder *recorder);
 

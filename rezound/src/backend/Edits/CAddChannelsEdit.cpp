@@ -61,6 +61,10 @@ CAddChannelsEditFactory::CAddChannelsEditFactory(AActionDialog *normalDialog) :
 {
 }
 
+CAddChannelsEditFactory::~CAddChannelsEditFactory()
+{
+}
+
 CAddChannelsEdit *CAddChannelsEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	return(new CAddChannelsEdit(

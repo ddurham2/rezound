@@ -46,6 +46,7 @@ class CCropEditFactory : public AActionFactory
 {
 public:
 	CCropEditFactory(AActionDialog *channelSelectDialog);
+	virtual ~CCropEditFactory();
 
 	CCropEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

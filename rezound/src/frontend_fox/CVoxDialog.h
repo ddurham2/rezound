@@ -34,8 +34,8 @@ class CVoxDialog : public FXModalDialogBox
 {
 	FXDECLARE(CVoxDialog);
 public:
-
 	CVoxDialog(FXWindow *mainWindow);
+	virtual ~CVoxDialog();
 
 	bool show(AFrontendHooks::VoxParameters &parameters);
 

@@ -56,6 +56,10 @@ FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title,con
 	valueSpinner->setRange(-10,10);
 }
 
+FXTextParamValue::~FXTextParamValue()
+{
+}
+
 void FXTextParamValue::setUnits(const FXString units,const FXString tipText)
 {
 	unitsLabel->setText(units);

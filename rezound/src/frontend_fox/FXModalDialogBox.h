@@ -45,6 +45,7 @@ public:
 	enum FrameTypes { ftHorizontal,ftVertical };
 
 	FXModalDialogBox(FXWindow *owner,const FXString &title,int w,int h,FrameTypes frameType=ftHorizontal);
+	virtual ~FXModalDialogBox();
 
 	virtual void show(FXuint placement);
 	virtual FXuint execute(FXuint placement=PLACEMENT_CURSOR);

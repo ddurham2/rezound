@@ -37,7 +37,7 @@ class CSoundListWindow : public FXTopWindow
 public:
 
 	CSoundListWindow(FXWindow *mainWindow);
-	~CSoundListWindow();
+	virtual ~CSoundListWindow();
 
 	enum 
 	{

@@ -59,6 +59,10 @@ CChannelSelectDialog::CChannelSelectDialog(FXWindow *mainWindow) :
 		new FXButton(buttonPacker,"Clear",NULL,this,ID_CLEAR_BUTTON,BUTTON_NORMAL);
 }
 
+CChannelSelectDialog::~CChannelSelectDialog()
+{
+}
+
 bool CChannelSelectDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
 	this->actionSound=actionSound;

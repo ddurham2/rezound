@@ -40,6 +40,7 @@ class CCueDialog : public FXModalDialogBox, public AActionDialog
 	FXDECLARE(CCueDialog);
 public:
 	CCueDialog(FXWindow *mainWindow);
+	virtual ~CCueDialog();
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 

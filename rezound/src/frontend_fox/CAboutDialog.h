@@ -35,8 +35,8 @@ class CAboutDialog : public FXDialogBox
 {
 	FXDECLARE(CAboutDialog);
 public:
-
 	CAboutDialog(FXWindow *mainWindow);
+	virtual ~CAboutDialog();
 
 protected:
 	CAboutDialog() {}

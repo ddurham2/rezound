@@ -47,6 +47,9 @@ CProgressDialog::CProgressDialog(FXWindow *owner,const FXString &title,bool show
 	progressBar->showNumber();
 }
 
+CProgressDialog::~CProgressDialog()
+{
+}
 
 long CProgressDialog::onCancelButton(FXObject *sender,FXSelector sel,void *ptr)
 {

@@ -94,6 +94,10 @@ CCopyEditFactory::CCopyEditFactory(AActionDialog *channelSelectDialog) :
 {
 }
 
+CCopyEditFactory::~CCopyEditFactory()
+{
+}
+
 CCopyCutDeleteEdit *CCopyEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	return(new CCopyCutDeleteEdit(actionSound,CCopyCutDeleteEdit::ccdtCopy));
@@ -109,6 +113,10 @@ CCutEditFactory::CCutEditFactory(AActionDialog *channelSelectDialog) :
 {
 }
 
+CCutEditFactory::~CCutEditFactory()
+{
+}
+
 CCopyCutDeleteEdit *CCutEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	return(new CCopyCutDeleteEdit(actionSound,CCopyCutDeleteEdit::ccdtCut));
@@ -121,6 +129,10 @@ CCopyCutDeleteEdit *CCutEditFactory::manufactureAction(const CActionSound &actio
 
 CDeleteEditFactory::CDeleteEditFactory(AActionDialog *channelSelectDialog) :
 	AActionFactory("Delete","Delete",false,channelSelectDialog,NULL,NULL)
+{
+}
+
+CDeleteEditFactory::~CDeleteEditFactory()
 {
 }
 

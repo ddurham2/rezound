@@ -51,8 +51,8 @@ class CPasteChannelsDialog : public FXModalDialogBox, public AActionDialog
 {
 	FXDECLARE(CPasteChannelsDialog);
 public:
-
 	CPasteChannelsDialog(FXWindow *mainWindow);
+	virtual ~CPasteChannelsDialog();
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 	void *getUserData();

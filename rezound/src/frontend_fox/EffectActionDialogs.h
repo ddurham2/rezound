@@ -33,18 +33,21 @@ class CNormalVolumeChangeDialog : public CActionParamDialog
 {
 public:
 	CNormalVolumeChangeDialog(FXWindow *mainWindow);
+	virtual ~CNormalVolumeChangeDialog(){}
 };
 
 class CNormalGainDialog : public CActionParamDialog
 {
 public:
 	CNormalGainDialog(FXWindow *mainWindow);
+	virtual ~CNormalGainDialog(){}
 };
 
 class CAdvancedGainDialog : public CActionParamDialog
 {
 public:
 	CAdvancedGainDialog(FXWindow *mainWindow);
+	virtual ~CAdvancedGainDialog(){}
 };
 
 
@@ -55,12 +58,14 @@ class CNormalRateChangeDialog : public CActionParamDialog
 {
 public:
 	CNormalRateChangeDialog(FXWindow *mainWindow);
+	virtual ~CNormalRateChangeDialog(){}
 };
 
 class CAdvancedRateChangeDialog : public CActionParamDialog
 {
 public:
 	CAdvancedRateChangeDialog(FXWindow *mainWindow);
+	virtual ~CAdvancedRateChangeDialog(){}
 };
 
 
@@ -73,6 +78,7 @@ class CFlangeDialog : public CActionParamDialog
 {
 public:
 	CFlangeDialog(FXWindow *mainWindow);
+	virtual ~CFlangeDialog(){}
 };
 
 
@@ -85,6 +91,7 @@ class CSimpleDelayDialog : public CActionParamDialog
 {
 public:
 	CSimpleDelayDialog(FXWindow *mainWindow);
+	virtual ~CSimpleDelayDialog(){}
 };
 
 
@@ -97,6 +104,7 @@ class CQuantizeDialog : public CActionParamDialog
 {
 public:
 	CQuantizeDialog(FXWindow *mainWindow);
+	virtual ~CQuantizeDialog(){}
 };
 
 
@@ -109,6 +117,7 @@ class CDistortionDialog : public CActionParamDialog
 {
 public:
 	CDistortionDialog(FXWindow *mainWindow);
+	virtual ~CDistortionDialog(){}
 };
 
 
@@ -121,6 +130,7 @@ class CVariedRepeatDialog : public CActionParamDialog
 {
 public:
 	CVariedRepeatDialog(FXWindow *mainWindow);
+	virtual ~CVariedRepeatDialog(){}
 };
 
 

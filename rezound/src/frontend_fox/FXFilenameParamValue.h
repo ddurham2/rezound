@@ -35,6 +35,7 @@ class FXFilenameParamValue : public FXVerticalFrame
 	FXDECLARE(FXFilenameParamValue);
 public:
 	FXFilenameParamValue(FXComposite *p,int opts,const char *title,const string filename);
+	virtual ~FXFilenameParamValue();
 
 	long onFilenameTextBoxChange(FXObject *sender,FXSelector sel,void *ptr);
 	long onBrowseButton(FXObject *sender,FXSelector sel,void *ptr);

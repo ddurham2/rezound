@@ -54,6 +54,10 @@ FXComboTextParamValue::FXComboTextParamValue(FXComposite *p,int opts,const char 
 	setItems(items);
 }
 
+FXComboTextParamValue::~FXComboTextParamValue()
+{
+}
+
 const FXint FXComboTextParamValue::getValue()
 {
 	if(isEditable)

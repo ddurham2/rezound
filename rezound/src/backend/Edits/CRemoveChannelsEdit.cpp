@@ -64,6 +64,10 @@ CRemoveChannelsEditFactory::CRemoveChannelsEditFactory(AActionDialog *normalDial
 {
 }
 
+CRemoveChannelsEditFactory::~CRemoveChannelsEditFactory()
+{
+}
+
 CRemoveChannelsEdit *CRemoveChannelsEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	return(new CRemoveChannelsEdit(actionSound));

@@ -386,6 +386,10 @@ CInsertPasteEditFactory::CInsertPasteEditFactory(AActionDialog *channelSelectDia
 {
 }
 
+CInsertPasteEditFactory::~CInsertPasteEditFactory()
+{
+}
+
 CPasteEdit *CInsertPasteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptInsert,getMixMethod(channelSelectDialog)));
@@ -402,6 +406,10 @@ CReplacePasteEditFactory::CReplacePasteEditFactory(AActionDialog *channelSelectD
 {
 }
 
+CReplacePasteEditFactory::~CReplacePasteEditFactory()
+{
+}
+
 CPasteEdit *CReplacePasteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptReplace,getMixMethod(channelSelectDialog)));
@@ -414,6 +422,10 @@ CHECK_FOR_DATA(CReplacePasteEditFactory)
 
 COverwritePasteEditFactory::COverwritePasteEditFactory(AActionDialog *channelSelectDialog) :
 	AActionFactory("Overwrite Paste","Overwrite Starting at the Start Position",false,channelSelectDialog,NULL,NULL)
+{
+}
+
+COverwritePasteEditFactory::~COverwritePasteEditFactory()
 {
 }
 
@@ -433,6 +445,10 @@ CLimitedOverwritePasteEditFactory::CLimitedOverwritePasteEditFactory(AActionDial
 {
 }
 
+CLimitedOverwritePasteEditFactory::~CLimitedOverwritePasteEditFactory()
+{
+}
+
 CPasteEdit *CLimitedOverwritePasteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptLimitedOverwrite,getMixMethod(channelSelectDialog)));
@@ -446,6 +462,10 @@ CHECK_FOR_DATA(CLimitedOverwritePasteEditFactory)
 
 CMixPasteEditFactory::CMixPasteEditFactory(AActionDialog *channelSelectDialog) :
 	AActionFactory("Mix Paste","Mix Starting at the Start Position",false,channelSelectDialog,NULL,NULL)
+{
+}
+
+CMixPasteEditFactory::~CMixPasteEditFactory()
 {
 }
 
@@ -464,6 +484,10 @@ CLimitedMixPasteEditFactory::CLimitedMixPasteEditFactory(AActionDialog *channelS
 {
 }
 
+CLimitedMixPasteEditFactory::~CLimitedMixPasteEditFactory()
+{
+}
+
 CPasteEdit *CLimitedMixPasteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	return(new CPasteEdit(actionSound,getPasteChannels(channelSelectDialog),CPasteEdit::ptLimitedMix,getMixMethod(channelSelectDialog)));
@@ -476,6 +500,10 @@ CHECK_FOR_DATA(CLimitedMixPasteEditFactory)
 
 CFitMixPasteEditFactory::CFitMixPasteEditFactory(AActionDialog *channelSelectDialog) :
 	AActionFactory("Fit Mix Paste","Mix Starting at the Start Position But Change the Rate of the Clipboard to Fit Within the Selection",false,channelSelectDialog,NULL,NULL)
+{
+}
+
+CFitMixPasteEditFactory::~CFitMixPasteEditFactory()
 {
 }
 

@@ -67,6 +67,10 @@ CSwapChannelsEditFactory::CSwapChannelsEditFactory(AActionDialog *normalDialog) 
 {
 }
 
+CSwapChannelsEditFactory::~CSwapChannelsEditFactory()
+{
+}
+
 CSwapChannelsEdit *CSwapChannelsEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	return(new CSwapChannelsEdit(

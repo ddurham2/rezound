@@ -34,8 +34,8 @@ class COggDialog : public FXModalDialogBox
 {
 	FXDECLARE(COggDialog);
 public:
-
 	COggDialog(FXWindow *mainWindow);
+	virtual ~COggDialog();
 
 	bool show(AFrontendHooks::OggCompressionParameters &parameters);
 

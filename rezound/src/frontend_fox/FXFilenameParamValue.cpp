@@ -58,6 +58,10 @@ FXFilenameParamValue::FXFilenameParamValue(FXComposite *p,int opts,const char *t
 	filenameTextBox->setText(filename.c_str());
 }
 
+FXFilenameParamValue::~FXFilenameParamValue()
+{
+}
+
 long FXFilenameParamValue::onFilenameTextBoxChange(FXObject *sender,FXSelector sel,void *ptr)
 {
 	// just verify something ???

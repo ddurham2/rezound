@@ -43,6 +43,10 @@ CCrossfadeEdgesDialog::CCrossfadeEdgesDialog(FXWindow *mainWindow) :
 
 }
 
+CCrossfadeEdgesDialog::~CCrossfadeEdgesDialog()
+{
+}
+
 void CCrossfadeEdgesDialog::showIt()
 {
 	CActionParameters actionParameters;

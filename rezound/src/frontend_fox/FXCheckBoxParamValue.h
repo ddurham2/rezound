@@ -36,6 +36,7 @@ class FXCheckBoxParamValue : public FXVerticalFrame
 	FXDECLARE(FXCheckBoxParamValue);
 public:
 	FXCheckBoxParamValue(FXComposite *p,int opts,const char *title,bool checked);
+	virtual ~FXCheckBoxParamValue();
 
 	const bool getValue();
 	void setValue(const bool checked);

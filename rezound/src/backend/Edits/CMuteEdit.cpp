@@ -63,6 +63,10 @@ CMuteEditFactory::CMuteEditFactory(AActionDialog *channelSelectDialog) :
 {
 }
 
+CMuteEditFactory::~CMuteEditFactory()
+{
+}
+
 CMuteEdit *CMuteEditFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	return(new CMuteEdit(actionSound));

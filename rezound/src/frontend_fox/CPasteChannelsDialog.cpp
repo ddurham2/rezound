@@ -91,6 +91,10 @@ CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
 
 }
 
+CPasteChannelsDialog::~CPasteChannelsDialog()
+{
+}
+
 bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *actionParameters)
 {
 	actionSound=_actionSound; // save for use in the reset and default handler buttons

@@ -42,6 +42,7 @@ class FXComboTextParamValue : public FXVerticalFrame
 	FXDECLARE(FXComboTextParamValue);
 public:
 	FXComboTextParamValue(FXComposite *p,int opts,const char *title,const vector<string> &items,bool isEditable);
+	virtual ~FXComboTextParamValue();
 
 	const FXint getValue(); // returns the index into the items given at construction of the selected item
 	void setValue(const FXint value);

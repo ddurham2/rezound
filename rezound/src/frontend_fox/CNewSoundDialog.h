@@ -37,6 +37,7 @@ class CNewSoundDialog : public FXModalDialogBox
 	FXDECLARE(CNewSoundDialog);
 public:
 	CNewSoundDialog(FXWindow *mainWindow);
+	virtual ~CNewSoundDialog();
 
 	void show(FXuint placement);
 

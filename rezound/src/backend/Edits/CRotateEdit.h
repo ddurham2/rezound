@@ -51,6 +51,7 @@ class CRotateLeftEditFactory : public AActionFactory
 {
 public:
 	CRotateLeftEditFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	virtual ~CRotateLeftEditFactory();
 
 	CRotateEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };
@@ -59,6 +60,7 @@ class CRotateRightEditFactory : public AActionFactory
 {
 public:
 	CRotateRightEditFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog);
+	virtual ~CRotateRightEditFactory();
 
 	CRotateEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
 };

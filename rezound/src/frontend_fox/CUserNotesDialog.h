@@ -36,8 +36,8 @@ class CUserNotesDialog : public FXModalDialogBox
 {
 	FXDECLARE(CUserNotesDialog);
 public:
-
 	CUserNotesDialog(FXWindow *mainWindow);
+	virtual ~CUserNotesDialog();
 
 	void show(CLoadedSound *loadedSound,FXint placement);
 

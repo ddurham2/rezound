@@ -63,6 +63,10 @@ CActionMenuCommand::CActionMenuCommand(AActionFactory *_actionFactory,FXComposit
 	prevEvent.click_button=0;
 }
 
+CActionMenuCommand::~CActionMenuCommand()
+{
+}
+
 long CActionMenuCommand::onMouseClick(FXObject *sender,FXSelector sel,void *ptr)
 {
 	prevEvent=*((FXEvent *)ptr);

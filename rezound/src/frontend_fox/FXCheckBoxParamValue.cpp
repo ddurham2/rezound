@@ -48,6 +48,10 @@ FXCheckBoxParamValue::FXCheckBoxParamValue(FXComposite *p,int opts,const char *t
 	checkBox->setCheck(checked);
 }
 
+FXCheckBoxParamValue::~FXCheckBoxParamValue()
+{
+}
+
 const bool FXCheckBoxParamValue::getValue()
 {
 	return(checkBox->getCheck());

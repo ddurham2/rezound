@@ -33,6 +33,7 @@ class CNoiseGateDialog : public CActionParamDialog
 {
 public:
 	CNoiseGateDialog(FXWindow *mainWindow);
+	virtual ~CNoiseGateDialog(){}
 };
 
 
@@ -43,6 +44,7 @@ class CCompressorDialog : public CActionParamDialog
 {
 public:
 	CCompressorDialog(FXWindow *mainWindow);
+	virtual ~CCompressorDialog(){}
 };
 
 
@@ -53,6 +55,7 @@ class CNormalizeDialog : public CActionParamDialog
 {
 public:
 	CNormalizeDialog(FXWindow *mainWindow);
+	virtual ~CNormalizeDialog(){}
 };
 
 
@@ -63,6 +66,7 @@ class CResampleDialog : public CActionParamDialog
 {
 public:
 	CResampleDialog(FXWindow *mainWindow);
+	virtual ~CResampleDialog(){}
 };
 
 

@@ -35,6 +35,7 @@ class FXTextParamValue : public FXHorizontalFrame
 	FXDECLARE(FXTextParamValue);
 public:
 	FXTextParamValue(FXComposite *p,int opts,const char *title,const double minValue,const double maxValue);
+	virtual ~FXTextParamValue();
 
 	long onValueTextBoxChange(FXObject *sender,FXSelector sel,void *ptr);
 
