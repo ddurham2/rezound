@@ -11,6 +11,10 @@
 - On a sound window:
 	- LEFT mouse button changes start position
 	- RIGHT mouse button changes stop position
+
+	- In the wave view, while holding CONTROL and clicking the LEFT mouse button the sound will play from the mouse cursor position until the end of the sound or stop is pressed
+	- In the wave view, while holding CONTROL and pressing the RIGHT mouse button the sound will play from the mouse cursor position until the RIGHT mouse button is released
+		
 	- mouse WHEEL *should* scroll the wave view when not zoomed out full
 		- holding CONTROL while using the mouse WHEEL will cause it to scroll faster
 	- RIGHT clicking the ruler across the top shows a popup menu for manipulating cues, RIGHT clicking on a cue shows one menu and RIGHT clicking on the other part of the ruler shows another
