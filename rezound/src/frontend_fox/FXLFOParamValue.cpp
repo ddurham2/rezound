@@ -52,11 +52,15 @@ FXLFOParamValue::FXLFOParamValue(FXComposite *p,int opts,const char *title,const
 
 	titleLabel(new FXLabel(this,title,NULL,LABEL_NORMAL|LAYOUT_CENTER_X)),
 	sliders(new FXHorizontalFrame(this,LAYOUT_FILL_X)),
-		amplitudeSlider(new FXConstantParamValue(interpretValue,uninterpretValue,1,(int)maxAmp,1,false,sliders,LAYOUT_CENTER_X,ampTitle.c_str())),
-		frequencySlider(new FXConstantParamValue(interpretValue,uninterpretValue,1,(int)maxFreq,1,false,sliders,LAYOUT_CENTER_X,"Frequency")),
+		amplitudeSlider(new FXConstantParamValue(interpretValue,uninterpretValue,min((int)maxAmp,1),(int)maxAmp,min((int)maxAmp,1),false,sliders,LAYOUT_CENTER_X,ampTitle.c_str())),
+		frequencySlider(new FXConstantParamValue(interpretValue,uninterpretValue,min((int)maxFreq,1),(int)maxFreq,min((int)maxFreq,1),false,sliders,LAYOUT_CENTER_X,"Frequency")),
 		phaseSlider(new FXConstantParamValue(interpretValue,uninterpretValue,360,360,360,true,sliders,LAYOUT_CENTER_X,"Phase")),
 	LFOTypeComboBox(new FXListBox(this,8,this,ID_LFO_TYPE_COMBOBOX,FRAME_SUNKEN|FRAME_THICK|LISTBOX_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,250,0))
 {
+	// allow this to be hidden (cause varied repeat doesn't need it)
+	if(ampTitle=="")
+		amplitudeSlider->hide();
+
 	amplitudeSlider->setUnits(ampUnits.c_str());
 	frequencySlider->setUnits(freqUnits.c_str());
 	phaseSlider->setUnits("deg");
@@ -72,6 +76,7 @@ FXLFOParamValue::FXLFOParamValue(FXComposite *p,int opts,const char *title,const
 		if(!hideBipolarLFOs || !gLFORegistry.isBipolar(t))
 			LFOTypeComboBox->appendItem(gLFORegistry.getName(t).c_str(),NULL,(void *)t);
 	}
+	LFOTypeComboBox->setCurrentItem(1); // sin is the first one.. just so constant won't be the initial
 
 	onLFOTypeChange(NULL,0,NULL);
 }
