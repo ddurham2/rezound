@@ -70,7 +70,6 @@ CAboutDialog::CAboutDialog(FXWindow *mainWindow) :
 
 		MAKE_TEXT(t,"Author","Davy Durham, ddurham@users.sourceforge.net");
 		MAKE_TEXT(t,"Autoconfiscator","Anthony Ventimiglia");
-		MAKE_TEXT(t,"Artist","Will Jayroe");
 		MAKE_LINK(t,"Home Page","http://rezound.sourceforge.net");
 		MAKE_LINK(t,"Bug Reports","http://sourceforge.net/tracker/?group_id=5056&atid=105056");
 		MAKE_LINK(t,"Feature Requests","http://sourceforge.net/tracker/?atid=355056&group_id=5056&func=browse");
