@@ -24,6 +24,7 @@
 #include "../../../config/common.h"
 
 #include "CGenerateNoiseAction.h"
+#include "CGenerateToneAction.h"
 
 
 #endif

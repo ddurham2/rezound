@@ -25,10 +25,12 @@ include $(top_srcdir)/config/am_include.mk
 
 noinst_HEADERS= \
 		CGenerateNoiseAction.h \
+		CGenerateToneAction.h \
 		GenerateActions.h
 
 noinst_LTLIBRARIES=libGenerate.la
 
 libGenerate_la_SOURCES= \
-		CGenerateNoiseAction.cpp 
+		CGenerateNoiseAction.cpp \
+		CGenerateToneAction.cpp 
 
