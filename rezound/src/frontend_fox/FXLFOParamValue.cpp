@@ -18,6 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
+#warning temporarliy modify an action to see that the LFOs are creating the expected shape at the given phase like the icon shows
+
 #include "FXLFOParamValue.h"
 
 #include <istring>
@@ -79,7 +81,7 @@ FXLFOParamValue::FXLFOParamValue(FXComposite *p,int opts,const char *title,const
 			LFOTypeComboBox->appendItem(gLFORegistry.getName(t).c_str(),FOXIcons->getByName(gLFORegistry.getName(t).c_str()),(void *)t);
 		}
 	}
-	LFOTypeComboBox->setCurrentItem(1); // sin is the first one.. just so constant won't be the initial
+	LFOTypeComboBox->setCurrentItem(0);
 
 	onLFOTypeChange(NULL,0,NULL);
 }
@@ -154,7 +156,7 @@ void FXLFOParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 	}
 	catch(...)
 	{
-		LFOTypeComboBox->setCurrentItem(0);
+		LFOTypeComboBox->setCurrentItem(0); // default to the first position which should be sine
 	}
 	onLFOTypeChange(NULL,0,NULL);
 

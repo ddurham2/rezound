@@ -411,11 +411,11 @@ const string CLFORegistry::getName(const size_t index) const
 	switch(index)
 	{
 	case 0:
-		return("Constant");
-	case 1:
 		return("Sine Wave [-1,1]");
-	case 2:
+	case 1:
 		return("Sine Wave [ 0,1]");
+	case 2:
+		return("Constant");
 	case 3:
 		return("Rising Sawtooth Wave [-1,1]");
 	case 4:
@@ -433,9 +433,9 @@ const bool CLFORegistry::isBipolar(const size_t index) const
 	switch(index)
 	{
 	case 0:
-		return(false);
-	case 1:
 		return(true);
+	case 1:
+		return(false);
 	case 2:
 		return(false);
 	case 3:
@@ -452,11 +452,11 @@ const bool CLFORegistry::isBipolar(const size_t index) const
 
 const size_t CLFORegistry::getIndexByName(const string name) const
 {
-	if(name=="Constant")
+	if(name=="Sine Wave [-1,1]")
 		return(0);
-	else if(name=="Sine Wave [-1,1]")
-		return(1);
 	else if(name=="Sine Wave [ 0,1]")
+		return(1);
+	else if(name=="Constant")
 		return(2);
 	else if(name=="Rising Sawtooth Wave [-1,1]")
 		return(3);
@@ -475,11 +475,11 @@ ALFO *CLFORegistry::createLFO(const CLFODescription &desc,const unsigned sampleR
 	switch(desc.LFOType)
 	{
 	case 0:
-		return(new CConstantLFO);
-	case 1:
 		return(new CSinLFO(desc.freq,desc.phase,sampleRate));
-	case 2:
+	case 1:
 		return(new CPosSinLFO(desc.freq,desc.phase,sampleRate));
+	case 2:
+		return(new CConstantLFO);
 	case 3:
 		return(new CRisingSawtoothLFO(desc.freq,desc.phase,sampleRate));
 	case 4:
