@@ -208,9 +208,11 @@ CBurnToCDDialog::CBurnToCDDialog(FXWindow *mainWindow) :
 			appliesTo.push_back(N_("Selection Only"));
 		addComboTextEntry(p1,N_("Applies to"),appliesTo);
 
-		FXHorizontalFrame *p2=new FXHorizontalFrame(p1,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 4,0);
-			FXComposite *device=addStringTextEntry(p2,N_("Device"),"0,0,0");
-				new FXButton(device,_("Detect"),NULL,this,ID_DETECT_DEVICE_BUTTON,BUTTON_NORMAL|LAYOUT_RIGHT);
+		FXVerticalFrame *p2=new FXVerticalFrame(p1,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
+			FXHorizontalFrame *p3=new FXHorizontalFrame(p2,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 4,0);
+				FXComposite *device=addStringTextEntry(p3,N_("Device"),"0,0,0");
+					new FXButton(device,_("Detect"),NULL,this,ID_DETECT_DEVICE_BUTTON,BUTTON_NORMAL|LAYOUT_RIGHT);
+			new FXLabel(p2,_("In linux >2.6, scanbus may not work and it may be\nnecessary to specify: for example: ATAPI:0,0,0"));
 
 		addStringTextEntry(p1,N_("Extra cdrdao Options"),"");
 		addCheckBoxEntry(p1,N_("Simulate Burn Only"),false,_("Don't Turn on Burn Laser"));
