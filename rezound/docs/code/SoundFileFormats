@@ -1,24 +1,23 @@
 
-ASound is the base class that represents a manipulatable set of audio data within ReZound.  Its
+CSound is the class that represents a manipulatable set of audio data within ReZound.  Its
 contents are PCM data in a specific format.  Any supported file format is to be implemented by
 deriving from ASoundTranslator and performing the necessary logic to read/write the audio data from 
-the foreign format, translate it into the native format and write into or read out of  a given 
+the foreign format, translate it into the native format and write into or read out of a given 
 CSound.
 
-The CSound has a TPoolFile object which is used for the working space of all the audio and relatively
-small other information.  TPoolFile maps physical space in a file to a contiguous logical address 
+The CSound has a TPoolFile object which is used for the working space of all the audio and
+other relevant information.  TPoolFile maps physical space in a file to a contiguous logical address 
 space and gives methods which simply modify the logical address space to give the appearance of a 
-very quick remove of space or adding of space inserted into the middle of the whole space.
+very quick removal of space or adding of space inserted into the middle of the whole space.
 
-CSound has a getAudio method which returns a TPoolFileAccessor that allows access to the data.  It
-also has methods to manipulate the size of the data which manages how to add/remove space when an 
-action which changes the size of the data but the action was not applied to all channels.
+CSound has a getAudio method which returns a TPoolFileAccessor that allows access to the data.  
+Changing the size of the audio pools is done through methods in the CSound class.
 
-The derived ASoundTranslator class should implement the methods... In short, it should just call 
-createWorkingPoolFile given the numer of channels, sample rate, and length.  Then it should read the 
-audio out of the foreign format and use the getAudio's returned TPoolFileAccessor to copy data into
-the audio pools.  Then if there is any available other data like user notes or cue positions/names 
-there are methods in the CSound class to add that information.
+The derived ASoundTranslator class should implement the abstract methods... In short, it should just 
+call createWorkingPoolFile given the numer of channels, sample rate, and length.  Then it should read 
+the audio out of the foreign format and use the getAudio's returned TPoolFileAccessor to copy data 
+into the audio pools.  Then if there is any available other data like user notes or cue 
+positions/names there are methods in the CSound class to add that information.
 
 The native .rez ReZound file format is actually just a TPoolFile, so the loading and saving of it
 requires little work.
