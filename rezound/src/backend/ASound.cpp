@@ -83,7 +83,7 @@ ASound::ASound() :
 
 	tempAudioPoolKeyCounter(0),
 
-	_isModified(false),
+	_isModified(true),
 
 	cueAccesser(NULL)
 {
@@ -104,7 +104,7 @@ ASound::ASound(const string &_filename,const unsigned _sampleRate,const unsigned
 
 	tempAudioPoolKeyCounter(0),
 
-	_isModified(false),
+	_isModified(true),
 
 	cueAccesser(NULL)
 {
@@ -166,6 +166,7 @@ ASound::~ASound()
 void ASound::saveSound()
 {
 	saveSound(filename);
+	_isModified=false;
 }
 
 void ASound::changeFilename(const string newFilename)
