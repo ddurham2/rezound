@@ -74,7 +74,7 @@ void initializeReZound()
 		// determine where /usr/share/rezound has been placed (try the install-from directory first)
 		gSysDataDirectory=SOURCE_DIR"/share/rezound";
 		if(!ost::Path(gSysDataDirectory).Exists()) 
-			gSysDataDirectory=INSTALL_PREFIX"/share/rezound";
+			gSysDataDirectory=DATA_DIR"/rezound";
 
 
 		// -- 1
