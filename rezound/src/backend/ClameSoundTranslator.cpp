@@ -224,13 +224,13 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 	if(!gFrontendHooks->promptForMp3CompressionParameters(parameters))
 		return false;
 	
-	removeExistingFile(filename);
-
 	if(sound->getCueCount()>0 || sound->getUserNotes()!="")
 	{
 		if(Question("MPEG Layer-3 does not support saving user notes or cues\nDo you wish to continue?",yesnoQues)!=yesAns)
 			return false;
 	}
+
+	removeExistingFile(filename);
 
 	string cmdLine=gPathToLame+" ";
 
@@ -288,7 +288,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,CSound *sound) cons
 			uint32_t dataLength;
 		} waveHeader; 
 
-		#define BITS 16 // has to go along with how we're writting it to the pipe below
+		#define BITS 16 // has to go along with how we're writing it to the pipe below
 
 		if(size>((0x7fffffff-4096)/((BITS/2)*channelCount)))
 			throw(runtime_error(string(__func__)+" -- audio data is too large to be converted to mp3 (more than 2gigs of "+istring(BITS)+"bit/"+istring(channelCount)+"channels"));
