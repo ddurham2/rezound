@@ -20,6 +20,8 @@
 
 #include "AStatusComm.h"
 
+#include <ctype.h>
+
 AStatusComm *gStatusComm=NULL;
 
 const string AStatusComm::breakIntoLines(const string _s)
@@ -52,7 +54,7 @@ const string AStatusComm::breakIntoLines(const string _s)
 	return(s);
 }
 
-void Error(const string &message,VSeverity severity=none)
+void Error(const string &message,VSeverity severity)
 {
 	gStatusComm->error(message,severity);
 }

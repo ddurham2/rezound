@@ -30,6 +30,10 @@
 template <class pool_element_t,class pool_file_t> class TPoolAccesser : public TStaticPoolAccesser<pool_element_t,pool_file_t>
 {
 public:
+	// ??? I REALLY don't think that I should have to re-typedef these from the base class... but it suppresses the warnings I get with gcc3.1.1
+	typedef typename TStaticPoolAccesser<pool_element_t,pool_file_t>::l_addr_t l_addr_t;
+	typedef typename TStaticPoolAccesser<pool_element_t,pool_file_t>::p_addr_t p_addr_t;
+	typedef typename TStaticPoolAccesser<pool_element_t,pool_file_t>::poolId_t poolId_t;
 
 	TPoolAccesser(const TStaticPoolAccesser<pool_element_t,pool_file_t> &src);
 

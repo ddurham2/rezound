@@ -93,7 +93,7 @@ template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_
 	position=where;
 }
 
-template <class pool_element_t,class pool_file_t> const TStaticPoolAccesser<pool_element_t,pool_file_t>::l_addr_t TStaticPoolAccesser<pool_element_t,pool_file_t>::tell() const
+template <class pool_element_t,class pool_file_t> const typename TStaticPoolAccesser<pool_element_t,pool_file_t>::l_addr_t TStaticPoolAccesser<pool_element_t,pool_file_t>::tell() const
 {
 	return(position);
 }

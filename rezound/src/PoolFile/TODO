@@ -1,10 +1,11 @@
 
+	- figure out the proper way to make a template parameter be a friend of a template class in TStaticPoolAccesser
 
 	- reimplemente TStaticPoolAccesser::copyData and zeroData to use memcpy and memset instead of for-loops
 
-	- I really need to play with very large files (>500meg) and make them faster if ay all possible
+	- I really need to play with very large files (>500meg) and make them faster if at all possible
 
-	- make TPoolFile::accessers (and others sets instead of vectors?) direct indexing isn't necessary, then searching and inserting would become faster
+	- make TPoolFile::accessers (and others) sets (instead of vectors?) direct indexing isn't necessary when searching and inserting would become faster
 
 	- I have taken the call to backupSAT() out of TPoolFile::insertSpace because it is just too slow in the real-time situation of recording.
 		- perhaps I could have a more efficient way of storing the SAT or backing it up more effiently

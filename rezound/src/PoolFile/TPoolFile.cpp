@@ -764,7 +764,7 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	const TPoolFile<l_addr_t,p_addr_t>::alignment_t TPoolFile<l_addr_t,p_addr_t>::getPoolAlignment(const poolId_t poolId) const
+	const typename TPoolFile<l_addr_t,p_addr_t>::alignment_t TPoolFile<l_addr_t,p_addr_t>::getPoolAlignment(const poolId_t poolId) const
 {
 	//readStructureInfoLock();
 	try
@@ -787,7 +787,7 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	const TPoolFile<l_addr_t,p_addr_t>::alignment_t TPoolFile<l_addr_t,p_addr_t>::getPoolAlignment(const string poolName) const
+	const typename TPoolFile<l_addr_t,p_addr_t>::alignment_t TPoolFile<l_addr_t,p_addr_t>::getPoolAlignment(const string poolName) const
 {
 	return(getPoolAlignment(getPoolIdByName(poolName)));
 }
@@ -883,7 +883,7 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	const TPoolFile<l_addr_t,p_addr_t>::poolId_t TPoolFile<l_addr_t,p_addr_t>::getPoolIdByName(const string poolName) const
+	const typename TPoolFile<l_addr_t,p_addr_t>::poolId_t TPoolFile<l_addr_t,p_addr_t>::getPoolIdByName(const string poolName) const
 {
 	if(!opened)
 		throw(runtime_error(string(__func__)+" -- no file is open"));
@@ -896,7 +896,7 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	const TPoolFile<l_addr_t,p_addr_t>::poolId_t TPoolFile<l_addr_t,p_addr_t>::getPoolIdByIndex(const size_t index) const // where index is 0 to getPoolCount()-1
+	const typename TPoolFile<l_addr_t,p_addr_t>::poolId_t TPoolFile<l_addr_t,p_addr_t>::getPoolIdByIndex(const size_t index) const // where index is 0 to getPoolCount()-1
 {
 	if(index>=poolNames.size())
 		throw(runtime_error(string(__func__)+" -- index out of bounds: "+istring(index)));
@@ -2291,7 +2291,7 @@ template<class l_addr_t,class p_addr_t>
 				exit(1);
 			}
 			*/
-			const vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(block.physicalStart));
+			const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(block.physicalStart));
 
 			if(remove_start==block_start && remove_end==block_end)
 			{ // case 1 -- remove whole block -- on first and only block, middle or last block
@@ -2537,7 +2537,7 @@ template<class l_addr_t,class p_addr_t>
 					exit(1);
 				}
 				*/
-				const vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(SAT[destPoolId][destBlockIndex].physicalStart));
+				const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(SAT[destPoolId][destBlockIndex].physicalStart));
 
 				// shrink the logical and physical blocks' sizes
 				//physicalBlockList[physicalBlockIndex].size=SAT[destPoolId][destBlockIndex].size=firstPartSize;
@@ -2600,7 +2600,7 @@ template<class l_addr_t,class p_addr_t>
 				exit(1);
 			}
 			*/
-			const vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(srcBlock.physicalStart));
+			const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(srcBlock.physicalStart));
 
 			if(src_remove_start==src_block_start && src_remove_end==src_block_end)
 			{ // case 1 -- remove whole block from src pool -- on first and only block, middle or last block
@@ -2863,7 +2863,7 @@ template<class l_addr_t,class p_addr_t>
 	// remove all the entries in the physicalBlockList associated with this pool
 	for(size_t t=0;t<SAT[poolId].size();t++)
 	{
-		const vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(SAT[poolId][t].physicalStart));
+		const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(SAT[poolId][t].physicalStart));
 		physicalBlockList.erase(physicalBlockIndex);
 	}
 
@@ -2900,7 +2900,7 @@ template<class l_addr_t,class p_addr_t>
 		// ??? Optimization: if there were many many pools, I could make this a TDimableList by poolId to eliminate looking through all of them
 		// look to see if this block is already cached in the active cached blocks
 		//STL TStackQueueIterator<RCachedBlock *> i=activeCachedBlocks.getIterator();
-		for(deque<RCachedBlock *>::iterator i=activeCachedBlocks.begin();i!=activeCachedBlocks.end();i++)
+		for(typename deque<RCachedBlock *>::iterator i=activeCachedBlocks.begin();i!=activeCachedBlocks.end();i++)
 		{
 			RCachedBlock *cachedBlock=(*i);
 			if(cachedBlock->poolId==poolId && cachedBlock->containsAddress(byteWhere))
@@ -2916,7 +2916,7 @@ template<class l_addr_t,class p_addr_t>
 		{
 			//STL TStackQueueIterator<RCachedBlock *> i=unreferencedCachedBlocks.getIterator();
 			//while(!i.atEnd())
-			for(deque<RCachedBlock *>::iterator i=unreferencedCachedBlocks.begin();i!=unreferencedCachedBlocks.end();i++)
+			for(typename deque<RCachedBlock *>::iterator i=unreferencedCachedBlocks.begin();i!=unreferencedCachedBlocks.end();i++)
 			{
 				RCachedBlock *cachedBlock=(*i);
 				if(cachedBlock->poolId==poolId && cachedBlock->containsAddress(byteWhere))
@@ -2939,7 +2939,7 @@ template<class l_addr_t,class p_addr_t>
 				}
 
 				bool dummy;
-				//const set<RLogicalBlock>::const_iterator SATIndex=findSATBlockContaining(poolId,byteWhere,dummy);
+				//const typename set<RLogicalBlock>::const_iterator SATIndex=findSATBlockContaining(poolId,byteWhere,dummy);
 				const size_t SATIndex=findSATBlockContaining(poolId,byteWhere,dummy);
 
 				// use an unused one if available
@@ -3026,7 +3026,7 @@ template<class l_addr_t,class p_addr_t>
 	if(cachedBlock->dirty)
 	{
 		bool atStartOfBlock;
-		//const set<RLogicalBlock>::const_iterator SATIndex=findSATBlockContaining(cachedBlock->poolId,cachedBlock->logicalStart,atStartOfBlock);
+		//const typename set<RLogicalBlock>::const_iterator SATIndex=findSATBlockContaining(cachedBlock->poolId,cachedBlock->logicalStart,atStartOfBlock);
 		size_t SATIndex=findSATBlockContaining(cachedBlock->poolId,cachedBlock->logicalStart,atStartOfBlock);
 		// if atStartOfBlock is not true.. problem!!!
 		//blockFile.write(cachedBlock->buffer,SATIndex->size,SATIndex->physicalStart+LEADING_DATA_SIZE);
@@ -3034,7 +3034,7 @@ template<class l_addr_t,class p_addr_t>
 	}
 
 	// the cached block structure is now unreferenced and unused
-	deque<RCachedBlock *>::iterator i=find(unreferencedCachedBlocks.begin(),unreferencedCachedBlocks.end(),cachedBlock);
+	typename deque<RCachedBlock *>::iterator i=find(unreferencedCachedBlocks.begin(),unreferencedCachedBlocks.end(),cachedBlock);
 	if(i!=unreferencedCachedBlocks.end())
 	{
 		unreferencedCachedBlocks.erase(i);
@@ -3059,7 +3059,7 @@ template<class l_addr_t,class p_addr_t>
 		if(cachedBlock->referenceCount==0)
 		{	// move cachedBlock from activeQueue to unreferencedQueue
 			// could check the return value
-			deque<RCachedBlock *>::iterator i=find(activeCachedBlocks.begin(),activeCachedBlocks.end(),cachedBlock);
+			typename deque<RCachedBlock *>::iterator i=find(activeCachedBlocks.begin(),activeCachedBlocks.end(),cachedBlock);
 			if(i!=activeCachedBlocks.end())
 				activeCachedBlocks.erase(i);
 			unreferencedCachedBlocks.push_back(cachedBlock);
@@ -3129,7 +3129,7 @@ template<class l_addr_t,class p_addr_t>
 		//const size_t accesserIndex=findAccesserIndex((const CGenericPoolAccesser *)accesser,false);
 		//if(accesserIndex!=NIL_INDEX)
 		//						??? see about changing this to lower_bound... figure out just if lower_bound-1 or upper_bound-1 should be used
-		vector<const CGenericPoolAccesser *>::iterator i=find(accessers.begin(),accessers.end(),(const CGenericPoolAccesser *)accesser);
+		typename vector<const CGenericPoolAccesser *>::iterator i=find(accessers.begin(),accessers.end(),(const CGenericPoolAccesser *)accesser);
 		if(i!=accessers.end())
 			accessers.erase(i);
 		unlockAccesserInfo();
@@ -3166,7 +3166,7 @@ template<class l_addr_t,class p_addr_t>
 	for(size_t poolId=0;poolId<pools.size();poolId++)
 	{
 		for(size_t t=0;t<SAT[poolId].size();t++)
-	 	//for(set<RLogicalBlock>::const_iterator t=SAT[poolId].begin();t!=SAT[poolId].end();t++)
+	 	//for(typename set<RLogicalBlock>::const_iterator t=SAT[poolId].begin();t!=SAT[poolId].end();t++)
 			correctBlockPosition(poolId,t,getProceedingPoolSizes(poolId));
 	}
 	verifyAllBlockInfo(true);
@@ -3248,7 +3248,7 @@ template<class l_addr_t,class p_addr_t>
 	if(block.physicalStart!=correctStart)
 	{
 		//size_t k;
-		map<poolId_t,map<l_addr_t,bool> >::iterator k;
+		typename map<poolId_t,map<l_addr_t,bool> >::iterator k;
 		//if((k=correctionsTried.findItem(poolId))==DL_NOT_FOUND || correctionsTried[k].findItem(block.logicalStart)==DL_NOT_FOUND)
 		if((k=correctionsTried.find(poolId))==correctionsTried.end() || k->second.find(block.logicalStart)==k->second.end())
 		{ // have not tried to fix this one's position
@@ -3258,7 +3258,7 @@ template<class l_addr_t,class p_addr_t>
 			// for any block in the way (and not the current block), recur
 			for(size_t i=0;i<pools.size();i++)
 			{
-				//for(set<RLogicalBlock>::const_iterator t=SAT[i].begin();t!=SAT[i].end();t++)
+				//for(typename set<RLogicalBlock>::const_iterator t=SAT[i].begin();t!=SAT[i].end();t++)
 				for(size_t t=0;t<SAT[i].size();t++)
 				{
 					//const RLogicalBlock &moveBlock=(*t);
@@ -3277,7 +3277,7 @@ template<class l_addr_t,class p_addr_t>
 				// for any block in the way (and not the current block), move it to the END
 				for(size_t i=0;i<pools.size();i++)
 				{
-					//for(set<RLogicalBlock>::const_iterator t=SAT[i].begin();t!=SAT[i].end();t++)
+					//for(typename set<RLogicalBlock>::const_iterator t=SAT[i].begin();t!=SAT[i].end();t++)
 					for(size_t t=0;t<SAT[i].size();t++)
 					{
 						//const RLogicalBlock &moveBlock=(*t);
@@ -3304,7 +3304,7 @@ template<class l_addr_t,class p_addr_t>
 			// for any block in the way (and not the current block), move it
 			for(size_t i=0;i<pools.size();i++)
 			{
-				//for(set<RLogicalBlock>::const_iterator t=SAT[i].begin();t!=SAT[i].end();t++)
+				//for(typename set<RLogicalBlock>::const_iterator t=SAT[i].begin();t!=SAT[i].end();t++)
 				for(size_t t=0;t<SAT[i].size();t++)
 				{
 					//const RLogicalBlock &moveBlock=(*t);
@@ -3353,8 +3353,8 @@ template<class l_addr_t,class p_addr_t>
 			exit(1);
 		}
 		*/
-		//set<RPhysicalBlock>::const_iterator physicalBlockIndex=physicalBlockList.find(RPhysicalBlock(block.physicalStart));
-		const vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(block.physicalStart));
+		//typename set<RPhysicalBlock>::const_iterator physicalBlockIndex=physicalBlockList.find(RPhysicalBlock(block.physicalStart));
+		const typename vector<RPhysicalBlock>::iterator physicalBlockIndex=lower_bound(physicalBlockList.begin(),physicalBlockList.end(),RPhysicalBlock(block.physicalStart));
 		if(physicalBlockIndex==physicalBlockList.end())
 		{
 			printf("physicalBlockList and SAT inconsistancies\n");
@@ -3408,7 +3408,7 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	TPoolFile<l_addr_t,p_addr_t>::RPoolInfo &TPoolFile<l_addr_t,p_addr_t>::RPoolInfo::operator=(const RPoolInfo &src)
+	typename TPoolFile<l_addr_t,p_addr_t>::RPoolInfo &TPoolFile<l_addr_t,p_addr_t>::RPoolInfo::operator=(const RPoolInfo &src)
 {
 	size=src.size;
 	alignment=src.alignment;
@@ -3488,7 +3488,7 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock &TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::operator=(const RLogicalBlock &src)
+	typename TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock &TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::operator=(const RLogicalBlock &src)
 {
 	logicalStart=src.logicalStart;
 	size=src.size;
@@ -3580,7 +3580,7 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	TPoolFile<l_addr_t,p_addr_t>::RPhysicalBlock &TPoolFile<l_addr_t,p_addr_t>::RPhysicalBlock::operator=(const RPhysicalBlock &src)
+	typename TPoolFile<l_addr_t,p_addr_t>::RPhysicalBlock &TPoolFile<l_addr_t,p_addr_t>::RPhysicalBlock::operator=(const RPhysicalBlock &src)
 {
 	physicalStart=src.physicalStart;
 	size=src.size;

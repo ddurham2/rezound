@@ -32,7 +32,7 @@ CGraphParamValueNode::CGraphParamValueNode()
 	userData=NULL;
 }
 
-CGraphParamValueNode::CGraphParamValueNode(double _position,double _value,void *_userData=NULL)
+CGraphParamValueNode::CGraphParamValueNode(double _position,double _value,void *_userData)
 {
 	position=_position;
 	value=_value;

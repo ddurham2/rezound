@@ -36,7 +36,8 @@ public:
 		ptLimitedMix // is limited overwrite with mixMethod of mmOverwrite
 	};
 
-	CPasteEdit(const CActionSound actionSound,const bool pasteChannels[MAX_CHANNELS][MAX_CHANNELS],PasteTypes pasteType,MixMethods mixMethod=mmOverwrite);
+	//                                        const bool pasteChannels[MAX_CHANNELS][MAX_CHANNELS]
+	CPasteEdit(const CActionSound actionSound,const vector<vector<bool> > &pasteChannels,PasteTypes pasteType,MixMethods mixMethod=mmOverwrite);
 	virtual ~CPasteEdit();
 
 
@@ -50,11 +51,12 @@ protected:
 private:
 	PasteTypes pasteType;
 	MixMethods mixMethod;
-	bool pasteChannels[MAX_CHANNELS][MAX_CHANNELS];
+	vector<vector<bool> > pasteChannels;
 	bool whichChannels[MAX_CHANNELS]; // or-ed together rows from pasteChannels which says which channels are affected
 
 
-	void pasteData(const ASoundClipboard *clipboard,const bool pasteChannels[MAX_CHANNELS][MAX_CHANNELS],const CActionSound &actionSound,const sample_pos_t srcLength,bool invalidatePeakData,MixMethods initialMixMethod,MixMethods nonInitialMixMethod);
+	//                                              const bool pasteChannels[MAX_CHANNELS][MAX_CHANNELS]
+	void pasteData(const ASoundClipboard *clipboard,const vector<vector<bool> > &pasteChannels,const CActionSound &actionSound,const sample_pos_t srcLength,bool invalidatePeakData,MixMethods initialMixMethod,MixMethods nonInitialMixMethod);
 
 	// --- undo information --------
 	sample_pos_t undoRemoveLength;

@@ -95,8 +95,12 @@ public:
 
 
 
+	
+	//friend pool_file_t; // ??? I don't know what the work-around or proper way for doing this is
+	public:
 
-protected:
+
+//protected:
 
 	pool_file_t * const poolFile;
 	const poolId_t poolId;
@@ -112,11 +116,11 @@ protected:
 
 	void cacheBlock(const l_addr_t where) const;
 
-private:
+//private:
+
 
 	// stuff managed by TPoolFile
-	friend pool_file_t;
-	mutable TPoolFile<l_addr_t,p_addr_t>::RCachedBlock *cachedBlock;
+	mutable typename TPoolFile<l_addr_t,p_addr_t>::RCachedBlock *cachedBlock;
 	TStaticPoolAccesser(pool_file_t * const _poolFile,const poolId_t _poolId);
 
 	void init() const;

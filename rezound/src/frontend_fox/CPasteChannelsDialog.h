@@ -68,6 +68,7 @@ private:
 		FXMatrix *checkBoxMatrix;
 			FXCheckButton *checkBoxes[MAX_CHANNELS][MAX_CHANNELS];
 
+	// make this a vector<vector<bool> >
 	bool pasteChannels[MAX_CHANNELS][MAX_CHANNELS];
 
 };
