@@ -165,11 +165,12 @@ FXTextParamValue *CActionParamDialog::addNumericTextEntry(void *parent,const str
 	return textEntry;
 }
 
-FXTextParamValue *CActionParamDialog::addStringTextEntry(void *parent,const string name,const string initialValue,const string unitsTipText)
+FXTextParamValue *CActionParamDialog::addStringTextEntry(void *parent,const string name,const string initialValue,const string tipText)
 {
 	if(parent==NULL)
 		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
 	FXTextParamValue *textEntry=new FXTextParamValue((FXPacker *)parent,0,name.c_str(),initialValue);
+	textEntry->setTipText(tipText.c_str());
 	parameters.push_back(make_pair(ptStringText,textEntry));
 	retValueConvs.push_back(NULL);
 

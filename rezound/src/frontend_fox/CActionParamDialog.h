@@ -64,7 +64,7 @@ public:
 	FXConstantParamValue *addSlider(void *parent,const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton);
 		FXConstantParamValue *getSliderParam(const string name);
 	FXTextParamValue *addNumericTextEntry(void *parent,const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsTipText="");
-	FXTextParamValue *addStringTextEntry(void *parent,const string name,const string initialValue,const string unitsTipText="");
+	FXTextParamValue *addStringTextEntry(void *parent,const string name,const string initialValue,const string tipText="");
 		FXTextParamValue *getTextParam(const string name);
 	FXDiskEntityParamValue *addDiskEntityEntry(void *parent,const string name,const string intialEntityName,FXDiskEntityParamValue::DiskEntityTypes entityType,const string tipText="");
 		FXDiskEntityParamValue *getDiskEntityParam(const string name);
