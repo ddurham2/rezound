@@ -176,6 +176,23 @@ CQuantizeDialog::CQuantizeDialog(FXWindow *mainWindow) :
 
 
 
+// --- distortion --------------------------
+
+static const double interpretValue_distortion(const double x,const int s) { return(x); }
+static const double uninterpretValue_distortion(const double x,const int s) { return(x); }
+
+CDistortionDialog::CDistortionDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Distortion")
+{
+	void *p=newHorzPanel(NULL);
+		addGraph(p,"Curve","%",interpretValue_distortion,uninterpretValue_distortion,NULL,0,0,0);
+
+}
+
+
+
+
+
 // --- varied repeat -----------------------
 
 static const double interpretValue_varied_repeat(const double x,const int s) { return(x*s); }

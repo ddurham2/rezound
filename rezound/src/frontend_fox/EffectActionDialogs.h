@@ -103,6 +103,18 @@ public:
 
 
 
+// --- distortion ------------------------
+
+class CDistortionDialog : public CActionParamDialog
+{
+public:
+	CDistortionDialog(FXWindow *mainWindow);
+};
+
+
+
+
+
 // --- varied repeat ---------------------
 
 class CVariedRepeatDialog : public CActionParamDialog
