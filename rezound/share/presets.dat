@@ -280,7 +280,7 @@ Quantize
 	}
 }
 
-Simple\ Delay
+Simple\ Delay\ \(Echo\)
 {
 	names={"Simple Echo","Subtle Box","Tunnel","Bucket","Ring","Paging John"};
 	Simple\ Echo
@@ -422,7 +422,7 @@ Change\ Rate
 	}
 }
 
-Change\ Gain\ According\ to\ a\ Curve
+Curved\ Gain
 {
 	Curved\ Fade\ In
 	{
