@@ -80,7 +80,7 @@ ajv_CXX_CHECK_LIB([FOX],FXApp,fox/fx.h,[http://fox-toolkit.org])
 dnl Check for FOX's reswrap program. 
 AC_PATH_PROG(RESWRAP, reswrap)
 	if test -z "$RESWRAP"; then
-		AC_MSG_ERROR([reswrap not found])
+		AC_MSG_ERROR([reswrap not found (it comes with fox)])
 	fi
 
 
