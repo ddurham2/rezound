@@ -385,6 +385,10 @@ void CMainWindow::createMenus()
 		new CActionMenuCommand(new CRotateRightEditFactory(gChannelSelectDialog,new CRotateDialog(this)),menu,"");
 
 		new FXMenuSeparator(menu);
+		new CActionMenuCommand(new CSwapChannelsEditFactory(new CSwapChannelsDialog(this)),menu,"");
+		// add/remove channels would go here
+
+		new FXMenuSeparator(menu);
 		new CActionMenuCommand(new CSelectionEditFactory(sSelectAll),menu,"Ctrl+A");
 		new CActionMenuCommand(new CSelectionEditFactory(sSelectToBeginning),menu,"");
 		new CActionMenuCommand(new CSelectionEditFactory(sSelectToEnd),menu,"");

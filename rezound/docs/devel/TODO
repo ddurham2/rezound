@@ -4,8 +4,6 @@
 
 	- create a 'paste to new' edit action
 
-	- should put a "swap audio between two channels" in the edit menu which would not allow showing the  channel select dialog, but would have a normal dialog allowing the user to selection which two channels to swap data for.. moveData should work as a means of swapping data
-
 	- create a "monoize" action under remaster that says: mix X% of left onto the right and X% of the right onto the left or any channel configuration for that matter
 		- the backend factory could probably make sure it's a 2 channel sound before continuing ( override AActionFactory::doPreActionSetup() and return true or false or throw an EUserMessage )
 
@@ -455,4 +453,6 @@
 	- it is evidently invalid to call ftruncate to make a file bigger if it's on a fat32 mounted device
 		- There is a specific errno that comes back from this, I should test for it and fwrite zeros to make the file bigger
 		- this would be fixed in src/PoolFile/CMultiFile.cpp
+
+	- should put a "swap audio between two channels" in the edit menu which would not allow showing the  channel select dialog, but would have a normal dialog allowing the user to selection which two channels to swap data for.. moveData should work as a means of swapping data
 

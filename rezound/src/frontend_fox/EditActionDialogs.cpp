@@ -20,6 +20,10 @@
 
 #include "EditActionDialogs.h"
 
+#include <istring>
+
+#include "../backend/CActionSound.h"
+#include "../backend/CSound.h"
 
 // --- insert silence -------------------------
 
@@ -39,5 +43,42 @@ CRotateDialog::CRotateDialog(FXWindow *mainWindow) :
 	addTextEntry("Amount","seconds",1.0,0,10000);
 }
 
+
+
+// --- swap channels --------------------------
+
+CSwapChannelsDialog::CSwapChannelsDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow,"Swap Channels A & B")
+{
+	vector<string> items;
+	addComboTextEntry("Channel A",items,"");
+	addComboTextEntry("Channel B",items,"");
+}
+
+#include "../backend/CActionParameters.h"
+
+bool CSwapChannelsDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
+{
+	if(actionSound->sound->getChannelCount()<2)
+		return(false);
+	else if(actionSound->sound->getChannelCount()==2)
+	{ // only one possibility of swapping the two channels
+		actionParameters->addUnsignedParameter(0);
+		actionParameters->addUnsignedParameter(1);
+		return(true);
+	}
+	else
+	{
+		vector<string> items;
+		for(size_t t=0;t<actionSound->sound->getChannelCount();t++)
+				items.push_back("Channel "+istring(t));
+
+		// set the combo boxes according to actionSound
+		getComboText("Channel A")->setItems(items);
+		getComboText("Channel B")->setItems(items);
+
+		return(CActionParamDialog::show(actionSound,actionParameters));
+	}
+}
 
 

@@ -31,5 +31,6 @@
 //#include "CTrimEdit.h"
 #include "CInsertSilenceEdit.h"
 #include "CRotateEdit.h"
+#include "CSwapChannelsEdit.h"
 
 #endif

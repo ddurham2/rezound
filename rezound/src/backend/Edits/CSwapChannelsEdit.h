@@ -18,48 +18,39 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __ActionDialogs_H__
-#define __ActionDialogs_H__
-
-#include "../../config/common.h"
-#include "fox_compat.h"
-
-#include "CActionParamDialog.h"
+#ifndef __CSwapChannelsEdit_H__
+#define __CSwapChannelsEdit_H__
 
 
-// --- insert silence --------------------
+#include "../../../config/common.h"
 
-class CInsertSilenceDialog : public CActionParamDialog
+#include "../AAction.h"
+
+class CSwapChannelsEdit : public AAction
 {
 public:
-	CInsertSilenceDialog(FXWindow *mainWindow);
+	CSwapChannelsEdit(const CActionSound actionSound,unsigned channelA,unsigned channelB);
+	virtual ~CSwapChannelsEdit();
+
+protected:
+	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound &actionSound);
+	CanUndoResults canUndo(const CActionSound &actionSound) const;
+
+private:
+	unsigned channelA,channelB;
+
 };
 
-
-
-// --- rotate ----------------------------
-
-class CRotateDialog : public CActionParamDialog
+class CSwapChannelsEditFactory : public AActionFactory
 {
 public:
-	CRotateDialog(FXWindow *mainWindow);
+	CSwapChannelsEditFactory(AActionDialog *channelSelectDialog);
+
+	CSwapChannelsEdit *manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const;
+
+protected:
+	bool doPreActionSetup(CLoadedSound *loadedSound);
 };
-
-
-
-// --- swap channels ---------------------
-
-class CSwapChannelsDialog : public CActionParamDialog
-{
-public:
-	CSwapChannelsDialog(FXWindow *mainWindow);
-
-	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
-};
-
-
-
-
-
 
 #endif
