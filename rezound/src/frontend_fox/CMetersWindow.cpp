@@ -655,6 +655,11 @@ private:
 			double wx=sx-width/2;
 			double wy=sy-height/2;
 
+			// shrink square so that the corners aren't cut off when rotated 
+			// (this also fixes the gaps between pixels if I don't shrink it)
+			wx*=(sqrt(2.0)/2.0); 
+			wy*=(sqrt(2.0)/2.0);
+
 			double rot_wx=wx*cos(ang)-wy*sin(ang);
 			double rot_wy=wx*sin(ang)+wy*cos(ang);
 
