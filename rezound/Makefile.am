@@ -39,7 +39,9 @@ EXTRA_DIST= \
 	bootstrap \
 	docs \
 	share \
-	config 
+	config \
+	libtool.GL.patch \
+	README.GL_PROBLEMS
 
 ## This removes stuff from the distribution which may be present
 ## from a cvs checkout or other build reasons
