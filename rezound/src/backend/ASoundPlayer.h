@@ -78,6 +78,8 @@ public:
 
 	virtual ~ASoundPlayer();
 
+	static ASoundPlayer *createInitializedSoundPlayer();
+
 	virtual void initialize();
 	virtual void deinitialize();
 	virtual bool isInitialized() const=0;

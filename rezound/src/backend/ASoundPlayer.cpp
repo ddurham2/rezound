@@ -452,3 +452,57 @@ const size_t ASoundPlayer::getFrequencyAnalysisOctaveStride() const
 #endif
 }
 
+
+// ----------------------------
+
+// one of ENABLE_OSS, ENABLE_PORTAUDIO or ENABLE_JACK will be defined
+#include "COSSSoundPlayer.h"
+#include "CPortAudioSoundPlayer.h"
+#include "CJACKSoundPlayer.h"
+
+#include "AStatusComm.h"
+
+ASoundPlayer *ASoundPlayer::createInitializedSoundPlayer()
+{
+	ASoundPlayer *soundPlayer=NULL;
+
+#if defined(ENABLE_PORTAUDIO)
+	soundPlayer=new CPortAudioSoundPlayer();
+#elif defined(ENABLE_JACK)
+	soundPlayer=new CJACKSoundPlayer();
+#elif defined(ENABLE_OSS)
+	soundPlayer=new COSSSoundPlayer();
+#endif
+
+	try
+	{
+		soundPlayer->initialize();
+	}
+	catch(exception &e)
+	{
+#if !defined(ENABLE_PORAUDIO) && !defined(ENABLE_JACK)
+		// OSS was the only defined method
+		Error(string(e.what())+"\nPlaying will be disabled.");
+#else
+		// OSS was not the original method chosen at configure time so now fall back to using OSS if it wasn't disabled
+	#ifdef ENABLE_OSS
+		Warning(string(e.what())+"\nAttempting to fall back to using OSS for audio output.");
+
+		// try OSS
+		delete soundPlayer;
+		soundPlayer=new COSSSoundPlayer();
+		try
+		{
+			soundPlayer->initialize();
+		}
+		catch(exception &e)
+		{ // now really give up
+			Error(string(e.what())+"\nPlaying will be disabled.");
+		}
+	#else
+		Error(string(e.what())+"\nPlaying will be disabled.");
+	#endif
+#endif
+	}
+	return soundPlayer;
+}
