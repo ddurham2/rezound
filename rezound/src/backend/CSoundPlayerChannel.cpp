@@ -24,6 +24,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <algorithm>
 
 #include <istring>
 
@@ -386,10 +387,9 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 		return;
 	}
 
-	if(sound.getLength()<3)
+	if(sound.getLength()<2)
 	{
-		kill();
-		this->envelope.releasing=true;
+		//kill(); ??? this might be necessary if the playing sound had an envelope that had to decay before it would actually stop
 		sound.unlockSize();
 		unlock();
 		return;
@@ -410,18 +410,26 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 		// both ends since the interpolation have to switch look-ahead directions 
 		// when playing in reverse.
 		// One way to fix this would be to have two separate implementations of 
-		// the MOVE_PLAY_PISITION macro and two separate sections of for-loops 
+		// the MOVE_PLAY_POSITION macro and two separate sections of for-loops 
 		// which would be used depending on whether tPlaySpeed was >0 or <0
 		// And I could then separate the outer most two cases in MOVE_PLAY_POSITION
 
 		const bool doInterpolate= (tPlaySpeed>=0.0 && sample_fpos_floor(tPlaySpeed)!=tPlaySpeed); // non-integer playSpeed and playing forward
-		const int fudge= doInterpolate ? 1 : 0; // fudge factor since we might look ahead one sample
+		const sample_pos_t fudge= doInterpolate ? 1 : 0; // fudge factor since we might look ahead one sample
 
 		if(playSelectionOnly)
 		{
 			// pos1 is selectStart; pos2 is selectStop
 			pos1=startPosition;
-			pos2=stopPosition-fudge;
+
+			if(stopPosition>fudge)
+				pos2=stopPosition-fudge;
+			else
+				pos2=0;
+
+			// incase the fudge subtraction made this not to be so
+			pos1=min(pos1,pos2);
+
 		}
 		else
 		{
@@ -429,9 +437,6 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 			pos1=0;
 			pos2=(sound.getLength()-1)-fudge;
 		}
-
-		if(pos1>pos2) // incase the fudge subtraction this not to be so
-			pos1=pos2;
 
 		// use a local variable instead of looking up the data member each time
 		register sample_fpos_t fPlayPosition=this->playPosition;
@@ -442,9 +447,6 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 			fPlayPosition=0.0;
 		else if(fPlayPosition>pos2)
 			fPlayPosition=pos2;
-
-//#warning I need to figure out how to get this to play okay when its interpolating and the seleciton is just near the end of the sound and the selection is one sample long
-
 
 		const sample_fpos_t origPlayPosition=fPlayPosition;
 
