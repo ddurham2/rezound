@@ -10,13 +10,19 @@ class CCompressorActionFactory;
 class CCompressorAction : public AAction
 {
 public:
-	CCompressorAction(const CActionSound &actionSound);
+	CCompressorAction(const CActionSound &actionSound,float windowTime,float threshold,float ratio,float attackTime,float releaseTime);
 
 protected:
 	bool doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo);
 	void undoActionSizeSafe(const CActionSound &actionSound);
 	CanUndoResults canUndo(const CActionSound &actionSound) const;
 
+private:
+	const float windowTime;
+	const float threshold;
+	const float ratio;
+	const float attackTime;
+	const float releaseTime;
 };
 
 class CCompressorActionFactory : public AActionFactory

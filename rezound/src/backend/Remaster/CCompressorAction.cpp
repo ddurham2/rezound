@@ -4,8 +4,14 @@
 
 #include "../DSPBlocks.h"
 
-CCompressorAction::CCompressorAction(const CActionSound &actionSound) :
-	AAction(actionSound)
+CCompressorAction::CCompressorAction(const CActionSound &actionSound,float _windowTime,float _threshold,float _ratio,float _attackTime,float _releaseTime) :
+	AAction(actionSound),
+
+	windowTime(_windowTime),
+	threshold(_threshold),
+	ratio(_ratio),
+	attackTime(_attackTime),
+	releaseTime(_releaseTime)
 {
 }
 
@@ -21,6 +27,7 @@ bool CCompressorAction::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 	if(prepareForUndo)
 		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
 
+
 	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 	{
 		if(actionSound.doChannel[i])
@@ -33,7 +40,13 @@ bool CCompressorAction::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 			sample_pos_t destPos=start;
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 
-			CDSPCompressor compressor(8000,6000,/*0.5*/1.0/1.585,4000,200000);
+			CDSPCompressor compressor(
+				ms_to_samples(windowTime,actionSound.sound->getSampleRate()),
+				dBFS_to_amp(threshold),
+				dB_to_scalar(ratio),
+				ms_to_samples(attackTime,actionSound.sound->getSampleRate()),
+				ms_to_samples(releaseTime,actionSound.sound->getSampleRate())
+			);
 
 			// initialize the compressor's level detector
 			//while((destPos++)<min(stop,4000))
@@ -79,7 +92,7 @@ CCompressorActionFactory::CCompressorActionFactory(AActionDialog *channelSelectD
 
 CCompressorAction *CCompressorActionFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
-	return(new CCompressorAction(actionSound));
+	return(new CCompressorAction(actionSound,20,-14.75,2,0.25,1));
 }
 
 

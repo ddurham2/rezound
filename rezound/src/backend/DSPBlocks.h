@@ -258,13 +258,13 @@ private:
 
 /* --- CDSPCompressor ----------------------------------------
  *
- * - This DSP block begins to change the gain from 1.0 to the given 'compressGain' 
- *   on the sound when the level of the audio rises above the given 'threshold'.  
- *   The rate at which it begins to change this gain is given by the 'gainAttackTime' 
- *   and the rate at which it begins to return to a gain of 1.0 once the level is 
- *   again below the threshold is given by 'gainReleaseTime'.  The level is detected 
- *   with a moving average (performed by CDSPLevelDetector) the width of the moving 
- *   window is given by 'windowTime'
+ * - This DSP block begins to change the gain from 1.0 to a different value based 
+ *   on the ratio on the sound when the level of the audio rises above the given 
+ *   'threshold'.  The rate at which it begins to change this gain is given by the 
+ *   'attackTime' and the rate at which it begins to return to a gain of 1.0 once 
+ *   the level is again below the threshold is given by 'releaseTime'.  The level 
+ *   is detected with a moving average (performed by CDSPLevelDetector) the width
+ *   of the moving window is given by 'windowTime'
  *
  * - To use simply construct the block with the desired parameters and repeatedly call 
  *   processSample() which returns the sample that was given but adjusted by the 
@@ -277,19 +277,26 @@ private:
  *
  * Info reference: http://www.harmony-central.com/Effects/Articles/Compression/
  *
+ * Also, I had a lot of details to work out myself.  Basically, when the level rises
+ * above the threshold then a gain is calculated to multiply with the sound which will
+ * change the level by 1/ratio of the difference the level is above the threshold
+ *
  */
 class CDSPCompressor
 {
 public:
 	// all times are in samples
-	CDSPCompressor(unsigned _windowTime,sample_t _threshold,float _compressGain,unsigned _gainAttackTime,unsigned _gainReleaseTime) :
+	CDSPCompressor(unsigned _windowTime,sample_t _threshold,float _compressionRatio,unsigned _attackTime,unsigned _releaseTime) :
 		windowTime(_windowTime),
 		threshold(_threshold),
-		compressGain(_compressGain),
-		gainAttackVelocity(1.0/(float)_gainAttackTime),
-		gainReleaseVelocity(1.0/(float)_gainReleaseTime),
-	
-		gain(1.0),
+		compressionRatio(_compressionRatio),
+
+		// have to take into account the ratio to be reached for the calculation 
+		// of the envelope velocity (value to add/sub to bouncingRatio each sample frame)
+		attackVelocity((_compressionRatio-1.0)/_attackTime),
+		releaseVelocity((_compressionRatio-1.0)/_releaseTime),
+
+		bouncingRatio(1.0),
 		levelDetector(windowTime)
 	{
 		// ??? verify parameters?
@@ -310,23 +317,19 @@ public:
 	{
 		const mix_sample_t level=levelDetector.readLevel(s);
 		
-		if(level>=threshold && gain!=compressGain)
-			gain= max(gain-gainAttackVelocity,compressGain);
-		else if(level<threshold && gain!=1.0)
-			gain= min(gain+gainReleaseVelocity,(float)1.0);
+		// ??? I need to allow compression ratio to also be less than 1 to act as an exciter
+		if(level>=threshold && bouncingRatio!=compressionRatio)
+			bouncingRatio= min(bouncingRatio+attackVelocity,compressionRatio);
+		else if(level<threshold && bouncingRatio!=1.0)
+			bouncingRatio= max(bouncingRatio-releaseVelocity,(float)1.0);
 
-		// ??? I need to be able to allow _compressGain to be any value.. then I should check the bounds of the gain here.. just one time
-
-			// ??? should be able to make this 3 return statements in the 2 cases+else above
-		return(gain!=1.0 ? (mix_sample_t)(s*gain) : s);
+		if(bouncingRatio>1.0)
+			return (mix_sample_t)(s * ((threshold*(bouncingRatio-1.0)+level)/(bouncingRatio*level)) );
+		else
+			return s;
+		
 	}
 
-
-	// can be used to reset the internal gain if desired
-	void resetGain(const float _gain=1.0)
-	{
-		gain=_gain;
-	}
 
 	const unsigned getWindowTime() const
 	{
@@ -337,11 +340,14 @@ public:
 private:
 	const unsigned windowTime;
 	const mix_sample_t threshold;
-	const float compressGain;
-	const float gainAttackVelocity;
-	const float gainReleaseVelocity;
+	const float compressionRatio;
+	const float attackVelocity;
+	const float releaseVelocity;
 
-	float gain;
+	// this is the compressionRatio affected by the attack and 
+	// release times as the level goes above and below the threshold
+	float bouncingRatio;
+
 	CDSPLevelDetector levelDetector;
 };
 
