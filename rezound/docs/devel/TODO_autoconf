@@ -11,3 +11,5 @@ and move it into config
 -O2 or not.
 
 -Get libfrontend_fox.la to work. 
+
+-We need to add an option to add -I paths for header files listed in a strange place. I'm using the compile farm to work out bugs like this.
