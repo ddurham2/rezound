@@ -48,6 +48,9 @@
 		- comp.dsp
 		- freshmeat
 
+	- Create a little description of how to make some interesting sound from a sample I give them.. show them how to take a small piece of it.. make it loop able.. then slow it down.. filter.. etc.. 
+		- post several examples of my _alt# files
+
 	- I've said that I want to support another audio file libary in the future, but I did find that libaudiofile's API at least has support for loop points, cues, notes and arbitrary data, but it doesn't seem to even be implemented on wave save.
 		- Perhaps I will work to patch libaudiofile to get this functionality working.  Because SOX's lib form is far from existing
 		- libsndfile has more formats than libaudiofile but has no API provisions for arbitrary data. AND it isn't packaged on hardly any distroes
