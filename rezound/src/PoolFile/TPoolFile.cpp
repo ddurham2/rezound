@@ -409,6 +409,8 @@ template<class l_addr_t,class p_addr_t>
 	//writeStructureInfoLock();
 	try
 	{
+		invalidateAllCachedBlocks();
+
 		// need to probably wait for any outstanding accessers to deallocate
 		if(_removeFile)
 		{
@@ -417,8 +419,6 @@ template<class l_addr_t,class p_addr_t>
 		}
 		else
 		{
-			invalidateAllCachedBlocks();
-
 			if(_defrag)
 				defrag();
 
