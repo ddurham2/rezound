@@ -141,7 +141,7 @@ template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_
 			throw(runtime_error(string(__func__)+" -- count parameter is out of bounds and not allowed to append"));
 
 		const l_addr_t overflow=count-(getSize()-position);
-		poolFile->insertSpace(poolId,poolFile->getPoolSize(poolId),overflow);
+		poolFile->insertSpace(poolId,getSize(),overflow);
 	}
 
 	for(l_addr_t i=0;;)
