@@ -47,7 +47,8 @@ public:
 	CSound *getSound() const;
 	CSound * const sound;
 
-	void play(bool _playLooped=false,bool _playSelectionOnly=false);
+	// the position arg is only used iff playLooped and playSelectionOnly are both false
+	void play(sample_pos_t position=0,bool _playLooped=false,bool _playSelectionOnly=false);
 	void pause();
 	void stop();
 

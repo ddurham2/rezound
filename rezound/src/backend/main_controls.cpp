@@ -160,7 +160,21 @@ void play(ASoundFileManager *soundFileManager,bool looped,bool selectionOnly)
 	{
 		CLoadedSound *loaded=soundFileManager->getActive();
 		if(loaded!=NULL)
-			loaded->channel->play(looped,selectionOnly);
+			loaded->channel->play(0,looped,selectionOnly);
+	}
+	catch(exception &e)
+	{
+		Error(e.what());
+	}
+}
+
+void play(ASoundFileManager *soundFileManager,sample_pos_t position)
+{
+	try
+	{
+		CLoadedSound *loaded=soundFileManager->getActive();
+		if(loaded!=NULL)
+			loaded->channel->play(position);
 	}
 	catch(exception &e)
 	{

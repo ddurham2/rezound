@@ -29,6 +29,8 @@
 
 #include <string>
 
+#include "CSound_defs.h"
+
 class ASoundFileManager;
 
 
@@ -47,6 +49,7 @@ const bool exitReZound(ASoundFileManager *soundFileManager);
 
 // --- play control operations ---
 void play(ASoundFileManager *soundFileManager,bool looped,bool selectionOnly);
+void play(ASoundFileManager *soundFileManager,sample_pos_t position);
 void pause(ASoundFileManager *soundFileManager);
 void stop(ASoundFileManager *soundFileManager);
 

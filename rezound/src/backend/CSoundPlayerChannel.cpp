@@ -117,7 +117,7 @@ void CSoundPlayerChannel::deinit()
 	destroyPrebufferedChunks();
 }
 
-void CSoundPlayerChannel::play(bool _playLooped,bool _playSelectionOnly)
+void CSoundPlayerChannel::play(sample_pos_t position,bool _playLooped,bool _playSelectionOnly)
 {
 	if(!player->isInitialized())
 		throw(runtime_error(string(__func__)+" -- the sound player is not initialized"));
@@ -129,17 +129,22 @@ void CSoundPlayerChannel::play(bool _playLooped,bool _playSelectionOnly)
 	for(size_t t=0;t<MAX_CHANNELS;t++)
 		prevFrame[t]=0;
 
-	playLooped=_playLooped;
-	playSelectionOnly=_playSelectionOnly;
-	if(playSelectionOnly)
-	{
-		prebufferPosition=startPosition;
-		playPosition=startPosition;
+	if(!_playLooped && !_playSelectionOnly)
+	{ // use position
+		if(position>=sound->getLength())
+			return;
+		playLooped=false;
+		playSelectionOnly=false;
+		prebufferPosition=playPosition=position;
 	}
 	else
-	{
-		prebufferPosition=0;
-		playPosition=0;
+	{ // ignore position and use the two flags
+		playLooped=_playLooped;
+		playSelectionOnly=_playSelectionOnly;
+		if(playSelectionOnly)
+			prebufferPosition=playPosition=startPosition;
+		else
+			prebufferPosition=playPosition=0;
 	}
 
 	prebuffering=true;
