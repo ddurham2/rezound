@@ -49,6 +49,8 @@ public:
 	virtual void show(FXuint placement);
 	virtual void hide();
 
+	void disableFrameDecor();
+
 	long onOkayButton(FXObject *sender,FXSelector sel,void *ptr);
 
 	enum 

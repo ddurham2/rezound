@@ -44,15 +44,19 @@ FXModalDialogBox::FXModalDialogBox(FXWindow *owner,const FXString &title,int w,i
 		upperFrame(
 			frameType==ftHorizontal 
 				? 
-				(FXPacker *)new FXHorizontalFrame(contents,FRAME_RAISED|FRAME_THICK | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 5,5,5,5)
+				(FXPacker *)new FXHorizontalFrame(contents,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)
 				:
-				(FXPacker *)new FXVerticalFrame(contents,FRAME_RAISED|FRAME_THICK | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 5,5,5,5)
+				(FXPacker *)new FXVerticalFrame(contents,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)
 			),
 		lowerFrame(new FXHorizontalFrame(contents,FRAME_RAISED|FRAME_THICK | LAYOUT_FILL_X|LAYOUT_FIX_HEIGHT, 0,0,0,65)),
 			buttonPacker(new FXHorizontalFrame(lowerFrame,LAYOUT_CENTER_X|LAYOUT_CENTER_Y, 0,0,0,0, 0,0,0,0, 12)),
 				okayButton(new FXButton(buttonPacker,"&Okay",new FXGIFIcon(getApp(),GreenCheck1),this,ID_OKAY_BUTTON,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2)),
 				cancelButton(new FXButton(buttonPacker,"&Cancel",new FXGIFIcon(getApp(),RedX1),this,ID_CANCEL,FRAME_RAISED|FRAME_THICK | JUSTIFY_NORMAL | ICON_ABOVE_TEXT | LAYOUT_FIX_WIDTH, 0,0,60,0, 2,2,2,2))
 {
+	getFrame()->setPadLeft(5); getFrame()->setPadRight(5); getFrame()->setPadTop(5); getFrame()->setPadBottom(5);
+	getFrame()->setHSpacing(DEFAULT_SPACING); getFrame()->setVSpacing(DEFAULT_SPACING);
+	getFrame()->setFrameStyle(getFrame()->getFrameStyle()|FRAME_RAISED|FRAME_THICK);
+
 		// ??? this doesn't seem to be having any effect... ask mailing list
 	okayButton->setDefault(TRUE);
 
@@ -60,6 +64,13 @@ FXModalDialogBox::FXModalDialogBox(FXWindow *owner,const FXString &title,int w,i
 	//ASSURE_WIDTH(contents,160);
 }
 
+
+void FXModalDialogBox::disableFrameDecor()
+{
+	getFrame()->setPadLeft(0); getFrame()->setPadRight(0); getFrame()->setPadTop(0); getFrame()->setPadBottom(0);
+	getFrame()->setHSpacing(0); getFrame()->setVSpacing(0);
+	getFrame()->setFrameStyle(getFrame()->getFrameStyle()& ~FRAME_RAISED & ~FRAME_THICK);
+}
 
 long FXModalDialogBox::onOkayButton(FXObject *sender,FXSelector sel,void *ptr)
 {
