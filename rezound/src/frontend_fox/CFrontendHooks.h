@@ -35,6 +35,9 @@
 	using namespace FX;
 #endif
 
+class CNewSoundDialog;
+class CRecordDialog;
+
 class CFrontendHooks : public AFrontendHooks
 {
 public:
@@ -56,12 +59,16 @@ public:
 
 	bool promptForRecord(ASoundRecorder *recorder);
 
+
 private:
 	FXWindow *mainWindow;
 
 	FXFileDialog *openDialog;
 	FXFileDialog *saveDialog;
 	FXDirDialog *dirDialog;
+
+	CNewSoundDialog *newSoundDialog;
+	CRecordDialog *recordDialog;
 };
 
 #endif

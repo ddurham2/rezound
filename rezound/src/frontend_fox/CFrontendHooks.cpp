@@ -39,9 +39,11 @@ CFrontendHooks::CFrontendHooks(FXWindow *_mainWindow) :
 	mainWindow(_mainWindow),
 
 	openDialog(NULL),
-	saveDialog(NULL)
-{
+	saveDialog(NULL),
 
+	newSoundDialog(NULL),
+	recordDialog(NULL)
+{
 	dirDialog=new FXDirDialog(mainWindow,"Select Directory");
 }
 
@@ -49,6 +51,9 @@ CFrontendHooks::~CFrontendHooks()
 {
 	delete openDialog;
 	delete saveDialog;
+
+	delete newSoundDialog;
+	delete recordDialog;
 }
 
 void CFrontendHooks::doSetupAfterBackendIsSetup()
@@ -64,6 +69,10 @@ void CFrontendHooks::doSetupAfterBackendIsSetup()
 	saveDialog->setPatternList(getFOXFileTypes().c_str());
 	saveDialog->setCurrentPattern(0);
 	saveDialog->setDirectory(gPromptDialogDirectory.c_str());
+
+	newSoundDialog=new CNewSoundDialog(mainWindow);
+	recordDialog=new CRecordDialog(mainWindow);
+	
 }
 
 const string CFrontendHooks::getFOXFileTypes() const
@@ -158,15 +167,15 @@ bool CFrontendHooks::promptForSaveSoundFilename(string &filename)
 
 bool CFrontendHooks::promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length)
 {
-	gNewSoundDialog->hideFilename(false);
-	gNewSoundDialog->hideLength(false);
-	gNewSoundDialog->setFilename(filename);
-	if(gNewSoundDialog->execute(PLACEMENT_CURSOR))	
+	newSoundDialog->hideFilename(false);
+	newSoundDialog->hideLength(false);
+	newSoundDialog->setFilename(filename);
+	if(newSoundDialog->execute(PLACEMENT_CURSOR))	
 	{
-		filename=gNewSoundDialog->getFilename();
-		channelCount=gNewSoundDialog->getChannelCount();
-		sampleRate=gNewSoundDialog->getSampleRate();
-		length=gNewSoundDialog->getLength();
+		filename=newSoundDialog->getFilename();
+		channelCount=newSoundDialog->getChannelCount();
+		sampleRate=newSoundDialog->getSampleRate();
+		length=newSoundDialog->getLength();
 		return(true);
 	}
 	return(false);
@@ -174,14 +183,14 @@ bool CFrontendHooks::promptForNewSoundParameters(string &filename,unsigned &chan
 
 bool CFrontendHooks::promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate)
 {
-	gNewSoundDialog->hideFilename(false);
-	gNewSoundDialog->hideLength(true);
-	gNewSoundDialog->setFilename(filename);
-	if(gNewSoundDialog->execute(PLACEMENT_CURSOR))	
+	newSoundDialog->hideFilename(false);
+	newSoundDialog->hideLength(true);
+	newSoundDialog->setFilename(filename);
+	if(newSoundDialog->execute(PLACEMENT_CURSOR))	
 	{
-		filename=gNewSoundDialog->getFilename();
-		channelCount=gNewSoundDialog->getChannelCount();
-		sampleRate=gNewSoundDialog->getSampleRate();
+		filename=newSoundDialog->getFilename();
+		channelCount=newSoundDialog->getChannelCount();
+		sampleRate=newSoundDialog->getSampleRate();
 		return(true);
 	}
 	return(false);
@@ -189,12 +198,12 @@ bool CFrontendHooks::promptForNewSoundParameters(string &filename,unsigned &chan
 
 bool CFrontendHooks::promptForNewSoundParameters(unsigned &channelCount,unsigned &sampleRate)
 {
-	gNewSoundDialog->hideFilename(true);
-	gNewSoundDialog->hideLength(true);
-	if(gNewSoundDialog->execute(PLACEMENT_CURSOR))	
+	newSoundDialog->hideFilename(true);
+	newSoundDialog->hideLength(true);
+	if(newSoundDialog->execute(PLACEMENT_CURSOR))	
 	{
-		channelCount=gNewSoundDialog->getChannelCount();
-		sampleRate=gNewSoundDialog->getSampleRate();
+		channelCount=newSoundDialog->getChannelCount();
+		sampleRate=newSoundDialog->getSampleRate();
 		return(true);
 	}
 	return(false);
@@ -213,7 +222,7 @@ bool CFrontendHooks::promptForDirectory(string &dirname,const string title)
 
 bool CFrontendHooks::promptForRecord(ASoundRecorder *recorder)
 {
-	if(gRecordDialog->show(recorder))
+	if(recordDialog->show(recorder))
 		return(true);
 	return(false);
 }

@@ -30,8 +30,6 @@
 #include "CFrontendHooks.h"
 #include "../backend/AStatusComm.h"
 
-CNewSoundDialog *gNewSoundDialog=NULL;
-
 
 FXDEFMAP(CNewSoundDialog) CNewSoundDialogMap[]=
 {

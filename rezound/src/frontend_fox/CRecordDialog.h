@@ -31,8 +31,6 @@ class CRecordDialog;
 
 #include "../backend/CSound_defs.h"
 
-extern CRecordDialog *gRecordDialog;
-
 class ASoundRecorder;
 
 class CRecordDialog : public FXModalDialogBox

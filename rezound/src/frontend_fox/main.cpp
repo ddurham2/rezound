@@ -143,8 +143,6 @@ int main(int argc,char *argv[])
 
 #include "CChannelSelectDialog.h"
 #include "CPasteChannelsDialog.h"
-#include "CNewSoundDialog.h"
-#include "CRecordDialog.h"
 #include "CCueDialog.h"
 #include "CCueListDialog.h"
 #include "CUserNotesDialog.h"
@@ -160,12 +158,6 @@ void setupWindows(CMainWindow *mainWindow)
 
 		// create the channel select dialog that AActionFactory uses for selecting channels to paste to
 		gPasteChannelsDialog=new CPasteChannelsDialog(mainWindow);
-
-		// create the dialog used to select parameters when the use creates a new sound
-		gNewSoundDialog=new CNewSoundDialog(mainWindow);
-
-		// create the dialog used to record to a new sound
-		gRecordDialog=new CRecordDialog(mainWindow);
 
 		// create the dialog used to obtain the name for a new cue
 		gCueDialog=new CCueDialog(mainWindow);

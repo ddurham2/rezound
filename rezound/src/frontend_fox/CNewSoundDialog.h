@@ -32,8 +32,6 @@ class CNewSoundDialog;
 
 #include "../backend/CSound_defs.h"
 
-extern CNewSoundDialog *gNewSoundDialog;
-
 class CNewSoundDialog : public FXModalDialogBox
 {
 	FXDECLARE(CNewSoundDialog);

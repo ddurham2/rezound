@@ -29,8 +29,6 @@
 
 #define STATUS_UPDATE_TIME 100
 
-CRecordDialog *gRecordDialog;
-
 FXDEFMAP(CRecordDialog) CRecordDialogMap[]=
 {
 //	Message_Type			ID					Message_Handler
