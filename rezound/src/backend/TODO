@@ -3,8 +3,6 @@
 
 	- enhance TSoundStretcher to do interpolation
 
-	- need to implement a CFileClipboard which can paste to/from a file
-
 	- have CRecordClipboard ask for recording parameters
 
 	- figure out what to do with the 4 bogus cues that appear in an aiff file when the file had no cues in it, itself
@@ -54,6 +52,7 @@
 		- I suppose I should use popt because it is packaged for most all rpm abd deb based distros.. I need to find URL of popt's homepage and refer to that on error in configure
 
 
+	- Eventually, I need to have the frontend make use of the backend's ability for some of the actions to use different LFO implementations
 
 
 
@@ -61,6 +60,11 @@
 --- POSSIBLE THINGS TO DO ---
 
 	- I could remember native clipboards between runs by not deleting removing the pool file's file
+
+	- Implement a CFileClipboard which can paste to/from a file
+		- it would need to let the user paste from a file, the whole file probably...
+		- when copying to this clipboard it should ask for a filename and save to that filename... possibly even having the option to turn around and open that file when the copy is done...
+			- if at all possible, avoid doing any extra read/write of all the audio when opening after copying/cuting
 
 	- To speed up initial work upon loading a large file (>100mb) I could have the loading functions calculate the peak chunk info instead of loading then calcing the peak chunk on the first draw which causes it to have to read and write the data twice instead of once
 		- or use the background fage as I'm leaning toward
