@@ -44,8 +44,9 @@ FXDEFMAP(FXComboTextParamValue) FXComboTextParamValueMap[]=
 
 FXIMPLEMENT(FXComboTextParamValue,FXVerticalFrame,FXComboTextParamValueMap,ARRAYNUMBER(FXComboTextParamValueMap))
 
-FXComboTextParamValue::FXComboTextParamValue(FXComposite *p,int opts,const char *title,const vector<string> &items,bool isEditable) :
+FXComboTextParamValue::FXComboTextParamValue(FXComposite *p,int opts,const char *title,const vector<string> &items,bool _isEditable) :
 	FXVerticalFrame(p,opts|FRAME_RIDGE | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 6,6,2,4, 2,0),
+	isEditable(_isEditable),
 
 	titleLabel(new FXLabel(this,title,NULL,LABEL_NORMAL|LAYOUT_CENTER_Y|LAYOUT_CENTER_X)),
 	valueComboBox(new FXComboBox(this,8,min((size_t)items.size(),(size_t)8),NULL,0, COMBOBOX_NORMAL|(!isEditable ? COMBOBOX_STATIC : 0) | FRAME_SUNKEN|FRAME_THICK | LAYOUT_CENTER_Y|LAYOUT_FILL_X))
@@ -55,12 +56,18 @@ FXComboTextParamValue::FXComboTextParamValue(FXComposite *p,int opts,const char 
 
 const FXint FXComboTextParamValue::getValue()
 {
-	return(valueComboBox->getCurrentItem());
+	if(isEditable)
+		return atoi(valueComboBox->getText().text());
+	else
+		return valueComboBox->getCurrentItem();
 }
 
 void FXComboTextParamValue::setValue(const FXint value)
 {
-	valueComboBox->setCurrentItem(value);
+	if(isEditable)
+		valueComboBox->setText(istring(value).c_str());
+	else
+		valueComboBox->setCurrentItem(value);
 }
 
 void FXComboTextParamValue::setItems(const vector<string> &items)
