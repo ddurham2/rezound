@@ -111,6 +111,7 @@ CLADSPAActionDialog::CLADSPAActionDialog(FXWindow *mainWindow,const LADSPA_Descr
 					addCheckBoxEntry(p2,pluginDesc->PortNames[t],defaultValue>0.0,"");
 				else
 				{
+					/*
 					printf("name:%s:%s int:%d l:%d,%f u:%d,%f logrth:%d sr:%d default:%d,%f\n",
 						pluginDesc->Name,
 						pluginDesc->PortNames[t],
@@ -129,6 +130,7 @@ CLADSPAActionDialog::CLADSPAActionDialog(FXWindow *mainWindow,const LADSPA_Descr
 						hasDefault,
 
 						defaultValue);
+					*/
 
 					double minValue=0;
 					double maxValue=10000;
@@ -168,7 +170,7 @@ CLADSPAActionDialog::CLADSPAActionDialog(FXWindow *mainWindow,const LADSPA_Descr
 					}
 					else // linear
 					{
-						printf("minScalar: %d maxScalar: %d minValue: %f maxValue: %f\n",minScalar,maxScalar,minValue,maxValue);
+						//printf("minScalar: %d maxScalar: %d minValue: %f maxValue: %f\n",minScalar,maxScalar,minValue,maxValue);
 						CActionParamMapper_linear_range_scaled *m=new CActionParamMapper_linear_range_scaled(defaultValue,minValue,maxValue,(int)initialScalar,minScalar,maxScalar);
 
 						if(LADSPA_IS_HINT_INTEGER(portRangeHintDesc))
