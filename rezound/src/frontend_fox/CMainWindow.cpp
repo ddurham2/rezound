@@ -467,7 +467,7 @@ void CMainWindow::createMenus()
 		new FXMenuCommand(menu,"VerifySAT",NULL,this,ID_VERIFY_SAT_MENUITEM);
 
 		new FXMenuSeparator(menu);
-		new FXMenuCommand(menu,"&Quit\tCtrl+Q",NULL,this,ID_FILE_QUIT_MENUITEM);
+		new FXMenuCommand(menu,"&Quit\tCtrl+Q",FOXIcons->exit,this,ID_FILE_QUIT_MENUITEM);
 
 
 		// ??? in CActionMenuItem I should be able to do something intelligent to 
