@@ -25,6 +25,7 @@
 #include <limits.h>
 #include <errno.h>
 #include <string.h>
+#include <errno.h>
 #include <stdio.h> // for rename
 
 #include <stdexcept>
@@ -106,7 +107,7 @@ CMultiFile::~CMultiFile()
 void CMultiFile::open(const string _initialFilename,const bool canCreate)
 {
 	if(opened)
-		throw(runtime_error(string(__func__)+" -- already opened"));
+		throw runtime_error(string(__func__)+" -- already opened");
 
 	initialFilename=_initialFilename;
 	openFileCount=0;
@@ -175,7 +176,7 @@ void CMultiFile::rename(const string newInitialFilename)
 void CMultiFile::seek(const l_addr_t _position,RHandle &handle)
 {
 	if(_position>totalSize)
-		throw(runtime_error(string(__func__)+" -- attempting to seek beyond the end of the file size: "+istring(_position)));
+		throw runtime_error(string(__func__)+" -- attempting to seek beyond the end of the file size: "+istring(_position));
 	handle.position=_position;
 }
 
@@ -187,9 +188,9 @@ const CMultiFile::l_addr_t CMultiFile::tell(RHandle &handle) const
 void CMultiFile::read(void *buffer,const l_addr_t count,RHandle &handle)
 {
 	if(!opened)
-		throw(runtime_error(string(__func__)+" -- not opened"));
+		throw runtime_error(string(__func__)+" -- not opened");
 	if((totalSize-handle.position)<count)
-		throw(runtime_error(string(__func__)+" -- attempting to read beyond the end of the file size; position: "+istring(handle.position)+" count: "+istring(count)));
+		throw runtime_error(string(__func__)+" -- attempting to read beyond the end of the file size; position: "+istring(handle.position)+" count: "+istring(count));
 
 	size_t whichFile=handle.position/LOGICAL_MAX_FILE_SIZE;
 	f_addr_t whereFile=(handle.position%LOGICAL_MAX_FILE_SIZE)+sizeof(RFileHeader);
@@ -200,12 +201,18 @@ void CMultiFile::read(void *buffer,const l_addr_t count,RHandle &handle)
 
 		const f_addr_t seekRet=lseek(openFiles[whichFile],whereFile,SEEK_SET);
 		if(seekRet==((f_addr_t)-1))
-			throw(runtime_error(string(__func__)+" -- error seeking in file: "+buildFilename(whichFile)));
+		{
+			int errNO=errno;
+			throw runtime_error(string(__func__)+" -- error seeking in file: "+buildFilename(whichFile)+" -- strerror: "+strerror(errNO));
+		}
 
 		const size_t stripRead=min(lengthToRead,LOGICAL_MAX_FILE_SIZE-whereFile);
 		const ssize_t lengthRead=::read(openFiles[whichFile],(uint8_t *)buffer+(count-lengthToRead),stripRead);
 		if(lengthRead<0 || (size_t)lengthRead!=stripRead)
-			throw(runtime_error(string(__func__)+" -- error reading from file: "+buildFilename(whichFile)));
+		{
+			int errNO=errno;
+			throw runtime_error(string(__func__)+" -- error reading from file: "+buildFilename(whichFile)+" -- lengthRead/stripRead: "+istring(lengthRead)+"/"+istring(stripRead)+" -- strerror: "+strerror(errNO));
+		}
 
 		lengthToRead-=stripRead;
 		handle.position+=stripRead;
@@ -225,9 +232,9 @@ void CMultiFile::read(void *buffer,const l_addr_t count,const l_addr_t _position
 void CMultiFile::write(const void *buffer,const l_addr_t count,RHandle &handle)
 {
 	if(!opened)
-		throw(runtime_error(string(__func__)+" -- not opened"));
+		throw runtime_error(string(__func__)+" -- not opened");
 	if((getAvailableSize()-handle.position)<count)
-		throw(runtime_error(string(__func__)+" -- insufficient space to write "+istring(count)+" more bytes"));
+		throw runtime_error(string(__func__)+" -- insufficient space to write "+istring(count)+" more bytes");
 
 	// grow file(s) if necessary 
 	if(totalSize<(handle.position+count))
@@ -242,12 +249,18 @@ void CMultiFile::write(const void *buffer,const l_addr_t count,RHandle &handle)
 
 		const f_addr_t seekRet=lseek(openFiles[whichFile],whereFile,SEEK_SET);
 		if(seekRet==((f_addr_t)-1))
-			throw(runtime_error(string(__func__)+" -- error seeking in file: "+buildFilename(whichFile)));
+		{
+			int errNO=errno;
+			throw runtime_error(string(__func__)+" -- error seeking in file: "+buildFilename(whichFile)+" -- strerror: "+strerror(errNO));
+		}
 
 		const size_t stripWrite=min(lengthToWrite,LOGICAL_MAX_FILE_SIZE-whereFile);
 		const ssize_t lengthWritten=::write(openFiles[whichFile],(uint8_t *)buffer+(count-lengthToWrite),stripWrite);
 		if(lengthWritten<0 || (size_t)lengthWritten!=stripWrite)
-			throw(runtime_error(string(__func__)+" -- error writing to file: "+buildFilename(whichFile)));
+		{
+			int errNO=errno;
+			throw runtime_error(string(__func__)+" -- error writing to file: "+buildFilename(whichFile)+" -- lengthWritten/stripWrite: "+istring(lengthWritten)+"/"+istring(stripWrite)+" -- strerror: "+strerror(errNO));
+		}
 
 		lengthToWrite-=lengthWritten;
 		handle.position+=lengthWritten;
@@ -272,7 +285,7 @@ void CMultiFile::setSize(const l_addr_t newSize)
 void CMultiFile::prvSetSize(const l_addr_t newSize,const l_addr_t forWriteSize)
 {
 	if(newSize>totalSize && getAvailableSize()<newSize)
-		throw(runtime_error(string(__func__)+" -- insufficient space to grow data size to: "+istring(newSize)));
+		throw runtime_error(string(__func__)+" -- insufficient space to grow data size to: "+istring(newSize));
 
 	size_t neededFileCount=(newSize/LOGICAL_MAX_FILE_SIZE)+1;
 	const f_addr_t currentLastFilesSize=(totalSize%LOGICAL_MAX_FILE_SIZE)+sizeof(RFileHeader);
@@ -281,7 +294,7 @@ void CMultiFile::prvSetSize(const l_addr_t newSize,const l_addr_t forWriteSize)
 	if(neededFileCount>openFileCount)
 	{ // create some new files
 		if(neededFileCount>MAX_OPEN_FILES)
-			throw(runtime_error(string(__func__)+" -- would have to open too many files ("+istring(neededFileCount)+") to set size to "+istring(newSize)));
+			throw runtime_error(string(__func__)+" -- would have to open too many files ("+istring(neededFileCount)+") to set size to "+istring(newSize));
 
 		// set the last file now its max size
 		setFileSize(openFiles[openFileCount-1],PHYSICAL_MAX_FILE_SIZE);
@@ -331,7 +344,7 @@ void CMultiFile::sync() const
 const CMultiFile::l_addr_t CMultiFile::getAvailableSize() const
 {
 	if(!opened)
-		throw(runtime_error(string(__func__)+" -- not opened"));
+		throw runtime_error(string(__func__)+" -- not opened");
 
 	return(MAX_OPEN_FILES*LOGICAL_MAX_FILE_SIZE);
 }
@@ -339,7 +352,7 @@ const CMultiFile::l_addr_t CMultiFile::getAvailableSize() const
 const CMultiFile::l_addr_t CMultiFile::getActualSize() const
 {
 	if(!opened)
-		throw(runtime_error(string(__func__)+" -- not opened"));
+		throw runtime_error(string(__func__)+" -- not opened");
 
 	struct stat statBuf;
 	fstat(openFiles[openFileCount-1],&statBuf);
@@ -350,7 +363,7 @@ const CMultiFile::l_addr_t CMultiFile::getActualSize() const
 const CMultiFile::l_addr_t CMultiFile::getSize() const
 {
 	if(!opened)
-		throw(runtime_error(string(__func__)+" -- not opened"));
+		throw runtime_error(string(__func__)+" -- not opened");
 	return(totalSize);
 }
 
@@ -368,7 +381,10 @@ void CMultiFile::writeHeaderToFiles()
 		lseek(openFiles[t],0,SEEK_SET);
 		const ssize_t wroteLength=::write(openFiles[t],&header,sizeof(header));
 		if(wroteLength<0 || (size_t)wroteLength!=sizeof(header))
-			throw(runtime_error(string(__func__)+" -- error writing header to file"));
+		{
+			int errNO=errno;
+			throw runtime_error(string(__func__)+" -- error writing header to file -- wroteLength/sizeof(header): "+istring(wroteLength)+"/"+istring(sizeof(header))+" -- strerror: "+strerror(errNO));
+		}
 	}
 }
 
@@ -384,7 +400,7 @@ void CMultiFile::openFile(const string &filename,RFileHeader &header,const bool 
 		fileHandle=::open(filename.c_str(),O_RDWR);
 #endif
 		if(fileHandle<0)
-			throw(runtime_error(string(__func__)+" -- expected file not found: "+filename+" -- "+strerror(errno)));
+			throw runtime_error(string(__func__)+" -- expected file not found: "+filename+" -- "+strerror(errno));
 
 		if(readHeader)
 		{
@@ -395,10 +411,10 @@ void CMultiFile::openFile(const string &filename,RFileHeader &header,const bool 
 				if(openingFirstFile)
 					matchSignature=header.matchSignature;
 				else if(header.matchSignature!=matchSignature)
-					throw(runtime_error(string(__func__)+" -- matchSignature not match in header information of file: "+filename));
+					throw runtime_error(string(__func__)+" -- matchSignature not match in header information of file: "+filename);
 
 				if(header.fileCount>MAX_OPEN_FILES)
-					throw(runtime_error(string(__func__)+" -- fileCount is greater than MAX_OPEN_FILES in header information of file: "+filename));
+					throw runtime_error(string(__func__)+" -- fileCount is greater than MAX_OPEN_FILES in header information of file: "+filename);
 
 				openFiles[openFileCount++]=fileHandle;
 				fileHandle=-1;
@@ -416,7 +432,7 @@ void CMultiFile::openFile(const string &filename,RFileHeader &header,const bool 
 
 				}
 				else
-					throw(runtime_error(string(__func__)+" -- invalid header information of file: "+filename));
+					throw runtime_error(string(__func__)+" -- invalid header information of file: "+filename);
 			}
 		}
 		else
