@@ -1,5 +1,5 @@
 rezound-0.5.0beta
-	This is a mostly new-feature release, but some bugs also have been fixed.
+	This is mostly a new-feature release, but some bugs also have been fixed.
 	- Added a Convolution filter and some presets for reverbs
 	- Added a Distortion by a curve action (not complete)
 	- Added a Resample action
