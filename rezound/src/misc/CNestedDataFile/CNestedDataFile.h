@@ -21,6 +21,8 @@
 #ifndef __CNestedDataFile_H__
 #define __CNestedDataFile_H__
 
+#include "../../../config/common.h"
+
 #include <string>
 #include <vector>
 #include <map>
