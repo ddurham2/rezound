@@ -7,11 +7,12 @@
 # #include of that file.
 function checkFilesForInclude # $1 is path to recur on; $2 is file to check for; $3 is line it should appear on
 {
-	# This section makes sure that common.h is include somewhere 
+	# This section makes sure that $2 is include somewhere 
 	# within every .cpp's .h file or in that .cpp file if it 
 	# doesn't have a .h file.
 	# Then, it reports a warning if the include of common.h isn't
-	# before all other includes
+	# the $3'th include
+
 	function checkForInclude
 	{
 		output=`grep -n "^#include.*[\"\<].*$2[\"\>]" $1`
