@@ -1174,7 +1174,7 @@ void ASound::saveMetaInfo()
 
 const string ASound::getWorkingFilename(const string originalFilename) const
 {
-	// ??? this directory needs to be a setting.. and perhaps in the home directory too ~/.ReZound
+	// ??? this directory needs to be a setting.. and perhaps in the home directory too ~/.ReZound or some other configured temp sapce directory
  	return("/tmp/"+ost::Path(originalFilename).BaseName()+".pf$");
 }
 
