@@ -52,8 +52,12 @@ public:
 	const size_t getArraySize(const char *key,bool throwIfNotExists=false) const;
 
 	// will create the parents of key as necessary
-	void createKey(const char *key,const string value);		// string
 	void createKey(const char *key,const double value);		// double
+	void createKey(const char *key,const string &value);		// string
+	void removeKey(const char *key,bool throwOnError=false);
+
+	void createArrayKey(const char *key,size_t index,const string &value);	// string
+	void removeArrayKey(const char *key,size_t index,bool throwOnError=false);
 
 	// CAUTION: collapses all arithmetic expressions to the evaluated value and throws away all comments from the original file
 	void writeFile(const string filename);
@@ -80,6 +84,7 @@ private:
 	public:	
 		CVariant();
 		CVariant(const string name);			// vtScope
+			// ??? I think these name parameters are never used
 		CVariant(const string name,const string value);	// vtString
 		CVariant(const string name,const double value);	// vtFloat
 		CVariant(const vector<CVariant> &value);	// vtArray

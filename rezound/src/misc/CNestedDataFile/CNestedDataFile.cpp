@@ -54,7 +54,7 @@ CNestedDataFile::CNestedDataFile(const string filename)
 		parseTree=this;
 
 		if(cfg_parse())
-			throw(runtime_error("CNestedDataFile::CNestedDataFile -- error while parsing file: "+filename));
+			throw(runtime_error(string(__func__)+" -- error while parsing file: "+filename));
 
 		//free(scanString);
 		#ifdef THREAD_SAFE_CSCOPE
@@ -83,7 +83,7 @@ const string CNestedDataFile::getValue(const char *key,bool throwIfNotExists) co
 	if(!findVariantNode(value,key,0,true,root))
 	{
 		if(throwIfNotExists)
-			throw(runtime_error("CNestedDataFile::getValue -- key '"+string(key)+"' does not exist from file: "+filename));
+			throw(runtime_error(string(__func__)+" -- key '"+string(key)+"' does not exist from file: "+filename));
 		else
 			return("");
 	}
@@ -95,9 +95,9 @@ const string CNestedDataFile::getValue(const char *key,bool throwIfNotExists) co
 	case vtFloat:
 		return(istring(value->floatValue));
 	case vtScope:
-		throw(runtime_error("CNestedDataFile::getValue -- '"+string(key)+"' resolves to a scope, not a value from file: "+filename));
+		throw(runtime_error(string(__func__)+" -- '"+string(key)+"' resolves to a scope, not a value from file: "+filename));
 	default:
-		throw(runtime_error("CNestedDataFile::getValue -- internal error: unhandled type: '"+istring(value->type)+"' from file: "+filename));
+		throw(runtime_error(string(__func__)+" -- internal error: unhandled type: '"+istring(value->type)+"' from file: "+filename));
 	}
 }
 
@@ -107,7 +107,7 @@ const string CNestedDataFile::getArrayValue(const char *key,size_t index,bool th
 	if(!findVariantNode(value,key,0,true,root))
 	{
 		if(throwIfNotExists)
-			throw(runtime_error("CNestedDataFile::getArrayValue -- key '"+string(key)+"' does not exist from file: "+filename));
+			throw(runtime_error(string(__func__)+" -- key '"+string(key)+"' does not exist from file: "+filename));
 		else
 			return("");
 	}
@@ -115,7 +115,7 @@ const string CNestedDataFile::getArrayValue(const char *key,size_t index,bool th
 	if(value->type!=vtArray)
 	{
 		if(throwIfNotExists)
-			throw(runtime_error("CNestedDataFile::getArrayValue -- '"+string(key)+"' is not an array from file: "+filename));
+			throw(runtime_error(string(__func__)+" -- '"+string(key)+"' is not an array from file: "+filename));
 		else
 			return("");
 	}
@@ -123,7 +123,7 @@ const string CNestedDataFile::getArrayValue(const char *key,size_t index,bool th
 	if(index>=value->arrayValue.size())
 	{
 		if(throwIfNotExists)
-			throw(runtime_error("CNestedDataFile::getArrayValue -- '"+string(key)+"["+istring(index)+"]' array index is out of bounds (+"+istring(value->arrayValue.size())+"+) from file: "+filename));
+			throw(runtime_error(string(__func__)+" -- '"+string(key)+"["+istring(index)+"]' array index is out of bounds (+"+istring(value->arrayValue.size())+"+) from file: "+filename));
 		else
 			return("");
 	}
@@ -135,7 +135,7 @@ const string CNestedDataFile::getArrayValue(const char *key,size_t index,bool th
 	case vtFloat:
 		return(istring(value->arrayValue[index].floatValue));
 	default:
-		throw(runtime_error("CNestedDataFile::getArrayValue -- internal error: unhandled type: '"+istring(value->arrayValue[index].type)+"' from file: "+filename));
+		throw(runtime_error(string(__func__)+" -- internal error: unhandled type: '"+istring(value->arrayValue[index].type)+"' from file: "+filename));
 	}
 }
 
@@ -145,7 +145,7 @@ const size_t CNestedDataFile::getArraySize(const char *key,bool throwIfNotExists
 	if(!findVariantNode(value,key,0,true,root))
 	{
 		if(throwIfNotExists)
-			throw(runtime_error("CNestedDataFile::getArraySize -- key '"+string(key)+"' does not exist from file: "+filename));
+			throw(runtime_error(string(__func__)+" -- key '"+string(key)+"' does not exist from file: "+filename));
 		else
 			return(0);
 	}
@@ -153,7 +153,7 @@ const size_t CNestedDataFile::getArraySize(const char *key,bool throwIfNotExists
 	if(value->type!=vtArray)
 	{
 		if(throwIfNotExists)
-			throw(runtime_error("CNestedDataFile::getArraySize -- '"+string(key)+"' is not an array from file: "+filename));
+			throw(runtime_error(string(__func__)+" -- '"+string(key)+"' is not an array from file: "+filename));
 		else
 			return(0);
 	}
@@ -172,7 +172,7 @@ bool CNestedDataFile::findVariantNode(CVariant *&retValue,const char *key,int of
 	if(variant->type!=vtScope)
 	{
 		if(throwOnError)
-			throw(runtime_error("CNestedDataFile::getValue -- '"+string(key)+"' resolves too soon to a value at: '"+string(key,max(0,offset-1))+"' from file: "+filename));
+			throw(runtime_error(string(__func__)+" -- '"+string(key)+"' resolves too soon to a value at: '"+string(key,max(0,offset-1))+"' from file: "+filename));
 		else
 			return(false);
 	}
@@ -249,10 +249,35 @@ void CNestedDataFile::createKey(const char *key,const double value)
 	prvCreateKey(key,0,newVariant,root);
 }
 
-void CNestedDataFile::createKey(const char *key,const string value)
+void CNestedDataFile::createKey(const char *key,const string &value)
 {
 	CVariant newVariant("",value);
 	prvCreateKey(key,0,newVariant,root);
+}
+
+void CNestedDataFile::createArrayKey(const char *key,size_t index,const string &initValue)
+{
+	CVariant *value;
+	if(!findVariantNode(value,key,0,true,root))
+	{
+		if(index!=0)
+			throw(runtime_error(string(__func__)+" -- '"+string(key)+"["+istring(index)+"]' key not found from file: "+filename));
+
+		vector<CVariant> values;
+		values.push_back(CVariant("",initValue));
+
+		CVariant newVariant(values);
+		prvCreateKey(key,0,newVariant,root);
+		return;
+	}
+
+	if(value->type!=vtArray)
+		throw(runtime_error(string(__func__)+" -- '"+string(key)+"' is not an array from file: "+filename));
+
+	if(index>value->arrayValue.size())
+		throw(runtime_error(string(__func__)+" -- '"+string(key)+"["+istring(index)+"]' array index is out of bounds (+"+istring(value->arrayValue.size())+"+) from file: "+filename));
+
+	value->arrayValue.insert(value->arrayValue.begin()+index,CVariant("",initValue));
 }
 
 void CNestedDataFile::createKey(const char *key,const vector<CVariant> &value)
@@ -260,6 +285,64 @@ void CNestedDataFile::createKey(const char *key,const vector<CVariant> &value)
 	CVariant newVariant(value);
 	prvCreateKey(key,0,newVariant,root);
 }
+
+void CNestedDataFile::removeKey(const char *key,bool throwOnError)
+{
+	CVariant *parent=NULL;;
+
+	string parentKey;
+	string childKey;
+	size_t lastDot=string(key).rfind('.');
+	if(lastDot==string::npos)
+	{
+		parent=root;
+		childKey=key;
+	}
+	else
+	{
+		parentKey=string(key).substr(0,lastDot);
+		childKey=string(key).substr(lastDot+1);
+	}
+
+	if(parent==root || findVariantNode(parent,parentKey.c_str(),0,throwOnError,root))
+	{
+		if(parent->members.find(childKey)==parent->members.end())
+		{
+			if(throwOnError)
+				throw(runtime_error(string(__func__)+" -- '"+string(key)+"' key not found from file: "+filename));
+			return;
+		}
+		parent->members.erase(childKey);
+	}
+}
+
+void CNestedDataFile::removeArrayKey(const char *key,size_t index,bool throwOnError)
+{
+	CVariant *value;
+	if(!findVariantNode(value,key,0,true,root))
+	{
+		if(throwOnError)
+			throw(runtime_error(string(__func__)+" -- '"+string(key)+"["+istring(index)+"]' key not found from file: "+filename));
+		return;
+	}
+
+	if(value->type!=vtArray)
+	{
+		if(throwOnError)
+			throw(runtime_error(string(__func__)+" -- '"+string(key)+"' is not an array from file: "+filename));
+		return;
+	}
+
+	if(index>=value->arrayValue.size())
+	{
+		if(throwOnError)
+			throw(runtime_error(string(__func__)+" -- '"+string(key)+"["+istring(index)+"]' array index is out of bounds (+"+istring(value->arrayValue.size())+"+) from file: "+filename));
+		return;
+	}
+
+	value->arrayValue.erase(value->arrayValue.begin()+index);
+}
+
 
 void CNestedDataFile::prvCreateKey(const char *key,int offset,CVariant &value,CVariant *variant)
 {
@@ -275,7 +358,7 @@ void CNestedDataFile::prvCreateKey(const char *key,int offset,CVariant &value,CV
 	{ // dot found, then we must be asking for a nested scope
 
 		if(variant->type!=vtScope)
-			throw(runtime_error("CNestedDataFile::createKey -- '"+string(key)+"' resolves too soon to a value at: '"+string(key,offset+pos)+"' from file: "+filename));
+			throw(runtime_error(string(__func__)+" -- '"+string(key)+"' resolves too soon to a value at: '"+string(key,offset+pos)+"' from file: "+filename));
 
 		map<string,CVariant>::const_iterator i=variant->members.find(string(key+offset,pos));
 		if(i==variant->members.end())
@@ -297,7 +380,7 @@ void CNestedDataFile::writeFile(const string filename)
 	// ??? do I wanna reassign this->filename ?
 	FILE *f=fopen(filename.c_str(),"wt");
 	if(f==NULL)
-		throw(runtime_error("CNestedDataFile::writeFile -- error opening file for write: "+filename));
+		throw(runtime_error(string(__func__)+" -- error opening file for write: "+filename));
 	try
 	{
 		prvWriteData(f,-1,root);
@@ -376,14 +459,14 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant)
 				fprintf(f,"%f",variant->arrayValue[t].floatValue);
 				break;
 			default:
-				throw(runtime_error("CNestedDataFile::prvWriteData -- internal error: unhandled type while writing array: "+istring(variant->arrayValue[t].type)+" from file: "+filename));
+				throw(runtime_error(string(__func__)+" -- internal error: unhandled type while writing array: "+istring(variant->arrayValue[t].type)+" from file: "+filename));
 			}
 		}
 		fprintf(f,"};\n");
 		break;
 
 	default:
-		throw(runtime_error("CNestedDataFile::prvWriteData -- internal error: unhandled type: "+istring(variant->type)+" from file: "+filename));
+		throw(runtime_error(string(__func__)+" -- internal error: unhandled type: "+istring(variant->type)+" from file: "+filename));
 	}
 }
 
@@ -407,12 +490,17 @@ CNestedDataFile::CVariant::CVariant(const string _name,const string value) :
 	type(vtString),
 	stringValue(value)
 {
+	if(name!="")
+		printf("okay.. it is used: %s\n",name.c_str());
 }
 
 CNestedDataFile::CVariant::CVariant(const string _name,const double value) :
+	name(_name),
 	type(vtFloat),
 	floatValue(value)
 {
+	if(name!="")
+		printf("okay.. it is used: %s\n",name.c_str());
 }
 
 CNestedDataFile::CVariant::CVariant(const vector<CVariant> &value) :
