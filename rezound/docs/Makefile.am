@@ -23,6 +23,8 @@
 ## I used config/am_include.mk for common definitions
 include $(top_srcdir)/config/am_include.mk
 
+pkgdocdir=$(prefix)/doc/rezound
+
 dist_pkgdoc_DATA=\
 		AUTHORS\
 		COPYING\
