@@ -50,7 +50,7 @@ int main(int argc,char *argv[])
 		*/
 
 		// you have to do this for hints to be activated
-		new FXTooltip(application);
+		new FXTooltip(application,TOOLTIP_VARIABLE);
 
 		// create the main window 
 		CMainWindow *mainWindow=new CMainWindow(application);

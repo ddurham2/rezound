@@ -76,6 +76,7 @@
 	- the frontend needs a way to tell COSSSoundPlayer and COSSSoundRecorder which device to use
 		- I should be able to test this at home since I have 2 sound cards installed
 
+	- rename setHelpText in my FX...ParamValues to setTipText since that's what it's known as in FOX
 
 
 

@@ -28,64 +28,31 @@ CCrossfadeEdgesDialog *gCrossfadeEdgesDialog=NULL;
 
 
 CCrossfadeEdgesDialog::CCrossfadeEdgesDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Crossfade Edges Settings",310,150)
+	CActionParamDialog(mainWindow,"Crossfade Edges Settings",310,150,FXModalDialogBox::ftVertical)
 {
 
-	/*
-	getFrame()->setVSpacing(1);
-	getFrame()->setHSpacing(1);
-	FXPacker *p;
-
-	p=new FXHorizontalFrame(getFrame(),LAYOUT_CENTER_X|LAYOUT_CENTER_Y);
-		new FXLabel(p,"Crossfade Start Edge for ",NULL);
-		//new FXTextField(p,5);
-		startSpinner=new FXSpinner(new FXHorizontalFrame(p,FRAME_THICK|FRAME_SUNKEN,0,0,0,0, 0,0,0,0, 0,0),5,this,ID_START_SPINNER,SPIN_NORMAL);
-			startSpinner->setRange(0,1000);
-		new FXLabel(p,"ms\tmilliseconds",NULL);
-
-	p=new FXHorizontalFrame(getFrame(),LAYOUT_CENTER_X|LAYOUT_CENTER_Y);
-		new FXLabel(p,"Crossfade  Stop Edge for ",NULL);
-		//new FXTextField(p,5);
-		stopSpinner=new FXSpinner(new FXHorizontalFrame(p,FRAME_THICK|FRAME_SUNKEN,0,0,0,0, 0,0,0,0, 0,0),5,this,ID_START_SPINNER,SPIN_NORMAL);
-			stopSpinner->setRange(0,1000);
-		new FXLabel(p,"ms\tmilliseconds",NULL);
-	*/
-
-	/*
-	startParam=new FXConstantParamValue(getFrame(),LAYOUT_CENTER_X|LAYOUT_CENTER_Y,"Crossfade Start Edge");
-	startParam->setUnits("ms","milliseconds");
-
-	stopParam=new FXConstantParamValue(getFrame(),LAYOUT_CENTER_X|LAYOUT_CENTER_Y,"Crossfade  Stop Edge");
-	stopParam->setUnits("ms","milliseconds");
-	*/
-	
+	setMargin(130);
 	addTextEntry("Crossfade Start Edge","ms",gCrossfadeStartTime,0,10000,"milliseconds");
 	addTextEntry("Crossfade Stop Edge","ms",gCrossfadeStopTime,0,10000,"milliseconds");
+		
+	vector<string> fadeMethods;
+		fadeMethods.push_back("Linear Fade");
+		fadeMethods.push_back("Parabolic Fade"); // a more industry standard term for this??? it means a gain x^2 where 0<=x<=1
+	addComboTextEntry("Crossfade Fade Method",fadeMethods,"Linear will maintain a constant gain of 1.0\nParabolic sounds a bit more natural\nFor very quick fades (less than 250ms) linear is recommended");
 
 }
 
 void CCrossfadeEdgesDialog::showIt()
 {
-	/*
-	startSpinner->setValue((FXint)gCrossfadeStartTime);
-	stopSpinner->setValue((FXint)gCrossfadeStopTime);
-	*/
-
 	CActionParameters actionParameters;
 	setValue(0,gCrossfadeStartTime);
 	setValue(1,gCrossfadeStopTime);
+	setValue(2,gCrossfadeFadeMethod);
 	if(CActionParamDialog::show(NULL,&actionParameters))
 	{
 		gCrossfadeStartTime=actionParameters.getDoubleParameter(0);
 		gCrossfadeStopTime=actionParameters.getDoubleParameter(1);
+		gCrossfadeFadeMethod=(CrossfadeFadeMethods)actionParameters.getUnsignedParameter(2);
 	}
 }
-
-/*
-bool CCrossfadeEdgesDialog::validateOnOkay()
-{
-
-	return(true);
-}
-*/
 

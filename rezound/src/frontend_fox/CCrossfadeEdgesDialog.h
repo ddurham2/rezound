@@ -38,7 +38,6 @@ public:
 	CCrossfadeEdgesDialog(FXWindow *mainWindow);
 
 	void showIt();
-	//virtual bool validateOnOkay();
 };
 
 #endif

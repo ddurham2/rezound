@@ -57,11 +57,20 @@ FXIMPLEMENT(CActionParamDialog,FXModalDialogBox,CActionParamDialogMap,ARRAYNUMBE
 // work the same what.. I'll work on figuring that out and then both 
 // parameters should be unnecessary
 
-CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title,int w,int h) :
+CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title,int w,int h,FXModalDialogBox::FrameTypes frameType) :
 	FXModalDialogBox(mainWindow,title,w=0,h,FXModalDialogBox::ftVertical),
 	
 	splitter(new FXSplitter(getFrame(),SPLITTER_VERTICAL|SPLITTER_REVERSED | LAYOUT_FILL_X|LAYOUT_FILL_Y)),
-		controlsFrame(new FXHorizontalFrame(splitter,FRAME_RAISED|FRAME_THICK | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 5,5,5,5)),
+		topPanel(new FXHorizontalFrame(splitter,FRAME_RAISED|FRAME_THICK, 0,0,0,0, 0,0,0,0, 0,0)),
+			leftMargin(new FXFrame(topPanel,FRAME_NONE|LAYOUT_FILL_Y|LAYOUT_FIX_WIDTH,0,0,0,0, 0,0,0,0)),
+			controlsFrame(
+				frameType==FXModalDialogBox::ftHorizontal 
+					?
+					(FXPacker *)new FXHorizontalFrame(topPanel,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 5,5,5,5)
+					:
+					(FXPacker *)new FXVerticalFrame(topPanel,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 5,5,5,5)
+			),
+			rightMargin(new FXFrame(topPanel,FRAME_NONE|LAYOUT_FILL_Y|LAYOUT_FIX_WIDTH,0,0,0,0, 0,0,0,0)),
 		presetsFrame(new FXHorizontalFrame(splitter,FRAME_RAISED|FRAME_THICK | LAYOUT_FILL_X, 0,0,0,0, 5,5,5,5)),
 			nativePresetList(NULL),
 			userPresetList(NULL)
@@ -120,6 +129,15 @@ void CActionParamDialog::addTextEntry(const string name,const string units,const
 }
 
 
+void CActionParamDialog::addComboTextEntry(const string name,const vector<string> &items,const string helpText)
+{
+	FXComboTextParamValue *comboTextEntry=new FXComboTextParamValue(controlsFrame,0,name.c_str(),items);
+	comboTextEntry->setHelpText(helpText.c_str());
+	parameters.push_back(pair<ParamTypes,void *>(ptComboText,(void *)comboTextEntry));
+	retValueConvs.push_back(NULL);
+}
+
+
 void CActionParamDialog::addGraph(const string name,const string units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar)
 {
 		// ??? there is still a question of how quite to lay out the graph if there are graph(s) and sliders
@@ -127,6 +145,13 @@ void CActionParamDialog::addGraph(const string name,const string units,FXGraphPa
 	graph->setUnits(units.c_str());
 	parameters.push_back(pair<ParamTypes,void *>(ptGraph,(void *)graph));
 	retValueConvs.push_back(optRetValueConv);
+}
+
+
+void CActionParamDialog::setMargin(FXint margin)
+{
+	leftMargin->setWidth(margin);
+	rightMargin->setWidth(margin);
 }
 
 void CActionParamDialog::setValue(size_t index,const double value)
@@ -139,6 +164,10 @@ void CActionParamDialog::setValue(size_t index,const double value)
 
 	case ptText:
 		((FXTextParamValue *)parameters[index].second)->setValue(value);
+		break;
+
+	case ptComboText:
+		((FXComboTextParamValue *)parameters[index].second)->setValue((FXint)value);
 		break;
 
 	case ptGraph:
@@ -195,6 +224,15 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 						ret=retValueConvs[t](ret);
 
 					actionParameters->addDoubleParameter(ret);	
+				}
+				break;
+
+			case ptComboText:
+				{
+					FXComboTextParamValue *comboTextEntry=(FXComboTextParamValue *)parameters[t].second;
+					FXint ret=comboTextEntry->getValue();
+
+					actionParameters->addUnsignedParameter((unsigned)ret);	
 				}
 				break;
 
@@ -268,6 +306,10 @@ long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void 
 				((FXTextParamValue *)parameters[t].second)->readFromFile(title,f);
 				break;
 
+			case ptComboText:
+				((FXComboTextParamValue *)parameters[t].second)->readFromFile(title,f);
+				break;
+
 			case ptGraph:
 				((FXGraphParamValue *)parameters[t].second)->readFromFile(title,f);
 				break;
@@ -324,6 +366,10 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 
 				case ptText:
 					((FXTextParamValue *)parameters[t].second)->writeToFile(title,f);
+					break;
+
+				case ptComboText:
+					((FXComboTextParamValue *)parameters[t].second)->writeToFile(title,f);
 					break;
 
 				case ptGraph:

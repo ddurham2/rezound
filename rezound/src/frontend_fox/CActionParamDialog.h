@@ -33,6 +33,7 @@ class CActionParamDialog;
 
 #include "FXConstantParamValue.h"
 #include "FXTextParamValue.h"
+#include "FXComboTextParamValue.h"
 #include "FXGraphParamValue.h"
 
 #include "../backend/AActionDialog.h"
@@ -47,11 +48,15 @@ class CActionParamDialog : public FXModalDialogBox, public AActionDialog
 public:
 	typedef const double (*f_at_x)(const double x);
 
-	CActionParamDialog(FXWindow *mainWindow,const FXString title,int w,int h);
+	CActionParamDialog(FXWindow *mainWindow,const FXString title,int w,int h,FXModalDialogBox::FrameTypes frameType=FXModalDialogBox::ftHorizontal);
 
 	void addSlider(const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton);
 	void addTextEntry(const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsHelpText="");
+	void addComboTextEntry(const string name,const vector<string> &items,const string helpText="");
 	void addGraph(const string name,const string units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar);
+
+	// don't like this, but it will do for now... someday I've got to come up with just how to specify placement of the added wigets
+	void setMargin(FXint margin); // will add a margin the left and right of all the controls
 
 	/* 
 	 * index corrisponds to the order that the add...() methods were called 
@@ -90,15 +95,19 @@ private:
 	{
 		ptConstant,
 		ptText,
+		ptComboText,
 		ptGraph
 	};
 
-	// the void * points to either an FXConstantParamValue, FXTextParamValue or an FXGraphParamValue
+	// the void * points to either an FXConstantParamValue, FXTextParamValue, FXComboTextParamValue or an FXGraphParamValue
 	vector<pair<ParamTypes,void *> > parameters;
 	vector<f_at_x> retValueConvs;
 
 	FXSplitter *splitter;
-		FXPacker *controlsFrame;
+		FXPacker *topPanel;
+			FXFrame *leftMargin;
+			FXPacker *controlsFrame;
+			FXFrame *rightMargin;
 		FXPacker *presetsFrame;
 			FXList *nativePresetList;
 			FXList *userPresetList;

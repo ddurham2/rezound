@@ -118,9 +118,9 @@ const string FXTextParamValue::getTitle() const
 
 void FXTextParamValue::setHelpText(const FXString &text)
 {
-	titleLabel->setHelpText(text);	
-	valueTextBox->setHelpText(text);
-	valueSpinner->setHelpText(text);
+	titleLabel->setTipText(text);	
+	valueTextBox->setTipText(text);
+	valueSpinner->setTipText(text);
 }
 
 FXString FXTextParamValue::getHelpText() const
