@@ -298,9 +298,28 @@ void ASoundFileManager::recordToNew()
 		return; // cancelled
 
 	COSSSoundRecorder recorder;
-	recorder.initialize(loaded->getSound());
-	bool ret=promptForRecord(&recorder);
-	recorder.deinitialize();
+	try
+	{
+		recorder.initialize(loaded->getSound());
+	}
+	catch(...)
+	{
+		close(ctSaveNone,loaded);
+		recorder.deinitialize();
+		throw;
+	}
+
+	bool ret=true;
+	try
+	{
+		ret=promptForRecord(&recorder);
+		recorder.deinitialize();
+	}
+	catch(...)
+	{
+		recorder.deinitialize();
+		throw;
+	}
 
 	if(!ret)
 		close(ctSaveNone,loaded); // record dialog was cancelled, don't ask to save when closing
