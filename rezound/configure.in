@@ -139,7 +139,7 @@ dnl handle the --enable-portaudio flag
 AC_ARG_ENABLE(
 	portaudio,
 	[
-  --enable-portaudio      build ReZound to use libportaudio for audio I/O ],
+  --enable-portaudio      build ReZound to use PortAudio for audio I/O ],
 	[
 		if [[ "$enableval" = "yes" ]]
 		then 
@@ -171,6 +171,36 @@ AC_ARG_ENABLE(
 		fi
 	]
 	)
+
+dnl handle the --enable-jack flag
+if [[ "$audioIOMethod" = "" ]]
+then
+	AC_ARG_ENABLE(
+		jack,
+		[  --enable-jack           build ReZound to use JACK for audio I/O ],
+		[ dnl action if either enable or disable flag is given
+			if [[ "$enableval" = "yes" ]]
+			then 
+					dnl this macro call was prescribed by the FAQs on the JACK homepage
+				PKG_CHECK_MODULES(JACK, jack, HAVE_JACK=true, HAVE_JACK=false)
+				if [[ "$HAVE_JACK" = "true" ]]
+				then
+					LIBS="$JACK_LIBS $LIBS"
+					CFLAGS="$JACK_CFLAGS $CFLAGS"
+
+					AC_DEFINE(ENABLE_JACK)
+					AC_MSG_RESULT([*** using JACK for audio I/O])
+					audioIOMethod="jack"
+				else
+					AC_MSG_ERROR([***** libjack.a or jack/jack.h not found (http://jackit.sourceforge.net) *****])
+				fi
+			fi
+		]
+		)
+fi
+
+
+
 
 dnl ...
 dnl handle other possible audio I/O system flags here
