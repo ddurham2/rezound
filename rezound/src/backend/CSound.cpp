@@ -86,6 +86,8 @@ CSound::CSound() :
 
 	tempAudioPoolKeyCounter(1),
 
+	adjustCuesOnSpaceChanges(true),
+
 	_isModified(true),
 
 	cueAccesser(NULL)
@@ -2151,6 +2153,11 @@ void CSound::clearCues()
 	cueIndex.clear();
 }
 
+void CSound::enableCueAdjustmentsOnSpaceChanges(bool enabled)
+{
+	adjustCuesOnSpaceChanges=enabled;
+}
+
 /*
  * This method handles the adjustment of cues 
  * pos1 can be less than pos2 indicating an addition of space at pos1 for pos2-pos1 samples
@@ -2158,6 +2165,9 @@ void CSound::clearCues()
  */
 void CSound::adjustCues(const sample_pos_t pos1,const sample_pos_t pos2)
 {
+	if(!adjustCuesOnSpaceChanges)
+		return;
+
 	if(pos1<pos2)
 	{ // added data
 		sample_pos_t addedLength=pos2-pos1;

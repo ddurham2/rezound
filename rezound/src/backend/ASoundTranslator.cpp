@@ -42,6 +42,7 @@ bool ASoundTranslator::loadSound(const string filename,CSound *sound) const
 		// use working file if it exists
 		if(!sound->createFromWorkingPoolFileIfExists(filename))
 		{
+			sound->enableCueAdjustmentsOnSpaceChanges(false);
 			if(!onLoadSound(filename,sound))
 			{
 				sound->unlockForResize();
@@ -56,10 +57,12 @@ bool ASoundTranslator::loadSound(const string filename,CSound *sound) const
 		if(!sound->poolFile.isOpen())
 			throw runtime_error(string(__func__)+" -- internal error -- no pool file was open after loading file");
 
+		sound->enableCueAdjustmentsOnSpaceChanges(true);
 		sound->unlockForResize();
 	}
 	catch(...)
 	{
+		sound->enableCueAdjustmentsOnSpaceChanges(true);
 		sound->unlockForResize();
 		throw;
 	}
