@@ -29,9 +29,12 @@ SUBDIRS= \
 noinst_HEADERS=\
 		AThread.h\
 		CMutex.h\
+		CConditionVariable.h\
 		CPath.h\
 		CRWLock.h\
-		TAutoBuffer.h		
+		TAutoBuffer.h\
+		TMemoryPipe.h\
+		TMemoryPipe.cpp		
 
 EXTRA_DIST= \
 	istring \
