@@ -30,6 +30,7 @@
 		- sox-users
 		- foxgui-users
 		- kurzlist [OT]
+		- http://www.futureforums.co.uk/computermusic/default.asp
 		- the individuals who emailed me from kurzlist: "any linux users out there"
 		- the few individuals that reponded to my developer call on demudi
 
@@ -106,6 +107,8 @@
 
 
 --- POSSIBLE THINGS TO DO ---
+
+	- make a place where people can submit a preset to be added into the main release if it's a good one
 
 	- There is a something which exists called LADSPA for writing reusable plugins for linux audio applications
 		- http://www.ladspa.org/ 
