@@ -29,8 +29,8 @@ noinst_LTLIBRARIES=libmiscCN.la
 libmiscCN_la_SOURCES=CNestedDataFile.cpp \
 		     cfg.tab.cc
 		     
-CNestedDataFile.o:CNestedDataFile.cpp CNestedDataFile.h
-test_CNestedDataFile.o:test_CNestedDataFile.cpp CNestedDataFile.h
+#CNestedDataFile.o:CNestedDataFile.cpp CNestedDataFile.h
+#test_CNestedDataFile.o:test_CNestedDataFile.cpp CNestedDataFile.h
 
 cfg.tab.o: cfg.tab.cc
 	
@@ -40,5 +40,5 @@ cfg.tab.cc: cfg.lex.c cfg.y CNestedDataFile.h
 cfg.lex.c: cfg.l CNestedDataFile.h
 	$(LEX) -Pcfg_ -t cfg.l > cfg.lex.c
 
-clean: 
+clean-local: 
 	-rm -f cfg.tab.cc cfg.lex.c
