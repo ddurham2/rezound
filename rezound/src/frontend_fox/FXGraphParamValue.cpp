@@ -27,6 +27,7 @@
 
 #include <istring>
 
+#warning fix these stupidness of this widget
 
 
 #define GET_SCALAR_VALUE(o) ( o->scalarSpinner==NULL ? 0 : o->scalarSpinner->getValue() )

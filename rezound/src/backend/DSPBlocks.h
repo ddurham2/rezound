@@ -21,7 +21,6 @@
 #ifndef __DSPBlocks_H__
 #define __DSPBlocks_H__
 
-
 #include "../../config/common.h"
 
 #include <stdexcept>
