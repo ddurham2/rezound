@@ -1,6 +1,8 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- use a registry setting for knowing where to put working files and the clipboard instead of always /tmp
+
 	- When it's possible, I really need to do something different in TPoolFile::isExclusiveLocked and also TPoolFile::getSharedLockCount because right now, the isExclusiveLocked returns true if it's shared locked obviously because the tryLock fails so it assumes wrongly that there's an exclusive lock obtained
 
 	- warn the user if he's saving an exported file format and information such as cues and user notes will not be exported (for now)
@@ -51,7 +53,9 @@
 	- need to eventually use a different sound file library which can also retrieve and store arbitrary data sections in the formats that support it (namely .wav).. So I can store and load cues
 		- I'd like to use libst (lib form of SOX), but there is no documentation or common API I don't think
 
+	- Need to handle duplicate named cues when loading a file.. I don't allow them, but a file format might
 
+	- Truncate file formats that don't save more than 32bits worth of sound and the sound file is longer than that
 
 
 
