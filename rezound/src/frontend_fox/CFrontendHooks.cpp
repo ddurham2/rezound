@@ -159,8 +159,8 @@ bool CFrontendHooks::promptForSaveSoundFilename(string &filename)
 {
 	if(filename!="")
 	{
-		saveDialog->setDirectory(gPromptDialogDirectory.c_str());
 		saveDialog->setFilename(CPath(filename).baseName().c_str());
+		saveDialog->setDirectory(gPromptDialogDirectory.c_str());
 	}
 
 	if(saveDialog->execute())
