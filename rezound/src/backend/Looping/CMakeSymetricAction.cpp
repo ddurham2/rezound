@@ -48,7 +48,7 @@ bool CMakeSymetricAction::doActionSizeSafe(CActionSound &actionSound,bool prepar
 			const sample_pos_t selectionLengthDiv2=selectionLength/2;
 			const sample_pos_t selectionLengthSub1=selectionLength-1;
 
-			CStatusBar statusBar("Make Symetric",0,selectionLengthDiv2);
+			CStatusBar statusBar("Make Symetric",0,selectionLengthDiv2,true);
 
 			for(sample_pos_t t=0;t<=selectionLengthDiv2;t++)
 			{
@@ -58,7 +58,14 @@ bool CMakeSymetricAction::doActionSizeSafe(CActionSound &actionSound,bool prepar
 
 				dest1[t+start]=dest2[selectionLengthSub1-t+start]=s;
 
-				statusBar.update(t);
+				if(statusBar.update(t))
+				{ // cancelled
+					if(prepareForUndo)
+						undoActionSizeSafe(actionSound);
+					else
+						actionSound.sound->invalidatePeakData(i,actionSound.start,t);
+					return false;
+				}
 			}
 
 			if(!prepareForUndo)
