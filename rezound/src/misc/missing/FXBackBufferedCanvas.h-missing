@@ -33,7 +33,7 @@
 
 #include <fox/fx.h> // change to "FXCanvas.h"
 
-namespace FX {
+// namespace FX {
 
 
 /// Back Buffered Canvas, an area drawn by another object, except a little more expensive but to reduce flicker
@@ -138,6 +138,6 @@ FXDEFMAP(FXBackBufferedCanvas) FXBackBufferedCanvasMap[]={
 // Object implementation
 FXIMPLEMENT(FXBackBufferedCanvas,FXWindow,FXBackBufferedCanvasMap,ARRAYNUMBER(FXBackBufferedCanvasMap))
 
-}
+// }
 
 #endif
