@@ -292,14 +292,14 @@ CNestedDataFile::CVariant::CVariant() :
 }
 
 CNestedDataFile::CVariant::CVariant(const string _name) :
-	type(vtScope),
-	name(_name)
+	name(_name),
+	type(vtScope)
 {
 }
 
 CNestedDataFile::CVariant::CVariant(const string _name,const string value) :
-	type(vtString),
 	name(_name),
+	type(vtString),
 	stringValue(value)
 {
 }
@@ -311,8 +311,8 @@ CNestedDataFile::CVariant::CVariant(const string _name,const double value) :
 }
 
 CNestedDataFile::CVariant::CVariant(const CVariant &src) :
-	type(src.type),
 	name(src.name),
+	type(src.type),
 	members(src.members),
 	stringValue(src.stringValue),
 	floatValue(src.floatValue)
@@ -321,8 +321,8 @@ CNestedDataFile::CVariant::CVariant(const CVariant &src) :
 
 const CNestedDataFile::CVariant &CNestedDataFile::CVariant::operator=(const CVariant &rhs)
 {
-	type=rhs.type;
 	name=rhs.name;
+	type=rhs.type;
 	members=rhs.members;
 	stringValue=rhs.stringValue;
 	floatValue=rhs.floatValue;
