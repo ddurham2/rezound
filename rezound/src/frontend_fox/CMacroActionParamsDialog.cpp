@@ -22,6 +22,7 @@
 
 #include "CFOXIcons.h"
 #include "utils.h"
+#include "CStatusComm.h"
 
 #include "../backend/AAction.h"
 #include "../backend/CLoadedSound.h"
@@ -71,7 +72,9 @@ CMacroActionParamsDialog::CMacroActionParamsDialog(FXWindow *mainWindow) :
 		startPosRadioButton4=new FXRadioButton(frame1,_("Same Proportionate Time"),this,ID_RADIO_BUTTON);
 		startPosRadioButton2=new FXRadioButton(frame1,_("Same Absolute Time From the Beginning of the Audio File"),this,ID_RADIO_BUTTON);
 		startPosRadioButton3=new FXRadioButton(frame1,_("Same Absolute Time From the End of the Audio File"),this,ID_RADIO_BUTTON);
-		startPosRadioButton7=new FXRadioButton(frame1,_("Same Cue Name"),this,ID_RADIO_BUTTON);
+		startPosRadioButton5=new FXRadioButton(frame1,_("Same Absolute Time Before the Stop Position"),this,ID_RADIO_BUTTON);
+		startPosRadioButton6=new FXRadioButton(frame1,_("Same Proportionate Time Before the Stop Position"),this,ID_RADIO_BUTTON);
+		startPosRadioButton9=new FXRadioButton(frame1,_("Same Cue Name"),this,ID_RADIO_BUTTON);
 		startPosRadioButton1=new FXRadioButton(frame1,_("Leave in the Same Position From Previous Action"),this,ID_RADIO_BUTTON);
 		startPosRadioButton4->setCheck(TRUE);
 
@@ -79,9 +82,9 @@ CMacroActionParamsDialog::CMacroActionParamsDialog(FXWindow *mainWindow) :
 		stopPosRadioButton4=new FXRadioButton(frame1,_("Same Proportionate Time"),this,ID_RADIO_BUTTON);
 		stopPosRadioButton2=new FXRadioButton(frame1,_("Same Absolute Time From the Beginning of the Audio File"),this,ID_RADIO_BUTTON);
 		stopPosRadioButton3=new FXRadioButton(frame1,_("Same Absolute Time From the End of the Audio File"),this,ID_RADIO_BUTTON);
-		stopPosRadioButton5=new FXRadioButton(frame1,_("Same Absolute Time After the Start Position"),this,ID_RADIO_BUTTON);
-		stopPosRadioButton6=new FXRadioButton(frame1,_("Same Proportionate Time After the Start Position"),this,ID_RADIO_BUTTON);
-		stopPosRadioButton7=new FXRadioButton(frame1,_("Same Cue Name"),this,ID_RADIO_BUTTON);
+		stopPosRadioButton7=new FXRadioButton(frame1,_("Same Absolute Time After the Start Position"),this,ID_RADIO_BUTTON);
+		stopPosRadioButton8=new FXRadioButton(frame1,_("Same Proportionate Time After the Start Position"),this,ID_RADIO_BUTTON);
+		stopPosRadioButton9=new FXRadioButton(frame1,_("Same Cue Name"),this,ID_RADIO_BUTTON);
 		stopPosRadioButton1=new FXRadioButton(frame1,_("Leave in the Same Position From Previous Action"),this,ID_RADIO_BUTTON);
 		stopPosRadioButton4->setCheck(TRUE);
 }
@@ -119,30 +122,30 @@ bool CMacroActionParamsDialog::showIt(const AActionFactory *actionFactory,AFront
 		if(loadedSound->sound->findCue(loadedSound->channel->getStartPosition(),index))
 		{
 			startPositionCueName=loadedSound->sound->getCueName(index);
-			startPosRadioButton7->enable();
+			startPosRadioButton9->enable();
 		}
 		else
 		{
-			startPosRadioButton7->disable();
-			if(startPosRadioButton7->getCheck()==TRUE)
+			startPosRadioButton9->disable();
+			if(startPosRadioButton9->getCheck()==TRUE)
 			{
 				startPosRadioButton1->setCheck(TRUE);
-				startPosRadioButton7->setCheck(FALSE);
+				startPosRadioButton9->setCheck(FALSE);
 			}
 		}
 
 		if(loadedSound->sound->findCue(loadedSound->channel->getStopPosition(),index))
 		{
 			stopPositionCueName=loadedSound->sound->getCueName(index);
-			stopPosRadioButton7->enable();
+			stopPosRadioButton9->enable();
 		}
 		else
 		{
-			stopPosRadioButton7->disable();
-			if(stopPosRadioButton7->getCheck()==TRUE)
+			stopPosRadioButton9->disable();
+			if(stopPosRadioButton9->getCheck()==TRUE)
 			{
 				stopPosRadioButton1->setCheck(TRUE);
-				stopPosRadioButton7->setCheck(FALSE);
+				stopPosRadioButton9->setCheck(FALSE);
 			}
 		}
 	}
@@ -154,7 +157,7 @@ bool CMacroActionParamsDialog::showIt(const AActionFactory *actionFactory,AFront
 
 	actionNameLabel->setText(("Action: "+actionName).c_str());
 
-	// this dialog may not even need to be shown depending on the action.. probably macroRecord can exclude a list of names, or it can be part of the action factory's info to know that
+reshow:
 	
 	if(execute(PLACEMENT_CURSOR))
 	{
@@ -168,7 +171,11 @@ bool CMacroActionParamsDialog::showIt(const AActionFactory *actionFactory,AFront
 			macroActionParameters.startPosPositioning=AFrontendHooks::MacroActionParameters::spAbsoluteTimeFromEnd;
 		else if(startPosRadioButton4->getCheck()==TRUE)
 			macroActionParameters.startPosPositioning=AFrontendHooks::MacroActionParameters::spProportionateTimeFromBeginning;
-		else if(startPosRadioButton7->getCheck()==TRUE)
+		else if(startPosRadioButton5->getCheck()==TRUE)
+			macroActionParameters.startPosPositioning=AFrontendHooks::MacroActionParameters::spAbsoluteTimeFromStopPosition;
+		else if(startPosRadioButton6->getCheck()==TRUE)
+			macroActionParameters.startPosPositioning=AFrontendHooks::MacroActionParameters::spProportionateTimeFromStopPosition;
+		else if(startPosRadioButton9->getCheck()==TRUE)
 			macroActionParameters.startPosPositioning=AFrontendHooks::MacroActionParameters::spSameCueName;
 		macroActionParameters.startPosCueName=startPositionCueName;
 
@@ -180,13 +187,20 @@ bool CMacroActionParamsDialog::showIt(const AActionFactory *actionFactory,AFront
 			macroActionParameters.stopPosPositioning=AFrontendHooks::MacroActionParameters::spAbsoluteTimeFromEnd;
 		else if(stopPosRadioButton4->getCheck()==TRUE)
 			macroActionParameters.stopPosPositioning=AFrontendHooks::MacroActionParameters::spProportionateTimeFromBeginning;
-		else if(stopPosRadioButton5->getCheck()==TRUE)
-			macroActionParameters.stopPosPositioning=AFrontendHooks::MacroActionParameters::spAbsoluteTimeFromStartPosition;
-		else if(stopPosRadioButton6->getCheck()==TRUE)
-			macroActionParameters.stopPosPositioning=AFrontendHooks::MacroActionParameters::spProportionateTimeFromStartPosition;
 		else if(stopPosRadioButton7->getCheck()==TRUE)
+			macroActionParameters.stopPosPositioning=AFrontendHooks::MacroActionParameters::spAbsoluteTimeFromStartPosition;
+		else if(stopPosRadioButton8->getCheck()==TRUE)
+			macroActionParameters.stopPosPositioning=AFrontendHooks::MacroActionParameters::spProportionateTimeFromStartPosition;
+		else if(stopPosRadioButton9->getCheck()==TRUE)
 			macroActionParameters.stopPosPositioning=AFrontendHooks::MacroActionParameters::spSameCueName;
 		macroActionParameters.stopPosCueName=stopPositionCueName;
+
+		if(macroActionParameters.positionsAreRelativeToEachOther())
+		{
+			hide();
+			Error(_("The positioning of the start and stop positions cannot be relative to each other."));
+			goto reshow;
+		}
 
 		return true;
 	}

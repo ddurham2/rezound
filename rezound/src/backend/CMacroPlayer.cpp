@@ -93,7 +93,6 @@ bool CMacroPlayer::doMacro(ASoundFileManager *soundFileManager,unsigned &count)
 			{
 				case AFrontendHooks::MacroActionParameters::spLeaveAlone: 
 					break;
-
 				case AFrontendHooks::MacroActionParameters::spAbsoluteTimeFromBeginning: 
 					startPosition=recStartPosition;
 					break;
@@ -101,7 +100,13 @@ bool CMacroPlayer::doMacro(ASoundFileManager *soundFileManager,unsigned &count)
 					startPosition=audioLength-(recAudioLength-recStartPosition);
 					break;
 				case AFrontendHooks::MacroActionParameters::spProportionateTimeFromBeginning: 
-					startPosition=audioLength/(recAudioLength/recStartPosition);
+					startPosition=(audioLength-1)/((recAudioLength-1)/recStartPosition);
+					break;
+				case AFrontendHooks::MacroActionParameters::spAbsoluteTimeFromStopPosition: 
+					// handled after the stop position is calculated
+					break;
+				case AFrontendHooks::MacroActionParameters::spProportionateTimeFromStopPosition: 
+					// handled after the stop position is calculated
 					break;
 				case AFrontendHooks::MacroActionParameters::spSameCueName: 
 					if(loadedSound->sound->containsCue(recStartPosCueName,cueIndex))
@@ -117,7 +122,6 @@ bool CMacroPlayer::doMacro(ASoundFileManager *soundFileManager,unsigned &count)
 			{
 				case AFrontendHooks::MacroActionParameters::spLeaveAlone: 
 					break;
-
 				case AFrontendHooks::MacroActionParameters::spAbsoluteTimeFromBeginning: 
 					stopPosition=recStopPosition;
 					break;
@@ -125,7 +129,7 @@ bool CMacroPlayer::doMacro(ASoundFileManager *soundFileManager,unsigned &count)
 					stopPosition=audioLength-(recAudioLength-recStopPosition);
 					break;
 				case AFrontendHooks::MacroActionParameters::spProportionateTimeFromBeginning: 
-					stopPosition=audioLength/(recAudioLength/recStopPosition);
+					stopPosition=(audioLength-1)/((recAudioLength-1)/recStopPosition);
 					break;
 				case AFrontendHooks::MacroActionParameters::spAbsoluteTimeFromStartPosition: 
 					stopPosition=startPosition+(recSelectionLength);
@@ -143,6 +147,16 @@ bool CMacroPlayer::doMacro(ASoundFileManager *soundFileManager,unsigned &count)
 					throw runtime_error(string(__func__)+" -- unhandled startPositioning: "+istring(recStopPosPositioning));
 			}
 
+				// these two cases have to be done *after* the stop position is calcuated
+			switch((int/*avoiding gcc warning about missing cases*/)recStartPosPositioning)
+			{
+				case AFrontendHooks::MacroActionParameters::spAbsoluteTimeFromStopPosition: 
+					startPosition=stopPosition-(recSelectionLength);
+					break;
+				case AFrontendHooks::MacroActionParameters::spProportionateTimeFromStopPosition: 
+					startPosition=stopPosition-(audioLength/(recAudioLength/recSelectionLength));
+					break;
+			}
 
 			// make sure the positions are within range
 			startPosition=max((sample_fpos_t)0,min(audioLength,startPosition));

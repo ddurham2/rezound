@@ -84,14 +84,25 @@ public:
 			spAbsoluteTimeFromEnd=3,
 			spProportionateTimeFromBeginning=4,
 
-			spAbsoluteTimeFromStartPosition=5, 	// only allowed for the stopPosPositioning
-			spProportionateTimeFromStartPosition=6,	// only allowed for the stopPosPositioning
+			spAbsoluteTimeFromStopPosition=5, 	// only allowed for the startPosPositioning
+			spProportionateTimeFromStopPosition=6,	// only allowed for the startPosPositioning
 
-			spSameCueName=7,
+			spAbsoluteTimeFromStartPosition=7, 	// only allowed for the stopPosPositioning
+			spProportionateTimeFromStartPosition=8,	// only allowed for the stopPosPositioning
+
+			// NOTE: 5 or 6 for a startPosPositioning cannot be used at the same time that 7 or 8 is used for the stopPosPositioning
+			// the positionsAreRelativeToEachOther() method can conveniently be called to test for this condition
+
+			spSameCueName=9,
 		};
 
 		SelectionPositioning startPosPositioning;
 		SelectionPositioning stopPosPositioning;
+
+		bool positionsAreRelativeToEachOther() const
+		{
+			return (startPosPositioning==5 || startPosPositioning==6) && (stopPosPositioning==7 || stopPosPositioning==8);
+		}
 
 		string startPosCueName;
 		string stopPosCueName;

@@ -63,16 +63,18 @@ private:
 		FXRadioButton *startPosRadioButton2;
 		FXRadioButton *startPosRadioButton3;
 		FXRadioButton *startPosRadioButton4;
-		FXRadioButton *startPosRadioButton7;
+		FXRadioButton *startPosRadioButton5;
+		FXRadioButton *startPosRadioButton6;
+		FXRadioButton *startPosRadioButton9;
 
 	FXGroupBox *stopPosPositioningGroupBox;
 		FXRadioButton *stopPosRadioButton1;
 		FXRadioButton *stopPosRadioButton2;
 		FXRadioButton *stopPosRadioButton3;
 		FXRadioButton *stopPosRadioButton4;
-		FXRadioButton *stopPosRadioButton5;
-		FXRadioButton *stopPosRadioButton6;
 		FXRadioButton *stopPosRadioButton7;
+		FXRadioButton *stopPosRadioButton8;
+		FXRadioButton *stopPosRadioButton9;
 
 };
 
