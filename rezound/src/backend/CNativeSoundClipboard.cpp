@@ -29,7 +29,11 @@ typedef TPoolAccesser<sample_t,CSound::PoolFile_t > CClipboardPoolAccesser;
 CNativeSoundClipboard::CNativeSoundClipboard(const string description,const string _workingFilename) :
 	ASoundClipboard(description),
 	workingFilename(_workingFilename),
-	workingFile(REZOUND_POOLFILE_BLOCKSIZE,"ReZoundC")
+	workingFile(REZOUND_POOLFILE_BLOCKSIZE,"ReZoundC"),
+
+	channelCount(0),
+	sampleRate(0),
+	length(0)
 {
 	workingFile.openFile(workingFilename,true); 
 	workingFile.clear();
