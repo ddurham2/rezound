@@ -1,0 +1,14 @@
+
+ASoundPlayer is the base class for any platform specific implementation to perform actual
+sound playback.  The derived class is to implement the platform specific code.  ASoundPlayer
+preforms software mixing of all playing sound channels (see SoundChannels for details of 
+how playback is managed within ReZound).
+
+The derived class is supposed to constantly feed audio to the playback device on that platform 
+and get its data from calling ASoundPlayer::mixChannels(...) which fills a buffer with the 
+currently playing audio data.
+
+- ??? I suppose I could have ASoundPlayer tell the implementation to 'wait, there's no data to 
+play right now', but the cost is not that great
+
+

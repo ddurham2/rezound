@@ -1,0 +1,48 @@
+
+
+- I should probably support several methods of locking for an action
+	- one that locks the sound for changing it's size for the entire operation
+		- the selection actionSound's start and stop positions should be verified after the lock
+	- one that locks the sound to keeps it's size from changing (where resizing is not part of the action's doings)
+		- the selection actionSound's start and stop positions should be verified after the lock
+
+	- perhaps another method that doesn't lock at all.. that is it leaves the responsibility up to the action's implementation
+		- sometimes we know that we have to change the size but then do much work afterwards
+		- but this probably isn't that benefitial... sure the sound can continue to play while the action works.. but it will be playing garbage
+			- and after changing the size, 'theoretically', we'd have to lock the size from changing again to ensure that before we started working, that it wouldn't change
+
+
+ -- ??? when I get it working, explain the process of creating a new action
+  	also explain how actions are invoked thru their respective factory object
+
+All actions (i.e. edits, effects, etc) are implemented as derivations of the AAction class.  AAction has
+the deriver to implement do and undo methods.  Then CLoadedSound (which represents a sound that has been
+'opened') has a stack of these AAction pointers to facilitate undo/redo functionality.  The derivation
+of AAction can opt to have AAction::canUndo return false which affects the undo/redo behavior.
+
+AAction also has code which the derived class can use to save data into for undoing the action... Some 
+actions just simply have to save a copy of the data that will be affected (i.e. adding random values to 
+the audio data), and other actions can just do the inverse of the action in without loss of accuracy to 
+the original data (i.e. reverse).
+
+AAction also has the ability to restore the selection positions prior to the action having been done.
+
+One AAction object is instantiated every time an action is done.
+
+An AAction is constructed with an AActionSound which contains an ASound pointer with some more information
+about which channels of the ASound object to apply the action to, where to apply the action within the sound.
+Note: the action is not necessarily applied to the selection, it is applied to where this object indicates.
+But that is not to say that the action won't affect data around the applied area (i.e. blending a pasted 
+section of audio may affect data outside the area).
+
+
+- Also, the AAction::doActionSizeSafe and AAction::undoActionSizeSafe implementations are reponsible for calling 
+	ASound::invalidPeakData(start,stop) for any data that they modified.  HOWEVER, it is not necessary to
+	call it for any data that was modified/added/removed/etc by the methods within ASound... It wouldn't hurt 
+	anything except be inefficient and redundant.
+		i.e. ASound::addSpace, ASound::removeSpace, ASound::mixData, etc...
+
+	
+
+
+

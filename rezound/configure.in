@@ -1,0 +1,92 @@
+# vim:tw=78
+## Process this file with autoconf to build a configure script
+##
+# ReZound configure.in Written by Anthony Ventimiglia
+#
+# Copyright (C) 2002 - David W. Durham
+# 
+# This file is part of ReZound, an audio editing application, 
+# 
+# ReZound is free software; you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 2 of the License, or (at your option) any later
+# version.
+# 
+# ReZound is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+# details.
+# 
+# You should have received a copy of the GNU General Public License along with
+# this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+# Place - Suite 330, Boston, MA  02111-1307, USA
+
+
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(config/common.h)
+AC_CONFIG_AUX_DIR(config)
+AM_CONFIG_HEADER(config/config.h)
+AM_INIT_AUTOMAKE(ReZound, 0.1prealpha)
+
+dnl Checks for programs.
+AC_PROG_AWK
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_CXX
+dnl These are some custom checks to see if cc accepts some extra warning flags
+dnl see config/cxx.m4 for macro definition
+ajv_CXX_FLAG(-Wno-unused-function)
+ajv_CXX_FLAG(-Wno-unused-variable)
+AC_PROG_RANLIB
+AM_PROG_LIBTOOL
+AC_PROG_CPP
+
+dnl Checks for libraries.
+AC_CHECK_LIB(m, sqrt)
+AC_CHECK_LIB(dl, dlopen)
+AC_CHECK_LIB(pthread, pthread_create)
+
+dnl I found that afSetVirtualSampleFormat() was missing from earlier versions
+dnl of audifile, so this is a little better than checking for a random
+dnl function in libaudiofile. I still have to work this so configure will
+dnl abort if the test fails.
+ajv_CHECK_LIB_ABORT(audiofile, afSetVirtualSampleFormat,
+AUDIOFILE,[http://oss.sgi.com/projects/audiofile/])
+
+dnl see config/cxx-lib.m4 for macro definitions. 
+dnl This is a check for a class in a C++ library. To pinpoint
+dnl the specific version we need we could change what class is linked.
+ajv_CXX_CHECK_LIB([FOX],FXApp,fox/fx.h,[http://fox-toolkit.org])
+
+dnl I'm commenting this out. Until a test can be made.
+dnl AC_CHECK_LIB(ccgnu, main)
+dnl -- Mutex is what I'd like to check for, but the output of the test compile complains about
+dnl symbols not found because we didn't link with -lpthread... but actually, commonc++ has a 
+dnl ccgnu-config script it installs to specify the flags to link with so that's handy.. Perhaps 
+dnl add another parameter to your macro which says, add this to the command line.  
+dnl -- Also, ost:: may or may not be valid depending on wether the compiler supports namespaces or not
+dnl if it doesn't then commonc++ would have compiled with no ost namespace and this test will fail.  Is
+dnl there a way to have it try something else if this doesn't fail?  I can't test in the ReZound code for 
+dnl whether ost is necessary or not by using the define from cc++/config.h (there is a define in there 
+dnl which says to wrap all the classes in a namespace or not.)
+dnl ajv_CXX_CHECK_LIB([ccgnu],ost::Mutex,cc++/thread.h,[http://www.gnu.org/directory/commoncpp.html])
+
+
+dnl Checks for header files.
+AC_HEADER_STDC
+dnl This is defined in config/sstream.m4 it checks for a native sstream 
+dnl header and sets config.h so we'll use missing/sstream-missing if it's 
+dnl not found. see config sstream.m4 for definition
+ajv_CHECK_HEADER_SSTREAM
+
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_OFF_T
+AC_TYPE_SIZE_T
+
+dnl Checks for library functions.
+AC_CHECK_FUNCS(strerror)
+
+AC_OUTPUT(Makefile src/Makefile src/misc/Makefile src/misc/cc++/Makefile src/PoolFile/Makefile src/backend/Makefile src/backend/Edits/Makefile src/backend/Effects/Makefile src/backend/Remaster/Makefile  src/frontend_fox/Makefile) 

@@ -1,0 +1,25 @@
+
+- One problem I ran into in designing ReZound's frontend somewhat after the windows version was the lack of MDI support in X
+- MDI has the concept that there is a focused application, but also the 'active' or focused document of the multiple document that application has loaded
+- X seems to only have the concept of one focused windows among all the created windows regardless of which application created which windows.
+- For lack of a better solution I created a toggle button which spans the top of each sound window indicating which sound window is 'active' (or focused)
+	- Then the 'active' window is the one which receives the action of any effect button, edit button, play control button, etc
+
+- If there ever comes a concept in X similar to and probably improved over the MDI concept I should mvoe to that, but in the mean time I have to work with what has been given to me
+	- FOX has created an MDI widget set, but is in my opinion a bit ugly and behaves a little different that I would prefer.  
+	- FOX also, basically, had to rewrite focus handling... I would prefer X in some way to handle it.
+	- Perhaps when/if skinning is possible with fox, I would use it.
+	- These are my thought on the matter now, they might some day change though
+
+
+- The way I implemented this was:
+	- CSoundFileManager keeps a vector of all opened sound window, and it overrides the getActive() method which searches through all the created windows and finds the first (and only) window which has its toggle button state set on (CSoundWindow::getActiveState() returns this)
+	- CSoundWindow has a setActiveState(bool isActive) method which:
+		- if isActive is false, 
+			- it simple untoggles its activeToggleButton
+		- if isActive is true, 
+			- then it calls CSoundFileManager::unsetActiveForAllSoundWindows() for the global CSoundFileManager object which unsets the active toggle state for all created windows (except for this window being worked on)
+			- and it sets its own activeToggleButton to the set toggled state and raises the window
+	- Also, when a window is created it becomes the new 'active' window
+	- When a window is destroyed, another remaining window becomes the new active window
+

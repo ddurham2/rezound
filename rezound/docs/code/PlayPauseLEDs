@@ -1,0 +1,12 @@
+
+The playing and paused LED indicators are implemented with triggers... CSoundPlayerChannel has a 
+means of allowing the front end sound window to register to get a function called when playing and 
+pausing starts and stops, the handler functions should simply check the isPlaying or isPaused flag 
+to know why the trigger was tripped
+
+This trigger mechanism is implemented with the CTrigger class which simply has a trip function and
+handler registration functions.  It also has a user data pointer given to CTrigger's constructor 
+that is passed to the handler function when the trigger is tripped.
+	- ??? I suppose CTrigger could be a template so the type of that user data could be known
+
+

@@ -1,0 +1,71 @@
+These are the final changes I've made in preparing v0.1prealpha
+
+Wed Mar  6 13:21:17 EST 2002 -- Anthony Ventimiglia  
+
+Porting for Debian -- Had to remove -Wno-unused-variable and -Wno-unused-function compiler flags because the Debian gcc (2.95.2) chokes on them. 
+
+I wrote a AC macro to test if C++ compiler recognizes flags, which I used to
+check for the above warning flags. So now configure checks to see if these
+flags are legal on g++ (or whatever compiler is used) and adds them to
+CXXFLAGS if they pass.
+
+-----------------------------------------------
+
+Debian compiler also doesn't like ASoundPlayer::mixSoundPlayedChannels() because it's protected. I don't know any of the inner workings, but I'll try moving it to a public member to see if it works. I marked the mods in ASoundPlayer.h
+
+I had to make a similar change with audio_fd in backend/COSSSoundPlayer.h
+
+As per Davy's request, I commented the moves with ???? to make them stand out.
+
+------------------------------------------------
+
+libaudiofile-dev package is too old, so To install it on Debian, An up to date audiofile package should be installed. I'm thinking about including it in the package.  Specifically the afSetVirtualSampleFormat() method isn't implemented in Debian, so we could check in configure.
+
+I wrote a macro ajv_CHECK_LIB_ABORT as a wrapper around AC_CHECK_LIB which
+prints a friendly error message if libaudiofile is missing. I'm also checking
+for afSetVirtualSampleFormat() since it was missing on Debian. It's an early
+version check. 
+
+There is also an option --disable-audiofile-check which will force configure
+to skip the check.
+
+--------------------------------------------------
+
+The macro ajv_CXX_CHECK_LIB is used to check for a good libFOX, it is
+parameterized, so hopefully it can be used to check for other libraries as
+well. Right now it tests for the FXApp class, but once we start getting bug
+reports about it, it can be changed to a class that is used, but is new to the
+version we require. 
+
+This macro could also be expanded one day if the decision to use different GUI
+libraries is ever made. 
+
+There is an option --disable-FOX-check to override this check as well.
+
+-------------------------------------------------
+
+I put a check to test for a native sstream header in configure.in the macro is
+defined in config/acinclude.m4. I also integrated config/config.h into the mix
+which is created with autoheader from acconfig.h
+
+misc/istring was modified to use missing/sstream-missing should the check for
+a native sstream fail
+
+--------------------------------------------------
+
+I moved the sources under src as Davy suggested. It's really a simple job. And
+made a common file config/am_include.mk which is included in all the
+Makefiles, and I've reorganized the docs directory. 
+
+-------------------------------------------------
+Fri Mar  8 10:08:39 EST 2002
+Wrote config/common.h which will be used to handle low level portability
+problems. common.h is included in every header file, so every file sees
+common.h and config.h
+
+Put URL's in relevent places in the documentation and configure scripts. 
+That's really all I'll do for now. Still some stuff to do, but I think we're
+ready to release on my end. 
+----------------------------------------------------
+
+

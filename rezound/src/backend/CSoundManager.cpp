@@ -1,0 +1,190 @@
+/* 
+ * Copyright (C) 2002 - David W. Durham
+ * 
+ * This file is part of ReZound, an audio editing application.
+ * 
+ * ReZound is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation; either version 2 of the License,
+ * or (at your option) any later version.
+ * 
+ * ReZound is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
+ */
+
+#include "CSoundManager.h"
+
+
+#include <ctype.h>
+
+#include <stdexcept>
+
+#include <istring>
+
+#include "CrezSound.h"
+#include "Cold_rezSound.h"
+//#include "CwavSound.h"
+//#include "CauSound.h"
+//#include "CrawSound.h"
+#include "ClibaudiofileSound.h"
+
+CSoundManager::CSoundManager()
+{
+}
+
+CSoundManager::~CSoundManager()
+{
+	for(size_t t=0;t<clients.size();t++)
+		delete clients[t];
+}
+
+// used to check the first 4 chars of the file for 'sNdF' to know if it's the old format
+bool checkForOldRezFormat(const string &filename)
+{
+	bool oldFormat=false;
+	{
+		FILE *f=fopen(filename.c_str(),"rb");
+		if(f!=NULL)
+		{
+			char buffer[5]={0};
+			fread(buffer,1,4,f);
+			if(strncmp(buffer,"sNdF",4)==0)
+				oldFormat=true;
+			fclose(f);
+		}
+	}
+	return(oldFormat);
+}
+
+CSoundManagerClient CSoundManager::openSound(const string filename,const bool readOnly,const bool raw)
+{
+	string extention;
+	if(!raw)
+	{
+		const size_t periodPosition=filename.rfind(".");
+		if(periodPosition==string::npos)
+			throw(runtime_error(string(__func__)+" -- cannot determine the extention on the filename: "+filename));
+
+		extention=istring(filename.substr(periodPosition+1)).lower();
+	}
+	else
+		extention="raw";
+
+	ASound *sound;
+	if(extention=="rez")
+		sound=checkForOldRezFormat(filename) ? static_cast<ASound *>(new Cold_rezSound()) : static_cast<ASound *>(new CrezSound());
+/*
+	else if(extention=="wav")
+		sound=new CwavSound();
+	else if(extention=="au")
+		sound=new CauSound();
+	else if(extention=="raw")
+		sound=new CrawSound();
+	else
+		throw(runtime_error(string(__func__)+" -- unknown file type with extention: "+extention));
+*/
+	else
+		sound=new ClibaudiofileSound();
+
+	try
+	{
+		sound->loadSound(filename);
+	}
+	catch(...)
+	{
+		delete sound;
+		throw;
+	}
+
+	//sounds.append(sound);
+	sounds.push_back(sound);
+	//closeSoundLater.append(false);
+	closeSoundLater.push_back(false);
+	//soundReferenceCounts.append(0);
+	soundReferenceCounts.push_back(0);
+
+	return(CSoundManagerClient(sound,this,readOnly));
+}
+
+CSoundManagerClient CSoundManager::newSound(const string &filename,const unsigned sampleRate,const unsigned channels,const sample_pos_t size)
+{
+	ASound *sound=new CrezSound(filename,sampleRate,channels,size);
+
+	//sounds.append(sound);
+	sounds.push_back(sound);
+	//closeSoundLater.append(false);
+	closeSoundLater.push_back(false);
+	//soundReferenceCounts.append(0);
+	soundReferenceCounts.push_back(0);
+
+	return(CSoundManagerClient(sound,this,false));
+}
+
+void CSoundManager::closeSound(CSoundManagerClient &client)
+{
+	size_t index=findSoundIndex(client.sound);
+	closeSoundLater[index]=true;
+}
+
+
+void CSoundManager::addClient(CSoundManagerClient *client)
+{
+	//clients.append(client);
+	clients.push_back(client);
+	addSoundReference(client->sound);
+}
+
+void CSoundManager::removeClient(CSoundManagerClient *client)
+{
+	for(size_t t=0;t<clients.size();t++)
+	{
+		if(clients[t]==client)
+		{
+			//clients.remove(t);
+			clients.erase(clients.begin()+t);
+			removeSoundReference(client->sound);
+			return;
+		}
+	}
+	throw(runtime_error(string(__func__)+" -- client not found in list"));
+}
+
+void CSoundManager::addSoundReference(ASound *sound)
+{
+	soundReferenceCounts[findSoundIndex(sound)]++;
+}
+
+void CSoundManager::removeSoundReference(ASound *sound)
+{
+	size_t index=findSoundIndex(sound);
+	if((--soundReferenceCounts[index])<=0)
+	{
+		if(closeSoundLater[index])
+			sounds[index]->closeSound();
+		delete sounds[index];
+
+		//sounds.remove(index);
+		sounds.erase(sounds.begin()+index);
+		//closeSoundLater.remove(index);
+		closeSoundLater.erase(closeSoundLater.begin()+index);
+		//soundReferenceCounts.remove(index);
+		soundReferenceCounts.erase(soundReferenceCounts.begin()+index);
+	}
+}
+
+const size_t CSoundManager::findSoundIndex(ASound *sound)
+{
+	for(size_t t=0;t<sounds.size();t++)
+	{
+		if(sounds[t]==sound)
+			return(t);
+	}
+	throw(runtime_error(string(__func__)+" -- sound object not found in list"));
+}
+

@@ -1,0 +1,8 @@
+
+1. Put in a check for gnucc, AC_CHECK_HEADER isn't working, so I'll have to write a macro. Also I want to put an option to override the check similar to the other override options.
+
+2. Look for other possible trouble spots such as stdint.h int32_t int16_t etc and set up a common.h header to deal with these problems. 
+
+3. write a common.h header and include it in every file. It will conditionally include config.h and take care of some of the workarounds we may have to use. 
+
+

@@ -1,0 +1,225 @@
+DAVY - Need to move -Wall before the other two warning flags: -Wno-unused-function -Wno-unused-variable in all the makefile.in files
+	- Also, it's too bad that all the makefile.in files can't be based on a common makefile.in file for such things as compiler flags
+	- perhaps there is an include directive for the processor of makefile.in files... then we could have a common.mk.in which contains
+	  any stuff common to all the makefile.in files.
+
+     - It may be too late (too much effort to change it) now, but I was thinking that we would have a src dir.  I don't know what that buys you.... Is it really easy to move the several source directories under ./src ?  If it's too much trouble or doesn't buy you anything just don't worry about it
+		- if done, we should move: images, frontend_fox, backend, PoolFile, and misc
+	
+
+	Davy - I wrote this to give you some idea of what I did to autoconfiscate this package. It's also a log of sorts, so I can keep my work somewhat organized.
+
+	I still have some kinks to work out, and some more tests to work on, but here's something you can try out. 
+	
+	I actually ran into another Mandrake related problem last night: make dist won't work properly on my Mandrake setup, I still have to figure out why this is happening. This is just a tarball of the package you gave me with my changes added, but once I have it complete, you'll be able to use make dist to roll a distribution tarball. 
+
+	The distribution version should look a little different than what this looks like now. All the unused  files and directories won't be included in the distro (except for docs of course). The zero byte files (AUTHORS, TODO, NEWS etc ) in the root directory are GNU Standards, you may want to write them and you can place them in the docs/ directory. I would recomend leaving README and INSTALL where they are. I'll add specific INSTALL instructions a little later on.
+
+	Let me first tell you that I learned everything I know about this from The NewRiders "GNU AUTOCONF, AUTOMAKE, AND LIBTOOL" book (Vaughn, Elliston, Tromey and Taylor). The book is actually GPL'd and available at http://newriders.com/autoconf. It's pretty in depth I've probably had to reread sections of it four or five times, but it's a tough subject to learn, because it covers so much. I would definitley advise getting a copy of it, because there's years of experience put into this book by many of the people who really brought about these programs.  I really find myself referncing it quite a bit. 
+
+	First thing I was to copy the whole dorectory to a new one so if I mess things up too much I'll be able to recover quickly. In this step I dumped the audiofile out. I think it would be better to just make it a requirement. It's a small package to build, and should be widely available in binary package (rpm deb) form. So I figured it would just make it easier for me to throw it out. We could change that if you like.
+
+1.	The first step I used was to run autoscan from the top source directory. Autoscan basically peeks into all the header files and source files it finds to give you configure.scan, which is basically what I'll make configure.in out of.  
+	Autoscan does a pretty good job of finding out what a configure script should check for. It's not always perfect, but it's the best way to start. It's also nice because it gives the general order that is best to check for features, if you read the dnl lines in configure.in you'll see the order, it's fairly logical, checking for the basics before specifics. It gave me the following macros:
+
+first some preliminaries:
+
+AC_INIT(images/images.h) -- This is basically the first Macro used to make a configure script. The argument is arbitrary, Autoscan just puts the first code file (.h, .c, etc) it finds. 
+
+checks for programs:
+
+AC_PROG_CC -- This checks for a c compiler. Autoscan isn't perfect, we want a c++ compiler, so I change this macro to AC_PROG_CXX
+AC_PROG_CPP -- checks for the c preprocessor not much to say here.
+AC_PROG_MAKE_SET -- This is the first time I've seen this macro, and I couldn't find any documentation of it. Guessing by the name it probably checks a feature of the make program on the machine, possibly. It really never hurts to check for too much, so I'll just leave it in. When I ran configure the first time I noticed that it check is make sets ${MAKE} this test is already performed by a previous macro (Probably AM_INIT_AUTOMAKE) so I can remove it.
+
+checks for libraries: 
+
+AC_CHECK_LIB(FOX, main) -- Autoscan basically lists any libraries that shouldn't be expected to be on pretty much everyones system. The first argument is the Library name (-lFOX) and the second is a function to look for in this library. Since autoscan knows nothing about non-native libraries it will always use main as a default function to look for. This MUST be changed, because very few (if any) libraries have a main() function. 
+	The way that a configure script actually performs this check is to try to compile and link a minimal program using the given function. With a C library this is a very simple macro, but I have run into problems with C++ libraries, Autoconf doesn't really know too much about C++. For example with Qt I really couldn't find any plain old functions to pass as a name here, so I had to write my own test, which was just a minimal program with a Qt object. For now I'll comment this out, and worry about writing a new macro later.
+
+DAVY - if it's not already fixed, I'll see how another existing package did it...... Also, if it has to check for a mangled name, that will be an issue... perhaps there's a way to have AC_CHECK_LIB compile with C++ instead of C, that way we could use an unmangled name.. That would be the way I would think that another package would do it... Also, how would configure ever work with languages other than C
+	- here is a url for a fox project which has configure check for FOX: http://www.scrypt.net/~celer/foxpilot/
+	- basically it just uses AC_HAVE_LIBRARY(FOX)... I don't guess it checks for any particular function, but it at least verifies that it's there... But I tell ya... we really probably want to check for a particular version of the library... That may be a little more challenging... Perhaps there is a standard symbol built into gnu libraries denoting the version number... Or maybe I'm thinking of seeing rpms complain about wrong version numbers
+	- here are some other projects using fox.. I don't know however if they use auto tool at all: http://www.hawaiian.net/~dgraves/
+		- found this out later, his fxcalc just checks for #include <fox/fx.h> and assumes the library will exist too which might be sufficient
+			AC_CHECK_HEADERS(fox/fx.h,,AC_MSG_ERROR("fox/fx.h not found (and we would put also the URL and sugguested --flag for specifying a alternate location)"))
+
+
+AC_CHECK_LIB(ccgnu, main) -- This is a check to link against the Common C++ library. This will also require a custom macro, which will be pretty much the same as the above macro. So I'll put this off until later.
+
+DAVY - I know there are many packages which use commonc++ and we can look in their configure.in scripts
+
+AC_CHECK_LIB(dl, main) -- This is a check for libdl, I replace the main with a function from ldl, let's use dlopen.
+
+AC_CHECK_LIB(misc, main) -- This is a check for libmisc. I'm not sure at this point, but I think this is an error, I think autoscan saw your misc headers and thought it was built in, so I'll comment this out until I know we don't need it.
+
+AC_CHECK_LIB(poolfile, main) -- This seems to be a bogus check as well.
+
+AC_CHECK_LIB(pthread, main) -- Ahh another C library, I'll just replace main with pthread_create.
+
+checks for headers: 
+
+AC_HEADER_STDC -- this is a check for stdlib.h apparantly not all unices have it. 
+
+Checks for typedefs, structures and compiler characteristics: These checks make sure whichever compiler is being used will support some aspects of a langusge that may not be fully implemented.
+
+AC_C_CONST -- checks to see if compiler recognizes const. This is a pretty easy problem to make portable, if a compiler doesn't recognize const, then the preprocessor can remove it by #defining const to nothing.
+
+AC_C_INLINE -- Pretty much the same as above. 
+AC_TYPE_OFF_T -- checks for off_t type.
+AC_TYPE_SIZE_T -- checks for size_t.
+
+DAVY - need to check for stdint.h ... int32_t, int16_t, and other types that I use... I can make a complete list if necessary, really by greping for _t in the code... only the XXintXX_t types
+
+checks for library functions: This checks for certain functions that might be missing in some systems. 
+AC_CHECK_FUNCS(strerror)
+
+AC_OUTPUT( ... )This is a list of all the Makefile.in's that will be used to write Makefiles after the configure script is done.
+
+2. 	Next I changed configure.scan to configure.in and added some basic macros that autoscan doesn't include. Here they are:
+
+AC_CONFIG_AUX_DIR(config) -- i added the config subdirectory. This Macro tells autotools to place it's configuration scripts (config.guess, install-sh, missing, mkinstalldirs, etc)into the config directory. It's not really a required macro (which is why autoscan doesn't produce it), but it makes the top source directory a little more tidy.
+
+AM_INIT_AUTOMAKE(ReZound, 1.0PreAlpha) This macro basically tells autoconf that we'll be using automake as well. Automake will take the Package name and version and pass them as compiler Defines like this -DPACKAGE=\"ReZound\" -DVERSION=\"1.0\". This is pretty nice for things like an About window, so the Version could be set at compile time. I set it to v1.0PreAlpha but you can set this to anything you like.
+
+DAVY - I guess make the version 'v0.1alpha' when we're ready to go
+
+AM_PROG_LIBTOOL -- This tells configure that we'll be using libtool in our build process. I decided to use libtool to create convienience libraries (.la) in the building of the package. This really the only way I know that automake can deal with linking objects in separate directories. In other words, every directory will have it's objects linked too one .la library, which will then be linked into the final executable. This will also make it easier in the future as our build process begins to change for various systems.
+
+3. 	The configure.in is not really as complete as it should be. We should have no problem using it on a fairly up to date GNU system, however. But in the process of porting to more platforms, more problems are bound to arise. For the most part, all of the above check will pass on a GNU system. And we're going to make Common C++, audiofile and fox a requirement. So for now just to get something up and working I can safely leave these out. 
+	For a final distribution, we'll have to offer alternatives for some of our checks, for instance we'll have to write a strerror replacement, and possibly more. I'll also be adding support for a config.h header to be included in every file in the package using #ifdef HAVE_CONFIG_H. This will just reduce the -D clutter that will be passed at compile time. 
+	Also when I write the Macros to check for the requred libraries, I'll make configure abort with an error if they aren't present. There will be an option to pass library paths to configure, in case our tests fail to find them. This way if someone doesn't have a requried library, they'll find out before they make anything. And if they have the library, but in a strange place, they'll be able to tell configure about it.
+
+DAVY - this is where in the error message we talked about sugguesting a URL to get the library from.  We should also, at that point, sugguest using the configure --flag which specifies the alternate include/link paths for that particular library
+
+	My next step is to write all the Makefile.am files in all of our build directories. There are directories that aren't being used right now, so I'll skip them. I won't say anything more about the Makefile.am's they are really fairly simple, and I've commented them to tell you what's going on.
+	I decided it would be easiest to build convenience libraries (.la) in All the subdirectories except frontend_fox. Since the final executable is in frontend fox, we don't need one there. The way automake works is it looks at a makefile for what it needs to build. But if it doesn't have a final target, it won't perform how you want it. See if I just tell it to build CMultiFile.o in PoolFile, it won't work, but by telling it to build libPoolFile.la, using CMultiFile.o, everything works just fine.
+	Using .la libraries will make this easier, because each individual makefile can decide what need to go into it's library based on our configuration settings. Right now of course, there's only one way to build everything, but as this package evolves, there may be some modules that will be left out or put in according to a user's system set-up. If we link all the object files in the end, the Makefile in the last directory( in this case frontend_fox) would have to make all the decisions as to what needs to be linked. As a result we might end up compiling files we don't need, and having everything depend on the one makefile would be a little bit more confusing. (DAVY - YES, I UNDERSTAND)
+	Here's a quick summary of what make should do:
+
+make--- |
+	PoolFile/make libPoolFile.la
+	|
+	backend/------ -|-------|Edits/make libEdits.la 
+	|		|
+	|		|-------|Effects/make libEffects.la
+	|		|
+	|		|-------|Remaster/make libRemaster.la
+	|		|
+	|		|make libbackend.la
+	|
+	misc/cc++/make libmisc.la
+	|
+	frontend_fox/make -----objects (.o)
+				ReZound	
+
+DAVY - logically, misc should be first, then poolfile, backend, and frontend_fox
+	
+
+	
+4. 	Ok now that the Makefile's are written, it's time to let the autotools do their magic. I actually have been testing them along the way. Checking every new Makefile as I wrote it, but I won't go into that.
+	To produce the configure script, and Makefile.in's there are 3 commands. aclocal scans the configure.in script and copies autoconf m4 macros that may not be standard in all systems. automake --add-missing --gnu scans the cinfigure.in file and creates a Makefile.in out of every Makefile.am to prepare for the configure script. Finally autoconf builds the configure script. Now we're ready to give it a spin.
+	By using automake with the --gnu --add-missing options, automake copies COPYING, and INSTALL to your source directory in order to be GNU compliant. It also will complain if it doesn't see AUTHORS, ChangeLog, NEWS, and README, so I'll just touch empty files so it won't make any noise( Actually I have to put at least a byte in there, or it won't be included in make dist).
+	I put a script called bootstrap in the root directory which handles all the commands to generate the configure script and all the Makefile.in files. when it is run it first deletes all auto generated files before writing the new files. The bootstrap script really is of no use to a user, but anyone who wants to chang a Makefile.am or the configure.in file will benefit from having bootstrap. In addition if you run bootstrap --clean it will remove all the autogenerated files, This might be nice if you want to compact the file for your own personal archive, but it shouldn't really be distributed this way, because there is no configure script. 
+
+5. 	Once I get everything to build right, removing a few bugs from my files, I'll run autoscan again to see if it finds any more dependancies. Usually at this point I'll expect it to want to check for some more things after getting a look at a working configuration., usually a check for install, ln -s, and usually awk. I think it basically looks for programs that will be used during the build process.
+	
+
+
+
+
+
+
+ToDo: 
+
+1. 	I personally like to have all my #includes in brackets <> and just make sure the compiler is passed the proper paths by make. I had to modify a reference to audiofile.h, because I removed it from the package. I guess it's fine to have the headers which are part of the package quoted, but if you ever decide to move thing around it will be easier to have them bracketed and set the include path in your makefile.
+
+DAVY - a reason for not doing this... I used to like #include <...> throughout too, but recently realized the potential usefulness of the \"'s
+	- if a filename of yours conficts with another file that happens to be in the include path before the directory of the one you're wanting it can cause errors
+	- moreover, on a system where you don't know what files will exist in standard include location this could be even more of a problem
+	- now, it may not be as much as a problem since gcc looks in the -I paths before its built-in paths, but there's no telling what other compilers might do, and with #include "" you know exactly what you're getting
+	- and something else I realized is that if you do say: #include "file.h" it looks up that filename relative to the path of the source file that that directive is in... 
+	 	- so you don't have to worry that #include "..." will find files in the current directory when the source file containing the #include "..." is somewhere else
+		- here's an example because it's hard to understand what I just said:
+			- ./src/inc/fred.h exists
+			- ./src/fred.h exists
+			- ./src/foo.h  -- contains #include "inc/bar.h"
+			- ./src/inc/bar.h -- contains #include "fred.h"
+				- even though src/foo.h inclues inc/bar.h which contains an #include "fred.h"  it does use src/inc/fred.h since src/inc/bar.h was in the inc directory... and it doesn't attempt to include src/fred.h where you might think it would since src/foo.h includes bar.h and bar.h contains #include "..."
+
+		- (still a little confusing maybe)
+
+
+2.	Set up a config.h header file. This is generated by the configure script from config.h.in and is basically used to hold defines set by configure, and possibly extra code which may be needed based on those defines. To use it all that has to be done is to place a conditional in the top of every file.
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+You really won't need to have this in every file, just the ones that may be affected by a change in configuration.
+
+3. 	Write my macros for the C++ library checks mentioned above in section 2. This is really just a short amount of shell scripting, which will check if the libraries exist by trying to link a small program with them. In the case that the linking fails configure will abort, giving the user a message that the required library is missing or broken.
+
+4. 	Write substitutions for features used that may be missing on some systems (strerror, sstream) and set up configure to compile those modules if it feels it needs to.  I'll also read through my autoconf book, because it has a few chapters which address certain features which are known to be a problem. 
+
+DAVY - alright.. or I can edit istring to just use sprintf instead since that may be easier than recreating sstreams functionality
+	- or... we could just require a certain level of libstdc++... 
+
+5. 	Work on getting this to build on my Debian box. Then work on getting it to build on Cygwin.
+
+DAVY - just go ahead and remove davydepend, and all the Makefile.orig files, and autoconfiscation_notes.txt'; and I accidently left PoolFile/txt in there
+	- also, if you can, make 'make install' create a sym link, 'rezound' to the 'ReZound' binary
+	- we can move FrontendFeatures.txt to docs/FrontendFeatures_fox.txt (renamed with fox incase there is another frontend without the same features)
+	- we can also move todo and TODO_FOR_USERS_TO_READ into docs
+
+DAVY - Another thing we could do with configure if it's possible is: at the beginning echo a message like: "Please report any problems/bugs in the configuration or compiling process to http://sourceforge.net/tracker/?group_id=5056&atid=105056" and then make them press return to continue, we could do this for as long as you feel the configure scripts need it... Later we could take out the requirement for pressing return and just echo the message or something.
+	- Should also at least put an indication of the website URL at the beginning anyway... make it stand out with a '########' outlining border like some do
+
+Anthony Ventimiglia
+Tue Mar  5 20:37:46 EST 2002
+
+
+
+
+
+DAVY - The following was the output of my attempt to 'make dist'
+	- the errors about $/config ... are coming from line 262 in the top level Makefile, which looks a little funny to me with $$...
+	- I just thought I would include this incase it's different from what you're seeing
+
+[ReZound]$make dist
+rm -rf ReZound-1.0PreAlpha
+mkdir ReZound-1.0PreAlpha
+chmod 777 ReZound-1.0PreAlpha
+here=`cd . && pwd`; \
+top_distdir=`cd ReZound-1.0PreAlpha && pwd`; \
+distdir=`cd ReZound-1.0PreAlpha && pwd`; \
+cd . \
+  && automake --include-deps --build-dir=$here --srcdir-name=. --output-dir=$top_distdir --gnu Makefile
+cp: cannot stat `$/config': No such file or directory
+cp: cannot stat `$/docs': No such file or directory
+cp: cannot stat `$/images': No such file or directory
+cp: cannot stat `$/misc': No such file or directory
+for subdir in PoolFile backend misc frontend_fox; do \
+  if test "$subdir" = .; then :; else \
+    test -d ReZound-1.0PreAlpha/$subdir \
+    || mkdir ReZound-1.0PreAlpha/$subdir \
+    || exit 1; \
+    chmod 777 ReZound-1.0PreAlpha/$subdir; \
+    (cd $subdir && make  top_distdir=../ReZound-1.0PreAlpha distdir=../ReZound-1.0PreAlpha/$subdir distdir) \
+      || exit 1; \
+  fi; \
+done
+make[1]: Entering directory `/home/ddurham/3/ReZound/PoolFile'
+here=`cd .. && pwd`; \
+top_distdir=`cd ../ReZound-1.0PreAlpha && pwd`; \
+distdir=`cd ../ReZound-1.0PreAlpha/PoolFile && pwd`; \
+cd .. \
+  && automake --include-deps --build-dir=$here --srcdir-name=.. --output-dir=$top_distdir --gnu PoolFile/Makefile
+cp: cannot stat `$/DiskTable': No such file or directory
+make[1]: *** [distdir] Error 1
+make[1]: Leaving directory `/home/ddurham/3/ReZound/PoolFile'
+make: *** [distdir] Error 1
+
+
+
+
+
+

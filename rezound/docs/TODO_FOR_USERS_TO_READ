@@ -1,0 +1,39 @@
+
+--- TODOs (for a user to be most concerned about) ordered from most serious to least serious ---
+
+// different now ???
+- I have yet to figure out the best way to handle the idea of focus when multiple open audio files are open.  Currently, only the most recently opened audio file is controlable, and that file is closed, the others are still uncontrolable.
+	- The problem arises when a window manager has 'focus follows mouse pointer' turn on, and I don't know, say, which opened audio file to play when the play button is pressed
+
+- Yes... Icons and graphics need to be present... I'm putting a call out for an artist to create them
+
+- The "draw a graph parameter" GUI widgets needs more work... it's sometimes querky
+
+- I have not implemented recording yet
+
+- I have not imeplemented 'redo' yet, but provisions are mostly in place for implementing it.
+
+- Need to improve file format exporting... Right now the only way to convert between formats is to 'edit copy' from one sound window and 'edit paste' into a 'file new' sound window where the filename of the new sound has an extension of the file format you want
+
+- Only the native ReZound (.rez) file format can save cues.  So if you create a cue in a .wav file sound, and save it, it won't be there when you open it again
+	- I will fix this when I change to using a different sound file format library (one that can store arbitrary data sections, namely .wav)
+
+- All the windows and dialogs are able to remember their locations and sizes on screen, except that the frontend library I'm currently using, fox, seems to read screen positions in one way and set them in a different way
+	- This should eventually be corrected, and I will re-enable the feature.
+
+- When pasting data, there is no aknowledgment of the differences in sample rate of the src data when pasting to the destination.  So if you cut from a 22.5khz sound and paste to a 44.1khz sound it will play the data twice as fast
+
+- I am temporarily using SGI's libaudiofile which isn't the most feature rich library of its kind, but sox's library is lacking any documentation as of now.  I have seen libaudiofile not report corrupt wave files which led to erroneously enormous temporary files so beware.
+
+- The 'Delay' effect is implemented to be much more powerful but there needs to be an advanced front end dialog to take advantage of this greater flexibility of the implementation
+
+- There is a slight drawing bug in which the the area on screen which is selected is drawn shifted to the left just slightly
+	- I always zoom in to make selections which are that important to get just exactly right
+
+- Many more effect actions, several more edit actions, and a few more play controls are planned
+
+- As more experienced users make suggestions, there will probably be changes to how the frontend dialogs express units and ranges of parameters to the effect and edit actions
+	- This is aimed at making the frontend controls act and feel more like professional hardware products
+
+- Some of the frontend dialogs for the actions need to have buttons or a listbox for predefined settings and probably user customizable buttons each with a name
+

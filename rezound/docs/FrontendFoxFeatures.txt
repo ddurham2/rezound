@@ -1,0 +1,50 @@
+
+- On a sound window:
+	- LEFT mouse button changes start position
+	- RIGHT mouse button changes stop position
+	- mouse WHEEL *should* scroll the view when not zoomed out full
+	- RIGHT clicking the ruler across the top shows a popup menu for manipulating cues
+		- normally the selection positions will 'snap' to the cue positions
+		- holding SHIFT while changing the selection positions will momentarily disable the 'snap to cue' feature
+	XXX (not until I get fox changed) - DOUBLE LEFT clicking the ruler brings up the cue list dialog
+	XXX (need to implement this) - DOUBLE LEFT clicking a cue brings up the edit dialog
+
+	- Holding SHIFT while changing the horizontal zoom level dial will center the start position on screen
+	- Holding CONTROL while changing the horizontal zoom level dial will center the stop position on screen
+
+	- There are checkboxes on the left side of the waveform for muting channels 
+		- The LEFT mouse button inverts the mute selections on the button below all the mute channel checkboxes 
+		- The RIGHT mouse button unmutes all the channels on the button below all the mute channel checkboxes 
+
+	- On the horizontal and vertical scroll bars, when the sound is not zoomed out full
+		- RIGHT dragging the slider on the scroll bar is a fine-adjustment to the scroll position
+		- MIDDLE clicking the scroll bar sends the slider immediately to the clicked position
+		
+		- RIGHT clicking the arrow buttons at the ends of the scroll bar moves the scroll position by a very small amount
+		- MIDDLE clicking the arrow buttons at the ends of the scroll bar moves the scroll position immediately to that end
+
+	- The buttons on either side of the horizontal or vertical zoom dials zoomes in or out full
+	- The button at the bottom right corner of the waveform zooms out full horizontally and vertically
+
+	- ReZound will attempt to maintain the visibility of either the start or stop positions while changing the horizontal zoom dial depending on wether the start or stop position was last changed and one is on screen
+		- If neither the start or stop position is visible on screen it attempts to keep the left most sample at the left edge of the waveform view
+
+
+
+- File operation buttons:
+	- RIGHT clicking the open button will display a popup menu allowing the user to select from several loaded and saved filenames from the past
+
+- Action buttons (edit buttons, effect buttons, etc):
+	- Holding CONTROL while clicking the button will generally causes a dialog to be displayed which allows the user to choose which channels to apply the action to.
+	- Using the RIGHT mouse button to click the button instead of the LEFT mouse button will cause (if available) an advanced mode of the action to be performed resulting possibly in a dialog for the action with additional, more advanced parameters (i.e. the volume and rate change dialogs have a curve instead of a constant parameter)
+
+
+- Play controls:
+	- list keyboard bindings here ...
+	- (on some systems) The mouse WHEEL used on the speed shuttle control will lock the shuttle dial into a position, clicking the dial will return the speed to normal
+
+
+- Cue List Dialog:
+	- Double clicking a cue brings up the edit cue dialog
+
+

@@ -1,0 +1,39 @@
+
+
+While the frontend implementations of actually drawing the data to the screen are left up to the 
+platform specific code, there is a system in the backend code which tells the front end what to
+render.
+
+- The wave form is rendered with peak chunk data in the following manner:
+	- Each screen X position coresponds to a data position in the sample data depending of the horizontal scroll 
+ 	  bar position and the horizontal zoom amount, basically 
+		data_position == (screen_X+horz_scroll_pos)*horz_zoom_scalar
+	  (although, these are not necessarily the names of the variables I use in the implementation)
+
+	- When I am to render a sample on the screen at screen position X (and that is the X screen coordinate) then 
+	  I find the min and max sample between the data position for that X and (up to but not including) the data 
+	  position for X+1
+
+	- Then I draw a line from that min to that max position
+
+	- In order to keep from always traversing through every sample when I render the whole waveform on the screen
+	  I maintain precalculated mins and maxes for every N number of samples. 
+		- For example, I may store the min and max of the samples for every 100 samples in the data
+		- This information is stored in another pool in the pool file for the ASound object
+		- Actually I don't do it for every 100 samples but for evert PEAK_CHUNK_SIZE samples (defined in 
+		  ASound.h
+
+		- This information is stored in a pool of RPeakChunk objects (declared in ASound.cpp) which has a 
+		  min, max, and dirty flag
+		- The dirty flag gets set to true when the min and max for that chunk of samples that the RPeakChunk
+		  represents (PEAK_CHUNK_SIZE number of samples to be exacty)
+		- So, the method, ASound::getPeakData() which returns this peak chunk data will check this dirty value
+		  and recalculate on the fly.
+		
+	- However, sometimes I shouldn't use this precalculated data to render because each X position on the screen
+	  may represent less than PEAK_CHUNK_SIZE samples... In this sitution, I have the caller give
+	  ASound::getPeakData() the next data position it's going to ask for, and if this position is less than
+	  PEAK_CHUNK_SIZE samples from the given dataPosition, then I don't use the precalculated data, but actualy
+	  go to the data itself to calculate the min and max.
+
+	

@@ -1,0 +1,155 @@
+/* 
+ * Copyright (C) 2002 - David W. Durham
+ * 
+ * This file is part of ReZound, an audio editing application.
+ * 
+ * ReZound is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation; either version 2 of the License,
+ * or (at your option) any later version.
+ * 
+ * ReZound is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
+ */
+
+#include "CStatusComm.h"
+#include "initialize.h"
+#include "settings.h"
+
+#include <stdint.h>
+
+#include <exception>
+#include <string>
+
+#include <CStringDiskTable.h>
+
+
+// ... except for a few things.. this could probably be moved into the backend.. it'd have to be done for all frontends
+
+#include "../backend/file.h"
+
+#include "../backend/CSoundManager.h"
+static CSoundManager *soundManager=NULL;
+
+//#include <CWinSoundPlayer.h>
+//static CWinSoundPlayer *soundPlayer=NULL;
+#include "../backend/COSSSoundPlayer.h"
+static COSSSoundPlayer *soundPlayer=NULL;
+
+#include <TPoolFile.h>
+static TPoolFile<unsigned,unsigned> *loadedRegistryPoolFile=NULL;
+
+#include "CSoundFileManager.h"
+
+#include "../backend/AAction.h"
+
+
+
+void initializeReZound()
+{
+	try
+	{
+		// ??? I might wanna use an XML library or my CScope (please rename) clas for the registry instead of a pool file so it can be edited more easily
+
+
+		// -- 1
+		loadedRegistryPoolFile=new TPoolFile<unsigned,unsigned>(4096,"ReZoundR");
+		//??? mkdir(dirname(string(getenv("HOME"))+"/.rezound"))
+		//??? loadedRegistryPoolFile->openFile(string(getenv("HOME"))+"/.rezound/registry.dat",true);
+		loadedRegistryPoolFile->openFile("./registry.dat",true);
+
+
+		// -- 2
+			// if there is an error opening the registry file then
+			// the system probably crashed... delete the registry file and
+			// warn user that the previous run history is lost.. but that
+			// they may beable to recover the last edits if they go load
+			// the files that were being edited (since the pool files will
+			// still exist for all previously open files)
+		gSettingsRegistry=new CStringDiskTable(*loadedRegistryPoolFile,"ReZound Settings");
+		gPromptDialogDirectory=gSettingsRegistry->getValue("promptDialogDirectory");
+
+
+		// -- 3
+						// ??? this filename needs to be an application setting
+		const string clipboardPoolFilename="/tmp/rezound.clipboard";
+		remove(clipboardPoolFilename.c_str());
+		AAction::clipboardPoolFile=new ASound::PoolFile_t();
+		AAction::clipboardPoolFile->openFile(clipboardPoolFilename,true);
+
+
+		// -- 4
+		soundPlayer=new COSSSoundPlayer();
+
+
+		// -- 5
+		soundManager=new CSoundManager();
+
+
+		// -- 6
+		gSoundFileManager=new CSoundFileManager(*soundManager,*soundPlayer,*loadedRegistryPoolFile);
+
+
+		// -- 7
+		soundPlayer->initialize();
+
+	}
+	catch(exception &e)
+	{
+		Error(e.what());
+		try { deinitializeReZound(); } catch(...) { /* oh well */ }
+		exit(0);
+	}
+}
+
+void deinitializeReZound()
+{
+	// reverse order of creation
+
+
+	// -- 7
+	if(soundPlayer!=NULL)
+		soundPlayer->deinitialize();
+
+
+	// -- 6
+	delete gSoundFileManager;
+
+
+	// -- 5
+	delete soundManager;
+
+
+	// -- 4
+	delete soundPlayer;
+
+
+	// -- 3
+	if(AAction::clipboardPoolFile!=NULL)
+	{
+		if(AAction::clipboardPoolFile->isOpen())
+			AAction::clipboardPoolFile->closeFile(false,true);
+		delete AAction::clipboardPoolFile;
+		AAction::clipboardPoolFile=NULL;
+	}
+
+
+	// -- 2
+	gPromptDialogDirectory=istring(gPromptDialogDirectory).truncate(_CSDT_STRING_SIZE-1); // define from CStringDiskTable.h
+	gSettingsRegistry->setValue("promptDialogDirectory",gPromptDialogDirectory);
+	delete gSettingsRegistry;
+
+
+	// -- 1
+	if(loadedRegistryPoolFile!=NULL)
+		loadedRegistryPoolFile->closeFile(true,false);
+	delete loadedRegistryPoolFile;
+}
+
+

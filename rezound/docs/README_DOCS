@@ -1,0 +1,7 @@
+This is a rough description of what can be found under the docs/ directory:
+
+All user related files are in docs/
+
+devel/ Changelogs, Porting notes, and Todo list for project developers.
+
+code/ Davy's notes on some of the details of how everything works. If you're thinking of digging into the code you might want to read these files. 

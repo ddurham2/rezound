@@ -1,0 +1,129 @@
+/* 
+ * Copyright (C) 2002 - David W. Durham
+ * 
+ * This file is part of ReZound, an audio editing application.
+ * 
+ * ReZound is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation; either version 2 of the License,
+ * or (at your option) any later version.
+ * 
+ * ReZound is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
+ */
+
+#include "CFlangeEffect.h"
+
+#include <math.h>
+
+#include <stdexcept>
+
+#include "../DSPBlocks.h"
+#include "../unit_conv.h"
+
+// LFO Speed is in Hertz, LFO Depth is in ?,LFO Phase is in degrees, Delay is in milliseconds
+CFlangeEffect::CFlangeEffect(const CActionSound actionSound,float _delayTime,float _wetGain,float _dryGain,float _LFOFreq,float _LFODepth,float _LFOPhase,float _feedback) :
+	AAction(actionSound),
+
+	// ??? perhaps I should do these conversions down in the code because I might someday be able to stream the action to disk for later use and the sampleRate would not necessarily be the same
+
+	delayTime(_delayTime),
+
+	wetGain(_wetGain),
+	dryGain(_dryGain),
+
+	LFOFreq(_LFOFreq),
+
+	LFODepth(_LFODepth),
+
+	LFOPhase(_LFOPhase),
+
+	feedback(_feedback)
+{
+	if(_delayTime<0.0)
+		throw(runtime_error(string(__func__)+" -- _delayTime is negative"));
+	if(_LFODepth<0.0)
+		throw(runtime_error(string(__func__)+" -- _LFODepth is negative"));
+}
+
+bool CFlangeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
+{
+	const sample_pos_t start=actionSound.start;
+	const sample_pos_t stop=actionSound.stop;
+
+	if(prepareForUndo)
+		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
+
+	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
+	{
+		if(actionSound.doChannel[i])
+		{
+			BEGIN_PROGRESS_BAR("Flange -- Channel "+istring(i),start,stop); 
+
+			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
+			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
+
+			CPosSinLFO LFO(LFOFreq,LFOPhase,actionSound.sound->getSampleRate());
+
+			CDSPFlangeEffect flangeEffect(
+				ms_to_samples(delayTime,actionSound.sound->getSampleRate()),
+				wetGain,
+				dryGain,
+				//LFOFreq,actionSound.sound->getSampleRate(),
+				&LFO,
+				ms_to_samples(LFODepth,actionSound.sound->getSampleRate()),
+				//LFOPhase,
+				feedback
+				);
+
+			sample_pos_t srcP=prepareForUndo ? 0 : start;
+			for(sample_pos_t t=start;t<=stop;t++)
+			{
+				dest[t]=ClipSample(flangeEffect.processSample(src[srcP++]));
+				UPDATE_PROGRESS_BAR(t);
+			}
+
+			END_PROGRESS_BAR();
+		}
+	}
+
+	return(true);
+}
+
+AAction::CanUndoResults CFlangeEffect::canUndo(const CActionSound &actionSound) const
+{
+	return(curYes);
+}
+
+void CFlangeEffect::undoActionSizeSafe(const CActionSound &actionSound)
+{
+	restoreSelectionFromTempPools(actionSound,actionSound.start,actionSound.selectionLength());
+}
+
+
+// ---------------------------------------------
+
+CFlangeEffectFactory::CFlangeEffectFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
+	AActionFactory("Flange","Flange Effect",false,channelSelectDialog,normalDialog,NULL)
+{
+}
+
+CFlangeEffect *CFlangeEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
+{
+	return(new CFlangeEffect(actionSound,
+		(float)actionParameters->getDoubleParameter(0),	// delay time
+		(float)actionParameters->getDoubleParameter(1),	// wet gain
+		(float)actionParameters->getDoubleParameter(2),	// dry gain
+		(float)actionParameters->getDoubleParameter(3),	// LFO freq
+		(float)actionParameters->getDoubleParameter(4),	// LFO depth
+		(float)actionParameters->getDoubleParameter(5),	// LFO phase
+		(float)actionParameters->getDoubleParameter(6)	// feedback
+	));
+}
+

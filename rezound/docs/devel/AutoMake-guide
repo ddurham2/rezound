@@ -1,0 +1,110 @@
+AutoMake-guide Anthony Ventimiglia
+
+	This is meant to be a rough guide to adding files in the ReZound source directory and build process. It would be a help to all the package maintainers if everyone works to keep the build process complete and the dependencies accurate.
+
+	Every source directory, starting from the top level, has it's own Makefile.am which is responsible for compiling the files in it's directory. automake converts Makefile.am into Makefile.in which is converted to a Makefile using the results on configure. Here is a visual layout of the overall build process, basically it's what happens when you type make at the top level directory.
+
+TOP_DIRECTORY/make
+	|	  
+	|- src/make	
+		  |
+		  misc/make--|
+		  |  	     |misc/cc++/make --- libmisc.la
+		  |
+		  PoolFile/make -- libPoolFile.la
+		  |
+		  backend/make--|
+		  |		backend/Edits/make -- libEdits.la
+		  |		|
+		  |		backend/Effects/make -- libEffects.la
+		  |		|
+		  |		backend/ReMaster/make -- libReMaster.la
+		  |
+		  |------ libbackend.la
+		  |
+		  frontend_fox/make --- (A whole bunch of .o files)
+		  		    --- link 	libmisc.la
+		  				libPoolFile.la
+		 				libEdits.la
+						libEffects.la
+						libRemaster.la
+						libbackend.la
+						(*.o)		-- ReZound
+
+	You might want to take a look at the Makefile.am files following the directory structure shown above to see how this all works. Basically every directory XXX creates it's own libXXX.la file which is then linked in to the final executable in frontend_fox. The frontend_fox directory doesn't use an .la file, but it probably will in the near future. 
+
+
+  	The next sections address specific ways of adding code to the package, specifically Adding to an existing directory, and adding a new directory to the existing structure. 
+
+A NOTE ABOUT common.h :
+	
+	We use the header config/common.h to address low level portability problems, and include it in every code file. So if you are adding new code, please 
+	#include "common.h" 
+at the top of your code files.
+
+	
+ADDING SOURCE FILES TO EXISTING DIRECTORY STRUCTURE
+
+	Adding a new file to one of the existing directories is a failrly simple thing to do. As an example, let's say we wrote a new effect in src/backend/Effects called EnvelopeFilter.cpp with a header called EnvelopeFilter.h. Your header file also includes the existing file src/backend/CEnvelope.h , so you'll want that listed as a dependency in the Makefile.
+
+	First off you would open src/backend/Effects/Makefile.am for editing this file builds libEffects.la. Your object file will become part of libEffects.la so the first thing you do is find the line libEffects_la_SOURCES= in Makefile.am. It will look something like this:
+
+libEffects_la_SOURCES=CChangeAmplitudeEffect.cpp \
+		      CChangeRateEffect.cpp \
+		      CDelayEffect.cpp \
+		      CFlangeEffect.cpp \
+		      CReverseEffect.cpp \
+		      CStaticReverbEffect.cpp \
+		      CTestEffect.cpp 
+
+	To add your file to the library, all you'll have to do is add it to the list, add a backslash \ with no trailing whitespace to the last file on the list, and put your .cpp file on the next line, the result should look like this.
+
+libEffects_la_SOURCES=CChangeAmplitudeEffect.cpp \
+		      CChangeRateEffect.cpp \
+		      CDelayEffect.cpp \
+		      CFlangeEffect.cpp \
+		      CReverseEffect.cpp \
+		      CStaticReverbEffect.cpp \
+		      CTestEffect.cpp \
+		      EnvelopeFilter.cpp
+
+	Right now you've done enough to build the package with your new file, but before you're done, you'll have to add your header file to make the tarball build process complete. And you'll need to add dependencies to make other developers lives easier. 
+
+	To add the your new header file. find the line EXTRA_DIST in the same Makefile.am. It should look something like this.
+
+EXTRA_DIST=CChangeAmplitudeEffect.h \
+	   CChangeRateEffect.h \
+	   CDelayEffect.h \
+	   CFlangeEffect.h \
+	   CReverseEffect.h \
+	   CStaticReverbEffect.h \
+	   CTestEffect.h \
+	   EffectActions.h
+
+	Here you'll add your header file EnvelopeFilter.h to the end of the list, the same way as above. Now to set up the dependencies the right way. 
+	
+	Go down to the end of Makefile.am, and youll see lists of files that look something like this:
+
+CTestEffect.o: CTestEffect.cpp \
+	CTestEffect.h \
+	$(top_srcdir)/src/backend/AAction.h \
+	$(top_srcdir)/src/backend/ASound.h \
+	$(top_srcdir)/src/backend/ASoundPlayer.h \
+	$(top_srcdir)/src/backend/AStatusComm.h \
+	$(top_srcdir)/src/backend/CEnvelope.h 
+
+	This may look familiar if you are used to writing Makefiles. It's basically the first line of a make command without the following compiler commands. Since your file  EnvelopeFilter.cpp depends on EnvelopeFilter.h and ../CEnvelope.h your dependency line will look like the following:
+
+EnvelopeFilter.o: EnvelopeFilter.cpp \
+		EnvelopeFilter.h \
+		$(top_srcdir)/src/backend/CEnvelope.h
+
+	Notice the $(top_srcdir) macro used to list CEnvelope.h. We have to use this macro top allow the build process to work properly. The automake process allows us to build in a separate build directory, and if we used a relative link (like ../CEnvelope.h) here external builds wouldn't work properly.
+
+	Ok so that's it. Now if you run make, the new Makefile will be created and your new file should be built in. Give it try, if it's not working, make sure you re-read my instructions before asking for help.
+
+ADDING NEW DIRECTORIES TO EXISTING STRUCTURE
+
+	First off read the last section, because there's some instructions there that will be the same in this section.
+
+	Put this on the TODO list.
