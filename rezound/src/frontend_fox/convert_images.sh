@@ -1,12 +1,16 @@
+
+RESWRAP=$1
+IMAGE_PATH=$2
+
 echo "/* script generated source code */" > images.cpp
 echo "#include \"images.h\"" >> images.cpp
 echo >> images.cpp
 
 
 # reswrap should have come with the fox package
-for i in *.gif
+for i in $IMAGE_PATH/*.gif
 do
-	reswrap -n ${i%\.gif}_gif $i >> images.cpp
+	$RESWRAP -n ${i%\.gif}_gif $i >> images.cpp
 done
 
 
