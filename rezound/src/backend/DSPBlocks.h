@@ -40,8 +40,20 @@
  *	- This class is uses a circular buffer to delay the input values by a certain delay time
  *	- There are several ways of retrieving samples out of the delay line.
  *		- Some to pull from the end of the delay, and some to pull from the middle of the delay
+ * 
+ *	- all delay time parameters are in samples not seconds or milliseconds
+ *	
+ *	- This delay line has a method getSample(unsigned delayTime) in which delayTime be passed 
+ *	  0 to maxDelayTime-1.  Where 0 returns the most recent sample given to putSample and given
+ *	  maxDelayTime-1 it returns the oldest sample in the delay line.
+ *		- Likewise, the getSample(float delayTime) works in a similar way, but it can approximate
+ *		  the sample that should appear at the given fractional delayTime.  NOTE: this method
+ *		  doesn't work well if maxDelayTime is 1 since it only has one sample to work with.
  *
- *	- all delay time parameters are in samples not seconds
+ *      - To properly use getSample/putSample, getSample should be called first, then putSample should
+ *	  be called after.  This is because of the simplest case of delaying by 1 sample, there is one
+ *	  element in the buffer.  getSample returns the oldest value (the previous sample given to 
+ *	  putSample, and putSample is then called to update that one element with the new sample.
  *
  *      - the template parameter is the type of data to be delayed
  */
@@ -60,18 +72,15 @@ public:
 
 	void setDelayTime(unsigned _maxDelayTime)
 	{
-		_maxDelayTime++; // fudging? or necessary because delayTime could be passed equal to the maxDelayTime? 
-		/*
 		if(_maxDelayTime<1)
-			throw(runtime_error(string(__func__)+" -- maxDelayTime parameter too small: "+istring(_maxDelayTime)));
-		*/
+			_maxDelayTime=1;
 
 		maxDelayTime=_maxDelayTime;
 
 		if(buffer!=NULL)
 			delete [] buffer;
 
-		buffer=new sample_t[maxDelayTime]; // expect to get an exception on error
+		buffer=new sample_t[maxDelayTime]; // expecting an exception on error rather than checking for NULL
 		clear();
 	}
 
@@ -84,7 +93,8 @@ public:
 	void clear()
 	{
 		memset(buffer,0,maxDelayTime*sizeof(*buffer));
-		putPos=getPos=maxDelayTime;
+		getPos=2*maxDelayTime; // I don't start at zero because getSample(...) subtracts from the positions
+		putPos=getPos-1;
 	}
 
 	// give an input sample, returns the sample delayed by the constructed delay time
@@ -97,13 +107,12 @@ public:
 
 	void putSample(const sample_t s)
 	{
-		buffer[(putPos++)%maxDelayTime]=s;
+		buffer[(++putPos)%maxDelayTime]=s;
 	}
 
 	const sample_t getSample()
 	{
-		const sample_t s=buffer[(getPos-maxDelayTime)%maxDelayTime];
-		getPos++;
+		const sample_t s=buffer[(getPos++)%maxDelayTime];
 		return(s);
 	}
 
@@ -129,7 +138,7 @@ public:
 private:
 	sample_t *buffer;
 	unsigned maxDelayTime;
-	unsigned putPos,getPos;
+	size_t putPos,getPos;
 };
 
 
@@ -456,10 +465,10 @@ public:
 		delete [] delays;
 	}
 
-	const mix_sample_t processSample(const mix_sample_t srcSample)
+	const mix_sample_t processSample(const mix_sample_t inputSample)
 	{
-		mix_sample_t fedbackSample=srcSample;
-		mix_sample_t outputSample=srcSample;
+		mix_sample_t fedbackSample=inputSample;
+		mix_sample_t outputSample=inputSample;
 		
 		int k=tapCount-1;
 
@@ -528,10 +537,10 @@ class CDSPFlangeEffect
 {
 public:
 	// delayTime is in samples
-	// LFODepth is in samples (the amount of samples delayed beyond delayTime when the LFO is at 1)
+	// LFODepth is in samples (the amount of samples delayed beyond delayTime when the LFO is at its max, 1.0)
 	// The LFO object must have a range of [0,1] and nothing greater
 	CDSPFlangeEffect(unsigned _delayTime,float _wetGain,float _dryGain,ALFO *_LFO,unsigned _LFODepth,float _feedback) :
-		delay((unsigned)(_delayTime+_LFODepth)),
+		delay((unsigned)(_delayTime+_LFODepth+1)),
 		delayTime(_delayTime),
 
 		wetGain(_wetGain),
@@ -550,7 +559,7 @@ public:
 	{
 	}
 
-	const mix_sample_t processSample(const mix_sample_t srcSample)
+	const mix_sample_t processSample(const mix_sample_t inputSample)
 	{
 		// calculate the delay time in samples from the LFO
 		const float _delayTime=(delayTime+(LFODepth*LFO->nextValue()));
@@ -559,9 +568,9 @@ public:
 		const mix_sample_t delayedSample=delay.getSample(_delayTime);
 
 		// write to delay
-		delay.putSample((mix_sample_t)(srcSample+(delayedSample*feedback)));
+		delay.putSample((mix_sample_t)(inputSample+(delayedSample*feedback)));
 
-		return((mix_sample_t)((srcSample*dryGain)+(delayedSample*wetGain)));
+		return((mix_sample_t)((inputSample*dryGain)+(delayedSample*wetGain)));
 	}
 
 private:
@@ -595,6 +604,8 @@ public:
 		coefficientCountSub1(_coefficientCount-1),
 		delay(_coefficientCount)
 	{
+		if(coefficientCount<1)
+			throw(runtime_error(string(__func__)+" -- invalid coefficientCount: "+istring(coefficientCount)));
 	}
 
 	virtual ~TDSPConvolver()
@@ -603,20 +614,19 @@ public:
 
 	sample_t processSample(const sample_t input)
 	{
-		coefficient_t output=0;
+		coefficient_t output=input*coefficients[0];
+		for(unsigned t=coefficientCountSub1;t>0;t--)
+			output+=delay.getSample(t)*coefficients[t];
+
 		delay.putSample((coefficient_t)input);
 
-		register unsigned i=0;
-		for(int t=coefficientCountSub1;t>=0;t--)
-			output+=delay.getSample(i++)*coefficients[t];
-		
 		return((sample_t)output);
 	}
 
 private:
 	const coefficient_t *coefficients; // aka, the impluse response
-	const int coefficientCount;
-	const int coefficientCountSub1;
+	const unsigned coefficientCount;
+	const unsigned coefficientCountSub1;
 
 	TDSPDelay<coefficient_t> delay;
 };

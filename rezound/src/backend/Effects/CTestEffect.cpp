@@ -119,10 +119,27 @@ static float xcoeffs[] =
     +0.7471313477, +0.7434692383, +0.7397766113,
   };
 
+/*
+	//#define NC 11025
+	#define NC 3000
+	float coeffs[NC];
+
+	for(int t=0;t<NC;t++)
+	{
+		coeffs[t]=((((float)rand()/(float)RAND_MAX)*400.0)-200.0)+pow((1.0-(float)t/(float)NC),2.0);
+		if(t>0)
+			coeffs[t]/=2;
+		else
+			coeffs[t]=1.0;
+	}
+*/
+
 			BEGIN_PROGRESS_BAR("Filtering -- Channel "+istring(i),start,stop); 
 			TDSPConvolver<mix_sample_t,float> convolver(xcoeffs,sizeof(xcoeffs)/sizeof(*xcoeffs));
+			//TDSPConvolver<mix_sample_t,float> convolver(coeffs,NC);
 			for(sample_pos_t t=start;t<=stop;t++)
 			{
+				//dest[t]=ClipSample(convolver.processSample(src[t-srcOffset])/NC);
 				dest[t]=ClipSample(convolver.processSample(src[t-srcOffset])/GAIN);
 				UPDATE_PROGRESS_BAR(t);
 			}
