@@ -35,16 +35,39 @@ echo "{" >> $H_FILE
 echo "public:" >> $H_FILE
 echo "        CFOXIcons(FXApp *app);" >> $H_FILE
 echo "        virtual ~CFOXIcons();" >> $H_FILE
+echo  >> $H_FILE
+echo "        FXIcon *getByName(const char *name) const;" >> $H_FILE
 echo >> $H_FILE
 
 
+# this function encodes filenames with spaces or other non-printable characters into something that will be a valid C-variable name
+function filenameToVarname # $1 is a [path/]filename
+{
+	name=`basename "${1%\.*}"`	# remove extention and pathname
+
+	# for each characters in the name
+	for ((t=0;t<${#1};t++))
+	{
+		c=${name:t:1}
+
+		# these encode characters to other valid C-variable characters
+		c=${c/\ /_}
+		c=${c/\[/_}
+		c=${c/\]/_}
+		c=${c/\,/_}
+		c=${c/\-/_}
+
+		echo -n $c
+		#echo -n $c >&2
+	}
+	#echo >&2
+}
 
 # for each file create a data-member in the class
-for i in $IMAGE_PATH/*.gif
+ls $IMAGE_PATH/*.gif | while read i
 do
-	file=`basename $i`
-	file=${file%\.*}
-	echo "	FXIcon *$file;" >> $H_FILE
+	varname=`filenameToVarname "$i"`
+	echo "	FXIcon *"$varname";" >> $H_FILE
 done
 
 echo "	int dummy;" >> $H_FILE
@@ -80,40 +103,63 @@ echo >> $C_FILE
 
 # reswrap should have come with the fox package
 # create a data array for each icon
-for i in $IMAGE_PATH/*.gif
+ls $IMAGE_PATH/*.gif | while read i
 do
+	varname=`filenameToVarname "$i"`
 	echo "static " >> $C_FILE
-	$RESWRAP -n `basename ${i%\.*}`_icon $i >> $C_FILE
+	$RESWRAP -n "${varname}_icon" "$i" >> $C_FILE
 done
+
 
 echo >> $C_FILE
 echo "CFOXIcons *FOXIcons=NULL;" >> $C_FILE
 
+# create constructor, CFOXIcons()
 echo >> $C_FILE
 echo "CFOXIcons::CFOXIcons(FXApp *app) :" >> $C_FILE
 
-# allocate each data member
-for i in $IMAGE_PATH/*.gif
-do
-	echo "	"`basename ${i%\.*}`"(new FXGIFIcon(app,"`basename ${i%\.*}`"_icon))," >> $C_FILE
-done
-echo "	dummy(0)" >> $C_FILE
+	# allocate each data member
+	ls $IMAGE_PATH/*.gif | while read i
+	do
+		varname=`filenameToVarname "$i"`
+		echo "	${varname}(new FXGIFIcon(app,${varname}_icon))," >> $C_FILE
+	done
+	echo "	dummy(0)" >> $C_FILE
 
 echo "{" >> $C_FILE
 echo "}" >> $C_FILE
 echo >> $C_FILE
 
-# create destruct
+# create destructor, ~CFOXIcons()
 echo "CFOXIcons::~CFOXIcons()" >> $C_FILE
 echo "{" >> $C_FILE
 
-# create a delete statement for each icon
-for i in $IMAGE_PATH/*.gif
-do
-	echo "	delete "`basename ${i%\.*}`";" >> $C_FILE
-done
+	# create a delete statement for each icon
+	ls $IMAGE_PATH/*.gif | while read i
+	do
+		varname=`filenameToVarname "$i"`
+		echo "	delete "$varname";" >> $C_FILE
+	done
 
 echo "}" >> $C_FILE
 echo >> $C_FILE
 
+# create method, FXIcon *getByName(const char *name)
+echo "#include <string.h>" >> $C_FILE
+echo "FXIcon *CFOXIcons::getByName(const char *name) const" >> $C_FILE
+echo "{" >> $C_FILE
 
+	# create an if statement to return a data member for each filename
+	ls $IMAGE_PATH/*.gif | while read i
+	do
+		varname=`filenameToVarname "$i"`
+		file=`basename "${i%\.*}"`
+		echo "	if(strcmp(name,\"$file\")==0) return $varname;" >> $C_FILE
+	done
+
+
+echo "	return NULL;" >> $C_FILE
+echo "}" >> $C_FILE
+echo >> $C_FILE
+
+exit 0
