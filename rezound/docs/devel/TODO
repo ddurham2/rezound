@@ -1,5 +1,7 @@
 --- THINGS TO DO FOR SURE ---
 
+	- Make a links section on the homepage about who is/has-used ReZound
+
 	- Possibly remove the concept of 'advanced mode' stuff for actions
 		- so far, I've only used it in two actions and don't see any reason to add it to more
 		- for gain and rate change I should just make two factories, but still use the same action code.. and I can make the procedure for adding new actions a bit more easy to understand without getting confused by the 'advanced mode' code
