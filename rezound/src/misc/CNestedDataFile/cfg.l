@@ -30,6 +30,12 @@
 
 #include <istring>
 
+/* some changes needed to be made to the implementation when flex changed how some things worked */
+#ifndef YY_FLEX_SUBMINOR_VERSION
+	#define YY_FLEX_SUBMINOR_VERSION 0
+#endif
+#define FLEX_VERSION (YY_FLEX_MAJOR_VERSION*100000+YY_FLEX_MINOR_VERSION*1000+YY_FLEX_SUBMINOR_VERSION)
+
 bool started;
 int yylineno; 
 
@@ -56,7 +62,6 @@ string currentFilename;
 
 %option never-interactive
 %option stack
-%option noyylineno
 
 %x COMMENT
 
@@ -387,7 +392,10 @@ void cfg_init()
 	if(YY_CURRENT_BUFFER)
 	{
 		yy_delete_buffer(YY_CURRENT_BUFFER);
+		int asdfqwer=FLEX_VERSION;
+#if FLEX_VERSION<205031 /*2.5.31*/
 		YY_CURRENT_BUFFER=NULL;
+#endif
 	}
 
 	if(CNestedDataFile::s2at_string.size()>0) // use s2at_string if it's not blank (meaning that string_to_anytype<vector>() is invoking the parser)
@@ -445,7 +453,9 @@ int yywrap(void)
 	if(YY_CURRENT_BUFFER)
 	{
 		yy_delete_buffer(YY_CURRENT_BUFFER);
+#if FLEX_VERSION<205031 /*2.5.31*/
 		YY_CURRENT_BUFFER=NULL;
+#endif
 	}
 
 	if(inputBufferStack.empty())
