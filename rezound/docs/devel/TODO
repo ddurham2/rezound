@@ -126,7 +126,19 @@
 --- POSSIBLE THINGS TO DO ---
 
 	- If I really create some decent FFT actions and a filter toolkit of some kind, then it would be nice to have the backend somehow interact more actively with the frontend while selecting parameters like the cutoff frequency and ripple parameters of the filters, etc...
+
 		- Perhaps the backend could render a pixel array as an image to display for whatever frontend there is.
+		- along these lines I'm thinking that the AAction system could work as follows:
+			- as is except, the AActionDialog would get passed a pointer to the factory.  Then the frontend derivation could ask the AActionFactory object for information on the action's would-be behavior based on a given CActionParameters from the current settings of the frontend.
+				- for example, some FFT filter's dialog could have 3 sliders for parameters, each time the user moves the slider (let's go after dragging) the AActionDialog's derived class calls void *AActionFactory::getFrontendFeedback(CActionParameters *)... 
+				- so the front end would create a quick CActionParameters object an construct the actual action class and ask it for the frontend feedback data... 
+				- for now I have a void * as what is returned.. I suppose it could be more structured.. but I don't know right now what might be required for the frontend to show.
+				- I could imaging that a pixel area which would be the filter's various responses might be nice... 
+				- but other actions may need different informations... PERHAPS a little preview of the sound could be returned as well
+				- perhaps I could return a CActionParameters which may contain images, or audio or many things as long as I added these types to CActionParameters.
+				- I may then want to make CActionParameters accessed by name instead of index so that in development it would be easier to know what parameter failed and also the order wouldn't matter at all ... 
+					- because at the moment, the order of the sliders totally matters because the backend has to know the order of the frontend sliders
+						- I should do this first.. then attempt to allow an action to give feedback to the frontend
 
 	- A simple thing that could avoid errors later... create a template class that is used that locks a given mutex on construction and unlock on deconstruction... this would let me remove the try catchs that are just there to unlock the mutex and would keep me from having to remember to write code later that will unlock the mutex... just declare local variable of one of these and it will do it
 
