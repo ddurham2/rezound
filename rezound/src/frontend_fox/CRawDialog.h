@@ -57,6 +57,7 @@ private:
 	FXComboBox *channelsCountComboBox;
 	FXComboBox *sampleRateComboBox;
 	FXComboBox *sampleFormatComboBox;
+	FXToggleButton *byteOrderToggleButton;
 	FXLabel *offsetLabel;
 	FXHorizontalFrame *offsetFrame;
 		FXTextField *dataOffsetTextBox;

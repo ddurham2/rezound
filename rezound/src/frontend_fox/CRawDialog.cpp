@@ -28,8 +28,6 @@
 
 #include "CStatusComm.h"
 
-#warning add an endian dropdown or toggle button
-
 FXDEFMAP(CRawDialog) CRawDialogMap[]=
 {
 //	Message_Type			ID					Message_Handler
@@ -45,18 +43,18 @@ FXIMPLEMENT(CRawDialog,FXModalDialogBox,CRawDialogMap,ARRAYNUMBER(CRawDialogMap)
 
 
 CRawDialog::CRawDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"Raw Loading Parameters",0,0,FXModalDialogBox::ftVertical)
+	FXModalDialogBox(mainWindow,"Raw Parameters",0,0,FXModalDialogBox::ftVertical)
 {
 	FXComposite *main=new FXMatrix(getFrame(),2,MATRIX_BY_COLUMNS,LAYOUT_FILL_X|LAYOUT_FILL_Y);
 	FXComboBox *combo;
 
-	new FXLabel(main,"Channels:");
+	new FXLabel(main,"Channels:",NULL,LABEL_NORMAL|LAYOUT_RIGHT);
 	combo=channelsCountComboBox=new FXComboBox(main,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK);
 		for(unsigned t=1;t<=MAX_CHANNELS;t++)
 			combo->appendItem(istring(t).c_str());
 		combo->setCurrentItem(1); // stereo
 
-	new FXLabel(main,"Sample Rate:");
+	new FXLabel(main,"Sample Rate:",NULL,LABEL_NORMAL|LAYOUT_RIGHT);
 	combo=sampleRateComboBox=new FXComboBox(main,10,9,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK);
 		combo->appendItem("4000");
 		combo->appendItem("8000");
@@ -69,7 +67,7 @@ CRawDialog::CRawDialog(FXWindow *mainWindow) :
 		combo->appendItem("96000");
 		combo->setCurrentItem(5);
 
-	new FXLabel(main,"Sample Format:");
+	new FXLabel(main,"Sample Format:",NULL,LABEL_NORMAL|LAYOUT_RIGHT);
 	combo=sampleFormatComboBox=new FXComboBox(main,25,10,NULL,0,COMBOBOX_STATIC|FRAME_SUNKEN|FRAME_THICK);
 		combo->appendItem("8bit Signed PCM");
 		combo->appendItem("8bit Unsigned PCM");
@@ -83,15 +81,18 @@ CRawDialog::CRawDialog(FXWindow *mainWindow) :
 		combo->appendItem("64bit Floating Point PCM");
 		combo->setCurrentItem(2);
 
+	new FXLabel(main,"Byte Order:",NULL,LABEL_NORMAL|LAYOUT_RIGHT);
+	byteOrderToggleButton=new FXToggleButton(main,"Little Endian (Intel)","Big Endian (non-Intel)");
+
 	FXComposite *t;
 
-	offsetLabel=new FXLabel(main,"Data Start:");
+	offsetLabel=new FXLabel(main,"Data Start:",NULL,LABEL_NORMAL|LAYOUT_RIGHT);
 	offsetFrame=new FXHorizontalFrame(main,0, 0,0,0,0, 0,0,0,0);
 		dataOffsetTextBox=new FXTextField(offsetFrame,10,NULL,0,TEXTFIELD_NORMAL|TEXTFIELD_INTEGER);
 		dataOffsetTextBox->setText("0");
 		new FXLabel(offsetFrame,"in bytes");
 
-	lengthLabel=new FXLabel(main,"Data Length:");
+	lengthLabel=new FXLabel(main,"Data Length:",NULL,LABEL_NORMAL|LAYOUT_RIGHT);
 		lengthLabel->setTipText("normally leave this 0");
 	lengthFrame=new FXHorizontalFrame(main,0, 0,0,0,0, 0,0,0,0);
 		dataLengthTextBox=new FXTextField(lengthFrame,10,NULL,0,TEXTFIELD_NORMAL|TEXTFIELD_INTEGER);
@@ -139,6 +140,8 @@ bool CRawDialog::show(AFrontendHooks::RawParameters &parameters,bool showOffsetA
 			default:
 				throw runtime_error(string(__func__)+" -- unhandled index for sampleFormatComboBox: "+istring(sampleFormatComboBox->getCurrentItem()));
 		}
+
+		parameters.endian= byteOrderToggleButton->getState() ? AFrontendHooks::RawParameters::eBigEndian : AFrontendHooks::RawParameters::eLittleEndian;
 
 		if(atoi(dataOffsetTextBox->getText().text())<0)
 		{
