@@ -456,59 +456,100 @@ void ASoundRecorder::removeStatusTrigger(TriggerFunc triggerFunc,void *data)
 
 // ------------------------
 
+#include <stdio.h> // for fprintf
+#include <vector>
+#include <string>
+
+#include "settings.h"
+
 #include "COSSSoundRecorder.h"
 #include "CPortAudioSoundRecorder.h"
 #include "CJACKSoundRecorder.h"
+
+#include <CNestedDataFile/CNestedDataFile.h>
 
 #include "AStatusComm.h"
 
 ASoundRecorder *ASoundRecorder::createInitializedSoundRecorder(CSound *sound)
 {
+	// if the registry doesn't already contain a methods setting, then create the default one
+	if(gSettingsRegistry->keyExists("AudioInputMethods")!=CNestedDataFile::ktValue)
+	{
+		vector<string> methods;
+		methods.push_back("oss");
+		methods.push_back("jack");
+		methods.push_back("portaudio");
+		gSettingsRegistry->createValue("AudioInutMethods",methods);
+	}
+
+
+	bool initializeThrewException=false;
 	ASoundRecorder *soundRecorder=NULL;
 
-#if defined(ENABLE_PORTAUDIO)
-	soundRecorder=new CPortAudioSoundRecorder() ;
-#elif defined(ENABLE_JACK)
-	soundRecorder=new CJACKSoundRecorder();
-#elif defined(ENABLE_OSS)
-	soundRecorder=new COSSSoundRecorder();
-#endif
+	vector<string> methods=gSettingsRegistry->getValue<vector<string> >("AudioInputMethods");
 
-	try
+	// add --audio-method=... to the beginning
+	if(gDefaultAudioMethod!="")
+		methods.insert(methods.begin(),gDefaultAudioMethod);
+
+	// for each requested method in registry.AudioInputMethods try each until one succeeds
+	// 'suceeding' is true if the method was enabled at build time and it can initialize now at run-time
+	for(size_t t=0;t<methods.size();t++)
 	{
-		soundRecorder->initialize(sound);
-		return soundRecorder;
-	}
-	catch(exception &e)
-	{
-		delete soundRecorder;
-
-#if !defined(ENABLE_PORAUDIO) && !defined(ENABLE_JACK)
-		// OSS was the only defined method
-		throw;
-#else
-		// OSS was not the original method chosen at configure time so now fall back to using OSS if it wasn't disabled
-	#ifdef ENABLE_OSS
-		fprintf(stderr,"%s\n",(string(e.what())+"\nAttempting to fall back to using OSS for audio input.").c_str());
-		//Warning(string(e.what())+"\nAttempting to fall back to using OSS for audio input.");
-
-		// try OSS
-		soundRecorder=new COSSSoundRecorder();
+		const string method=methods[t];
 		try
 		{
-			soundRecorder->initialize(sound);
-			return soundRecorder;
+#define INITIALIZE_RECORDER(ClassName) 					\
+			{						\
+				initializeThrewException=false;		\
+				delete soundRecorder;			\
+				soundRecorder=new ClassName();		\
+				soundRecorder->initialize(sound);	\
+				break; /* no exception thrown from initialize() so we're good to go */ \
+			}
+
+			if(method=="oss")
+			{	
+#ifdef ENABLE_OSS
+				INITIALIZE_RECORDER(COSSSoundRecorder)
+#endif
+			}
+			else if(method=="jack")
+			{
+#ifdef ENABLE_JACK
+				INITIALIZE_RECORDER(CJACKSoundRecorder)
+#endif
+			}
+			else if(method=="portaudio")
+			{
+#ifdef ENABLE_PORTAUDIO
+				INITIALIZE_RECORDER(CPortAudioSoundRecorder)
+#endif
+			}
+			else
+			{
+				Warning("unhandled method type in the registry:AudioInputMethods[] '"+method+"'");
+				continue;
+			}
 		}
 		catch(exception &e)
 		{ // now really give up
-			delete soundRecorder;
-			throw runtime_error(string("Error occurred after trying to fall back to OSS\n")+e.what());
+			fprintf(stderr,"Error occurred while initializing audio input method '%s' -- %s\n",method.c_str(),e.what());
+			initializeThrewException=true;
 		}
-	#else
-		throw;
-	#endif
-#endif
 	}
 
+	if(soundRecorder)
+	{
+		if(initializeThrewException)
+		{
+			delete soundRecorder;
+			throw runtime_error(string(__func__)+" -- "+_("No audio input method could be initialized"));
+		}
+		else
+			return soundRecorder;
+	}
+	else
+		throw runtime_error(string(__func__)+" -- "+_("Either no audio input method was enabled at configure-time, or no method was recognized in the registry:AudioInputMethods[] setting"));
 }
 
