@@ -10,8 +10,6 @@
 
 	- inquire to jeroen if FXLabel could become an FXComposite so that the label would go beside, above, below, etc, whatever any child objects there were
 
-	- make the cue list dialog's list box have a fixed width font
-
 	- the 'active' sound window is not staying raised and I don't know why (when focus method is fmActiveButton)
 
 	- set any "stay on top" flags that need to be for dialogs 
@@ -158,4 +156,6 @@
 	- I should probably put whatever code in the frontend (i.e. button handlers in CMainWindow) that could be put in the backend (i.e. would be done by any frontend) into the backend like the file operations already are
 
 	- I need to display the sample rate (and perhaps the number of channels) in the status info of CSoundWindow
+
+	- make the cue list dialog's list box have a fixed width font
 

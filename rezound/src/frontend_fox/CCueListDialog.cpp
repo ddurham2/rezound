@@ -20,6 +20,8 @@
 
 #include "CCueListDialog.h"
 
+#include <string.h>
+
 #include <string>
 #include <map>
 
@@ -77,7 +79,14 @@ CCueListDialog::CCueListDialog(FXWindow *owner) :
 	removeCueActionFactory(NULL),
 	replaceCueActionFactory(NULL)
 {
-	// ??? I need to make sure that FXList has a fixed-width font
+	// make cueList have a fixed width font
+	FXFont *listFont=cueList->getFont();
+        FXFontDesc d;
+        listFont->getFontDesc(d);
+	strcpy(d.face,"courier");
+        listFont=new FXFont(getApp(),d);
+	cueList->setFont(listFont);
+
 
 		// ??? this doesn't seem to be having any effect... ask mailing list
 	closeButton->setDefault(TRUE);
