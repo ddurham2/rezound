@@ -57,8 +57,8 @@ public:
 	bool promptForOpenSoundFilenames(vector<string> &filenames,bool &readOnly,bool &openAsRaw);
 	bool promptForSaveSoundFilename(string &filename,bool &saveAsRaw);
 
-	bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length);
-	bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate);
+	bool promptForNewSoundParameters(string &filename,bool &rawFormat,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length);
+	bool promptForNewSoundParameters(string &filename,bool &rawFormat,unsigned &channelCount,unsigned &sampleRate);
 	bool promptForNewSoundParameters(unsigned &channelCount,unsigned &sampleRate);
 
 	bool promptForDirectory(string &dirname,const string title);

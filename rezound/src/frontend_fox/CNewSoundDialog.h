@@ -48,11 +48,12 @@ public:
 		ID_LAST,
 	};
 
-	const string getFilename() const { return(filename); }
-	void setFilename(const string f) { filename=f; }
-	const unsigned getChannelCount() const { return(channelCount); }
-	const unsigned getSampleRate() const { return(sampleRate); }
-	const sample_pos_t getLength() const { return(length); }
+	const string getFilename() const { return filename; }
+	const bool getRawFormat() const { return rawFormat; }
+	void setFilename(const string f,const bool _rawFormat=false) { filename=f; rawFormat=_rawFormat; }
+	const unsigned getChannelCount() const { return channelCount; }
+	const unsigned getSampleRate() const { return sampleRate; }
+	const sample_pos_t getLength() const { return length; }
 
 	void hideFilename(bool hide);
 	void hideLength(bool hide);
@@ -67,18 +68,22 @@ private:
 		FXLabel *filenameLabel;
 		FXTextField *filenameTextBox;
 		FXButton *browseButton;
-	FXHorizontalFrame *channelsFrame;
+	FXHorizontalFrame *rawFormatFrame;
+		FXCheckButton *rawFormatCheckButton;
+	FXMatrix *matrix;
 		FXLabel *channelsLabel;
 		FXComboBox *channelsComboBox;
-	FXHorizontalFrame *sampleRateFrame;
+
 		FXLabel *sampleRateLabel;
 		FXComboBox *sampleRateComboBox;
-	FXHorizontalFrame *lengthFrame;
+
 		FXLabel *lengthLabel;
-		FXComboBox *lengthComboBox;
-		FXLabel *lengthUnitsLabel;
+		FXHorizontalFrame *lengthFrame;
+			FXComboBox *lengthComboBox;
+			FXLabel *lengthUnitsLabel;
 
 	string filename;
+	bool rawFormat;
 	unsigned channelCount;
 	unsigned sampleRate;
 	sample_pos_t length;

@@ -57,19 +57,20 @@ CLoadedSound *ASoundFileManager::prvCreateNew(bool askForLength)
 	CLoadedSound *loaded=NULL;
 
 	string filename=getUntitledFilename(gPromptDialogDirectory,"rez");
+	bool rawFormat=false;
 	unsigned channelCount;
 	unsigned sampleRate;
 	sample_pos_t length=1;  // 1 if askForLength is false
 	if(
-		(askForLength && gFrontendHooks->promptForNewSoundParameters(filename,channelCount,sampleRate,length)) ||
-		(!askForLength && gFrontendHooks->promptForNewSoundParameters(filename,channelCount,sampleRate))
+		(askForLength && gFrontendHooks->promptForNewSoundParameters(filename,rawFormat,channelCount,sampleRate,length)) ||
+		(!askForLength && gFrontendHooks->promptForNewSoundParameters(filename,rawFormat,channelCount,sampleRate))
 	)
 	{
 		if(isFilenameRegistered(filename))
 			throw(runtime_error(string(__func__)+" -- a file named '"+filename+"' is already opened"));
 
 		// should get based on extension
-		const ASoundTranslator *translator=getTranslator(filename,false/*isRaw*/);
+		const ASoundTranslator *translator=getTranslator(filename,rawFormat);
 
 		try
 		{

@@ -51,16 +51,20 @@ CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 		filenameLabel(new FXLabel(filenameFrame,"Filename:")),
 		filenameTextBox(new FXTextField(filenameFrame,30,NULL,0,TEXTFIELD_NORMAL | LAYOUT_FILL_X)),
 		browseButton(new FXButton(filenameFrame,"&Browse",NULL,this,ID_BROWSE_BUTTON)),
-	channelsFrame(new FXHorizontalFrame(getFrame(),LAYOUT_CENTER_X)),
-		channelsLabel(new FXLabel(channelsFrame,"      Channels:")),
-		channelsComboBox(new FXComboBox(channelsFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC)),
-	sampleRateFrame(new FXHorizontalFrame(getFrame(),LAYOUT_CENTER_X)),
-		sampleRateLabel(new FXLabel(sampleRateFrame,"Sample Rate:")),
-		sampleRateComboBox(new FXComboBox(sampleRateFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK)),
-	lengthFrame(new FXHorizontalFrame(getFrame(),LAYOUT_CENTER_X)),
-		lengthLabel(new FXLabel(lengthFrame,"         Length:")),
-		lengthComboBox(new FXComboBox(lengthFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK)),
-		lengthUnitsLabel(new FXLabel(lengthFrame,"second(s)"))
+	rawFormatFrame(new FXHorizontalFrame(getFrame(),LAYOUT_FILL_X)),
+		rawFormatCheckButton(new FXCheckButton(rawFormatFrame,"Raw Format",NULL,0,CHECKBUTTON_NORMAL|LAYOUT_CENTER_X)),
+	matrix(new FXMatrix(getFrame(),2,MATRIX_BY_COLUMNS|LAYOUT_CENTER_X)),
+
+		channelsLabel(new FXLabel(matrix,"      Channels:")),
+		channelsComboBox(new FXComboBox(matrix,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC)),
+
+		sampleRateLabel(new FXLabel(matrix,"Sample Rate:")),
+		sampleRateComboBox(new FXComboBox(matrix,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK)),
+
+		lengthLabel(new FXLabel(matrix,"         Length:")),
+		lengthFrame(new FXHorizontalFrame(matrix,LAYOUT_CENTER_X,0,0,0,0, 0,0,0,0, 0,0)),
+			lengthComboBox(new FXComboBox(lengthFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK)),
+			lengthUnitsLabel(new FXLabel(lengthFrame,"second(s)"))
 {
 	for(size_t t=0;t<MAX_CHANNELS;t++)
 		channelsComboBox->appendItem(istring(t+1).c_str());
@@ -93,26 +97,36 @@ CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 long CNewSoundDialog::onBrowseButton(FXObject *sender,FXSelector sel,void *ptr)
 {
 	string filename;
-	bool saveAsRaw;
+	bool saveAsRaw=false;
 	if(gFrontendHooks->promptForSaveSoundFilename(filename,saveAsRaw))
+	{
 		filenameTextBox->setText(filename.c_str());
-#warning use saveAsRaw 
+		rawFormatCheckButton->setCheck(saveAsRaw);
+	}
 
-	return(1);
+
+	return 1;
 }
 
 void CNewSoundDialog::show(FXuint placement)
 {
 	filenameTextBox->setText(filename.c_str());
+	rawFormatCheckButton->setCheck(rawFormat);
 	FXModalDialogBox::show(placement);
 }
 
 void CNewSoundDialog::hideFilename(bool hide)
 {
 	if(hide)
+	{
 		filenameFrame->hide();
+		rawFormatCheckButton->hide();
+	}
 	else
+	{
 		filenameFrame->show();
+		rawFormatCheckButton->show();
+	}
 }
 
 void CNewSoundDialog::hideLength(bool hide)
@@ -133,7 +147,7 @@ bool CNewSoundDialog::validateOnOkay()
 		if(filename=="")
 		{
 			Warning("Please supply a filename");
-			return(false);
+			return false;
 		}
 
 
@@ -144,18 +158,20 @@ bool CNewSoundDialog::validateOnOkay()
 		if(CPath(filename).exists())
 		{
 			if(Question(string("Are you sure you want to overwrite the existing file:\n   ")+filename.c_str(),yesnoQues)!=yesAns)
-				return(false);
+				return false;
 		}
 		this->filename=filename;
 	}
 	else
 		this->filename="";
 
+	this->rawFormat=rawFormatCheckButton->getCheck();
+
 	int channelCount=atoi(channelsComboBox->getText().text());
 	if(channelCount<0 || channelCount>=MAX_CHANNELS)
 	{
 		Error("Invalid number of channels");
-		return(false);
+		return false;
 	}
 	this->channelCount=channelCount;
 
@@ -164,7 +180,7 @@ bool CNewSoundDialog::validateOnOkay()
 	if(sampleRate<1000 || sampleRate>1000000)
 	{
 		Error("Invalid sample rate");
-		return(false);
+		return false;
 	}
 	this->sampleRate=sampleRate;
 
@@ -174,13 +190,13 @@ bool CNewSoundDialog::validateOnOkay()
 		if(length<0 || MAX_LENGTH/sampleRate<length)
 		{
 			Error("Invalid length");
-			return(false);
+			return false;
 		} 
 		this->length=(int)(length*sampleRate);
 	}
 	else
 		this->length=1;
 
-	return(true);
+	return true;
 }
 

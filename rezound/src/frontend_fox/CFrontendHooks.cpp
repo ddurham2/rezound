@@ -224,14 +224,15 @@ bool CFrontendHooks::promptForSaveSoundFilename(string &filename,bool &saveAsRaw
 	return(false);
 }
 
-bool CFrontendHooks::promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length)
+bool CFrontendHooks::promptForNewSoundParameters(string &filename,bool &rawFormat,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length)
 {
 	newSoundDialog->hideFilename(false);
 	newSoundDialog->hideLength(false);
-	newSoundDialog->setFilename(filename);
+	newSoundDialog->setFilename(filename,rawFormat);
 	if(newSoundDialog->execute(PLACEMENT_CURSOR))	
 	{
 		filename=newSoundDialog->getFilename();
+		rawFormat=newSoundDialog->getRawFormat();
 		channelCount=newSoundDialog->getChannelCount();
 		sampleRate=newSoundDialog->getSampleRate();
 		length=newSoundDialog->getLength();
@@ -240,14 +241,15 @@ bool CFrontendHooks::promptForNewSoundParameters(string &filename,unsigned &chan
 	return(false);
 }
 
-bool CFrontendHooks::promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate)
+bool CFrontendHooks::promptForNewSoundParameters(string &filename,bool &rawFormat,unsigned &channelCount,unsigned &sampleRate)
 {
 	newSoundDialog->hideFilename(false);
 	newSoundDialog->hideLength(true);
-	newSoundDialog->setFilename(filename);
+	newSoundDialog->setFilename(filename,rawFormat);
 	if(newSoundDialog->execute(PLACEMENT_CURSOR))	
 	{
 		filename=newSoundDialog->getFilename();
+		rawFormat=newSoundDialog->getRawFormat();
 		channelCount=newSoundDialog->getChannelCount();
 		sampleRate=newSoundDialog->getSampleRate();
 		return(true);

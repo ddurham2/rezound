@@ -49,8 +49,8 @@ public:
 	virtual bool promptForSaveSoundFilename(string &filename,bool &saveAsRaw)=0;
 
 	// prompt for a new sound to be created asking for the given parameters (return false if the prompt was cancelled)
-	virtual bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length)=0;
-	virtual bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate)=0;
+	virtual bool promptForNewSoundParameters(string &filename,bool &rawFormat,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length)=0;
+	virtual bool promptForNewSoundParameters(string &filename,bool &rawFormat,unsigned &channelCount,unsigned &sampleRate)=0;
 	virtual bool promptForNewSoundParameters(unsigned &channelCount,unsigned &sampleRate)=0;
 
 	// should prompt for the user to choose a directory
