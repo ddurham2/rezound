@@ -818,7 +818,6 @@ long CSoundWindow::onActiveToggleButton(FXObject *sender,FXSelector sel,void *pt
 	return 1;
 }
 
-#include "../backend/file.h"
 long CSoundWindow::onCloseWindow(FXObject *sender,FXSelector sel,void *ptr)
 {
 	gSoundFileManager->close(ASoundFileManager::ctSaveYesNoCancel,loadedSound);

@@ -23,7 +23,11 @@
 #include "CChannelSelectDialog.h"
 #include "CPasteChannelsDialog.h"
 
+#include "CSoundFileManager.h"
+
 #include "rememberShow.h"
+
+#include "../backend/main_controls.h"
 
 #include "../backend/Edits/EditActions.h"
 
@@ -41,7 +45,10 @@ CEditToolbar *gEditToolbar=NULL;
 
 FXDEFMAP(CEditToolbar) CEditToolbarMap[]=
 {
-	//	  Message_Type			ID					Message_Handler
+	//	  Message_Type			ID						Message_Handler
+	FXMAPFUNC(SEL_COMMAND,			CEditToolbar::ID_UNDO_BUTTON,			CEditToolbar::onUndoButton),
+	FXMAPFUNC(SEL_COMMAND,			CEditToolbar::ID_CLEAR_UNDO_HISTORY_BUTTON,	CEditToolbar::onClearUndoHistoryButton),
+
 };
 
 FXIMPLEMENT(CEditToolbar,FXTopWindow,CEditToolbarMap,ARRAYNUMBER(CEditToolbarMap))
@@ -61,6 +68,13 @@ CEditToolbar::CEditToolbar(FXWindow *mainWindow) :
 	/*
 	 * If I wanted to put "Selection:" ... "Editing:" I could group the sets of buttons in separate FXMatrix's and put the label above
 	 */
+
+	// undo buttons
+	new FXButton(contents,"Undo",NULL,this,ID_UNDO_BUTTON,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+	new FXButton(contents,"ClUo",NULL,this,ID_CLEAR_UNDO_HISTORY_BUTTON,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
+
+	MAKE_FILLER;
+	MAKE_FILLER;
 
 	// selection functions
 	selectAllButton=new CActionButton(new CSelectionEditFactory(sSelectAll),contents,"sa",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
@@ -113,6 +127,18 @@ void CEditToolbar::hide()
 {
 	rememberHide(this);
 	FXTopWindow::hide();
+}
+
+long CEditToolbar::onUndoButton(FXObject *sender,FXSelector sel,void *ptr)
+{
+	undo(gSoundFileManager);
+	return(1);
+}
+
+long CEditToolbar::onClearUndoHistoryButton(FXObject *sender,FXSelector sel,void *ptr)
+{
+	clearUndoHistory(gSoundFileManager);
+	return(1);
 }
 
 

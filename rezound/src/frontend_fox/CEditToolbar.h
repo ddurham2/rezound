@@ -50,6 +50,16 @@ public:
 	FXButton *cropButton;
 	FXButton *pasteInsertButton;
 
+	long onUndoButton(FXObject *sender,FXSelector sel,void *ptr);
+	long onClearUndoHistoryButton(FXObject *sender,FXSelector sel,void *ptr);
+
+	enum
+	{
+		ID_UNDO_BUTTON=FXTopWindow::ID_LAST,
+		ID_CLEAR_UNDO_HISTORY_BUTTON,
+		ID_LAST
+	};
+
 protected:
 	CEditToolbar() {}
 

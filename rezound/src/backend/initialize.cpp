@@ -34,10 +34,6 @@
 
 
 
-// ... except for a few things.. this could probably be moved into the backend.. it'd have to be done for all frontends if I didn't move it
-
-#include "file.h"
-
 //#include "CWinSoundPlayer.h"
 //static CWinSoundPlayer *soundPlayer=NULL;
 #include "COSSSoundPlayer.h"

@@ -106,9 +106,6 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REDRAW_BUTTON,			CMainWindow::onRedrawButton),
 
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_UNDO_BUTTON,			CMainWindow::onUndoButton),
-	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CLEAR_UNDO_HISTORY_BUTTON,	CMainWindow::onClearUndoHistoryButton),
-
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_NOTES_BUTTON,			CMainWindow::onUserNotesButton),
 	
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_DEFRAG_BUTTON,			CMainWindow::onDefragButton),
@@ -163,8 +160,6 @@ CMainWindow::CMainWindow(FXApp* a) :
 	miscControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,6,6),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 3,2);
 		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
 				// ??? this and redo should probably be the top two buttons on the edit panel
-			new FXButton(t,"&Undo",NULL,this,ID_UNDO_BUTTON,FRAME_RAISED);
-			new FXButton(t,"&ClrUndo",NULL,this,ID_CLEAR_UNDO_HISTORY_BUTTON,FRAME_RAISED);
 		new FXButton(miscControlsFrame,"&Redraw",NULL,this,ID_REDRAW_BUTTON,FRAME_RAISED);
 		followPlayPositionButton=new FXCheckButton(miscControlsFrame,"Follow Play Position",this,ID_FOLLOW_PLAY_POSITION_BUTTON);
 		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
@@ -476,18 +471,6 @@ long CMainWindow::onRedrawButton(FXObject *sender,FXSelector sel,void *ptr)
 	else
 		getApp()->beep();
 	
-	return(1);
-}
-
-long CMainWindow::onUndoButton(FXObject *sender,FXSelector sel,void *ptr)
-{
-	undo(gSoundFileManager);
-	return(1);
-}
-
-long CMainWindow::onClearUndoHistoryButton(FXObject *sender,FXSelector sel,void *ptr)
-{
-	clearUndoHistory(gSoundFileManager);
 	return(1);
 }
 

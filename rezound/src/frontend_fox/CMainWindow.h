@@ -62,9 +62,6 @@ public:
 
 	long onRedrawButton(FXObject *sender,FXSelector sel,void *ptr);
 
-	long onUndoButton(FXObject *sender,FXSelector sel,void *ptr);
-	long onClearUndoHistoryButton(FXObject *sender,FXSelector sel,void *ptr);
-
 	long onUserNotesButton(FXObject *sender,FXSelector sel,void *ptr);
 
 	long onShuttleReturn(FXObject *sender,FXSelector sel,void *ptr);
@@ -118,9 +115,6 @@ public:
 		ID_CENTER_STOP_POS,
 
 		ID_REDRAW_BUTTON,
-
-		ID_UNDO_BUTTON,
-		ID_CLEAR_UNDO_HISTORY_BUTTON,
 
 		ID_NOTES_BUTTON,
 
