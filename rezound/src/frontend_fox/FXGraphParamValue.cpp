@@ -69,6 +69,7 @@
 
 // --- declaration of FXValueRuler -----------------------------------------------
 
+#warning need to also have a horizontal axis.. perhaps use FXRezWaveRuler be derived from an interface so this can use it and same with any other ruler dBFS for example
 
 class FXValueRuler : public FXHorizontalFrame
 {
