@@ -8,6 +8,8 @@ using namespace std;
 class ASoundFileManager;
 class CNestedDataFile;
 
+#include "CRunMacroAction.h"
+
 class CMacroPlayer
 {
 public:
@@ -16,11 +18,12 @@ public:
 	CMacroPlayer(const CNestedDataFile *macroStore,const string macroName);
 	virtual ~CMacroPlayer();
 
-	bool doMacro(ASoundFileManager *soundFileManager,unsigned &count);
+	bool doMacro(ASoundFileManager *soundFileManager);
 
 private:
 	const CNestedDataFile *macroStore;
 	const string macroName;
+	CRanMacroActionFactory ranMacroActionFactory;
 };
 
 #endif

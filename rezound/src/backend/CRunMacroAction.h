@@ -19,10 +19,11 @@ protected:
 	void undoActionSizeSafe(const CActionSound *actionSound);
 	CanUndoResults canUndo(const CActionSound *actionSound) const;
 
+	bool doesWarrantSaving() const { return false; }
+
 private:
 	ASoundFileManager *soundFileManager;
 	const string macroName;
-	unsigned actionCount;
 
 };
 
@@ -35,4 +36,37 @@ public:
 	CRunMacroAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
 };
 
+// ---------------------------------------------------------------
+
+class CRanMacroAction : public AAction
+{
+public:
+	CRanMacroAction(const AActionFactory *factory,const CActionSound *actionSound,ASoundFileManager *soundFileManager,const string macroName,unsigned actionCount);
+	virtual ~CRanMacroAction();
+
+protected:
+	bool doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo);
+	void undoActionSizeSafe(const CActionSound *actionSound);
+	CanUndoResults canUndo(const CActionSound *actionSound) const;
+
+	bool doesWarrantSaving() const { return false; }
+
+	// since we undo within undoActionSizeSafe() we don't want the flag to be affected after it returns
+	bool restoreIsModifiedAfterUndo() const { return false; }
+
+private:
+	ASoundFileManager *soundFileManager;
+	const string macroName;
+	unsigned actionCount;
+
+};
+
+class CRanMacroActionFactory : public AActionFactory
+{
+public:
+	CRanMacroActionFactory();
+	virtual ~CRanMacroActionFactory();
+
+	CRanMacroAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
+};
 #endif
