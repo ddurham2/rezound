@@ -113,7 +113,7 @@ class CSinLFO : public ALFO
 {
 public:
 	// frequency is in hertz
-	// initialAngle is in desgrees
+	// initialAngle is in degrees
 	// sampleRate is given to know how often nextValue will be called per cycle
 	CSinLFO(float _frequency,float initialAngle,unsigned sampleRate) :
 			// convert from herz to scalar to mul with counter
@@ -183,7 +183,7 @@ class CRisingSawtoothLFO : public ALFO
 {
 public:
 	// frequency is in hertz
-	// initialAngle is in desgrees
+	// initialAngle is in degrees
 	// sampleRate is given to know how often nextValue will be called per cycle
 	CRisingSawtoothLFO(float frequency,float initialAngle,unsigned sampleRate) :
 		mod((unsigned)ceil(sampleRate/frequency)),
@@ -247,7 +247,7 @@ class CFallingSawtoothLFO : public CRisingSawtoothLFO
 {
 public:
 	// frequency is in hertz
-	// initialAngle is in desgrees
+	// initialAngle is in degrees
 	// sampleRate is given to know how often nextValue will be called per cycle
 	CFallingSawtoothLFO(float frequency,float initialAngle,unsigned sampleRate) :
 		CRisingSawtoothLFO(frequency,initialAngle,sampleRate)
@@ -300,6 +300,87 @@ public:
 		return 1.0-(time%mod)/div;
 	}
 };
+
+
+
+
+
+
+
+
+
+#if 0 // not implemented yet.. 
+
+The sine is deformable in that you can set where the positive peak 
+of the sine should be, and the negative peak will be semetric with it.
+
+I had to do a piecewise function where you use a multiplier on the x 
+coordinate to do the two pieces from 0..target and (360-target)..360 (called 'R1')
+And there is another multiplier as well as a phase to use between
+target..(360-target) (called 'R2')
+
+A natural sine will be produced at target=90
+
+I suppose target has to be between 0..180
+
+The formulas: (target IS in degrees)
+	R1Mul=90.0/target
+	
+	R2Mul=1.0/(2.0-(1.0/R1Mul))
+	R2Phase=0.75*M_PI - M_PI/(2.0*R1Mul)
+
+I derived these on paper which looks really nasty.. so I'll just use them
+	
+
+// ---------------------------------------------
+class CDeformableSinLFO : public ALFO
+{
+public:
+	// frequency is in hertz
+	// initialAngle is in degrees
+	// sampleRate is given to know how often nextValue will be called per cycle
+	CDeformableSinLFO(float _frequency,float initialAngle,float peakAngle,unsigned sampleRate) :
+			// convert from herz to scalar to mul with counter
+		frequency((1.0/((float)sampleRate/_frequency))*(2.0*M_PI)),
+		initial(degrees_to_radians(initialAngle)/frequency),
+
+			// initialize the counter to return the initial angle
+		counter(initial)
+	{
+	}
+
+	virtual ~CDeformableSinLFO()
+	{
+	}
+
+	const float nextValue()
+	{
+		return(sinf((counter++)*frequency));
+	}
+
+	const float getValue(const sample_pos_t time) const
+	{
+		return(sinf((time+initial)*frequency));
+	}
+
+protected:
+	float frequency;
+	float initial;
+	// ??? I probably do need to worry about counter wrap around
+		// perhaps I could know a threshold when to fmod the counter
+	float counter;
+
+	
+};
+
+#endif
+
+// -----------------------------------------------
+
+
+
+
+
 
 
 
@@ -410,6 +491,5 @@ ALFO *CLFORegistry::createLFO(const CLFODescription &desc,const unsigned sampleR
 	}
 	throw(runtime_error(string(__func__)+" -- unhandled LFOType (index): "+istring(desc.LFOType)));
 }
-
 
 
