@@ -30,7 +30,3 @@ EXTRA_DIST=path.h \
 ## 
 noinst_LTLIBRARIES=libmiscCC.la
 libmiscCC_la_SOURCES=path.cpp
-
-path.o:path.cpp \
-	path.h 
-
