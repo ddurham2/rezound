@@ -34,7 +34,7 @@ AC_GNU_SOURCE 		# enable posix extensions in glibc
 ### handle --enable-largefile flag
 AC_ARG_ENABLE(
 	largefile,
-	[  --enable-largefile      enable 64bit file I/O support; NOTE: all dependancies file I/O libraries will also need to have largefile support enabled],
+	AC_HELP_STRING([--enable-largefile],[enable 64bit file I/O support; NOTE: all dependancies file I/O libraries will also need to have largefile support enabled]),
 	[ # action if either enable or disable flag is given
 		if [[ "$enableval" = "yes" ]]
 		then 
@@ -269,7 +269,7 @@ AC_MSG_NOTICE([Tests for methods to use for audio I/O will follow below.  The me
 AH_TEMPLATE(ENABLE_OSS)
 AC_ARG_ENABLE(
 	oss,
-	[  --enable/disable-oss            enable/disable ReZound to use OSS for audio I/O ],
+	AC_HELP_STRING([--enable/disable-oss],[enable/disable ReZound to use OSS for audio I/O]),
 	[ # action if either enable or disable flag is given
 		if [[ "$enableval" = "yes" ]]
 		then 
@@ -302,7 +302,7 @@ AC_ARG_ENABLE(
 AH_TEMPLATE(ENABLE_PORTAUDIO)
 AC_ARG_ENABLE(
 	portaudio,
-	[  --enable/disable-portaudio      enable/disable ReZound to use PortAudio for audio I/O ],
+	AC_HELP_STRING([--enable/disable-portaudio],[enable/disable ReZound to use PortAudio for audio I/O]),
 	[
 		if [[ "$enableval" = "yes" ]]
 		then 
@@ -362,7 +362,7 @@ AC_ARG_ENABLE(
 AH_TEMPLATE(ENABLE_JACK)
 AC_ARG_ENABLE(
 	jack,
-	[  --enable/disable-jack           enable/disable ReZound to use JACK for audio I/O ],
+	AC_HELP_STRING([--enable/disable-jack],[enable/disable ReZound to use JACK for audio I/O]),
 	[ # action if either enable or disable flag is given
 		if [[ "$enableval" = "yes" ]]
 		then 
@@ -567,7 +567,7 @@ AM_GNU_GETTEXT([external])
 # does not use libtool to compile so it fails as a valid flag to the compiler
 AC_ARG_ENABLE(
 	standalone,
-	[  --enable-standalone     build ReZound linked only to static libraries so it can run nearly on its own],
+	AC_HELP_STRING([--enable-standalone],[build ReZound linked only to static libraries so it can run nearly on its own]),
 	[
 		# the 3rd arg would not be necessary if this section didn't have to come after ajv_CXX_CHECK_LIB's
 		AC_CHECK_LIB(dl, dlopen,[LIBS="$LIBS -ldl"])
