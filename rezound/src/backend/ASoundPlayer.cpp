@@ -294,13 +294,15 @@ void ASoundPlayer::calculateAnalyzerBandIndexRanges() const
 		bandUpperIndexes.push_back(0);
 	}
 
+/*
 	for(size_t t=0;t<bandLowerIndexes.size();t++)
 		printf("%d .. %d\n",bandLowerIndexes[t],bandUpperIndexes[t]);
+*/
 }
 
 TAutoBuffer<fftw_real> *ASoundPlayer::createHammingWindow(size_t windowSize)
 {
-printf("creating for length %d\n",windowSize);
+//printf("creating for length %d\n",windowSize);
 	TAutoBuffer<fftw_real> *h=new TAutoBuffer<fftw_real>(windowSize);
 	
 	for(size_t t=0;t<windowSize;t++)

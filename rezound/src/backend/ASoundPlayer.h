@@ -123,7 +123,7 @@ public:
 	// The number of elements will be according to the sample rate of the output device since the 
 	// higher the sample rate the higher the frequency that can be represented in the data.  The elements
 	// will represent as many bands as will fit from 20Hz up to half the sample rate, not going over.
-// ??? figure out and explain how the frequency band label corrisonds to the band, is the the middle frequency or the lower or upper bound of the band?
+	// the labels on the bands corrispond to its being the center frequency in the band (except perhaps the first and last band)
 	const vector<float> getFrequencyAnalysis() const;
 	const size_t getFrequencyAnalysisOctaveStride() const; // return the number of bands per octave returned by getFrequencyAnalysis
 
