@@ -81,6 +81,9 @@ class CSaveAsMultipleFilesDialog : public CActionParamDialog
 public:
 	CSaveAsMultipleFilesDialog(FXWindow *mainWindow);
 	virtual ~CSaveAsMultipleFilesDialog(){}
+
+protected:
+	const string getExplaination() const;
 };
 
 
