@@ -48,8 +48,7 @@ FXIMPLEMENT(CActionMenuCommand,FXMenuCommand,CActionMenuCommandMap,ARRAYNUMBER(C
 CActionMenuCommand::CActionMenuCommand(AActionFactory *_actionFactory,FXComposite* p, const FXString& accelKeyText, FXIcon* ic, FXuint opts) :
 	FXMenuCommand(
 		p,
-		// i18n/translate the action's name, append '...' if it has a dialog and set the accelerator key
-		(string(gettext(_actionFactory->getName().c_str()))+(_actionFactory->hasDialog() ? "..." : "")+"\t"+accelKeyText.text()).c_str(),
+		"",
 		(ic==NULL ? FOXIcons->normal_action_buff : ic),
 		this,
 		ID_HOTKEY,
@@ -57,6 +56,11 @@ CActionMenuCommand::CActionMenuCommand(AActionFactory *_actionFactory,FXComposit
 		),
 	actionFactory(_actionFactory)
 {
+	setAccelText(accelKeyText);
+
+	// i18n/translate the action's name, append '...' if it has a dialog
+	setText((string(gettext(actionFactory->getName().c_str()))+(actionFactory->hasDialog() ? "..." : "")).c_str());
+
 	tip=actionFactory->getDescription().c_str();
 
 	prevEvent.state=0;
