@@ -117,6 +117,9 @@ private:
 	f_at_xs interpretValue;
 	f_at_xs uninterpretValue;
 
+	// we draw on this one time and blit from it anytime we need to update the canvas
+	FXImage *backBuffer;
+
 };
 
 #endif

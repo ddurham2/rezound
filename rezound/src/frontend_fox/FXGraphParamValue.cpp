@@ -27,8 +27,6 @@
 
 #include <istring>
 
-#warning fix these stupidness of this widget
-
 
 #define GET_SCALAR_VALUE(o) ( o->scalarSpinner==NULL ? 0 : o->scalarSpinner->getValue() )
 	
@@ -107,7 +105,7 @@ public:
 			{ // draw and label this tick
 				dc.drawLine(getWidth()-2,renderY,getWidth()-10,renderY);
 
-				printf("y: %d\n",y);
+				//printf("y: %d\n",y);
 
 				double value=parent->interpretValue(parent->screenToNodeValue(y),GET_SCALAR_VALUE(parent));
 
@@ -197,7 +195,7 @@ public:
 
 	long onDestroyNode(FXObject *sender,FXSelector sel,void *ptr)
 	{
-		printf("node right release\n");
+		//printf("node right release\n");
 		 if(!isEdgeNode && underCursor())
 		{
 			owner->removeNode=this;
@@ -209,12 +207,12 @@ public:
 
 	long onDragStart(FXObject *sender,FXSelector sel,void *ptr)
 	{
-		printf("node left press\n");
+		//printf("node left press\n");
 		dragging=true;
 
 		FXEvent *ev=(FXEvent *)ptr;
-		dragOffsetX=ev->win_x;
-		dragOffsetY=ev->win_y;
+		//dragOffsetX=ev->win_x;
+		//dragOffsetY=ev->win_y;
 
 		onDrag(sender,sel,ptr);
 		return(0);
@@ -222,7 +220,7 @@ public:
 
 	long onDragStop(FXObject *sender,FXSelector sel,void *ptr)
 	{
-		printf("node left release\n");
+		//printf("node left release\n");
 		dragging=false;
 
 		// erase status ??? make sure that changing these doesn't cause everything to re-layout
@@ -234,8 +232,10 @@ public:
 	{
 		if(dragging)
 		{
-			printf("node move while dragging\n");
 			FXEvent *ev=(FXEvent *)ptr;
+			
+			static int g=0;
+			printf("%5d node move while dragging x:%d y:%d\n",g++,ev->win_x,ev->win_y);fflush(stdout);
 
 			int x,y;
 			translateCoordinatesTo(x,y,getParent(),ev->win_x-dragOffsetX,ev->win_y-dragOffsetY);
@@ -266,6 +266,7 @@ public:
 
 	void updateStatus()
 	{
+//return;
 		const int index=owner->findNode(this);
 		if(index==-1)
 			return;
@@ -274,12 +275,13 @@ public:
 
 		// draw status
 		const string time=owner->sound->getTimePosition((sample_pos_t)((sample_fpos_t)(owner->stop-owner->start+1)*n.position+owner->start));
-		owner->positionLabel->setText(("Time: "+time).c_str());
+		//owner->positionLabel->setText(("Time: "+time).c_str());
 		owner->valueLabel->setText(("Value: "+istring(owner->interpretValue(n.value,GET_SCALAR_VALUE(owner)),6,3)).c_str());
 	}
 
 	void clearStatus()
 	{
+return;
 		owner->positionLabel->setText("Time: ");
 		owner->valueLabel->setText("Value: ");
 	}
@@ -386,7 +388,9 @@ FXGraphParamValue::FXGraphParamValue(f_at_xs _interpretValue,f_at_xs _uninterpre
 	draggingNodeAfterCreate(NULL),
 
 	interpretValue(_interpretValue),
-	uninterpretValue(_uninterpretValue)
+	uninterpretValue(_uninterpretValue),
+
+	backBuffer(new FXImage(getApp()))
 {
 	// just to give a minimum width and height to the panel
 	new FXFrame(this,LAYOUT_FIX_WIDTH | FRAME_NONE | LAYOUT_SIDE_TOP, 0,0,500,0, 0,0,0,0);
@@ -402,16 +406,18 @@ FXGraphParamValue::FXGraphParamValue(f_at_xs _interpretValue,f_at_xs _uninterpre
 
 	new FXButton(buttonPanel,"Clear",NULL,this,ID_CLEAR_BUTTON);
 
-	//nodes.setReallocQuantum(100);
 	nodes.reserve(100);
+
+	backBuffer->create();
 }
 
 void FXGraphParamValue::layout()
 {
 	FXPacker::layout();
 
-	//printf("layout\n");
+//printf("layout 456\n");
 
+/* add back but try to get cleanStatus and updateStatus not to cause a whole layout event
 	if(nodes.size()>=2)
 	{
 		// relocate all the nodes based on their distances and values
@@ -423,7 +429,15 @@ void FXGraphParamValue::layout()
 		FX_NODE(nodes[0])->isEdgeNode=true;
 		FX_NODE(nodes[nodes.size()-1])->isEdgeNode=true;
 	}
+*/
 
+	// render waveform to the backbuffer
+	backBuffer->resize(graphPanel->getWidth(),graphPanel->getHeight());
+	if(sound!=NULL)
+	{
+		FXDCWindow dc(backBuffer);
+		drawPortion(0,graphPanel->getWidth(),&dc);
+	}
 }
 
 void FXGraphParamValue::setSound(ASound *_sound,sample_pos_t _start,sample_pos_t _stop)
@@ -431,6 +445,9 @@ void FXGraphParamValue::setSound(ASound *_sound,sample_pos_t _start,sample_pos_t
 	sound=_sound;
 	start=_start;
 	stop=_stop;
+
+	// make sure that the back buffer re-renders
+	layout();
 }
 
 void FXGraphParamValue::clearNodes()
@@ -480,8 +497,8 @@ long FXGraphParamValue::onGraphPanelPaint(FXObject *sender,FXSelector sel,void *
 	if(firstTime)
 		clearNodes();
 
-	FXEvent *ev=(FXEvent *)ptr;
-	FXDCWindow dc(graphPanel/*,ev*/);
+	static int g=0;
+	//printf("on paint: %d\n",g++);
 
 	if(removeNode!=NULL)
 	{
@@ -495,9 +512,13 @@ long FXGraphParamValue::onGraphPanelPaint(FXObject *sender,FXSelector sel,void *
 		}
 	}
 
-	//drawPortion(ev->rect.x,ev->rect.w,&dc);
-	drawPortion(0,graphPanel->getWidth(),&dc); // redraw the whole thing since we have to erase all the red lines... perhaps we could know which one has moved and only draw from one left to one right of that one
+	FXDCWindow dc(graphPanel);
 
+	// draw the whole background
+	dc.drawImage(backBuffer,0,0);
+
+
+	// draw the lines connecting the nodes
 	dc.setForeground(FXRGB(255,64,64));
 	for(size_t t=1;t<nodes.size();t++)
 	{
@@ -666,7 +687,7 @@ void FXGraphParamValue::insertIntoNodes(CGraphParamValueNode &n)
 
 long FXGraphParamValue::onCreateNode(FXObject *sender,FXSelector sel,void *ptr)
 {
-	printf("panel left press\n");
+	//printf("panel left press\n");
 	FXEvent *ev=(FXEvent *)ptr;
 
 	CGraphParamValueNode n(screenToNodePosition(ev->win_x),screenToNodeValue(ev->win_y),new FXGraphParamNode(this,ev->win_x-NODE_WIDTH/2,ev->win_y-NODE_HEIGHT/2,false));
@@ -699,7 +720,7 @@ long FXGraphParamValue::onDragNodeAfterCreate(FXObject *sender,FXSelector sel,vo
 
 	if(draggingNodeAfterCreate!=NULL)
 	{
-		printf("panel move while dragging after create\n");
+		//printf("panel move while dragging after create\n");
 
 		FXEvent ev=*((FXEvent *)ptr); // making a copy of event since we're modifying it
 		((FXWindow *)sender)->translateCoordinatesTo(ev.win_x,ev.win_y,draggingNodeAfterCreate,ev.win_x-NODE_WIDTH/2,ev.win_y-NODE_HEIGHT/2);
@@ -710,7 +731,7 @@ long FXGraphParamValue::onDragNodeAfterCreate(FXObject *sender,FXSelector sel,vo
 
 long FXGraphParamValue::onStopDraggingNodeAfterCreate(FXObject *sender,FXSelector sel,void *ptr)
 {
-	printf("panel left release\n");
+	//printf("panel left release\n");
 	if(draggingNodeAfterCreate!=NULL)
 	{
 		draggingNodeAfterCreate->onDragStop(sender,sel,ptr);
