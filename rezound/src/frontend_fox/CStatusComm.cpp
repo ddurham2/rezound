@@ -21,6 +21,7 @@
 #include "CStatusComm.h"
 
 #include <stdio.h>
+#include <ctype.h>
 
 #include <stdexcept>
 
@@ -47,27 +48,27 @@ void CStatusComm::error(const string &message,VSeverity severity)
 	{
 	case none:
 		fprintf(stderr,"error - %s\n",message.c_str());
-		FXMessageBox::error(mainWindow,MBOX_OK,"Error",message.c_str());
+		FXMessageBox::error(mainWindow,MBOX_OK,"Error",breakIntoLines(message).c_str());
 		break;
 	case light:
 		fprintf(stderr,"light error - %s\n",message.c_str());
-		FXMessageBox::error(mainWindow,MBOX_OK,"Light Error",message.c_str());
+		FXMessageBox::error(mainWindow,MBOX_OK,"Light Error",breakIntoLines(message).c_str());
 		break;
 	case medium:
 		fprintf(stderr,"medium error - %s\n",message.c_str());
-		FXMessageBox::error(mainWindow,MBOX_OK,"Medium Error",message.c_str());
+		FXMessageBox::error(mainWindow,MBOX_OK,"Medium Error",breakIntoLines(message).c_str());
 		break;
 	case hard:
 		fprintf(stderr,"hard error - %s\n",message.c_str());
-		FXMessageBox::error(mainWindow,MBOX_OK,"Hard Error",message.c_str());
+		FXMessageBox::error(mainWindow,MBOX_OK,"Hard Error",breakIntoLines(message).c_str());
 		break;
 	case fatal:
 		fprintf(stderr,"fatal error - %s\n",message.c_str());
-		FXMessageBox::error(mainWindow,MBOX_OK,"Fatal Error!",message.c_str());
+		FXMessageBox::error(mainWindow,MBOX_OK,"Fatal Error!",breakIntoLines(message).c_str());
 		break;
 	default:
 		fprintf(stderr,"unknwon severity error - %s\n",message.c_str());
-		FXMessageBox::error(mainWindow,MBOX_OK,"Error -- unknown severity",message.c_str());
+		FXMessageBox::error(mainWindow,MBOX_OK,"Error -- unknown severity",breakIntoLines(message).c_str());
 		break;
 	}
 }
@@ -75,12 +76,12 @@ void CStatusComm::error(const string &message,VSeverity severity)
 void CStatusComm::warning(const string &message)
 {
 	fprintf(stderr,"warning -- %s\n",message.c_str());
-	FXMessageBox::warning(mainWindow,MBOX_OK,"Warning",message.c_str());
+	FXMessageBox::warning(mainWindow,MBOX_OK,"Warning",breakIntoLines(message).c_str());
 }
 
 void CStatusComm::message(const string &message)
 {
-	FXMessageBox::information(mainWindow,MBOX_OK,"Note",message.c_str());
+	FXMessageBox::information(mainWindow,MBOX_OK,"Note",breakIntoLines(message).c_str());
 }
 
 VAnswer CStatusComm::question(const string &message,VQuestion options)
@@ -95,7 +96,7 @@ VAnswer CStatusComm::question(const string &message,VQuestion options)
 	if(flags==0)
 		flags=MBOX_OK;
 
-	switch(FXMessageBox::question(mainWindow,flags,"Question",message.c_str()))
+	switch(FXMessageBox::question(mainWindow,flags,"Question",breakIntoLines(message).c_str()))
 	{
 	case MBOX_CLICKED_YES:
 		return(yesAns);
@@ -106,6 +107,30 @@ VAnswer CStatusComm::question(const string &message,VQuestion options)
 	default:
 		return(defaultAns);
 	}
+}
+
+const string CStatusComm::breakIntoLines(const string _s)
+{
+	// break into lines when a line has become to long, break at the next space.
+	#define BREAK_AFTER 100
+	
+	string s=_s;
+	const size_t len=s.length();
+	size_t lineLen=0;
+	for(size_t t=0;t<len;t++)
+	{
+		if(s[t]=='\n')
+			lineLen=0;
+		else if(lineLen++>BREAK_AFTER)
+		{
+			if(isspace(s[t]))
+			{
+				lineLen=0;
+				s[t]='\n';
+			}
+		}
+	}
+	return(s);
 }
 
 void CStatusComm::beep()
