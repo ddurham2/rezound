@@ -203,7 +203,7 @@ CCompressorAction *CCompressorActionFactory::manufactureAction(const CActionSoun
 		actionParameters->getDoubleParameter("Release Time"),
 		actionParameters->getDoubleParameter("Input Gain"),
 		actionParameters->getDoubleParameter("Output Gain"),
-		true//actionParameters->getBoolParameter("Lock Channels") ??? need to implement a checkbox parameter on the frontend --> I've done this now.. now I need to use it!
+		actionParameters->getBoolParameter("Lock Channels")
 	));
 }
 

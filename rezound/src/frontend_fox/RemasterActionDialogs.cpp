@@ -65,14 +65,17 @@ static const double uninterpretValue_compressGain(const double x,const int s) { 
 CCompressorDialog::CCompressorDialog(FXWindow *mainWindow) :
 	CActionParamDialog(mainWindow,"Compressor")
 {
-	void *p=newHorzPanel(NULL);
-		addSlider(p,"Window Time","ms",interpretValue_compressorWindowTime,uninterpretValue_compressorWindowTime,NULL,35.0,1,10,1,false);
-		addSlider(p,"Threshold","dBFS",interpretValue_dBFS,uninterpretValue_dBFS,NULL,-12.0,0,0,1,false);
-		addSlider(p,"Ratio",":1",interpretValue_compressionRatio,uninterpretValue_compressionRatio,NULL,2.0,2,20,6,false);
-		addSlider(p,"Attack Time","ms",interpretValue_compressAttack,uninterpretValue_compressAttack,NULL,10.0,0,0,0,false);
-		addSlider(p,"Release Time","ms",interpretValue_compressRelease,uninterpretValue_compressRelease,NULL,50.0,0,0,0,false);
-		addSlider(p,"Input Gain","x",interpretValue_compressGain,uninterpretValue_compressGain,NULL,1.0,0,0,0,true);
-		addSlider(p,"Output Gain","x",interpretValue_compressGain,uninterpretValue_compressGain,NULL,1.0,0,0,0,true);
+	void *p0=newVertPanel(NULL,true);
+		void *p1=newHorzPanel(p0,false);
+			addSlider(p1,"Window Time","ms",interpretValue_compressorWindowTime,uninterpretValue_compressorWindowTime,NULL,35.0,1,10,1,false);
+			addSlider(p1,"Threshold","dBFS",interpretValue_dBFS,uninterpretValue_dBFS,NULL,-12.0,0,0,1,false);
+			addSlider(p1,"Ratio",":1",interpretValue_compressionRatio,uninterpretValue_compressionRatio,NULL,2.0,2,20,6,false);
+			addSlider(p1,"Attack Time","ms",interpretValue_compressAttack,uninterpretValue_compressAttack,NULL,10.0,0,0,0,false);
+			addSlider(p1,"Release Time","ms",interpretValue_compressRelease,uninterpretValue_compressRelease,NULL,50.0,0,0,0,false);
+			addSlider(p1,"Input Gain","x",interpretValue_compressGain,uninterpretValue_compressGain,NULL,1.0,0,0,0,true);
+			addSlider(p1,"Output Gain","x",interpretValue_compressGain,uninterpretValue_compressGain,NULL,1.0,0,0,0,true);
+		p1=newVertPanel(p0,false);
+			addCheckBoxEntry(p1,"Lock Channels",true);
 }
 
 
