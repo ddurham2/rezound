@@ -128,7 +128,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 	bool retval=false;
 
 	// restore the splitter's position
-	const FXint h=atoi(gSettingsRegistry->getValue((getTitle()+"_SplitterPos").text()).c_str());
+	const FXint h=atoi(gSettingsRegistry->getValue(("SplitterPositions."+getTitle()).text()).c_str());
 	presetsFrame->setHeight(h);
 
 
@@ -182,7 +182,7 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 
 	// save the splitter's position
 	FXint h2=presetsFrame->getHeight();
-	gSettingsRegistry->createKey((getTitle()+"_SplitterPos").text(),istring(h2));
+	gSettingsRegistry->createKey(("SplitterPositions."+getTitle()).text(),istring(h2));
 
 	return(retval);
 }
