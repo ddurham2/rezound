@@ -224,6 +224,11 @@ void CSoundPlayerChannel::setPlaySpeed(float _playSpeed)
 		playSpeed=playSpeed<0 ? -0.001 : 0.001;
 }
 
+float CSoundPlayerChannel::getPlaySpeed() const
+{
+	return(playSpeed);
+}
+
 void CSoundPlayerChannel::setPosition(sample_pos_t newPosition)
 {
 	lock(); // we lock when we set the variable because playPosition is modified there too in mixOntoBuffer

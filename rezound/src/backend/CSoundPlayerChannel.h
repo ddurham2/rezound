@@ -63,6 +63,7 @@ public:
 	bool isPlayingLooped() const;
 
 	void setPlaySpeed(float _playSpeed);
+	float getPlaySpeed() const;
 
 	// really play position
 	sample_pos_t getPosition() const { return (sample_pos_t)playPosition; }
