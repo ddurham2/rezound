@@ -345,12 +345,19 @@ bool CBurnToCDAction::doActionSizeSafe(CActionSound &actionSound,bool prepareFor
 	const string endianSwap="--swap ";
 #endif
 
-	// burn the files
-	const string command="'"+pathTo_cdrdao+"' "+(testOnly ? "simulate " : "write ")+endianSwap+"--speed "+istring(burnSpeed)+" --device "+device+" "+extra_cdrdao_options+" '"+TOCFilename+"'";
-	printf("about to run command: %s\n",command.c_str());
-	int status=system(command.c_str());
-	if(WEXITSTATUS(status)!=0)
-		Warning(_("cdrdao returned non-zero exit status.  Consult standard output/error for problems."));
+	int CDCount=0;
+	do {
+
+		// burn the files
+		const string command="'"+pathTo_cdrdao+"' "+(testOnly ? "simulate " : "write ")+endianSwap+"--speed "+istring(burnSpeed)+" --device "+device+" "+extra_cdrdao_options+" '"+TOCFilename+"'";
+		printf("about to run command: %s\n",command.c_str());
+		int status=system(command.c_str());
+		if(WEXITSTATUS(status)!=0)
+			Warning(_("cdrdao returned non-zero exit status.  Consult standard output/error for problems."));
+		else
+			CDCount++;
+
+	} while(Question(_("Successful Burn Count: ")+istring(CDCount)+"\n"+_("Would you like to burn another?")+"\n"+_("(Insert a new blank, and then press 'Yes'.)"),yesnoQues)==yesAns);
 
 	// cleanup
 	unlink(TOCFilename.c_str());
