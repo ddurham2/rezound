@@ -1,5 +1,5 @@
 # vim:tw=78
-# ReZound Makefile.am Written by Anthony Ventimiglia
+# $Id$
 ## Process this file with automake to create Makefile.in
 ##
 ##
@@ -23,18 +23,15 @@
 ## I used config/am_include.mk for common definitions
 include $(top_srcdir)/config/am_include.mk
 
-## Descend into SUBDIRS and run make. Look at the Makefile.am files in the
-## subdirectories Start at frontend_fox/Makefile.am to see how everything works.
-SUBDIRS=\
-	docs \
-	src\
-	share
+dist_pkgdoc_DATA=\
+		AUTHORS\
+		COPYING\
+		NEWS\
+		README_DOCS\
+		FrontendFoxFeatures.txt
 
-## These extra files and directories will be included in the distribution. by
-## using make-dist by default many common filenames are automatically included
-## such as AUTHORS, COPYING, etc the bootstrap script really shouldn't be a part
-## of a final package, but it is useful for developers who might want to make
-## changes to the configure scripts or makefiles.
-EXTRA_DIST= \
-	config \
-	bootstrap
+EXTRA_DIST=\
+	CVS-INSTALL\
+	INSTALL\
+	code\
+	devel
