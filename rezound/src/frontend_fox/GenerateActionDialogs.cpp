@@ -57,10 +57,10 @@ CGenerateNoiseDialog::CGenerateNoiseDialog(FXWindow *mainWindow) :
 
 	// these need to follow the order in the enum in CGenerateNoiseAction.cpp
 	items.clear();
-	items.push_back("White (Equal Energy per Frequency)");
-	items.push_back("Pink (Natural, Equal Energy per Octave; response: f^(-1))");
-	items.push_back("Brown (as in Brownian Motion; response: f^(-2))");
-	items.push_back("Black :)");
+	items.push_back(_("White (Equal Energy per Frequency)"));
+	items.push_back(_("Pink (Natural, Equal Energy per Octave; response: f^(-1))"));
+	items.push_back(_("Brown (as in Brownian Motion; response: f^(-2))"));
+	items.push_back(_("Black :)"));
 	//items.push_back("Green");
 	//items.push_back("Blue");
 	//items.push_back("Violet");
@@ -74,11 +74,11 @@ CGenerateNoiseDialog::CGenerateNoiseDialog(FXWindow *mainWindow) :
 
 	// these need to follow the order in the enum in CGenerateNoiseAction.cpp
 	items.clear();
-	items.push_back("Independent Channels");
-	items.push_back("Mono");
-	items.push_back("Inverse Mono");
+	items.push_back(_("Independent Channels"));
+	items.push_back(_("Mono"));
+	items.push_back(_("Inverse Mono"));
 	//items.push_back("Spatial stereo");
-	addComboTextEntry(p0,"Stereo Image",items);
+	addComboTextEntry(p0,_("Stereo Image"),items);
 		
 }
 
