@@ -47,6 +47,7 @@ EXTRA_DIST= \
 	   CGraphParamValueNode.h \
 	   CLoadedSound.h \
 	   COSSSoundPlayer.h \
+	   COSSSoundRecorder.h \
 	   CSoundManager.h \
 	   CSoundManagerClient.h \
 	   CSoundPlayerChannel.h \
@@ -54,7 +55,6 @@ EXTRA_DIST= \
 	   ClibaudiofileSound.h \
 	   Cold_rezSound.h \
 	   CrezSound.h \
-	   CrezSoundRecorder.h \
 	   DSPBlocks.h 
 	   
 
@@ -71,6 +71,7 @@ libbackend_la_SOURCES= AAction.cpp  \
 		       CGraphParamValueNode.cpp \
 		       CLoadedSound.cpp  \
 		       COSSSoundPlayer.cpp \
+		       COSSSoundRecorder.cpp \
 		       CSoundManager.cpp \
 		       CSoundManagerClient.cpp \
 		       CSoundPlayerChannel.cpp \
@@ -78,6 +79,5 @@ libbackend_la_SOURCES= AAction.cpp  \
 		       ClibaudiofileSound.cpp \
 		       Cold_rezSound.cpp \
 		       CrezSound.cpp \
-		       CrezSoundRecorder.cpp \
 		       file.cpp  \
 		       playcontrols.cpp 

@@ -20,10 +20,61 @@
 
 #include "ASoundRecorder.h"
 
-ASoundRecorder::ASoundRecorder()
+ASoundRecorder::ASoundRecorder() :
+	sound(NULL)
 {
 }
 
 ASoundRecorder::~ASoundRecorder()
 {
 }
+
+void ASoundRecorder::onInit(ASound *_sound,const unsigned _channelCount,const unsigned _sampleRate)
+{
+	sound=_sound;
+	channelCount=_channelCount;
+	sampleRate=_sampleRate;
+}
+
+void ASoundRecorder::onStart()
+{
+	origLength=sound->getLength();
+	prealloced=0;
+}
+
+void ASoundRecorder::onData(const sample_t *samples,const size_t sampleFramesRecorded)
+{
+	// we preallocate space in the sound in 5 second chunks
+	while(prealloced<sampleFramesRecorded)
+	{
+		sound->addSpace(sound->getLength(),5*sampleRate,false);
+		prealloced+=(5*sampleRate);
+	}
+
+	const unsigned channelCount=this->channelCount;
+	for(unsigned i=0;i<channelCount;i++)
+	{
+		CRezPoolAccesser a=sound->getAudio(i);
+		const sample_t *_samples=samples+i;
+		for(size_t t=0;t<sampleFramesRecorded;t++)
+		{
+			a[t]=*_samples;
+			_samples+=channelCount;
+		}
+	}
+}
+
+void ASoundRecorder::onStop(bool error)
+{
+	// ??? on error should I remove all recorded space back to the origLength?
+	if(prealloced>0)
+		// remove extra space
+		sound->removeSpace(sound->getLength()-prealloced,prealloced);
+}
+
+void ASoundRecorder::onRedo()
+{
+	if(sound->getLength()>origLength)
+		sound->removeSpace(origLength,sound->getLength()-origLength);
+}
+

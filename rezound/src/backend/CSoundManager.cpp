@@ -18,6 +18,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
+#include <unistd.h>
+#include "COSSSoundRecorder.h"
+
 #include "CSoundManager.h"
 
 
@@ -117,6 +120,12 @@ CSoundManagerClient CSoundManager::newSound(const string &filename,const unsigne
 	sounds.push_back(sound);
 	closeSoundLater.push_back(false);
 	soundReferenceCounts.push_back(0);
+
+	COSSSoundRecorder r;
+	r.initialize(sound,channels,sampleRate);
+	r.start();
+	system("sleep 3");
+	r.deinitialize();
 
 	return(CSoundManagerClient(sound,this,false));
 }
