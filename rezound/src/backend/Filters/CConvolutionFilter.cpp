@@ -72,7 +72,7 @@ bool CConvolutionFilter::doActionSizeSafe(CActionSound &actionSound,bool prepare
 	const string tempFilename=gFallbackWorkDir+"/filter_kernel_"+CPath(filename).baseName();
 
 	// for lack of a better way.. I just make a link of the file and load that temp file incase it's already opened.. perhaps I should use the loaded CSound object if it exists (but right now there's not an easy way to do that)
-	// 	in which cause I would need a pointer to the gSoundFileManager which could be passed to the factory object when it's constructed in CMainWindow.cpp
+	// 	in which case I would need a pointer to the gSoundFileManager which could be passed to the factory object when it's constructed in CMainWindow.cpp
 	symlink(filename.c_str(),tempFilename.c_str());
 	try
 	{
