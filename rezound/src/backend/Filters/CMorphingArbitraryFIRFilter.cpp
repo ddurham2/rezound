@@ -21,6 +21,7 @@
 #include "CMorphingArbitraryFIRFilter.h"
 
 #include <algorithm>
+#include <memory>
 
 #include "../CActionParameters.h"
 

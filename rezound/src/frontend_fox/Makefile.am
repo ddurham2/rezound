@@ -102,7 +102,7 @@ rezound_LDADD= libfrontend.la\
 	$(top_builddir)/src/misc/CNestedDataFile/libmiscCN.la \
 	$(top_builddir)/src/PoolFile/libPoolFile.la @FOX_LIBS@
 
-rezound_CXXFLAGS=@FOX_CXXFLAGS@
+AM_CXXFLAGS=@FOX_CXXFLAGS@
 
 noinst_HEADERS=\
 	fox_compat.h \

@@ -1,4 +1,5 @@
 #!/bin/bash
+# probably should go with something more generic like /bin/sh
 
 # to change to something other than gif, replace .gif and FXGIFIcon throughout the script
 
@@ -46,8 +47,9 @@ function filenameToVarname # $1 is a [path/]filename
 	name=`basename "${1%\.*}"`	# remove extention and pathname
 
 	# for each characters in the name
-	for ((t=0;t<${#1};t++))
-	{
+	t=0
+	while [ $t -lt ${#1} ]
+	do
 		c=${name:t:1}
 
 		# these encode characters to other valid C-variable characters
@@ -59,7 +61,9 @@ function filenameToVarname # $1 is a [path/]filename
 
 		echo -n $c
 		#echo -n $c >&2
-	}
+			
+		t=$((t + 1))
+	done
 	#echo >&2
 }
 
