@@ -61,7 +61,7 @@ AC_DEFUN(ajv_CXX_CHECK_LIB,
 
 	dnl create a --disable-LIB-check flag to configure
 	[AC_ARG_ENABLE($1-check,
-		[  --disable-$1-check     Override the check for $1 library],
+		AC_HELP_STRING([--disable-$1-check],[Override the check for $1 library]),
 		[
 			enable_$1_check="$enableval"
 		],
@@ -72,7 +72,7 @@ AC_DEFUN(ajv_CXX_CHECK_LIB,
 
 	dnl create a --with-LIB-include flag to configure (which sets the -I flags to the lib's headers)
 	[AC_ARG_WITH($1-include,
-		[  --with-$1-include	  Specify path to $1 header files],
+		AC_HELP_STRING([--with-$1-include],[Specify path to $1 header files]),
 		[ 	
 			ajv_inc$1_path=-I$withval
 			# I'm commenting this out, so passing the with option won't override check.
@@ -85,7 +85,7 @@ AC_DEFUN(ajv_CXX_CHECK_LIB,
 
 	dnl create a --with-LIB-path flag to configure (which sets the -L flags to the lib)
 	[AC_ARG_WITH($1-path,
-		[  --with-$1-path	  Specify path to $1 libraries],
+		AC_HELP_STRING([--with-$1-path],[Specify path to $1 libraries]),
 		[	
 			ajv_lib$1_path=-L$withval
 			# I'm commenting this out, so passing the with option won't override check.

@@ -13,11 +13,9 @@ AC_DEFUN(AM_PATH_AUDIOFILE,
 [dnl 
 dnl Get compiler flags and libraries from the audiofile-config script.
 dnl
-AC_ARG_WITH(audiofile-prefix,[  --with-audiofile-prefix=PFX   Prefix where Audio File Library is installed (optional)],
-            audiofile_prefix="$withval", audiofile_prefix="")
-AC_ARG_WITH(audiofile-exec-prefix,[  --with-audiofile-exec-prefix=PFX Exec prefix where Audio File Library is installed (optional)],
-            audiofile_exec_prefix="$withval", audiofile_exec_prefix="")
-AC_ARG_ENABLE(audiofiletest, [  --disable-audiofiletest       Do not try to compile and run a test Audio File Library program], , enable_audiofiletest=yes)
+AC_ARG_WITH(audiofile-prefix,AC_HELP_STRING([--with-audiofile-prefix=PFX],[Prefix where Audio File Library is installed (optional)]), audiofile_prefix="$withval", audiofile_prefix="")
+AC_ARG_WITH(audiofile-exec-prefix,AC_HELP_STRING([--with-audiofile-exec-prefix=PFX],[Exec prefix where Audio File Library is installed (optional)]), audiofile_exec_prefix="$withval", audiofile_exec_prefix="")
+AC_ARG_ENABLE(audiofiletest,AC_HELP_STRING([--disable-audiofiletest],[Do not try to compile and run a test Audio File Library program]), , enable_audiofiletest=yes)
 
   if test x$audiofile_exec_prefix != x ; then
      audiofile_args="$audiofile_args --exec-prefix=$audiofile_exec_prefix"

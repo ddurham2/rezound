@@ -9,10 +9,10 @@ AC_DEFUN(AM_PATH_LIBFLACPP,
 [dnl 
 dnl Get the cflags and libraries
 dnl
-AC_ARG_WITH(libFLACPP,[  --with-libFLACPP=PFX   Prefix where libFLAC++ is installed (optional)], libFLACPP_prefix="$withval", libFLACPP_prefix="")
-AC_ARG_WITH(libFLACPP-libraries,[  --with-libFLACPP-libraries=DIR   Directory where libFLAC++ library is installed (optional)], libFLACPP_libraries="$withval", libFLACPP_libraries="")
-AC_ARG_WITH(libFLACPP-includes,[  --with-libFLACPP-includes=DIR   Directory where libFLAC++ header files are installed (optional)], libFLACPP_includes="$withval", libFLACPP_includes="")
-AC_ARG_ENABLE(libFLACPPtest, [  --disable-libFLACPPtest       Do not try to compile and run a test libFLAC++ program],, enable_libFLACPPtest=yes)
+AC_ARG_WITH(libFLACPP,AC_HELP_STRING([--with-libFLACPP=PFX],[Prefix where libFLAC++ is installed (optional)]), libFLACPP_prefix="$withval", libFLACPP_prefix="")
+AC_ARG_WITH(libFLACPP-libraries,AC_HELP_STRING([--with-libFLACPP-libraries=DIR],[Directory where libFLAC++ library is installed (optional)]), libFLACPP_libraries="$withval", libFLACPP_libraries="")
+AC_ARG_WITH(libFLACPP-includes,AC_HELP_STRING([--with-libFLACPP-includes=DIR],[Directory where libFLAC++ header files are installed (optional)]), libFLACPP_includes="$withval", libFLACPP_includes="")
+AC_ARG_ENABLE(libFLACPPtest,AC_HELP_STRING([--disable-libFLACPPtest],[Do not try to compile and run a test libFLAC++ program]),, enable_libFLACPPtest=yes)
 
   if test "x$libFLACPP_libraries" != "x" ; then
     LIBFLACPP_LIBS="-L$libFLACPP_libraries"
