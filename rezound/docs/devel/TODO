@@ -45,6 +45,8 @@
 
 			- and be able to set the window width of the moving average which detects the audio level
 
+		- slide selection to the left or right by a given amount
+
 		- frontend: 
 			- grow/shrink(radio buttons)     
 			- symtetrically/start/stop(radio buttons)
@@ -70,6 +72,9 @@
 	- right now, if you copy/cut from not all the channels, (by hitting ctrl-cut/copy and deselecting some checkboxes)
 		- then when you ctrl-click to paste, the pasteChannels dialog shows up with all the channels that were cut/copied shifted down to lower channel numbers 
 		- perhaps I could create pools but not put data into them, for the un-included copy/cut channels, but know to disable the check boxes in the GUI if the pool is zero length
+
+	- Need someone like a sound engineer who can create interesting names and settings for presets of the effect
+		- He would also be good to suggest new parameters for the effects
 
 
 
