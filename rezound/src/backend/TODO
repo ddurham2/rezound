@@ -59,6 +59,8 @@
 
 --- POSSIBLE THINGS TO DO ---
 
+	- could warn the user if they are saving a file that was loaded from a lossy format then saving again to a lossy format that the loss will start to build up and become quite audible rather quickly
+
 	- in order to implement a "Save Selection" under the editing menu, I should make the sound translator objects accept a start and stop paramater in the save methods (and even later, a vector of starts and stops for multiple selected regions or something)
 
 	- use TSoundStretcher in CSoundPlayerChannel
