@@ -65,6 +65,7 @@ public:
 	long onShuttleReturn(FXObject *sender,FXSelector sel,void *ptr);
 	long onShuttleChange(FXObject *sender,FXSelector sel,void *ptr);
 	void positionShuttleGivenSpeed(double playSpeed);
+	long onShuttleDialSpringButton(FXObject *sender,FXSelector sel,void *ptr);
 
 	// used to control the shuttle control with the keyboard
 	long onKeyboardSeek(FXObject *sender,FXSelector sel,void *ptr);
@@ -105,6 +106,7 @@ public:
 		ID_JUMP_TO_NEXT_CUE_BUTTON,
 	
 		ID_SHUTTLE_DIAL,
+		ID_SHUTTLE_DIAL_SPRING_BUTTON,
 
 		// used for key bindings
 		ID_SEEK_NORMAL,
@@ -147,6 +149,7 @@ private:
 	FXHorizontalFrame	*contents;		// top horizontal main frame which contains play controls and action controls
 
 	FXDial *shuttleDial;
+	FXToggleButton *shuttleDialSpringButton;
 
 	FXCheckButton	*followPlayPositionButton;
 	FXComboBox	*crossfadeEdgesComboBox;

@@ -38,8 +38,9 @@
 
 
 - Play controls:
+	- The shuttle control can be toggled between 'spring-back mode' or 'free mode' by clicking the switch just to the right of the shuttle control
+	- RIGHT clicking the shuttle control is useful to recenter the shuttle control while in 'free mode'
 	- list keyboard bindings here ...
-	- (on some systems) The mouse WHEEL used on the speed shuttle control will lock the shuttle dial into a position, clicking the dial will return the speed to normal
 
 
 - Cue List Dialog:

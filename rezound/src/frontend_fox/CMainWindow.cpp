@@ -51,12 +51,8 @@
 
 
 /* TODO:
- * 	- make a button that brings back the editing toolbar incase they closed it
- *
  * 	- put gap after repeating and other toggles
  * 
- *	- remove all the data members for controls that don't need to have their value saved for any reason
- *
  */
 
 FXDEFMAP(CMainWindow) CMainWindowMap[]=
@@ -95,7 +91,9 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_JUMP_TO_PREV_CUE_BUTTON,	CMainWindow::onPlayControlButton),
 
 	FXMAPFUNC(SEL_LEFTBUTTONRELEASE,	CMainWindow::ID_SHUTTLE_DIAL,			CMainWindow::onShuttleReturn),
+	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	CMainWindow::ID_SHUTTLE_DIAL,			CMainWindow::onShuttleReturn),
 	FXMAPFUNC(SEL_CHANGED,			CMainWindow::ID_SHUTTLE_DIAL,			CMainWindow::onShuttleChange),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_DIAL_SPRING_BUTTON,	CMainWindow::onShuttleDialSpringButton),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SEEK_NORMAL,			CMainWindow::onShuttleReturn),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SEEK_LEFT,			CMainWindow::onKeyboardSeek),
@@ -154,10 +152,15 @@ CMainWindow::CMainWindow(FXApp* a) :
 		new FXButton(playControlsFrame,"\tJump to Previous Cue",FOXIcons->jump_to_previous_q,this,ID_JUMP_TO_PREV_CUE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32+32+16,32+32,16);
 		new FXButton(playControlsFrame,"\tJump to Next Cue",FOXIcons->jump_to_next_q,this,ID_JUMP_TO_NEXT_CUE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32+32+16,32+32,16);
 
-		shuttleDial=new FXDial(playControlsFrame,this,ID_SHUTTLE_DIAL,DIAL_HORIZONTAL|DIAL_HAS_NOTCH|LAYOUT_EXPLICIT, 0,32+32+16+16,32+32+32+32,20);
-		shuttleDial->setRange(-((shuttleDial->getWidth())/2),(shuttleDial->getWidth())/2);
-		shuttleDial->setRevolutionIncrement(shuttleDial->getWidth()*2-1);
-		shuttleDial->setTipText("Shuttle Seek While Playing\n(Hint: try the mouse wheel as well as dragging)");
+		t=new FXHorizontalFrame(playControlsFrame,FRAME_NONE|LAYOUT_FIX_X|LAYOUT_FIX_Y,0,32+32+16+16,0,0, 0,0,0,0, 0,0);
+			shuttleDial=new FXDial(t,this,ID_SHUTTLE_DIAL,DIAL_HORIZONTAL|DIAL_HAS_NOTCH|LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32+32+32+32,20);
+			shuttleDial->setRange(-((shuttleDial->getWidth())/2),(shuttleDial->getWidth())/2);
+			shuttleDial->setRevolutionIncrement(shuttleDial->getWidth()*2-1);
+			shuttleDial->setTipText("Shuttle Seek While Playing");
+
+			shuttleDialSpringButton=new FXToggleButton(t,"F","S",NULL,NULL,this,ID_SHUTTLE_DIAL_SPRING_BUTTON,TOGGLEBUTTON_NORMAL|TOGGLEBUTTON_TOOLBAR|LAYOUT_FIX_HEIGHT,0,0,0,20);
+			shuttleDialSpringButton->setState(true);
+			shuttleDialSpringButton->setTipText("[S]pring-Back or [F]ree");
 
 	// build miscellaneous buttons
 	FXPacker *miscControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 3,2);
@@ -576,8 +579,11 @@ long CMainWindow::onClearUndoHistoryButton(FXObject *sender,FXSelector sel,void 
 
 long CMainWindow::onShuttleReturn(FXObject *sender,FXSelector sel,void *ptr)
 {
+	if((ptr==NULL || ((FXEvent *)ptr)->code==LEFTBUTTON) && !shuttleDialSpringButton->getState())
+		return 1;
+
 	shuttleDial->setValue(0);
-	onShuttleChange(sender,sel,ptr); // I think I need to call this ???
+	onShuttleChange(NULL,0,NULL); // I think I need to call this ???
 	return 1;
 }
 
@@ -613,13 +619,27 @@ void CMainWindow::positionShuttleGivenSpeed(double playSpeed)
 	if(playSpeed==1.0)
 		shuttlePos=0;
 	else if(playSpeed>1.0)
-		shuttlePos=maxValue*sqrt((playSpeed-1.0)/100.0);
+		shuttlePos=(FXint)(maxValue*sqrt((playSpeed-1.0)/100.0));
 	else if(playSpeed<1.0)
-		shuttlePos=minValue*sqrt((playSpeed+1.0)/-100.0);
+		shuttlePos=(FXint)(minValue*sqrt((playSpeed+1.0)/-100.0));
 	else // catch all
 		shuttlePos=0;
 
+	if(shuttlePos==0)
+		shuttleDialSpringButton->setState(true);
+	else
+		shuttleDialSpringButton->setState(false);
+
 	shuttleDial->setValue(shuttlePos);
+}
+
+long CMainWindow::onShuttleDialSpringButton(FXObject *sender,FXSelector sel,void *ptr)
+{
+	if(shuttleDialSpringButton->getState())
+		onShuttleReturn(NULL,0,NULL);
+	shuttleDialSpringButton->killFocus();
+
+	return 1;
 }
 
 long CMainWindow::onKeyboardSeek(FXObject *sender,FXSelector sel,void *ptr)
