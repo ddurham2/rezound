@@ -34,6 +34,7 @@ class CActionParamDialog;
 
 #include "FXConstantParamValue.h"
 #include "FXTextParamValue.h"
+#include "FXFilenameParamValue.h"
 #include "FXComboTextParamValue.h"
 #include "FXCheckBoxParamValue.h"
 #include "FXGraphParamValue.h"
@@ -51,15 +52,21 @@ class CActionParamDialog : public FXModalDialogBox, public AActionDialog
 public:
 	typedef const double (*f_at_x)(const double x);
 
-	CActionParamDialog(FXWindow *mainWindow,const FXString title,FXModalDialogBox::FrameTypes frameType=FXModalDialogBox::ftHorizontal);
+	CActionParamDialog(FXWindow *mainWindow,const FXString title);
 
-	void addSlider(const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton);
-	void addTextEntry(const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsTipText="");
-	void addComboTextEntry(const string name,const vector<string> &items,const string tipText="",bool isEditable=false);
+	// these are used to create new parents for the controls
+	// 	pass NULL the first time
+	void *newHorzPanel(void *parent,bool createBorder=true);
+	void *newVertPanel(void *parent,bool createBorder=true);
+
+	void addSlider(void *parent,const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton);
+	void addTextEntry(void *parent,const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsTipText="");
+	void addFilenameEntry(void *parent,const string name,const string intialFilename,const string tipText="");
+	void addComboTextEntry(void *parent,const string name,const vector<string> &items,const string tipText="",bool isEditable=false);
 		FXComboTextParamValue *getComboText(const string name); // so a derived class can set the values
-	void addCheckBoxEntry(const string name,const bool checked,const string tipText="");
-	void addGraph(const string name,const string units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar);
-	void addLFO(const string name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs);
+	void addCheckBoxEntry(void *parent,const string name,const bool checked,const string tipText="");
+	void addGraph(void *parent,const string name,const string units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar);
+	void addLFO(void *parent,const string name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs);
 
 	/* 
 	 * index corrisponds to the order that the add...() methods were called 
@@ -67,6 +74,9 @@ public:
 	 * to set the index of a combobox
 	 */
 	void setValue(size_t index,const double value);
+
+	//void setControlHeight(size_t index,const size_t height);
+	//const size_t getControlHeight(size_t index) const;
 
 	void setTipText(size_t index,const string tipText);
 
@@ -103,6 +113,7 @@ private:
 	{
 		ptConstant,
 		ptText,
+		ptFilename,
 		ptComboText,
 		ptCheckBox,
 		ptGraph,

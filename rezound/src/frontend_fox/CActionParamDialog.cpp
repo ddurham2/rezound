@@ -59,19 +59,13 @@ FXIMPLEMENT(CActionParamDialog,FXModalDialogBox,CActionParamDialogMap,ARRAYNUMBE
 // work the same what.. I'll work on figuring that out and then both 
 // parameters should be unnecessary
 
-CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title,FXModalDialogBox::FrameTypes frameType) :
+CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title) :
 	FXModalDialogBox(mainWindow,title,0,0,FXModalDialogBox::ftVertical),
 	
 	splitter(new FXSplitter(getFrame(),SPLITTER_VERTICAL|SPLITTER_REVERSED | LAYOUT_FILL_X|LAYOUT_FILL_Y)),
 		topPanel(new FXHorizontalFrame(splitter,FRAME_RAISED|FRAME_THICK, 0,0,0,0, 0,0,0,0, 0,0)),
 			leftMargin(new FXFrame(topPanel,FRAME_NONE|LAYOUT_FILL_Y|LAYOUT_FIX_WIDTH,0,0,0,0, 0,0,0,0)),
-			controlsFrame(
-				frameType==FXModalDialogBox::ftHorizontal 
-					?
-					(FXPacker *)new FXHorizontalFrame(topPanel,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 5,5,5,5)
-					:
-					(FXPacker *)new FXVerticalFrame(topPanel,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 5,5,5,5)
-			),
+			controlsFrame(new FXPacker(topPanel,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0)),
 			rightMargin(new FXFrame(topPanel,FRAME_NONE|LAYOUT_FILL_Y|LAYOUT_FIX_WIDTH,0,0,0,0, 0,0,0,0)),
 		presetsFrame(new FXHorizontalFrame(splitter,FRAME_RAISED|FRAME_THICK | LAYOUT_FILL_X, 0,0,0,0, 5,5,5,5)),
 			nativePresetList(NULL),
@@ -112,28 +106,72 @@ CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title
 	//ASSURE_WIDTH(this,200);
 }
 
-void CActionParamDialog::addSlider(const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton)
+void *CActionParamDialog::newHorzPanel(void *parent,bool createBorder)
 {
-	FXConstantParamValue *slider=new FXConstantParamValue(interpretValue,uninterpretValue,minScalar,maxScalar,initScalar,showInverseButton,controlsFrame,0,name.c_str());
+	if(parent==NULL)
+	{
+		if(controlsFrame->numChildren()>0)
+			throw runtime_error(string(__func__)+" -- this method has already been called with a NULL parameter");
+		parent=controlsFrame;
+	}
+	if(createBorder)
+		return new FXHorizontalFrame((FXPacker *)parent,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 5,5,5,5);
+	else
+		return new FXHorizontalFrame((FXPacker *)parent,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0);
+}
+
+void *CActionParamDialog::newVertPanel(void *parent,bool createBorder)
+{
+	if(parent==NULL)
+	{
+		if(controlsFrame->numChildren()>0)
+			throw runtime_error(string(__func__)+" -- this method has already been called with a NULL parameter");
+		parent=controlsFrame;
+	}
+	if(createBorder)
+		return new FXVerticalFrame((FXPacker *)parent,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 5,5,5,5);
+	else
+		return new FXVerticalFrame((FXPacker *)parent,FRAME_NONE | LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0);
+}
+
+void CActionParamDialog::addSlider(void *parent,const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton)
+{
+	if(parent==NULL)
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+	FXConstantParamValue *slider=new FXConstantParamValue(interpretValue,uninterpretValue,minScalar,maxScalar,initScalar,showInverseButton,(FXPacker *)parent,0,name.c_str());
 	slider->setUnits(units.c_str());
 	slider->setValue(initialValue);
 	parameters.push_back(pair<ParamTypes,void *>(ptConstant,(void *)slider));
 	retValueConvs.push_back(optRetValueConv);
 }
 
-void CActionParamDialog::addTextEntry(const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsTipText)
+void CActionParamDialog::addTextEntry(void *parent,const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsTipText)
 {
-	FXTextParamValue *textEntry=new FXTextParamValue(controlsFrame,0,name.c_str(),minValue,maxValue);
+	if(parent==NULL)
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+	FXTextParamValue *textEntry=new FXTextParamValue((FXPacker *)parent,0,name.c_str(),minValue,maxValue);
 	textEntry->setUnits(units.c_str(),unitsTipText.c_str());
 	textEntry->setValue(initialValue);
 	parameters.push_back(pair<ParamTypes,void *>(ptText,(void *)textEntry));
 	retValueConvs.push_back(NULL);
 }
 
-
-void CActionParamDialog::addComboTextEntry(const string name,const vector<string> &items,const string tipText,bool isEditable)
+void CActionParamDialog::addFilenameEntry(void *parent,const string name,const string initialFilename,const string tipText)
 {
-	FXComboTextParamValue *comboTextEntry=new FXComboTextParamValue(controlsFrame,0,name.c_str(),items,isEditable);
+	if(parent==NULL)
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+	FXFilenameParamValue *filenameEntry=new FXFilenameParamValue((FXPacker *)parent,0,name.c_str(),initialFilename);
+	filenameEntry->setTipText(tipText.c_str());
+	parameters.push_back(pair<ParamTypes,void *>(ptFilename,(void *)filenameEntry));
+	retValueConvs.push_back(NULL);
+}
+
+
+void CActionParamDialog::addComboTextEntry(void *parent,const string name,const vector<string> &items,const string tipText,bool isEditable)
+{
+	if(parent==NULL)
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+	FXComboTextParamValue *comboTextEntry=new FXComboTextParamValue((FXPacker *)parent,0,name.c_str(),items,isEditable);
 	comboTextEntry->setTipText(tipText.c_str());
 	parameters.push_back(pair<ParamTypes,void *>(ptComboText,(void *)comboTextEntry));
 	retValueConvs.push_back(NULL);
@@ -150,9 +188,11 @@ FXComboTextParamValue *CActionParamDialog::getComboText(const string name)
 }
 
 
-void CActionParamDialog::addCheckBoxEntry(const string name,const bool checked,const string tipText)
+void CActionParamDialog::addCheckBoxEntry(void *parent,const string name,const bool checked,const string tipText)
 {
-	FXCheckBoxParamValue *checkBoxEntry=new FXCheckBoxParamValue(controlsFrame,0,name.c_str(),checked);
+	if(parent==NULL)
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+	FXCheckBoxParamValue *checkBoxEntry=new FXCheckBoxParamValue((FXPacker *)parent,0,name.c_str(),checked);
 	checkBoxEntry->setTipText(tipText.c_str());
 	parameters.push_back(pair<ParamTypes,void *>(ptCheckBox,(void *)checkBoxEntry));
 	retValueConvs.push_back(NULL);
@@ -160,18 +200,22 @@ void CActionParamDialog::addCheckBoxEntry(const string name,const bool checked,c
 
 void setComboBoxItems(const string name,const vector<string> &items);
 
-void CActionParamDialog::addGraph(const string name,const string units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar)
+void CActionParamDialog::addGraph(void *parent,const string name,const string units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar)
 {
+	if(parent==NULL)
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
 		// ??? there is still a question of how quite to lay out the graph if there are graph(s) and sliders
-	FXGraphParamValue *graph=new FXGraphParamValue(name.c_str(),interpretValue,uninterpretValue,minScalar,maxScalar,initialScalar,controlsFrame,LAYOUT_FILL_X|LAYOUT_FILL_Y);
+	FXGraphParamValue *graph=new FXGraphParamValue(name.c_str(),interpretValue,uninterpretValue,minScalar,maxScalar,initialScalar,(FXPacker *)parent,LAYOUT_FILL_X|LAYOUT_FILL_Y);
 	graph->setUnits(units.c_str());
 	parameters.push_back(pair<ParamTypes,void *>(ptGraph,(void *)graph));
 	retValueConvs.push_back(optRetValueConv);
 }
 
-void CActionParamDialog::addLFO(const string name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs)
+void CActionParamDialog::addLFO(void *parent,const string name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs)
 {
-	FXLFOParamValue *LFOEntry=new FXLFOParamValue(controlsFrame,0,name.c_str(),ampUnits,ampTitle,maxAmp,freqUnits,maxFreq,hideBipolarLFOs);
+	if(parent==NULL)
+		throw runtime_error(string(__func__)+" -- parent was passed NULL -- used CActionParameValue::newHorzPanel() or newVertPanel() to obtain a parent parameter to pass");
+	FXLFOParamValue *LFOEntry=new FXLFOParamValue((FXPacker *)parent,0,name.c_str(),ampUnits,ampTitle,maxAmp,freqUnits,maxFreq,hideBipolarLFOs);
 	//LFOEntry->setTipText(tipText.c_str());
 	parameters.push_back(pair<ParamTypes,void *>(ptLFO,(void *)LFOEntry));
 	retValueConvs.push_back(NULL);
@@ -220,6 +264,75 @@ void CActionParamDialog::setValue(size_t index,const double value)
 	}
 }
 
+#if 0
+void CActionParamDialog::setControlHeight(size_t index,const size_t height)
+{
+	switch(parameters[index].first)
+	{
+	case ptConstant:
+		((FXConstantParamValue *)parameters[index].second)->setHeight(height);
+		break;
+
+	case ptText:
+		((FXTextParamValue *)parameters[index].second)->setHeight(height);
+		break;
+
+	case ptFilename:
+		((FXFilenameParamValue *)parameters[index].second)->setHeight(height);
+		break;
+
+	case ptComboText:
+		((FXComboTextParamValue *)parameters[index].second)->setHeight(height);
+		break;
+
+	case ptCheckBox:
+		((FXCheckBoxParamValue *)parameters[index].second)->setHeight(height);
+		break;
+
+	case ptGraph:
+		((FXGraphParamValue *)parameters[index].second)->setHeight(height);
+		break;
+
+	case ptLFO:
+		((FXGraphParamValue *)parameters[index].second)->setHeight(height);
+		break;
+
+	default:
+		throw(runtime_error(string(__func__)+" -- unhandled or unimplemented parameter type: "+istring(parameters[index].first)));
+	}
+}
+
+const size_t CActionParamDialog::getControlHeight(size_t index) const
+{
+	switch(parameters[index].first)
+	{
+	case ptConstant:
+		return ((FXConstantParamValue *)parameters[index].second)->getHeight();
+
+	case ptText:
+		return ((FXTextParamValue *)parameters[index].second)->getHeight();
+
+	case ptFilename:
+		return ((FXFilenameParamValue *)parameters[index].second)->getHeight();
+
+	case ptComboText:
+		return ((FXComboTextParamValue *)parameters[index].second)->getHeight();
+
+	case ptCheckBox:
+		return ((FXCheckBoxParamValue *)parameters[index].second)->getHeight();
+
+	case ptGraph:
+		return ((FXGraphParamValue *)parameters[index].second)->getHeight();
+
+	case ptLFO:
+		return ((FXGraphParamValue *)parameters[index].second)->getHeight();
+
+	default:
+		throw(runtime_error(string(__func__)+" -- unhandled or unimplemented parameter type: "+istring(parameters[index].first)));
+	}
+}
+#endif
+
 void CActionParamDialog::setTipText(size_t index,const string tipText)
 {
 	switch(parameters[index].first)
@@ -230,6 +343,10 @@ void CActionParamDialog::setTipText(size_t index,const string tipText)
 
 	case ptText:
 		((FXTextParamValue *)parameters[index].second)->setTipText(tipText.c_str());
+		break;
+
+	case ptFilename:
+		((FXFilenameParamValue *)parameters[index].second)->setTipText(tipText.c_str());
 		break;
 
 	case ptComboText:
@@ -300,6 +417,14 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 						ret=retValueConvs[t](ret);
 
 					actionParameters->addDoubleParameter(textEntry->getTitle(),ret);	
+				}
+				break;
+
+			case ptFilename:
+				{
+					FXFilenameParamValue *filenameEntry=(FXFilenameParamValue *)parameters[t].second;
+					const string ret=filenameEntry->getFilename();
+					actionParameters->addStringParameter(filenameEntry->getTitle(),ret);	
 				}
 				break;
 
@@ -399,6 +524,10 @@ long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void 
 				((FXTextParamValue *)parameters[t].second)->readFromFile(title,presetsFile);
 				break;
 
+			case ptFilename:
+				((FXFilenameParamValue *)parameters[t].second)->readFromFile(title,presetsFile);
+				break;
+
 			case ptComboText:
 				((FXComboTextParamValue *)parameters[t].second)->readFromFile(title,presetsFile);
 				break;
@@ -475,6 +604,10 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 
 				case ptText:
 					((FXTextParamValue *)parameters[t].second)->writeToFile(title,presetsFile);
+					break;
+
+				case ptFilename:
+					((FXFilenameParamValue *)parameters[t].second)->writeToFile(title,presetsFile);
 					break;
 
 				case ptComboText:
