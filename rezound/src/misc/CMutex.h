@@ -82,9 +82,34 @@ public:
 	}
 
 private:
+	friend class CConditionVariable;
 	pthread_mutex_t mutex;
 	int locked;
 
+};
+
+/* 
+ * This class simply locks the given mutex on construct and unlocks on destruction
+ * it is useful to use where a lock should be obtained, then released on return or
+ * exception... when an object of this class goes out of scope, the lock will be 
+ * released
+ */
+class CMutexLocker
+{
+public:
+	CMutexLocker(CMutex &_m) :
+		m(_m)
+	{
+		m.lock();
+	}
+
+	virtual ~CMutexLocker()
+	{
+		m.unlock();
+	}
+
+private:
+	CMutex &m;
 };
 
 
