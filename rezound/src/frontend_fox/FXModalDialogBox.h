@@ -65,6 +65,7 @@ protected:
 	FXModalDialogBox() {}
 
 	FXPacker *getFrame();
+	FXPacker *getButtonFrame();
 
 	// a derived class can override this to validate stuff before the okay button closes the window
 	virtual bool validateOnOkay() { return(true); }

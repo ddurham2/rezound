@@ -85,7 +85,7 @@ long FXModalDialogBox::onOkayButton(FXObject *sender,FXSelector sel,void *ptr)
 	if(validateOnOkay())
 		FXDialogBox::handle(this,MKUINT(ID_ACCEPT,SEL_COMMAND),ptr);
 
-	return(1);
+	return 1;
 }
 
 void FXModalDialogBox::show(FXuint placement)
@@ -132,6 +132,11 @@ void FXModalDialogBox::hide()
 
 FXPacker *FXModalDialogBox::getFrame()
 {
-	return(upperFrame);
+	return upperFrame;
+}
+
+FXPacker *FXModalDialogBox::getButtonFrame()
+{
+	return buttonPacker;
 }
 
