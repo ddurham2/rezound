@@ -60,7 +60,7 @@ static void fillBitRateComboBox(FXComboBox *c,bool t=false)
 	else
 		c->appendItem("310000");
 
-	c->setCurrentItem(8);
+	c->setCurrentItem(9);
 	c->setNumVisible(c->getNumItems());
 }
 
