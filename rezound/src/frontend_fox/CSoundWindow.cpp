@@ -875,6 +875,7 @@ long CSoundWindow::onTimeUnitsSetting(FXObject *sender,FXSelector sel,void *ptr)
 {
 	popupTimeUnitsSelectionMenu((FXWindow *)sender,(FXEvent *)ptr);
 	updateAllStatusInfo();
+	return 1;
 }
 
 const map<string,string> CSoundWindow::getPositionalInfo() const
