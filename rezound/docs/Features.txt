@@ -44,7 +44,7 @@
 	- Shuttle Play Position Control
 	- Play from Mouse Cursor (hold ctrl and use left and right mouse buttons)
 
-- Audio Level Playback Meter and Frequency Analyzer
+- Playback Audio Level Meters and Frequency Analyzer
 
 - Full Featured Editing Tools
 	- Copy
