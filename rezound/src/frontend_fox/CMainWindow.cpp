@@ -299,7 +299,7 @@ long CMainWindow::onCrossfadeEdgesCheckbox(FXObject *sender,FXSelector sel,void 
 
 long CMainWindow::onCrossfadeEdgesSettings(FXObject *sender,FXSelector sel,void *ptr)
 {
-	gCrossfadeEdgesDialog->execute(PLACEMENT_CURSOR);
+	gCrossfadeEdgesDialog->showIt();
 	return 1;
 }
 

@@ -66,7 +66,6 @@ FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _unin
 			halfLabel(new FXLabel(tickLabelFrame,"0.5",NULL,JUSTIFY_LEFT|JUSTIFY_CENTER_Y | LAYOUT_FILL_ROW|LAYOUT_FILL_Y)),
 			minLabel(new FXLabel(tickLabelFrame,"0.0",NULL,JUSTIFY_LEFT|JUSTIFY_CENTER_Y | LAYOUT_FILL_ROW)),
 	valuePanel(new FXHorizontalFrame(this,LAYOUT_FILL_X | JUSTIFY_CENTER_X /*| FRAME_SUNKEN*/, 0,0,0,0, 4,4,4,4, 2,2)),
-		//valueLabel(new FXLabel(valuePanel,"Value",NULL, LAYOUT_CENTER_Y)),
 		valueTextBox(new FXTextField(valuePanel,6,this,ID_VALUE_TEXTBOX, TEXTFIELD_NORMAL | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
 		unitsLabel(new FXLabel(valuePanel,"x",NULL,LAYOUT_CENTER_Y)),
 	scalarPanel(NULL),
@@ -99,40 +98,12 @@ FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _unin
 	updateNumbers();
 }
 
-//FXConstantParamValue::FXConstantParamValue(FXComposite *p,int opts,const char *title,int x,int y,int w,int h) :
-	//FXVerticalFrame(p,opts|FRAME_RIDGE | LAYOUT_FILL_Y|LAYOUT_CENTER_X|LAYOUT_FIX_HEIGHT,x,y,w,h, 6,6,2,4, 0,2),
-FXConstantParamValue::FXConstantParamValue(FXComposite *p,int opts,const char *title) :
-	FXVerticalFrame(p,opts|FRAME_RIDGE | LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 6,6,2,4, 0,2),
-
-	titleLabel(new FXLabel(this,title,NULL,LAYOUT_TOP|LAYOUT_FILL_X | JUSTIFY_CENTER_X)),
-	horzSep(NULL),
-	middleFrame(NULL),
-		inverseButtonFrame(NULL),
-			inverseButton(NULL),
-		slider(NULL),
-		tickLabelFrame(NULL),
-			maxLabel(NULL),
-			halfLabel(NULL),
-			minLabel(NULL),
-	valuePanel(new FXHorizontalFrame(this,LAYOUT_FILL_X | JUSTIFY_CENTER_X /*| FRAME_SUNKEN*/, 0,0,0,0, 4,4,4,4, 2,2)),
-		//valueLabel(new FXLabel(valuePanel,"Value",NULL, LAYOUT_CENTER_Y)),
-		valueTextBox(new FXTextField(valuePanel,6,this,ID_VALUE_TEXTBOX, TEXTFIELD_NORMAL | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
-		unitsLabel(new FXLabel(valuePanel,"x",NULL,LAYOUT_CENTER_Y)),
-	scalarPanel(NULL),
-		scalarLabel(NULL),
-		scalarSpinner(NULL),
-
-	interpretValue(NULL),
-	uninterpretValue(NULL)
-{
-	updateNumbers();
-}
-
-void FXConstantParamValue::setUnits(FXString _units)
+void FXConstantParamValue::setUnits(const FXString _units,const FXString helpText)
 {
 	units=_units;
 
 	unitsLabel->setText(units);
+	unitsLabel->setTipText(helpText);
 	updateNumbers();
 }
 
@@ -157,14 +128,9 @@ long FXConstantParamValue::onScalarSpinnerChange(FXObject *sender,FXSelector sel
 
 long FXConstantParamValue::onValueTextBoxChange(FXObject *sender,FXSelector sel,void *ptr)
 {
-	if(slider!=NULL)
-	{
-			// check range if uninterpretValue does that
-		retValue=interpretValue(uninterpretValue(atof(valueTextBox->getText().text()),GET_SCALAR_VALUE),GET_SCALAR_VALUE);
-		slider->setValue((int)(uninterpretValue(retValue,GET_SCALAR_VALUE)*10000.0));
-	}
-	else
-		retValue=atof(valueTextBox->getText().text());
+		// check range if uninterpretValue does that
+	retValue=interpretValue(uninterpretValue(atof(valueTextBox->getText().text()),GET_SCALAR_VALUE),GET_SCALAR_VALUE);
+	slider->setValue((int)(uninterpretValue(retValue,GET_SCALAR_VALUE)*10000.0));
 
 	return(1);
 }
@@ -177,17 +143,14 @@ long FXConstantParamValue::onInverseButton(FXObject *sender,FXSelector sel,void 
 
 void FXConstantParamValue::updateNumbers()
 {
-	if(slider!=NULL)
-	{
-		minLabel->setText(istring(interpretValue(0.0,GET_SCALAR_VALUE),3,2).c_str()+units);
-		halfLabel->setText(istring(interpretValue(0.5,GET_SCALAR_VALUE),3,2).c_str()+units);
-		maxLabel->setText(istring(interpretValue(1.0,GET_SCALAR_VALUE),3,2).c_str()+units);
+	minLabel->setText(istring(interpretValue(0.0,GET_SCALAR_VALUE),3,2).c_str()+units);
+	halfLabel->setText(istring(interpretValue(0.5,GET_SCALAR_VALUE),3,2).c_str()+units);
+	maxLabel->setText(istring(interpretValue(1.0,GET_SCALAR_VALUE),3,2).c_str()+units);
 
-		onSliderChange(NULL,0,NULL);
-	}
+	onSliderChange(NULL,0,NULL);
 }
 
-const double &FXConstantParamValue::getValue() const
+const double FXConstantParamValue::getValue() const
 {
 	return(retValue);
 }
@@ -195,8 +158,7 @@ const double &FXConstantParamValue::getValue() const
 void FXConstantParamValue::setValue(const double value)
 {
 	retValue=value;
-	if(slider!=NULL)
-		slider->setValue((int)(uninterpretValue(value,GET_SCALAR_VALUE)*10000.0));
+	slider->setValue((int)(uninterpretValue(value,GET_SCALAR_VALUE)*10000.0));
 	valueTextBox->setText((istring(retValue,7,4)).c_str());
 }
 

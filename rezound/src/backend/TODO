@@ -1,6 +1,12 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- split AAction.* into separate files for each class
+		- and go thru every file that includes AAction.h and see if it could avoid including it for one of the split-offs
+		- probably leave AAction and AActionFactory in the same AAction.h
+		- need definiately: CActionParameter.h AActionDialog.h CActionSound.h (and make sure CActionSound.h doesn't include CSound.h)
+		- this should really improve compiling the frontend dialogs speed
+
 	- the clip board that the edit actions use is not set up to allow it to paste and copy from other applications
 		- when/if I want to allow that, I should create a base class clipboard which has the platform specific
 		  implementation that reads from the system clipboard.
@@ -103,9 +109,6 @@
 	- make a 'rotate' edit where 'X' samples from the beginning of the selection are moved to the end or X samples from the end are moved to the begginning... that is a left or right rotation
 
 	- ASound::bits is probably on longer necessary since we don't support anything different than sample_t's type
-
-	- NAH.... no need right now
-		- split AAction.* into separate files for each class
 
 	- CSoundPlayerChannel could be enhanced to read a mapping in ASound that maps each channel in the ASound with a channel in the player
 		- ??? this is done, except there is no front-end interface to edit the mapping... by default all channels in a sound are assigned, left, right, left, right, etc...

@@ -103,12 +103,12 @@ void CActionParamDialog::addSlider(const string name,const string units,FXConsta
 	retValueConvs.push_back(optRetValueConv);
 }
 
-void CActionParamDialog::addValueEntry(const string name,const string units,const double initialValue)
+void CActionParamDialog::addTextEntry(const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsHelpText)
 {
-	FXConstantParamValue *valueEntry=new FXConstantParamValue(controlsFrame,0,name.c_str());
-	valueEntry->setUnits(units.c_str());
-	valueEntry->setValue(initialValue);
-	parameters.push_back(pair<ParamTypes,void *>(ptConstant,(void *)valueEntry));
+	FXTextParamValue *textEntry=new FXTextParamValue(controlsFrame,0,name.c_str(),minValue,maxValue);
+	textEntry->setUnits(units.c_str(),unitsHelpText.c_str());
+	textEntry->setValue(initialValue);
+	parameters.push_back(pair<ParamTypes,void *>(ptText,(void *)textEntry));
 	retValueConvs.push_back(NULL);
 }
 
@@ -120,6 +120,29 @@ void CActionParamDialog::addGraph(const string name,const string units,FXGraphPa
 	graph->setUnits(units.c_str());
 	parameters.push_back(pair<ParamTypes,void *>(ptGraph,(void *)graph));
 	retValueConvs.push_back(optRetValueConv);
+}
+
+void CActionParamDialog::setValue(size_t index,const double value)
+{
+	switch(parameters[index].first)
+	{
+	case ptConstant:
+		((FXConstantParamValue *)parameters[index].second)->setValue(value);
+		break;
+
+	case ptText:
+		((FXTextParamValue *)parameters[index].second)->setValue(value);
+		break;
+
+	case ptGraph:
+		/*
+		((FXGraphParamValue *)parameters[index].second)->setValue(value);
+		break;
+		*/
+
+	default:
+		throw(runtime_error(string(__func__)+" -- unhandled or unimplemented parameter type: "+istring(parameters[index].first)));
+	}
 }
 
 bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
@@ -148,6 +171,18 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 				{
 					FXConstantParamValue *slider=(FXConstantParamValue *)parameters[t].second;
 					double ret=slider->getValue();
+
+					if(retValueConvs[t]!=NULL)
+						ret=retValueConvs[t](ret);
+
+					actionParameters->addDoubleParameter(ret);	
+				}
+				break;
+
+			case ptText:
+				{
+					FXTextParamValue *textEntry=(FXTextParamValue *)parameters[t].second;
+					double ret=textEntry->getValue();
 
 					if(retValueConvs[t]!=NULL)
 						ret=retValueConvs[t](ret);
@@ -222,6 +257,10 @@ long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void 
 				((FXConstantParamValue *)parameters[t].second)->readFromFile(title,f);
 				break;
 
+			case ptText:
+				((FXTextParamValue *)parameters[t].second)->readFromFile(title,f);
+				break;
+
 			case ptGraph:
 				((FXGraphParamValue *)parameters[t].second)->readFromFile(title,f);
 				break;
@@ -274,6 +313,10 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 				{
 				case ptConstant:
 					((FXConstantParamValue *)parameters[t].second)->writeToFile(title,f);
+					break;
+
+				case ptText:
+					((FXTextParamValue *)parameters[t].second)->writeToFile(title,f);
 					break;
 
 				case ptGraph:

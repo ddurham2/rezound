@@ -48,6 +48,7 @@ libfrontend_la_SOURCES= \
 			EditActionDialogs.cpp \
 			EffectActionDialogs.cpp \
 			FXConstantParamValue.cpp \
+			FXTextParamValue.cpp \
 			FXGraphParamValue.cpp \
 			FXModalDialogBox.cpp \
 			FXRezWaveView.cpp \
@@ -102,6 +103,7 @@ noinst_HEADERS=\
 	EditActionDialogs.h \
 	EffectActionDialogs.h \
 	FXConstantParamValue.h \
+	FXTextParamValue.h \
 	FXGraphParamValue.h \
 	FXModalDialogBox.h \
 	FXRezWaveView.h \

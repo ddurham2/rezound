@@ -427,3 +427,20 @@ Change\ Amplitude\ According\ to\ a\ Curve
 	names[]={"Curved Fade In", "Curved Fade Out", "Linear Fade In", "Linear Fade Out","Mute Very Edges"};
 }
 
+Crossfade\ Edges\ Settings
+{
+	names[]={"Default"};
+	Default
+	{
+		Crossfade\ Start\ Edge
+		{
+			value="10";
+		}
+
+		Crossfade\ Stop\ Edge
+		{
+			value="10";
+		}
+
+	}
+}

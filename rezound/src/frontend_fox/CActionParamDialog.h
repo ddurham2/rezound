@@ -30,7 +30,9 @@ class CActionParamDialog;
 #include <utility>
 
 #include "FXModalDialogBox.h"
+
 #include "FXConstantParamValue.h"
+#include "FXTextParamValue.h"
 #include "FXGraphParamValue.h"
 
 #include "../backend/AAction.h"
@@ -48,8 +50,15 @@ public:
 	CActionParamDialog(FXWindow *mainWindow,const FXString title,int w,int h);
 
 	void addSlider(const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton);
-	void addValueEntry(const string name,const string units,const double initialValue);
+	void addTextEntry(const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsHelpText="");
 	void addGraph(const string name,const string units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar);
+
+	/* 
+	 * index corrisponds to the order that the add...() methods were called 
+	 * and this can only be called for sliders and text entries
+	 */
+
+	void setValue(size_t index,const double value);
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 
@@ -80,10 +89,11 @@ private:
 	enum ParamTypes
 	{
 		ptConstant,
+		ptText,
 		ptGraph
 	};
 
-	// the void * points to either an FXConstantParamValue or an FXGraphParamValue
+	// the void * points to either an FXConstantParamValue, FXTextParamValue or an FXGraphParamValue
 	vector<pair<ParamTypes,void *> > parameters;
 	vector<f_at_x> retValueConvs;
 

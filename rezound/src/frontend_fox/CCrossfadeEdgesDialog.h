@@ -18,26 +18,27 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#include "EditActionDialogs.h"
+#ifndef __CCrossfadeEdgesDialog_H__
+#define __CCrossfadeEdgesDialog_H__
+#include "../../config/common.h"
 
+class CCrossfadeEdgesDialog;
 
-// --- insert silence -------------------------
+#include "CActionParamDialog.h"
 
-CInsertSilenceDialog::CInsertSilenceDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Insert Silence",180,140)
+extern CCrossfadeEdgesDialog *gCrossfadeEdgesDialog;
+
+/* 
+ * I derive from CActionParamDialog even though this isn't a dialog for any action.
+ * I derive from it so that the user can have preset crossfade settings
+ */
+class CCrossfadeEdgesDialog : public CActionParamDialog
 {
-	addTextEntry("Length","seconds",1.0,0,10000);
-}
+public:
+	CCrossfadeEdgesDialog(FXWindow *mainWindow);
 
+	void showIt();
+	//virtual bool validateOnOkay();
+};
 
-
-// --- rotate ---------------------------------
-
-CRotateDialog::CRotateDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Rotate",180,140)
-{
-	addTextEntry("Amount","seconds",1.0,0,10000);
-}
-
-
-
+#endif
