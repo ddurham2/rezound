@@ -39,7 +39,7 @@ public:
 	TStaticPoolAccesser(const TStaticPoolAccesser<pool_element_t,pool_file_t> &src);
 	virtual ~TStaticPoolAccesser();
 
-	const l_addr_t getSize() const { return(poolFile->getPoolSize(poolId)/sizeof(pool_element_t)); }
+	const l_addr_t getSize() const { return poolFile->getPoolSize(poolId)/sizeof(pool_element_t); }
 
 
 	// stream-like access methods
@@ -58,10 +58,10 @@ public:
 			if(poolFile!=NULL)
 				cacheBlock(where);
 			else
-				throw(runtime_error(string(__func__)+" -- TPoolFile object no longer exists"));
+				throw runtime_error(string(__func__)+" -- TPoolFile object no longer exists");
 		}
 		dirty=true;
-		return(cacheBuffer[where-startAddress]);
+		return cacheBuffer[where-startAddress];
 	}
 
 	/* !!! NOTE !!!
@@ -78,9 +78,9 @@ public:
 			if(poolFile!=NULL)
 				cacheBlock(where);
 			else
-				throw(runtime_error(string(__func__)+" const -- CPoolFile object no longer exists"));
+				throw runtime_error(string(__func__)+" const -- CPoolFile object no longer exists");
 		}
-		return(cacheBuffer[where-startAddress]);
+		return cacheBuffer[where-startAddress];
 	}
 
 
