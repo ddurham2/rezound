@@ -1,6 +1,10 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- add file operation icons for all the file operations
+	
+	- improve the two icons, normal_action and advanced_action 12x12 should be a good size
+
 	- Other commercial audio editors do this, and now I think I know why...
 		XXX - When loading a sound it doesn't start zoomed out to see the whole thing.. 
 		- if I had a thread always running in the background low priority, I could be calculating peak chunk information while the user isn't looking
