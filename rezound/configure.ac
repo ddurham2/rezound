@@ -48,9 +48,9 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AM_PROG_LEX 
-	expr z"$LEX" : z".*flex.*" >/dev/null || AC_MSG_ERROR([flex not found (and I have not tested if lex will work)])
+	expr z"$LEX" : z"flex.*" >/dev/null || AC_MSG_ERROR([flex not found (and I have not tested if lex will work)])
 AC_PROG_YACC 
-	expr z"$YACC" : z".*bison.*" >/dev/null || AC_MSG_ERROR([bison not found (and yacc will not work)])
+	expr z"$YACC" : z"bison.*" >/dev/null || AC_MSG_ERROR([bison not found (and yacc will not work)])
 
 AM_PROG_LIBTOOL dnl turn on using libtool
 
