@@ -80,10 +80,9 @@ static unsigned gNumberOfOctaves=11; // is set dynamically at runtime in CArbitr
 static const double interpretValue_freq(const double x,const int s) { return octave_to_freq(x*gNumberOfOctaves,gBaseFrequency); }
 static const double uninterpretValue_freq(const double x,const int s) { return freq_to_octave(x,gBaseFrequency)/gNumberOfOctaves; }
 
-		// ??? perhaps should be done in dB
-static const double interpretValue_coefficient(const double x,const int s) { return x*s; }
-static const double uninterpretValue_coefficient(const double x,const int s) { return x/s; }
-
+// intention: 0dB change is always in the middle, and the range above/below the gets wider or narrower depending on s (but that s is really only a tenth of what it would normally be)
+static const double interpretValue_FIR_change(const double x,const int s) { return scalar_to_dB(x*2)*(s/10.0); }
+static const double uninterpretValue_FIR_change(const double x,const int s) { return dB_to_scalar(x/(s/10.0))/2; }
 
 // define the interpretValue_kernelLength and uninterpretValue_kernelLength functions
 #ifdef HAVE_LIBFFTW
@@ -132,7 +131,7 @@ CArbitraryFIRFilterDialog::CArbitraryFIRFilterDialog(FXWindow *mainWindow) :
 	void *p0=newHorzPanel(NULL);
 		addSlider(p0,"Wet/Dry Mix","%",interpretValue_wetdry_mix,uninterpretValue_wetdry_mix,NULL,100.0,0,0,0,true);
 		void *p1=newVertPanel(p0,false);
-			addGraph(p1,"Frequency Response","Frequency","Hz",interpretValue_freq,uninterpretValue_freq,"Coefficient","x",interpretValue_coefficient,uninterpretValue_coefficient,NULL,1,10,2);
+			addGraph(p1,"Frequency Response","Frequency","Hz",interpretValue_freq,uninterpretValue_freq,"Change","dB",interpretValue_FIR_change,uninterpretValue_FIR_change,dB_to_scalar,-100,100,20);
 			void *p2=newHorzPanel(p1,false);
 				addNumericTextEntry(p2,"Base Frequency","Hz",20,10,1000,"This Sets the Lowest Frequency Displayed on the Graph.\nThis is the Frequency of the First Octave.");
 				addNumericTextEntry(p2,"Number of Octaves","",11,1,15,"This Sets the Number of Octaves Displayed on the Graph.\nBut Note that no Frequency Higher than Half of the Sound's Sampling Rate can be Affected Since it Cannot Contain a Frequency Higher than That.");
