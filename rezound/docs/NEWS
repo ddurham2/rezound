@@ -1,3 +1,6 @@
+rezound-0.11.1beta -- 10/26/2004
+	- Fixed an issue with the way the ALSA audio implementation is chosen
+
 rezound-0.11.0beta -- 10/21/2004
 	- Added native ALSA support so as not to rely on ALSA's OSS emulation
 	- Added a '-p/--play' flag that causes ReZound to play all the files that are loaded from the command line
