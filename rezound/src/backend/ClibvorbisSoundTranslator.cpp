@@ -241,7 +241,7 @@ void ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 			// ??? float is supported by ov_read_float
 		#define BIT_RATE 16
 
-		TAutoBuffer<sample_t> buffer((size_t)((bitRate/8)*4096/sizeof(sample_t)));
+		TAutoBuffer<sample_t> buffer((size_t)((BIT_RATE/8)*4096/sizeof(sample_t)));
 		sample_pos_t pos=0;
 
 		unsigned long count=CPath(filename).getSize();
@@ -259,7 +259,7 @@ void ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 			}
 			else // if(ret>0)
 			{
-				const int chunkSize= ret/((bitRate/8)*channelCount);
+				const int chunkSize= ret/((BIT_RATE/8)*channelCount);
 
 				if((pos+REALLOC_FILE_SIZE)>sound->getLength())
 					sound->addSpace(sound->getLength(),REALLOC_FILE_SIZE);
