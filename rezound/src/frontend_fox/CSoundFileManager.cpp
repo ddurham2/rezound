@@ -30,13 +30,13 @@
 
 #include "../backend/CLoadedSound.h"
 #include "CSoundWindow.h"
-#include "CSoundListWindow.h"
+#include "CMainWindow.h"
 
 #include <fox/fx.h>
 
 CSoundFileManager *gSoundFileManager=NULL;
 
-CSoundFileManager::CSoundFileManager(FXWindow *_mainWindow,ASoundPlayer *_soundPlayer,CNestedDataFile *_loadedRegistryFile) :
+CSoundFileManager::CSoundFileManager(CMainWindow *_mainWindow,ASoundPlayer *_soundPlayer,CNestedDataFile *_loadedRegistryFile) :
 	ASoundFileManager(_soundPlayer,_loadedRegistryFile),
 	mainWindow(_mainWindow)
 {
@@ -48,13 +48,13 @@ CSoundFileManager::~CSoundFileManager()
 
 void CSoundFileManager::createWindow(CLoadedSound *loaded)
 {
-	CSoundWindow *win=new CSoundWindow(mainWindow,loaded);
+	CSoundWindow *win=new CSoundWindow(mainWindow->getParentOfSoundWindows(),loaded);
 	win->create();
+	win->show();
+
+	mainWindow->addSoundWindow(win);
 
 	soundWindows.push_back(win);
-
-	if(gFocusMethod==fmSoundWindowList)
-		gSoundListWindow->addSoundWindow(win);
 
 	win->setActiveState(true);
 }
@@ -67,8 +67,7 @@ void CSoundFileManager::destroyWindow(CLoadedSound *loaded)
 		{
 			CSoundWindow *win=soundWindows[t];
 
-			if(gFocusMethod==fmSoundWindowList)
-				gSoundListWindow->removeSoundWindow(win);
+			mainWindow->removeSoundWindow(win);
 
 			soundWindows.erase(soundWindows.begin()+t);
 
@@ -123,9 +122,7 @@ void CSoundFileManager::updateAfterEdit()
 	if(activeSoundWindow)
 	{
 		activeSoundWindow->updateFromEdit();
-		if(gFocusMethod==fmSoundWindowList)
-			gSoundListWindow->updateWindowName(activeSoundWindow); // incase the filename changed
-
+		mainWindow->updateSoundWindowName(activeSoundWindow);
 	}
 }
 

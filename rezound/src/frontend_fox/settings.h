@@ -30,14 +30,4 @@
 #define CUE_RADIUS 3
 #define CUE_OFF_SCREEN (-(CUE_RADIUS+1000))
 
-/*
- * how sound windows are focused
- */
-enum FocusMethods
-{ 
-	fmFocusButton,		// each sound window has an 'Active' button that one has to press to make that the 'working' sound window
-	fmSoundWindowList 	// there is a toolbar window with a list of all loaded sounds and whichever one is selected is the only sound window visible
-};
-extern FocusMethods gFocusMethod;
-
 #endif

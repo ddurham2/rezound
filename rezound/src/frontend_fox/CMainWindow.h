@@ -29,6 +29,8 @@
 
 #include <fox/fx.h>
 
+class CSoundWindow;
+
 class CMainWindow : public FXMainWindow
 {
 	FXDECLARE(CMainWindow)
@@ -69,6 +71,9 @@ public:
 	void positionShuttleGivenSpeed(double seekSpeed,const string shuttleControlScalar,bool springBack);
 	long onShuttleDialSpringButton(FXObject *sender,FXSelector sel,void *ptr);
 	long onShuttleDialScaleButton(FXObject *sender,FXSelector sel,void *ptr);
+
+	long onSoundListChange(FXObject *sender,FXSelector sel,void *ptr);
+	long onSoundListHotKey(FXObject *sender,FXSelector sel,void *ptr);
 
 	// used to control the shuttle control with the keyboard
 	long onKeyboardSeek(FXObject *sender,FXSelector sel,void *ptr);
@@ -138,9 +143,15 @@ public:
 
 		ID_CLIPBOARD_COMBOBOX,
 
+		ID_SOUND_LIST,
+
 		ID_LAST
 	};
-							  
+
+	void addSoundWindow(CSoundWindow *win);
+	void removeSoundWindow(CSoundWindow *win);
+	void updateSoundWindowName(CSoundWindow *win);
+	FXComposite *getParentOfSoundWindows() { return soundWindowFrame; }
 
 protected:
 
@@ -150,7 +161,8 @@ protected:
 private:
 
 	FXMenuBar 		*menubar;
-	FXHorizontalFrame	*contents;		// top horizontal main frame which contains play controls and action controls
+	FXPacker		*contents;		// top horizontal main frame which contains play controls and action controls
+	FXPacker 		*soundWindowFrame; 	// parent of all sound windows (only one is visible though)
 
 	FXFont *shuttleFont;
 	FXDial *shuttleDial;
@@ -161,6 +173,7 @@ private:
 	FXComboBox	*crossfadeEdgesComboBox;
 	FXComboBox	*clipboardComboBox; // ??? it would however make sense to put this on the edit dialog.. it's just a little wide
 
+	FXList *soundList;
 };
 
 

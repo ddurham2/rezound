@@ -43,11 +43,11 @@ class CReplaceCueActionFactory;
  * This is the window created for each opened sound file
  */
 
-class CSoundWindow : public FXTopWindow
+class CSoundWindow : public FXPacker
 {
 	FXDECLARE(CSoundWindow)
 public:
-	CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound);
+	CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound);
 	virtual ~CSoundWindow();
 
 	void setActiveState(bool isActive);
@@ -81,8 +81,6 @@ public:
 
 		ID_MUTE_BUTTON,
 		ID_INVERT_MUTE_BUTTON,
-
-		ID_ACTIVE_TOGGLE_BUTTON,
 
 		ID_REDRAW_BUTTON,
 
@@ -136,9 +134,6 @@ public:
 	long onEditCue(FXObject *sender,FXSelector sel,void *ptr);
 	long onShowCueList(FXObject *sender,FXSelector sel,void *ptr);
 
-	// focusing handlers
-	long onActiveToggleButton(FXObject *sender,FXSelector sel,void *ptr);
-
 	long onCloseWindow(FXObject *sender,FXSelector sel,void *ptr);
 
 	string shuttleControlScalar;
@@ -158,10 +153,7 @@ private:
 	bool firstTimeShowing;
 	bool closing;
 
-	FXint prevW,prevH;
-
 	/* 
-	                  ======================================= <--- activeToggleButton
 	                  +-------------------------------------+
 	                  | -  -----------------------------  - |
 	                  || ||                             || || <---- waveViewPanel
@@ -180,8 +172,6 @@ private:
 	                  |                                     |
 	                   -------------------------------------
 	*/
-
-	FXToggleButton *activeToggleButton;
 
 	FXHorizontalFrame *statusPanel;
 		FXPacker *playingLED; // there are actually two FXLabels in this packer occupying the same positions that I just use raise() on them to turn the LED on or off

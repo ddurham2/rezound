@@ -24,6 +24,8 @@
 #include <algorithm>
 #include <string>
 
+#include <CPath.h>
+
 #include "CActionMenuCommand.h"
 
 #include "CSoundFileManager.h"
@@ -119,6 +121,8 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CROSSFADE_EDGES_SETTINGS,	CMainWindow::onCrossfadeEdgesSettings),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_CLIPBOARD_COMBOBOX,		CMainWindow::onClipboardComboBox),
+
+	FXMAPFUNC(SEL_CHANGED,			CMainWindow::ID_SOUND_LIST,			CMainWindow::onSoundListChange),
 };
 
 FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
@@ -126,19 +130,21 @@ FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
 #include <fox/fxkeys.h>
 
 CMainWindow::CMainWindow(FXApp* a) :
-	FXMainWindow(a,"ReZound",FOXIcons->icon_logo_32,FOXIcons->icon_logo_16,DECOR_ALL,10,20),
+	FXMainWindow(a,"ReZound",FOXIcons->icon_logo_32,FOXIcons->icon_logo_16,DECOR_ALL,10,20,800,600),
 	shuttleFont(NULL)
 {
 	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X);
 
-	contents=new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 1,1,0,0, 1,0);
+	contents=new FXVerticalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 1,1,0,0, 1,0);
+	
+
+	FXPacker *s,*t;
+
+	s=new FXHorizontalFrame(contents,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
 
 	#define BUTTON_STYLE FRAME_RAISED|LAYOUT_EXPLICIT
-
-	FXPacker *t;
-
 	// build play control buttons
-	FXPacker *playControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 4,4,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
+	FXPacker *playControlsFrame=new FXPacker(new FXPacker(s,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 4,4,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
 		#define PLAY_CONTROLS_BUTTON_STYLE BUTTON_STYLE
 		new FXButton(playControlsFrame,"\tPlay All Once",FOXIcons->play_all_once,this,ID_PLAY_ALL_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,0,32,32);
 		new FXButton(playControlsFrame,"\tPlay Selection Once",FOXIcons->play_selection_once,this,ID_PLAY_SELECTION_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32,0,32,32);
@@ -180,7 +186,7 @@ CMainWindow::CMainWindow(FXApp* a) :
 
 
 	// build miscellaneous buttons
-	FXPacker *miscControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 3,2);
+	FXPacker *miscControlsFrame=new FXPacker(new FXPacker(s,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 3,2);
 		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
 		followPlayPositionButton=new FXCheckButton(miscControlsFrame,"Follow Play Position",this,ID_FOLLOW_PLAY_POSITION_BUTTON);
 		t=new FXHorizontalFrame(miscControlsFrame,0, 0,0,0,0, 0,0,0,0);
@@ -193,6 +199,13 @@ CMainWindow::CMainWindow(FXApp* a) :
 				crossfadeEdgesComboBox->setCurrentItem(0);
 			new FXButton(t,"...\tChange Crossfade Times",NULL,this,ID_CROSSFADE_EDGES_SETTINGS, BUTTON_NORMAL & ~FRAME_THICK);
 		clipboardComboBox=new FXComboBox(miscControlsFrame,8,8, this,ID_CLIPBOARD_COMBOBOX, FRAME_SUNKEN|FRAME_THICK | COMBOBOX_NORMAL|COMBOBOX_STATIC);
+
+	// build sound list 
+	t=new FXPacker(s,LAYOUT_FILL_X|LAYOUT_FILL_Y|FRAME_RIDGE);
+		t=new FXPacker(t,LAYOUT_FILL_X|LAYOUT_FILL_Y | FRAME_SUNKEN|FRAME_THICK, 0,0,0,0, 0,0,0,0, 0,0); // had to do this because FXList won't take that frame style
+			soundList=new FXList(t,0,this,ID_SOUND_LIST,LIST_BROWSESELECT | LAYOUT_FILL_X|LAYOUT_FILL_Y);
+
+	soundWindowFrame=new FXPacker(contents,LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 0,0,0,0, 0,0);
 }
 
 CMainWindow::~CMainWindow()
@@ -260,6 +273,58 @@ void CMainWindow::showAbout()
 			gSettingsRegistry->createKey("SeenAboutDialogCount",istring(atoi(count.c_str())+1));
 	}
 	gAboutDialog->execute(PLACEMENT_SCREEN);
+}
+
+void CMainWindow::addSoundWindow(CSoundWindow *win)
+{
+	// add to sound window list 
+	CPath p(win->loadedSound->getFilename().c_str());
+
+	// if I could, i'd like a two column list where the basename was in the first column and path in the second???
+	soundList->appendItem((p.baseName()+"  "+p.dirName()).c_str(),NULL,win);
+	soundList->setCurrentItem(soundList->getNumItems()-1);
+	soundList->makeItemVisible(soundList->getNumItems()-1);
+}
+
+void CMainWindow::removeSoundWindow(CSoundWindow *win)
+{
+	// remove from sound window list 
+	for(FXint t=0;t<soundList->getNumItems();t++)
+	{
+		if(soundList->getItemData(t)==win)
+		{
+			soundList->removeItem(t);
+			if(soundList->getNumItems()>0)
+			{
+				soundList->setCurrentItem(0);
+				soundList->makeItemVisible(0);
+			}
+			break;
+		}
+	}
+}
+
+void CMainWindow::updateSoundWindowName(CSoundWindow *win)
+{
+	for(FXint t=0;t<soundList->getNumItems();t++)
+	{
+		if(soundList->getItemData(t)==win)
+		{
+			CPath p(win->loadedSound->getFilename().c_str());
+			soundList->setItemText(t,(p.baseName()+"  "+p.dirName()).c_str());
+			break;
+		}
+	}
+}
+
+long CMainWindow::onSoundListChange(FXObject *sender,FXSelector sel,void *ptr)
+{
+	FXint index=(FXint)ptr;
+
+	if(index>=0 && index<soundList->getNumItems())
+		((CSoundWindow *)soundList->getItemData(index))->setActiveState(true);
+
+	return 1;
 }
 
 
@@ -837,5 +902,4 @@ long CMainWindow::onDebugButton(FXObject *sender,FXSelector sel,void *ptr)
 	
 	return(1);
 }
-
 

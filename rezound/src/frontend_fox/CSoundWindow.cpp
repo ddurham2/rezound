@@ -22,16 +22,9 @@ static void playTrigger(void *Pthis);
 
 /*
  * TODO
- * 	- figure out why I can't get all the decorations to show when the window pops up
- *		- well, all window managers EXCEPT enlightenment and blackbox to have a resizable border for CSoundWindow
- *
  * 	- change the clicking on the + and - signs go between 0, 25, 50, 100 
  *
  * 	- maybe replace the +/- signs with little magnifying glass icons
- *
- * 	- I may need to delete the FXIcon objects I'm creating
- *
- * 	- create a better way of placing the newly created sound window, below the mainWindow and right of the edit tool bar
  */
 
 #include "CSoundWindow.h"
@@ -102,12 +95,10 @@ FXDEFMAP(CSoundWindow) CSoundWindowMap[]=
 	FXMAPFUNC(FXRezWaveView::SEL_EDIT_CUE,CSoundWindow::ID_WAVEVIEW,			CSoundWindow::onEditCue),
 	FXMAPFUNC(FXRezWaveView::SEL_SHOW_CUE_LIST,CSoundWindow::ID_WAVEVIEW,			CSoundWindow::onShowCueList),
 
-	FXMAPFUNC(SEL_COMMAND,			CSoundWindow::ID_ACTIVE_TOGGLE_BUTTON,		CSoundWindow::onActiveToggleButton),
-
 	FXMAPFUNC(SEL_CLOSE,			0,						CSoundWindow::onCloseWindow),
 };
 
-FXIMPLEMENT(CSoundWindow,FXTopWindow,CSoundWindowMap,ARRAYNUMBER(CSoundWindowMap))
+FXIMPLEMENT(CSoundWindow,FXPacker,CSoundWindowMap,ARRAYNUMBER(CSoundWindowMap))
 
 
 void playTrigger(void *Pthis)
@@ -120,8 +111,8 @@ void playTrigger(void *Pthis)
 
 // ----------------------------------------------------------
 
-CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
-	FXTopWindow(mainWindow,_loadedSound->getFilename().c_str(),FOXIcons->icon_logo_32,FOXIcons->icon_logo_16,DECOR_ALL, 10,mainWindow->getY()+mainWindow->getDefaultHeight()+40,750,400, 0,0,0,0, 0,0),
+CSoundWindow::CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound) :
+	FXPacker(parent,LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 0,0,0,0, 0,0),
 
 	shuttleControlScalar("100x"),
 	shuttleControlSpringBack(true),
@@ -131,11 +122,6 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 	timerHandle(NULL),
 	firstTimeShowing(true),
 	closing(false),
-
-	prevW(-1),
-	prevH(-1),
-
-	activeToggleButton(gFocusMethod==fmFocusButton ? new FXToggleButton(this,"Not Active","Active",NULL,NULL,this,ID_ACTIVE_TOGGLE_BUTTON,TOGGLEBUTTON_NORMAL | LAYOUT_FILL_X|LAYOUT_SIDE_TOP, 0,0,0,0, 1,1,1,1) : NULL),
 
 	statusPanel(new FXHorizontalFrame(this,FRAME_RIDGE | LAYOUT_SIDE_BOTTOM | LAYOUT_FILL_X, 0,0,0,0, 2,2,3,3, 1,0)),
 
@@ -166,19 +152,10 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 	playingLEDOn(false),
 	pausedLEDOn(false)
 {
-	delete getAccelTable(); // delete the existing one to setup a new one
-	setAccelTable(mainWindow->getAccelTable());
-
 	new FXButton(horzZoomPanel,"Redraw",NULL,this,ID_REDRAW_BUTTON,FRAME_RAISED | LAYOUT_SIDE_RIGHT | LAYOUT_FILL_Y);
 
 	waveView->setTarget(this);
 	waveView->setSelector(ID_WAVEVIEW);
-
-	if(activeToggleButton!=NULL)
-	{
-		activeToggleButton->setState(false);
-		//activeToggleButton->setFocusRectangleStyle to nothing...
-	}
 
 	recreateMuteButtons(false);
 	
@@ -265,8 +242,6 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 
 CSoundWindow::~CSoundWindow()
 {
-	setAccelTable(NULL); // unset it since ~FXWindow delete's it and ours is global
-
 	if(timerHandle!=NULL)
 		getApp()->removeTimeout(timerHandle);
 
@@ -315,46 +290,24 @@ void CSoundWindow::recreateMuteButtons(bool callCreate)
 void CSoundWindow::setActiveState(bool isActive)
 {
 	if(isActive)
-		static_cast<CMainWindow *>(getOwner())->positionShuttleGivenSpeed(loadedSound->channel->getSeekSpeed(),shuttleControlScalar,shuttleControlSpringBack);
-
-	if(gFocusMethod==fmFocusButton)
 	{
-		activeToggleButton->setBackColor(isActive ? FXRGB(230,230,230) : FXRGB(25,25,25));
-		activeToggleButton->setTextColor(isActive ? FXRGB(0,0,0) : FXRGB(255,255,255));
-		activeToggleButton->setFrameStyle(isActive ? (FRAME_THICK|FRAME_RAISED) : (FRAME_THICK|FRAME_SUNKEN));
-		activeToggleButton->setState(isActive);
-
-		if(isActive)
-		{
-			gSoundFileManager->untoggleActiveForAllSoundWindows(this);
-			raise();
-		}
+		static_cast<CMainWindow *>(getOwner()->getOwner()->getOwner())->positionShuttleGivenSpeed(loadedSound->channel->getSeekSpeed(),shuttleControlScalar,shuttleControlSpringBack);
+		recalc();
+		show();
+		gSoundFileManager->untoggleActiveForAllSoundWindows(this);
 	}
-	else if(gFocusMethod==fmSoundWindowList)
-	{
-		if(isActive)
-		{
-			show();
-			gSoundFileManager->untoggleActiveForAllSoundWindows(this);
-		}
-		else
-			hide();
-	}
+	else
+		hide();
 }
 
 bool CSoundWindow::getActiveState() const
 {
-	if(gFocusMethod==fmFocusButton)
-		return(activeToggleButton->getState() ? true : false);
-	else if(gFocusMethod==fmSoundWindowList)
-		return(shown());
-	else
-		throw(runtime_error(string(__func__)+" -- unhandle gFocusMethod: "+istring(gFocusMethod)));
+	return(shown());
 }
 
 void CSoundWindow::show()
 {
-	FXTopWindow::show();
+	FXPacker::show();
 	if(firstTimeShowing)
 	{
 			// approximately show 10 (setting) seconds of sound (apx because we haven't done layout yet)
@@ -413,7 +366,6 @@ void CSoundWindow::updateFromEdit()
 		*/
 	}
 
-	setTitle(loadedSound->getFilename().c_str()); // incase the filename changed
 	waveView->updateFromEdit();
 	//onHorzZoomDialChange(NULL,0,NULL);
 	updateAllStatusInfo();
@@ -495,20 +447,7 @@ void CSoundWindow::centerStopPos()
 
 void CSoundWindow::create()
 {
-	FXTopWindow::create();
-
-
-	if(gFocusMethod==fmFocusButton)
-	{
-		FXTopWindow::show(PLACEMENT_VISIBLE);
-
-		#define OFFSET_AMOUNT 35
-		
-		// each time a window opens, offset it a little
-		static FXint offset=-OFFSET_AMOUNT;
-		offset=(offset+OFFSET_AMOUNT)%(OFFSET_AMOUNT*10);
-		move(getX()+offset,getY()+offset);
-	}
+	FXPacker::create();
 
 	updateAllStatusInfo();
 
@@ -793,15 +732,6 @@ long CSoundWindow::onShowCueList(FXObject *sender,FXSelector sel,void *ptr)
 {
 	gCueListDialog->setLoadedSound(loadedSound);
 	gCueListDialog->execute(PLACEMENT_CURSOR);
-	return 1;
-}
-
-
-// focusing handlers
-long CSoundWindow::onActiveToggleButton(FXObject *sender,FXSelector sel,void *ptr)
-{
-	setActiveState(true);
-	activeToggleButton->killFocus();
 	return 1;
 }
 

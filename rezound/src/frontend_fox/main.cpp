@@ -155,7 +155,6 @@ int main(int argc,char *argv[])
 #include "CCueListDialog.h"
 #include "CUserNotesDialog.h"
 #include "CCrossfadeEdgesDialog.h"
-#include "CSoundListWindow.h"
 
 void setupWindows(CMainWindow *mainWindow)
 {
@@ -179,12 +178,6 @@ void setupWindows(CMainWindow *mainWindow)
 		// create the dialog used to set the length of the crossfade on the edges
 		gCrossfadeEdgesDialog=new CCrossfadeEdgesDialog(mainWindow);
 
-		if(gFocusMethod==fmSoundWindowList)
-		{
-			gSoundListWindow=new CSoundListWindow(mainWindow);
-			gSoundListWindow->create();
-		}
-
 		// create the tool bars in CMainWindow
 		mainWindow->createMenus();
 }
@@ -203,9 +196,9 @@ void setupAccels(CMainWindow *mainWindow)
 	at->addAccel(KEY_2 ,mainWindow,MKUINT(CMainWindow::ID_SEEK_MODIFY,SEL_COMMAND));
 	at->addAccel(KEY_3 ,mainWindow,MKUINT(CMainWindow::ID_SEEK_RIGHT,SEL_COMMAND),MKUINT(CMainWindow::ID_SEEK_NORMAL,SEL_COMMAND));
 
-
 	// view
 	at->addAccel(KEY_z ,mainWindow,MKUINT(CMainWindow::ID_CENTER_START_POS,SEL_COMMAND));
 	at->addAccel(KEY_x ,mainWindow,MKUINT(CMainWindow::ID_CENTER_STOP_POS,SEL_COMMAND));
 }
+
 

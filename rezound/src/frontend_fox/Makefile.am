@@ -42,7 +42,6 @@ libfrontend_la_SOURCES= \
 			CProgressDialog.cpp \
 			CSoundFileManager.cpp \
 			CFrontendHooks.cpp \
-			CSoundListWindow.cpp \
 			CSoundWindow.cpp \
 			CStatusComm.cpp \
 			CUserNotesDialog.cpp \
@@ -113,7 +112,6 @@ noinst_HEADERS=\
 	CProgressDialog.h \
 	CSoundFileManager.h \
 	CFrontendHooks.h \
-	CSoundListWindow.h \
 	CSoundWindow.h \
 	CStatusComm.h \
 	CUserNotesDialog.h \
