@@ -122,39 +122,39 @@ void CSoundPlayerChannel::play(bool _playLooped,bool _playSelectionOnly)
 	if(!player->isInitialized())
 		throw(runtime_error(string(__func__)+" -- the sound player is not initialized"));
 
-	if(!playing)
+	if(playing)
+		stop();
+
+	// zero out previous frame for interpolation
+	for(size_t t=0;t<MAX_CHANNELS;t++)
+		prevFrame[t]=0;
+
+	playLooped=_playLooped;
+	playSelectionOnly=_playSelectionOnly;
+	if(playSelectionOnly)
 	{
-		// zero out previous frame for interpolation
-		for(size_t t=0;t<MAX_CHANNELS;t++)
-			prevFrame[t]=0;
+		prebufferPosition=startPosition;
+		playPosition=startPosition;
+	}
+	else
+	{
+		prebufferPosition=0;
+		playPosition=0;
+	}
 
-		playLooped=_playLooped;
-		playSelectionOnly=_playSelectionOnly;
-		if(playSelectionOnly)
-		{
-			prebufferPosition=startPosition;
-			playPosition=startPosition;
-		}
-		else
-		{
-			prebufferPosition=0;
-			playPosition=0;
-		}
-	
-		prebuffering=true;
-		playing=true;
-		paused=false;
-		playTrigger.trip();
-		pauseTrigger.trip();
+	prebuffering=true;
+	playing=true;
+	paused=false;
+	playTrigger.trip();
+	pauseTrigger.trip();
 
-		prebufferedChunkPipe.clear();
+	prebufferedChunkPipe.clear();
 
-		// prime the pipe with a couple of chunks of data
-		if(!prebufferChunk() && !prebufferChunk())
-		{
-			CMutexLocker l(prebufferThread.waitForPlayMutex);
-			prebufferThread.waitForPlay.signal(); // take the prebuffer thread out of its wait-state
-		}
+	// prime the pipe with a couple of chunks of data
+	if(!prebufferChunk() && !prebufferChunk())
+	{
+		CMutexLocker l(prebufferThread.waitForPlayMutex);
+		prebufferThread.waitForPlay.signal(); // take the prebuffer thread out of its wait-state
 	}
 }
 
