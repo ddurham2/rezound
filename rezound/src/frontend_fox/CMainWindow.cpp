@@ -57,6 +57,7 @@
 /* TODO:
  * 	- put gap after repeating and other toggles
  * 
+ * 	- it is necesary for the owner to specifically delete the FXMenuPane objects it creates
  */
 
 FXDEFMAP(CMainWindow) CMainWindowMap[]=
