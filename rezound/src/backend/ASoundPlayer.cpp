@@ -25,6 +25,8 @@
 #include "CSound.h"
 #include "CSoundPlayerChannel.h"
 
+#include "settings.h"
+
 #include "unit_conv.h"
 
 ASoundPlayer::ASoundPlayer()
@@ -38,12 +40,14 @@ ASoundPlayer::~ASoundPlayer()
 void ASoundPlayer::initialize()
 {
 	for(unsigned t=0;t<MAX_CHANNELS;t++)
+	{
 		maxRMSLevels[t]=peakLevels[t]=0;
+		resetMaxRMSLevels[t]=resetPeakLevels[t]=false;
+	}
 
 	// only handling the first device ???
 	for(unsigned t=0;t<devices[0].channelCount;t++)
-								// 50 ms cause I know that's the frame-rate time I hard coded in the frontend (CMetersWindow.cpp)
-		RMSLevelDetectors[t].setWindowTime(ms_to_samples(50.0,devices[0].sampleRate));
+		RMSLevelDetectors[t].setWindowTime(ms_to_samples(gMeterRMSWindowTime,devices[0].sampleRate));
 }
 
 void ASoundPlayer::deinitialize()
@@ -86,8 +90,10 @@ void ASoundPlayer::mixSoundPlayerChannels(const unsigned nChannels,sample_t * co
 	for(unsigned i=0;i<nChannels;i++)
 	{
 		size_t p=i;
-		sample_t peak=peakLevels[i];
-		sample_t maxRMSLevel=maxRMSLevels[i];
+		sample_t peak=resetPeakLevels[i] ? 0 : peakLevels[i];
+		resetPeakLevels[i]=false;
+		sample_t maxRMSLevel=resetMaxRMSLevels[i] ? 0 : maxRMSLevels[i];
+		resetMaxRMSLevels[i]=false;
 		for(size_t t=0;t<bufferSize;t++)
 		{
 			// m = max(m,abs(buffer[p]);
@@ -126,14 +132,14 @@ const sample_t ASoundPlayer::getRMSLevel(unsigned channel) const
 {
 	//return RMSLevelDetectors[channel].readCurrentLevel();
 	const sample_t r=maxRMSLevels[channel];
-	maxRMSLevels[channel]=0;
+	resetMaxRMSLevels[channel]=true;
 	return r;
 }
 
 const sample_t ASoundPlayer::getPeakLevel(unsigned channel) const
 {
 	const sample_t p=peakLevels[channel];
-	peakLevels[channel]=0;
+	resetPeakLevels[channel]=true;
 	return p;
 }
 
