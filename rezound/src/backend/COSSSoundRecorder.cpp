@@ -304,11 +304,18 @@ void COSSSoundRecorder::CRecordThread::main()
 			redoMutexLocked=true;
 */
 
-			int len;
+			int len,err;
 			if((len=read(parent->audio_fd,buffer,BUFFER_SIZE_BYTES))!=BUFFER_SIZE_BYTES)
-				fprintf(stderr,"warning: didn't read whole buffer -- only read %d of %d bytes\n",len,BUFFER_SIZE_BYTES);
+			{
+				if(len==-1)
+					fprintf(stderr,"warning: error returned by read() function -- %s\n",strerror(errno));
+				else
+					fprintf(stderr,"warning: didn't read whole buffer -- only read %d of %d bytes\n",len,BUFFER_SIZE_BYTES);
+			}
 
-			parent->onData(buffer,len/(sizeof(sample_t)*parent->getChannelCount()));
+			if(len!=-1)
+				parent->onData(buffer,len/(sizeof(sample_t)*parent->getChannelCount()));
+			// else wait a few milliseconds?
 
 /*
 			redoMutexLocked=false;
