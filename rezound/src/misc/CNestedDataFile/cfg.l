@@ -384,6 +384,8 @@ static char *quote(const char *input,int &length)
 
 void cfg_init()
 {
+	myyynerrs=0;
+
 	while(!scopeStack.empty())
 		scopeStack.pop();
 
