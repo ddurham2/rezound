@@ -269,7 +269,7 @@ CArbitraryFIRFilterDialog::CArbitraryFIRFilterDialog(FXWindow *mainWindow) :
 				freqMapper=new CActionParamMapper_arbitraryFIRFilter_freq,
 				N_("Change"),
 				"dB",
-				new CActionParamMapper_arbitraryFIRFilter_amp(1.0,20,-100,100),
+				new CActionParamMapper_arbitraryFIRFilter_amp(0.0,20,-100,100),
 				dB_to_scalar
 			);
 
@@ -363,7 +363,7 @@ CMorphingArbitraryFIRFilterDialog::CMorphingArbitraryFIRFilterDialog(FXWindow *m
 				freqMapper=new CActionParamMapper_arbitraryFIRFilter_freq,
 				N_("Change"),
 				"dB",
-				new CActionParamMapper_arbitraryFIRFilter_amp(1.0,20,-100,100),
+				new CActionParamMapper_arbitraryFIRFilter_amp(0.0,20,-100,100),
 				dB_to_scalar
 			);
 
@@ -379,7 +379,7 @@ CMorphingArbitraryFIRFilterDialog::CMorphingArbitraryFIRFilterDialog(FXWindow *m
 				freqMapper,
 				N_("Change"),
 				"dB",
-				new CActionParamMapper_arbitraryFIRFilter_amp(1.0,20,-100,100),
+				new CActionParamMapper_arbitraryFIRFilter_amp(0.0,20,-100,100),
 				dB_to_scalar
 			);
 			

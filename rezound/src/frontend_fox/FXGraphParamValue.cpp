@@ -454,13 +454,11 @@ void FXGraphParamValue::clearNodes()
 {
 	nodes.clear();
 
-#warning could make use of the default values that the mapper returns for the initial nodes (use uninterpretValue here)
-
 	// add endpoints
-	CGraphParamValueNode first(0.0,0.5);
+	CGraphParamValueNode first(0.0,vertValueMapper==NULL ? 0.5 : vertValueMapper->uninterpretValue(vertValueMapper->getDefaultValue()));
 	nodes.push_back(first);
 
-	CGraphParamValueNode last(1.0,0.5);
+	CGraphParamValueNode last(1.0,vertValueMapper==NULL ? 0.5 : vertValueMapper->uninterpretValue(vertValueMapper->getDefaultValue()));
 	nodes.push_back(last);
 
 	graphCanvas->update();

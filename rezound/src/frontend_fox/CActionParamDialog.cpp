@@ -77,7 +77,8 @@ CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,bool _showPresetPane
 			nativePresetList(NULL),
 			userPresetList(NULL),
 
-	presetPrefix(_presetPrefix=="" ? "" : _presetPrefix DOT "")
+	presetPrefix(_presetPrefix=="" ? "" : _presetPrefix DOT ""),
+	firstShowing(true)
 {
 	disableFrameDecor();
 
@@ -521,10 +522,16 @@ bool CActionParamDialog::show(CActionSound *actionSound,CActionParameters *actio
 	for(size_t t=0;t<parameters.size();t++)
 	{
 		if(parameters[t].first==ptGraphWithWaveform)
+		{
 			((FXGraphParamValue *)parameters[t].second)->setSound(actionSound->sound,actionSound->start,actionSound->stop);
+			if(firstShowing)
+				((FXGraphParamValue *)parameters[t].second)->clearNodes();
+		}
 		else if(parameters[t].first==ptPluginRouting)
 			((FXPluginRoutingParamValue *)parameters[t].second)->setSound(actionSound->sound);
 	}
+
+	firstShowing=false;
 
 reshow:
 

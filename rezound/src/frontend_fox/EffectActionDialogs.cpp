@@ -239,10 +239,10 @@ CDistortionDialog::CDistortionDialog(FXWindow *mainWindow) :
 			N_("Curve"),
 			N_("Input"),
 			"dBFS",
-			new CActionParamMapper_dBFS(0),
+			new CActionParamMapper_dBFS(-6.0),
 			N_("Output"),
 			"dBFS",
-			new CActionParamMapper_dBFS(0),
+			new CActionParamMapper_dBFS(-6.0),
 			NULL
 		);
 }

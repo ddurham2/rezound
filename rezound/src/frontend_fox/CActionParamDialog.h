@@ -178,6 +178,8 @@ private:
 
 	unsigned findParamByName(const string name) const;
 
+	bool firstShowing;
+
 };
 
 #endif
