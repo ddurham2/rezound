@@ -128,7 +128,10 @@ const string CNestedDataFile::getValue(const char *key,bool throwIfNotExists) co
 	case ktString:
 		return(value->stringValue);
 	case ktFloat:
-		return(istring(value->floatValue));
+		if(value->floatValue>999999.0)
+			return(istring(value->floatValue,24,12).ltrim());
+		else
+			return(istring(value->floatValue));
 	case ktScope:
 		throw(runtime_error(string(__func__)+" -- '"+string(key)+"' resolves to a scope, not a value from file: "+filename));
 	default:
@@ -168,7 +171,10 @@ const string CNestedDataFile::getArrayValue(const char *key,size_t index,bool th
 	case ktString:
 		return(value->arrayValue[index].stringValue);
 	case ktFloat:
-		return(istring(value->arrayValue[index].floatValue));
+		if(value->arrayValue[index].floatValue>999999.0)
+			return(istring(value->arrayValue[index].floatValue,24,12).ltrim());
+		else
+			return(istring(value->arrayValue[index].floatValue));
 	default:
 		throw(runtime_error(string(__func__)+" -- internal error: unhandled type: '"+istring(value->arrayValue[index].type)+"' from file: "+filename));
 	}
@@ -539,7 +545,10 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant) 
 
 	case ktFloat:
 		// ??? I may want to do a better job of making sure I don't truncate any necessary percision on outputing the value
-		fprintf(f,"%s=%f;\n",name.c_str(),variant->floatValue);
+		if(variant->floatValue>999999.0)
+			fprintf(f,"%s=%.12e;\n",name.c_str(),variant->floatValue);
+		else
+			fprintf(f,"%s=%f;\n",name.c_str(),variant->floatValue);
 		break;
 
 	case ktScope:
@@ -595,7 +604,10 @@ void CNestedDataFile::prvWriteData(void *_f,int indent,const CVariant *variant) 
 				fprintf(f,"\"%s\"",variant->arrayValue[t].stringValue.c_str());
 				break;
 			case ktFloat:
-				fprintf(f,"%f",variant->arrayValue[t].floatValue);
+				if(variant->arrayValue[t].floatValue>999999.0)
+					fprintf(f,"%.12e",variant->arrayValue[t].floatValue);
+				else
+					fprintf(f,"%f",variant->arrayValue[t].floatValue);
 				break;
 			default:
 				throw(runtime_error(string(__func__)+" -- internal error: unhandled type while writing array: "+istring(variant->arrayValue[t].type)+" from file: "+filename));

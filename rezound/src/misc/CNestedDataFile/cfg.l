@@ -73,7 +73,7 @@ string currentFilename;
 
 
 
-(([0-9]*\.[0-9]+)|([0-9]+))		{ yylval.floatValue=atof(yytext); return(LIT_NUMBER); }
+(([0-9]*\.[0-9]+(e[\-+]?[0-9]+)?)|([0-9]+))		{ yylval.floatValue=atof(yytext); return(LIT_NUMBER); }
 
 ([_0-9A-Za-z]|(\\[\x20-\x7e]))+	{ 
 		if(strcmp(yytext,"include")==0)
