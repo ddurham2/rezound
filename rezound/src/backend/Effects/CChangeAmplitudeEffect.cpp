@@ -116,7 +116,7 @@ CChangeAmplitudeEffectFactory::CChangeAmplitudeEffectFactory(AActionDialog *chan
 CChangeAmplitudeEffect *CChangeAmplitudeEffectFactory::manufactureAction(const CActionSound &actionSound,const CActionParameters *actionParameters,bool advancedMode) const
 {
 	if(actionParameters->getGraphParameter(0).size()<2)
-		throw(runtime_error(string(__func__)+" -- nodes contains less than 2 nodes"));
+		throw(runtime_error(string(__func__)+" -- graph parameter 0 contains less than 2 nodes"));
 
 	return(new CChangeAmplitudeEffect(actionSound,actionParameters->getGraphParameter(0)));
 }
