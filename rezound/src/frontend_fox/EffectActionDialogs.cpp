@@ -167,7 +167,7 @@ CQuantizeDialog::CQuantizeDialog(FXWindow *mainWindow) :
 	void *p=newHorzPanel(NULL);
 		addSlider(p,"Input Gain","x",interpretValue_quantizeGain,uninterpretValue_quantizeGain,NULL,1.0,2,100,2,true);
 		addSlider(p,"Quantum Count","",interpretValue_quantize,uninterpretValue_quantize,NULL,8,4,1000000,32,false);
-			setTipText(1,"The Number of Possible Sample Values Above Zero");
+			setTipText("Quantum Count","The Number of Possible Sample Values Above Zero");
 		addSlider(p,"Output Gain","x",interpretValue_quantizeGain,uninterpretValue_quantizeGain,NULL,1.0,2,100,2,true);
 
 }
