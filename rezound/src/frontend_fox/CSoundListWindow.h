@@ -52,6 +52,7 @@ public:
 
 	void addSoundWindow(CSoundWindow *window);
 	void removeSoundWindow(CSoundWindow *window);
+	void updateWindowName(CSoundWindow *window);
 
 protected:
 	CSoundListWindow() {}

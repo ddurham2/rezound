@@ -211,9 +211,9 @@ void CSoundFileManager::redrawActive()
 	{
 		activeSoundWindow->setTitle(activeSoundWindow->loadedSound->getSound()->getFilename().c_str());
 		activeSoundWindow->updateFromEdit();
-		//updateAll(activeSoundWindow);
-		//activeSoundWindow->layout(); // ??? I should be able to do something less expensive than re-layout-ing the whole CSoundWindow, but just the waveView
-		//activeSoundWindow->flush();
+		if(gFocusMethod==fmSoundWindowList)
+			gSoundListWindow->updateWindowName(activeSoundWindow);
+
 	}
 }
 

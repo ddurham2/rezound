@@ -119,6 +119,20 @@ void CSoundListWindow::removeSoundWindow(CSoundWindow *window)
 	hideOrShow();
 }
 
+void CSoundListWindow::updateWindowName(CSoundWindow *window)
+{
+	for(FXint t=0;t<soundList->getNumItems();t++)
+	{
+		if(soundList->getItemData(t)==window)
+		{
+			ost::Path p(window->loadedSound->getSound()->getFilename().c_str());
+			soundList->setItemText(t,(p.BaseName()+"  "+p.DirName()).c_str());
+			break;
+		}
+	}
+
+}
+
 void CSoundListWindow::hideOrShow()
 {
 	if(soundList->getNumItems()>1)
