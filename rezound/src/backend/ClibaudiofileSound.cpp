@@ -393,8 +393,9 @@ void ClibaudiofileSound::saveSound(const string filename)
 bool ClibaudiofileSound::supportsFormat(const string filename)
 {
 	int fd=open(filename.c_str(),O_RDONLY);
+	int _e=errno;
 	if(fd==-1)
-		return(false);
+		throw(runtime_error(string(__func__)+" -- error opening file '"+filename+"' -- "+strerror(_e)));
 
 	int implemented=0;
 	int id=afIdentifyNamedFD(fd,filename.c_str(),&implemented);
