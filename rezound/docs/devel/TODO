@@ -157,6 +157,7 @@
 
 	- I could determine the most recent cue passed while playing at the beginning of each time I go to mix some sound... and set just an integer index in the ASoundPlayerChannel object for the frontend to read and display the current playing cue name in a status bar
 		- I'm not implementing this right away because I don't know how useful it would be... But there were lots of off screen cues, it could be useful to have an idea of where the sound was playing 
+		- If I do implement this, I should create a method in ASound which returns the most recent cue, and call it at each mix buffer call... This method should use the cue index in ASound for effient finding of this value
 
 	- for multi-track editing, I could create a derivation of ASound that wraps around a given ASound that returns peak data according to the volume envelopes
 		- I would need to address how real-time effects get inserted into the play queue, perhaps ASoundPlayer could support that or CSoundPlayerChannel could contain the logic to mixData onto the buffer...
