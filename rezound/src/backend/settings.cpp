@@ -97,17 +97,17 @@ float gSkipMiddleMarginSeconds=2.0;
 float gLoopGapLengthSeconds=0.75;
 
 
-bool gLevelMetersEnabled=true;
-bool gFrequencyAnalyzerEnabled=true;
-
-
 double gInitialLengthToShow=120.0; // default 120 seconds
 
 
 unsigned gMeterUpdateTime=50;
+
+bool gLevelMetersEnabled=true;
 unsigned gMeterRMSWindowTime=200;
 unsigned gMaxPeakFallDelayTime=500;
 double gMaxPeakFallRate=0.02;
+
+bool gFrequencyAnalyzerEnabled=true;
 unsigned gAnalyzerPeakFallDelayTime=400;
 double gAnalyzerPeakFallRate=0.025;
 
