@@ -150,7 +150,7 @@ public:
 				//dc.drawLine(getWidth()-2,renderY,getWidth()-5,renderY); // half way tick between labled ticks
 		}
 
-		return(0);
+		return 0;
 	}
 
 protected:
@@ -259,7 +259,7 @@ public:
 				//dc.drawLine(getWidth()-2,renderY,getWidth()-5,renderY); // half way tick between labled ticks
 		}
 
-		return(0);
+		return 0;
 	}
 
 protected:
@@ -299,6 +299,10 @@ FXDEFMAP(FXGraphParamValue) FXGraphParamValueMap[]=
 
 	FXMAPFUNC(SEL_COMMAND,			FXGraphParamValue::ID_SCALAR_SPINNER,	FXGraphParamValue::onScalarSpinnerChange),
 	FXMAPFUNC(SEL_COMMAND,			FXGraphParamValue::ID_CLEAR_BUTTON,	FXGraphParamValue::onPatternButton),
+
+	FXMAPFUNC(SEL_CHANGED,			FXGraphParamValue::ID_HORZ_DEFORM_SLIDER,FXGraphParamValue::onHorzDeformSliderChange),
+	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	FXGraphParamValue::ID_HORZ_DEFORM_SLIDER,FXGraphParamValue::onHorzDeformSliderReset),
+	FXMAPFUNC(SEL_CHANGED,			FXGraphParamValue::ID_VERT_DEFORM_SLIDER,FXGraphParamValue::onVertDeformSliderChange),
 };
 
 FXIMPLEMENT(FXGraphParamValue,FXPacker,FXGraphParamValueMap,ARRAYNUMBER(FXGraphParamValueMap))
@@ -318,6 +322,8 @@ FXGraphParamValue::FXGraphParamValue(const string _title,const int minScalar,con
 	statusPanel(new FXHorizontalFrame(this,FRAME_NONE | LAYOUT_SIDE_BOTTOM | LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 4,0)),
 		horzValueLabel(new FXLabel(statusPanel,": ",NULL,LAYOUT_LEFT)),
 		vertValueLabel(new FXLabel(statusPanel,": ",NULL)),
+	horzDeformPanel(new FXHorizontalFrame(this,FRAME_NONE | LAYOUT_SIDE_BOTTOM | LAYOUT_FILL_X,0,0,0,0, 8,8,2,2, 0,0)),
+		horzDeformSlider(new FXSlider(horzDeformPanel,this,ID_HORZ_DEFORM_SLIDER,SLIDER_HORIZONTAL|LAYOUT_FILL_X|SLIDER_TICKS_TOP|SLIDER_ARROW_UP,0,0,0,0)),
 	graphPanelParent(new FXPacker(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0)),
 		graphPanel(new FXCanvas(graphPanelParent,this,ID_GRAPH_PANEL,LAYOUT_FILL_X|LAYOUT_FILL_Y)),
 
@@ -347,6 +353,14 @@ FXGraphParamValue::FXGraphParamValue(const string _title,const int minScalar,con
         textFont->getFontDesc(d);
         d.size-=10;
         textFont=new FXFont(getApp(),d);
+
+	
+	const int deformSliderRange=4000;
+	horzDeformSlider->setRange(-deformSliderRange,deformSliderRange); // symmetry is assumed when the slider is used (and horz and very should be the same
+	horzDeformSlider->setTickDelta((deformSliderRange*2+1)/(11-1)); // 11 tick marks
+	horzDeformSlider->setValue(0);
+	horzDeformSlider->setTipText("Horizontally Deform the Nodes Toward One Side or the Other\nRight-Click to Reset to the Middle");
+
 
 	// just to give a minimum width and height to the panel
 	new FXFrame(this,LAYOUT_FIX_WIDTH | FRAME_NONE | LAYOUT_SIDE_TOP, 0,0,500,0, 0,0,0,0);
@@ -434,16 +448,51 @@ void FXGraphParamValue::clearNodes()
 long FXGraphParamValue::onScalarSpinnerChange(FXObject *sender,FXSelector sel,void *ptr)
 {
 	updateNumbers();
-	return(1);
+	return 1;
 }
 
 long FXGraphParamValue::onPatternButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-	clearNodes();
+	switch(FXSELID(sel))
+	{
+	case ID_CLEAR_BUTTON:
+		horzDeformSlider->setValue(0);
+		//vertDeformSlider->setValue(0);
+		clearNodes();
+		break;
+
+	}
 
 	graphPanel->update();
-	return(1);
+	return 1;
 }
+
+long FXGraphParamValue::onHorzDeformSliderChange(FXObject *sender,FXSelector sel,void *ptr)
+{
+	graphPanel->update();
+	return 1;
+}
+
+long FXGraphParamValue::onVertDeformSliderChange(FXObject *sender,FXSelector sel,void *ptr)
+{
+	graphPanel->update();
+	return 1;
+}
+
+long FXGraphParamValue::onHorzDeformSliderReset(FXObject *sender,FXSelector sel,void *ptr)
+{
+	horzDeformSlider->setValue(0);
+	graphPanel->update();
+	return 1;
+}
+
+long FXGraphParamValue::onVertDeformSliderReset(FXObject *sender,FXSelector sel,void *ptr)
+{
+	//vertDeformSlider->setValue(0);
+	graphPanel->update();
+	return 1;
+}
+
 
 long FXGraphParamValue::onGraphPanelPaint(FXObject *sender,FXSelector sel,void *ptr)
 {
@@ -562,7 +611,7 @@ don't pass thru the control points
 		dc.fillArc(x-NODE_RADIUS,y-NODE_RADIUS,NODE_RADIUS*2,NODE_RADIUS*2,0*64,360*64);
 	}
 		
-	return(1);
+	return 1;
 }
 
 #include "drawPortion.h"
@@ -598,7 +647,7 @@ int FXGraphParamValue::getGraphPanelWidth() const
 	int w=graphPanel->getWidth();
 	if(w%2==0)
 		w--;
-	return(max(w,1));
+	return max(w,1);
 }
 
 // always returns an odd value >=1
@@ -607,16 +656,16 @@ int FXGraphParamValue::getGraphPanelHeight() const
 	int h=graphPanel->getHeight();
 	if(h%2==0)
 		h--;
-	return(max(h,1));
+	return max(h,1);
 }
 
 int FXGraphParamValue::insertIntoNodes(const CGraphParamValueNode &node)
 {
 	// sanity checks
 	if(nodes.size()<2)
-		throw(runtime_error(string(__func__)+" -- nodes doesn't already contain at least 2 items"));
+		throw runtime_error(string(__func__)+" -- nodes doesn't already contain at least 2 items");
 	if(node.x<0.0 || node.x>1.0)
-		throw(runtime_error(string(__func__)+" -- node's x is out of range: "+istring(node.x)));
+		throw runtime_error(string(__func__)+" -- node's x is out of range: "+istring(node.x));
 
 	int insertedIndex=-1;
 
@@ -634,7 +683,7 @@ int FXGraphParamValue::insertIntoNodes(const CGraphParamValueNode &node)
 		}
 	}
 
-	return(insertedIndex);
+	return insertedIndex;
 }
 
 long FXGraphParamValue::onCreateOrStartDragNode(FXObject *sender,FXSelector sel,void *ptr)
@@ -659,7 +708,7 @@ long FXGraphParamValue::onCreateOrStartDragNode(FXObject *sender,FXSelector sel,
 	
 	updateStatus();
 	graphPanel->update();
-	return(1);
+	return 1;
 }
 
 long FXGraphParamValue::onDragNode(FXObject *sender,FXSelector sel,void *ptr)
@@ -698,27 +747,27 @@ long FXGraphParamValue::onDragNode(FXObject *sender,FXSelector sel,void *ptr)
 		updateStatus();
 		graphPanel->update();
 	}
-	return(1);
+	return 1;
 }
 
 long FXGraphParamValue::onStopDragNode(FXObject *sender,FXSelector sel,void *ptr)
 {
 	draggingNode=-1;
 	clearStatus();
-	return(1);
+	return 1;
 }
 
 long FXGraphParamValue::onDestroyNode(FXObject *sender,FXSelector sel,void *ptr)
 {
 	FXEvent *ev=(FXEvent *)ptr;
 	int nodeIndex=findNodeAt(ev->win_x,ev->win_y);
-	if(nodeIndex!=-1 && nodeIndex!=0 && nodeIndex!=nodes.size()-1) // not the first or the last node
+	if(nodeIndex!=-1 && nodeIndex!=0 && nodeIndex!=(int)(nodes.size()-1)) // not the first or the last node
 	{
 		nodes.erase(nodes.begin()+nodeIndex);
 		draggingNode=-1;
 		graphPanel->update();
 	}
-	return(1);
+	return 1;
 }
 
 int FXGraphParamValue::findNodeAt(int x,int y)
@@ -732,10 +781,72 @@ int FXGraphParamValue::findNodeAt(int x,int y)
 
 		// see if the node's position is <= the NODE_RADIUS from the give x,y position
 		if( ((nx-x)*(nx-x)+(ny-y)*(ny-y)) <= (NODE_RADIUS*NODE_RADIUS) )
-			return(t);
+			return t;
 	}
 
-	return(-1);
+	return -1;
+}
+
+double FXGraphParamValue::deformNodeX(double x,FXint sliderValue) const
+{
+/*
+	This deformation takes x:[0,1] and translates it to a deformation of x yet still with the range of [0,1]
+	The deformation is to plug x into one quadrant of the unit circle given by the graph of f(x)=cos(asin(x)) where x:[0,1]
+	Then I use the rule that cos(asin(x)) == sqrt(1-x^2)
+	So, f(x) = sqrt(1-x^2)
+	
+	Then I let the slider define a variable, p, that adjusts how much from a straight line to a more and more taught curve
+	to deform x by.  This comes from generalizing the f(x) above to:
+		f(x) = ( 1-x^p ) ^ (1/p)  (that is, p takes the place of '2' in the previous f(x))
+
+	So, now p can go from 1 (where f(x) produces the line, y=x) and upwards where elbow of the curve is more and more and more bent toward (1,0)
+	
+	So, the x coord of the node plugged into this f(x) where s==1 does no deforming and where s is greater, the x is more bent in one direction
+
+	So the slider going from [-N,N] is scaled to s: [-1,1] and when s>=0 I let s define p as p=(K*s)+1
+	But when s<0 I let be defined as p=(K*(-s))+1, but I flip the f(x) equation horizontally and vertically so that the bend tends toward (0,1)
+	This way, the slider deforms the nodes' x values leftwards or rightwards depending on the slider's value being - or +
+
+	And as a side note: I square s (but maintain the sign) so that more values in the middle will be available but s is will [-1,1] 
+	
+*/
+
+	FXint lo,hi; // assuming symmetry on low and hi and vert and horz are the same
+	horzDeformSlider->getRange(lo,hi);
+
+		// s=[-1,1]
+	double s=(double)sliderValue/(double)hi;
+	s=fabs(s)*s;
+
+	if(s>=0)
+	{
+		double p=(10.0*s)+1.0;
+		return pow( 1.0-pow(1.0-x,p) , 1.0/p );
+	}
+	else
+	{
+		double p=(10.0*(-s))+1.0;
+		return 1.0-pow( 1.0-pow(x,p) , 1.0/p );
+	}
+
+}
+
+double FXGraphParamValue::undeformNodeX(double x,FXint sliderValue) const
+{
+	/* this computes the inverse of the previous deformNodeX method above */
+	/* which simplifies to just calling deformNodeX with the negated sliderValue */
+	return deformNodeX(x,-sliderValue);
+}
+
+int FXGraphParamValue::nodeToScreenX(const CGraphParamValueNode &node)
+{
+	return (int)(deformNodeX(node.x,horzDeformSlider->getValue())*(graphPanel->getWidth()-1));
+}
+
+int FXGraphParamValue::nodeToScreenY(const CGraphParamValueNode &node)
+{
+	//return (int)((1.0-deformNodeX(node.y,vertDeformSlider->getValue()))*(getGraphPanelHeight()));
+	return (int)((1.0-node.y)*(getGraphPanelHeight()));
 }
 
 double FXGraphParamValue::screenToNodeHorzValue(int x)
@@ -745,7 +856,7 @@ double FXGraphParamValue::screenToNodeHorzValue(int x)
 		v=0.0;
 	else if(v>1.0)
 		v=1.0;
-	return(v);
+	return undeformNodeX(v,horzDeformSlider->getValue());
 }
 
 double FXGraphParamValue::screenToNodeVertValue(int y)
@@ -755,17 +866,7 @@ double FXGraphParamValue::screenToNodeVertValue(int y)
 		v=0.0;
 	else if(v>1.0)
 		v=1.0;
-	return(v);
-}
-
-int FXGraphParamValue::nodeToScreenX(const CGraphParamValueNode &node)
-{
-	return((int)(node.x*(graphPanel->getWidth()-1)));
-}
-
-int FXGraphParamValue::nodeToScreenY(const CGraphParamValueNode &node)
-{
-	return((int)((1.0-node.y)*(getGraphPanelHeight())));
+	return v;
 }
 
 void FXGraphParamValue::updateNumbers()
@@ -786,7 +887,7 @@ const CGraphParamValueNodeList &FXGraphParamValue::getNodes() const
 			retNodes[t].y=vertInterpretValue(nodes[t].y,getScalar());
 	}
 
-	return(retNodes);
+	return retNodes;
 }
 
 const string FXGraphParamValue::getVertValueString(double vertValue) const
@@ -838,7 +939,7 @@ const int FXGraphParamValue::getMinScalar() const
 	FXint lo=0,hi=0;
 	if(scalarSpinner!=NULL)
 		scalarSpinner->getRange(lo,hi);
-	return(lo);
+	return lo;
 }
 
 const int FXGraphParamValue::getMaxScalar() const
@@ -846,12 +947,12 @@ const int FXGraphParamValue::getMaxScalar() const
 	FXint lo=0,hi=0;
 	if(scalarSpinner!=NULL)
 		scalarSpinner->getRange(lo,hi);
-	return(hi);
+	return hi;
 }
 
 const string FXGraphParamValue::getTitle() const
 {
-	return(title);
+	return title;
 }
 
 void FXGraphParamValue::readFromFile(const string &prefix,CNestedDataFile *f)

@@ -72,6 +72,12 @@ public:
 
 	long onPatternButton(FXObject *sender,FXSelector sel,void *ptr);
 
+	long onHorzDeformSliderChange(FXObject *sender,FXSelector sel,void *ptr);
+	long onVertDeformSliderChange(FXObject *sender,FXSelector sel,void *ptr);
+
+	long onHorzDeformSliderReset(FXObject *sender,FXSelector sel,void *ptr);
+	long onVertDeformSliderReset(FXObject *sender,FXSelector sel,void *ptr);
+
 	void updateNumbers();
 
 	const CGraphParamValueNodeList &getNodes() const;
@@ -94,6 +100,9 @@ public:
 
 		ID_SCALAR_SPINNER,
 		ID_CLEAR_BUTTON,
+
+		ID_HORZ_DEFORM_SLIDER,
+		ID_VERT_DEFORM_SLIDER,
 
 		ID_LAST
 	};
@@ -121,8 +130,11 @@ private:
 	FXComposite *statusPanel;
 		FXLabel *horzValueLabel;
 		FXLabel *vertValueLabel;
+	FXSlider *vertDeformSlider;
+	FXComposite *horzDeformPanel;
+		FXSlider *horzDeformSlider;
 	FXComposite *graphPanelParent;
-	FXCanvas *graphPanel;
+		FXCanvas *graphPanel;
 
 	int draggingNode;
 	int dragOffsetX,dragOffsetY;
@@ -149,6 +161,9 @@ private:
 
 	const string getHorzValueString(double horzValue) const; /* horzValue is [0..1] */
 	const string getVertValueString(double vertValue) const; /* vertValue is [0..1] */
+
+	double deformNodeX(double x,FXint sliderValue) const;
+	double undeformNodeX(double x,FXint sliderValue) const;
 
 	CSound *sound;
 	sample_pos_t start,stop;
