@@ -19,6 +19,24 @@
  */
 
 /*
+??? I could create an LFO that has an extra parameter which could be anything
+from a falling saw to a triangle to a rising saw but adjusting how the angles 
+are aimed.    think of a V in a square where the bottom axis is 0 to 360 degrees
+and the tops of the V hit the top two corners.  Then let the extra parameter 
+say where the bottom point of the V hits on the bottom axis.  So, 180 degrees would
+be a triangle wave at a phase of 90 deg. and zero or 359 degrees would be sawtooth
+waves.   
+
+The only reason I haven't done this already is that the frontend would need a 4th
+slider which would have to be appropriately names, and second, because I would 
+probably need an explaination of it by showing the user an image.
+
+If I did have a 4th parameter, I could also use that to define the number of 
+steps for a step function LFO.  But it would have a different name.. so CLFORegistry
+would also have to return what the call the optional extra slider
+*/
+
+/*
 ??? OPTIMIZATION: I could conceivably make the constructor of the derived LFO
 class calculate a lookup table and the base class could implement nextSample() 
 to just use the calculated lookup table.  I would have to base the number of
