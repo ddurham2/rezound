@@ -26,8 +26,6 @@
 
 	- rename MAX_CHANNELS and MAX_LENGTH in CSound_defs.h to something a little more ReZound specific like REZ_MAX_CHANNELS REZ_MAX_LENGTH
 
-	- change the ClipSample macro to an inline function so _SSS is no longer a static global... verify that the assembler for the inline is no less efficient than the macro
-
 	- I need to think thru and handle problems with the data becoming too large for whatever address space is currently active
 		- if CSound is about to change the space, if the total space is about to cross some threshhold, I shouldn't proceed to do the action
 
@@ -100,6 +98,10 @@
 		- the parameters which are given to AAction's constructor and doAction are somewhat arbirary in which ones are where
 		- possibly I should just give all of them to the constructor or all to the doAction method, except maybe the channel
 		- or I could decide which ones logically go where and for what reason
+
+	- change the ClipSample macro to an inline function so _SSS is no longer a static global... verify that the assembler for the inline is no less efficient than the macro
+		- I did this, and the inlined function is just as good as the macro, but it won't get inlined unless -O1 is given
+		- -O1 does make ReZound run much faster but takes a LONG time to compile and I haven't tested it to know that it doesn't introduce bugs
 
 
 
