@@ -99,16 +99,29 @@ CLoadedSound *ASoundFileManager::prvCreateNew(bool askForLength)
 
 void ASoundFileManager::open(const string _filename,bool asRaw)
 {
+	vector<string> filenames;
 	string filename=_filename;
 	bool readOnly=false;
 	if(filename=="")
 	{
-		if(!gFrontendHooks->promptForOpenSoundFilename(filename,readOnly))
+		if(!gFrontendHooks->promptForOpenSoundFilenames(filenames,readOnly))
 			return;
 	}
+	else
+		filenames.push_back(filename);
 
-	prvOpen(filename,readOnly,true,asRaw);
-	updateReopenHistory(filename);
+	for(size_t t=0;t<filenames.size();t++)
+	{
+		try
+		{
+			prvOpen(filenames[t],readOnly,true,asRaw);
+			updateReopenHistory(filenames[t]);
+		}
+		catch(runtime_error &e)
+		{
+			Error(e.what());
+		}
+	}
 }
 
 /*

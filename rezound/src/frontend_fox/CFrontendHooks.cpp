@@ -63,9 +63,10 @@ CFrontendHooks::~CFrontendHooks()
 void CFrontendHooks::doSetupAfterBackendIsSetup()
 {
 	openDialog=new FXFileDialog(mainWindow,"Open File");
-	openDialog->setSelectMode(SELECTFILE_EXISTING);
 	openDialog->setPatternList(getFOXFileTypes().c_str());
 	openDialog->setCurrentPattern(0);
+	openDialog->showReadOnly(false); // would be true if I supported it
+	openDialog->setReadOnly(false);
 	if(openDialog->getDirectory()!=gPromptDialogDirectory.c_str())
 		openDialog->setDirectory(gPromptDialogDirectory.c_str());
 
@@ -142,13 +143,38 @@ bool CFrontendHooks::promptForOpenSoundFilename(string &filename,bool &readOnly)
 {
 	if(openDialog->getDirectory()!=gPromptDialogDirectory.c_str())
 		openDialog->setDirectory(gPromptDialogDirectory.c_str());
+	openDialog->setSelectMode(SELECTFILE_EXISTING);
 	if(openDialog->execute())
 	{
 		// save directory to open the opendialog to next time
 		gPromptDialogDirectory=openDialog->getDirectory().text();
 
 		filename=openDialog->getFilename().text();
-		readOnly=false;
+		readOnly=openDialog->getReadOnly();
+
+		return(true);
+	}
+	return(false);
+}
+
+bool CFrontendHooks::promptForOpenSoundFilenames(vector<string> &filenames,bool &readOnly)
+{
+	if(openDialog->getDirectory()!=gPromptDialogDirectory.c_str())
+		openDialog->setDirectory(gPromptDialogDirectory.c_str());
+	openDialog->setSelectMode(SELECTFILE_MULTIPLE);
+	if(openDialog->execute())
+	{
+		// save directory to open the opendialog to next time
+		gPromptDialogDirectory=openDialog->getDirectory().text();
+
+		// add the selected filenames to the filenames vector
+		FXString *_filenames=openDialog->getFilenames();
+		while(_filenames!=NULL && (*_filenames)!="")
+		{
+			filenames.push_back(_filenames->text());
+			_filenames++;
+		}
+		readOnly=openDialog->getReadOnly();
 
 		return(true);
 	}
@@ -168,6 +194,7 @@ bool CFrontendHooks::promptForSaveSoundFilename(string &filename)
 		gPromptDialogDirectory=saveDialog->getDirectory().text();
 
 		filename=saveDialog->getFilename().text();
+
 		return(true);
 	}
 	return(false);

@@ -26,6 +26,7 @@
 class AFrontendHooks;
 
 #include <string>
+#include <vector>
 
 #include "CSound_defs.h"
 
@@ -42,6 +43,7 @@ public:
 
 	// prompt with an open file dialog (return false if the prompt was cancelled)
 	virtual bool promptForOpenSoundFilename(string &filename,bool &readOnly)=0;
+	virtual bool promptForOpenSoundFilenames(vector<string> &filenames,bool &readOnly)=0;
 
 	// prompt with a save file dialog (return false if the prompt was cancelled)
 	virtual bool promptForSaveSoundFilename(string &filename)=0;

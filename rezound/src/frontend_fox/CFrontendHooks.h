@@ -51,6 +51,7 @@ public:
 	const string getFOXFileTypes() const; // returns a string to pass as the file types drop-down in FOX file dialogs
 
 	bool promptForOpenSoundFilename(string &filename,bool &readOnly);
+	bool promptForOpenSoundFilenames(vector<string> &filenames,bool &readOnly);
 	bool promptForSaveSoundFilename(string &filename);
 
 	bool promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length);
