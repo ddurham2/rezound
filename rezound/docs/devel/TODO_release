@@ -11,9 +11,13 @@ distro tarball(eg: removing warning flags)
 
 3. Revise docs/NEWS use cvs2cl.pl to determine what significant things have changed since the previous release
 
-4. Make a cvs release tag
-	- cvs tag rezound-1_2_3alpha
-
 5. Update the version number in configure.in and docs/INSTALL
 	- and then do a bootstrap
+	- check these two in
+
+5. 'make distcheck'
+6. rebuild FOX with all the --disable flags then 'make_standalone.sh'
+
+7. Make a cvs release tag
+	- cvs tag rezound-1_2_3alpha
 
