@@ -46,6 +46,9 @@ CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
 	label(new FXLabel(getFrame(),"Pasting Routing Information:",NULL,LAYOUT_CENTER_X)),
 	contents(new FXMatrix(getFrame(),2,MATRIX_BY_COLUMNS | LAYOUT_FILL_X|LAYOUT_FILL_Y))
 {
+	getFrame()->setVSpacing(1);
+	getFrame()->setHSpacing(1);
+
 	new FXLabel(contents,"");
 	sourceLabel=new FXLabel(contents,"Source",NULL,LAYOUT_CENTER_X);
 	destinationLabel=new FXLabel(contents,"Destination",NULL,LAYOUT_CENTER_Y);

@@ -39,10 +39,13 @@ FXIMPLEMENT(CChannelSelectDialog,FXModalDialogBox,CChannelSelectDialogMap,ARRAYN
 // ----------------------------------------
 
 CChannelSelectDialog::CChannelSelectDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"Channel Select",310,290,FXModalDialogBox::ftVertical),
+	FXModalDialogBox(mainWindow,"Channel Select",310,270,FXModalDialogBox::ftVertical),
 
 	label(new FXLabel(getFrame(),"Channels to Which This Action Should Apply:",NULL,LAYOUT_CENTER_X))
 {
+	getFrame()->setVSpacing(1);
+	getFrame()->setHSpacing(1);
+
 	for(unsigned t=0;t<MAX_CHANNELS;t++)			    // ??? could map it to some name like "Left, Right, Center, Bass... etc"
 		checkBoxes[t]=new FXCheckButton(getFrame(),("Channel "+istring(t+1)).c_str(),NULL,0,CHECKBUTTON_NORMAL | LAYOUT_CENTER_X);
 }
