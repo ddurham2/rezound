@@ -1,4 +1,8 @@
 
+- Hot-Keys
+	- alt-1 through alt-0 switch between the opened sounds
+	- alt-` switches back to the previously active window
+
 - Action menu-items (IMPORTANT) (edit menu-items, effect menu-items, etc):
 	- Holding SHIFT while clicking the menu-item will generally causes a dialog to be displayed which allows the user to choose which channels to apply the action to.
 	- Using the RIGHT mouse button to click the menu-item instead of the LEFT mouse button will cause (if available) an advanced mode of the action to be performed resulting possibly in a dialog for the action with additional, more advanced parameters (i.e. the gain and rate change dialogs have a curve instead of a constant parameter)
