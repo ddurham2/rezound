@@ -1,0 +1,21 @@
+*** ../libtool	Tue Mar 19 11:17:12 2002
+--- libtool	Tue Mar 19 11:18:14 2002
+***************
+*** 1791,1800 ****
+--- 1791,1806 ----
+  	case $lib in
+  	*/* | *\\*) . $lib ;;
+  	*) . ./$lib ;;
+  	esac
+  
++ 	# remove anything from the dependency_libs value which references opengl libs
++ 	# this sed simply matches the pattern:
++ 	#     (zero-or-more-non-whitespace)libGL(zero-or-more-non-whitespace) 
++ 	# and replaces it with ''
++ 	dependency_libs=`$echo "$dependency_libs" | sed -e "s/[^[:space:]]*libGL[^[:space:]]*//g"`
++ 
+  	if test "$linkmode,$pass" = "lib,link" ||
+  	   test "$linkmode,$pass" = "prog,scan" ||
+  	   { test "$linkmode" = oldlib && test "$linkmode" = obj; }; then
+  	   # Add dl[pre]opened files of deplib
+  	  test -n "$dlopen" && dlfiles="$dlfiles $dlopen"

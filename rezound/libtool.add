@@ -1,0 +1,6 @@
+right around line 1796 after a case statement
+# remove anything from the dependency_libs value which references opengl libs
+# this sed simply matches the pattern:
+#     (zero-or-more-non-whitespace)libGL(zero-or-more-non-whitespace) 
+# and replaces it with ''
+dependency_libs=`$echo "$dependency_libs" | sed -e "s/[^[:space:]]*libGL[^[:space:]]*//g"`
