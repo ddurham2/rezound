@@ -69,18 +69,19 @@ int myyynerrs=0;
 	delete b;
 
 
-%}
-
-%expect 1
-
-%union // stopped being allowed after bison 1.35 cfg_parse_union
+union cfg_parse_union
 {
 	char *				stringValue;
 	double				floatValue;
 	int 				intValue;
 	CNestedDataFile::CVariant *	variant;
 	vector<CNestedDataFile::CVariant> *variantList;
-}
+};
+#define YYSTYPE union cfg_parse_union
+
+%}
+
+%expect 1
 
 %token 	<stringValue> 	IDENT
 %token	<floatValue>	LIT_NUMBER

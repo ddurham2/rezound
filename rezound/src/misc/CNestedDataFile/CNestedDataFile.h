@@ -85,6 +85,7 @@ public:
 	void save() const;
 	void writeFile(const string filename) const;
 
+private:
 
 	class CVariant
 	{
@@ -109,8 +110,6 @@ public:
 		double floatValue;
 		vector<CVariant> arrayValue;
 	};
-
-private: // private: should be above the definition of CVariant but bison stopped letting the union be named, so I can't declare it as a friend
 
 	class CVariant;
 	friend class CVariant;
@@ -145,7 +144,7 @@ private: // private: should be above the definition of CVariant but bison stoppe
 	friend void cfg_init();
 
 	friend struct RKeyValue;
-	//friend union cfg_parse_union;
+	friend union cfg_parse_union;
 
 };
 
