@@ -105,10 +105,23 @@ if test x"$prefix" = x"NONE"; then
 else
 	ajv_install_prefix=$prefix
 fi
+dnl these macros #define some cpp macros so our install paths can be 
+dnl hard coded into the compiled program.
 AC_DEFINE_UNQUOTED(INSTALL_PREFIX, "$ajv_install_prefix",[ This is the prefix passed to configure])
 dnl and the top source directory for running pre-install
 ajv_source_dir="`pwd`/$srcdir"
 AC_DEFINE_UNQUOTED(SOURCE_DIR, "$ajv_source_dir",[ This is the top source directory for
 pre-installed testing])
 
+if test x"$datadir" = x'${prefix}/share'; then
+	ajv_data_dir=$ajv_install_prefix/`echo $datadir | sed 's%${prefix}/%%'`
+else
+	ajv_data_dir=$datadir
+fi
+AC_DEFINE_UNQUOTED(DATA_DIR, "$ajv_data_dir",[ This the --datadir (share) set
+by configure ])
+
+
 AC_OUTPUT(Makefile src/Makefile src/misc/Makefile src/misc/cc++/Makefile src/misc/CNestedDataFile/Makefile src/PoolFile/Makefile src/backend/Makefile src/backend/Edits/Makefile src/backend/Effects/Makefile src/backend/Remaster/Makefile  src/frontend_fox/Makefile) 
+
+# vim:ts=4:sw=4

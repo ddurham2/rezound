@@ -1,6 +1,8 @@
 #!/bin/sh
 # Calls autotools to build configure script and Makefile.in.
 # Generated automatically using bootstrapper 0.1Alpha
+# http://bootstrapper.sourceforge.net/
+#
 # Copyright (C) 2002 Anthony Ventimiglia
 #
 # This bootstrap script is free software; you can redistribute 
