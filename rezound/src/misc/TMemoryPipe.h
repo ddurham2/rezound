@@ -48,7 +48,7 @@
 template <class type> class TMemoryPipe
 {
 public:
-	TMemoryPipe(int pipeSize);
+	TMemoryPipe(int pipeSize); 
 	virtual ~TMemoryPipe();
 
 	 // an EPipeClosed is thrown if the read end of the pipe is closed (all 3 methods)
@@ -60,6 +60,7 @@ public:
 	 // an EPipeClosed is thrown if the write end of the pipe is closed
 	int write(const type *buffer,int size);
 
+	void open(); // note, pipe is open after construction
 	void closeRead();
 	void closeWrite();
 
@@ -72,7 +73,6 @@ public:
 	class EPipeClosed : public runtime_error { public: EPipeClosed(const string msg) : runtime_error(msg) { } };
 
 private:
-	void open();
 
 	bool readOpened;
 	bool writeOpened;
