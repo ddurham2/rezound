@@ -845,6 +845,7 @@ void CMainWindow::buildActionMap()
 	// Filter
 	addToActionMap(								new CActionMenuCommand(new CConvolutionFilterFactory(gChannelSelectDialog,new CConvolutionFilterDialog(this)),dummymenu,		""),																	menuItemRegistry);
 	addToActionMap(								new CActionMenuCommand(new CArbitraryFIRFilterFactory(gChannelSelectDialog,new CArbitraryFIRFilterDialog(this)),dummymenu,		"",		FOXIcons->filter_custom),												menuItemRegistry);
+	addToActionMap(								new CActionMenuCommand(new CMorphingArbitraryFIRFilterFactory(gChannelSelectDialog,new CMorphingArbitraryFIRFilterDialog(this)),dummymenu,"",		FOXIcons->filter_custom),												menuItemRegistry);
 	// -
 	addToActionMap(								new CActionMenuCommand(new CSinglePoleLowpassFilterFactory(gChannelSelectDialog,new CSinglePoleLowpassFilterDialog(this)),dummymenu,	"",		FOXIcons->filter_lowpass),												menuItemRegistry);
 	addToActionMap(								new CActionMenuCommand(new CSinglePoleHighpassFilterFactory(gChannelSelectDialog,new CSinglePoleHighpassFilterDialog(this)),dummymenu,	"",		FOXIcons->filter_highpass),												menuItemRegistry);

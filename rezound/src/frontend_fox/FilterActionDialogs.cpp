@@ -21,6 +21,7 @@
 #include "FilterActionDialogs.h"
 #include "../backend/unit_conv.h"
 
+#include "CStatusComm.h"
 
 
 static const double interpretValue_filter(const double x,const int s) { return(x*s); }
@@ -151,8 +152,6 @@ CArbitraryFIRFilterDialog::CArbitraryFIRFilterDialog(FXWindow *mainWindow) :
 		w->setSelector(ID_NUMBER_OF_OCTAVES);
 
 	onFrequencyRangeChange(NULL,0,NULL);
-
-// need to try to make some buttons or deformation sliders that change the symmetry (build this symmetry changing code into CGraphParamValue nodes) and I should build this into FXGraphParamValue so that all the widgets can have it
 }
 
 long CArbitraryFIRFilterDialog::onFrequencyRangeChange(FXObject *sender,FXSelector sel,void *ptr)
@@ -170,13 +169,103 @@ long CArbitraryFIRFilterDialog::onFrequencyRangeChange(FXObject *sender,FXSelect
 	return 1;
 }
 
-#include "../backend/CActionSound.h"
-#include "../backend/CSound.h"
-bool CArbitraryFIRFilterDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
+
+
+
+// --- morphing arbitrary FIR filter --------------
+
+FXDEFMAP(CMorphingArbitraryFIRFilterDialog) CMorphingArbitraryFIRFilterDialogMap[]=
 {
-	//gSampleRate=actionSound->sound->getSampleRate();
-	return CActionParamDialog::show(actionSound,actionParameters);
+	//Message_Type			ID							Message_Handler
+
+	FXMAPFUNC(SEL_COMMAND,		CMorphingArbitraryFIRFilterDialog::ID_BASE_FREQUENCY,		CMorphingArbitraryFIRFilterDialog::onFrequencyRangeChange),
+	FXMAPFUNC(SEL_COMMAND,		CMorphingArbitraryFIRFilterDialog::ID_NUMBER_OF_OCTAVES,	CMorphingArbitraryFIRFilterDialog::onFrequencyRangeChange),
+	FXMAPFUNC(SEL_COMMAND,		CMorphingArbitraryFIRFilterDialog::ID_USE_LFO_CHECKBOX,		CMorphingArbitraryFIRFilterDialog::onUseLFOCheckBox),
+};
+
+FXIMPLEMENT(CMorphingArbitraryFIRFilterDialog,CActionParamDialog,CMorphingArbitraryFIRFilterDialogMap,ARRAYNUMBER(CMorphingArbitraryFIRFilterDialogMap))
+
+CMorphingArbitraryFIRFilterDialog::CMorphingArbitraryFIRFilterDialog(FXWindow *mainWindow) :
+	CActionParamDialog(mainWindow)
+{
+	FXPacker *p0,*p1,*p2;
+
+	p0=newVertPanel(NULL);
+		p1=newHorzPanel(p0,false);
+			addGraph(p1,N_("Frequency Response 1"),N_("Frequency"),"Hz",interpretValue_freq,uninterpretValue_freq,N_("Change"),"dB",interpretValue_FIR_change,uninterpretValue_FIR_change,dB_to_scalar,-100,100,20);
+			addGraph(p1,N_("Frequency Response 2"),N_("Frequency"),"Hz",interpretValue_freq,uninterpretValue_freq,N_("Change"),"dB",interpretValue_FIR_change,uninterpretValue_FIR_change,dB_to_scalar,-100,100,20);
+			
+		p1=newHorzPanel(p0,false);
+			FXTextParamValue *baseFrequency=addNumericTextEntry(p1,N_("Base Frequency"),"Hz",20,10,1000,_("This Sets the Lowest Frequency Displayed on the Graph.\nThis is the Frequency of the First Octave."));
+				baseFrequency->setTarget(this);
+				baseFrequency->setSelector(ID_BASE_FREQUENCY);
+			FXTextParamValue *numberOfOctaves=addNumericTextEntry(p1,N_("Number of Octaves"),"",11,1,15,_("This Sets the Number of Octaves Displayed on the Graph.\nBut Note that no Frequency Higher than Half of the Sound's Sampling Rate can be Affected Since it Cannot Contain a Frequency Higher than That."));
+				numberOfOctaves->setTarget(this);
+				numberOfOctaves->setSelector(ID_NUMBER_OF_OCTAVES);
+
+		p1=newHorzPanel(p0,false);
+		p1->setLayoutHints(p1->getLayoutHints()&(~LAYOUT_FILL_X));
+
+			addSlider(p1,N_("Wet/Dry Mix"),"%",interpretValue_wetdry_mix,uninterpretValue_wetdry_mix,NULL,100.0,0,0,0,true);
+
+			p2=newVertPanel(p1,false);
+				addCheckBoxEntry(p2,N_("Use LFO"),false);
+					FXCheckBoxParamValue *useLFOCheckBox=getCheckBoxParam("Use LFO");
+					useLFOCheckBox->setTarget(this);
+					useLFOCheckBox->setSelector(ID_USE_LFO_CHECKBOX);
+				addLFO(p2,N_("Sweep LFO"),"ms","",0,"Hz",20,true);
+
+			p2=newVertPanel(p1,false);
+				addSlider(p2,N_("Kernel Length"),"",interpretValue_kernelLength,uninterpretValue_kernelLength,NULL,1024,0,0,0,false); 
+				setTipText("Kernel Length",_("This is the Size of the Filter Kernel Computed (in samples) From Your Curve to be Convolved with the Audio"));
+				addCheckBoxEntry(p2,N_("Undelay"),true,_("This Counteracts the Delay Side-Effect of Custom FIR Filters"));
+
+	onFrequencyRangeChange(NULL,0,NULL);
+	onUseLFOCheckBox(useLFOCheckBox,0,NULL);
 }
+
+long CMorphingArbitraryFIRFilterDialog::onFrequencyRangeChange(FXObject *sender,FXSelector sel,void *ptr)
+{
+	FXGraphParamValue *g1=getGraphParam("Frequency Response 1");
+	FXGraphParamValue *g2=getGraphParam("Frequency Response 2");
+
+	FXTextParamValue *baseFrequency=getTextParam("Base Frequency");
+	FXTextParamValue *numberOfOctaves=getTextParam("Number of Octaves");
+
+	gBaseFrequency=(unsigned)baseFrequency->getValue();
+	gNumberOfOctaves=(unsigned)numberOfOctaves->getValue();
+
+	g1->updateNumbers();
+	g2->updateNumbers();
+
+	return 1;
+}
+
+long CMorphingArbitraryFIRFilterDialog::onUseLFOCheckBox(FXObject *sender,FXSelector sel,void *ptr)
+{
+	if(((FXCheckBoxParamValue *)sender)->getValue())
+		getLFOParam("Sweep LFO")->enable();
+	else
+		getLFOParam("Sweep LFO")->disable();
+	return 1;
+}
+
+bool CMorphingArbitraryFIRFilterDialog::validateOnOkay()
+{
+	if(getGraphParam("Frequency Response 1")->getNodes().size()!=getGraphParam("Frequency Response 2")->getNodes().size())
+	{
+		Error(_("Frequency Response 1 and Frequency Response 2 must contain the same number of nodes"));
+		return false;
+	}
+	return true;
+}
+
+#include "../backend/Filters/CMorphingArbitraryFIRFilter.h"
+const string CMorphingArbitraryFIRFilterDialog::getExplanation() const
+{
+	return CMorphingArbitraryFIRFilter::getExplanation();
+}
+
 
 
 
