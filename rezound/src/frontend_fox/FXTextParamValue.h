@@ -40,7 +40,7 @@ public:
 
 	long onValueSpinnerChange(FXObject *sender,FXSelector sel,void *ptr);
 
-	void setUnits(const FXString units,const FXString helpText="");
+	void setUnits(const FXString units,const FXString tipText="");
 
 	const double getValue();
 	void setValue(const double value);
@@ -49,8 +49,8 @@ public:
 
 	const string getTitle() const;
 
-	void setHelpText(const FXString &text);
-	FXString getHelpText() const;
+	void setTipText(const FXString &text);
+	FXString getTipText() const;
 
 	void readFromFile(const string &prefix,CNestedDataFile *f);
 	void writeToFile(const string &prefix,CNestedDataFile *f);

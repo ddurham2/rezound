@@ -67,8 +67,8 @@ public:
 
 	const string getTitle() const;
 
-	void setHelpText(const FXString &text);
-	FXString getHelpText() const;
+	void setTipText(const FXString &text);
+	FXString getTipText() const;
 
 	void enable();
 	void disable();

@@ -121,20 +121,20 @@ void CActionParamDialog::addSlider(const string name,const string units,FXConsta
 	retValueConvs.push_back(optRetValueConv);
 }
 
-void CActionParamDialog::addTextEntry(const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsHelpText)
+void CActionParamDialog::addTextEntry(const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsTipText)
 {
 	FXTextParamValue *textEntry=new FXTextParamValue(controlsFrame,0,name.c_str(),minValue,maxValue);
-	textEntry->setUnits(units.c_str(),unitsHelpText.c_str());
+	textEntry->setUnits(units.c_str(),unitsTipText.c_str());
 	textEntry->setValue(initialValue);
 	parameters.push_back(pair<ParamTypes,void *>(ptText,(void *)textEntry));
 	retValueConvs.push_back(NULL);
 }
 
 
-void CActionParamDialog::addComboTextEntry(const string name,const vector<string> &items,const string helpText,bool isEditable)
+void CActionParamDialog::addComboTextEntry(const string name,const vector<string> &items,const string tipText,bool isEditable)
 {
 	FXComboTextParamValue *comboTextEntry=new FXComboTextParamValue(controlsFrame,0,name.c_str(),items,isEditable);
-	comboTextEntry->setHelpText(helpText.c_str());
+	comboTextEntry->setTipText(tipText.c_str());
 	parameters.push_back(pair<ParamTypes,void *>(ptComboText,(void *)comboTextEntry));
 	retValueConvs.push_back(NULL);
 }
@@ -150,10 +150,10 @@ FXComboTextParamValue *CActionParamDialog::getComboText(const string name)
 }
 
 
-void CActionParamDialog::addCheckBoxEntry(const string name,const bool checked,const string helpText)
+void CActionParamDialog::addCheckBoxEntry(const string name,const bool checked,const string tipText)
 {
 	FXCheckBoxParamValue *checkBoxEntry=new FXCheckBoxParamValue(controlsFrame,0,name.c_str(),checked);
-	checkBoxEntry->setHelpText(helpText.c_str());
+	checkBoxEntry->setTipText(tipText.c_str());
 	parameters.push_back(pair<ParamTypes,void *>(ptCheckBox,(void *)checkBoxEntry));
 	retValueConvs.push_back(NULL);
 }
@@ -172,7 +172,7 @@ void CActionParamDialog::addGraph(const string name,const string units,FXGraphPa
 void CActionParamDialog::addLFO(const string name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs)
 {
 	FXLFOParamValue *LFOEntry=new FXLFOParamValue(controlsFrame,0,name.c_str(),ampUnits,ampTitle,maxAmp,freqUnits,maxFreq,hideBipolarLFOs);
-	//LFOEntry->setHelpText(helpText.c_str());
+	//LFOEntry->setTipText(tipText.c_str());
 	parameters.push_back(pair<ParamTypes,void *>(ptLFO,(void *)LFOEntry));
 	retValueConvs.push_back(NULL);
 }
@@ -214,6 +214,43 @@ void CActionParamDialog::setValue(size_t index,const double value)
 		((FXGraphParamValue *)parameters[index].second)->setValue(value);
 		break;
 		*/
+
+	default:
+		throw(runtime_error(string(__func__)+" -- unhandled or unimplemented parameter type: "+istring(parameters[index].first)));
+	}
+}
+
+void CActionParamDialog::setTipText(size_t index,const string tipText)
+{
+	switch(parameters[index].first)
+	{
+	case ptConstant:
+		((FXConstantParamValue *)parameters[index].second)->setTipText(tipText.c_str());
+		break;
+
+	case ptText:
+		((FXTextParamValue *)parameters[index].second)->setTipText(tipText.c_str());
+		break;
+
+	case ptComboText:
+		((FXComboTextParamValue *)parameters[index].second)->setTipText(tipText.c_str());
+		break;
+
+	case ptCheckBox:
+		((FXCheckBoxParamValue *)parameters[index].second)->setTipText(tipText.c_str());
+		break;
+
+	case ptGraph:
+/*
+		((FXGraphParamValue *)parameters[index].second)->setTipText(tipText.c_str());
+		break;
+*/
+
+	case ptLFO:
+/*
+		((FXGraphParamValue *)parameters[index].second)->setTipText(tipText.c_str());
+		break;
+*/
 
 	default:
 		throw(runtime_error(string(__func__)+" -- unhandled or unimplemented parameter type: "+istring(parameters[index].first)));

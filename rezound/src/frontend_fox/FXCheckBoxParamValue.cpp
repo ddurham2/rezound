@@ -63,14 +63,14 @@ const string FXCheckBoxParamValue::getTitle() const
 	return(checkBox->getText().text());
 }
 
-void FXCheckBoxParamValue::setHelpText(const FXString &text)
+void FXCheckBoxParamValue::setTipText(const FXString &text)
 {
 	checkBox->setTipText(text);
 }
 
-FXString FXCheckBoxParamValue::getHelpText() const
+FXString FXCheckBoxParamValue::getTipText() const
 {
-	return(checkBox->getHelpText());	
+	return(checkBox->getTipText());	
 }
 
 void FXCheckBoxParamValue::readFromFile(const string &prefix,CNestedDataFile *f)

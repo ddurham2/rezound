@@ -56,10 +56,10 @@ FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title,con
 	valueSpinner->setRange(-10,10);
 }
 
-void FXTextParamValue::setUnits(const FXString units,const FXString helpText)
+void FXTextParamValue::setUnits(const FXString units,const FXString tipText)
 {
 	unitsLabel->setText(units);
-	unitsLabel->setTipText(helpText);
+	unitsLabel->setTipText(tipText);
 }
 
 long FXTextParamValue::onValueSpinnerChange(FXObject *sender,FXSelector sel,void *ptr)
@@ -117,16 +117,16 @@ const string FXTextParamValue::getTitle() const
 	return(titleLabel->getText().text());
 }
 
-void FXTextParamValue::setHelpText(const FXString &text)
+void FXTextParamValue::setTipText(const FXString &text)
 {
 	titleLabel->setTipText(text);	
 	valueTextBox->setTipText(text);
 	valueSpinner->setTipText(text);
 }
 
-FXString FXTextParamValue::getHelpText() const
+FXString FXTextParamValue::getTipText() const
 {
-	return(titleLabel->getHelpText());	
+	return(titleLabel->getTipText());	
 }
 
 void FXTextParamValue::readFromFile(const string &prefix,CNestedDataFile *f)

@@ -123,16 +123,16 @@ const string FXLFOParamValue::getTitle() const
 }
 
 /*
-void FXLFOParamValue::setHelpText(const FXString &text)
+void FXLFOParamValue::setTipText(const FXString &text)
 {
 	titleLabel->setTipText(text);	
 	valueTextBox->setTipText(text);
 	valueSpinner->setTipText(text);
 }
 
-FXString FXLFOParamValue::getHelpText() const
+FXString FXLFOParamValue::getTipText() const
 {
-	return(titleLabel->getHelpText());	
+	return(titleLabel->getTipText());	
 }
 */
 

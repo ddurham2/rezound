@@ -204,29 +204,30 @@ const string FXConstantParamValue::getTitle() const
 	return(titleLabel->getText().text());
 }
 
-void FXConstantParamValue::setHelpText(const FXString &text)
+void FXConstantParamValue::setTipText(const FXString &text)
 {
-	titleLabel->setHelpText(text);	
-	//inverseButtonFrame->setHelpText(text);	
-		inverseButton->setHelpText(text);	
-	slider->setHelpText(text);	
-	//tickLableFrame->setHelpText(text);	
-		maxLabel->setHelpText(text);	
-		halfLabel->setHelpText(text);	
-		minLabel->setHelpText(text);	
-	//valuePanel->setHelpText(text);
-		valueTextBox->setHelpText(text);
-		unitsLabel->setHelpText(text);
+	titleLabel->setTipText(text);	
+	//inverseButtonFrame->setTipText(text);	
+	if(inverseButton)
+		inverseButton->setTipText(text);	
+	slider->setTipText(text);	
+	//tickLableFrame->setTipText(text);	
+		maxLabel->setTipText(text);	
+		halfLabel->setTipText(text);	
+		minLabel->setTipText(text);	
+	//valuePanel->setTipText(text);
+		valueTextBox->setTipText(text);
+		unitsLabel->setTipText(text);
 	if(scalarPanel)
 	{
-		//scalarPanel->setHelpText(text);
-			scalarLabel->setHelpText(text);
+		//scalarPanel->setTipText(text);
+			scalarLabel->setTipText(text);
 	}
 }
 
-FXString FXConstantParamValue::getHelpText() const
+FXString FXConstantParamValue::getTipText() const
 {
-	return(titleLabel->getHelpText());	
+	return(titleLabel->getTipText());	
 }
 
 /* ??? I might want to move this into a common place so that other action parameter widgets can use them */

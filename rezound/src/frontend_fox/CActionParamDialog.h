@@ -54,10 +54,10 @@ public:
 	CActionParamDialog(FXWindow *mainWindow,const FXString title,FXModalDialogBox::FrameTypes frameType=FXModalDialogBox::ftHorizontal);
 
 	void addSlider(const string name,const string units,FXConstantParamValue::f_at_xs interpretValue,FXConstantParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const double initialValue,const int minScalar,const int maxScalar,const int initScalar,bool showInverseButton);
-	void addTextEntry(const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsHelpText="");
-	void addComboTextEntry(const string name,const vector<string> &items,const string helpText="",bool isEditable=false);
+	void addTextEntry(const string name,const string units,const double initialValue,const double minValue,const double maxValue,const string unitsTipText="");
+	void addComboTextEntry(const string name,const vector<string> &items,const string tipText="",bool isEditable=false);
 		FXComboTextParamValue *getComboText(const string name); // so a derived class can set the values
-	void addCheckBoxEntry(const string name,const bool checked,const string helpText="");
+	void addCheckBoxEntry(const string name,const bool checked,const string tipText="");
 	void addGraph(const string name,const string units,FXGraphParamValue::f_at_xs interpretValue,FXGraphParamValue::f_at_xs uninterpretValue,f_at_x optRetValueConv,const int minScalar,const int maxScalar,const int initialScalar);
 	void addLFO(const string name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs);
 
@@ -67,6 +67,8 @@ public:
 	 * to set the index of a combobox
 	 */
 	void setValue(size_t index,const double value);
+
+	void setTipText(size_t index,const string tipText);
 
 	// don't like this, but it will do for now... someday I've got to come up with just how to specify placement of the added wigets
 	void setMargin(FXint margin); // will add a margin the left and right of all the controls

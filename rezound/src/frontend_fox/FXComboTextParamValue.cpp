@@ -84,15 +84,15 @@ const string FXComboTextParamValue::getTitle() const
 	return(titleLabel->getText().text());
 }
 
-void FXComboTextParamValue::setHelpText(const FXString &text)
+void FXComboTextParamValue::setTipText(const FXString &text)
 {
 	titleLabel->setTipText(text);	
 	valueComboBox->setTipText(text);
 }
 
-FXString FXComboTextParamValue::getHelpText() const
+FXString FXComboTextParamValue::getTipText() const
 {
-	return(titleLabel->getHelpText());	
+	return(titleLabel->getTipText());	
 }
 
 void FXComboTextParamValue::readFromFile(const string &prefix,CNestedDataFile *f)

@@ -83,8 +83,6 @@
 		- I should be able to test this at home since I have 2 sound cards installed
 		- I've already made a registry setting for it
 
-	- rename setHelpText in my FX...ParamValues to setTipText since that's what it's known as in FOX
-
 
 
 
@@ -277,4 +275,6 @@
 		- so selecting a constant LFO would gray out frequency and phase and only allow selection of amplitude
 
 	- the FXCanvas::copyArea doesn't do right, when part of the window is off-screen.. I don't know if X needs to handle this.. or if I can tell if it's exposed or not.. if it's not exposed then I do need to draw instead of copyArea
+
+	- rename setHelpText in my FX...ParamValues to setTipText since that's what it's known as in FOX
 
