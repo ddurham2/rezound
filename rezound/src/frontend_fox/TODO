@@ -79,6 +79,10 @@
 
 --- POSSIBLE THINGS TO DO ---
 
+	- Add a popup menu to the frequency slider of the LFO widget and make it have items like.. 1/4, 1/2 1, 2, 3, 4 cyles time per selected area
+		- Could this could be a unit selection of the LFO slider widget.. units are in cycles per selected area
+	- could also add a popup to the phase slider for 0 90 180 270.. or could make notches
+
 	- A more musical friendly unit would be BPM instead of Hz for parameters like LFO frequency
 
 	- If I did every want to get rid of using reswrap, then I could have CFOXIcons go out and manually load from disk the icon files by looking in the share directory.. this would allow the user to replace the icons if they wanted and it would still avoid loading a reused icon over and over since it's abstracted in the CFOXIcon class
