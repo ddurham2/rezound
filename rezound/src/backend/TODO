@@ -27,8 +27,6 @@ or sample values to follow
 	- I need to think thru and handle problems with the data becoming too large for whatever address space is currently active
 		- if CSound is about to change the space, if the total space is about to cross some threshhold, I shouldn't proceed to do the action
 
-	- Need to handle duplicate named cues when loading a file.. I don't allow them, but a file format might
-
 	- Warn the user if saving to a file format that doesn't save more than 31bits worth of sound and the sound file is longer than that
 
 	- There may be some more formats that libaudiofile supports... I just didn't see them in the docs... work with the author to include any others
@@ -283,4 +281,6 @@ or sample values to follow
 				- might not take a performance hit of virtual functions if I precalculate a table for the LFOs
 			 - (I did this already and the performance hit was actually quite acceptable)
 		- The same could go for CChangeAmplitudeRate, flange(done) and Echo(done) effect
+
+	- Need to handle duplicate named cues when loading a file.. I don't allow them, but a file format might
 
