@@ -63,8 +63,8 @@ public:
 			const float inputSample=(float)input/(float)maxSample;
 			for(size_t t=0;t<positiveCurveSizeSub1;t++)
 			{
-				if(inputSample<=(positiveCurve[t+1].position))
-					return (sample_t)(maxSample*remap(inputSample,positiveCurve[t].position,positiveCurve[t].value,positiveCurve[t+1].position,positiveCurve[t+1].value));
+				if(inputSample<=(positiveCurve[t+1].x))
+					return (sample_t)(maxSample*remap(inputSample,positiveCurve[t].x,positiveCurve[t].y,positiveCurve[t+1].x,positiveCurve[t+1].y));
 			}
 		}
 		else
@@ -72,8 +72,8 @@ public:
 			const float inputSample=(float)-input/(float)maxSample;
 			for(size_t t=0;t<negativeCurveSizeSub1;t++)
 			{
-				if(inputSample<=(negativeCurve[t+1].position))
-					return -(sample_t)(maxSample*remap(inputSample,negativeCurve[t].position,negativeCurve[t].value,negativeCurve[t+1].position,negativeCurve[t+1].value));
+				if(inputSample<=(negativeCurve[t+1].x))
+					return -(sample_t)(maxSample*remap(inputSample,negativeCurve[t].x,negativeCurve[t].y,negativeCurve[t+1].x,negativeCurve[t+1].y));
 			}
 		}
 		// catch all
