@@ -98,6 +98,11 @@
 
 --- POSSIBLE THINGS TO DO ---
 
+	- Now in at least two modules (LADSPA and CSoundPlayerChannel) and then perhaps in more than one place in each module I iterate over the sound in either looped or non-looped mode
+		- I could create an iterator for a CSound object that would return data in the native format
+		- In LADSPA where I might produce silence, I could either have the iterator that doesn't loop return zeros, or just check for end and produce zeros in the LADSPA code itself
+		- If I implemented the pause before looping and durring selection I could even theoretically use that in LADSPA actions (although I don't know why)
+
 	- There is a project called 'audiere' which I might be able to use to load .s3m, .it, .mod, etc if it was found.  I couldn't save, but I could at least load.
 
 	- add a draw function so that if the user is zoomed in full, he can use the mouse to draw in the values he wants
