@@ -24,8 +24,6 @@
 #include <string>
 #include <vector>
 
-#include <istring>
-
 #include "settings.h"
 
 #include "../backend/CLoadedSound.h"

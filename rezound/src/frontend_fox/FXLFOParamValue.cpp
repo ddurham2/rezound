@@ -20,9 +20,6 @@
 
 #include "FXLFOParamValue.h"
 
-#include <istring>
-#include <stdexcept>
-
 #include <CNestedDataFile/CNestedDataFile.h>
 
 #include "FXConstantParamValue.h"

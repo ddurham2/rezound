@@ -20,8 +20,6 @@
 
 #include "FXCheckBoxParamValue.h"
 
-#include <istring>
-
 #include <CNestedDataFile/CNestedDataFile.h>
 
 #include "utils.h"
