@@ -145,6 +145,10 @@ private:
 
 	mutable double retValue;
 
+	void prvSetValue(const double value);
+	double defaultValue;
+	
+
 };
 
 #endif

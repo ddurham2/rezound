@@ -88,9 +88,14 @@ FXString FXComboTextParamValue::getHelpText() const
 
 void FXComboTextParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
 {
-	const string key=prefix+"."+getTitle()+".";
-	const string v=f.getValue((key+"index").c_str());
-	setValue(atoi(v.c_str()));
+	const string key=prefix+"."+getTitle()+".index";
+	if(f.keyExists(key.c_str()))
+	{
+		const string v=f.getValue(key.c_str());
+		setValue(atoi(v.c_str()));
+	}
+	else
+		setValue(0); // ??? would use initialIndex if there were such a thing
 }
 
 void FXComboTextParamValue::writeToFile(const string &prefix,CNestedDataFile &f)

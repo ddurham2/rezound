@@ -96,6 +96,8 @@ private:
 
 	string title;
 
+	int initScalar;
+
 	CSound *sound;
 	sample_pos_t start,stop;
 

@@ -157,6 +157,12 @@ const double FXConstantParamValue::getValue() const
 
 void FXConstantParamValue::setValue(const double value)
 {
+	defaultValue=value;
+	prvSetValue(value);
+}
+
+void FXConstantParamValue::prvSetValue(const double value)
+{
 	retValue=value;
 	slider->setValue((int)(uninterpretValue(value,GET_SCALAR_VALUE)*10000.0));
 	valueTextBox->setText((istring(retValue,7,4)).c_str());
@@ -222,11 +228,17 @@ FXString FXConstantParamValue::getHelpText() const
 void FXConstantParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
 {
 	const string key=prefix+"."+getTitle()+".";
-	const string v=f.getValue((key+"value").c_str());
-	const string s=f.getValue((key+"scalar").c_str());
 
-	setScalar(atoi(s.c_str()));
-	setValue(atof(v.c_str()));
+	if(f.keyExists((key+"value").c_str()))
+		prvSetValue(atof(f.getValue((key+"value").c_str()).c_str()));
+	else
+		prvSetValue(defaultValue);
+
+	if(f.keyExists((key+"scalar").c_str()))
+		setScalar(atoi(f.getValue((key+"scalar").c_str()).c_str()));
+	else
+		setScalar(initScalar);
+
 }
 
 void FXConstantParamValue::writeToFile(const string &prefix,CNestedDataFile &f) const

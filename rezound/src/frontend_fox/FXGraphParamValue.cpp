@@ -200,10 +200,12 @@ FXDEFMAP(FXGraphParamValue) FXGraphParamValueMap[]=
 
 FXIMPLEMENT(FXGraphParamValue,FXPacker,FXGraphParamValueMap,ARRAYNUMBER(FXGraphParamValueMap))
 
-FXGraphParamValue::FXGraphParamValue(const string _title,f_at_xs _interpretValue,f_at_xs _uninterpretValue,const int minScalar,const int maxScalar,const int initScalar,FXComposite *p,int opts,int x,int y,int w,int h) :
+FXGraphParamValue::FXGraphParamValue(const string _title,f_at_xs _interpretValue,f_at_xs _uninterpretValue,const int minScalar,const int maxScalar,const int _initScalar,FXComposite *p,int opts,int x,int y,int w,int h) :
 	FXPacker(p,opts|FRAME_RIDGE,x,y,w,h, 2,2,2,2, 0,0),
 
 	title(_title),
+
+	initScalar(_initScalar),
 
 	sound(NULL),
 	start(0),
@@ -596,17 +598,28 @@ void FXGraphParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
 {
 	const string key=prefix+"."+getTitle()+".";
 
-	const string s=f.getValue((key+"scalar").c_str());
-	setScalar(atoi(s.c_str()));
+	if(f.keyExists((key+"scalar").c_str()))
+	{
+		const string s=f.getValue((key+"scalar").c_str());
+		setScalar(atoi(s.c_str()));
+	}
+	else	
+		setScalar(initScalar);
 
 
 	nodes.clear();
+
 	const string k1=key+"node_positions";
-	const string k2=key+"node_values";
-	const size_t count=f.getArraySize(k1.c_str());
-	// ??? I could either save the node positions and values as [0,1], or I could use save the actual values ( <-- currently)
-	for(size_t t=0;t<count;t++)
-		nodes.push_back(CGraphParamValueNode(atof(f.getArrayValue(k1.c_str(),t).c_str()),atof(f.getArrayValue(k2.c_str(),t).c_str())));
+	if(f.keyExists(k1.c_str()))
+	{
+		const string k2=key+"node_values";
+		const size_t count=f.getArraySize(k1.c_str());
+		// ??? I could either save the node positions and values as [0,1], or I could use save the actual values ( <-- currently)
+		for(size_t t=0;t<count;t++)
+			nodes.push_back(CGraphParamValueNode(atof(f.getArrayValue(k1.c_str(),t).c_str()),atof(f.getArrayValue(k2.c_str(),t).c_str())));
+	}
+	else
+		clearNodes();
 
 	updateNumbers();
 	update();
