@@ -67,9 +67,9 @@
 #include <sys/types.h>
 
 #define MAX_OPENS 100
-int child_pids[MAX_OPENS]; /* init to zero */
-FILE *pipe_streams[MAX_OPENS];
-FILE *pipe_err_streams[MAX_OPENS];
+static int child_pids[MAX_OPENS]; /* init to zero */
+static FILE *pipe_streams[MAX_OPENS];
+static FILE *pipe_err_streams[MAX_OPENS];
 
 /* 
 	passed:	process id -- pid
@@ -77,7 +77,7 @@ FILE *pipe_err_streams[MAX_OPENS];
 	returns: 0 -- success
 		 1 -- failure
 */
-int add_piped_process(int pid,FILE *s,FILE *e)
+static int add_piped_process(int pid,FILE *s,FILE *e)
 {
 	int t;
 	for(t=0;t<MAX_OPENS;t++)
@@ -98,7 +98,7 @@ int add_piped_process(int pid,FILE *s,FILE *e)
 	returns: 0 -- not in list
 		 else -- pid
 */
-int remove_piped_process(FILE *s,FILE **e)
+static int remove_piped_process(FILE *s,FILE **e)
 {
 	int t;
 	for(t=0;t<MAX_OPENS;t++)
