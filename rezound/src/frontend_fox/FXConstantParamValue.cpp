@@ -266,27 +266,6 @@ FXString FXConstantParamValue::getTipText() const
 	return titleLabel->getTipText();
 }
 
-/* ??? I might want to move this into a common place so that other action parameter widgets can use them */
-// recursively call enable for all descendants of a given window
-static void enableAllChildren(FXWindow *w)
-{
-	for(int t=0;t<w->numChildren();t++)
-	{
-		w->childAtIndex(t)->enable();
-		enableAllChildren(w->childAtIndex(t));
-	}
-}
-
-// recursively call disable for all descendants of a given window
-static void disableAllChildren(FXWindow *w)
-{
-	for(int t=0;t<w->numChildren();t++)
-	{
-		w->childAtIndex(t)->disable();
-		disableAllChildren(w->childAtIndex(t));
-	}
-}
-
 void FXConstantParamValue::enable()
 {
 	FXVerticalFrame::enable();
