@@ -1,4 +1,4 @@
-# ReZound misc/Makefile.am Written by Anthony Ventimiglia
+# ReZound misc/missing/Makefile.am Written by Anthony Ventimiglia
 ## Process this file with automake to create Makefile.in
 ##
 ##
@@ -23,16 +23,5 @@
 
 include $(top_srcdir)/config/am_include.mk
 
-SUBDIRS= \
-	CNestedDataFile\
-	missing
-
-noinst_HEADERS=\
-		AThread.h\
-		CMutex.h\
-		CPath.h\
-		CRWLock.h\
-		TAutoBuffer.h		
-
 EXTRA_DIST= \
-	istring
+	sstream-missing
