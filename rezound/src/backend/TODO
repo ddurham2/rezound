@@ -1,6 +1,10 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- I should make an f(x) feature for CGraphParamValueNodes which will return y given x and it should be implemented for line segments, cos, or bicubic interpretation of the nodes
+		- I should reimplement the Distortion module to use this
+		- But I don't guess I should implement f(x) unless anything else were already going to use it
+
 	- Added a "Lock Channels" check box feature to the noise gate, also it would be better if noise gate has a choice of dBFS or percent for the threshold
 
 	DONE - create separate CDSPLevelDetectorRMS and CDSPPeakLevelDetectorPeak dsp blocks
