@@ -34,7 +34,7 @@ using namespace std;
 /* Redefine PACKAGE TO REZOUND_PACKAGE to clear up a conflict with
  * gnucc's config.h which has PACKAGE and VERSION defined. I really think
  * the Common C++ people are going to have to fix that, because it will cause
- * problems with and automake generated package. */
+ * problems with any automake generated package. */
 #ifdef PACKAGE
 # define REZOUND_PACKAGE	PACKAGE
 # undef PACKAGE
