@@ -39,7 +39,6 @@
 
 #include <stdexcept>
 #include <string>
-#include <iostream>
 #include <typeinfo>
 
 #include <istring>
@@ -331,11 +330,11 @@ void COSSSoundPlayer::CPlayThread::main()
 	}
 	catch(exception &e)
 	{
-		cerr << "exception caught in play thread: " << e.what() << endl;
+		fprintf(stderr,"exception caught in play thread: %s\n",e.what());
 	}
 	catch(...)
 	{
-		cerr << "unknown exception caught in play thread" << endl;
+		fprintf(stderr,"unknown exception caught in play thread\n");
 	}
 }
 

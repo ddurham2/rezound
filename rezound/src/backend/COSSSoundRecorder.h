@@ -32,7 +32,6 @@
 class COSSSoundRecorder : public ASoundRecorder
 {
 public:
-
 	COSSSoundRecorder();
 	virtual ~COSSSoundRecorder();
 
