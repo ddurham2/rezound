@@ -48,7 +48,7 @@ public:
 	void setVertZoomFactor(double v);
 	double getMaxVertZoomFactor();
 
-	void drawPlayPosition(sample_pos_t dataPosition,bool justErasing);
+	void drawPlayPosition(sample_pos_t dataPosition,bool justErasing,bool scrollToMakeVisible);
 
 	void redraw();
 

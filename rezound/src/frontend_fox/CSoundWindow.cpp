@@ -38,6 +38,8 @@ static void pauseTrigger(void *Pthis);
 #include "CSoundWindow.h"
 #include "CSoundFileManager.h"
 
+#include <algorithm>
+
 #include <istring>
 
 #include "../backend/CLoadedSound.h"
@@ -251,11 +253,17 @@ CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 	loadedSound->channel->addOnPlayTrigger(playTrigger,this);
 	loadedSound->channel->addOnPauseTrigger(pauseTrigger,this);
 
-	// set the ranges of the vertical and horiztonal zoom dials
+
+	// set the ranges and initial values of the vertical and horiztonal zoom dials
 	horzZoomDial->setRange(0,100);
 	horzZoomDial->setRevolutionIncrement(100);
+		// approximately show 10 seconds of sound (apx because we haven't done layout yet)
+	setHorzZoomFactor(max(1.0, (10.0*loadedSound->getSound()->getSampleRate())/getWidth()) );
+
 	vertZoomDial->setRange(0,100);
 	vertZoomDial->setRevolutionIncrement(100);
+	vertZoomDial->setValue(0);
+
 
 	addCueActionFactory=new CAddCueActionFactory(gCueDialog);
 	removeCueActionFactory=new CRemoveCueActionFactory;
@@ -344,9 +352,9 @@ void CSoundWindow::drawPlayPosition(bool justErasing)
 
 	// quarter second minimum to draw the play status
 	if(length>=sampleRate || length*4/sampleRate>=1 || loadedSound->channel->isPaused())
-		waveView->drawPlayPosition(loadedSound->channel->getPosition(),justErasing);
+		waveView->drawPlayPosition(loadedSound->channel->getPosition(),justErasing,true);
 	else
-		waveView->drawPlayPosition(loadedSound->channel->getPosition(),true);
+		waveView->drawPlayPosition(loadedSound->channel->getPosition(),true,false);
 }
 
 /*
@@ -551,6 +559,15 @@ long CSoundWindow::onDrawPlayPosition(FXObject *sender,FXSelector,void*)
 
 
 // horz zoom handlers
+
+void CSoundWindow::setHorzZoomFactor(sample_fpos_t horzZoomFactor)
+{
+	printf("%f %f\n",horzZoomFactor,waveView->getMaxHorzZoomFactor());
+	waveView->setHorzZoomFactor(horzZoomFactor);
+
+	const sample_fpos_t p=sample_fpos_pow( ((100.0*(horzZoomFactor-1.0))/(waveView->getMaxHorzZoomFactor()-1.0))*100.0*100.0, 1.0/3.0);
+	horzZoomDial->setValue((FXint)p);
+}
 
 long CSoundWindow::onHorzZoomDialChange(FXObject *sender ,FXSelector sel,void *ptr)
 {

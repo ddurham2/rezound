@@ -59,6 +59,7 @@
 	#define sample_fpos_exp(a)	(exp(a))
 	#define sample_fpos_fabs(a)	(fabs(a))
 	#define sample_fpos_sin(a)	(sin(a))
+	#define sample_fpos_pow(a,b)	(pow(a,b))
 
 #elif 0 // 64 bit
 	typedef uint64_t 	sample_pos_t;	// integral sample position
@@ -73,6 +74,7 @@
 	#define sample_fpos_exp(a)	(expl(a))
 	#define sample_fpos_fabs(a)	(fabsl(a))
 	#define sample_fpos_sin(a)	(sinl(a))
+	#define sample_fpos_pow(a,b)	(powl(a,b))
 
 #else
 	#error please enable one section above

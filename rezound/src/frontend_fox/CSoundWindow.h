@@ -228,6 +228,8 @@ private:
 	void updateAllStatusInfo();
 	void updateSelectionStatusInfo();
 	void updatePlayPositionStatusInfo();
+	
+	void setHorzZoomFactor(sample_fpos_t horzZoomFactor);
 
 };
 

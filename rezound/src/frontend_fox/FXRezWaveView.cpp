@@ -92,7 +92,7 @@ public:
 	void setVertZoomFactor(double v);
 	double getMaxVertZoomFactor();
 
-	void drawPlayPosition(sample_pos_t dataPosition,bool justErasing);
+	void drawPlayPosition(sample_pos_t dataPosition,bool justErasing,bool scrollToMakeVisible);
 
 	void redraw();
 
@@ -293,9 +293,9 @@ double FXRezWaveView::getMaxVertZoomFactor()
 	return(waveScrollArea->getMaxVertZoomFactor());
 }
 
-void FXRezWaveView::drawPlayPosition(sample_pos_t dataPosition,bool justErasing)
+void FXRezWaveView::drawPlayPosition(sample_pos_t dataPosition,bool justErasing,bool scrollToMakeVisible)
 {
-	waveScrollArea->drawPlayPosition(dataPosition,justErasing);
+	waveScrollArea->drawPlayPosition(dataPosition,justErasing,scrollToMakeVisible);
 }
 
 void FXRezWaveView::redraw()
@@ -478,7 +478,7 @@ double FXWaveScrollArea::getMaxVertZoomFactor()
 	return( (MAX_SAMPLE/((double)getSupposedCanvasHeight()/2.0)) * sound->getChannelCount());
 }
 
-void FXWaveScrollArea::drawPlayPosition(sample_pos_t dataPosition,bool justErasing)
+void FXWaveScrollArea::drawPlayPosition(sample_pos_t dataPosition,bool justErasing,bool scrollToMakeVisible)
 {
 	FXint drawPlayStatusX;
 	FXDCWindow dc(canvas);
@@ -487,6 +487,19 @@ void FXWaveScrollArea::drawPlayPosition(sample_pos_t dataPosition,bool justErasi
 	{
 		// recalc new draw position
 		drawPlayStatusX=(FXint)((sample_fpos_t)dataPosition/horzZoomFactor+pos_x);
+
+
+		if(scrollToMakeVisible && !loadedSound->channel->isPaused())
+		{ // scroll the wave view to make the play position visible on the left most side of the screen
+
+			// if the play position is off the screen
+			if(drawPlayStatusX<0 || drawPlayStatusX>=(sample_fpos_t)getSupposedCanvasWidth())
+			{
+				setPosition(-(sample_pos_t)sample_fpos_round((sample_fpos_t)dataPosition/horzZoomFactor),pos_y); \
+				drawPlayStatusX=0;
+			}
+		}
+
 	}
 
 	// erase the old position (unless it's in the same place
@@ -738,6 +751,9 @@ void FXWaveScrollArea::drawPortion(int left,int width,FXDCWindow *dc)
 {
 	// certain code sets skipDraw incase it wants to avoid a redraw when it knows another is about to happen
 	if(skipDraw>0)
+		return;
+
+	if(!shown())
 		return;
 
 	sound->lockSize();
