@@ -49,15 +49,3 @@ noinst_LTLIBRARIES=libPoolFile.la
 ## libPoolFile.la becomes libPoolFile_la when we write the macro for automake.
 ## here we list all the source files that will be used to build libPoolFile.la
 libPoolFile_la_SOURCES=CMultiFile.cpp
-
-
-## Automake inherently adds the $(CXX) $(CXXFLAGS) command, so all we have to do
-## is tell it our dependencies. This is really more of a benefit for a potential
-## developer than someone who ants to do a one time build. Automake is smart
-## enoug to know that *.cpp will be made into *.o. But by putting the
-## dependancies we have a true make file, which is smart enough to recompile the
-## proper components should anything be modified.
-CMultiFile.o: CMultiFile.cpp \
-	CMultiFile.h \
-	$(top_srcdir)/src/misc/istring \
-	$(top_srcdir)/src/misc/cc++/path.h 
