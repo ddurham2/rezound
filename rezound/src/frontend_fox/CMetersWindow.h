@@ -70,6 +70,7 @@ private:
 			FXLabel *grandMaxPeakLevelLabel;
 
 	FXPacker *analyzerFrame;
+		FXCanvas *analysisCanvas;
 
 	vector<CMeter *> meters;
 
@@ -77,6 +78,8 @@ private:
 
 	FXChore *chore;
 	FXTimer *timeout;
+
+	void renderFrequencyAnalysis();
 };
 
 
