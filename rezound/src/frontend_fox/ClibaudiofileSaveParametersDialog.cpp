@@ -25,8 +25,6 @@
 
 #include "../backend/CActionParameters.h"
 
-#warning need to handle audiofile not being detected 
-
 FXDEFMAP(ClibaudiofileSaveParametersDialog) ClibaudiofileSaveParametersDialogMap[]=
 {
 //	Message_Type			ID								Message_Handler
@@ -68,6 +66,7 @@ ClibaudiofileSaveParametersDialog::ClibaudiofileSaveParametersDialog(FXWindow *m
 		addComboTextEntry(p,N_("Compression Type"),compressionTypes,"");
 }
 
+#ifdef HAVE_LIBAUDIOFILE
 #include <audiofile.h>
 static int indexTo_AF_SAMPFMT_xxx(int index)
 {
@@ -80,6 +79,12 @@ static int indexTo_AF_SAMPFMT_xxx(int index)
 	default: throw runtime_error(string(__func__)+" -- internal error -- unhandled index: "+istring(index));
 	}
 }
+
+#else
+
+static int indexTo_AF_SAMPFMT_xxx(int index){ return 0; }
+
+#endif
 
 static int indexToSampleWidth(int index)
 {
