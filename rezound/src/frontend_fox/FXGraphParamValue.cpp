@@ -38,16 +38,13 @@
  *
  *	- I probably need to limit the minimum size as it could cause divide by zero errors, and really be unusable anyway
  *
- *	- be able to save or load a particular curve to disk
- *
  * 	- I would have liked to reuse code (without copy/pasting) from FXRezWaveView, but it's currently
  * 	  too much tied to CLoadedSound for start and stop positions and such...
  * 	  - At least I pulled draw portion out not to have to rewrite that
  * 	  - but it would be nice if all the scrolling and zooming capabilities where also there....
  *
- * 	- I would like to put a horz ruler at the top of the rendered wave
- * 		- I should also onMouseMove print the time that the cursor is over
- * 			- clear it onExit
+ * 	- I should also onMouseMove print the time that the cursor is over
+ * 		- clear it onExit
  *
  * 	- draw a vertical to the time and a horizontal line to the ruler while dragging the nodes 
  *
@@ -756,9 +753,13 @@ void FXGraphParamValue::updateNumbers()
 const CGraphParamValueNodeList &FXGraphParamValue::getNodes() const
 {
 	retNodes=nodes;
-	// adjust the y by the given function
 	for(size_t t=0;t<retNodes.size();t++)
-		retNodes[t].y=vertInterpretValue(nodes[t].y,getScalar());
+	{
+		if(horzInterpretValue!=NULL)
+			retNodes[t].x=horzInterpretValue(nodes[t].x,0);
+		if(vertInterpretValue!=NULL)
+			retNodes[t].y=vertInterpretValue(nodes[t].y,getScalar());
+	}
 
 	return(retNodes);
 }
@@ -840,7 +841,6 @@ void FXGraphParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 	else	
 		setScalar(initScalar);
 
-
 	nodes.clear();
 
 	const string k1=key+"node_positions";
@@ -866,9 +866,6 @@ void FXGraphParamValue::writeToFile(const string &prefix,CNestedDataFile *f) con
 
 	if(getMinScalar()!=getMaxScalar())
 		f->createKey((key+"scalar").c_str(),istring(getScalar()));
-
-	//const CGraphParamValueNodeList nodes=getNodes();
-
 
 	const string k1=key+"node_positions";
 		// ??? I could implement a createArrayKey which takes a double so I wouldn't have to convert to string here
