@@ -8,11 +8,6 @@
 	- figure out why the limit isn't always working.. twice I entered 90:00.00 and it didn't stop
 		- I haven't seen it since, but with the limit label I should know when it is at least going to happen
 
-	- the 'active' sound window is not staying raised and I don't know why (when focus method is fmActiveButton)
-
-	- set any "stay on top" flags that need to be for dialogs 
-		- I don't see anything in the DECOR flags, ask the fox user list about there being any "stay on top" flags
-
 	- inquire to jeroen if FXLabel could become an FXComposite so that the label would go beside, above, below, etc, whatever any child objects there were
 		- then I could go thru all the code and anywhere that I declare an FXComposite then put a widget and a lable beside it it could change that to something simpler
 		- actually.. I could myself derive from FXLabel and do this, except that label is not derived from composite
@@ -183,4 +178,9 @@
 		- in the frontend create a conglomerated list called all file types that includes all the extensions as well as a *.* entry
 
 	- I still probably need to instatiate a FXFileDialog to use for saving and opening because it doesn't remember the size, view mode, etc.. when it opens each time
+
+	- Didn't find any problems after going back to fix it
+		- the 'active' sound window is not staying raised and I don't know why (when focus method is fmActiveButton)
+		- set any "stay on top" flags that need to be for dialogs 
+		- I don't see anything in the DECOR flags, ask the fox user list about there being any "stay on top" flags
 

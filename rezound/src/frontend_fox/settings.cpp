@@ -21,4 +21,5 @@
 #include "settings.h"
 
 FocusMethods gFocusMethod=fmSoundWindowList;
+//FocusMethods gFocusMethod=fmFocusButton;
 

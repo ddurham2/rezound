@@ -93,8 +93,6 @@ public:
 
 	virtual void layout();
 
-	//virtual void raise();
-
 
 
 	// --- event handlers I setup  --------------------------------------------

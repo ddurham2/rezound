@@ -358,10 +358,6 @@ void CSoundWindow::show()
 		waveView->horzScroll(0);
 		firstTimeShowing=false;
 	}
-	//setDecorations(DECOR_NONE);
-	//setDecorations(DECOR_ALL);
-	//printf("show\n");
-
 }
 
 template <class T> bool between(const T &v, const T &v1, const T &v2)
@@ -494,10 +490,11 @@ void CSoundWindow::create()
 {
 	FXTopWindow::create();
 
-	//show(PLACEMENT_VISIBLE);
 
 	if(gFocusMethod==fmFocusButton)
 	{
+		FXTopWindow::show(PLACEMENT_VISIBLE);
+
 		#define OFFSET_AMOUNT 35
 		
 		// each time a window opens, offset it a little
@@ -539,13 +536,6 @@ long CSoundWindow::onResize(FXObject *sender,FXSelector,void*)
 	return(0);
 }
 
-/*
-void CSoundWindow::raise()
-{
-	FXTopWindow::raise();
-	printf("raised\n");
-}
-*/
 
 // --- event handlers I setup  --------------------------------------------
 
