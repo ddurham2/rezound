@@ -328,6 +328,7 @@ static void printUsage(const string app)
 #ifdef ENABLE_PORTAUDIO
 	printf("\t\tportaudio\n");
 #endif
+	printf("\t\tnull\n");
 
 	printf("\n");
 	printf("Notes:\n");
