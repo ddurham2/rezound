@@ -23,10 +23,11 @@
 
 #include "../../config/common.h"
 
+#include <string>
 
 #include <fox/fx.h>
 
-#include "../backend/ASound.h"
+#include "../backend/CSound_defs.h"
 #include "../backend/CGraphParamValueNode.h"
 
 class FXGraphParamNode;
@@ -41,7 +42,7 @@ public:
 	// minScalar and maxScalar define the min and max spinner values, if they're the same, no spinner is shown
 	FXGraphParamValue(const string title,f_at_xs interpretValue,f_at_xs uninterpretValue,const int minScalar,const int maxScalar,const int initScalar,FXComposite *p,int opts,int x=0,int y=0,int w=0,int h=0);
 
-	void setSound(ASound *sound,sample_pos_t start,sample_pos_t stop);
+	void setSound(CSound *sound,sample_pos_t start,sample_pos_t stop);
 	void clearNodes();
 
 	long onGraphPanelPaint(FXObject *sender,FXSelector sel,void *ptr);
@@ -94,7 +95,7 @@ private:
 
 	string title;
 
-	ASound *sound;
+	CSound *sound;
 	sample_pos_t start,stop;
 
 	FXString units;

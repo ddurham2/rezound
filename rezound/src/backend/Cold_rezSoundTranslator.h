@@ -18,29 +18,29 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __CrezSound_H__
-#define __CrezSound_H__
-
+#ifndef __Cold_rezSoundTranslator_H__
+#define __Cold_rezSoundTranslator_H__
 
 #include "../../config/common.h"
 
-#ifdef __EXPORT_CLASSES__
-class __declspec(dllexport) CrezSound;
-#endif
+#include "ASoundTranslator.h"
 
-#include "ASound.h"
-
-class CrezSound : public ASound
+class Cold_rezSoundTranslator : public ASoundTranslator
 {
 public:
+	Cold_rezSoundTranslator();
+	virtual ~Cold_rezSoundTranslator();
 
-	CrezSound();
-	CrezSound(const string &filename,const unsigned sampleRate,const unsigned channels,const sample_pos_t size);
+	bool handlesExtension(const string extension) const;
+	bool supportsFormat(const string filename) const;
 
-	void loadSound(const string filename);
-	void saveSound(const string filename);
+protected:
+
+	void onLoadSound(const string filename,CSound *sound) const;
+	void onSaveSound(const string filename,CSound *sound) const;
+
+private:
 
 };
 
 #endif
-

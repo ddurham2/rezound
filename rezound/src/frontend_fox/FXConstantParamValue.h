@@ -23,10 +23,11 @@
 
 #include "../../config/common.h"
 
+#include <string>
 
 #include <fox/fx.h>
 
-#include "../backend/ASound.h"
+#include "../backend/CSound_defs.h"
 
 class FXConstantParamNode;
 class CNestedDataFile;

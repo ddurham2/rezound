@@ -35,7 +35,7 @@ public:
 	COSSSoundRecorder();
 	virtual ~COSSSoundRecorder();
 
-	void initialize(ASound *sound);
+	void initialize(CSound *sound);
 	void deinitialize();
 
 	void redo();

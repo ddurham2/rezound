@@ -22,6 +22,10 @@
 
 #include <stdexcept>
 
+#include "CSound.h"
+#include "CSoundPlayerChannel.h"
+
+
 ASoundPlayer::ASoundPlayer()
 {
 }
@@ -40,7 +44,7 @@ void ASoundPlayer::deinitialize()
 	killAll();
 }
 
-CSoundPlayerChannel *ASoundPlayer::newSoundPlayerChannel(ASound *sound)
+CSoundPlayerChannel *ASoundPlayer::newSoundPlayerChannel(CSound *sound)
 {
 	return(new CSoundPlayerChannel(this,sound));
 }

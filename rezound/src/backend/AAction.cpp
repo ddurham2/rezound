@@ -486,7 +486,7 @@ const string &AActionFactory::getDescription() const
 // ----------------------------------------------------------------------
 
 //CPoolFile *AAction::undoPoolFile=NULL;
-ASound::PoolFile_t *AAction::clipboardPoolFile=NULL;
+CSound::PoolFile_t *AAction::clipboardPoolFile=NULL;
 //int AAction::poolNameCounter=0;
 
 // ??? perhaps we could hold on to a pointer to our factory to easily be able to rePEAT the action
@@ -548,7 +548,7 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool wil
 		// save the cues so that if they are modified by the action, then they can be restored at undo
 		restoreCues.clear();
 		for(size_t t=0;t<actionSound.sound->getCueCount();t++)
-			restoreCues.push_back(ASound::RCue(actionSound.sound->getCueName(t).c_str(),actionSound.sound->getCueTime(t),actionSound.sound->isCueAnchored(t)));
+			restoreCues.push_back(CSound::RCue(actionSound.sound->getCueName(t).c_str(),actionSound.sound->getCueTime(t),actionSound.sound->isCueAnchored(t)));
 
 		if(channel!=NULL)
 		{
@@ -782,7 +782,7 @@ void AAction::moveSelectionToTempPools(const CActionSound &actionSound,const Mov
 	 *   30 samples of silence appended to channel 1 to keep the lengths of the channels equivalent.  Next, 
 	 *   when I undo: I would insert the 30 deleted samples back to the beginning of channel 1 which would cause,
 	 *   30 samples of silence to be appended to the end of channel 2 to keep the lengths of the channels 
-	 *   equivalent again.  By passing the maxLength parameter to the space modifier methods of ASound in 
+	 *   equivalent again.  By passing the maxLength parameter to the space modifier methods of CSound in 
 	 *   restoreSelectionFromTempPools it avoids this side-effect of 30 samples of silence being there after 
 	 *   the undo.
 	 */

@@ -22,8 +22,10 @@
 
 #include <exception>
 
+#include "CSound.h"
 #include "AStatusComm.h"
 #include "ASoundFileManager.h"
+#include "CSoundPlayerChannel.h"
 
 void play(ASoundFileManager *soundFileManager,bool looped,bool selectionOnly)
 {
@@ -197,7 +199,7 @@ void jumpToPreviousCue(ASoundFileManager *soundFileManager)
 
 			// find the previous cue relative to the current play position
 			const sample_pos_t playPosition=channel->getPosition();
-			ASound *sound=loaded->getSound();
+			CSound *sound=loaded->getSound();
 		
 			sample_pos_t smallestDistance=MAX_LENGTH;
 			size_t previousCueIndex=0; // zero means not found yet, and we always store the index+1 when we do find one
@@ -249,7 +251,7 @@ void jumpToNextCue(ASoundFileManager *soundFileManager)
 
 			// find the previous cue relative to the current play position
 			const sample_pos_t playPosition=channel->getPosition();
-			ASound *sound=loaded->getSound();
+			CSound *sound=loaded->getSound();
 		
 			sample_pos_t smallestDistance=MAX_LENGTH;
 			size_t nextCueIndex=0; // zero means not found yet, and we always store the index+1 when we do find one

@@ -177,7 +177,7 @@ bool CRecordDialog::show(ASoundRecorder *_recorder)
 	recorder=_recorder;
 	clearClipCount();
 
-	// ??? should find name (using a method on ASound) that finds the first available number or 1 more than the max actually
+	// ??? should find name (using a method on CSound) that finds the first available number or 1 more than the max actually
 	cueNameNumber->setValue(1);
 
 	for(unsigned i=0;i<recorder->getChannelCount();i++)

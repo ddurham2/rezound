@@ -29,7 +29,7 @@
  */
 
 #include <math.h>
-#include "ASound.h"
+#include "CSound_defs.h"
 
 // volume
 static const double scalar_to_dB(const double scalar) { return(10.0*log10(scalar)); }

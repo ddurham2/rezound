@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#include "ASound.h"
+#include "CSound.h"
 #include "AStatusComm.h"
 
 #include <math.h>
@@ -54,11 +54,11 @@
 // ??? probably check a static variable that doesn't require a lock if the application is not threaded
 #define ASSERT_RESIZE_LOCK \
 	if(!poolFile.isExclusiveLocked()) \
-		throw(runtime_error(string(__func__)+" -- this ASound object has not been locked for resize"));
+		throw(runtime_error(string(__func__)+" -- this CSound object has not been locked for resize"));
 
 #define ASSERT_SIZE_LOCK \
 	if(!poolFile.isExclusiveLocked() && poolFile.getSharedLockCount()<=0) \
-		throw(runtime_error(string(__func__)+" -- this ASound object's size has not been locked"));
+		throw(runtime_error(string(__func__)+" -- this CSound object's size has not been locked"));
 
 
 #define CURRENT_VERSION 1
@@ -71,9 +71,8 @@
 #define NOTES_POOL_NAME "UserNotes"
 
 
-ASound::ASound() :
+CSound::CSound() :
 	poolFile(REZOUND_POOLFILE_BLOCKSIZE,REZOUND_POOLFILE_SIGNATURE),
-	filename(""),
 
 	size(0),
 	sampleRate(0),
@@ -92,13 +91,12 @@ ASound::ASound() :
 
 }
 
-ASound::ASound(const string &_filename,const unsigned _sampleRate,const unsigned _channelCount,const sample_pos_t _size) :
+CSound::CSound(const string &_filename,const unsigned _sampleRate,const unsigned _channelCount,const sample_pos_t _size) :
 	poolFile(REZOUND_POOLFILE_BLOCKSIZE,REZOUND_POOLFILE_SIGNATURE),
-	filename(_filename),
 
-	size(_size),
-	sampleRate(_sampleRate),
-	channelCount(_channelCount),
+	size(0),
+	sampleRate(0),
+	channelCount(0),
 
 	metaInfoPoolID(0),
 
@@ -111,24 +109,9 @@ ASound::ASound(const string &_filename,const unsigned _sampleRate,const unsigned
 	for(unsigned t=0;t<MAX_CHANNELS;t++)
 		peakChunkAccessers[t]=NULL;
 
-/* done in createWorkingPoolFile
-	if(channelCount>=MAX_CHANNELS)
-		throw(runtime_error(string(__func__)+" -- invalid number of channels: "+istring(channelCount)));
-*/
-/*
-	if(_size>MAX_LENGTH)
-		throw(runtime_error(string(__func__)+" -- size is greater than MAX_LENGTH"));
-*/
-
-	const string tempFilename=_filename;
-
 	try
 	{
-		// get a real temp file name
-		remove(tempFilename.c_str());
-
-		createWorkingPoolFile(tempFilename);
-		filename=tempFilename;
+		createWorkingPoolFile(_filename,_sampleRate,_channelCount,_size);
 	}
 	catch(...)
 	{
@@ -136,14 +119,12 @@ ASound::ASound(const string &_filename,const unsigned _sampleRate,const unsigned
 		{
 			poolFile.closeFile(false,true);
 		} catch(...) {}
-		//remove(tempFilename);
 		throw;
 	}
 
-	matchUpChannelLengths(NIL_SAMPLE_POS);
 }
 
-ASound::~ASound()
+CSound::~CSound()
 {
     // destructor of descendent should saveSound???
 
@@ -163,70 +144,62 @@ ASound::~ASound()
 	}
 }
 
-void ASound::saveSound()
+void CSound::changeWorkingFilename(const string newOriginalFilename)
 {
-	saveSound(filename);
-	_isModified=false;
+	poolFile.rename(getWorkingFilename(newOriginalFilename));
 }
 
-void ASound::changeFilename(const string newFilename)
-{
-	poolFile.rename(getWorkingFilename(newFilename));
-	filename=newFilename;
-}
-
-void ASound::closeSound()
+void CSound::closeSound()
 {
 	// ??? probably should get a lock?
 	deletePeakChunkAccessers();
 	deleteCueAccesser();
 	poolFile.closeFile(false,true);
-	//removeWorkingPoolFile(filename);
 }
 
 // locks to keep the size from changing (multiple locks can be obtained of this type)
-void ASound::lockSize() const
+void CSound::lockSize() const
 {
     poolFile.sharedLock();
 }
 
-bool ASound::trylockSize() const
+bool CSound::trylockSize() const
 {
     return(poolFile.sharedTrylock());
 }
 
-void ASound::unlockSize() const
+void CSound::unlockSize() const
 {
     poolFile.sharedUnlock();
 }
 
 // locks to be able to change the size (only one lock can be obtained of this type)
-void ASound::lockForResize() const
+void CSound::lockForResize() const
 {
     poolFile.exclusiveLock();
 }
 
-bool ASound::trylockForResize() const
+bool CSound::trylockForResize() const
 {
     return(poolFile.exclusiveTrylock());
 }
 
-void ASound::unlockForResize() const
+void CSound::unlockForResize() const
 {
     poolFile.exclusiveUnlock();
 }
 
-ASound::CInternalRezPoolAccesser ASound::getAudioInternal(unsigned channel)
+CSound::CInternalRezPoolAccesser CSound::getAudioInternal(unsigned channel)
 {
     return(poolFile.getPoolAccesser<sample_t>(channelPoolIDs[channel]));
 }
 
-ASound::CInternalRezPoolAccesser ASound::getTempDataInternal(unsigned tempAudioPoolKey,unsigned channel)
+CSound::CInternalRezPoolAccesser CSound::getTempDataInternal(unsigned tempAudioPoolKey,unsigned channel)
 {
     return(poolFile.getPoolAccesser<sample_t>(createTempAudioPoolName(tempAudioPoolKey,channel)));
 }
 
-CRezPoolAccesser ASound::getAudio(unsigned channel)
+CRezPoolAccesser CSound::getAudio(unsigned channel)
 {
     if(channel>=channelCount)
         throw(runtime_error(string(__func__)+" -- invalid channel: "+istring(channel)));
@@ -234,7 +207,7 @@ CRezPoolAccesser ASound::getAudio(unsigned channel)
     return(poolFile.getPoolAccesser<sample_t>(channelPoolIDs[channel]));
 }
 
-const CRezPoolAccesser ASound::getAudio(unsigned channel) const
+const CRezPoolAccesser CSound::getAudio(unsigned channel) const
 {
     if(channel>=channelCount)
         throw(runtime_error(string(__func__)+" -- invalid channel: "+istring(channel)));
@@ -244,7 +217,7 @@ const CRezPoolAccesser ASound::getAudio(unsigned channel) const
 
 
 
-CRezPoolAccesser ASound::getTempAudio(unsigned tempAudioPoolKey,unsigned channel)
+CRezPoolAccesser CSound::getTempAudio(unsigned tempAudioPoolKey,unsigned channel)
 {
     if(channel>=channelCount)
         throw(runtime_error(string(__func__)+" -- invalid channel: "+istring(channel)));
@@ -252,7 +225,7 @@ CRezPoolAccesser ASound::getTempAudio(unsigned tempAudioPoolKey,unsigned channel
     return(poolFile.getPoolAccesser<sample_t>(createTempAudioPoolName(tempAudioPoolKey,channel)));
 }
 
-const CRezPoolAccesser ASound::getTempAudio(unsigned tempAudioPoolKey,unsigned channel) const
+const CRezPoolAccesser CSound::getTempAudio(unsigned tempAudioPoolKey,unsigned channel) const
 {
     if(channel>=channelCount)
         throw(runtime_error(string(__func__)+" -- invalid channel: "+istring(channel)));
@@ -291,7 +264,7 @@ const CRezPoolAccesser ASound::getTempAudio(unsigned tempAudioPoolKey,unsigned c
  *    'what WOULD be the next data position' not than it will be necessarily called with that
  *    position
  */
-RPeakChunk ASound::getPeakData(unsigned channel,sample_pos_t dataPos,sample_pos_t nextDataPos,const CRezPoolAccesser &dataAccesser) const
+RPeakChunk CSound::getPeakData(unsigned channel,sample_pos_t dataPos,sample_pos_t nextDataPos,const CRezPoolAccesser &dataAccesser) const
 {
 	if(channel>=channelCount)
 		throw(runtime_error(string(__func__)+" -- channel parameter is out of change: "+istring(channel)));
@@ -394,7 +367,7 @@ if(dataPos==getLength()-1)
 	}
 }
 
-void ASound::invalidatePeakData(unsigned channel,sample_pos_t start,sample_pos_t stop)
+void CSound::invalidatePeakData(unsigned channel,sample_pos_t start,sample_pos_t stop)
 {
 	if(channel>=channelCount)
 		throw(runtime_error(string(__func__)+" -- channel parameter is out of change: "+istring(channel)));
@@ -418,7 +391,7 @@ void ASound::invalidatePeakData(unsigned channel,sample_pos_t start,sample_pos_t
 		peakChunkAccesser[t].dirty=true;
 }
 
-void ASound::invalidatePeakData(const bool doChannel[MAX_CHANNELS],sample_pos_t start,sample_pos_t stop)
+void CSound::invalidatePeakData(const bool doChannel[MAX_CHANNELS],sample_pos_t start,sample_pos_t stop)
 {
 	for(sample_pos_t t=0;t<channelCount;t++)
 	{
@@ -427,13 +400,13 @@ void ASound::invalidatePeakData(const bool doChannel[MAX_CHANNELS],sample_pos_t 
 	}
 }
 
-void ASound::invalidateAllPeakData()
+void CSound::invalidateAllPeakData()
 {
 	deletePeakChunkAccessers();
 	createPeakChunkAccessers();
 }
 
-void ASound::deleteChannel(unsigned channel)
+void CSound::deleteChannel(unsigned channel)
 {
 
 	throw(runtime_error(string(__func__)+" -- unimplemented"));
@@ -467,7 +440,7 @@ void ASound::deleteChannel(unsigned channel)
 }
 
 
-static const bool isAllChannels(ASound *sound,const bool whichChannels[MAX_CHANNELS])
+static const bool isAllChannels(CSound *sound,const bool whichChannels[MAX_CHANNELS])
 {
 	unsigned count=0;
 	for(unsigned t=0;t<sound->getChannelCount();t++)
@@ -477,7 +450,7 @@ static const bool isAllChannels(ASound *sound,const bool whichChannels[MAX_CHANN
 }
 
 
-void ASound::addSpace(sample_pos_t where,sample_pos_t length,bool doZeroData)
+void CSound::addSpace(sample_pos_t where,sample_pos_t length,bool doZeroData)
 {
 	ASSERT_RESIZE_LOCK 
 
@@ -488,7 +461,7 @@ void ASound::addSpace(sample_pos_t where,sample_pos_t length,bool doZeroData)
 	addSpace(whichChannels,where,length,doZeroData);
 }
 
-void ASound::addSpace(const bool whichChannels[MAX_CHANNELS],sample_pos_t where,sample_pos_t length,bool doZeroData,sample_pos_t maxLength)
+void CSound::addSpace(const bool whichChannels[MAX_CHANNELS],sample_pos_t where,sample_pos_t length,bool doZeroData,sample_pos_t maxLength)
 {
 	ASSERT_RESIZE_LOCK 
 
@@ -511,7 +484,7 @@ void ASound::addSpace(const bool whichChannels[MAX_CHANNELS],sample_pos_t where,
 	matchUpChannelLengths(maxLength);
 }
 
-void ASound::removeSpace(sample_pos_t where,sample_pos_t length)
+void CSound::removeSpace(sample_pos_t where,sample_pos_t length)
 {
 	ASSERT_RESIZE_LOCK 
 
@@ -522,7 +495,7 @@ void ASound::removeSpace(sample_pos_t where,sample_pos_t length)
 	removeSpace(whichChannels,where,length);
 }
 
-void ASound::removeSpace(const bool whichChannels[MAX_CHANNELS],sample_pos_t where,sample_pos_t length,sample_pos_t maxLength)
+void CSound::removeSpace(const bool whichChannels[MAX_CHANNELS],sample_pos_t where,sample_pos_t length,sample_pos_t maxLength)
 {
 	ASSERT_RESIZE_LOCK 
 
@@ -543,14 +516,14 @@ void ASound::removeSpace(const bool whichChannels[MAX_CHANNELS],sample_pos_t whe
 	matchUpChannelLengths(maxLength);
 }
 
-unsigned ASound::moveDataToTemp(const bool whichChannels[MAX_CHANNELS],sample_pos_t where,sample_pos_t length,sample_pos_t fudgeFactor,sample_pos_t maxLength)
+unsigned CSound::moveDataToTemp(const bool whichChannels[MAX_CHANNELS],sample_pos_t where,sample_pos_t length,sample_pos_t fudgeFactor,sample_pos_t maxLength)
 {
 	ASSERT_RESIZE_LOCK 
 
 	return(moveDataToTempAndReplaceSpace(whichChannels,where,length,0,fudgeFactor));
 }
 
-unsigned ASound::moveDataToTempAndReplaceSpace(const bool whichChannels[MAX_CHANNELS],sample_pos_t where,sample_pos_t length,sample_pos_t replaceLength,sample_pos_t fudgeFactor,sample_pos_t maxLength)
+unsigned CSound::moveDataToTempAndReplaceSpace(const bool whichChannels[MAX_CHANNELS],sample_pos_t where,sample_pos_t length,sample_pos_t replaceLength,sample_pos_t fudgeFactor,sample_pos_t maxLength)
 {
 	ASSERT_RESIZE_LOCK 
 
@@ -588,14 +561,14 @@ unsigned ASound::moveDataToTempAndReplaceSpace(const bool whichChannels[MAX_CHAN
 	return(tempAudioPoolKey);
 }
 
-void ASound::moveDataFromTemp(const bool whichChannels[MAX_CHANNELS],unsigned tempAudioPoolKey,sample_pos_t moveWhere,sample_pos_t moveLength,bool removeTempAudioPools,sample_pos_t maxLength)
+void CSound::moveDataFromTemp(const bool whichChannels[MAX_CHANNELS],unsigned tempAudioPoolKey,sample_pos_t moveWhere,sample_pos_t moveLength,bool removeTempAudioPools,sample_pos_t maxLength)
 {
 	ASSERT_RESIZE_LOCK 
 
 	removeSpaceAndMoveDataFromTemp(whichChannels,0,0,tempAudioPoolKey,moveWhere,moveLength,removeTempAudioPools,maxLength);
 }
 
-void ASound::removeSpaceAndMoveDataFromTemp(const bool whichChannels[MAX_CHANNELS],sample_pos_t removeWhere,sample_pos_t removeLength,unsigned tempAudioPoolKey,sample_pos_t moveWhere,sample_pos_t moveLength,bool removeTempAudioPools,sample_pos_t maxLength)
+void CSound::removeSpaceAndMoveDataFromTemp(const bool whichChannels[MAX_CHANNELS],sample_pos_t removeWhere,sample_pos_t removeLength,unsigned tempAudioPoolKey,sample_pos_t moveWhere,sample_pos_t moveLength,bool removeTempAudioPools,sample_pos_t maxLength)
 {
 	ASSERT_RESIZE_LOCK 
 
@@ -623,7 +596,7 @@ void ASound::removeSpaceAndMoveDataFromTemp(const bool whichChannels[MAX_CHANNEL
 	matchUpChannelLengths(maxLength);
 }
 
-void ASound::removeTempAudioPools(unsigned tempAudioPoolKey)
+void CSound::removeTempAudioPools(unsigned tempAudioPoolKey)
 {
 	for(unsigned t=0;t<MAX_CHANNELS;t++)
 	{
@@ -633,7 +606,7 @@ void ASound::removeTempAudioPools(unsigned tempAudioPoolKey)
 	}
 }
 
-void ASound::appendForFudgeFactor(CInternalRezPoolAccesser dest,const CInternalRezPoolAccesser src,sample_pos_t srcWhere,sample_pos_t fudgeFactor)
+void CSound::appendForFudgeFactor(CInternalRezPoolAccesser dest,const CInternalRezPoolAccesser src,sample_pos_t srcWhere,sample_pos_t fudgeFactor)
 {
 	if(fudgeFactor==0)
 		return;
@@ -652,7 +625,7 @@ void ASound::appendForFudgeFactor(CInternalRezPoolAccesser dest,const CInternalR
 }
 
 
-void ASound::rotateLeft(const bool whichChannels[MAX_CHANNELS],const sample_pos_t start,const sample_pos_t stop,const sample_pos_t amount)
+void CSound::rotateLeft(const bool whichChannels[MAX_CHANNELS],const sample_pos_t start,const sample_pos_t stop,const sample_pos_t amount)
 {
 	ASSERT_RESIZE_LOCK 
 
@@ -674,7 +647,7 @@ void ASound::rotateLeft(const bool whichChannels[MAX_CHANNELS],const sample_pos_
 
 }
 
-void ASound::rotateRight(const bool whichChannels[MAX_CHANNELS],const sample_pos_t start,const sample_pos_t stop,const sample_pos_t amount)
+void CSound::rotateRight(const bool whichChannels[MAX_CHANNELS],const sample_pos_t start,const sample_pos_t stop,const sample_pos_t amount)
 {
 	ASSERT_RESIZE_LOCK 
 
@@ -698,7 +671,7 @@ void ASound::rotateRight(const bool whichChannels[MAX_CHANNELS],const sample_pos
 
 
 
-void ASound::addSpaceToChannel(unsigned channel,sample_pos_t where,sample_pos_t length,bool doZeroData)
+void CSound::addSpaceToChannel(unsigned channel,sample_pos_t where,sample_pos_t length,bool doZeroData)
 {
 	if(length==0)
 		return;
@@ -731,7 +704,7 @@ void ASound::addSpaceToChannel(unsigned channel,sample_pos_t where,sample_pos_t 
 	}
 }
 
-void ASound::removeSpaceFromChannel(unsigned channel,sample_pos_t where,sample_pos_t length)
+void CSound::removeSpaceFromChannel(unsigned channel,sample_pos_t where,sample_pos_t length)
 {
 	if(length==0)
 		return;
@@ -760,7 +733,7 @@ void ASound::removeSpaceFromChannel(unsigned channel,sample_pos_t where,sample_p
 	}
 }
 
-void ASound::moveDataOutOfChannel(unsigned tempAudioPoolKey,unsigned channel,sample_pos_t where,sample_pos_t length)
+void CSound::moveDataOutOfChannel(unsigned tempAudioPoolKey,unsigned channel,sample_pos_t where,sample_pos_t length)
 {
 	CInternalRezPoolAccesser destAccesser=createTempAudioPool(tempAudioPoolKey,channel);
 
@@ -791,7 +764,7 @@ void ASound::moveDataOutOfChannel(unsigned tempAudioPoolKey,unsigned channel,sam
 	}
 }
 
-void ASound::moveDataIntoChannel(unsigned tempAudioPoolKey,unsigned channel,sample_pos_t where,sample_pos_t length,bool removeTempAudioPool)
+void CSound::moveDataIntoChannel(unsigned tempAudioPoolKey,unsigned channel,sample_pos_t where,sample_pos_t length,bool removeTempAudioPool)
 {
 	if(length==0)
 		return;
@@ -828,7 +801,7 @@ void ASound::moveDataIntoChannel(unsigned tempAudioPoolKey,unsigned channel,samp
 
 }
 
-void ASound::silenceSound(unsigned channel,sample_pos_t where,sample_pos_t length,bool doInvalidatePeakData,bool showProgressBar)
+void CSound::silenceSound(unsigned channel,sample_pos_t where,sample_pos_t length,bool doInvalidatePeakData,bool showProgressBar)
 {
 	ASSERT_SIZE_LOCK
 
@@ -838,7 +811,7 @@ void ASound::silenceSound(unsigned channel,sample_pos_t where,sample_pos_t lengt
 		invalidatePeakData(channel,where,where+length);
 }
 
-void ASound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser src,sample_pos_t srcWhere,sample_pos_t length,MixMethods mixMethod,bool doInvalidatePeakData,bool showProgressBar)
+void CSound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser src,sample_pos_t srcWhere,sample_pos_t length,MixMethods mixMethod,bool doInvalidatePeakData,bool showProgressBar)
 {
 	ASSERT_SIZE_LOCK
 
@@ -936,7 +909,7 @@ void ASound::mixSound(unsigned channel,sample_pos_t where,const CRezPoolAccesser
 
 
 
-const string ASound::getTimePosition(sample_pos_t samplePos,int secondsDecimalPlaces,bool includeUnits) const
+const string CSound::getTimePosition(sample_pos_t samplePos,int secondsDecimalPlaces,bool includeUnits) const
 {
 	const sample_fpos_t sampleRate=getSampleRate();
 	const sample_fpos_t sTime=samplePos/sampleRate;
@@ -966,7 +939,7 @@ const string ASound::getTimePosition(sample_pos_t samplePos,int secondsDecimalPl
 }
 
 #include <stdio.h> // for sscanf
-const sample_pos_t ASound::getPositionFromTime(const string time,bool &wasInvalid) const
+const sample_pos_t CSound::getPositionFromTime(const string time,bool &wasInvalid) const
 {
 	wasInvalid=false;
 	sample_pos_t samplePos=0;
@@ -1003,7 +976,7 @@ const sample_pos_t ASound::getPositionFromTime(const string time,bool &wasInvali
 	return(samplePos);
 }
 
-const string ASound::getAudioDataSize(const sample_pos_t sampleCount) const
+const string CSound::getAudioDataSize(const sample_pos_t sampleCount) const
 {
 	sample_fpos_t audioDataSize=sampleCount*sizeof(sample_t)*channelCount;
 	if(audioDataSize>=1024*1024*1024)
@@ -1024,12 +997,12 @@ const string ASound::getAudioDataSize(const sample_pos_t sampleCount) const
 	}
 }
 
-const string ASound::getAudioDataSize() const
+const string CSound::getAudioDataSize() const
 {
 	return(getAudioDataSize(isEmpty() ? 0 : getAudio(0).getSize()));
 }
 
-const string ASound::getPoolFileSize() const
+const string CSound::getPoolFileSize() const
 {
 	sample_pos_t iPoolFileSize=poolFile.getFileSize();
 	if(iPoolFileSize>=1024*1024*1024)
@@ -1050,7 +1023,7 @@ const string ASound::getPoolFileSize() const
 	}
 }
 
-void ASound::defragPoolFile()
+void CSound::defragPoolFile()
 {
 	lockForResize();
 	try
@@ -1065,14 +1038,14 @@ void ASound::defragPoolFile()
 	}
 }
 
-void ASound::printSAT()
+void CSound::printSAT()
 {
 	poolFile.printSAT();
 }
 
 
 
-void ASound::flush()
+void CSound::flush()
 {
 	poolFile.flushData();
 }
@@ -1080,23 +1053,28 @@ void ASound::flush()
 /*
 	By the time this is called, all the protected data members about format info have be set
 */
-void ASound::createWorkingPoolFile(const string originalFilename)
+void CSound::createWorkingPoolFile(const string originalFilename,const unsigned _sampleRate,const unsigned _channelCount,const sample_pos_t _size)
 {
 	if(poolFile.isOpen())
 		throw(runtime_error(string(__func__)+" -- poolFile is already opened"));
 
-	if(channelCount>MAX_CHANNELS)
-		throw(runtime_error(string(__func__)+" -- invalid number of channels: "+istring(channelCount)));
+	if(_channelCount>MAX_CHANNELS)
+		throw(runtime_error(string(__func__)+" -- invalid number of channels: "+istring(_channelCount)));
 
-	const string _filename=getWorkingFilename(originalFilename);
-	remove(_filename.c_str());
-	poolFile.openFile(_filename,true);
+	channelCount=_channelCount;
+	sampleRate=_sampleRate;
+	size=_size;
+
+	const string filename=getWorkingFilename(originalFilename);
+	remove(filename.c_str());
+	poolFile.openFile(filename,true);
 	removeAllTempAudioPools();
 
 	CFormat1InfoPoolAccesser a=poolFile.createPool<RFormatInfo1>(FORMAT_INFO_POOL_NAME);
 	metaInfoPoolID=poolFile.getPoolIdByName(FORMAT_INFO_POOL_NAME);
 	a.append(1);
 
+	// create an audio pool for each channel
 	for(unsigned t=0;t<channelCount;t++)
 	{
 		string poolName=AUDIO_POOL_NAME+istring(t+1);
@@ -1110,10 +1088,12 @@ void ASound::createWorkingPoolFile(const string originalFilename)
 
 	createCueAccesser();
 
+	matchUpChannelLengths(NIL_SAMPLE_POS);
+
 	saveMetaInfo();
 }
 
-bool ASound::createFromWorkingPoolFileIfExists(const string originalFilename,bool promptIfFound)
+bool CSound::createFromWorkingPoolFileIfExists(const string originalFilename,bool promptIfFound)
 {
 	if(poolFile.isOpen())
 		throw(runtime_error(string(__func__)+" -- poolFile is already opened"));
@@ -1206,7 +1186,7 @@ bool ASound::createFromWorkingPoolFileIfExists(const string originalFilename,boo
 	}
 }
 
-void ASound::saveMetaInfo()
+void CSound::saveMetaInfo()
 {
 	if(!poolFile.isOpen())
 		throw(runtime_error(string(__func__)+" -- poolFile is not opened"));
@@ -1244,20 +1224,13 @@ void ASound::saveMetaInfo()
 	// flush();
 }
 
-const string ASound::getWorkingFilename(const string originalFilename) const
+const string CSound::getWorkingFilename(const string originalFilename)
 {
 	// ??? this directory needs to be a setting.. and perhaps in the home directory too ~/.ReZound or some other configured temp sapce directory
  	return("/tmp/"+ost::Path(originalFilename).BaseName()+".pf$");
 }
 
-void ASound::removeWorkingPoolFile(const string originalFilename) const
-{
-	if(poolFile.isOpen())
-		throw(runtime_error(string(__func__)+" -- poolFile is open"));
-	remove(getWorkingFilename(originalFilename).c_str());
-}
-
-void ASound::createPeakChunkAccessers()
+void CSound::createPeakChunkAccessers()
 {
 	if(poolFile.isOpen())
 	{
@@ -1273,7 +1246,7 @@ void ASound::createPeakChunkAccessers()
 	}
 }
 
-void ASound::deletePeakChunkAccessers()
+void CSound::deletePeakChunkAccessers()
 {
 	if(poolFile.isOpen())
 	{
@@ -1286,23 +1259,23 @@ void ASound::deletePeakChunkAccessers()
 }
 
 // returns the number of peak chunks that there needs to be for the given size
-sample_pos_t ASound::calcPeakChunkCount(sample_pos_t givenSize)
+sample_pos_t CSound::calcPeakChunkCount(sample_pos_t givenSize)
 {
 	return((sample_pos_t)ceil(((sample_fpos_t)givenSize)/((sample_fpos_t)PEAK_CHUNK_SIZE)));
 }
 
 
-const string ASound::createTempAudioPoolName(unsigned tempAudioPoolKey,unsigned channel)
+const string CSound::createTempAudioPoolName(unsigned tempAudioPoolKey,unsigned channel)
 {
 	return(TEMP_AUDIO_POOL_NAME+istring(tempAudioPoolKey)+"_"+istring(channel));
 }
 
-ASound::CInternalRezPoolAccesser ASound::createTempAudioPool(unsigned tempAudioPoolKey,unsigned channel)
+CSound::CInternalRezPoolAccesser CSound::createTempAudioPool(unsigned tempAudioPoolKey,unsigned channel)
 {
 	return(poolFile.createPool<sample_t>(createTempAudioPoolName(tempAudioPoolKey,channel)));
 }
 
-void ASound::removeAllTempAudioPools()
+void CSound::removeAllTempAudioPools()
 {
 	for(size_t t=0;t<poolFile.getPoolCount();t++)
 	{
@@ -1319,7 +1292,7 @@ void ASound::removeAllTempAudioPools()
 
 
 // appends silence to the end of any channel that is shorter than the longest one
-void ASound::matchUpChannelLengths(sample_pos_t maxLength)
+void CSound::matchUpChannelLengths(sample_pos_t maxLength)
 {
 /*
 	if(maxLength>MAX_LENGTH)
@@ -1361,7 +1334,7 @@ void ASound::matchUpChannelLengths(sample_pos_t maxLength)
 	saveMetaInfo();
 }
 
-void ASound::ensureNonZeroLength()
+void CSound::ensureNonZeroLength()
 {
 	if(size==0)
 	{
@@ -1376,12 +1349,12 @@ void ASound::ensureNonZeroLength()
 	}
 }
 
-void ASound::setIsModified(bool v)
+void CSound::setIsModified(bool v)
 {
 	_isModified=v;
 }
 
-const bool ASound::isModified() const
+const bool CSound::isModified() const
 {
 	return(_isModified);
 }
@@ -1393,22 +1366,22 @@ const bool ASound::isModified() const
 // --- Cue Methods -------------------------------------
 // -----------------------------------------------------
 
-const size_t ASound::getCueCount() const
+const size_t CSound::getCueCount() const
 {
 	return(cueAccesser->getSize());
 }
 
-const string ASound::getCueName(size_t index) const
+const string CSound::getCueName(size_t index) const
 {
 	return((*cueAccesser)[index].name);
 }
 
-const sample_pos_t ASound::getCueTime(size_t index) const
+const sample_pos_t CSound::getCueTime(size_t index) const
 {
 	return((*cueAccesser)[index].time);
 }
 
-void ASound::setCueTime(size_t index,sample_pos_t newTime)
+void CSound::setCueTime(size_t index,sample_pos_t newTime)
 {
 	if(index>cueAccesser->getSize())
 		throw(runtime_error(string(__func__)+" -- invalid index: "+istring(index)));
@@ -1418,12 +1391,12 @@ void ASound::setCueTime(size_t index,sample_pos_t newTime)
 	rebuildCueIndex();
 }
 
-const bool ASound::isCueAnchored(size_t index) const
+const bool CSound::isCueAnchored(size_t index) const
 {
 	return((*cueAccesser)[index].isAnchored);
 }
 
-void ASound::addCue(const string &name,const sample_pos_t time,const bool isAnchored)
+void CSound::addCue(const string &name,const sample_pos_t time,const bool isAnchored)
 {
 	if(name.size()>=MAX_SOUND_CUE_NAME_LENGTH-1)
 		throw(runtime_error(string(__func__)+" -- cue name too long"));
@@ -1437,7 +1410,7 @@ void ASound::addCue(const string &name,const sample_pos_t time,const bool isAnch
 	cueIndex.insert(map<sample_pos_t,size_t>::value_type(time,cueAccesser->getSize()-1));
 }
 
-void ASound::insertCue(size_t index,const string &name,const sample_pos_t time,const bool isAnchored)
+void CSound::insertCue(size_t index,const string &name,const sample_pos_t time,const bool isAnchored)
 {
 	if(name.size()>=MAX_SOUND_CUE_NAME_LENGTH-1)
 		throw(runtime_error(string(__func__)+" -- cue name too long"));
@@ -1454,7 +1427,7 @@ void ASound::insertCue(size_t index,const string &name,const sample_pos_t time,c
 	rebuildCueIndex();
 }
 
-void ASound::removeCue(size_t index)
+void CSound::removeCue(size_t index)
 {
 	cueAccesser->remove(index,1);
 
@@ -1462,7 +1435,7 @@ void ASound::removeCue(size_t index)
 	rebuildCueIndex();
 }
 
-bool ASound::containsCue(const string &name) const
+bool CSound::containsCue(const string &name) const
 {
 	for(size_t t=0;t<cueAccesser->getSize();t++)
 	{
@@ -1472,7 +1445,7 @@ bool ASound::containsCue(const string &name) const
 	return(false);
 }
 
-bool ASound::findCue(const sample_pos_t time,size_t &index) const
+bool CSound::findCue(const sample_pos_t time,size_t &index) const
 {
 	const map<sample_pos_t,size_t>::const_iterator i=cueIndex.find(time);
 
@@ -1485,7 +1458,7 @@ bool ASound::findCue(const sample_pos_t time,size_t &index) const
 		return(false);
 }
 
-bool ASound::findNearestCue(const sample_pos_t time,size_t &index,sample_pos_t &distance) const
+bool CSound::findNearestCue(const sample_pos_t time,size_t &index,sample_pos_t &distance) const
 {
 	if(cueIndex.empty())
 		return(false);
@@ -1529,7 +1502,7 @@ bool ASound::findNearestCue(const sample_pos_t time,size_t &index,sample_pos_t &
 	return(true);
 }
 
-void ASound::clearCues()
+void CSound::clearCues()
 {
 	cueAccesser->clear();
 
@@ -1542,7 +1515,7 @@ void ASound::clearCues()
  * pos1 can be less than pos2 indicating an addition of space at pos1 for pos2-pos1 samples
  * or pos2 can be less then pos1 indicating a removal of space as pos2 for pos1-pos2 samples
  */
-void ASound::adjustCues(const sample_pos_t pos1,const sample_pos_t pos2)
+void CSound::adjustCues(const sample_pos_t pos1,const sample_pos_t pos2)
 {
 	if(pos1<pos2)
 	{ // added data
@@ -1576,7 +1549,7 @@ void ASound::adjustCues(const sample_pos_t pos1,const sample_pos_t pos2)
 	rebuildCueIndex();
 }
 
-void ASound::createCueAccesser()
+void CSound::createCueAccesser()
 {
 	if(poolFile.isOpen())
 	{
@@ -1588,7 +1561,7 @@ void ASound::createCueAccesser()
 	}
 }
 
-void ASound::deleteCueAccesser()
+void CSound::deleteCueAccesser()
 {
 	if(poolFile.isOpen())
 	{
@@ -1600,7 +1573,7 @@ void ASound::deleteCueAccesser()
 	}
 }
 
-void ASound::rebuildCueIndex()
+void CSound::rebuildCueIndex()
 {
 	cueIndex.clear();
 
@@ -1613,7 +1586,7 @@ void ASound::rebuildCueIndex()
 // -----------------------------------------------------
 
 
-const string ASound::getUserNotes() const
+const string CSound::getUserNotes() const
 {
 	if(poolFile.containsPool(NOTES_POOL_NAME))
 	{
@@ -1641,7 +1614,7 @@ const string ASound::getUserNotes() const
 		return("");
 }
 
-void ASound::setUserNotes(const string &notes)
+void CSound::setUserNotes(const string &notes)
 {
 	TPoolAccesser<int8_t,PoolFile_t> a=poolFile.containsPool(NOTES_POOL_NAME) ? poolFile.getPoolAccesser<int8_t>(NOTES_POOL_NAME) : poolFile.createPool<int8_t>(NOTES_POOL_NAME);
 

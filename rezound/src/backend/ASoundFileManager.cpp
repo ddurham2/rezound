@@ -20,21 +20,25 @@
 
 #include "ASoundFileManager.h"
 
+#include "CSound.h"
+
 #include "AStatusComm.h"
 #include "settings.h"
 
 #include <stdexcept>
-
 #include <cc++/path.h>
 
 #include <CNestedDataFile/CNestedDataFile.h>
 
+#include "ASoundPlayer.h"
+#include "CSoundPlayerChannel.h"
+#include "ASoundRecorder.h"
+#include "ASoundTranslator.h"
+
 #define MAX_REOPEN_HISTORY 16 // needs to be a preference ???
 
 
-					// ??? should be pointers really
-ASoundFileManager::ASoundFileManager(CSoundManager *_soundManager,ASoundPlayer *_soundPlayer,CNestedDataFile *_loadedRegistryFile) :
-	soundManager(_soundManager),
+ASoundFileManager::ASoundFileManager(ASoundPlayer *_soundPlayer,CNestedDataFile *_loadedRegistryFile) :
 	soundPlayer(_soundPlayer),
 	loadedRegistryFile(_loadedRegistryFile)
 {
@@ -47,7 +51,7 @@ void ASoundFileManager::createNew()
 
 CLoadedSound *ASoundFileManager::prvCreateNew(bool askForLength)
 {
-	CSoundManagerClient *client=NULL;
+	CSound *sound=NULL;
 	CSoundPlayerChannel *channel=NULL;
 	CLoadedSound *loaded=NULL;
 
@@ -63,21 +67,24 @@ CLoadedSound *ASoundFileManager::prvCreateNew(bool askForLength)
 		if(isFilenameRegistered(filename))
 			throw(runtime_error(string(__func__)+" -- a file named '"+filename+"' is already opened"));
 
+		// should get based on extension
+		const ASoundTranslator *translator=getTranslator(filename,false/*isRaw*/);
+
 		try
 		{
-				client=new CSoundManagerClient(soundManager->newSound(filename,sampleRate,channelCount,length));
-				channel=soundPlayer->newSoundPlayerChannel(client->sound);
-				loaded=new CLoadedSound(client,channel);
+				sound=new CSound(filename,sampleRate,channelCount,length);
+				channel=soundPlayer->newSoundPlayerChannel(sound);
+				loaded=new CLoadedSound(filename,channel,false,translator);
 
 				createWindow(loaded);
 		}
 		catch(...)
 		{
-			delete loaded;
-			delete channel;
-			delete client;
 			if(loaded!=NULL)
 				destroyWindow(loaded);
+			delete loaded;
+			delete channel;
+			delete sound;
 			throw;
 		}
 
@@ -108,31 +115,33 @@ void ASoundFileManager::open(const string _filename)
  * when we are loading the registered files from a previous sessions, so they would already be
  * in the registry
  */
-void ASoundFileManager::prvOpen(const string &filename,bool readOnly,bool doRegisterFilename)
+void ASoundFileManager::prvOpen(const string &filename,bool readOnly,bool doRegisterFilename,const ASoundTranslator *translatorToUse)
 {
 	if(doRegisterFilename && isFilenameRegistered(filename))
 		throw(runtime_error(string(__func__)+" -- file already opened"));
 
-	CSoundManagerClient *client=NULL;
+	CSound *sound=NULL;
 	CSoundPlayerChannel *channel=NULL;
 	CLoadedSound *loaded=NULL;
 
 	try
 	{
-		client=new CSoundManagerClient(soundManager->openSound(filename,readOnly));
-		channel=soundPlayer->newSoundPlayerChannel(client->sound);
-		loaded=new CLoadedSound(client,channel);
+		if(translatorToUse==NULL)
+			translatorToUse=getTranslator(filename,/*isRaw*/false);
+		sound=new CSound;
+		translatorToUse->loadSound(filename,sound);
+		channel=soundPlayer->newSoundPlayerChannel(sound);
+		loaded=new CLoadedSound(filename,channel,readOnly,translatorToUse);
 
 		createWindow(loaded);
-
 	}
 	catch(...)
 	{
-		delete loaded;
-		delete channel;
-		delete client;
 		if(loaded!=NULL)
 			destroyWindow(loaded);
+		delete loaded;
+		delete channel;
+		delete sound;
 		throw;
 	}
 
@@ -150,24 +159,11 @@ void ASoundFileManager::save()
 	CLoadedSound *loaded=getActive();
 	if(loaded)
 	{
-		string filename=loaded->getSound()->getFilename();
-		if(filename=="")
-			throw(runtime_error(string(__func__)+" -- filename is not set -- how did this happen? -- I shouldn't have this problem since even a new sound has to be given a filename"));
-/*
-		{
-			if(!promptForSave(filename,filename.substr(filename.rfind(".")+1)))
-				return;
-			
-			if(ost::Path(filename).Exists())
-			{
-				if(Question("Overwrite Existing File:\n"+filename,yesnoQues)!=yesAns)
-					return;
-			}
-			
-		}
-*/
+		string filename=loaded->getFilename();
+		if(filename=="" || loaded->translator==NULL)
+			throw(runtime_error(string(__func__)+" -- filename is not set or translator is NULL -- how did this happen? -- I shouldn't have this problem since even a new sound has to be given a filename"));
 		
-		loaded->getSound()->saveSound(filename);
+		loaded->translator->saveSound(filename,loaded->getSound());
 		loaded->getSound()->setIsModified(false);
 		updateAfterEdit();
 		updateReopenHistory(filename);
@@ -179,13 +175,12 @@ void ASoundFileManager::saveAs()
 	CLoadedSound *loaded=getActive();
 	if(loaded)
 	{
-		string filename=loaded->getSound()->getFilename();
-		//if(!promptForSave(filename,loaded->getSound()->getFilename().substr(loaded->getSound()->getFilename().rfind(".")+1)))
-		if(!promptForSave(filename,ost::Path(loaded->getSound()->getFilename()).Extension()))
+		string filename=loaded->getFilename();
+		if(!promptForSave(filename,ost::Path(loaded->getFilename()).Extension()))
 			return;
 
-		if(loaded->getSound()->getFilename()==filename)
-		{
+		if(loaded->getFilename()==filename)
+		{ // the user chose the same name
 			save();
 			return;
 		}
@@ -199,12 +194,14 @@ void ASoundFileManager::saveAs()
 				return;
 		}
 
-		
-		loaded->getSound()->saveSound(filename);
+		const ASoundTranslator *translator=getTranslator(filename,/*isRaw*/false);
 
-		unregisterFilename(loaded->client->sound->getFilename());
-		loaded->getSound()->changeFilename(filename);
-		registerFilename(loaded->client->sound->getFilename());
+		translator->saveSound(filename,loaded->getSound());
+		loaded->translator=translator; // make save use this translator next time
+
+		unregisterFilename(loaded->getFilename());
+		loaded->changeFilename(filename);
+		registerFilename(filename);
 
 		loaded->getSound()->setIsModified(false);
 		updateAfterEdit();
@@ -222,14 +219,14 @@ void ASoundFileManager::close(CloseTypes closeType,CLoadedSound *closeWhichSound
 		{
 			if(closeType==ctSaveYesNoStop)
 			{
-				VAnswer a=Question("Save Modified Sound:\n"+loaded->getSound()->getFilename(),cancelQues);
+				VAnswer a=Question("Save Modified Sound:\n"+loaded->getFilename(),cancelQues);
 				if(a==cancelAns)
 					throw EStopClosing();
 				doSave=(a==yesAns);
 			}
 			else if(closeType==ctSaveYesNoCancel)
 			{
-				VAnswer a=Question("Save Modified Sound:\n"+loaded->getSound()->getFilename(),cancelQues);
+				VAnswer a=Question("Save Modified Sound:\n"+loaded->getFilename(),cancelQues);
 				if(a==cancelAns)
 					return;
 				doSave=(a==yesAns);
@@ -248,23 +245,18 @@ void ASoundFileManager::close(CloseTypes closeType,CLoadedSound *closeWhichSound
 			loaded->getSound()->unlockForResize();
 			// perhaps don't worry about it???
 		}
-		unregisterFilename(loaded->client->sound->getFilename());
 
+		// save before we start deconstructing everything so that if there
+		// is an error saving, the user hasn't lost all when it closes below
 		if(doSave)
-		{
-			try
-			{
-				save();
-			}
-			catch(exception &e)
-			{
-				Error(e.what());
-			}
-		}
+			save();
+
+		unregisterFilename(loaded->getFilename());
 
 		destroyWindow(loaded);
-		soundManager->closeSound(*(loaded->client));
-		delete loaded;
+
+		loaded->getSound()->closeSound();
+		delete loaded; // also deletes channel
 	}
 }
 
@@ -274,8 +266,9 @@ void ASoundFileManager::revert()
 	// NOTE: can't revert if the sound has never been saved 
 	if(loaded)
 	{
-		const bool readOnly=loaded->client->isReadOnly();
-		string filename=loaded->getSound()->getFilename();
+		const ASoundTranslator *translatorToUse=loaded->translator;
+		const bool readOnly=loaded->isReadOnly();
+		string filename=loaded->getFilename();
 
 		if(!ost::Path(filename).Exists())
 		{
@@ -289,7 +282,7 @@ void ASoundFileManager::revert()
 
 		// could be more effecient by not destroying then creating the sound window
 		close(ctSaveNone); // ??? I need a way to know not to defrag since we're not attempting to save any results... altho.. I may never want to defrag.. perhaps on open... 
-		prvOpen(filename,readOnly,true);
+		prvOpen(filename,readOnly,true,translatorToUse);
 		// should I remember the selection positions and use them if they're valid? ???
 	}
 }
@@ -302,6 +295,7 @@ void ASoundFileManager::recordToNew()
 	if(loaded==NULL)
 		return; // cancelled
 
+	// need to somehow choose an implementation ???
 	COSSSoundRecorder recorder;
 	try
 	{
@@ -417,7 +411,7 @@ void ASoundFileManager::unregisterFilename(const string filename)
 	size_t l=loadedRegistryFile->getArraySize(LOADED_REG_KEY);
 	for(size_t t=0;t<l;t++)
 	{
-		if(loadedRegistryFile->getArrayValue(LOADED_REG_KEY,t)==filename);
+		if(loadedRegistryFile->getArrayValue(LOADED_REG_KEY,t)==filename)
 		{
 			loadedRegistryFile->removeArrayKey(LOADED_REG_KEY,t);
 			break;
@@ -473,4 +467,52 @@ const string ASoundFileManager::getReopenHistoryItem(const size_t index) const
 	else
 		return("");
 }
+
+
+#include "CrezSoundTranslator.h"
+#include "Cold_rezSoundTranslator.h"
+#include "ClibaudiofileSoundTranslator.h"
+#include "CrawSoundTranslator.h"
+/*
+	I implemented this method the way I did so it would be a relatively simple
+	change if I wanted to just loop thru a list of registered translators and
+	ask each one if it could handle the file... Also, this method could be 
+	given some abstract stream class pointer instead of a filename which could 
+	access a file or a network URL.   Then the translators would also have to 
+	be changed to read from that stream instead of the file, and libaudiofile
+	would at this point in time have trouble doing that.
+*/
+const ASoundTranslator *ASoundFileManager::getTranslator(const string filename,bool isRaw)
+{
+	static const CrezSoundTranslator rezSoundTranslator;
+	static const Cold_rezSoundTranslator old_rezSoundTranslator;
+	static const ClibaudiofileSoundTranslator libaudiofileSoundTranslator;
+	static const CrawSoundTranslator rawSoundTranslator;
+
+	if(isRaw)
+		return(&rawSoundTranslator);
+
+	if(ost::Path(filename).Exists())
+	{ // try to determine from the contents of the file
+		if(rezSoundTranslator.supportsFormat(filename))
+			return(&rezSoundTranslator);
+		else if(libaudiofileSoundTranslator.supportsFormat(filename))
+			return(&libaudiofileSoundTranslator);
+		else if(old_rezSoundTranslator.supportsFormat(filename))
+			return(&old_rezSoundTranslator);
+	}
+
+	// file doesn't exist or invalid signatures, so attempt to determine the translater based on the file extension
+	const string extension=istring(ost::Path(filename).Extension()).lower();
+	if(extension=="")
+		throw(runtime_error(string(__func__)+" -- cannot determine the extension on the filename: "+filename));
+
+	if(rezSoundTranslator.handlesExtension(extension))
+		return(&rezSoundTranslator);
+	else if(libaudiofileSoundTranslator.handlesExtension(extension))
+		return(&libaudiofileSoundTranslator);
+	else
+		throw(runtime_error(string(__func__)+" -- unhandled extension for the filename '"+filename+"'"));
+}
+
 

@@ -27,7 +27,7 @@
 #include <fox/fx.h>
 
 class CLoadedSound;
-#include "../backend/ASound.h"
+#include "../backend/CSound_defs.h"
 
 // these need to be static class members
 enum UnitTypes { utSeconds, utSamples };

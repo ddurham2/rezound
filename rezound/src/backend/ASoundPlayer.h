@@ -21,16 +21,12 @@
 #ifndef __ASoundPlayer_H__
 #define __ASoundPlayer_H__
 
-
 #include "../../config/common.h"
 
 class ASoundPlayer;
 
-#include "ASound.h"
 #include "CEnvelope.h"
-#include "CSoundPlayerChannel.h"
 
-//#include <TUniqueSortList.h>
 #include <set>
 
 /*
@@ -53,6 +49,9 @@ class ASoundPlayer;
    you can use to play, stop, seek ...
 */
 
+#include "CSound_defs.h"
+class CSoundPlayerChannel;
+
 #define MAX_OUTPUT_DEVICES 16
 class ASoundPlayer
 {
@@ -72,7 +71,8 @@ public:
 
 	void killAll();
 
-	CSoundPlayerChannel *newSoundPlayerChannel(ASound *sound);
+	CSoundPlayerChannel *newSoundPlayerChannel(CSound *sound);
+		// ??? I think this can be moved back now that we declared friendship in the derived class's nested thread class
 	//????This was moved from being a protected member.
 	//????To make gcc 2.95.2 happy --AV
 	// bufferSize is in sample frames (NOT BYTES)

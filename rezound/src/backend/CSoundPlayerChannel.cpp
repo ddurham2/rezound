@@ -27,6 +27,9 @@
 
 #include <istring>
 
+#include "CSound.h"
+#include "ASoundPlayer.h"
+
 /* TODO
  * - Provisions have been made in here for supporting multiple simultaneous output devices, 
  *   however, ASoundPlayer doesn't haven't this notion yet.  When it does, it should pass
@@ -41,7 +44,7 @@
  *   instead of 1 value.
  */
 
-CSoundPlayerChannel::CSoundPlayerChannel(ASoundPlayer *_player,ASound *_sound) :
+CSoundPlayerChannel::CSoundPlayerChannel(ASoundPlayer *_player,CSound *_sound) :
 	sound(_sound),
 	player(_player),
 	playing(false),
@@ -65,7 +68,7 @@ CSoundPlayerChannel::~CSoundPlayerChannel()
 	deinit();
 }
 
-ASound *CSoundPlayerChannel::getSound() const
+CSound *CSoundPlayerChannel::getSound() const
 {
 	return(sound);
 }
@@ -375,7 +378,7 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 
 	lock();
 
-	const ASound &sound=*this->sound;
+	const CSound &sound=*this->sound;
 
 	if(!sound.trylockSize())
 	{ // some action is probably taking place
@@ -687,7 +690,7 @@ typedef _ROutputRoute ROutputRoute[MAX_ROUTE_CHANNELS];
 
 void CSoundPlayerChannel::createInitialOutputRoute()
 {
-	TPoolAccesser<ROutputRoute,ASound::PoolFile_t> a=sound->getGeneralDataAccesser<ROutputRoute>("OutputRoutes");
+	TPoolAccesser<ROutputRoute,CSound::PoolFile_t> a=sound->getGeneralDataAccesser<ROutputRoute>("OutputRoutes");
 
 	const size_t outputDeviceIndex=0;
 	
@@ -710,7 +713,7 @@ void CSoundPlayerChannel::getOutputRouteParams(unsigned route,unsigned channel,u
 		throw(runtime_error(string(__func__)+" -- channel out of bounds: "+istring(channel)));
 
 	// ??? make this const again if I ever move away from the typedef [32] thing
-	/*const*/ TPoolAccesser<ROutputRoute,ASound::PoolFile_t> a=sound->getGeneralDataAccesser<ROutputRoute>("OutputRoutes");
+	/*const*/ TPoolAccesser<ROutputRoute,CSound::PoolFile_t> a=sound->getGeneralDataAccesser<ROutputRoute>("OutputRoutes");
 	if(route>=a.getSize())
 		route=0; // if out of bounds, use default
 

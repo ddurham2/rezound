@@ -31,19 +31,16 @@ class AAction;
 
 
 
-//#include <CString.h>
 #include <string>
-//#include <TDimableList.h>
-
 #include <vector>
 
 #include "CSoundPlayerChannel.h"
-#include "ASound.h"
+#include "CSound.h"
 #include "AStatusComm.h"
 
 class CLoadedSound;
 
-typedef TPoolAccesser<sample_t,ASound::PoolFile_t > CRezClipboardPoolAccesser;
+typedef TPoolAccesser<sample_t,CSound::PoolFile_t > CRezClipboardPoolAccesser;
 
 /*
     This class specifies which sound, which channels in that sound
@@ -52,7 +49,7 @@ typedef TPoolAccesser<sample_t,ASound::PoolFile_t > CRezClipboardPoolAccesser;
 class CActionSound
 {
 public:
-	ASound *sound;
+	CSound *sound;
 	bool doChannel[MAX_CHANNELS];
 
 	// the start and stop data-members are used to set the
@@ -200,7 +197,7 @@ protected:
 	// - hasAdvancedMode can be passed as true if something is to be done when performAction's advancedMode parameter is true
 	// - Otherwise, it will say "this action has no advanced mode" so the user doesn't think something different than normal is
 	//   happening
-	// - lockForResize can be passed as false to avoid locking the ASound object for resize if the action doesn't need that lock to, but a lockSize will be obtained anyway
+	// - lockForResize can be passed as false to avoid locking the CSound object for resize if the action doesn't need that lock to, but a lockSize will be obtained anyway
 	AActionFactory(const string actionName,const string actionDescription,const bool hasAdvancedMode,AActionDialog *channelSelectDialog,AActionDialog *normalDialog,AActionDialog *advancedDialog,bool willResize=true);
 
 
@@ -266,7 +263,7 @@ public:
 	// this CPoolFile object needs to be instantiated at startup and destroyed at
 	// shutdown and should be created as a file in the user-specified temp directory
 	// it is used for storing copied/cut data
-	static ASound::PoolFile_t *clipboardPoolFile;
+	static CSound::PoolFile_t *clipboardPoolFile;
 	static void clearClipboard();
 	static unsigned getClipboardChannelCount(); // ??? may supply a clipboard ID
 	static sample_pos_t getClipboardLength(); // ??? may supply a clipboard ID
@@ -364,7 +361,7 @@ private:
 	sample_pos_t restoreLength2;
 	sample_pos_t restoreTotalLength;
 	//CActionSound restoreActionSound;	// the CActionSound passed to backupUndoSelection
-	vector<ASound::RCue> restoreCues;
+	vector<CSound::RCue> restoreCues;
 
 	/*
 	// used to get unique pool names for the global undo CPoolFile across all actions

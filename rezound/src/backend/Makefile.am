@@ -41,7 +41,7 @@ noinst_HEADERS= \
 	   unit_conv.h \
 	   AAction.h \
 	   ALFO.h \
-	   ASound.h \
+	   CSound.h \
 	   ASoundPlayer.h \
 	   ASoundRecorder.h \
 	   ASoundFileManager.h \
@@ -51,13 +51,13 @@ noinst_HEADERS= \
 	   CLoadedSound.h \
 	   COSSSoundPlayer.h \
 	   COSSSoundRecorder.h \
-	   CSoundManager.h \
-	   CSoundManagerClient.h \
 	   CSoundPlayerChannel.h \
 	   CTrigger.h \
-	   ClibaudiofileSound.h \
-	   Cold_rezSound.h \
-	   CrezSound.h \
+	   ASoundTranslator.h \
+	   CrezSoundTranslator.h \
+	   Cold_rezSoundTranslator.h \
+	   ClibaudiofileSoundTranslator.h \
+	   CrawSoundTranslator.h \
 	   DSPBlocks.h 
 	   
 
@@ -66,7 +66,7 @@ noinst_HEADERS= \
 noinst_LTLIBRARIES=libbackend.la
 libbackend_la_SOURCES= \
 			AAction.cpp  \
-			ASound.cpp  \
+			CSound.cpp  \
 			ASoundFileManager.cpp \
 			ASoundPlayer.cpp  \
 			ASoundRecorder.cpp \
@@ -76,14 +76,14 @@ libbackend_la_SOURCES= \
 			CLoadedSound.cpp  \
 			COSSSoundPlayer.cpp \
 			COSSSoundRecorder.cpp \
-			CSoundManager.cpp \
-			CSoundManagerClient.cpp \
 			CSoundPlayerChannel.cpp \
 			CTrigger.cpp \
-			ClibaudiofileSound.cpp \
-			Cold_rezSound.cpp \
-			CrezSound.cpp \
 			file.cpp  \
 			playcontrols.cpp \
 		        settings.cpp \
+			ASoundTranslator.cpp \
+			CrezSoundTranslator.cpp \
+			Cold_rezSoundTranslator.cpp \
+			ClibaudiofileSoundTranslator.cpp \
+			CrawSoundTranslator.cpp \
 		        initialize.cpp

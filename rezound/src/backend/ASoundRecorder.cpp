@@ -163,7 +163,7 @@ void ASoundRecorder::done()
 }
 
 
-void ASoundRecorder::initialize(ASound *_sound)
+void ASoundRecorder::initialize(CSound *_sound)
 {
 	started=false;
 	sound=_sound;
@@ -341,7 +341,7 @@ void ASoundRecorder::addCueNow(const string name,bool isAnchored)
 
 	// this actually adds the cue at the last 20th of a second or so
 	// depending on the how often the derived class is invoking onData
-	addedCues.push_back(ASound::RCue(istring(name).truncate(MAX_SOUND_CUE_NAME_LENGTH).c_str(),origLength+writePos,isAnchored));
+	addedCues.push_back(CSound::RCue(istring(name).truncate(MAX_SOUND_CUE_NAME_LENGTH).c_str(),origLength+writePos,isAnchored));
 }
 
 /*

@@ -18,16 +18,34 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __backend_initialize_H__
-#define __backend_initialize_H__
-
+#ifndef __ASoundTranslator_H__
+#define __ASoundTranslator_H__
 
 #include "../../config/common.h"
 
-class ASoundPlayer;
-class CSoundManager;
+#include <string>
 
-void initializeBackend(ASoundPlayer *&soundPlayer);
-void deinitializeBackend();
+class CSound;
+
+class ASoundTranslator
+{
+public:
+	ASoundTranslator();
+	virtual ~ASoundTranslator();
+
+	void loadSound(const string filename,CSound *sound) const;
+	void saveSound(const string filename,CSound *sound) const;
+
+	virtual bool handlesExtension(const string extension) const=0;
+	virtual bool supportsFormat(const string filename) const=0;
+
+protected:
+
+	virtual void onLoadSound(const string filename,CSound *sound) const=0;
+	virtual void onSaveSound(const string filename,CSound *sound) const=0;
+
+private:
+
+};
 
 #endif

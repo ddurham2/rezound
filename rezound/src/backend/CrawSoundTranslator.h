@@ -18,28 +18,29 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __Cold_rezSound_H__
-#define __Cold_rezSound_H__
-
+#ifndef __CrawSoundTranslator_H__
+#define __CrawSoundTranslator_H__
 
 #include "../../config/common.h"
 
-#include "ASound.h"
+#include "ASoundTranslator.h"
 
-class Cold_rezSound : public ASound
+class CrawSoundTranslator : public ASoundTranslator
 {
 public:
+	CrawSoundTranslator();
+	virtual ~CrawSoundTranslator();
 
-    Cold_rezSound();
-
-    virtual void loadSound(const string filename);
-    virtual void saveSound(const string filename);
+	bool handlesExtension(const string extension) const;
+	bool supportsFormat(const string filename) const;
 
 protected:
+
+	void onLoadSound(const string filename,CSound *sound) const;
+	void onSaveSound(const string filename,CSound *sound) const;
 
 private:
 
 };
 
 #endif
-

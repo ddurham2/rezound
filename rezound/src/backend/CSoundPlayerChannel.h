@@ -29,8 +29,10 @@ class CSoundPlayerChannel;
 #include <cc++/thread.h>
 
 #include "CTrigger.h"
-#include "ASound.h"
-#include "ASoundPlayer.h"
+#include "CEnvelope.h"
+
+#include "CSound_defs.h"
+class ASoundPlayer;
 
 // ??? perhaps these should change to float if sample_t is floating point .. perhap define them where sample_t is defined
 #define MAX_VOLUME_SCALAR 32767
@@ -45,8 +47,8 @@ public:
 	explicit CSoundPlayerChannel(const CSoundPlayerChannel &src);
 	virtual ~CSoundPlayerChannel();
 
-	ASound *getSound() const;
-	ASound * const sound;
+	CSound *getSound() const;
+	CSound * const sound;
 
 	CSoundPlayerChannel &operator=(const CSoundPlayerChannel &src);
 
@@ -99,7 +101,7 @@ private:
 
 	mutable ost::Mutex mutex;
 	ASoundPlayer *player;
-	CSoundPlayerChannel(ASoundPlayer *_player,ASound *_sound);
+	CSoundPlayerChannel(ASoundPlayer *_player,CSound *_sound);
 
 	// Playing Status and Play Positions
 	volatile bool playing,paused,playLooped,playSelectionOnly;

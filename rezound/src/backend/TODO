@@ -15,22 +15,11 @@
 	- use a registry setting for knowing where to put working files and the clipboard instead of always /tmp
 
 	- warn the user if he's saving an exported file format and information such as cues and user notes will not be exported (for now)
-		- problem should somewhat go away with a different audio file library
+		- implement in the derivations from ASoundTranslator
 
-	- rename MAX_CHANNELS and MAX_LENGTH in ASound.h to something a little more ReZound specific like REZ_MAX_CHANNELS REZ_MAX_LENGTH
+	- rename MAX_CHANNELS and MAX_LENGTH in CSound_dehs.h to something a little more ReZound specific like REZ_MAX_CHANNELS REZ_MAX_LENGTH
 
 	- change the ClipSample macro to an inline function so _SSS is no longer a static global... verify that the assembler for the inline is no less efficient than the macro
-
-	- I need to go thru these backend classes and make sure of what they all do... 
-		- I have the concept that a sound can be loaded that does have a window: i.e. it's been registered with CSoundManager but not thru ASoundFileManager
-		- I should think thru just exactly what my requirements are and base the classes on that... I shouldn't have to rewrite much code.. it's all there
-
-			- ASoundPlayer plays CSoundPlayerChannels (perhaps change the name from Channel to Track so as not to confuse it with the channels of PCM data)
-			- CSoundManager managers CSoundManagerClients... Now, just WHY is this necessary?  So I can have one sound loaded assigned to many CSoundPlayerTracks
-		- I think my motives were to be able to implement MIDISamplePlayer with most of ReZound's code, but a different front end
-			- while this may be feasible, I also need to think thru how multitrack editing may be accomplished... Perhaps it already can
-
-		- I just don't have a good grip that there is a reason for everything I did in the backend as far as these managers... 
 
 	- When pasting data, there is no heeding of the differences in sample rate of the src data when pasting to the destination
 		- I should fix this problem when I implement a real clipboard system and I would have to supply the PCM parameters to the clipboard when I copied the data there, then pasting could do something to resolve any differances when reading from it
@@ -57,7 +46,7 @@
 		- I suppose I should use popt because it is packaged for most all rpm abd deb based distros.. I need to find URL of popt's homepage and refer to that on error in configure
 
 	- I need to think thru and handle problems with the data becoming too large for whatever address space is currently active
-		- if ASound is about to change the space, if the total space is about to cross some threshhold, I shouldn't proceed to do the action
+		- if CSound is about to change the space, if the total space is about to cross some threshhold, I shouldn't proceed to do the action
 
 	- Need to handle duplicate named cues when loading a file.. I don't allow them, but a file format might
 
@@ -68,6 +57,8 @@
 --- POSSIBLE THINGS TO DO ---
 
 	- To speed up initial work upon loading a large file (>100mb) I could have the loading functions calculate the peak chunk info instead of loading then calcing the peak chunk on the first draw which causes it to have to read and write the data twice instead of once
+
+	- move the typedefs at the top of CSound.h to its own file so we don't have to include it in so many places
 
 	- The only reason I don't prebuffer more data than I do is because the play position drawn in the front end is always a little ahead of the acutal playing sound... I could buffer a lot of data if I were to know the approximate delay time of processing to sound card I might be able to overcome the problem...
 		- One possibility is to be able to know which buffer is playing, then I could tag each buffer with a play position for the start of that buffer... then I would just render the play position on screen as the start position of the currently playing buffer
@@ -153,4 +144,14 @@
 
 	- need to eventually use a different sound file library which can also retrieve and store arbitrary data sections in the formats that support it (namely .wav).. So I can store and load cues
 		- I'd like to use libst (lib form of SOX), but there is no documentation or common API I don't think
+
+	- I need to go thru these backend classes and make sure of what they all do... 
+		- I went thru and reorganized everything
+		- I have the concept that a sound can be loaded that does have a window: i.e. it's been registered with CSoundManager but not thru ASoundFileManager
+		- I should think thru just exactly what my requirements are and base the classes on that... I shouldn't have to rewrite much code.. it's all there
+			- ASoundPlayer plays CSoundPlayerChannels (perhaps change the name from Channel to Track so as not to confuse it with the channels of PCM data)
+			- CSoundManager managers CSoundManagerClients... Now, just WHY is this necessary?  So I can have one sound loaded assigned to many CSoundPlayerTracks
+		- I think my motives were to be able to implement MIDISamplePlayer with most of ReZound's code, but a different front end
+			- while this may be feasible, I also need to think thru how multitrack editing may be accomplished... Perhaps it already can
+		- I just don't have a good grip that there is a reason for everything I did in the backend as far as these managers... 
 

@@ -78,6 +78,7 @@
 		- when I was taking a file up above 2gb, I copied a 1.2g selection and it seemed to do something for a long time before growing the clipboard file during the copy action
 
 	- need to make front and backend provisions for letting the user specify the export format parameters... some of the parameters depend on the export format... Perhaps I could have a dialog with a tabbed bar which has different parameters on each... which ever bar was activated would be the export format type... Either use the tabbar or radio buttons (real buttons) and a switcher like the switcher test that comes with fox
+		- should be somewhat easier now with the code reorganization
 
 	- write a little document in PoolFile that explains simply the layout of how PoolFileAccessors do their thing and perhaps a very simplified explination of how TPoolFile does what it does
 
@@ -103,13 +104,12 @@
 	- could easily make the play buttons stop if playing and then do their action so that they don't do nothing while it's playing
 		- plus you have to hit stop and play to make it do something else... stop needs to be nice and big anyway
 
-	- I could probably move most of initializeReZound into the backend
-
 	- I could add an advanced mode for copy/cut/paste where the user can choose from multiple clipboards
 		- perhaps one way to implement this would be to have multiple instantiated ASoundClipboard objects in an array one may point to a system clipboard and others to TPoolFile clipboard
 		- interface:
 			- either advanced mode for copy/cut/paste
 			- or a dropdown list somewhere on the mainform
+		- even a clipboard with is a recording source is quite feasible
 
 	- it may be more intutive/user-friendly/athetically-pleasing to have the channel select dialog start out all unchecked so I acutally clikc on the channels I want to apply the action to, rather than the inverse of the channels...
 		- I should also probably add a button that selects all chanels or unselects all changes
@@ -139,8 +139,6 @@
 	- a very nice project called 'ardour' on sourceforge.net has setup a paypal account to receive donations, perhaps I should do the same
 
 	- look at sox's code for more effect algorithms
-
-	- I need to profile to look into pool file's performance and figure out why a 300 meg file loaded takes even as long as it does to delete or insert data... roughly 4000 modifications to the SAT wouldn't seem like a lot
 
 
 
@@ -352,3 +350,8 @@
 	- Need a hot key or event that keeps the play position on screen.. only do something if it's not on screen
 
 	- List in the documentation (which isn't the most obvious feature) that in the recording dialog, one can use start/stop multiple times as in pausing the recording, resuming, pausing, resuming, etc
+
+	- I could probably move most of initializeReZound into the backend
+
+	- I need to profile to look into pool file's performance and figure out why a 300 meg file loaded takes even as long as it does to delete or insert data... roughly 4000 modifications to the SAT wouldn't seem like a lot
+

@@ -28,11 +28,16 @@
 class ASoundFileManager;
 
 #include <string>
+#include <vector>
 
 #include "CLoadedSound.h"
 
+#include "CSound_defs.h"
+
 class CNestedDataFile;
+class ASoundPlayer;
 class ASoundRecorder;
+class ASoundTranslator;
 
 struct EStopClosing { };
 
@@ -40,7 +45,7 @@ class ASoundFileManager
 {
 public:
 
-	ASoundFileManager(CSoundManager *soundManager,ASoundPlayer *soundPlayer,CNestedDataFile *loadedRegistryFile);
+	ASoundFileManager(ASoundPlayer *soundPlayer,CNestedDataFile *loadedRegistryFile);
 	// should a destructor be responsible for closing all files???
 	virtual ~ASoundFileManager() { }
 
@@ -102,12 +107,14 @@ protected:
 
 private:
 
-	CSoundManager *soundManager;
+	// ??? perhaps I should have some enum here which indicates a desired format incase the extension is non-standard
+	static const ASoundTranslator *getTranslator(const string filename,bool isRaw);
+
 	ASoundPlayer *soundPlayer;
 
 	CNestedDataFile *loadedRegistryFile;
 
-	void prvOpen(const string &filename,bool readOnly,bool registerFilename);
+	void prvOpen(const string &filename,bool readOnly,bool registerFilename,const ASoundTranslator *translatorToUse=NULL);
 	void registerFilename(const string filename);
 	void unregisterFilename(const string filename);
 	bool isFilenameRegistered(const string filename);

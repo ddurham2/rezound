@@ -23,9 +23,9 @@
 #include "../../config/common.h"
 
 
-class ASound;
+class CSound;
 class FXDCWindow;
-extern void drawPortion(int left,int width,FXDCWindow *dc,ASound *sound,int canvasWidth,int canvasHeight,int drawSelectStart,int drawSelectStop,double horzZoomFactor,int hOffset,double vertZoomFactor,int vOffset,bool darkened=false);
+extern void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth,int canvasHeight,int drawSelectStart,int drawSelectStop,double horzZoomFactor,int hOffset,double vertZoomFactor,int vOffset,bool darkened=false);
 
 #include <fox/fxdefs.h>
 extern FXColor backGroundColor;

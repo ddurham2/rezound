@@ -90,7 +90,7 @@ long CSoundListWindow::onSoundListChange(FXObject *sender,FXSelector sel,void *p
 
 void CSoundListWindow::addSoundWindow(CSoundWindow *window)
 {
-	ost::Path p(window->loadedSound->getSound()->getFilename().c_str());
+	ost::Path p(window->loadedSound->getFilename().c_str());
 
 	// if I could, i'd like a two column list where the basename was in the first column and path in the second???
 	soundList->appendItem((p.BaseName()+"  "+p.DirName()).c_str(),NULL,window);
@@ -125,7 +125,7 @@ void CSoundListWindow::updateWindowName(CSoundWindow *window)
 	{
 		if(soundList->getItemData(t)==window)
 		{
-			ost::Path p(window->loadedSound->getSound()->getFilename().c_str());
+			ost::Path p(window->loadedSound->getFilename().c_str());
 			soundList->setItemText(t,(p.BaseName()+"  "+p.DirName()).c_str());
 			break;
 		}

@@ -18,41 +18,40 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#include "CSoundManagerClient.h"
+#include "ASoundTranslator.h"
+#include "CSound.h"
 
 #include <stdexcept>
 
-CSoundManagerClient::CSoundManagerClient(ASound *_sound,CSoundManager *_soundManager,bool _readOnly) :
-	sound(_sound),
-	soundManager(_soundManager),
-	readOnly(_readOnly)
-{
-	soundManager->addClient(this);
-}
-
-CSoundManagerClient::CSoundManagerClient(const CSoundManagerClient &src) :
-	sound(src.sound),
-	soundManager(src.soundManager),
-	readOnly(src.readOnly)
-{
-	soundManager->addClient(this);
-}
-
-CSoundManagerClient::~CSoundManagerClient()
-{
-	soundManager->removeClient(this);
-}
-
-CSoundManagerClient &CSoundManagerClient::operator=(const CSoundManagerClient &src)
-{
-	throw(runtime_error(string(__func__)+"= -- CSoundManagerClient objects must not be assigned; use the copy constructor"));
-}
-
-void CSoundManagerClient::saveSound()
+ASoundTranslator::ASoundTranslator()
 {
 }
 
-void CSoundManagerClient::copySound(const string filename)
+ASoundTranslator::~ASoundTranslator()
 {
+}
+
+void ASoundTranslator::loadSound(const string filename,CSound *sound) const
+{
+	sound->lockForResize();
+	try
+	{
+		// use working file if it exists
+		if(!sound->createFromWorkingPoolFileIfExists(filename))
+			onLoadSound(filename,sound);
+
+		sound->unlockForResize();
+	}
+	catch(...)
+	{
+		sound->unlockForResize();
+		throw;
+	}
+}
+
+void ASoundTranslator::saveSound(const string filename,CSound *sound) const
+{
+	// lockSize
+	onSaveSound(filename,sound);
 }
 

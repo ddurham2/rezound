@@ -18,16 +18,37 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __backend_initialize_H__
-#define __backend_initialize_H__
+#include "CrawSoundTranslator.h"
+#include "CSound.h"
+
+#include <stdexcept>
+
+CrawSoundTranslator::CrawSoundTranslator()
+{
+}
+
+CrawSoundTranslator::~CrawSoundTranslator()
+{
+}
+
+void CrawSoundTranslator::onLoadSound(const string filename,CSound *sound) const
+{
+	throw(runtime_error(string(__func__)+" -- unimplemented"));
+}
+
+void CrawSoundTranslator::onSaveSound(const string filename,CSound *sound) const
+{
+	throw(runtime_error(string(__func__)+" -- unimplemented"));
+}
 
 
-#include "../../config/common.h"
+bool CrawSoundTranslator::handlesExtension(const string extension) const
+{
+	return(extension=="raw");
+}
 
-class ASoundPlayer;
-class CSoundManager;
+bool CrawSoundTranslator::supportsFormat(const string filename) const
+{
+	return(true); // this necessitates CrawSoundTranslator being the last translator consulted
+}
 
-void initializeBackend(ASoundPlayer *&soundPlayer);
-void deinitializeBackend();
-
-#endif

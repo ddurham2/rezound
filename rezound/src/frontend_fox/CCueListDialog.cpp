@@ -174,7 +174,7 @@ void CCueListDialog::rebuildCueList()
 
 	// insert into a map and then extract (sorted) into the list box
 	map<string,size_t> cues;
-	ASound *sound=loadedSound->getSound();
+	CSound *sound=loadedSound->getSound();
 	for(size_t t=0;t<loadedSound->getSound()->getCueCount();t++)
 	{
 		cues.insert(

@@ -20,15 +20,23 @@
 
 #include "CLoadedSound.h"
 
+#include "AAction.h"
+#include "CSoundPlayerChannel.h"
+#include "CSound.h"
+
 CLoadedSound::CLoadedSound(const CLoadedSound &src) :
-	client(src.client),
-	channel(src.channel)
+	channel(src.channel),
+	translator(src.translator),
+	filename(src.filename),
+	_isReadOnly(src._isReadOnly)
 {
 }
 
-CLoadedSound::CLoadedSound(CSoundManagerClient *_client,CSoundPlayerChannel *_channel) :
-	client(_client),
-	channel(_channel)
+CLoadedSound::CLoadedSound(const string _filename,CSoundPlayerChannel *_channel,bool __isReadOnly,const ASoundTranslator *_translator) :
+	channel(_channel),
+	translator(_translator),
+	filename(_filename),
+	_isReadOnly(__isReadOnly)
 {
 }
 
@@ -36,7 +44,6 @@ CLoadedSound::~CLoadedSound()
 {
 	clearUndoHistory();
 	delete channel;
-	delete client;
 }
 
 void CLoadedSound::clearUndoHistory()
@@ -48,18 +55,30 @@ void CLoadedSound::clearUndoHistory()
 	}
 }
 
-ASound *CLoadedSound::getSound() const
+CSound *CLoadedSound::getSound() const
 {
 	return(channel->getSound());
 }
 
+const string CLoadedSound::getFilename() const
+{
+	return(filename);
+}
+
+void CLoadedSound::changeFilename(const string newFilename)
+{
+	getSound()->changeWorkingFilename(newFilename);
+	filename=newFilename;
+}
+
+#warning I dont think this operator is necessary
 bool CLoadedSound::operator==(const CLoadedSound &rhs) const
 {
-	return(client==rhs.client && channel==rhs.channel);
+	return(channel==rhs.channel);
 }
 
 bool CLoadedSound::isReadOnly() const
 {
-	return(client->isReadOnly());
+	return(_isReadOnly);
 }
 

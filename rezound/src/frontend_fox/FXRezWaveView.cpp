@@ -29,6 +29,8 @@
 #include "drawPortion.h"
 
 #include "../backend/CLoadedSound.h"
+#include "../backend/CSound.h"
+#include "../backend/CSoundPlayerChannel.h"
 
 // these could be static class members
 static FXColor playStatusColor=FXRGB(255,0,0);
@@ -156,7 +158,7 @@ private:
 	int skipDraw;
 
 	CLoadedSound *loadedSound;
-	ASound *sound;
+	CSound *sound;
 
 	bool draggingSelectStart,draggingSelectStop;
 	FXint prevDrawPlayStatusX;
@@ -236,7 +238,7 @@ private:
 	FXRezWaveView *parent;
 
 	CLoadedSound *loadedSound;
-	ASound *sound;
+	CSound *sound;
 
 	FXFont *font;
 

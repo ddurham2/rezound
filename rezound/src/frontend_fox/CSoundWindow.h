@@ -34,7 +34,7 @@ class CAddCueActionFactory;
 class CRemoveCueActionFactory;
 class CReplaceCueActionFactory;
 
-#include "../backend/ASound.h"
+#include "../backend/CSound_defs.h"
 
 
 /*

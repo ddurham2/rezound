@@ -62,10 +62,9 @@ int main(int argc,char *argv[])
 		//   ??? I suppose I could atleast print to strerr if gStatusComm was not created yet
 
 		ASoundPlayer *soundPlayer=NULL;
-		CSoundManager *soundManager=NULL;
-		initializeBackend(soundPlayer,soundManager);
+		initializeBackend(soundPlayer);
 
-		gSoundFileManager=new CSoundFileManager(mainWindow,soundManager,soundPlayer,gSettingsRegistry);
+		gSoundFileManager=new CSoundFileManager(mainWindow,soundPlayer,gSettingsRegistry);
 
 
 		setupWindows(mainWindow);

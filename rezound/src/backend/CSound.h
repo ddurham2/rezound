@@ -18,103 +18,23 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __ASound_H__
-#define __ASound_H__
+#ifndef __CSound_H__
+#define __CSound_H__
 
 #include "../../config/common.h"
 
-#include <stdint.h>
-
 #include <string>
 #include <map>
+
+#include "CSound_defs.h"
 
 // it would be nice if I didn't have to include all this ???
 #include <TPoolFile.h>
 #include <TPoolAccesser.h>
 
-	// ??? rename to something more specific to audio, PCM, or rezound
-	// create a MAX_LENGTH that I check for in the methods... I've made it, but I don't think I use it yet much
-	// right now I made this lower only because I haven't made the frontend dialogs not show unnecessary check boxes and such...so the dialogs were huge even when many channels were not in use
-#define MAX_CHANNELS 8
-
-
-
-// ??? sample_pos_t is the best name I could think of even though it is the type that ASound::getLength returns
-/* 
- * audio size specifications
- *
- *    sample_pos_t should always be unsigned since I use this assumption and never check for < 0 in the code
- *    sample_fpos_t should abe floating point, but big enough to hold all values of sample_pos_t
- */
-#if 1 // 32 bit
-	typedef uint32_t 	sample_pos_t;	// integral sample count
-	typedef double		sample_fpos_t;	// floating-point sample count
-
-	#define MAX_LENGTH (0x7fffffff-1024)
-
-	#define sample_fpos_floor(a)	(floor(a))
-	#define sample_fpos_ceil(a)	(ceil(a))
-	#define sample_fpos_round(a)	(nearbyint(a))
-	#define sample_fpos_log(a)	(log(a))
-	#define sample_fpos_exp(a)	(exp(a))
-	#define sample_fpos_fabs(a)	(fabs(a))
-	#define sample_fpos_sin(a)	(sin(a))
-	#define sample_fpos_pow(a,b)	(pow(a,b))
-
-#elif 0 // 64 bit
-	typedef uint64_t 	sample_pos_t;	// integral sample position
-	typedef long double 	sample_fpos_t;	// floating-point sample position
-
-	#define MAX_LENGTH (0x7fffffffffffffff-1024)
-
-	#define sample_fpos_floor(a)	(floorl(a))
-	#define sample_fpos_ceil(a)	(ceill(a))
-	#define sample_fpos_round(a)	(nearbyintl(a))
-	#define sample_fpos_log(a)	(logl(a))
-	#define sample_fpos_exp(a)	(expl(a))
-	#define sample_fpos_fabs(a)	(fabsl(a))
-	#define sample_fpos_sin(a)	(sinl(a))
-	#define sample_fpos_pow(a,b)	(powl(a,b))
-
-#else
-	#error please enable one section above
-#endif
-
-static const sample_pos_t NIL_SAMPLE_POS=~((sample_pos_t)0);
-
-
-
-// ??? probably should add conversion macros which convert to and from several types of formats to and from the native format 
-//	- this would help in importing and exporting audio data
-//	- might deal with endian-ness too
-
-// audio type specifications
-#if 1 // 16 bit PCM
-
-	#define MAX_SAMPLE (32767)
-	#define MIN_SAMPLE (-MAX_SAMPLE) // these should stay symetric so I don't have to handle the possilbility of them being off center in the frontend rendering
-	typedef int16_t sample_t;
-	typedef int_fast32_t mix_sample_t; // this needs to hold at least a value of MAX_SAMPLE squared
-
-#elif 0 // 32 bit floating point PCM
-	#define MAX_SAMPLE (1.0)
-	#define MIN_SAMPLE (-MAX_SAMPLE) // these should stay symetric so I don't have to handle the possilbility of them being off center in the frontend rendering
-	typedef float sample_t;
-	typedef float mix_sample_t;
-
-#else
-	#error please enable one section above
-#endif
-
-
-#define REZOUND_POOLFILE_BLOCKSIZE 32768
-#define REZOUND_POOLFILE_SIGNATURE "ReZoundF"
-
 // ??? I should even typedef the uint64_t as something else... it needs to match whatever CMultiFile has though
 typedef TStaticPoolAccesser<sample_t,TPoolFile<sample_pos_t,uint64_t> > CRezPoolAccesser;
 
-static mix_sample_t _SSS;
-#define ClipSample(s) ((sample_t)(_SSS=((mix_sample_t)(s)), _SSS>MAX_SAMPLE ? MAX_SAMPLE : ( _SSS<MIN_SAMPLE ? MIN_SAMPLE : _SSS ) ) )
 
 enum MixMethods
 {
@@ -130,28 +50,34 @@ public:
 	sample_t min;
 	sample_t max;
 private:
-	friend class ASound;
+	friend class CSound;
 	bool dirty;
 };
 
-class ASound
+class CSound
 {
 public:
 	typedef TPoolFile<sample_pos_t,uint64_t> PoolFile_t;
 
-	virtual ~ASound();
+	CSound();
+		// works like createWorkingPoolFile
+	CSound(const string &_filename,const unsigned _sampleRate,const unsigned _channelCount,const sample_pos_t _size);
+	virtual ~CSound();
 
-	virtual void loadSound(const string filename)=0;
+	// creates a poolFile with a temp name based off of originalFilename and populates the given meta-info
+	// 	- don't want as public except that each derivation of ASoundTranslator would have ot be a friend
+	void createWorkingPoolFile(const string originalFilename,const unsigned _sampleRate,const unsigned _channelCount,const sample_pos_t _size);
 
-	// ??? really this should be static, and it should get passed another ASound * from which it gets the format info and uses getData to export the data
-		// - this way I can convert from one format to another... exporting to different compression types and such would require front-end involvment and flags to the saveSound method
-		// - and again, I can have CSoundManager analyze the extension to determine which format to use
-	virtual void saveSound(const string filename)=0;
+	// attempts to open a poolFile with the given name and if it succeeds then it populates the data-members with the format-info
+	bool createFromWorkingPoolFileIfExists(const string originalFilename,bool promptIfFound=true);
 
-	virtual void saveSound();
-	virtual void closeSound();
+	static const string getWorkingFilename(const string originalFilename);
 
-	void changeFilename(const string newFilename);
+
+
+	void closeSound();
+
+	void changeWorkingFilename(const string newOriginalFilename);
 
 	// locks to keep the size from changing (multiple locks can be obtained of this type)
 	void lockSize() const;
@@ -182,7 +108,7 @@ public:
 
 	/* 
 	 * - Should be called by any code that modified the data in such a way that peak data needs to be modified
-	 * - It's not necessary to call it for data that was touched by the methods in ASound that modify or resize 
+	 * - It's not necessary to call it for data that was touched by the methods in CSound that modify or resize 
 	 *   the data
 	 */
 	void invalidatePeakData(unsigned channel,sample_pos_t start,sample_pos_t stop);
@@ -191,7 +117,6 @@ public:
 
 
 
-	const string getFilename() const	{ return(filename); }
 	sample_pos_t getLength() const		{ return(size); }
 	unsigned getChannelCount() const	{ return(channelCount); }
 	unsigned getSampleRate() const		{ return(sampleRate); }
@@ -403,30 +328,14 @@ protected:
 
 	typedef TPoolAccesser<sample_t,PoolFile_t > CInternalRezPoolAccesser;
 
-	ASound();
-	ASound(const string &_filename,const unsigned _sampleRate,const unsigned _channelCount,const sample_pos_t _size);
-
 	CInternalRezPoolAccesser getAudioInternal(unsigned channel);
 	CInternalRezPoolAccesser getTempDataInternal(unsigned tempAudioPoolKey,unsigned channel);
 
 	PoolFile_t poolFile;
-	string filename;
 
 	sample_pos_t size; // ??? rename to sampleCount
 	unsigned sampleRate;
 	unsigned channelCount;
-
-
-	// creates a poolFile with the temp name and populates the meta-info with
-	// what's currently in the data-members
-	void createWorkingPoolFile(const string originalFilename);
-
-	// attempts to open a poolFile with the given name and if it succeeds then
-	// it populates the data-members with the format-info
-	bool createFromWorkingPoolFileIfExists(const string originalFilename,bool promptIfFound=true);
-
-	// poolFile must be closed
-	void removeWorkingPoolFile(const string originalFilename) const;
 
 	// this should be called after every space modification and even loading of a file
 	// and pass NIL_SAMPLE_POS as the maxLength parameter to match to the longest channel
@@ -434,7 +343,8 @@ protected:
 
 private:
 
-	friend class CrezSound;
+		// ??? temporary until CrezSoundTranslator saves properly
+	friend class CrezSoundTranslator;
 
 	void addSpaceToChannel(unsigned channel,sample_pos_t where,sample_pos_t length,bool doZeroData);
 	void removeSpaceFromChannel(unsigned channel,sample_pos_t where,sample_pos_t length);
@@ -442,8 +352,6 @@ private:
 	void moveDataIntoChannel(unsigned tempAudioPoolKey,unsigned channel,sample_pos_t where,sample_pos_t length,bool removeTempAudioPool);
 
 	static void appendForFudgeFactor(CInternalRezPoolAccesser dest,const CInternalRezPoolAccesser src,sample_pos_t srcWhere,sample_pos_t fudgeFactor);
-
-	const string getWorkingFilename(const string originalFilename) const;
 
 	struct RFormatInfo1
 	{

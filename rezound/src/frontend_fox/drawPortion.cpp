@@ -26,7 +26,7 @@
 #include <algorithm>
 
 
-#include "../backend/ASound.h"
+#include "../backend/CSound.h"
 #include "drawPortion.h"
 
 //static FXColor playStatusColor=FXRGB(255,0,0);
@@ -54,7 +54,7 @@ FXColor clippedWaveformColor=FXRGB(255,0,127); // pink to stand out
 
 
 // need to lock sound's size before calling this to be safe
-void drawPortion(int left,int width,FXDCWindow *dc,ASound *sound,int canvasWidth,int canvasHeight,int drawSelectStart,int drawSelectStop,double horzZoomFactor,int hOffset,double vertZoomFactor,int vOffset,bool darkened)
+void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth,int canvasHeight,int drawSelectStart,int drawSelectStop,double horzZoomFactor,int hOffset,double vertZoomFactor,int vOffset,bool darkened)
 {
 	try
 	{

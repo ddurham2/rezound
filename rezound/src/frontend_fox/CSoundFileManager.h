@@ -33,7 +33,7 @@ class FXWindow;
 class CSoundFileManager : public ASoundFileManager
 {
 public:
-	CSoundFileManager(FXWindow *mainWindow,CSoundManager *soundManager,ASoundPlayer *soundPlayer,CNestedDataFile *loadedRegistryFile);
+	CSoundFileManager(FXWindow *mainWindow,ASoundPlayer *soundPlayer,CNestedDataFile *loadedRegistryFile);
 
 	void untoggleActiveForAllSoundWindows(CSoundWindow *exceptThisOne);
 	

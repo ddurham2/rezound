@@ -23,35 +23,42 @@
 
 #include "../../config/common.h"
 
-
-#include "CSoundManagerClient.h"
-#include "CSoundPlayerChannel.h"
-#include "AAction.h"
-
-//#include <TStack.h>
+#include <string>
 #include <stack>
+
+class AAction;
+class CSound;
+class CSoundPlayerChannel;
+class ASoundTranslator;
 
 class CLoadedSound
 {
 public:
-	CSoundManagerClient * const client;
-	CSoundPlayerChannel * const channel;
-
-	ASound *getSound() const; // has to get it thru channel
-
-	// this stack is used for undoing actions (later a stack could be used for redoing actions)
-	//TStack<AAction *> actions;
-	stack<AAction *> actions;
-
-	CLoadedSound(CSoundManagerClient *client,CSoundPlayerChannel *channel);
+											// translator can be NULL
+	CLoadedSound(const string filename,CSoundPlayerChannel *channel,bool isReadOnly,const ASoundTranslator *translator);
 	CLoadedSound(const CLoadedSound &src);
 	virtual ~CLoadedSound();
 
 	void clearUndoHistory();
 
+	const string getFilename() const;
+	void changeFilename(const string newFilename);
+
 	bool isReadOnly() const;
 
+	// ??? is this necessary?
 	bool operator==(const CLoadedSound &rhs) const;
+
+	CSoundPlayerChannel * const channel;
+	const ASoundTranslator *translator; // can be NULL, is used to save (in contrast with save-as) the sound after an open
+	CSound *getSound() const; // just gets it through channel
+
+	// this stack is used for undoing actions (later a stack could be used for redoing actions)
+	stack<AAction *> actions;
+
+private:
+	string filename;
+ 	bool _isReadOnly;
 
 };
 

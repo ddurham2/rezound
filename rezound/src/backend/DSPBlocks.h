@@ -28,7 +28,7 @@
 
 #include <istring>
 
-#include "ASound.h"
+#include "CSound_defs.h"
 #include "unit_conv.h"
 
 #include "ALFO.h"

@@ -67,7 +67,7 @@ COSSSoundRecorder::~COSSSoundRecorder()
 	deinitialize();
 }
 
-void COSSSoundRecorder::initialize(ASound *sound)
+void COSSSoundRecorder::initialize(CSound *sound)
 {
 	if(!initialized)
 	{

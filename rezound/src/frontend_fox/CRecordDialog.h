@@ -27,7 +27,7 @@ class CRecordDialog;
 #include "FXModalDialogBox.h"
 #include <vector>
 
-#include "../backend/ASound.h"
+#include "../backend/CSound_defs.h"
 
 extern CRecordDialog *gRecordDialog;
 

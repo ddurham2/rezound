@@ -24,7 +24,7 @@
 
 #include "../../config/common.h"
 
-#include "ASound.h"
+#include "CSound.h" // have to include here because we need CSound::RCue
 #include "CTrigger.h"
 
 /*
@@ -38,7 +38,7 @@
  can also call redo and deinitialize to affect the recording process.
 
  - The derived class should NOT forget to call this base class's initialize and
- deinitialize methods.  initialize() should be called at the top of the dirved 
+ deinitialize methods.  initialize() should be called at the top of the derived 
  class's implementation, and deinitialize() should be called at the botton of
  the derived class's implementation.
 
@@ -46,7 +46,8 @@
  class's initialize() method has be called and not call onData() method after
  deinitialize() has been called (or until initialize is called again).
 
- - This class appends the recorded data to the given ASound object
+ - This class appends the recorded data to the given CSound object
+	- perhaps later a moveData will be issued at the end to move to where it was inserted
 
  - It should not be an error to deinitialize() while not initialize()
 
@@ -66,7 +67,7 @@ public:
 	void removeStatusTrigger(TriggerFunc triggerFunc,void *data);
 	float getAndResetLastPeakValue(unsigned channel);
 
-	virtual void initialize(ASound *sound);
+	virtual void initialize(CSound *sound);
 	virtual void deinitialize();
 
 
@@ -85,12 +86,13 @@ public:
 	string getRecordedSizeS() const;
 	string getRecordLimitS() const;
 
-	const ASound *getSound() const { return(sound); }
+	const CSound *getSound() const { return(sound); }
 
 	void addCueNow(const string name,bool isAnchored);
 
 	// This function should be called when a data chunk is recorded
 	// data should come in an interlaced format that is [sL1sR1 sL2sR2 sL3sR3 ...]
+		 //??? This should be corrected now that we declared friendship in the derived class's thread nested class
 	//$$$$$Davy This wasn't working on my gcc as a protected member, 
 	//so I just moved it into the public
 	void onData(const sample_t *samples,const size_t sampleFramesRecorded);
@@ -98,14 +100,14 @@ protected:
 
 
 private:
-	ASound *sound;
+	CSound *sound;
 	bool started;
 	sample_pos_t prealloced;
 	sample_pos_t origLength;
 	sample_pos_t writePos;
 	sample_pos_t stopPosition;
 
-	vector<ASound::RCue> addedCues;
+	vector<CSound::RCue> addedCues;
 
 	CTrigger statusTrigger;
 

@@ -18,34 +18,29 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __ClibaudiofileSound_H__
-#define __ClibaudiofileSound_H__
-
+#ifndef __ClibaudiofileSoundTranslator_H__
+#define __ClibaudiofileSoundTranslator_H__
 
 #include "../../config/common.h"
 
-#include "ASound.h"
+#include "ASoundTranslator.h"
 
-class ClibaudiofileSound : public ASound
+class ClibaudiofileSoundTranslator : public ASoundTranslator
 {
 public:
+	ClibaudiofileSoundTranslator();
+	virtual ~ClibaudiofileSoundTranslator();
 
-	ClibaudiofileSound();
-	ClibaudiofileSound(const string &_filename,const unsigned _sampleRate,const unsigned _channelCount,const sample_pos_t _size);
-
-	virtual void loadSound(const string filename);
-	virtual void saveSound(const string filename);
-
-	// actually opens the file to determine the format
-	static bool supportsFormat(const string filename);
-	// only returns true if the given extension is one that it handles
-	static bool handlesExtension(const string extension);
+	bool handlesExtension(const string extension) const;
+	bool supportsFormat(const string filename) const;
 
 protected:
+
+	void onLoadSound(const string filename,CSound *sound) const;
+	void onSaveSound(const string filename,CSound *sound) const;
 
 private:
 
 };
 
 #endif
-

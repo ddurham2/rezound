@@ -24,6 +24,8 @@
 #include <string>
 #include <vector>
 
+#include <istring>
+
 #include <cc++/path.h>
 
 #include <CNestedDataFile/CNestedDataFile.h>
@@ -42,8 +44,8 @@
 CSoundFileManager *gSoundFileManager=NULL;
 
 
-CSoundFileManager::CSoundFileManager(FXWindow *_mainWindow,CSoundManager *_soundManager,ASoundPlayer *_soundPlayer,CNestedDataFile *_loadedRegistryFile) :
-	ASoundFileManager(_soundManager,_soundPlayer,_loadedRegistryFile),
+CSoundFileManager::CSoundFileManager(FXWindow *_mainWindow,ASoundPlayer *_soundPlayer,CNestedDataFile *_loadedRegistryFile) :
+	ASoundFileManager(_soundPlayer,_loadedRegistryFile),
 	mainWindow(_mainWindow)
 {
 }
@@ -51,7 +53,7 @@ CSoundFileManager::CSoundFileManager(FXWindow *_mainWindow,CSoundManager *_sound
 bool CSoundFileManager::promptForOpen(string &filename,bool &readOnly)
 {
 	// I can do getOpenFilenames to be able to open multiple files ??? then the parameter would need to be a vector<string>
-																// this list could be build programatically from all the ASound derivations
+																// this list could be build programatically from all the registered ASoundTranslator derivations
 	FXString _filename=FXFileDialog::getOpenFilename(mainWindow,"Open file",gPromptDialogDirectory.c_str(),"Supported Files (*.wav,*.WAV,*.rez,*.aiff,*.AIFF,*.au,*.AU,*.snd,*.SND,*.sf,*.SF,*.raw)\nAll Files(*)",0);
 	if(_filename!="")
 	{
@@ -199,7 +201,7 @@ void CSoundFileManager::updateAfterEdit()
 	CSoundWindow *activeSoundWindow=getActiveWindow();
 	if(activeSoundWindow)
 	{
-		activeSoundWindow->setTitle(activeSoundWindow->loadedSound->getSound()->getFilename().c_str());
+		activeSoundWindow->setTitle(activeSoundWindow->loadedSound->getFilename().c_str());
 		activeSoundWindow->updateFromEdit();
 		if(gFocusMethod==fmSoundWindowList)
 			gSoundListWindow->updateWindowName(activeSoundWindow);

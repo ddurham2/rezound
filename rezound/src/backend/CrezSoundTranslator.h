@@ -18,16 +18,29 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __backend_initialize_H__
-#define __backend_initialize_H__
-
+#ifndef __CrezSoundTranslator_H__
+#define __CrezSoundTranslator_H__
 
 #include "../../config/common.h"
 
-class ASoundPlayer;
-class CSoundManager;
+#include "ASoundTranslator.h"
 
-void initializeBackend(ASoundPlayer *&soundPlayer);
-void deinitializeBackend();
+class CrezSoundTranslator : public ASoundTranslator
+{
+public:
+	CrezSoundTranslator();
+	virtual ~CrezSoundTranslator();
+
+	bool handlesExtension(const string extension) const;
+	bool supportsFormat(const string filename) const;
+
+protected:
+
+	void onLoadSound(const string filename,CSound *sound) const;
+	void onSaveSound(const string filename,CSound *sound) const;
+
+private:
+
+};
 
 #endif

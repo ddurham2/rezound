@@ -24,10 +24,9 @@
 
 #include "../../config/common.h"
 
-//#include <TBasicList.h>
 #include <vector>
 
-#include "ASound.h"
+#include "CSound_defs.h"
 
 class CGraphParamValueNode
 {

@@ -29,6 +29,8 @@
 
 #include <CNestedDataFile/CNestedDataFile.h>
 
+#include "../backend/CSound.h"
+
 #define NODE_RADIUS 4
 
 #define GET_SCALAR_VALUE(o) ( o->scalarSpinner==NULL ? 0 : o->scalarSpinner->getValue() )
@@ -247,7 +249,7 @@ FXGraphParamValue::FXGraphParamValue(const string _title,f_at_xs _interpretValue
 	clearNodes();
 }
 
-void FXGraphParamValue::setSound(ASound *_sound,sample_pos_t _start,sample_pos_t _stop)
+void FXGraphParamValue::setSound(CSound *_sound,sample_pos_t _start,sample_pos_t _stop)
 {
 	sound=_sound;
 	start=_start;

@@ -23,12 +23,13 @@
 
 #include "../../config/common.h"
 
+#include <string>
 
 class CNewSoundDialog;
 
 #include "FXModalDialogBox.h"
 
-#include "../backend/ASound.h"
+#include "../backend/CSound_defs.h"
 
 extern CNewSoundDialog *gNewSoundDialog;
 

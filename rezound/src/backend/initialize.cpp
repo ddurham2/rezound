@@ -37,9 +37,6 @@
 
 #include "file.h"
 
-#include "CSoundManager.h"
-static CSoundManager *soundManager=NULL;
-
 //#include "CWinSoundPlayer.h"
 //static CWinSoundPlayer *soundPlayer=NULL;
 #include "COSSSoundPlayer.h"
@@ -54,7 +51,7 @@ static COSSSoundPlayer *soundPlayer=NULL;
 
 #include <cc++/path.h>
 
-void initializeBackend(ASoundPlayer *&_soundPlayer,CSoundManager *&_soundManager)
+void initializeBackend(ASoundPlayer *&_soundPlayer)
 {
 	try
 	{
@@ -111,10 +108,10 @@ void initializeBackend(ASoundPlayer *&_soundPlayer,CSoundManager *&_soundManager
 
 
 		// -- 2
-						// ??? this filename needs to be an application setting just as in ASound.cpp
+						// ??? this filename needs to be an application setting just as in CSound.cpp
 		const string clipboardPoolFilename="/tmp/rezound.clipboard";
 		remove(clipboardPoolFilename.c_str());
-		AAction::clipboardPoolFile=new ASound::PoolFile_t();
+		AAction::clipboardPoolFile=new CSound::PoolFile_t();
 		AAction::clipboardPoolFile->openFile(clipboardPoolFilename,true);
 
 
@@ -123,10 +120,6 @@ void initializeBackend(ASoundPlayer *&_soundPlayer,CSoundManager *&_soundManager
 
 
 		// -- 4
-		_soundManager=soundManager=new CSoundManager();
-
-
-		// -- 5
 		soundPlayer->initialize();
 
 	}
@@ -143,13 +136,9 @@ void deinitializeBackend()
 	// reverse order of creation
 
 
-	// -- 5
+	// -- 4
 	if(soundPlayer!=NULL)
 		soundPlayer->deinitialize();
-
-
-	// -- 4
-	delete soundManager;
 
 
 	// -- 3
