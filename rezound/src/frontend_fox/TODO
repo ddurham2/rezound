@@ -28,8 +28,6 @@
 		- either list these things themselves, or give URLs or file paths of where to find the information
 			- could I actually #include the file from the docs directory ?
 
-	- right now all the play control buttons are activated on mouse_button_release events, where it might be good to active on mouse button down.... perhaps I could derive my own button class... or get a feature added to FXButton to selected which way it should behave
-
 	- make sure that nothing is being allocated and left around when a file is unable to be loaded at startup...
 		- I guess that should go for any load of a sound... that upon having an error (unsupported format perhaps) that nothing be left around...
 		- Also if there's  an error creating perhaps the CSoundPlayerChannel that the ASound is deleted and all temp data is cleaned up
@@ -38,8 +36,6 @@
 		- it can be done with the given extension right now, but the user may not know the extensions... or perhaps the open dialog should have separate filetype entries and it will add the extension chosen
 		- right now the backend knows it by file extension, and the backend may need to pop up a subsequent dialog to ask for format specifiy parametesr
 		- should be easier now that the code has be reorganized
-
-	- add tip text support to the reusable slider and graph widget to and allow a way to set it in the base class dialogs
 
 	- I should use FXAccelTable so that I can make key bindings to things like 
 		- (ctrl-a)select all (space)play, (space)stop, (p)pause, (a,z)seek, (ctrl-c)copy, (ctrl-x)cut, (ctrl-d,del)delete, (ctrl-v)paste, etc
@@ -57,14 +53,11 @@
 	- make some checkbox on the mainWindow that allows the user not to do undo incase they know they don't want it
 		 - the backend already supports this (although it hasn't been tested yet since there's been no frontend means)
 
-	- make the open file dialog have resizable borders.... 
-		- I think its up to the window manager to allow this or not
-
 	- supply icons for all the windows
 		- just new FXIcon(...) instead of passing NULL
 		- Will is supposedly doing this
 
-	- the front end needs a way to tell COSSSoundPlayer and COSSSoundRecorder which device to use
+	- the frontend needs a way to tell COSSSoundPlayer and COSSSoundRecorder which device to use
 		- I should be able to test this at home since I have 2 sound cards installed
 
 
@@ -74,6 +67,8 @@
 --- POSSIBLE THINGS TO DO ---
 
 	- in order to create multiple taps for an echo effect... I could have the dialog have tabs and each tap could be tap.. there would be buttons outside the tab bar to insert, remove, move left/right the tabs to rearrange the taps
+
+	- right now all the play control buttons are activated on mouse_button_release events, where it might be good to active on mouse button down.... perhaps I could derive my own button class... or get a feature added to FXButton to selected which way it should behave
 
 	- make cues draggable
 		- snap them to the start, stop, beginning and end positions
@@ -158,4 +153,6 @@
 	- I need to display the sample rate (and perhaps the number of channels) in the status info of CSoundWindow
 
 	- make the cue list dialog's list box have a fixed width font
+
+	- add tip text support to the reusable slider and graph widget to and allow a way to set it in the base class dialogs
 

@@ -232,6 +232,31 @@ const string FXConstantParamValue::getTitle() const
 	return(titleLabel->getText().text());
 }
 
+void FXConstantParamValue::setHelpText(const FXString &text)
+{
+	titleLabel->setHelpText(text);	
+	//inverseButtonFrame->setHelpText(text);	
+		inverseButton->setHelpText(text);	
+	slider->setHelpText(text);	
+	//tickLableFrame->setHelpText(text);	
+		maxLabel->setHelpText(text);	
+		halfLabel->setHelpText(text);	
+		minLabel->setHelpText(text);	
+	//valuePanel->setHelpText(text);
+		valueTextBox->setHelpText(text);
+		unitsLabel->setHelpText(text);
+	if(scalarPanel)
+	{
+		//scalarPanel->setHelpText(text);
+			scalarLabel->setHelpText(text);
+	}
+}
+
+FXString FXConstantParamValue::getHelpText() const
+{
+	return(titleLabel->getHelpText());	
+}
+
 void FXConstantParamValue::readFromFile(const string &prefix,CNestedDataFile &f)
 {
 	const string key=prefix+"."+getTitle()+".";
