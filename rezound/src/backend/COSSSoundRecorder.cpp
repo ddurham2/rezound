@@ -174,7 +174,7 @@ void COSSSoundRecorder::deinitialize()
 		// stop record thread
 		recordThread.kill=true;
 
-		// because thread.wait() did nothing expected, I use an event to wait on the thread to finish
+		// because recordThread.wait() did nothing expected, I use a semaphore to wait on the thread to finish
 		threadFinishedSem.Wait();
 
 		// close OSS audio device (which should cause the read to finish)

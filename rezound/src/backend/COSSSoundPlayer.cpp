@@ -57,7 +57,8 @@ COSSSoundPlayer::COSSSoundPlayer() :
 	audio_fd(-1),
 	initialized(false),
 
-	playThread(this)
+	playThread(this),
+	threadFinishedSem(1)
 {
 }
 
@@ -148,6 +149,7 @@ void COSSSoundPlayer::initialize()
 			close(audio_fd);
 			throw(runtime_error(string(__func__)+" -- error getting the buffering parameters -- "+strerror(errno)));
 		}
+		
 		/*
 		printf("OSS player: info.fragments: %d\n",info.fragments);
 		printf("OSS player: info.fragstotal: %d\n",info.fragstotal);
@@ -157,7 +159,13 @@ void COSSSoundPlayer::initialize()
 
 
 		// start play thread
-		playThread.Start();
+		threadFinishedSem.Wait(); // will immediatly return only used to decrement Sem
+		playThread.kill=false;
+		if(playThread.Start())
+		{
+			threadFinishedSem.Post();
+			throw(runtime_error(string(__func__)+" -- error starting play thread"));
+		}
 
 		initialized=true;
 	}
@@ -173,7 +181,9 @@ void COSSSoundPlayer::deinitialize()
 
 		// stop play thread
 		playThread.kill=true;
-		playThread.wait();
+		
+		// because playThread.wait() did nothing expected, I use a semaphore to wait on the thread to finish
+		threadFinishedSem.Wait();
 
 		// close OSS audio device
 		close(audio_fd);
@@ -217,14 +227,18 @@ void COSSSoundPlayer::CPlayThread::Run()
 				fprintf(stderr,"warning: didn't write whole buffer -- only wrote %d of %d bytes\n",len,BUFFER_SIZE_BYTES);
 
 		}
+
+		parent->threadFinishedSem.Post();
 	}
 	catch(exception &e)
 	{
+		parent->threadFinishedSem.Post();
 		cerr << "exception caught in play thread: " << e.what() << endl;
 		abort();
 	}
 	catch(...)
 	{
+		parent->threadFinishedSem.Post();
 		cerr << "unknown exception caught in play thread" << endl;
 		abort();
 	}

@@ -65,6 +65,7 @@ private:
 	};
 
 	CPlayThread playThread;
+	ost::Semaphore threadFinishedSem;
 
 };
 
