@@ -48,6 +48,7 @@ libfrontend_la_SOURCES= \
 			drawPortion.cpp \
 			EditActionDialogs.cpp \
 			EffectActionDialogs.cpp \
+			CAboutDialog.cpp \
 			FXConstantParamValue.cpp \
 			FXTextParamValue.cpp \
 			FXComboTextParamValue.cpp \
@@ -105,6 +106,7 @@ noinst_HEADERS=\
 	CUserNotesDialog.h \
 	EditActionDialogs.h \
 	EffectActionDialogs.h \
+	CAboutDialog.h \
 	FXConstantParamValue.h \
 	FXTextParamValue.h \
 	FXComboTextParamValue.h \

@@ -30,6 +30,8 @@
 
 #include "../images/images.h"
 
+#include "CAboutDialog.h"
+
 #include "../backend/main_controls.h"
 
 #include "../backend/Effects/EffectActions.h"
@@ -73,6 +75,8 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_CLOSE_BUTTON,		CMainWindow::onFileButton),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_REVERT_BUTTON,		CMainWindow::onFileButton),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_FILE_RECORD_BUTTON,		CMainWindow::onFileButton),
+
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_ABOUT_BUTTON,			CMainWindow::onFileButton),
 
 	FXMAPFUNC(SEL_RIGHTBUTTONPRESS,		CMainWindow::ID_FILE_OPEN_BUTTON,		CMainWindow::onReopenMenuPopup),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_REOPEN_MENU_SELECT,		CMainWindow::onReopenMenuSelect),
@@ -138,13 +142,13 @@ CMainWindow::CMainWindow(FXApp* a) :
 
 	playControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,6,6),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
 		#define PLAY_CONTROLS_BUTTON_STYLE BUTTON_STYLE
-		new FXButton(playControlsFrame,"PAO\tPlay All Once",NULL,this,ID_PLAY_ALL_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,0,32,32);
+		new FXButton(playControlsFrame,"\tPAO\tPlay All Once",new FXGIFIcon(getApp(),play_on_gif),this,ID_PLAY_ALL_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,0,32,32);
 		new FXButton(playControlsFrame,"PSO\tPlay Selection Once",NULL,this,ID_PLAY_SELECTION_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32,0,32,32);
 		new FXButton(playControlsFrame,"PAL\tPlay All Looped",NULL,this,ID_PLAY_ALL_LOOPED_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32,32,32);
 		new FXButton(playControlsFrame,"PSL\tPlay Selection Looped",NULL,this,ID_PLAY_SELECTION_LOOPED_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32,32,32,32);
 
-		new FXButton(playControlsFrame,"Stop\tStop",NULL,this,ID_STOP_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,0,32,32),
-		new FXButton(playControlsFrame,"Pause\tPause",NULL,this,ID_PAUSE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32,32,32),
+		new FXButton(playControlsFrame,"\tStop\tStop",new FXGIFIcon(getApp(),stop_on_gif),this,ID_STOP_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,0,32,32),
+		new FXButton(playControlsFrame,"\tPause\tPause",new FXGIFIcon(getApp(),pause_on_gif),this,ID_PAUSE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32,32,32),
 
 		new FXButton(playControlsFrame,"||<<\tJump to Beginning",NULL,this,ID_JUMP_TO_BEGINNING_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32+32,32+32,16);
 		new FXButton(playControlsFrame,"|<<\tJump to Start Position",NULL,this,ID_JUMP_TO_START_POSITION_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32+32,32+32,16);
@@ -190,6 +194,8 @@ CMainWindow::CMainWindow(FXApp* a) :
 				fileRevertButton=new FXButton(fileTabFrame,"Re&vert",new FXGIFIcon(getApp(),revert_gif),this,ID_FILE_REVERT_BUTTON,FRAME_RAISED | ICON_ABOVE_TEXT);
 				fileRecordButton=new FXButton(fileTabFrame,"&Record",NULL,this,ID_FILE_RECORD_BUTTON,FRAME_RAISED);
 				notesButton=new FXButton(fileTabFrame,"Notes\tUser notes about the sound (and preserved in the file if the format supports it)",new FXGIFIcon(getApp(),notes_gif),this,ID_NOTES_BUTTON,FRAME_RAISED | ICON_ABOVE_TEXT);
+
+				new FXButton(fileTabFrame,"&About",NULL,this,ID_ABOUT_BUTTON,FRAME_RAISED | ICON_ABOVE_TEXT);
 
 				// just for testing
 				new FXFrame(fileTabFrame,FRAME_NONE);
@@ -371,6 +377,10 @@ long CMainWindow::onFileButton(FXObject *sender,FXSelector sel,void *ptr)
 
 	case ID_FILE_RECORD_BUTTON:
 		recordSound(gSoundFileManager);
+		break;
+
+	case ID_ABOUT_BUTTON:
+		gAboutDialog->execute(PLACEMENT_SCREEN);
 		break;
 
 	default:

@@ -116,6 +116,8 @@ int main(int argc,char *argv[])
 
 
 
+#include "CAboutDialog.h"
+
 #include "CChannelSelectDialog.h"
 #include "CPasteChannelsDialog.h"
 #include "CNewSoundDialog.h"
@@ -129,6 +131,8 @@ int main(int argc,char *argv[])
 
 void setupWindows(CMainWindow *mainWindow)
 {
+		gAboutDialog=new CAboutDialog(mainWindow);
+
 		// create the channel select dialog that AActionFactory is given to use often
 		gChannelSelectDialog=new CChannelSelectDialog(mainWindow);
 

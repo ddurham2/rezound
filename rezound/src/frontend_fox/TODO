@@ -5,6 +5,8 @@
 		XXX - When loading a sound it doesn't start zoomed out to see the whole thing.. 
 		- if I had a thread always running in the background low priority, I could be calculating peak chunk information while the user isn't looking
 
+	- use TEXTFIELD_INTEGER or TEXTFIELD_REAL for FXConstantParamValue
+
 	- figure out why the limit isn't always working.. twice I entered 90:00.00 and it didn't stop
 		- I haven't seen it since, but with the limit label I should know when it is at least going to happen
 
@@ -20,6 +22,9 @@
 
 		- either list these things themselves, or give URLs or file paths of where to find the information
 			- could I actually #include the file from the docs directory ?
+
+		- Also, encourage the user to actually report bugs or request features and not to just assume someone else will
+		- make the about dialog show up on the first run
 
 	- make sure that nothing is being allocated and left around when a file is unable to be loaded at startup...
 		- I guess that should go for any load of a sound... that upon having an error (unsupported format perhaps) that nothing be left around...
