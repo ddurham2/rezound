@@ -27,10 +27,12 @@
 
 
 #include "../backend/CSound.h"
+#include "../backend/unit_conv.h"
 #include "drawPortion.h"
 
 //static FXColor playStatusColor=FXRGB(255,0,0);
 static FXColor axisColor=FXRGB(64,64,180);
+static FXColor dBAxisColor=FXRGB(45,45,45);
 
 FXColor backGroundColor=FXRGB(0,10,58);
 static FXColor selectedBackGroundColor=FXRGB(46,98,110);
@@ -198,18 +200,35 @@ void drawPortion(int left,int width,FXDCWindow *dc,CSound *sound,int canvasWidth
 					}
 				}
 
-				// draw axis
-				float y=channelOffset+vOffset;
-				if(y<channelOffset-channelHeight/2)
-					y=channelOffset-channelHeight/2;
-				else if(y>channelOffset+channelHeight/2)
-					y=channelOffset+channelHeight/2;
-
 				dc->setFunction(BLT_SRC_XOR_DST); // xor the axis on so it doesn't cover up waveform
-				dc->setForeground(axisColor);
-				//dc->drawLine(left-1,y,right+1,y); // -1 and +1 because the for loop did that too
-				const int _y=(int)nearbyint(y);
-				dc->drawLine(left,_y,right,_y); // -1 and +1 because the for loop did that too
+
+				// draw axis
+				{
+					dc->setForeground(axisColor);
+
+					float y=nearbyint(channelOffset+vOffset);
+					if(y<channelOffset-channelHeight/2)
+						y=channelOffset-channelHeight/2;
+					else if(y>channelOffset+channelHeight/2)
+						y=channelOffset+channelHeight/2;
+
+					dc->drawLine(left,(int)y,right,(int)y);
+				}
+		
+				// draw -6dB lines
+				{
+					int y;
+					dc->setForeground(dBAxisColor);
+
+					y=(int)nearbyint(channelOffset+vOffset+dBFS_to_amp(-6.0)/vertZoomFactor);
+					if(y>=channelOffset-channelHeight/2 && y<=channelOffset+channelHeight/2)
+						dc->drawLine(left,y,right,y);
+
+					y=(int)nearbyint(channelOffset+vOffset-dBFS_to_amp(-6.0)/vertZoomFactor);
+					if(y>=channelOffset-channelHeight/2 && y<=channelOffset+channelHeight/2)
+						dc->drawLine(left,y,right,y);
+				}
+
 				dc->setFunction(); // set draw mode back to default
 
 
