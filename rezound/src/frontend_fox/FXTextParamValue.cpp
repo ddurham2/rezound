@@ -21,6 +21,7 @@
 #include "FXTextParamValue.h"
 
 #include <stdlib.h>
+#include <math.h> // for log10
 
 #include <istring>
 
@@ -54,12 +55,14 @@ FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title,con
 	maxValue(_maxValue),
 
 	titleLabel(new FXLabel(this,title,NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
-	valueTextBox(new FXTextField(this,8,this,ID_VALUE_TEXTBOX, TEXTFIELD_NORMAL | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
+	valueTextBox(new FXTextField(this,8,this,ID_VALUE_TEXTBOX, TEXTFIELD_NORMAL | LAYOUT_CENTER_Y)),
 	valueSpinner(new FXSpinner(this,0,this,ID_VALUE_SPINNER, SPIN_NORMAL|SPIN_NOTEXT | LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0)),
 	unitsLabel(new FXLabel(this,"",NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
 
 	textFont(getApp()->getNormalFont())
 {
+	valueTextBox->setNumColumns((FXint)(log10(maxValue)+1));
+
 	// create a smaller font to use 
         FXFontDesc d;
         textFont->getFontDesc(d);
@@ -157,6 +160,7 @@ void FXTextParamValue::setRange(const double _minValue,const double _maxValue)
 {
 	minValue=_minValue;
 	maxValue=_maxValue;
+	valueTextBox->setNumColumns((FXint)(log10(maxValue)+1));
 	validateRange();
 }
 
