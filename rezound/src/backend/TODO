@@ -8,6 +8,7 @@
 
 	- distortion would be an easy effect
 		- create the same widget as the curved amplitude or rate change has and make both axies dBFS and the user can create a mapping for sample values to follow
+		- create presets for 'mute above axis' and 'mute below axis'
 
 	- create an effects->pan action where two chosen channels (or default if stereo) can be crossfaded/mixed in every combination I can think of
 
