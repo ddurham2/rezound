@@ -33,6 +33,7 @@
 #include <istring>
 
 #include <CPath.h>
+#include <endian_util.h>
 
 //#if defined(__SOLARIS_GNU_CPP__) || defined(__SOLARIS_SUN_CPP__) || defined(__LINUX_GNU_CPP__)
 	// ??? if windows is posix... I think it should have these necessary files... We'll see when we try to compile there
@@ -54,8 +55,10 @@
 #endif
 */
 
+#define HEADER_SIZE 512
+
 #define PHYSICAL_MAX_FILE_SIZE ((CMultiFile::l_addr_t)LONG_MAX) // ??? this needs to change based on off_t's type... won't be a problem when simple 64bit fs is in place commonly
-#define LOGICAL_MAX_FILE_SIZE ((CMultiFile::l_addr_t)(PHYSICAL_MAX_FILE_SIZE-sizeof(CMultiFile::RFileHeader)))
+#define LOGICAL_MAX_FILE_SIZE ((CMultiFile::l_addr_t)(PHYSICAL_MAX_FILE_SIZE-HEADER_SIZE))
 
 #define CMULTIFILE_SIGNATURE (*((uint32_t *)"CMFL"))
 
@@ -85,6 +88,11 @@
  *   addresses to the first file, then the next 2 billion addresses to the second file and
  *   so on.  However, there is a 512 byte header at the beginning of each file which is used
  *   to tie the files in a set together.
+ *
+ * - endianness is handled by always writing the header as the native endian except that the
+ *   signature is +1 if written as big endian so that when the file is opened again, it is
+ *   known whether endian swapping is necessary.  Also, the signature is always written 
+ *   little endian
  *
  */
 
@@ -191,7 +199,7 @@ void CMultiFile::read(void *buffer,const l_addr_t count,RHandle &handle)
 		throw runtime_error(string(__func__)+" -- attempting to read beyond the end of the file size; position: "+istring(handle.position)+" count: "+istring(count));
 
 	size_t whichFile=handle.position/LOGICAL_MAX_FILE_SIZE;
-	f_addr_t whereFile=(handle.position%LOGICAL_MAX_FILE_SIZE)+sizeof(RFileHeader);
+	f_addr_t whereFile=(handle.position%LOGICAL_MAX_FILE_SIZE)+HEADER_SIZE;
 
 	l_addr_t lengthToRead=count;
 	while(lengthToRead>0)
@@ -219,8 +227,8 @@ void CMultiFile::read(void *buffer,const l_addr_t count,RHandle &handle)
 		lengthToRead-=stripRead;
 		handle.position+=stripRead;
 
-		whichFile++;			// read from the next file next go around
-		whereFile=sizeof(RFileHeader);	// each additional file to read from should start at 0 now
+		whichFile++;		// read from the next file next go around
+		whereFile=HEADER_SIZE;	// each additional file to read from should start at 0 now
 	}
 }
 
@@ -243,7 +251,7 @@ void CMultiFile::write(const void *buffer,const l_addr_t count,RHandle &handle)
 		prvSetSize(handle.position+count,count);
 
 	size_t whichFile=handle.position/LOGICAL_MAX_FILE_SIZE;
-	f_addr_t whereFile=(handle.position%LOGICAL_MAX_FILE_SIZE)+sizeof(RFileHeader);
+	f_addr_t whereFile=(handle.position%LOGICAL_MAX_FILE_SIZE)+HEADER_SIZE;
 
 	l_addr_t lengthToWrite=count;
 	while(lengthToWrite>0)
@@ -271,8 +279,8 @@ void CMultiFile::write(const void *buffer,const l_addr_t count,RHandle &handle)
 		lengthToWrite-=lengthWritten;
 		handle.position+=lengthWritten;
 
-		whichFile++;			// write to the next file next go around
-		whereFile=sizeof(RFileHeader);	// each additional file to write to should start at 0 now
+		whichFile++;		// write to the next file next go around
+		whereFile=HEADER_SIZE;	// each additional file to write to should start at 0 now
 	}
 }
 
@@ -294,8 +302,8 @@ void CMultiFile::prvSetSize(const l_addr_t newSize,const l_addr_t forWriteSize)
 		throw runtime_error(string(__func__)+" -- insufficient space to grow data size to: "+istring(newSize));
 
 	size_t neededFileCount=(newSize/LOGICAL_MAX_FILE_SIZE)+1;
-	const f_addr_t currentLastFilesSize=(totalSize%LOGICAL_MAX_FILE_SIZE)+sizeof(RFileHeader);
-	const f_addr_t lastFilesSize=(newSize%LOGICAL_MAX_FILE_SIZE)+sizeof(RFileHeader);
+	const f_addr_t currentLastFilesSize=(totalSize%LOGICAL_MAX_FILE_SIZE)+HEADER_SIZE;
+	const f_addr_t lastFilesSize=(newSize%LOGICAL_MAX_FILE_SIZE)+HEADER_SIZE;
 
 	if(neededFileCount>openFileCount)
 	{ // create some new files
@@ -380,20 +388,21 @@ void CMultiFile::writeHeaderToFiles()
 	header.signature=CMULTIFILE_SIGNATURE;
 	header.matchSignature=matchSignature;
 	header.fileCount=openFileCount;
-	memset(header.padding,0,sizeof(header.padding));
+	header.encodeEndianBeforeWrite();
 
 	for(size_t t=0;t<openFileCount;t++)
 	{
 		lseek(openFiles[t],0,SEEK_SET);
-		const ssize_t wroteLength=::write(openFiles[t],&header,sizeof(header));
+	/*	const ssize_t wroteLength=::write(openFiles[t],&header,sizeof(header)); */
+		const ssize_t wroteLength=header.write(openFiles[t]);
 		if(wroteLength<0)
 		{
 			int errNO=errno;
 			throw runtime_error(string(__func__)+" -- error writing header to file -- strerror: "+strerror(errNO));
 		}
-		else if((size_t)wroteLength!=sizeof(header))
+		else if((size_t)wroteLength!=HEADER_SIZE)
 		{
-			throw runtime_error(string(__func__)+" -- error writing header to file -- wroteLength/sizeof(header): "+istring(wroteLength)+"/"+istring(sizeof(header)));
+			throw runtime_error(string(__func__)+" -- error writing header to file -- wroteLength/HEADER_SIZE: "+istring(wroteLength)+"/"+istring(HEADER_SIZE));
 		}
 	}
 }
@@ -418,8 +427,9 @@ void CMultiFile::openFile(const string &filename,RFileHeader &header,const bool 
 		if(readHeader)
 		{
 			// read info which ties this file to other files
-			if(::read(fileHandle,&header,sizeof(header))==sizeof(header) && header.signature==CMULTIFILE_SIGNATURE)
-			{ // sizeof(header) bytes were read and signature matched
+	/*		if(::read(fileHandle,&header,sizeof(header))==sizeof(header) && header.decodeEndianAfterRead(),header.signature==CMULTIFILE_SIGNATURE)*/
+			if(header.read(fileHandle)==HEADER_SIZE && header.signature==CMULTIFILE_SIGNATURE)
+			{ // HEADER_SIZE bytes were read and signature matched
 
 				if(openingFirstFile)
 					matchSignature=header.matchSignature;
@@ -465,7 +475,7 @@ void CMultiFile::openFile(const string &filename,RFileHeader &header,const bool 
 
 const CMultiFile::l_addr_t CMultiFile::calcTotalSize() const
 {
-	return getActualSize()-(openFileCount*sizeof(RFileHeader));
+	return getActualSize()-(openFileCount*HEADER_SIZE);
 }
 
 
@@ -562,3 +572,76 @@ const string CMultiFile::buildFilename(size_t which,const string &initialFilenam
 	else
 		return initialFilename+"."+istring(which);
 }
+
+int CMultiFile::RFileHeader::read(int fd)
+{
+	if(::read(fd,&signature,sizeof(signature))!=sizeof(signature))
+		return 0;
+	if(::read(fd,&matchSignature,sizeof(matchSignature))!=sizeof(matchSignature))
+		return 0;
+	if(::read(fd,&fileCount,sizeof(fileCount))!=sizeof(fileCount))
+		return 0;
+
+	const static int padlen=HEADER_SIZE-(sizeof(signature)+sizeof(matchSignature)+sizeof(fileCount));
+	if(::lseek(fd,padlen,SEEK_CUR)==(off_t)-1)
+		return 0;
+
+	/* signature is always stored in little-endian */
+	lethe(&signature);
+
+	/* if signature is CMULTIFILE_SIGNATURE+1 then this file was written on a big endian machine */
+#ifdef WORDS_BIGENDIAN
+	if(signature==(CMULTIFILE_SIGNATURE+1))
+	{ // nothing to do, header was written as big endian
+		signature--;
+	}
+	else
+	{ // header was written on a little endian machine, must convert
+		lethe(&matchSignature);
+		lethe(&fileCount);
+	}
+#else
+	if(signature==(CMULTIFILE_SIGNATURE+1))
+	{ // header was written on a big endian machine, must convert
+		signature--;
+
+		bethe(&signature);
+		bethe(&matchSignature);
+		bethe(&fileCount);
+	}
+	else
+	{ // nothing to do, header was written as little endian
+	}
+#endif
+	
+	return HEADER_SIZE;
+}
+
+int CMultiFile::RFileHeader::write(int fd)
+{
+	if(::write(fd,&signature,sizeof(signature))!=sizeof(signature))
+		return 0;
+	if(::write(fd,&matchSignature,sizeof(matchSignature))!=sizeof(matchSignature))
+		return 0;
+	if(::write(fd,&fileCount,sizeof(fileCount))!=sizeof(fileCount))
+		return 0;
+
+	static int8_t padding[HEADER_SIZE]={0};
+	const static int padlen=HEADER_SIZE-(sizeof(signature)+sizeof(matchSignature)+sizeof(fileCount));
+	if(::write(fd,padding,padlen)!=padlen)
+		return 0;
+
+	return HEADER_SIZE;
+}
+
+void CMultiFile::RFileHeader::encodeEndianBeforeWrite()
+{
+	/* always store signature as little-endian */
+	/* if we're on a big endian platform add 1 to the signature */
+#ifdef WORDS_BIGENDIAN
+	signature++;
+	hetle(&signature);
+#else
+#endif
+}
+

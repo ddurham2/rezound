@@ -30,7 +30,7 @@
 
 #include <string>
 
-#include <sys/types.h> // for off_t
+#include <sys/types.h> // for off_t and ssize_t
 
 class CMultiFile
 {
@@ -100,13 +100,17 @@ private:
 	size_t openFileCount;
 
 	// 512 byte header at the beginning of the file
+	// I do not write(&RFileHeader) because padding can be different on each platform, the methods are used
 	struct RFileHeader
 	{
 		uint32_t signature;		// signature for CMultiFile
 		uint32_t matchSignature; 	// signature for this set of files
 		uint64_t fileCount;		// number of files in this set
 		
-		uint8_t padding[512-(4+4+8)];
+		// returns the number of bytes read or written
+		ssize_t read(int fd);
+		ssize_t write(int fd);
+			void encodeEndianBeforeWrite();
 	};
 
 	void writeHeaderToFiles();
