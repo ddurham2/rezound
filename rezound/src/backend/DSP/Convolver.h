@@ -30,7 +30,7 @@
 #include "Delay.h"
 
 
-/* --- TDSPConvolver ------------------------------------
+/* --- TSimpleConvolver ------------------------------------
  * 
  *	This class is a DSP block to do a sample by sample convolution of the given 
  *	array of coefficients with the input given by the repeated calls to processSample()
@@ -39,27 +39,27 @@
  *	the type also of the output, the return value of processSample() ).  And The second
  *	template parameter specifies the type of the coefficients.
  */
-template<class sample_t,class coefficient_t> class TDSPConvolver
+template<class sample_t,class coefficient_t> class TSimpleConvolver
 {
 public:
-	TDSPConvolver(const coefficient_t _coefficients[],size_t _coefficientCount) :
+	TSimpleConvolver(const coefficient_t _coefficients[],size_t _coefficientCount) :
 		coefficients(_coefficients),
 		coefficientCount(_coefficientCount),
 		coefficientCountSub1(_coefficientCount-1),
 		delay(_coefficientCount)
 	{
 		if(coefficientCount<1)
-			throw(runtime_error(string(__func__)+" -- invalid coefficientCount: "+istring(coefficientCount)));
+			throw runtime_error(string(__func__)+" -- invalid coefficientCount: "+istring(coefficientCount));
 	}
 
-	virtual ~TDSPConvolver()
+	virtual ~TSimpleConvolver()
 	{
 	}
 
 	const sample_t processSample(const sample_t input)
 	{
 		coefficient_t output=input*coefficients[0];
-		for(unsigned t=coefficientCountSub1;t>0;t--)
+		for(size_t t=coefficientCountSub1;t>0;t--)
 			output+=delay.getSample(t)*coefficients[t];
 
 		delay.putSample((coefficient_t)input);
@@ -69,10 +69,266 @@ public:
 
 private:
 	const coefficient_t *coefficients; // aka, the impluse response
-	const unsigned coefficientCount;
-	const unsigned coefficientCountSub1;
+	const size_t coefficientCount;
+	const size_t coefficientCountSub1;
 
 	TDSPDelay<coefficient_t> delay;
 };
+
+
+
+#ifdef HAVE_LIBRFFTW
+
+#include <rfftw.h>
+
+#include <TAutoBuffer.h>
+
+/*
+ *	Written partly from stuff I learned in "The Scientist and 
+ *	Engineer's Guide to Digital Signal Processing":
+ *		http://www.dspguide.com
+ *
+ *	and partly from libfftw's documentation:
+ *		http://www.fftw.org
+ *
+ * 	To use this DSP block it must be instantiated with a time-domain
+ * 	set of convolution coefficients, called the 'filter kernel'.  
+ *
+ * 	Call beginWrite(); then, exactly getChunkSize() samples should be written 
+ * 	with the writeSample() method.  
+ * 	Then the beginRead() method should be called,  and the same number of
+ * 	samples that were just written with writeSample() must be read with the 
+ * 	readSample() method.  And this 3-part procedure can be repeated.  
+ *
+ * 	The one exception to writing exactly getChunkSize() samples is 
+ * 	on the last chunk.  If there are not getChunkSize() samples
+ * 	remaining in the input, the beginRead() method can be called
+ * 	sooner.  And then readSample() can be called again for as many
+ * 	samples as were written.
+ *
+ * 	Optionally, after this is all finished, since the complete
+ * 	convolution actually creates the kernel filter's size - 1 
+ * 	extra samples of output more than the size of the input, these
+ * 	can be read by calling readEndingSample() for the filter kernel's
+ * 	size - 1 times.
+ *
+ * 	The reset() method can be called if everything is to start over
+ * 	as if just after construction
+ *
+ * 	And of course, the object can be safely destroyed without having 
+ * 	read all the samples that were written.
+ */
+
+template <class sample_t,class coefficient_t> class TFFTConvolver
+{
+	// ??? there are perhaps some optimizations like using memset instead of for-loops
+public:
+	/* for now, filterKernel's elements need to sum to 1 */
+	TFFTConvolver(const coefficient_t filterKernel[],size_t filterKernelSize) :
+		M(filterKernelSize),
+		W(getFFTWindowSize()),fW(W),
+		N(W-M+1),
+
+		p(rfftw_create_plan(W, FFTW_REAL_TO_COMPLEX, FFTW_ESTIMATE)),
+		un_p(rfftw_create_plan(W, FFTW_COMPLEX_TO_REAL, FFTW_ESTIMATE)),
+
+		kernel_real(W/2+1),
+		kernel_img(W/2+1),
+		data(W),dataPos(0),
+		xform(W+1),
+
+		overlap(M-1),
+		overlapPos(0)
+	{
+		// ??? might want to check coefficient_t against fftw_real
+		
+		prepareFilterKernel(filterKernel);
+		//printf("chosen window size: %d\n",W);
+
+		reset();
+	}
+
+	virtual ~TFFTConvolver()
+	{
+		rfftw_destroy_plan(p);
+		rfftw_destroy_plan(un_p);
+	}
+
+
+	const size_t getChunkSize() const
+	{
+		return N;
+	}
+
+	void beginWrite()
+	{
+		dataPos=0;
+	}
+
+	void writeSample(const sample_t s)
+	{
+		data[dataPos++]=s;
+	}
+
+	// i needs to be 0 to W/2
+	#define RE(i) xform[(i)]
+	#define IM(i) xform[W-(i)]
+		
+	void beginRead()
+	{
+		if(dataPos>N) // inappropriate use
+			throw runtime_error(string(__func__)+" -- writeSample() was called too many times: "+istring(dataPos)+">TFFTConvolver::getChunkSize() ("+istring(N)+")");
+		// pad data with zero
+		while(dataPos<W)
+			data[dataPos++]=0;
+
+		// do the fft data --> xform
+		rfftw_one(p, data, xform);
+		xform[W]=0; // to help out macros
+						
+
+			// ??? and here is where I could just as easily deconvolve by dividing with some flag
+		// multiply the frequency-domain kernel with the now frequency-domain audio
+		for(size_t t=0;t<=W/2;t++)
+		{
+			// complex multiplication
+			const fftw_real temp=RE(t)*kernel_real[t] - IM(t)*kernel_img[t];
+			IM(t)=RE(t)*kernel_img[t] + IM(t)*kernel_real[t];
+			RE(t)=temp;
+		}
+
+		// do the inverse fft xfrorm --> data
+		rfftw_one(un_p, xform, data);
+
+		// add the last segment's overlap to this segment
+		for(size_t t=0;t<M-1;t++)
+			data[t]+=overlap[t];
+
+		// save the samples that will overlap the next segment
+		for(size_t t=N;t<W;t++)
+			overlap[t-N]=data[t];
+
+		dataPos=0;
+	}
+
+	const fftw_real readSample()
+	{
+		return data[dataPos++]/fW;
+	}
+
+	const fftw_real readEndingSample()
+	{
+		return overlap[overlapPos++];
+	}
+
+	void reset()
+	{
+		dataPos=0;
+		overlapPos=0;
+
+		for(size_t t=0;t<M-1;t++)
+			overlap[t]=0;
+	}
+
+	const size_t getFilterKernelSize() const
+	{
+		return(M);
+	}
+
+private:
+
+	const size_t M; // length of filter kernel
+	const size_t W; // fft window size
+		const fftw_real fW;
+	const size_t N; // length of audio chunk to be processed each fft window (W-M+1)
+
+	rfftw_plan p;
+	rfftw_plan un_p;
+
+	TAutoBuffer<fftw_real> kernel_real;
+	TAutoBuffer<fftw_real> kernel_img;
+
+	TAutoBuffer<fftw_real> data;
+	size_t dataPos;
+
+	TAutoBuffer<fftw_real> xform;
+
+	TAutoBuffer<fftw_real> overlap;
+	size_t overlapPos;
+
+
+	const size_t getFFTWindowSize() const
+	{
+		if(M<=0)
+			throw runtime_error(string(__func__)+" -- filter kernel length is <= 0 -- "+istring(M));
+
+		//                                       don't worry with anything less than 8192
+		//                                       2^13 5^6   2^14  3^9    2^15 3^10 2^16   5^7   7^6    2^17   3^11   2^18   5^8    2^19   3^12   7^7    2^20    3^13    5^9     2^21    2^22    3^14    7^8     2^23    5^10    3^15     2^24     11^7
+		static const size_t fftw_good_sizes[]={0,8192,15625,16384,19683,32768,59049,65536,78125,117649,131072,177147,262144,390625,524288,531441,823543,1048576,1594323,1953125,2097152,4194304,4782969,5764801,8388608,9765625,14348907,16777216,19487171};
+		static const size_t num_sizes=sizeof(fftw_good_sizes)/sizeof(*fftw_good_sizes);
+
+		// the window size to use should be the first item in fftw_good_sizes that can accomidate the filterKernel, then one more bigger
+		for(size_t t=0;t<num_sizes-1;t++)
+		{
+			if(fftw_good_sizes[t]>=M)
+				return(fftw_good_sizes[t+1]);
+		}
+
+		throw runtime_error(string(__func__)+" -- cannot handle a filter kernel of size "+istring(M)+" -- perhaps simply another element needs to be added to fftw_good_sizes");
+	}
+	
+	void prepareFilterKernel(const coefficient_t filterKernel[])
+	{
+			// ??? perhaps a parameter could be passed that would indicate what the filterKernel is.. whether it's time-domain or what
+
+		// convert the given time-domain kernel into a frequency-domain kernel
+		for(size_t t=0;t<M;t++) // copy to data
+			data[t]=filterKernel[t];
+		for(size_t t=M;t<W;t++) // pad with zero
+			data[t]=0;
+
+		rfftw_one(p, data, xform);
+		xform[W]=0; // to help out macros
+
+		// copy into kernel_real and kernel_img
+		for(size_t t=0;t<=W/2;t++)
+		{
+			kernel_real[t]=RE(t);
+			kernel_img[t]=IM(t);
+		}
+	}
+		
+};
+
+/* some helper functions for if/when I need to convert fftw's rectangular transformed output to polar coordinates and back
+#include <math.h>
+static float rec_to_polar_mag(float real,float img) 
+{
+	return sqrt(real*real+img*img);
+}
+
+static float rec_to_polar_phase(float real,float img)
+{
+	if(real==0) real=1e-20;
+	float phase=atan(img/real);
+	if(real<0 && img<0) phase=phase-M_PI;
+	else if(real<0 && img>=0) phase=phase+M_PI;
+	return phase;
+}
+
+static float polar_to_rec_real(float mag,float phase)
+{
+	return mag*cos(phase);
+}
+
+static float polar_to_rec_img(float mag,float phase)
+{
+	return mag*sin(phase);
+}
+*/
+
+
+
+#endif
 
 #endif
