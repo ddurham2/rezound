@@ -25,6 +25,7 @@
 #include <stdlib.h>
 
 #include <istring>
+#include <algorithm>
 
 #include <CNestedDataFile/CNestedDataFile.h>
 
@@ -59,8 +60,6 @@ FXDEFMAP(FXConstantParamValue) FXConstantParamValueMap[]=
 
 FXIMPLEMENT(FXConstantParamValue,FXVerticalFrame,FXConstantParamValueMap,ARRAYNUMBER(FXConstantParamValueMap))
 
-#define ASSURE_HEIGHT(parent,height) new FXFrame(parent,FRAME_NONE|LAYOUT_SIDE_LEFT | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT,0,0,0,height);
-
 #include "utils.h"
 
 FXConstantParamValue::FXConstantParamValue(AActionParamMapper *_valueMapper,bool showInverseButton,FXComposite *p,int opts,const char *_name) :
@@ -88,10 +87,11 @@ FXConstantParamValue::FXConstantParamValue(AActionParamMapper *_valueMapper,bool
 
 	valueMapper(_valueMapper),
 
-	textFont(getApp()->getNormalFont())
-{
-	ASSURE_HEIGHT(middleFrame,120); // assure that the slider will be this many pixels tall
+	textFont(getApp()->getNormalFont()),
 
+	minWidth(0),
+	minHeight(196)
+{
 	// create a smaller font to use 
         FXFontDesc d;
         textFont->getFontDesc(d);
@@ -130,6 +130,22 @@ FXConstantParamValue::FXConstantParamValue(AActionParamMapper *_valueMapper,bool
 FXConstantParamValue::~FXConstantParamValue()
 {
 	delete textFont;
+}
+
+FXint FXConstantParamValue::getDefaultWidth()
+{
+	return max(FXVerticalFrame::getDefaultWidth(),minWidth);
+}
+
+FXint FXConstantParamValue::getDefaultHeight()
+{
+	return max(FXVerticalFrame::getDefaultHeight(),minHeight);
+}
+
+void FXConstantParamValue::setMinSize(FXint _minWidth,FXint _minHeight)
+{
+	minWidth=_minWidth;
+	minHeight=_minHeight;
 }
 
 void FXConstantParamValue::setUnits(const FXString _units)

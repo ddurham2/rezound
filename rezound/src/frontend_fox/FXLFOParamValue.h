@@ -38,6 +38,10 @@ public:
 	FXLFOParamValue(FXComposite *p,int opts,const char *name,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs);
 	virtual ~FXLFOParamValue();
 
+	FXint getDefaultWidth();
+	FXint getDefaultHeight();
+	void setMinSize(FXint minWidth,FXint minHeight);
+
 	long onLFOTypeChange(FXObject *sender,FXSelector sel,void *ptr);
 
 	const CLFODescription getValue();
@@ -76,6 +80,8 @@ private:
 	FXListBox *LFOTypeComboBox;
 
 	FXFont *textFont;
+
+	FXint minWidth,minHeight;
 };
 
 #endif

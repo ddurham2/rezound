@@ -42,6 +42,10 @@ public:
 	FXConstantParamValue(AActionParamMapper *valueMapper,bool showInverseButton,FXComposite *p,int opts,const char *name);
 	virtual ~FXConstantParamValue();
 
+	FXint getDefaultWidth();
+	FXint getDefaultHeight();
+	void setMinSize(FXint minWidth,FXint minHeight);
+
 	long onSliderChange(FXObject *sender,FXSelector sel,void *ptr);
 
 	long onValueTextBoxChange(FXObject *sender,FXSelector sel,void *ptr);
@@ -156,6 +160,8 @@ private:
 	double defaultValue;
 
 	FXFont *textFont;
+
+	FXint minWidth,minHeight;
 };
 
 #endif

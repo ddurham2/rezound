@@ -354,7 +354,10 @@ FXGraphParamValue::FXGraphParamValue(const char *_name,FXComposite *p,int opts,i
 
 	backBuffer(new FXImage(getApp())),
 
-	textFont(getApp()->getNormalFont())
+	textFont(getApp()->getNormalFont()),
+	
+	minWidth(500),
+	minHeight(300)
 {
 	// create a smaller font to use 
         FXFontDesc d;
@@ -401,9 +404,15 @@ FXGraphParamValue::~FXGraphParamValue()
 	delete textFont;
 }
 
-// set the default w & h of this widget
-FXint FXGraphParamValue::getDefaultWidth() { return 500; }
-FXint FXGraphParamValue::getDefaultHeight() { return 300; }
+// return the default w & h of this widget
+FXint FXGraphParamValue::getDefaultWidth() { return minWidth; }
+FXint FXGraphParamValue::getDefaultHeight() { return minHeight; }
+
+void FXGraphParamValue::setMinSize(FXint _minWidth,FXint _minHeight)
+{
+	minWidth=_minWidth;
+	minHeight=_minHeight;
+}
 
 void FXGraphParamValue::setSound(CSound *_sound,sample_pos_t _start,sample_pos_t _stop)
 {

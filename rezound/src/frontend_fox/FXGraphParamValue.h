@@ -52,6 +52,7 @@ public:
 
 	FXint getDefaultWidth();
 	FXint getDefaultHeight();
+	void setMinSize(FXint minWidth,FXint minHeight);
 
 	void setSound(CSound *sound,sample_pos_t start,sample_pos_t stop);
 	void setHorzParameters(const string horzAxisLabel,const string horzUnits,AActionParamMapper *horzValueMapper);
@@ -190,6 +191,8 @@ private:
 	FXImage *backBuffer;
 
 	FXFont *textFont;
+
+	FXint minWidth,minHeight;
 };
 
 #endif

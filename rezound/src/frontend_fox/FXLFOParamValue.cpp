@@ -79,8 +79,15 @@ FXLFOParamValue::FXLFOParamValue(FXComposite *p,int opts,const char *_name,const
 
 	LFOTypeComboBox(new FXListBox(this,16,this,ID_LFO_TYPE_COMBOBOX,FRAME_SUNKEN|FRAME_THICK|LISTBOX_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,180,0)),
 
-	textFont(getApp()->getNormalFont())
+	textFont(getApp()->getNormalFont()),
+
+	minHeight(236),
+	minWidth(0)
 {
+	amplitudeSlider->setDefaultSize(0,0);
+	frequencySlider->setDefaultSize(0,0);
+	phaseSlider->setDefaultSize(0,0);
+
 	// create a smaller font to use 
         FXFontDesc d;
         textFont->getFontDesc(d);
@@ -113,6 +120,22 @@ FXLFOParamValue::FXLFOParamValue(FXComposite *p,int opts,const char *_name,const
 FXLFOParamValue::~FXLFOParamValue()
 {
 	delete textFont;
+}
+
+FXint FXLFOParamValue::getDefaultWidth()
+{
+	return max(FXVerticalFrame::getDefaultWidth(),minWidth);
+}
+
+FXint FXLFOParamValue::getDefaultHeight()
+{
+	return max(FXVerticalFrame::getDefaultHeight(),minHeight);
+}
+
+void FXLFOParamValue::setMinSize(FXint _minWidth,FXint _minHeight)
+{
+	minWidth=_minWidth;
+	minHeight=_minHeight;
 }
 
 long FXLFOParamValue::onLFOTypeChange(FXObject *sender,FXSelector sel,void *ptr)
