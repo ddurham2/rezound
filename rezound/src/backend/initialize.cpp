@@ -221,12 +221,16 @@ bool initializeBackend(ASoundPlayer *&_soundPlayer,int argc,char *argv[])
 
 		if(gSettingsRegistry->keyExists(("Meters"+DOT+"meterUpdateTime").c_str()))
 			gMeterUpdateTime= atoi(gSettingsRegistry->getValue(("Meters"+DOT+"meterUpdateTime").c_str()).c_str());
-		if(gSettingsRegistry->keyExists(("Meters"+DOT+"RMSWindowTime").c_str()))
-			gMeterRMSWindowTime= atoi(gSettingsRegistry->getValue(("Meters"+DOT+"RMSWindowTime").c_str()).c_str());
-		if(gSettingsRegistry->keyExists(("Meters"+DOT+"maxPeakFallDelayTime").c_str()))
-			gMaxPeakFallDelayTime= atoi(gSettingsRegistry->getValue(("Meters"+DOT+"maxPeakFallDelayTime").c_str()).c_str());
-		if(gSettingsRegistry->keyExists(("Meters"+DOT+"maxPeakFallRate").c_str()))
-			gMaxPeakFallRate= atof(gSettingsRegistry->getValue(("Meters"+DOT+"maxPeakFallRate").c_str()).c_str());
+		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Level"+DOT+"RMSWindowTime").c_str()))
+			gMeterRMSWindowTime= atoi(gSettingsRegistry->getValue(("Meters"+DOT+"Level"+DOT+"RMSWindowTime").c_str()).c_str());
+		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Level"+DOT+"maxPeakFallDelayTime").c_str()))
+			gMaxPeakFallDelayTime= atoi(gSettingsRegistry->getValue(("Meters"+DOT+"Level"+DOT+"maxPeakFallDelayTime").c_str()).c_str());
+		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Level"+DOT+"maxPeakFallRate").c_str()))
+			gMaxPeakFallRate= atof(gSettingsRegistry->getValue(("Meters"+DOT+"Level"+DOT+"maxPeakFallRate").c_str()).c_str());
+		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Analyzer"+DOT+"peakFallDelayTime").c_str()))
+			gAnalyzerPeakFallDelayTime= atoi(gSettingsRegistry->getValue(("Meters"+DOT+"Analyzer"+DOT+"peakFallDelayTime").c_str()).c_str());
+		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Analyzer"+DOT+"peakFallRate").c_str()))
+			gAnalyzerPeakFallRate= atof(gSettingsRegistry->getValue(("Meters"+DOT+"Analyzer"+DOT+"peakFallRate").c_str()).c_str());
 
 
 		if(gSettingsRegistry->keyExists("crossfadeEdges"))
@@ -382,9 +386,11 @@ void deinitializeBackend()
 	gSettingsRegistry->createKey("initialLengthToShow",gInitialLengthToShow);
 
 	gSettingsRegistry->createKey(("Meters"+DOT+"meterUpdateTime").c_str(),gMeterUpdateTime);
-	gSettingsRegistry->createKey(("Meters"+DOT+"RMSWindowTime").c_str(),gMeterRMSWindowTime);
-	gSettingsRegistry->createKey(("Meters"+DOT+"maxPeakFallDelayTime").c_str(),gMaxPeakFallDelayTime);
-	gSettingsRegistry->createKey(("Meters"+DOT+"maxPeakFallRate").c_str(),gMaxPeakFallRate);
+	gSettingsRegistry->createKey(("Meters"+DOT+"Level"+DOT+"RMSWindowTime").c_str(),gMeterRMSWindowTime);
+	gSettingsRegistry->createKey(("Meters"+DOT+"Level"+DOT+"maxPeakFallDelayTime").c_str(),gMaxPeakFallDelayTime);
+	gSettingsRegistry->createKey(("Meters"+DOT+"Level"+DOT+"maxPeakFallRate").c_str(),gMaxPeakFallRate);
+	gSettingsRegistry->createKey(("Meters"+DOT+"Analyzer"+DOT+"peakFallDelayTime").c_str(),gAnalyzerPeakFallDelayTime);
+	gSettingsRegistry->createKey(("Meters"+DOT+"Analyzer"+DOT+"peakFallRate").c_str(),gAnalyzerPeakFallRate);
 
 	gSettingsRegistry->createKey("crossfadeEdges",(float)gCrossfadeEdges);
 		gSettingsRegistry->createKey("crossfadeStartTime",gCrossfadeStartTime);

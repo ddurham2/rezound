@@ -111,12 +111,14 @@ extern bool gFollowPlayPosition;
 extern double gInitialLengthToShow;
 
 /*
- * settings pertaining to audio level meters
+ * settings pertaining to audio meters
  */
 extern unsigned gMeterUpdateTime;	// the number of milliseconds before update the audio level meters again
 extern unsigned gMeterRMSWindowTime;	// the number of milliseconds of audio that the RMS should do a moving average on (normally 10-1000 milliseconds)
-extern unsigned gMaxPeakFallDelayTime;	// the number of milliseconds seconds before the max peak indicators should hold before falling
+extern unsigned gMaxPeakFallDelayTime;	// the number of milliseconds before the max peak indicators should hold before falling
 extern double gMaxPeakFallRate;		// the fraction of the maximum sample value that should be subtracted from the max peak level durring falling (normally 2% or 0.02)
+extern unsigned gAnalyzerPeakFallDelayTime;	// the number of milliseconds before the analyzer peaks should hold before falling
+extern double gAnalyzerPeakFallRate;	// the the fraction of 1 that should be subtracted from tne analyzer peaks durring falling 
 
 
 /*

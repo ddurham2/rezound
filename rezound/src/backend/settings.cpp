@@ -90,6 +90,8 @@ unsigned gMeterUpdateTime=50;
 unsigned gMeterRMSWindowTime=200;
 unsigned gMaxPeakFallDelayTime=500;
 double gMaxPeakFallRate=0.02;
+unsigned gAnalyzerPeakFallDelayTime=400;
+double gAnalyzerPeakFallRate=0.025;
 
 
 CrossfadeEdgesTypes gCrossfadeEdges=cetInner;
