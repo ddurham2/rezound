@@ -1190,6 +1190,7 @@ void CSound::flush()
 	space of 110% of the given file's size
 */
 #include <sys/vfs.h>
+#include <stdio.h>
 #include <string.h>
 #include <errno.h>
 const string findWorkDir(const string filename)
@@ -1201,10 +1202,12 @@ const string findWorkDir(const string filename)
 	for(size_t t=0;t<workingDirs.size();t++)
 	{ 
 		const string workDir=workingDirs[t];
-		FILE *f=fopen((workDir+CPath::dirDelim+"rezrez842rezrez").c_str(),"wb");
+		const string testFilename=workDir+CPath::dirDelim+"rezrez842rezrez";
+		FILE *f=fopen(testFilename.c_str(),"wb");
 		if(f!=NULL)
 		{ // directry is writable
 			fclose(f);
+			remove(testFilename.c_str());
 
 			struct statfs s;
 			if(statfs(workDir.c_str(),&s)!=0)
