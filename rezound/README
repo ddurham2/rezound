@@ -24,14 +24,17 @@ Open Discussions:	http://sourceforge.net/forum/forum.php?forum_id=15508
 Other related open source projects
 
 snd:	- http://ccrma-www.stanford.edu/software/snd/
-
 	This app has some very advanced features that one may
 	find useful, but I find its frontend pretty hard to use.
 
 
-
 glame:	- http://glame.sourceforge.net/
-
 	This is a very nice audio editing application similar to ReZound.
 	Not perfect, but it's maturing more and more everyday.
+
+
+sox:	- http://sox.sourceforge.net/
+	This is a command line based audio file manipulation
+	program.  It's sort of like ImageMagick for audio files.
+	
 
