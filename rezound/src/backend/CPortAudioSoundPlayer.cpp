@@ -74,8 +74,6 @@ void CPortAudioSoundPlayer::initialize()
 			throw(runtime_error(string(__func__)+" -- unhandled sample_t format"));
 		
 
-		ASoundPlayer::initialize();
-
 		// open a PortAudio stream
 		err = Pa_OpenStream(
 			&stream,
@@ -114,6 +112,7 @@ void CPortAudioSoundPlayer::initialize()
 		supportsFullDuplex= query libportaudio if the device supports fullduplex mode ... perhaps write a method that runs prior to this point that tried to open the device with input and output parameters to Pa_OpenStream
 */
 
+		ASoundPlayer::initialize();
 		initialized=true;
 	}
 	else

@@ -38,6 +38,8 @@ class ASoundPlayer;
    the player is not initialized.
 
  - overriding initialize and deinitialize methods should invoke the overridden method
+ 	- this class's initialize() method should be called after the derived class 
+	has finished its initialization
 
  - the derived class's destructor needs to call deinitialize because if this base
    class did it, some stuff could be freed in the derived class before the base
@@ -49,6 +51,8 @@ class ASoundPlayer;
 
 #include "CSound_defs.h"
 class CSoundPlayerChannel;
+
+#include "DSP/LevelDetector.h"
 
 #define MAX_OUTPUT_DEVICES 16
 class ASoundPlayer
@@ -91,7 +95,10 @@ public:
 
 	CSoundPlayerChannel *newSoundPlayerChannel(CSound *sound);
 
-	// gets the most recent peak level (??? needs to be enhanced to know the max since the last call to this function or something like that)
+	// gets the max RMS level since the last call to this method for the same channel (hence to sub-systems could not currently use this method at the same time sinc they would interfere with each other's last-time-this-method was called)
+	const sample_t getRMSLevel(unsigned channel) const;
+
+	// gets the maximum peak level since the last call to this method for the same channel (hence two sub-systems could not currently use this method at the same time since they would interfere with each other's last-time-this-method-was-called)
 	const sample_t getPeakLevel(unsigned channel) const;
 
 protected:
@@ -109,7 +116,10 @@ private:
 	void addSoundPlayerChannel(CSoundPlayerChannel *soundPlayerChannel);
 	void removeSoundPlayerChannel(CSoundPlayerChannel *soundPlayerChannel);
 
-	sample_t peakLevels[MAX_CHANNELS];
+
+	CDSPRMSLevelDetector RMSLevelDetectors[MAX_CHANNELS];
+	mutable sample_t maxRMSLevels[MAX_CHANNELS];
+	mutable sample_t peakLevels[MAX_CHANNELS];
 };
 
 

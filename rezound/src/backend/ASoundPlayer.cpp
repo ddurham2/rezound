@@ -25,6 +25,7 @@
 #include "CSound.h"
 #include "CSoundPlayerChannel.h"
 
+#include "unit_conv.h"
 
 ASoundPlayer::ASoundPlayer()
 {
@@ -36,6 +37,13 @@ ASoundPlayer::~ASoundPlayer()
 
 void ASoundPlayer::initialize()
 {
+	for(unsigned t=0;t<MAX_CHANNELS;t++)
+		maxRMSLevels[t]=peakLevels[t]=0;
+
+	// only handling the first device ???
+	for(unsigned t=0;t<devices[0].channelCount;t++)
+								// 50 ms cause I know that's the frame-rate time I hard coded in the frontend (CMetersWindow.cpp)
+		RMSLevelDetectors[t].setWindowTime(ms_to_samples(50.0,devices[0].sampleRate));
 }
 
 void ASoundPlayer::deinitialize()
@@ -74,21 +82,35 @@ void ASoundPlayer::mixSoundPlayerChannels(const unsigned nChannels,sample_t * co
 		(*i)->mixOntoBuffer(nChannels,buffer,bufferSize);
 
 
-	// calculate the peak levels for this chunk
+	// calculate the peak levels and max RMS levels for this chunk
 	for(unsigned i=0;i<nChannels;i++)
 	{
 		size_t p=i;
-		sample_t m=0;
+		sample_t peak=peakLevels[i];
+		sample_t maxRMSLevel=maxRMSLevels[i];
 		for(size_t t=0;t<bufferSize;t++)
 		{
 			// m = max(m,abs(buffer[p]);
 			sample_t s=buffer[p];
-			s= s<0 ? -s : s;
-			m= m>s ? m : s;
+
+			s= s<0 ? -s : s; // s=abs(s)
+
+			// peak=max(peak,s)
+			if(peak<s)
+				peak=s;
+
+			// update the RMS level detectors
+			sample_t RMSLevel=RMSLevelDetectors[i].readLevel(s);
+
+			// RMSLevel=max(maxRMSLevel,RMSLevel)
+			if(maxRMSLevel<RMSLevel)
+				maxRMSLevel=RMSLevel;
 
 			p+=nChannels;
 		}
-		peakLevels[i]=m;
+	
+		maxRMSLevels[i]=maxRMSLevel;
+		peakLevels[i]=peak;
 	}
 	for(unsigned i=nChannels;i<MAX_CHANNELS;i++)
 		peakLevels[i]=0;
@@ -100,9 +122,19 @@ void ASoundPlayer::stopAll()
 		(*i)->stop();
 }
 
+const sample_t ASoundPlayer::getRMSLevel(unsigned channel) const
+{
+	//return RMSLevelDetectors[channel].readCurrentLevel();
+	const sample_t r=maxRMSLevels[channel];
+	maxRMSLevels[channel]=0;
+	return r;
+}
+
 const sample_t ASoundPlayer::getPeakLevel(unsigned channel) const
 {
-	return peakLevels[channel];
+	const sample_t p=peakLevels[channel];
+	peakLevels[channel]=0;
+	return p;
 }
 
 

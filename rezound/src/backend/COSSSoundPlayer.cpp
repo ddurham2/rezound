@@ -80,8 +80,6 @@ void COSSSoundPlayer::initialize()
 {
 	if(!initialized)
 	{
-		ASoundPlayer::initialize();
-
 		try
 		{
 			int sampleFormat=0;
@@ -236,6 +234,7 @@ void COSSSoundPlayer::initialize()
 			playThread.kill=false;
 			playThread.start();
 
+			ASoundPlayer::initialize();
 			initialized=true;
 		}
 		catch(...)
