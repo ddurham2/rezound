@@ -125,6 +125,9 @@ void playTrigger(void *Pthis)
 CSoundWindow::CSoundWindow(FXWindow *mainWindow,CLoadedSound *_loadedSound) :
 	FXTopWindow(mainWindow,_loadedSound->getFilename().c_str(),FOXIcons->icon_logo_32,FOXIcons->icon_logo_16,DECOR_ALL, 10,mainWindow->getY()+mainWindow->getDefaultHeight()+40,750,400, 0,0,0,0, 0,0),
 
+	shuttleControlScalar("100x"),
+	shuttleControlSpringBack(true),
+
 	loadedSound(_loadedSound),
 
 	timerHandle(NULL),
@@ -295,7 +298,7 @@ CSoundWindow::~CSoundWindow()
 void CSoundWindow::setActiveState(bool isActive)
 {
 	if(isActive)
-		static_cast<CMainWindow *>(getOwner())->positionShuttleGivenSpeed(loadedSound->channel->getPlaySpeed());
+		static_cast<CMainWindow *>(getOwner())->positionShuttleGivenSpeed(loadedSound->channel->getPlaySpeed(),shuttleControlScalar,shuttleControlSpringBack);
 
 	if(gFocusMethod==fmFocusButton)
 	{

@@ -94,6 +94,7 @@ FXDEFMAP(CMainWindow) CMainWindowMap[]=
 	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	CMainWindow::ID_SHUTTLE_DIAL,			CMainWindow::onShuttleReturn),
 	FXMAPFUNC(SEL_CHANGED,			CMainWindow::ID_SHUTTLE_DIAL,			CMainWindow::onShuttleChange),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_DIAL_SPRING_BUTTON,	CMainWindow::onShuttleDialSpringButton),
+	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SHUTTLE_DIAL_SCALE_BUTTON,	CMainWindow::onShuttleDialScaleButton),
 
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SEEK_NORMAL,			CMainWindow::onShuttleReturn),
 	FXMAPFUNC(SEL_COMMAND,			CMainWindow::ID_SEEK_LEFT,			CMainWindow::onKeyboardSeek),
@@ -125,7 +126,8 @@ FXIMPLEMENT(CMainWindow,FXMainWindow,CMainWindowMap,ARRAYNUMBER(CMainWindowMap))
 #include <fox/fxkeys.h>
 
 CMainWindow::CMainWindow(FXApp* a) :
-	FXMainWindow(a,"ReZound",FOXIcons->icon_logo_32,FOXIcons->icon_logo_16,DECOR_ALL,10,20)
+	FXMainWindow(a,"ReZound",FOXIcons->icon_logo_32,FOXIcons->icon_logo_16,DECOR_ALL,10,20),
+	shuttleFont(NULL)
 {
 	menubar=new FXMenuBar(this,LAYOUT_SIDE_TOP|LAYOUT_FILL_X);
 
@@ -136,7 +138,7 @@ CMainWindow::CMainWindow(FXApp* a) :
 	FXPacker *t;
 
 	// build play control buttons
-	FXPacker *playControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
+	FXPacker *playControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 4,4,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
 		#define PLAY_CONTROLS_BUTTON_STYLE BUTTON_STYLE
 		new FXButton(playControlsFrame,"\tPlay All Once",FOXIcons->play_all_once,this,ID_PLAY_ALL_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,0,32,32);
 		new FXButton(playControlsFrame,"\tPlay Selection Once",FOXIcons->play_selection_once,this,ID_PLAY_SELECTION_ONCE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32,0,32,32);
@@ -152,15 +154,30 @@ CMainWindow::CMainWindow(FXApp* a) :
 		new FXButton(playControlsFrame,"\tJump to Previous Cue",FOXIcons->jump_to_previous_q,this,ID_JUMP_TO_PREV_CUE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 0,32+32+16,32+32,16);
 		new FXButton(playControlsFrame,"\tJump to Next Cue",FOXIcons->jump_to_next_q,this,ID_JUMP_TO_NEXT_CUE_BUTTON,PLAY_CONTROLS_BUTTON_STYLE, 32+32,32+32+16,32+32,16);
 
+		// shuttle controls
 		t=new FXHorizontalFrame(playControlsFrame,FRAME_NONE|LAYOUT_FIX_X|LAYOUT_FIX_Y,0,32+32+16+16,0,0, 0,0,0,0, 0,0);
-			shuttleDial=new FXDial(t,this,ID_SHUTTLE_DIAL,DIAL_HORIZONTAL|DIAL_HAS_NOTCH|LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32+32+32+32,20);
+
+			shuttleFont=getApp()->getNormalFont();
+
+			FXFontDesc d;
+			shuttleFont->getFontDesc(d);
+			d.weight=FONTWEIGHT_LIGHT;
+			d.size=65;
+			shuttleFont=new FXFont(getApp(),d);
+
+			shuttleDial=new FXDial(t,this,ID_SHUTTLE_DIAL,DIAL_HORIZONTAL|DIAL_HAS_NOTCH|LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT|LAYOUT_CENTER_Y, 0,0,32+32+32+32,20);
 			shuttleDial->setRange(-((shuttleDial->getWidth())/2),(shuttleDial->getWidth())/2);
 			shuttleDial->setRevolutionIncrement(shuttleDial->getWidth()*2-1);
-			shuttleDial->setTipText("Shuttle Seek While Playing");
+			shuttleDial->setTipText("Shuttle Seek While Playing\n(right-click to return to middle)");
 
-			shuttleDialSpringButton=new FXToggleButton(t,"F","S",NULL,NULL,this,ID_SHUTTLE_DIAL_SPRING_BUTTON,TOGGLEBUTTON_NORMAL|TOGGLEBUTTON_TOOLBAR|LAYOUT_FIX_HEIGHT,0,0,0,20);
-			shuttleDialSpringButton->setState(true);
-			shuttleDialSpringButton->setTipText("[S]pring-Back or [F]ree");
+			t=new FXVerticalFrame(t,FRAME_NONE,0,0,0,0, 0,0,0,0, 0,0);
+				shuttleDialSpringButton=new FXToggleButton(t,"free","spring",NULL,NULL,this,ID_SHUTTLE_DIAL_SPRING_BUTTON,LAYOUT_FILL_X|JUSTIFY_NORMAL|TOGGLEBUTTON_TOOLBAR|FRAME_RAISED,0,0,0,0, 1,1,0,0);
+				shuttleDialSpringButton->setState(true);
+				shuttleDialSpringButton->setFont(shuttleFont);
+
+				shuttleDialScaleButton=new FXButton(t,"100x",NULL,this,ID_SHUTTLE_DIAL_SCALE_BUTTON,LAYOUT_FILL_X|JUSTIFY_NORMAL|TOGGLEBUTTON_TOOLBAR|FRAME_RAISED,0,0,0,0, 1,1,0,0);
+				shuttleDialScaleButton->setFont(shuttleFont);
+
 
 	// build miscellaneous buttons
 	FXPacker *miscControlsFrame=new FXPacker(new FXPacker(contents,FRAME_RIDGE|LAYOUT_FILL_Y,0,0,0,0, 6,6,2,2),LAYOUT_FILL_Y|LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 3,2);
@@ -176,6 +193,11 @@ CMainWindow::CMainWindow(FXApp* a) :
 				crossfadeEdgesComboBox->setCurrentItem(0);
 			new FXButton(t,"...\tChange Crossfade Times",NULL,this,ID_CROSSFADE_EDGES_SETTINGS, BUTTON_NORMAL & ~FRAME_THICK);
 		clipboardComboBox=new FXComboBox(miscControlsFrame,8,8, this,ID_CLIPBOARD_COMBOBOX, FRAME_SUNKEN|FRAME_THICK | COMBOBOX_NORMAL|COMBOBOX_STATIC);
+}
+
+CMainWindow::~CMainWindow()
+{
+	delete shuttleFont;
 }
 
 void CMainWindow::show()
@@ -579,38 +601,69 @@ long CMainWindow::onClearUndoHistoryButton(FXObject *sender,FXSelector sel,void 
 
 long CMainWindow::onShuttleReturn(FXObject *sender,FXSelector sel,void *ptr)
 {
-	if((ptr==NULL || ((FXEvent *)ptr)->code==LEFTBUTTON) && !shuttleDialSpringButton->getState())
-		return 1;
+	if(((FXEvent *)ptr)->code==LEFTBUTTON && !shuttleDialSpringButton->getState())
+		return 1; // this wasn't a left click release and where we're in spring-back mode
 
+	// return shuttle control to the middle
 	shuttleDial->setValue(0);
-	onShuttleChange(NULL,0,NULL); // I think I need to call this ???
+	onShuttleChange(NULL,0,NULL);
 	return 1;
 }
 
 long CMainWindow::onShuttleChange(FXObject *sender,FXSelector sel,void *ptr)
 {
-	CLoadedSound *s=gSoundFileManager->getActive();
-	if(s!=NULL)
+	CSoundWindow *w=gSoundFileManager->getActiveWindow();
+	if(w!=NULL)
 	{
+		CLoadedSound *s=w->loadedSound;
+
 		FXint minValue,maxValue;
 		shuttleDial->getRange(minValue,maxValue);
+
 		const FXint shuttlePos=shuttleDial->getValue();
 		float playSpeed;
 
+
 		if(shuttlePos==0)
 			playSpeed=1.0;
-		else if(shuttlePos>0)
-			playSpeed=(pow((double)shuttlePos/(double)maxValue,2.0)*100.0)+1.0;
-		else if(shuttlePos<0)
-			playSpeed=(pow((double)shuttlePos/(double)minValue,2.0)*-100.0)-1.0;
+		else
+		{
+			const string text=shuttleDialScaleButton->getText().text();
+			if(text=="1x")
+			{ // 1x +/- (0..1]
+				if(shuttlePos>0)
+					playSpeed=(double)shuttlePos/(double)maxValue;
+				else //if(shuttlePos<0)
+					playSpeed=(double)-shuttlePos/(double)minValue;
+			}
+			else if(text=="2x")
+			{ // 2x +/- [1..2]
+				if(shuttlePos>0)
+					playSpeed=(double)shuttlePos/(double)maxValue+1.0;
+				else //if(shuttlePos<0)
+					playSpeed=(double)-shuttlePos/(double)minValue-1.0;
+			}
+			else if(text=="100x")
+			{ // 100x +/- [1..100]
+						// I square the value to give a more useful range
+				if(shuttlePos>0)
+					playSpeed=(pow((double)shuttlePos/(double)maxValue,2.0)*100.0)+1.0;
+				else //if(shuttlePos<0)
+					playSpeed=(pow((double)shuttlePos/(double)minValue,2.0)*-100.0)-1.0;
+			}
+			else
+				throw(runtime_error(string(__func__)+" -- internal error -- unhandled text for shuttleDialScaleButton: '"+text+"'"));
+		}
 
-		s->channel->setPlaySpeed(playSpeed);	
+		w->shuttleControlScalar=shuttleDialScaleButton->getText().text();
+		w->shuttleControlSpringBack=shuttleDialSpringButton->getState();
+		s->channel->setPlaySpeed(playSpeed);
 	}
 
 	return 1;
 }
 
-void CMainWindow::positionShuttleGivenSpeed(double playSpeed)
+void CMainWindow::positionShuttleGivenSpeed(double playSpeed,const string shuttleControlScalar,bool springBack)
 {
 	FXint minValue,maxValue;
 	shuttleDial->getRange(minValue,maxValue);
@@ -618,26 +671,68 @@ void CMainWindow::positionShuttleGivenSpeed(double playSpeed)
 	FXint shuttlePos;
 	if(playSpeed==1.0)
 		shuttlePos=0;
-	else if(playSpeed>1.0)
-		shuttlePos=(FXint)(maxValue*sqrt((playSpeed-1.0)/100.0));
-	else if(playSpeed<1.0)
-		shuttlePos=(FXint)(minValue*sqrt((playSpeed+1.0)/-100.0));
-	else // catch all
-		shuttlePos=0;
-
-	if(shuttlePos==0)
-		shuttleDialSpringButton->setState(true);
 	else
-		shuttleDialSpringButton->setState(false);
+	{
+		const string &text=shuttleControlScalar;
+		if(text=="1x")
+		{
+			if(playSpeed>0.0)
+				shuttlePos=(FXint)(playSpeed*maxValue);
+			else //if(playSpeed<0.0)
+				shuttlePos=(FXint)(-playSpeed*minValue);
+		}
+		else if(text=="2x")
+		{
+			if(playSpeed>0.0)
+				shuttlePos=(FXint)((playSpeed-1.0)*maxValue);
+			else //if(playSpeed<0.0)
+				shuttlePos=(FXint)(-(playSpeed+1.0)*minValue);
+		}
+		else if(text=="100x")
+		{
+			if(playSpeed>0.0)
+				shuttlePos=(FXint)(maxValue*sqrt((playSpeed-1.0)/100.0));
+			else //if(playSpeed<0.0)
+				shuttlePos=(FXint)(minValue*sqrt((playSpeed+1.0)/-100.0));
+		}
+		else
+			throw(runtime_error(string(__func__)+" -- internal error -- unhandled text for shuttleDialScaleButton: '"+text+"'"));
+		
+	}
 
+	shuttleDialScaleButton->setText(shuttleControlScalar.c_str());
+	shuttleDialSpringButton->setState(springBack);
 	shuttleDial->setValue(shuttlePos);
 }
 
 long CMainWindow::onShuttleDialSpringButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-	if(shuttleDialSpringButton->getState())
-		onShuttleReturn(NULL,0,NULL);
 	shuttleDialSpringButton->killFocus();
+	if(shuttleDialSpringButton->getState())
+	{
+		// return the shuttle control to the middle
+		shuttleDial->setValue(0);
+		onShuttleChange(NULL,0,NULL);
+	}
+	return 1;
+}
+
+long CMainWindow::onShuttleDialScaleButton(FXObject *sender,FXSelector sel,void *ptr)
+{
+	shuttleDialScaleButton->killFocus();
+	const string text=shuttleDialScaleButton->getText().text();
+	if(text=="1x")
+		shuttleDialScaleButton->setText("2x");
+	else if(text=="2x")
+		shuttleDialScaleButton->setText("100x");
+	else if(text=="100x")
+		shuttleDialScaleButton->setText("1x");
+	else
+		throw(runtime_error(string(__func__)+" -- internal error -- unhandled text for shuttleDialScaleButton: '"+text+"'"));
+
+	// return the shuttle control to the middle
+	shuttleDial->setValue(0);
+	onShuttleChange(NULL,0,NULL);
 
 	return 1;
 }

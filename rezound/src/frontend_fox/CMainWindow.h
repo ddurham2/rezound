@@ -25,6 +25,7 @@
 #include "fox_compat.h"
 
 #include <map>
+#include <string>
 
 #include <fox/fx.h>
 
@@ -34,6 +35,7 @@ class CMainWindow : public FXMainWindow
 public:
 
 	CMainWindow(FXApp* a);
+	virtual ~CMainWindow();
 
 	virtual void show();
 	virtual void hide();
@@ -64,8 +66,9 @@ public:
 
 	long onShuttleReturn(FXObject *sender,FXSelector sel,void *ptr);
 	long onShuttleChange(FXObject *sender,FXSelector sel,void *ptr);
-	void positionShuttleGivenSpeed(double playSpeed);
+	void positionShuttleGivenSpeed(double playSpeed,const string shuttleControlScalar,bool springBack);
 	long onShuttleDialSpringButton(FXObject *sender,FXSelector sel,void *ptr);
+	long onShuttleDialScaleButton(FXObject *sender,FXSelector sel,void *ptr);
 
 	// used to control the shuttle control with the keyboard
 	long onKeyboardSeek(FXObject *sender,FXSelector sel,void *ptr);
@@ -107,6 +110,7 @@ public:
 	
 		ID_SHUTTLE_DIAL,
 		ID_SHUTTLE_DIAL_SPRING_BUTTON,
+		ID_SHUTTLE_DIAL_SCALE_BUTTON,
 
 		// used for key bindings
 		ID_SEEK_NORMAL,
@@ -148,8 +152,10 @@ private:
 	FXMenuBar 		*menubar;
 	FXHorizontalFrame	*contents;		// top horizontal main frame which contains play controls and action controls
 
+	FXFont *shuttleFont;
 	FXDial *shuttleDial;
 	FXToggleButton *shuttleDialSpringButton;
+	FXButton *shuttleDialScaleButton;
 
 	FXCheckButton	*followPlayPositionButton;
 	FXComboBox	*crossfadeEdgesComboBox;
