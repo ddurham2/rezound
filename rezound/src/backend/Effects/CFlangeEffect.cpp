@@ -84,6 +84,14 @@ bool CFlangeEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUn
 				dest[t]=ClipSample(flangeEffect.processSample(src[srcP++]));
 				UPDATE_PROGRESS_BAR(t);
 			}
+			
+/* This code can be used to test what the LFOs actually look like
+			for(sample_pos_t t=start;t<=stop;t++)
+			{
+				dest[t]=ClipSample(LFO->nextValue()*10000);
+				UPDATE_PROGRESS_BAR(t);
+			}
+*/
 
 			END_PROGRESS_BAR();
 		}

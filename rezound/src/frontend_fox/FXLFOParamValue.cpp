@@ -18,8 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#warning temporarliy modify an action to see that the LFOs are creating the expected shape at the given phase like the icon shows
-
 #include "FXLFOParamValue.h"
 
 #include <istring>
@@ -58,7 +56,7 @@ FXLFOParamValue::FXLFOParamValue(FXComposite *p,int opts,const char *title,const
 		amplitudeSlider(new FXConstantParamValue(interpretValue,uninterpretValue,min((int)maxAmp,1),(int)maxAmp,min((int)maxAmp,1),false,sliders,LAYOUT_CENTER_X,ampTitle.c_str())),
 		frequencySlider(new FXConstantParamValue(interpretValue,uninterpretValue,min((int)maxFreq,1),(int)maxFreq,min((int)maxFreq,1),false,sliders,LAYOUT_CENTER_X,"Frequency")),
 		phaseSlider(new FXConstantParamValue(interpretValue,uninterpretValue,360,360,360,true,sliders,LAYOUT_CENTER_X,"Phase")),
-	LFOTypeComboBox(new FXListBox(this,8,this,ID_LFO_TYPE_COMBOBOX,FRAME_SUNKEN|FRAME_THICK|LISTBOX_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,250,0))
+	LFOTypeComboBox(new FXListBox(this,16,this,ID_LFO_TYPE_COMBOBOX,FRAME_SUNKEN|FRAME_THICK|LISTBOX_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,250,0))
 {
 	// allow this to be hidden (cause varied repeat doesn't need it)
 	if(ampTitle=="")

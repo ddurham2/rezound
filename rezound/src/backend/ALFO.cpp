@@ -188,7 +188,7 @@ public:
 	CRisingSawtoothLFO(float frequency,float initialAngle,unsigned sampleRate) :
 		mod((unsigned)ceil(sampleRate/frequency)),
 		div(sampleRate/frequency/2.0),
-		counter((unsigned)(initialAngle/360.0*sampleRate/frequency)%mod)
+		counter((unsigned)((initialAngle+180.0)/360.0*sampleRate/frequency)%mod)
 		
 	{
 	}
@@ -263,12 +263,12 @@ public:
 	{
 		const float v=(counter++)/div-1.0;
 		counter%=mod;
-		return 1.0-v;
+		return -v;
 	}
 
 	const float getValue(const sample_pos_t time) const
 	{
-		return 1.0-(time%mod)/div-1.0;
+		return -(time%mod)/div-1.0;
 	}
 
 };
