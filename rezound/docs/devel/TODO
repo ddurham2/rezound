@@ -104,6 +104,9 @@
 
 --- POSSIBLE THINGS TO DO ---
 
+	- at some point I need to decide on a rounding function to use everywhere instead of using rint, round or nearbyint arbitrarily
+		- make a define in platform or something
+
 	- Now in at least two modules (LADSPA and CSoundPlayerChannel) and then perhaps in more than one place in each module I iterate over the sound in either looped or non-looped mode
 		- I could create an iterator for a CSound object that would return data in the native format
 		- In LADSPA where I might produce silence, I could either have the iterator that doesn't loop return zeros, or just check for end and produce zeros in the LADSPA code itself
