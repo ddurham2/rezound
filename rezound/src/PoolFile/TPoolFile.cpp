@@ -1862,13 +1862,15 @@ template<class l_addr_t,class p_addr_t>
 	//void TPoolFile<l_addr_t,p_addr_t>::joinAdjacentBlocks(const poolId_t poolId,const set<RLogicalBlock>::const_iterator firstBlockIndex,const set<RLogicalBlock>::const_iterator end)
 	void TPoolFile<l_addr_t,p_addr_t>::joinAdjacentBlocks(const poolId_t poolId,const size_t firstBlockIndex,const size_t blockCount)
 {
-	//size_t totalBlocks=SAT[poolId].size();
+	const size_t totalBlocks=SAT[poolId].size();
 
-	for(size_t t=0;t<blockCount;t++)
+	for(size_t t=firstBlockIndex;t<firstBlockIndex+blockCount;t++)
 	//for(set<RLogicalBlock>::const_iterator t=firstBlockIndex;t!=end;t++)
 	{
 		if(t==firstBlockIndex)
-			continue; // skip first iteration
+			continue; // skip first iteration because we're looking at t and the one before t (also avoids t-1 being underflowing)
+		if(t>=totalBlocks)
+			break; // just in case firstBlockIndex + blockCount specifies too many blocks
 
 		RLogicalBlock &b1=SAT[poolId][t-1];
 		//const RLogicalBlock &b1=*prev(t);
