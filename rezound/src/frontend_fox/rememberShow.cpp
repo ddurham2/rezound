@@ -25,8 +25,6 @@
 #include <string>
 #include <algorithm>
 
-#include <istring>
-
 #include <fox/fx.h>
 
 #include <CNestedDataFile/CNestedDataFile.h>
@@ -106,21 +104,21 @@ bool rememberShow(FXTopWindow *window)
 	// using this mechanism because FXToolBarShell's position method calls show which causes infinite recursion
 	static bool inThis=false;
 	if(inThis)
-		return(false);
+		return false;
 	inThis=true;
 
-	const string title=("WindowDimensions"+FXString(CNestedDataFile::delimChar)+window->getTitle()).text();
-	if(!gSettingsRegistry->keyExists((title+"_X").c_str()))
+	const string title="WindowDimensions" DOT window->getTitle().text();
+	if(!gSettingsRegistry->keyExists(title+"_X"))
 	{
 		inThis=false;
-		return(false);
+		return false;
 	}
 	else
 	{
-		FXint x=atoi(gSettingsRegistry->getValue((title+"_X").c_str()).c_str());
-		FXint y=atoi(gSettingsRegistry->getValue((title+"_Y").c_str()).c_str());
-		FXint width=atoi(gSettingsRegistry->getValue((title+"_W").c_str()).c_str());
-		FXint height=atoi(gSettingsRegistry->getValue((title+"_H").c_str()).c_str());
+		FXint x=gSettingsRegistry->getValue<int>(title+"_X");
+		FXint y=gSettingsRegistry->getValue<int>(title+"_Y");
+		FXint width=gSettingsRegistry->getValue<int>(title+"_W");
+		FXint height=gSettingsRegistry->getValue<int>(title+"_H");
 
 		//x+=decorWidth;
 		//y+=decorHeight;
@@ -144,22 +142,22 @@ bool rememberShow(FXTopWindow *window)
 		else 
 		{
 			inThis=false;
-			return(false);
+			return false;
 		}
 #endif
 
 	}
 	inThis=false;
-	return(true);
+	return true;
 }
 
 void rememberHide(FXTopWindow *window)
 {
-	const string title=("WindowDimensions"+FXString(CNestedDataFile::delimChar)+window->getTitle()).text();
+	const string title="WindowDimensions" DOT window->getTitle().text();
 	//printf("closing window: %s %d %d\n",window->getTitle().text(),window->getX(),window->getY());
-	gSettingsRegistry->createKey((title+"_X").c_str(),istring(window->getX()/*-decorWidth*/));
-	gSettingsRegistry->createKey((title+"_Y").c_str(),istring(window->getY()/*-decorHeight*/));
-	gSettingsRegistry->createKey((title+"_W").c_str(),istring(window->getWidth()));
-	gSettingsRegistry->createKey((title+"_H").c_str(),istring(window->getHeight()));
+	gSettingsRegistry->createValue<int>(title+"_X",window->getX()/*-decorWidth*/);
+	gSettingsRegistry->createValue<int>(title+"_Y",window->getY()/*-decorHeight*/);
+	gSettingsRegistry->createValue<int>(title+"_W",window->getWidth());
+	gSettingsRegistry->createValue<int>(title+"_H",window->getHeight());
 }
 

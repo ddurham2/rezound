@@ -30,7 +30,6 @@
 #include "settings.h"
 
 #include <CNestedDataFile/CNestedDataFile.h>
-#define DOT (CNestedDataFile::delimChar)
 
 #include "utils.h"
 
@@ -165,18 +164,18 @@ const FXDiskEntityParamValue::DiskEntityTypes FXDiskEntityParamValue::getEntityT
 
 void FXDiskEntityParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getName();
-	const string v=f->getValue(key.c_str());
-	setEntityName(v,f->getValue((key+" AsRaw").c_str())=="true");
+	const string key=prefix DOT getName();
+	const string v=f->getValue<string>(key);
+	setEntityName(v,f->getValue<bool>(key+" AsRaw"));
 }
 
 void FXDiskEntityParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getName();
-	f->createKey(key.c_str(),encodeFilenamePresetParameter(entityNameTextBox->getText().text()));
+	const string key=prefix DOT getName();
+	f->createValue<string>(key,encodeFilenamePresetParameter(entityNameTextBox->getText().text()));
 
 	if(openAsRawCheckButton!=NULL)
-		f->createKey((key+" AsRaw").c_str(),openAsRawCheckButton->getCheck() ? "true" : "false");
+		f->createValue<bool>(key+" AsRaw",openAsRawCheckButton->getCheck());
 }
 
 

@@ -26,7 +26,6 @@
 #include <istring>
 
 #include <CNestedDataFile/CNestedDataFile.h>
-#define DOT (CNestedDataFile::delimChar)
 
 #include "utils.h"
 
@@ -209,22 +208,31 @@ FXString FXTextParamValue::getTipText() const
 
 void FXTextParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getName()+DOT;
-	const string v= f->keyExists((key+"value").c_str()) ? f->getValue((key+"value").c_str()) : initialValue;
-	if(isNumeric)
-		setValue(atof(v.c_str()));
+	const string key=prefix DOT getName() DOT "value";
+	if(f->keyExists(key))
+	{
+		if(isNumeric)
+			setValue(f->getValue<double>(key));
+		else
+			setText(f->getValue<string>(key));
+	}
 	else
-		setText(v);
+	{
+		if(isNumeric)
+			setValue(atof(initialValue.c_str())); // ??? not i18n safe (i.e. if the locale was ru and the initial value was "1.234")
+		else
+			setText(initialValue);
+	}
 	changed();
 }
 
 void FXTextParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getName()+DOT;
+	const string key=prefix DOT getName();
 	if(isNumeric)
-		f->createKey((key+"value").c_str(),istring(getValue()));
+		f->createValue<double>(key DOT "value",getValue());
 	else
-		f->createKey((key+"value").c_str(),getText());
+		f->createValue<string>(key DOT "value",getText());
 }
 
 void FXTextParamValue::changed()

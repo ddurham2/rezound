@@ -34,8 +34,6 @@
 
 #include <CNestedDataFile/CNestedDataFile.h>
 
-#define DOT string(CNestedDataFile::delimChar)
-
 #include "ASoundPlayer.h"
 static ASoundPlayer *gSoundPlayer=NULL; // saved value for deinitialize
 
@@ -113,8 +111,8 @@ bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[])
 			else if(CPath(SOURCE_DIR"/share").exists())
 				gSysDataDirectory=SOURCE_DIR"/share";
 			// next try the registry setting
-			else if(gSettingsRegistry->keyExists("shareDirectory") && CPath(gSettingsRegistry->getValue("shareDirectory")).exists())
-				gSysDataDirectory=gSettingsRegistry->getValue("shareDirectory");
+			else if(gSettingsRegistry->keyExists("shareDirectory") && CPath(gSettingsRegistry->getValue<string>("shareDirectory")).exists())
+				gSysDataDirectory=gSettingsRegistry->getValue<string>("shareDirectory");
 			// finally fall back on the #define set by configure saying where ReZound will be installed
 			else
 				gSysDataDirectory=DATA_DIR"/rezound";
@@ -166,56 +164,44 @@ bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[])
 			Error(e.what());
 		}
 		
+		#define GET_SETTING(key,variable,type)					\
+			if(gSettingsRegistry->keyExists((key)))				\
+				variable= gSettingsRegistry->getValue<type>((key));
 
-		gPromptDialogDirectory=gSettingsRegistry->getValue("promptDialogDirectory");
+		GET_SETTING("promptDialogDirectory",gPromptDialogDirectory,string)
 
 	
-		if(gSettingsRegistry->keyExists("DesiredOutputSampleRate"))
-			gDesiredOutputSampleRate= atoi(gSettingsRegistry->getValue("DesiredOutputSampleRate").c_str());
-
-		if(gSettingsRegistry->keyExists("DesiredOutputChannelCount"))
-			gDesiredOutputChannelCount= atoi(gSettingsRegistry->getValue("DesiredOutputChannelCount").c_str());
-
-		if(gSettingsRegistry->keyExists("DesiredOutputBufferCount"))
-			gDesiredOutputBufferCount= atoi(gSettingsRegistry->getValue("DesiredOutputBufferCount").c_str());
-		gDesiredOutputBufferCount=max(2,gDesiredOutputBufferCount);
-
-		if(gSettingsRegistry->keyExists("DesiredOutputBufferSize"))
-			gDesiredOutputBufferSize= atoi(gSettingsRegistry->getValue("DesiredOutputBufferSize").c_str());
-		if(gDesiredOutputBufferSize<256 || log((double)gDesiredOutputBufferSize)/log(2.0)!=floor(log((double)gDesiredOutputBufferSize)/log(2.0)))
-			throw runtime_error(string(__func__)+" -- DesiredOutputBufferSize in "+registryFilename+" must be a power of 2 and >= than 256");
+		GET_SETTING("DesiredOutputSampleRate",gDesiredOutputSampleRate,unsigned)
+		GET_SETTING("DesiredOutputChannelCount",gDesiredOutputChannelCount,unsigned)
+		GET_SETTING("DesiredOutputBufferCount",gDesiredOutputBufferCount,int)
+			gDesiredOutputBufferCount=max(2,gDesiredOutputBufferCount);
+		GET_SETTING("DesiredOutputBufferSize",gDesiredOutputBufferSize,unsigned)
+			if(gDesiredOutputBufferSize<256 || log((double)gDesiredOutputBufferSize)/log(2.0)!=floor(log((double)gDesiredOutputBufferSize)/log(2.0)))
+				throw runtime_error(string(__func__)+" -- DesiredOutputBufferSize in "+registryFilename+" must be a power of 2 and >= than 256");
 
 
 #ifdef ENABLE_OSS
-		if(gSettingsRegistry->keyExists("OSSOutputDevice"))
-			gOSSOutputDevice= gSettingsRegistry->getValue("OSSOutputDevice");
-
-		if(gSettingsRegistry->keyExists("OSSInputDevice"))
-			gOSSInputDevice= gSettingsRegistry->getValue("OSSInputDevice");
+		GET_SETTING("OSSOutputDevice",gOSSOutputDevice,string)
+		GET_SETTING("OSSInputDevice",gOSSInputDevice,string)
 #endif
 
 #ifdef ENABLE_PORTAUDIO
-		if(gSettingsRegistry->keyExists("PortAudioOutputDevice"))
-			gPortAudioOutputDevice= atoi(gSettingsRegistry->getValue("PortAudioOutputDevice").c_str());
-
-		if(gSettingsRegistry->keyExists("PortAudioInputDevice"))
-			gPortAudioInputDevice= atoi(gSettingsRegistry->getValue("PortAudioInputDevice").c_str());
+		GET_SETTING("PortAudioOutputDevice",gPortAudioOutputDevice,int)
+		GET_SETTING("PortAudioInputDevice",gPortAudioInputDevice,int)
 #endif
 
 #ifdef ENABLE_JACK
-		// ??? could do these with array-keys I suppose
+		// ??? could do these with vector values I suppose
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 		{
-			if(gSettingsRegistry->keyExists(("JACKOutputPortName"+istring(t+1)).c_str()))
-				gJACKOutputPortNames[t]=gSettingsRegistry->getValue(("JACKOutputPortName"+istring(t+1)).c_str());
+			GET_SETTING("JACKOutputPortName"+istring(t+1),gJACKOutputPortNames[t],string)
 			else
 				break;
 		}
 	
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 		{
-			if(gSettingsRegistry->keyExists(("JACKInputPortName"+istring(t+1)).c_str()))
-				gJACKInputPortNames[t]=gSettingsRegistry->getValue(("JACKInputPortName"+istring(t+1)).c_str());
+			GET_SETTING("JACKInputPortName"+istring(t+1),gJACKInputPortNames[t],string)
 			else
 				break;
 		}
@@ -223,69 +209,51 @@ bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[])
 
 
 		// where ReZound should fallback to put working files if it can't write to where it loaded a file from
-			// ??? This could be an array where it would try multiple locations finding one that isn't full or close to full relative to the loaded file size
-		if(gSettingsRegistry->keyExists("fallbackWorkDir"))
-			gFallbackWorkDir= gSettingsRegistry->getValue("fallbackWorkDir");
+			// ??? This could be a vector where it would try multiple locations finding one that isn't full or close to full relative to the loaded file size
+		GET_SETTING("fallbackWorkDir",gFallbackWorkDir,string)
+
+		GET_SETTING("clipboardDir",gClipboardDir,string)
+
+		GET_SETTING("clipboardFilenamePrefix",gClipboardFilenamePrefix,string)
+
+		GET_SETTING("whichClipboard",gWhichClipboard,size_t)
+
+		GET_SETTING("ReopenHistory" DOT "maxReopenHistory",gMaxReopenHistory,size_t)
+
+		// ??? where are the SnapToCues handlers?
+
+		GET_SETTING("followPlayPosition",gFollowPlayPosition,bool)
+
+		GET_SETTING("renderClippingWarning",gRenderClippingWarning,bool)
+
+		GET_SETTING("skipMiddleMarginSeconds",gSkipMiddleMarginSeconds,float)
+
+		GET_SETTING("loopGapLengthSeconds",gLoopGapLengthSeconds,float)
+
+		GET_SETTING("initialLengthToShow",gInitialLengthToShow,double)
 
 
-		if(gSettingsRegistry->keyExists("clipboardDir"))
-			gClipboardDir= gSettingsRegistry->getValue("clipboardDir");
+		GET_SETTING("Meters" DOT "meterUpdateTime",gMeterUpdateTime,unsigned)
 
-		if(gSettingsRegistry->keyExists("clipboardFilenamePrefix"))
-			gClipboardFilenamePrefix= gSettingsRegistry->getValue("clipboardFilenamePrefix");
+		GET_SETTING("Meters" DOT "Level" DOT "enabled",gLevelMetersEnabled,bool)
+		GET_SETTING("Meters" DOT "Level" DOT "RMSWindowTime",gMeterRMSWindowTime,unsigned)
+		GET_SETTING("Meters" DOT "Level" DOT "maxPeakFallDelayTime",gMaxPeakFallDelayTime,unsigned)
+		GET_SETTING("Meters" DOT "Level" DOT "maxPeakFallRate",gMaxPeakFallRate,double)
 
-		if(gSettingsRegistry->keyExists("whichClipboard"))
-			gWhichClipboard= atoi(gSettingsRegistry->getValue("whichClipboard").c_str());
+		GET_SETTING("Meters" DOT "StereoPhase" DOT "enabled",gStereoPhaseMetersEnabled,bool)
+		GET_SETTING("Meters" DOT "StereoPhase" DOT "pointCount",gStereoPhaseMeterPointCount,unsigned)
 
-		if(gSettingsRegistry->keyExists(("ReopenHistory"+DOT+"maxReopenHistory").c_str()))
-			gMaxReopenHistory= atoi(gSettingsRegistry->getValue(("ReopenHistory"+DOT+"maxReopenHistory").c_str()).c_str());
-
-		if(gSettingsRegistry->keyExists("followPlayPosition"))
-			gFollowPlayPosition= gSettingsRegistry->getValue("followPlayPosition")=="true";
-
-		if(gSettingsRegistry->keyExists("renderClippingWarning"))
-			gRenderClippingWarning= gSettingsRegistry->getValue("renderClippingWarning")=="true";
-
-		if(gSettingsRegistry->keyExists("skipMiddleMarginSeconds"))
-			gSkipMiddleMarginSeconds= atof(gSettingsRegistry->getValue("skipMiddleMarginSeconds").c_str());
-
-		if(gSettingsRegistry->keyExists("loopGapLengthSeconds"))
-			gLoopGapLengthSeconds= atof(gSettingsRegistry->getValue("loopGapLengthSeconds").c_str());
-
-		if(gSettingsRegistry->keyExists("initialLengthToShow"))
-			gInitialLengthToShow= atof(gSettingsRegistry->getValue("initialLengthToShow").c_str());
-
-		if(gSettingsRegistry->keyExists(("Meters"+DOT+"meterUpdateTime").c_str()))
-			gMeterUpdateTime= atoi(gSettingsRegistry->getValue(("Meters"+DOT+"meterUpdateTime").c_str()).c_str());
-
-		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Level"+DOT+"enabled").c_str()))
-			gLevelMetersEnabled= gSettingsRegistry->getValue(("Meters"+DOT+"Level"+DOT+"enabled").c_str())=="true";
-		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Level"+DOT+"RMSWindowTime").c_str()))
-			gMeterRMSWindowTime= atoi(gSettingsRegistry->getValue(("Meters"+DOT+"Level"+DOT+"RMSWindowTime").c_str()).c_str());
-		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Level"+DOT+"maxPeakFallDelayTime").c_str()))
-			gMaxPeakFallDelayTime= atoi(gSettingsRegistry->getValue(("Meters"+DOT+"Level"+DOT+"maxPeakFallDelayTime").c_str()).c_str());
-		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Level"+DOT+"maxPeakFallRate").c_str()))
-			gMaxPeakFallRate= atof(gSettingsRegistry->getValue(("Meters"+DOT+"Level"+DOT+"maxPeakFallRate").c_str()).c_str());
-
-		if(gSettingsRegistry->keyExists(("Meters"+DOT+"StereoPhase"+DOT+"enabled").c_str()))
-			gStereoPhaseMetersEnabled= gSettingsRegistry->getValue(("Meters"+DOT+"StereoPhase"+DOT+"enabled").c_str())=="true";
-		if(gSettingsRegistry->keyExists(("Meters"+DOT+"StereoPhase"+DOT+"pointCount").c_str()))
-			gStereoPhaseMeterPointCount= atoi(gSettingsRegistry->getValue(("Meters"+DOT+"StereoPhase"+DOT+"pointCount").c_str()).c_str());
-
-		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Analyzer"+DOT+"enabled").c_str()))
-			gFrequencyAnalyzerEnabled= gSettingsRegistry->getValue(("Meters"+DOT+"Analyzer"+DOT+"enabled").c_str())=="true";
-		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Analyzer"+DOT+"peakFallDelayTime").c_str()))
-			gAnalyzerPeakFallDelayTime= atoi(gSettingsRegistry->getValue(("Meters"+DOT+"Analyzer"+DOT+"peakFallDelayTime").c_str()).c_str());
-		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Analyzer"+DOT+"peakFallRate").c_str()))
-			gAnalyzerPeakFallRate= atof(gSettingsRegistry->getValue(("Meters"+DOT+"Analyzer"+DOT+"peakFallRate").c_str()).c_str());
+		GET_SETTING("Meters" DOT "Analyzer" DOT "enabled",gFrequencyAnalyzerEnabled,bool)
+		GET_SETTING("Meters" DOT "Analyzer" DOT "peakFallDelayTime",gAnalyzerPeakFallDelayTime,unsigned)
+		GET_SETTING("Meters" DOT "Analyzer" DOT "peakFallRate",gAnalyzerPeakFallRate,double)
 
 
 		if(gSettingsRegistry->keyExists("crossfadeEdges"))
 		{
-			gCrossfadeEdges= (CrossfadeEdgesTypes)atof(gSettingsRegistry->getValue("crossfadeEdges").c_str());
-			gCrossfadeStartTime= atof(gSettingsRegistry->getValue("crossfadeStartTime").c_str());
-			gCrossfadeStopTime= atof(gSettingsRegistry->getValue("crossfadeStopTime").c_str());
-			gCrossfadeFadeMethod= (CrossfadeFadeMethods)atof(gSettingsRegistry->getValue("crossfadeFadeMethod").c_str());
+			gCrossfadeEdges= (CrossfadeEdgesTypes)gSettingsRegistry->getValue<int>("crossfadeEdges");
+			gCrossfadeStartTime= gSettingsRegistry->getValue<float>("crossfadeStartTime");
+			gCrossfadeStopTime= gSettingsRegistry->getValue<float>("crossfadeStopTime");
+			gCrossfadeFadeMethod= (CrossfadeFadeMethods)gSettingsRegistry->getValue<int>("crossfadeFadeMethod");
 		}
 
 
@@ -412,85 +380,85 @@ void deinitializeBackend()
 
 
 	// -- 1
-	gSettingsRegistry->createKey("shareDirectory",gSysDataDirectory);
-	gSettingsRegistry->createKey("promptDialogDirectory",gPromptDialogDirectory);
+	gSettingsRegistry->createValue<string>("shareDirectory",gSysDataDirectory);
+	gSettingsRegistry->createValue<string>("promptDialogDirectory",gPromptDialogDirectory);
 
 
-	gSettingsRegistry->createKey("DesiredOutputSampleRate",gDesiredOutputSampleRate);
-	gSettingsRegistry->createKey("DesiredOutputChannelCount",gDesiredOutputChannelCount);
-	gSettingsRegistry->createKey("DesiredOutputBufferCount",gDesiredOutputBufferCount);
-	gSettingsRegistry->createKey("DesiredOutputBufferSize",gDesiredOutputBufferSize);
+	gSettingsRegistry->createValue<unsigned>("DesiredOutputSampleRate",gDesiredOutputSampleRate);
+	gSettingsRegistry->createValue<unsigned>("DesiredOutputChannelCount",gDesiredOutputChannelCount);
+	gSettingsRegistry->createValue<int>("DesiredOutputBufferCount",gDesiredOutputBufferCount);
+	gSettingsRegistry->createValue<unsigned>("DesiredOutputBufferSize",gDesiredOutputBufferSize);
 
 
 #ifdef ENABLE_OSS
-	gSettingsRegistry->createKey("OSSOutputDevice",gOSSOutputDevice);
-	gSettingsRegistry->createKey("OSSInputDevice",gOSSInputDevice);
+	gSettingsRegistry->createValue<string>("OSSOutputDevice",gOSSOutputDevice);
+	gSettingsRegistry->createValue<string>("OSSInputDevice",gOSSInputDevice);
 #endif
 
 #ifdef ENABLE_PORTAUDIO
-	gSettingsRegistry->createKey("PortAudioOutputDevice",gPortAudioOutputDevice);
-	gSettingsRegistry->createKey("PortAudioInputDevice",gPortAudioInputDevice);
+	gSettingsRegistry->createValue<int>("PortAudioOutputDevice",gPortAudioOutputDevice);
+	gSettingsRegistry->createValue<int>("PortAudioInputDevice",gPortAudioInputDevice);
 #endif
 
 #ifdef ENABLE_JACK
-	// ??? could do these with array-keys I suppose
+	// ??? could do these with vector<string> values I suppose
 	for(unsigned t=0;t<MAX_CHANNELS;t++)
 	{
 		if(gJACKOutputPortNames[t]!="")
-			gSettingsRegistry->createKey(("JACKOutputPortName"+istring(t+1)).c_str(),gJACKOutputPortNames[t]);
+			gSettingsRegistry->createValue<string>("JACKOutputPortName"+istring(t+1),gJACKOutputPortNames[t]);
 		else
 		{
-			gSettingsRegistry->removeKey(("JACKOutputPortName"+istring(t+2)).c_str());
+			gSettingsRegistry->removeKey("JACKOutputPortName"+istring(t+2));
 			break;
 		}
 	}
 	for(unsigned t=0;t<MAX_CHANNELS;t++)
 	{
 		if(gJACKInputPortNames[t]!="")
-			gSettingsRegistry->createKey(("JACKInputPortName"+istring(t+1)).c_str(),gJACKInputPortNames[t]);
+			gSettingsRegistry->createValue<string>("JACKInputPortName"+istring(t+1),gJACKInputPortNames[t]);
 		else
 		{
-			gSettingsRegistry->removeKey(("JACKInputPortName"+istring(t+2)).c_str());
+			gSettingsRegistry->removeKey("JACKInputPortName"+istring(t+2));
 			break;
 		}
 	}
 #endif
 
-	gSettingsRegistry->createKey("fallbackWorkDir",gFallbackWorkDir);
+	gSettingsRegistry->createValue<string>("fallbackWorkDir",gFallbackWorkDir);
 
-	gSettingsRegistry->createKey("clipboardDir",gClipboardDir);
-	gSettingsRegistry->createKey("clipboardFilenamePrefix",gClipboardFilenamePrefix);
-	gSettingsRegistry->createKey("whichClipboard",gWhichClipboard);
+	gSettingsRegistry->createValue<string>("clipboardDir",gClipboardDir);
+	gSettingsRegistry->createValue<string>("clipboardFilenamePrefix",gClipboardFilenamePrefix);
+	gSettingsRegistry->createValue<size_t>("whichClipboard",gWhichClipboard);
 
-	gSettingsRegistry->createKey(("ReopenHistory"+DOT+"maxReopenHistory").c_str(),gMaxReopenHistory);
+	gSettingsRegistry->createValue<size_t>("ReopenHistory" DOT "maxReopenHistory",gMaxReopenHistory);
 
-	gSettingsRegistry->createKey("followPlayPosition",gFollowPlayPosition ? "true" : "false");
+	gSettingsRegistry->createValue<bool>("followPlayPosition",gFollowPlayPosition);
 
-	gSettingsRegistry->createKey("renderClippingWarning",gRenderClippingWarning ? "true" : "false");
+	gSettingsRegistry->createValue<bool>("renderClippingWarning",gRenderClippingWarning);
 
-	gSettingsRegistry->createKey("skipMiddleMarginSeconds",gSkipMiddleMarginSeconds);
-	gSettingsRegistry->createKey("loopGapLengthSeconds",gLoopGapLengthSeconds);
+	gSettingsRegistry->createValue<float>("skipMiddleMarginSeconds",gSkipMiddleMarginSeconds);
+	gSettingsRegistry->createValue<float>("loopGapLengthSeconds",gLoopGapLengthSeconds);
 
-	gSettingsRegistry->createKey("initialLengthToShow",gInitialLengthToShow);
+	gSettingsRegistry->createValue<double>("initialLengthToShow",gInitialLengthToShow);
 
-	gSettingsRegistry->createKey(("Meters"+DOT+"meterUpdateTime").c_str(),gMeterUpdateTime);
+	gSettingsRegistry->createValue<unsigned>("Meters" DOT "meterUpdateTime",gMeterUpdateTime);
 
-	gSettingsRegistry->createKey(("Meters"+DOT+"Level"+DOT+"enabled").c_str(),gLevelMetersEnabled ? "true" : "false");
-	gSettingsRegistry->createKey(("Meters"+DOT+"Level"+DOT+"RMSWindowTime").c_str(),gMeterRMSWindowTime);
-	gSettingsRegistry->createKey(("Meters"+DOT+"Level"+DOT+"maxPeakFallDelayTime").c_str(),gMaxPeakFallDelayTime);
-	gSettingsRegistry->createKey(("Meters"+DOT+"Level"+DOT+"maxPeakFallRate").c_str(),gMaxPeakFallRate);
+	gSettingsRegistry->createValue<bool>("Meters" DOT "Level" DOT "enabled",gLevelMetersEnabled);
+	gSettingsRegistry->createValue<unsigned>("Meters" DOT "Level" DOT "RMSWindowTime",gMeterRMSWindowTime);
+	gSettingsRegistry->createValue<unsigned>("Meters" DOT "Level" DOT "maxPeakFallDelayTime",gMaxPeakFallDelayTime);
+	gSettingsRegistry->createValue<double>("Meters" DOT "Level" DOT "maxPeakFallRate",gMaxPeakFallRate);
 
-	gSettingsRegistry->createKey(("Meters"+DOT+"StereoPhase"+DOT+"enabled").c_str(),gStereoPhaseMetersEnabled ? "true" : "false");
-	gSettingsRegistry->createKey(("Meters"+DOT+"StereoPhase"+DOT+"pointCount").c_str(),gStereoPhaseMeterPointCount);
+	gSettingsRegistry->createValue<bool>("Meters" DOT "StereoPhase" DOT "enabled",gStereoPhaseMetersEnabled);
+	gSettingsRegistry->createValue<unsigned>("Meters" DOT "StereoPhase" DOT "pointCount",gStereoPhaseMeterPointCount);
 
-	gSettingsRegistry->createKey(("Meters"+DOT+"Analyzer"+DOT+"enabled").c_str(),gFrequencyAnalyzerEnabled ? "true" : "false");
-	gSettingsRegistry->createKey(("Meters"+DOT+"Analyzer"+DOT+"peakFallDelayTime").c_str(),gAnalyzerPeakFallDelayTime);
-	gSettingsRegistry->createKey(("Meters"+DOT+"Analyzer"+DOT+"peakFallRate").c_str(),gAnalyzerPeakFallRate);
+	gSettingsRegistry->createValue<bool>("Meters" DOT "Analyzer" DOT "enabled",gFrequencyAnalyzerEnabled);
+	gSettingsRegistry->createValue<unsigned>("Meters" DOT "Analyzer" DOT "peakFallDelayTime",gAnalyzerPeakFallDelayTime);
+	gSettingsRegistry->createValue<double>("Meters" DOT "Analyzer" DOT "peakFallRate",gAnalyzerPeakFallRate);
 
-	gSettingsRegistry->createKey("crossfadeEdges",(float)gCrossfadeEdges);
-		gSettingsRegistry->createKey("crossfadeStartTime",gCrossfadeStartTime);
-		gSettingsRegistry->createKey("crossfadeStopTime",gCrossfadeStopTime);
-		gSettingsRegistry->createKey("crossfadeFadeMethod",(float)gCrossfadeFadeMethod);
+	gSettingsRegistry->createValue<int>("crossfadeEdges",(int)gCrossfadeEdges);
+	gSettingsRegistry->createValue<float>("crossfadeStartTime",gCrossfadeStartTime);
+	gSettingsRegistry->createValue<float>("crossfadeStopTime",gCrossfadeStopTime);
+	gSettingsRegistry->createValue<int>("crossfadeFadeMethod",(int)gCrossfadeFadeMethod);
 
 
 	gSettingsRegistry->save();

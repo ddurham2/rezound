@@ -353,12 +353,12 @@ void CMainWindow::showAbout()
 	// this is called whenever the application starts
 	// I do it to make sure the user at least knows *why* this release was made for the alpha and beta stages
 	// make the about dialog show up some fixed number of times every time the version changes
-	string version=gSettingsRegistry->getValue("SeenAboutDialogVersion");
-	string count=gSettingsRegistry->getValue("SeenAboutDialogCount");
+	string version=gSettingsRegistry->getValue<string>("SeenAboutDialogVersion");
+	int count=gSettingsRegistry->getValue<int>("SeenAboutDialogCount");
 	if(version!=REZOUND_VERSION)
 	{ // different version
-		gSettingsRegistry->createKey("SeenAboutDialogVersion",REZOUND_VERSION);
-		gSettingsRegistry->createKey("SeenAboutDialogCount","1");
+		gSettingsRegistry->createValue<string>("SeenAboutDialogVersion",REZOUND_VERSION);
+		gSettingsRegistry->createValue<int>("SeenAboutDialogCount",1);
 
 		// if the version has changed from the previous run, then forget all window positions/sizes and splitter positions
 		gSettingsRegistry->removeKey("SplitterPositions");
@@ -366,10 +366,10 @@ void CMainWindow::showAbout()
 	}
 	else
 	{ // same version, now check count or increment count
-		if(atoi(count.c_str())>2)
+		if(count>2)
 			return; // been seen 3 times already
 		else
-			gSettingsRegistry->createKey("SeenAboutDialogCount",istring(atoi(count.c_str())+1));
+			gSettingsRegistry->createValue<int>("SeenAboutDialogCount",count+1);
 	}
 	gAboutDialog->execute(PLACEMENT_SCREEN);
 }
@@ -382,7 +382,7 @@ void CMainWindow::rebuildSoundWindowList()
 		CSoundWindow *win=gSoundFileManager->getSoundWindow(t);
 
 		// add to sound window list 
-		CPath p(win->loadedSound->getFilename().c_str());
+		CPath p(win->loadedSound->getFilename());
 
 		soundList->appendItem(
 			(
@@ -885,7 +885,6 @@ void CMainWindow::buildActionMap()
 	addToActionMap(new CActionMenuCommand(new CGenerateNoiseActionFactory(gChannelSelectDialog,new CGenerateNoiseDialog(this)),dummymenu,""),menuItemRegistry);
 }
 
-#define DOT string(CNestedDataFile::delimChar)
 void CMainWindow::buildMenu(FXMenuPane *menu,const CNestedDataFile *menuLayoutFile,const string menuKey,const string itemName)
 {
 	if(itemName=="-") 
@@ -895,11 +894,11 @@ void CMainWindow::buildMenu(FXMenuPane *menu,const CNestedDataFile *menuLayoutFi
 	}
 
 	// if the item is a submenu item, recur for each item in it; otherwise, add as normal menu item
-	if(menuLayoutFile->keyExists(menuKey.c_str()))
+	if(menuLayoutFile->keyExists(menuKey))
 	{	// add as a submenu
 		FXMenuPane *submenu=NULL;
 
-		const size_t DOTCount=istring(menuKey).count(CNestedDataFile::delimChar[0]);
+		const size_t DOTCount=istring(menuKey).count(CNestedDataFile::delim);
 		if(DOTCount==0)
 		{	// we've been passed just the layout name
 			// this is the theorical place to create menubar, but for FOX's needs I have to create it in the constructor
@@ -915,16 +914,16 @@ void CMainWindow::buildMenu(FXMenuPane *menu,const CNestedDataFile *menuLayoutFi
 			new FXMenuCascade(menu,itemName.c_str(),NULL,submenu);
 		}
 
-		const string menuItemsKey=menuKey+DOT+"menuitems";
-		if(menuLayoutFile->keyExists(menuItemsKey.c_str())==CNestedDataFile::ktArray)
+		const string menuItemsKey=menuKey DOT "menuitems";
+		if(menuLayoutFile->keyExists(menuItemsKey)==CNestedDataFile::ktValue)
 		{
-			const size_t nMenuItems=menuLayoutFile->getArraySize(menuItemsKey.c_str());
-			for(size_t t=0;t<nMenuItems;t++) 
+			const vector<string> menuItems=menuLayoutFile->getValue<vector<string> >(menuItemsKey);
+			for(size_t t=0;t<menuItems.size();t++) 
 			{
-				const string name=menuLayoutFile->getArrayValue(menuItemsKey.c_str(),t);
-				buildMenu(submenu,menuLayoutFile,menuKey+DOT+stripAmpersand(name),name);
+				const string name=menuItems[t];
+				buildMenu(submenu,menuLayoutFile,menuKey DOT stripAmpersand(name),name);
 			}
-		} // else (if it's not an array) something is screwed up in the layout definition
+		} // else (if it's not an array) something may be screwed up in the layout definition
 	}
 	else
 	{	// add as normal item
@@ -952,7 +951,7 @@ void CMainWindow::createMenus()
 	//	NOTE: this would be the first frontend specific global setting (but this isn't the only lookup (showAbout() also does it))
 	string menuLayout;
         if(gSettingsRegistry->keyExists("MenuLayout"))
-		menuLayout=gSettingsRegistry->getValue("MenuLayout");
+		menuLayout=gSettingsRegistry->getValue<string>("MenuLayout");
 	else
 		menuLayout="default";
 
@@ -967,10 +966,10 @@ void CMainWindow::createMenus()
 	const CNestedDataFile *menuLayoutFile=new CNestedDataFile(menuLayoutFilename);
 	try
 	{
-		if(	menuLayoutFile->keyExists(menuLayout.c_str())!=CNestedDataFile::ktScope || 
-			menuLayoutFile->keyExists((menuLayout+DOT+"menuitems").c_str())!=CNestedDataFile::ktArray)
+		if(	menuLayoutFile->keyExists(menuLayout)!=CNestedDataFile::ktScope || 
+			menuLayoutFile->keyExists(menuLayout DOT "menuitems")!=CNestedDataFile::ktValue)
 		{
-			Warning(menuLayout+".menuitems[] does not exist in requested menu layout '"+ menuLayout+"' in '"+menuLayoutFilename+"'");
+			Warning(menuLayout+".menuitems array does not exist in requested menu layout '"+ menuLayout+"' in '"+menuLayoutFilename+"'");
 			menuLayout="default"; // go around again and use the default menu layout
 			goto tryAgain;
 		}

@@ -23,7 +23,6 @@
 #include <istring>
 
 #include <CNestedDataFile/CNestedDataFile.h>
-#define DOT (CNestedDataFile::delimChar)
 
 #include "utils.h"
 
@@ -94,10 +93,10 @@ FXString FXCheckBoxParamValue::getTipText() const
 
 void FXCheckBoxParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getName()+DOT+"value";
-	if(f->keyExists(key.c_str()))
+	const string key=prefix DOT getName() DOT "value";
+	if(f->keyExists(key))
 	{
-		const bool v= f->getValue(key.c_str())=="true" ? true : false;
+		const bool v=f->getValue<bool>(key);
 		setValue(v);
 	}
 	else
@@ -106,8 +105,8 @@ void FXCheckBoxParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 
 void FXCheckBoxParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getName()+DOT;
-	f->createKey((key+"value").c_str(),getValue() ? "true" : "false");
+	const string key=prefix DOT getName();
+	f->createValue<bool>(key DOT "value",getValue());
 }
 
 

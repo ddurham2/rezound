@@ -27,7 +27,6 @@
 #include <istring>
 
 #include <CNestedDataFile/CNestedDataFile.h>
-#define DOT (CNestedDataFile::delimChar)
 
 #include "utils.h"
 
@@ -152,11 +151,10 @@ FXString FXComboTextParamValue::getTipText() const
 
 void FXComboTextParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getName()+DOT+"index";
-	if(f->keyExists(key.c_str()))
+	const string key=prefix DOT getName() DOT "index";
+	if(f->keyExists(key))
 	{
-		const string v=f->getValue(key.c_str());
-		const int i=atoi(v.c_str());
+		const int i=f->getValue<int>(key);
 		if(i>=0 && i<valueComboBox->getNumItems())
 			setValue(i);
 	}
@@ -166,8 +164,8 @@ void FXComboTextParamValue::readFromFile(const string &prefix,CNestedDataFile *f
 
 void FXComboTextParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getName()+DOT;
-	f->createKey((key+"index").c_str(),istring(getValue()));
+	const string key=prefix DOT getName();
+	f->createValue<int>(key DOT "index",getValue());
 }
 
 

@@ -25,7 +25,6 @@
 #include <istring>
 
 #include <CNestedDataFile/CNestedDataFile.h>
-#define DOT (CNestedDataFile::delimChar)
 
 #include "utils.h"
 
@@ -302,10 +301,10 @@ void FXConstantParamValue::disable()
 
 void FXConstantParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getName()+DOT;
+	const string key=prefix DOT getName();
 
-	const double value=f->keyExists((key+"value").c_str()) ? atof(f->getValue((key+"value").c_str()).c_str()) : defaultValue;
-	const int scalar=f->keyExists((key+"scalar").c_str()) ? atoi(f->getValue((key+"scalar").c_str()).c_str()) : initScalar;
+	const double value=f->keyExists(key DOT "value") ? f->getValue<double>(key DOT "value") : defaultValue;
+	const int scalar=f->keyExists(key DOT "scalar") ? f->getValue<int>(key DOT "scalar") : initScalar;
 
 	// do it twice.. because setting one before the other may cause a range problem.. by the second time, the range shouldn't be a problem
 	prvSetValue(value);
@@ -318,11 +317,11 @@ void FXConstantParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 
 void FXConstantParamValue::writeToFile(const string &prefix,CNestedDataFile *f) const
 {
-	const string key=prefix+DOT+getName()+DOT;
+	const string key=prefix DOT getName();
 
-	f->createKey((key+"value").c_str(),getValue());
+	f->createValue<double>(key DOT "value",getValue());
 	if(getMinScalar()!=getMaxScalar())
-		f->createKey((key+"scalar").c_str(),istring(getScalar()));
+		f->createValue<int>(key DOT "scalar",getScalar());
 }
 
 

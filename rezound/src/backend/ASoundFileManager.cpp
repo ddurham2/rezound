@@ -29,7 +29,6 @@
 #include <CPath.h>
 
 #include <CNestedDataFile/CNestedDataFile.h>
-#define DOT (CNestedDataFile::delimChar)
 
 #include "CLoadedSound.h"
 #include "ASoundPlayer.h"
@@ -482,12 +481,12 @@ const string ASoundFileManager::getUntitledFilename(const string directory,const
 const vector<string> ASoundFileManager::loadFilesInRegistry()
 {
 	vector<string> errors;
-	for(size_t t=0;t<loadedRegistryFile->getArraySize(LOADED_REG_KEY);t++)
+	const vector<string> reg=loadedRegistryFile->getValue<vector<string> >(LOADED_REG_KEY);
+	for(size_t t=0;t<reg.size();t++)
 	{
-		string filename;
+		const string filename=reg[t];
 		try
 		{
-			filename=loadedRegistryFile->getArrayValue(LOADED_REG_KEY,t);
 			if(Question("Load sound from previous session?\n   "+filename,yesnoQues)==yesAns)
 			{
 						// ??? readOnly and asRaw really need to be whatever the last value was, when it was originally loaded
@@ -518,17 +517,20 @@ void ASoundFileManager::registerFilename(const string filename)
 	if(isFilenameRegistered(filename))
 		throw(runtime_error(string(__func__)+" -- file already registered"));
 
-	loadedRegistryFile->createArrayKey(LOADED_REG_KEY,loadedRegistryFile->getArraySize(LOADED_REG_KEY),filename);
+	vector<string> reg=loadedRegistryFile->getValue<vector<string> >(LOADED_REG_KEY);
+	reg.push_back(filename);
+	loadedRegistryFile->createValue<vector<string> >(LOADED_REG_KEY,reg);
 }
 
 void ASoundFileManager::unregisterFilename(const string filename)
 {
-	size_t l=loadedRegistryFile->getArraySize(LOADED_REG_KEY);
-	for(size_t t=0;t<l;t++)
+	vector<string> reg=loadedRegistryFile->getValue<vector<string> >(LOADED_REG_KEY);
+	for(size_t t=0;t<reg.size();t++)
 	{
-		if(loadedRegistryFile->getArrayValue(LOADED_REG_KEY,t)==filename)
+		if(reg[t]==filename)
 		{
-			loadedRegistryFile->removeArrayKey(LOADED_REG_KEY,t);
+			reg.erase(reg.begin()+t);
+			loadedRegistryFile->createValue<vector<string> >(LOADED_REG_KEY,reg);
 			break;
 		}
 	}
@@ -536,23 +538,23 @@ void ASoundFileManager::unregisterFilename(const string filename)
 
 bool ASoundFileManager::isFilenameRegistered(const string filename)
 {
-	size_t l=loadedRegistryFile->getArraySize(LOADED_REG_KEY);
-	for(size_t t=0;t<l;t++)
+	vector<string> reg=loadedRegistryFile->getValue<vector<string> >(LOADED_REG_KEY);
+	for(size_t t=0;t<reg.size();t++)
 	{
-		if(loadedRegistryFile->getArrayValue(LOADED_REG_KEY,t)==filename)
-			return(true);
+		if(reg[t]==filename)
+			return true;
 	}
-	return(false);
+	return false;
 }
 
 void ASoundFileManager::updateReopenHistory(const string filename)
 {
+// ??? I think it would really make sense just to write this as a vector value since it's that way in memory
 	// rewrite the reopen history to the gSettingsRegistry
 	vector<string> reopenFilenames;
-	
-	for(size_t t=0;gSettingsRegistry->keyExists(("ReopenHistory"+string(DOT)+"item"+istring(t)).c_str());t++)
+	for(size_t t=0;gSettingsRegistry->keyExists("ReopenHistory" DOT "item"+istring(t));t++)
 	{
-		const string h=gSettingsRegistry->getValue(("ReopenHistory"+string(DOT)+"item"+istring(t)).c_str());
+		const string h=gSettingsRegistry->getValue<string>("ReopenHistory" DOT "item"+istring(t));
 		if(h!=filename)
 			reopenFilenames.push_back(h);
 	}
@@ -563,23 +565,23 @@ void ASoundFileManager::updateReopenHistory(const string filename)
 	reopenFilenames.insert(reopenFilenames.begin(),filename);
 
 	for(size_t t=0;t<reopenFilenames.size();t++)
-		gSettingsRegistry->createKey(("ReopenHistory"+string(DOT)+"item"+istring(t)).c_str(),reopenFilenames[t]);
+		gSettingsRegistry->createValue<string>("ReopenHistory" DOT "item"+istring(t),reopenFilenames[t]);
 }
 
 const size_t ASoundFileManager::getReopenHistorySize() const
 {
 	size_t t;
-	for(t=0;t<gMaxReopenHistory && gSettingsRegistry->keyExists(("ReopenHistory"+string(DOT)+"item"+istring(t)).c_str());t++);
+	for(t=0;t<gMaxReopenHistory && gSettingsRegistry->keyExists("ReopenHistory" DOT "item"+istring(t));t++);
 
 	return t;
 }
 
 const string ASoundFileManager::getReopenHistoryItem(const size_t index) const
 {
-	const string key="ReopenHistory"+string(DOT)+"item"+istring(index);
-	if(gSettingsRegistry->keyExists(key.c_str()))
-		return(gSettingsRegistry->getValue(key.c_str()));
+	const string key="ReopenHistory" DOT "item"+istring(index);
+	if(gSettingsRegistry->keyExists(key))
+		return gSettingsRegistry->getValue<string>(key);
 	else
-		return("");
+		return "";
 }
 

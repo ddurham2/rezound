@@ -24,7 +24,6 @@
 #include <stdexcept>
 
 #include <CNestedDataFile/CNestedDataFile.h>
-#define DOT (CNestedDataFile::delimChar)
 
 #include "FXConstantParamValue.h"
 #include "CFOXIcons.h"
@@ -153,8 +152,8 @@ FXString FXLFOParamValue::getTipText() const
 
 void FXLFOParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getName();
-	const string LFOName=f->keyExists((key+DOT+"name").c_str()) ? f->getValue((key+DOT+"name").c_str()) : "Constant";
+	const string key=prefix DOT getName();
+	const string LFOName=f->keyExists(key DOT "name") ? f->getValue<string>(key DOT "name") : "Constant";
 	try
 	{
 		const size_t LFOIndex=gLFORegistry.getIndexByName(LFOName);
@@ -180,8 +179,8 @@ void FXLFOParamValue::readFromFile(const string &prefix,CNestedDataFile *f)
 
 void FXLFOParamValue::writeToFile(const string &prefix,CNestedDataFile *f)
 {
-	const string key=prefix+DOT+getName();
-	f->createKey((key+DOT+"name").c_str(),LFOTypeComboBox->getItemText(LFOTypeComboBox->getCurrentItem()).text());
+	const string key=prefix DOT getName();
+	f->createValue<string>(key DOT "name",LFOTypeComboBox->getItemText(LFOTypeComboBox->getCurrentItem()).text());
 
 	amplitudeSlider->writeToFile(key,f);
 	frequencySlider->writeToFile(key,f);
