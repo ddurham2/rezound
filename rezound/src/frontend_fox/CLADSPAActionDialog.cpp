@@ -27,6 +27,9 @@
 
 #include "../backend/unit_conv.h"
 #include "../backend/LADSPA/utils.h"
+#include "../backend/CActionSound.h"
+#include "../backend/CActionParameters.h"
+#include "../backend/CSound.h" // for getSampleRate()
 
 #include "ActionParamMappers.h"
 
@@ -89,13 +92,14 @@ CLADSPAActionDialog::CLADSPAActionDialog(FXWindow *mainWindow,const LADSPA_Descr
 
 		for(unsigned t=0;t<pluginDesc->PortCount;t++)
 		{
-			#warning much more work needs to be done on the sliders about sample rates and ranges mins and maxes, might require some changes to how CActionParamDialog works
 			const LADSPA_PortDescriptor portDesc=pluginDesc->PortDescriptors[t];
 			const LADSPA_PortRangeHint portRangeHint=pluginDesc->PortRangeHints[t];
 			const LADSPA_PortRangeHintDescriptor portRangeHintDesc=portRangeHint.HintDescriptor;
 
 			if(LADSPA_IS_PORT_CONTROL(portDesc) && LADSPA_IS_PORT_INPUT(portDesc))
 			{
+				// determine min and max default scalars and value
+
 				// ??? for now this will have to do, but later it would be better to reset parameters for ports that are sample rates and have it depend on the action sound passed to show()
 				LADSPA_Data defaultValue=0.0;
 				const int hasDefault= getLADSPADefault(&portRangeHint,44100,&defaultValue)==0;
@@ -103,16 +107,15 @@ CLADSPAActionDialog::CLADSPAActionDialog(FXWindow *mainWindow,const LADSPA_Descr
 				if(!hasDefault)
 					defaultValue=0.0;
 
-				// determine min and max and make sure default is in range
-
 				if(LADSPA_IS_HINT_TOGGLED(portRangeHintDesc))
 					addCheckBoxEntry(p2,pluginDesc->PortNames[t],defaultValue>0.0,"");
 				else
 				{
-					/*
-					printf("name:%s:%s l:%d,%f u:%d,%f sr:%d default:%d,%f\n",
+					printf("name:%s:%s int:%d l:%d,%f u:%d,%f logrth:%d sr:%d default:%d,%f\n",
 						pluginDesc->Name,
 						pluginDesc->PortNames[t],
+
+						LADSPA_IS_HINT_INTEGER(portRangeHintDesc),
 
 						LADSPA_IS_HINT_BOUNDED_BELOW(portRangeHintDesc),
 						portRangeHint.LowerBound,
@@ -120,64 +123,60 @@ CLADSPAActionDialog::CLADSPAActionDialog(FXWindow *mainWindow,const LADSPA_Descr
 						LADSPA_IS_HINT_BOUNDED_ABOVE(portRangeHintDesc),
 						portRangeHint.UpperBound,
 
+						LADSPA_IS_HINT_LOGARITHMIC(portRangeHintDesc),
+
 						LADSPA_IS_HINT_SAMPLE_RATE(portRangeHintDesc),
 						hasDefault,
 
 						defaultValue);
-					*/
 
 					double minValue=0;
-					double maxValue=50000;
+					double maxValue=10000;
 
 					if(LADSPA_IS_HINT_BOUNDED_BELOW(portRangeHintDesc))
-						minValue=floor(portRangeHint.LowerBound);
+						minValue=portRangeHint.LowerBound;
 					if(LADSPA_IS_HINT_BOUNDED_ABOVE(portRangeHintDesc))
-						maxValue=ceil(portRangeHint.UpperBound);
+						maxValue=portRangeHint.UpperBound;
 
-					// ??? working on it
-	//??? really need to use min and max in interpret/uninterpret value since I'm using the ranges of the scalar this way
+					// make sure default is in range (because a default might not have been given)
+					defaultValue=min(maxValue,max(minValue,(double)defaultValue));
 
-	// better yet.. when the min and maxs are less than 1 (so the scalars are less 
-	// than 1) change the implementation for the interpret and uninterpret values 
-	// some how
+					int minScalar=1;
+					int maxScalar=max(minScalar, (int)ceil(maxValue/10));
 
-					if(LADSPA_IS_HINT_SAMPLE_RATE(portRangeHintDesc))
-					{
-						// This really needs to be done on each time a new sound is used
-						// or better yet.. display on the screen the multiplication with 
-						// the sample rate, but still internally store the fractions
-						minValue*=44100;
-						maxValue*=44100;
-						defaultValue*=44100;
-					}
-			
 					// determine a reasonable scalar
-					double initialScalar=maxValue;
+					double initialScalar=(minScalar+maxScalar)/2;
 					if(hasDefault)
-						initialScalar=max(1.0,min(maxValue,(double)(10*defaultValue)));  // if we have a default make the initial scalar 10 times the default value, but don'e go over the max (and not less than 1)
+						initialScalar=max(1.0,min((double)maxScalar,(double)ceil(defaultValue)));
 
-	// ??? if it's a sample rate, then I would want to set the optRetValueConv parameter
-
-					if(!hasDefault)
-						defaultValue=max((LADSPA_Data)minValue,min((LADSPA_Data)maxValue,defaultValue));
+					// beacuse we're using a range, scaled below, I need to divide the min/max value by however high the user can set the scalar
+					maxValue/=(double)maxScalar; 
+					minValue/=(double)maxScalar; 
 
 					if(LADSPA_IS_HINT_LOGARITHMIC(portRangeHintDesc))
 					{
 						#warning needs to be logrithmic
-						CActionParamMapper_linear *m=new CActionParamMapper_linear(defaultValue,(int)initialScalar,(int)minValue,(int)maxValue);
+						CActionParamMapper_linear_range_scaled *m=new CActionParamMapper_linear_range_scaled(defaultValue,minValue,maxValue,(int)initialScalar,minScalar,maxScalar);
 
 						if(LADSPA_IS_HINT_INTEGER(portRangeHintDesc))
 							m->floorTheValue(true);
 
+						if(LADSPA_IS_HINT_SAMPLE_RATE(portRangeHintDesc))
+							sampleRateMappers.push_back(make_pair((string)pluginDesc->PortNames[t],m));
+			
 						addSlider(p2,pluginDesc->PortNames[t],"",m,NULL,false);
 					}
 					else // linear
 					{
-						CActionParamMapper_linear *m=new CActionParamMapper_linear(defaultValue,(int)initialScalar,(int)minValue,(int)maxValue);
+						printf("minScalar: %d maxScalar: %d minValue: %f maxValue: %f\n",minScalar,maxScalar,minValue,maxValue);
+						CActionParamMapper_linear_range_scaled *m=new CActionParamMapper_linear_range_scaled(defaultValue,minValue,maxValue,(int)initialScalar,minScalar,maxScalar);
 
 						if(LADSPA_IS_HINT_INTEGER(portRangeHintDesc))
 							m->floorTheValue(true);
 
+						if(LADSPA_IS_HINT_SAMPLE_RATE(portRangeHintDesc))
+							sampleRateMappers.push_back(make_pair((string)pluginDesc->PortNames[t],m));
+			
 						addSlider(p2,pluginDesc->PortNames[t],"",m,NULL,false);
 					}
 				}
@@ -193,6 +192,37 @@ CLADSPAActionDialog::CLADSPAActionDialog(FXWindow *mainWindow,const LADSPA_Descr
 		FXPacker *p2=newHorzPanel(p1,false);
 		addPluginRoutingParam(p2,N_("Channel Mapping"),pluginDesc);
 	}
+}
+
+
+bool CLADSPAActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
+{
+	// set scalar to reflect sample rate
+	for(size_t t=0;t<sampleRateMappers.size();t++)
+	{
+		if((unsigned)sampleRateMappers[t].second->getScalar()!=actionSound->sound->getSampleRate())
+		{ // only interrupt previous value if the sample rate is now different
+			getSliderParam(sampleRateMappers[t].first)->setScalar(actionSound->sound->getSampleRate());
+			getSliderParam(sampleRateMappers[t].first)->setValue(sampleRateMappers[t].second->getDefaultValue());
+			getSliderParam(sampleRateMappers[t].first)->updateNumbers();
+		}
+	}
+	if(CActionParamDialog::show(actionSound,actionParameters))
+	{
+		// divide values that are sample rates by the sample rate
+		for(size_t t=0;t<sampleRateMappers.size();t++)
+		{
+			actionParameters->setDoubleParameter(
+				sampleRateMappers[t].first,
+				actionParameters->getDoubleParameter(sampleRateMappers[t].first)/actionSound->sound->getSampleRate()
+			);
+		}
+
+		return true;
+	}
+	else
+		return false;
+
 }
 
 CLADSPAActionDialog::~CLADSPAActionDialog()

@@ -30,14 +30,23 @@
 #include "CActionParamDialog.h"
 #include "../backend/LADSPA/ladspa.h"
 
+#include <vector>
+#include <utility>
+
+class AActionParamMapper;
+class CActionSound;
+class CActionParameters;
+
 class CLADSPAActionDialog : public CActionParamDialog
 {
 public:
 	CLADSPAActionDialog(FXWindow *mainWindow,const LADSPA_Descriptor *desc);
 	virtual ~CLADSPAActionDialog();
 
+	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 private:
 	const LADSPA_Descriptor *pluginDesc;
+	vector<pair<string, AActionParamMapper *> > sampleRateMappers;
 };
 
 #endif // USE_LADSPA
