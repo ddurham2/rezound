@@ -204,18 +204,15 @@ void COSSSoundPlayer::CPlayThread::Run()
 		/*
 		 * NOTE: in linux, during testing when this thread was overruning this
 		 * 	mix buffer, the thread would die, but the process would hang.
-		 * 	I think it was sending a signal that perhaps I should catch
+		 * 	I think it was sending a signal that perhaps I should catch.
+		 *      So, I'm just making it bigger than necessary
 		 */
-
-
 		sample_t buffer[BUFFER_SIZE_SAMPLES*CHANNELS*2]; 
-		int c=1;
+
 		while(!kill)
 		{
 			// can mixChannels throw any exception?
 			parent->mixSoundPlayerChannels(CHANNELS,buffer,BUFFER_SIZE_SAMPLES*2);
-
-			//for(int t=0;t<BUFFER_SIZE_SAMPLES*CHANNELS;t++) buffer[t]=rand();
 
 			int len;
 			if((len=write(parent->audio_fd,buffer,BUFFER_SIZE_BYTES))!=BUFFER_SIZE_BYTES)
@@ -225,12 +222,12 @@ void COSSSoundPlayer::CPlayThread::Run()
 	}
 	catch(exception &e)
 	{
-		cerr << "exception caught: " << e.what() << endl;
+		cerr << "exception caught in play thread: " << e.what() << endl;
 		abort();
 	}
 	catch(...)
 	{
-		cerr << "unknown exception caught" << endl;
+		cerr << "unknown exception caught in play thread" << endl;
 		abort();
 	}
 }
