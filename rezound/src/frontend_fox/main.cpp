@@ -59,7 +59,7 @@ static void listFonts();
 int main(int argc,char *argv[])
 {
 #ifdef ENABLE_NLS
-	printf("locale is: %s\n",setlocale(LC_ALL,""));
+	setlocale(LC_ALL,"");
 	bindtextdomain(REZOUND_PACKAGE,DATA_DIR"/locale");
 	textdomain(REZOUND_PACKAGE);
 #endif
