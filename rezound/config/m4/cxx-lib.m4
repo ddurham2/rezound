@@ -136,6 +136,10 @@ ajv_lib$1_path=-L$withval, ajv_lib$1_path="")] dnl
 [enable_$1_check=$enableval], dnl
 [enable_$1_check="yes" ])]
 if test "$enable_$1_check" = "yes"; then
+	tmp_ldflags=$LDFLAGS
+	tmp_cxxflags=$CXXFLAGS
+	LDFLAGS="$ajv_lib$1_path $LDFLAGS"
+	CXXFLAGS="$ajv_inc$1_path $CXXFLAGS"
 	[AC_CHECK_LIB($1, $2)]
 	cat > ajv_ck_lib_$1.c <<EOF
 #include "confdefs.h"
@@ -145,6 +149,8 @@ if test "$enable_$1_check" = "yes"; then
 EOF
 	$CPP $ajv_lib$1_path $ajv_inc$1_path ajv_ck_lib_$1.c >/dev/null 2>ajv_ck_lib_$1.err
 	if test $? = 0; then
+		LDFLAGS=$tmp_ldflags
+		CXXFLAGS=$tmp_cxxflags
 		LDFLAGS="$ajv_lib$1_path $LDFLAGS"
 		CXXFLAGS="$ajv_inc$1_path $CXXFLAGS"
 		rm -f ajv_ck_lib_$1.c
