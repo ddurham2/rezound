@@ -87,7 +87,7 @@ void CPasteAsNewEdit::undoActionSizeSafe(const CActionSound &actionSound)
 
 
 CPasteAsNewEditFactory::CPasteAsNewEditFactory() :
-	AActionFactory("Paste As New","Paste the Clipboard's Contents into a Newly Created Sound Window",NULL,NULL)
+	AActionFactory("Paste As New","Paste the Clipboard's Contents into a Newly Created Sound Window",NULL,NULL,false,false)
 {
 }
 
