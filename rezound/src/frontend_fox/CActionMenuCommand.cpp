@@ -58,55 +58,21 @@ CActionMenuCommand::CActionMenuCommand(AActionFactory *_actionFactory,FXComposit
 {
 	if(actionFactory->getName()!=actionFactory->getDescription()) // don't be stupid (no need for a popup hint)
 		tip=actionFactory->getDescription().c_str();
+
+	prevEvent.state=0;
+	prevEvent.click_button=0;
 }
 
 long CActionMenuCommand::onMouseClick(FXObject *sender,FXSelector sel,void *ptr)
 {
-	if(!FXMenuCommand::handle(sender,sel,ptr))
-		return(0);
-
-	if(ptr==NULL || ptr==((void *)1))
-		throw(runtime_error(string(__func__)+" -- ptr was NULL"));
-
-	FXEvent *ev=((FXEvent *)ptr);
-
-	CLoadedSound *activeSound=gSoundFileManager->getActive();
-	if(activeSound)
-	{
-		if((ev->click_button==LEFTBUTTON || ev->click_button==RIGHTBUTTON) && underCursor())
-		{
-			CActionParameters actionParameters;
-			if(actionFactory->performAction(activeSound,&actionParameters,ev->state&SHIFTMASK,ev->click_button==RIGHTBUTTON))
-				gSoundFileManager->updateAfterEdit();
-		}
-	}
-	else
-		getApp()->beep();
-
-	return(1);
+	prevEvent=*((FXEvent *)ptr);
+	return FXMenuCommand::handle(sender,sel,ptr);
 }
 
 long CActionMenuCommand::onKeyClick(FXObject *sender,FXSelector sel,void *ptr)
 {
-	if(!FXMenuCommand::handle(sender,sel,ptr))
-		return(0);
-
-	if(ptr==NULL || ptr==((void *)1))
-		throw(runtime_error(string(__func__)+" -- ptr was NULL"));
-
-	FXEvent *ev=((FXEvent *)ptr);
-
-	CLoadedSound *activeSound=gSoundFileManager->getActive();
-	if(activeSound)
-	{
-		CActionParameters actionParameters;
-		if(actionFactory->performAction(activeSound,&actionParameters,ev->state&SHIFTMASK,false))
-			gSoundFileManager->updateAfterEdit();
-	}
-	else
-		getApp()->beep();
-
-	return(1);
+	prevEvent=*((FXEvent *)ptr);
+	return FXMenuCommand::handle(sender,sel,ptr);
 }
 
 long CActionMenuCommand::onCommand(FXObject *sender,FXSelector sel,void *ptr)
@@ -115,16 +81,17 @@ long CActionMenuCommand::onCommand(FXObject *sender,FXSelector sel,void *ptr)
 	if(activeSound)
 	{
 		CActionParameters actionParameters;
-		//if(actionFactory->performAction(activeSound,&actionParameters,keyboardState&SHIFTMASK,false))
-		if(actionFactory->performAction(activeSound,&actionParameters,false,false))
+		if(actionFactory->performAction(activeSound,&actionParameters,prevEvent.state&SHIFTMASK,prevEvent.click_button==RIGHTBUTTON))
 			gSoundFileManager->updateAfterEdit();
+
+		prevEvent.state=0;
+		prevEvent.click_button=0;
 	}
 	else
 		getApp()->beep();
 
 	return(1);
 }
-
 
 long CActionMenuCommand::onQueryTip(FXObject* sender,FXSelector sel,void *ptr)
 {
@@ -135,5 +102,4 @@ long CActionMenuCommand::onQueryTip(FXObject* sender,FXSelector sel,void *ptr)
 	}
 	return 0;
 }
-
 

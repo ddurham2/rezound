@@ -56,7 +56,8 @@ public:
 
 	enum
 	{
-		ID_HOTKEY=FXMenuCommand::ID_LAST
+		ID_HOTKEY=FXMenuCommand::ID_LAST,
+		ID_LAST
 	};
 
 protected:
@@ -65,6 +66,8 @@ protected:
 private:
 	AActionFactory * const actionFactory;
 	FXString tip;
+
+	FXEvent prevEvent;
 
 };
 
