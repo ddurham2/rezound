@@ -37,7 +37,7 @@ libEffects_la_SOURCES=\
 		CReverseEffect.cpp \
 		CStaticReverbEffect.cpp \
 		CVariedRepeatEffect.cpp \
-		CTestEffect.cpp 
+		CTestEffect.cpp
 
 
 noinst_HEADERS= \

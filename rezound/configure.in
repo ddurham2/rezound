@@ -122,6 +122,6 @@ AC_DEFINE_UNQUOTED(DATA_DIR, "$ajv_data_dir",[ This the --datadir (share) set
 by configure ])
 
 
-AC_OUTPUT(Makefile src/Makefile src/misc/Makefile src/misc/cc++/Makefile src/misc/CNestedDataFile/Makefile src/PoolFile/Makefile src/backend/Makefile src/backend/Edits/Makefile src/backend/Effects/Makefile src/backend/Remaster/Makefile  src/frontend_fox/Makefile) 
+AC_OUTPUT(Makefile src/Makefile src/misc/Makefile src/misc/cc++/Makefile src/misc/CNestedDataFile/Makefile src/PoolFile/Makefile src/backend/Makefile src/backend/Edits/Makefile src/backend/Effects/Makefile src/backend/Looping/Makefile src/backend/Remaster/Makefile  src/frontend_fox/Makefile) 
 
 # vim:ts=4:sw=4

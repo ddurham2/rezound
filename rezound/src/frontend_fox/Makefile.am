@@ -80,6 +80,7 @@ ReZound_LDADD= libfrontend.la\
 	$(top_builddir)/src/backend/libbackend.la \
 	$(top_builddir)/src/backend/Edits/libEdits.la \
 	$(top_builddir)/src/backend/Effects/libEffects.la \
+	$(top_builddir)/src/backend/Looping/libLooping.la \
 	$(top_builddir)/src/backend/Remaster/libRemaster.la \
 	$(top_builddir)/src/misc/CNestedDataFile/libmiscCN.la \
 	$(top_builddir)/src/PoolFile/libPoolFile.la \

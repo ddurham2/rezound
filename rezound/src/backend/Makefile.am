@@ -29,6 +29,7 @@ include $(top_srcdir)/config/am_include.mk
 SUBDIRS=\
 	Edits  \
 	Effects \
+	Looping \
 	Remaster
 
 ## EXTRA_DIST these files don't make it into make dist by default but

@@ -27,6 +27,8 @@ TOP_DIRECTORY/make
 		  |
 		  misc/make--|
 		  |  	     |misc/cc++/make --- libmisc.la
+		  |	     |
+		  |  	     |misc/CNestedDataFile/make --- libmiscCN.la
 		  |
 		  PoolFile/make -- libPoolFile.la
 		  |
@@ -35,7 +37,9 @@ TOP_DIRECTORY/make
 		  |		|
 		  |		backend/Effects/make -- libEffects.la
 		  |		|
-		  |		backend/ReMaster/make -- libReMaster.la
+		  |		backend/Looping/make -- libLooping.la
+		  |		|
+		  |		backend/Remaster/make -- libRemaster.la
 		  |
 		  |------ libbackend.la
 		  |
@@ -251,3 +255,4 @@ AC_OUTPUT(Makefile src/Makefile src/misc/Makefile src/misc/cc++/Makefile src/Poo
 	http://rezound.sourceforge.net. 
 
 	Good Luck and Happy Hacking.
+

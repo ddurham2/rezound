@@ -35,6 +35,7 @@
 #include "../backend/main_controls.h"
 
 #include "../backend/Effects/EffectActions.h"
+#include "../backend/Looping/LoopingActions.h"
 #include "../backend/Remaster/RemasterActions.h"
 
 #include "../backend/CLoadedSound.h"
@@ -276,6 +277,9 @@ void CMainWindow::createToolbars()
 	setupButton(new CActionButton(new CVariedRepeatEffectFactory(gChannelSelectDialog,new CVariedRepeatDialog(this)),effectsTabFrame,"vrep",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
 
 	setupButton(new CActionButton(new CTestEffectFactory(gChannelSelectDialog),effectsTabFrame,"test",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
+
+	// looping
+	setupButton(new CActionButton(new CMakeSymetricActionFactory(gChannelSelectDialog),loopingTabFrame,"sym",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
 
 	// remaster
 	setupButton(new CActionButton(new CUnclipActionFactory(gChannelSelectDialog),remasterTabFrame,"unclp",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32));
