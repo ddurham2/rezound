@@ -37,7 +37,9 @@
 #define FLEX_VERSION (YY_FLEX_MAJOR_VERSION*100000+YY_FLEX_MINOR_VERSION*1000+YY_FLEX_SUBMINOR_VERSION)
 
 bool started;
+#if FLEX_VERSION>205027 /*2.5.27*/
 int yylineno; 
+#endif
 
 static stack<string> filenameStack;
 static stack<int> linenoStack;
