@@ -31,7 +31,6 @@ AM_INIT_AUTOMAKE
 AC_DISABLE_SHARED   dnl This makes libtool only build static libs 
 
 AC_LANG(C++)
-AC_GNU_SOURCE
 
 
 
