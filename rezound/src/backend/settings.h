@@ -155,9 +155,13 @@ extern unsigned gMeterRMSWindowTime;	// the number of milliseconds of audio that
 extern unsigned gMaxPeakFallDelayTime;	// the number of milliseconds before the max peak indicators should hold before falling
 extern double gMaxPeakFallRate;		// the fraction of the maximum sample value that should be subtracted from the max peak level durring falling (normally 2% or 0.02)
 
+extern bool gStereoPhaseMetersEnabled;	// flag whether the stereo phase meters are enabled
+extern unsigned gStereoPhaseMeterPointCount;	// the number of stereo phase point to plot from the audio output each update
+
 extern bool gFrequencyAnalyzerEnabled;	// flag whether the frequency analyzer is enabled
 extern unsigned gAnalyzerPeakFallDelayTime;	// the number of milliseconds before the analyzer peaks should hold before falling
 extern double gAnalyzerPeakFallRate;	// the the fraction of 1 that should be subtracted from tne analyzer peaks durring falling 
+
 
 
 /*

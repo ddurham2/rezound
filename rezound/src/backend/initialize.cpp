@@ -258,8 +258,8 @@ bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[])
 		if(gSettingsRegistry->keyExists(("Meters"+DOT+"meterUpdateTime").c_str()))
 			gMeterUpdateTime= atoi(gSettingsRegistry->getValue(("Meters"+DOT+"meterUpdateTime").c_str()).c_str());
 
-		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Level"+DOT+"levelMetersEnabled").c_str()))
-			gLevelMetersEnabled= gSettingsRegistry->getValue(("Meters"+DOT+"Level"+DOT+"levelMetersEnabled").c_str())=="true";
+		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Level"+DOT+"enabled").c_str()))
+			gLevelMetersEnabled= gSettingsRegistry->getValue(("Meters"+DOT+"Level"+DOT+"enabled").c_str())=="true";
 		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Level"+DOT+"RMSWindowTime").c_str()))
 			gMeterRMSWindowTime= atoi(gSettingsRegistry->getValue(("Meters"+DOT+"Level"+DOT+"RMSWindowTime").c_str()).c_str());
 		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Level"+DOT+"maxPeakFallDelayTime").c_str()))
@@ -267,8 +267,13 @@ bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[])
 		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Level"+DOT+"maxPeakFallRate").c_str()))
 			gMaxPeakFallRate= atof(gSettingsRegistry->getValue(("Meters"+DOT+"Level"+DOT+"maxPeakFallRate").c_str()).c_str());
 
-		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Analyzer"+DOT+"frequencyAnalyzerEnabled").c_str()))
-			gFrequencyAnalyzerEnabled= gSettingsRegistry->getValue(("Meters"+DOT+"Analyzer"+DOT+"frequencyAnalyzerEnabled").c_str())=="true";
+		if(gSettingsRegistry->keyExists(("Meters"+DOT+"StereoPhase"+DOT+"enabled").c_str()))
+			gStereoPhaseMetersEnabled= gSettingsRegistry->getValue(("Meters"+DOT+"StereoPhase"+DOT+"enabled").c_str())=="true";
+		if(gSettingsRegistry->keyExists(("Meters"+DOT+"StereoPhase"+DOT+"pointCount").c_str()))
+			gStereoPhaseMeterPointCount= atoi(gSettingsRegistry->getValue(("Meters"+DOT+"StereoPhase"+DOT+"pointCount").c_str()).c_str());
+
+		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Analyzer"+DOT+"enabled").c_str()))
+			gFrequencyAnalyzerEnabled= gSettingsRegistry->getValue(("Meters"+DOT+"Analyzer"+DOT+"enabled").c_str())=="true";
 		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Analyzer"+DOT+"peakFallDelayTime").c_str()))
 			gAnalyzerPeakFallDelayTime= atoi(gSettingsRegistry->getValue(("Meters"+DOT+"Analyzer"+DOT+"peakFallDelayTime").c_str()).c_str());
 		if(gSettingsRegistry->keyExists(("Meters"+DOT+"Analyzer"+DOT+"peakFallRate").c_str()))
@@ -291,7 +296,7 @@ bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[])
 		// -- 3
 		for(unsigned t=1;t<=3;t++)
 		{
-			const string filename=gClipboardDir+CPath::dirDelim+gClipboardFilenamePrefix+".clipboard"+istring(t);
+			const string filename=gClipboardDir+CPath::dirDelim+gClipboardFilenamePrefix+".clipboard"+istring(t)+"."+istring(getuid());
 			try
 			{
 				AAction::clipboards.push_back(new CNativeSoundClipboard("Native Clipboard "+istring(t),filename));
@@ -304,7 +309,7 @@ bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[])
 		}
 		for(unsigned t=1;t<=3;t++)
 		{
-			const string filename=gClipboardDir+CPath::dirDelim+gClipboardFilenamePrefix+".record"+istring(t);
+			const string filename=gClipboardDir+CPath::dirDelim+gClipboardFilenamePrefix+".record"+istring(t)+"."+istring(getuid());
 			try
 			{
 				AAction::clipboards.push_back(new CRecordSoundClipboard("Record Clipboard "+istring(t),filename,soundPlayer));
@@ -470,12 +475,15 @@ void deinitializeBackend()
 
 	gSettingsRegistry->createKey(("Meters"+DOT+"meterUpdateTime").c_str(),gMeterUpdateTime);
 
-	gSettingsRegistry->createKey(("Meters"+DOT+"Level"+DOT+"levelMetersEnabled").c_str(),gLevelMetersEnabled ? "true" : "false");
+	gSettingsRegistry->createKey(("Meters"+DOT+"Level"+DOT+"enabled").c_str(),gLevelMetersEnabled ? "true" : "false");
 	gSettingsRegistry->createKey(("Meters"+DOT+"Level"+DOT+"RMSWindowTime").c_str(),gMeterRMSWindowTime);
 	gSettingsRegistry->createKey(("Meters"+DOT+"Level"+DOT+"maxPeakFallDelayTime").c_str(),gMaxPeakFallDelayTime);
 	gSettingsRegistry->createKey(("Meters"+DOT+"Level"+DOT+"maxPeakFallRate").c_str(),gMaxPeakFallRate);
 
-	gSettingsRegistry->createKey(("Meters"+DOT+"Analyzer"+DOT+"frequencyAnalyzerEnabled").c_str(),gFrequencyAnalyzerEnabled ? "true" : "false");
+	gSettingsRegistry->createKey(("Meters"+DOT+"StereoPhase"+DOT+"enabled").c_str(),gStereoPhaseMetersEnabled ? "true" : "false");
+	gSettingsRegistry->createKey(("Meters"+DOT+"StereoPhase"+DOT+"pointCount").c_str(),gStereoPhaseMeterPointCount);
+
+	gSettingsRegistry->createKey(("Meters"+DOT+"Analyzer"+DOT+"enabled").c_str(),gFrequencyAnalyzerEnabled ? "true" : "false");
 	gSettingsRegistry->createKey(("Meters"+DOT+"Analyzer"+DOT+"peakFallDelayTime").c_str(),gAnalyzerPeakFallDelayTime);
 	gSettingsRegistry->createKey(("Meters"+DOT+"Analyzer"+DOT+"peakFallRate").c_str(),gAnalyzerPeakFallRate);
 

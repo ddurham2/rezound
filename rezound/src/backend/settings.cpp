@@ -108,6 +108,9 @@ unsigned gMeterRMSWindowTime=200;
 unsigned gMaxPeakFallDelayTime=500;
 double gMaxPeakFallRate=0.02;
 
+bool gStereoPhaseMetersEnabled=true;
+unsigned gStereoPhaseMeterPointCount=100;
+
 bool gFrequencyAnalyzerEnabled=true;
 unsigned gAnalyzerPeakFallDelayTime=400;
 double gAnalyzerPeakFallRate=0.025;
