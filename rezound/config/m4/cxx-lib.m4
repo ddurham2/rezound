@@ -109,49 +109,41 @@ AC_DEFUN(ajv_CXX_CHECK_LIB,
 
 		[AC_MSG_CHECKING(for $2 class in -l$1)]
 
-		[ccfile="ajv_chk_cxx_lib_@&t@AS_TR_CPP($1).cc"]
-		[errfile="ajv_chk_cxx_lib_@&t@AS_TR_CPP($1).err"]
-
-		cat > $ccfile << EOF
-			#include <$3>
-			int main() { $2 xxx; }
-EOF
 		dnl these are not procedures, but are a statement that unconditionally make a substitution later
 		[AC_SUBST(AS_TR_CPP($1)_CXXFLAGS)]
 		[AC_SUBST(AS_TR_CPP($1)_LIBS)]
 
-		[CXX_CMDLINE="$CXX ${AS_TR_CPP($1)_CXXFLAGS} ${AS_TR_CPP($1)_LIBS} $ccfile"]
-		$CXX_CMDLINE >/dev/null 2>$errfile
-		if test x"$?" = x"0"; then
-			AC_MSG_RESULT(yes)
+		[AC_LANG_PUSH(C++)]
 
-			[AC_DEFINE_UNQUOTED(AS_TR_CPP(HAVE_LIB$1))]
+		saved_CPPFLAGS="$CPPFLAGS"
+		saved_CXXFLAGS="$CXXFLAGS"
+		saved_LDFLAGS="$LDFLAGS"
+		saved_CXX="$CXX"
 
-			rm -f $ccfile
-			rm -f $errfile
-		else
-			AC_MSG_RESULT(no)
+		[CPPFLAGS="$CPPFLAGS $ajv_inc@&t@AS_TR_CPP($1)_path"]
+		[CXXFLAGS="$CXXFLAGS $ajv_inc@&t@AS_TR_CPP($1)_path"]
+		[LDFLAGS="$LDFLAGS $ajv_lib@&t@AS_TR_CPP($1)_path -l$1 $5"]
+		
+		builddir=`pwd`  # I'm assuming that the pwd will always be what $(top_builddir) will be set to in AC_OUTPUT
 
-			dnl so the later substitution (via AC_SUBST) will substitude empty values
-			[AS_TR_CPP($1)_CXXFLAGS=""]
-			[AS_TR_CPP($1)_LIBS=""]
+		# HACK: force AC_LINK_IFELSE to use libtool to link so it will get FOX's dependancies.  Personally, I think it should do this anyway because I've used AC_PROG_LIBTOOL to request libtool as the linker for the subsequent make
+		CXX="$builddir/libtool --mode=link $CXX"
 
-			if ! test z"$6" = "zfalse"; then
-				echo
-				echo "** compile line was: $CXX_CMDLINE"
-				echo "** compiled file was: $ccfile ..."
-				cat $ccfile
-				echo
-				echo "** compile errors were ..."
-				cat $errfile
-				echo
-			fi
+		[AC_LINK_IFELSE([
+				#include <$3>
+				int main() { $2 xxx; return 0; }
+			],
+			[ # worked
+				AC_MSG_RESULT(yes)
+				AC_DEFINE_UNQUOTED(AS_TR_CPP(HAVE_LIB$1))
+			],
+			[ # failed
+				AC_MSG_RESULT(no)
+				AS_TR_CPP($1)_CXXFLAGS=""
+				AS_TR_CPP($1)_LIBS=""
 
-			rm -f $ccfile
-			rm -f $errfile
-
-			if ! test z"$6" = "zfalse"; then
-				[AC_MSG_ERROR([ 
+				if ! test z"$6" = "zfalse"; then
+					AC_MSG_ERROR([ 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    !!!!! Fatal Error:  lib$1 missing, broken or outdated !!!!!
    
@@ -171,7 +163,7 @@ EOF
    specifying --with-@&t@AS_TR_CPP($1)-path or --with-@&t@AS_TR_CPP($1)-include will override the
    test for lib$1
    
-   If you believe this  error message is a result of a bug in the 
+   If you believe this error message is a result of a bug in the 
    configure script, please report the bug to the Package Maintainers. 
    See docs/INSTALL for information on submitting bug-reports.
  
@@ -181,11 +173,24 @@ EOF
    include a screendump or script file of the error, see script(1) man 
    page for info on how to record a script file.
 
+   See config.log for compiler input and output.
+
    ReZound home page http://rezound.sourceforge.net
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-				])]
-			fi
-		fi
+					])
+				fi
+			],
+			[ # cross compiling
+				AC_MSG_ERROR([Cannot test for FOX since we're cross compiling -- this situation has not been addressed])
+			]
+		)]
+
+		CPPFLAGS="$saved_CPPFLAGS"
+		CXXFLAGS="$saved_CXXFLAGS"
+		LDFLAGS="$saved_LDFLAGS"
+		CXX="$saved_CXX"
+
+		[AC_LANG_POP(C++)]
 	fi
 )
 
