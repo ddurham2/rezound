@@ -118,6 +118,7 @@ void ASoundPlayer::mixSoundPlayerChannels(const unsigned nChannels,sample_t * co
 		(*i)->mixOntoBuffer(nChannels,buffer,bufferSize);
 
 
+// ??? could just schedule this to occur (by making a copy of the buffer) the next time getLevel or getAnalysis is called rather than doing it here in the callback for mixing audio
 	// calculate the peak levels and max RMS levels for this chunk
 	if(gLevelMetersEnabled)
 	{
