@@ -29,6 +29,7 @@
 
 #include "CNewSoundDialog.h"
 #include "CRecordDialog.h"
+#include "COggDialog.h"
 
 #include "../backend/ASoundTranslator.h"
 
@@ -42,7 +43,8 @@ CFrontendHooks::CFrontendHooks(FXWindow *_mainWindow) :
 	saveDialog(NULL),
 
 	newSoundDialog(NULL),
-	recordDialog(NULL)
+	recordDialog(NULL),
+	oggDialog(NULL)
 {
 	dirDialog=new FXDirDialog(mainWindow,"Select Directory");
 }
@@ -54,6 +56,7 @@ CFrontendHooks::~CFrontendHooks()
 
 	delete newSoundDialog;
 	delete recordDialog;
+	delete oggDialog;
 }
 
 void CFrontendHooks::doSetupAfterBackendIsSetup()
@@ -72,6 +75,7 @@ void CFrontendHooks::doSetupAfterBackendIsSetup()
 
 	newSoundDialog=new CNewSoundDialog(mainWindow);
 	recordDialog=new CRecordDialog(mainWindow);
+	oggDialog=new COggDialog(mainWindow);
 	
 }
 
@@ -225,5 +229,10 @@ bool CFrontendHooks::promptForRecord(ASoundRecorder *recorder)
 	if(recordDialog->show(recorder))
 		return(true);
 	return(false);
+}
+
+bool CFrontendHooks::promptForOggCompressionParameters(OggCompressionParameters &parameters)
+{
+	return(oggDialog->show(parameters));
 }
 

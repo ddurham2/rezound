@@ -58,6 +58,26 @@ public:
 	// since it should probably show level meters and be able to insert cues while recording etc.
 	virtual bool promptForRecord(ASoundRecorder *recorder)=0;
 
+
+	// called when the user is saving an ogg file and compression parameters are needed
+	struct OggCompressionParameters
+	{
+		enum 
+		{
+			brVBR, 
+			brQuality 
+		} method;
+
+		// method==brVBR
+		int minBitRate;
+		int normBitRate;
+		int maxBitRate;
+
+		// method==brQuality
+		float quality;
+	};
+	virtual bool promptForOggCompressionParameters(OggCompressionParameters &parameters)=0;
+
 };
 
 #endif

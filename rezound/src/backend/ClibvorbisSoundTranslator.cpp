@@ -61,6 +61,7 @@
 
 #include "CSound.h"
 #include "AStatusComm.h"
+#include "AFrontendHooks.h"
 
 
 #ifdef WORDS_BIGENDIAN
@@ -317,14 +318,22 @@ bool ClibvorbisSoundTranslator::onSaveSound(const string filename,CSound *sound)
 
 	vorbis_info_init(&vi);
 
-	/*  constant bit rate 
-	int maxEncBitRate,normEncBitRate,minEncBitRate;
-	maxEncBitRate=normEncBitRate=minEncBitRate=128000; // ??? need to prompt the user for these settings
-	if(vorbis_encode_init(&vi,channelCount,sampleRate,maxEncBitRate,normEncBitRate,minEncBitRate)<0) // constant bitrate
-	*/
-	/* or variable bitrate (with .7 quality) ??? need to prompt the user for the quality setting */
-	if(vorbis_encode_init_vbr(&vi,channelCount,sampleRate,0.7)<0)
-		throw(runtime_error(string(__func__)+" -- error initializing the Ogg Vorbis encoder engine"));
+	AFrontendHooks::OggCompressionParameters parameters;
+	if(!gFrontendHooks->promptForOggCompressionParameters(parameters))
+		return(false);
+
+	if(parameters.method==AFrontendHooks::OggCompressionParameters::brVBR)
+	{
+		if(vorbis_encode_init(&vi,channelCount,sampleRate,parameters.maxBitRate,parameters.normBitRate,parameters.minBitRate)<0)
+			throw(runtime_error(string(__func__)+" -- error initializing the Ogg Vorbis encoder engine"));
+	}
+	else if(parameters.method==AFrontendHooks::OggCompressionParameters::brQuality)
+	{
+		if(vorbis_encode_init_vbr(&vi,channelCount,sampleRate,parameters.quality)<0)
+			throw(runtime_error(string(__func__)+" -- error initializing the Ogg Vorbis encoder engine"));
+	}
+	else
+		throw(runtime_error(string(__func__)+" -- internal error -- unhandle bit rate method "+istring(parameters.method)));
 
 	vorbis_comment vc;
 	vorbis_comment_init(&vc);
