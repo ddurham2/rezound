@@ -135,7 +135,7 @@ void CSinglePoleFilter::undoActionSizeSafe(const CActionSound &actionSound)
 // --------------------------------------------------
 
 CSinglePoleLowpassFilterFactory::CSinglePoleLowpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Lowpass Filter","Single Pole Lowpass Filter",false,channelSelectDialog,normalDialog,NULL)
+	AActionFactory("Single Pole Lowpass Filter","Single Pole Lowpass Filter",false,channelSelectDialog,normalDialog,NULL)
 {
 }
 
@@ -151,7 +151,7 @@ CSinglePoleFilter *CSinglePoleLowpassFilterFactory::manufactureAction(const CAct
 
 
 CSinglePoleHighpassFilterFactory::CSinglePoleHighpassFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *normalDialog) :
-	AActionFactory("Highpass Filter","Single Pole Highpass Filter",false,channelSelectDialog,normalDialog,NULL)
+	AActionFactory("Single Pole Highpass Filter","Single Pole Highpass Filter",false,channelSelectDialog,normalDialog,NULL)
 {
 }
 
