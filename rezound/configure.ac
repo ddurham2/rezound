@@ -28,9 +28,20 @@ AC_CONFIG_AUX_DIR(config)
 # ??? AC_CONFIG_SRCDIR([config/config.h])
 AM_CONFIG_HEADER([config/config.h])
 AM_INIT_AUTOMAKE
-AC_DISABLE_SHARED	dnl This makes libtool only build static libs 
-AC_GNU_SOURCE 		dnl enable posix extensions in glibc
-AC_SYS_LARGEFILE	dnl enable 64bit file support if it's available
+AC_DISABLE_SHARED	# This makes libtool only build static libs 
+AC_GNU_SOURCE 		# enable posix extensions in glibc
+
+### handle --enable-largefile flag
+AC_ARG_ENABLE(
+	largefile,
+	[  --enable-largefile      enable 64bit file I/O support; NOTE: all dependancies file I/O libraries will also need to have largefile support enabled],
+	[ # action if either enable or disable flag is given
+		if [[ "$enableval" = "yes" ]]
+		then 
+			AC_SYS_LARGEFILE
+		fi
+	]
+)
 
 AC_LANG(C++)
 
@@ -41,7 +52,7 @@ AC_LANG(C++)
 ############################################################################
 # Checks for programs                                                      #
 ############################################################################
-CXXFLAGS= dnl AC_PROG_CXX automatically sets CXXFLAGS to -g -O2 if g++ is the C++ compiler and CXXFLAGS hasn't been set, so by setting CXXFLAGS, we can avoid this.
+CXXFLAGS= # AC_PROG_CXX automatically sets CXXFLAGS to -g -O2 if g++ is the C++ compiler and CXXFLAGS hasn't been set, so by setting CXXFLAGS, we can avoid this.
 AC_PROG_CXX
 AC_PROG_AWK
 AC_PROG_CC
@@ -55,7 +66,7 @@ AM_PROG_LEX
 AC_PROG_YACC 
 	expr z"$YACC" : z"bison.*" >/dev/null || AC_MSG_ERROR([bison not found (and yacc will not work)])
 
-AM_PROG_LIBTOOL dnl turn on using libtool
+AM_PROG_LIBTOOL # turn on using libtool
 
 AC_PATH_PROG(LAME, lame)
 	test -z "$LAME" && AC_MSG_WARN([lame not found on \$PATH -- this is necessary for loading and saving MP3s -- it is called 'notlame' on some distroes -- the source can be downloaded from http://lame.sourceforge.net])
@@ -87,7 +98,7 @@ ajv_CXX_FLAG(-Wno-unused)
 ############################################################################
 
 # this is used by the sections below AND ajv_CHECK_HEADER_SSTREAM
-builddir=`pwd`  dnl I'm assuming that the pwd will always be what $(top_builddir) will be set to in AC_OUTPUT
+builddir=`pwd`  # I'm assuming that the pwd will always be what $(top_builddir) will be set to in AC_OUTPUT
 
 # check for stdint.h
 AC_CHECK_HEADER(stdint.h,
@@ -231,7 +242,7 @@ AH_TEMPLATE(ENABLE_OSS)
 AC_ARG_ENABLE(
 	oss,
 	[  --enable/disable-oss            enable/disable ReZound to use OSS for audio I/O ],
-	[ dnl action if either enable or disable flag is given
+	[ # action if either enable or disable flag is given
 		if [[ "$enableval" = "yes" ]]
 		then 
 			AC_DEFINE(ENABLE_OSS)
@@ -240,7 +251,7 @@ AC_ARG_ENABLE(
 			AC_MSG_RESULT([*** disabling OSS for audio I/O])
 		fi
 	],
-	[ dnl action if neither enable or disable flag is given
+	[ # action if neither enable or disable flag is given
 			AC_DEFINE(ENABLE_OSS)
 			AC_MSG_RESULT([*** enabling OSS for audio I/O])
 	]
@@ -254,8 +265,8 @@ AC_ARG_ENABLE(
 	[
 		if [[ "$enableval" = "yes" ]]
 		then 
-			dnl --enable-portaudio was given
-			dnl Require that the portaudio library can be found
+			# --enable-portaudio was given
+			# Require that the portaudio library can be found
 			AC_CHECK_LIB(
 				portaudio,
 				Pa_Initialize,
@@ -263,7 +274,7 @@ AC_ARG_ENABLE(
 				origLIBS="$LIBS"
 				LIBS="-lportaudio $LIBS"
 				
-				dnl libportaudio found, now check for portaudio header file
+				# libportaudio found, now check for portaudio header file
 				[AC_CHECK_HEADER(
 					portaudio.h,
 					[
@@ -282,8 +293,8 @@ AC_ARG_ENABLE(
 			AC_MSG_RESULT([*** disabling libportaudio for audio I/O])
 		fi
 	],
-	[ dnl action if neither enable or disable flag was given
-		dnl if libportaudio and portaudio.h are found, then enable it
+	[ # action if neither enable or disable flag was given
+		# if libportaudio and portaudio.h are found, then enable it
 		AC_CHECK_LIB(
 			portaudio,
 			Pa_Initialize,
@@ -291,7 +302,7 @@ AC_ARG_ENABLE(
 			origLIBS="$LIBS"
 			LIBS="-lportaudio $LIBS"
 			
-			dnl libportaudio found, now check for portaudio header file
+			# libportaudio found, now check for portaudio header file
 			[AC_CHECK_HEADER(
 				portaudio.h,
 				[
@@ -311,7 +322,7 @@ AH_TEMPLATE(ENABLE_JACK)
 AC_ARG_ENABLE(
 	jack,
 	[  --enable/disable-jack           enable/disable ReZound to use JACK for audio I/O ],
-	[ dnl action if either enable or disable flag is given
+	[ # action if either enable or disable flag is given
 		if [[ "$enableval" = "yes" ]]
 		then 
 			PKG_CHECK_MODULES(
@@ -329,8 +340,8 @@ AC_ARG_ENABLE(
 			AC_MSG_RESULT([*** disabling JACK for audio I/O])
 		fi
 	],
-	[ dnl action if neither enable or disable flag was given
-		dnl if the jack lib is found, then enable it
+	[ # action if neither enable or disable flag was given
+		# if the jack lib is found, then enable it
 		PKG_CHECK_MODULES(
 			JACK,
 			jack,
@@ -339,7 +350,7 @@ AC_ARG_ENABLE(
 				AC_MSG_RESULT([*** enabling JACK for audio I/O])
 			],
 			[
-				dnl disable default action of exiting if not found
+				# disable default action of exiting if not found
 				AC_MSG_RESULT([*** JACK not enabled for audio I/O])
 			]
 		)
@@ -372,7 +383,7 @@ AM_PATH_AUDIOFILE(0.2.2,AC_DEFINE(HAVE_LIBAUDIOFILE),AC_MSG_NOTICE([audiofile we
 
 ### Ogg Vorbis Libraries ##################################################
 
-AC_LANG_PUSH(C) dnl xiph needs to include vorbisenc.h as well if C++ is going to compile the code
+AC_LANG_PUSH(C) # xiph needs to include vorbisenc.h as well if C++ is going to compile the code
 
 AH_TEMPLATE(HAVE_LIBOGG)
 # this macro detects libogg and does an AC_SUBST on OGG_CFLAGS and OGG_LIBS, so I put these variables in src/backend/Makefile.am for substitution
@@ -417,7 +428,7 @@ AM_PATH_LIBFLAC(
 # if it's not found, then I should print a noticable warning that FFT
 # actions will be disabled and why
 #  ??? email about an official way to test for fftw
-		dnl ??? actually I don't think I need fftw, just rfftw.. remove fftw and see if that's so
+		# ??? actually I don't think I need fftw, just rfftw.. remove fftw and see if that's so
 AC_CHECK_HEADER(
 	fftw.h,
 	AC_CHECK_LIB(fftw, fftw_create_plan, , AC_MSG_WARN([***** libfftw.a not found -- any FFT based actions will be disabled (http://www.fftw.org) *****]),-lfftw),
@@ -517,12 +528,12 @@ AC_ARG_ENABLE(
 	standalone,
 	[  --enable-standalone     build ReZound linked only to static libraries so it can run nearly on its own],
 	[
-		dnl the 3rd arg would not be necessary if this section didn't have to come after ajv_CXX_CHECK_LIB's
+		# the 3rd arg would not be necessary if this section didn't have to come after ajv_CXX_CHECK_LIB's
 		AC_CHECK_LIB(dl, dlopen,[LIBS="$LIBS -ldl"])
 		LDFLAGS="-all-static $LDFLAGS"
 		AC_MSG_NOTICE([*** NOTICE *** stand-alone build enabled -- now static versions of all the dependancy libraries will be required.  If final linking fails, then make sure a static version of the failed library is installed.])
 
-		dnl warn about needing static libs if using FOX and statically linking
+		# warn about needing static libs if using FOX and statically linking
 		if ! test -z "$FOX_LIBS"; then
 			AC_MSG_NOTICE([*** NOTICE *** since static linking is enabled, FOX will require static versions of libjpeg, libpng, libtiff, XFree86-libs, and maybe others (Also, I have found it necessary to configure FOX as: "CPPFLAGS=-DNO_XIM configure --with-opengl=no" when statically linking)])
 		fi
