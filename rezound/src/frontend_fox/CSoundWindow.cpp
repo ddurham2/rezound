@@ -358,19 +358,36 @@ void CSoundWindow::show()
 	//printf("show\n");
 }
 
+template <class T> bool between(const T &v, const T &v1, const T &v2)
+{
+	return(v>=min(v1,v2) && v<=max(v1,v2));
+}
+
 void CSoundWindow::drawPlayPosition(bool justErasing)
 {
 	if(!justErasing && !loadedSound->channel->isPlaying())
 		return;
 
-	const sample_pos_t length=loadedSound->channel->isPlayingSelectionOnly() ? (loadedSound->channel->getStopPosition()-loadedSound->channel->getStartPosition()) : loadedSound->channel->sound->getLength();
+	const sample_pos_t position=loadedSound->channel->getPosition();
+	const sample_pos_t start=loadedSound->channel->getStartPosition();
+	const sample_pos_t stop=loadedSound->channel->getStopPosition();
+
+	// length to test for to see if we should draw the play position
+	const sample_pos_t length=
+		(loadedSound->channel->isPlayingSelectionOnly() && between(position,start,stop) )
+			? 
+			(stop-start) 
+			: 
+			(loadedSound->channel->sound->getLength())
+		;
+
 	const size_t sampleRate=loadedSound->channel->sound->getSampleRate();
 
 	// quarter second minimum to draw the play status
 	if(length>=sampleRate || length*4/sampleRate>=1 || loadedSound->channel->isPaused())
-		waveView->drawPlayPosition(loadedSound->channel->getPosition(),justErasing,gFollowPlayPosition);
+		waveView->drawPlayPosition(position,justErasing,gFollowPlayPosition);
 	else
-		waveView->drawPlayPosition(loadedSound->channel->getPosition(),true,false);
+		waveView->drawPlayPosition(position,true,false);
 }
 
 /*
