@@ -832,6 +832,7 @@ public:
 #ifndef HAVE_LIBRFFTW
 		else
 		{
+			dc.setFont(getApp()->getNormalFont());
 			dc.drawText(3,3+12,_("Configure with FFTW"),19);
 			dc.drawText(3,20+12,_("for Freq. Analysis"),18);
 		}
