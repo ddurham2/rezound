@@ -2109,6 +2109,44 @@ bool CSound::findNextCue(const sample_pos_t time,size_t &index) const
 	return true;
 }
 
+bool CSound::findPrevCueInTime(const sample_pos_t time,size_t &index) const
+{
+	if(cueIndex.empty())
+		return false;
+
+	// upper_bound returns the element that is greater than the position where 'time' would be inserted if it were
+	map<sample_pos_t,size_t>::const_iterator i=cueIndex.upper_bound(time);
+
+	if(i==cueIndex.end())
+	{
+		i--;
+		index=i->second;
+		return true; // ok return the last cue in time
+	}
+	else
+	{
+		if(i==cueIndex.begin())
+			return false; // ok, so time is are prior to all cues 
+		i--;
+		index=i->second;
+		return true; // ok we're at the cue prior to the one upper_bound found
+	}
+}
+
+bool CSound::findNextCueInTime(const sample_pos_t time,size_t &index) const
+{
+	// upper_bound returns the element that is greater than the position where 'time' would be inserted if it were
+	map<sample_pos_t,size_t>::const_iterator i=cueIndex.upper_bound(time);
+
+	if(i!=cueIndex.end())
+	{
+		index=i->second;
+		return true;
+	}
+	else
+		return false;
+}
+
 const string CSound::getUnusedCueName(const string &prefix) const
 {
 	// ??? containsCue is not the most efficient, but we're not talking about huge amounts of data here

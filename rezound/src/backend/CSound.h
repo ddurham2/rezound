@@ -377,8 +377,11 @@ public:
 		// these following find methods return true if something is found else false
 	bool findCue(const sample_pos_t time,size_t &index) const;
 	bool findNearestCue(const sample_pos_t time,size_t &index,sample_pos_t &distance) const; // finds the cue nearest to the given time
-	bool findPrevCue(const sample_pos_t time,size_t &index) const; // finds the previous cue in time at the given time
-	bool findNextCue(const sample_pos_t time,size_t &index) const; // finds the following cue in time at the given time
+	bool findPrevCue(const sample_pos_t time,size_t &index) const; // finds the previous cue in time at the cue with the given time (false if none is found)
+	bool findNextCue(const sample_pos_t time,size_t &index) const; // finds the following cue in time at the cue with the given time (false if none is found)
+
+	bool findPrevCueInTime(const sample_pos_t time,size_t &index) const; // finds the previous cue in time from the given time (false if none is found)
+	bool findNextCueInTime(const sample_pos_t time,size_t &index) const; // finds the next cue in time from the given time (false if none is found)
 
 	const string getUnusedCueName(const string &prefix="noname") const;
 
