@@ -67,6 +67,7 @@ private:
 	};
 
 	CRecordThread recordThread;
+	ost::Semaphore threadFinishedSem;
 
 };
 

@@ -52,7 +52,8 @@ COSSSoundRecorder::COSSSoundRecorder() :
 	audio_fd(-1),
 	initialized(false),
 
-	recordThread(this)
+	recordThread(this),
+	threadFinishedSem(1)
 {
 }
 
@@ -143,14 +144,22 @@ void COSSSoundRecorder::initialize(ASound *sound)
 			throw(runtime_error(string(__func__)+" -- error getting the buffering parameters -- "+strerror(errno)));
 		}
 		
+		/*
 		printf("OSS record: info.fragments: %d\n",info.fragments);
 		printf("OSS record: info.fragstotal: %d\n",info.fragstotal);
 		printf("OSS record: info.fragsize: %d\n",info.fragsize);
 		printf("OSS record: info.bytes: %d\n",info.bytes);
+		*/
 		
 
 		// start record thread
-		recordThread.Start();
+		threadFinishedSem.Wait(); // will immediatly return only used to decrement Sem
+		recordThread.kill=false;
+		if(recordThread.Start())
+		{
+			threadFinishedSem.Post();
+			throw(runtime_error(string(__func__)+" -- error starting record thread"));
+		}
 
 		initialized=true;
 	}
@@ -164,9 +173,11 @@ void COSSSoundRecorder::deinitialize()
 	{
 		// stop record thread
 		recordThread.kill=true;
-		recordThread.wait();
 
-		// close OSS audio device
+		// because thread.wait() did nothing expected, I use an event to wait on the thread to finish
+		threadFinishedSem.Wait();
+
+		// close OSS audio device (which should cause the read to finish)
 		close(audio_fd);
 
 		ASoundRecorder::deinitialize();
@@ -210,14 +221,18 @@ void COSSSoundRecorder::CRecordThread::Run()
 
 			parent->onData(buffer,len/(sizeof(sample_t)*parent->getChannelCount()));
 		}
+
+		parent->threadFinishedSem.Post();
 	}
 	catch(exception &e)
 	{
+		parent->threadFinishedSem.Post();
 		cerr << "exception caught in record thread: " << e.what() << endl;
 		abort();
 	}
 	catch(...)
 	{
+		parent->threadFinishedSem.Post();
 		cerr << "unknown exception caught in record thread" << endl;
 		abort();
 	}
