@@ -76,7 +76,7 @@ void COSSSoundPlayer::initialize()
 		// open OSS device
 		if((audio_fd=open("/dev/dsp",O_WRONLY,0)) == -1) 
 			throw(runtime_error(string(__func__)+" -- error opening OSS device -- "+strerror(errno)));
-
+		//printf("OSS: device: %s\n","/dev/dsp");
 
 		// set the bit rate and endianness
 		int format=OSS_PCM_FORMAT; // signed 16-bit little endian
@@ -90,6 +90,7 @@ void COSSSoundPlayer::initialize()
 			close(audio_fd);
 			throw(runtime_error(string(__func__)+" -- error setting the bit rate -- the device does not support "+istring(BITS)+" bit little endian data"));
 		}
+		//printf("OSS: format: %d\n",format);
 
 
 		// set number of channels 
@@ -104,6 +105,7 @@ void COSSSoundPlayer::initialize()
 			close(audio_fd);
 			throw(runtime_error(string(__func__)+" -- error setting the number of channels -- the device does not support stereo"));
 		}
+		//printf("OSS: channel count: %d\n",CHANNELS);
 
 		devices[0].channelCount=CHANNELS; // make note of the number of channels for this device (??? which is only device zero for now)
 
@@ -120,6 +122,7 @@ void COSSSoundPlayer::initialize()
 			//close(audio_fd);
 			//throw(runtime_error(string(__func__)+" -- error setting the sample rate -- the sample rate is not supported"));
 		} 
+		//printf("OSS: sample rate: %d\n",speed);
 
 		devices[0].sampleRate=speed; // make note of the sample rate for this device (??? which is only device zero for now)
 
@@ -139,7 +142,6 @@ void COSSSoundPlayer::initialize()
 			throw(runtime_error(string(__func__)+" -- error setting the buffering parameters -- "+istring(BUFFER_COUNT)+" buffers, each "+istring(BUFFER_SIZE_BYTES)+" bytes long, not supported"));
 		}
 
-		
 
 		// get the fragment info
 		audio_buf_info info;
@@ -148,13 +150,12 @@ void COSSSoundPlayer::initialize()
 			close(audio_fd);
 			throw(runtime_error(string(__func__)+" -- error getting the buffering parameters -- "+strerror(errno)));
 		}
-		else
-		{
-			printf("OSS: info.fragments: %d\n",info.fragments);
-			printf("OSS: info.fragstotal: %d\n",info.fragstotal);
-			printf("OSS: info.fragsize: %d\n",info.fragsize);
-			printf("OSS: info.bytes: %d\n",info.bytes);
-		}
+		/*
+		printf("OSS: info.fragments: %d\n",info.fragments);
+		printf("OSS: info.fragstotal: %d\n",info.fragstotal);
+		printf("OSS: info.fragsize: %d\n",info.fragsize);
+		printf("OSS: info.bytes: %d\n",info.bytes);
+		*/
 
 
 		// start play thread
