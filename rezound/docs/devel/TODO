@@ -2,6 +2,8 @@
 
 	- I might want to make sure that gcc is some minimum version in configure.in.. I really don't think gcc2.8 will cut it
 
+	- create a 'paste to new' edit action
+
 	- should put a "swap audio between two channels" in the edit menu which would not allow showing the  channel select dialog, but would have a normal dialog allowing the user to selection which two channels to swap data for.. moveData should work as a means of swapping data
 
 	- create a "monoize" action under remaster that says: mix X% of left onto the right and X% of the right onto the left or any channel configuration for that matter
