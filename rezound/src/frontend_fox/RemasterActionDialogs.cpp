@@ -145,7 +145,7 @@ static const double uninterpretValue_monoize(const double x,const int s) { retur
 static const double retconv_monoize(const double x) { return x/100.0 ; }
 
 CMonoizeActionDialog::CMonoizeActionDialog(FXWindow *mainWindow) :
-	CActionParamDialog(mainWindow,"Monoize")
+	CActionParamDialog(mainWindow,"Monoize",true,FXModalDialogBox::stShrinkWrap)
 {
 		void *p0=newVertPanel(NULL);
 			void *p1=newHorzPanel(p0,false);
@@ -158,22 +158,12 @@ CMonoizeActionDialog::CMonoizeActionDialog(FXWindow *mainWindow) :
 			addComboTextEntry(p0,"Method",options);
 }
 
-#include "../misc/CNestedDataFile/CNestedDataFile.h" // so I can override what rememberShow does
 bool CMonoizeActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
 	if(actionSound->sound->getChannelCount()<1)
 		return false;
 	else
 	{
-		// this should make FXModalDialog::execute() resize the dialog to it's default size
-		{
-			resize(25,25);
-		
-			const string title=("WindowDimensions"+FXString(CNestedDataFile::delimChar)+getTitle()).text();
-			gSettingsRegistry->removeKey((title+"_W").c_str());
-			gSettingsRegistry->removeKey((title+"_H").c_str());
-		}
-
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 			showControl("Channel "+istring(t), t<actionSound->sound->getChannelCount() );
 

@@ -31,8 +31,6 @@
 #include "../backend/CActionParameters.h"
 #include "../backend/ASoundClipboard.h"
 
-#include "../misc/CNestedDataFile/CNestedDataFile.h" // so I can override what rememberShow does
-
 CPasteChannelsDialog *gPasteChannelsDialog=NULL;
 
 
@@ -59,7 +57,7 @@ static const double interpret_repeat(const double x,const int s) { return x*s; }
 static const double uninterpret_repeat(const double x,const int s) { return x/s; }
 
 CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
-	FXModalDialogBox(mainWindow,"Paste Channels",100,100,FXModalDialogBox::ftVertical),
+	FXModalDialogBox(mainWindow,"Paste Channels",100,100,FXModalDialogBox::ftVertical,FXModalDialogBox::stShrinkWrap),
 
 	label(new FXLabel(getFrame(),"Pasting Parameters:",NULL,LAYOUT_CENTER_X)),
 	horzSeparator(new FXHorizontalSeparator(getFrame())),
@@ -175,15 +173,6 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 			checkBoxMatrix->childAtRowCol(row+1,0)->hide();
 	}
 
-	// this should make FXModalDialog::execute() resize the dialog to it's default size
-	{
-		resize(25,25);
-	
-		const string title=("WindowDimensions"+FXString(CNestedDataFile::delimChar)+getTitle()).text();
-		gSettingsRegistry->removeKey((title+"_W").c_str());
-		gSettingsRegistry->removeKey((title+"_H").c_str());
-	}
-	
 	// by default check a 1:1 paste mapping
 	onDefaultButton(NULL,0,NULL);
 
@@ -202,8 +191,6 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 
 	// when the number of hidden and shown widgets change, the matrix needs to be told to recalc
 	checkBoxMatrix->recalc();
-
-	routingContents->getParent()->recalc();
 
 	if(execute(PLACEMENT_CURSOR))
 	{
