@@ -28,6 +28,7 @@
 #include <istring>
 
 #include "../CGraphParamValueNode.h"
+#include "../unit_conv.h"
 
 /* --- TDSPDistorter ------------------------------------
  *	This class is a DSP block to distort the samples according to a given curve
@@ -35,10 +36,11 @@
 template<class sample_t,int maxSample> class TDSPDistorter
 {
 public:
+	// the curves' nodes' x's and y's should be in dBFS
 	TDSPDistorter(const CGraphParamValueNodeList &_positiveCurve,const CGraphParamValueNodeList &_negativeCurve) :
-		positiveCurve(_positiveCurve),
+		positiveCurve(dBFS_to_scalar(_positiveCurve)),
 		positiveCurveSizeSub1(_positiveCurve.size()-1),
-		negativeCurve(_negativeCurve),
+		negativeCurve(dBFS_to_scalar(_negativeCurve)),
 		negativeCurveSizeSub1(_negativeCurve.size()-1)
 	
 	{
@@ -58,6 +60,7 @@ public:
 	const sample_t processSample(const sample_t input) const
 	{
 		// ??? if sample_t were greater precision than float, this would need to change
+		// ??? a flat curve (0,0)-(1,1) does not produce identical output because of truncation errors when going between 0..MAX_SAMPLE and 0..1
 		if(input>=0)
 		{
 			const float inputSample=(float)input/(float)maxSample;
@@ -81,9 +84,9 @@ public:
 	}
 
 private:
-	CGraphParamValueNodeList positiveCurve;
+	const CGraphParamValueNodeList positiveCurve;
 	const size_t positiveCurveSizeSub1;
-	CGraphParamValueNodeList negativeCurve;
+	const CGraphParamValueNodeList negativeCurve;
 	const size_t negativeCurveSizeSub1;
 
 	static const float remap(const float sample,const float x1,const float y1,const float x2,const float y2)
@@ -95,6 +98,16 @@ private:
 			const float m=(y2-y1)/(x2-x1);
 			return m*(sample-x1)+y1;
 		}
+	}
+
+	static const CGraphParamValueNodeList dBFS_to_scalar(CGraphParamValueNodeList nodes)
+	{
+		for(size_t t=0;t<nodes.size();t++)
+		{
+			nodes[t].x=dB_to_scalar(nodes[t].x);
+			nodes[t].y=dB_to_scalar(nodes[t].y);
+		}
+		return nodes;
 	}
 };
 
