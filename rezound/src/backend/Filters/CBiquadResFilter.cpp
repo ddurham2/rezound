@@ -50,6 +50,7 @@ bool CBiquadResFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 	if(prepareForUndo)
 		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
 
+	unsigned channelsDoneCount=0;
 	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 	{
 		if(actionSound.doChannel[i])
@@ -73,7 +74,7 @@ bool CBiquadResFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 			{
 			case ftLowpass:
 			{
-				CStatusBar statusBar("Lowpass Filter -- Channel "+istring(i),start,stop,true);
+				CStatusBar statusBar("Lowpass Filter -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true);
 
 				TDSPBiquadResLowpassFilter<mix_sample_t> filter(freq_to_fraction(frequency,actionSound.sound->getSampleRate()),resonance);
 				for(sample_pos_t t=start;t<=stop;t++)
@@ -86,7 +87,7 @@ bool CBiquadResFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 
 			case ftHighpass:
 			{
-				CStatusBar statusBar("Highpass Filter -- Channel "+istring(i),start,stop,true);
+				CStatusBar statusBar("Highpass Filter -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true);
 
 				TDSPBiquadResHighpassFilter<mix_sample_t> filter(freq_to_fraction(frequency,actionSound.sound->getSampleRate()),resonance);
 				for(sample_pos_t t=start;t<=stop;t++)
@@ -99,7 +100,7 @@ bool CBiquadResFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareFo
 
 			case ftBandpass:
 			{
-				CStatusBar statusBar("Bandpass Filter -- Channel "+istring(i),start,stop,true); 
+				CStatusBar statusBar("Bandpass Filter -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
 
 				TDSPBiquadResBandpassFilter<mix_sample_t> filter(freq_to_fraction(frequency,actionSound.sound->getSampleRate()),resonance);
 				for(sample_pos_t t=start;t<=stop;t++)

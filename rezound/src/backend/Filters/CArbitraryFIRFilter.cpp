@@ -116,6 +116,7 @@ bool CArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,bool prepar
 	const float dryGain=(100.0-fabs(wetdryMix))/100.0 * (wetdryMix<0.0 ? -1.0 : 1.0);
 	const float wetGain=wetdryMix/100.0;
 
+	unsigned channelsDoneCount=0;
 	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 	{
 		if(actionSound.doChannel[i])
@@ -126,7 +127,7 @@ bool CArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,bool prepar
 			const CRezPoolAccesser src=prepareForUndo ? actionSound.sound->getTempAudio(tempAudioPoolKey,i) : actionSound.sound->getAudio(i);
 			sample_pos_t srcOffset=prepareForUndo ? 0 : start;
 
-			CStatusBar statusBar("Filtering -- Channel "+istring(i),start,stop,true); 
+			CStatusBar statusBar("Filtering -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
 
 			if(removeDelay)
 			{

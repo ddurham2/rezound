@@ -50,6 +50,7 @@ bool CSinglePoleFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 	if(prepareForUndo)
 		moveSelectionToTempPools(actionSound,mmSelection,actionSound.selectionLength());
 
+	unsigned channelsDoneCount=0;
 	for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 	{
 		if(actionSound.doChannel[i])
@@ -73,7 +74,7 @@ bool CSinglePoleFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 			{
 			case ftLowpass:
 			{
-				CStatusBar statusBar("Lowpass Filter -- Channel "+istring(i),start,stop,true); 
+				CStatusBar statusBar("Lowpass Filter -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
 
 				TDSPSinglePoleLowpassFilter<mix_sample_t> filter(freq_to_fraction(frequency,actionSound.sound->getSampleRate()));
 				for(sample_pos_t t=start;t<=stop;t++)
@@ -86,7 +87,7 @@ bool CSinglePoleFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 
 			case ftHighpass:
 			{
-				CStatusBar statusBar("Highpass Filter -- Channel "+istring(i),start,stop,true); 
+				CStatusBar statusBar("Highpass Filter -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
 
 				TDSPSinglePoleHighpassFilter<mix_sample_t> filter(freq_to_fraction(frequency,actionSound.sound->getSampleRate()));
 				for(sample_pos_t t=start;t<=stop;t++)
@@ -99,7 +100,7 @@ bool CSinglePoleFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 
 			case ftBandpass:
 			{
-				CStatusBar statusBar("Bandpass Filter -- Channel "+istring(i),start,stop,true); 
+				CStatusBar statusBar("Bandpass Filter -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
 
 				TDSPBandpassFilter<mix_sample_t> filter(freq_to_fraction(frequency,actionSound.sound->getSampleRate()),freq_to_fraction(bandwidth,actionSound.sound->getSampleRate()));
 				for(sample_pos_t t=start;t<=stop;t++)
@@ -112,7 +113,7 @@ bool CSinglePoleFilter::doActionSizeSafe(CActionSound &actionSound,bool prepareF
 
 			case ftNotch:
 			{
-				CStatusBar statusBar("Notch Filter -- Channel "+istring(i),start,stop,true); 
+				CStatusBar statusBar("Notch Filter -- Channel "+istring(++channelsDoneCount)+"/"+istring(actionSound.countChannels()),start,stop,true); 
 				TDSPNotchFilter<mix_sample_t> filter(freq_to_fraction(frequency,actionSound.sound->getSampleRate()),freq_to_fraction(bandwidth,actionSound.sound->getSampleRate()));
 				for(sample_pos_t t=start;t<=stop;t++)
 				{
