@@ -57,6 +57,7 @@ so that the meter and analyzer widgets are not tied to using ASoundPlayer
 
 #define ANALYZER_BAR_WIDTH 3
 
+#define NUM_LEVEL_TICKS 17
 
 // --- CMeter ----------------------------------------------------------------
 
@@ -120,14 +121,13 @@ public:
 		const FXint width=canvas->getWidth();
 		const FXint height=canvas->getHeight();
 
-		// draw 11 tick marks above level indication
+		// draw NUM_LEVEL_TICKS tick marks above level indication
 		dc.setForeground(M_BACKGROUND);
 		dc.fillRectangle(0,0,width,2);
 		dc.setForeground(M_TEXT_COLOR);
-		#define NUM 11
-		for(int t=0;t<NUM;t++)
+		for(int t=0;t<NUM_LEVEL_TICKS;t++)
 		{
-			const int x=(width-1)*t/(NUM-1);
+			const int x=(width-1)*t/(NUM_LEVEL_TICKS-1);
 			dc.drawLine(x,0,x,1);
 		}
 
@@ -614,21 +614,24 @@ CMetersWindow::CMetersWindow(FXComposite *parent) :
 	levelMetersFrame->setBackColor(M_BACKGROUND);
 		headerFrame->setBackColor(M_BACKGROUND);
 
+			// create the labels above the tick marks
 			labelFrame->setTarget(this);
 			labelFrame->setSelector(ID_LABEL_FRAME);
 			labelFrame->setBackColor(M_BACKGROUND);
-			#define MAKE_DB_LABEL(text) { FXLabel *l=new FXLabel(labelFrame,text,NULL,LAYOUT_FIX_X|LAYOUT_FIX_Y,0,0,0,0, 0,0,0,0); l->setBackColor(M_BACKGROUND); l->setTextColor(M_TEXT_COLOR); l->setFont(statusFont); }
-			MAKE_DB_LABEL("dBFS")
-			MAKE_DB_LABEL("-20")
-			MAKE_DB_LABEL("-14")
-			MAKE_DB_LABEL("-10.5")
-			MAKE_DB_LABEL("-8")
-			MAKE_DB_LABEL("-6")
-			MAKE_DB_LABEL("-4.4")
-			MAKE_DB_LABEL("-3.1")
-			MAKE_DB_LABEL("-2")
-			MAKE_DB_LABEL("-1")
-			MAKE_DB_LABEL("0")
+			#define MAKE_DB_LABEL(text) { FXLabel *l=new FXLabel(labelFrame,(text),NULL,LAYOUT_FIX_X|LAYOUT_FIX_Y,0,0,0,0, 0,0,0,0); l->setBackColor(M_BACKGROUND); l->setTextColor(M_TEXT_COLOR); l->setFont(statusFont); }
+			MAKE_DB_LABEL("dBFS") // create the -infinity label as just the units label
+			for(int t=1;t<NUM_LEVEL_TICKS;t++)
+			{
+				istring s;
+				if(t>NUM_LEVEL_TICKS/2)
+					s=istring(round(scalar_to_dB((double)t/(NUM_LEVEL_TICKS-1))*10)/10,3,1); // round to nearest tenth
+				else 
+					s=istring(round(scalar_to_dB((double)t/(NUM_LEVEL_TICKS-1))),3,1); // round to nearest int
+
+				if(s.rfind(".0")!=istring::npos) // remove .0's from the right side
+					s.erase(s.length()-2,2);
+				MAKE_DB_LABEL(s.c_str())
+			}
 
 			grandMaxPeakLevelLabel->setTarget(this);
 			grandMaxPeakLevelLabel->setSelector(ID_GRAND_MAX_PEAK_LEVEL_LABEL);
