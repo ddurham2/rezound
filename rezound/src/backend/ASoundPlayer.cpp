@@ -226,7 +226,7 @@ const sample_t ASoundPlayer::getPeakLevel(unsigned channel) const
 
 const size_t ASoundPlayer::getSamplingForStereoPhaseMeters(sample_t *buffer,size_t bufferSizeInSamples) const
 {
-	return samplingForStereoPhaseMeters.read(buffer,min(bufferSizeInSamples,gStereoPhaseMeterPointCount*devices[0].channelCount))/devices[0].channelCount; // ??? only device zero
+	return samplingForStereoPhaseMeters.read(buffer,min(bufferSizeInSamples,(size_t)(gStereoPhaseMeterPointCount*devices[0].channelCount)))/devices[0].channelCount; // ??? only device zero
 }
 
 #ifdef HAVE_LIBRFFTW

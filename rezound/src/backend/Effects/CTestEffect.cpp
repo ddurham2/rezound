@@ -131,7 +131,7 @@ bool CTestEffect::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo
 			sample_pos_t destPos=start;
 			while(destPos<=stop)
 			{
-				const sample_pos_t count=min(c.getChunkSize(),stop-destPos+1);
+				const sample_pos_t count=min((sample_pos_t)c.getChunkSize(),stop-destPos+1);
 
 				// write to the convolver
 				c.beginWrite();

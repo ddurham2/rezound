@@ -95,7 +95,7 @@ static const double uninterpretValue_FIR_change(const double x,const int s) { re
 			goodFilterKernelSizes=TFFTConvolverTimeDomainKernel<float,float>::getGoodFilterKernelSizes();
 
 			// use min and max to place reasonable limits on the kernel size
-		return min((unsigned)(4*1024*1024),max((size_t)8,goodFilterKernelSizes[(size_t)ceil(x*(goodFilterKernelSizes.size()-2))])); // -2 cause I need padding in the actual convolver
+		return min((size_t)(4*1024*1024),max((size_t)8,goodFilterKernelSizes[(size_t)ceil(x*(goodFilterKernelSizes.size()-2))])); // -2 cause I need padding in the actual convolver
 	}
 	static const double uninterpretValue_kernelLength(const double x,const int s) 
 	{

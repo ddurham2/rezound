@@ -104,7 +104,7 @@ bool CArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,bool prepar
 
 				while(destPos<=stop)
 				{
-					const sample_pos_t count=min(convolver.getChunkSize(),stop-destPos+1); // amount to read/write to the convolver
+					const sample_pos_t count=min((sample_pos_t)convolver.getChunkSize(),stop-destPos+1); // amount to read/write to the convolver
 
 					// write to the convolver
 					{
@@ -126,13 +126,13 @@ bool CArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,bool prepar
 						convolver.beginRead();
 
 						// skip as much of the convolved output as we can and are supposed to
-						const sample_pos_t maxToSkip=min(skipOutput,convolver.getChunkSize());
+						const sample_pos_t maxToSkip=min(skipOutput,(sample_pos_t)convolver.getChunkSize());
 						sample_pos_t skippedAmount=0;
 						for(;skippedAmount<maxToSkip; skippedAmount++,skipOutput--)
 							convolver.readSample();
 
 						// now read from the convolver and write back to the dest as much as we can and as much as we're supposed to
-						const sample_pos_t maxToRead=min(count,convolver.getChunkSize()-skippedAmount);
+						const sample_pos_t maxToRead=min(count,(sample_pos_t)convolver.getChunkSize()-skippedAmount);
 						for(sample_pos_t t=0;t<maxToRead;t++)
 							dest[destPos++]=ClipSample((src[srcReadPos++])*dryGain+convolver.readSample()*wetGain);
 					}
@@ -153,7 +153,7 @@ bool CArbitraryFIRFilter::doActionSizeSafe(CActionSound &actionSound,bool prepar
 				sample_pos_t destPos=start;
 				while(destPos<=stop)
 				{
-					const sample_pos_t count=min(convolver.getChunkSize(),stop-destPos+1);
+					const sample_pos_t count=min((sample_pos_t)convolver.getChunkSize(),stop-destPos+1);
 
 					// write to the convolver
 					convolver.beginWrite();

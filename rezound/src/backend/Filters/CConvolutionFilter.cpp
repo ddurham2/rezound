@@ -153,7 +153,7 @@ bool CConvolutionFilter::doActionSizeSafe(CActionSound &actionSound,bool prepare
 					sample_pos_t prevCount=0; // only needed in the wrapDecay section to know what size the last chunk was
 					while(destPos<=stop)
 					{
-						const sample_pos_t count=min(convolver.getChunkSize(),stop-destPos+1);
+						const sample_pos_t count=min((sample_pos_t)convolver.getChunkSize(),stop-destPos+1);
 						prevCount=count;
 
 						// write to the convolver
