@@ -1,6 +1,18 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- figure out why the limit isn't always working.. twice I entered 90:00.00 and it didn't stop
+
+	- on the record dialog, put a red-led while recording, and put a lable that says what the recording is limited to by actually asking the recorder for the limit it's using
+
+	- doing a save as needs to update the CLoadedSoundWindow's filename
+		- does the loadedRegistry even get the memo?
+
+	- Other commercial audio editors do this, and now I think I know why...
+		- When loading a sound it doesn't start zoomed out to see the whole thing.. 
+		- if I had a thread always running in the background low priority, I could be calculating peak chunk information while the user isn't looking
+		- Also, I would only want to not start zoomed out depending on the file size and the average computer speed
+
 	- inquire to jaroen if FXLabel could become an FXComposite so that the label would go beside, above, below, etc, whatever any child objects there were
 
 	- make the cue list dialog's list box have a fixed width font

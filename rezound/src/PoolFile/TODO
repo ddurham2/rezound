@@ -1,9 +1,16 @@
 
 
+	- I really need to play with very large files (>500meg) and make them faster if ay all possible
+
 	- make TPoolFile::accessers (and others sets instead of vectors?) direct indexing isn't necessary, then searching and inserting would become faster
 
 	- I have taken the call to backupSAT() out of TPoolFile::insertSpace because it is just too slow in the real-time situation of recording.
 		- perhaps I could have a more efficient way of storing the SAT or backing it up more effiently
+	
+	- I should at least implement writeSATToFile to go much faster because it really took for ever to write the SAT on a 500 meg file... 
+		- Write to a buffer in memory and write it all at once to disk... or change CMultiFile to preallocate space rather than calling ftruncate so many times, which may be what's taking so long
+
+	- And maybe buildSATFromFile too
 
 
 	- reimplement TPoolFile::copyToFile to do this: 
