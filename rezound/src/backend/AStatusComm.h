@@ -110,16 +110,17 @@ void endAllProgressBars();
 #define BEGIN_PROGRESS_BAR(title,firstValue,lastValue)				\
 	const int __progressHandle=beginProgressBar(title);			\
 	const sample_pos_t __progressSub=firstValue;				\
-	const sample_pos_t __progressMod=((lastValue-firstValue)+1)/100 < 1 ? 1 : ((lastValue-firstValue)+1)/100;	\
-	int __progress=0;
+	const sample_pos_t __progressMod=(((lastValue)-(firstValue))+100)/100 < 1 ? 1 : (((lastValue)-(firstValue))+100)/100; \
+	sample_pos_t __lastProgress=0;
 
 #define RESET_PROGRESS_BAR()							\
-	__progress=0;								\
-	gStatusComm->updateProgressBar(__progressHandle,__progress);
+	__lastProgress=0;							\
+	gStatusComm->updateProgressBar(__progressHandle,0);
 
 #define UPDATE_PROGRESS_BAR(value)						\
-	if(((value-__progressSub)%__progressMod)==0)				\
-		gStatusComm->updateProgressBar(__progressHandle,__progress++);
+	const sample_pos_t __progress=((value)-__progressSub)/__progressMod;	\
+	if(__progress!=__lastProgress)						\
+		gStatusComm->updateProgressBar(__progressHandle,__lastProgress=__progress);
 
 #define END_PROGRESS_BAR()							\
 	endProgressBar(__progressHandle);
