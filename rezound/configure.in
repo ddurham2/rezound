@@ -51,6 +51,8 @@ AC_PROG_CXXCPP
 AM_PROG_LEX
 AC_PROG_YACC
 
+AC_C_BIGENDIAN(AC_MSG_ERROR([ReZound has not been made to compile on big endian platforms yet]))
+
 dnl ---------------------|
 dnl Checks for libraries.|
 dnl ---------------------|
