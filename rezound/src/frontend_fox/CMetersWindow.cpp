@@ -54,6 +54,8 @@ so that the meter and analyzer widgets are not tied to using ASoundPlayer
 #define M_BRT_YELLOW (FXRGB(255,255,112))
 #define M_BRT_RED (FXRGB(255,38,0))
 
+#define M_PHASE_METER_AXIS (FXRGB(100,100,100))
+
 #define MIN_METER_HEIGHT 15
 #define MIN_METERS_WINDOW_HEIGHT 75
 
@@ -536,8 +538,9 @@ public:
 		// draw the axies
 		for(FXint t=0;t<canvasSize;t++)
 		{
-			data[t+(canvasSize*canvasSize/2)]=M_METER_OFF; // horz
-			data[(t*canvasSize)+canvasSize/2]=M_METER_OFF; // vert
+				// I have no idea with '-canvasSize/2' is necessary but it doesn't look right if I omit it
+			data[t+(canvasSize*canvasSize/2)-canvasSize/2]=M_PHASE_METER_AXIS; // horz
+			data[(t*canvasSize)+canvasSize/2]=M_PHASE_METER_AXIS; // vert
 		}
 
 		// draw the points
