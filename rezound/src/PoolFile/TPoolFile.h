@@ -213,8 +213,8 @@ private:
 		RPoolInfo(const RPoolInfo &src);
 		RPoolInfo &operator=(const RPoolInfo &src);
 
-		void writeToFile(CMultiFile *f);
-		void readFromFile(CMultiFile *f);
+		void writeToFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle) const;
+		void readFromFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle);
 	};
 
 		// ??? poolId wouldn't seem to be consistant if you remove a pool... I should perhaps fix this problematic area
@@ -253,9 +253,9 @@ private:
 	void closeSATFiles(const bool removeFiles=true);
 	void writeWhichSATFile();
 	void backupSAT();
-	void writeSATToFile(CMultiFile *f);
+	void writeSATToFile(CMultiFile *f,const p_addr_t writeWhere);
 	void restoreSAT();
-	void buildSATFromFile(CMultiFile *f);
+	void buildSATFromFile(CMultiFile *f,const p_addr_t readWhere);
 
 	// SAT operations
 	const size_t findSATBlockContaining(const poolId_t poolId,const l_addr_t where,bool &atStartOfBlock) const;
@@ -335,8 +335,8 @@ private:
 		const bool operator<(const RLogicalBlock &src) const;
 		const bool operator<=(const RLogicalBlock &src) const { return(operator<(src) || operator==(src)); }
 
-		void writeToFile(CMultiFile *f) const;
-		void readFromFile(CMultiFile *f);
+		void writeToFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle) const;
+		void readFromFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle);
 
 		void print() const;
 	};
@@ -367,8 +367,8 @@ private:
 	template<class C,class I> static void sortedInsert(C &c,const I &i);
 
 	// read/write a string to a CMultiFile
-	static void readString(string &s,CMultiFile *f);
-	static void writeString(const string &s,CMultiFile *f);
+	static void readString(string &s,CMultiFile *f,CMultiFile::RHandle &multiFileHandle);
+	static void writeString(const string &s,CMultiFile *f,CMultiFile::RHandle &multiFileHandle);
 
 };
 

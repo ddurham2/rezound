@@ -52,13 +52,25 @@ public:
 
 	void rename(const string newInitialFilename);
 
-	void seek(const l_addr_t _position);
-	const l_addr_t tell() const;
 
-	void read(void *buffer,const l_addr_t count);
+	// The seek, tell, read and write methods require that one of these
+	// be instantiated and a pointer be passed when the method is called
+	class RHandle // ??? for lack of a better term
+	{
+	public:
+		RHandle() { position=0; }
+	private:
+		friend class CMultiFile;
+		CMultiFile::l_addr_t position;
+	};
+
+	void seek(const l_addr_t _position,RHandle &handle);
+	const l_addr_t tell(RHandle &handle) const;
+
+	void read(void *buffer,const l_addr_t count,RHandle &handle);
 	void read(void *buffer,const l_addr_t count,const l_addr_t _position);
 
-	void write(const void *buffer,const l_addr_t count);
+	void write(const void *buffer,const l_addr_t count,RHandle &handle);
 	void write(const void *buffer,const l_addr_t count,const l_addr_t _position);
 
 	void setSize(const l_addr_t newSize);
@@ -83,7 +95,7 @@ private:
 	string initialFilename;
 	uint32_t matchSignature;
 
-	l_addr_t position;
+	//l_addr_t position; left up to the method callers to provide this data space
 	l_addr_t totalSize;
 
 	size_t openFileCount;

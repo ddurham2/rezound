@@ -309,9 +309,7 @@ template<class l_addr_t,class p_addr_t>
 				if(metaDataOffset<LEADING_DATA_SIZE)
 					throw(runtime_error("invalid meta data offset"));
 
-				blockFile.seek(metaDataOffset);
-
-				buildSATFromFile(&blockFile);
+				buildSATFromFile(&blockFile,metaDataOffset);
 				joinAllAdjacentBlocks();
 			}
 		}
@@ -338,6 +336,12 @@ template<class l_addr_t,class p_addr_t>
 	}
 }
 
+/*
+ * NOTE: in a multi-threaded app, this method should be called with an 
+ * exclusive locksince the file's seek positions will matter while it's 
+ * copying.  Though, I do not check for this locked status since this
+ * might not be used in a multi-threaded app.
+ */
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::copyToFile(const string _filename)
 {
@@ -349,8 +353,13 @@ template<class l_addr_t,class p_addr_t>
 		if(_filename==getFilename())
 			throw(runtime_error(string(__func__)+" -- attempting to copy to the file which is open"));
 
+		invalidateAllCachedBlocks();
+
 		CMultiFile copyFile;
 		copyFile.open(_filename,true);
+
+		CMultiFile::RHandle multiFileHandle1;
+		CMultiFile::RHandle multiFileHandle2;
 
 		try
 		{
@@ -359,18 +368,18 @@ template<class l_addr_t,class p_addr_t>
 
 			const p_addr_t length=blockFile.getSize();
 
-			blockFile.seek(0);
-			copyFile.seek(0);
+			blockFile.seek(0,multiFileHandle1);
+			copyFile.seek(0,multiFileHandle2);
 		
 			for(l_addr_t t=0;t<length/maxBlockSize;t++)
 			{
-				blockFile.read(temp,maxBlockSize);
-				copyFile.write(temp,maxBlockSize);
+				blockFile.read(temp,maxBlockSize,multiFileHandle1);
+				copyFile.write(temp,maxBlockSize,multiFileHandle2);
 			}
 			if((length%maxBlockSize)!=0)
 			{
-				blockFile.read(temp,length%maxBlockSize);
-				copyFile.write(temp,length%maxBlockSize);
+				blockFile.read(temp,length%maxBlockSize,multiFileHandle1);
+				copyFile.write(temp,length%maxBlockSize,multiFileHandle2);
 			}
 
 			writeMetaData(&copyFile);
@@ -1300,13 +1309,12 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::writeMetaData(CMultiFile *f)
 {
-	makeBlockFileSmallest(false); // doesn't necessarily help if f is not &blockFile
+	makeBlockFileSmallest(false); // doesn't necessarily help if f is not &this->blockFile
 
 	// write meta and user info
-	f->seek(f->getSize());
-	uint64_t metaDataOffset=f->tell();
+	uint64_t metaDataOffset=f->getSize();
 
-	writeSATToFile(f);
+	writeSATToFile(f,metaDataOffset);
 
 	// Signature
 	f->write(FORMAT_SIGNATURE,8,SIGNATURE_OFFSET);
@@ -1459,37 +1467,38 @@ template<class l_addr_t,class p_addr_t>
 
 	whichSATFile= ((whichSATFile==0) ? 1 : 0);
 
-	SATFiles[whichSATFile].seek(0);
-
-	writeSATToFile(&SATFiles[whichSATFile]);
+	writeSATToFile(&SATFiles[whichSATFile],0);
 	writeWhichSATFile();
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::writeSATToFile(CMultiFile *f)
+	void TPoolFile<l_addr_t,p_addr_t>::writeSATToFile(CMultiFile *f,const p_addr_t writeWhere)
 {
 	// ??? probably want to put a SAT file signature here to make sure it's a SAT file
 
+	CMultiFile::RHandle multiFileHandle;
+	f->seek(writeWhere,multiFileHandle);
+
 	// write number of pools
 	const uint32_t poolCount=SAT.size();
-	f->write(&poolCount,sizeof(poolCount));
+	f->write(&poolCount,sizeof(poolCount),multiFileHandle);
 
 	for(size_t poolId=0;poolId<SAT.size();poolId++)
 	{
 		// write name of pool
-		writeString(getPoolNameById(poolId),f);
+		writeString(getPoolNameById(poolId),f,multiFileHandle);
 
 		// write pool info structure
-		pools[poolId].writeToFile(f);
+		pools[poolId].writeToFile(f,multiFileHandle);
 
 		// write number of SAT entries for this pool
 		const uint32_t SATSize=SAT[poolId].size();
-		f->write(&SATSize,sizeof(SATSize));
+		f->write(&SATSize,sizeof(SATSize),multiFileHandle);
 
 		// write each SAT entry
 		for(size_t t=0;t<SAT[poolId].size();t++)
 		//for(set<RLogicalBlock>::const_iterator t=SAT[poolId].begin();t!=SAT[poolId].end();t++)
-			SAT[poolId][t].writeToFile(f);
+			SAT[poolId][t].writeToFile(f,multiFileHandle);
 	}
 }
 
@@ -1501,6 +1510,7 @@ template<class l_addr_t,class p_addr_t>
 
 	invalidateAllCachedBlocks();
 
+
 	uint8_t buffer[1];
 	blockFile.read(buffer,sizeof(*buffer),WHICH_SAT_FILE_OFFSET);
 	whichSATFile=buffer[0];
@@ -1510,16 +1520,17 @@ template<class l_addr_t,class p_addr_t>
 		exit(0);
 	}
 
-	SATFiles[whichSATFile].seek(0);
-
-	buildSATFromFile(&SATFiles[whichSATFile]);
+	buildSATFromFile(&SATFiles[whichSATFile],0);
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::buildSATFromFile(CMultiFile *f)
+	void TPoolFile<l_addr_t,p_addr_t>::buildSATFromFile(CMultiFile *f,const p_addr_t readWhere)
 {
-    if(isTemp())
-        return;
+	if(isTemp())
+		return;
+
+	CMultiFile::RHandle multiFileHandle;
+	f->seek(readWhere,multiFileHandle);
 
 	// ??? probably want to put a SAT file signature here to make sure it's a SAT file
 
@@ -1531,16 +1542,16 @@ template<class l_addr_t,class p_addr_t>
 
 	// read number of pools
 	uint32_t poolCount;
-	f->read(&poolCount,sizeof(poolCount));
+	f->read(&poolCount,sizeof(poolCount),multiFileHandle);
 	for(size_t poolId=0;poolId<poolCount;poolId++)
 	{
 		// read pool name
 		string poolName;
-		readString(poolName,f);
+		readString(poolName,f,multiFileHandle);
 
 		// read pool info structure
 		RPoolInfo poolInfo;
-		poolInfo.readFromFile(f);
+		poolInfo.readFromFile(f,multiFileHandle);
 
 		try
 		{
@@ -1554,11 +1565,11 @@ template<class l_addr_t,class p_addr_t>
 
 		// read number of SAT entries
 		uint32_t SATSize;
-		f->read(&SATSize,sizeof(SATSize));
+		f->read(&SATSize,sizeof(SATSize),multiFileHandle);
 		for(size_t t=0;t<SATSize;t++)
 		{
 			RLogicalBlock logicalBlock;
-			logicalBlock.readFromFile(f);
+			logicalBlock.readFromFile(f,multiFileHandle);
 
 			// divide the size of the block just read into pieces that will fit into maxBlockSize sizes blocks
 			// just in case the maxBlockSize is smaller than it used to be
@@ -3421,17 +3432,17 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::RPoolInfo::writeToFile(CMultiFile *f)
+	void TPoolFile<l_addr_t,p_addr_t>::RPoolInfo::writeToFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle) const
 {
-	f->write(&size,sizeof(size));
-	f->write(&alignment,sizeof(alignment));
+	f->write(&size,sizeof(size),multiFileHandle);
+	f->write(&alignment,sizeof(alignment),multiFileHandle);
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::RPoolInfo::readFromFile(CMultiFile *f)
+	void TPoolFile<l_addr_t,p_addr_t>::RPoolInfo::readFromFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle)
 {
-	f->read(&size,sizeof(size));
-	f->read(&alignment,sizeof(alignment));
+	f->read(&size,sizeof(size),multiFileHandle);
+	f->read(&alignment,sizeof(alignment),multiFileHandle);
 }
 
 
@@ -3517,19 +3528,19 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::writeToFile(CMultiFile *f) const
+	void TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::writeToFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle) const
 {
-	f->write(&logicalStart,sizeof(logicalStart));
-	f->write(&size,sizeof(size));
-	f->write(&physicalStart,sizeof(physicalStart));
+	f->write(&logicalStart,sizeof(logicalStart),multiFileHandle);
+	f->write(&size,sizeof(size),multiFileHandle);
+	f->write(&physicalStart,sizeof(physicalStart),multiFileHandle);
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::readFromFile(CMultiFile *f)
+	void TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::readFromFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle)
 {
-	f->read(&logicalStart,sizeof(logicalStart));
-	f->read(&size,sizeof(size));
-	f->read(&physicalStart,sizeof(physicalStart));
+	f->read(&logicalStart,sizeof(logicalStart),multiFileHandle);
+	f->read(&size,sizeof(size),multiFileHandle);
+	f->read(&physicalStart,sizeof(physicalStart),multiFileHandle);
 }
 
 template<class l_addr_t,class p_addr_t>
@@ -3613,29 +3624,29 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::readString(string &s,CMultiFile *f)
+	void TPoolFile<l_addr_t,p_addr_t>::readString(string &s,CMultiFile *f,CMultiFile::RHandle &multiFileHandle)
 {
 	uint32_t len;
-	f->read(&len,sizeof(len));
+	f->read(&len,sizeof(len),multiFileHandle);
 	char buffer[1024];
 	for(size_t t=0;t<len/1024;t++)
 	{
-		f->read(buffer,1024);
+		f->read(buffer,1024,multiFileHandle);
 		s.append(buffer,1024);
 	}
 	if(len%1024)
 	{
-		f->read(buffer,len%1024);
+		f->read(buffer,len%1024,multiFileHandle);
 		s.append(buffer,len%1024);
 	}
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::writeString(const string &s,CMultiFile *f)
+	void TPoolFile<l_addr_t,p_addr_t>::writeString(const string &s,CMultiFile *f,CMultiFile::RHandle &multiFileHandle)
 {
 	uint32_t len=s.length();
-	f->write(&len,sizeof(len));
-	f->write(s.c_str(),len);
+	f->write(&len,sizeof(len),multiFileHandle);
+	f->write(s.c_str(),len,multiFileHandle);
 }
 
 #endif

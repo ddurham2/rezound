@@ -108,7 +108,7 @@ void CMultiFile::open(const string _initialFilename,const bool canCreate)
 
 	initialFilename=_initialFilename;
 	openFileCount=0;
-	position=0;
+	//position=0;
 
 	try
 	{
@@ -153,7 +153,7 @@ void CMultiFile::close(bool removeFiles=false)
 	openFileCount=0;
 
 	initialFilename="";
-	position=0;
+	//position=0;
 	totalSize=0;
 	opened=false;
 }
@@ -170,27 +170,27 @@ void CMultiFile::rename(const string newInitialFilename)
 	open(newInitialFilename,false);
 }
 
-void CMultiFile::seek(const l_addr_t _position)
+void CMultiFile::seek(const l_addr_t _position,RHandle &handle)
 {
 	if(_position>totalSize)
 		throw(runtime_error(string(__func__)+" -- attempting to seek beyond the end of the file size: "+istring(_position)));
-	position=_position;
+	handle.position=_position;
 }
 
-const CMultiFile::l_addr_t CMultiFile::tell() const
+const CMultiFile::l_addr_t CMultiFile::tell(RHandle &handle) const
 {
-	return(position);
+	return(handle.position);
 }
 
-void CMultiFile::read(void *buffer,const l_addr_t count)
+void CMultiFile::read(void *buffer,const l_addr_t count,RHandle &handle)
 {
 	if(!opened)
 		throw(runtime_error(string(__func__)+" -- not opened"));
-	if((totalSize-position)<count)
-		throw(runtime_error(string(__func__)+" -- attempting to read beyond the end of the file size; position: "+istring(position)+" count: "+istring(count)));
+	if((totalSize-handle.position)<count)
+		throw(runtime_error(string(__func__)+" -- attempting to read beyond the end of the file size; position: "+istring(handle.position)+" count: "+istring(count)));
 
-	size_t whichFile=position/LOGICAL_MAX_FILE_SIZE;
-	f_addr_t whereFile=(position%LOGICAL_MAX_FILE_SIZE)+sizeof(RFileHeader);
+	size_t whichFile=handle.position/LOGICAL_MAX_FILE_SIZE;
+	f_addr_t whereFile=(handle.position%LOGICAL_MAX_FILE_SIZE)+sizeof(RFileHeader);
 
 	l_addr_t lengthToRead=count;
 	while(lengthToRead>0)
@@ -206,7 +206,7 @@ void CMultiFile::read(void *buffer,const l_addr_t count)
 			throw(runtime_error(string(__func__)+" -- error reading from file: "+buildFilename(whichFile)));
 
 		lengthToRead-=stripRead;
-		position+=stripRead;
+		handle.position+=stripRead;
 
 		whichFile++;			// read from the next file next go around
 		whereFile=sizeof(RFileHeader);	// each additional file to read from should start at 0 now
@@ -215,23 +215,24 @@ void CMultiFile::read(void *buffer,const l_addr_t count)
 
 void CMultiFile::read(void *buffer,const l_addr_t count,const l_addr_t _position)
 {
-	seek(_position);
-	read(buffer,count);
+	RHandle handle;
+	seek(_position,handle);
+	read(buffer,count,handle);
 }
 
-void CMultiFile::write(const void *buffer,const l_addr_t count)
+void CMultiFile::write(const void *buffer,const l_addr_t count,RHandle &handle)
 {
 	if(!opened)
 		throw(runtime_error(string(__func__)+" -- not opened"));
-	if((getAvailableSize()-position)<count)
+	if((getAvailableSize()-handle.position)<count)
 		throw(runtime_error(string(__func__)+" -- insufficient space to write "+istring(count)+" more bytes"));
 
 	// grow file(s) if necessary
-	if(totalSize<(position+count))
-		setSize(position+count);
+	if(totalSize<(handle.position+count))
+		setSize(handle.position+count);
 
-	size_t whichFile=position/LOGICAL_MAX_FILE_SIZE;
-	f_addr_t whereFile=(position%LOGICAL_MAX_FILE_SIZE)+sizeof(RFileHeader);
+	size_t whichFile=handle.position/LOGICAL_MAX_FILE_SIZE;
+	f_addr_t whereFile=(handle.position%LOGICAL_MAX_FILE_SIZE)+sizeof(RFileHeader);
 
 	l_addr_t lengthToWrite=count;
 	while(lengthToWrite>0)
@@ -247,7 +248,7 @@ void CMultiFile::write(const void *buffer,const l_addr_t count)
 			throw(runtime_error(string(__func__)+" -- error writing to file: "+buildFilename(whichFile)));
 
 		lengthToWrite-=lengthWritten;
-		position+=lengthWritten;
+		handle.position+=lengthWritten;
 
 		whichFile++;			// write to the next file next go around
 		whereFile=sizeof(RFileHeader);	// each additional file to write to should start at 0 now
@@ -256,8 +257,9 @@ void CMultiFile::write(const void *buffer,const l_addr_t count)
 
 void CMultiFile::write(const void *buffer,const l_addr_t count,const l_addr_t _position)
 {
-	seek(_position);
-	write(buffer,count);
+	RHandle handle;
+	seek(_position,handle);
+	write(buffer,count,handle);
 }
 
 void CMultiFile::setSize(const l_addr_t newSize)
