@@ -79,7 +79,7 @@ protected:
 	CPasteChannelsDialog() {}
 
 private:
-	const CActionSound *actionSound;
+	CActionSound *actionSound;
 
 	FXLabel *label;
 	FXHorizontalSeparator *horzSeparator;

@@ -85,6 +85,12 @@ public:
 	 *
 	 *	   The derived class's show method should modify show's actionSound 
 	 *	   parameter's doChannel values
+	 *	   NOTE: Even if the channel select dialog presets some complex choices
+	 *	   for how channels are to be affected (besides a simple option to select
+	 *	   enable/disable each channel that must be represented in something more
+	 *	   complex than the doChannels bool array) it needs to set doChannels to 
+	 *	   true and false if a channel will be affected at all.  This information is
+	 *	   used to know which channels need to be crossfaded and such.
 	 */
 	//
 	bool performAction(CLoadedSound *loadedSound,CActionParameters *actionParameters,bool showChannelSelectDialog);

@@ -522,6 +522,14 @@ void AAction::prepareForInnerCrossfade(const CActionSound &actionSound)
 	}
 }
 
+/* NOTE TTT:
+ * 	I force the crossfadeFadeMethod to linear when the channel is not true in doChannel[]
+ * 	this is because I crossfade all channels no matter what doChannel[] says (simpler 
+ * 	implementaion and it's not too expensive), but doing a non-linear (i.e. parabolic) 
+ * 	crossfade on data that hasn't changed changes the data (and I don't want to affect the
+ * 	channels that doChannel[] is false for).
+ */
+
 void AAction::crossfadeEdgesInner(const CActionSound &actionSound)
 {
 	bool allChannels[MAX_CHANNELS];
@@ -558,6 +566,7 @@ void AAction::crossfadeEdgesInner(const CActionSound &actionSound)
 		{	
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempCrossfadePoolKeyStart,i);
+			const CrossfadeFadeMethods crossfadeFadeMethod=actionSound.doChannel[i] ? gCrossfadeFadeMethod : cfmLinear; // TTT
 
 /* 
 ??? when I do careful listening on a crossfade after a 
@@ -577,7 +586,7 @@ run-through on paper would help
 			{
 				float g1=(float)srcPos/(float)(crossfadeStartTime-1);
 				float g2=1.0-g1;
-				if(gCrossfadeFadeMethod==cfmParabolic) { g1*=g1; g2*=g2; }
+				if(crossfadeFadeMethod==cfmParabolic) { g1*=g1; g2*=g2; }
 				dest[t]=(sample_t)(dest[t]*g1 + src[srcPos]*g2);
 			}
 		}
@@ -589,7 +598,7 @@ run-through on paper would help
 		crossfadeStartLength=crossfadeStartTime;
 	}
 		
-	// crossfade at stop position
+	// crossfade at the stop position
 	{
 		int tempPoolKey=actionSound.sound->copyDataToTemp(allChannels,actionSound.stop-crossfadeStopTime+1,crossfadeStopTime);
 
@@ -597,6 +606,7 @@ run-through on paper would help
 		{	
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempCrossfadePoolKeyStop,i);
+			const CrossfadeFadeMethods crossfadeFadeMethod=actionSound.doChannel[i] ? gCrossfadeFadeMethod : cfmLinear; // TTT
 
 			sample_pos_t srcPos=0;
 			sample_pos_t srcOffset=crossfadeStopLength-crossfadeStopTime; // amount that we're not using of the stop.. so the *end* of the data will match up
@@ -607,7 +617,7 @@ run-through on paper would help
 			{
 				float g1=(float)srcPos/(float)(crossfadeStopTime-1);
 				float g2=1.0-g1;
-				if(gCrossfadeFadeMethod==cfmParabolic) { g1*=g1; g2*=g2; }
+				if(crossfadeFadeMethod==cfmParabolic) { g1*=g1; g2*=g2; }
 				dest[t]=(sample_t)(dest[t]*g2 + src[srcPos]*g1);
 			}
 		}
@@ -660,10 +670,12 @@ void AAction::crossfadeEdgesOuter(const CActionSound &actionSound)
 		crossfadeStart=actionSound.start-crossfadeTime;
 		crossfadeStartLength=crossfadeTime;
 
+		// crossfade at the start position
 		for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 		{	
 			CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempCrossfadePoolKeyStart,i);
+			const CrossfadeFadeMethods crossfadeFadeMethod=actionSound.doChannel[i] ? gCrossfadeFadeMethod : cfmLinear; // TTT
 
 			sample_pos_t srcPos=0;
 
@@ -672,7 +684,7 @@ void AAction::crossfadeEdgesOuter(const CActionSound &actionSound)
 			for(sample_pos_t t=actionSound.start-crossfadeTime;t<actionSound.start;t++,srcPos++)
 			{
 				float g=1.0-((float)srcPos/(float)(crossfadeTime-1));
-				if(gCrossfadeFadeMethod==cfmParabolic) g*=g;
+				if(crossfadeFadeMethod==cfmParabolic) g*=g;
 				dest[t]=(sample_t)(src[srcPos]*g);
 			}
 
@@ -682,7 +694,7 @@ void AAction::crossfadeEdgesOuter(const CActionSound &actionSound)
 			for(sample_pos_t t=actionSound.start-crossfadeTime;t<actionSound.start;t++,srcPos++)
 			{
 				float g=(float)(srcPos-crossfadeTime)/(float)(crossfadeTime-1);
-				if(gCrossfadeFadeMethod==cfmParabolic) g*=g;
+				if(crossfadeFadeMethod==cfmParabolic) g*=g;
 				dest[t]+=(sample_t)(src[srcPos]*g);
 			}
 
@@ -720,10 +732,12 @@ void AAction::crossfadeEdgesOuter(const CActionSound &actionSound)
 			crossfadeStop=actionSound.stop-crossfadeTime;
 			crossfadeStopLength=crossfadeTime;
 
+			// crossfade at the stop position
 			for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
 			{	
 				CRezPoolAccesser dest=actionSound.sound->getAudio(i);
 				const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempCrossfadePoolKeyStop,i);
+				const CrossfadeFadeMethods crossfadeFadeMethod=actionSound.doChannel[i] ? gCrossfadeFadeMethod : cfmLinear; // TTT
 
 				sample_pos_t srcPos=0;
 
@@ -732,7 +746,7 @@ void AAction::crossfadeEdgesOuter(const CActionSound &actionSound)
 				for(sample_pos_t t=actionSound.stop-crossfadeTime;t<actionSound.stop;t++,srcPos++)
 				{
 					float g=1.0-((float)srcPos/(float)(crossfadeTime-1));
-					if(gCrossfadeFadeMethod==cfmParabolic) g*=g;
+					if(crossfadeFadeMethod==cfmParabolic) g*=g;
 					dest[t]=(sample_t)(src[srcPos]*g);
 				}
 
@@ -742,7 +756,7 @@ void AAction::crossfadeEdgesOuter(const CActionSound &actionSound)
 				for(sample_pos_t t=actionSound.stop-crossfadeTime;t<actionSound.stop;t++,srcPos++)
 				{
 					float g=(float)(srcPos-crossfadeTime)/(float)(crossfadeTime-1);
-					if(gCrossfadeFadeMethod==cfmParabolic) g*=g;
+					if(crossfadeFadeMethod==cfmParabolic) g*=g;
 					dest[t]+=(sample_t)(src[srcPos]*g);
 				}
 

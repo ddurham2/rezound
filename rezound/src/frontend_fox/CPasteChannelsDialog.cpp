@@ -223,11 +223,13 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 		for(unsigned row=0;row<MAX_CHANNELS;row++)
 		{
 			pasteChannels.push_back(vector<bool>());
+			actionSound->doChannel[row]=false; // set doChannel for backend's crossfading's sake
 			for(unsigned col=0;col<MAX_CHANNELS;col++)
 			{
 				FXCheckButton *cb=(FXCheckButton *)checkBoxMatrix->childAtRowCol(row+1,col+1);
 				pasteChannels[row].push_back(cb->shown() ? cb->getCheck() : false);
 				ret|=pasteChannels[row][col];
+				actionSound->doChannel[row]|=pasteChannels[row][col]; // set doChannel for backend's crossfading's sake
 			}
 		}
 
