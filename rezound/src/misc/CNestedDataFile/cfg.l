@@ -370,6 +370,7 @@ static char *quote(const char *input,int &length)
 
 void cfg_init()
 {
+	yylineno=0;
 	myyynerrs=0;
 
 	while(!scopeStack.empty())
@@ -406,7 +407,7 @@ void cfg_includeFile(const char *filename)
 {
 	FILE *f=fopen(filename,"r");
 	if(f==NULL)
-		throw(runtime_error(istring(yylineno)+": -- could not open file: "+string(filename)));
+		throw(runtime_error(string(__func__)+" -- "+istring(yylineno)+": -- could not open file: "+string(filename)));
 	
 	// read text from file into scanString
 	#define READ_CHUNK_SIZE 256
