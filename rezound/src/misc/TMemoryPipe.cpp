@@ -560,13 +560,9 @@ template <class type> int TMemoryPipe<type>::getSize() const
 
 	const int diff=writePos-readPos;
 	if(diff<0) // if(writePos<readPos)
-		//return((bufferSize-(readPos-writePos))-1);
-		return(bufferSize+diff-1);
-	else if(diff>0) // if(readPos<writePos)
-		//return((writePos-readPos)-1);
-		return(diff-1);
-	else // if(writePos==readPos)
-		return(0);
+		return(bufferSize+diff);
+	else // if(writePos>=readPos);
+		return(diff);
 }
 
 template <class type> void TMemoryPipe<type>::clear()
