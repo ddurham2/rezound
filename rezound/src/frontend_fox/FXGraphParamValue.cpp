@@ -70,7 +70,7 @@ class CHorzRuler : public FXHorizontalFrame
 	FXDECLARE(CHorzRuler)
 public:
 	CHorzRuler(FXComposite *p,FXGraphParamValue *_parent) :
-		FXHorizontalFrame(p,FRAME_RAISED | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT | LAYOUT_SIDE_TOP, 0,0,0,20),
+		FXHorizontalFrame(p,FRAME_RAISED | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT | LAYOUT_SIDE_TOP, 0,0,0,17),
 
 		parent(_parent),
 
@@ -138,7 +138,10 @@ public:
 				//dc.drawLine(renderX+H_TICK_FREQ/2,getHeight()-2,renderX+H_TICK_FREQ/2,getHeight()-4);
 
 				const string sValue=parent->getHorzValueString(parent->screenToNodeHorzValue(x));
-				dc.drawText(renderX+1,font->getFontHeight()+2,sValue.c_str(),sValue.length());
+
+				int offset=font->getTextWidth(sValue.c_str(),sValue.length()); // put text left of the tick mark
+
+				dc.drawText(renderX-offset-1,font->getFontHeight()+2,sValue.c_str(),sValue.length());
 			}
 			// else, every 2 ticks (i.e. in between labled ticks)
 				//dc.drawLine(getWidth()-2,renderY,getWidth()-5,renderY); // half way tick between labled ticks
@@ -174,7 +177,7 @@ class CVertRuler : public FXHorizontalFrame
 	FXDECLARE(CVertRuler)
 public:
 	CVertRuler(FXComposite *p,FXGraphParamValue *_parent) :
-		FXHorizontalFrame(p,FRAME_RAISED | LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH | LAYOUT_SIDE_LEFT, 0,0,30),
+		FXHorizontalFrame(p,FRAME_RAISED | LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH | LAYOUT_SIDE_LEFT, 0,0,42),
 
 		parent(_parent),
 
@@ -239,10 +242,11 @@ public:
 			{ // draw and label this tick
 				dc.drawLine(getWidth()-2,renderY,getWidth()-10,renderY);
 
-		
-				int offset=font->getFontHeight(); // put text below the tick mark
 				const string s=parent->getVertValueString(parent->screenToNodeVertValue(y));
-				dc.drawText(3,renderY+offset,s.c_str(),s.length());
+		
+				int yoffset=font->getFontHeight(); // put text below the tick mark
+				int xoffset=font->getTextWidth(s.c_str(),s.length());
+				dc.drawText(getWidth()-xoffset-7,renderY+yoffset,s.c_str(),s.length());
 			}
 			// else, every 2 ticks (i.e. in between labled ticks)
 				//dc.drawLine(getWidth()-2,renderY,getWidth()-5,renderY); // half way tick between labled ticks
@@ -361,12 +365,14 @@ void FXGraphParamValue::setSound(CSound *_sound,sample_pos_t _start,sample_pos_t
 	stop=_stop;
 
 	horzAxisLabel="Time";
-	horzUnits=""; // comes from CSound::getTimePosition()
+	horzUnits="s";
 	horzInterpretValue=NULL;
 	horzUninterpretValue=NULL;
 
 	// make sure that the back buffer re-renders
 	onGraphPanelResize(NULL,0,NULL);
+
+	clearStatus();
 }
 
 void FXGraphParamValue::setHorzParameters(const string horzAxisLabel,const string horzUnits,f_at_xs interpretValue,f_at_xs uninterpretValue)
@@ -767,7 +773,7 @@ const string FXGraphParamValue::getHorzValueString(double horzValue) const
 	if(sound==NULL)
 		return istring(horzInterpretValue(horzValue,0),5,3);
 	else
-		return sound->getTimePosition((sample_pos_t)((sample_fpos_t)(stop-start+1)*horzValue+start));
+		return sound->getTimePosition((sample_pos_t)((sample_fpos_t)(stop-start+1)*horzValue+start),3,false);
 }
 
 
@@ -785,8 +791,8 @@ void FXGraphParamValue::updateStatus()
 
 void FXGraphParamValue::clearStatus()
 {
-	horzValueLabel->setText((horzAxisLabel+": ").c_str());
-	vertValueLabel->setText((vertAxisLabel+": ").c_str());
+	horzValueLabel->setText((horzAxisLabel+": #"+horzUnits).c_str());
+	vertValueLabel->setText((vertAxisLabel+": #"+vertUnits).c_str());
 }
 	
 
