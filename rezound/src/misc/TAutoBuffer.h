@@ -43,7 +43,7 @@
 template <class type> class TAutoBuffer
 {
 public:
-	TAutoBuffer(const size_t _size,const bool zeroContents=false) : 
+	TAutoBuffer(const size_t _size=0,const bool zeroContents=false) : 
 		buffer(NULL)
 	{
 		if(_size>0)
