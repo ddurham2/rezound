@@ -72,7 +72,8 @@ public:
 	virtual void deinitialize();
 
 
-	void start(const sample_pos_t maxDuration=NIL_SAMPLE_POS);
+				// startThreshold is in dBFS
+	void start(const double startThreshold=1,const sample_pos_t maxDuration=NIL_SAMPLE_POS);
 	void stop();
 	virtual void redo(const sample_pos_t maxDuration=NIL_SAMPLE_POS);
 
@@ -82,6 +83,7 @@ public:
 	unsigned getSampleRate() const;
 
 	bool isStarted() const;
+	bool isWaitingForThreshold() const; // may be started, but is still waiting for a certain threshold to actually start saving data
 	const sample_pos_t getRecordedLength() const;
 	string getRecordedLengthS() const;
 	string getRecordedSizeS() const;
@@ -100,6 +102,7 @@ protected:
 private:
 	CSound *sound;
 	bool started;
+	sample_t startThreshold;
 	sample_pos_t prealloced;
 	sample_pos_t origLength;
 	sample_pos_t writePos;

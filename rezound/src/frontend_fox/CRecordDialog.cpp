@@ -41,6 +41,8 @@ FXDEFMAP(CRecordDialog) CRecordDialogMap[]=
 
 	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_DURATION_SPINNER,	CRecordDialog::onDurationSpinner),
 
+	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_START_THRESHOLD_SPINNER,	CRecordDialog::onStartThresholdSpinner),
+
 	FXMAPFUNC(SEL_TIMEOUT,		CRecordDialog::ID_STATUS_UPDATE,	CRecordDialog::onStatusUpdate),
 
 	FXMAPFUNC(SEL_COMMAND,		CRecordDialog::ID_CLEAR_CLIP_COUNT_BUTTON,CRecordDialog::onClearClipCountButton),
@@ -85,17 +87,20 @@ CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
 					// but what name shall I give the cues
 					// the checkbox should indicate that cues will be placed at each time the sound is stopped and started
 				//surroundWithCuesButton=new FXCheckButton(frame3,"Surround With Cues");
-			frame3=new FXHorizontalFrame(frame2,FRAME_RAISED | LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
-				recordingLED=new FXPacker(frame3,LAYOUT_CENTER_X|LAYOUT_CENTER_Y, 0,0,0,0, 0,0,0,0, 0,0);
+			frame3=new FXVerticalFrame(frame2,FRAME_RAISED | LAYOUT_FILL_X, 0,0,0,0, 0,45,0,0, 0,0);
+				recordingLED=new FXPacker(frame3,LAYOUT_RIGHT|LAYOUT_CENTER_Y, 0,0,0,0, 0,0,0,0, 0,0);
 					new FXLabel(recordingLED,"Recording:",FOXIcons->RedLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0);
 					new FXLabel(recordingLED,"Recording:",FOXIcons->OffLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0);
+				waitingForThresholdLED=new FXPacker(frame3,LAYOUT_RIGHT|LAYOUT_CENTER_Y, 0,0,0,0, 0,0,0,0, 0,0);
+					new FXLabel(waitingForThresholdLED,"Waiting for Threshold:",FOXIcons->YellowLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0);
+					new FXLabel(waitingForThresholdLED,"Waiting for Threshold:",FOXIcons->OffLED1,JUSTIFY_NORMAL | ICON_AFTER_TEXT | LAYOUT_FIX_X|LAYOUT_FIX_Y, 0,0);
 			frame3=new FXHorizontalFrame(frame2,FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_FILL_Y);
 				frame3->setHSpacing(0);
 				frame3->setVSpacing(0);
 				frame4=new FXVerticalFrame(frame3,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
-					new FXLabel(frame4,"Rec Length: ",NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT);
-					new FXLabel(frame4,"Rec Size: ",NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT);
-					new FXLabel(frame4,"Rec Limit: ",NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT);
+					new FXLabel(frame4,"Record Length: ",NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT);
+					new FXLabel(frame4,"Record Size: ",NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT);
+					new FXLabel(frame4,"Record Limit: ",NULL,LAYOUT_FILL_X|JUSTIFY_RIGHT);
 				frame4=new FXVerticalFrame(frame3,LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 0,0);
 					recordedLengthStatusLabel=new FXLabel(frame4,"00:00.000",NULL,LAYOUT_FILL_X|JUSTIFY_LEFT);
 					recordedSizeStatusLabel=new FXLabel(frame4,"0",NULL,LAYOUT_FILL_X|JUSTIFY_LEFT);
@@ -110,13 +115,22 @@ CRecordDialog::CRecordDialog(FXWindow *mainWindow) :
 			new FXButton(frame2,"Record/\nResume",NULL,this,ID_START_BUTTON);
 			new FXButton(frame2,"Stop/\nPause",NULL,this,ID_STOP_BUTTON);
 			new FXButton(frame2,"Redo/\nReset",NULL,this,ID_REDO_BUTTON);
+
 		frame2=new FXHorizontalFrame(frame1,LAYOUT_CENTER_X);
 			setDurationButton=new FXCheckButton(frame2,"Limit Duration to ");
 			durationEdit=new FXTextField(frame2,12);
 			durationEdit->setText("MM:SS.sss");
 			durationSpinner=new FXSpinner(frame2,0,this,ID_DURATION_SPINNER, SPIN_NOTEXT);
 			durationSpinner->setRange(-10,10);
-		
+
+		frame2=new FXHorizontalFrame(frame1,LAYOUT_CENTER_X);
+			startThresholdButton=new FXCheckButton(frame2,"Effective on Threshold ");
+			startThresholdEdit=new FXTextField(frame2,12);
+			startThresholdEdit->setText("-25");
+			startThresholdSpinner=new FXSpinner(frame2,0,this,ID_START_THRESHOLD_SPINNER, SPIN_NOTEXT);
+			startThresholdSpinner->setRange(-10,10);
+			new FXLabel(frame2,"dBFS");
+	
 }
 
 CRecordDialog::~CRecordDialog()
@@ -146,10 +160,12 @@ void CRecordDialog::setMeterValue(unsigned channel,float value)
 	meter->setProgress((FXint)(value*1000));
 }
 
+
+static int blinkCounter=0;
 long CRecordDialog::onStatusUpdate(FXObject *sender,FXSelector sel,void *ptr)
 {
 	if(!showing)
-		return(0);
+		return 0;
 
 	for(unsigned i=0;i<meters.size();i++)
 		setMeterValue(i,recorder->getAndResetLastPeakValue(i));
@@ -164,14 +180,41 @@ long CRecordDialog::onStatusUpdate(FXObject *sender,FXSelector sel,void *ptr)
 	else
 		recordLimitLabel->setText("");
 
+
+	blinkCounter++;
+	blinkCounter%=6;
+
+	// handle the red recording LED
 	if(recorder->isStarted())
-		recordingLED->getFirst()->raise();
+	{
+		if(recorder->isWaitingForThreshold())
+			recordingLED->getFirst()->raise(); // solid while waiting
+		else
+		{ // blinking while actually recording
+			if(blinkCounter>=2)
+				recordingLED->getFirst()->raise();
+			else
+				recordingLED->getFirst()->lower();
+		}
+	}
 	else
 		recordingLED->getFirst()->lower();
 
+	// handle the yellow waiting LED
+	if(recorder->isWaitingForThreshold())
+	{
+		//blink
+		if(blinkCounter>=2)
+			waitingForThresholdLED->getFirst()->raise();
+		else
+			waitingForThresholdLED->getFirst()->lower();
+	}
+	else
+		waitingForThresholdLED->getFirst()->lower();
+
 	// schedule for the next status update
 	timerHandle=getApp()->addTimeout(STATUS_UPDATE_TIME,this,CRecordDialog::ID_STATUS_UPDATE);
-	return(1);
+	return 1;
 }
 
 bool CRecordDialog::show(ASoundRecorder *_recorder)
@@ -202,11 +245,11 @@ bool CRecordDialog::show(ASoundRecorder *_recorder)
 		{
 			showing=false;
 			cleanupMeters();
-			return(true);
+			return true;
 		}
 		showing=false;
 		cleanupMeters();
-		return(false);
+		return false;
 	}
 	catch(...)
 	{
@@ -224,24 +267,36 @@ const sample_pos_t CRecordDialog::getMaxDuration()
 		if(wasInvalid)
 		{
 			Error("Invalid record time limit -- Should be in the form of HH:MM:SS.sss, MM:SS.sss or SS.sss");
-			return(1);
+			return 1;
 		}
 
 		if(d==0)
 		{
 			setDurationButton->setCheck(false);
-			return(NIL_SAMPLE_POS);
+			return NIL_SAMPLE_POS;
 		}
 		else
-			return(d);
+			return d;
 	}
-	return(NIL_SAMPLE_POS);
+	return NIL_SAMPLE_POS;
+}
+
+const double CRecordDialog::getStartThreshold()
+{
+	if(startThresholdButton->getCheck())
+	{
+		const double startThreshold=atof(startThresholdEdit->getText().text());
+		startThresholdEdit->setText(istring(startThreshold,3,2,false).c_str());
+		return startThreshold;
+	}
+	return 1.0; // no threshold
 }
 
 long CRecordDialog::onStartButton(FXObject *sender,FXSelector sel,void *ptr)
 {
+	blinkCounter=2;
 	clearClipCount();
-	recorder->start(getMaxDuration());
+	recorder->start(getStartThreshold(),getMaxDuration());
 	return 1;
 }
 
@@ -309,3 +364,21 @@ long CRecordDialog::onDurationSpinner(FXObject *sender,FXSelector sel,void *ptr)
 
 	return 1;
 }
+
+long CRecordDialog::onStartThresholdSpinner(FXObject *sender,FXSelector sel,void *ptr)
+{
+	double startThreshold=atof(startThresholdEdit->getText().text());
+	startThreshold+=startThresholdSpinner->getValue();
+	startThresholdSpinner->setValue(0);
+
+	if(startThreshold<-100)
+		startThreshold=-100;
+	else if(startThreshold>0)
+		startThreshold=0;
+
+	startThresholdEdit->setText(istring(startThreshold,3,2,false).c_str());
+	
+	startThresholdButton->setCheck(true);
+	return 1;
+}
+

@@ -54,6 +54,7 @@ public:
 		ID_CLEAR_CLIP_COUNT_BUTTON,
 
 		ID_DURATION_SPINNER,
+		ID_START_THRESHOLD_SPINNER,
 
 		ID_STATUS_UPDATE,
 
@@ -72,6 +73,8 @@ public:
 
 	long onDurationSpinner(FXObject *sender,FXSelector sel,void *ptr);
 
+	long onStartThresholdSpinner(FXObject *sender,FXSelector sel,void *ptr);
+
 protected:
 	CRecordDialog() {}
 
@@ -88,12 +91,17 @@ private:
 	FXLabel *recordLimitLabel;
 
 	FXPacker *recordingLED;
+	FXPacker *waitingForThresholdLED;
 
 	FXLabel *clipCountLabel;
 
 	FXCheckButton *setDurationButton;
 	FXTextField *durationEdit;
 	FXSpinner *durationSpinner;
+
+	FXCheckButton *startThresholdButton;
+	FXTextField *startThresholdEdit;
+	FXSpinner *startThresholdSpinner;
 
 	FXTextField *cueNamePrefix;
 	FXSpinner *cueNameNumber;
@@ -105,6 +113,7 @@ private:
 	void clearClipCount();
 
 	const sample_pos_t getMaxDuration();
+	const double getStartThreshold();
 
 };
 

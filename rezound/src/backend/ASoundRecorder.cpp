@@ -21,6 +21,7 @@
 #include "ASoundRecorder.h"
 
 #include "AStatusComm.h"
+#include "unit_conv.h"
 
 #include <algorithm>
 
@@ -38,13 +39,18 @@ ASoundRecorder::~ASoundRecorder()
 {
 }
 
-void ASoundRecorder::start(const sample_pos_t maxDuration)
+void ASoundRecorder::start(const double _startThreshold,const sample_pos_t maxDuration)
 {
 	mutex.lock();
 	try
 	{
 		if(!started)
 		{
+			if(_startThreshold>0)
+				startThreshold=-1; // no threshold asked for
+			else
+				startThreshold=dBFS_to_amp(_startThreshold); // translate dBFS into an actual sample value
+
 			started=true;
 			if(maxDuration!=NIL_SAMPLE_POS && (MAX_LENGTH-writePos)>maxDuration)
 				stopPosition=writePos+maxDuration;
@@ -131,7 +137,7 @@ void ASoundRecorder::done()
 {
 	// this method removes extra space in the sound beyond what was recorded since the last start()/stop()
 	if(started)
-		throw(string(__func__)+" -- done should not be called while the recorder is start()-ed");
+		throw string(__func__)+" -- done should not be called while the recorder is start()-ed";
 
 	sound->lockForResize();
 	try
@@ -241,6 +247,38 @@ void ASoundRecorder::onData(const sample_t *samples,const size_t _sampleFramesRe
 
 		if(started)
 		{
+			// if a startThreshold has been set, then ignore data even if started if no data is above the threshold
+			if(startThreshold>=0)
+			{
+				for(unsigned i=0;i<channelCount;i++)
+				{
+					const sample_t *_samples=samples+i;
+					for(size_t t=0;t<sampleFramesRecorded;t++)
+					{
+						sample_t s=*_samples;
+						if(s<0)
+							s=-s;
+						if(s>=startThreshold)
+						{
+							// threshold met, now turn off the threshold check
+							startThreshold=-1;
+
+							// ignore data in chunk before the first sample that met the treshold
+							samples+=(t*channelCount);
+							sampleFramesRecorded-=t;
+
+							goto goAheadAndSave; // using 'goto', because 'break' can go past two loops
+						}
+						_samples+=channelCount;
+					}
+
+				}
+				mutex.unlock();
+				return;
+			}
+
+			goAheadAndSave:
+
 			// we preallocate space in the sound in PREALLOC_SECONDS second chunks
 			if(prealloced<sampleFramesRecorded)
 			{
@@ -299,40 +337,45 @@ void ASoundRecorder::onData(const sample_t *samples,const size_t _sampleFramesRe
 
 unsigned ASoundRecorder::getChannelCount() const
 {
-	return(sound->getChannelCount());
+	return sound->getChannelCount();
 }
 
 unsigned ASoundRecorder::getSampleRate() const
 {
-	return(sound->getSampleRate());
+	return sound->getSampleRate();
 }
 
 bool ASoundRecorder::isStarted() const
 {
-	return(started);
+	return started;
+}
+
+bool ASoundRecorder::isWaitingForThreshold() const
+{
+	return started && startThreshold>=0;
 }
 
 string ASoundRecorder::getRecordedLengthS() const
 {
-	return(sound->getTimePosition(writePos-origLength));
+	return sound->getTimePosition(writePos-origLength);
 }
 
 const sample_pos_t ASoundRecorder::getRecordedLength() const
 {
-	return(writePos-origLength);
+	return writePos-origLength;
 }
 
 string ASoundRecorder::getRecordedSizeS() const
 {
-	return(sound->getAudioDataSize(writePos-origLength));
+	return sound->getAudioDataSize(writePos-origLength);
 }
 
 string ASoundRecorder::getRecordLimitS() const
 {
 	if(stopPosition!=NIL_SAMPLE_POS)
-		return(sound->getTimePosition(stopPosition-origLength));
+		return sound->getTimePosition(stopPosition-origLength);
 	else
-		return("memory");
+		return "memory";
 }
 
 bool ASoundRecorder::cueNameExists(const string name) const
@@ -340,15 +383,15 @@ bool ASoundRecorder::cueNameExists(const string name) const
 	for(size_t t=0;t<addedCues.size();t++)
 	{
 		if(strcmp(addedCues[t].name,name.c_str())==0)
-			return(true);
+			return true;
 	}
-	return(false);
+	return false;
 }
 
 void ASoundRecorder::addCueNow(const string name,bool isAnchored)
 {
 	if(sound->containsCue(name) || cueNameExists(istring(name).truncate(MAX_SOUND_CUE_NAME_LENGTH)))
-		throw(runtime_error(string(__func__)+" -- a cue already exist with the name: '"+name+"'"));
+		throw runtime_error(string(__func__)+" -- a cue already exist with the name: '"+name+"'");
 
 	// this actually adds the cue at the last 20th of a second or so
 	// depending on the how often the derived class is invoking onData
@@ -366,7 +409,7 @@ float ASoundRecorder::getAndResetLastPeakValue(unsigned channel)
 {
 	float p=lastPeakValues[channel];
 	lastPeakValues[channel]=0.0;
-	return(p);
+	return p;
 }
 
 void ASoundRecorder::setStatusTrigger(TriggerFunc triggerFunc,void *data)
