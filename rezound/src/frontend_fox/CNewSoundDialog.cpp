@@ -65,8 +65,6 @@ CNewSoundDialog::CNewSoundDialog(FXWindow *mainWindow) :
 		lengthComboBox(new FXComboBox(lengthFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK)),
 		lengthUnitsLabel(new FXLabel(lengthFrame,"second(s)"))
 {
-	filenameTextBox->setText((gPromptDialogDirectory+"untitled0.rez").c_str());
-
 	for(size_t t=0;t<MAX_CHANNELS;t++)
 		channelsComboBox->appendItem(istring(t+1).c_str());
 	channelsComboBox->setCurrentItem(1); // stereo
@@ -109,6 +107,12 @@ long CNewSoundDialog::onBrowseButton(FXObject *sender,FXSelector sel,void *ptr)
 	}
 
 	return(1);
+}
+
+void CNewSoundDialog::show(FXuint placement)
+{
+	filenameTextBox->setText(filename.c_str());
+	FXModalDialogBox::show(placement);
 }
 
 void CNewSoundDialog::hideLength(bool hide)

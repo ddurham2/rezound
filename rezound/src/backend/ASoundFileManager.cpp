@@ -334,6 +334,31 @@ void ASoundFileManager::recordToNew()
 }
 
 
+const string ASoundFileManager::getUntitledFilename(const string directory,const string extension)
+{
+	string filename=directory+"untitled";
+	for(size_t t=0;t<100;t++)
+	{
+		if(!ost::Path(filename+istring(t)+"."+extension).Exists())
+			return(filename+istring(t)+"."+extension);
+	}
+
+	filename=directory+"default";
+	for(size_t t=0;t<100;t++)
+	{
+		if(!ost::Path(filename+istring(t)+"."+extension).Exists())
+			return(filename+istring(t)+"."+extension);
+	}
+
+	filename=directory+"newfile";
+	for(size_t t=0;t<100;t++)
+	{
+		if(!ost::Path(filename+istring(t)+"."+extension).Exists())
+			return(filename+istring(t)+"."+extension);
+	}
+
+	return("");
+}
 
 
 #define LOADED_REG_KEY "loaded"

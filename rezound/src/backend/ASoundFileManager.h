@@ -54,6 +54,8 @@ public:
 	void revert();
 	void recordToNew();
 
+	static const string getUntitledFilename(const string directory,const string extension);
+
 	// return the CLoadedSound object associated with the sound window which is currently 'focused'
 	// return NULL if there is no focused window
 	virtual CLoadedSound *getActive()=0;

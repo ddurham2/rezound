@@ -93,6 +93,7 @@ bool CSoundFileManager::promptForSave(string &filename,const string _extension)
 bool CSoundFileManager::promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate,sample_pos_t &length)
 {
 	gNewSoundDialog->hideLength(false);
+	gNewSoundDialog->setFilename(getUntitledFilename(gPromptDialogDirectory,"rez"));
 	if(gNewSoundDialog->execute(PLACEMENT_CURSOR))	
 	{
 		filename=gNewSoundDialog->getFilename();
@@ -107,6 +108,7 @@ bool CSoundFileManager::promptForNewSoundParameters(string &filename,unsigned &c
 bool CSoundFileManager::promptForNewSoundParameters(string &filename,unsigned &channelCount,unsigned &sampleRate)
 {
 	gNewSoundDialog->hideLength(true);
+	gNewSoundDialog->setFilename(getUntitledFilename(gPromptDialogDirectory,"rez"));
 	if(gNewSoundDialog->execute(PLACEMENT_CURSOR))	
 	{
 		filename=gNewSoundDialog->getFilename();

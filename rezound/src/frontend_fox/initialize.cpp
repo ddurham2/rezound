@@ -62,18 +62,24 @@ void initializeReZound()
 	{
 
 		// make sure that ~/.rezound exists
-		gUserDataDirectory=string(getenv("HOME"))+"/.rezound";
+		gUserDataDirectory=string(getenv("HOME"))+istring(ost::Path::dirDelim)+".rezound";
 		const int mkdirResult=mkdir(gUserDataDirectory.c_str(),0700);
 		const int mkdirErrno=errno;
 		if(mkdirResult!=0 && mkdirErrno!=EEXIST)
 			throw(runtime_error(string(__func__)+" -- error creating "+gUserDataDirectory+" -- "+strerror(mkdirErrno)));
 
-		ost::Path(gUserDataDirectory+"/presets.dat").Touch();
 
 		// determine where /usr/share/rezound has been placed (try the install-from directory first)
 		gSysDataDirectory=SOURCE_DIR"/share/rezound";
 		if(!ost::Path(gSysDataDirectory).Exists()) 
 			gSysDataDirectory=DATA_DIR"/rezound";
+
+
+		gUserPresetsFile=gUserDataDirectory+istring(ost::Path::dirDelim)+"presets.dat";
+		gSysPresetsFile=gSysDataDirectory+istring(ost::Path::dirDelim)+"presets.dat";
+
+		ost::Path(gUserPresetsFile).Touch();
+
 
 
 		// -- 1
@@ -85,7 +91,7 @@ void initializeReZound()
 			// still exist for all previously open files)
 		try
 		{
-			gSettingsRegistry=new CNestedDataFile(gUserDataDirectory+"/registry.dat",true);
+			gSettingsRegistry=new CNestedDataFile(gUserDataDirectory+istring(ost::Path::dirDelim)+"registry.dat",true);
 		}
 		catch(exception &e)
 		{

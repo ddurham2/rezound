@@ -66,7 +66,7 @@ CActionParamDialog::CActionParamDialog(FXWindow *mainWindow,const FXString title
 
 	try
 	{
-		if(CNestedDataFile(gSysDataDirectory+"/presets.dat").getArraySize((getTitle()+".names").text())>0)
+		if(CNestedDataFile(gSysPresetsFile).getArraySize((getTitle()+".names").text())>0)
 		{
 			// native preset stuff
 			FXPacker *listFrame=new FXPacker(presetsFrame,FRAME_SUNKEN|FRAME_THICK|LAYOUT_FIX_WIDTH | LAYOUT_FILL_Y, 0,0,200,0, 0,0,0,0, 0,0); // had to do this because FXList won't take that frame style
@@ -193,12 +193,12 @@ long CActionParamDialog::onPresetUseButton(FXObject *sender,FXSelector sel,void 
 	FXList *listBox;
 	if(SELID(sel)==ID_NATIVE_PRESET_BUTTON || SELID(sel)==ID_NATIVE_PRESET_LIST)
 	{
-		filename=gSysDataDirectory+"/presets.dat";
+		filename=gSysPresetsFile;
 		listBox=nativePresetList;
 	}
 	else //if(SELID(sel)==ID_USER_PRESET_BUTTON || SELID(sel)==ID_USER_PRESET_LIST)
 	{
-		filename=gUserDataDirectory+"/presets.dat";
+		filename=gUserPresetsFile;
 		listBox=userPresetList;
 	}
 
@@ -256,7 +256,7 @@ long CActionParamDialog::onPresetSaveButton(FXObject *sender,FXSelector sel,void
 		string name=_name.text();
 		try
 		{
-			CNestedDataFile f(gUserDataDirectory+"/presets.dat");
+			CNestedDataFile f(gUserPresetsFile);
 
 
 			const string title=string(getTitle().text())+"."+name;
@@ -312,7 +312,7 @@ long CActionParamDialog::onPresetRemoveButton(FXObject *sender,FXSelector sel,vo
 		string name=(userPresetList->getItemText(userPresetList->getCurrentItem())).mid(4,255).text();
 		if(Question("Remove Preset '"+name+"'",yesnoQues)==yesAns)
 		{
-			CNestedDataFile f(gUserDataDirectory+"/presets.dat");
+			CNestedDataFile f(gUserPresetsFile);
 
 			const string key=string(getTitle().text())+"."+name;
 
@@ -335,7 +335,7 @@ void CActionParamDialog::buildPresetLists()
 	{
 		try
 		{
-			CNestedDataFile f1(gSysDataDirectory+"/presets.dat");
+			CNestedDataFile f1(gSysPresetsFile);
 			buildPresetList(f1,nativePresetList);
 		}
 		catch(exception &e)
@@ -347,7 +347,7 @@ void CActionParamDialog::buildPresetLists()
 
 	try
 	{
-		CNestedDataFile f2(gUserDataDirectory+"/presets.dat");
+		CNestedDataFile f2(gUserPresetsFile);
 		buildPresetList(f2,userPresetList);
 	}
 	catch(exception &e)

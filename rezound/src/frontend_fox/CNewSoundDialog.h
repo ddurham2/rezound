@@ -38,6 +38,8 @@ class CNewSoundDialog : public FXModalDialogBox
 public:
 	CNewSoundDialog(FXWindow *mainWindow);
 
+	void show(FXuint placement);
+
 	long onBrowseButton(FXObject *sender,FXSelector sel,void *ptr);
 
 	enum	
@@ -47,6 +49,7 @@ public:
 	};
 
 	const string getFilename() const { return(filename); }
+	void setFilename(const string f) { filename=f; }
 	const unsigned getChannelCount() const { return(channelCount); }
 	const unsigned getSampleRate() const { return(sampleRate); }
 	const sample_pos_t getLength() const { return(length); }

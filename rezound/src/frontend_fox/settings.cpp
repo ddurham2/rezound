@@ -30,6 +30,9 @@ string gPromptDialogDirectory="";
 string gUserDataDirectory="";
 string gSysDataDirectory="";
 
+string gUserPresetsFile="";
+string gSysPresetsFile="";
+
 FocusMethods gFocusMethod=fmSoundWindowList;
 
 bool gSnapToCues=true;

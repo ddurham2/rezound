@@ -43,6 +43,9 @@ extern string gPromptDialogDirectory;
 extern string gUserDataDirectory;	// "~/.rezound"
 extern string gSysDataDirectory;	// "/usr/share/rezound" (or whereever the --prefix was set)
 
+extern string gUserPresetsFile;		// "~/.rezound/presets.dat"
+extern string gSysPresetsFile;		// "/usr/share/rezound/presets.dat"
+
 
 /*
  * how sound windows are focused
