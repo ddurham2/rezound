@@ -347,4 +347,5 @@ dnl since this script isn't terribly big and it can be confusing when things
 dnl are cached and you're re-running configure after installing some library I 
 dnl will just always remove the cache file after running
 rm -f config.cache
+rm -f a.out #autoconf  is leaving this around for some reason
 
