@@ -54,8 +54,6 @@ FXDEFMAP(FXConstantParamValue) FXConstantParamValueMap[]=
 
 FXIMPLEMENT(FXConstantParamValue,FXVerticalFrame,FXConstantParamValueMap,ARRAYNUMBER(FXConstantParamValueMap))
 
-//FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _uninterpretValue,const int minScalar,const int maxScalar,const int _initScalar,bool showInverseButton,FXComposite *p,int opts,const char *title,int x,int y,int w,int h) :
-	//FXVerticalFrame(p,opts|FRAME_RIDGE | LAYOUT_FILL_Y|LAYOUT_CENTER_X|LAYOUT_FIX_HEIGHT,x,y,w,h, 6,6,2,4, 0,2),
 FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _uninterpretValue,const int minScalar,const int maxScalar,const int _initScalar,bool showInverseButton,FXComposite *p,int opts,const char *title) :
 	FXVerticalFrame(p,opts|FRAME_RIDGE | LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 6,6,2,4, 0,2),
 
@@ -138,6 +136,7 @@ void FXConstantParamValue::setUnits(FXString _units)
 }
 
 #define GET_SCALAR_VALUE ( scalarSpinner==NULL ? initScalar : scalarSpinner->getValue()  )
+#define SET_SCALAR_VALUE(v) { if(scalarSpinner!=NULL) scalarSpinner->setValue(v); }
 
 long FXConstantParamValue::onSliderChange(FXObject *sender,FXSelector sel,void *ptr)
 {
@@ -198,5 +197,37 @@ void FXConstantParamValue::setValue(const double value)
 	if(slider!=NULL)
 		slider->setValue((int)(uninterpretValue(value,GET_SCALAR_VALUE)*10000.0));
 	valueTextBox->setText((istring(retValue,7,4)).c_str());
+}
+
+const int FXConstantParamValue::getScalar() const
+{
+	return(GET_SCALAR_VALUE);
+}
+
+void FXConstantParamValue::setScalar(const int scalar)
+{
+	SET_SCALAR_VALUE(scalar);
+	updateNumbers();
+}
+
+const int FXConstantParamValue::getMinScalar() const
+{
+	FXint lo=0,hi=0;
+	if(scalarSpinner!=NULL)
+		scalarSpinner->getRange(lo,hi);
+	return(lo);
+}
+
+const int FXConstantParamValue::getMaxScalar() const
+{
+	FXint lo=0,hi=0;
+	if(scalarSpinner!=NULL)
+		scalarSpinner->getRange(lo,hi);
+	return(hi);
+}
+
+const string FXConstantParamValue::getTitle() const
+{
+	return(titleLabel->getText().text());
 }
 

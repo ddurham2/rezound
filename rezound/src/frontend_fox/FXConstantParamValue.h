@@ -64,6 +64,15 @@ public:
 	const double &getValue() const;
 	void setValue(const double value);
 
+	const int getScalar() const;
+	void setScalar(const int scalar);
+
+	const int getMinScalar() const;
+	const int getMaxScalar() const;
+	
+
+	const string getTitle() const;
+
 	enum
 	{
 		ID_SLIDER=FXPacker::ID_LAST,
