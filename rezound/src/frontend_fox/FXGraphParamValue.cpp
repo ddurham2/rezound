@@ -33,6 +33,9 @@
 #include "utils.h"
 
 #include "../backend/CSound.h"
+#include "../backend/CSound.h"
+
+#include "CFOXIcons.h"
 
 #define NODE_RADIUS 4
 
@@ -298,7 +301,10 @@ FXDEFMAP(FXGraphParamValue) FXGraphParamValueMap[]=
 	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	FXGraphParamValue::ID_GRAPH_CANVAS,	FXGraphParamValue::onDestroyNode),
 
 	FXMAPFUNC(SEL_COMMAND,			FXGraphParamValue::ID_SCALAR_SPINNER,	FXGraphParamValue::onScalarSpinnerChange),
+
 	FXMAPFUNC(SEL_COMMAND,			FXGraphParamValue::ID_CLEAR_BUTTON,	FXGraphParamValue::onPatternButton),
+	FXMAPFUNC(SEL_COMMAND,			FXGraphParamValue::ID_HORZ_FLIP_BUTTON,	FXGraphParamValue::onPatternButton),
+	FXMAPFUNC(SEL_COMMAND,			FXGraphParamValue::ID_VERT_FLIP_BUTTON,	FXGraphParamValue::onPatternButton),
 
 	FXMAPFUNC(SEL_CHANGED,			FXGraphParamValue::ID_HORZ_DEFORM_SLIDER,FXGraphParamValue::onHorzDeformSliderChange),
 	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	FXGraphParamValue::ID_HORZ_DEFORM_SLIDER,FXGraphParamValue::onHorzDeformSliderReset),
@@ -324,11 +330,11 @@ FXGraphParamValue::FXGraphParamValue(const string _title,const int minScalar,con
 			horzDeformSlider(new FXSlider(horzDeformPanel,this,ID_HORZ_DEFORM_SLIDER, FRAME_NONE | LAYOUT_FILL_X | SLIDER_HORIZONTAL|SLIDER_TICKS_TOP|SLIDER_ARROW_UP,0,0,0,0, 0,0,0,0)),
 		graphCanvas(new FXCanvas(graphPanel,this,ID_GRAPH_CANVAS,LAYOUT_FILL_X|LAYOUT_FILL_Y)),
 	
-	statusPanel(new FXHorizontalFrame(this,FRAME_NONE | LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 4,0)),
+	statusPanel(new FXHorizontalFrame(this,FRAME_NONE | LAYOUT_FILL_X, 0,0,0,0, 4,4,0,0, 4,0)),
 		horzValueLabel(new FXLabel(statusPanel,": ",NULL,LAYOUT_LEFT)),
 		vertValueLabel(new FXLabel(statusPanel,": ",NULL,LAYOUT_LEFT)),
 
-	buttonPanel(new FXHorizontalFrame(this,FRAME_NONE | LAYOUT_FILL_X, 0,0,0,0, 0,0,2,2)),
+	buttonPanel(new FXHorizontalFrame(this,FRAME_NONE | LAYOUT_FILL_X, 0,0,0,0, 4,4,2,4)),
 		scalarLabel(NULL),
 		scalarSpinner(NULL),
 
@@ -377,12 +383,14 @@ FXGraphParamValue::FXGraphParamValue(const string _title,const int minScalar,con
 	if(minScalar!=maxScalar)
 	{
 		scalarLabel=new FXLabel(buttonPanel,"Scalar",NULL,LABEL_NORMAL|LAYOUT_CENTER_Y);
-		scalarSpinner=new FXSpinner(buttonPanel,5,this,ID_SCALAR_SPINNER,SPIN_NORMAL|FRAME_SUNKEN|FRAME_THICK);
+		scalarSpinner=new FXSpinner(buttonPanel,5,this,ID_SCALAR_SPINNER,SPIN_NORMAL|FRAME_SUNKEN|FRAME_THICK|LAYOUT_CENTER_Y);
 		scalarSpinner->setRange(minScalar,maxScalar);
 		scalarSpinner->setValue(initScalar);
 	}
 
-	new FXButton(buttonPanel,"Clear",NULL,this,ID_CLEAR_BUTTON);
+	new FXButton(buttonPanel,"\tClear to Normal",FOXIcons->graph_clear,this,ID_CLEAR_BUTTON);
+	new FXButton(buttonPanel,"\tFlip Graph Horizontally",FOXIcons->graph_horz_flip,this,ID_HORZ_FLIP_BUTTON);
+	new FXButton(buttonPanel,"\tFlip Graph Vertically",FOXIcons->graph_vert_flip,this,ID_VERT_FLIP_BUTTON);
 
 	nodes.reserve(100);
 
@@ -472,6 +480,28 @@ long FXGraphParamValue::onPatternButton(FXObject *sender,FXSelector sel,void *pt
 		vertDeformSlider->setValue(0);
 		clearNodes();
 		break;
+
+	case ID_HORZ_FLIP_BUTTON:
+	{
+		horzDeformSlider->setValue(-horzDeformSlider->getValue());
+		// reverse the order and 1.0-x each node
+		CGraphParamValueNodeList tmp;
+		for(unsigned t=0;t<nodes.size();t++)
+		{
+			tmp.push_back(nodes[nodes.size()-t-1]);
+			tmp[tmp.size()-1].x=1.0-tmp[tmp.size()-1].x;
+		}
+		nodes=tmp;
+	}
+		break;
+
+	case ID_VERT_FLIP_BUTTON:
+		vertDeformSlider->setValue(-vertDeformSlider->getValue());
+		for(unsigned t=0;t<nodes.size();t++)
+			nodes[t].y=1.0-nodes[t].y;
+		break;
+
+	// ??? need a button that can change bandpass to notch
 
 	}
 
