@@ -65,6 +65,8 @@ private:
 
 	FXLabel *titleLabel;
 	FXComboBox *valueComboBox;
+
+	FXFont *textFont;
 };
 
 #endif

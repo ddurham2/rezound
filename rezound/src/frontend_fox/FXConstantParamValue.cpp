@@ -27,6 +27,8 @@
 #include <CNestedDataFile/CNestedDataFile.h>
 #define DOT (CNestedDataFile::delimChar)
 
+#include "utils.h"
+
 /*
 	- This is the slider widget used over and over by ReZound on action dialogs
 	- It can also be constructed not to have the slider to serve as a text entry widget
@@ -58,20 +60,23 @@ FXIMPLEMENT(FXConstantParamValue,FXVerticalFrame,FXConstantParamValueMap,ARRAYNU
 
 #define ASSURE_HEIGHT(parent,height) new FXFrame(parent,FRAME_NONE|LAYOUT_SIDE_LEFT | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT,0,0,0,height);
 
+#include "utils.h"
+
 FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _uninterpretValue,const int minScalar,const int maxScalar,const int _initScalar,bool showInverseButton,FXComposite *p,int opts,const char *title) :
-	FXVerticalFrame(p,opts|FRAME_RIDGE | /*LAYOUT_FILL_X|*/LAYOUT_FILL_Y|LAYOUT_CENTER_X,0,0,0,0, 6,6,2,4, 0,2),
+	FXVerticalFrame(p,opts|FRAME_RAISED | LAYOUT_FILL_Y|LAYOUT_CENTER_X,0,0,0,0, 4,4,2,2, 0,0),
 
 	titleLabel(new FXLabel(this,title,NULL,LAYOUT_TOP|LAYOUT_FILL_X | JUSTIFY_CENTER_X)),
 	horzSep(new FXHorizontalSeparator(this)),
 	middleFrame(new FXHorizontalFrame(this,LAYOUT_FILL_Y|LAYOUT_CENTER_X, 0,0,60,60, 0,0,2,2, 2,0)),
 		inverseButtonFrame(showInverseButton ? new FXPacker(middleFrame,LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0) : NULL),
-			inverseButton(showInverseButton ? new FXButton(inverseButtonFrame,"Inv",NULL,this,ID_INVERSE_BUTTON,FRAME_RAISED | LAYOUT_CENTER_Y) : NULL),
+			inverseButton(showInverseButton ? new FXButton(inverseButtonFrame,"I\tInvert Value",NULL,this,ID_INVERSE_BUTTON,FRAME_THICK|FRAME_RAISED | LAYOUT_CENTER_Y) : NULL),
 		slider(new FXSlider(middleFrame,this,ID_SLIDER,  SLIDER_INSIDE_BAR|SLIDER_VERTICAL|SLIDER_TICKS_RIGHT | LAYOUT_FILL_X|LAYOUT_FILL_Y)),
 		tickLabelFrame(new FXVerticalFrame(middleFrame,LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
-			maxLabel(new FXLabel(tickLabelFrame,"1.0",NULL,JUSTIFY_LEFT|JUSTIFY_CENTER_Y | LAYOUT_FILL_ROW)),
-			halfLabel(new FXLabel(tickLabelFrame,"0.5",NULL,JUSTIFY_LEFT|JUSTIFY_CENTER_Y | LAYOUT_FILL_ROW|LAYOUT_FILL_Y)),
-			minLabel(new FXLabel(tickLabelFrame,"0.0",NULL,JUSTIFY_LEFT|JUSTIFY_CENTER_Y | LAYOUT_FILL_ROW)),
-	valuePanel(new FXHorizontalFrame(this,LAYOUT_FILL_X | JUSTIFY_CENTER_X /*| FRAME_SUNKEN*/, 0,0,0,0, 4,4,4,4, 2,2)),
+			maxLabel(new FXLabel(tickLabelFrame,"1.0",NULL,JUSTIFY_LEFT|LAYOUT_TOP)),
+			middleTickLabelFrame(new FXPacker(tickLabelFrame,LAYOUT_FILL_Y,0,0,0,0, 0,0,0,0, 0,0)),
+				halfLabel(new FXLabel(middleTickLabelFrame,"0.5",NULL,JUSTIFY_LEFT|LAYOUT_CENTER_Y)),
+			minLabel(new FXLabel(tickLabelFrame,"0.0",NULL,JUSTIFY_LEFT|LAYOUT_BOTTOM)),
+	valuePanel(new FXHorizontalFrame(this,LAYOUT_FILL_X | JUSTIFY_CENTER_X, 0,0,0,0, 2,2,2,2, 0,0)),
 		valueTextBox(new FXTextField(valuePanel,6,this,ID_VALUE_TEXTBOX, TEXTFIELD_NORMAL | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
 		unitsLabel(new FXLabel(valuePanel,"x",NULL,LAYOUT_CENTER_Y)),
 	scalarPanel(NULL),
@@ -80,17 +85,27 @@ FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _unin
 
 	interpretValue(_interpretValue),
 	uninterpretValue(_uninterpretValue),
-	initScalar(_initScalar)
+	initScalar(_initScalar),
+
+	textFont(getApp()->getNormalFont())
 
 {
-	ASSURE_HEIGHT(middleFrame,180);
+	ASSURE_HEIGHT(middleFrame,100); // assure that the slider will be this many pixels tall
+
+	// create a smaller font to use 
+        FXFontDesc d;
+        textFont->getFontDesc(d);
+        d.size-=10;
+        textFont=new FXFont(getApp(),d);
+
+
 
 	halfLabel->setTarget(this);
 	halfLabel->setSelector(ID_MIDDLE_LABEL);
 
 	if(minScalar!=maxScalar)
 	{
-		scalarPanel=new FXHorizontalFrame(this,LAYOUT_BOTTOM|LAYOUT_FILL_X | JUSTIFY_CENTER_X, 0,0,0,0, 4,4,4,4, 2,2);
+		scalarPanel=new FXHorizontalFrame(this,LAYOUT_BOTTOM|LAYOUT_FILL_X | JUSTIFY_CENTER_X, 0,0,0,0, 2,2,2,2, 0,0);
 			scalarLabel=new FXLabel(scalarPanel,"Scalar",NULL, LAYOUT_CENTER_Y);
 			scalarSpinner=new FXSpinner(scalarPanel,5,this,ID_SCALAR_SPINNER,SPIN_NORMAL | LAYOUT_CENTER_Y | FRAME_SUNKEN|FRAME_THICK);
 
@@ -99,17 +114,20 @@ FXConstantParamValue::FXConstantParamValue(f_at_xs _interpretValue,f_at_xs _unin
 	}
 
 	slider->setRange(0,10000);
-	slider->setHeadSize(30);
+	slider->setHeadSize(25);
 #if FOX_MAJOR >= 1 // this did not exist much before fox 1.0
 	slider->setTickDelta(10000/8);
 #endif
 	slider->setValue(0);
 
 	updateNumbers();
+
+	setFontOfAllChildren(this,textFont);
 }
 
 FXConstantParamValue::~FXConstantParamValue()
 {
+	delete textFont;
 }
 
 void FXConstantParamValue::setUnits(const FXString _units)

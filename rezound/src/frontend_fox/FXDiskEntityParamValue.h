@@ -87,6 +87,8 @@ private:
 		FXTextField *entityNameTextBox;
 		FXButton *browseButton;
 	FXCheckButton *openAsRawCheckButton;
+
+	FXFont *textFont;
 };
 
 #endif

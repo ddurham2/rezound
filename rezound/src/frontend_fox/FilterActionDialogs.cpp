@@ -57,7 +57,7 @@ CConvolutionFilterDialog::CConvolutionFilterDialog(FXWindow *mainWindow) :
 				addSlider(p1,"Output Gain","dB",interpretValue_dB_gain,uninterpretValue_dB_gain,dB_to_scalar,0.0,0,0,0,false);
 				addSlider(p1,"Predelay","ms",interpretValue_delayTime,uninterpretValue_delayTime,NULL,50.0,1,500,100,false);
 
-				void *p2=newVertPanel(p1,true);
+				void *p2=newVertPanel(p1,false);
 					addDiskEntityEntry(p2,"Filter Kernel","",FXDiskEntityParamValue::detAudioFilename,"The Audio File to Use as the Filter Kernel");
 
 					void *p3=newHorzPanel(p2,false);

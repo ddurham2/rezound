@@ -73,7 +73,7 @@ CMp3Dialog::CMp3Dialog(FXWindow *mainWindow) :
 	FXComposite *main=new FXGroupBox(getFrame(),"",GROUPBOX_NORMAL|LAYOUT_FILL_X|LAYOUT_FILL_Y);
 
 	CBRButton=new FXRadioButton(main,"Constant Bit Rate",this,ID_WHICH_BUTTON);
-		CBRFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RIDGE|LAYOUT_FILL_X);
+		CBRFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RAISED|LAYOUT_FILL_X);
 			new FXLabel(CBRFrame,"Bit Rate: ");
 			bitRateComboBox=new FXComboBox(CBRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
 			fillBitRateComboBox(bitRateComboBox);
@@ -81,7 +81,7 @@ CMp3Dialog::CMp3Dialog(FXWindow *mainWindow) :
 
 	new FXFrame(main,LAYOUT_FIX_HEIGHT,0,0,1,10);
 	ABRButton=new FXRadioButton(main,"Average Bit Rate",this,ID_WHICH_BUTTON);
-		ABRFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RIDGE|LAYOUT_FILL_X);
+		ABRFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RAISED|LAYOUT_FILL_X);
 			new FXLabel(ABRFrame,"Minimum Bit Rate: ");
 			minRateComboBox=new FXComboBox(ABRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
 			fillBitRateComboBox(minRateComboBox);
@@ -95,7 +95,7 @@ CMp3Dialog::CMp3Dialog(FXWindow *mainWindow) :
 
 	new FXFrame(main,LAYOUT_FIX_HEIGHT,0,0,1,10);
 	qualityButton=new FXRadioButton(main,"Variable Bit Rate Quality Setting",this,ID_WHICH_BUTTON);
-		qualityFrame=new FXMatrix(main,3,MATRIX_BY_COLUMNS|FRAME_RIDGE|LAYOUT_FILL_X);
+		qualityFrame=new FXMatrix(main,3,MATRIX_BY_COLUMNS|FRAME_RAISED|LAYOUT_FILL_X);
 			new FXLabel(qualityFrame,"Quality: ");
 			qualityComboBox=new FXComboBox(qualityFrame,10,10,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
 			for(int t=0;t<10;t++)
@@ -105,7 +105,7 @@ CMp3Dialog::CMp3Dialog(FXWindow *mainWindow) :
 
 	
 	new FXFrame(main,LAYOUT_FIX_HEIGHT,0,0,1,10);
-		flagsFrame=new FXMatrix(main,3,MATRIX_BY_COLUMNS|FRAME_RIDGE|LAYOUT_FILL_X);
+		flagsFrame=new FXMatrix(main,3,MATRIX_BY_COLUMNS|FRAME_RAISED|LAYOUT_FILL_X);
 			useOnlyFlagsButton=new FXCheckButton(flagsFrame,"Use Only These Flags");
 			new FXFrame(flagsFrame,FRAME_NONE); // place holder
 			new FXFrame(flagsFrame,FRAME_NONE); // place holder

@@ -64,7 +64,7 @@ COggDialog::COggDialog(FXWindow *mainWindow) :
 	FXComposite *main=new FXGroupBox(getFrame(),"",GROUPBOX_NORMAL|LAYOUT_FILL_X|LAYOUT_FILL_Y);
 
 	qualityButton=new FXRadioButton(main,"Quality Setting",this,ID_WHICH_BUTTON);
-		qualityFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RIDGE|LAYOUT_FILL_X);
+		qualityFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RAISED|LAYOUT_FILL_X);
 			new FXLabel(qualityFrame,"Quality: ");
 			qualityTextBox=new FXTextField(qualityFrame,10,NULL,0,TEXTFIELD_REAL|TEXTFIELD_NORMAL);
 			qualityTextBox->setText("0.7");
@@ -72,7 +72,7 @@ COggDialog::COggDialog(FXWindow *mainWindow) :
 	
 	new FXFrame(main,LAYOUT_FIX_HEIGHT,0,0,1,10);
 	CBRButton=new FXRadioButton(main,"Constant Bit Rate",this,ID_WHICH_BUTTON);
-		CBRFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RIDGE|LAYOUT_FILL_X);
+		CBRFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RAISED|LAYOUT_FILL_X);
 			new FXLabel(CBRFrame,"Bit Rate: ");
 			bitRateComboBox=new FXComboBox(CBRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
 			fillBitRateComboBox(bitRateComboBox);
@@ -80,7 +80,7 @@ COggDialog::COggDialog(FXWindow *mainWindow) :
 
 	new FXFrame(main,LAYOUT_FIX_HEIGHT,0,0,1,10);
 	VBRButton=new FXRadioButton(main,"Variable Bit Rate",this,ID_WHICH_BUTTON);
-		VBRFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RIDGE|LAYOUT_FILL_X);
+		VBRFrame=new FXMatrix(main,2,MATRIX_BY_COLUMNS|FRAME_RAISED|LAYOUT_FILL_X);
 			new FXLabel(VBRFrame,"Minimum Bit Rate: ");
 			minRateComboBox=new FXComboBox(VBRFrame,10,8,NULL,0,COMBOBOX_NORMAL|FRAME_SUNKEN|FRAME_THICK|COMBOBOX_STATIC);
 			fillBitRateComboBox(minRateComboBox);

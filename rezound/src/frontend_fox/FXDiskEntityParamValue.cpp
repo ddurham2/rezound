@@ -32,6 +32,8 @@
 #include <CNestedDataFile/CNestedDataFile.h>
 #define DOT (CNestedDataFile::delimChar)
 
+#include "utils.h"
+
 /*
 	- This is the text entry widget used over and over by ReZound on action dialogs
 	- Its purpose is to select a constant value for a parameter to an action
@@ -48,7 +50,7 @@ FXDEFMAP(FXDiskEntityParamValue) FXDiskEntityParamValueMap[]=
 FXIMPLEMENT(FXDiskEntityParamValue,FXVerticalFrame,FXDiskEntityParamValueMap,ARRAYNUMBER(FXDiskEntityParamValueMap))
 
 FXDiskEntityParamValue::FXDiskEntityParamValue(FXComposite *p,int opts,const char *title,const string initialEntityName,DiskEntityTypes _entityType) :
-	FXVerticalFrame(p,opts|FRAME_RIDGE|LAYOUT_FILL_X|LAYOUT_CENTER_Y, 0,0,0,0, 3,6,3,3, 0,0),
+	FXVerticalFrame(p,opts|FRAME_RAISED |LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 2,2,2,2, 0,0),
 	
 	entityType(_entityType),
 
@@ -57,13 +59,25 @@ FXDiskEntityParamValue::FXDiskEntityParamValue(FXComposite *p,int opts,const cha
 		entityNameTextBox(new FXTextField(hFrame,8,this,ID_ENTITYNAME_TEXTBOX, TEXTFIELD_NORMAL | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
 		browseButton(new FXButton(hFrame,"&Browse",NULL,this,ID_BROWSE_BUTTON)),
 			// ??? if this widget is ever going to be used for anything other than sound files, then I need to conditionally show this checkButton
-	openAsRawCheckButton(entityType==detAudioFilename ? new FXCheckButton(this,"Open as &Raw") : NULL)
+	openAsRawCheckButton(entityType==detAudioFilename ? new FXCheckButton(this,"Open as &Raw") : NULL),
+
+	textFont(getApp()->getNormalFont())
 {
+	// create a smaller font to use 
+        FXFontDesc d;
+        textFont->getFontDesc(d);
+        d.size-=10;
+        textFont=new FXFont(getApp(),d);
+
 	entityNameTextBox->setText(initialEntityName.c_str());
+
+	if(entityType==detAudioFilename)
+		setFontOfAllChildren(this,textFont);
 }
 
 FXDiskEntityParamValue::~FXDiskEntityParamValue()
 {
+	delete textFont;
 }
 
 long FXDiskEntityParamValue::onEntityNameTextBoxChange(FXObject *sender,FXSelector sel,void *ptr)

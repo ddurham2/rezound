@@ -71,6 +71,8 @@ private:
 		FXConstantParamValue *frequencySlider;
 		FXConstantParamValue *phaseSlider;
 	FXListBox *LFOTypeComboBox;
+
+	FXFont *textFont;
 };
 
 #endif

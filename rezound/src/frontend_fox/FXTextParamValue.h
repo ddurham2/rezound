@@ -83,6 +83,8 @@ private:
 	FXLabel *unitsLabel;
 
 	void validateRange();
+
+	FXFont *textFont;
 };
 
 #endif

@@ -25,6 +25,8 @@
 #include <CNestedDataFile/CNestedDataFile.h>
 #define DOT (CNestedDataFile::delimChar)
 
+#include "utils.h"
+
 /*
 	- This is the text entry widget used over and over by ReZound on action dialogs
 	- Its purpose is to select a boolean value for a parameter to an action
@@ -41,15 +43,26 @@ FXDEFMAP(FXCheckBoxParamValue) FXCheckBoxParamValueMap[]=
 FXIMPLEMENT(FXCheckBoxParamValue,FXVerticalFrame,FXCheckBoxParamValueMap,ARRAYNUMBER(FXCheckBoxParamValueMap))
 
 FXCheckBoxParamValue::FXCheckBoxParamValue(FXComposite *p,int opts,const char *title,const bool checked) :
-	FXVerticalFrame(p,opts|FRAME_RIDGE | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 6,6,2,4, 2,0),
+	FXVerticalFrame(p,opts|FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 2,2,2,2, 1,0),
 
-	checkBox(new FXCheckButton(this,title,NULL,0,CHECKBUTTON_NORMAL))
+	checkBox(new FXCheckButton(this,title,NULL,0,CHECKBUTTON_NORMAL)),
+
+	textFont(getApp()->getNormalFont())
 {
+	// create a smaller font to use 
+        FXFontDesc d;
+        textFont->getFontDesc(d);
+        d.size-=10;
+        textFont=new FXFont(getApp(),d);
+
 	checkBox->setCheck(checked);
+
+	//setFontOfAllChildren(this,textFont);
 }
 
 FXCheckBoxParamValue::~FXCheckBoxParamValue()
 {
+	delete textFont;
 }
 
 const bool FXCheckBoxParamValue::getValue()

@@ -142,6 +142,7 @@ noinst_HEADERS=\
 	drawPortion.h \
 	rememberShow.h \
 	custom_cursors.h \
+	utils.h \
 	settings.h 
 
 EXTRA_DIST=convert_images.sh

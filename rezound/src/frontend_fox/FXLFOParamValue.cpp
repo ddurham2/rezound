@@ -29,6 +29,8 @@
 #include "FXConstantParamValue.h"
 #include "CFOXIcons.h"
 
+#include "utils.h"
+
 /*
 	- This is the LFO selection widget used over and over by ReZound on action dialogs
 
@@ -49,15 +51,23 @@ static const double interpretValue(const double x,const int s) { return(x*s); }
 static const double uninterpretValue(const double x,const int s) { return(x/s); }
 
 FXLFOParamValue::FXLFOParamValue(FXComposite *p,int opts,const char *title,const string ampUnits,const string ampTitle,const double maxAmp,const string freqUnits,const double maxFreq,const bool hideBipolarLFOs) :
-	FXVerticalFrame(p,opts | FRAME_RIDGE | LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 1,1,3,3, 0,0),
+	FXVerticalFrame(p,opts|FRAME_RAISED |LAYOUT_FILL_X|LAYOUT_FILL_Y,0,0,0,0, 2,2,2,2, 0,2),
 
 	titleLabel(new FXLabel(this,title,NULL,LABEL_NORMAL|LAYOUT_CENTER_X)),
-	sliders(new FXHorizontalFrame(this,LAYOUT_FILL_X)),
+	sliders(new FXHorizontalFrame(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0, 0,0)),
 		amplitudeSlider(new FXConstantParamValue(interpretValue,uninterpretValue,min((int)maxAmp,1),(int)maxAmp,min((int)maxAmp,1),false,sliders,LAYOUT_CENTER_X,ampTitle.c_str())),
 		frequencySlider(new FXConstantParamValue(interpretValue,uninterpretValue,min((int)maxFreq,1),(int)maxFreq,min((int)maxFreq,1),false,sliders,LAYOUT_CENTER_X,"Frequency")),
 		phaseSlider(new FXConstantParamValue(interpretValue,uninterpretValue,360,360,360,true,sliders,LAYOUT_CENTER_X,"Phase")),
-	LFOTypeComboBox(new FXListBox(this,16,this,ID_LFO_TYPE_COMBOBOX,FRAME_SUNKEN|FRAME_THICK|LISTBOX_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,250,0))
+	LFOTypeComboBox(new FXListBox(this,16,this,ID_LFO_TYPE_COMBOBOX,FRAME_SUNKEN|FRAME_THICK|LISTBOX_NORMAL|LAYOUT_CENTER_X|LAYOUT_FIX_WIDTH,0,0,180,0)),
+
+	textFont(getApp()->getNormalFont())
 {
+	// create a smaller font to use 
+        FXFontDesc d;
+        textFont->getFontDesc(d);
+        d.size-=10;
+        textFont=new FXFont(getApp(),d);
+
 	// allow this to be hidden (cause varied repeat doesn't need it)
 	if(ampTitle=="")
 		amplitudeSlider->hide();
@@ -82,10 +92,13 @@ FXLFOParamValue::FXLFOParamValue(FXComposite *p,int opts,const char *title,const
 	LFOTypeComboBox->setCurrentItem(0);
 
 	onLFOTypeChange(NULL,0,NULL);
+
+	setFontOfAllChildren(this,textFont);
 }
 
 FXLFOParamValue::~FXLFOParamValue()
 {
+	delete textFont;
 }
 
 long FXLFOParamValue::onLFOTypeChange(FXObject *sender,FXSelector sel,void *ptr)

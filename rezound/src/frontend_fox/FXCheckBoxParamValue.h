@@ -54,6 +54,8 @@ protected:
 
 private:
 	FXCheckButton *checkBox;
+
+	FXFont *textFont;
 };
 
 #endif

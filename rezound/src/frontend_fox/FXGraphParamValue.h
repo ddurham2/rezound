@@ -166,6 +166,7 @@ private:
 	// we draw on this one time and blit from it anytime we need to update the canvas
 	FXImage *backBuffer;
 
+	FXFont *textFont;
 };
 
 #endif

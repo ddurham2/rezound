@@ -30,6 +30,8 @@
 #include <CNestedDataFile/CNestedDataFile.h>
 #define DOT (CNestedDataFile::delimChar)
 
+#include "utils.h"
+
 #include "../backend/CSound.h"
 
 #define NODE_RADIUS 4
@@ -67,7 +69,7 @@ class CHorzRuler : public FXHorizontalFrame
 	FXDECLARE(CHorzRuler)
 public:
 	CHorzRuler(FXComposite *p,FXGraphParamValue *_parent) :
-		FXHorizontalFrame(p,FRAME_RAISED | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT | LAYOUT_SIDE_TOP, 0,0,0,17),
+		FXHorizontalFrame(p,FRAME_NONE | LAYOUT_FILL_X | LAYOUT_FIX_HEIGHT | LAYOUT_SIDE_TOP, 0,0,0,17),
 
 		parent(_parent),
 
@@ -178,7 +180,7 @@ class CVertRuler : public FXHorizontalFrame
 	FXDECLARE(CVertRuler)
 public:
 	CVertRuler(FXComposite *p,FXGraphParamValue *_parent) :
-		FXHorizontalFrame(p,FRAME_RAISED | LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH | LAYOUT_SIDE_LEFT, 0,0,42),
+		FXHorizontalFrame(p,FRAME_NONE | LAYOUT_FILL_Y | LAYOUT_FIX_WIDTH | LAYOUT_SIDE_LEFT, 0,0,42),
 
 		parent(_parent),
 
@@ -302,7 +304,7 @@ FXDEFMAP(FXGraphParamValue) FXGraphParamValueMap[]=
 FXIMPLEMENT(FXGraphParamValue,FXPacker,FXGraphParamValueMap,ARRAYNUMBER(FXGraphParamValueMap))
 
 FXGraphParamValue::FXGraphParamValue(const string _title,const int minScalar,const int maxScalar,const int _initScalar,FXComposite *p,int opts,int x,int y,int w,int h) :
-	FXPacker(p,opts|FRAME_RIDGE,x,y,w,h, 2,2,2,2, 0,0),
+	FXPacker(p,opts|FRAME_RAISED,x,y,w,h, 2,2,2,2, 0,0),
 
 	title(_title),
 
@@ -313,7 +315,7 @@ FXGraphParamValue::FXGraphParamValue(const string _title,const int minScalar,con
 		scalarSpinner(NULL),
 	horzRuler(new CHorzRuler(this,this)),
 	vertRuler(new CVertRuler(this,this)),
-	statusPanel(new FXHorizontalFrame(this,FRAME_RAISED | LAYOUT_SIDE_BOTTOM | LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 4,0)),
+	statusPanel(new FXHorizontalFrame(this,FRAME_NONE | LAYOUT_SIDE_BOTTOM | LAYOUT_FILL_X, 0,0,0,0, 0,0,0,0, 4,0)),
 		horzValueLabel(new FXLabel(statusPanel,": ",NULL,LAYOUT_LEFT)),
 		vertValueLabel(new FXLabel(statusPanel,": ",NULL)),
 	graphPanelParent(new FXPacker(this,LAYOUT_FILL_X|LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0)),
@@ -336,8 +338,16 @@ FXGraphParamValue::FXGraphParamValue(const string _title,const int minScalar,con
 	vertInterpretValue(NULL),
 	vertUninterpretValue(NULL),
 
-	backBuffer(new FXImage(getApp()))
+	backBuffer(new FXImage(getApp())),
+
+	textFont(getApp()->getNormalFont())
 {
+	// create a smaller font to use 
+        FXFontDesc d;
+        textFont->getFontDesc(d);
+        d.size-=10;
+        textFont=new FXFont(getApp(),d);
+
 	// just to give a minimum width and height to the panel
 	new FXFrame(this,LAYOUT_FIX_WIDTH | FRAME_NONE | LAYOUT_SIDE_TOP, 0,0,500,0, 0,0,0,0);
 	new FXFrame(this,LAYOUT_FIX_HEIGHT | FRAME_NONE | LAYOUT_SIDE_RIGHT, 0,0,0,250, 0,0,0,0);
@@ -357,10 +367,14 @@ FXGraphParamValue::FXGraphParamValue(const string _title,const int minScalar,con
 	backBuffer->create();
 
 	clearNodes();
+
+	setFontOfAllChildren(buttonPanel,textFont);
+	setFontOfAllChildren(statusPanel,textFont);
 }
 
 FXGraphParamValue::~FXGraphParamValue()
 {
+	delete textFont;
 }
 
 void FXGraphParamValue::setSound(CSound *_sound,sample_pos_t _start,sample_pos_t _stop)

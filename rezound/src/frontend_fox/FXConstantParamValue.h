@@ -138,7 +138,8 @@ private:
 		FXSlider *slider;
 		FXVerticalFrame *tickLabelFrame;
 			FXLabel *maxLabel;
-			FXLabel *halfLabel;
+			FXPacker *middleTickLabelFrame;
+				FXLabel *halfLabel;
 			FXLabel *minLabel;
 	FXHorizontalFrame *valuePanel;
 		FXTextField *valueTextBox;
@@ -155,8 +156,9 @@ private:
 
 	void prvSetValue(const double value);
 	double defaultValue;
-	
 
+
+	FXFont *textFont;
 };
 
 #endif

@@ -27,6 +27,8 @@
 #include <CNestedDataFile/CNestedDataFile.h>
 #define DOT (CNestedDataFile::delimChar)
 
+#include "utils.h"
+
 /*
 	- This is the text entry widget used over and over by ReZound on action dialogs
 	- Its purpose is to select a constant value for a parameter to an action
@@ -43,7 +45,7 @@ FXDEFMAP(FXTextParamValue) FXTextParamValueMap[]=
 FXIMPLEMENT(FXTextParamValue,FXHorizontalFrame,FXTextParamValueMap,ARRAYNUMBER(FXTextParamValueMap))
 
 FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title,const double _minValue,const double _maxValue) :
-	FXHorizontalFrame(p,opts|FRAME_RIDGE | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 6,6,2,4, 2,0),
+	FXHorizontalFrame(p,opts|FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 2,2,4,4, 0,0),
 
 	isNumeric(true),
 
@@ -52,26 +54,46 @@ FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title,con
 
 	titleLabel(new FXLabel(this,title,NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
 	valueTextBox(new FXTextField(this,8,this,ID_VALUE_TEXTBOX, TEXTFIELD_NORMAL | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
-	valueSpinner(new FXSpinner(this,0,this,ID_VALUE_SPINNER, SPIN_NORMAL|SPIN_NOTEXT | LAYOUT_FILL_Y)),
-	unitsLabel(new FXLabel(this,"",NULL,LABEL_NORMAL|LAYOUT_CENTER_Y))
+	valueSpinner(new FXSpinner(this,0,this,ID_VALUE_SPINNER, SPIN_NORMAL|SPIN_NOTEXT | LAYOUT_FILL_Y, 0,0,0,0, 0,0,0,0)),
+	unitsLabel(new FXLabel(this,"",NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
+
+	textFont(getApp()->getNormalFont())
 {
+	// create a smaller font to use 
+        FXFontDesc d;
+        textFont->getFontDesc(d);
+        d.size-=10;
+        textFont=new FXFont(getApp(),d);
+
 	valueSpinner->setRange(-10,10);
+
+	//setFontOfAllChildren(this,textFont);
 }
 
 FXTextParamValue::FXTextParamValue(FXComposite *p,int opts,const char *title) :
-	FXHorizontalFrame(p,opts|FRAME_RIDGE | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 6,6,2,4, 2,0),
+	FXHorizontalFrame(p,opts|FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 2,2,4,4, 0,0),
 
 	isNumeric(false),
 
 	titleLabel(new FXLabel(this,title,NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
 	valueTextBox(new FXTextField(this,8,this,ID_VALUE_TEXTBOX, TEXTFIELD_NORMAL | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
 	valueSpinner(NULL),
-	unitsLabel(NULL)
+	unitsLabel(NULL),
+
+	textFont(getApp()->getNormalFont())
 {
+	// create a smaller font to use 
+        FXFontDesc d;
+        textFont->getFontDesc(d);
+        d.size-=10;
+        textFont=new FXFont(getApp(),d);
+
+	//setFontOfAllChildren(this,textFont);
 }
 
 FXTextParamValue::~FXTextParamValue()
 {
+	delete textFont;
 }
 
 void FXTextParamValue::setUnits(const FXString units,const FXString tipText)

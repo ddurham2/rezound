@@ -29,6 +29,8 @@
 #include <CNestedDataFile/CNestedDataFile.h>
 #define DOT (CNestedDataFile::delimChar)
 
+#include "utils.h"
+
 /*
 	- This is the text entry widget used over and over by ReZound on action dialogs
 	- Its purpose is to select a constant value for a parameter to an action
@@ -45,17 +47,28 @@ FXDEFMAP(FXComboTextParamValue) FXComboTextParamValueMap[]=
 FXIMPLEMENT(FXComboTextParamValue,FXHorizontalFrame,FXComboTextParamValueMap,ARRAYNUMBER(FXComboTextParamValueMap))
 
 FXComboTextParamValue::FXComboTextParamValue(FXComposite *p,int opts,const char *title,const vector<string> &items,bool _isEditable) :
-	FXHorizontalFrame(p,opts|FRAME_RIDGE | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 6,6,2,4, 2,0),
+	FXHorizontalFrame(p,opts|FRAME_RAISED | LAYOUT_FILL_X|LAYOUT_CENTER_Y,0,0,0,0, 2,2,4,4, 0,0),
 	isEditable(_isEditable),
 
 	titleLabel(new FXLabel(this,title,NULL,LABEL_NORMAL|LAYOUT_CENTER_Y)),
-	valueComboBox(new FXComboBox(this,8,min((size_t)items.size(),(size_t)8),NULL,0, COMBOBOX_NORMAL|(!isEditable ? COMBOBOX_STATIC : 0) | FRAME_SUNKEN|FRAME_THICK | LAYOUT_CENTER_Y|LAYOUT_FILL_X))
+	valueComboBox(new FXComboBox(this,8,min((size_t)items.size(),(size_t)8),NULL,0, COMBOBOX_NORMAL|(!isEditable ? COMBOBOX_STATIC : 0) | FRAME_SUNKEN|FRAME_THICK | LAYOUT_CENTER_Y|LAYOUT_FILL_X)),
+
+	textFont(getApp()->getNormalFont())
 {
+	// create a smaller font to use 
+        FXFontDesc d;
+        textFont->getFontDesc(d);
+        d.size-=10;
+        textFont=new FXFont(getApp(),d);
+
 	setItems(items);
+
+	//setFontOfAllChildren(this,textFont);
 }
 
 FXComboTextParamValue::~FXComboTextParamValue()
 {
+	delete textFont;
 }
 
 const FXint FXComboTextParamValue::getValue()
