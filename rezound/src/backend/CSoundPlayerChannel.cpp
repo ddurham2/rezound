@@ -576,6 +576,11 @@ bool CSoundPlayerChannel::prebufferChunk()
 			pos2=sound->getLength()-1;
 		}
 
+		// assure that prebufferPosition is not out of range
+		if(prebufferPosition<0)
+			prebufferPosition=0;
+		else if(prebufferPosition>pos2)
+			prebufferPosition=pos2;
 
 		chunk->playPosition=prebufferPosition;
 
