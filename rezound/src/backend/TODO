@@ -3,7 +3,7 @@
 
 	- create separate CDSPLevelDetectorRMS and CDSPPeakLevelDetectorPeak dsp blocks
 
-	- create a template method in DSPBlocks which is a mean finder given an accessor and a range to find the mean in
+	- create a template method in DSPBlocks which is a mean finder given an accessor and a range to find the mean for removing DC
 		- it would handle avoiding overflow by use of recursion and also should be give an accuracy parameter to avoid looking at every value
 
 	- distortion would be an easy effect
@@ -15,7 +15,6 @@
 
 		- before  do this.. check the CPU usage when playing 5 sounds... after changing it, check 5 sounds again
 
-	- bite the bullet and implement a windowed FFT DSP block
 
 
 	- figure out what to do with the 4 bogus cues that appear in an aiff file when the file had no cues in it, itself
@@ -58,11 +57,17 @@
 
 	- There may be some more formats that libaudiofile supports... I just didn't see them in the docs... work with the author to include any others
 	
+	- research and create DSP blocks for filters.. it should use a delay line multiplied by some vector of coefficients
+
+	- implement a windowed FFT DSP block... I'm not quite sure what the interface should be
+
+
 
 
 --- POSSIBLE THINGS TO DO ---
 
-	- I could remember native clipboards between runs by not deleting removing the pool file's file
+
+	- I could easily remember native clipboards between runs by not deleting removing the pool file's file
 
 	- Implement a CFileClipboard which can paste to/from a file
 		- it would need to let the user paste from a file, the whole file probably...
