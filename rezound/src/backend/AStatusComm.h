@@ -69,6 +69,9 @@ public:
 	virtual void updateProgressBar(int handle,int progress)=0; // progress is 0 to 100
 	virtual void endProgressBar(int handle)=0;
 	virtual void endAllProgressBars()=0;
+
+	// breaks "msg -- msg -- msg" into "msg\n-- msg\n-- msg"
+	static const string breakIntoLines(const string s);
 };
 
 extern AStatusComm *gStatusComm;

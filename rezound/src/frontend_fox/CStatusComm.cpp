@@ -109,30 +109,6 @@ VAnswer CStatusComm::question(const string &message,VQuestion options)
 	}
 }
 
-const string CStatusComm::breakIntoLines(const string _s)
-{
-	// break into lines when a line has become to long, break at the next space.
-	#define BREAK_AFTER 100
-	
-	string s=_s;
-	const size_t len=s.length();
-	size_t lineLen=0;
-	for(size_t t=0;t<len;t++)
-	{
-		if(s[t]=='\n')
-			lineLen=0;
-		else if(lineLen++>BREAK_AFTER)
-		{
-			if(isspace(s[t]))
-			{
-				lineLen=0;
-				s[t]='\n';
-			}
-		}
-	}
-	return(s);
-}
-
 void CStatusComm::beep()
 {
 	mainWindow->getApp()->beep();

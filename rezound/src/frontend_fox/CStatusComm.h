@@ -57,11 +57,9 @@ public:
 	virtual void endAllProgressBars();
 
 private:
-
-	static const string breakIntoLines(const string s);
-	
 	FXWindow *mainWindow;
 	CProgressDialog *progressDialogs[MAX_PROGRESS_DIALOGS];
+
 };
 
 #endif

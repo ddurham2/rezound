@@ -22,6 +22,36 @@
 
 AStatusComm *gStatusComm=NULL;
 
+const string AStatusComm::breakIntoLines(const string _s)
+{
+	// break into lines when a line has become to long, break at the next space.
+	#define BREAK_AFTER 100
+
+	// and also break at each ' -- '
+	
+	string s=_s;
+	const size_t len=s.length();
+	size_t lineLen=0;
+	for(size_t t=0;t<len;t++)
+	{
+		if(s[t]=='\n')
+			lineLen=0;
+		else if(
+			(lineLen++>BREAK_AFTER) 
+			||
+			((len-t)>3 && s[t+1]=='-' && s[t+2]=='-' && s[t+3]==' ') // "-- " is in the future
+		)
+		{
+			if(isspace(s[t]))
+			{
+				lineLen=0;
+				s[t]='\n';
+			}
+		}
+	}
+	return(s);
+}
+
 void Error(const string &message,VSeverity severity=none)
 {
 	gStatusComm->error(message,severity);
