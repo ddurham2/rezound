@@ -42,6 +42,8 @@ static ASoundPlayer *gSoundPlayer=NULL; // saved value for deinitialize
 #include "CNativeSoundClipboard.h"
 #include "CRecordSoundClipboard.h"
 
+#include "CLoadedSound.h"
+#include "CSoundPlayerChannel.h"
 
 // for mkdir  --- possibly wouldn't port???
 #include <sys/stat.h>
@@ -176,6 +178,7 @@ bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[])
 bool handleMoreBackendArgs(ASoundFileManager *fileManager,int argc,char *argv[])
 {
 	bool forceFilenames=false;
+	bool playLoadedWhenDone=false;
 	for(int t=1;t<argc;t++)
 	{
 		if(strcmp(argv[t],"--")==0)
@@ -184,6 +187,11 @@ bool handleMoreBackendArgs(ASoundFileManager *fileManager,int argc,char *argv[])
 			continue;
 		}
 
+		if(!forceFilenames && (strcmp(argv[t],"-p")==0 || strcmp(argv[t],"--play")==0))
+		{
+			playLoadedWhenDone=true;
+		}
+		else
 #ifdef HAVE_LIBAUDIOFILE
 		// also handle a --raw flag to force the loading of the following argument as a file
 		if(!forceFilenames && strcmp(argv[t],"--raw")==0)
@@ -221,6 +229,12 @@ bool handleMoreBackendArgs(ASoundFileManager *fileManager,int argc,char *argv[])
 				Error(e.what());
 			}
 		}
+	}
+
+	if(playLoadedWhenDone)
+	{
+		for(size_t t=0;t<fileManager->getOpenedCount();t++)
+			fileManager->getSound(t)->channel->play();
 	}
 
 	return true;
@@ -317,6 +331,7 @@ static void printUsage(const string app)
 	printf("\n");              
 	printf("\t--help                   show this help message and exit\n");
 	printf("\t--version                show version information and exit\n");
+	printf("\t-p OR --play             simultaneously plays the sound files given at the command line after all are loaded\n");
 	printf("\t--audio-method=<method>  method to try first for audio I/O\n");
 	printf("\t  Audio Method(s) Are:\n");
 #ifdef ENABLE_OSS
