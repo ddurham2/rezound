@@ -236,7 +236,7 @@ long CRecordDialog::onStatusUpdate(FXObject *sender,FXSelector sel,void *ptr)
 
 	// schedule for the next status update
 	timerHandle=getApp()->addTimeout(this,CRecordDialog::ID_STATUS_UPDATE,STATUS_UPDATE_TIME);
-	return 1;
+	return 0;
 }
 
 bool CRecordDialog::show(ASoundRecorder *_recorder)
