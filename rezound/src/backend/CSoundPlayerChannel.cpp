@@ -252,10 +252,21 @@ void CSoundPlayerChannel::setSeekSpeed(float _seekSpeed)
 	}
 
 
-	if((seekSpeed*origSeekSpeed)<0.0)
-	{ // invalidate prebuffered data since the signs of the new and old play speeds where different (which means direction changed)
+	if(fabs(origSeekSpeed)>5.0 && fabs(seekSpeed)<=5.0)
+	{ // since we're coming from a seek speed faster than 5.0 and now it's less than 5.0 invalidate prebuffered data because what has been buffered so far is skipping a lot of data
+		// and set the prebuffer position to the most recently played position
+		CMutexLocker l(prebufferPositionMutex);
+		prebufferPosition=playPosition;
 		prebufferedChunkPipe.clear();
 	}
+	else if((seekSpeed*origSeekSpeed)<0.0)
+	{ // invalidate prebuffered data since the signs of the new and old play speeds where different (which means direction changed)
+		// and set the prebuffer position to the most recently played position
+		CMutexLocker l(prebufferPositionMutex);
+		prebufferPosition=playPosition;
+		prebufferedChunkPipe.clear();
+	}
+
 	
 	// if the channel was paused, but we just set the play speed to something not 1.0, then start playing again
 	if(paused && seekSpeed!=1.0 && origSeekSpeed==1.0)
