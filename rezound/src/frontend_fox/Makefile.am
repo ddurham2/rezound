@@ -27,14 +27,12 @@ include $(top_srcdir)/config/am_include.mk
 
 noinst_LTLIBRARIES=libfrontend.la
 libfrontend_la_SOURCES= \
-			CActionButton.cpp \
 			CActionMenuCommand.cpp \
 			CChannelSelectDialog.cpp \
 			CCrossfadeEdgesDialog.cpp \
 			CActionParamDialog.cpp \
 			CCueDialog.cpp \
 			CCueListDialog.cpp \
-			CEditToolbar.cpp \
 			CMainWindow.cpp \
 			CNewSoundDialog.cpp \
 			CRecordDialog.cpp \
@@ -89,14 +87,12 @@ ReZound_LDADD= libfrontend.la\
 
 noinst_HEADERS=\
 	fox_compat.h \
-	CActionButton.h \
 	CActionMenuCommand.h \
 	CChannelSelectDialog.h \
 	CCrossfadeEdgesDialog.h \
 	CActionParamDialog.h \
 	CCueDialog.h \
 	CCueListDialog.h \
-	CEditToolbar.h \
 	CMainWindow.h \
 	CNewSoundDialog.h \
 	CRecordDialog.h \

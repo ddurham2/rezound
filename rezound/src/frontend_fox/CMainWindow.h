@@ -38,7 +38,7 @@ public:
 	virtual void show();
 	virtual void hide();
 
-	void createToolbars();
+	void createMenus();
 
 
 	long onQuit(FXObject *sender,FXSelector sel,void *ptr);

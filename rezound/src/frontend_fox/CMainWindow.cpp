@@ -23,7 +23,6 @@
 #include <stdexcept>
 #include <string>
 
-#include "CActionButton.h"
 #include "CActionMenuCommand.h"
 
 #include "CSoundFileManager.h"
@@ -269,55 +268,8 @@ public:
 #include "RemasterActionDialogs.h"
 
 
-void CMainWindow::createToolbars()
+void CMainWindow::createMenus()
 {
-#if 0
-	// build edit buttons 
-	{
-		FXMatrix *matrix;
-
-		#define MAKE_BUTTON_FILLER(p) new FXFrame((p),LAYOUT_FIX_WIDTH, 0,0,0,8);
-		#define MAKE_SPACER(p) new FXFrame((p),LAYOUT_FIX_WIDTH|LAYOUT_FILL_Y, 0,0,8,1);
-
-
-		// selection functions
-		matrix=new FXMatrix(editFrame,2,MATRIX_BY_COLUMNS, 0,0,0,0, 0,0,0,0, 0,0);
-		new CActionButton(new CSelectionEditFactory(sSelectAll),matrix,"sa",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-		MAKE_BUTTON_FILLER(matrix);
-		new CActionButton(new CSelectionEditFactory(sSelectToBeginning),matrix,"stb",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-		new CActionButton(new CSelectionEditFactory(sSelectToEnd),matrix,"ste",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-		new CActionButton(new CSelectionEditFactory(sFlopToBeginning),matrix,"ftb",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-		new CActionButton(new CSelectionEditFactory(sFlopToEnd),matrix,"fte",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-		new CActionButton(new CSelectionEditFactory(sSelectToSelectStart),matrix,"sp2st",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-		new CActionButton(new CSelectionEditFactory(sSelectToSelectStop),matrix,"st2sp",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-
-		MAKE_SPACER(matrix);
-
-		// edit functions that remove/copy
-		matrix=new FXMatrix(editFrame,2,MATRIX_BY_COLUMNS, 0,0,0,0, 0,0,0,0, 0,0);
-		new CActionButton(new CCopyEditFactory(gChannelSelectDialog),matrix,"copy",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-		new CActionButton(new CCutEditFactory(gChannelSelectDialog),matrix,"cut",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-		new CActionButton(new CDeleteEditFactory(gChannelSelectDialog),matrix,"del",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-		new CActionButton(new CCropEditFactory(gChannelSelectDialog),matrix,"crop",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-		new CActionButton(new CRotateLeftEditFactory(gChannelSelectDialog,new CRotateDialog(this)),matrix,"<<",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-		new CActionButton(new CRotateRightEditFactory(gChannelSelectDialog,new CRotateDialog(this)),matrix,">>",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-
-		MAKE_SPACER(matrix);
-
-		// edit functions that paste/mute
-		matrix=new FXMatrix(editFrame,2,MATRIX_BY_COLUMNS, 0,0,0,0, 0,0,0,0, 0,0);
-		new CActionButton(new CInsertPasteEditFactory(gPasteChannelsDialog),matrix,"insrt",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-		new CActionButton(new CReplacePasteEditFactory(gPasteChannelsDialog),matrix,"replc",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-		new CActionButton(new COverwritePasteEditFactory(gPasteChannelsDialog),matrix,"ovwr",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-		new CActionButton(new CLimitedOverwritePasteEditFactory(gPasteChannelsDialog),matrix,"lovr",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-		new CActionButton(new CMixPasteEditFactory(gPasteChannelsDialog),matrix,"mix",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-		new CActionButton(new CLimitedMixPasteEditFactory(gPasteChannelsDialog),matrix,"lmix",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-		new CActionButton(new CInsertSilenceEditFactory(gChannelSelectDialog,new CInsertSilenceDialog(this)),matrix,"slnc",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-		new CActionButton(new CMuteEditFactory(gChannelSelectDialog),matrix,"mute",NULL,FRAME_RAISED | LAYOUT_FIX_WIDTH|LAYOUT_FIX_HEIGHT, 0,0,32,32);
-	}
-#endif
-
-
 	// build the drop-down menus
 	FXMenuPane *menu;
 
