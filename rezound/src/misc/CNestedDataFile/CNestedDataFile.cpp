@@ -483,7 +483,7 @@ void CNestedDataFile::writeFile(const string filename) const
 	if(f==NULL)
 		throw(runtime_error(string(__func__)+" -- error opening file for write: "+filename));
 
-	fprintf(f,"// ReZound program generated data; be careful if modifying\n\n");
+	fprintf(f,"// ReZound program generated data; be careful if modifying.  Consider making a backup before modifying!\n\n");
 
 	try
 	{
