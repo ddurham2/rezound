@@ -54,7 +54,7 @@ public:
 	// ??? should rename these to, saveActive...  or pass them a CSound * (I prefer that), perhaps optionally pass saveAs a filename which can be ""
 	void save();
 	void saveAs();
-	void savePartial(const CSound *sound,const string filename,const sample_pos_t saveStart,const sample_pos_t saveLength);
+	bool savePartial(const CSound *sound,const string filename,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs);
 	enum CloseTypes { ctSaveYesNoStop,ctSaveYesNoCancel,ctSaveNone };
 	void close(CloseTypes closeType,CLoadedSound *closeWhichSound=NULL); // if nothing is passed for closeWhichSound, then the active sound is closed
 	void revert();

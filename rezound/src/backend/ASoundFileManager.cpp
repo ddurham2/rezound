@@ -285,7 +285,7 @@ askAgain:
 	}
 }
 
-void ASoundFileManager::savePartial(const CSound *sound,const string _filename,const sample_pos_t saveStart,const sample_pos_t saveLength)
+bool ASoundFileManager::savePartial(const CSound *sound,const string _filename,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs)
 {
 	string filename=_filename;
 	bool first=true;
@@ -295,7 +295,7 @@ askAgain:
 	if(filename=="" || !first)
 	{
 		if(!gFrontendHooks->promptForSaveSoundFilename(filename,saveAsRaw))
-			return;
+			return false;
 	}
 
 	first=false;
@@ -311,8 +311,12 @@ askAgain:
 
 	const ASoundTranslator *translator=ASoundTranslator::findTranslator(filename,saveAsRaw);
 
-	if(translator->saveSound(filename,sound,saveStart,saveLength))
+	if(translator->saveSound(filename,sound,saveStart,saveLength,useLastUserPrefs))
+	{
 		updateReopenHistory(filename);
+		return true;
+	}
+	return false;
 }
 
 void ASoundFileManager::close(CloseTypes closeType,CLoadedSound *closeWhichSound)
