@@ -38,14 +38,11 @@ class AAction;
 class CLoadedSound;
 class CSoundPlayerChannel;
 class AActionDialog;
-
 class CActionParameters;
+class ASoundClipboard;
 
 
 #include "CSound.h" // really only necesary because of CSound::RCue
-
-typedef TPoolAccesser<sample_t,CSound::PoolFile_t > CRezClipboardPoolAccesser;
-
 
 
 /*
@@ -160,14 +157,7 @@ public:
 	// - if channel is passed, restores the selection positions from before the action executed if a channel was given to doAction
 	void undoAction(CSoundPlayerChannel *channel=NULL);
 
-
-	// this CPoolFile object needs to be instantiated at startup and destroyed at
-	// shutdown and should be created as a file in the user-specified temp directory
-	// it is used for storing copied/cut data
-	static CSound::PoolFile_t *clipboardPoolFile;
-	static void clearClipboard();
-	static unsigned getClipboardChannelCount(); // ??? may supply a clipboard ID
-	static sample_pos_t getClipboardLength(); // ??? may supply a clipboard ID
+	static vector<ASoundClipboard *> clipboards;
 
 protected:
 
@@ -222,7 +212,7 @@ protected:
 	};
 	void moveSelectionToTempPools(const CActionSound &actionSound,const MoveModes moveMode,sample_pos_t replaceLength=0,sample_pos_t fudgeFactor=0);
 	void restoreSelectionFromTempPools(const CActionSound &actionSound,sample_pos_t removeWhere=0,sample_pos_t removeLength=0);
-	// frees what moveSelectionToTempPool created
+	// frees what moveSelectionToTempPool, and crossfade methodscreated
 	void freeAllTempPools();
 
 	int tempAudioPoolKey;
@@ -250,10 +240,7 @@ private:
 
 	// members used to keep track of undo backup information
 	sample_pos_t oldSelectStart,oldSelectStop;	// the selection positions when doAction was called to restore if the action is undone
-	/*
-	TDimableList<int,string> undoPoolNames; // a list of arbitrary names of pools in the undo CPoolFile unique across all actions, but the int key is unique to this action
-	void removeUndoPools();			// removes all undo pools in the global undo CPoolFile that this action created
-	*/
+
 
 	bool origIsModified;
 	
@@ -262,7 +249,6 @@ private:
 	sample_pos_t restoreWhere,restoreLength;
 	sample_pos_t restoreLength2;
 	sample_pos_t restoreTotalLength;
-	//CActionSound restoreActionSound;	// the CActionSound passed to backupUndoSelection
 	vector<CSound::RCue> restoreCues;
 
 	
@@ -282,14 +268,6 @@ private:
 	sample_pos_t crossfadeStopLength;
 	sample_pos_t crossfadeMoveMul;
 	
-	
-
-	/*
-	// used to get unique pool names for the global undo CPoolFile across all actions
-	static const string getUniquePoolName();
-	static int poolNameCounter;
-	*/
-
 };
 
 #endif

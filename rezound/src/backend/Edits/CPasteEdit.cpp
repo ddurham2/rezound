@@ -26,18 +26,7 @@
 #include <istring>
 
 #include "../AActionDialog.h"
-
-
-/* TODO
- * Still have to implement several of the paste methods
- *
- * - Have a parameter which said to perform a quick blend on the edges of the pasted data
- *   - the parameter would probably be in millisecs
- *   - it could be set for both the start and end edges
- *   - 'insert' may not do anything with this parameter, or may blend the edges so there are no quick pops
- *   - 'replace' is mainly what I was thinking about, it would do a quick cross-fade from the original audio to the new audio
- *   - 'mix' would probably quickly fade in the new audio instead of starting and ending it suddenly
- */
+#include "../ASoundClipboard.h"
 
 
 /* 
@@ -45,6 +34,7 @@
  *    for example  if pasteChannels[0][1]==true    then data from the left channel gets pasted into the right channel
  *    for example  if pasteChannels[1][1]==true    then data from the right channel gets pasted into the right channel
  *
+ * ??? this should now be fixed with the abstraction of ASoundClipboard
  * - Although the data could represent it, I ignore if two channels from the source data is to be pasted into one channel;
  *   I just use the first one I come to... The GUI interface should have radio buttons to disallow the user creating that
  *   senario
@@ -86,16 +76,19 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 		printf("\n");
 	}
 
+	const ASoundClipboard *clipboard=clipboards[gWhichClipboard];
+	const sample_pos_t clipboardLength=clipboard->getLength(actionSound.sound->getSampleRate());
+
 	// save info for undo
-	undoRemoveLength=getClipboardLength();
+	undoRemoveLength=clipboardLength;
 	originalLength=actionSound.sound->getLength();
 
 	switch(pasteType)
 	{
 	case ptInsert:
 		// insert the space into the channels we need to
-		actionSound.sound->addSpace(whichChannels,actionSound.start,getClipboardLength());
-		pasteData(pasteChannels,actionSound,getClipboardLength(),false,mmOverwrite,mmAdd);
+		actionSound.sound->addSpace(whichChannels,actionSound.start,clipboardLength);
+		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,false,mmOverwrite,mmAdd);
 		break;
 
 	case ptReplace:
@@ -105,15 +98,15 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 			for(unsigned t=0;t<MAX_CHANNELS;t++)
 				_actionSound.doChannel[t]=whichChannels[t];
 
-			moveSelectionToTempPools(_actionSound,mmSelection,getClipboardLength());
+			moveSelectionToTempPools(_actionSound,mmSelection,clipboardLength);
 		}
 		else
 		{
 			actionSound.sound->removeSpace(whichChannels,actionSound.start,actionSound.selectionLength());
-			actionSound.sound->addSpace(whichChannels,actionSound.start,getClipboardLength());
+			actionSound.sound->addSpace(whichChannels,actionSound.start,clipboardLength);
 		}
 
-		pasteData(pasteChannels,actionSound,getClipboardLength(),false,mmOverwrite,mmAdd);
+		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,false,mmOverwrite,mmAdd);
 		break;
 
 	case ptMix:
@@ -134,8 +127,8 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 
 		// it is the amount that the clipboard, if pasted starting at the start position, overhangs the end of the sound
 		sample_pos_t extraLength=0;
-		if((actionSound.start+getClipboardLength())>actionSound.sound->getLength())
-			extraLength=(actionSound.start+getClipboardLength())-actionSound.sound->getLength();
+		if((actionSound.start+clipboardLength)>actionSound.sound->getLength())
+			extraLength=(actionSound.start+clipboardLength)-actionSound.sound->getLength();
 
 		if(prepareForUndo)
 		{
@@ -146,7 +139,7 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 			if(extraLength>0)
 				_actionSound.stop=actionSound.sound->getLength()-1;
 			else // doesn't overhang the end
-				_actionSound.stop=_actionSound.start+getClipboardLength()-1;
+				_actionSound.stop=_actionSound.start+clipboardLength-1;
 
 			// move the data that is going to be affected into a temp pool and replace the space
 			moveSelectionToTempPools(_actionSound,mmSelection,_actionSound.selectionLength());
@@ -163,7 +156,7 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 		if(extraLength>0)
 			actionSound.sound->addSpace(whichChannels,actionSound.sound->getLength(),extraLength,true);
 
-		pasteData(pasteChannels,actionSound,getClipboardLength(),prepareForUndo,mixMethod,mixMethod);
+		pasteData(clipboard,pasteChannels,actionSound,clipboardLength,prepareForUndo,mixMethod,mixMethod);
 
 	}
 		break;
@@ -175,7 +168,7 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 			for(unsigned t=0;t<MAX_CHANNELS;t++)
 				_actionSound.doChannel[t]=whichChannels[t];
 
-			_actionSound.stop=min(_actionSound.start+getClipboardLength()-1,_actionSound.stop);
+			_actionSound.stop=min(_actionSound.start+clipboardLength-1,_actionSound.stop);
 
 			// reassign this value for undo
 			undoRemoveLength=_actionSound.selectionLength();
@@ -191,7 +184,7 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
 			}
 		}
 
-		pasteData(pasteChannels,actionSound,undoRemoveLength,prepareForUndo,mixMethod,mixMethod);
+		pasteData(clipboard,pasteChannels,actionSound,undoRemoveLength,prepareForUndo,mixMethod,mixMethod);
 
 		break;
 
@@ -208,18 +201,16 @@ bool CPasteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepareForUndo)
  * 	whichChannels is true for each which which is going to have data written to, calculated from pasteChannels
  * 	pasteChannels came from the user
  */
-void CPasteEdit::pasteData(const bool pasteChannels[MAX_CHANNELS][MAX_CHANNELS],const CActionSound &actionSound,const sample_pos_t srcLength,bool invalidatePeakData,MixMethods initialMixMethod,MixMethods nonInitialMixMethod)
+void CPasteEdit::pasteData(const ASoundClipboard *clipboard,const bool pasteChannels[MAX_CHANNELS][MAX_CHANNELS],const CActionSound &actionSound,const sample_pos_t srcLength,bool invalidatePeakData,MixMethods initialMixMethod,MixMethods nonInitialMixMethod)
 {
 	for(unsigned y=0;y<actionSound.sound->getChannelCount();y++)
 	{
 		bool first=true;
-		for(unsigned x=0;x<getClipboardChannelCount();x++)
+		for(unsigned x=0;x<MAX_CHANNELS;x++)
 		{
 			if(pasteChannels[y][x])
 			{
-				const string poolName="Clipboard Channel "+istring(x);
-				const CRezPoolAccesser src=clipboardPoolFile->getPoolAccesser<sample_t>(poolName);
-				actionSound.sound->mixSound(y,actionSound.start,src,0,srcLength,first ? initialMixMethod : nonInitialMixMethod,first && invalidatePeakData);
+				clipboards[gWhichClipboard]->copyTo(actionSound.sound,y,x,actionSound.start,srcLength,first ? initialMixMethod : nonInitialMixMethod,first && invalidatePeakData);
 				first=false;
 			}
 		}
@@ -269,7 +260,10 @@ void CPasteEdit::undoActionSizeSafe(const CActionSound &actionSound)
 #define CHECK_FOR_DATA(ClassName) 						\
 	bool ClassName::doPreActionSetup() 					\
 	{ 									\
-		if(AAction::getClipboardChannelCount()<=0) 			\
+		if(!AAction::clipboards[gWhichClipboard]->prepareForCopyTo())	\
+			return(false);						\
+										\
+		if(AAction::clipboards[gWhichClipboard]->isEmpty())		\
 		{ 								\
 			Message("No data has been cut or copied yet"); 		\
 			return(false); 						\

@@ -8,6 +8,11 @@ would use this pool file to store data.  What this would allow, is being able to
 And it would speed copy/paste except the copy could be delayed until the region that was copied needs to be modified.  But a copy 
 followed by a paste would only take as long as the paste.
 
+If there were some notion that the user could express that the data they are cutting is only going to be pasted once, then I could use
+move data all together.  Also, I suppose that I could use move data on the first paste, and then it would become a watched region and
+on the first modify if the clipboard still needs that data, then it could make a copy or ask the user if the clipboard data can be
+discarded.... this is however, less transparent
+
 Another advantage would be a single working space rather than multiple files scattered out with the input files.
 
 ---------------------------------------

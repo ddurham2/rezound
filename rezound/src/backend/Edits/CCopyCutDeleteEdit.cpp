@@ -22,6 +22,8 @@
 
 #include <istring>
 
+#include "../ASoundClipboard.h"
+
 CCopyCutDeleteEdit::CCopyCutDeleteEdit(const CActionSound actionSound,CCDType _type) :
     AAction(actionSound),
 
@@ -41,18 +43,7 @@ bool CCopyCutDeleteEdit::doActionSizeSafe(CActionSound &actionSound,bool prepare
 		const sample_pos_t start=actionSound.start;
 		const sample_pos_t selectionLength=actionSound.selectionLength();
 
-		clearClipboard();
-
-		for(unsigned i=0;i<actionSound.sound->getChannelCount();i++)
-		{
-			if(actionSound.doChannel[i])
-			{
-				const string poolName="Clipboard Channel "+istring(i);
-				CRezClipboardPoolAccesser dest=clipboardPoolFile->createPool<sample_t>(poolName);
-				// ??? progress bar.. either call this in 100 chunks or have a call back function
-				dest.copyData(0,actionSound.sound->getAudio(i),start,selectionLength,true);
-			}
-		}
+		AAction::clipboards[gWhichClipboard]->copyFrom(actionSound.sound,actionSound.doChannel,start,selectionLength);
 	}
 	
 	if(type==ccdtCut || type==ccdtDelete)

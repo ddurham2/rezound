@@ -9,6 +9,10 @@
 		- When pasting data, there is no heeding of the differences in sample rate of the src data when pasting to the destination
 			- I should fix this problem when I implement a real clipboard system and I would have to supply the PCM parameters to the clipboard when I copied the data there, then pasting could do something to resolve any differances when reading from it
 
+	- make CSound::mixSound convert sample rates
+
+	- figure out what to do with the 4 bogus cues that appear in an aiff file when the file had no cues in it, itself
+
 	- need a method that can make an available cue name which isn't already used
 		- use whenever the new-cue-dialog is shown
 		- or when a button is pressed while playing (hmm.. latency of play position might matter.. maybe I could work with COSSSoundPlayer to know where the real play position is by subtracting the amount of prebuffered samples from the CSoundPlayerChannel's playPosition... looping would be an issue and so would sample rate... )

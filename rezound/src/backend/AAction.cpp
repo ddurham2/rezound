@@ -161,9 +161,7 @@ const string &AActionFactory::getDescription() const
 // -- AAction -----------------------------------------------------------
 // ----------------------------------------------------------------------
 
-//CPoolFile *AAction::undoPoolFile=NULL;
-CSound::PoolFile_t *AAction::clipboardPoolFile=NULL;
-//int AAction::poolNameCounter=0;
+vector<ASoundClipboard *> AAction::clipboards;
 
 // ??? perhaps we could hold on to a pointer to our factory to easily be able to rePEAT the action
 
@@ -176,8 +174,6 @@ AAction::AAction(const CActionSound &_actionSound) :
 	done(false),
 	oldSelectStart(NIL_SAMPLE_POS),
 	oldSelectStop(NIL_SAMPLE_POS),
-	//undoBackupSaved(false)//,
-	//backedUpActionSound(_actionSound)
 
 	origIsModified(true),
 
@@ -331,7 +327,6 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 
 		uncrossfadeEdges();
 
-		//const CActionSound _actionSound(backedUpActionSound);
 		const CActionSound _actionSound(actionSound);
 
 		undoActionSizeSafe(_actionSound);
@@ -541,6 +536,7 @@ run-through on paper would help
 			const CRezPoolAccesser src=actionSound.sound->getTempAudio(tempCrossfadePoolKeyStop,i);
 
 			sample_pos_t srcPos=0;
+			sample_pos_t srcOffset=crossfadeStopLength-crossfadeStopTime; // amount that we're not using of the stop.. so the *end* of the data will match up
 
 			// crossfade with what already there and what's in the temp audio pool
 			for(sample_pos_t t=actionSound.stop-crossfadeStopTime+1;t<=actionSound.stop;t++,srcPos++)
@@ -548,7 +544,7 @@ run-through on paper would help
 					(
 						(dest[t]*(1.0-((float)srcPos/(float)crossfadeStopTime)))
 						+
-						(src[srcPos]*(float)srcPos/(float)crossfadeStopTime)
+						(src[srcPos+srcOffset]*(float)srcPos/(float)crossfadeStopTime)
 					);
 		}
 
@@ -828,23 +824,5 @@ void AAction::restoreSelectionFromTempPools(const CActionSound &actionSound,samp
 	default:
 		throw(runtime_error(string(__func__)+" -- unhandled moveMode: "+istring(restoreMoveMode)));
 	}
-}
-
-// ---------------------------------------------------------
-
-void AAction::clearClipboard()
-{
-	clipboardPoolFile->clear();
-}
-
-unsigned AAction::getClipboardChannelCount()
-{
-	return(clipboardPoolFile->getPoolCount());
-}
-
-sample_pos_t AAction::getClipboardLength()
-{
-	CRezPoolAccesser a=clipboardPoolFile->getPoolAccesser<sample_t>(clipboardPoolFile->getPoolIdByIndex(0));
-	return(a.getSize());
 }
 

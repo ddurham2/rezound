@@ -36,6 +36,9 @@ string gUserPresetsFile="";
 string gSysPresetsFile="";
 
 
+size_t gWhichClipboard=0;
+
+
 bool gSnapToCues=true;
 unsigned gSnapToCueDistance=5;
 

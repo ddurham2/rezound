@@ -1,6 +1,11 @@
 
 --- THINGS TO DO FOR SURE ---
 
+	- I was able to create a preset named "3 seconds" which is invalid when it reparses, but verifyKey should have caught it
+
+	- there needs to be a key binding for "center" start position or "center" stop position, list this key in the drop down from the CSoundWindow ruler too
+		- ??? this listed binding should be read from a list of bindings.... but I don't have that yet
+
 	- need to make a type parameter in the "new sound" dialog... Allow the user to choose among wave, rezound, etc types
 		- it can be done with the given extension right now, but the user may not know the extensions... or perhaps the open dialog should have separate filetype entries and it will add the extension chosen
 		- right now the backend knows it by file extension, and the backend may need to pop up a subsequent dialog to ask for format specifiy parametesr

@@ -24,9 +24,12 @@
 
 #include <istring>
 
+#include "settings.h"
+
 #include "../backend/AAction.h"
 #include "../backend/CActionSound.h"
-#include "../backend/CSound.h"
+#include "../backend/CSound_defs.h"
+#include "../backend/ASoundClipboard.h"
 
 CPasteChannelsDialog *gPasteChannelsDialog=NULL;
 
@@ -76,30 +79,60 @@ CPasteChannelsDialog::CPasteChannelsDialog(FXWindow *mainWindow) :
 
 bool CPasteChannelsDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
+	const ASoundClipboard *clipboard=AAction::clipboards[gWhichClipboard];
+	if(clipboard->isEmpty())
+		return(false);
+
+	// determine if and which channel is the only channel available in the clipbaord
+	bool isSingleClipboardChannel=false;
+	size_t singleClipboardChannel;
+	for(size_t t=0;t<MAX_CHANNELS;t++)
+	{
+		if(clipboard->getWhichChannels()[t])
+		{
+			if(isSingleClipboardChannel)
+			{
+				isSingleClipboardChannel=false;
+				break;
+			}
+			else
+			{
+				isSingleClipboardChannel=true;
+				singleClipboardChannel=t;
+			}
+		}
+	}
+
 	// don't show the dialog if there is only one channel in both the source and destination
-	if(actionSound->sound->getChannelCount()<=1 && AAction::getClipboardChannelCount()<=1)
+	if(actionSound->sound->getChannelCount()<=1 && isSingleClipboardChannel)
 	{
 		for(unsigned y=0;y<MAX_CHANNELS;y++)
 		for(unsigned x=0;x<MAX_CHANNELS;x++)
 			pasteChannels[y][x]=false;
 
-		pasteChannels[0][0]=true;
+		pasteChannels[0][singleClipboardChannel]=true;
 		return(true);
 	}
 
 
+	// uncheck all check boxes and enable only the valid ones where data could be pasted to and from
 	for(unsigned y=0;y<MAX_CHANNELS;y++)
 	for(unsigned x=0;x<MAX_CHANNELS;x++)
 	{
 		checkBoxes[y][x]->setCheck(FALSE);
-		if(y<actionSound->sound->getChannelCount() && x<AAction::getClipboardChannelCount())
+
+		if(y<actionSound->sound->getChannelCount() && clipboard->getWhichChannels()[x])
 			checkBoxes[y][x]->enable();
 		else
 			checkBoxes[y][x]->disable();
 	}
 
-	for(unsigned t=0;t<min(actionSound->sound->getChannelCount(),AAction::getClipboardChannelCount());t++)
-		checkBoxes[t][t]->setCheck(TRUE);
+	// by default enable a 1:1 paste mapping
+	for(unsigned t=0;t<actionSound->sound->getChannelCount();t++)
+	{
+		if(checkBoxes[t][t]->isEnabled())
+			checkBoxes[t][t]->setCheck(TRUE);
+	}
 
 	if(FXDialogBox::execute(PLACEMENT_CURSOR))
 	{

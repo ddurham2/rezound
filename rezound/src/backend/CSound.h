@@ -31,10 +31,11 @@
 // it would be nice if I didn't have to include all this ???
 #include <TPoolFile.h>
 #include <TPoolAccesser.h>
+#define REZOUND_POOLFILE_BLOCKSIZE 32768
+#define REZOUND_POOLFILE_SIGNATURE "ReZoundF"
 
-// ??? I should even typedef the uint64_t as something else... it needs to match whatever CMultiFile has though
-typedef TStaticPoolAccesser<sample_t,TPoolFile<sample_pos_t,uint64_t> > CRezPoolAccesser;
 
+typedef TStaticPoolAccesser<sample_t,TPoolFile<sample_pos_t,CMultiFile::l_addr_t> > CRezPoolAccesser;
 
 struct RPeakChunk
 { 

@@ -48,6 +48,12 @@ extern string gUserPresetsFile;		// "~/.rezound/presets.dat"
 extern string gSysPresetsFile;		// "/usr/share/rezound/presets.dat"
 
 
+
+// specifies an index into AAction::clipboards which specifies which clipboard 
+// should be used for the subsequent edit operations which use a clipboard
+extern size_t gWhichClipboard;
+
+
 /*
  * These are the parameters of whether or not to snap the selection positions
  * to the cue position, and if so, how far from a cue to does the position have

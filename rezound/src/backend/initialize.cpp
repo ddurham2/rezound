@@ -33,6 +33,7 @@
 #include <CNestedDataFile/CNestedDataFile.h>
 
 
+
 // ... except for a few things.. this could probably be moved into the backend.. it'd have to be done for all frontends if I didn't move it
 
 #include "file.h"
@@ -42,7 +43,9 @@
 #include "COSSSoundPlayer.h"
 static COSSSoundPlayer *soundPlayer=NULL;
 
+
 #include "AAction.h"
+#include "CNativeSoundClipboard.h"
 
 
 // for mkdir  --- possibly wouldn't port???
@@ -100,6 +103,10 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 		}
 		gPromptDialogDirectory=gSettingsRegistry->getValue("promptDialogDirectory");
 
+		
+		if(gSettingsRegistry->keyExists("whichClipboard"))
+			gWhichClipboard= atoi(gSettingsRegistry->getValue("whichClipboard").c_str());
+
 		if(gSettingsRegistry->keyExists("followPlayPosition"))
 			gFollowPlayPosition= gSettingsRegistry->getValue("followPlayPosition")=="true";
 
@@ -116,10 +123,12 @@ void initializeBackend(ASoundPlayer *&_soundPlayer)
 
 		// -- 2
 						// ??? this filename needs to be an application setting just as in CSound.cpp
-		const string clipboardPoolFilename="/tmp/rezound.clipboard";
-		remove(clipboardPoolFilename.c_str());
-		AAction::clipboardPoolFile=new CSound::PoolFile_t();
-		AAction::clipboardPoolFile->openFile(clipboardPoolFilename,true);
+		const string clipboardPoolFilename="/tmp/rezound.clipboard1";
+		AAction::clipboards.push_back(new CNativeSoundClipboard("Native Clipboard A",clipboardPoolFilename));
+
+			// make sure the global clipboard selector index is in range
+		if(gWhichClipboard>=AAction::clipboards.size())
+			gWhichClipboard=0; 
 
 
 		// -- 3
@@ -153,17 +162,16 @@ void deinitializeBackend()
 
 
 	// -- 2
-	if(AAction::clipboardPoolFile!=NULL)
+	while(!AAction::clipboards.empty())
 	{
-		if(AAction::clipboardPoolFile->isOpen())
-			AAction::clipboardPoolFile->closeFile(false,true);
-		delete AAction::clipboardPoolFile;
-		AAction::clipboardPoolFile=NULL;
+		delete AAction::clipboards[0];
+		AAction::clipboards.erase(AAction::clipboards.begin());
 	}
 
 
 	// -- 1
 	gSettingsRegistry->createKey("promptDialogDirectory",gPromptDialogDirectory);
+	gSettingsRegistry->createKey("whichClipboard",gWhichClipboard);
 	gSettingsRegistry->createKey("followPlayPosition",gFollowPlayPosition ? "true" : "false");
 	gSettingsRegistry->createKey("initialLengthToShow",gInitialLengthToShow);
 	gSettingsRegistry->createKey("crossfadeEdges",(float)gCrossfadeEdges);

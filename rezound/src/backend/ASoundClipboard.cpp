@@ -20,7 +20,34 @@
 
 #include "ASoundClipboard.h"
 
-ASoundClipboard::ASoundClipboard()
+ASoundClipboard::ASoundClipboard(const string _description) :
+	description(_description)
 {
+	clearWhichChannels();
+}
+
+ASoundClipboard::~ASoundClipboard()
+{
+}
+
+const string ASoundClipboard::getDescription() const
+{
+	return(description);
+}
+
+void ASoundClipboard::clearWhichChannels()
+{
+	for(size_t t=0;t<MAX_CHANNELS;t++)
+		whichChannels[t]=false;
+}
+
+const bool *ASoundClipboard::getWhichChannels() const
+{
+	return(whichChannels);
+}
+
+bool ASoundClipboard::prepareForCopyTo()
+{
+	return(true);
 }
 

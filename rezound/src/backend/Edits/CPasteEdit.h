@@ -52,7 +52,7 @@ private:
 	bool whichChannels[MAX_CHANNELS]; // or-ed together rows from pasteChannels which says which channels are affected
 
 
-	void pasteData(const bool pasteChannels[MAX_CHANNELS][MAX_CHANNELS],const CActionSound &actionSound,const sample_pos_t srcLength,bool invalidatePeakData,MixMethods initialMixMethod,MixMethods nonInitialMixMethod);
+	void pasteData(const ASoundClipboard *clipboard,const bool pasteChannels[MAX_CHANNELS][MAX_CHANNELS],const CActionSound &actionSound,const sample_pos_t srcLength,bool invalidatePeakData,MixMethods initialMixMethod,MixMethods nonInitialMixMethod);
 
 	// --- undo information --------
 	sample_pos_t undoRemoveLength;
