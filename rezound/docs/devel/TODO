@@ -10,9 +10,9 @@
 	- go to each dialog and make at least some presets for each that could use it
 		- crossfading could use it
 
-	- go through and remove all the unneeded commented code before making a release
+	- eventually need to go through and remove all the unneeded commented code
 
-	- needs some compressor action(s)
+	- DONE needs some compressor action(s)
 		- need a "link-channels" toggle parameter which causes all the channels to be compressed if any channel needs to be compressed
 			- I have to implement a frontend checkbox action dialog widget for this
 			- the backend already supports this behavior
@@ -71,13 +71,13 @@
 		- post several examples of my _alt# files
 
 	- I've said that I want to support another audio file libary in the future, but I did find that libaudiofile's API at least has support for loop points, cues, notes and arbitrary data, but it doesn't seem to even be implemented on wave save.
-		- Perhaps I will work to patch libaudiofile to get this functionality working.  Because SOX's lib form is far from existing
+		- DONE Perhaps I will work to patch libaudiofile to get this functionality working.  Because SOX's lib form is far from existing
 		- libsndfile has more formats than libaudiofile but has no API provisions for arbitrary data. AND it isn't packaged on hardly any distroes
-		- Now another possiblity for at least giving a decent effort toward being able to load and save numerous other formats could be done by making a CSOXSound : ASound and have it shell out and actually run the sox command.  Maybe sox can even read and write to std i/o so I could avoid intermediate copies by sending it and receiving from it raw PCM data.
+		- Now another possiblity for at least giving a decent effort toward being able to load and save numerous other formats could be done by making a CSOXSoundTranslator : ASoundTranslator and have it shell out and actually run the sox command.  Maybe sox can even read and write to std i/o so I could avoid intermediate copies by sending it and receiving from it raw PCM data.
 			- This would be under an explicit import/export set of buttons under the file actions because it would probably support no form of saving the cues and notes and such and the user could be warned that none of this information will be preserved.
 			- configure should test for `sox` being valid and make it a depenancy... If it's not found, then the import and export file operations will be disabled
 				- the configure script should make a big note of this on screen that import/export will be disabled
-		- But I should still use libaudiofile to load and save wav, aiff, (ogg and mp3 when it's available)
+		- But I should still use libaudiofile to load and save wav, aiff, (ogg and mp3 if/when it's available)
 
 	- create selection edits which:
 		- grow or shrink the selection by a given duration
@@ -108,15 +108,7 @@
 	- in ddd, step thru a copy/insert action to make sure nothing unexpected is happening
 		- when I was taking a file up above 2gb, I copied a 1.2g selection and it seemed to do something for a long time before growing the clipboard file during the copy action
 
-	- need to make front and backend provisions for letting the user specify the export format parameters... some of the parameters depend on the export format... Perhaps I could have a dialog with a tabbed bar which has different parameters on each... which ever bar was activated would be the export format type... Either use the tabbar or radio buttons (real buttons) and a switcher like the switcher test that comes with fox
-		- should be somewhat easier now with the code reorganization
-		- I should quite easily be able to do with with the existance of AFrontendHooks
-
 	- write a little document in PoolFile that explains simply the layout of how PoolFileAccessors do their thing and perhaps a very simplified explination of how TPoolFile does what it does
-
-	- it is evidently invalid to call ftruncate to make a file bigger if it's on a fat32 mounted device
-		- There is a specific errno that comes back from this, I should test for it and fwrite zeros to make the file bigger
-		- this would be fixed in src/PoolFile/CMultiFile.cpp
 
 	- Need someone like a sound engineer/hobbiest who can create interesting names and settings for presets of the effect
 		- He would also be good to suggest new parameters for the effects
@@ -147,7 +139,8 @@
 					- because at the moment, the order of the sliders totally matters because the backend has to know the order of the frontend sliders
 						- I should do this first.. then attempt to allow an action to give feedback to the frontend
 
-	- A simple thing that could avoid errors later... create a template class that is used that locks a given mutex on construction and unlock on deconstruction... this would let me remove the try catchs that are just there to unlock the mutex and would keep me from having to remember to write code later that will unlock the mutex... just declare local variable of one of these and it will do it
+	- DONE A simple thing that could avoid errors later... create a template class that is used that locks a given mutex on construction and unlock on deconstruction... this would let me remove the try catchs that are just there to unlock the mutex and would keep me from having to remember to write code later that will unlock the mutex... just declare local variable of one of these and it will do it
+		- need to use it more through out the code
 
 	- After reading more of the DSP book about filters
 		- create a data type in CActionParameters which is the filter to apply to the sound
@@ -188,12 +181,13 @@
 			- this would be stupid right now, but more useful if I support 5 channel sounds or something
 		- I should put a button on the channel select dialog (and paste channel dialog) which set it to a normal state
 
-	- I could create a method in TPoolFileAccessor that can copy from another TPoolFileAccessor of the same type... It could do memcpys from the cachedBuffers instead of manually having to do a for loop calling operator[] and being enefficient
-		- do some timing tests before and after to see the speed increase
+	- DONE I did create this: TPoolFileAccessor::copyData -- but I haven't made it actually use memmove() yet
+		- I could create a method in TPoolFileAccessor that can copy from another TPoolFileAccessor of the same type... It could do memcpys from the cachedBuffers instead of manually having to do a for loop calling operator[] and being enefficient
+			- do some timing tests before and after to see the speed increase
 
-		- places to use it epecially are:
-			- AAction::backup/restoreUndoSelection
-			- CCopyCutDeleteEdit::doActionSizeSafe
+			- places to use it epecially are:
+				- AAction::backup/restoreUndoSelection
+				- CCopyCutDeleteEdit::doActionSizeSafe
 
 	- when making loops, it may be cool to have a play button that loops the selection, but skips the bulk of the middle for time's sake
 	- when editing large files it would be nice ot have play selection buttons (once and looped), but it plays a few seconds before the start to a few seconds after the stop so that you don't have to play from the beginning and seek forward to or play the selection and seek backwards a little bit
@@ -220,8 +214,6 @@
 --- KNOWN BUGS/GLITCHES ---
 	- OUTSTANDING -
 		- I've seen it once hang when closing the application... I attached to the process with the debugger and it was stuck waiting on a mutex of loaded->getSound()->lockForResize() in ASoundFileManager::close ... so perhaps some condition happened which left a mutex unlocked
-		- It's not reproducable, but I've seen Xlib return something which causes the application to lock up; fox even prints an 'unexpected ...' message, VERY seldom though
-			- I think this is because I'm modifying FOX widgets in the play/pause triggers in CSoundWindow
 
 		- I didn't notice this being a problem until I upgraded to Mandrake 8.2 with the 2.4.18 kernel, but when closing a large (80megs) file it would write all the meta data to end of the file.  Each write caused a call to ftruncate to make the file a little bigger each write.  ftruncate seemed to be taking quite a longer time than before because the program would seem to have on closing the file.
 			- However, I have avoided the problem for now by change TPoolFile::closeFile to not write the meta data if the file is about to be removed.  
@@ -243,6 +235,8 @@
 		- goofy stuff happens with the graph param value widget... orphaned nodes and stuff
 		- pressing the space bar key on the loaded sound listbox while it's empty causes a segfault.. I think it's a problem with fox itself
 			- I think it's trying to focus an item that doesn't exist (Jeroen fixed it in fox)
+		- It's not reproducable, but I've seen Xlib return something which causes the application to lock up; fox even prints an 'unexpected ...' message, VERY seldom though
+			- I think this is because I'm modifying FOX widgets in the play/pause triggers in CSoundWindow
 
 
 
@@ -269,13 +263,13 @@
 			- if I thought it would be that beneficial, I could make all the non-realtime actions use the filters to do their work
 		- it would then be just a matter of GUI creation to have ReZound act something like audacity
 
+		- for multi-track editing, I could create a derivation of CSound that wraps around a given CSound that returns peak data according to the volume envelopes
+			- I would need to address how real-time effects get inserted into the play queue, perhaps CSoundPlayerChannel would pull data from a module chain
+				- then different playback rates and formats could be handled by just having an initial sample rate conversion module to the native sample rate
+
 	- I could determine the most recent cue passed while playing at the beginning of each time I go to mix some sound... and set just an integer index in the ASoundPlayerChannel object for the frontend to read and display the current playing cue name in a status bar
 		- I'm not implementing this right away because I don't know how useful it would be... But there were lots of off screen cues, it could be useful to have an idea of where the sound was playing 
 		- If I do implement this, I should create a method in ASound which returns the most recent cue, and call it at each mix buffer call... This method should use the cue index in ASound for effient finding of this value
-
-	- for multi-track editing, I could create a derivation of CSound that wraps around a given CSound that returns peak data according to the volume envelopes
-		- I would need to address how real-time effects get inserted into the play queue, perhaps CSoundPlayerChannel would pull data from a module chain
-			- then different playback rates and formats could be handled by just having an initial sample rate conversion module to the native sample rate
 
 	- I could have copy and cut's copy to the clipboard delayed until a non-paste function and a not a paste function to the same range and sound that we cut/copied from
 		- that way, a copy from one sound and an immediate paste into another would not require but one copy
@@ -447,4 +441,12 @@
 	- right now, if you copy/cut from not all the channels, (by hitting ctrl-cut/copy and deselecting some checkboxes)
 		- then when you ctrl-click to paste, the pasteChannels dialog shows up with all the channels that were cut/copied shifted down to lower channel numbers 
 		- perhaps I could create pools but not put data into them, for the un-included copy/cut channels, but know to disable the check boxes in the GUI if the pool is zero length
+
+	- need to make front and backend provisions for letting the user specify the export format parameters... some of the parameters depend on the export format... Perhaps I could have a dialog with a tabbed bar which has different parameters on each... which ever bar was activated would be the export format type... Either use the tabbar or radio buttons (real buttons) and a switcher like the switcher test that comes with fox
+		- should be somewhat easier now with the code reorganization
+		- I should quite easily be able to do with with the existance of AFrontendHooks
+
+	- it is evidently invalid to call ftruncate to make a file bigger if it's on a fat32 mounted device
+		- There is a specific errno that comes back from this, I should test for it and fwrite zeros to make the file bigger
+		- this would be fixed in src/PoolFile/CMultiFile.cpp
 
