@@ -445,6 +445,7 @@ void CMainWindow::createMenus()
 		new FXMenuCascade(menu,"&Reopen",FOXIcons->file_open,new CReopenPopup(this));
 		new FXMenuCommand(menu,"&Save\tCtrl+S",FOXIcons->file_save,this,ID_FILE_SAVE_MENUITEM);
 		new FXMenuCommand(menu,"Save &As",FOXIcons->file_save_as,this,ID_FILE_SAVE_AS_MENUITEM);
+		new CActionMenuCommand(new CSaveSelectionAsActionFactory(),menu,"",FOXIcons->file_save_as);
 		new FXMenuCommand(menu,"&Close\tCtrl+W",FOXIcons->file_close,this,ID_FILE_CLOSE_MENUITEM);
 		new FXMenuCommand(menu,"Re&vert",FOXIcons->file_revert,this,ID_FILE_REVERT_MENUITEM);
 
@@ -608,7 +609,7 @@ long CMainWindow::onClipboardComboBox(FXObject *sender,FXSelector sel,void *ptr)
 // file action events
 long CMainWindow::onFileAction(FXObject *sender,FXSelector sel,void *ptr)
 {
-	switch(SELID(sel))
+	switch(FXSELID(sel))
 	{
 	case ID_FILE_NEW_MENUITEM:
 		newSound(gSoundFileManager);
@@ -655,7 +656,7 @@ long CMainWindow::onFileAction(FXObject *sender,FXSelector sel,void *ptr)
 // play control events
 long CMainWindow::onPlayControlButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-	switch(SELID(sel))
+	switch(FXSELID(sel))
 	{
 	case ID_PLAY_ALL_ONCE_BUTTON:
 		play(gSoundFileManager,false,false);
@@ -879,17 +880,17 @@ long CMainWindow::onKeyboardSeek(FXObject *sender,FXSelector sel,void *ptr)
 
 	FXint pos=shuttleDial->getValue();
 
-	if(pos==0 && SELID(sel)==ID_SEEK_LEFT)
+	if(pos==0 && FXSELID(sel)==ID_SEEK_LEFT)
 	{
 		shuttleDial->setValue(pos-inc);
 		onShuttleChange(sender,sel,ptr);
 	}
-	else if(pos==0 && SELID(sel)==ID_SEEK_RIGHT)
+	else if(pos==0 && FXSELID(sel)==ID_SEEK_RIGHT)
 	{
 		shuttleDial->setValue(pos+inc);
 		onShuttleChange(sender,sel,ptr);
 	}
-	else if(pos!=0 && SELID(sel)==ID_SEEK_MODIFY)
+	else if(pos!=0 && FXSELID(sel)==ID_SEEK_MODIFY)
 	{
 		if(pos<0)
 		{ // go more leftward
@@ -908,7 +909,7 @@ long CMainWindow::onKeyboardSeek(FXObject *sender,FXSelector sel,void *ptr)
 
 long CMainWindow::onViewKey(FXObject *sender,FXSelector sel,void *ptr)
 {
-	switch(SELID(sel))
+	switch(FXSELID(sel))
 	{
 	case ID_CENTER_START_POS:
 		if(gSoundFileManager->getActiveWindow())
@@ -930,14 +931,14 @@ long CMainWindow::onDebugButton(FXObject *sender,FXSelector sel,void *ptr)
 	CLoadedSound *s=gSoundFileManager->getActive();
 	if(s!=NULL)
 	{
-		if(SELID(sel)==ID_DEFRAG_MENUITEM)
+		if(FXSELID(sel)==ID_DEFRAG_MENUITEM)
 		{
 			s->sound->defragPoolFile();
 			gSoundFileManager->updateAfterEdit();
 		}
-		else if(SELID(sel)==ID_PRINT_SAT_MENUITEM)
+		else if(FXSELID(sel)==ID_PRINT_SAT_MENUITEM)
 			s->sound->printSAT();
-		else if(SELID(sel)==ID_VERIFY_SAT_MENUITEM)
+		else if(FXSELID(sel)==ID_VERIFY_SAT_MENUITEM)
 			s->sound->verifySAT();
 	}
 	else
