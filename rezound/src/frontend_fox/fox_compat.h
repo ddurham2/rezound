@@ -18,6 +18,9 @@
 #elif defined(HAVE_LIBFOX_1_4)
 	#include <fox-1.4/fx.h>
 	#include <fox-1.4/fxkeys.h>
+#elif defined(HAVE_LIBFOX_1_5)
+	#include <fox-1.5/fx.h>
+	#include <fox-1.5/fxkeys.h>
 #else
 	#error no HAVE_LIBFOX defined
 #endif
