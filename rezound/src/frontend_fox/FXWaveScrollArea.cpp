@@ -108,6 +108,8 @@ void FXWaveScrollArea::updateFromEdit(bool undoing)
 	// don't ask me why.. but if I don't put this twice it won't work unless I press the fit button twice.. and still it doesn't always work.. maybe I'll figure it out one day
 	setPosition(-canvas->getHorzOffset(),-canvas->getVertOffset());
 	layout();
+
+	update();
 }
 
 void FXWaveScrollArea::setHorzZoom(double v,FXWaveCanvas::HorzRecenterTypes horzRecenterType)
