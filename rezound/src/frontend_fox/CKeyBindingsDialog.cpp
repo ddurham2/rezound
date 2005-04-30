@@ -31,7 +31,9 @@
 CKeyBindingsDialog *gKeyBindingsDialog=NULL;
 
 
+#if REZ_FOX_VERSION<10501
 FXString fxunparseAccel(FXHotKey key);
+#endif
 
 void parseItemText(const string itemText,string &name,string &key)
 {
@@ -279,6 +281,7 @@ bool CKeyBindingsDialog::showIt(const map<string,FXMenuCommand *> &keyBindingReg
 	return false;
 }
 
+#if REZ_FOX_VERSION<10501
 FXString fxunparseAccel(FXHotKey key)
 {
 	FXString s;
@@ -424,3 +427,4 @@ FXString fxunparseAccel(FXHotKey key)
 
 	return s;
 }
+#endif
