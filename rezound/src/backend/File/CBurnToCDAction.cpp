@@ -148,8 +148,8 @@ bool CBurnToCDAction::doActionSizeSafe(CActionSound *actionSound,bool prepareFor
 			}
 			else
 			{
-				Error(_("Total data to be burned is too large: ")+istring(totalBurnLength,3,1)+" "+_("minutes"));
-				return false;
+				if(Question(_("Total data to be burned is ")+istring(totalBurnLength)+" "+_("minutes")+".  "+_("You will probably need to enable an --overburn or --full-burn option to cdrdao.  See cdrdao for details.  Do this at your own risk.\n")+_("Do you want to continue?"),yesnoQues)!=yesAns)
+					return false;
 			}
 		}
 
