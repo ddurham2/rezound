@@ -40,6 +40,8 @@ noinst_HEADERS=\
 EXTRA_DIST= \
 	istring \
 	endian_util.h \
+	auto_array.h \
+	TTempVarSetter.h \
 	missing/sstream-missing \
 	missing/stdint.h-missing
 
