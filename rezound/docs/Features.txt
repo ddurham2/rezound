@@ -36,6 +36,10 @@
 
 - Ability to Save User Notes on Formats that Support them
 
+- Macros Allow a User To Record a Sequence of Changes to a File and Repeat Those Actions on Other Files Later.
+
+- User-Definable Key Bindings to Actions
+
 - Recording
 	- Realtime Level Meters (display also when not recording)
 	- Record Time Limit Setting
@@ -138,6 +142,7 @@
 	- Normalization
 	- Adaptive Normalize
 	- Mark Quiet Areas (with cues)
+	- Shorten Quiet Areas
 	- Resample
 	- Change Pitch
 	- Change Tempo
@@ -155,6 +160,7 @@
 	- Russian
 	- German
 	- Spanish
+	- Finnish
 
 - Tested Platforms
 	Mandrake 9.1/x86

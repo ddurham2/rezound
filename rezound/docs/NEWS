@@ -1,3 +1,14 @@
+rezound-0.11.5beta -- 4/30/2005
+	- Implemented Macros.  Now, if you often repeat a sequence of edits, you can record this sequence, and play them back unattendedly on different files.
+	- Implemented user-definable key-bindings.  Now a user can customize what he wants keys on the keyboard to do in ReZound.
+	- Added a new Remaster action which can "shorten quiet areas".  That is, it finds quiet areas and automatically shortens these by some given amount.  It's great for slow-speaking lecturers.
+	- Enhanced the Burn To CD action.  More feedback to the user.
+	- Included a new Finnish thanks to Uffek
+	- There is new 'M' column in the loaded sound list to indicate which files are in a "modified" state.
+	- Updated other translation files
+	- Compiles with latest FOX releases
+	- Several other bug fixes and cosmetic tweaks
+
 rezound-0.11.1beta -- 10/26/2004
 	- Fixed an issue with the way the ALSA audio implementation is chosen
 

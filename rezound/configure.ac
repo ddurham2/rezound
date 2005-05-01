@@ -4,7 +4,7 @@
 # configure.in written by Anthony Ventimiglia and heavily 
 # modified by David W. Durham
 #
-# Copyright (C) 2002 - David W. Durham
+# Copyright (C) 2005 - David W. Durham
 # 
 # This file is part of ReZound, an audio editing application, 
 # 
@@ -23,7 +23,7 @@
 # Place - Suite 330, Boston, MA  02111-1307, USA
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT(rezound, 0.11.1beta, [http://sourceforge.net/tracker/?atid=105056&group_id=5056])
+AC_INIT(rezound, 0.12.0beta, [http://sourceforge.net/tracker/?atid=105056&group_id=5056])
 AC_CONFIG_AUX_DIR(config)
 AM_CONFIG_HEADER([config/config.h])
 AM_INIT_AUTOMAKE

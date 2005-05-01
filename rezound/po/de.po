@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ReZound 0.8.3beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-16 22:09-0600\n"
+"POT-Creation-Date: 2005-05-01 00:05-0500\n"
 "PO-Revision-Date: 2005-02-20 18:15+0100\n"
 "Last-Translator: Joost Andrae <Joost.Andrae@gmx.de>\n"
 "Language-Team: German <de@li.org>\n"
@@ -310,7 +310,7 @@ msgstr ""
 
 #: src/backend/ClameSoundTranslator.cpp:354
 #: src/backend/ClibaudiofileSoundTranslator.cpp:521
-#: src/backend/CFLACSoundTranslator.cpp:219
+#: src/backend/CFLACSoundTranslator.cpp:233
 msgid "Saving Sound"
 msgstr "Speichere Sound"
 
@@ -603,12 +603,14 @@ msgstr "Minuten"
 
 #: src/backend/File/CBurnToCDAction.cpp:140
 #: src/backend/File/CBurnToCDAction.cpp:146
+#: src/backend/File/CBurnToCDAction.cpp:151
 #: src/backend/File/CBurnToCDAction.cpp:161
 #: src/backend/File/CSaveAsMultipleFilesAction.cpp:102
 msgid "Do you want to continue?"
 msgstr "Möchten Sie fortfahren ?"
 
 #: src/backend/File/CBurnToCDAction.cpp:146
+#: src/backend/File/CBurnToCDAction.cpp:151
 msgid "Total data to be burned is "
 msgstr "Zu schreibende Daten sind "
 
@@ -617,8 +619,10 @@ msgid "You will need an 80 minute CD\n"
 msgstr "Sie benötigen eine 80 Minuten CD\n"
 
 #: src/backend/File/CBurnToCDAction.cpp:151
-msgid "Total data to be burned is too large: "
-msgstr "Zu schreibende Daten sind zu lang: "
+msgid ""
+"You will probably need to enable an --overburn or --full-burn option to "
+"cdrdao.  See cdrdao for details.  Do this at your own risk.\n"
+msgstr ""
 
 #: src/backend/File/CBurnToCDAction.cpp:161
 msgid ""
@@ -632,7 +636,7 @@ msgstr ""
 msgid "Writing Data to Burn"
 msgstr "Brennvorgang"
 
-#: src/backend/File/CBurnToCDAction.cpp:368
+#: src/backend/File/CBurnToCDAction.cpp:373
 msgid ""
 "cdrdao returned non-zero exit status.  Consult standard output/error for "
 "problems."
@@ -640,19 +644,19 @@ msgstr ""
 "cdrdao gab einen Fehler aus. Beachte Standard Ausgabe/Fehler auf "
 "Fehlermeldungen."
 
-#: src/backend/File/CBurnToCDAction.cpp:372
+#: src/backend/File/CBurnToCDAction.cpp:377
 msgid "Successful Burn Count: "
 msgstr "Erfolgreiche Brenn-Vorgänge: "
 
-#: src/backend/File/CBurnToCDAction.cpp:372
+#: src/backend/File/CBurnToCDAction.cpp:377
 msgid "Would you like to burn another?"
 msgstr "Möchten Sie eine weitere CD brennen ?"
 
-#: src/backend/File/CBurnToCDAction.cpp:372
+#: src/backend/File/CBurnToCDAction.cpp:377
 msgid "(Insert a new blank, and then press 'Yes'.)"
 msgstr "(Führen Sie eine neue, leere CD ein und bestätigen Sie.)"
 
-#: src/backend/File/CBurnToCDAction.cpp:400
+#: src/backend/File/CBurnToCDAction.cpp:405
 msgid ""
 "\n"
 "This action can be used to burn the loaded audio file onto a CD using the "
@@ -681,11 +685,11 @@ msgstr ""
 "Pfad im Aktionen-Dialog konfiguriert werden.\n"
 "\t"
 
-#: src/backend/File/CBurnToCDAction.cpp:446
+#: src/backend/File/CBurnToCDAction.cpp:451
 msgid "Burning..."
 msgstr "Brenne..."
 
-#: src/backend/File/CBurnToCDAction.cpp:569
+#: src/backend/File/CBurnToCDAction.cpp:576
 msgid "Burn to CD"
 msgstr "Brennen auf CD"
 
@@ -1144,6 +1148,7 @@ msgid "Changing Balance"
 msgstr "Balance verändern"
 
 #: src/backend/Remaster/CBalanceAction.cpp:181
+#, c-format
 msgid ""
 "Strict Balance: -100% means normal A and no B, 0 means normal A and normal "
 "B, 100% means no A and normal B\n"
@@ -1273,7 +1278,7 @@ msgstr "Möchten Sie das Originalformat benutzen ?"
 msgid " -- unhandled format/extension for the filename"
 msgstr " -- nicht unterstütztes Format/Dateierweiterung für den Dateinamen"
 
-#: src/backend/CFLACSoundTranslator.cpp:241
+#: src/backend/CFLACSoundTranslator.cpp:255
 msgid ""
 "Saving user notes or cues is unimplemented for FLAC\n"
 "Do you wish to continue?"
@@ -1766,34 +1771,39 @@ msgid "Spanish Translation"
 msgstr "Spanische Übersetzung"
 
 #: src/frontend_fox/CAboutDialog.cpp:115
+#, fuzzy
+msgid "Finnish Translation"
+msgstr "Spanische Übersetzung"
+
+#: src/frontend_fox/CAboutDialog.cpp:116
 msgid "Testing/Porting"
 msgstr "Testing/Portierung"
 
-#: src/frontend_fox/CAboutDialog.cpp:116 src/frontend_fox/CAboutDialog.cpp:117
-#: src/frontend_fox/CAboutDialog.cpp:118 src/frontend_fox/CAboutDialog.cpp:119
-#: src/frontend_fox/CAboutDialog.cpp:120 src/frontend_fox/CAboutDialog.cpp:123
-#: src/frontend_fox/CAboutDialog.cpp:125 src/frontend_fox/CAboutDialog.cpp:126
-#: src/frontend_fox/CAboutDialog.cpp:127 src/frontend_fox/CAboutDialog.cpp:128
+#: src/frontend_fox/CAboutDialog.cpp:117 src/frontend_fox/CAboutDialog.cpp:118
+#: src/frontend_fox/CAboutDialog.cpp:119 src/frontend_fox/CAboutDialog.cpp:120
+#: src/frontend_fox/CAboutDialog.cpp:121 src/frontend_fox/CAboutDialog.cpp:124
+#: src/frontend_fox/CAboutDialog.cpp:126 src/frontend_fox/CAboutDialog.cpp:127
+#: src/frontend_fox/CAboutDialog.cpp:128 src/frontend_fox/CAboutDialog.cpp:129
 msgid "Bug Finding"
 msgstr "Bugs suchen"
 
-#: src/frontend_fox/CAboutDialog.cpp:121
+#: src/frontend_fox/CAboutDialog.cpp:122
 msgid "Feature Suggestions"
 msgstr "Feature Vorschläge"
 
-#: src/frontend_fox/CAboutDialog.cpp:122
+#: src/frontend_fox/CAboutDialog.cpp:123
 msgid "Bug Finding/Fixing"
 msgstr "Bugs suchen/fixen"
 
-#: src/frontend_fox/CAboutDialog.cpp:124
+#: src/frontend_fox/CAboutDialog.cpp:125
 msgid "Semitones Shuttle Wheel Feature Patch"
 msgstr "Halbton Shuttle Rad Feature Patch"
 
-#: src/frontend_fox/CAboutDialog.cpp:131
+#: src/frontend_fox/CAboutDialog.cpp:132
 msgid "License"
 msgstr "Lizenz"
 
-#: src/frontend_fox/CAboutDialog.cpp:139 src/frontend_fox/CMainWindow.cpp:818
+#: src/frontend_fox/CAboutDialog.cpp:140 src/frontend_fox/CMainWindow.cpp:818
 #: src/frontend_fox/CCueListDialog.cpp:74
 msgid "&Close"
 msgstr "S&chließen"
@@ -2287,85 +2297,85 @@ msgstr "Lösche Rückgängig-Historie"
 msgid "&Recent Actions"
 msgstr "Letzte Aktionen"
 
-#: src/frontend_fox/CMainWindow.cpp:1006
+#: src/frontend_fox/CMainWindow.cpp:1007
 msgid "&File"
 msgstr "&Datei"
 
-#: src/frontend_fox/CMainWindow.cpp:1007
+#: src/frontend_fox/CMainWindow.cpp:1008
 #: src/frontend_fox/CCueListDialog.cpp:78
 msgid "&Edit"
 msgstr "Bearbeiten"
 
-#: src/frontend_fox/CMainWindow.cpp:1008
+#: src/frontend_fox/CMainWindow.cpp:1009
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1071
 msgid "Selection"
 msgstr "Selektion"
 
-#: src/frontend_fox/CMainWindow.cpp:1009
+#: src/frontend_fox/CMainWindow.cpp:1010
 msgid "&View"
 msgstr "Ansicht"
 
-#: src/frontend_fox/CMainWindow.cpp:1010
+#: src/frontend_fox/CMainWindow.cpp:1011
 msgid "&Control"
 msgstr "Steuerung"
 
-#: src/frontend_fox/CMainWindow.cpp:1011
+#: src/frontend_fox/CMainWindow.cpp:1012
 msgid "Effec&ts"
 msgstr "Effekte"
 
-#: src/frontend_fox/CMainWindow.cpp:1012
+#: src/frontend_fox/CMainWindow.cpp:1013
 msgid "&Looping"
 msgstr "&Looping"
 
-#: src/frontend_fox/CMainWindow.cpp:1013
+#: src/frontend_fox/CMainWindow.cpp:1014
 msgid "F&ilters"
 msgstr "F&ilter"
 
-#: src/frontend_fox/CMainWindow.cpp:1014
+#: src/frontend_fox/CMainWindow.cpp:1015
 msgid "&Remaster"
 msgstr "&Remaster"
 
-#: src/frontend_fox/CMainWindow.cpp:1015
+#: src/frontend_fox/CMainWindow.cpp:1016
 msgid "&Generate"
 msgstr "Erzeugen"
 
-#: src/frontend_fox/CMainWindow.cpp:1173
+#: src/frontend_fox/CMainWindow.cpp:1174
 msgid "No LADSPA Plugins Found"
 msgstr "Keine LADSPA Plugins gefunden"
 
-#: src/frontend_fox/CMainWindow.cpp:1175
+#: src/frontend_fox/CMainWindow.cpp:1176
 msgid "Like PATH, set LADSPA_PATH to point"
 msgstr "Wie PATH, muß auch LADSPA_PATH gesetzt sein"
 
-#: src/frontend_fox/CMainWindow.cpp:1176
+#: src/frontend_fox/CMainWindow.cpp:1177
 msgid "to a directory(s) containing LADSPA"
 msgstr "zu einem Verzeichnis(se) mit LADSPA"
 
-#: src/frontend_fox/CMainWindow.cpp:1177
+#: src/frontend_fox/CMainWindow.cpp:1178
 msgid "plugin .so file at least once.  Or"
 msgstr "Plugin .so Datei mindestens einmal. Oder"
 
-#: src/frontend_fox/CMainWindow.cpp:1178
+#: src/frontend_fox/CMainWindow.cpp:1179
 msgid "edit the value in ~/.rezound/registry.dat"
 msgstr "Editiere den Wert in ~/.rezound/registry.dat"
 
-#: src/frontend_fox/CMainWindow.cpp:1387
+#: src/frontend_fox/CMainWindow.cpp:1402
 msgid "Cannot close a file while recording a macro"
 msgstr "Kann keine Datei schließen, solange ein Makro aufgezeichnet wird"
 
-#: src/frontend_fox/CMainWindow.cpp:1396
+#: src/frontend_fox/CMainWindow.cpp:1411
 msgid "Cannot revert a file while recording a macro"
 msgstr ""
 "Kann keine Datei wiederherstellen, solange ein Makro aufgezeichnet wird"
 
-#: src/frontend_fox/CMainWindow.cpp:1522
+#: src/frontend_fox/CMainWindow.cpp:1537
 msgid "Cannot record audio while recording a macro"
 msgstr "Kann kein Audio aufnehmen, solange ein Makro aufgezeichnet wird"
 
-#: src/frontend_fox/CMainWindow.cpp:1666 src/frontend_fox/CMainWindow.cpp:1700
-#: src/frontend_fox/CMainWindow.cpp:1760 src/frontend_fox/CMainWindow.cpp:1798
-#: src/frontend_fox/CMainWindow.cpp:1799
-#: src/frontend_fox/RemasterActionDialogs.cpp:543
+#: src/frontend_fox/CMainWindow.cpp:1681 src/frontend_fox/CMainWindow.cpp:1715
+#: src/frontend_fox/CMainWindow.cpp:1775 src/frontend_fox/CMainWindow.cpp:1813
+#: src/frontend_fox/CMainWindow.cpp:1814
+#: src/frontend_fox/RemasterActionDialogs.cpp:598
 msgid "semitones"
 msgstr "Halbtöne"
 
@@ -2600,18 +2610,22 @@ msgid "Calculate Signal Level Across All Channels Simultaneously"
 msgstr "Berechne den max. Signal-Level Wert gleichzeitig über alle Kanäle"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:453
+#: src/frontend_fox/RemasterActionDialogs.cpp:512
 msgid "Threshold for Quiet"
 msgstr "Schwellwert für Still"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:459
+#: src/frontend_fox/RemasterActionDialogs.cpp:518
 msgid "An audio level below this threshold is considered to be quiet."
 msgstr "Ein Audio-Level unter diesem Schwellwert ist als Still zu bezeichnen."
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:462
+#: src/frontend_fox/RemasterActionDialogs.cpp:521
 msgid "Must Remain Quiet for"
 msgstr "Soll still bleiben für"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:468
+#: src/frontend_fox/RemasterActionDialogs.cpp:527
 msgid ""
 "The audio level must remain below the threshold for this long before a "
 "beginning cue will be added."
@@ -2620,10 +2634,12 @@ msgstr ""
 "Marker gesetzt wird."
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:471
+#: src/frontend_fox/RemasterActionDialogs.cpp:530
 msgid "Must Remain Unquiet for"
 msgstr "Soll nicht-still bleiben für"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:477
+#: src/frontend_fox/RemasterActionDialogs.cpp:536
 msgid ""
 "After the beginning of a quiet area has been detected the audio level must "
 "rise above the threshold for this long for an ending cue to be added."
@@ -2632,10 +2648,12 @@ msgstr ""
 "einen Schwellenwert ansteigen bevor ein Ende-Marker eingefügt wird."
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:480
+#: src/frontend_fox/RemasterActionDialogs.cpp:539
 msgid "Level Detector Window Time"
 msgstr "Level-Detector Zeit-Fenster"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:486
+#: src/frontend_fox/RemasterActionDialogs.cpp:545
 msgid ""
 "This is the length of the window of audio to analyze for detecting the audio "
 "level."
@@ -2659,26 +2677,36 @@ msgstr "Stille-Ende Marker-Name"
 msgid "What to Name a Cue That Marks End of a Quiet Region"
 msgstr "Wie man einen Marker benennt, welcher das Ende einer Stille markiert"
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:520
+#: src/frontend_fox/RemasterActionDialogs.cpp:548
+msgid "Shorten Found Area To"
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:554
+msgid ""
+"When a quiet area is found it will be shorted to this much of its original "
+"length."
+msgstr ""
+
+#: src/frontend_fox/RemasterActionDialogs.cpp:575
 msgid "New Sample Rate"
 msgstr "Neue Sample-Rate"
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:538
-#: src/frontend_fox/RemasterActionDialogs.cpp:619
+#: src/frontend_fox/RemasterActionDialogs.cpp:593
+#: src/frontend_fox/RemasterActionDialogs.cpp:674
 msgid "Pitch"
 msgstr "Tonhöhe"
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:542
+#: src/frontend_fox/RemasterActionDialogs.cpp:597
 msgid "Semitones"
 msgstr "Halbtöne"
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:550
-#: src/frontend_fox/RemasterActionDialogs.cpp:632
+#: src/frontend_fox/RemasterActionDialogs.cpp:605
+#: src/frontend_fox/RemasterActionDialogs.cpp:687
 msgid "Tweaking"
 msgstr "Tweaking"
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:552
-#: src/frontend_fox/RemasterActionDialogs.cpp:634
+#: src/frontend_fox/RemasterActionDialogs.cpp:607
+#: src/frontend_fox/RemasterActionDialogs.cpp:689
 msgid ""
 "CAUTION: Some of combinations of these parameters cause the SoundTouch "
 "library to generate assertion errors \n"
@@ -2698,28 +2726,28 @@ msgstr ""
 "Hoffentlich wird an diesem Issue in Zukunft gearbeitet.\n"
 "Lese die SoundTouch Header-Datei für nähere Infos zu diesen Parametern."
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:555
-#: src/frontend_fox/RemasterActionDialogs.cpp:637
+#: src/frontend_fox/RemasterActionDialogs.cpp:610
+#: src/frontend_fox/RemasterActionDialogs.cpp:692
 msgid "Use Anti-alias Filter"
 msgstr "Benutze Anti-Alias Filter"
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:557
-#: src/frontend_fox/RemasterActionDialogs.cpp:639
+#: src/frontend_fox/RemasterActionDialogs.cpp:612
+#: src/frontend_fox/RemasterActionDialogs.cpp:694
 msgid "Enable/disable anti-alias filter in pitch transposer"
 msgstr "Aktiviere/Deaktiviere Anti-Alias Filter im Tonhöhen-Umsetzer"
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:563
-#: src/frontend_fox/RemasterActionDialogs.cpp:645
+#: src/frontend_fox/RemasterActionDialogs.cpp:618
+#: src/frontend_fox/RemasterActionDialogs.cpp:700
 msgid "Anti-alias Filter Length"
 msgstr "Anti-Alias Filter Lenge"
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:571
-#: src/frontend_fox/RemasterActionDialogs.cpp:653
+#: src/frontend_fox/RemasterActionDialogs.cpp:626
+#: src/frontend_fox/RemasterActionDialogs.cpp:708
 msgid "Use Quick Seek"
 msgstr "Benutze schnelles Suchen"
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:573
-#: src/frontend_fox/RemasterActionDialogs.cpp:655
+#: src/frontend_fox/RemasterActionDialogs.cpp:628
+#: src/frontend_fox/RemasterActionDialogs.cpp:710
 msgid ""
 "Enable/disable quick seeking algorithm in tempo changer routine (enabling "
 "quick seeking lowers CPU utilization but causes a minor sound quality "
@@ -2729,13 +2757,13 @@ msgstr ""
 "(aktivieren der Schnell-Suche benötigt weniger CPU, wirkt sich aber auf die "
 "Sound-Qualität aus)"
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:579
-#: src/frontend_fox/RemasterActionDialogs.cpp:661
+#: src/frontend_fox/RemasterActionDialogs.cpp:634
+#: src/frontend_fox/RemasterActionDialogs.cpp:716
 msgid "Sequence Length"
 msgstr "Sequenz-Länge"
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:585
-#: src/frontend_fox/RemasterActionDialogs.cpp:667
+#: src/frontend_fox/RemasterActionDialogs.cpp:640
+#: src/frontend_fox/RemasterActionDialogs.cpp:722
 msgid ""
 "This is the default length of a single processing sequence, in milliseconds. "
 "Determines to how long sequences the original sound is chopped in time-"
@@ -2750,13 +2778,13 @@ msgstr ""
 "Wert besser beim langsamer werden, aber schlechter wenn das Tempo erhöht "
 "wird und umgekehrt."
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:590
-#: src/frontend_fox/RemasterActionDialogs.cpp:672
+#: src/frontend_fox/RemasterActionDialogs.cpp:645
+#: src/frontend_fox/RemasterActionDialogs.cpp:727
 msgid "Seek Window Length"
 msgstr "Suchen-Fenster Länge"
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:596
-#: src/frontend_fox/RemasterActionDialogs.cpp:678
+#: src/frontend_fox/RemasterActionDialogs.cpp:651
+#: src/frontend_fox/RemasterActionDialogs.cpp:733
 msgid ""
 "Seeking window default length in milliseconds for algorithm that seeks for "
 "the best possible overlapping location. This determines from how wide sample "
@@ -2779,13 +2807,13 @@ msgstr ""
 "Artifakt vorhanden sein, welches wie eine konstante Frequenz klingt, welche "
 "umherschwirrt, dann reduziere diesen Wert."
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:601
-#: src/frontend_fox/RemasterActionDialogs.cpp:683
+#: src/frontend_fox/RemasterActionDialogs.cpp:656
+#: src/frontend_fox/RemasterActionDialogs.cpp:738
 msgid "Overlap Length"
 msgstr "Überlappungs-Länge"
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:607
-#: src/frontend_fox/RemasterActionDialogs.cpp:689
+#: src/frontend_fox/RemasterActionDialogs.cpp:662
+#: src/frontend_fox/RemasterActionDialogs.cpp:744
 msgid ""
 "Overlap length in milliseconds. When the chopped sound sequences are mixed "
 "back together to form again a continuous sound stream, this parameter "
@@ -2801,7 +2829,7 @@ msgstr ""
 "einem Parameter. Wird die Sequenz-Länge stark reduziert, wünscht man sich "
 "schnell einen kleineren Wert dafür"
 
-#: src/frontend_fox/RemasterActionDialogs.cpp:624
+#: src/frontend_fox/RemasterActionDialogs.cpp:679
 msgid "Tempo Change"
 msgstr "Rate Change"
 
@@ -3224,11 +3252,11 @@ msgstr "Normalerweise auf 0 gesetzt"
 msgid "in audio frames"
 msgstr "In Audio-Frames"
 
-#: src/frontend_fox/CRawDialog.cpp:164
+#: src/frontend_fox/CRawDialog.cpp:163
 msgid "invalid negative data offset"
 msgstr "Ungültiger negativer Daten-Versatz"
 
-#: src/frontend_fox/CRawDialog.cpp:171
+#: src/frontend_fox/CRawDialog.cpp:170
 msgid "invalid negative data length"
 msgstr "Ungültige negative Daten-Länge"
 
@@ -3866,51 +3894,51 @@ msgstr ""
 "Dies geschieht, weil ReZound von der libaudiofile Bibliothek nicht erfährt "
 "was gültig ist."
 
-#: src/frontend_fox/CKeyBindingsDialog.cpp:50
+#: src/frontend_fox/CKeyBindingsDialog.cpp:52
 msgid "Assign Hotkey"
 msgstr "Belege Zugriffstaste"
 
-#: src/frontend_fox/CKeyBindingsDialog.cpp:55
+#: src/frontend_fox/CKeyBindingsDialog.cpp:57
 msgid "Press a Key Combination"
 msgstr "Drücke eine Tastenkombination"
 
-#: src/frontend_fox/CKeyBindingsDialog.cpp:56
+#: src/frontend_fox/CKeyBindingsDialog.cpp:58
 msgid "Assign No Key"
 msgstr "Belege keine Taste"
 
-#: src/frontend_fox/CKeyBindingsDialog.cpp:57
+#: src/frontend_fox/CKeyBindingsDialog.cpp:59
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/frontend_fox/CKeyBindingsDialog.cpp:141
+#: src/frontend_fox/CKeyBindingsDialog.cpp:143
 msgid "Hot Keys"
 msgstr "Zugriffstasten"
 
-#: src/frontend_fox/CKeyBindingsDialog.cpp:146
+#: src/frontend_fox/CKeyBindingsDialog.cpp:148
 msgid "Assign Hot Keys"
 msgstr "Belege Zugrisstasten"
 
-#: src/frontend_fox/CKeyBindingsDialog.cpp:178
+#: src/frontend_fox/CKeyBindingsDialog.cpp:180
 msgid "Action"
 msgstr "Aktion"
 
-#: src/frontend_fox/CKeyBindingsDialog.cpp:179
+#: src/frontend_fox/CKeyBindingsDialog.cpp:181
 msgid "Hot Key"
 msgstr "Zugriffstaste"
 
-#: src/frontend_fox/CKeyBindingsDialog.cpp:183
+#: src/frontend_fox/CKeyBindingsDialog.cpp:185
 msgid "Assign\tOr Double-Click An Item"
 msgstr "Zuweisen\toder Doppel-Klick auf einen Eintrag"
 
-#: src/frontend_fox/CKeyBindingsDialog.cpp:211
+#: src/frontend_fox/CKeyBindingsDialog.cpp:213
 msgid "Unhandled Key Combination"
 msgstr "Unbehandelte Tastenkombination"
 
-#: src/frontend_fox/CKeyBindingsDialog.cpp:225
+#: src/frontend_fox/CKeyBindingsDialog.cpp:227
 msgid " is already assigned to: "
 msgstr " ist bereits zugewiesen zu: "
 
-#: src/frontend_fox/CKeyBindingsDialog.cpp:225
+#: src/frontend_fox/CKeyBindingsDialog.cpp:227
 msgid "Do you want to override the existing key assignment?"
 msgstr "Wollen Sie wirklich die vorhandene Tastenzuweisung überschreiben ? "
 
@@ -4187,3 +4215,6 @@ msgstr ""
 #: src/backend/File/parse_segment_cues.h:103
 msgid " -- internal error -- invalid state: "
 msgstr " -- interner Fehler -- ungültiger Status: "
+
+#~ msgid "Total data to be burned is too large: "
+#~ msgstr "Zu schreibende Daten sind zu lang: "
