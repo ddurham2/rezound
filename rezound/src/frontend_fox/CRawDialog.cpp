@@ -110,7 +110,6 @@ CRawDialog::~CRawDialog()
 
 bool CRawDialog::show(AFrontendHooks::RawParameters &parameters,bool showLoadRawParameters)
 {
-	printf("here15\n");
 	if(showLoadRawParameters)
 	{
 		channelsCountLabel->show();
