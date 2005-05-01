@@ -1017,7 +1017,6 @@ msgid "Changing Balance"
 msgstr ""
 
 #: src/backend/Remaster/CBalanceAction.cpp:181
-#, c-format
 msgid ""
 "Strict Balance: -100% means normal A and no B, 0 means normal A and normal "
 "B, 100% means no A and normal B\n"
