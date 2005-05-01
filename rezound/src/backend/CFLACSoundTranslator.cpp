@@ -112,7 +112,7 @@ protected:
 			//printf("br %d\n",bitRate);
 			//printf("cc %d\n",channelCount);
 			//printf("sr %d\n",sampleRate);
-			if(bitRate!=16)
+			if(bitRate!=16 && bitRate!=24 && bitRate!=32)
 			{
 				Error("unhandled bitrate! (data will be incorrect): "+istring(bitRate));
 			}
@@ -145,6 +145,20 @@ protected:
 				for(unsigned t=0;t<sampleframes_read;t++)
 					// the FLAC__int32 src seems to actually be 16bit (maybe this changes depending on the file?)
 					dest[pos+t]=convert_sample<int16_t,sample_t>(src[t]);
+			}
+			else if(bitRate==24)
+			{
+				for(unsigned t=0;t<sampleframes_read;t++)
+				{
+					int24_t sd;
+					sd.set(src[t]);
+					dest[pos+t]=convert_sample<int24_t,sample_t>(sd);
+				}
+			}
+			else if(bitRate==32)
+			{
+				for(unsigned t=0;t<sampleframes_read;t++)
+					dest[pos+t]=convert_sample<int32_t,sample_t>(src[t]);
 			}
 			else
 			{ // warned user already
