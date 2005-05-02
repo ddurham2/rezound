@@ -163,7 +163,7 @@
 	- Finnish
 
 - Tested Platforms
-	Mandrake 9.1/x86
+	Mandrake 9.1(and upwards)/x86
 	RH9/x86
 	RH7.3/x86
 	BSD/x86
