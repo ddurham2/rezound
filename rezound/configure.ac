@@ -550,14 +550,14 @@ AM_PATH_LIBFLAC(
 		# ??? actually I don't think I need fftw, just rfftw.. remove fftw and see if that's so
 AC_CHECK_HEADER(
 	fftw.h,
-	AC_CHECK_LIB(fftw, fftw_create_plan, , AC_MSG_WARN([***** libfftw.a not found -- any FFT based actions will be disabled (http://www.fftw.org) *****]),-lfftw),
-	AC_MSG_WARN([***** fftw.h header file not found -- any FFT based actions will be disabled (http://www.fftw.org) *****])
+	AC_CHECK_LIB(fftw, fftw_create_plan, , AC_MSG_WARN([***** libfftw.a (version 2) not found -- any FFT based actions will be disabled (http://www.fftw.org) *****]),-lfftw),
+	AC_MSG_WARN([***** fftw.h (version 2) header file not found -- any FFT based actions will be disabled (http://www.fftw.org) *****])
 	)
 
 AC_CHECK_HEADER(
 	rfftw.h,
-	AC_CHECK_LIB(rfftw, rfftw_create_plan, , AC_MSG_WARN([***** librfftw.a not found -- any FFT based actions will be disabled (http://www.fftw.org) *****]),-lrfftw),
-	AC_MSG_WARN([***** rfftw.h header file not found -- any FFT based actions will be disabled (http://www.fftw.org) *****])
+	AC_CHECK_LIB(rfftw, rfftw_create_plan, , AC_MSG_WARN([***** librfftw.a (version 2) not found -- any FFT based actions will be disabled (http://www.fftw.org) *****]),-lrfftw),
+	AC_MSG_WARN([***** rfftw.h (version 2) header file not found -- any FFT based actions will be disabled (http://www.fftw.org) *****])
 )
 
 
