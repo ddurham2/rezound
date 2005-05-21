@@ -122,6 +122,8 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 
 		ret&=action->doAction((requiresALoadedSound ? loadedSound->channel : NULL),true,willResize,crossfadeEdgesIsApplicable);
 
+		// don't freeAllTempPools(), happens in the destructor
+
 		if(requiresALoadedSound)
 		{
 			const AAction::CanUndoResults result=action->canUndo();

@@ -1,5 +1,16 @@
 #!/bin/sh
 
+cat >&2 <<EOF
+The following packages (some version at least) are required to bootstrap:
+	autoconf2.5
+	automake1.7
+	m4-1.4
+	pkgconfig
+	libtool
+	gettext
+	gettext-devel
+EOF
+
 if [ "$1" = "--clean" ]
 then
 	if [ -a Makefile ]
