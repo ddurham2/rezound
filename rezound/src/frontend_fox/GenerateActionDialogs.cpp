@@ -93,7 +93,7 @@ CGenerateNoiseDialog::CGenerateNoiseDialog(FXWindow *mainWindow) :
 	items.push_back(_("Inverse Mono"));
 	//items.push_back("Spatial stereo");
 	addComboTextEntry(p0,
-		_("Stereo Image"),
+		N_("Stereo Image"),
 		items,
 		CActionParamDialog::cpvtAsInteger
 	);

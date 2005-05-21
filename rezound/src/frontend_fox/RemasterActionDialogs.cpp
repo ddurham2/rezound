@@ -223,7 +223,7 @@ bool CMonoizeActionDialog::show(CActionSound *actionSound,CActionParameters *act
 	else
 	{
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
-			showControl(_("Channel ")+istring(t), t<actionSound->sound->getChannelCount() );
+			showControl(N_("Channel ")+istring(t), t<actionSound->sound->getChannelCount() );
 
 		return CActionParamDialog::show(actionSound,actionParameters);
 	}
