@@ -222,7 +222,8 @@ void CALSASoundRecorder::initialize(CSound *sound)
 				recordThread.kill=true;
 				recordThread.wait();
 			}
-			snd_pcm_close(capture_handle);
+			if(capture_handle)
+				snd_pcm_close(capture_handle);
 			capture_handle=NULL;
 
 			ASoundRecorder::deinitialize();
