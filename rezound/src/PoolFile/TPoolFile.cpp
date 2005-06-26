@@ -494,23 +494,45 @@ template<class l_addr_t,class p_addr_t>
 
 
 template<class l_addr_t,class p_addr_t>
-	l_addr_t TPoolFile<l_addr_t,p_addr_t>::readPoolRaw(const poolId_t poolId,void *buffer,l_addr_t readSize)
+	l_addr_t TPoolFile<l_addr_t,p_addr_t>::readPoolRaw(const poolId_t poolId,void *buffer,l_addr_t readSize,l_addr_t pos)
 {
 	if(!opened)
 		throw runtime_error(string(__func__)+" -- no file is open");
 	if(!isValidPoolId(poolId))
 		throw runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId));
 
-	const TStaticPoolAccesser<uint8_t,TPoolFile<l_addr_t,p_addr_t> > accesser(const_cast<TPoolFile<l_addr_t,p_addr_t> *>(this),poolId);
-	readSize=min(readSize,accesser.getSize());
+	TStaticPoolAccesser<uint8_t,TPoolFile<l_addr_t,p_addr_t> > accesser(const_cast<TPoolFile<l_addr_t,p_addr_t> *>(this),poolId);
+	accesser.seek(pos);
+	readSize=min(readSize,accesser.getSize()-pos);
 	accesser.read((uint8_t *)buffer,readSize);
 	return readSize;
 }
 
 template<class l_addr_t,class p_addr_t>
-	l_addr_t TPoolFile<l_addr_t,p_addr_t>::readPoolRaw(const string poolName,void *buffer,l_addr_t readSize)
+	l_addr_t TPoolFile<l_addr_t,p_addr_t>::readPoolRaw(const string poolName,void *buffer,l_addr_t readSize,l_addr_t pos)
 {
-	return readPoolRaw(getPoolIdByName(poolName),buffer,readSize);
+	return readPoolRaw(getPoolIdByName(poolName),buffer,readSize,pos);
+}
+
+template<class l_addr_t,class p_addr_t>
+	l_addr_t TPoolFile<l_addr_t,p_addr_t>::writePoolRaw(const poolId_t poolId,void *buffer,l_addr_t writeSize,l_addr_t pos)
+{
+	if(!opened)
+		throw runtime_error(string(__func__)+" -- no file is open");
+	if(!isValidPoolId(poolId))
+		throw runtime_error(string(__func__)+" -- invalid poolId parameter: "+istring(poolId));
+
+	TStaticPoolAccesser<uint8_t,TPoolFile<l_addr_t,p_addr_t> > accesser(const_cast<TPoolFile<l_addr_t,p_addr_t> *>(this),poolId);
+	accesser.seek(pos);
+	writeSize=min(writeSize,accesser.getSize()-pos);
+	accesser.write((uint8_t *)buffer,writeSize);
+	return writeSize;
+}
+
+template<class l_addr_t,class p_addr_t>
+	l_addr_t TPoolFile<l_addr_t,p_addr_t>::writePoolRaw(const string poolName,void *buffer,l_addr_t writeSize,l_addr_t pos)
+{
+	return writePoolRaw(getPoolIdByName(poolName),buffer,writeSize,pos);
 }
 
 template<class l_addr_t,class p_addr_t>

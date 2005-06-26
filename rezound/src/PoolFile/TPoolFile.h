@@ -119,8 +119,12 @@ public:
 	template<class pool_element_t> const TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > getPoolAccesser(const string poolName) const;
 
 	// these methods can be used to read raw data from a pool disregarding the alignment of the pool
-	l_addr_t readPoolRaw(const poolId_t poolId,void *buffer,l_addr_t readSize);
-	l_addr_t readPoolRaw(const string poolName,void *buffer,l_addr_t readSize);
+	l_addr_t readPoolRaw(const poolId_t poolId,void *buffer,l_addr_t readSize,l_addr_t pos=0);
+	l_addr_t readPoolRaw(const string poolName,void *buffer,l_addr_t readSize,l_addr_t pos=0);
+
+	// these methods can be used to write raw data to a pool disregarding the alignment of the pool (the pool must already be the correct size before writing)
+	l_addr_t writePoolRaw(const poolId_t poolId,void *buffer,l_addr_t writeSize,l_addr_t pos=0);
+	l_addr_t writePoolRaw(const string poolName,void *buffer,l_addr_t writeSize,l_addr_t pos=0);
 
 
 	// pool information/managment methods
