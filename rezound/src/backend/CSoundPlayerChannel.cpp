@@ -844,9 +844,14 @@ bool CSoundPlayerChannel::prebufferChunk()
 		const LoopTypes loopType=this->loopType; // store current value
 		if(playSelectionOnly)
 		{
+			sample_pos_t t;
 			// pos1 is selectStart; pos2 is selectStop
-			pos1=min((sample_pos_t)startPosition,sound->getLength()-1);
-			pos2=min((sample_pos_t)stopPosition,sound->getLength()-1);
+
+			t=startPosition;
+			pos1=min(t,sound->getLength()-1);
+
+			t=stopPosition;
+			pos2=min(t,sound->getLength()-1);
 		}
 		else
 		{

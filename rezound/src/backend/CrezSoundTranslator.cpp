@@ -353,7 +353,8 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 			{
 				// read packed version into p
 				RFormatInfo1::PackedChunk p;
-				loadFromFile.getPoolAccesser<RFormatInfo1::PackedChunk>("Format Info").read(&p,1);
+				//loadFromFile.getPoolAccesser<RFormatInfo1::PackedChunk>("Format Info").read(&p,1);	doesn't work with gcc4 anymore
+				loadFromFile.readPoolRaw("Format Info",&p,sizeof(p));
 
 				// unpack from p into r
 				RFormatInfo1 r;
@@ -375,7 +376,8 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 			{
 				// read packed version into p
 				RFormatInfo2::PackedChunk p;
-				loadFromFile.getPoolAccesser<RFormatInfo2::PackedChunk>("Format Info").read(&p,1);
+				//loadFromFile.getPoolAccesser<RFormatInfo2::PackedChunk>("Format Info").read(&p,1);	doesn't work with gcc4 anymore
+				loadFromFile.readPoolRaw("Format Info",&p,sizeof(p));
 
 				// unpack from p into r
 				RFormatInfo2 r;
@@ -397,7 +399,8 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 			{
 				// read packed version into p
 				RFormatInfo3::PackedChunk p;
-				loadFromFile.getPoolAccesser<RFormatInfo3::PackedChunk>("Format Info").read(&p,1);
+				//loadFromFile.getPoolAccesser<RFormatInfo3::PackedChunk>("Format Info").read(&p,1);	doesn't work with gcc4 anymore
+				loadFromFile.readPoolRaw("Format Info",&p,sizeof(p));
 
 				// unpack values from p into r
 				RFormatInfo3 r;
@@ -450,6 +453,7 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 			// have to write the cues into a packed byte array because 
 			// simply reading/writing a struct on different platforms can 
 			// yield different word alignments and padding  (the easiest thing to do would have been to use gcc __attribute__ ((packed)) on the structs, but I would only do that if I knew this extension existed on all compilers (maybe ANSI C will adopted this one day) ???)
+			/* doesn't work with gcc4 anymore
 			const CPackedCueAccesser srcCues=loadFromFile.getPoolAccesser<CSound::RCue::PackedChunk>("Cues");
 			sound->cueAccesser->clear();
 			sound->cueAccesser->seek(0);
@@ -462,6 +466,18 @@ bool CrezSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 				cue.unpack(r);
 				sound->cueAccesser->write(&cue,1,true);
 			}
+			*/
+			CSound::RCue::PackedChunk cueData;
+			for(size_t t=0;t<loadFromFile.getPoolSize("Cues");t+=sizeof(cueData))
+			{
+				loadFromFile.readPoolRaw("Cues",&cueData,sizeof(cueData),t);
+
+				CSound::RCue cue;
+				cue.unpack(cueData);
+				sound->cueAccesser->write(&cue,1,true);
+			}
+
+
 			sound->rebuildCueIndex();
 		}
 
@@ -645,8 +661,12 @@ bool CrezSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 		RFormatInfo3::PackedChunk p;
 		formatInfo3.pack(p);
 
+		/* doesn't work with gcc4 anymore 
 		CFormatInfo3PoolAccesser a=saveToFile.createPool<RFormatInfo3::PackedChunk>("Format Info");
 		a.write(&p,1,true);
+		*/
+		TPoolAccesser<uint8_t,CSound::PoolFile_t> a(saveToFile.createPool<uint8_t>("Format Info"));
+		a.write((const uint8_t *)&p,sizeof(p),true);
 	}
 
 	// write the output routing information
@@ -656,6 +676,7 @@ bool CrezSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 	// write the cues
 	{
 		// unless we're converting sample rates here, the sample positions in sound's cues are valid for saving
+		/* doesn't work with gcc4 anymore
 		CPackedCueAccesser destCues=saveToFile.createPool<CSound::RCue::PackedChunk>("Cues");
 		for(size_t t=0;t<sound->getCueCount();t++)
 		{
@@ -664,6 +685,17 @@ bool CrezSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 				CSound::RCue::PackedChunk r;
 				(*(sound->cueAccesser))[t].pack(r);
 				destCues.write(&r,1,true);
+			}
+		}
+		*/
+		TPoolAccesser<uint8_t,CSound::PoolFile_t> destCues=saveToFile.createPool<uint8_t>("Cues");
+		for(size_t t=0;t<sound->getCueCount();t++)
+		{
+			if(sound->getCueTime(t)>=saveStart && sound->getCueTime(t)<(saveStart+saveLength))
+			{
+				CSound::RCue::PackedChunk r;
+				(*(sound->cueAccesser))[t].pack(r);
+				destCues.write((const uint8_t *)&r,sizeof(r),true);
 			}
 		}
 	}
