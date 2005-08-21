@@ -848,10 +848,10 @@ bool CSoundPlayerChannel::prebufferChunk()
 			// pos1 is selectStart; pos2 is selectStop
 
 			t=startPosition;
-			pos1=min(t,sound->getLength()-1);
+			pos1=min<sample_pos_t>(t,sound->getLength()-1);
 
 			t=stopPosition;
-			pos2=min(t,sound->getLength()-1);
+			pos2=min<sample_pos_t>(t,sound->getLength()-1);
 		}
 		else
 		{
