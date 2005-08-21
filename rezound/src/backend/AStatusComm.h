@@ -58,6 +58,8 @@ enum VAnswer {yesAns,noAns,cancelAns,defaultAns};
 class AStatusComm
 {
 public:
+	virtual ~AStatusComm();
+
 	virtual void error(const string &message,VSeverity severity=none,bool reformatIfNeeded=true)=0;
 	virtual void warning(const string &message,bool reformatIfNeeded=true)=0;
 	virtual void message(const string &message,bool reformatIfNeeded=true)=0;

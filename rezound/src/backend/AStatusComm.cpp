@@ -24,6 +24,10 @@
 
 AStatusComm *gStatusComm=NULL;
 
+AStatusComm::~AStatusComm()
+{
+}
+
 const string AStatusComm::breakIntoLines(const string _s)
 {
 	// break into lines when a line has become to long, break at the next space.

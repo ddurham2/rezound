@@ -46,8 +46,8 @@
 	// --- code that waits for condition to be true -----
 
 	m.lock();
-	while(desired condition IS NOT true)
-		c.wait(m);
+	while(desired condition IS NOT true) 
+		c.wait(m); // the thread will wake up every time the condition variable is signaled..
 
 	// now condition IS true
 		...
@@ -98,7 +98,7 @@ public:
 /*
 	void wait(int timeout,CMutex &mutex)
 	{
-		const int ret=pthread_cond_timewait(&cond,&mutex.mutex,...);
+		const int ret=pthread_cond_timedwait(&cond,&mutex.mutex,...);
 		if(ret)
 			throw(runtime_error(string(__func__)+" -- error waiting -- "+strerror(ret)));
 	}
