@@ -233,8 +233,6 @@ void setLocaleFont(FXApp *application)
 			FONTWEIGHT_BOLD,
 			FONTSLANT_REGULAR,
 			FONTENCODING_KOI8_R,
-			FONTSETWIDTH_DONTCARE,
-			0
 		};
 
 		application->setNormalFont(new FXFont(application,desc));
@@ -247,8 +245,6 @@ void setLocaleFont(FXApp *application)
 			FONTWEIGHT_BOLD,
 			FONTSLANT_REGULAR,
 			FONTENCODING_ISO_8859_1,
-			FONTSETWIDTH_DONTCARE,
-			0
 		};
 
 		application->setNormalFont(new FXFont(application,desc));
@@ -261,8 +257,6 @@ void setLocaleFont(FXApp *application)
 			FONTWEIGHT_BOLD,
 			FONTSLANT_REGULAR,
 			FONTENCODING_ISO_8859_1,
-			FONTSETWIDTH_DONTCARE,
-			0
 		};
 
 		application->setNormalFont(new FXFont(application,desc));

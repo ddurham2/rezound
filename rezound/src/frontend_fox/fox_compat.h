@@ -94,6 +94,14 @@
 	#define FXListBox(p,tgt,sel,opts) FXListBox((p),0,(tgt),(sel),(opts))
 #endif
 
+#if REZ_FOX_VERSION>=10506
+	// ~1.5.6 changed the FONTWEIGHT_xxx defines to enums
+	#define FONTWEIGHT_BOLD FXFont::Bold
+	#define FONTWEIGHT_LIGHT FXFont::Light
+	#define FONTWEIGHT_NORMAL FXFont::Normal
+	#define FONTSLANT_REGULAR FXFont::Straight
+#endif
+
 
 
 #endif
