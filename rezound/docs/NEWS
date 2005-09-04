@@ -1,4 +1,9 @@
-rezound-0.11.5beta -- 4/30/2005
+rezound-0.12.1beta -- 9/3/2005
+	- Made fixes to compile with gcc version 4
+	- Made fixes to compile with fox-1.5
+	- Other bug fixes
+
+rezound-0.12.0beta -- 4/30/2005
 	- Implemented Macros.  Now, if you often repeat a sequence of edits, you can record this sequence, and play them back unattendedly on different files.
 	- Implemented user-definable key-bindings.  Now a user can customize what he wants keys on the keyboard to do in ReZound.
 	- Added a new Remaster action which can "shorten quiet areas".  That is, it finds quiet areas and automatically shortens these by some given amount.  It's great for slow-speaking lecturers.
