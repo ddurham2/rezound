@@ -33,6 +33,7 @@
 
 class FXGraphParamNode;
 class CNestedDataFile;
+class CHorzRuler;
 
 /*
  * This can be constructed to be a widget for drawing a curve as a parameter
