@@ -40,6 +40,7 @@ pkgdoc_DATA=\
 pkgdata_DATA= \
 	share/presets.dat \
 	share/menu.dat \
+	share/key_bindings.dat \
 	share/impulse_hall1.wav \
 	src/images/icon_logo_32.gif
 
