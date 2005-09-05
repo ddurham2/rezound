@@ -723,6 +723,8 @@ void CMainWindow::setWhichClipboard(size_t whichClipboard)
 #include "CChannelSelectDialog.h"
 #include "CPasteChannelsDialog.h"
 
+#include "../backend/CActionParameters.h"
+
 #include "../backend/CRunMacroAction.h"
 
 #include "../backend/File/FileActions.h"
