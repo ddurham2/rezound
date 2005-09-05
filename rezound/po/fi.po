@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ReZound 0.1.1beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-03 19:01-0500\n"
+"POT-Creation-Date: 2005-09-04 17:33-0500\n"
 "PO-Revision-Date: 2005-03-26 21:16+0200\n"
 "Last-Translator: uffek >\n"
 "Language-Team: \n"
@@ -1551,7 +1551,7 @@ msgid "Use "
 msgstr "K‰yt‰"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1071
-#: src/frontend_fox/CMainWindow.cpp:1009
+#: src/frontend_fox/CMainWindow.cpp:1011
 msgid "Selection"
 msgstr "Valinta"
 
@@ -1731,29 +1731,29 @@ msgstr "&Tallenna"
 msgid "&Remove"
 msgstr "&Poista"
 
-#: src/frontend_fox/CMainWindow.cpp:218 src/frontend_fox/CMainWindow.cpp:839
+#: src/frontend_fox/CMainWindow.cpp:218 src/frontend_fox/CMainWindow.cpp:841
 msgid "Play All Once"
 msgstr "Soita Kaikki Kerralla"
 
-#: src/frontend_fox/CMainWindow.cpp:219 src/frontend_fox/CMainWindow.cpp:841
+#: src/frontend_fox/CMainWindow.cpp:219 src/frontend_fox/CMainWindow.cpp:843
 msgid "Play Selection Once"
 msgstr "Soita Valinta Kerran"
 
-#: src/frontend_fox/CMainWindow.cpp:220 src/frontend_fox/CMainWindow.cpp:843
+#: src/frontend_fox/CMainWindow.cpp:220 src/frontend_fox/CMainWindow.cpp:845
 #, fuzzy
 msgid "Play From Selection Start to End"
 msgstr "Soita Valinnan Alusta Loppuun"
 
-#: src/frontend_fox/CMainWindow.cpp:221 src/frontend_fox/CMainWindow.cpp:842
+#: src/frontend_fox/CMainWindow.cpp:221 src/frontend_fox/CMainWindow.cpp:844
 #, fuzzy
 msgid "Play From Left Edge of Screen to End"
 msgstr "Soita Valinnan Alusta Loppuun"
 
-#: src/frontend_fox/CMainWindow.cpp:222 src/frontend_fox/CMainWindow.cpp:840
+#: src/frontend_fox/CMainWindow.cpp:222 src/frontend_fox/CMainWindow.cpp:842
 msgid "Play All Looped"
 msgstr "Soita Silmukkana"
 
-#: src/frontend_fox/CMainWindow.cpp:223 src/frontend_fox/CMainWindow.cpp:844
+#: src/frontend_fox/CMainWindow.cpp:223 src/frontend_fox/CMainWindow.cpp:846
 msgid "Play Selection Looped"
 msgstr "Soita Valintaa Silmukkana"
 
@@ -1765,11 +1765,11 @@ msgstr "Soita Valintaa Silmukkana mutta Hypp‰‰ Keskiosan Yli"
 msgid "Play Selection Looped and Play a Gap Before Repeating"
 msgstr "Soita Valintaa Silmukkana ja Pid‰ Tauko Ennen Uusintaa"
 
-#: src/frontend_fox/CMainWindow.cpp:227 src/frontend_fox/CMainWindow.cpp:847
+#: src/frontend_fox/CMainWindow.cpp:227 src/frontend_fox/CMainWindow.cpp:849
 msgid "Stop"
 msgstr "Pys‰yt‰"
 
-#: src/frontend_fox/CMainWindow.cpp:228 src/frontend_fox/CMainWindow.cpp:848
+#: src/frontend_fox/CMainWindow.cpp:228 src/frontend_fox/CMainWindow.cpp:850
 msgid "Pause"
 msgstr "Pause"
 
@@ -1777,7 +1777,7 @@ msgstr "Pause"
 msgid "Record"
 msgstr "ƒ‰nit‰"
 
-#: src/frontend_fox/CMainWindow.cpp:232 src/frontend_fox/CMainWindow.cpp:850
+#: src/frontend_fox/CMainWindow.cpp:232 src/frontend_fox/CMainWindow.cpp:852
 msgid "Jump to Beginning"
 msgstr "Hypp‰‰ Alkuun"
 
@@ -1785,11 +1785,11 @@ msgstr "Hypp‰‰ Alkuun"
 msgid "Jump to Start Position"
 msgstr "Hypp‰‰ Alkuasemaan"
 
-#: src/frontend_fox/CMainWindow.cpp:235 src/frontend_fox/CMainWindow.cpp:852
+#: src/frontend_fox/CMainWindow.cpp:235 src/frontend_fox/CMainWindow.cpp:854
 msgid "Jump to Previous Cue"
 msgstr "Hypp‰‰ Edelliseen V‰limerkkiin"
 
-#: src/frontend_fox/CMainWindow.cpp:236 src/frontend_fox/CMainWindow.cpp:853
+#: src/frontend_fox/CMainWindow.cpp:236 src/frontend_fox/CMainWindow.cpp:855
 msgid "Jump to Next Cue"
 msgstr "Hypp‰‰ Seuraavaan V‰limerkkiin"
 
@@ -1876,249 +1876,249 @@ msgid ""
 "macro."
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:811
+#: src/frontend_fox/CMainWindow.cpp:813
 msgid "&Reopen"
 msgstr "&Uudelleenavaa"
 
-#: src/frontend_fox/CMainWindow.cpp:818 src/frontend_fox/CAboutDialog.cpp:140
+#: src/frontend_fox/CMainWindow.cpp:820 src/frontend_fox/CAboutDialog.cpp:140
 #: src/frontend_fox/CCueListDialog.cpp:74
 msgid "&Close"
 msgstr "&Sulje"
 
-#: src/frontend_fox/CMainWindow.cpp:819
+#: src/frontend_fox/CMainWindow.cpp:821
 msgid "Re&vert"
 msgstr "Ta&kaisin"
 
-#: src/frontend_fox/CMainWindow.cpp:822
+#: src/frontend_fox/CMainWindow.cpp:824
 msgid "Record Macro..."
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:824
+#: src/frontend_fox/CMainWindow.cpp:826
 #, fuzzy
 msgid "User No&tes..."
 msgstr "Muistiiin &Panot"
 
-#: src/frontend_fox/CMainWindow.cpp:826
+#: src/frontend_fox/CMainWindow.cpp:828
 msgid "&About ReZound"
 msgstr "&Sis‰ltˆ ReZound"
 
-#: src/frontend_fox/CMainWindow.cpp:827
+#: src/frontend_fox/CMainWindow.cpp:829
 msgid "&Setup Hotkeys..."
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:834
+#: src/frontend_fox/CMainWindow.cpp:836
 msgid "&Quit"
 msgstr "&Lopeta"
 
-#: src/frontend_fox/CMainWindow.cpp:838
+#: src/frontend_fox/CMainWindow.cpp:840
 #, fuzzy
 msgid "Record..."
 msgstr "ƒ‰nit‰"
 
-#: src/frontend_fox/CMainWindow.cpp:845
+#: src/frontend_fox/CMainWindow.cpp:847
 msgid "Loop Selection but Skip Most of the Middle"
 msgstr "Soita Silmukkana Hyp‰ten Keskiosan Yli"
 
-#: src/frontend_fox/CMainWindow.cpp:846
+#: src/frontend_fox/CMainWindow.cpp:848
 msgid "Loop Selection and Play a Gap Before Repeating"
 msgstr "Soita Silmukkana ja Pid‰ Tauko Ennen Uusintaa"
 
-#: src/frontend_fox/CMainWindow.cpp:851
+#: src/frontend_fox/CMainWindow.cpp:853
 msgid "Jump to Selection Start"
 msgstr "Hypp‰‰ Valinnan Alkuun"
 
-#: src/frontend_fox/CMainWindow.cpp:855
+#: src/frontend_fox/CMainWindow.cpp:857
 msgid "Shuttle Rewind"
 msgstr "Shuttle Takaisinkelaus"
 
-#: src/frontend_fox/CMainWindow.cpp:856
+#: src/frontend_fox/CMainWindow.cpp:858
 msgid "Shuttle Amount"
 msgstr "Shuttle M‰‰r‰"
 
-#: src/frontend_fox/CMainWindow.cpp:857
+#: src/frontend_fox/CMainWindow.cpp:859
 msgid "Shuttle Forward"
 msgstr "Shuttle Eteen"
 
-#: src/frontend_fox/CMainWindow.cpp:861
+#: src/frontend_fox/CMainWindow.cpp:863
 msgid "Zoom Out F&ull"
 msgstr "Zoomaa kaikki &ulos"
 
-#: src/frontend_fox/CMainWindow.cpp:862
+#: src/frontend_fox/CMainWindow.cpp:864
 msgid "Zoom &Out"
 msgstr "Zoomaa&Ulos"
 
-#: src/frontend_fox/CMainWindow.cpp:863
+#: src/frontend_fox/CMainWindow.cpp:865
 msgid "Zoom &In"
 msgstr "Zoomaa &Sis‰‰n"
 
-#: src/frontend_fox/CMainWindow.cpp:864
+#: src/frontend_fox/CMainWindow.cpp:866
 msgid "Zoom &Fit Selection"
 msgstr "Zoomaa &Valintaan"
 
-#: src/frontend_fox/CMainWindow.cpp:866
+#: src/frontend_fox/CMainWindow.cpp:868
 msgid "Find &Start Position"
 msgstr "Etsi &Alkuasema"
 
-#: src/frontend_fox/CMainWindow.cpp:867
+#: src/frontend_fox/CMainWindow.cpp:869
 msgid "Find Sto&p Position"
 msgstr "Etsi &Loppuasema"
 
-#: src/frontend_fox/CMainWindow.cpp:869
+#: src/frontend_fox/CMainWindow.cpp:871
 msgid "&Redraw"
 msgstr "&Piirr‰ Uudelleen"
 
-#: src/frontend_fox/CMainWindow.cpp:872 src/frontend_fox/CMainWindow.cpp:876
+#: src/frontend_fox/CMainWindow.cpp:874 src/frontend_fox/CMainWindow.cpp:878
 msgid "Toggle &Level Meters"
 msgstr "&Tasomittari"
 
-#: src/frontend_fox/CMainWindow.cpp:873 src/frontend_fox/CMainWindow.cpp:877
+#: src/frontend_fox/CMainWindow.cpp:875 src/frontend_fox/CMainWindow.cpp:879
 msgid "Toggle &Stereo Phase Meters"
 msgstr "&Stereovaihemittari"
 
-#: src/frontend_fox/CMainWindow.cpp:874 src/frontend_fox/CMainWindow.cpp:878
+#: src/frontend_fox/CMainWindow.cpp:876 src/frontend_fox/CMainWindow.cpp:880
 msgid "Toggle Frequency &Analyzer"
 msgstr "&Taajuusanalysaattori"
 
-#: src/frontend_fox/CMainWindow.cpp:881
+#: src/frontend_fox/CMainWindow.cpp:883
 #, fuzzy
 msgid "Switch to Previously Viewed File"
 msgstr "ƒskett‰in Avattu Tiedosto"
 
-#: src/frontend_fox/CMainWindow.cpp:882
+#: src/frontend_fox/CMainWindow.cpp:884
 #, fuzzy
 msgid "Switch to Loaded File 1"
 msgstr "N‰yt‰ Avattu Tiedosto 1"
 
-#: src/frontend_fox/CMainWindow.cpp:883
+#: src/frontend_fox/CMainWindow.cpp:885
 #, fuzzy
 msgid "Switch to Loaded File 2"
 msgstr "N‰yt‰ Avattu Tiedosto 2"
 
-#: src/frontend_fox/CMainWindow.cpp:884
+#: src/frontend_fox/CMainWindow.cpp:886
 #, fuzzy
 msgid "Switch to Loaded File 3"
 msgstr "N‰yt‰ Avattu Tiedosto 1"
 
-#: src/frontend_fox/CMainWindow.cpp:885
+#: src/frontend_fox/CMainWindow.cpp:887
 #, fuzzy
 msgid "Switch to Loaded File 4"
 msgstr "N‰yt‰ Avattu Tiedosto 1"
 
-#: src/frontend_fox/CMainWindow.cpp:886
+#: src/frontend_fox/CMainWindow.cpp:888
 #, fuzzy
 msgid "Switch to Loaded File 5"
 msgstr "N‰yt‰ Avattu Tiedosto 1"
 
-#: src/frontend_fox/CMainWindow.cpp:887
+#: src/frontend_fox/CMainWindow.cpp:889
 #, fuzzy
 msgid "Switch to Loaded File 6"
 msgstr "N‰yt‰ Avattu Tiedosto 1"
 
-#: src/frontend_fox/CMainWindow.cpp:888
+#: src/frontend_fox/CMainWindow.cpp:890
 #, fuzzy
 msgid "Switch to Loaded File 7"
 msgstr "N‰yt‰ Avattu Tiedosto 1"
 
-#: src/frontend_fox/CMainWindow.cpp:889
+#: src/frontend_fox/CMainWindow.cpp:891
 #, fuzzy
 msgid "Switch to Loaded File 8"
 msgstr "N‰yt‰ Avattu Tiedosto 1"
 
-#: src/frontend_fox/CMainWindow.cpp:890
+#: src/frontend_fox/CMainWindow.cpp:892
 #, fuzzy
 msgid "Switch to Loaded File 9"
 msgstr "N‰yt‰ Avattu Tiedosto 9"
 
-#: src/frontend_fox/CMainWindow.cpp:891
+#: src/frontend_fox/CMainWindow.cpp:893
 #, fuzzy
 msgid "Switch to Loaded File 10"
 msgstr "N‰yt‰ Avattu Tiedosto 10"
 
-#: src/frontend_fox/CMainWindow.cpp:895
+#: src/frontend_fox/CMainWindow.cpp:897
 msgid "Undo"
 msgstr "Kumoa"
 
-#: src/frontend_fox/CMainWindow.cpp:896
+#: src/frontend_fox/CMainWindow.cpp:898
 msgid "Clear Undo History"
 msgstr "Puhdista Kumoa Historia"
 
-#: src/frontend_fox/CMainWindow.cpp:898
+#: src/frontend_fox/CMainWindow.cpp:900
 msgid "&Recent Actions"
 msgstr "Suoritetut &Toimet"
 
-#: src/frontend_fox/CMainWindow.cpp:1007
+#: src/frontend_fox/CMainWindow.cpp:1009
 msgid "&File"
 msgstr "&Tiedosto"
 
-#: src/frontend_fox/CMainWindow.cpp:1008
+#: src/frontend_fox/CMainWindow.cpp:1010
 #: src/frontend_fox/CCueListDialog.cpp:78
 msgid "&Edit"
 msgstr "&Editoi"
 
-#: src/frontend_fox/CMainWindow.cpp:1010
+#: src/frontend_fox/CMainWindow.cpp:1012
 #, fuzzy
 msgid "&View"
 msgstr "&Uusi"
 
-#: src/frontend_fox/CMainWindow.cpp:1011
+#: src/frontend_fox/CMainWindow.cpp:1013
 msgid "&Control"
 msgstr "&Toiminnot"
 
-#: src/frontend_fox/CMainWindow.cpp:1012
+#: src/frontend_fox/CMainWindow.cpp:1014
 msgid "Effec&ts"
 msgstr "Efek&tit"
 
-#: src/frontend_fox/CMainWindow.cpp:1013
+#: src/frontend_fox/CMainWindow.cpp:1015
 msgid "&Looping"
 msgstr "&Silmukka"
 
-#: src/frontend_fox/CMainWindow.cpp:1014
+#: src/frontend_fox/CMainWindow.cpp:1016
 msgid "F&ilters"
 msgstr "S&uotimet"
 
-#: src/frontend_fox/CMainWindow.cpp:1015
+#: src/frontend_fox/CMainWindow.cpp:1017
 msgid "&Remaster"
 msgstr "&Remaster"
 
-#: src/frontend_fox/CMainWindow.cpp:1016
+#: src/frontend_fox/CMainWindow.cpp:1018
 msgid "&Generate"
 msgstr "&Muodosta"
 
-#: src/frontend_fox/CMainWindow.cpp:1174
+#: src/frontend_fox/CMainWindow.cpp:1176
 msgid "No LADSPA Plugins Found"
 msgstr " LADSPA Plugin Ei Lˆydy"
 
-#: src/frontend_fox/CMainWindow.cpp:1176
+#: src/frontend_fox/CMainWindow.cpp:1178
 msgid "Like PATH, set LADSPA_PATH to point"
 msgstr "Niinkuin PATH, aseta LADSPA_PATH osoittamaan."
 
-#: src/frontend_fox/CMainWindow.cpp:1177
+#: src/frontend_fox/CMainWindow.cpp:1179
 msgid "to a directory(s) containing LADSPA"
 msgstr " kansioon(kansioihin) sis‰lt‰en LADSPA"
 
-#: src/frontend_fox/CMainWindow.cpp:1178
+#: src/frontend_fox/CMainWindow.cpp:1180
 msgid "plugin .so file at least once.  Or"
 msgstr "plugin .so tiedoston ainakin kerran"
 
-#: src/frontend_fox/CMainWindow.cpp:1179
+#: src/frontend_fox/CMainWindow.cpp:1181
 msgid "edit the value in ~/.rezound/registry.dat"
 msgstr "tai editoi arvoa ~/.rezound/registry.dat"
 
-#: src/frontend_fox/CMainWindow.cpp:1402
+#: src/frontend_fox/CMainWindow.cpp:1404
 msgid "Cannot close a file while recording a macro"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1411
+#: src/frontend_fox/CMainWindow.cpp:1413
 msgid "Cannot revert a file while recording a macro"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1537
+#: src/frontend_fox/CMainWindow.cpp:1539
 msgid "Cannot record audio while recording a macro"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1681 src/frontend_fox/CMainWindow.cpp:1715
-#: src/frontend_fox/CMainWindow.cpp:1775 src/frontend_fox/CMainWindow.cpp:1813
-#: src/frontend_fox/CMainWindow.cpp:1814
+#: src/frontend_fox/CMainWindow.cpp:1683 src/frontend_fox/CMainWindow.cpp:1717
+#: src/frontend_fox/CMainWindow.cpp:1777 src/frontend_fox/CMainWindow.cpp:1815
+#: src/frontend_fox/CMainWindow.cpp:1816
 #: src/frontend_fox/RemasterActionDialogs.cpp:598
 msgid "semitones"
 msgstr "semitones"

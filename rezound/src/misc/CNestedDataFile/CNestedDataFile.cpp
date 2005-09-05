@@ -175,9 +175,9 @@ void CNestedDataFile::parseFile(const string _filename,bool clearExisting)
 		}
 		else
 		{
-#warning make this a flag .. otherwise throw an exception
 			// create an empty file
-			CPath(filename).touch();
+			//    this is not absolutely necessary
+			//CPath(filename).touch();
 		}
 	}
 	catch(...)

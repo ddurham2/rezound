@@ -1,3 +1,6 @@
+rezound-0.12.2beta -- 9/5/2005
+	- Fixed a few compile/install issues
+
 rezound-0.12.1beta -- 9/3/2005
 	- Made fixes to compile with gcc version 4
 	- Made fixes to compile with fox-1.5

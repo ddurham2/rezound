@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-03 19:01-0500\n"
+"POT-Creation-Date: 2005-09-04 17:33-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1414,7 +1414,7 @@ msgid "Use "
 msgstr ""
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1071
-#: src/frontend_fox/CMainWindow.cpp:1009
+#: src/frontend_fox/CMainWindow.cpp:1011
 msgid "Selection"
 msgstr ""
 
@@ -1582,27 +1582,27 @@ msgstr ""
 msgid "&Remove"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:218 src/frontend_fox/CMainWindow.cpp:839
+#: src/frontend_fox/CMainWindow.cpp:218 src/frontend_fox/CMainWindow.cpp:841
 msgid "Play All Once"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:219 src/frontend_fox/CMainWindow.cpp:841
+#: src/frontend_fox/CMainWindow.cpp:219 src/frontend_fox/CMainWindow.cpp:843
 msgid "Play Selection Once"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:220 src/frontend_fox/CMainWindow.cpp:843
+#: src/frontend_fox/CMainWindow.cpp:220 src/frontend_fox/CMainWindow.cpp:845
 msgid "Play From Selection Start to End"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:221 src/frontend_fox/CMainWindow.cpp:842
+#: src/frontend_fox/CMainWindow.cpp:221 src/frontend_fox/CMainWindow.cpp:844
 msgid "Play From Left Edge of Screen to End"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:222 src/frontend_fox/CMainWindow.cpp:840
+#: src/frontend_fox/CMainWindow.cpp:222 src/frontend_fox/CMainWindow.cpp:842
 msgid "Play All Looped"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:223 src/frontend_fox/CMainWindow.cpp:844
+#: src/frontend_fox/CMainWindow.cpp:223 src/frontend_fox/CMainWindow.cpp:846
 msgid "Play Selection Looped"
 msgstr ""
 
@@ -1614,11 +1614,11 @@ msgstr ""
 msgid "Play Selection Looped and Play a Gap Before Repeating"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:227 src/frontend_fox/CMainWindow.cpp:847
+#: src/frontend_fox/CMainWindow.cpp:227 src/frontend_fox/CMainWindow.cpp:849
 msgid "Stop"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:228 src/frontend_fox/CMainWindow.cpp:848
+#: src/frontend_fox/CMainWindow.cpp:228 src/frontend_fox/CMainWindow.cpp:850
 msgid "Pause"
 msgstr ""
 
@@ -1626,7 +1626,7 @@ msgstr ""
 msgid "Record"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:232 src/frontend_fox/CMainWindow.cpp:850
+#: src/frontend_fox/CMainWindow.cpp:232 src/frontend_fox/CMainWindow.cpp:852
 msgid "Jump to Beginning"
 msgstr ""
 
@@ -1634,11 +1634,11 @@ msgstr ""
 msgid "Jump to Start Position"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:235 src/frontend_fox/CMainWindow.cpp:852
+#: src/frontend_fox/CMainWindow.cpp:235 src/frontend_fox/CMainWindow.cpp:854
 msgid "Jump to Previous Cue"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:236 src/frontend_fox/CMainWindow.cpp:853
+#: src/frontend_fox/CMainWindow.cpp:236 src/frontend_fox/CMainWindow.cpp:855
 msgid "Jump to Next Cue"
 msgstr ""
 
@@ -1720,235 +1720,235 @@ msgid ""
 "macro."
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:811
+#: src/frontend_fox/CMainWindow.cpp:813
 msgid "&Reopen"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:818 src/frontend_fox/CAboutDialog.cpp:140
+#: src/frontend_fox/CMainWindow.cpp:820 src/frontend_fox/CAboutDialog.cpp:140
 #: src/frontend_fox/CCueListDialog.cpp:74
 msgid "&Close"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:819
+#: src/frontend_fox/CMainWindow.cpp:821
 msgid "Re&vert"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:822
+#: src/frontend_fox/CMainWindow.cpp:824
 msgid "Record Macro..."
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:824
+#: src/frontend_fox/CMainWindow.cpp:826
 msgid "User No&tes..."
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:826
+#: src/frontend_fox/CMainWindow.cpp:828
 msgid "&About ReZound"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:827
+#: src/frontend_fox/CMainWindow.cpp:829
 msgid "&Setup Hotkeys..."
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:834
+#: src/frontend_fox/CMainWindow.cpp:836
 msgid "&Quit"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:838
+#: src/frontend_fox/CMainWindow.cpp:840
 msgid "Record..."
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:845
+#: src/frontend_fox/CMainWindow.cpp:847
 msgid "Loop Selection but Skip Most of the Middle"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:846
+#: src/frontend_fox/CMainWindow.cpp:848
 msgid "Loop Selection and Play a Gap Before Repeating"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:851
+#: src/frontend_fox/CMainWindow.cpp:853
 msgid "Jump to Selection Start"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:855
+#: src/frontend_fox/CMainWindow.cpp:857
 msgid "Shuttle Rewind"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:856
+#: src/frontend_fox/CMainWindow.cpp:858
 msgid "Shuttle Amount"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:857
+#: src/frontend_fox/CMainWindow.cpp:859
 msgid "Shuttle Forward"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:861
+#: src/frontend_fox/CMainWindow.cpp:863
 msgid "Zoom Out F&ull"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:862
+#: src/frontend_fox/CMainWindow.cpp:864
 msgid "Zoom &Out"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:863
+#: src/frontend_fox/CMainWindow.cpp:865
 msgid "Zoom &In"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:864
+#: src/frontend_fox/CMainWindow.cpp:866
 msgid "Zoom &Fit Selection"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:866
+#: src/frontend_fox/CMainWindow.cpp:868
 msgid "Find &Start Position"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:867
+#: src/frontend_fox/CMainWindow.cpp:869
 msgid "Find Sto&p Position"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:869
+#: src/frontend_fox/CMainWindow.cpp:871
 msgid "&Redraw"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:872 src/frontend_fox/CMainWindow.cpp:876
+#: src/frontend_fox/CMainWindow.cpp:874 src/frontend_fox/CMainWindow.cpp:878
 msgid "Toggle &Level Meters"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:873 src/frontend_fox/CMainWindow.cpp:877
+#: src/frontend_fox/CMainWindow.cpp:875 src/frontend_fox/CMainWindow.cpp:879
 msgid "Toggle &Stereo Phase Meters"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:874 src/frontend_fox/CMainWindow.cpp:878
+#: src/frontend_fox/CMainWindow.cpp:876 src/frontend_fox/CMainWindow.cpp:880
 msgid "Toggle Frequency &Analyzer"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:881
+#: src/frontend_fox/CMainWindow.cpp:883
 msgid "Switch to Previously Viewed File"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:882
+#: src/frontend_fox/CMainWindow.cpp:884
 msgid "Switch to Loaded File 1"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:883
+#: src/frontend_fox/CMainWindow.cpp:885
 msgid "Switch to Loaded File 2"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:884
+#: src/frontend_fox/CMainWindow.cpp:886
 msgid "Switch to Loaded File 3"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:885
+#: src/frontend_fox/CMainWindow.cpp:887
 msgid "Switch to Loaded File 4"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:886
+#: src/frontend_fox/CMainWindow.cpp:888
 msgid "Switch to Loaded File 5"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:887
+#: src/frontend_fox/CMainWindow.cpp:889
 msgid "Switch to Loaded File 6"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:888
+#: src/frontend_fox/CMainWindow.cpp:890
 msgid "Switch to Loaded File 7"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:889
+#: src/frontend_fox/CMainWindow.cpp:891
 msgid "Switch to Loaded File 8"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:890
+#: src/frontend_fox/CMainWindow.cpp:892
 msgid "Switch to Loaded File 9"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:891
+#: src/frontend_fox/CMainWindow.cpp:893
 msgid "Switch to Loaded File 10"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:895
+#: src/frontend_fox/CMainWindow.cpp:897
 msgid "Undo"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:896
+#: src/frontend_fox/CMainWindow.cpp:898
 msgid "Clear Undo History"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:898
+#: src/frontend_fox/CMainWindow.cpp:900
 msgid "&Recent Actions"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1007
+#: src/frontend_fox/CMainWindow.cpp:1009
 msgid "&File"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1008
+#: src/frontend_fox/CMainWindow.cpp:1010
 #: src/frontend_fox/CCueListDialog.cpp:78
 msgid "&Edit"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1010
+#: src/frontend_fox/CMainWindow.cpp:1012
 msgid "&View"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1011
+#: src/frontend_fox/CMainWindow.cpp:1013
 msgid "&Control"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1012
+#: src/frontend_fox/CMainWindow.cpp:1014
 msgid "Effec&ts"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1013
+#: src/frontend_fox/CMainWindow.cpp:1015
 msgid "&Looping"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1014
+#: src/frontend_fox/CMainWindow.cpp:1016
 msgid "F&ilters"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1015
+#: src/frontend_fox/CMainWindow.cpp:1017
 msgid "&Remaster"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1016
+#: src/frontend_fox/CMainWindow.cpp:1018
 msgid "&Generate"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1174
+#: src/frontend_fox/CMainWindow.cpp:1176
 msgid "No LADSPA Plugins Found"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1176
+#: src/frontend_fox/CMainWindow.cpp:1178
 msgid "Like PATH, set LADSPA_PATH to point"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1177
+#: src/frontend_fox/CMainWindow.cpp:1179
 msgid "to a directory(s) containing LADSPA"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1178
+#: src/frontend_fox/CMainWindow.cpp:1180
 msgid "plugin .so file at least once.  Or"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1179
+#: src/frontend_fox/CMainWindow.cpp:1181
 msgid "edit the value in ~/.rezound/registry.dat"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1402
+#: src/frontend_fox/CMainWindow.cpp:1404
 msgid "Cannot close a file while recording a macro"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1411
+#: src/frontend_fox/CMainWindow.cpp:1413
 msgid "Cannot revert a file while recording a macro"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1537
+#: src/frontend_fox/CMainWindow.cpp:1539
 msgid "Cannot record audio while recording a macro"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1681 src/frontend_fox/CMainWindow.cpp:1715
-#: src/frontend_fox/CMainWindow.cpp:1775 src/frontend_fox/CMainWindow.cpp:1813
-#: src/frontend_fox/CMainWindow.cpp:1814
+#: src/frontend_fox/CMainWindow.cpp:1683 src/frontend_fox/CMainWindow.cpp:1717
+#: src/frontend_fox/CMainWindow.cpp:1777 src/frontend_fox/CMainWindow.cpp:1815
+#: src/frontend_fox/CMainWindow.cpp:1816
 #: src/frontend_fox/RemasterActionDialogs.cpp:598
 msgid "semitones"
 msgstr ""

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-03 19:01-0500\n"
+"POT-Creation-Date: 2005-09-04 17:33-0500\n"
 "PO-Revision-Date: 2003-08-28 18:45+0400\n"
 "Last-Translator: Alexandre Prokoudine <avp@altlinux.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -1481,7 +1481,7 @@ msgid "Use "
 msgstr "Использовать LFO"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1071
-#: src/frontend_fox/CMainWindow.cpp:1009
+#: src/frontend_fox/CMainWindow.cpp:1011
 msgid "Selection"
 msgstr "Выделение"
 
@@ -1662,29 +1662,29 @@ msgstr "&Сохранить"
 msgid "&Remove"
 msgstr "&Удалить"
 
-#: src/frontend_fox/CMainWindow.cpp:218 src/frontend_fox/CMainWindow.cpp:839
+#: src/frontend_fox/CMainWindow.cpp:218 src/frontend_fox/CMainWindow.cpp:841
 msgid "Play All Once"
 msgstr "Воспроизвести всё один раз"
 
-#: src/frontend_fox/CMainWindow.cpp:219 src/frontend_fox/CMainWindow.cpp:841
+#: src/frontend_fox/CMainWindow.cpp:219 src/frontend_fox/CMainWindow.cpp:843
 msgid "Play Selection Once"
 msgstr "Воспроизвести только выделение"
 
-#: src/frontend_fox/CMainWindow.cpp:220 src/frontend_fox/CMainWindow.cpp:843
+#: src/frontend_fox/CMainWindow.cpp:220 src/frontend_fox/CMainWindow.cpp:845
 #, fuzzy
 msgid "Play From Selection Start to End"
 msgstr "Перейти к началу выделения"
 
-#: src/frontend_fox/CMainWindow.cpp:221 src/frontend_fox/CMainWindow.cpp:842
+#: src/frontend_fox/CMainWindow.cpp:221 src/frontend_fox/CMainWindow.cpp:844
 #, fuzzy
 msgid "Play From Left Edge of Screen to End"
 msgstr "Перейти к началу выделения"
 
-#: src/frontend_fox/CMainWindow.cpp:222 src/frontend_fox/CMainWindow.cpp:840
+#: src/frontend_fox/CMainWindow.cpp:222 src/frontend_fox/CMainWindow.cpp:842
 msgid "Play All Looped"
 msgstr "Воспроизвести все циклы"
 
-#: src/frontend_fox/CMainWindow.cpp:223 src/frontend_fox/CMainWindow.cpp:844
+#: src/frontend_fox/CMainWindow.cpp:223 src/frontend_fox/CMainWindow.cpp:846
 msgid "Play Selection Looped"
 msgstr "Вопроизвести выделение в цикле"
 
@@ -1696,11 +1696,11 @@ msgstr "Воспроизвести выделение в цикле без середины"
 msgid "Play Selection Looped and Play a Gap Before Repeating"
 msgstr "Воспроизвести выделение в цикле и паузу перед повтором"
 
-#: src/frontend_fox/CMainWindow.cpp:227 src/frontend_fox/CMainWindow.cpp:847
+#: src/frontend_fox/CMainWindow.cpp:227 src/frontend_fox/CMainWindow.cpp:849
 msgid "Stop"
 msgstr "Остановить"
 
-#: src/frontend_fox/CMainWindow.cpp:228 src/frontend_fox/CMainWindow.cpp:848
+#: src/frontend_fox/CMainWindow.cpp:228 src/frontend_fox/CMainWindow.cpp:850
 msgid "Pause"
 msgstr "Приостановить"
 
@@ -1708,7 +1708,7 @@ msgstr "Приостановить"
 msgid "Record"
 msgstr "Записать"
 
-#: src/frontend_fox/CMainWindow.cpp:232 src/frontend_fox/CMainWindow.cpp:850
+#: src/frontend_fox/CMainWindow.cpp:232 src/frontend_fox/CMainWindow.cpp:852
 msgid "Jump to Beginning"
 msgstr "Перейти к началу"
 
@@ -1716,11 +1716,11 @@ msgstr "Перейти к началу"
 msgid "Jump to Start Position"
 msgstr "Перейти к начальной позиции"
 
-#: src/frontend_fox/CMainWindow.cpp:235 src/frontend_fox/CMainWindow.cpp:852
+#: src/frontend_fox/CMainWindow.cpp:235 src/frontend_fox/CMainWindow.cpp:854
 msgid "Jump to Previous Cue"
 msgstr "Перейти к предыдущему маркеру"
 
-#: src/frontend_fox/CMainWindow.cpp:236 src/frontend_fox/CMainWindow.cpp:853
+#: src/frontend_fox/CMainWindow.cpp:236 src/frontend_fox/CMainWindow.cpp:855
 msgid "Jump to Next Cue"
 msgstr "Перейти к следующему маркеру"
 
@@ -1804,249 +1804,249 @@ msgid ""
 "macro."
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:811
+#: src/frontend_fox/CMainWindow.cpp:813
 msgid "&Reopen"
 msgstr "&Заново открыть"
 
-#: src/frontend_fox/CMainWindow.cpp:818 src/frontend_fox/CAboutDialog.cpp:140
+#: src/frontend_fox/CMainWindow.cpp:820 src/frontend_fox/CAboutDialog.cpp:140
 #: src/frontend_fox/CCueListDialog.cpp:74
 msgid "&Close"
 msgstr "&Закрыть"
 
-#: src/frontend_fox/CMainWindow.cpp:819
+#: src/frontend_fox/CMainWindow.cpp:821
 msgid "Re&vert"
 msgstr "Пере&вернуть"
 
-#: src/frontend_fox/CMainWindow.cpp:822
+#: src/frontend_fox/CMainWindow.cpp:824
 msgid "Record Macro..."
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:824
+#: src/frontend_fox/CMainWindow.cpp:826
 #, fuzzy
 msgid "User No&tes..."
 msgstr "&Примечания к файлу"
 
-#: src/frontend_fox/CMainWindow.cpp:826
+#: src/frontend_fox/CMainWindow.cpp:828
 msgid "&About ReZound"
 msgstr "&О программе ReZound"
 
-#: src/frontend_fox/CMainWindow.cpp:827
+#: src/frontend_fox/CMainWindow.cpp:829
 msgid "&Setup Hotkeys..."
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:834
+#: src/frontend_fox/CMainWindow.cpp:836
 msgid "&Quit"
 msgstr "Вы&йти"
 
-#: src/frontend_fox/CMainWindow.cpp:838
+#: src/frontend_fox/CMainWindow.cpp:840
 #, fuzzy
 msgid "Record..."
 msgstr "Записать"
 
-#: src/frontend_fox/CMainWindow.cpp:845
+#: src/frontend_fox/CMainWindow.cpp:847
 msgid "Loop Selection but Skip Most of the Middle"
 msgstr "Зациклить выделение, но пропустить большую часть из середины"
 
-#: src/frontend_fox/CMainWindow.cpp:846
+#: src/frontend_fox/CMainWindow.cpp:848
 msgid "Loop Selection and Play a Gap Before Repeating"
 msgstr "Зациклить выделение и проиграть интервал перед повтором"
 
-#: src/frontend_fox/CMainWindow.cpp:851
+#: src/frontend_fox/CMainWindow.cpp:853
 msgid "Jump to Selection Start"
 msgstr "Перейти к началу выделения"
 
-#: src/frontend_fox/CMainWindow.cpp:855
+#: src/frontend_fox/CMainWindow.cpp:857
 msgid "Shuttle Rewind"
 msgstr "Отмотать шаттлом назад"
 
-#: src/frontend_fox/CMainWindow.cpp:856
+#: src/frontend_fox/CMainWindow.cpp:858
 msgid "Shuttle Amount"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:857
+#: src/frontend_fox/CMainWindow.cpp:859
 msgid "Shuttle Forward"
 msgstr "Отмотать шаттлом вперёд"
 
-#: src/frontend_fox/CMainWindow.cpp:861
+#: src/frontend_fox/CMainWindow.cpp:863
 msgid "Zoom Out F&ull"
 msgstr "Отдалить &полностью"
 
-#: src/frontend_fox/CMainWindow.cpp:862
+#: src/frontend_fox/CMainWindow.cpp:864
 msgid "Zoom &Out"
 msgstr "От&далить"
 
-#: src/frontend_fox/CMainWindow.cpp:863
+#: src/frontend_fox/CMainWindow.cpp:865
 msgid "Zoom &In"
 msgstr "При&близить"
 
-#: src/frontend_fox/CMainWindow.cpp:864
+#: src/frontend_fox/CMainWindow.cpp:866
 msgid "Zoom &Fit Selection"
 msgstr "&Уместить выделение в окне"
 
-#: src/frontend_fox/CMainWindow.cpp:866
+#: src/frontend_fox/CMainWindow.cpp:868
 msgid "Find &Start Position"
 msgstr "Найти &начальную позицию"
 
-#: src/frontend_fox/CMainWindow.cpp:867
+#: src/frontend_fox/CMainWindow.cpp:869
 msgid "Find Sto&p Position"
 msgstr "Найти позицию &остановки"
 
-#: src/frontend_fox/CMainWindow.cpp:869
+#: src/frontend_fox/CMainWindow.cpp:871
 msgid "&Redraw"
 msgstr "Пере&рисовать"
 
-#: src/frontend_fox/CMainWindow.cpp:872 src/frontend_fox/CMainWindow.cpp:876
+#: src/frontend_fox/CMainWindow.cpp:874 src/frontend_fox/CMainWindow.cpp:878
 msgid "Toggle &Level Meters"
 msgstr "Переключить индикатор &уровня"
 
-#: src/frontend_fox/CMainWindow.cpp:873 src/frontend_fox/CMainWindow.cpp:877
+#: src/frontend_fox/CMainWindow.cpp:875 src/frontend_fox/CMainWindow.cpp:879
 msgid "Toggle &Stereo Phase Meters"
 msgstr "Переключить фазовые &стереоиндикаторы"
 
-#: src/frontend_fox/CMainWindow.cpp:874 src/frontend_fox/CMainWindow.cpp:878
+#: src/frontend_fox/CMainWindow.cpp:876 src/frontend_fox/CMainWindow.cpp:880
 msgid "Toggle Frequency &Analyzer"
 msgstr "Переключить частотный &анализатор"
 
-#: src/frontend_fox/CMainWindow.cpp:881
+#: src/frontend_fox/CMainWindow.cpp:883
 #, fuzzy
 msgid "Switch to Previously Viewed File"
 msgstr "Предыдущий просматривавшйися файл"
 
-#: src/frontend_fox/CMainWindow.cpp:882
+#: src/frontend_fox/CMainWindow.cpp:884
 #, fuzzy
 msgid "Switch to Loaded File 1"
 msgstr "Просмотреть загруженный Файл 1"
 
-#: src/frontend_fox/CMainWindow.cpp:883
+#: src/frontend_fox/CMainWindow.cpp:885
 #, fuzzy
 msgid "Switch to Loaded File 2"
 msgstr "Просмотреть загруженный Файл 2"
 
-#: src/frontend_fox/CMainWindow.cpp:884
+#: src/frontend_fox/CMainWindow.cpp:886
 #, fuzzy
 msgid "Switch to Loaded File 3"
 msgstr "Просмотреть загруженный Файл 1"
 
-#: src/frontend_fox/CMainWindow.cpp:885
+#: src/frontend_fox/CMainWindow.cpp:887
 #, fuzzy
 msgid "Switch to Loaded File 4"
 msgstr "Просмотреть загруженный Файл 1"
 
-#: src/frontend_fox/CMainWindow.cpp:886
+#: src/frontend_fox/CMainWindow.cpp:888
 #, fuzzy
 msgid "Switch to Loaded File 5"
 msgstr "Просмотреть загруженный Файл 1"
 
-#: src/frontend_fox/CMainWindow.cpp:887
+#: src/frontend_fox/CMainWindow.cpp:889
 #, fuzzy
 msgid "Switch to Loaded File 6"
 msgstr "Просмотреть загруженный Файл 1"
 
-#: src/frontend_fox/CMainWindow.cpp:888
+#: src/frontend_fox/CMainWindow.cpp:890
 #, fuzzy
 msgid "Switch to Loaded File 7"
 msgstr "Просмотреть загруженный Файл 1"
 
-#: src/frontend_fox/CMainWindow.cpp:889
+#: src/frontend_fox/CMainWindow.cpp:891
 #, fuzzy
 msgid "Switch to Loaded File 8"
 msgstr "Просмотреть загруженный Файл 1"
 
-#: src/frontend_fox/CMainWindow.cpp:890
+#: src/frontend_fox/CMainWindow.cpp:892
 #, fuzzy
 msgid "Switch to Loaded File 9"
 msgstr "Просмотреть загруженный Файл 9"
 
-#: src/frontend_fox/CMainWindow.cpp:891
+#: src/frontend_fox/CMainWindow.cpp:893
 #, fuzzy
 msgid "Switch to Loaded File 10"
 msgstr "Просмотреть загруженный Файл 10"
 
-#: src/frontend_fox/CMainWindow.cpp:895
+#: src/frontend_fox/CMainWindow.cpp:897
 msgid "Undo"
 msgstr "Отменить"
 
-#: src/frontend_fox/CMainWindow.cpp:896
+#: src/frontend_fox/CMainWindow.cpp:898
 msgid "Clear Undo History"
 msgstr "Стереть историю изменений"
 
-#: src/frontend_fox/CMainWindow.cpp:898
+#: src/frontend_fox/CMainWindow.cpp:900
 msgid "&Recent Actions"
 msgstr "&Недавние действия"
 
-#: src/frontend_fox/CMainWindow.cpp:1007
+#: src/frontend_fox/CMainWindow.cpp:1009
 msgid "&File"
 msgstr "&Файл"
 
-#: src/frontend_fox/CMainWindow.cpp:1008
+#: src/frontend_fox/CMainWindow.cpp:1010
 #: src/frontend_fox/CCueListDialog.cpp:78
 msgid "&Edit"
 msgstr "&Правка"
 
-#: src/frontend_fox/CMainWindow.cpp:1010
+#: src/frontend_fox/CMainWindow.cpp:1012
 #, fuzzy
 msgid "&View"
 msgstr "&Новый"
 
-#: src/frontend_fox/CMainWindow.cpp:1011
+#: src/frontend_fox/CMainWindow.cpp:1013
 msgid "&Control"
 msgstr "&Управление"
 
-#: src/frontend_fox/CMainWindow.cpp:1012
+#: src/frontend_fox/CMainWindow.cpp:1014
 msgid "Effec&ts"
 msgstr "Эффек&ты"
 
-#: src/frontend_fox/CMainWindow.cpp:1013
+#: src/frontend_fox/CMainWindow.cpp:1015
 msgid "&Looping"
 msgstr "&Циклы"
 
-#: src/frontend_fox/CMainWindow.cpp:1014
+#: src/frontend_fox/CMainWindow.cpp:1016
 msgid "F&ilters"
 msgstr "Ф&ильтры"
 
-#: src/frontend_fox/CMainWindow.cpp:1015
+#: src/frontend_fox/CMainWindow.cpp:1017
 msgid "&Remaster"
 msgstr "&Ремастеринг"
 
-#: src/frontend_fox/CMainWindow.cpp:1016
+#: src/frontend_fox/CMainWindow.cpp:1018
 msgid "&Generate"
 msgstr "&Создание"
 
-#: src/frontend_fox/CMainWindow.cpp:1174
+#: src/frontend_fox/CMainWindow.cpp:1176
 msgid "No LADSPA Plugins Found"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1176
+#: src/frontend_fox/CMainWindow.cpp:1178
 msgid "Like PATH, set LADSPA_PATH to point"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1177
+#: src/frontend_fox/CMainWindow.cpp:1179
 msgid "to a directory(s) containing LADSPA"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1178
+#: src/frontend_fox/CMainWindow.cpp:1180
 msgid "plugin .so file at least once.  Or"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1179
+#: src/frontend_fox/CMainWindow.cpp:1181
 msgid "edit the value in ~/.rezound/registry.dat"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1402
+#: src/frontend_fox/CMainWindow.cpp:1404
 msgid "Cannot close a file while recording a macro"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1411
+#: src/frontend_fox/CMainWindow.cpp:1413
 msgid "Cannot revert a file while recording a macro"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1537
+#: src/frontend_fox/CMainWindow.cpp:1539
 msgid "Cannot record audio while recording a macro"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:1681 src/frontend_fox/CMainWindow.cpp:1715
-#: src/frontend_fox/CMainWindow.cpp:1775 src/frontend_fox/CMainWindow.cpp:1813
-#: src/frontend_fox/CMainWindow.cpp:1814
+#: src/frontend_fox/CMainWindow.cpp:1683 src/frontend_fox/CMainWindow.cpp:1717
+#: src/frontend_fox/CMainWindow.cpp:1777 src/frontend_fox/CMainWindow.cpp:1815
+#: src/frontend_fox/CMainWindow.cpp:1816
 #: src/frontend_fox/RemasterActionDialogs.cpp:598
 msgid "semitones"
 msgstr "полутонов"
