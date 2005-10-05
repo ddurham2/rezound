@@ -59,6 +59,7 @@ static inline const sample_pos_t ms_to_samples(const sample_fpos_t ms,const unsi
 static inline const sample_pos_t s_to_samples(const sample_fpos_t s,const unsigned sampleRate) { return (sample_pos_t)sample_fpos_floor(((sample_fpos_t)sampleRate*s)+0.5); }
 static inline const sample_fpos_t samples_to_ms(const sample_pos_t samples,const unsigned sampleRate) { return (sample_fpos_t)samples/(sample_fpos_t)sampleRate*1000.0; }
 static inline const sample_fpos_t samples_to_s(const sample_pos_t samples,const unsigned sampleRate) { return (sample_fpos_t)samples/(sample_fpos_t)sampleRate; }
+static inline const int s_to_samples_offset(const float s,const unsigned sampleRate) { return (int)floor(((float)sampleRate*s)+0.5); }
 
 // sTime is in seconds
 static inline const string seconds_to_string(const sample_fpos_t sTime,int secondsDecimalPlaces=0,bool includeUnits=false)

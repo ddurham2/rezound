@@ -107,14 +107,18 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 			}
 		}
 
+		AAction *action=manufactureAction(actionSound.get(),actionParameters);
+
+		// the factory can choose to cancel the action by returning false
+		if(action==NULL)
+			return false;
+
 		// if we're not already running an action and we're recording a macro.. then add this action to the macro
 		if(AAction::doActionRecursionCount<=0 && macroRecorder.isRecording())
 		{
 			if(!macroRecorder.pushAction(actionName,actionParameters,loadedSound))
 				return false; // dialog was cancelled
 		}
-
-		AAction *action=manufactureAction(actionSound.get(),actionParameters);
 
 		// save zoom factors and scroll positions so the frontend can restore this upon undo
 		if(actionParameters->getSoundFileManager()!=NULL)

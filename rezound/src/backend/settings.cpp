@@ -106,6 +106,14 @@ size_t gMaxReopenHistory=16;
 float gSkipMiddleMarginSeconds=2.0;
 float gLoopGapLengthSeconds=0.75;
 
+float gPlayPositionShift=-0.08; // a guess at latency between hearing and where it would place the cue
+
+string gAddCueWhilePlaying_CueName="";
+bool gAddCueWhilePlaying_Anchored=false;
+
+string gAddCueAtClick_CueName="";
+bool gAddCueAtClick_Anchored=false;
+
 
 unsigned gMeterUpdateTime=50;
 
@@ -286,6 +294,13 @@ void readBackendSettings()
 
 	GET_SETTING("loopGapLengthSeconds",gLoopGapLengthSeconds,float)
 
+	GET_SETTING("playPositionShift",gPlayPositionShift,float)
+
+	GET_SETTING("addCueWhilePlaying_CueName",gAddCueWhilePlaying_CueName,string)
+	GET_SETTING("addCueWhilePlaying_Anchored",gAddCueWhilePlaying_Anchored,bool)
+
+	GET_SETTING("addCueAtClick_CueName",gAddCueAtClick_CueName,string)
+	GET_SETTING("addCueAtClick_Anchored",gAddCueAtClick_Anchored,bool)
 
 	GET_SETTING("Meters" DOT "meterUpdateTime",gMeterUpdateTime,unsigned)
 
@@ -370,6 +385,14 @@ void writeBackendSettings()
 
 	gSettingsRegistry->setValue<float>("skipMiddleMarginSeconds",gSkipMiddleMarginSeconds);
 	gSettingsRegistry->setValue<float>("loopGapLengthSeconds",gLoopGapLengthSeconds);
+
+	gSettingsRegistry->setValue<float>("playPositionShift",gPlayPositionShift);
+
+	gSettingsRegistry->setValue<string>("addCueWhilePlaying_CueName",gAddCueWhilePlaying_CueName);
+	gSettingsRegistry->setValue<bool>("addCueWhilePlaying_Anchored",gAddCueWhilePlaying_Anchored);
+
+	gSettingsRegistry->setValue<string>("addCueAtClick_CueName",gAddCueAtClick_CueName);
+	gSettingsRegistry->setValue<bool>("addCueAtClick_Anchored",gAddCueAtClick_Anchored);
 
 	gSettingsRegistry->setValue<unsigned>("Meters" DOT "meterUpdateTime",gMeterUpdateTime);
 

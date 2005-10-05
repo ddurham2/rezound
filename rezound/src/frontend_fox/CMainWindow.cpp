@@ -189,6 +189,7 @@ CMainWindow::CMainWindow(FXApp* a) :
 	soundListHeaderFont(NULL),
 
 	playMouseCursor(NULL),
+	addCueMouseCursor(NULL),
 
 	toggleLevelMetersMenuItem(NULL),
 	toggleStereoPhaseMetersMenuItem(NULL),
@@ -197,6 +198,9 @@ CMainWindow::CMainWindow(FXApp* a) :
 					// I'm aware of these two memory leaks, but I'm not concerned
 	playMouseCursor=new FXCursor(a,bytesToBits(playMouseCursorSource,16*16),bytesToBits(playMouseCursorMask,16*16),16,16,14,8);
 	playMouseCursor->create();
+	addCueMouseCursor=new FXCursor(a,bytesToBits(addCueMouseCursorSource,16*16),bytesToBits(addCueMouseCursorMask,16*16),16,16,8,14);
+	addCueMouseCursor->create();
+
 
 	FXFontDesc d;
 
@@ -330,6 +334,7 @@ CMainWindow::CMainWindow(FXApp* a) :
 CMainWindow::~CMainWindow()
 {
 	delete playMouseCursor;
+	delete addCueMouseCursor;
 	delete shuttleFont;
 	delete soundListFont;
 	delete soundListHeaderFont;
@@ -571,6 +576,9 @@ long CMainWindow::onKeyPress(FXObject *sender,FXSelector sel,void *ptr)
 	if(((FXEvent *)ptr)->code==KEY_Control_L || ((FXEvent *)ptr)->code==KEY_Control_R)
 		// set play cursor
 		setMouseCursorForFXWaveCanvas(soundWindowFrame,playMouseCursor);
+	else if(((FXEvent *)ptr)->code==KEY_Shift_L || ((FXEvent *)ptr)->code==KEY_Shift_R)
+		// set addCue cursor
+		setMouseCursorForFXWaveCanvas(soundWindowFrame,addCueMouseCursor);
 
 	return FXMainWindow::handle(sender,sel,ptr); // behave as normal, just intercept ctrl presses
 }
@@ -579,6 +587,9 @@ long CMainWindow::onKeyRelease(FXObject *sender,FXSelector sel,void *ptr)
 {
 	if(((FXEvent *)ptr)->code==KEY_Control_L || ((FXEvent *)ptr)->code==KEY_Control_R)
 		// unset play cursor
+		setMouseCursorForFXWaveCanvas(soundWindowFrame,getApp()->getDefaultCursor(DEF_ARROW_CURSOR));
+	else if(((FXEvent *)ptr)->code==KEY_Shift_L || ((FXEvent *)ptr)->code==KEY_Shift_R)
+		// unset addCue cursor
 		setMouseCursorForFXWaveCanvas(soundWindowFrame,getApp()->getDefaultCursor(DEF_ARROW_CURSOR));
 
 	return FXMainWindow::handle(sender,sel,ptr); // behave as normal, just intercept ctrl releases
@@ -593,8 +604,11 @@ long CMainWindow::onMouseEnter(FXObject *sender,FXSelector sel,void *ptr)
 	if(keyboardModifierState&CONTROLMASK)
 		// set play cursor
 		setMouseCursorForFXWaveCanvas(soundWindowFrame,playMouseCursor);
+	else if(keyboardModifierState&SHIFTMASK)
+		// set addCue cursor
+		setMouseCursorForFXWaveCanvas(soundWindowFrame,addCueMouseCursor);
 	else
-		// unset play cursor
+		// unset custom cursor
 		setMouseCursorForFXWaveCanvas(soundWindowFrame,getApp()->getDefaultCursor(DEF_ARROW_CURSOR));
 
 	return 1;
@@ -731,6 +745,7 @@ void CMainWindow::setWhichClipboard(size_t whichClipboard)
 #include "FileActionDialogs.h"
 
 #include "../backend/Edits/EditActions.h"
+#include "../backend/Edits/CCueAction.h"
 #include "EditActionDialogs.h"
 
 #include "../backend/Effects/EffectActions.h"
@@ -934,6 +949,8 @@ void CMainWindow::buildActionMap()
 	addToActionMap(								new CActionMenuCommand(new CSelectionEditFactory(sFlopToEnd),dummymenu,											NULL),															menuItemRegistry);
 	addToActionMap(								new CActionMenuCommand(new CSelectionEditFactory(sSelectToSelectStart),dummymenu,									NULL),															menuItemRegistry);
 	addToActionMap(								new CActionMenuCommand(new CSelectionEditFactory(sSelectToSelectStop),dummymenu,									NULL),															menuItemRegistry);
+	// -
+	addToActionMap(								new CActionMenuCommand(new CAddCueWhilePlayingActionFactory,dummymenu,												NULL),															menuItemRegistry);
 
 
 	// Effects

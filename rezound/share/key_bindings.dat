@@ -1,5 +1,6 @@
 
 About\ ReZound="F1";
+Add\ Cue\ While\ Playing="c";
 Close="ctrl+w";
 Copy="ctrl+c";
 Crop="ctrl+r";

@@ -25,6 +25,9 @@
 #include "CSoundPlayerChannel.h"
 #include "CSound.h"
 
+#include "settings.h"
+#include "unit_conv.h"
+
 
 // ----------------------------------------------------------------------
 // -- CActionSound ------------------------------------------------------
@@ -39,6 +42,21 @@ CActionSound::CActionSound(CSoundPlayerChannel *_channel,CrossfadeEdgesTypes _do
 
 	start=_channel->getStartPosition();
 	stop=_channel->getStopPosition();
+	
+	playPosition=_channel->getPosition();
+
+	// now shift playPosition by a setting
+	const int playPositionShift=s_to_samples_offset(gPlayPositionShift,sound->getSampleRate());
+	if(playPositionShift!=0)
+	{
+		if(playPositionShift>0 && (playPosition+playPositionShift)<sound->getLength()) // don't overrun the length
+			playPosition+=playPositionShift;
+		else if(playPositionShift<0 && (sample_fpos_t)playPosition>playPositionShift) // don't underrun zero
+			playPosition+=playPositionShift;
+		else
+			playPosition=0;
+	}
+
 	allChannels();
 }
 
@@ -55,7 +73,7 @@ unsigned CActionSound::countChannels() const
 		if(doChannel[t])
 			i++;
 	}
-	return(i);
+	return i;
 }
 
 void CActionSound::allChannels()
@@ -74,7 +92,7 @@ void CActionSound::noChannels()
 
 sample_pos_t CActionSound::selectionLength() const
 {
-	return((stop-start)+1);
+	return (stop-start)+1;
 }
 
 void CActionSound::selectAll() const
@@ -99,8 +117,9 @@ CActionSound &CActionSound::operator=(const CActionSound &rhs)
 
 	start=rhs.start;
 	stop=rhs.stop;
+	playPosition=rhs.playPosition;
 
-	return(*this);
+	return *this;
 }
 
 

@@ -67,7 +67,7 @@ public:
 	float getSeekSpeed() const;
 
 	// really play position
-	sample_pos_t getPosition() const { return playPosition; }
+	sample_pos_t getPosition() const { return playing ? playPosition : 0; }
 	void setPosition(sample_pos_t newPosition);
 
 	sample_pos_t getStartPosition() const { return startPosition; }

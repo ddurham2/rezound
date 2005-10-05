@@ -136,6 +136,25 @@ extern float gSkipMiddleMarginSeconds;
  */
 extern float gLoopGapLengthSeconds;
 
+/*
+ * This value is added to the current play position (in seconds) when it is reported to an action
+ *    Useful for making the Add Cue While Playing action more precise
+ */
+extern float gPlayPositionShift;
+
+
+/*
+ * How to create a cue that is added with the "Add Cue While Playing" action
+ */
+extern string gAddCueWhilePlaying_CueName;
+extern bool gAddCueWhilePlaying_Anchored;
+
+/*
+ * How to create a cue that is added with the add cue at click action
+ */
+extern string gAddCueAtClick_CueName;
+extern bool gAddCueAtClick_Anchored;
+
 
 /*
  * settings pertaining to audio level meters and frequency analyzer

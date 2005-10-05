@@ -46,6 +46,7 @@ public:
 	// the start and stop data-members are used to set the
 	// selectStart and selectStop positions after doing the action
 	mutable sample_pos_t start,stop;
+	sample_pos_t playPosition;
 
 	// default method of doing an action (all channels, apply just to selection)
 	CActionSound(CSoundPlayerChannel *channel,CrossfadeEdgesTypes doCrossfadeEdges);

@@ -35,6 +35,8 @@
 #include "../backend/CSoundPlayerChannel.h"
 #include "../backend/main_controls.h"
 
+#include "../backend/CActionParameters.h"
+
 
 /* TODO:
  *
@@ -84,7 +86,9 @@ FXWaveScrollArea::FXWaveScrollArea(FXRezWaveView *_parent,CLoadedSound *_loadedS
 
 	draggingSelectStart(false),draggingSelectStop(false),
 
-	momentaryPlaying(false)
+	momentaryPlaying(false),
+
+	addCueActionFactory(new CAddCueActionFactory(NULL))
 {
 	enable();
 
@@ -96,6 +100,7 @@ FXWaveScrollArea::FXWaveScrollArea(FXRezWaveView *_parent,CLoadedSound *_loadedS
 
 FXWaveScrollArea::~FXWaveScrollArea()
 {
+	delete addCueActionFactory;
 }
 
 void FXWaveScrollArea::updateFromEdit(bool undoing)
@@ -254,11 +259,26 @@ long FXWaveScrollArea::onMouseDown(FXObject*,FXSelector,void *ptr)
 		play(gSoundFileManager,position);
 		return 0;
 	}
-	else if(ev->click_button==RIGHTBUTTON && ev->state&CONTROLMASK) // left button pressed while holding control
+	else if(ev->click_button==RIGHTBUTTON && ev->state&CONTROLMASK) // right button pressed while holding control
 	{
 		const sample_pos_t position=getSamplePosForScreenX(X);
 		play(gSoundFileManager,position);
 		momentaryPlaying=true;
+		return 0;
+	}
+	else if(ev->click_button==LEFTBUTTON && ev->state&SHIFTMASK) // left button pressed while holding alternate
+	{
+		const sample_pos_t position=getSamplePosForScreenX(X);
+
+		CActionParameters actionParameters(NULL);
+
+		actionParameters.setValue<string>("name",gAddCueAtClick_CueName);
+		actionParameters.setValue<sample_pos_t>("position",position);
+		actionParameters.setValue<bool>("isAnchored",gAddCueAtClick_Anchored);
+
+		addCueActionFactory->performAction(loadedSound,&actionParameters,false);
+		parent->updateFromEdit();
+
 		return 0;
 	}
 

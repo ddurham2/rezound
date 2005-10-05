@@ -57,6 +57,18 @@ private:
 
 };
 
+class CAddCueWhilePlayingActionFactory : public AActionFactory
+{
+public:
+	CAddCueWhilePlayingActionFactory();
+	virtual ~CAddCueWhilePlayingActionFactory();
+
+	CAddCueAction *manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const;
+
+private:
+
+};
+
 
 // ------------------------------------------
 

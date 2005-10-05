@@ -81,6 +81,33 @@ CAddCueAction *CAddCueActionFactory::manufactureAction(const CActionSound *actio
 }
 
 
+// -----------------------------------
+
+CAddCueWhilePlayingActionFactory::CAddCueWhilePlayingActionFactory() :
+	AActionFactory(N_("Add Cue While Playing"),"",NULL,NULL,false,false)
+{
+	selectionPositionsAreApplicable=false;
+}
+
+CAddCueWhilePlayingActionFactory::~CAddCueWhilePlayingActionFactory()
+{
+}
+
+CAddCueAction *CAddCueWhilePlayingActionFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
+{
+	if(actionSound->playPosition==0)
+		return NULL; // this indicates (almost 100%) that they're not playing.. so cancel
+
+	return new CAddCueAction(
+		this,
+		actionSound,
+		gAddCueWhilePlaying_CueName,
+		actionSound->playPosition,
+		gAddCueWhilePlaying_Anchored
+	);
+}
+
+
 // ----------------------------------- 
 
 CRemoveCueAction::CRemoveCueAction(const AActionFactory *factory,const CActionSound *actionSound,const size_t cueIndex) :

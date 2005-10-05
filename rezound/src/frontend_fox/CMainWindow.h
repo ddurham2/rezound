@@ -235,6 +235,7 @@ private:
 	FXIconList *soundList;
 
 	FXCursor *playMouseCursor;
+	FXCursor *addCueMouseCursor;
 
 	FXMenuCommand *toggleLevelMetersMenuItem;
 	FXMenuCommand *toggleStereoPhaseMetersMenuItem;

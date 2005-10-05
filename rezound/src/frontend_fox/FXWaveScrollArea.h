@@ -31,6 +31,8 @@ class FXRezWaveView;
 class CLoadedSound;
 #include "../backend/CSound_defs.h"
 
+#include "../backend/Edits/CCueAction.h"
+
 class FXWaveScrollArea : public FXScrollArea
 {
 	FXDECLARE(FXWaveScrollArea)
@@ -105,6 +107,8 @@ private:
 	bool draggingSelectStart,draggingSelectStop;
 
 	bool momentaryPlaying;
+
+	CAddCueActionFactory *addCueActionFactory;
 
 	void handleMouseMoveSelectChange(FXint X);
 };
