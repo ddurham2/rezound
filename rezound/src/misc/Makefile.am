@@ -27,14 +27,15 @@ SUBDIRS= \
 	CNestedDataFile
 
 noinst_HEADERS=\
-		AThread.h\
-		CMutex.h\
-		CConditionVariable.h\
-		CPath.h\
-		CRWLock.h\
-		TAutoBuffer.h\
-		TRingBuffer.h\
-		TMemoryPipe.h\
+		AThread.h \
+		CMutex.h \
+		CConditionVariable.h \
+		CPath.h \
+		CRWLock.h \
+		TAutoBuffer.h \
+		TRingBuffer.h \
+		TTempVarSetter.h \
+		TMemoryPipe.h \
 		TMemoryPipe.cpp		
 
 EXTRA_DIST= \

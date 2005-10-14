@@ -157,10 +157,10 @@ bool CBurnToCDAction::doActionSizeSafe(CActionSound *actionSound,bool prepareFor
 			return false;
 	}
 
-
+	/* not necessary now that I'm parsing cdrdao's progress output
 	if(Question(_("About to write data to burn.  Afterwards burning will begin.  Watch standard output/error for progress information, or just wait for cdrdao to finish.")+string("\n")+_("Do you want to continue?"),yesnoQues)!=yesAns)
 		return false;
-
+	*/
 
 	// proceed to save files
 	{
