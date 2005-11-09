@@ -101,10 +101,10 @@ CChangeVolumeEffectFactory::~CChangeVolumeEffectFactory()
 
 CChangeAmplitudeEffect *CChangeVolumeEffectFactory::manufactureAction(const CActionSound *actionSound,const CActionParameters *actionParameters) const
 {
-	if(actionParameters->getValue<CGraphParamValueNodeList>("Volume Change").size()<2)
-		throw runtime_error(string(__func__)+" -- graph parameter 0 contains less than 2 nodes");
-
-	return new CChangeAmplitudeEffect(this,actionSound,actionParameters->getValue<CGraphParamValueNodeList>("Volume Change"));
+	CGraphParamValueNodeList g;
+	g.push_back(CGraphParamValueNode(0.0,actionParameters->getValue<double>("Volume Change")));
+	g.push_back(CGraphParamValueNode(1.0,actionParameters->getValue<double>("Volume Change")));
+	return new CChangeAmplitudeEffect(this,actionSound,g);
 }
 
 
