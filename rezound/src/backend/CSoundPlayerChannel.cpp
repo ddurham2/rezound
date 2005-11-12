@@ -721,8 +721,8 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 			if(!muted[i])  // ??? this memory needs to be locked for JACK's sake
 			{
 				// populate for interpolation
-				readBuffer[-(2*channelCount)+i]=prevLast2Frames[0][i]; 
-				readBuffer[-   channelCount +i]=prevLast2Frames[1][i];
+				readBuffer[-(2*(int)channelCount)+(int)i]=prevLast2Frames[0][i]; 
+				readBuffer[-   (int)channelCount +(int)i]=prevLast2Frames[1][i];
 				const sample_t * const rreadBuffer=readBuffer-(2*channelCount);
 
 				const vector<bool> outputRouting=getOutputRoute(0,i); // ??? this needs to be put into a data member of memory NOT TO BE SWAPPED for jack's sake and it needs to be updated in updateAfterEdit()
@@ -765,8 +765,8 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 			}
 
 			// save the last 2 samples and (later) the offset into the next-to-last so that we can use it for interpolation the next go around
-			prevLast2Frames[0][i]=readBuffer[((framesRead-2)*channelCount)+i];
-			prevLast2Frames[1][i]=readBuffer[((framesRead-1)*channelCount)+i];
+			prevLast2Frames[0][i]=readBuffer[(((int)framesRead-2)*(int)channelCount)+(int)i];
+			prevLast2Frames[1][i]=readBuffer[(((int)framesRead-1)*(int)channelCount)+(int)i];
 		}
 
 		// if all channels were muted, or none were mapped to an output device then this value never got set

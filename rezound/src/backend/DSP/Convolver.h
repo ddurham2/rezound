@@ -64,7 +64,7 @@ public:
 	const sample_t processSample(const sample_t input)
 	{
 		coefficient_t output=input*coefficients[0];
-		for(size_t t=coefficientCountSub1;t>0;t--)
+		for(unsigned t=coefficientCountSub1;t>0;t--)
 			output+=delay.getSample(t)*coefficients[t];
 
 		delay.putSample((coefficient_t)input);
