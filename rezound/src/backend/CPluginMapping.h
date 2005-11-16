@@ -215,7 +215,19 @@ public:
 };
 
 #include <CNestedDataFile/anytype.h>
-template<> static const CPluginMapping string_to_anytype<CPluginMapping>(const string &str,CPluginMapping &ret) { CNestedDataFile f; f.parseString(s2at::remove_surrounding_quotes(str)); ret.readFromFile(&f,""); return ret; }
-template<> static const string anytype_to_string<CPluginMapping>(const CPluginMapping &any) { CNestedDataFile f; any.writeToFile(&f,""); return "\""+s2at::escape_chars(istring(f.asString()).searchAndReplace("\n"," ",true))+"\""; }
+template<> static const CPluginMapping string_to_anytype<CPluginMapping>(const string &str,CPluginMapping &ret)
+{
+	CNestedDataFile f;
+	f.parseString(s2at::remove_surrounding_quotes(str));
+	ret.readFromFile(&f,"");
+	return ret;
+}
+
+template<> static const string anytype_to_string<CPluginMapping>(const CPluginMapping &any)
+{
+	CNestedDataFile f;
+	any.writeToFile(&f,"");
+	return "\""+s2at::escape_chars(istring(f.asString()).searchAndReplace("\n"," ",true))+"\"";
+}
 
 #endif

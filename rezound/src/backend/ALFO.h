@@ -94,8 +94,19 @@ public:
 };
 
 #include <CNestedDataFile/anytype.h>
-template<> static const CLFODescription string_to_anytype<CLFODescription>(const string &str,CLFODescription &ret) { CNestedDataFile f; f.parseString(s2at::remove_surrounding_quotes(str)); ret.readFromFile(&f,""); return ret; }
-template<> static const string anytype_to_string<CLFODescription>(const CLFODescription &any) { CNestedDataFile f; any.writeToFile(&f,""); return "\""+s2at::escape_chars(istring(f.asString()).searchAndReplace("\n"," ",true))+"\""; }
+template<> static const CLFODescription string_to_anytype<CLFODescription>(const string &str,CLFODescription &ret) 
+{
+	 CNestedDataFile f;
+	 f.parseString(s2at::remove_surrounding_quotes(str));
+	 ret.readFromFile(&f,"");
+	 return ret;
+}
+
+template<> static const string anytype_to_string<CLFODescription>(const CLFODescription &any) 
+{
+	CNestedDataFile f; any.writeToFile(&f,"");
+	return "\""+s2at::escape_chars(istring(f.asString()).searchAndReplace("\n"," ",true))+"\"";
+}
 
 class CLFORegistry
 {

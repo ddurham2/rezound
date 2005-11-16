@@ -222,7 +222,12 @@ void setupWindows(CMainWindow *mainWindow)
 void setLocaleFont(FXApp *application)
 {
 	/*??? it'd be nice if I knew if the font choice was overridden in the FOX registry... I should also have a font dialog for choosing in the config system later */
-	const string lang=setlocale(LC_MESSAGES,NULL);
+	string lang=setlocale(LC_MESSAGES,NULL);
+
+	// it's important to set the default locale for STL streams too (but remove the numeric puctuation because the STL putting punctuation in a number doesn't jive when atoi/f parses it)
+	locale loc(lang.c_str());
+	std::locale::global(std::locale(loc,std::locale::classic(),std::locale::numeric));
+
 	if(lang=="")
 		return;
 	else if(lang=="ru" || lang=="ru_RU")
