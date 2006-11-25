@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ReZound 0.1.1beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-11-03 09:15-0600\n"
+"POT-Creation-Date: 2006-11-25 09:03-0600\n"
 "PO-Revision-Date: 2005-03-26 21:16+0200\n"
 "Last-Translator: uffek >\n"
 "Language-Team: \n"
@@ -3397,11 +3397,11 @@ msgstr ""
 "Ankkuroitu Aikaan\tTarkoittaen ett‰ v‰limerkin sijaintiin ei vaikuta  "
 "audiomateriaalin lis‰‰minen tai poistaminen"
 
-#: src/frontend_fox/CCueDialog.cpp:101
+#: src/frontend_fox/CCueDialog.cpp:103
 msgid "Cue Name Too Long"
 msgstr "V‰limerkin nimi on liian pitk‰"
 
-#: src/frontend_fox/CCueDialog.cpp:109
+#: src/frontend_fox/CCueDialog.cpp:111
 msgid "Invalid Cue Time.  Format: HH:MM:SS.sssss or MM:SS.sssss"
 msgstr "Ep‰sopiva aika. Muoto: HH:MM:SS.sssss o MM:SS.sssss"
 

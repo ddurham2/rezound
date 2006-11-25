@@ -63,7 +63,7 @@ with show up in that list of installed locales.
 
 
 
-** To translate more text in ReZound that exists in the rezound.pot file:
+** To translate more text in ReZound than exists in the rezound.pot file:
 	- rezound.pot is created by gettext scanning the source code for
 	  strings in the form: _("..string..")  Not all strings that need to be
 	  translated are tagged in this manner yet.  If you want to go looking

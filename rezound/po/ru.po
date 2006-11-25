@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-11-03 09:15-0600\n"
+"POT-Creation-Date: 2006-11-25 09:03-0600\n"
 "PO-Revision-Date: 2003-08-28 18:45+0400\n"
 "Last-Translator: Alexandre Prokoudine <avp@altlinux.ru>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -3290,11 +3290,11 @@ msgid ""
 "Adding and Removing Space Within the Audio"
 msgstr ""
 
-#: src/frontend_fox/CCueDialog.cpp:101
+#: src/frontend_fox/CCueDialog.cpp:103
 msgid "Cue Name Too Long"
 msgstr "Слишком длинное имя маркера"
 
-#: src/frontend_fox/CCueDialog.cpp:109
+#: src/frontend_fox/CCueDialog.cpp:111
 msgid "Invalid Cue Time.  Format: HH:MM:SS.sssss or MM:SS.sssss"
 msgstr "Невреное время маркера.  Формат: HH:MM:SS.sssss или MM:SS.sssss"
 

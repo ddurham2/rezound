@@ -266,6 +266,30 @@ void setLocaleFont(FXApp *application)
 
 		application->setNormalFont(new FXFont(application,desc));
 	}
+	else if(lang=="fi" || lang=="fi_FI")
+	{ // setup ISO_8859-1 encoded font
+		FXFontDesc desc={
+			"helvetica",
+			90,
+			FONTWEIGHT_BOLD,
+			FONTSLANT_REGULAR,
+			FONTENCODING_ISO_8859_1,
+		};
+
+		application->setNormalFont(new FXFont(application,desc));
+	}
+	else if(lang=="fr" || lang=="fr_FR")
+	{ // setup ISO_8859-1 encoded font
+		FXFontDesc desc={
+			"helvetica",
+			90,
+			FONTWEIGHT_BOLD,
+			FONTSLANT_REGULAR,
+			FONTENCODING_ISO_8859_1,
+		};
+
+		application->setNormalFont(new FXFont(application,desc));
+	}
 
 }
 #endif
