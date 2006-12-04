@@ -21,6 +21,9 @@
 #elif defined(HAVE_LIBFOX_1_5)
 	#include <fox-1.5/fx.h>
 	#include <fox-1.5/fxkeys.h>
+#elif defined(HAVE_LIBFOX_1_6)
+	#include <fox-1.6/fx.h>
+	#include <fox-1.6/fxkeys.h>
 #else
 	#error no HAVE_LIBFOX defined
 #endif
@@ -101,6 +104,21 @@
 	#define FONTWEIGHT_NORMAL FXFont::Normal
 	#define FONTSLANT_REGULAR FXFont::Straight
 #endif
+
+
+#if REZ_FOX_VERSION<=10600
+	// ~1.6.0 changed fxparseAccel to just FX::parseAccel
+	#define parseAccel fxparseAccel
+	#define unparseAccel fxunparseAccel
+#endif
+
+#if REZ_FOX_VERSION<10600
+	// 1.6.0 changed FXbool to bool through the headesr
+	#define fx_bool FXbool
+#else
+	#define fx_bool bool
+#endif
+
 
 
 

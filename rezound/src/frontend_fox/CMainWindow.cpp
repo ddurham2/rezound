@@ -1303,7 +1303,7 @@ void CMainWindow::setupKeyBindings()
 			if(value=="")
 				continue; // no key bound to this action
 
-			FXHotKey acckey=fxparseAccel(value.c_str());
+			FXHotKey acckey=parseAccel(value.c_str());
 			mc->setAccelText(value.c_str());
 
 			/* these shuttle controls have to be handle specially because they require key up events to return the shuttle to the middle */
@@ -1344,7 +1344,7 @@ long CMainWindow::onSetupKeyBindings(FXObject *sender,FXSelector sel,void *ptr)
 	vector<FXHotKey> removeKeyBindingsList;
 	const vector<string> actionsWithKeyBindings=gKeyBindingsStore->getChildKeys("");
 	for(size_t t=0;t<actionsWithKeyBindings.size();t++)
-		removeKeyBindingsList.push_back(fxparseAccel(gKeyBindingsStore->getValue<string>(actionsWithKeyBindings[t]).c_str()));
+		removeKeyBindingsList.push_back(parseAccel(gKeyBindingsStore->getValue<string>(actionsWithKeyBindings[t]).c_str()));
 
 	if(gKeyBindingsDialog->showIt(gKeyBindingRegistry))
 	{

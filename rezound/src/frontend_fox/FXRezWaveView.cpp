@@ -48,7 +48,7 @@ public:
 
 	virtual void create();
 
-	virtual FXbool canFocus() const;
+	virtual fx_bool canFocus() const;
 
 
 	size_t getClickedCue(FXint x,FXint y);
@@ -369,7 +369,7 @@ void FXWaveRuler::create()
 	font->create();
 }
 
-FXbool FXWaveRuler::canFocus() const
+fx_bool FXWaveRuler::canFocus() const
 {
 	return 1;
 }

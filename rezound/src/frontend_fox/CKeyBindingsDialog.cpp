@@ -32,7 +32,7 @@ CKeyBindingsDialog *gKeyBindingsDialog=NULL;
 
 
 #if REZ_FOX_VERSION<10501
-FXString fxunparseAccel(FXHotKey key);
+FXString unparseAccel(FXHotKey key);
 #endif
 
 void parseItemText(const string itemText,string &name,string &key)
@@ -208,7 +208,7 @@ long CKeyBindingsDialog::onDefineKeyBinding(FXObject *sender,FXSelector sel,void
 			}
 			else
 			{
-				string tmp_key=fxunparseAccel(keycode).text();
+				string tmp_key=unparseAccel(keycode).text();
 				if(tmp_key=="")
 					Error(_("Unhandled Key Combination"));
 				else

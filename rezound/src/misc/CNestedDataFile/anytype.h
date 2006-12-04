@@ -89,6 +89,7 @@ template<> static const long double string_to_anytype<long double>(const string 
 // I really wished that I didn't have to explicitly use 'vector' in the definition; I'd have like to use any container with an iterator interface
 #include <CMutex.h>
 #include <CNestedDataFile/CNestedDataFile.h>
+extern int cfg_parse();
 template<class Type> static const vector<Type> &string_to_anytype(const string &str,vector<Type> &ret)
 {
 	// This function has to parse '{' ..., ... '}' where the ... can contain nested array

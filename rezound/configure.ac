@@ -615,19 +615,22 @@ AM_PATH_SOUNDTOUCH([],[],AC_MSG_WARN([***** libSoundTouch not found -- tempo and
 
 # This is a check for a class in a C++ library. To pinpoint the specific version we need we could change what class is linked.
 # it sets $1_CXXFLAGS and $1_LIBS to either something useful or nothing
-ajv_CXX_CHECK_LIB(FOX-1.5,FXApp,fox-1.5/fx.h,[http://fox-toolkit.org],[],false)
-if test -z "$FOX_1_5_LIBS"; then
-	ajv_CXX_CHECK_LIB(FOX-1.4,FXApp,fox-1.4/fx.h,[http://fox-toolkit.org],[],false)
-	if test -z "$FOX_1_4_LIBS"; then
-		ajv_CXX_CHECK_LIB(FOX-1.3,FXApp,fox-1.3/fx.h,[http://fox-toolkit.org],[],false)
-		if test -z "$FOX_1_3_LIBS"; then
-			ajv_CXX_CHECK_LIB(FOX-1.2,FXApp,fox-1.2/fx.h,[http://fox-toolkit.org],[],false)
-			if test -z "$FOX_1_2_LIBS"; then
-				# libFOX-1.2 was not found, now try libFOX-1.1
-				ajv_CXX_CHECK_LIB(FOX-1.1,FXApp,fox-1.1/fx.h,[http://fox-toolkit.org],[],false)
-				if test -z "$FOX_1_1_LIBS"; then
-					# libFOX-1.1 was not found, now try libFOX
-					ajv_CXX_CHECK_LIB(FOX,FXApp,fox/fx.h,[http://fox-toolkit.org],[],true)
+ajv_CXX_CHECK_LIB(FOX-1.6,FXApp,fox-1.6/fx.h,[http://fox-toolkit.org],[],false)
+if test -z "$FOX_1_6_LIBS"; then
+	ajv_CXX_CHECK_LIB(FOX-1.5,FXApp,fox-1.5/fx.h,[http://fox-toolkit.org],[],false)
+	if test -z "$FOX_1_5_LIBS"; then
+		ajv_CXX_CHECK_LIB(FOX-1.4,FXApp,fox-1.4/fx.h,[http://fox-toolkit.org],[],false)
+		if test -z "$FOX_1_4_LIBS"; then
+			ajv_CXX_CHECK_LIB(FOX-1.3,FXApp,fox-1.3/fx.h,[http://fox-toolkit.org],[],false)
+			if test -z "$FOX_1_3_LIBS"; then
+				ajv_CXX_CHECK_LIB(FOX-1.2,FXApp,fox-1.2/fx.h,[http://fox-toolkit.org],[],false)
+				if test -z "$FOX_1_2_LIBS"; then
+					# libFOX-1.2 was not found, now try libFOX-1.1
+					ajv_CXX_CHECK_LIB(FOX-1.1,FXApp,fox-1.1/fx.h,[http://fox-toolkit.org],[],false)
+					if test -z "$FOX_1_1_LIBS"; then
+						# libFOX-1.1 was not found, now try libFOX
+						ajv_CXX_CHECK_LIB(FOX,FXApp,fox/fx.h,[http://fox-toolkit.org],[],true)
+					fi
 				fi
 			fi
 		fi
@@ -644,6 +647,8 @@ AC_SUBST(FOX_1_4_CXXFLAGS)
 AC_SUBST(FOX_1_4_LIBS)
 AC_SUBST(FOX_1_5_CXXFLAGS)
 AC_SUBST(FOX_1_5_LIBS)
+AC_SUBST(FOX_1_6_CXXFLAGS)
+AC_SUBST(FOX_1_6_LIBS)
 AC_SUBST(FOX_CXXFLAGS)
 AC_SUBST(FOX_LIBS)
 
