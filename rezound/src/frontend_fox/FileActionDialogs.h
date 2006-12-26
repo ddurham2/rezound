@@ -87,7 +87,7 @@ public:
 	long onDetectDeviceButton(FXObject *object,FXSelector sel,void *ptr);
 
 protected:
-	CBurnToCDDialog::CBurnToCDDialog() {}
+	CBurnToCDDialog() {}
 
 	const string getExplanation() const;
 };
@@ -111,7 +111,7 @@ public:
 	long onRemoveButton(FXObject *object,FXSelector sel,void *ptr);
 
 protected:
-	CRunMacroDialog::CRunMacroDialog() {}
+	CRunMacroDialog() {}
 
 };
 
