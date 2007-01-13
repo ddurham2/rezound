@@ -58,6 +58,10 @@ namespace s2at // s2at signifies string_to_anytype/anytype_to_string
 template<typename Type> static const Type string_to_anytype(const string &str,Type &ret)       ;// { no_specialization_of_this_template_with_the_given_type; }
 template<typename Type> static const string anytype_to_string(const Type &any)                 ;// { no_specialization_of_this_template_with_the_given_type; }
 
+// vector versions (prototyped BEFORE we include CNestedDataFile.h which calls them)
+template<class Type> static const vector<Type> &string_to_anytype(const string &str,vector<Type> &ret);
+template<class Type> static const string anytype_to_string(const vector<Type> &any);
+
 
 
 

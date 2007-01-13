@@ -155,7 +155,7 @@ private:
 	friend int cfg_parse();
 	friend void cfg_init();
 	friend void cfg_error(int line,const char *msg);
-	template<class type> friend const vector<type> &string_to_anytype(const string &str,vector<type> &ret);
+	template<class Type> friend const vector<Type> &string_to_anytype(const string &str,vector<Type> &ret);
 
 	friend union cfg_parse_union;
 };
