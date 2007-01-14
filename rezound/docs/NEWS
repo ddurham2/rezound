@@ -1,3 +1,14 @@
+rezound-0.12.3beta -- 1/13/2007
+	- Compiles with gcc 4.x now
+	- Compiles against fox-1.6 (1.7 will come later since it's in flux)
+	- Included a new French translation thanks to europee
+	- Now cues can be added where the mouse cursor is by shift-left-clicking 
+	- Now cues can be added while palying at the current play position if 'c' is pressed
+	- Fixes on 64-bit systems (hopefully, couldn't fully test myself)
+	- Fixed some NLS issues
+	- Fixed the simple volume control effect
+	- Fixed various minor bugs
+
 rezound-0.12.2beta -- 9/5/2005
 	- Fixed a few compile/install issues
 

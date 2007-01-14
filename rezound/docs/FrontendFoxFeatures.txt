@@ -14,6 +14,8 @@
 
 	- In the wave view, while holding CONTROL and clicking the LEFT mouse button the sound will play from the mouse cursor position until the end of the sound or stop is pressed
 	- In the wave view, while holding CONTROL and pressing the RIGHT mouse button the sound will play from the mouse cursor position until the RIGHT mouse button is released
+        - In the wave view, while holding SHIFT and clicking the LEFT mouse button, a cue will be created at the clicked position.  The name of the cue created can be configured currently by editing ~/.rezound/registry.dat
+	- Pressing 'c' while playing will add a cue at the current play position
 		
 	- mouse WHEEL *should* scroll the wave view when not zoomed out full
 		- holding CONTROL while using the mouse WHEEL will cause it to scroll faster
@@ -25,7 +27,7 @@
 	- DOUBLE LEFT clicking a cue brings up the edit dialog
 	- A cue can be dragged using the LEFT mouse button.  Pressing ESCAPE while dragging a cue will cancel the drag
 		- If the start or stop position is exactly on a cue position when dragging the cue starts then that start or stop position will be dragged too. Holding SHIFT when starting the drag disables this action.
-	- LEFT clicking a cue focueses that cue.  
+	- LEFT clicking a cue focuses that cue.  
 		- Cues can be deleted by pressing DELETE 
 		- The LEFT, RIGHT, HOME and END cursor keys will focues the next or previous cue.  When the next or previous cue is focued that cue's position will be centered (useful when zoomed in)
 		- Pressing RETURN will bring up the edit dialog for that focused cue
