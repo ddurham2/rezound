@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-11-25 09:03-0600\n"
+"POT-Creation-Date: 2007-01-13 21:19-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1721,7 +1721,7 @@ msgstr ""
 msgid "&Reopen"
 msgstr ""
 
-#: src/frontend_fox/CMainWindow.cpp:835 src/frontend_fox/CAboutDialog.cpp:140
+#: src/frontend_fox/CMainWindow.cpp:835 src/frontend_fox/CAboutDialog.cpp:141
 #: src/frontend_fox/CCueListDialog.cpp:74
 msgid "&Close"
 msgstr ""
@@ -2046,30 +2046,34 @@ msgid "Finnish Translation"
 msgstr ""
 
 #: src/frontend_fox/CAboutDialog.cpp:116
+msgid "French Translation"
+msgstr ""
+
+#: src/frontend_fox/CAboutDialog.cpp:117
 msgid "Testing/Porting"
 msgstr ""
 
-#: src/frontend_fox/CAboutDialog.cpp:117 src/frontend_fox/CAboutDialog.cpp:118
-#: src/frontend_fox/CAboutDialog.cpp:119 src/frontend_fox/CAboutDialog.cpp:120
-#: src/frontend_fox/CAboutDialog.cpp:121 src/frontend_fox/CAboutDialog.cpp:124
-#: src/frontend_fox/CAboutDialog.cpp:126 src/frontend_fox/CAboutDialog.cpp:127
-#: src/frontend_fox/CAboutDialog.cpp:128 src/frontend_fox/CAboutDialog.cpp:129
+#: src/frontend_fox/CAboutDialog.cpp:118 src/frontend_fox/CAboutDialog.cpp:119
+#: src/frontend_fox/CAboutDialog.cpp:120 src/frontend_fox/CAboutDialog.cpp:121
+#: src/frontend_fox/CAboutDialog.cpp:122 src/frontend_fox/CAboutDialog.cpp:125
+#: src/frontend_fox/CAboutDialog.cpp:127 src/frontend_fox/CAboutDialog.cpp:128
+#: src/frontend_fox/CAboutDialog.cpp:129 src/frontend_fox/CAboutDialog.cpp:130
 msgid "Bug Finding"
 msgstr ""
 
-#: src/frontend_fox/CAboutDialog.cpp:122
+#: src/frontend_fox/CAboutDialog.cpp:123
 msgid "Feature Suggestions"
 msgstr ""
 
-#: src/frontend_fox/CAboutDialog.cpp:123
+#: src/frontend_fox/CAboutDialog.cpp:124
 msgid "Bug Finding/Fixing"
 msgstr ""
 
-#: src/frontend_fox/CAboutDialog.cpp:125
+#: src/frontend_fox/CAboutDialog.cpp:126
 msgid "Semitones Shuttle Wheel Feature Patch"
 msgstr ""
 
-#: src/frontend_fox/CAboutDialog.cpp:132
+#: src/frontend_fox/CAboutDialog.cpp:133
 msgid "License"
 msgstr ""
 

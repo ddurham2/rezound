@@ -11,7 +11,7 @@ distro tarball(eg: removing warning flags)
 
 3. Revise docs/NEWS and docs/Features.txt (use cvs2cl.pl to determine what significant things have changed since the previous release)
 
-4. in po/ to make POTFILES.in-update, configure and make rezound.pot-update
+4. in po/ to make POTFILES.in-update, configure and (back in the po directory) make rezound.pot-update
 
 5. Update the version number in configure.ac and docs/INSTALL
 	- and then do a bootstrap && configure
