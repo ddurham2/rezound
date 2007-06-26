@@ -23,6 +23,7 @@
 #include <sstream>
 #include <string>
 #include <vector> // for the vector implemenation to/from string
+#include <math.h>
 using namespace std;
 
 // utilities just for s2at purposes
@@ -86,9 +87,9 @@ template<> static const unsigned long string_to_anytype<unsigned long>(const str
 template<> static const long long string_to_anytype<long long>(const string &str,long long &ret)                   { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
 template<> static const unsigned long long string_to_anytype<unsigned long long>(const string &str,unsigned long long &ret) { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
 
-template<> static const float string_to_anytype<float>(const string &str,float &ret)                           { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0.0f; ss >> ret; return ret; }
-template<> static const double string_to_anytype<double>(const string &str,double &ret)                         { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0.0; ss >> ret; return ret; }
-template<> static const long double string_to_anytype<long double>(const string &str,long double &ret)               { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0.0; ss >> ret; return ret; }
+template<> static const float string_to_anytype<float>(const string &str,float &ret)                           { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0.0f; if(str=="inf") ret=INFINITY; else if(str=="-inf") ret=-INFINITY; else ss >> ret; return ret; }
+template<> static const double string_to_anytype<double>(const string &str,double &ret)                         { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0.0; if(str=="inf") ret=INFINITY; else if(str=="-inf") ret=-INFINITY; else ss >> ret; return ret; }
+template<> static const long double string_to_anytype<long double>(const string &str,long double &ret)               { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0.0; if(str=="inf") ret=INFINITY; else if(str=="-inf") ret=-INFINITY; else ss >> ret; return ret; }
 
 // I really wished that I didn't have to explicitly use 'vector' in the definition; I'd have like to use any container with an iterator interface
 #include <CMutex.h>
@@ -141,9 +142,9 @@ template<> static const string anytype_to_string<unsigned long long>(const unsig
 // I've picked a rather arbitrary way of formatting floats one way or another depending on how big it is.. I wish there were a way to output the ascii in such a way as to preserve all the information in the float (without printing the hex of it or something like that)
 #include <istring>
 #include <math.h> // for isnan which I hope is there (maybe fix in common.h if it's not
-template<> static const string anytype_to_string<float>(const float &any)              { if(isnan(any)) return "0"; else { ostringstream ss; NO_LOCALE(ss) if(any>999999.0) {ss.setf(ios::scientific); ss.width(0); ss.precision(12); ss.fill(' '); } else {ss.setf(ios::fixed); ss.precision(6); ss.fill(' '); } ss << any; return istring(ss.str()).trim(); } }
-template<> static const string anytype_to_string<double>(const double &any)             { if(isnan(any)) return "0"; else { ostringstream ss; NO_LOCALE(ss) if(any>999999.0) {ss.setf(ios::scientific); ss.width(0); ss.precision(12); ss.fill(' '); } else {ss.setf(ios::fixed); ss.precision(6); ss.fill(' '); } ss << any; return istring(ss.str()).trim(); } }
-template<> static const string anytype_to_string<long double>(const long double &any)        { if(isnan(any)) return "0"; else { ostringstream ss; NO_LOCALE(ss) if(any>999999.0) {ss.setf(ios::scientific); ss.width(0); ss.precision(12); ss.fill(' '); } else {ss.setf(ios::fixed); ss.precision(6); ss.fill(' '); } ss << any; return istring(ss.str()).trim(); } }
+template<> static const string anytype_to_string<float>(const float &any)              { if(isnan(any)) return "0"; else if(isinf(any)==1) return "inf"; else if(isinf(any)==-1) return "-inf"; else { ostringstream ss; NO_LOCALE(ss) if(any>999999.0) {ss.setf(ios::scientific); ss.width(0); ss.precision(12); ss.fill(' '); } else {ss.setf(ios::fixed); ss.precision(6); ss.fill(' '); } ss << any; return istring(ss.str()).trim(); } }
+template<> static const string anytype_to_string<double>(const double &any)             { if(isnan(any)) return "0"; else if(isinf(any)==1) return "inf"; else if(isinf(any)==-1) return "-inf"; else { ostringstream ss; NO_LOCALE(ss) if(any>999999.0) {ss.setf(ios::scientific); ss.width(0); ss.precision(12); ss.fill(' '); } else {ss.setf(ios::fixed); ss.precision(6); ss.fill(' '); } ss << any; return istring(ss.str()).trim(); } }
+template<> static const string anytype_to_string<long double>(const long double &any)        { if(isnan(any)) return "0"; else if(isinf(any)==1) return "inf"; else if(isinf(any)==-1) return "-inf"; else { ostringstream ss; NO_LOCALE(ss) if(any>999999.0) {ss.setf(ios::scientific); ss.width(0); ss.precision(12); ss.fill(' '); } else {ss.setf(ios::fixed); ss.precision(6); ss.fill(' '); } ss << any; return istring(ss.str()).trim(); } }
 
 
 // I really wished that I didn't have to explicitly use 'vector' in the definition, I'd have like to use any container with an iterator interface
