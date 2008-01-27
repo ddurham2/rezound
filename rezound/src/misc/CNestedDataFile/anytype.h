@@ -68,7 +68,7 @@ template<class Type> static const string anytype_to_string(const vector<Type> &a
 
 // template specializations of string_to_anytype
 
-template<> static const string string_to_anytype<string>(const string &str,string &ret)                         { return s2at::unescape_chars(s2at::remove_surrounding_quotes(str)); }
+template<> static const string string_to_anytype<string>(const string &str,string &ret)                         { return ret=s2at::unescape_chars(s2at::remove_surrounding_quotes(str)); }
 
 template<> static const bool string_to_anytype<bool>(const string &str,bool &ret)                             { return s2at::remove_surrounding_quotes(str)=="true" ? ret=true : ret=false; }
 
