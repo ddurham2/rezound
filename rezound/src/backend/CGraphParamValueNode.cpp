@@ -22,6 +22,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <stdio.h>
 
 #include <istring>
 
@@ -202,6 +203,12 @@ const CGraphParamValueNodeList smoothGraphNodes(const CGraphParamValueNodeList &
 	}
 
 	return tmp;
+}
+
+void printCGraphParamValueNodeList(const CGraphParamValueNodeList &nodes)
+{
+	for(unsigned t=0;t<nodes.size();t++)
+		printf("node %03u: (%6.3f, %6.3f)\n",t,nodes[t].x,nodes[t].y);
 }
 
 // ------------------------------------

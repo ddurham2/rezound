@@ -78,6 +78,7 @@ extern const CGraphParamValueNodeList flipGraphNodesHorizontally(const CGraphPar
 extern const CGraphParamValueNodeList flipGraphNodesVertically(const CGraphParamValueNodeList &nodes);
 extern const CGraphParamValueNodeList smoothGraphNodes(const CGraphParamValueNodeList &nodes);
 
+void printCGraphParamValueNodeList(const CGraphParamValueNodeList &nodes);
 
 class CGraphParamValueIterator
 {
