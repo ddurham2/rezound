@@ -63,7 +63,7 @@ public:
 	virtual void error(const string &message,VSeverity severity=none,bool reformatIfNeeded=true)=0;
 	virtual void warning(const string &message,bool reformatIfNeeded=true)=0;
 	virtual void message(const string &message,bool reformatIfNeeded=true)=0;
-	virtual VAnswer question(const string &message,VQuestion options,bool reformatIfNeeded=true)=0;
+	virtual VAnswer question(const string &message,/*VQuestion*/int options,bool reformatIfNeeded=true)=0;
 
 	virtual void beep()=0;
 
@@ -82,7 +82,7 @@ extern AStatusComm *gStatusComm;
 void Error(const string &message,VSeverity severity=none,bool reformatIfNeeded=true);
 void Warning(const string &message,bool reformatIfNeeded=true);
 void Message(const string &message,bool reformatIfNeeded=true);
-VAnswer Question(const string &message,VQuestion options,bool reformatIfNeeded=true);
+VAnswer Question(const string &message,/*VQuestion*/int options,bool reformatIfNeeded=true);
 
 
 

@@ -73,7 +73,7 @@ void Message(const string &message,bool reformatIfNeeded)
 	gStatusComm->message(message,reformatIfNeeded);
 }
 
-VAnswer Question(const string &message,VQuestion options,bool reformatIfNeeded)
+VAnswer Question(const string &message,/*VQuestion*/int options,bool reformatIfNeeded)
 {
 	return(gStatusComm->question(message,options,reformatIfNeeded));
 }
