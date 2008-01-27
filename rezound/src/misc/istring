@@ -60,18 +60,18 @@ class istring : public std::string
 {
 public:
 	// --- constructors
-	explicit istring(const allocator_type &a=allocator_type()) : string(){}
+	explicit istring(const allocator_type &a=allocator_type()) : string(a){}
 	istring(const string &str,size_type pos=0,size_type n=npos, const 
-		allocator_type &a=allocator_type()) : string(str,pos,n){}
+		allocator_type &a=allocator_type()) : string(str,pos,n,a){}
 	istring(const char *s,size_type n,const allocator_type 
-			&a=allocator_type()) : string(s,n) { }
+			&a=allocator_type()) : string(s,n,a) { }
 	istring(const char *s,const allocator_type &a=allocator_type()) 
-		: string(s) { }
+		: string(s,a) { }
 	istring(size_type n,char c,const allocator_type &a=allocator_type()) 
-		: string(n,c) { }
+		: string(n,c,a) { }
 	template<class InputIterator> istring(InputIterator begin,InputIterator
 		end,const allocator_type &a=allocator_type()) 
-		: string(begin,end) { }
+		: string(begin,end,a) { }
 	
 	// --- explicit number conversion constructors
 		// integer or floating point type to string
