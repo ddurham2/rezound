@@ -31,7 +31,7 @@
 #include "../backend/CActionParameters.h"
 #include "../backend/ASoundClipboard.h"
 
-#include "ActionParamMappers.h"
+#include "../backend/ActionParamMappers.h"
 
 CPasteChannelsDialog *gPasteChannelsDialog=NULL;
 

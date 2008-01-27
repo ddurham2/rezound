@@ -28,7 +28,7 @@
 
 #include "../backend/CSound_defs.h"
 
-#include "AActionParamMapper.h"
+#include "../backend/AActionParamMapper.h"
 
 class CNestedDataFile;
 

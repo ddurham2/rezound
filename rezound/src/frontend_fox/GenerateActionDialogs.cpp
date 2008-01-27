@@ -21,7 +21,7 @@
 #include "GenerateActionDialogs.h"
 #include "../backend/unit_conv.h"
 
-#include "ActionParamMappers.h"
+#include "../backend/ActionParamMappers.h"
 
 // --- Generate Noise -------------------------
 

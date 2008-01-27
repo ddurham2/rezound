@@ -29,7 +29,7 @@
 #include "../backend/CSound_defs.h"
 #include "../backend/CGraphParamValueNode.h"
 
-#include "AActionParamMapper.h"
+#include "../backend/AActionParamMapper.h"
 
 class FXGraphParamNode;
 class CNestedDataFile;

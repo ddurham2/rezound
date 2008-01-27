@@ -20,7 +20,7 @@
 
 #include "EffectActionDialogs.h"
 
-#include "ActionParamMappers.h"
+#include "../backend/ActionParamMappers.h"
 
 
 // --- volume ---------------------------------

@@ -56,6 +56,8 @@ noinst_HEADERS= \
 	   AStatusComm.h \
 	   CActionParameters.h \
 	   CActionSound.h \
+	   ActionParamMappers.h \
+	   AActionParamMapper.h \
 	   CGraphParamValueNode.h \
 	   ClameSoundTranslator.h \
 	   ClibaudiofileSoundTranslator.h \
@@ -109,6 +111,7 @@ libbackend_la_SOURCES= \
 			AStatusComm.cpp \
 			CActionParameters.cpp  \
 			CActionSound.cpp  \
+			AActionParamMapper.cpp \
 			CGraphParamValueNode.cpp \
 			ClameSoundTranslator.cpp \
 			ClibaudiofileSoundTranslator.cpp \

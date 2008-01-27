@@ -31,7 +31,7 @@
 #include "../backend/CActionParameters.h"
 #include "../backend/CSound.h" // for getSampleRate()
 
-#include "ActionParamMappers.h"
+#include "../backend/ActionParamMappers.h"
 
 
 CLADSPAActionDialog::CLADSPAActionDialog(FXWindow *mainWindow,const LADSPA_Descriptor *_desc) :

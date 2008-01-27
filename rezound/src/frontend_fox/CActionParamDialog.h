@@ -44,7 +44,7 @@ class CActionParamDialog;
 #include "../backend/AActionDialog.h"
 #include "../backend/CGraphParamValueNode.h"
 
-#include "AActionParamMapper.h"
+#include "../backend/AActionParamMapper.h"
 
 class CNestedDataFile;
 

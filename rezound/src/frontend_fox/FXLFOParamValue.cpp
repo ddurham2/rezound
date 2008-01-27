@@ -27,7 +27,7 @@
 
 #include "utils.h"
 
-#include "ActionParamMappers.h"
+#include "../backend/ActionParamMappers.h"
 
 /*
 	- This is the LFO selection widget used over and over by ReZound on action dialogs

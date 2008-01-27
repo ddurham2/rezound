@@ -28,7 +28,7 @@
 #include "../backend/CActionParameters.h"
 #include "../backend/CSound.h"
 
-#include "ActionParamMappers.h"
+#include "../backend/ActionParamMappers.h"
 
 
 // --- balance ------------------------

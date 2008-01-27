@@ -26,7 +26,7 @@
 #include "../backend/CSound.h"
 #include "settings.h"
 
-#include "ActionParamMappers.h"
+#include "../backend/ActionParamMappers.h"
 
 
 // --- insert silence -------------------------
