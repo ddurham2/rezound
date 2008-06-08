@@ -18,12 +18,12 @@ msgstr ""
 #: src/backend/File/CSaveAsAudioFileAction.cpp:46
 #, fuzzy
 msgid "Save As"
-msgstr "Talleta &Nimellä"
+msgstr "Talleta &Nimella"
 
 #: src/backend/File/CSaveAsAudioFileAction.cpp:46
 #, fuzzy
 msgid "Save an Audio File as a Chosen Filename"
-msgstr "Audiotidosto jota Käytetään Suotimen Ytimenä"
+msgstr "Audiotidosto jota Kaytetaan Suotimen Ytimena"
 
 #: src/backend/File/CNewAudioFileAction.cpp:51
 #, fuzzy
@@ -36,15 +36,15 @@ msgstr "Uusi Audiotiedosto"
 
 #: src/backend/File/CSaveSelectionAsAction.cpp:61
 msgid "Save Selection As..."
-msgstr "Tallenna nimellä..."
+msgstr "Tallenna nimella..."
 
 #: src/backend/File/CBurnToCDAction.cpp:68
 msgid "cdrdao not found in the given path: "
-msgstr "cdrdao ei löydy annetulta polulta:"
+msgstr "cdrdao ei loydy annetulta polulta:"
 
 #: src/backend/File/CBurnToCDAction.cpp:96
 msgid "Too many tracks defined by cues.  99 is the maximum."
-msgstr "Liikaa raitoja määritetty merkein. 99 on maksimi."
+msgstr "Liikaa raitoja maaritetty merkein. 99 on maksimi."
 
 #: src/backend/File/CBurnToCDAction.cpp:99
 msgid ""
@@ -52,9 +52,9 @@ msgid ""
 "'explain' button on the previous window for how to name the cues.\n"
 "Would you like to continue burning the audio as one track?"
 msgstr ""
-"Oikein nimettyä välimerkistöä ei löydy. Katso 'selitys' näppäin edellisessä "
-"ikkunassa kappalejaon nimeämiseksi.\n"
-"Haluatko polttaa tiedoston yhtenä raitana?"
+"Oikein nimettya valimerkistoa ei loydy. Katso 'selitys' nappain edellisessa "
+"ikkunassa kappalejaon nimeamiseksi.\n"
+"Haluatko polttaa tiedoston yhtena raitana?"
 
 #: src/backend/File/CBurnToCDAction.cpp:121
 msgid "Track is less than 4 seconds long."
@@ -62,7 +62,7 @@ msgstr "Raidan pituus on alle 4 sekuntia."
 
 #: src/backend/File/CBurnToCDAction.cpp:137
 msgid "Gap between tracks: "
-msgstr "Raitojen välinen tyhjä:"
+msgstr "Raitojen valinen tyhja:"
 
 #: src/backend/File/CBurnToCDAction.cpp:138
 msgid "Total Burn Length: "
@@ -84,7 +84,7 @@ msgstr "Haluatko jatkaa?"
 #: src/backend/File/CBurnToCDAction.cpp:146
 #: src/backend/File/CBurnToCDAction.cpp:151
 msgid "Total data to be burned is "
-msgstr "Poltettava datamäärä"
+msgstr "Poltettava datamaara"
 
 #: src/backend/File/CBurnToCDAction.cpp:146
 msgid "You will need an 80 minute CD\n"
@@ -119,7 +119,7 @@ msgstr "Haluatko polttaa toisen?"
 
 #: src/backend/File/CBurnToCDAction.cpp:377
 msgid "(Insert a new blank, and then press 'Yes'.)"
-msgstr "(Aseta uusi tyhjä levy ja paina 'Kyllä'.)"
+msgstr "(Aseta uusi tyhja levy ja paina 'Kylla'.)"
 
 #: src/backend/File/CBurnToCDAction.cpp:405
 msgid ""
@@ -137,20 +137,20 @@ msgid ""
 "\t"
 msgstr ""
 "\n"
-"Toimintoa käytetään avatun raidan polttamiseen levylle käyttäen cdrdao (CD-R "
-"Disk-At-Once) työkalua.\n"
+"Toimintoa kaytetaan avatun raidan polttamiseen levylle kayttaen cdrdao (CD-R "
+"Disk-At-Once) tyokalua.\n"
 "\n"
-"Raidat määritetään välimerkeillä  '('...[')']. tyyliin. Katso 'Selitykset' "
-"näppäin Tiedosto->Tallenna useana tiedostona kuinka se tehdään. Jotkut "
-"selityksen osat ovat selvästi ei-sovellettavia tähän tarkoitukseen.\n"
+"Raidat maaritetaan valimerkeilla  '('...[')']. tyyliin. Katso 'Selitykset' "
+"nappain Tiedosto->Tallenna useana tiedostona kuinka se tehdaan. Jotkut "
+"selityksen osat ovat selvasti ei-sovellettavia tahan tarkoitukseen.\n"
 "\n"
-"cdrdao tulee olla asennettuna. Polkua $PATH etsitään 'cdrdao'lle  ReZoundin "
-"käynnistyessä, jollei polkua löydy täytyy se  määrittää selausnäppäimellä.\n"
+"cdrdao tulee olla asennettuna. Polkua $PATH etsitaan 'cdrdao'lle  ReZoundin "
+"kaynnistyessa, jollei polkua loydy taytyy se  maarittaa selausnappaimella.\n"
 "\t"
 
 #: src/backend/File/CBurnToCDAction.cpp:451
 msgid "Burning..."
-msgstr "Polttaa levyä..."
+msgstr "Polttaa levya..."
 
 #: src/backend/File/CBurnToCDAction.cpp:576
 msgid "Burn to CD"
@@ -181,20 +181,20 @@ msgid ""
 "No appropriately named cues found to define segments to save.  See the "
 "'explain' button on the previous window for how to name the cues."
 msgstr ""
-" Oikein nimettyjä välimerkkejä ei löydy talletettavien alueiden "
-"määrittämiseksi. Katso 'selitys' näppäin edellisessä ikkunassa  kappalejaon "
-"nimeämiseksi"
+" Oikein nimettyja valimerkkeja ei loydy talletettavien alueiden "
+"maarittamiseksi. Katso 'selitys' nappain edellisessa ikkunassa  kappalejaon "
+"nimeamiseksi"
 
 #: src/backend/File/CSaveAsMultipleFilesAction.cpp:98
 msgid "These are the files about to be created..."
-msgstr "Nämä tiedostot luodaan..."
+msgstr "Nama tiedostot luodaan..."
 
 #: src/backend/File/CSaveAsMultipleFilesAction.cpp:115
 msgid ""
 "The file was not saved successfully.  Do you wish to abort saving any other "
 "files?"
 msgstr ""
-"Tiedosto ei tallentunut onnistuneesti. Haluatko keskeyttää muiden "
+"Tiedosto ei tallentunut onnistuneesti. Haluatko keskeyttaa muiden "
 "tiedostojen tallennuksen?"
 
 #: src/backend/File/CSaveAsMultipleFilesAction.cpp:147
@@ -244,45 +244,45 @@ msgid ""
 "format, etc).\n"
 msgstr ""
 "\n"
-"Suuren tiedoston  (tai siitä valitun alueen) tallennus eri segmentteinä "
-"onnistuu lisäämällä välimerkit ja sen jälkeen \"Tallenna useina tiedostoina"
+"Suuren tiedoston  (tai siita valitun alueen) tallennus eri segmentteina "
+"onnistuu lisaamalla valimerkit ja sen jalkeen \"Tallenna useina tiedostoina"
 "\" valikosta \"Tiedosto\".\n"
 "\n"
-"Yleisesti kappalejaon voi merkitä '(' ja ')' valitun osan alku ja loppu "
-"merkkinä.\n"
-"Kuitenkin  ')' (voidaan laittaa ennen avausmerkkiä '(' jos edellinen raita "
-"päättyy seuraavan raidan alkaessa.\n"
-"Aivan viimeinen merkki ')' voidaan laittaa alkuperäisen audiotiedoston "
+"Yleisesti kappalejaon voi merkita '(' ja ')' valitun osan alku ja loppu "
+"merkkina.\n"
+"Kuitenkin  ')' (voidaan laittaa ennen avausmerkkia '(' jos edellinen raita "
+"paattyy seuraavan raidan alkaessa.\n"
+"Aivan viimeinen merkki ')' voidaan laittaa alkuperaisen audiotiedoston "
 "loppuun (tai valitun alueen loppuun).\n"
-"Valinnaisesti jakomerkki '(' voidaan nimetä '(xyz' jos 'xyz' kirjoitetaan "
-"myös valitun segmentin tiedostonimeen.\n"
+"Valinnaisesti jakomerkki '(' voidaan nimeta '(xyz' jos 'xyz' kirjoitetaan "
+"myos valitun segmentin tiedostonimeen.\n"
 "\n"
 "Muutama parametri voidaan valita kun on painettu  \"Tallenna useina "
 "tiedostoina\" valikosta \"Tiedosto\".\n"
 "Parametri \"Tallenna tiedostoon\" on tiedosto johon segmenttien jakotiedot "
 "tallennetaan.\n"
-" \"Tiedostonimen etuliite\" asetetaan ennen valinnaista 'xyz' jakomerkistä  "
+" \"Tiedostonimen etuliite\" asetetaan ennen valinnaista 'xyz' jakomerkista  "
 "'(xyz' .\n"
-" \"Tiedostonimen liite\" asetetaan valinnaisen 'xyz' jälkeen jakomerkistä  "
+" \"Tiedostonimen liite\" asetetaan valinnaisen 'xyz' jalkeen jakomerkista  "
 "'(xyz'.\n"
-"Parametri \"Tallennusmuoto\" määrittää mihin muotoon segmentit "
+"Parametri \"Tallennusmuoto\" maarittaa mihin muotoon segmentit "
 "talletetaan .\n"
 "Kun raidan tiedostonimi on muodostettu laittamalla yhteen [kansio]/[etuliite]"
-"[xyz][liite].[tallennusmuoto], jos se sisältää merkin '#', silloin '#' "
-"vaihtuu segmenttijärjestyksen mukaiseksi numeroksi talletettaessa.\n"
+"[xyz][liite].[tallennusmuoto], jos se sisaltaa merkin '#', silloin '#' "
+"vaihtuu segmenttijarjestyksen mukaiseksi numeroksi talletettaessa.\n"
 "  Esimerkiksi: \"/home/john/sounds/track #.wav\" vaihtuu \"/home/john/sounds/"
-"track 1.wav\" ja tämän jälkeen tulevat segmentit saavat kasvavan numeron "
-"siinä järjestyksessä kun ne ovat.\n"
+"track 1.wav\" ja taman jalkeen tulevat segmentit saavat kasvavan numeron "
+"siina jarjestyksessa kun ne ovat.\n"
 " Joten tulisi laittaa '#' tiedostonimeen, etuliitteeseen, xyz, tai  "
-"liitteeseen jotta yksilölliset tiedostonimet muodostuisivat.\n"
+"liitteeseen jotta yksilolliset tiedostonimet muodostuisivat.\n"
 "Parametri \"Segmenttinumero\" voidaan vaihtaa muuksi kuin '1' niin siilloin "
-"korvaava '#' muuttuu myös vastaavasti.\n"
-"Valintaa \"Avaa talletetut segmentit\" käytetään kun halutaan avata aiemmin "
+"korvaava '#' muuttuu myos vastaavasti.\n"
+"Valintaa \"Avaa talletetut segmentit\" kaytetaan kun halutaan avata aiemmin "
 "talletetut segmentit.\n"
-"Parametri \"Sovelletaan\" indikoi pitäisikö toiminnon vaikuttaa vain "
+"Parametri \"Sovelletaan\" indikoi pitaisiko toiminnon vaikuttaa vain "
 "valittuun osa-alueeseen vai koko tiedostoon.\n"
-"Valintaa  \"Kysy vain kerran tallennusparametrit\" käytetään kun halutaan "
-"tallettaa kaikki samoilla parametreillä  (esimerkiksi, kompressio, "
+"Valintaa  \"Kysy vain kerran tallennusparametrit\" kaytetaan kun halutaan "
+"tallettaa kaikki samoilla parametreilla  (esimerkiksi, kompressio, "
 "tallennusmuoto, jne.).\n"
 
 #: src/backend/File/CSaveAsMultipleFilesAction.cpp:174
@@ -291,24 +291,24 @@ msgstr "Tallenna Useina Tiedostoina"
 
 #: src/backend/initialize.cpp:162
 msgid "Native Clipboard "
-msgstr "Leikepöytä "
+msgstr "Leikepoyta "
 
 #: src/backend/initialize.cpp:175
 msgid "Record Clipboard "
-msgstr "Äänitysleikepöytä "
+msgstr "Aanitysleikepoyta "
 
 #: src/backend/CRecordSoundClipboard.cpp:70
 msgid ""
 "There is already data on this recording clipboard.  Do you want to record "
 "something new?"
-msgstr "Äänitysleikepöydällä on jo dataa. Haluatko äänittää jotain uutta?"
+msgstr "Aanitysleikepoydalla on jo dataa. Haluatko aanittaa jotain uutta?"
 
 #: src/backend/ClameSoundTranslator.cpp:278
 msgid ""
 "MPEG Layer-3 does not support saving user notes or cues\n"
 "Do you wish to continue?"
 msgstr ""
-"MPEG Layer-3 ei tue muistiinpanoja tai raitamerkkejä\n"
+"MPEG Layer-3 ei tue muistiinpanoja tai raitamerkkeja\n"
 "Haluatko jatkaa?"
 
 #: src/backend/ClameSoundTranslator.cpp:354
@@ -327,14 +327,14 @@ msgid ""
 "Either no audio output method was enabled at configure-time, or no method "
 "was recognized in the registry:AudioOutputMethods[] setting"
 msgstr ""
-"Audion toistotapaa ei ole määritetty asennusaikana, tai tapaa ei tunnistettu "
-"rekisterissä:AudioOutputMethods[]"
+"Audion toistotapaa ei ole maaritetty asennusaikana, tai tapaa ei tunnistettu "
+"rekisterissa:AudioOutputMethods[]"
 
 #: src/backend/CMacroPlayer.cpp:61
 msgid ""
 "At this point when the macro was recorded the selected sound was changed to "
 "position: "
-msgstr "Tässä kohdassa makroa nauhoitettaessa valittu äänitiedosto"
+msgstr "Tassa kohdassa makroa nauhoitettaessa valittu aanitiedosto"
 "siirrettiin kohtaan:"
 
 #: src/backend/CMacroPlayer.cpp:61
@@ -343,7 +343,7 @@ msgid ""
 "back.\n"
 "\n"
 "The macro playback is bailing."
-msgstr "Audiotiedostoa ei avata tässä kohdassa nyt kun makroa toistetaan "
+msgstr "Audiotiedostoa ei avata tassa kohdassa nyt kun makroa toistetaan "
 ".\n"
 "\n"
 "The macro playback is bailing."
@@ -352,25 +352,25 @@ msgstr "Audiotiedostoa ei avata tässä kohdassa nyt kun makroa toistetaan "
 msgid ""
 "The macro being played was flagged to set the start position to the position "
 "of a cue with the name: "
-msgstr "Toistettavan makron aloituskohta asetettiin välimerkkiin:"
+msgstr "Toistettavan makron aloituskohta asetettiin valimerkkiin:"
 
 #: src/backend/CMacroPlayer.cpp:120
 msgid ""
 "However, no cue by that name can be found.  The start position will be left "
 "unchanged."
-msgstr "Tämän nimistä välimerkkkiä ei löydy.  Aloituskohtaa ei muuteta."
+msgstr "Taman nimista valimerkkkia ei loydy.  Aloituskohtaa ei muuteta."
 
 #: src/backend/CMacroPlayer.cpp:149
 msgid ""
 "The macro being played was flagged to set the stop position to the position "
 "of a cue with the name: "
-msgstr "Toistettavan makron lopetuskohta asetettiin välimerkkiin:"
+msgstr "Toistettavan makron lopetuskohta asetettiin valimerkkiin:"
 
 #: src/backend/CMacroPlayer.cpp:149
 msgid ""
 "However, no cue by that name can be found.  The stop position will be left "
 "unchanged."
-msgstr "Tämän nimistä välimerkkiä ei löydy.  Lopetuskohtaa ei muuteta."
+msgstr "Taman nimista valimerkkia ei loydy.  Lopetuskohtaa ei muuteta."
 
 #: src/backend/CMacroPlayer.cpp:190
 #, fuzzy
@@ -384,7 +384,7 @@ msgid ""
 "\n"
 "Would you like to use choose new action parameters now, overriding the ones "
 "chosen when the macro was recorded?"
-msgstr "Toiminto asetettiin kysymään tämä kysymys silloin kun makro "
+msgstr "Toiminto asetettiin kysymaan tama kysymys silloin kun makro "
 "nauhoitettiin.\n"
 "\n"
 "Haluatko valita uudet toimintaparametrit nyt, ohittaen ne "
@@ -392,11 +392,11 @@ msgstr "Toiminto asetettiin kysymään tämä kysymys silloin kun makro "
 
 #: src/backend/CMacroPlayer.cpp:210
 msgid "When the macro was recorded a clipboard existed with the description: "
-msgstr "Kun makroa nauhoitettin leikepöydällä oli:"
+msgstr "Kun makroa nauhoitettin leikepoydalla oli:"
 
 #: src/backend/CMacroPlayer.cpp:210
 msgid "However, now there is no clipboard with that description."
-msgstr "Leikepöydän sisältö ei enää täsmää."
+msgstr "Leikepoydan sisalto ei enaa tasmaa."
 
 #: src/backend/CMacroPlayer.cpp:230
 msgid ""
@@ -405,7 +405,7 @@ msgid ""
 "Do you want to continue running the macro's remaining actions?"
 msgstr "Toiminto eionnistunut.\n"
 "\n"
-"Haluatko jatkaa makron jäljelläolevia toimia?"
+"Haluatko jatkaa makron jaljellaolevia toimia?"
 
 #: src/backend/LADSPA/CLADSPAAction.cpp:85
 msgid ""
@@ -444,7 +444,7 @@ msgstr "Poista audio kanavat"
 
 #: src/backend/Edits/CCopyCutDeleteEdit.cpp:48
 msgid "cannot copy/cut to clipboard: "
-msgstr "Ei voi kopioida/leikata leikepöydälle:"
+msgstr "Ei voi kopioida/leikata leikepoydalle:"
 
 #: src/backend/Edits/CCopyCutDeleteEdit.cpp:91
 msgid "Copy"
@@ -466,7 +466,7 @@ msgstr "Vaimenna"
 msgid ""
 "Inserting this many more channels will add more than the maximum allowed "
 "channels."
-msgstr "Näin monen kanavan lisääminen aiheuttaa sallitun määrän ylittymisen."
+msgstr "Nain monen kanavan lisaaminen aiheuttaa sallitun maaran ylittymisen."
 
 #: src/backend/Edits/CDuplicateChannelEdit.cpp:79
 msgid "Duplicate Channel"
@@ -474,12 +474,12 @@ msgstr "Tuplaa kanava"
 
 #: src/backend/Edits/CCueAction.cpp:63 src/frontend_fox/CRecordDialog.cpp:91
 msgid "Add Cue"
-msgstr "Lisää jakomerkki"
+msgstr "Lisaa jakomerkki"
 
 #: src/backend/Edits/CCueAction.cpp:87
 #, fuzzy
 msgid "Add Cue While Playing"
-msgstr "Lisää Välimerkki Tähän"
+msgstr "Lisaa Valimerkki Tahan"
 
 #: src/backend/Edits/CCueAction.cpp:143
 msgid "Remove Cue"
@@ -491,7 +491,7 @@ msgstr "Vaihda jakomerkki"
 
 #: src/backend/Edits/CCueAction.cpp:269
 msgid "Move Cue"
-msgstr "Siirrä jakomerkki"
+msgstr "Siirra jakomerkki"
 
 #: src/backend/Edits/CSwapChannelsEdit.cpp:66
 msgid "Swap Channels"
@@ -499,7 +499,7 @@ msgstr "Vaihda Kanavat"
 
 #: src/backend/Edits/CSwapChannelsEdit.cpp:66
 msgid "Swap the Audio Between Two Channels"
-msgstr "Vaihda Audio Kahdessa Kanavassa Keskenään"
+msgstr "Vaihda Audio Kahdessa Kanavassa Keskenaan"
 
 #: src/backend/Edits/CSelectionEdit.cpp:27
 msgid "Select All"
@@ -523,35 +523,35 @@ msgstr "Vaihda Loppuun"
 
 #: src/backend/Edits/CSelectionEdit.cpp:32
 msgid "Move Stop to Start Position"
-msgstr "Siirä Loppuasema Alkuasemaksi"
+msgstr "Siira Loppuasema Alkuasemaksi"
 
 #: src/backend/Edits/CSelectionEdit.cpp:33
 msgid "Move Start to Stop Position"
-msgstr "Siirrä Alkuasema Loppuasemaksi"
+msgstr "Siirra Alkuasema Loppuasemaksi"
 
 #: src/backend/Edits/CSelectionEdit.cpp:39
 msgid "Move Start Position to Beginning"
-msgstr "Siirrä Alkuasema Alkuun"
+msgstr "Siirra Alkuasema Alkuun"
 
 #: src/backend/Edits/CSelectionEdit.cpp:40
 msgid "Move Stop Position to End"
-msgstr "Siirrä Loppuasema Loppuun"
+msgstr "Siirra Loppuasema Loppuun"
 
 #: src/backend/Edits/CSelectionEdit.cpp:41
 msgid "Move Stop Position to Beginning"
-msgstr "Siirrä Loppuasema Alkuun"
+msgstr "Siirra Loppuasema Alkuun"
 
 #: src/backend/Edits/CSelectionEdit.cpp:42
 msgid "Move Start Position to End"
-msgstr "Siirrä Alkuasema Loppuun"
+msgstr "Siirra Alkuasema Loppuun"
 
 #: src/backend/Edits/CSelectionEdit.cpp:43
 msgid "Move Stop Position Backward to Start Position"
-msgstr "Siirrä Loppuasema Taaksepäin Alkuasemaan"
+msgstr "Siirra Loppuasema Taaksepain Alkuasemaan"
 
 #: src/backend/Edits/CSelectionEdit.cpp:44
 msgid "Move Start Position Forward to Stop Position"
-msgstr "Siirrä Alkuasema Eteenpäin Loppuasemaan"
+msgstr "Siirra Alkuasema Eteenpain Loppuasemaan"
 
 #: src/backend/Edits/CSelectionEdit.cpp:250
 msgid "Selection Change"
@@ -559,7 +559,7 @@ msgstr "Vaihda Valinta"
 
 #: src/backend/Edits/CSelectionEdit.cpp:250
 msgid "Selection Change From Mouse"
-msgstr "Vaihda Valinta Hiirellä"
+msgstr "Vaihda Valinta Hiirella"
 
 #: src/backend/Edits/CSelectionEdit.cpp:271
 msgid "Grow or Slide Selection"
@@ -567,36 +567,36 @@ msgstr "Kasvata tai Liu'uta Valintaa"
 
 #: src/backend/Edits/CRotateEdit.cpp:33
 msgid " -- amount is negative"
-msgstr " -- määrä on negatiivinen"
+msgstr " -- maara on negatiivinen"
 
 #: src/backend/Edits/CRotateEdit.cpp:73
 msgid "<< Rotate Left"
-msgstr "<< Käännä Vasempaan"
+msgstr "<< Kaanna Vasempaan"
 
 #: src/backend/Edits/CRotateEdit.cpp:95
 msgid ">> Rotate Right"
-msgstr ">> Käännä Oikeaan"
+msgstr ">> Kaanna Oikeaan"
 
 #: src/backend/Edits/CPasteAsNewEdit.cpp:94
 msgid "Paste As New"
-msgstr "Liitä Uutena"
+msgstr "Liita Uutena"
 
 #: src/backend/Edits/CPasteAsNewEdit.cpp:94
 msgid "Paste the Clipboard's Contents into a Newly Created Sound Window"
-msgstr "Liitä leikepöydän sisältö uuteen ikkunaan"
+msgstr "Liita leikepoydan sisalto uuteen ikkunaan"
 
 #: src/backend/Edits/CPasteAsNewEdit.cpp:116
 #: src/backend/Edits/CPasteEdit.cpp:410
 msgid "No data has been cut or copied to the selected clipboard yet."
-msgstr "Dataa ei ole vielä leikattu tai kopioitu leikepöydälle."
+msgstr "Dataa ei ole viela leikattu tai kopioitu leikepoydalle."
 
 #: src/backend/Edits/CAddChannelsEdit.cpp:60
 msgid "Add Channels"
-msgstr "Lisää Kanavia"
+msgstr "Lisaa Kanavia"
 
 #: src/backend/Edits/CAddChannelsEdit.cpp:60
 msgid "Add New Channels of Audio"
-msgstr "Lisää Uusia Audiokanavia"
+msgstr "Lisaa Uusia Audiokanavia"
 
 #: src/backend/Edits/CCropEdit.cpp:70
 msgid "Crop"
@@ -605,19 +605,19 @@ msgstr "Valitse poistaen loput"
 #: src/backend/Edits/CPasteEdit.cpp:281 src/backend/Edits/CPasteEdit.cpp:359
 #: src/backend/Edits/CPasteEdit.cpp:392
 msgid " -- unhandled pasteType: "
-msgstr " -- ei käsiteltävä liitä-Type :"
+msgstr " -- ei kasiteltava liita-Type :"
 
 #: src/backend/Edits/CPasteEdit.cpp:465
 msgid "Insert Paste"
-msgstr "Liitä tähän väliin"
+msgstr "Liita tahan valiin"
 
 #: src/backend/Edits/CPasteEdit.cpp:465
 msgid "Insert at the Start Position"
-msgstr "Liitä Alkuun"
+msgstr "Liita Alkuun"
 
 #: src/backend/Edits/CPasteEdit.cpp:485
 msgid "Replace Paste"
-msgstr "Vaihda Liitä"
+msgstr "Vaihda Liita"
 
 #: src/backend/Edits/CPasteEdit.cpp:485
 msgid "Replace the Selection"
@@ -629,20 +629,20 @@ msgstr "Kirjoita liitetyn yli"
 
 #: src/backend/Edits/CPasteEdit.cpp:504
 msgid "Overwrite Starting at the Start Position"
-msgstr "Kirjoita päälle aloittaen Alkuasemasta"
+msgstr "Kirjoita paalle aloittaen Alkuasemasta"
 
 #: src/backend/Edits/CPasteEdit.cpp:524
 msgid "Limited Overwrite Paste"
-msgstr "Rajoitettu kirjoita päälle liittäen"
+msgstr "Rajoitettu kirjoita paalle liittaen"
 
 #: src/backend/Edits/CPasteEdit.cpp:524
 msgid ""
 "Overwrite Starting at the Start Position But Not Beyond the Stop Position"
-msgstr "Kirjoita päälle aloittaen Alkuasemasta mutta ei ylittäen Loppuasemaa "
+msgstr "Kirjoita paalle aloittaen Alkuasemasta mutta ei ylittaen Loppuasemaa "
 
 #: src/backend/Edits/CPasteEdit.cpp:544
 msgid "Mix Paste"
-msgstr "Mixaa Liitä"
+msgstr "Mixaa Liita"
 
 #: src/backend/Edits/CPasteEdit.cpp:544
 msgid "Mix Starting at the Start Position"
@@ -650,7 +650,7 @@ msgstr "Mixaa aloittaen Alkuasemasta"
 
 #: src/backend/Edits/CPasteEdit.cpp:563
 msgid "Limited Mix Paste"
-msgstr "Rajattu Liitä Mixaten"
+msgstr "Rajattu Liita Mixaten"
 
 #: src/backend/Edits/CPasteEdit.cpp:563
 msgid "Mix Starting at the Start Position But Not Beyond the Stop Position"
@@ -658,15 +658,15 @@ msgstr "Mixaa aloittaen Alkuasemasta mutta ei yli Loppuaseman "
 
 #: src/backend/Edits/CPasteEdit.cpp:582
 msgid "Fit Mix Paste"
-msgstr "Sovita Liitä Mixaten"
+msgstr "Sovita Liita Mixaten"
 
 #: src/backend/Edits/CPasteEdit.cpp:582
 msgid ""
 "Mix Starting at the Start Position But Change the Rate of the Clipboard to "
 "Fit Within the Selection"
 msgstr ""
-"Mixaa aloittaen Alkuasemasta muuttaen leikepöydän näytteenottotaajuutta niin "
-"että leike sopii valittuun alueeseen"
+"Mixaa aloittaen Alkuasemasta muuttaen leikepoydan naytteenottotaajuutta niin "
+"etta leike sopii valittuun alueeseen"
 
 #: src/backend/Edits/CCopyCutToNewEdit.cpp:105
 msgid "Copy to New"
@@ -690,7 +690,7 @@ msgstr " -- hijaisuuden pituus on alle nollan:"
 
 #: src/backend/Edits/CInsertSilenceEdit.cpp:71
 msgid "Insert Silence"
-msgstr "Lisää hiljaisuutta"
+msgstr "Lisaa hiljaisuutta"
 
 #: src/backend/CMIDISDSSoundTranslator.cpp:384
 msgid "Downloading Sample"
@@ -698,11 +698,11 @@ msgstr "Lataa tiedostoa"
 
 #: src/backend/CMIDISDSSoundTranslator.cpp:474
 msgid "Keeping what was received"
-msgstr "Pitää vastaanotettua tallessa"
+msgstr "Pitaa vastaanotettua tallessa"
 
 #: src/backend/CMIDISDSSoundTranslator.cpp:644
 msgid "Uploading Sample"
-msgstr "Lähettää tiedostoa"
+msgstr "Lahettaa tiedostoa"
 
 #: src/backend/CMIDISDSSoundTranslator.cpp:644
 msgid "Dumping Sample"
@@ -710,11 +710,11 @@ msgstr "Poistaa tiedostoa"
 
 #: src/backend/Generate/CGenerateToneAction.cpp:66
 msgid "Generating Tone -- Channel "
-msgstr "Muodostaa Ääntä - Kanava"
+msgstr "Muodostaa Aanta - Kanava"
 
 #: src/backend/Generate/CGenerateToneAction.cpp:177
 msgid "Generate Tone"
-msgstr "Muodosta Ääni"
+msgstr "Muodosta Aani"
 
 #: src/backend/Generate/CGenerateNoiseAction.cpp:255
 msgid "Generate Noise"
@@ -722,11 +722,11 @@ msgstr "Kohinageneraattori"
 
 #: src/backend/Generate/CGenerateNoiseAction.cpp:255
 msgid "Generate Various Colors of Noise"
-msgstr "Muodosta Useita Kohinan Värejä"
+msgstr "Muodosta Useita Kohinan Vareja"
 
 #: src/backend/CNativeSoundClipboard.cpp:72
 msgid "Copying to Clipboard -- Channel "
-msgstr "Kopioidaan leikepöydälle -- Kanava"
+msgstr "Kopioidaan leikepoydalle -- Kanava"
 
 #: src/backend/CSound.cpp:1088
 msgid "Copying/Fitting Data -- Channel "
@@ -738,20 +738,20 @@ msgstr "Kopioi Dataa -- Kanava "
 
 #: src/backend/CSound.cpp:1148
 msgid "Mixing/Fitting Data (add) -- Channel "
-msgstr "Mixaa/Sovittaa Dataa (lisä) -- Kanava "
+msgstr "Mixaa/Sovittaa Dataa (lisa) -- Kanava "
 
 #: src/backend/CSound.cpp:1170 src/backend/CSound.cpp:1188
 msgid "Mixing Data (add) -- Channel "
-msgstr "Mixaa Dataa (lisä) -- Kanava "
+msgstr "Mixaa Dataa (lisa) -- Kanava "
 
 #: src/backend/CSound.cpp:1213
 #, fuzzy
 msgid "Mixing/Fitting Data (subtract) -- Channel "
-msgstr "Mixaa/Sovittaa Dataa (vähentää) -- Kanava "
+msgstr "Mixaa/Sovittaa Dataa (vahentaa) -- Kanava "
 
 #: src/backend/CSound.cpp:1235 src/backend/CSound.cpp:1253
 msgid "Mixing Data (subtract) -- Channel "
-msgstr "Mixaa Dataa (vähentää) -- Kanava "
+msgstr "Mixaa Dataa (vahentaa) -- Kanava "
 
 #: src/backend/CSound.cpp:1278
 msgid "Mixing/Fitting Data (multiply) -- Channel "
@@ -781,10 +781,10 @@ msgid ""
 "Do you wish to attempt to recover from this temporary file (otherwise the "
 "file will be deleted)?"
 msgstr ""
-"Väliaikainen tiedosto löytynyt osoittaen että tiedostoa on editoitu kun "
+"Valiaikainen tiedosto loytynyt osoittaen etta tiedostoa on editoitu kun "
 "ohjelma on keskeytynyt.\n"
 "\n"
-"Haluatko yrittää väliaikaisen tiedoston palautusta (ellet halua, tiedosto "
+"Haluatko yrittaa valiaikaisen tiedoston palautusta (ellet halua, tiedosto "
 "poistetaan)?"
 
 #: src/backend/CFLACSoundTranslator.cpp:67
@@ -797,7 +797,7 @@ msgid ""
 "Saving user notes or cues is unimplemented for FLAC\n"
 "Do you wish to continue?"
 msgstr ""
-"Muistiinpanojen lisääminen ei ole suotavaa FLAC\n"
+"Muistiinpanojen lisaaminen ei ole suotavaa FLAC\n"
 "Haluatko jatkaa?"
 
 #: src/backend/ALFO.cpp:489
@@ -867,31 +867,31 @@ msgstr "Ladataanko edellisen istunnon tiedosto?"
 
 #: src/backend/ASoundRecorder.cpp:555
 msgid "No audio input method could be initialized"
-msgstr "Audion sisääntulotapaa ei tunnistettu"
+msgstr "Audion sisaantulotapaa ei tunnistettu"
 
 #: src/backend/ASoundRecorder.cpp:561
 msgid ""
 "Either no audio input method was enabled at configure-time, or no method was "
 "recognized in the registry:AudioInputMethods[] setting"
 msgstr ""
-"Audion sisääntulotapaa ei ole määritetty asennusaikana, tai tapaa ei "
-"tunnistettu rekisterissä:AudioInputMethods[]"
+"Audion sisaantulotapaa ei ole maaritetty asennusaikana, tai tapaa ei "
+"tunnistettu rekisterissa:AudioInputMethods[]"
 
 #: src/backend/CJACKSoundRecorder.cpp:65 src/backend/CJACKSoundPlayer.cpp:78
 msgid " -- error connecting to jack server -- jackd not running?"
-msgstr " -- virhe yhdistettäessä jack serveriin -- jackd ei ole toiminnassa?"
+msgstr " -- virhe yhdistettaessa jack serveriin -- jackd ei ole toiminnassa?"
 
 #: src/backend/CJACKSoundRecorder.cpp:110
 msgid "Choose Port for Input Channel "
-msgstr "Valitse portti sisääntulokanavalle"
+msgstr "Valitse portti sisaantulokanavalle"
 
 #: src/backend/CJACKSoundRecorder.cpp:116 src/backend/CJACKSoundPlayer.cpp:131
 msgid "Cannot connect to JACK port, "
-msgstr "JACK porttiin ei voi kytkeytyä,"
+msgstr "JACK porttiin ei voi kytkeytya,"
 
 #: src/backend/CJACKSoundRecorder.cpp:116 src/backend/CJACKSoundPlayer.cpp:131
 msgid ", please choose a different one"
-msgstr ", ole hyvä ja valitse toinen"
+msgstr ", ole hyva ja valitse toinen"
 
 #: src/backend/CrezSoundTranslator.cpp:510
 msgid "Loading Channel "
@@ -923,11 +923,11 @@ msgstr "Muunneltava Uudelleentoisto"
 
 #: src/backend/Effects/CVariedRepeatEffect.cpp:91
 msgid "Repeat the Selection Variably According to an LFO"
-msgstr "Toista Valintaa Uudelleen Niinkuin LFO Määrää"
+msgstr "Toista Valintaa Uudelleen Niinkuin LFO Maaraa"
 
 #: src/backend/Effects/CChangeRateEffect.cpp:61
 msgid "newLength calulated out of range -- action not taken"
-msgstr "uusi pituus ylittää varatun alueen -- ei suoriteta"
+msgstr "uusi pituus ylittaa varatun alueen -- ei suoriteta"
 
 #: src/backend/Effects/CChangeRateEffect.cpp:74
 msgid "Changing Rate -- Channel "
@@ -939,11 +939,11 @@ msgstr "Muuta Nopeus"
 
 #: src/backend/Effects/CChangeRateEffect.cpp:253
 msgid "Curved Change Rate"
-msgstr "Muuta Nopeus Käyrän Mukaan"
+msgstr "Muuta Nopeus Kayran Mukaan"
 
 #: src/backend/Effects/CChangeRateEffect.cpp:253
 msgid "Change Rate According to a Curve"
-msgstr "Muuta Nopeutta Piirtämäsi Käyrän Mukaan"
+msgstr "Muuta Nopeutta Piirtamasi Kayran Mukaan"
 
 #: src/backend/Effects/CDelayEffect.cpp:87
 msgid "Delay -- Channel "
@@ -981,7 +981,7 @@ msgstr "Muuttuva Vahvistus"
 
 #: src/backend/Effects/CChangeAmplitudeEffect.cpp:133
 msgid "Change Gain According to a Curve"
-msgstr "Muuta Vahvistus Käyrän Mukaan"
+msgstr "Muuta Vahvistus Kayran Mukaan"
 
 #: src/backend/Effects/CQuantizeEffect.cpp:56
 msgid "Quantize -- Channel "
@@ -993,7 +993,7 @@ msgstr "Kvantisoi"
 
 #: src/backend/Effects/CQuantizeEffect.cpp:102
 msgid "Quantize the Number of Possible Sample Levels"
-msgstr "Määritä mahdollisten näytetasojen määrä"
+msgstr "Maarita mahdollisten naytetasojen maara"
 
 #: src/backend/Effects/CFlangeEffect.cpp:47
 msgid " -- _delayTime is negative"
@@ -1013,25 +1013,25 @@ msgstr "Flange"
 
 #: src/backend/Effects/CDistortionEffect.cpp:32
 msgid "Distortion -- Channel "
-msgstr "Särö -- Kanava"
+msgstr "Saro -- Kanava"
 
 #: src/backend/Effects/CDistortionEffect.cpp:87
 msgid "Distortion"
-msgstr "Särö"
+msgstr "Saro"
 
 #: src/backend/Effects/CReverseEffect.cpp:53
 msgid "Reversing -- Channel "
-msgstr "Kääntää -- Kanava"
+msgstr "Kaantaa -- Kanava"
 
 #: src/backend/Effects/CReverseEffect.cpp:71
 #: src/backend/Effects/CReverseEffect.cpp:94
 msgid "Cancelling Reverse -- Channel "
-msgstr "Peruuttaa Käännä -- Kanava"
+msgstr "Peruuttaa Kaanna -- Kanava"
 
 #: src/backend/Effects/CReverseEffect.cpp:144
 #: src/frontend_fox/FilterActionDialogs.cpp:133
 msgid "Reverse"
-msgstr "Käännä soittosuunta"
+msgstr "Kaanna soittosuunta"
 
 #: src/backend/ClibaudiofileSoundTranslator.cpp:88
 msgid " -- error opening"
@@ -1039,7 +1039,7 @@ msgstr " -- virhe avattaessa"
 
 #: src/backend/ClibaudiofileSoundTranslator.cpp:438
 msgid "This format does not support saving cues"
-msgstr "Tallennusmuoto ei tue välimerkkejä"
+msgstr "Tallennusmuoto ei tue valimerkkeja"
 
 #: src/backend/main_controls.cpp:157
 msgid "Are you sure you want to quit?"
@@ -1051,7 +1051,7 @@ msgstr "Valitse portti ulostulokanavalle"
 
 #: src/backend/CMacroRecorder.cpp:44
 msgid "A macro already exists with the name: "
-msgstr "Tällä nimellä oleva makro on jo olemassa"
+msgstr "Talla nimella oleva makro on jo olemassa"
 
 #: src/backend/CMacroRecorder.cpp:44
 #, fuzzy
@@ -1060,7 +1060,7 @@ msgstr "Haluatko jatkaa?"
 
 #: src/backend/CMacroRecorder.cpp:66
 msgid "Nothing was recorded in the macro: "
-msgstr "Makroon ei nauhoitettu mitään"
+msgstr "Makroon ei nauhoitettu mitaan"
 
 #: src/backend/CMacroRecorder.cpp:97
 msgid "The action just performed will not be recorded in your macro."
@@ -1068,31 +1068,31 @@ msgstr "Suoritettua toimintoa ei nauhoiteta makroon"
 
 #: src/backend/Looping/CAddCuesAction.cpp:58
 msgid "The time interval was zero"
-msgstr "Aikaväli on nolla"
+msgstr "Aikavali on nolla"
 
 #: src/backend/Looping/CAddCuesAction.cpp:60
 msgid ""
 "The time interval was so small for the selected area that an unlikely "
 "desired amount of cues would be added"
 msgstr ""
-"Aikaväli oli niin pieni että haluttua määrää merkkejä ei voida lisätä "
+"Aikavali oli niin pieni etta haluttua maaraa merkkeja ei voida lisata "
 "valitulle alueelle"
 
 #: src/backend/Looping/CAddCuesAction.cpp:97
 msgid "Add N Cues"
-msgstr "Lisää N Merkkiä"
+msgstr "Lisaa N Merkkia"
 
 #: src/backend/Looping/CAddCuesAction.cpp:97
 msgid "Add N Cues at Evenly Spaced Intervals"
-msgstr "Lisää N Merkkiä Tasaisin Välimatkoin"
+msgstr "Lisaa N Merkkia Tasaisin Valimatkoin"
 
 #: src/backend/Looping/CAddCuesAction.cpp:120
 msgid "Add Timed Cues"
-msgstr "Lisää Ajoitettuja Merkkejä"
+msgstr "Lisaa Ajoitettuja Merkkeja"
 
 #: src/backend/Looping/CAddCuesAction.cpp:120
 msgid "Add a Cue Every X Seconds"
-msgstr "Lisää Merkki Joka X Sekuntia"
+msgstr "Lisaa Merkki Joka X Sekuntia"
 
 #: src/backend/Looping/CMakeSymetricAction.cpp:56
 msgid "Make Symetric -- Channel "
@@ -1112,11 +1112,11 @@ msgstr "Tallennusmuotoa ei tueta "
 
 #: src/backend/ASoundTranslator.cpp:157
 msgid "Would you like to use a raw format?"
-msgstr "Haluatko käyttää raakatallennusmuotoa?"
+msgstr "Haluatko kayttaa raakatallennusmuotoa?"
 
 #: src/backend/ASoundTranslator.cpp:161
 msgid " -- unhandled format/extension for the filename"
-msgstr " -- tallennusmuoto ei sovi tiedostopäätteeseen"
+msgstr " -- tallennusmuoto ei sovi tiedostopaatteeseen"
 
 #: src/backend/Filters/CConvolutionFilter.cpp:70
 msgid " -- cannot read kernel filter file '"
@@ -1124,7 +1124,7 @@ msgstr " -- ei voi lukea suotimen ydintiedostoa '"
 
 #: src/backend/Filters/CConvolutionFilter.cpp:149
 msgid "Convolving -- Channel "
-msgstr "Yhdistää -- Kanava"
+msgstr "Yhdistaa -- Kanava"
 
 #: src/backend/Filters/CConvolutionFilter.cpp:239
 #: src/backend/Filters/CArbitraryFIRFilter.cpp:187
@@ -1133,16 +1133,16 @@ msgid ""
 " -- feature disabled because the fftw/rfftw library was not installed or "
 "detected when configure was run"
 msgstr ""
-" -- toimenpide peruttu koska fftw/rfftw library ei ole asennettu tai sitä ei "
-"löytynyt asennuksen aikana"
+" -- toimenpide peruttu koska fftw/rfftw library ei ole asennettu tai sita ei "
+"loytynyt asennuksen aikana"
 
 #: src/backend/Filters/CConvolutionFilter.cpp:256
 msgid "Convolution Filter"
-msgstr "Yhdistämis Suodin"
+msgstr "Yhdistamis Suodin"
 
 #: src/backend/Filters/CConvolutionFilter.cpp:256
 msgid "Convolve One Audio File with this One"
-msgstr "Yhdistä Yksi Audiotiedosto Tämän Kanssa"
+msgstr "Yhdista Yksi Audiotiedosto Taman Kanssa"
 
 #: src/backend/Filters/CArbitraryFIRFilter.cpp:92
 #: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:85
@@ -1157,23 +1157,23 @@ msgstr "Mielivaltainen FIR Suodin"
 msgid ""
 "Finite Impulse Response Filter Given a Custom/User-Defined Frequency Response"
 msgstr ""
-"Finite Impulse Response Suodin Antaa Yksilöllisen/Käyttäjän Määrittelemän "
+"Finite Impulse Response Suodin Antaa Yksilollisen/Kayttajan Maaritteleman "
 "Taajuusvasteen"
 
 #: src/backend/Filters/CSinglePoleFilter.cpp:75
 #: src/backend/Filters/CBiquadResFilter.cpp:75
 msgid "Lowpass Filter -- Channel "
-msgstr "Alipäästösuodin -- Kanava"
+msgstr "Alipaastosuodin -- Kanava"
 
 #: src/backend/Filters/CSinglePoleFilter.cpp:88
 #: src/backend/Filters/CBiquadResFilter.cpp:88
 msgid "Highpass Filter -- Channel "
-msgstr "Ylipäästösuodin -- Kanava"
+msgstr "Ylipaastosuodin -- Kanava"
 
 #: src/backend/Filters/CSinglePoleFilter.cpp:101
 #: src/backend/Filters/CBiquadResFilter.cpp:101
 msgid "Bandpass Filter -- Channel "
-msgstr "Kaistanpäästösuodin -- Kanava"
+msgstr "Kaistanpaastosuodin -- Kanava"
 
 #: src/backend/Filters/CSinglePoleFilter.cpp:114
 msgid "Notch Filter -- Channel "
@@ -1181,15 +1181,15 @@ msgstr "Kaistanpoistosuodin -- Kanava"
 
 #: src/backend/Filters/CSinglePoleFilter.cpp:151
 msgid "Single Pole Lowpass Filter"
-msgstr "Yksivaiheinen Alipäästösuodin"
+msgstr "Yksivaiheinen Alipaastosuodin"
 
 #: src/backend/Filters/CSinglePoleFilter.cpp:173
 msgid "Single Pole Highpass Filter"
-msgstr "Yksivaiheinen Ylipäästösuodin"
+msgstr "Yksivaiheinen Ylipaastosuodin"
 
 #: src/backend/Filters/CSinglePoleFilter.cpp:195
 msgid "Bandpass Filter"
-msgstr "Kaistanpäästösuodin"
+msgstr "Kaistanpaastosuodin"
 
 #: src/backend/Filters/CSinglePoleFilter.cpp:218
 msgid "Notch Filter"
@@ -1203,7 +1203,7 @@ msgstr " -- sweepLFODesc.vahvistus on negatiivinen"
 msgid ""
 " -- freqResponse1 and freqResonse2 do not contain the same number of nodes"
 msgstr ""
-" -- taajuusvaste1 ja taajuusvaste2 eivät sisällä samaa määrää pistekohtia"
+" -- taajuusvaste1 ja taajuusvaste2 eivat sisalla samaa maaraa pistekohtia"
 
 #: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:232
 msgid ""
@@ -1224,17 +1224,17 @@ msgid ""
 "depending on how different the two responses are.\n"
 msgstr ""
 "\n"
-"Toiminto aloittaa suotamisen ensimmäisen taajuusvasteen mukaan ja muuntaa "
+"Toiminto aloittaa suotamisen ensimmaisen taajuusvasteen mukaan ja muuntaa "
 "suotimen toisen taajuusvasteen mukaiseksi.\n"
-"Molempien taajuusvasteiden pistekohtien määrä tulee olla sama.\n"
-"muuntaminen lasketaan jokaisessa pistekohdassa ensimmäisen taajuusvasteen "
-"siirtyessä toista taajuusvastetta kohtiPistekohta vastaa toiseen jos se on "
-"järjestyksessä vasemmalta oikealle. .\n"
-"Jos 'Käytä LFO' ei ole valittuna, silloin suodin käyttää koko valitun matkan "
-"muuntuakseen ensimmäisestä toiseen taajuusvasteeseen. .\n"
-"jos 'Käytä LFO' on valittuna, muuntuminen tapahtuu mukaillen LFO ta.\n"
-"Pidemmällä ydinpituudella on parempi suototaajuustarkkuus, mutta liian pitkä "
-"ydin aiheuttaa muunnoksen 'askelten' kuulumisen riippuen siitä kuinka "
+"Molempien taajuusvasteiden pistekohtien maara tulee olla sama.\n"
+"muuntaminen lasketaan jokaisessa pistekohdassa ensimmaisen taajuusvasteen "
+"siirtyessa toista taajuusvastetta kohtiPistekohta vastaa toiseen jos se on "
+"jarjestyksessa vasemmalta oikealle. .\n"
+"Jos 'Kayta LFO' ei ole valittuna, silloin suodin kayttaa koko valitun matkan "
+"muuntuakseen ensimmaisesta toiseen taajuusvasteeseen. .\n"
+"jos 'Kayta LFO' on valittuna, muuntuminen tapahtuu mukaillen LFO ta.\n"
+"Pidemmalla ydinpituudella on parempi suototaajuustarkkuus, mutta liian pitka "
+"ydin aiheuttaa muunnoksen 'askelten' kuulumisen riippuen siita kuinka "
 "erilaisia taajuusvasteet ovat.\n"
 
 #: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:245
@@ -1246,20 +1246,20 @@ msgid ""
 "Animated Finite Impulse Response Filter Given two Custom/User-Defined "
 "Frequency Responses"
 msgstr ""
-"Animated Finite Impulse Response Suodin Antaa kaksi muunnettavaa/käyttäjän "
-"määriteltävää taajuusvastetta."
+"Animated Finite Impulse Response Suodin Antaa kaksi muunnettavaa/kayttajan "
+"maariteltavaa taajuusvastetta."
 
 #: src/backend/Filters/CBiquadResFilter.cpp:139
 msgid "Biquad Resonant Lowpass Filter"
-msgstr "Biquad Resonanssi Alipäästösuodin"
+msgstr "Biquad Resonanssi Alipaastosuodin"
 
 #: src/backend/Filters/CBiquadResFilter.cpp:162
 msgid "Biquad Resonant Highpass Filter"
-msgstr "Biquad Resonanssi Ylipäästösuodin"
+msgstr "Biquad Resonanssi Ylipaastosuodin"
 
 #: src/backend/Filters/CBiquadResFilter.cpp:185
 msgid "Biquad Resonant Bandpass Filter"
-msgstr "Biquad Resonanssi Kaistanpäästösuodin"
+msgstr "Biquad Resonanssi Kaistanpaastosuodin"
 
 #: src/backend/Remaster/CBalanceAction.cpp:57
 msgid "Changing Balance"
@@ -1275,7 +1275,7 @@ msgid ""
 "2x Balance: -100% means 2x A and no B, 0 means normal A and normal B, 100% "
 "means no A and 2x B"
 msgstr ""
-"Pelkkä Balanssi : -100% tarkoittaa normaali A ja ei B, 0 tarkoittaa normaali "
+"Pelkka Balanssi : -100% tarkoittaa normaali A ja ei B, 0 tarkoittaa normaali "
 "A ja B, 100% tarkoittaa ei A ja normaali B\n"
 "Balanssi 1x: -100% tarkoittaa normaali A ja ei B, 0 tarkoittaa puoli A ja "
 "puoli B, 100% tarkoittaa ei A ja normaali B\n"
@@ -1290,7 +1290,7 @@ msgstr "Balanssi"
 
 #: src/backend/Remaster/CBalanceAction.cpp:222
 msgid "Curved Balance"
-msgstr "Käyrän Mukainen Balanssi"
+msgstr "Kayran Mukainen Balanssi"
 
 #: src/backend/Remaster/CAdaptiveNormalizeAction.cpp:77
 #, fuzzy
@@ -1319,10 +1319,10 @@ msgid ""
 "one better, then please contact me.  Contact information is in the about "
 "dialog under the file menu"
 msgstr ""
-"Teen ensimmäistä kertaa kompressorialgoritmia. En ole varma minkälainen tämä "
-"on verrattuna toisiin 'ammattityökaluihin'. Minulla, on hyvin vähän "
-"käyttökokemusta kompressorista . Jos sinä olet kokenut kompressorinkäyttäjä "
-"ja sinulla on hyviä parannusehdotuksia niin ole hyvä ja ota yhteyttä. "
+"Teen ensimmaista kertaa kompressorialgoritmia. En ole varma minkalainen tama "
+"on verrattuna toisiin 'ammattityokaluihin'. Minulla, on hyvin vahan "
+"kayttokokemusta kompressorista . Jos sina olet kokenut kompressorinkayttaja "
+"ja sinulla on hyvia parannusehdotuksia niin ole hyva ja ota yhteytta. "
 "Yhteystietoni ovat tiedostot-valikossa  kohdassa ReZound."
 
 #: src/backend/Remaster/CCompressorAction.cpp:282
@@ -1342,48 +1342,48 @@ msgstr "Merkkaa Hiljaiset Alueet"
 #: src/backend/Remaster/CShortenQuietAreasAction.cpp:294
 #, fuzzy
 msgid "Shorten Quiet Areas with Cues"
-msgstr "Välimerkitse hiljaiset alueet"
+msgstr "Valimerkitse hiljaiset alueet"
 
 #: src/backend/Remaster/CInvertPhaseAction.cpp:43
 msgid "Inverting Phase -- Channel "
-msgstr "Kääntää Vaihetta -- Kanava"
+msgstr "Kaantaa Vaihetta -- Kanava"
 
 #: src/backend/Remaster/CInvertPhaseAction.cpp:57
 #: src/backend/Remaster/CInvertPhaseAction.cpp:71
 msgid "Cancelling Invert Phase -- Channel "
-msgstr "Kumoaa Käännä Vaihe -- Kanava"
+msgstr "Kumoaa Kaanna Vaihe -- Kanava"
 
 #: src/backend/Remaster/CInvertPhaseAction.cpp:116
 msgid "Invert Phase"
-msgstr "Käännä Vaihe"
+msgstr "Kaanna Vaihe"
 
 #: src/backend/Remaster/CInvertPhaseAction.cpp:131
 msgid "Invert Phase 180 degrees"
-msgstr "Käännä Vaihetta 180 astetta"
+msgstr "Kaanna Vaihetta 180 astetta"
 
 #: src/backend/Remaster/CRemoveDCAction.cpp:76
 msgid "Remove DC Component -- Channel "
-msgstr "Poistaa Tasajännitettä -- Kanava"
+msgstr "Poistaa Tasajannitetta -- Kanava"
 
 #: src/backend/Remaster/CRemoveDCAction.cpp:118
 msgid "Remove DC Component"
-msgstr "Poista Tasajännite"
+msgstr "Poista Tasajannite"
 
 #: src/backend/Remaster/CRemoveDCAction.cpp:133
 msgid "Removes a DC offset from the audio, recentering it around zero"
-msgstr "Poistaa tasajännitteen audiosta, keskittäen nollaan"
+msgstr "Poistaa tasajannitteen audiosta, keskittaen nollaan"
 
 #: src/backend/Remaster/CResampleAction.cpp:63
 msgid "Changing Sample Rate -- Channel "
-msgstr "Muuntaa näytetaajuutta -- Kanava"
+msgstr "Muuntaa naytetaajuutta -- Kanava"
 
 #: src/backend/Remaster/CResampleAction.cpp:115
 msgid "Resample"
-msgstr "Näytetaajuus"
+msgstr "Naytetaajuus"
 
 #: src/backend/Remaster/CResampleAction.cpp:115
 msgid "Change Sample Rate"
-msgstr "Muunna Näytetaajuus"
+msgstr "Muunna Naytetaajuus"
 
 #: src/backend/Remaster/CMonoizeAction.cpp:85
 #: src/backend/Remaster/CMonoizeAction.cpp:191
@@ -1410,7 +1410,7 @@ msgstr "Kanava "
 
 #: src/backend/Remaster/CUnclipAction.cpp:355
 msgid "Unclip (just messing around)"
-msgstr "Särönpoisto (kokeellinen)"
+msgstr "Saronpoisto (kokeellinen)"
 
 #: src/backend/Remaster/CUnclipAction.cpp:355
 msgid ""
@@ -1419,8 +1419,8 @@ msgid ""
 "of a very short\n"
 "regions in the audio where the peak of a waveform was clipped"
 msgstr ""
-"(NOTE: Tämä on tehty puolittain vitsinä. Ei ole käyttökelpoinen tällaisena. "
-"Parannan sitä myöhemmin) Särönpoistoa käytetään siten että se arvaa lyhyen  "
+"(NOTE: Tama on tehty puolittain vitsina. Ei ole kayttokelpoinen tallaisena. "
+"Parannan sita myohemmin) Saronpoistoa kaytetaan siten etta se arvaa lyhyen  "
 "leikkautuneen aaltomuodon ja korvaa leikkautuneen osan."
 
 #: src/backend/Remaster/CMarkQuietAreasAction.cpp:157
@@ -1429,7 +1429,7 @@ msgstr "Merkkaa Hiljaiset Alueet"
 
 #: src/backend/Remaster/CMarkQuietAreasAction.cpp:157
 msgid "Mark Quiet Areas with Cues"
-msgstr "Välimerkitse hiljaiset alueet"
+msgstr "Valimerkitse hiljaiset alueet"
 
 #: src/backend/Remaster/CChangePitchAction.cpp:63
 msgid "Changing Pitch -- Channel "
@@ -1437,7 +1437,7 @@ msgstr "Vaihtaa Pitch -- Kanava"
 
 #: src/backend/Remaster/CChangePitchAction.cpp:98
 msgid "No library was found at configure time to enable pitch changing"
-msgstr "Pitch muutokseen tarvittavaa tiedostoa (library) ei löydy "
+msgstr "Pitch muutokseen tarvittavaa tiedostoa (library) ei loydy "
 
 #: src/backend/Remaster/CChangePitchAction.cpp:117
 msgid "Change Pitch"
@@ -1466,7 +1466,7 @@ msgid ""
 "know if you approve or disapprove of the result's quality)"
 msgstr ""
 "Normalisoi Amplitudi (Osa tekniikasta on kokeellista, saattakaa tietooni "
-"onko lopputulos hyväksyttävää laatua)"
+"onko lopputulos hyvaksyttavaa laatua)"
 
 #: src/backend/Remaster/CChangeTempoAction.cpp:67
 msgid "Changing Tempo -- Channel "
@@ -1474,7 +1474,7 @@ msgstr "Vaihtaa Tempoa -- Kanava"
 
 #: src/backend/Remaster/CChangeTempoAction.cpp:116
 msgid "No library was found at configure time to enable tempo changing"
-msgstr "Tempon vaihtamiseen tarvittavaa tiedostoa (library) ei löydy  "
+msgstr "Tempon vaihtamiseen tarvittavaa tiedostoa (library) ei loydy  "
 
 #: src/backend/Remaster/CChangeTempoAction.cpp:136
 msgid "Change Tempo"
@@ -1490,7 +1490,7 @@ msgid ""
 "threshold.\n"
 "The gain changes with a velocity according to the attack and release times"
 msgstr ""
-"Vahvistus [0,1] toteutuu kun jännite putoaa alle kynnysjännitteen  .\n"
+"Vahvistus [0,1] toteutuu kun jannite putoaa alle kynnysjannitteen  .\n"
 "Vahvistus muuttuu verranollisena tartu ja irroita aikoihin "
 
 #: src/backend/Remaster/CNoiseGateAction.cpp:133
@@ -1517,7 +1517,7 @@ msgstr "Suoritettu Makro"
 
 #: src/frontend_fox/CUserNotesDialog.cpp:43
 msgid "User Notes"
-msgstr "Käyttäjän Huomautukset"
+msgstr "Kayttajan Huomautukset"
 
 #: src/frontend_fox/CRecordMacroDialog.cpp:40
 #: src/frontend_fox/CMainWindow.cpp:291
@@ -1532,7 +1532,7 @@ msgstr "Makron Nimi:"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:196
 msgid "Use Sound ->\tAdd the Selected Sound as a Source Above"
-msgstr "Äänitiedosto->\tLisää Valittu Osa Lähdetiedostoksi"
+msgstr "Aanitiedosto->\tLisaa Valittu Osa Lahdetiedostoksi"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:197
 msgid "New Instance\tCreate a New Instance of the Plugin"
@@ -1554,7 +1554,7 @@ msgstr "Kytke Irti"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:817
 msgid "Nothing mapped to an output; check the routing"
-msgstr "Mitään ei ole mapitettu ulostuloon; tarkista reititys"
+msgstr "Mitaan ei ole mapitettu ulostuloon; tarkista reititys"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:947
 #: src/frontend_fox/EffectActionDialogs.cpp:243
@@ -1563,7 +1563,7 @@ msgstr "Ulos"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1066
 msgid "Use "
-msgstr "Käytä"
+msgstr "Kayta"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1071
 #: src/frontend_fox/CMainWindow.cpp:1028
@@ -1592,11 +1592,11 @@ msgstr "Haluatko varmasti poistaa instanssin?"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1474
 msgid "Are you sure you want to remove this source?"
-msgstr "Haluatko varmasti poistaa tämän lähteen?"
+msgstr "Haluatko varmasti poistaa taman lahteen?"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1529
 msgid "Append New Channel"
-msgstr "Lisää Uusi Kanava"
+msgstr "Lisaa Uusi Kanava"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1530
 msgid "Remove Last Channel"
@@ -1604,11 +1604,11 @@ msgstr "Poista Viimeinen Kanava"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1548
 msgid "Cannot exceed maximum number of channels: "
-msgstr "Ei voi ylittää kanavien maksimimäärää"
+msgstr "Ei voi ylittaa kanavien maksimimaaraa"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1560
 msgid "Cannot remove the last output channel"
-msgstr "Ei voi poistaa viimeistä ulostulokanavaa"
+msgstr "Ei voi poistaa viimeista ulostulokanavaa"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1566
 msgid "Are you sure you want to clear the routing?"
@@ -1626,32 +1626,32 @@ msgid ""
 "preset was saved is now the action sound.  Some connections will likely be "
 "missing or wrong."
 msgstr ""
-"Tämä lähde verrattuna esiasetettuun joka ei ollut toimiva äänimalli kun "
-"esiasetusta tallennettin on nyt toimiva äänimalli. Jotkut kytkennät "
-"todennäköisesti puuttuvat tai evät toimi."
+"Tama lahde verrattuna esiasetettuun joka ei ollut toimiva aanimalli kun "
+"esiasetusta tallennettin on nyt toimiva aanimalli. Jotkut kytkennat "
+"todennakoisesti puuttuvat tai evat toimi."
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1762
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1779
 msgid "When this preset was saved there was a file loaded named:"
-msgstr "Kun esiasetus tallennettiin, avoinna oli tiedosto nimeltään:"
+msgstr "Kun esiasetus tallennettiin, avoinna oli tiedosto nimeltaan:"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1762
 msgid ""
 "This file is currently not loaded.\n"
 "Would you like to load it now?"
 msgstr ""
-"Tämä tiedosto ei ole nyt avoinna.\n"
+"Tama tiedosto ei ole nyt avoinna.\n"
 "Haluatko avata sen nyt?"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1762
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1779
 msgid "If you do not, then the preset cannot not be fully recreated."
-msgstr "Jollet halua, esiasetusta ei voi täydellisenä luoda uudelleen."
+msgstr "Jollet halua, esiasetusta ei voi taydellisena luoda uudelleen."
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1772
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1789
 msgid "The preset cannot be fully recreated."
-msgstr "Esiasetusta ei voi luoda täydellisenä."
+msgstr "Esiasetusta ei voi luoda taydellisena."
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1779
 msgid ""
@@ -1666,16 +1666,16 @@ msgid ""
 "This file has fewer channels than the one used when the preset was saved.  "
 "It may not be possible to restore some of the connections."
 msgstr ""
-"Tieostossa on vähemmän kanavia kun siinä jossa esiasetus tallennettiin. "
-"Joitain kytkentöjä ei voi luoda."
+"Tieostossa on vahemman kanavia kun siina jossa esiasetus tallennettiin. "
+"Joitain kytkentoja ei voi luoda."
 
 #: src/frontend_fox/CCrossfadeEdgesDialog.cpp:33
 msgid "Crossfade Edges Settings"
-msgstr "Asetukset Ristiinhäivytä Reunat "
+msgstr "Asetukset Ristiinhaivyta Reunat "
 
 #: src/frontend_fox/CCrossfadeEdgesDialog.cpp:38
 msgid "Crossfade Start Edge"
-msgstr "Ristiinhäivytys Alkureuna"
+msgstr "Ristiinhaivytys Alkureuna"
 
 #: src/frontend_fox/CCrossfadeEdgesDialog.cpp:38
 #: src/frontend_fox/CCrossfadeEdgesDialog.cpp:39
@@ -1684,7 +1684,7 @@ msgstr "millisekuntia"
 
 #: src/frontend_fox/CCrossfadeEdgesDialog.cpp:39
 msgid "Crossfade Stop Edge"
-msgstr "Ristiinhäivytys Loppureuna"
+msgstr "Ristiinhaivytys Loppureuna"
 
 #: src/frontend_fox/CCrossfadeEdgesDialog.cpp:42
 msgid "Linear Fade"
@@ -1696,7 +1696,7 @@ msgstr "Parabolinen Vaimennus"
 
 #: src/frontend_fox/CCrossfadeEdgesDialog.cpp:44
 msgid "Crossfade Fade Method"
-msgstr "Ristiinhäivytystapa"
+msgstr "Ristiinhaivytystapa"
 
 #: src/frontend_fox/CCrossfadeEdgesDialog.cpp:44
 msgid ""
@@ -1704,13 +1704,13 @@ msgid ""
 "Parabolic sounds a bit more natural\n"
 "For very quick fades (less than 250ms) linear is recommended"
 msgstr ""
-"Lineaarinen pitää yllä vakiovahvistusta 1.0\n"
+"Lineaarinen pitaa ylla vakiovahvistusta 1.0\n"
 "Parabolinen kuulostaa luonnollisemmalta\n"
-"Nopeaan häivytykseen (alle 250ms) lineaarinen on suositeltava"
+"Nopeaan haivytykseen (alle 250ms) lineaarinen on suositeltava"
 
 #: src/frontend_fox/CActionParamDialog.cpp:99
 msgid "Explain"
-msgstr "Selitä"
+msgstr "Selita"
 
 #: src/frontend_fox/CActionParamDialog.cpp:780
 msgid "Preset Name"
@@ -1718,11 +1718,11 @@ msgstr "Esivalinnan Nimi"
 
 #: src/frontend_fox/CActionParamDialog.cpp:784
 msgid "Invalid Preset Name"
-msgstr "Esivalintaa ei löydy"
+msgstr "Esivalintaa ei loydy"
 
 #: src/frontend_fox/CActionParamDialog.cpp:793
 msgid "Preset Name cannot contain"
-msgstr "Esivalinnan nimessä ei voi olla"
+msgstr "Esivalinnan nimessa ei voi olla"
 
 #: src/frontend_fox/CActionParamDialog.cpp:808
 msgid "Overwrite Existing Preset"
@@ -1735,7 +1735,7 @@ msgstr "Poista Esivalinta"
 #: src/frontend_fox/CActionParamDialog.cpp:928
 #: src/frontend_fox/CActionParamDialog.cpp:942
 msgid "&Use\tOr Double-Click an Item in the List"
-msgstr "&Käytä\t tai Tuplaklikkaa Valintaa Listalla"
+msgstr "&Kayta\t tai Tuplaklikkaa Valintaa Listalla"
 
 #: src/frontend_fox/CActionParamDialog.cpp:943
 msgid "&Save"
@@ -1774,15 +1774,15 @@ msgstr "Soita Valintaa Silmukkana"
 
 #: src/frontend_fox/CMainWindow.cpp:228
 msgid "Play Selection Looped but Skip Most of the Middle"
-msgstr "Soita Valintaa Silmukkana mutta Hyppää Keskiosan Yli"
+msgstr "Soita Valintaa Silmukkana mutta Hyppaa Keskiosan Yli"
 
 #: src/frontend_fox/CMainWindow.cpp:229
 msgid "Play Selection Looped and Play a Gap Before Repeating"
-msgstr "Soita Valintaa Silmukkana ja Pidä Tauko Ennen Uusintaa"
+msgstr "Soita Valintaa Silmukkana ja Pida Tauko Ennen Uusintaa"
 
 #: src/frontend_fox/CMainWindow.cpp:231 src/frontend_fox/CMainWindow.cpp:864
 msgid "Stop"
-msgstr "Pysäytä"
+msgstr "Pysayta"
 
 #: src/frontend_fox/CMainWindow.cpp:232 src/frontend_fox/CMainWindow.cpp:865
 msgid "Pause"
@@ -1790,23 +1790,23 @@ msgstr "Pause"
 
 #: src/frontend_fox/CMainWindow.cpp:234 src/frontend_fox/CRecordDialog.cpp:64
 msgid "Record"
-msgstr "Äänitä"
+msgstr "Aanita"
 
 #: src/frontend_fox/CMainWindow.cpp:236 src/frontend_fox/CMainWindow.cpp:867
 msgid "Jump to Beginning"
-msgstr "Hyppää Alkuun"
+msgstr "Hyppaa Alkuun"
 
 #: src/frontend_fox/CMainWindow.cpp:237
 msgid "Jump to Start Position"
-msgstr "Hyppää Alkuasemaan"
+msgstr "Hyppaa Alkuasemaan"
 
 #: src/frontend_fox/CMainWindow.cpp:239 src/frontend_fox/CMainWindow.cpp:869
 msgid "Jump to Previous Cue"
-msgstr "Hyppää Edelliseen Välimerkkiin"
+msgstr "Hyppaa Edelliseen Valimerkkiin"
 
 #: src/frontend_fox/CMainWindow.cpp:240 src/frontend_fox/CMainWindow.cpp:870
 msgid "Jump to Next Cue"
-msgstr "Hyppää Seuraavaan Välimerkkiin"
+msgstr "Hyppaa Seuraavaan Valimerkkiin"
 
 #: src/frontend_fox/CMainWindow.cpp:255
 msgid ""
@@ -1842,7 +1842,7 @@ msgstr "Leikkaus Varoitus"
 
 #: src/frontend_fox/CMainWindow.cpp:278
 msgid "Draw Vertical Cue Positions"
-msgstr "Piirrä Pystysuuntaiset Välimerkit"
+msgstr "Piirra Pystysuuntaiset Valimerkit"
 
 #: src/frontend_fox/CMainWindow.cpp:283
 msgid ""
@@ -1850,25 +1850,25 @@ msgid ""
 "Positions to Give a Smoother Transition in to and out of the Modified "
 "Selection"
 msgstr ""
-"Useimpien toimien jälkeen on hyvä ristiinhäivyttää lopullisen valinnanreuna-"
-"alueet tasaisemman siirtymän saavuttamiseksi. \n"
+"Useimpien toimien jalkeen on hyva ristiinhaivyttaa lopullisen valinnanreuna-"
+"alueet tasaisemman siirtyman saavuttamiseksi. \n"
 " "
 
 #: src/frontend_fox/CMainWindow.cpp:284
 msgid "No Crossfade"
-msgstr "Ei Ristiinhäivytystä"
+msgstr "Ei Ristiinhaivytysta"
 
 #: src/frontend_fox/CMainWindow.cpp:285
 msgid "Crossfade Inner Edges"
-msgstr "Ristiinhäivytä Sisäreunat"
+msgstr "Ristiinhaivyta Sisareunat"
 
 #: src/frontend_fox/CMainWindow.cpp:286
 msgid "Crossfade Outer Edges"
-msgstr "Ristiinhäivytä Ulkoreunat"
+msgstr "Ristiinhaivyta Ulkoreunat"
 
 #: src/frontend_fox/CMainWindow.cpp:288
 msgid "Change Crossfade Times"
-msgstr "Muuta Ristiinhäivytysaikaa"
+msgstr "Muuta Ristiinhaivytysaikaa"
 
 #: src/frontend_fox/CMainWindow.cpp:326
 msgid "Name"
@@ -1882,15 +1882,15 @@ msgstr "Polku"
 msgid ""
 "You have changed the selected audio file while a macro is being recorded to "
 "position: "
-msgstr "Olet muuttamut valittua audiotiedostoa sillä aikaa kun makroa on nauhoitettu:"
+msgstr "Olet muuttamut valittua audiotiedostoa silla aikaa kun makroa on nauhoitettu:"
 
 #: src/frontend_fox/CMainWindow.cpp:449
 msgid ""
 "Note that when the macro is played back the audio file loaded in the same "
 "position in the loaded sounds list will be selected at this step in the "
 "macro."
-msgstr "Huomaa että kun makroa toistetaan niin samaan kohtaan varattu"
-"audiotiedosto valitaan avatuista tällä hetkellä makroon"
+msgstr "Huomaa etta kun makroa toistetaan niin samaan kohtaan varattu"
+"audiotiedosto valitaan avatuista talla hetkella makroon"
 
 #: src/frontend_fox/CMainWindow.cpp:828
 msgid "&Reopen"
@@ -1916,11 +1916,11 @@ msgstr "Muistiiin &Panot"
 
 #: src/frontend_fox/CMainWindow.cpp:843
 msgid "&About ReZound"
-msgstr "&Sisältö ReZound"
+msgstr "&Sisalto ReZound"
 
 #: src/frontend_fox/CMainWindow.cpp:844
 msgid "&Setup Hotkeys..."
-msgstr "&Aseta Pikänäppäimet..."
+msgstr "&Aseta Pikanappaimet..."
 
 #: src/frontend_fox/CMainWindow.cpp:851
 msgid "&Quit"
@@ -1929,19 +1929,19 @@ msgstr "&Lopeta"
 #: src/frontend_fox/CMainWindow.cpp:855
 #, fuzzy
 msgid "Record..."
-msgstr "Äänitä"
+msgstr "Aanita"
 
 #: src/frontend_fox/CMainWindow.cpp:862
 msgid "Loop Selection but Skip Most of the Middle"
-msgstr "Soita Silmukkana Hypäten Keskiosan Yli"
+msgstr "Soita Silmukkana Hypaten Keskiosan Yli"
 
 #: src/frontend_fox/CMainWindow.cpp:863
 msgid "Loop Selection and Play a Gap Before Repeating"
-msgstr "Soita Silmukkana ja Pidä Tauko Ennen Uusintaa"
+msgstr "Soita Silmukkana ja Pida Tauko Ennen Uusintaa"
 
 #: src/frontend_fox/CMainWindow.cpp:868
 msgid "Jump to Selection Start"
-msgstr "Hyppää Valinnan Alkuun"
+msgstr "Hyppaa Valinnan Alkuun"
 
 #: src/frontend_fox/CMainWindow.cpp:872
 msgid "Shuttle Rewind"
@@ -1949,7 +1949,7 @@ msgstr "Shuttle Takaisinkelaus"
 
 #: src/frontend_fox/CMainWindow.cpp:873
 msgid "Shuttle Amount"
-msgstr "Shuttle Määrä"
+msgstr "Shuttle Maara"
 
 #: src/frontend_fox/CMainWindow.cpp:874
 msgid "Shuttle Forward"
@@ -1965,7 +1965,7 @@ msgstr "Zoomaa&Ulos"
 
 #: src/frontend_fox/CMainWindow.cpp:880
 msgid "Zoom &In"
-msgstr "Zoomaa &Sisään"
+msgstr "Zoomaa &Sisaan"
 
 #: src/frontend_fox/CMainWindow.cpp:881
 msgid "Zoom &Fit Selection"
@@ -1981,7 +1981,7 @@ msgstr "Etsi &Loppuasema"
 
 #: src/frontend_fox/CMainWindow.cpp:886
 msgid "&Redraw"
-msgstr "&Piirrä Uudelleen"
+msgstr "&Piirra Uudelleen"
 
 #: src/frontend_fox/CMainWindow.cpp:889 src/frontend_fox/CMainWindow.cpp:893
 msgid "Toggle &Level Meters"
@@ -1998,57 +1998,57 @@ msgstr "&Taajuusanalysaattori"
 #: src/frontend_fox/CMainWindow.cpp:898
 #, fuzzy
 msgid "Switch to Previously Viewed File"
-msgstr "Äskettäin Avattu Tiedosto"
+msgstr "Askettain Avattu Tiedosto"
 
 #: src/frontend_fox/CMainWindow.cpp:899
 #, fuzzy
 msgid "Switch to Loaded File 1"
-msgstr "Näytä Avattu Tiedosto 1"
+msgstr "Nayta Avattu Tiedosto 1"
 
 #: src/frontend_fox/CMainWindow.cpp:900
 #, fuzzy
 msgid "Switch to Loaded File 2"
-msgstr "Näytä Avattu Tiedosto 2"
+msgstr "Nayta Avattu Tiedosto 2"
 
 #: src/frontend_fox/CMainWindow.cpp:901
 #, fuzzy
 msgid "Switch to Loaded File 3"
-msgstr "Näytä Avattu Tiedosto 3"
+msgstr "Nayta Avattu Tiedosto 3"
 
 #: src/frontend_fox/CMainWindow.cpp:902
 #, fuzzy
 msgid "Switch to Loaded File 4"
-msgstr "Näytä Avattu Tiedosto 4"
+msgstr "Nayta Avattu Tiedosto 4"
 
 #: src/frontend_fox/CMainWindow.cpp:903
 #, fuzzy
 msgid "Switch to Loaded File 5"
-msgstr "Näytä Avattu Tiedosto 5"
+msgstr "Nayta Avattu Tiedosto 5"
 
 #: src/frontend_fox/CMainWindow.cpp:904
 #, fuzzy
 msgid "Switch to Loaded File 6"
-msgstr "Näytä Avattu Tiedosto 6"
+msgstr "Nayta Avattu Tiedosto 6"
 
 #: src/frontend_fox/CMainWindow.cpp:905
 #, fuzzy
 msgid "Switch to Loaded File 7"
-msgstr "Näytä Avattu Tiedosto 7"
+msgstr "Nayta Avattu Tiedosto 7"
 
 #: src/frontend_fox/CMainWindow.cpp:906
 #, fuzzy
 msgid "Switch to Loaded File 8"
-msgstr "Näytä Avattu Tiedosto 8"
+msgstr "Nayta Avattu Tiedosto 8"
 
 #: src/frontend_fox/CMainWindow.cpp:907
 #, fuzzy
 msgid "Switch to Loaded File 9"
-msgstr "Näytä Avattu Tiedosto 9"
+msgstr "Nayta Avattu Tiedosto 9"
 
 #: src/frontend_fox/CMainWindow.cpp:908
 #, fuzzy
 msgid "Switch to Loaded File 10"
-msgstr "Näytä Avattu Tiedosto 10"
+msgstr "Nayta Avattu Tiedosto 10"
 
 #: src/frontend_fox/CMainWindow.cpp:912
 msgid "Undo"
@@ -2102,7 +2102,7 @@ msgstr "&Muodosta"
 
 #: src/frontend_fox/CMainWindow.cpp:1193
 msgid "No LADSPA Plugins Found"
-msgstr " LADSPA Plugin Ei Löydy"
+msgstr " LADSPA Plugin Ei Loydy"
 
 #: src/frontend_fox/CMainWindow.cpp:1195
 msgid "Like PATH, set LADSPA_PATH to point"
@@ -2110,7 +2110,7 @@ msgstr "Niinkuin PATH, aseta LADSPA_PATH osoittamaan."
 
 #: src/frontend_fox/CMainWindow.cpp:1196
 msgid "to a directory(s) containing LADSPA"
-msgstr " kansioon(kansioihin) sisältäen LADSPA"
+msgstr " kansioon(kansioihin) sisaltaen LADSPA"
 
 #: src/frontend_fox/CMainWindow.cpp:1197
 msgid "plugin .so file at least once.  Or"
@@ -2141,11 +2141,11 @@ msgstr "semitones"
 
 #: src/frontend_fox/CAboutDialog.cpp:43
 msgid "About ReZound"
-msgstr "Sisältö ReZound"
+msgstr "Sisalto ReZound"
 
 #: src/frontend_fox/CAboutDialog.cpp:69
 msgid "Please Read"
-msgstr "Ole hyvä ja lue"
+msgstr "Ole hyva ja lue"
 
 #: src/frontend_fox/CAboutDialog.cpp:73
 msgid ""
@@ -2171,26 +2171,26 @@ msgid ""
 msgstr ""
 "*** LUE MINUT ***\n"
 "\n"
-"  Tervetuloa käyttämään kehitystyön alla olevaa ReZound (beta) versiota. "
-"Tarkoituksena on saada palautetta siitä mitä ongelmia ReZoundin "
-"käytössäilmenee ja lisäksi listata (ei-kovin-tarkkaan) ne ominaisuudet jotka "
-"ReZoundissa tulisi olla ennenkuin sitä kutsutaan versionumerolla '1.0'."
-"Ilmoittakaa minulle ongelmista joita asennuksessa ja käytössä ilmenee"
-"(configure/compiling/running) käyttäen bugilinkkiä tiedostot-valikosta. .\n"
-"  Lisää ominaisuuksia on tulossa. Suunnittelen lyhyttä asiakirjaa siitä   "
-"kuinka uudet valikot täytetään. Suunnittelin ReZoundin niin että uusien "
-"ominaisuuksien lisääminen on helppoa.\n"
-"  Jos sinulla on ehdotuksia ulkoasun tai lisäominaisuuksien suhteen,  lähetä "
-"ne minulle tukilinkkiä tai ehdotuslinkkiä käyttäen. Kiitos siitä että "
-"kokeilet ReZoundia. Toivottavasti kokemus on miellyttävä ja sovellus "
-"ominaisuuksiltaan riittävä audion editointityöhön.  .\n"
+"  Tervetuloa kayttamaan kehitystyon alla olevaa ReZound (beta) versiota. "
+"Tarkoituksena on saada palautetta siita mita ongelmia ReZoundin "
+"kaytossailmenee ja lisaksi listata (ei-kovin-tarkkaan) ne ominaisuudet jotka "
+"ReZoundissa tulisi olla ennenkuin sita kutsutaan versionumerolla '1.0'."
+"Ilmoittakaa minulle ongelmista joita asennuksessa ja kaytossa ilmenee"
+"(configure/compiling/running) kayttaen bugilinkkia tiedostot-valikosta. .\n"
+"  Lisaa ominaisuuksia on tulossa. Suunnittelen lyhytta asiakirjaa siita   "
+"kuinka uudet valikot taytetaan. Suunnittelin ReZoundin niin etta uusien "
+"ominaisuuksien lisaaminen on helppoa.\n"
+"  Jos sinulla on ehdotuksia ulkoasun tai lisaominaisuuksien suhteen,  laheta "
+"ne minulle tukilinkkia tai ehdotuslinkkia kayttaen. Kiitos siita etta "
+"kokeilet ReZoundia. Toivottavasti kokemus on miellyttava ja sovellus "
+"ominaisuuksiltaan riittava audion editointityohon.  .\n"
 "\n"
 "  -- Davy\n"
 "\t\t"
 
 #: src/frontend_fox/CAboutDialog.cpp:91
 msgid "About"
-msgstr "Sisältö"
+msgstr "Sisalto"
 
 #: src/frontend_fox/CAboutDialog.cpp:95
 msgid "Author"
@@ -2202,7 +2202,7 @@ msgstr "Original Autoconfiscation"
 
 #: src/frontend_fox/CAboutDialog.cpp:97
 msgid "Additional Programming"
-msgstr "Lisä Ohjelmointi"
+msgstr "Lisa Ohjelmointi"
 
 #: src/frontend_fox/CAboutDialog.cpp:98
 msgid "Artistic Consultant"
@@ -2226,11 +2226,11 @@ msgstr "Tukilinkki"
 
 #: src/frontend_fox/CAboutDialog.cpp:103
 msgid "Feature Requests"
-msgstr "Lisäominaisuustoivelinkki"
+msgstr "Lisaominaisuustoivelinkki"
 
 #: src/frontend_fox/CAboutDialog.cpp:105
 msgid "Also Please Read"
-msgstr "Myöskin Lue, kiitos"
+msgstr "Myoskin Lue, kiitos"
 
 #: src/frontend_fox/CAboutDialog.cpp:108
 msgid "Thanks To"
@@ -2238,15 +2238,15 @@ msgstr "Kiitokset"
 
 #: src/frontend_fox/CAboutDialog.cpp:112
 msgid "Russian Translation"
-msgstr "Venäjän Käännös"
+msgstr "Venajan Kaannos"
 
 #: src/frontend_fox/CAboutDialog.cpp:113
 msgid "German Translation"
-msgstr "Saksan Käännös"
+msgstr "Saksan Kaannos"
 
 #: src/frontend_fox/CAboutDialog.cpp:114
 msgid "Spanish Translation"
-msgstr "Espanjan Käännös"
+msgstr "Espanjan Kaannos"
 
 #: src/frontend_fox/CAboutDialog.cpp:115
 #, fuzzy
@@ -2256,7 +2256,7 @@ msgstr "Suomennos"
 #: src/frontend_fox/CAboutDialog.cpp:116
 #, fuzzy
 msgid "French Translation"
-msgstr "Ranskan Käännös"
+msgstr "Ranskan Kaannos"
 
 #: src/frontend_fox/CAboutDialog.cpp:117
 msgid "Testing/Porting"
@@ -2268,7 +2268,7 @@ msgstr "Testaus/Portitus"
 #: src/frontend_fox/CAboutDialog.cpp:127 src/frontend_fox/CAboutDialog.cpp:128
 #: src/frontend_fox/CAboutDialog.cpp:129 src/frontend_fox/CAboutDialog.cpp:130
 msgid "Bug Finding"
-msgstr "Bugien Etsintä"
+msgstr "Bugien Etsinta"
 
 #: src/frontend_fox/CAboutDialog.cpp:123
 msgid "Feature Suggestions"
@@ -2276,11 +2276,11 @@ msgstr "Ominaisuus Ehdotuksia"
 
 #: src/frontend_fox/CAboutDialog.cpp:124
 msgid "Bug Finding/Fixing"
-msgstr "Bugien Etsintä/Korjaukset"
+msgstr "Bugien Etsinta/Korjaukset"
 
 #: src/frontend_fox/CAboutDialog.cpp:126
 msgid "Semitones Shuttle Wheel Feature Patch"
-msgstr "Semitones Etsintäpyörä Ominaisuus"
+msgstr "Semitones Etsintapyora Ominaisuus"
 
 #: src/frontend_fox/CAboutDialog.cpp:133
 msgid "License"
@@ -2294,13 +2294,13 @@ msgstr "Wet/Dry Miksaus"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:72
 msgid "Input Lowpass"
-msgstr "Sisään Alipäästö"
+msgstr "Sisaan Alipaasto"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:80
 #: src/frontend_fox/EffectActionDialogs.cpp:200
 #: src/frontend_fox/RemasterActionDialogs.cpp:328
 msgid "Input Gain"
-msgstr "Vahvistus Sisään"
+msgstr "Vahvistus Sisaan"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:88
 #: src/frontend_fox/EffectActionDialogs.cpp:219
@@ -2318,7 +2318,7 @@ msgstr "Suodin Ydin"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:105
 msgid "The Audio File to Use as the Filter Kernel"
-msgstr "Audiotidosto jota Käytetään Suotimen Ytimenä"
+msgstr "Audiotidosto jota Kaytetaan Suotimen Ytimena"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:109
 msgid "FK Gain"
@@ -2326,7 +2326,7 @@ msgstr "FK Vahvistus"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:117
 msgid "FK Lowpass"
-msgstr "FK Alipäästö"
+msgstr "FK Alipaasto"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:126
 msgid "FK Rate"
@@ -2334,7 +2334,7 @@ msgstr "FK Rate"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:135
 msgid "Wrap Decay back to Beginning"
-msgstr "Kierrätä 'decay' takaisin alkuun"
+msgstr "Kierrata 'decay' takaisin alkuun"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:266
 msgid "Frequency Response"
@@ -2365,13 +2365,13 @@ msgid ""
 "This Sets the Lowest Frequency Displayed on the Graph.\n"
 "This is the Frequency of the First Octave."
 msgstr ""
-"Tämä Asettaa Alimman Näytettävän Taajuuden.\n"
-"Tämä on Ensimmäisen Oktaavin Taajuus."
+"Tama Asettaa Alimman Naytettavan Taajuuden.\n"
+"Tama on Ensimmaisen Oktaavin Taajuus."
 
 #: src/frontend_fox/FilterActionDialogs.cpp:289
 #: src/frontend_fox/FilterActionDialogs.cpp:452
 msgid "Number of Octaves"
-msgstr "Oktaavien Lukumäärä"
+msgstr "Oktaavien Lukumaara"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:294
 #: src/frontend_fox/FilterActionDialogs.cpp:457
@@ -2380,9 +2380,9 @@ msgid ""
 "But Note that no Frequency Higher than Half of the Sound's Sampling Rate can "
 "be Affected Since it Cannot Contain a Frequency Higher than That."
 msgstr ""
-"Tämä Asettaa Näytettävien Oktaavien Lukumäärän.\n"
-"Huomaa Että Taajuuksiin Jotka Ovat Yli Puolet Näytetaajuudesta Ei Voida "
-"Vaikuttaa Koska Tiedosto Ei Sisällä Tämän Korkeampia Taajuuksia. "
+"Tama Asettaa Naytettavien Oktaavien Lukumaaran.\n"
+"Huomaa Etta Taajuuksiin Jotka Ovat Yli Puolet Naytetaajuudesta Ei Voida "
+"Vaikuttaa Koska Tiedosto Ei Sisalla Taman Korkeampia Taajuuksia. "
 
 #: src/frontend_fox/FilterActionDialogs.cpp:301
 #: src/frontend_fox/FilterActionDialogs.cpp:422
@@ -2395,7 +2395,7 @@ msgid ""
 "This is the Size of the Filter Kernel Computed (in samples) From Your Curve "
 "to be Convolved with the Audio"
 msgstr ""
-"Tämä on Suodin Ytimen Koko Laskettuna (samples) Käyrästä Joka Yhdistetään "
+"Tama on Suodin Ytimen Koko Laskettuna (samples) Kayrasta Joka Yhdistetaan "
 "Audioon"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:310
@@ -2406,7 +2406,7 @@ msgstr "Poista Viive"
 #: src/frontend_fox/FilterActionDialogs.cpp:312
 #: src/frontend_fox/FilterActionDialogs.cpp:434
 msgid "This Counteracts the Delay Side-Effect of Custom FIR Filters"
-msgstr "Tämä Tekee Vastatoimen Viive Sivuilmiöön joka Aiheutuu FIR Suotimesta"
+msgstr "Tama Tekee Vastatoimen Viive Sivuilmioon joka Aiheutuu FIR Suotimesta"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:360
 msgid "Frequency Response 1"
@@ -2418,7 +2418,7 @@ msgstr "Kopioi Vaste 1 Vaste 2;een"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:373
 msgid "Swap Response 1 and Response 2"
-msgstr "Vaihda Keskenään Vaste 1 ja Vaste 2"
+msgstr "Vaihda Keskenaan Vaste 1 ja Vaste 2"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:374
 msgid "Copy Response 2 to Response 1"
@@ -2430,18 +2430,18 @@ msgstr "Taajuusvaste 2"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:403
 msgid "Use LFO"
-msgstr "Käytä LFO"
+msgstr "Kayta LFO"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:410
 msgid "Sweep LFO"
-msgstr "Pyyhkäise LFO"
+msgstr "Pyyhkaise LFO"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:516
 msgid ""
 "Frequency Response 1 and Frequency Response 2 must contain the same number "
 "of nodes"
 msgstr ""
-"Taajuusvaste 1 ja Taajuusvaste 2 täytyy sisältää yhtä paljon Käännepisteitä"
+"Taajuusvaste 1 ja Taajuusvaste 2 taytyy sisaltaa yhta paljon Kaannepisteita"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:551
 #: src/frontend_fox/FilterActionDialogs.cpp:574
@@ -2470,59 +2470,59 @@ msgstr "Resonanssi"
 #: src/frontend_fox/FXRezWaveView.cpp:511
 #: src/frontend_fox/FXRezWaveView.cpp:516
 msgid "Set Start Position to Cue"
-msgstr "Aseta Aloitus Välimerkkiin"
+msgstr "Aseta Aloitus Valimerkkiin"
 
 #: src/frontend_fox/FXRezWaveView.cpp:513
 #: src/frontend_fox/FXRezWaveView.cpp:517
 msgid "Set Stop Position to Cue"
-msgstr "Aseta Lopetus Välimerkkiin"
+msgstr "Aseta Lopetus Valimerkkiin"
 
 #: src/frontend_fox/FXRezWaveView.cpp:521
 msgid "&Edit Cue"
-msgstr "&Editoi Välimerkkiä"
+msgstr "&Editoi Valimerkkia"
 
 #: src/frontend_fox/FXRezWaveView.cpp:522
 msgid "&Remove Cue"
-msgstr "&Poista Välimerkki"
+msgstr "&Poista Valimerkki"
 
 #: src/frontend_fox/FXRezWaveView.cpp:524
 #: src/frontend_fox/FXRezWaveView.cpp:543
 msgid "Show Cues &List"
-msgstr "Näytä Välimerkit &Listat"
+msgstr "Nayta Valimerkit &Listat"
 
 #: src/frontend_fox/FXRezWaveView.cpp:536
 msgid "Center Start Position"
-msgstr "Keskitä Aloituspaikka"
+msgstr "Keskita Aloituspaikka"
 
 #: src/frontend_fox/FXRezWaveView.cpp:537
 msgid "Center Stop Position"
-msgstr "Keskitä Lopetuspaikka"
+msgstr "Keskita Lopetuspaikka"
 
 #: src/frontend_fox/FXRezWaveView.cpp:539
 msgid "Add Cue at This Position"
-msgstr "Lisää Välimerkki Tähän"
+msgstr "Lisaa Valimerkki Tahan"
 
 #: src/frontend_fox/FXRezWaveView.cpp:540
 msgid "Add Cue at Start Position"
-msgstr "Lisää Välimerkki Alkuun"
+msgstr "Lisaa Valimerkki Alkuun"
 
 #: src/frontend_fox/FXRezWaveView.cpp:541
 msgid "Add Cue at Stop Position"
-msgstr "Lisää Välimerkki Loppuun"
+msgstr "Lisaa Valimerkki Loppuun"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:47
 #, fuzzy
 msgid "Macro Action Parameters"
-msgstr "Liittää Parametrit:"
+msgstr "Liittaa Parametrit:"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:62
 msgid "When the Macro is Played Back and This Action is to be Performed..."
-msgstr "Kun Makroa toistetaan ja tätä toimintoa suoritetaan..."
+msgstr "Kun Makroa toistetaan ja tata toimintoa suoritetaan..."
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:71
 #, fuzzy
 msgid "Set the Start Position..."
-msgstr "Liitä Alkuun"
+msgstr "Liita Alkuun"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:72
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:82
@@ -2541,28 +2541,28 @@ msgstr "Sama absoluuttinen aika audiotidoston lopusta lukien"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:75
 msgid "Same Absolute Time Before the Stop Position"
-msgstr "Sama absoluuttinen aika ennen pysäytyspistettä"
+msgstr "Sama absoluuttinen aika ennen pysaytyspistetta"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:76
 #, fuzzy
 msgid "Same Proportionate Time Before the Stop Position"
-msgstr "Siirrä alkuasema eteenpäin loppuasemaan"
+msgstr "Siirra alkuasema eteenpain loppuasemaan"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:77
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:87
 #, fuzzy
 msgid "Same Cue Name"
-msgstr "Sama välimerkin nimi"
+msgstr "Sama valimerkin nimi"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:78
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:88
 msgid "Leave in the Same Position From Previous Action"
-msgstr "Jätä samaan paikkaan kuin edellisessä toimenpiteessä"
+msgstr "Jata samaan paikkaan kuin edellisessa toimenpiteessa"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:81
 #, fuzzy
 msgid "Set the Stop Position..."
-msgstr "Keskitä Lopetuspaikka"
+msgstr "Keskita Lopetuspaikka"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:85
 #, fuzzy
@@ -2572,7 +2572,7 @@ msgstr "Mixaa aloittaen Alkuasemasta"
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:86
 #, fuzzy
 msgid "Same Proportionate Time After the Start Position"
-msgstr "Kirjoita päälle aloittaen Alkuasemasta"
+msgstr "Kirjoita paalle aloittaen Alkuasemasta"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:201
 msgid ""
@@ -2590,7 +2590,7 @@ msgstr "Voimakkuden Muutos "
 
 #: src/frontend_fox/EffectActionDialogs.cpp:63
 msgid "Gain Curve"
-msgstr "Vahvistuskäyrä"
+msgstr "Vahvistuskayra"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:80
 msgid "Rate Change"
@@ -2598,7 +2598,7 @@ msgstr "Rate Muutos"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:93
 msgid "Rate Curve"
-msgstr "Rate Käyrä"
+msgstr "Rate Kayra"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:94
 msgid "Rate"
@@ -2628,7 +2628,7 @@ msgstr "LFO Syvyys"
 #: src/frontend_fox/EffectActionDialogs.cpp:146
 #: src/frontend_fox/EffectActionDialogs.cpp:181
 msgid "Feedback"
-msgstr "Feedback-Vastakytkentä"
+msgstr "Feedback-Vastakytkenta"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:210
 msgid "Quantum Count"
@@ -2636,15 +2636,15 @@ msgstr "Quantum Count"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:216
 msgid "The Number of Possible Sample Values Above Zero"
-msgstr "Mahdollisten Sample Arvojen Määrä Nollan Yläpuolella."
+msgstr "Mahdollisten Sample Arvojen Maara Nollan Ylapuolella."
 
 #: src/frontend_fox/EffectActionDialogs.cpp:239
 msgid "Curve"
-msgstr "Käyrä"
+msgstr "Kayra"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:240
 msgid "Input"
-msgstr "Sisään"
+msgstr "Sisaan"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:261
 msgid "LFO"
@@ -2660,7 +2660,7 @@ msgstr "Tallenna Kansioon"
 
 #: src/frontend_fox/FileActionDialogs.cpp:127
 msgid "All the files will be saved into this directory"
-msgstr "Kaikki tiedostot tallennetaan tähän kansioon"
+msgstr "Kaikki tiedostot tallennetaan tahan kansioon"
 
 #: src/frontend_fox/FileActionDialogs.cpp:128
 msgid "Filename Prefix"
@@ -2672,15 +2672,15 @@ msgstr "Osa#"
 
 #: src/frontend_fox/FileActionDialogs.cpp:128
 msgid "This will be added to the front of the filename"
-msgstr "Tämä lisätään tiedostonimen eteen"
+msgstr "Tama lisataan tiedostonimen eteen"
 
 #: src/frontend_fox/FileActionDialogs.cpp:129
 msgid "Filename Suffix"
-msgstr "Tiedostonimen Pääte"
+msgstr "Tiedostonimen Paate"
 
 #: src/frontend_fox/FileActionDialogs.cpp:129
 msgid "This will be added to the end of the filename"
-msgstr "Tämä lisätään tiedostonimen perään"
+msgstr "Tama lisataan tiedostonimen peraan"
 
 #: src/frontend_fox/FileActionDialogs.cpp:130
 msgid "Format"
@@ -2688,7 +2688,7 @@ msgstr "Muoto"
 
 #: src/frontend_fox/FileActionDialogs.cpp:130
 msgid "The format to save each segment as"
-msgstr "Muoto jossa joka segmentti talletetaaan nimellä"
+msgstr "Muoto jossa joka segmentti talletetaaan nimella"
 
 #: src/frontend_fox/FileActionDialogs.cpp:131
 msgid "Segment Number Start"
@@ -2707,7 +2707,7 @@ msgstr "Avaa Tallennetut Segmentit"
 
 #: src/frontend_fox/FileActionDialogs.cpp:132
 msgid "Open the Segments After Saving Them"
-msgstr "Avaa Segmentit Tallennuksen Jälkeen"
+msgstr "Avaa Segmentit Tallennuksen Jalkeen"
 
 #: src/frontend_fox/FileActionDialogs.cpp:134
 #: src/frontend_fox/FileActionDialogs.cpp:183
@@ -2735,14 +2735,14 @@ msgid ""
 "file if necessary.  All other saved files will use the previous parameters "
 "if possible."
 msgstr ""
-"Jotkut tallennusmuodot vaativat käyttäjältä parametrit (niinkuin kompressio-"
-"tyyppi audiomuoto, jne).  Klikkaamalla tämän ruudun tallennusparametrit "
-"kysytään vain kerran jos se on tarpeen. Kaikki muut tallennettavat tiedostot "
-"käyttävät edellisiä parametrejä jos mahdollista."
+"Jotkut tallennusmuodot vaativat kayttajalta parametrit (niinkuin kompressio-"
+"tyyppi audiomuoto, jne).  Klikkaamalla taman ruudun tallennusparametrit "
+"kysytaan vain kerran jos se on tarpeen. Kaikki muut tallennettavat tiedostot "
+"kayttavat edellisia parametreja jos mahdollista."
 
 #: src/frontend_fox/FileActionDialogs.cpp:165
 msgid "Temp Space Directory"
-msgstr "Välaikainen Kansio"
+msgstr "Valaikainen Kansio"
 
 #: src/frontend_fox/FileActionDialogs.cpp:165
 msgid ""
@@ -2750,7 +2750,7 @@ msgid ""
 "will be needed for CD quality audio of the length of the audio to be burned "
 "to the CD"
 msgstr ""
-"Polttoa varten muodostettava väliaikaistidosto tehdään tähän kansioonTilaa "
+"Polttoa varten muodostettava valiaikaistidosto tehdaan tahan kansioonTilaa "
 "vaaditaan muodostettavan CD-pituuden verran CD-laatuisen  audion tallennusta "
 "varten"
 
@@ -2764,11 +2764,11 @@ msgstr "Polttonopeus"
 
 #: src/frontend_fox/FileActionDialogs.cpp:179
 msgid "Gap Between Tracks"
-msgstr "Raitojen Väli"
+msgstr "Raitojen Vali"
 
 #: src/frontend_fox/FileActionDialogs.cpp:179
 msgid "The Gap of Silence to Place Between Each Track"
-msgstr "Hiljainen Väli Raitojen Välissä"
+msgstr "Hiljainen Vali Raitojen Valissa"
 
 #: src/frontend_fox/FileActionDialogs.cpp:189
 msgid "Device"
@@ -2782,7 +2782,7 @@ msgstr "Tunnista"
 msgid ""
 "In linux >2.6, scanbus may not work and it may be\n"
 "necessary to specify: for example: ATAPI:0,0,0"
-msgstr "Linuxin >2.6, scanbus ei ehkä toimi\n"
+msgstr "Linuxin >2.6, scanbus ei ehka toimi\n"
 "anna polku : esim: ATAPI:0,0,0"
 
 #: src/frontend_fox/FileActionDialogs.cpp:192
@@ -2791,7 +2791,7 @@ msgstr ""
 
 #: src/frontend_fox/FileActionDialogs.cpp:194
 msgid "Extra cdrdao Options"
-msgstr "cdrdao lisävalinnat"
+msgstr "cdrdao lisavalinnat"
 
 #: src/frontend_fox/FileActionDialogs.cpp:195
 msgid "Simulate Burn Only"
@@ -2799,7 +2799,7 @@ msgstr "Simuloi Polttoa"
 
 #: src/frontend_fox/FileActionDialogs.cpp:195
 msgid "Don't Turn on Burn Laser"
-msgstr "Älä Kytke Polttolaseria"
+msgstr "Ala Kytke Polttolaseria"
 
 #: src/frontend_fox/FileActionDialogs.cpp:230
 msgid "Macro Name"
@@ -2825,7 +2825,7 @@ msgstr "Zoomaa Kokonaan Ulos"
 
 #: src/frontend_fox/CSoundWindow.cpp:154 src/frontend_fox/CSoundWindow.cpp:158
 msgid "Zoom In Full"
-msgstr "Zoomaa Kokonaan Sisään"
+msgstr "Zoomaa Kokonaan Sisaan"
 
 #: src/frontend_fox/CSoundWindow.cpp:156
 msgid "Horizontally and Vertically Zoom Out Full"
@@ -2833,7 +2833,7 @@ msgstr "Zoomaa Vaaka- ja Pystysuunnassa Kokonaan Ulos"
 
 #: src/frontend_fox/CSoundWindow.cpp:162
 msgid "M\tMute Channels"
-msgstr "M\tMykistä Kanavat"
+msgstr "M\tMykista Kanavat"
 
 #: src/frontend_fox/CSoundWindow.cpp:163
 msgid ""
@@ -2865,7 +2865,7 @@ msgstr "Audio Pituus:"
 
 #: src/frontend_fox/CSoundWindow.cpp:218 src/frontend_fox/CSoundWindow.cpp:466
 msgid "Working File: "
-msgstr "Työtiedosto:"
+msgstr "Tyotiedosto:"
 
 #: src/frontend_fox/CSoundWindow.cpp:224
 msgid "Total: "
@@ -2877,7 +2877,7 @@ msgstr "Valinta:"
 
 #: src/frontend_fox/CSoundWindow.cpp:250
 msgid "Increase/Decrease Start Position by One Sample"
-msgstr "Lisää/Vähennä Alkuasemaan Yksi Näyte -Sample"
+msgstr "Lisaa/Vahenna Alkuasemaan Yksi Nayte -Sample"
 
 #: src/frontend_fox/CSoundWindow.cpp:251
 msgid "Start: "
@@ -2885,7 +2885,7 @@ msgstr "Start:"
 
 #: src/frontend_fox/CSoundWindow.cpp:263
 msgid "Increase/Decrease Stop Position by One Sample"
-msgstr "Lisää/Vähennä Loppusamaan Yksi Näyte -Sample"
+msgstr "Lisaa/Vahenna Loppusamaan Yksi Nayte -Sample"
 
 #: src/frontend_fox/CSoundWindow.cpp:264
 msgid "Stop: "
@@ -2921,7 +2921,7 @@ msgstr "sekuntia"
 #: src/frontend_fox/EditActionDialogs.cpp:49
 #: src/frontend_fox/EditActionDialogs.cpp:147
 msgid "Amount"
-msgstr "Määrä"
+msgstr "Maara"
 
 #: src/frontend_fox/EditActionDialogs.cpp:61
 #: src/frontend_fox/RemasterActionDialogs.cpp:47
@@ -2938,11 +2938,11 @@ msgstr "Kanava B"
 #: src/frontend_fox/EditActionDialogs.cpp:103
 #: src/frontend_fox/EditActionDialogs.cpp:117
 msgid "Insert Where"
-msgstr "Mihin Väliin Liitetään"
+msgstr "Mihin Valiin Liitetaan"
 
 #: src/frontend_fox/EditActionDialogs.cpp:104
 msgid "Insert Count"
-msgstr "Liitä Väliin -Count"
+msgstr "Liita Valiin -Count"
 
 #: src/frontend_fox/EditActionDialogs.cpp:116
 msgid "Which Channel"
@@ -2954,7 +2954,7 @@ msgstr "Kuinka Monta Kertaa"
 
 #: src/frontend_fox/EditActionDialogs.cpp:153
 msgid "Amount to Affect the Selection in Seconds"
-msgstr "Valintaan Vaikuttava Määrä Sekunteina"
+msgstr "Valintaan Vaikuttava Maara Sekunteina"
 
 #: src/frontend_fox/EditActionDialogs.cpp:156
 msgid "Grow Selection to the Left"
@@ -3002,7 +3002,7 @@ msgstr "Balanssi Tyyppi"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:141
 msgid "Balance Curve"
-msgstr "Balanssi Käyrä"
+msgstr "Balanssi Kayra"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:210
 msgid "Remove All But One Channel"
@@ -3058,20 +3058,20 @@ msgid ""
 "This Toggles That Compression Should be Applied to Both Channels when Either "
 "Channel Needs Compression"
 msgstr ""
-"Tämä tarkoittaa että kompressio toteutetaan molemmissa kanavissa jos toinen "
-"kanava sitä vaatii."
+"Tama tarkoittaa etta kompressio toteutetaan molemmissa kanavissa jos toinen "
+"kanava sita vaatii."
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:351
 msgid "Look Ahead For Level"
-msgstr "Katso Tasoa Etukäteen"
+msgstr "Katso Tasoa Etukateen"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:353
 msgid ""
 "This Toggles That the Compressor Should Look Ahead (by Half the Window Time "
 "Amount) in the Input Signal When Calculating the Level of the Input Signal"
 msgstr ""
-"Tämä tarkoittaa että kompressori tutkii puoli ikkunaa edellä signaalia kun "
-"se laskee sisääntulotasoa. "
+"Tama tarkoittaa etta kompressori tutkii puoli ikkunaa edella signaalia kun "
+"se laskee sisaantulotasoa. "
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:373
 #: src/frontend_fox/RemasterActionDialogs.cpp:407
@@ -3080,7 +3080,7 @@ msgstr "Normalisointi Taso"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:383
 msgid "Region Count"
-msgstr "Alueiden Määrä"
+msgstr "Alueiden Maara"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:394
 msgid "Calculate Maximum Sample Value in a Region Across All Channels"
@@ -3094,7 +3094,7 @@ msgstr "Maksimi Vahvistus"
 #: src/frontend_fox/RemasterActionDialogs.cpp:434
 #, fuzzy
 msgid "Calculate Signal Level Across All Channels Simultaneously"
-msgstr "Laske Signaalitaso Kaikkien Alueiden Yli Yhdessä"
+msgstr "Laske Signaalitaso Kaikkien Alueiden Yli Yhdessa"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:453
 #: src/frontend_fox/RemasterActionDialogs.cpp:512
@@ -3104,12 +3104,12 @@ msgstr "Kynnys (Treshold) Hijaisuudelle"
 #: src/frontend_fox/RemasterActionDialogs.cpp:459
 #: src/frontend_fox/RemasterActionDialogs.cpp:518
 msgid "An audio level below this threshold is considered to be quiet."
-msgstr "Audiotaso Tämän Alapuolella on Hiljaisuutta."
+msgstr "Audiotaso Taman Alapuolella on Hiljaisuutta."
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:462
 #: src/frontend_fox/RemasterActionDialogs.cpp:521
 msgid "Must Remain Quiet for"
-msgstr "Täytyy Olla Hiljaisena"
+msgstr "Taytyy Olla Hiljaisena"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:468
 #: src/frontend_fox/RemasterActionDialogs.cpp:527
@@ -3117,13 +3117,13 @@ msgid ""
 "The audio level must remain below the threshold for this long before a "
 "beginning cue will be added."
 msgstr ""
-"Audiotaso täytyy pysyä alle kynnyksen näin kauan ennenkuin  "
-"aloitusvälimerkki lisätään."
+"Audiotaso taytyy pysya alle kynnyksen nain kauan ennenkuin  "
+"aloitusvalimerkki lisataan."
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:471
 #: src/frontend_fox/RemasterActionDialogs.cpp:530
 msgid "Must Remain Unquiet for"
-msgstr "Täytyy Olla Äänessä"
+msgstr "Taytyy Olla Aanessa"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:477
 #: src/frontend_fox/RemasterActionDialogs.cpp:536
@@ -3131,8 +3131,8 @@ msgid ""
 "After the beginning of a quiet area has been detected the audio level must "
 "rise above the threshold for this long for an ending cue to be added."
 msgstr ""
-"Hiljaisen alueen jälkeen audiotason täytyy säilyä yli kynnyksen  näin kauan "
-"ennenkuin lopetusvälimerkki lisätään. "
+"Hiljaisen alueen jalkeen audiotason taytyy sailya yli kynnyksen  nain kauan "
+"ennenkuin lopetusvalimerkki lisataan. "
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:480
 #: src/frontend_fox/RemasterActionDialogs.cpp:539
@@ -3145,39 +3145,39 @@ msgid ""
 "This is the length of the window of audio to analyze for detecting the audio "
 "level."
 msgstr ""
-"Tämä on se ikkunapituus josta audiotaso analysoidaan audiotason "
-"määrittämiseksi.  "
+"Tama on se ikkunapituus josta audiotaso analysoidaan audiotason "
+"maarittamiseksi.  "
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:490
 msgid "Quiet Begin Cue Name"
-msgstr "Hiljaisuuden Välimerkki Nimi"
+msgstr "Hiljaisuuden Valimerkki Nimi"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:492
 msgid "What to Name a Cue That Marks Beginning of a Quiet Region"
-msgstr "Miten Nimetään Välimerkki Joka on Hiljaisen Kohdan Alussa"
+msgstr "Miten Nimetaan Valimerkki Joka on Hiljaisen Kohdan Alussa"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:496
 msgid "Quiet End Cue Name"
-msgstr "Hiljaisuus Päättyy Välimerkki Nimi"
+msgstr "Hiljaisuus Paattyy Valimerkki Nimi"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:498
 msgid "What to Name a Cue That Marks End of a Quiet Region"
-msgstr "Miten Nimetään Välimerkki Joka on Hiljaisen Kohdan Lopussa"
+msgstr "Miten Nimetaan Valimerkki Joka on Hiljaisen Kohdan Lopussa"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:548
 msgid "Shorten Found Area To"
-msgstr "Lyhennä Löydetty Alue"
+msgstr "Lyhenna Loydetty Alue"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:554
 msgid ""
 "When a quiet area is found it will be shorted to this much of its original "
 "length."
-msgstr "Löydetty hiljainen aika lyhennetään alkuperäisestä pituudestaan "
-"tähän pituuteen."
+msgstr "Loydetty hiljainen aika lyhennetaan alkuperaisesta pituudestaan "
+"tahan pituuteen."
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:575
 msgid "New Sample Rate"
-msgstr "Uusi Näytetaajuus"
+msgstr "Uusi Naytetaajuus"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:593
 #: src/frontend_fox/RemasterActionDialogs.cpp:674
@@ -3217,7 +3217,7 @@ msgstr "CAUTION: Some of combinations of these parameters cause the SoundTouch "
 #: src/frontend_fox/RemasterActionDialogs.cpp:610
 #: src/frontend_fox/RemasterActionDialogs.cpp:692
 msgid "Use Anti-alias Filter"
-msgstr "Käytä Anti-alias Suodinta"
+msgstr "Kayta Anti-alias Suodinta"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:612
 #: src/frontend_fox/RemasterActionDialogs.cpp:694
@@ -3232,7 +3232,7 @@ msgstr "Anti-alias Suotimen Pituus"
 #: src/frontend_fox/RemasterActionDialogs.cpp:626
 #: src/frontend_fox/RemasterActionDialogs.cpp:708
 msgid "Use Quick Seek"
-msgstr "Käytä Pikahakua"
+msgstr "Kayta Pikahakua"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:628
 #: src/frontend_fox/RemasterActionDialogs.cpp:710
@@ -3328,40 +3328,40 @@ msgstr "Aikaa Kulunut"
 
 #: src/frontend_fox/CProgressDialog.cpp:96
 msgid "Estimated Time Remaining "
-msgstr "Arvio Jäljellä"
+msgstr "Arvio Jaljella"
 
 #: src/frontend_fox/CRecordDialog.cpp:84
 msgid "   Cue Prefix:"
-msgstr "  Välimerkin Etuliite:"
+msgstr "  Valimerkin Etuliite:"
 
 #: src/frontend_fox/CRecordDialog.cpp:88
 msgid "Cue Number:"
-msgstr "Välimerkin Numero:"
+msgstr "Valimerkin Numero:"
 
 #: src/frontend_fox/CRecordDialog.cpp:92
 msgid "Add Anchored Cue"
-msgstr "Lisää Ankkuroitu Välimerkki"
+msgstr "Lisaa Ankkuroitu Valimerkki"
 
 #: src/frontend_fox/CRecordDialog.cpp:98 src/frontend_fox/CRecordDialog.cpp:99
 msgid "Recording:"
-msgstr "Äänitys:"
+msgstr "Aanitys:"
 
 #: src/frontend_fox/CRecordDialog.cpp:101
 #: src/frontend_fox/CRecordDialog.cpp:102
 msgid "Waiting for Threshold:"
-msgstr "Odottaa Kynnysjännitettä:"
+msgstr "Odottaa Kynnysjannitetta:"
 
 #: src/frontend_fox/CRecordDialog.cpp:107
 msgid "Record Length: "
-msgstr "Äänityksen Pituus:"
+msgstr "Aanityksen Pituus:"
 
 #: src/frontend_fox/CRecordDialog.cpp:108
 msgid "Record Size: "
-msgstr "Äänityksen Koko:"
+msgstr "Aanityksen Koko:"
 
 #: src/frontend_fox/CRecordDialog.cpp:109
 msgid "Record Limit: "
-msgstr "Äänityksen Raja:"
+msgstr "Aanityksen Raja:"
 
 #: src/frontend_fox/CRecordDialog.cpp:115
 msgid "DCOffset: "
@@ -3375,7 +3375,7 @@ msgstr "Repoitoi Joka 5 Sekuntia"
 msgid ""
 "Compensate\tSubtract out the currently reported DC Offset from any further "
 "recorded data"
-msgstr "Kompensoi/Poista DC siirtymä (Offset) kaikesta äänitettävästä datasta"
+msgstr "Kompensoi/Poista DC siirtyma (Offset) kaikesta aanitettavasta datasta"
 
 #: src/frontend_fox/CRecordDialog.cpp:120
 msgid "Reset"
@@ -3392,7 +3392,7 @@ msgid ""
 "Record/\n"
 "Resume"
 msgstr ""
-"Äänitä/\n"
+"Aanita/\n"
 "Jatka"
 
 #: src/frontend_fox/CRecordDialog.cpp:126
@@ -3400,7 +3400,7 @@ msgid ""
 "Stop/\n"
 "Pause"
 msgstr ""
-"Pysäytä/\n"
+"Pysayta/\n"
 "Pause"
 
 #: src/frontend_fox/CRecordDialog.cpp:127
@@ -3417,7 +3417,7 @@ msgstr "Rajoita Pituus"
 
 #: src/frontend_fox/CRecordDialog.cpp:137
 msgid "Effective on Threshold "
-msgstr "Aloitus Kynnysjännite"
+msgstr "Aloitus Kynnysjannite"
 
 #: src/frontend_fox/CRecordDialog.cpp:234
 msgid "DC Offset: "
@@ -3428,36 +3428,36 @@ msgid ""
 "Invalid record time limit -- Should be in the form of HH:MM:SS.sss, MM:SS."
 "sss or SS.sss"
 msgstr ""
-"Epäkelpo äänitysaikaraja -- Tulee olla muotoa HH:MM:SS.sss, MM:SS.sss tai SS."
+"Epakelpo aanitysaikaraja -- Tulee olla muotoa HH:MM:SS.sss, MM:SS.sss tai SS."
 "sss"
 
 #: src/frontend_fox/CCueDialog.cpp:48
 msgid "Cue Properties"
-msgstr "Välimerkki Ominaisuudet"
+msgstr "Valimerkki Ominaisuudet"
 
 #: src/frontend_fox/CCueDialog.cpp:51
 msgid "Cue Name:"
-msgstr "Välimerkin Nimi:"
+msgstr "Valimerkin Nimi:"
 
 #: src/frontend_fox/CCueDialog.cpp:55
 msgid " Cue Time:"
-msgstr "Välimerkin Aika:"
+msgstr "Valimerkin Aika:"
 
 #: src/frontend_fox/CCueDialog.cpp:59
 msgid ""
 "Anchored in Time\tMeaning That This Cue's Position Will Not Be Affected by "
 "Adding and Removing Space Within the Audio"
 msgstr ""
-"Ankkuroitu Aikaan\tTarkoittaen että välimerkin sijaintiin ei vaikuta  "
-"audiomateriaalin lisääminen tai poistaminen"
+"Ankkuroitu Aikaan\tTarkoittaen etta valimerkin sijaintiin ei vaikuta  "
+"audiomateriaalin lisaaminen tai poistaminen"
 
 #: src/frontend_fox/CCueDialog.cpp:103
 msgid "Cue Name Too Long"
-msgstr "Välimerkin nimi on liian pitkä"
+msgstr "Valimerkin nimi on liian pitka"
 
 #: src/frontend_fox/CCueDialog.cpp:111
 msgid "Invalid Cue Time.  Format: HH:MM:SS.sssss or MM:SS.sssss"
-msgstr "Epäsopiva aika. Muoto: HH:MM:SS.sssss o MM:SS.sssss"
+msgstr "Epasopiva aika. Muoto: HH:MM:SS.sssss o MM:SS.sssss"
 
 #: src/frontend_fox/CStatusComm.cpp:93
 msgid "Warning"
@@ -3473,11 +3473,11 @@ msgstr "Kysymys"
 
 #: src/frontend_fox/CPasteChannelsDialog.cpp:60
 msgid "Paste Channels"
-msgstr "Liitä Kanavat"
+msgstr "Liita Kanavat"
 
 #: src/frontend_fox/CPasteChannelsDialog.cpp:62
 msgid "Pasting Parameters:"
-msgstr "Liittää Parametrit:"
+msgstr "Liittaa Parametrit:"
 
 #: src/frontend_fox/CPasteChannelsDialog.cpp:77
 #: src/frontend_fox/CPasteChannelsDialog.cpp:213
@@ -3508,11 +3508,11 @@ msgstr "Miksaus Tapa:"
 
 #: src/frontend_fox/CPasteChannelsDialog.cpp:110
 msgid "Add"
-msgstr "Lisää"
+msgstr "Lisaa"
 
 #: src/frontend_fox/CPasteChannelsDialog.cpp:111
 msgid "Subtract"
-msgstr "Vähennä"
+msgstr "Vahenna"
 
 #: src/frontend_fox/CPasteChannelsDialog.cpp:112
 msgid "Multiply"
@@ -3524,7 +3524,7 @@ msgstr "Keskiarvo"
 
 #: src/frontend_fox/CPasteChannelsDialog.cpp:117
 msgid "Clipboard"
-msgstr "Leikepöytä"
+msgstr "Leikepoyta"
 
 #: src/frontend_fox/CPasteChannelsDialog.cpp:118
 msgid "Destination"
@@ -3536,7 +3536,7 @@ msgstr "Miksaus Tapa"
 
 #: src/frontend_fox/CNewSoundDialog.cpp:52
 msgid "New Sound"
-msgstr "Uusi Äänitiedosto"
+msgstr "Uusi Aanitiedosto"
 
 #: src/frontend_fox/CNewSoundDialog.cpp:55
 msgid "Filename:"
@@ -3559,7 +3559,7 @@ msgstr "Kanavat:"
 #: src/frontend_fox/CNewSoundDialog.cpp:65 src/frontend_fox/CRawDialog.cpp:58
 #: src/frontend_fox/CVoxDialog.cpp:54
 msgid "Sample Rate:"
-msgstr "Näytetaajuus:"
+msgstr "Naytetaajuus:"
 
 #: src/frontend_fox/CNewSoundDialog.cpp:68
 msgid "Length:"
@@ -3595,7 +3595,7 @@ msgid ""
 "Are you sure you want to overwrite the existing file:\n"
 "   "
 msgstr ""
-"Haluatko varmasti kirjoittaa olemassaolevan päälle:\n"
+"Haluatko varmasti kirjoittaa olemassaolevan paalle:\n"
 "   "
 
 #: src/frontend_fox/CNewSoundDialog.cpp:217
@@ -3604,7 +3604,7 @@ msgstr "Kanavaluku ei kelpaa"
 
 #: src/frontend_fox/CNewSoundDialog.cpp:226
 msgid "Invalid sample rate"
-msgstr "Näytetaajuus ei kelpaa"
+msgstr "Naytetaajuus ei kelpaa"
 
 #: src/frontend_fox/CNewSoundDialog.cpp:236
 msgid "Invalid length"
@@ -3616,7 +3616,7 @@ msgstr "Raaka Parametrit"
 
 #: src/frontend_fox/CRawDialog.cpp:72
 msgid "Sample Format:"
-msgstr "Näyte Formaatti:"
+msgstr "Nayte Formaatti:"
 
 #: src/frontend_fox/CRawDialog.cpp:75
 msgid "8bit Signed PCM"
@@ -3660,7 +3660,7 @@ msgstr "64bit Floating Point PCM"
 
 #: src/frontend_fox/CRawDialog.cpp:87
 msgid "Byte Order:"
-msgstr "Bittijärjestys:"
+msgstr "Bittijarjestys:"
 
 #: src/frontend_fox/CRawDialog.cpp:88
 msgid "Little Endian (Intel)"
@@ -3685,7 +3685,7 @@ msgstr "Datan Pituus:"
 #: src/frontend_fox/CRawDialog.cpp:99 src/frontend_fox/CRawDialog.cpp:103
 #: src/frontend_fox/CRawDialog.cpp:104
 msgid "normally leave this 0"
-msgstr "normaalisti jätä tämä 0"
+msgstr "normaalisti jata tama 0"
 
 #: src/frontend_fox/CRawDialog.cpp:104
 msgid "in audio frames"
@@ -3701,18 +3701,18 @@ msgstr "Data pituus negatiivinen"
 
 #: src/frontend_fox/CCueListDialog.cpp:66
 msgid "Cue List"
-msgstr "Välimerkkilista"
+msgstr "Valimerkkilista"
 
 #: src/frontend_fox/CCueListDialog.cpp:76
 msgid "&Add"
-msgstr "&Lisää"
+msgstr "&Lisaa"
 
 #: src/frontend_fox/CMetersWindow.cpp:510
 msgid ""
 "Adjust Zoom Factor for Stereo Phase Meter\n"
 "All the way down means no zooming"
 msgstr ""
-"Säädä Stereovaihemittarin Zoomauskerrointa \n"
+"Saada Stereovaihemittarin Zoomauskerrointa \n"
 "Kokonaan alhaalla - ei zoomausta"
 
 #: src/frontend_fox/CMetersWindow.cpp:602
@@ -3725,20 +3725,20 @@ msgid ""
 "Adjust Zoom Factor for Analyzer\n"
 "Right-click for Default"
 msgstr ""
-"Säädä Analysaattorin Zoomauskerrointa\n"
+"Saada Analysaattorin Zoomauskerrointa\n"
 "Oletusasetus Hiiren Oikealla"
 
 #: src/frontend_fox/CMetersWindow.cpp:836
 msgid "Configure with FFTW"
-msgstr "Määritä FFTW;n kanssa"
+msgstr "Maarita FFTW;n kanssa"
 
 #: src/frontend_fox/CMetersWindow.cpp:837
 msgid "for Freq. Analysis"
-msgstr "taajuusanalyysiä varten."
+msgstr "taajuusanalyysia varten."
 
 #: src/frontend_fox/settings.cpp:81
 msgid "Show Time Units in..."
-msgstr "Näytä aika..."
+msgstr "Nayta aika..."
 
 #: src/frontend_fox/settings.cpp:83
 #, fuzzy
@@ -3753,39 +3753,39 @@ msgstr "Frames"
 #: src/frontend_fox/settings.cpp:87
 #, fuzzy
 msgid "Bytes"
-msgstr "Bittiä"
+msgstr "Bittia"
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:32
 #: src/frontend_fox/LoopingActionDialogs.cpp:58
 msgid "Cue Name"
-msgstr "Välimerkin Nimi"
+msgstr "Valimerkin Nimi"
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:34
 #: src/frontend_fox/LoopingActionDialogs.cpp:60
 msgid "What to Name the New Cues"
-msgstr "Uusien Välimerkkien Nimet"
+msgstr "Uusien Valimerkkien Nimet"
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:38
 msgid "Cue Count"
-msgstr "Välimerkkien Määrä"
+msgstr "Valimerkkien Maara"
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:43
 msgid "How Many Cues to Place Equally Spaced within the Selection"
-msgstr "Kuinka Monta Välimerkkiä Asetetaan Tasavälein Valitulle Alueelle"
+msgstr "Kuinka Monta Valimerkkia Asetetaan Tasavalein Valitulle Alueelle"
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:47
 #: src/frontend_fox/LoopingActionDialogs.cpp:72
 msgid "Anchor Cues in Time"
-msgstr "Ankkuroi Välimerkit Aikaan"
+msgstr "Ankkuroi Valimerkit Aikaan"
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:49
 #: src/frontend_fox/LoopingActionDialogs.cpp:74
 msgid "Set the Cues to be Anchored in Time or Not"
-msgstr "Ankkuroidaanko Välimerkit Aikaan vaiko Ei"
+msgstr "Ankkuroidaanko Valimerkit Aikaan vaiko Ei"
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:64
 msgid "Time Interval"
-msgstr "Aikaväli"
+msgstr "Aikavali"
 
 #: src/frontend_fox/ClibaudiofileSaveParametersDialog.cpp:40
 msgid "Save Parameters"
@@ -3807,7 +3807,7 @@ msgstr "Kompressio Tyyppi"
 #: src/frontend_fox/ClibaudiofileSaveParametersDialog.cpp:68
 #, fuzzy
 msgid "Save Cues"
-msgstr "Tallenna Välimerkit"
+msgstr "Tallenna Valimerkit"
 
 #: src/frontend_fox/ClibaudiofileSaveParametersDialog.cpp:68
 msgid ""
@@ -3817,7 +3817,7 @@ msgstr "Enable or Disable the saving of cues to the file if the format supports 
 #: src/frontend_fox/ClibaudiofileSaveParametersDialog.cpp:69
 #, fuzzy
 msgid "Save User Notes"
-msgstr "Käyttäjän Huomautukset"
+msgstr "Kayttajan Huomautukset"
 
 #: src/frontend_fox/ClibaudiofileSaveParametersDialog.cpp:69
 msgid ""
@@ -3830,8 +3830,8 @@ msgstr "Enable or Disable the saving of user notes to the file if the format "
 msgid ""
 "Some software may not handle files containing cues or user notes.\n"
 "So, you can disable their being saved to the file."
-msgstr "Jotkut ohjelmat eivät hyväksy välimerkkejä tai huomautuksia.\n"
-"Voit valita ettei niitä tallenneta tiedostoon."
+msgstr "Jotkut ohjelmat eivat hyvaksy valimerkkeja tai huomautuksia.\n"
+"Voit valita ettei niita tallenneta tiedostoon."
 
 #: src/frontend_fox/ClibaudiofileSaveParametersDialog.cpp:165
 msgid ""
@@ -3839,8 +3839,8 @@ msgid ""
 "This is because ReZound cannot tell enough from the libaudiofile library "
 "what is valid."
 msgstr ""
-"Jotkut yhdistelmät voivat aiheuttaa ongelmia.\n"
-" ReZound ei voi tulkita libaudiofile kansiosta kaikkia täsmääviä "
+"Jotkut yhdistelmat voivat aiheuttaa ongelmia.\n"
+" ReZound ei voi tulkita libaudiofile kansiosta kaikkia tasmaavia "
 "vaihtoehtoja."
 
 #: src/frontend_fox/FXConstantParamValue.cpp:74
@@ -3870,11 +3870,11 @@ msgstr "Puhdista Normaaliksi"
 
 #: src/frontend_fox/FXGraphParamValue.cpp:381
 msgid "Flip Graph Horizontally"
-msgstr "Käännä Vaakasuunnassa"
+msgstr "Kaanna Vaakasuunnassa"
 
 #: src/frontend_fox/FXGraphParamValue.cpp:382
 msgid "Flip Graph Vertically"
-msgstr "Käännä Pystysuunnassa"
+msgstr "Kaanna Pystysuunnassa"
 
 #: src/frontend_fox/FXGraphParamValue.cpp:383
 msgid "Smooth Graph Nodes"
@@ -3888,11 +3888,11 @@ msgstr "points"
 
 #: src/frontend_fox/CKeyBindingsDialog.cpp:52
 msgid "Assign Hotkey"
-msgstr "Tee pikanäppäin"
+msgstr "Tee pikanappain"
 
 #: src/frontend_fox/CKeyBindingsDialog.cpp:57
 msgid "Press a Key Combination"
-msgstr "Paina näppäinyhdistelmä"
+msgstr "Paina nappainyhdistelma"
 
 #: src/frontend_fox/CKeyBindingsDialog.cpp:58
 msgid "Assign No Key"
@@ -3905,11 +3905,11 @@ msgstr "&Poista"
 
 #: src/frontend_fox/CKeyBindingsDialog.cpp:143
 msgid "Hot Keys"
-msgstr "Pikanäppäin"
+msgstr "Pikanappain"
 
 #: src/frontend_fox/CKeyBindingsDialog.cpp:148
 msgid "Assign Hot Keys"
-msgstr "Aseta pikanäppäin"
+msgstr "Aseta pikanappain"
 
 #: src/frontend_fox/CKeyBindingsDialog.cpp:180
 #, fuzzy
@@ -3918,12 +3918,12 @@ msgstr "Valinta"
 
 #: src/frontend_fox/CKeyBindingsDialog.cpp:181
 msgid "Hot Key"
-msgstr "Pikanäppäin"
+msgstr "Pikanappain"
 
 #: src/frontend_fox/CKeyBindingsDialog.cpp:185
 #, fuzzy
 msgid "Assign\tOr Double-Click An Item"
-msgstr "&Käytä\t tai Tuplaklikkaa Valintaa Listalla"
+msgstr "&Kayta\t tai Tuplaklikkaa Valintaa Listalla"
 
 #: src/frontend_fox/CKeyBindingsDialog.cpp:213
 msgid "Unhandled Key Combination"
@@ -3937,7 +3937,7 @@ msgstr "on jo varattu: "
 #, fuzzy
 msgid "Do you want to override the existing key assignment?"
 msgstr ""
-"Haluatko varmasti kirjoittaa olemassaolevan päälle:\n"
+"Haluatko varmasti kirjoittaa olemassaolevan paalle:\n"
 "   "
 
 #: src/frontend_fox/GenerateActionDialogs.cpp:53
@@ -3967,7 +3967,7 @@ msgstr "Musta :)"
 
 #: src/frontend_fox/GenerateActionDialogs.cpp:79
 msgid "Noise Color"
-msgstr "Kohinan Väri"
+msgstr "Kohinan Vari"
 
 #: src/frontend_fox/GenerateActionDialogs.cpp:91
 msgid "Independent Channels"
@@ -3979,7 +3979,7 @@ msgstr "Mono"
 
 #: src/frontend_fox/GenerateActionDialogs.cpp:93
 msgid "Inverse Mono"
-msgstr "Käänteinen mono"
+msgstr "Kaanteinen mono"
 
 #: src/frontend_fox/GenerateActionDialogs.cpp:96
 msgid "Stereo Image"
@@ -4007,7 +4007,7 @@ msgstr "Kolmioaalto"
 
 #: src/frontend_fox/GenerateActionDialogs.cpp:161
 msgid "Tone Type"
-msgstr "Ääni Tyyppi"
+msgstr "Aani Tyyppi"
 
 #: src/frontend_fox/CVoxDialog.cpp:42
 msgid "Vox Parameters"
@@ -4015,7 +4015,7 @@ msgstr "Vox Parameters"
 
 #: src/frontend_fox/CLADSPAActionDialog.cpp:87
 msgid "Controls"
-msgstr "Säätimet"
+msgstr "Saatimet"
 
 #: src/frontend_fox/CLADSPAActionDialog.cpp:192
 msgid "Routing"
@@ -4036,13 +4036,13 @@ msgid ""
 "receive garbage from the LADSPA plugin.  If this is the case, then either "
 "rebuild ReZound or the LADSPA plugins to make the types match."
 msgstr ""
-"TÄMÄ VAROITUS NÄYTETÄÄN VAIN KERRAN, LUE SIIS TARKKAAN!!!\n"
+"TAMA VAROITUS NAYTETAAN VAIN KERRAN, LUE SIIS TARKKAAN!!!\n"
 "\n"
-"JOTKUT LADSPA liitynnäiset(plugins) käyttävät libfftw. libfftw voidaan "
-"määrittää käyttämään 'floats' tai 'doubles' luonnollisena tallennusmuotona "
-"(mutta ei kumpaakin yhtäaikaa). Jos LADSPA pluginit on erilailla määritetyn "
-"libfftw varassa kun ReZound sen määritti tuloksena saa roskaa tästä plugin "
-"LADSPA. Tässä tapauksessa uudellenrakenna ReZound tai LADSPA, jotta ovat "
+"JOTKUT LADSPA liitynnaiset(plugins) kayttavat libfftw. libfftw voidaan "
+"maarittaa kayttamaan 'floats' tai 'doubles' luonnollisena tallennusmuotona "
+"(mutta ei kumpaakin yhtaaikaa). Jos LADSPA pluginit on erilailla maaritetyn "
+"libfftw varassa kun ReZound sen maaritti tuloksena saa roskaa tasta plugin "
+"LADSPA. Tassa tapauksessa uudellenrakenna ReZound tai LADSPA, jotta ovat "
 "yhteensopivia."
 
 #: src/frontend_fox/CRezSaveParametersDialog.cpp:40
@@ -4120,11 +4120,11 @@ msgstr "Silmukkatyyppi"
 #: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:102
 #: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:139
 msgid "Waveform IDs must be from 0 to 16384"
-msgstr "Aaltomuoto ID täytyy olla 0 - 16384"
+msgstr "Aaltomuoto ID taytyy olla 0 - 16384"
 
 #: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:148
 msgid "Loop type must be from 0 to 127"
-msgstr "Silmukkatyyppi täytyy olla 0 - 127"
+msgstr "Silmukkatyyppi taytyy olla 0 - 127"
 
 #: src/frontend_fox/COggDialog.cpp:56
 msgid "Ogg Compression Parameters"
@@ -4180,11 +4180,11 @@ msgstr "mp3 Kompressio Parametrit"
 
 #: src/frontend_fox/CMp3Dialog.cpp:83
 msgid "Average Bit Rate"
-msgstr "Keskimääräinen Bittivirta"
+msgstr "Keskimaarainen Bittivirta"
 
 #: src/frontend_fox/CMp3Dialog.cpp:88
 msgid "Average Bit Rate: "
-msgstr "Keskimääräinen Bittivirta:"
+msgstr "Keskimaarainen Bittivirta:"
 
 #: src/frontend_fox/CMp3Dialog.cpp:97
 msgid "Variable Bit Rate Quality Setting"
@@ -4196,11 +4196,11 @@ msgstr "0(Paras Laatu) -> 9(Huonoin laatu)"
 
 #: src/frontend_fox/CMp3Dialog.cpp:110
 msgid "Use Only These Flags"
-msgstr "Käytä Vain Näitä Indikaattoreita"
+msgstr "Kayta Vain Naita Indikaattoreita"
 
 #: src/frontend_fox/CMp3Dialog.cpp:114
 msgid "Additional Flags: "
-msgstr "Lisä Indikaattorit:"
+msgstr "Lisa Indikaattorit:"
 
 #: src/frontend_fox/CMp3Dialog.cpp:117
 msgid "To lame"
@@ -4211,28 +4211,28 @@ msgid ""
 " -- syntax error in cue names -- expected to find a cue beginning with '(' "
 "at time: "
 msgstr ""
-" -- syntax virhe välimerkkien nimissä -- välimerkin tulisi alkaa   '(' aika:"
+" -- syntax virhe valimerkkien nimissa -- valimerkin tulisi alkaa   '(' aika:"
 
 #: src/backend/File/parse_segment_cues.h:98
 msgid ""
 " -- syntax error in cue names -- expected to find a cue beginning with '(' "
 "or ')' at time: "
 msgstr ""
-" -- syntax virhe välimerkkien nimissä -- välimerkin tulisi alkaa  '(' tai "
+" -- syntax virhe valimerkkien nimissa -- valimerkin tulisi alkaa  '(' tai "
 "')' aika:"
 
 #: src/backend/File/parse_segment_cues.h:103
 msgid " -- internal error -- invalid state: "
-msgstr " -- sisäinen virhe -- epäkelpo asema:"
+msgstr " -- sisainen virhe -- epakelpo asema:"
 
 #~ msgid ""
 #~ "About to write data to burn.  Afterwards burning will begin.  Watch "
 #~ "standard output/error for progress information, or just wait for cdrdao "
 #~ "to finish."
 #~ msgstr ""
-#~ "Dataa kirjoitetaan poltettavaksi. Tämän jälkeen poltto alkaa. Katso "
-#~ "standardi ulostuloa/virheitä edistymisen toteamiseksi, tai odota kun "
-#~ "cdrdao saa työn  valmiiksi."
+#~ "Dataa kirjoitetaan poltettavaksi. Taman jalkeen poltto alkaa. Katso "
+#~ "standardi ulostuloa/virheita edistymisen toteamiseksi, tai odota kun "
+#~ "cdrdao saa tyon  valmiiksi."
 
 #~ msgid "Total data to be burned is too large: "
-#~ msgstr "Poltettava datamäärä on liian suuri:"
+#~ msgstr "Poltettava datamaara on liian suuri:"
