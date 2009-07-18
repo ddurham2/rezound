@@ -98,7 +98,7 @@ void CStatusComm::message(const string &message,bool reformatIfNeeded)
 	FXMessageBox::information(mainWindow,MBOX_OK,_("Note"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str());
 }
 
-VAnswer CStatusComm::question(const string &message,VQuestion options,bool reformatIfNeeded)
+VAnswer CStatusComm::question(const string &message,/*VQuestion*/int options,bool reformatIfNeeded)
 {
 	FXint flags=0;
 

@@ -47,7 +47,7 @@ public:
 	virtual void error(const string &message,VSeverity severity=none,bool reformatIfNeeded=true);
 	virtual void warning(const string &message,bool reformatIfNeeded=true);
 	virtual void message(const string &message,bool reformatIfNeeded=true);
-	virtual VAnswer question(const string &message,VQuestion options,bool reformatIfNeeded=true);
+	virtual VAnswer question(const string &message,/*VQuestion*/int options,bool reformatIfNeeded=true);
 
 	virtual void beep();
 

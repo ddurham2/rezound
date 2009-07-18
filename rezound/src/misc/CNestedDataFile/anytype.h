@@ -68,28 +68,28 @@ template<class Type> static const string anytype_to_string(const vector<Type> &a
 
 // template specializations of string_to_anytype
 
-template<> static const string string_to_anytype<string>(const string &str,string &ret)                         { return ret=s2at::unescape_chars(s2at::remove_surrounding_quotes(str)); }
+template<> const string string_to_anytype<string>(const string &str,string &ret)                         { return ret=s2at::unescape_chars(s2at::remove_surrounding_quotes(str)); }
 
-template<> static const bool string_to_anytype<bool>(const string &str,bool &ret)                             { return s2at::remove_surrounding_quotes(str)=="true" ? ret=true : ret=false; }
+template<> const bool string_to_anytype<bool>(const string &str,bool &ret)                             { return s2at::remove_surrounding_quotes(str)=="true" ? ret=true : ret=false; }
 
-template<> static const char string_to_anytype<char>(const string &str,char &ret)                             { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
-template<> static const unsigned char string_to_anytype<unsigned char>(const string &str,unsigned char &ret)           { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
+template<> const char string_to_anytype<char>(const string &str,char &ret)                             { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
+template<> const unsigned char string_to_anytype<unsigned char>(const string &str,unsigned char &ret)           { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
 
-template<> static const short string_to_anytype<short>(const string &str,short &ret)                           { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
-template<> static const unsigned short string_to_anytype<unsigned short>(const string &str,unsigned short &ret)         { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
+template<> const short string_to_anytype<short>(const string &str,short &ret)                           { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
+template<> const unsigned short string_to_anytype<unsigned short>(const string &str,unsigned short &ret)         { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
 
-template<> static const int string_to_anytype<int>(const string &str,int &ret)                               { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
-template<> static const unsigned int string_to_anytype<unsigned int>(const string &str,unsigned int &ret)             { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
+template<> const int string_to_anytype<int>(const string &str,int &ret)                               { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
+template<> const unsigned int string_to_anytype<unsigned int>(const string &str,unsigned int &ret)             { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
 
-template<> static const long string_to_anytype<long>(const string &str,long &ret)                             { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
-template<> static const unsigned long string_to_anytype<unsigned long>(const string &str,unsigned long &ret)           { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
+template<> const long string_to_anytype<long>(const string &str,long &ret)                             { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
+template<> const unsigned long string_to_anytype<unsigned long>(const string &str,unsigned long &ret)           { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
 
-template<> static const long long string_to_anytype<long long>(const string &str,long long &ret)                   { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
-template<> static const unsigned long long string_to_anytype<unsigned long long>(const string &str,unsigned long long &ret) { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
+template<> const long long string_to_anytype<long long>(const string &str,long long &ret)                   { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
+template<> const unsigned long long string_to_anytype<unsigned long long>(const string &str,unsigned long long &ret) { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
 
-template<> static const float string_to_anytype<float>(const string &str,float &ret)                           { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0.0f; if(str=="inf") ret=INFINITY; else if(str=="-inf") ret=-INFINITY; else ss >> ret; return ret; }
-template<> static const double string_to_anytype<double>(const string &str,double &ret)                         { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0.0; if(str=="inf") ret=INFINITY; else if(str=="-inf") ret=-INFINITY; else ss >> ret; return ret; }
-template<> static const long double string_to_anytype<long double>(const string &str,long double &ret)               { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0.0; if(str=="inf") ret=INFINITY; else if(str=="-inf") ret=-INFINITY; else ss >> ret; return ret; }
+template<> const float string_to_anytype<float>(const string &str,float &ret)                           { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0.0f; if(str=="inf") ret=INFINITY; else if(str=="-inf") ret=-INFINITY; else ss >> ret; return ret; }
+template<> const double string_to_anytype<double>(const string &str,double &ret)                         { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0.0; if(str=="inf") ret=INFINITY; else if(str=="-inf") ret=-INFINITY; else ss >> ret; return ret; }
+template<> const long double string_to_anytype<long double>(const string &str,long double &ret)               { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0.0; if(str=="inf") ret=INFINITY; else if(str=="-inf") ret=-INFINITY; else ss >> ret; return ret; }
 
 // I really wished that I didn't have to explicitly use 'vector' in the definition; I'd have like to use any container with an iterator interface
 #include <CMutex.h>
@@ -120,31 +120,31 @@ template<class Type> static const vector<Type> &string_to_anytype(const string &
 
 // template specializations of anytype_to_string
 
-template<> static const string anytype_to_string<string>(const string &any)             { return "\""+s2at::escape_chars(any)+"\""; }
+template<> const string anytype_to_string<string>(const string &any)             { return "\""+s2at::escape_chars(any)+"\""; }
 
-template<> static const string anytype_to_string<bool>(const bool &any)               { return any ? "true" : "false"; }
+template<> const string anytype_to_string<bool>(const bool &any)               { return any ? "true" : "false"; }
 
-template<> static const string anytype_to_string<char>(const char &any)               { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
-template<> static const string anytype_to_string<unsigned char>(const unsigned char &any)      { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
+template<> const string anytype_to_string<char>(const char &any)               { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
+template<> const string anytype_to_string<unsigned char>(const unsigned char &any)      { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
 
-template<> static const string anytype_to_string<short>(const short &any)              { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
-template<> static const string anytype_to_string<unsigned short>(const unsigned short &any)     { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
+template<> const string anytype_to_string<short>(const short &any)              { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
+template<> const string anytype_to_string<unsigned short>(const unsigned short &any)     { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
 
-template<> static const string anytype_to_string<int>(const int &any)                { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
-template<> static const string anytype_to_string<unsigned int>(const unsigned int &any)       { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
+template<> const string anytype_to_string<int>(const int &any)                { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
+template<> const string anytype_to_string<unsigned int>(const unsigned int &any)       { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
 
-template<> static const string anytype_to_string<long>(const long &any)               { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
-template<> static const string anytype_to_string<unsigned long>(const unsigned long &any)      { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
+template<> const string anytype_to_string<long>(const long &any)               { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
+template<> const string anytype_to_string<unsigned long>(const unsigned long &any)      { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
 
-template<> static const string anytype_to_string<long long>(const long long &any)          { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
-template<> static const string anytype_to_string<unsigned long long>(const unsigned long long &any) { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
+template<> const string anytype_to_string<long long>(const long long &any)          { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
+template<> const string anytype_to_string<unsigned long long>(const unsigned long long &any) { ostringstream ss; NO_LOCALE(ss) ss << any; return ss.str(); }
 
 // I've picked a rather arbitrary way of formatting floats one way or another depending on how big it is.. I wish there were a way to output the ascii in such a way as to preserve all the information in the float (without printing the hex of it or something like that)
 #include <istring>
 #include <math.h> // for isnan which I hope is there (maybe fix in common.h if it's not
-template<> static const string anytype_to_string<float>(const float &any)              { if(isnan(any)) return "0"; else if(isinf(any)==1) return "inf"; else if(isinf(any)==-1) return "-inf"; else { ostringstream ss; NO_LOCALE(ss) if(any>999999.0) {ss.setf(ios::scientific); ss.width(0); ss.precision(12); ss.fill(' '); } else {ss.setf(ios::fixed); ss.precision(6); ss.fill(' '); } ss << any; return istring(ss.str()).trim(); } }
-template<> static const string anytype_to_string<double>(const double &any)             { if(isnan(any)) return "0"; else if(isinf(any)==1) return "inf"; else if(isinf(any)==-1) return "-inf"; else { ostringstream ss; NO_LOCALE(ss) if(any>999999.0) {ss.setf(ios::scientific); ss.width(0); ss.precision(12); ss.fill(' '); } else {ss.setf(ios::fixed); ss.precision(6); ss.fill(' '); } ss << any; return istring(ss.str()).trim(); } }
-template<> static const string anytype_to_string<long double>(const long double &any)        { if(isnan(any)) return "0"; else if(isinf(any)==1) return "inf"; else if(isinf(any)==-1) return "-inf"; else { ostringstream ss; NO_LOCALE(ss) if(any>999999.0) {ss.setf(ios::scientific); ss.width(0); ss.precision(12); ss.fill(' '); } else {ss.setf(ios::fixed); ss.precision(6); ss.fill(' '); } ss << any; return istring(ss.str()).trim(); } }
+template<> const string anytype_to_string<float>(const float &any)              { if(isnan(any)) return "0"; else if(isinf(any)==1) return "inf"; else if(isinf(any)==-1) return "-inf"; else { ostringstream ss; NO_LOCALE(ss) if(any>999999.0) {ss.setf(ios::scientific); ss.width(0); ss.precision(12); ss.fill(' '); } else {ss.setf(ios::fixed); ss.precision(6); ss.fill(' '); } ss << any; return istring(ss.str()).trim(); } }
+template<> const string anytype_to_string<double>(const double &any)             { if(isnan(any)) return "0"; else if(isinf(any)==1) return "inf"; else if(isinf(any)==-1) return "-inf"; else { ostringstream ss; NO_LOCALE(ss) if(any>999999.0) {ss.setf(ios::scientific); ss.width(0); ss.precision(12); ss.fill(' '); } else {ss.setf(ios::fixed); ss.precision(6); ss.fill(' '); } ss << any; return istring(ss.str()).trim(); } }
+template<> const string anytype_to_string<long double>(const long double &any)        { if(isnan(any)) return "0"; else if(isinf(any)==1) return "inf"; else if(isinf(any)==-1) return "-inf"; else { ostringstream ss; NO_LOCALE(ss) if(any>999999.0) {ss.setf(ios::scientific); ss.width(0); ss.precision(12); ss.fill(' '); } else {ss.setf(ios::fixed); ss.precision(6); ss.fill(' '); } ss << any; return istring(ss.str()).trim(); } }
 
 
 // I really wished that I didn't have to explicitly use 'vector' in the definition, I'd have like to use any container with an iterator interface
