@@ -31,6 +31,21 @@ using namespace std;
 #include "config.h"
 #endif
 
+#ifdef __GNUC__
+#	ifndef GCC_VERSION
+#		define GCC_VERSION (__GNUC__ * 100 + __GNUC_MINOR__)
+#	endif
+
+// requirement of static template functions changed in gcc-4.3
+#	if GCC_VERSION >= 403
+#		define STATIC_TPL
+#	else
+#		define STATIC_TPL static
+#	endif
+#endif
+
+
+
 /* Redefine PACKAGE TO REZOUND_PACKAGE to clear up possible conflicts with
  * other autoconfed packages 
  */

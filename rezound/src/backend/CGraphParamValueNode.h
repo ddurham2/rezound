@@ -21,7 +21,6 @@
 #ifndef __CGraphParamValueNode_H__
 #define __CGraphParamValueNode_H__
 
-
 #include "../../config/common.h"
 
 #include <vector>
@@ -45,7 +44,7 @@ public:
 typedef vector<CGraphParamValueNode> CGraphParamValueNodeList;
 
 #include <CNestedDataFile/anytype.h>
-template<> static const CGraphParamValueNode string_to_anytype<CGraphParamValueNode>(const string &_str,CGraphParamValueNode &ret) 
+template<> STATIC_TPL const CGraphParamValueNode string_to_anytype<CGraphParamValueNode>(const string &_str,CGraphParamValueNode &ret) 
 {
 	const string str=s2at::remove_surrounding_quotes(_str); 
 	const size_t pos=str.find("|"); 
@@ -56,7 +55,7 @@ template<> static const CGraphParamValueNode string_to_anytype<CGraphParamValueN
 	return ret; 
 }
 
-template<> static const string anytype_to_string<CGraphParamValueNode>(const CGraphParamValueNode &any) 
+template<> STATIC_TPL const string anytype_to_string<CGraphParamValueNode>(const CGraphParamValueNode &any) 
 {
 	return "\""+anytype_to_string<double>(any.x)+"|"+anytype_to_string<double>(any.y)+"\""; 
 }

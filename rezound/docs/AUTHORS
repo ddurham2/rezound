@@ -30,6 +30,9 @@ $Id$
 
 # Gerhard Zintel - Implementation of semitone shuttle wheel feature (src/frontend_foxCMainWindow.cpp)
 
+# James Vega - https://sourceforge.net/tracker/?func=detail&aid=1919151&group_id=5056&atid=305056
+#
+
 # David W. Durham - Pretty much everything else
 
 # Translations - see po/*.po

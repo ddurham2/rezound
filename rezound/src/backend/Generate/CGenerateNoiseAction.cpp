@@ -22,6 +22,7 @@
 #include "CGenerateNoiseAction.h"
 
 #include "../CActionParameters.h"
+#include <cstdlib>
 
 CGenerateNoiseAction::CGenerateNoiseAction(const AActionFactory *factory,const CActionSound *actionSound,const double _noiseLength,const double _volume,const NoiseTypes _noiseType,const StereoImage _stereoImage,const double _maxParticleVelocity):
 	AAction(factory,actionSound),

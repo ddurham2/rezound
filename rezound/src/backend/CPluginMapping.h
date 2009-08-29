@@ -215,7 +215,7 @@ public:
 };
 
 #include <CNestedDataFile/anytype.h>
-template<> static const CPluginMapping string_to_anytype<CPluginMapping>(const string &str,CPluginMapping &ret)
+template<> STATIC_TPL const CPluginMapping string_to_anytype<CPluginMapping>(const string &str,CPluginMapping &ret)
 {
 	CNestedDataFile f;
 	f.parseString(s2at::remove_surrounding_quotes(str));
@@ -223,7 +223,7 @@ template<> static const CPluginMapping string_to_anytype<CPluginMapping>(const s
 	return ret;
 }
 
-template<> static const string anytype_to_string<CPluginMapping>(const CPluginMapping &any)
+template<> STATIC_TPL const string anytype_to_string<CPluginMapping>(const CPluginMapping &any)
 {
 	CNestedDataFile f;
 	any.writeToFile(&f,"");
