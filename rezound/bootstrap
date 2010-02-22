@@ -29,6 +29,7 @@ then
 	rm -f ABOUT-NLS config/config.rpath config/m4/codeset.m4 config/m4/gettext.m4 config/m4/glibc21.m4 config/m4/iconv.m4 config/m4/intdiv0.m4 config/m4/inttypes-pri.m4 config/m4/inttypes.m4 config/m4/inttypes_h.m4 config/m4/isc-posix.m4 config/m4/lcmessage.m4 config/m4/lib-ld.m4 config/m4/lib-link.m4 config/m4/lib-prefix.m4 config/m4/progtest.m4 config/m4/stdint_h.m4 config/m4/uintmax_t.m4 config/m4/ulonglong.m4 po/Makefile.in.in po/Rules-quot po/boldquot.sed po/en@boldquot.header po/en@quot.header po/insert-header.sin po/quot.sed po/remove-potcdate.sin 
 
 else
+	libtoolize
 	export AUTOMAKE="automake --add-missing --foreign"
 	autoreconf -fisv && rm -f `find . -name "*~"` && rm -f ChangeLog
 	exit $?

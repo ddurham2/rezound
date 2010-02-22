@@ -37,10 +37,10 @@ EOF
 
 	$CXX $1 ajv_cxx_flag.cc >/dev/null 2>ajv_cxx_flag.err
 	if test x"$?" = x"0"; then
-		AC_MSG_RESULT(yes)
+		[AC_MSG_RESULT(yes)]
 		CXXFLAGS="$CXXFLAGS $1"
 	else
-		AC_MSG_RESULT(no)
+		[AC_MSG_RESULT(no)]
 	fi
 
 	rm -rf ajv_cxx_flag.cc

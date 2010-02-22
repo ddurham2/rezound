@@ -62,6 +62,6 @@ libRemaster_la_SOURCES= \
 			CShortenQuietAreasAction.cpp 
 
 
-AM_CXXFLAGS=@SOUNDTOUCH_CXXFLAGS@
+AM_CXXFLAGS=@soundtouch_CFLAGS@
 # had to put this in here or it wouldn't link because of lib order
-libRemaster_la_LIBADD=@SOUNDTOUCH_LIBS@ 
+libRemaster_la_LIBADD=@soundtouch_LIBS@ 

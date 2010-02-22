@@ -24,7 +24,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_INIT(rezound, 0.12.3beta, [http://sourceforge.net/tracker/?atid=105056&group_id=5056])
-AC_CONFIG_AUX_DIR(config)
+AC_CONFIG_AUX_DIR([config])
+AC_CONFIG_MACRO_DIR([config/m4])
 AM_CONFIG_HEADER([config/config.h])
 AM_INIT_AUTOMAKE
 AC_DISABLE_SHARED	# This makes libtool only build static libs 
@@ -81,7 +82,7 @@ AC_PATH_PROG(CDRDAO, cdrdao)
 
 
 ############################################################################
-# Set some compilter flags if they're available                            #
+# Set some compiler flags if they're available                             #
 ############################################################################
 ajv_CXX_FLAG(-g)
 ajv_CXX_FLAG(-Wall)
@@ -495,44 +496,68 @@ AC_ARG_ENABLE(
 
 # used to conditionally activate code in ClibaudiofileSoundTranslator.*
 AH_TEMPLATE(HAVE_LIBAUDIOFILE)
-# this macro detects libaudiofile and does an AC_SUBST on AUDIOFILE_CFLAGS and AUDIOFILE_LIBS, so I put these variables in src/backend/Makefile.am for substitution (also audiofile comes with with a pkg-config file, I could use that)
-AM_PATH_AUDIOFILE(0.2.2,AC_DEFINE(HAVE_LIBAUDIOFILE),AC_MSG_NOTICE([audiofile website: http://oss.sgi.com/projects/audiofile]))
-
+PKG_CHECK_MODULES(
+	[audiofile],
+	[audiofile >= 0.2.2],
+	[AC_DEFINE(HAVE_LIBAUDIOFILE)],
+	[AC_MSG_WARN(***** libaudiofile not found.  Many file audio formats will not be supported.)]
+)
 
 
 ### Ogg Vorbis Libraries ##################################################
 
-AC_LANG_PUSH(C) # xiph needs to include vorbisenc.h as well if C++ is going to compile the code
-
 AH_TEMPLATE(HAVE_LIBOGG)
-# this macro detects libogg and does an AC_SUBST on OGG_CFLAGS and OGG_LIBS, so I put these variables in src/backend/Makefile.am for substitution
-XIPH_PATH_OGG(AC_DEFINE(HAVE_LIBOGG),AC_MSG_NOTICE([Ogg Vorbis website: http://www.xiph.org]))
+PKG_CHECK_MODULES(
+	[ogg],
+	[ogg],
+	[AC_DEFINE(HAVE_LIBOGG)],
+	[AC_MSG_WARN(***** libogg not found.  The ogg file audio format will not be supported.)]
+)
 
 AH_TEMPLATE(HAVE_LIBVORBIS)
-# this macro detects libvorbis and does an AC_SUBST on VORBIS_CFLAGS, VORBIS_LIBS, VORBISFILE_LIBS and VORBISENC_LIBS, so I put these variables in src/backend/Makefile.am for substitution
-XIPH_PATH_VORBIS(AC_DEFINE(HAVE_LIBVORBIS),AC_MSG_NOTICE([Ogg Vorbis website: http://www.xiph.org]))
+PKG_CHECK_MODULES(
+	[vorbis],
+	[vorbis],
+	[AC_DEFINE(HAVE_LIBVORBIS)],
+	[AC_MSG_WARN(***** libvorbis not found.  The ogg file audio format will not be supported.)]
+)
 
-AC_LANG_POP(C)
+AH_TEMPLATE(HAVE_LIBVORBISENC)
+PKG_CHECK_MODULES(
+	[vorbisenc],
+	[vorbisenc],
+	[AC_DEFINE(HAVE_LIBVORBISENC)],
+	[AC_MSG_WARN(***** libvorbisenc not found.  The ogg file audio format will not be supported.)]
+)
 
+AH_TEMPLATE(HAVE_LIBVORBISFILE)
+PKG_CHECK_MODULES(
+	[vorbisfile],
+	[vorbisfile],
+	[AC_DEFINE(HAVE_LIBVORBISFILE)],
+	[AC_MSG_WARN(***** libvorbisfile not found.  The ogg file audio format will not be supported.)]
+)
 
 
 
 
 ### FLAC Library ##########################################################
 
-# used to conditionally activate code in CFLACSoundTranslator.*
-AH_TEMPLATE(HAVE_LIBFLACPP)
 AH_TEMPLATE(HAVE_LIBFLAC)
-
-# look for libFLAC and if it's found then look for libFLAC++
-AM_PATH_LIBFLAC(
-	[
-		AC_DEFINE(HAVE_LIBFLAC)
-		AM_PATH_LIBFLACPP(AC_DEFINE(HAVE_LIBFLACPP),AC_MSG_NOTICE([FLAC website: http://flac.sourceforge.net]))
-	],
-	AC_MSG_NOTICE([FLAC website: http://flac.sourceforge.net])
+PKG_CHECK_MODULES(
+	[flac],
+	[flac],
+	[AC_DEFINE(HAVE_LIBFLAC)],
+	[AC_MSG_WARN(***** libflac not found.  The flac file audio format will not be supported.)]
 )
 
+AH_TEMPLATE(HAVE_LIBFLACPP)
+PKG_CHECK_MODULES(
+	[flacpp],
+	[flac++],
+	[AC_DEFINE(HAVE_LIBFLACPP)],
+	[AC_MSG_WARN(***** libflac++ not found.  The flac file audio format will not be supported.)]
+)
 
 
 
@@ -548,6 +573,7 @@ AM_PATH_LIBFLAC(
 # actions will be disabled and why
 #  ??? email about an official way to test for fftw
 		# ??? actually I don't think I need fftw, just rfftw.. remove fftw and see if that's so
+# TODO port to fftw3 and then can use pkg-config
 AC_CHECK_HEADER(
 	fftw.h,
 	AC_CHECK_LIB(fftw, fftw_create_plan, , AC_MSG_WARN([***** libfftw.a (version 2) not found -- any FFT based actions will be disabled (http://www.fftw.org) *****]),-lfftw),
@@ -600,10 +626,17 @@ AC_SUBST(MAYBE_LADSPA_LIB)
 
 
 
-dnl ############################################################################
-dnl # Handle the flags for a library to to tempo/pitch changing independantly  *
-dnl ############################################################################
-AM_PATH_SOUNDTOUCH([],[],AC_MSG_WARN([***** libSoundTouch not found -- tempo and pitch changing will be disabled (http://www.iki.fi/oparviai/soundtouch) *****]))
+############################################################################
+# Handle the flags for a library to to tempo/pitch changing independently  *
+############################################################################
+
+AH_TEMPLATE(HAVE_LIBSOUNDTOUCH)
+PKG_CHECK_MODULES(
+	[soundtouch],
+	[soundtouch-1.0 >= 1.0],
+	[AC_DEFINE(HAVE_LIBSOUNDTOUCH)],
+	[AC_MSG_WARN(***** libsoundtouch not found.  Tempo and pitch changing will not be supported.)]
+)
 
 
 
@@ -613,49 +646,23 @@ AM_PATH_SOUNDTOUCH([],[],AC_MSG_WARN([***** libSoundTouch not found -- tempo and
 # Check for the Frontend GUI Library                                       #
 ############################################################################
 
-# This is a check for a class in a C++ library. To pinpoint the specific version we need we could change what class is linked.
-# it sets $1_CXXFLAGS and $1_LIBS to either something useful or nothing
-ajv_CXX_CHECK_LIB(FOX-1.6,FXApp,fox-1.6/fx.h,[http://fox-toolkit.org],[],false)
-if test -z "$FOX_1_6_LIBS"; then
-	ajv_CXX_CHECK_LIB(FOX-1.5,FXApp,fox-1.5/fx.h,[http://fox-toolkit.org],[],false)
-	if test -z "$FOX_1_5_LIBS"; then
-		ajv_CXX_CHECK_LIB(FOX-1.4,FXApp,fox-1.4/fx.h,[http://fox-toolkit.org],[],false)
-		if test -z "$FOX_1_4_LIBS"; then
-			ajv_CXX_CHECK_LIB(FOX-1.3,FXApp,fox-1.3/fx.h,[http://fox-toolkit.org],[],false)
-			if test -z "$FOX_1_3_LIBS"; then
-				ajv_CXX_CHECK_LIB(FOX-1.2,FXApp,fox-1.2/fx.h,[http://fox-toolkit.org],[],false)
-				if test -z "$FOX_1_2_LIBS"; then
-					# libFOX-1.2 was not found, now try libFOX-1.1
-					ajv_CXX_CHECK_LIB(FOX-1.1,FXApp,fox-1.1/fx.h,[http://fox-toolkit.org],[],false)
-					if test -z "$FOX_1_1_LIBS"; then
-						# libFOX-1.1 was not found, now try libFOX
-						ajv_CXX_CHECK_LIB(FOX,FXApp,fox/fx.h,[http://fox-toolkit.org],[],true)
-					fi
-				fi
-			fi
-		fi
-	fi
-fi
+AH_TEMPLATE(HAVE_LIBFOX)
+AX_PATH_GENERIC(
+	[fox],
+	[1.1.0],
+	,
+	[
+		AC_DEFINE(HAVE_LIBFOX)
+	],
+	[
+		AC_MSG_ERROR(***** libfox not found -- GUI library (http://fox-toolkit.org) *****) 
+	]
+)
 
-AC_SUBST(FOX_1_1_CXXFLAGS)
-AC_SUBST(FOX_1_1_LIBS)
-AC_SUBST(FOX_1_2_CXXFLAGS)
-AC_SUBST(FOX_1_2_LIBS)
-AC_SUBST(FOX_1_3_CXXFLAGS)
-AC_SUBST(FOX_1_3_LIBS)
-AC_SUBST(FOX_1_4_CXXFLAGS)
-AC_SUBST(FOX_1_4_LIBS)
-AC_SUBST(FOX_1_5_CXXFLAGS)
-AC_SUBST(FOX_1_5_LIBS)
-AC_SUBST(FOX_1_6_CXXFLAGS)
-AC_SUBST(FOX_1_6_LIBS)
-AC_SUBST(FOX_CXXFLAGS)
-AC_SUBST(FOX_LIBS)
 
 # Check for FOX's reswrap program. 
 AC_PATH_PROG(RESWRAP, reswrap)
 	test -z "$RESWRAP" && AC_MSG_ERROR([reswrap not found (it comes with fox) -- perhaps you need to add reswrap's location to your PATH])
-
 
 
 
@@ -728,6 +735,8 @@ AC_ARG_ENABLE(
 # Final                                                                    #
 ############################################################################
 
+# consider using scons.. and create pkg-config files for anything that doesn't already have them
+# TODO stop creating so many libs.. just have a list of cpp files to compile and let that be something the frontend can compile and link in
 #AC_CONFIG_FILES([
 #	Makefile
 #	src/Makefile

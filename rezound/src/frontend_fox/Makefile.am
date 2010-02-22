@@ -114,14 +114,14 @@ _rezound_LDADD= libfrontend.la\
 	$(top_builddir)/src/misc/CNestedDataFile/libmiscCN.la \
 	$(top_builddir)/src/PoolFile/libPoolFile.la
 
-rezound_LDADD=$(_rezound_LDADD) @FOX_1_6_LIBS@ @FOX_1_5_LIBS@  @FOX_1_4_LIBS@ @FOX_1_3_LIBS@ @FOX_1_2_LIBS@ @FOX_1_1_LIBS@ @FOX_LIBS@
+rezound_LDADD=$(_rezound_LDADD) @FOX_LIBS@
 
 ## if I don't do this, automake leaves out @abc@ vars when creating the rezound_DEPENDENCES value
 ## so changes to the LADSPA lib (that may or may not be built) don't cause a re-link
 rezound_DEPENDENCIES=$(_rezound_LDADD)
 
 
-AM_CXXFLAGS=@FOX_1_6_CXXFLAGS@ @FOX_1_5_CXXFLAGS@ @FOX_1_4_CXXFLAGS@ @FOX_1_3_CXXFLAGS@ @FOX_1_2_CXXFLAGS@ @FOX_1_1_CXXFLAGS@ @FOX_CXXFLAGS@
+AM_CXXFLAGS=@FOX_CFLAGS@
 
 noinst_HEADERS=\
 	fox_compat.h \

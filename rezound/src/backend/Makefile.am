@@ -145,9 +145,9 @@ libbackend_la_SOURCES= \
 		        mypopen.cpp \
 		        settings.cpp
 
-# SOUNDTOUCH_CXXFLAGS is in Remaster/Makefile.am
-AM_CXXFLAGS=@AUDIOFILE_CFLAGS@ @ALSA_CFLAGS@ @JACK_CFLAGS@ @OGG_CFLAGS@ @VORBIS_CFLAGS@ @LIBFLACPP_CFLAGS@ @LIBFLAC_CFLAGS@
+# soundtouch_CFLAGS is in Remaster/Makefile.am
+AM_CXXFLAGS=@audiofile_CFLAGS@ @ALSA_CFLAGS@ @JACK_CFLAGS@ @ogg_CFLAGS@ @vorbis_CFLAGS@ @flacpp_CFLAGS@ @flac_CFLAGS@
 
-# SOUNDTOUCH_LIBS is in Remaster/Makefile.am
-libbackend_la_LIBADD=@LTLIBINTL@ @AUDIOFILE_LIBS@ @ALSA_LIBS@ @JACK_LIBS@ @OGG_LIBS@ @VORBISFILE_LIBS@ @VORBISENC_LIBS@ @VORBIS_LIBS@ @LIBFLACPP_LIBS@ @LIBFLAC_LIBS@
+# soundtouch_LIBS is in Remaster/Makefile.am
+libbackend_la_LIBADD=@LTLIBINTL@ @audiofile_LIBS@ @ALSA_LIBS@ @JACK_LIBS@ @ogg_LIBS@ @vorbisfile_LIBS@ @vorbisenc_LIBS@ @vorbis_LIBS@ @flacpp_LIBS@ @flac_LIBS@
 
