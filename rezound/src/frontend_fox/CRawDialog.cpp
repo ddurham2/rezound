@@ -137,8 +137,11 @@ bool CRawDialog::show(AFrontendHooks::RawParameters &parameters,bool showLoadRaw
 
 	if(execute(PLACEMENT_SCREEN))
 	{
-		parameters.channelCount=atoi(channelsCountComboBox->getText().text());
-		parameters.sampleRate=atoi(sampleRateComboBox->getText().text());
+		// don't apply values of hidden GUI controls
+		if (showLoadRawParameters) {
+			parameters.channelCount=atoi(channelsCountComboBox->getText().text());
+			parameters.sampleRate=atoi(sampleRateComboBox->getText().text());
+		}
 
 		switch(sampleFormatComboBox->getCurrentItem())
 		{
@@ -158,19 +161,22 @@ bool CRawDialog::show(AFrontendHooks::RawParameters &parameters,bool showLoadRaw
 
 		parameters.endian= byteOrderToggleButton->getState() ? AFrontendHooks::RawParameters::eBigEndian : AFrontendHooks::RawParameters::eLittleEndian;
 
-		if(atoi(dataOffsetTextBox->getText().text())<0)
-		{
-			Error(_("invalid negative data offset"));
-			return(false);
-		}
-		parameters.dataOffset=atoi(dataOffsetTextBox->getText().text());
+		// don't apply values of hidden GUI controls
+		if (showLoadRawParameters) {
+			if(atoi(dataOffsetTextBox->getText().text())<0)
+			{
+				Error(_("invalid negative data offset"));
+				return(false);
+			}
+			parameters.dataOffset=atoi(dataOffsetTextBox->getText().text());
 
-		if(atoi(dataLengthTextBox->getText().text())<0)
-		{
-			Error(_("invalid negative data length"));
-			return(false);
+			if(atoi(dataLengthTextBox->getText().text())<0)
+			{
+				Error(_("invalid negative data length"));
+				return(false);
+			}
+			parameters.dataLength=atoi(dataLengthTextBox->getText().text());
 		}
-		parameters.dataLength=atoi(dataLengthTextBox->getText().text());
 
 		return(true);
 	}

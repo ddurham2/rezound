@@ -37,7 +37,7 @@ public:
 	CRawDialog(FXWindow *mainWindow);
 	virtual ~CRawDialog();
 
-	bool show(AFrontendHooks::RawParameters &parameters,bool showOffsetAndLengthParameters);
+	bool show(AFrontendHooks::RawParameters &parameters,bool showLoadRawParameters);
 
 	//long onRadioButton(FXObject *sender,FXSelector sel,void *ptr);
 

@@ -102,10 +102,10 @@ bool CrawSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 		initSetup(setup,parameters);
 
 #if (LIBAUDIOFILE_MAJOR_VERSION*10000+LIBAUDIOFILE_MINOR_VERSION*100+LIBAUDIOFILE_MICRO_VERSION) >= /*000204*/204
-		afInitDataOffset(setup,AF_DEFAULT_TRACK,parameters.dataOffset);
-
-		if(parameters.dataLength>0)
+		if(parameters.dataLength>0 || parameters.dataOffset>0) {
+			afInitDataOffset(setup,AF_DEFAULT_TRACK,parameters.dataOffset);
 			afInitFrameCount(setup,AF_DEFAULT_TRACK,parameters.dataLength);
+		}
 #else
 		if(parameters.dataOffset>0 || parameters.dataLength>0)
 			Warning("cannot set data offset or data length when loading raw because libaudiofile is less than version 0.2.4 -- upgrade libaudiofile (perhaps even to cvs) if you need this functionality");
@@ -132,6 +132,13 @@ bool CrawSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 		// get user preferences for saving the raw data
 		static bool parametersGotten=false;
 		static AFrontendHooks::RawParameters parameters;
+
+		// init parameters which cannot be changed by the RAW parameters dialog
+		parameters.channelCount=sound->getChannelCount();
+		parameters.sampleRate=sound->getSampleRate();
+		parameters.dataLength=sound->getLength();
+		parameters.dataOffset=0;
+
 		useLastUserPrefs&=parametersGotten;
 		if(!useLastUserPrefs)
 		{
