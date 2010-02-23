@@ -45,10 +45,14 @@ public:
 
 private:
 	bool initialized;
-	PortAudioStream *stream;
+	PaStream *stream;
 	bool supportsFullDuplex;
 
+#ifdef ENABLE_PORTAUDIO_V19
+	static int PortAudioCallback(const void *inputBuffer,void *outputBuffer,unsigned long framesPerBuffer,const PaStreamCallbackTimeInfo* outTime, PaStreamCallbackFlags statusFlags, void *userData);
+#else
 	static int PortAudioCallback(void *inputBuffer,void *outputBuffer,unsigned long framesPerBuffer,PaTimestamp outTime,void *userData);
+#endif
 
 };
 

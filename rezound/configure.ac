@@ -373,15 +373,63 @@ AC_ARG_ENABLE(
 
 # handle the --enable-portaudio flag
 AH_TEMPLATE(ENABLE_PORTAUDIO)
+AH_TEMPLATE(ENABLE_PORTAUDIO_V19)
 if test -z "$enable_standalone"; then
 	AC_ARG_ENABLE(
 		portaudio,
 		AC_HELP_STRING([--enable/disable-portaudio],[enable/disable ReZound to use PortAudio for audio I/O]),
 		[
 			if [[ "$enableval" = "yes" ]]
-			then 
+			then
 				# --enable-portaudio was given
-				# Require that the portaudio library can be found
+
+				PKG_CHECK_MODULES(PORTAUDIO_19,portaudio-2.0 >= 0.21 ,[portaudio_v19=yes],:)
+				if test "x$portaudio_v19" = "xyes"; then
+					AC_DEFINE(ENABLE_PORTAUDIO)
+					AC_DEFINE(ENABLE_PORTAUDIO_V19)
+					LIBS="$LIBS $PORTAUDIO_19_LIBS"
+					AC_MSG_RESULT([*** enabling libportaudio v19 for audio I/O])
+					using_portaudio=1
+				else
+					# Require that the portaudio library can be found
+					AC_CHECK_LIB(
+						portaudio,
+						Pa_Initialize,
+
+						origLIBS="$LIBS"
+						LIBS="-lportaudio $LIBS"
+						
+						# libportaudio found, now check for portaudio header file
+						[AC_CHECK_HEADER(
+							portaudio.h,
+							[
+								AC_DEFINE(ENABLE_PORTAUDIO)
+								AC_MSG_RESULT([*** enabling libportaudio for audio I/O])
+								using_portaudio=1
+							],
+							[
+								LIBS="$origLIBS"
+								AC_MSG_ERROR([***** portaudio.h header file not found (http://www.portaudio.com) *****])
+							]
+						)], 
+
+						AC_MSG_ERROR([***** libportaudio.a not found (http://www.portaudio.com) *****])
+					)
+				fi
+			else
+				AC_MSG_RESULT([*** disabling libportaudio for audio I/O])
+			fi
+		],
+		[ # action if neither enable or disable flag was given
+			# if libportaudio and portaudio.h are found, then enable it
+			PKG_CHECK_MODULES(PORTAUDIO_19,portaudio-2.0 >= 0.21 ,[portaudio_v19=yes],:)
+			if test "x$portaudio_v19" = "xyes"; then
+				AC_DEFINE(ENABLE_PORTAUDIO)
+				AC_DEFINE(ENABLE_PORTAUDIO_V19)
+				LIBS="$LIBS $PORTAUDIO_19_LIBS"
+				AC_MSG_RESULT([*** enabling libportaudio v19 for audio I/O])
+				using_portaudio=1
+			else
 				AC_CHECK_LIB(
 					portaudio,
 					Pa_Initialize,
@@ -399,38 +447,10 @@ if test -z "$enable_standalone"; then
 						],
 						[
 							LIBS="$origLIBS"
-							AC_MSG_ERROR([***** portaudio.h header file not found (http://www.portaudio.com) *****])
 						]
-					)], 
-
-					AC_MSG_ERROR([***** libportaudio.a not found (http://www.portaudio.com) *****])
+					)]
 				)
-			else
-				AC_MSG_RESULT([*** disabling libportaudio for audio I/O])
 			fi
-		],
-		[ # action if neither enable or disable flag was given
-			# if libportaudio and portaudio.h are found, then enable it
-			AC_CHECK_LIB(
-				portaudio,
-				Pa_Initialize,
-
-				origLIBS="$LIBS"
-				LIBS="-lportaudio $LIBS"
-				
-				# libportaudio found, now check for portaudio header file
-				[AC_CHECK_HEADER(
-					portaudio.h,
-					[
-						AC_DEFINE(ENABLE_PORTAUDIO)
-						AC_MSG_RESULT([*** enabling libportaudio for audio I/O])
-						using_portaudio=1
-					],
-					[
-						LIBS="$origLIBS"
-					]
-				)]
-			)
 		]
 	)
 else

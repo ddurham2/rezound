@@ -42,10 +42,14 @@ public:
 	void redo();
 
 private:
-	PortAudioStream *stream;
+	PaStream *stream;
 	bool initialized;
 
+#ifdef ENABLE_PORTAUDIO_V19
+	static int PortAudioCallback(const void *inputBuffer,void *outputBuffer,unsigned long framesPerBuffer,const PaStreamCallbackTimeInfo* outTime, PaStreamCallbackFlags statusFlags, void *userData);
+#else
 	static int PortAudioCallback(void *inputBuffer,void *outputBuffer,unsigned long framesPerBuffer,PaTimestamp outTime,void *userData);
+#endif
 };
 
 #endif // ENABLE_PORTAUDIO

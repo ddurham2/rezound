@@ -65,6 +65,24 @@ void CPortAudioSoundRecorder::initialize(CSound *sound)
 		ASoundRecorder::initialize(sound);
 
 		// open a PortAudio stream
+#ifdef ENABLE_PORTAUDIO_V19
+		PaStreamParameters input = { 
+                        gPortAudioOutputDevice, 
+                        sound->getChannelCount(), 
+                        sampleFormat, 
+                        Pa_GetDeviceInfo(gPortAudioOutputDevice)->defaultLowInputLatency ,
+                        NULL};
+		err = Pa_OpenStream(
+			&stream,
+			&input,
+			NULL,
+			sound->getSampleRate(),
+			BUFFER_SIZE_FRAMES*12,
+			paClipOff|paDitherOff,
+			CPortAudioSoundRecorder::PortAudioCallback,
+			this);
+
+#else
 		err = Pa_OpenStream(
 			&stream,
 			gPortAudioOutputDevice,
@@ -81,6 +99,7 @@ void CPortAudioSoundRecorder::initialize(CSound *sound)
 			paClipOff|paDitherOff,
 			CPortAudioSoundRecorder::PortAudioCallback,
 			this);
+#endif
 
 		if(err!=paNoError) 
 			throw runtime_error(string(__func__)+" -- error opening PortAudio stream -- "+Pa_GetErrorText(err));
@@ -131,7 +150,11 @@ void CPortAudioSoundRecorder::redo()
 	Pa_StartStream(stream);
 }
 
+#ifdef ENABLE_PORTAUDIO_V19
+int CPortAudioSoundRecorder::PortAudioCallback(const void *inputBuffer,void *outputBuffer,unsigned long framesPerBuffer,const PaStreamCallbackTimeInfo* outTime, PaStreamCallbackFlags statusFlags, void *userData)
+#else
 int CPortAudioSoundRecorder::PortAudioCallback(void *inputBuffer,void *outputBuffer,unsigned long framesPerBuffer,PaTimestamp outTime,void *userData)
+#endif
 {
 	try
 	{
