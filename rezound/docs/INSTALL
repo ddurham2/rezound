@@ -24,9 +24,9 @@ Before attempting to build ReZound you will need to have (or are encouraged to h
 			to run unless the files in src/images are newer than 
 			src/frontend_fox/CFOXIcons.h|cpp
 
-	- libfftw v2.1.3 (or later (not version 3.x yet)) -- http://www.fftw.org -- This 
-	is required for convolution filtering, arbitrary FIR filtering and the frequency 
-	analyzer and will be required for planned features.
+	- libfftw v3.0.0 (or later) -- http://www.fftw.org -- This is required for 
+	convolution filtering, arbitrary FIR filtering and the frequency analyzer and 
+	will be required for planned features.
 
 	- lame v3.92 (or later) -- http://www.mp3dev.org/mp3 -- It is recommended that 
 	you have lame installed because it provides ReZound with the ability to load and 
