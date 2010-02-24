@@ -34,14 +34,14 @@
 
 ASoundPlayer::ASoundPlayer()
 {
-#ifdef HAVE_LIBRFFTW
+#ifdef HAVE_FFTW
 	analyzerPlan=NULL;
 #endif
 }
 
 ASoundPlayer::~ASoundPlayer()
 {
-#ifdef HAVE_LIBRFFTW
+#ifdef HAVE_FFTW
 	for(map<size_t,TAutoBuffer<fftw_real> *>::iterator i=hammingWindows.begin();i!=hammingWindows.end();i++)
 		delete i->second;
 #endif
@@ -62,12 +62,12 @@ void ASoundPlayer::initialize()
 
 
 
-#ifdef HAVE_LIBRFFTW
+#ifdef HAVE_FFTW
 	frequencyAnalysisBufferPrepared=false;
 	for(size_t t=0;t<ASP_ANALYSIS_BUFFER_SIZE;t++)
 		frequencyAnalysisBuffer[t]=0.0;
 
-	analyzerPlan=rfftw_create_plan(ASP_ANALYSIS_BUFFER_SIZE, FFTW_REAL_TO_COMPLEX, FFTW_ESTIMATE);
+	analyzerPlan = fftw_plan_r2r_1d(ASP_ANALYSIS_BUFFER_SIZE, frequencyAnalysisBuffer, data, FFTW_HC2R, FFTW_ESTIMATE);
 
 	// this causes calculateAnalyzerBandIndexRanges() to be called later when getting the analysis
 	bandLowerIndexes.clear();
@@ -79,10 +79,10 @@ void ASoundPlayer::deinitialize()
 {
 	stopAll();
 
-#ifdef HAVE_LIBRFFTW
+#ifdef HAVE_FFTW
 	if(analyzerPlan!=NULL)
 	{
-		rfftw_destroy_plan(analyzerPlan);
+		fftw_destroy_plan(analyzerPlan);
 		analyzerPlan=NULL;
 	}
 #endif
@@ -163,7 +163,7 @@ void ASoundPlayer::mixSoundPlayerChannels(const unsigned nChannels,sample_t * co
 	if(gStereoPhaseMetersEnabled)
 		samplingForStereoPhaseMeters.write(buffer,bufferSize*nChannels); // NOTE: nChannels is supposed to equal devices[0].channelCount
 
-#ifdef HAVE_LIBRFFTW
+#ifdef HAVE_FFTW
 	if(gFrequencyAnalyzerEnabled)
 	{
 		CMutexLocker l(frequencyAnalysisBufferMutex);
@@ -229,7 +229,7 @@ const size_t ASoundPlayer::getSamplingForStereoPhaseMeters(sample_t *buffer,size
 	return samplingForStereoPhaseMeters.read(buffer,min(bufferSizeInSamples,(size_t)(gStereoPhaseMeterPointCount*devices[0].channelCount)))/devices[0].channelCount; // ??? only device zero
 }
 
-#ifdef HAVE_LIBRFFTW
+#ifdef HAVE_FFTW
 
 // NOTE: when I say 'band', a band is expressed in terms of an 
 // octave (where octave is a real number) and each band is a 
@@ -337,7 +337,7 @@ const vector<float> ASoundPlayer::getFrequencyAnalysis() const
 	if(!isInitialized())
 		return v;
 
-#ifdef HAVE_LIBRFFTW
+#ifdef HAVE_FFTW
 	CMutexLocker l(frequencyAnalysisBufferMutex);
 
 	if(!frequencyAnalysisBufferPrepared)
@@ -378,8 +378,7 @@ for(int t=0;t<ASP_ANALYSIS_BUFFER_SIZE;t++)
 }
 */
 
-	fftw_real data[ASP_ANALYSIS_BUFFER_SIZE];
-	rfftw_one(analyzerPlan,(fftw_real *)frequencyAnalysisBuffer,data);
+	fftw_execute(analyzerPlan);
 	
 	for(size_t t=0;t<bandLowerIndexes.size();t++)
 	{
@@ -449,7 +448,7 @@ for(int t=0;t<ASP_ANALYSIS_BUFFER_SIZE;t++)
 
 const size_t ASoundPlayer::getFrequency(size_t index) const
 {
-#ifdef HAVE_LIBRFFTW
+#ifdef HAVE_FFTW
 	return (size_t)freqAtOctave((float)index/(float)octaveStride);
 #else
 	return 0;
@@ -458,7 +457,7 @@ const size_t ASoundPlayer::getFrequency(size_t index) const
 
 const size_t ASoundPlayer::getFrequencyAnalysisOctaveStride() const
 {
-#ifdef HAVE_LIBRFFTW
+#ifdef HAVE_FFTW
 	return octaveStride;
 #else
 	return 1;

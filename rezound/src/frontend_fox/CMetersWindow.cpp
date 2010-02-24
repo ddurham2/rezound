@@ -829,7 +829,7 @@ public:
 				x+=barWidth;
 			}
 		}
-#ifndef HAVE_LIBRFFTW
+#ifndef HAVE_FFTW
 		else
 		{
 			dc.compat_setFont(getApp()->getNormalFont());

@@ -586,24 +586,41 @@ PKG_CHECK_MODULES(
 ############################################################################
 # Handle the flags for the FFTW library                                    #
 ############################################################################
-
-# check for the rfftw library installed.  Eventually this macro call
-# should define HAVE_FFTW and enable or disable the FFT based actions
-# if it's not found, then I should print a noticable warning that FFT
-# actions will be disabled and why
-#  ??? email about an official way to test for fftw
-		# ??? actually I don't think I need fftw, just rfftw.. remove fftw and see if that's so
-# TODO port to fftw3 and then can use pkg-config
-AC_CHECK_HEADER(
-	fftw.h,
-	AC_CHECK_LIB(fftw, fftw_create_plan, , AC_MSG_WARN([***** libfftw.a (version 2) not found -- any FFT based actions will be disabled (http://www.fftw.org) *****]),-lfftw),
-	AC_MSG_WARN([***** fftw.h (version 2) header file not found -- any FFT based actions will be disabled (http://www.fftw.org) *****])
-	)
-
-AC_CHECK_HEADER(
-	rfftw.h,
-	AC_CHECK_LIB(rfftw, rfftw_create_plan, , AC_MSG_WARN([***** librfftw.a (version 2) not found -- any FFT based actions will be disabled (http://www.fftw.org) *****]),-lrfftw),
-	AC_MSG_WARN([***** rfftw.h (version 2) header file not found -- any FFT based actions will be disabled (http://www.fftw.org) *****])
+AH_TEMPLATE(HAVE_FFTW)
+AC_ARG_ENABLE(
+	fftw3,
+	AC_HELP_STRING([--enable/disable-fftw3],[enable/disable ReZound to use fftw3 library (version 3 and later)]),
+	[ # action if either enable or disable flag is given
+		if [[ "$enableval" = "yes" ]]
+		then 
+			PKG_CHECK_MODULES(
+				fftw3,
+				fftw3 >= 3.0.0,
+				[
+					AC_DEFINE(HAVE_FFTW)
+					AC_MSG_RESULT([*** enabling FFTW])
+				],
+				AC_MSG_ERROR([***** libfftw3.a or fftw3.h not found (http://www.fftw.org) *****])
+			)
+		else
+			AC_MSG_RESULT([*** disabling fftw3])
+		fi
+	],
+	[ # action if neither enable or disable flag was given
+		# if the fftw3 lib is found, then enable it
+		PKG_CHECK_MODULES(
+			fftw3,
+			fftw3 >= 3.0.0,
+			[
+				AC_DEFINE(HAVE_FFTW)
+				AC_MSG_RESULT([*** enabling fftw3])
+			],
+			[
+				# disable default action of exiting if not found
+				AC_MSG_RESULT([*** fftw3 not enabled])
+			]
+		)
+	]
 )
 
 

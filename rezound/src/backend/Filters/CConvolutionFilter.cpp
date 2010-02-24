@@ -34,7 +34,22 @@
 
 #include "../settings.h"
 
-CConvolutionFilter::CConvolutionFilter(const AActionFactory *factory,const CActionSound *actionSound,const float _wetdryMix,const float _inputGain,const float _outputGain,const float _inputLowpassFreq,const float _predelay,const string _filterKernelFilename,const bool _openFilterKernelAsRaw,const float _filterKernelGain,const float _filterKernelLowpassFreq,const float _filterKernelRate,const bool _reverseFilterKernel,const bool _wrapDecay) :
+CConvolutionFilter::CConvolutionFilter(
+	const AActionFactory *factory,
+	const CActionSound *actionSound,
+	const float _wetdryMix,
+	const float _inputGain,
+	const float _outputGain,
+	const float _inputLowpassFreq,
+	const float _predelay,
+	const string _filterKernelFilename,
+	const bool _openFilterKernelAsRaw,
+	const float _filterKernelGain,
+	const float _filterKernelLowpassFreq,
+	const float _filterKernelRate,
+	const bool _reverseFilterKernel,
+	const bool _wrapDecay
+	) :
 	AAction(factory,actionSound),
 
 	wetdryMix(_wetdryMix),
@@ -60,7 +75,7 @@ CConvolutionFilter::~CConvolutionFilter()
 #include <unistd.h> // for symlink and unlink
 bool CConvolutionFilter::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-#ifdef HAVE_LIBRFFTW
+#ifdef HAVE_FFTW
 	const sample_pos_t start=actionSound->start;
 	const sample_pos_t stop=actionSound->stop;
 	const sample_pos_t selectionLength=actionSound->selectionLength();

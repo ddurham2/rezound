@@ -82,11 +82,13 @@ private:
 
 
 
-#ifdef HAVE_LIBRFFTW
+#ifdef HAVE_FFTW
 
-#include <rfftw.h>
+#include <fftw3.h>
 
 #include <TAutoBuffer.h>
+
+typedef double fftw_real;
 
 /*
  *	Written partly from stuff I learned in "The Scientist and 
@@ -138,8 +140,8 @@ public:
 		data(W),dataPos(0),
 		xform(W+1),
 
-		p(rfftw_create_plan_specific(W, FFTW_REAL_TO_COMPLEX, FFTW_ESTIMATE, data,1,xform,1)),
-		un_p(rfftw_create_plan_specific(W, FFTW_COMPLEX_TO_REAL, FFTW_ESTIMATE, xform,1,data,1)),
+		p   (fftw_plan_r2r_1d(W, data, xform, FFTW_R2HC, FFTW_ESTIMATE)),
+		un_p(fftw_plan_r2r_1d(W, xform, data, FFTW_HC2R, FFTW_ESTIMATE)),
 
 		kernel_real(W/2+1),
 		kernel_img(W/2+1),
@@ -160,21 +162,21 @@ public:
 
 	virtual ~TFFTConvolverTimeDomainKernel()
 	{
-		rfftw_destroy_plan(p);
-		rfftw_destroy_plan(un_p);
+		fftw_destroy_plan(p);
+		fftw_destroy_plan(un_p);
 	}
 
 	// the NEW set of coefficients MUST be the same size as the original one at construction
 	void setNewFilterKernel(const coefficient_t filterKernel[])
 	{
 		TAutoBuffer<fftw_real> data(W),xform(W+1);
-		rfftw_plan p=rfftw_create_plan_specific(W, FFTW_REAL_TO_COMPLEX, FFTW_ESTIMATE, data,1,xform,1);
-		rfftw_plan un_p=rfftw_create_plan_specific(W, FFTW_COMPLEX_TO_REAL, FFTW_ESTIMATE, xform,1,data,1);
+		fftw_plan p    = fftw_plan_r2r_1d(W, data, xform, FFTW_R2HC, FFTW_ESTIMATE);
+		fftw_plan un_p = fftw_plan_r2r_1d(W, xform, data, FFTW_HC2R, FFTW_ESTIMATE);
 
 		prepareFilterKernel(filterKernel,data,xform,p,un_p);
 
-		rfftw_destroy_plan(p);
-		rfftw_destroy_plan(un_p);
+		fftw_destroy_plan(p);
+		fftw_destroy_plan(un_p);
 	}
 
 
@@ -202,7 +204,7 @@ public:
 			data[dataPos++]=0;
 
 		// do the fft data --> xform
-		rfftw_one(p, data, xform);
+		fftw_execute(p);
 		xform[W]=0; // to help out macros
 						
 
@@ -220,7 +222,7 @@ public:
 		}
 
 		// do the inverse fft xfrorm --> data
-		rfftw_one(un_p, xform, data);
+		fftw_execute(un_p);
 
 		// add the last segment's overlap to this segment
 		for(size_t t=0;t<M-1;t++)
@@ -281,8 +283,8 @@ private:
 
 	TAutoBuffer<fftw_real> xform;
 
-	rfftw_plan p;
-	rfftw_plan un_p;
+	fftw_plan p;
+	fftw_plan un_p;
 
 	TAutoBuffer<fftw_real> kernel_real;
 	TAutoBuffer<fftw_real> kernel_img;
@@ -308,7 +310,7 @@ private:
 		throw runtime_error(string(__func__)+" -- cannot handle a filter kernel of size "+istring(M)+" -- perhaps simply another element needs to be added to fftw_good_sizes");
 	}
 	
-	void prepareFilterKernel(const coefficient_t filterKernel[],fftw_real data[],fftw_real xform[],rfftw_plan p,rfftw_plan un_p)
+	void prepareFilterKernel(const coefficient_t filterKernel[],fftw_real data[],fftw_real xform[],fftw_plan p,fftw_plan un_p)
 	{
 			// ??? perhaps a parameter could be passed that would indicate what the filterKernel is.. whether it's time-domain or freq domain already
 
@@ -318,7 +320,7 @@ private:
 		for(size_t t=M;t<W;t++) // pad with zero
 			data[t]=0;
 
-		rfftw_one(p, data, xform);
+		fftw_execute(p);
 		xform[W]=0; // to help out macros
 
 		// copy into kernel_real and kernel_img
@@ -410,9 +412,9 @@ private:
 				xform[W-t]=imaginary[t];
 		}
 		TAutoBuffer<fftw_real> data(W);
-		rfftw_plan un_p=rfftw_create_plan(W, FFTW_COMPLEX_TO_REAL, FFTW_ESTIMATE);
-		rfftw_one(un_p, xform, data);	// xform -> data
-		rfftw_destroy_plan(un_p);
+		fftw_plan un_p = fftw_plan_r2r_1d(W, xform, data, FFTW_HC2R, FFTW_ESTIMATE);
+		fftw_execute(un_p);	// xform -> data
+		fftw_destroy_plan(un_p);
 
 
 		// fftw scales the output of the complex->real transform by W (undo this)

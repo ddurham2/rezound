@@ -46,7 +46,7 @@ CArbitraryFIRFilter::~CArbitraryFIRFilter()
 
 bool CArbitraryFIRFilter::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-#ifdef HAVE_LIBRFFTW
+#ifdef HAVE_FFTW
 	const sample_pos_t start=actionSound->start;
 	const sample_pos_t stop=actionSound->stop;
 	const sample_pos_t selectionLength=actionSound->selectionLength();

@@ -146,8 +146,8 @@ libbackend_la_SOURCES= \
 		        settings.cpp
 
 # soundtouch_CFLAGS is in Remaster/Makefile.am
-AM_CXXFLAGS=@audiofile_CFLAGS@ @ALSA_CFLAGS@ @JACK_CFLAGS@ @ogg_CFLAGS@ @vorbis_CFLAGS@ @flacpp_CFLAGS@ @flac_CFLAGS@
+AM_CXXFLAGS=@audiofile_CFLAGS@ @ALSA_CFLAGS@ @JACK_CFLAGS@ @ogg_CFLAGS@ @vorbis_CFLAGS@ @flacpp_CFLAGS@ @flac_CFLAGS@ @fftw3_CFLAGS@
 
 # soundtouch_LIBS is in Remaster/Makefile.am
-libbackend_la_LIBADD=@LTLIBINTL@ @audiofile_LIBS@ @ALSA_LIBS@ @JACK_LIBS@ @ogg_LIBS@ @vorbisfile_LIBS@ @vorbisenc_LIBS@ @vorbis_LIBS@ @flacpp_LIBS@ @flac_LIBS@
+libbackend_la_LIBADD=@LTLIBINTL@ @audiofile_LIBS@ @ALSA_LIBS@ @JACK_LIBS@ @ogg_LIBS@ @vorbisfile_LIBS@ @vorbisenc_LIBS@ @vorbis_LIBS@ @flacpp_LIBS@ @flac_LIBS@ @fftw3_LIBS@
 
