@@ -33,6 +33,7 @@ $Id$
 # - ENHANCEMENTS
 # James Vega - https://sourceforge.net/tracker/?func=detail&aid=1919151&group_id=5056&atid=305056
 # aballier - (portaudio v19) https://sourceforge.net/tracker/?func=detail&aid=1749539&group_id=5056&atid=305056
+# peim - (fftw2 -> fftw3) https://sourceforge.net/tracker/?func=detail&aid=1873893&group_id=5056&atid=305056
 
 # - BUGS
 # cuse - (raw saving) https://sourceforge.net/tracker/?func=detail&aid=1859015&group_id=5056&atid=305056
