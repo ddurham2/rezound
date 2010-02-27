@@ -244,6 +244,7 @@ void COSSSoundPlayer::initialize()
 
 			ASoundPlayer::initialize();
 			initialized=true;
+			fprintf(stderr, "OSS player initialized\n");
 		}
 		catch(...)
 		{
@@ -277,8 +278,7 @@ void COSSSoundPlayer::deinitialize()
 		close(audio_fd);
 
 		initialized=false;
-
-		//printf("OSS player: deinitialized\n");
+		fprintf(stderr, "OSS player deinitialized\n");
 	}
 }
 

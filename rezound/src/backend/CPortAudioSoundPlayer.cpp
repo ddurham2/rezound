@@ -128,6 +128,7 @@ void CPortAudioSoundPlayer::initialize()
 
 		ASoundPlayer::initialize();
 		initialized=true;
+		fprintf(stderr, "PortAudio player initialized\n");
 	}
 	else
 		throw runtime_error(string(__func__)+" -- already initialized");
@@ -153,6 +154,7 @@ void CPortAudioSoundPlayer::deinitialize()
 
 		stream=NULL;
 		initialized=false;
+		fprintf(stderr, "PortAudio player deinitialized\n");
 	}
 }
 

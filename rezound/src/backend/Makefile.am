@@ -76,6 +76,7 @@ noinst_HEADERS= \
 	   CPortAudioSoundRecorder.h \
 	   CJACKSoundPlayer.h \
 	   CJACKSoundRecorder.h \
+	   CPulseSoundPlayer.h \
 	   CrawSoundTranslator.h \
 	   CRecordSoundClipboard.h \
 	   CrezSoundTranslator.h \
@@ -129,6 +130,7 @@ libbackend_la_SOURCES= \
 	   		CPortAudioSoundRecorder.cpp \
 	   		CJACKSoundPlayer.cpp \
 			CJACKSoundRecorder.cpp \
+			CPulseSoundPlayer.cpp \
 			CrawSoundTranslator.cpp \
 			CRecordSoundClipboard.cpp \
 			CrezSoundTranslator.cpp \
@@ -146,8 +148,8 @@ libbackend_la_SOURCES= \
 		        settings.cpp
 
 # soundtouch_CFLAGS is in Remaster/Makefile.am
-AM_CXXFLAGS=@audiofile_CFLAGS@ @ALSA_CFLAGS@ @JACK_CFLAGS@ @ogg_CFLAGS@ @vorbis_CFLAGS@ @flacpp_CFLAGS@ @flac_CFLAGS@ @fftw3_CFLAGS@
+AM_CXXFLAGS=@audiofile_CFLAGS@ @ALSA_CFLAGS@ @JACK_CFLAGS@ @PULSE_CFLAGS@ @ogg_CFLAGS@ @vorbis_CFLAGS@ @flacpp_CFLAGS@ @flac_CFLAGS@ @fftw3_CFLAGS@
 
 # soundtouch_LIBS is in Remaster/Makefile.am
-libbackend_la_LIBADD=@LTLIBINTL@ @audiofile_LIBS@ @ALSA_LIBS@ @JACK_LIBS@ @ogg_LIBS@ @vorbisfile_LIBS@ @vorbisenc_LIBS@ @vorbis_LIBS@ @flacpp_LIBS@ @flac_LIBS@ @fftw3_LIBS@
+libbackend_la_LIBADD=@LTLIBINTL@ @audiofile_LIBS@ @ALSA_LIBS@ @JACK_LIBS@ @PULSE_LIBS@ @ogg_LIBS@ @vorbisfile_LIBS@ @vorbisenc_LIBS@ @vorbis_LIBS@ @flacpp_LIBS@ @flac_LIBS@ @fftw3_LIBS@
 

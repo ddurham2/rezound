@@ -498,6 +498,46 @@ AC_ARG_ENABLE(
 )
 
 
+# handle the --enable-pulse flag
+AH_TEMPLATE(ENABLE_PULSE)
+AC_ARG_ENABLE(
+	pulse,
+	AC_HELP_STRING([--enable/disable-pulse],[enable/disable ReZound to use PulseAudio for audio I/O]),
+	[ # action if either enable or disable flag is given
+		if [[ "$enableval" = "yes" ]]
+		then 
+			PKG_CHECK_MODULES(
+				PULSE,
+				libpulse-simple,
+				[
+					AC_DEFINE(ENABLE_PULSE)
+					AC_MSG_RESULT([*** enabling PulseAUdio for audio I/O])
+				],
+				AC_MSG_ERROR([***** libpulse-simple.a or pulse/simple.h not found (http://www.pulseaudio.org) *****])
+			)
+			
+		else
+			AC_MSG_RESULT([*** disabling PulseAudio for audio I/O])
+		fi
+	],
+	[ # action if neither enable or disable flag was given
+		# if the pulse lib is found, then enable it
+		PKG_CHECK_MODULES(
+			PULSE,
+			libpulse-simple,
+			[
+				AC_DEFINE(ENABLE_PULSE)
+				AC_MSG_RESULT([*** enabling PulseAudio for audio I/O])
+			],
+			[
+				# disable default action of exiting if not found
+				AC_MSG_RESULT([*** PulseAudio not enabled for audio I/O])
+			]
+		)
+	]
+)
+
+
 # ...
 # handle other possible audio I/O system flags here
 # ...

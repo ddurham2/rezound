@@ -476,6 +476,7 @@ const size_t ASoundPlayer::getFrequencyAnalysisOctaveStride() const
 #include "CALSASoundPlayer.h"
 #include "CPortAudioSoundPlayer.h"
 #include "CJACKSoundPlayer.h"
+#include "CPulseSoundPlayer.h"
 
 #include "AStatusComm.h"
 
@@ -487,6 +488,7 @@ ASoundPlayer *ASoundPlayer::createInitializedSoundPlayer()
 	if(gSettingsRegistry->keyExists("AudioOutputMethods")!=CNestedDataFile::ktValue)
 	{
 		vector<string> methods;
+		methods.push_back("pulse");
 		methods.push_back("oss");
 		methods.push_back("alsa");
 		methods.push_back("jack");
@@ -545,6 +547,12 @@ ASoundPlayer *ASoundPlayer::createInitializedSoundPlayer()
 			{
 #ifdef ENABLE_PORTAUDIO
 				INITIALIZE_PLAYER(CPortAudioSoundPlayer)
+#endif
+			}
+			else if(method=="pulse")
+			{
+#ifdef ENABLE_PULSE
+				INITIALIZE_PLAYER(CPulseSoundPlayer)
 #endif
 			}
 			else if(method=="null")

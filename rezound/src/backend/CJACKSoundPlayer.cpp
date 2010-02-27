@@ -136,6 +136,7 @@ void CJACKSoundPlayer::initialize()
 
 			ASoundPlayer::initialize();
 			initialized=true;
+			fprintf(stderr, "JACK player initialized\n");
 		}
 		catch(...)
 		{
@@ -165,6 +166,7 @@ void CJACKSoundPlayer::deinitialize()
 	}
 
 	initialized=false;
+	fprintf(stderr, "JACK player deinitialized\n");
 }
 
 void CJACKSoundPlayer::aboutToRecord()

@@ -218,6 +218,7 @@ void CALSASoundPlayer::initialize()
 
 			ASoundPlayer::initialize();
 			initialized=true;
+			fprintf(stderr, "ALSA player initialized\n");
 		}
 		catch(...)
 		{
@@ -254,6 +255,7 @@ void CALSASoundPlayer::deinitialize()
 		playback_handle=NULL;
 
 		initialized=false;
+		fprintf(stderr, "ALSA player deinitialized\n");
 	}
 }
 
