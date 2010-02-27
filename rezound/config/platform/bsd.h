@@ -21,6 +21,7 @@
 
 
 
+#if 0 // these functions are now available on BSD 5+
 /* these functions are not included with BSD */
 #ifdef rez_OS_BSD
 	/*
@@ -31,6 +32,7 @@
 	#define nearbyint rint
 	#define round rintf
 	#define atoll(v)  strtoll((v),NULL,10)
+#endif
 #endif
 
 
