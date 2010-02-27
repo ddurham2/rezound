@@ -274,14 +274,11 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 		// even though the AAction derived class might not resize the sound, we will if crossfading is to be done
 		willResize|= (actionSound->doCrossfadeEdges!=cetNone && crossfadeEdgesIsApplicable);
 
-		if(willResize)
-			actionSound->sound->lockForResize();
-		else
-			actionSound->sound->lockSize();
-
 		doActionRecursionCount++;
 		try
 		{
+			CSoundLocker sl(actionSound->sound, willResize);
+
 			// save the cues so that if they are modified by the action, then they can be restored at undo
 			if(prepareForUndo)
 			{
@@ -349,10 +346,8 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 				channel->updateAfterEdit(dummy);
 			}
 
-			if(willResize)
-				actionSound->sound->unlockForResize();
-			else
-				actionSound->sound->unlockSize();
+			// explicitly unlock now
+			sl.unlock();
 
 			actionSound->sound->flush();
 
@@ -364,11 +359,6 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 		}
 		catch(EUserMessage &e)
 		{
-			if(willResize)
-				actionSound->sound->unlockForResize();
-			else
-				actionSound->sound->unlockSize();
-
 			if(e.what()[0])
 				Message(e.what());
 
@@ -377,11 +367,6 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 		}
 		catch(...)
 		{
-			if(willResize)
-				actionSound->sound->unlockForResize();
-			else
-				actionSound->sound->unlockSize();
-
 			doActionRecursionCount--;
 			throw;
 		}
@@ -424,15 +409,12 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 
 	if(!undoingAMacro)
 	{
-		// willResize is set from doAction, and it's needed value should be consistant with the way the action will be undo
-		if(willResize)
-			actionSound->sound->lockForResize();
-		else
-			actionSound->sound->lockSize();
-
 		undoActionRecursionCount++;
 		try
 		{
+			// willResize is set from doAction, and it's needed value should be consistent with the way the action will be undone
+			CSoundLocker sl(actionSound->sound, willResize);
+
 			if(canUndo()!=curYes)
 				throw runtime_error(string(__func__)+" -- cannot undo action");
 
@@ -466,10 +448,8 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 				channel->updateAfterEdit(restoreOutputRoutes);
 
 
-			if(willResize)
-				actionSound->sound->unlockForResize();
-			else
-				actionSound->sound->unlockSize();
+			// explicitly unlock now
+			sl.unlock();
 
 			actionSound->sound->flush();
 
@@ -488,21 +468,11 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 		}
 		catch(EUserMessage &e)
 		{
-			if(willResize)
-				actionSound->sound->unlockForResize();
-			else
-				actionSound->sound->unlockSize();
-
 			if(e.what()[0])
 				Message(e.what());
 		}
 		catch(...)
 		{
-			if(willResize)
-				actionSound->sound->unlockForResize();
-			else
-				actionSound->sound->unlockSize();
-
 			undoActionRecursionCount--;
 			throw;
 		}

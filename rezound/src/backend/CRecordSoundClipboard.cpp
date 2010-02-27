@@ -124,7 +124,10 @@ bool CRecordSoundClipboard::prepareForCopyTo()
 			whichChannels[t]=true;
 
 		// ??? temporary until CSound can have zero lenth
-		workingFile->lockForResize(); try { workingFile->removeSpace(0,1); workingFile->unlockForResize(); } catch(...) { workingFile->unlockForResize(); throw; }
+		{
+			CSoundLocker sl(workingFile, true);
+			workingFile->removeSpace(0,1);
+		}
 
 		delete recorder; recorder=NULL;
 		soundPlayer->doneRecording();
@@ -181,27 +184,17 @@ void CRecordSoundClipboard::temporarilyShortenLength(unsigned sampleRate,sample_
 	if(workingFile==NULL)
 		return;
 
-	workingFile->lockForResize();
-	try
-	{
-		if(changeTo>getLength(sampleRate))
-			throw runtime_error(string(__func__)+" -- changeTo is greater than the current length");
-		if(changeTo==getLength(sampleRate))
-			return;
+	CSoundLocker sl(workingFile, true);
 
-		sample_pos_t newLength=(sample_pos_t)sample_fpos_floor((sample_fpos_t)changeTo/(sample_fpos_t)workingFile->getSampleRate()*(sample_fpos_t)sampleRate);
-		origLength=workingFile->getLength();
+	if(changeTo>getLength(sampleRate))
+		throw runtime_error(string(__func__)+" -- changeTo is greater than the current length");
+	if(changeTo==getLength(sampleRate))
+		return;
 
-		tempAudioPoolKey=workingFile->moveDataToTemp(whichChannels,newLength,workingFile->getLength()-newLength);
+	sample_pos_t newLength=(sample_pos_t)sample_fpos_floor((sample_fpos_t)changeTo/(sample_fpos_t)workingFile->getSampleRate()*(sample_fpos_t)sampleRate);
+	origLength=workingFile->getLength();
 
-		workingFile->unlockForResize();
-	}
-	catch(...)
-	{
-		workingFile->unlockForResize();
-		throw;
-	}
-	
+	tempAudioPoolKey=workingFile->moveDataToTemp(whichChannels,newLength,workingFile->getLength()-newLength);
 }
 
 void CRecordSoundClipboard::undoTemporaryShortenLength()
@@ -209,18 +202,10 @@ void CRecordSoundClipboard::undoTemporaryShortenLength()
 	if(workingFile==NULL)
 		return;
 
-	workingFile->lockForResize();
-	try
-	{
-		if(tempAudioPoolKey!=0)
-			workingFile->moveDataFromTemp(whichChannels,tempAudioPoolKey,workingFile->getLength(),origLength-workingFile->getLength());
-		workingFile->unlockForResize();
-	}
-	catch(...)
-	{
-		workingFile->unlockForResize();
-		throw;
-	}
+	CSoundLocker sl(workingFile, true);
+
+	if(tempAudioPoolKey!=0)
+		workingFile->moveDataFromTemp(whichChannels,tempAudioPoolKey,workingFile->getLength(),origLength-workingFile->getLength());
 	tempAudioPoolKey=0;
 }
 

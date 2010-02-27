@@ -812,9 +812,7 @@ bool CSoundPlayerChannel::prebufferChunk()
 	if(paused && seekSpeed==1.0/*not seeking*/)
 		return false;
 
-	// nothing better cause an exception to be thrown between here and 
-	// the 'GGG' try-catch below without making provisions to unlock this 
-	sound->lockSize(); 
+	CSoundLocker sl(sound, false);
 	CMutexLocker l(prebufferPositionMutex); /* ??? might be renaming this to prebufferWritingMutex */ 
 
 	// used if loopType==ltLoopSkipMost
@@ -828,60 +826,93 @@ bool CSoundPlayerChannel::prebufferChunk()
 	sample_pos_t prebufferPositionToWrite=0;
 
 	const unsigned channelCount=prepared_channelCount;
-	try // GGG
+	sample_pos_t pos1=0,pos2=0; // declared out here incase I need their values when queuing up a gap 
+
+	if(!playing || !prebuffering) // stop() may have changed this since the method started (unlikely tho)
 	{
-		sample_pos_t pos1=0,pos2=0; // declared out here incase I need their values when queuing up a gap 
+		prebuffering=false;
+		return true;
+	}
 
-		if(!playing || !prebuffering) // stop() may have changed this since the method started (unlikely tho)
+	const int positionInc=(seekSpeed>0) ? 1 : -1;
+
+	const LoopTypes loopType=this->loopType; // store current value
+	if(playSelectionOnly)
+	{
+		sample_pos_t t;
+		// pos1 is selectStart; pos2 is selectStop
+
+		t=startPosition;
+		pos1=min<sample_pos_t>(t,sound->getLength()-1);
+
+		t=stopPosition;
+		pos2=min<sample_pos_t>(t,sound->getLength()-1);
+	}
+	else
+	{
+		// pos1 is 0; pos2 is length-1
+		pos1=0;
+		pos2=sound->getLength()-1;
+	}
+
+	// assure that prebufferPosition is not out of range
+	if(prebufferPosition<0)
+		prebufferPosition=0;
+	else if(prebufferPosition>pos2)
+		prebufferPosition=pos2;
+
+	prebufferPositionToWrite=prebufferPosition;
+
+	for(unsigned i=0;i<channelCount;i++)
+	{
+		const CRezPoolAccesser &src=sound->getAudio(i);
+
+		sample_pos_t tPrebufferPosition=prebufferPosition;
+
+		// ??? I should be able to know ahead of time an exact number of samples to copy before the loop point instead of having to check the loop point every iteration
+			
+		// avoid +i in (buffer[t*channelCount+i]) the loop by offsetting buffer 
+		sample_t *_buffer=buffer+i;
+		// avoid the *channelCount in (buffer[t*channelCount+i]) the loop by incrementing by the channelCount
+		const size_t last=FRAMES_PER_CHUNK*channelCount;
+
+		if(positionInc>0)
 		{
-			prebuffering=false;
-			sound->unlockSize();
-			return true;
+			for(size_t t=0;t<last;t+=channelCount)
+			{
+				_buffer[t]=src[tPrebufferPosition];
+				bufferUsed++;
+
+				// move position for next iteration
+				tPrebufferPosition+=positionInc;
+				if(tPrebufferPosition>pos2)
+				{
+					if(loopType==ltLoopNone)
+					{
+						ret=true;
+						break;
+					}
+					else // is looped
+					{
+						tPrebufferPosition=pos1;
+						if(loopType==ltLoopGapBeforeRepeat)
+						{
+							// pad with zeros to avoid gap signal played slightly after the beginning of the next loop's audio
+							for(size_t k=t+channelCount;k<last;k+=channelCount)
+							{
+								_buffer[k]=0;
+								bufferUsed++; 
+							}
+							queueUpAGap=true;
+							break;
+						}
+					}
+				}
+			}
 		}
-
-		const int positionInc=(seekSpeed>0) ? 1 : -1;
-
-		const LoopTypes loopType=this->loopType; // store current value
-		if(playSelectionOnly)
+		else // if(positionInc<=0)
 		{
-			sample_pos_t t;
-			// pos1 is selectStart; pos2 is selectStop
-
-			t=startPosition;
-			pos1=min<sample_pos_t>(t,sound->getLength()-1);
-
-			t=stopPosition;
-			pos2=min<sample_pos_t>(t,sound->getLength()-1);
-		}
-		else
-		{
-			// pos1 is 0; pos2 is length-1
-			pos1=0;
-			pos2=sound->getLength()-1;
-		}
-
-		// assure that prebufferPosition is not out of range
-		if(prebufferPosition<0)
-			prebufferPosition=0;
-		else if(prebufferPosition>pos2)
-			prebufferPosition=pos2;
-
-		prebufferPositionToWrite=prebufferPosition;
-
-		for(unsigned i=0;i<channelCount;i++)
-		{
-			const CRezPoolAccesser &src=sound->getAudio(i);
-
-			sample_pos_t tPrebufferPosition=prebufferPosition;
-
-			// ??? I should be able to know ahead of time an exact number of samples to copy before the loop point instead of having to check the loop point every iteration
-				
-			// avoid +i in (buffer[t*channelCount+i]) the loop by offsetting buffer 
-			sample_t *_buffer=buffer+i;
-			// avoid the *channelCount in (buffer[t*channelCount+i]) the loop by incrementing by the channelCount
-			const size_t last=FRAMES_PER_CHUNK*channelCount;
-
-			if(positionInc>0)
+			if(tPrebufferPosition>0) // don't even bother if it's not >0 because we're playing backwards and it's going to just click,click,click from the first sample being there and the rest being silence
 			{
 				for(size_t t=0;t<last;t+=channelCount)
 				{
@@ -889,126 +920,84 @@ bool CSoundPlayerChannel::prebufferChunk()
 					bufferUsed++;
 
 					// move position for next iteration
-					tPrebufferPosition+=positionInc;
-					if(tPrebufferPosition>pos2)
-					{
-						if(loopType==ltLoopNone)
-						{
-							ret=true;
-							break;
-						}
-						else // is looped
-						{
-							tPrebufferPosition=pos1;
-							if(loopType==ltLoopGapBeforeRepeat)
-							{
-								// pad with zeros to avoid gap signal played slightly after the beginning of the next loop's audio
-								for(size_t k=t+channelCount;k<last;k+=channelCount)
-								{
-									_buffer[k]=0;
-									bufferUsed++; 
-								}
-								queueUpAGap=true;
-								break;
-							}
-						}
-					}
-				}
-			}
-			else // if(positionInc<=0)
-			{
-				if(tPrebufferPosition>0) // don't even bother if it's not >0 because we're playing backwards and it's going to just click,click,click from the first sample being there and the rest being silence
-				{
-					for(size_t t=0;t<last;t+=channelCount)
-					{
-						_buffer[t]=src[tPrebufferPosition];
-						bufferUsed++;
-
-						// move position for next iteration
-						if(tPrebufferPosition>0)
-							tPrebufferPosition+=positionInc;
-						else
-						{
-							tPrebufferPosition=0;
-							break;
-						}
-					}
-				}
-				else
-				{
-					for(size_t t=0;t<last;t+=channelCount)
-					{
-						_buffer[t]=0;
-						bufferUsed++;
-					}
-				}
-			}
-
-			// update real prebufferPosition place holder on last iteration
-			if(i==channelCount-1)
-			{
-				// but before we do that, if we're seeking faster than 5.0, then start skipping chunks (and handle loops points)
-				const int skipAmount=playSpeedForPrebuffering*FRAMES_PER_CHUNK;
-				if(skipAmount>0)
-				{
-					tPrebufferPosition+=skipAmount;
-					if(tPrebufferPosition>pos2)
-					{
-						if(loopType==ltLoopNone)
-						{
-							tPrebufferPosition=pos2;
-							ret=true;
-						}
-						else // is looped
-							tPrebufferPosition=pos1;
-					}
-				}
-				else if(skipAmount<0)
-				{
-					if(tPrebufferPosition>(sample_pos_t)(-skipAmount))
-						tPrebufferPosition+=skipAmount;
+					if(tPrebufferPosition>0)
+						tPrebufferPosition+=positionInc;
 					else
+					{
 						tPrebufferPosition=0;
+						break;
+					}
 				}
-
-				prebufferPosition=tPrebufferPosition;
 			}
-		}
-
-		// if loopType is to skip most of the middle make pos2 the point to skip most of the middle
-		if(loopType==ltLoopSkipMost)
-		{
-			// make sure there is at least 2 margins between pos1 and pos2
-			// and that the gap to be placed between the two margines is shorter than what will be skipped
-			if((pos2-pos1)>(skipMiddleMargin*2+gapSignalLength))
+			else
 			{
-				// see if prebufferPosition is within the area we should skip
-				if(prebufferPosition>(pos1+skipMiddleMargin) && prebufferPosition<(pos2-skipMiddleMargin))
+				for(size_t t=0;t<last;t+=channelCount)
 				{
-					if(seekSpeed>0)
-						prebufferPosition=pos2-skipMiddleMargin; // skip ahead 
-					else // if(seekSpeed<0)
-						prebufferPosition=pos1+skipMiddleMargin; // skip backwards
-					
-					queueUpAGap=true;
+					_buffer[t]=0;
+					bufferUsed++;
 				}
 			}
 		}
 
-		sound->unlockSize();
+		// update real prebufferPosition place holder on last iteration
+		if(i==channelCount-1)
+		{
+			// but before we do that, if we're seeking faster than 5.0, then start skipping chunks (and handle loops points)
+			const int skipAmount=playSpeedForPrebuffering*FRAMES_PER_CHUNK;
+			if(skipAmount>0)
+			{
+				tPrebufferPosition+=skipAmount;
+				if(tPrebufferPosition>pos2)
+				{
+					if(loopType==ltLoopNone)
+					{
+						tPrebufferPosition=pos2;
+						ret=true;
+					}
+					else // is looped
+						tPrebufferPosition=pos1;
+				}
+			}
+			else if(skipAmount<0)
+			{
+				if(tPrebufferPosition>(sample_pos_t)(-skipAmount))
+					tPrebufferPosition+=skipAmount;
+				else
+					tPrebufferPosition=0;
+			}
+
+			prebufferPosition=tPrebufferPosition;
+		}
 	}
-	catch(...)
+
+	// if loopType is to skip most of the middle make pos2 the point to skip most of the middle
+	if(loopType==ltLoopSkipMost)
 	{
-		sound->unlockSize();
-		throw; // ??? hmm.. what would I want to do here
+		// make sure there is at least 2 margins between pos1 and pos2
+		// and that the gap to be placed between the two margines is shorter than what will be skipped
+		if((pos2-pos1)>(skipMiddleMargin*2+gapSignalLength))
+		{
+			// see if prebufferPosition is within the area we should skip
+			if(prebufferPosition>(pos1+skipMiddleMargin) && prebufferPosition<(pos2-skipMiddleMargin))
+			{
+				if(seekSpeed>0)
+					prebufferPosition=pos2-skipMiddleMargin; // skip ahead 
+				else // if(seekSpeed<0)
+					prebufferPosition=pos1+skipMiddleMargin; // skip backwards
+				
+				queueUpAGap=true;
+			}
+		}
 	}
+
+	// can unlock this now
+	sl.unlock();
 
 		// also, the stretching algorithm in the play thread messes up sometimes if 
 		// successive chunks aren't the same length (isn't a problem I don't think 
 		// with the idea of the algorithm just some particular about it that I'm not 
 		// going to worry about since I will always write full chunks... someday it 
 		// may crop up again)
-
 
 	try // wrap to catch TMemoryPipe::EPipeClosed ??? shouldn't be necessary any more
 	{

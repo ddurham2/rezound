@@ -36,16 +36,16 @@ ASoundTranslator::~ASoundTranslator()
 
 bool ASoundTranslator::loadSound(const string filename,CSound *sound) const
 {
-	sound->lockForResize();
 	try
 	{
+		CSoundLocker sl(sound, true);
+
 		// use working file if it exists
 		if(!sound->createFromWorkingPoolFileIfExists(filename))
 		{
 			sound->enableCueAdjustmentsOnSpaceChanges(false);
 			if(!onLoadSound(filename,sound))
 			{
-				sound->unlockForResize();
 				sound->closeSound(); // this removes the working poolfile
 				return false; // cancelled
 			}
@@ -58,12 +58,10 @@ bool ASoundTranslator::loadSound(const string filename,CSound *sound) const
 			throw runtime_error(string(__func__)+" -- internal error -- no pool file was open after loading file");
 
 		sound->enableCueAdjustmentsOnSpaceChanges(true);
-		sound->unlockForResize();
 	}
 	catch(...)
 	{
 		sound->enableCueAdjustmentsOnSpaceChanges(true);
-		sound->unlockForResize();
 		throw;
 	}
 	return true;
@@ -76,35 +74,26 @@ bool ASoundTranslator::saveSound(const string filename,const CSound *sound,bool 
 
 bool ASoundTranslator::saveSound(const string filename,const CSound *sound,const sample_pos_t saveStart,const sample_pos_t saveLength,bool useLastUserPrefs) const
 {
-	sound->lockSize();
-	try
-	{
-		/*
-		 * ??? A nice feature that would be good now that saving a file can be cancelled
-		 * is for onSaveSound to be passed two files.. one to display in error msgs and on dialogs and such
-		 * and another to actually write to.. then this code would do a move after everything was successful.
-		 * The only problem might be running out of space... Perhaps if space is low, or there isn't
-		 * enough for raw PCM size on that directory, then I should prompt the user
-		 *
-		 * Another solution is to rename the current file that exists and then do the same.. when the 
-		 * save is successful, delete the original, or if the save is cancelled, then rename the original
-		 * back again.
-		 *
-		 * ESPECIALLY since saving a file can be cancelled thus killing the original
-		 */
+	CSoundLocker sl(sound, false);
+	/*
+	 * ??? A nice feature that would be good now that saving a file can be cancelled
+	 * is for onSaveSound to be passed two files.. one to display in error msgs and on dialogs and such
+	 * and another to actually write to.. then this code would do a move after everything was successful.
+	 * The only problem might be running out of space... Perhaps if space is low, or there isn't
+	 * enough for raw PCM size on that directory, then I should prompt the user
+	 *
+	 * Another solution is to rename the current file that exists and then do the same.. when the 
+	 * save is successful, delete the original, or if the save is cancelled, then rename the original
+	 * back again.
+	 *
+	 * ESPECIALLY since saving a file can be cancelled thus killing the original
+	 */
 
-		if(saveLength>sound->getLength() || (sound->getLength()-saveLength)<saveStart)
-			throw runtime_error(string(__func__)+" -- invalid saveStart and saveLength range: from "+istring(saveStart)+" for "+istring(saveLength));
+	if(saveLength>sound->getLength() || (sound->getLength()-saveLength)<saveStart)
+		throw runtime_error(string(__func__)+" -- invalid saveStart and saveLength range: from "+istring(saveStart)+" for "+istring(saveLength));
 
-		bool ret=onSaveSound(filename,sound,saveStart,saveLength,useLastUserPrefs);
-		sound->unlockSize();
-		return ret;
-	}
-	catch(...)
-	{
-		sound->unlockSize();
-		throw;
-	}
+	bool ret=onSaveSound(filename,sound,saveStart,saveLength,useLastUserPrefs);
+	return ret;
 }
 
 // --- static methods --------------------------------------------

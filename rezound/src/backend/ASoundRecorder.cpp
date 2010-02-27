@@ -72,21 +72,13 @@ void ASoundRecorder::prvStop()
 		started=false;
 
 		// remove extra prealloceded space
-		sound->lockForResize();
-		try
+		CSoundLocker sl(sound, true);
+		if(prealloced>0)
 		{
-			if(prealloced>0)
-				// remove extra space
-				sound->removeSpace(sound->getLength()-prealloced,prealloced);
-			prealloced=0;
-
-			sound->unlockForResize();
+			// remove extra space
+			sound->removeSpace(sound->getLength()-prealloced,prealloced);
 		}
-		catch(...)
-		{
-			sound->unlockForResize();
-			throw;
-		}
+		prealloced=0;
 	}
 
 }
@@ -117,9 +109,10 @@ void ASoundRecorder::done()
 	if(started)
 		throw string(__func__)+" -- done should not be called while the recorder is start()-ed";
 
-	sound->lockForResize();
 	try
 	{
+		CSoundLocker sl(sound, true);
+
 		if(sound->getLength()>writePos)
 			// remove extra space
 			sound->removeSpace(writePos,sound->getLength()-writePos);
@@ -137,13 +130,10 @@ void ASoundRecorder::done()
 			Error(e.what());
 		}
 		
-
-		sound->unlockForResize();
 	}
 	catch(...)
 	{
-		sound->unlockForResize();
-		sound=NULL;
+		sound=NULL; // ??? why this?
 		throw;
 	}
 
@@ -306,20 +296,11 @@ void ASoundRecorder::onData(sample_t *samples,const size_t _sampleFramesRecorded
 		// we preallocate space in the sound in PREALLOC_SECONDS second chunks
 		if(prealloced<sampleFramesRecorded)
 		{
-			sound->lockForResize();
-			try
+			CSoundLocker sl(sound, true);
+			while(prealloced<sampleFramesRecorded)
 			{
-				while(prealloced<sampleFramesRecorded)
-				{
-					sound->addSpace(sound->getLength(),PREALLOC_SECONDS*sound->getSampleRate(),false);
-					prealloced+=(PREALLOC_SECONDS*sound->getSampleRate());
-				}
-				sound->unlockForResize();
-			}
-			catch(...)
-			{
-				sound->unlockForResize();
-				throw;
+				sound->addSpace(sound->getLength(),PREALLOC_SECONDS*sound->getSampleRate(),false);
+				prealloced+=(PREALLOC_SECONDS*sound->getSampleRate());
 			}
 		}
 

@@ -362,7 +362,8 @@ void FXWaveCanvas::drawPortion(int left,int width,FXDCWindow *dc)
 	//
 	// ??? One better solution would be to arrange for a back buffer to be saved 
 	// before the action started, and I could blit from that for updates
-	if(!loadedSound->sound->trylockSize())
+	CSoundLocker sl(loadedSound->sound, false, true);
+	if(!sl.isLocked())
 	{ // can't lock.. just paint with background.. whole thing first time the lock fails.. just do updated part on not-the-first time
 		dc->setForeground(backGroundColor);
 		if(lastDrawWasUnsuccessful)
@@ -375,40 +376,30 @@ void FXWaveCanvas::drawPortion(int left,int width,FXDCWindow *dc)
 	else
 		lastDrawWasUnsuccessful=false;
 
-	try
-	{
-		renderedStartPosition=loadedSound->channel->getStartPosition();
-		renderedStopPosition=loadedSound->channel->getStopPosition();
+	renderedStartPosition=loadedSound->channel->getStartPosition();
+	renderedStopPosition=loadedSound->channel->getStopPosition();
 
-		const int vOffset=((getVertSize()-getHeight())/2)-vertOffset;
-		::drawPortion(left,width,dc,loadedSound->sound,getWidth(),getHeight(),(int)getDrawSelectStart(),(int)getDrawSelectStop(),horzZoomFactor,horzOffset,vertZoomFactor,vOffset);
+	const int vOffset=((getVertSize()-getHeight())/2)-vertOffset;
+	::drawPortion(left,width,dc,loadedSound->sound,getWidth(),getHeight(),(int)getDrawSelectStart(),(int)getDrawSelectStop(),horzZoomFactor,horzOffset,vertZoomFactor,vOffset);
 
-		if(gDrawVerticalCuePositions)
-		{	// draw cue positions as inverted colors
+	if(gDrawVerticalCuePositions)
+	{	// draw cue positions as inverted colors
 
-			// calculate the min and max times based on the left and right boundries of the drawing
-			const sample_pos_t minTime=getSamplePosForScreenX(max(0,left-1));
-			const sample_pos_t maxTime=getSamplePosForScreenX(left+width+1);
+		// calculate the min and max times based on the left and right boundries of the drawing
+		const sample_pos_t minTime=getSamplePosForScreenX(max(0,left-1));
+		const sample_pos_t maxTime=getSamplePosForScreenX(left+width+1);
 
-			/* ??? if I iterated over the cues by increasing time, then I could be more efficient by finding the neared cue to minTime and stop when a cue is greater than maxTime */
-			const size_t cueCount=loadedSound->sound->getCueCount();
-			for(size_t t=0;t<cueCount;t++)
+		/* ??? if I iterated over the cues by increasing time, then I could be more efficient by finding the neared cue to minTime and stop when a cue is greater than maxTime */
+		const size_t cueCount=loadedSound->sound->getCueCount();
+		for(size_t t=0;t<cueCount;t++)
+		{
+			const sample_pos_t cueTime=loadedSound->sound->getCueTime(t);
+			if(cueTime>=minTime && cueTime<=maxTime)
 			{
-				const sample_pos_t cueTime=loadedSound->sound->getCueTime(t);
-				if(cueTime>=minTime && cueTime<=maxTime)
-				{
-					const FXint x=getCueScreenX(t);
-					::drawPortion(x,1,dc,loadedSound->sound,getWidth(),getHeight(),(int)getDrawSelectStart(),(int)getDrawSelectStop(),horzZoomFactor,horzOffset,vertZoomFactor,vOffset,false,true);
-				}
+				const FXint x=getCueScreenX(t);
+				::drawPortion(x,1,dc,loadedSound->sound,getWidth(),getHeight(),(int)getDrawSelectStart(),(int)getDrawSelectStop(),horzZoomFactor,horzOffset,vertZoomFactor,vOffset,false,true);
 			}
 		}
-
-		loadedSound->sound->unlockSize();
-	}
-	catch(...)
-	{
-		loadedSound->sound->unlockSize();
-		throw;
 	}
 }
 

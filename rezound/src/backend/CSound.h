@@ -72,17 +72,6 @@ public:
 
 	void changeWorkingFilename(const string newOriginalFilename);
 
-	// locks to keep the size from changing (multiple locks can be obtained of this type)
-	void lockSize() const;
-	bool trylockSize() const;
-	void unlockSize() const;
-
-	// locks to be able to change the size (only one lock can be obtained of this type)
-	void lockForResize() const;
-	bool trylockForResize() const;
-	void unlockForResize() const;
-
-
 
 	CRezPoolAccesser getAudio(unsigned channel);
 	const CRezPoolAccesser getAudio(unsigned channel) const;
@@ -519,6 +508,74 @@ private:
 	// called after every space modification to ensure that there is at least 1 sample of length
 	// zero length poses problems with selection positions, so I just always make sure there is at least 1 sample
 	void ensureNonZeroLength();
+
+
+
+
+	// --- private locking methods only used by CSoundLocker ------------------------------
+	friend class CSoundLocker;
+
+	// locks to keep the size from changing (multiple locks can be obtained of this type)
+	void lockSize() const;
+	bool trylockSize() const;
+	void unlockSize() const;
+
+	// locks to be able to change the size (only one lock can be obtained of this type)
+	void lockForResize() const;
+	bool trylockForResize() const;
+	void unlockForResize() const;
+
+};
+
+class CSoundLocker {
+	const CSound *mSound;
+	const bool mLockForResize;
+public:
+	CSoundLocker(const CSound *sound, bool lockForResize, bool trylock=false)
+		: mSound(sound)
+		, mLockForResize(lockForResize)
+	{
+		if(mLockForResize) {
+			if(trylock) {
+				// trylock for resize
+				if(!mSound->trylockForResize()) {
+					mSound = NULL;
+				}
+			} else {
+				// lock for resize
+				mSound->lockForResize();
+			}
+		} else {
+			if(trylock) {
+				// trylock the size
+				if(!mSound->trylockSize()) {
+					mSound = NULL;
+				}
+			} else {
+				// lock the size
+				mSound->lockSize();
+			}
+		}
+	}
+
+	~CSoundLocker() {
+		unlock();
+	}
+
+	bool isLocked() const {
+		return mSound != NULL;
+	}
+
+	void unlock() {
+		if(mSound) {
+			if(mLockForResize) {
+				mSound->unlockForResize();
+			} else {
+				mSound->unlockSize();
+			}
+			mSound = NULL;
+		}
+	}
 };
 
 #endif

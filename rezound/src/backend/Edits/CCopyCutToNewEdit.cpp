@@ -50,21 +50,15 @@ bool CCopyCutToNewEdit::doActionSizeSafe(CActionSound *actionSound,bool prepareF
 		actionSound->sound->getSampleRate(),
 		selectionLength);
 
-	newSound->sound->lockSize();
-	try
 	{
+		CSoundLocker sl(newSound->sound, false);
+
 		unsigned k=0;
 		for(unsigned t=0;t<actionSound->sound->getChannelCount();t++)
 		{
 			if(actionSound->doChannel[t])
 				newSound->sound->mixSound(k++,0,actionSound->sound->getAudio(t),start,actionSound->sound->getSampleRate(),selectionLength,mmOverwrite,sftNone,false,true);
 		}
-		newSound->sound->unlockSize();
-	}
-	catch(...)
-	{
-		newSound->sound->unlockSize();
-		throw;
 	}
 
 	if(type==cctCutToNew)

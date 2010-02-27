@@ -365,16 +365,9 @@ bool ASoundFileManager::close(CloseTypes closeType,CLoadedSound *closeWhichSound
 			// else closeType==ctSaveNone  (no question to ask; just don't save)
 		}
 
-		loaded->sound->lockForResize();
-		try
 		{
+			CSoundLocker sl(loaded->sound, true);
 			loaded->channel->stop();
-			loaded->sound->unlockForResize();
-		}
-		catch(...)
-		{
-			loaded->sound->unlockForResize();
-			// perhaps don't worry about it???
 		}
 
 		// save before we start deconstructing everything so that if there
@@ -474,7 +467,10 @@ void ASoundFileManager::recordToNew()
 		else
 		{
 			// ??? temporary until CSound can have zero length
-			loaded->sound->lockForResize(); try { loaded->sound->removeSpace(0,1); loaded->sound->unlockForResize(); } catch(...) { loaded->sound->unlockForResize(); throw; }
+			{
+				CSoundLocker sl(loaded->sound, true);
+				loaded->sound->removeSpace(0, 1);
+			}
 
 			// set some kind of initial selection
 			loaded->channel->setStopPosition(loaded->sound->getLength()/2+loaded->sound->getLength()/4);
