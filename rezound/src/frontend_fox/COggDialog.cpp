@@ -136,7 +136,7 @@ template <class type> void setEnable(type *t,bool enabled)
 
 long COggDialog::onRadioButton(FXObject *sender,FXSelector sel,void *ptr)
 {
-	if((int)ptr==0) // only act when ptr==1 when it's getting checked
+	if(!ptr) // only act when ptr==1 when it's getting checked
 		return 1;
 
 	// turn off all buttons

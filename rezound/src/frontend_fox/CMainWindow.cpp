@@ -438,7 +438,7 @@ void CMainWindow::rebuildSoundWindowList()
 
 long CMainWindow::onSoundListChange(FXObject *sender,FXSelector sel,void *ptr)
 {
-	FXint index=(FXint)ptr;
+	intptr_t index=(intptr_t)ptr;
 
 	if(index>=0 && index<soundList->getNumItems())
 	{
@@ -1853,13 +1853,13 @@ long CMainWindow::onKeyboardShuttle(FXObject *sender,FXSelector sel,void *ptr)
 
 	if(pos==0 && FXSELID(sel)==ID_SHUTTLE_BACKWARD)
 	{
-		if((unsigned)ptr > 1/*came from keyboard event*/) enableAutoRepeat(getApp()->getDisplay(),false); // QQQ
+		if((uintptr_t)ptr > 1/*came from keyboard event*/) enableAutoRepeat(getApp()->getDisplay(),false); // QQQ
 		shuttleDial->setValue(pos-inc);
 		onShuttleChange(sender,sel,ptr);
 	}
 	else if(pos==0 && FXSELID(sel)==ID_SHUTTLE_FORWARD)
 	{
-		if((unsigned)ptr > 1/*came from keyboard event*/) enableAutoRepeat(getApp()->getDisplay(),false); // QQQ
+		if((uintptr_t)ptr > 1/*came from keyboard event*/) enableAutoRepeat(getApp()->getDisplay(),false); // QQQ
 		shuttleDial->setValue(pos+inc);
 		onShuttleChange(sender,sel,ptr);
 	}

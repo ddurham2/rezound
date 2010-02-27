@@ -206,7 +206,7 @@ bool CPasteChannelsDialog::show(CActionSound *_actionSound,CActionParameters *ac
 	{
 		pasteChannels.clear();
 
-		actionParameters->setValue<unsigned>(_("MixMethod"),(unsigned)(mixTypeComboBox->getItemData(mixTypeComboBox->getCurrentItem())));
+		actionParameters->setValue<unsigned>(_("MixMethod"),(uintptr_t)(mixTypeComboBox->getItemData(mixTypeComboBox->getCurrentItem())));
 		
 		if(repeatTypeComboBox->getCurrentItem()==0)
 		{ // repeating it a given number of times
