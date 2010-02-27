@@ -223,7 +223,7 @@ AC_FUNC_STAT
 AC_CHECK_LIB(m, sqrt,,AC_MSG_ERROR([compatible libc math library not found])) 
 
 AC_LANG_PUSH(C)
-AC_CHECK_FUNCS([floor ftruncate memmove memset mkdir modf pow realpath sqrt strchr strdup strerror strrchr strstr strtol statfs],[],[AC_MSG_WARN([Some functions not found.  Compile may fail.  Alternate methods may need to be implemented.])])
+AC_CHECK_FUNCS([floor ftruncate memmove memset mkdir modf pow realpath sqrt strchr strdup strerror strrchr strstr strtol statfs gettimeofday],[],[AC_MSG_WARN([Some functions not found.  Compile may fail.  Alternate methods may need to be implemented.])])
 AC_LANG_POP(C)
 
 

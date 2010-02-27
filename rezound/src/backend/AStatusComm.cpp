@@ -98,12 +98,19 @@ void endAllProgressBars()
 
 // --- CStatusBar --------------------------------------
 
-#include <sys/timeb.h>
+#include <sys/time.h>
+// we're truncating the result to 32bit, but that's okay because we're only taking the differences
 static unsigned long getCurrentMilliseconds()
 {
+#if HAVE_GETTIMEOFDAY
+	struct timeval tp;
+	(void)gettimeofday(&tp, NULL);
+	return (unsigned long)tp.tv_sec*1000UL+(unsigned long)tp.tv_usec/1000UL;
+#else
 	struct timeb tb;
 	ftime(&tb);
 	return (unsigned long)tb.time*1000UL+(unsigned long)tb.millitm;
+#endif
 }
 
 CStatusBar::CStatusBar(const string title,const sample_pos_t firstValue,const sample_pos_t lastValue,const bool showCancelButton) :

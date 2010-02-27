@@ -115,7 +115,7 @@ private:
 	const sample_pos_t div;
 	const float mul;
 	sample_pos_t lastProgress;
-	unsigned long initialTime;
+	uint64_t initialTime;
 
 	const string getTimeElapsed();
 	const string getTimeRemaining();
