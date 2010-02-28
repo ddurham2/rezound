@@ -93,6 +93,7 @@ string gLADSPAPath="";
 
 
 string gFallbackWorkDir="/tmp"; // ??? would be something else on non-unix platforms
+string gPrimaryWorkDir="";
 
 
 string gClipboardDir="/tmp"; // ??? would be something else on non-unix platforms
@@ -280,6 +281,7 @@ void readBackendSettings()
 
 	// where ReZound should fallback to put working files if it can't write to where it loaded a file from
 		// ??? This could be a vector where it would try multiple locations finding one that isn't full or close to full relative to the loaded file size
+	GET_SETTING("primaryWorkDir",gPrimaryWorkDir,string)
 	GET_SETTING("fallbackWorkDir",gFallbackWorkDir,string)
 
 	GET_SETTING("clipboardDir",gClipboardDir,string)
@@ -375,6 +377,7 @@ void writeBackendSettings()
 
 	gSettingsRegistry->setValue<string>("LADSPA_PATH",gLADSPAPath);
 
+	gSettingsRegistry->setValue<string>("primaryWorkDir",gPrimaryWorkDir);
 	gSettingsRegistry->setValue<string>("fallbackWorkDir",gFallbackWorkDir);
 
 	gSettingsRegistry->setValue<string>("clipboardDir",gClipboardDir);

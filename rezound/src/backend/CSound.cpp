@@ -1558,6 +1558,9 @@ void CSound::flush()
 const string findWorkDir(const string filename)
 {
 	vector<string> workingDirs;
+		if(gPrimaryWorkDir!="" && CPath(gPrimaryWorkDir).isDirectory()) {
+			workingDirs.push_back(CPath(gPrimaryWorkDir).realPath());
+		}
 		workingDirs.push_back(CPath(filename).dirName()); // first try the dirname of the given filename
 		workingDirs.push_back(gFallbackWorkDir); // next try to fallback working dir (in the future, this may be a list)
 

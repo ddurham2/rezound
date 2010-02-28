@@ -104,9 +104,12 @@ extern string gJACKInputPortNames[64];
 extern string gLADSPAPath;
 
 
+// This specifies the directory to first try to put working files into
+extern string gPrimaryWorkDir;			// defaulted to ""
+
 // This specifies the directory to fall back to if we cannot write
-// to the directory where we're loading a file from, or if it's 
-// a nearly full file system
+// to gPrimaryWorkDir nor the directory where we're loading a file from, 
+// or if it's on a nearly full file system
 extern string gFallbackWorkDir;			// defaulted to /tmp
 
 

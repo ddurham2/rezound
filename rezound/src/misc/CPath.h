@@ -257,6 +257,12 @@ public:
 		return S_ISREG(statBuf.st_mode);
 	}
 
+	// returns true if the path is a directory
+	bool isDirectory() const
+	{
+		return S_ISDIR(statBuf.st_mode);
+	}
+
 	bool isLink() const
 	{
 		return S_ISLNK(statBuf.st_mode);
