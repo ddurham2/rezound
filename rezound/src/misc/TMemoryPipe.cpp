@@ -23,11 +23,13 @@
 #endif
 
 #include <string.h>
+#include <sys/mman.h>
 
 #include <stdexcept>
 #include <algorithm>
 
 #include <istring>
+
 
 template <class type> TMemoryPipe<type>::TMemoryPipe(int pipeSize) :
 	readOpened(false),
@@ -43,7 +45,11 @@ template <class type> TMemoryPipe<type>::~TMemoryPipe()
 {
 	closeRead();
 	closeWrite();
-	delete [] buffer;
+
+	if(buffer) {
+		munlock(buffer, bufferSize);
+		delete [] buffer;
+	}
 }
 
 template <class type> void TMemoryPipe<type>::setSize(int pipeSize)
@@ -56,12 +62,19 @@ template <class type> void TMemoryPipe<type>::setSize(int pipeSize)
 	if(pipeSize<=0)
 		throw runtime_error(string(__func__)+" -- invalid pipeSize: "+istring(pipeSize));
 
-#warning need to do something to prevent this data from getting swapped to disk (for JACK)
+	if(buffer) {
+		// release lock on not-swapping memory
+		munlock(buffer, bufferSize);
+	}
+
 	type *temp=new type[pipeSize+1];
 	delete [] buffer;
 	buffer=temp;
 
 	bufferSize=pipeSize+1;
+
+	// lock memory for being swapped (for JACK's sake)
+	mlock(buffer, bufferSize);
 }
 
 template <class type> void TMemoryPipe<type>::open()
