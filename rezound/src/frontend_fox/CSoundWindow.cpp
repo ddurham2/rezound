@@ -393,10 +393,10 @@ void CSoundWindow::drawPlayPosition(bool justErasing)
 			? 
 			(stop-start) 
 			: 
-			(loadedSound->channel->sound->getLength())
+			(loadedSound->channel->getSound()->getLength())
 		;
 
-	const size_t sampleRate=loadedSound->channel->sound->getSampleRate();
+	const size_t sampleRate=loadedSound->channel->getSound()->getSampleRate();
 
 	// quarter second minimum to draw the play status
 	if(length>=sampleRate || length*4/sampleRate>=1 || loadedSound->channel->isPaused())

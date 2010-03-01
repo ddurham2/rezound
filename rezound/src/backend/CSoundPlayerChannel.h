@@ -43,7 +43,6 @@ public:
 	virtual ~CSoundPlayerChannel();
 
 	CSound *getSound() const;
-	CSound * const sound;
 
 	enum LoopTypes
 	{
@@ -90,6 +89,7 @@ public:
 	void updateAfterEdit(const vector<int16_t> &restoreOutputRoutes);
 
 private:
+	CSound * const sound;
 
 	friend class ASoundPlayer;
 
