@@ -231,7 +231,7 @@ void readBackendSettings()
 	GET_SETTING("DesiredOutputBufferCount",gDesiredOutputBufferCount,int)
 		gDesiredOutputBufferCount=max(2,gDesiredOutputBufferCount);
 	GET_SETTING("DesiredOutputBufferSize",gDesiredOutputBufferSize,unsigned)
-		if(gDesiredOutputBufferSize<256 || (gDesiredOutputBufferSize & gDesiredOutputBufferSize-1))
+		if(gDesiredOutputBufferSize<256 || (gDesiredOutputBufferSize & (gDesiredOutputBufferSize-1)))
 			throw runtime_error(string(__func__)+" -- DesiredOutputBufferSize in "+gSettingsRegistry->getFilename()+" must be a power of 2 and >= than 256");
 
 

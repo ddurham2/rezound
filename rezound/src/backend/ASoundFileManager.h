@@ -54,7 +54,7 @@ public:
 	bool open(const string filename="",bool openAsRaw=false);
 	bool open(const vector<string> &filenames,bool openAsRaw=false);
 
-#warning do this.. I can call soundFileManager->getActive() from actions when necessary
+//#warning "do this.. I can call soundFileManager->getActive() from actions when necessary"
 	// ??? should rename these to, saveActive...  or pass them a CSound * (I prefer that), perhaps optionally pass saveAs a filename which can be ""
 		// returns false if something was cancelled
 	bool save();

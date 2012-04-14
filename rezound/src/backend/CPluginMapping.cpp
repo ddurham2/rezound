@@ -330,7 +330,7 @@ void CPluginMapping::print() const
 		{
 			for(size_t j=0;j<inputMappings[t][i].size();j++)
 			{
-				printf("\tinstance:%3d  plugin_input:%3d n:%3d -- loadedIndex: %3d channel: %3d wdro: %1d howMuch: %1d gain: %3.2f\n",t,i,j,inputMappings[t][i][j].soundFileManagerIndex,inputMappings[t][i][j].channel,inputMappings[t][i][j].wdro,inputMappings[t][i][j].howMuch,inputMappings[t][i][j].gain);
+				printf("\tinstance:%3d  plugin_input:%3d n:%3d -- loadedIndex: %3d channel: %3d wdro: %1d howMuch: %1d gain: %3.2f\n",(int)t,(int)i,(int)j,inputMappings[t][i][j].soundFileManagerIndex,inputMappings[t][i][j].channel,inputMappings[t][i][j].wdro,inputMappings[t][i][j].howMuch,inputMappings[t][i][j].gain);
 			}
 		}
 	}
@@ -342,7 +342,7 @@ void CPluginMapping::print() const
 		{
 			for(size_t j=0;j<outputMappings[t][i].size();j++)
 			{
-				printf("\tinstance:%3d output_channel:%3d n:%3d -- plugin_output: %3d gain: %3.2f\n",t,i,j,outputMappings[t][i][j].channel,outputMappings[t][i][j].gain);
+				printf("\tinstance:%3d output_channel:%3d n:%3d -- plugin_output: %3d gain: %3.2f\n",(int)t,(int)i,(int)j,outputMappings[t][i][j].channel,outputMappings[t][i][j].gain);
 			}
 		}
 	}
@@ -352,7 +352,7 @@ void CPluginMapping::print() const
 	{
 		printf("\tchannel: %3d\n",t);
 		for(size_t i=0;i<passThrus[t].size();i++)
-			printf("\t\t%3d -- loadedIndex: %3d channel: %3d wdro: %1d howMuch: %1d gain: %3.2f\n",i,passThrus[t][i].soundFileManagerIndex,passThrus[t][i].channel,passThrus[t][i].wdro,passThrus[t][i].howMuch,passThrus[t][i].gain);
+			printf("\t\t%3d -- loadedIndex: %3d channel: %3d wdro: %1d howMuch: %1d gain: %3.2f\n",(int)i,passThrus[t][i].soundFileManagerIndex,passThrus[t][i].channel,passThrus[t][i].wdro,passThrus[t][i].howMuch,passThrus[t][i].gain);
 	}
 
 	/*

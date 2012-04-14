@@ -85,7 +85,7 @@ void CALSASoundPlayer::initialize()
 			if((err = snd_pcm_hw_params_set_rate_near(playback_handle, hw_params, &outSampleRate, 0)) < 0)
 				throw runtime_error(string(__func__)+" -- cannot set sample rate -- "+snd_strerror(err));
 			if(sampleRate!=outSampleRate)
-				fprintf(stderr,("warning: ALSA used a different sample rate ("+istring(outSampleRate)+") than what was asked for ("+istring(sampleRate)+"); will have to do extra calculations to compensate\n").c_str());
+				fprintf(stderr,"warning: ALSA used a different sample rate (%d) than what was asked for (%d); will have to do extra calculations to compensate\n", (int)outSampleRate, (int)sampleRate);
 			devices[0].sampleRate=outSampleRate; // make note of the sample rate for this device (??? which is only device zero for now)
 
 

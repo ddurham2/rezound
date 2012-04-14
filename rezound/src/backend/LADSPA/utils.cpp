@@ -51,7 +51,7 @@ const vector<const LADSPA_Descriptor *> findLADSPAPlugins() {
   const char * pcStart;
 
   pcLADSPAPath = gLADSPAPath.c_str();
-  if (pcLADSPAPath=="")
+  if (pcLADSPAPath[0]==0)
     return list;
 
   set<string> alreadySearched;

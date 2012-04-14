@@ -24,6 +24,8 @@
 #include "../../config/common.h"
 #include "fox_compat.h"
 
+#include <string.h>
+
 #include <stdexcept>
 #ifdef ENABLE_NLS
 #include <clocale> // for gettext init
@@ -60,7 +62,7 @@ static void printNormalFontProperties(FXApp *application);
 static void listFonts();
 // ---
 
-int main(int argc,char *argv[])
+int main(int argc,char* argv[])
 {
 #ifdef ENABLE_NLS
 	setlocale(LC_ALL,"");
@@ -72,7 +74,7 @@ int main(int argc,char *argv[])
 	try
 	{
 		FXApp* application=new FXApp("ReZound","NLT");
-		application->init(argc,argv);
+		application->init(argc, argv);
 
 		// QQQ
 		if(argc==2 && string(argv[1])=="--fix-auto-repeat")
@@ -118,7 +120,7 @@ int main(int argc,char *argv[])
 		//   ??? I suppose I could atleast print to strerr if gStatusComm was not created yet
 
 		ASoundPlayer *soundPlayer=NULL;
-		if(!initializeBackend(soundPlayer,argc,argv))
+		if(!initializeBackend(soundPlayer, argc, argv))
 			return 0;
 
 		// the backend needed to be setup before this stuff was done

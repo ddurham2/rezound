@@ -21,6 +21,7 @@
 #include "CAdaptiveNormalizeAction.h"
 
 #include <utility>
+#include <stdio.h>
 
 #include "../CActionParameters.h"
 #include "../unit_conv.h"

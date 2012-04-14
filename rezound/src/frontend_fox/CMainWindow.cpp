@@ -24,6 +24,7 @@
 #include <algorithm>
 #include <map>
 #include <string>
+#include <stdint.h>
 
 #include <CPath.h>
 
@@ -288,10 +289,12 @@ CMainWindow::CMainWindow(FXApp* a) :
 			new FXButton(t,FXString("...\t")+_("Change Crossfade Times"),NULL,this,ID_CROSSFADE_EDGES_SETTINGS_BUTTON, BUTTON_NORMAL & ~FRAME_THICK);
 		clipboardComboBox=new FXComboBox(miscControlsFrame,8,this,ID_CLIPBOARD_COMBOBOX, FRAME_SUNKEN|FRAME_THICK | COMBOBOX_NORMAL|COMBOBOX_STATIC);
 		clipboardComboBox->setNumVisible(8);
-		recordMacroButton=new FXButton(miscControlsFrame,(_("Record Macro")+string(" ")).c_str(),FOXIcons->OffLED1,this,ID_RECORD_MACRO, BUTTON_NORMAL|ICON_BEFORE_TEXT);
+		
 			// have to 'create' both icons before using them
 			FOXIcons->OffLED1->create();
 			FOXIcons->RedLED1->create();
+			
+		recordMacroButton=new FXButton(miscControlsFrame,(_("Record Macro")+string(" ")).c_str(),FOXIcons->OffLED1,this,ID_RECORD_MACRO, BUTTON_NORMAL|ICON_BEFORE_TEXT);
 
 
 	new FXVerticalSeparator(s);

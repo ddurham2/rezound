@@ -173,7 +173,7 @@ void COSSSoundPlayer::initialize()
 			} 
 			if (sampleRate!=gDesiredOutputSampleRate)
 			{ 
-				fprintf(stderr,("warning: OSS used a different sample rate ("+istring(sampleRate)+") than what was asked for ("+istring(gDesiredOutputSampleRate)+"); will have to do extra calculations to compensate\n").c_str());
+				fprintf(stderr, "warning: OSS used a different sample rate (%d) than what was asked for (%d); will have to do extra calculations to compensate\n", (int)sampleRate, (int)gDesiredOutputSampleRate);
 				//close(audio_fd);
 				//throw runtime_error(string(__func__)+" -- error setting the sample rate -- the sample rate is not supported");
 			} 
@@ -338,7 +338,7 @@ void COSSSoundPlayer::CPlayThread::main()
 			// if(initialize to S16) ???
 			{ // no conversion necessary
 				if((len=write(parent->audio_fd,buffer,BUFFER_SIZE_FRAMES*sizeof(sample_t)*gDesiredOutputChannelCount))!=(int)BUFFER_SIZE_BYTES(sizeof(int16_t)))
-					fprintf(stderr,"warning: didn't write whole buffer -- only wrote %d of %d bytes\n",len,BUFFER_SIZE_BYTES(sizeof(int16_t)));
+					fprintf(stderr,"warning: didn't write whole buffer -- only wrote %d of %d bytes\n",len,BUFFER_SIZE_BYTES((int)sizeof(int16_t)));
 			}
 
 #elif defined(SAMPLE_TYPE_FLOAT)
@@ -349,7 +349,7 @@ void COSSSoundPlayer::CPlayThread::main()
 				for(unsigned t=0;t<l;t++)
 					buffer__int16_t[t]=convert_sample<float,int16_t>(buffer[t]);
 				if((len=write(parent->audio_fd,buffer__int16_t,BUFFER_SIZE_FRAMES*sizeof(int16_t)*gDesiredOutputChannelCount))!=(int)BUFFER_SIZE_BYTES(sizeof(int16_t)))
-					fprintf(stderr,"warning: didn't write whole buffer -- only wrote %d of %d bytes\n",len,BUFFER_SIZE_BYTES(sizeof(int16_t)));
+					fprintf(stderr,"warning: didn't write whole buffer -- only wrote %d of %d bytes\n",len,BUFFER_SIZE_BYTES((int)sizeof(int16_t)));
 			}
 
 #else
