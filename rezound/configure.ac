@@ -855,6 +855,12 @@ ln -s src/frontend_fox/rezound ./rezound
 
 rm -f a.out #autoconf  is leaving this around for some reason
 
+if [[ -z "$RESWRAP" ]]; then
+	RESWRAP=`which reswrap`/reswrap
+fi
+echo "Converting icons"
+src/frontend_fox/convert_images.sh "$RESWRAP" src/images
+
 
 echo
 echo "Please consider joining the ReZound-users mailing list: 

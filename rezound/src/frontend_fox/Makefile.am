@@ -25,11 +25,8 @@
 
 include $(top_srcdir)/config/am_include.mk
 
-
 noinst_LTLIBRARIES=libfrontend.la
-# CFOXIcons.cpp is listed twice because adding 'make CFOXIcons.o' in the dependancy below doesn't work (it leaves of compiler flags for some reason)
 libfrontend_la_SOURCES= \
-			CFOXIcons.cpp \
 			CFOXIcons.cpp \
 			CActionMenuCommand.cpp \
 			CChannelSelectDialog.cpp \
@@ -124,8 +121,8 @@ rezound_DEPENDENCIES=$(_rezound_LDADD)
 AM_CXXFLAGS=@FOX_CFLAGS@
 
 noinst_HEADERS=\
-	fox_compat.h \
 	CFOXIcons.h \
+	fox_compat.h \
 	CActionMenuCommand.h \
 	CChannelSelectDialog.h \
 	CCrossfadeEdgesDialog.h \
@@ -186,19 +183,8 @@ noinst_HEADERS=\
 EXTRA_DIST=convert_images.sh
 
 
-
-$(top_srcdir)/src/frontend_fox/CFOXIcons.h: $(top_srcdir)/src/frontend_fox/CFOXIcons.cpp
-$(top_srcdir)/src/frontend_fox/CFOXIcons.cpp: $(top_srcdir)/src/images/*.gif
-	cd $(top_srcdir)/src/frontend_fox && ./convert_images.sh $(RESWRAP) $(top_srcdir)/src/images
-
-CFOXIcons.cpp: $(top_srcdir)/src/frontend_fox/CFOXIcons.cpp
-CFOXIcons.h: $(top_srcdir)/src/frontend_fox/CFOXIcons.h
-# without this, touching a file in images will cause CFOXIcons.o to be regenerated, but won't cause rezound to be re-linked
-$(bin_PROGRAMS): $(top_builddir)/src/frontend_fox/CFOXIcons.o
-
-
-clean-local: 
-	-rm -f CFOXIcons.cpp CFOXIcons.h
+distclean-compile: 
+	-rm -f CFOXIcons.h CFOXIcons.cpp
 
 
 ## Commented out with namechange

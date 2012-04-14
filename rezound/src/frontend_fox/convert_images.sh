@@ -11,8 +11,11 @@ then
 	exit 1
 fi
 
-RESWRAP=$1
-IMAGE_PATH=$2
+# absolutize these paths
+RESWRAP=$(cd "$(dirname "$1")"; pwd)/$(basename "$1")
+IMAGE_PATH=$(cd "$2"; pwd)
+cd "$(dirname "$0")"
+
 # patterns to match that are instantiated NOT to guess at the alpha color
 override_alpha_exceptions="logo icon_logo_32 icon_logo_16 plugin_wave"
 
