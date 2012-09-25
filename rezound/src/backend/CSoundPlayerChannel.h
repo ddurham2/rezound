@@ -65,7 +65,7 @@ public:
 	void setSeekSpeed(float _seekSpeed);
 	float getSeekSpeed() const;
 
-	// really play position
+	// really is the "play position"
 	sample_pos_t getPosition() const { return playing ? playPosition : 0; }
 	void setPosition(sample_pos_t newPosition);
 
@@ -85,18 +85,19 @@ public:
 
 	const vector<int16_t> getOutputRoutes() const;
 
-	// pass and empty vector if this is not to restore, but possibly recreate the output routes
+	// pass an empty vector if this is not to restore, but possibly recreate the output routes
 	void updateAfterEdit(const vector<int16_t> &restoreOutputRoutes);
 
-private:
-	CSound * const sound;
-
+private: /* for ASoundPlayer only */
 	friend class ASoundPlayer;
+	CSoundPlayerChannel(ASoundPlayer *_player,CSound *_sound);
 
 	// - called by ASoundPlayer
 	// - nChannels is the number of channels buffer represents (i.e 1 mono, 2 stereo, etc)
 	// - bufferSize is in sample frames
 	void mixOntoBuffer(const unsigned nChannels,sample_t * const buffer,const size_t bufferSize);
+
+	CSound * const sound;
 
 	volatile mutable bool somethingWantsToClearThePrebufferQueue;
 				// ??? perhaps everywhere that I set the prebufferPosition I also write/clear the pipe
@@ -146,7 +147,6 @@ private:
 	void createGapSignal();
 
 	ASoundPlayer *player;
-	CSoundPlayerChannel(ASoundPlayer *_player,CSound *_sound);
 
 	// Playing Status and Play Positions
 	volatile bool prebuffering,playing,paused,playSelectionOnly;

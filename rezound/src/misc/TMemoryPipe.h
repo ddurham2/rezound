@@ -91,6 +91,8 @@ private:
 	CConditionVariable fullCond;
 	CConditionVariable emptyCond;
 
+	int privateRead(type *buffer,int size,bool block,int &readPos);
+
 };
 
 #define __TMemoryPipe_H__CPP
