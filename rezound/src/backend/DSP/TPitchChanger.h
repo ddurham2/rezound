@@ -87,12 +87,12 @@ public:
 		if(outputBufferOffset<outputBufferSize)
 			// data available to read
 			return convert_sample<soundtouch::SAMPLETYPE,sample_t>(outputBuffer[outputBufferOffset++]);
-		else if(!changer.isEmpty())
+		else if(changer.numSamples() > 0)
 		{	// read more data from changer
 			outputBufferSize=changer.receiveSamples(outputBuffer,outputBuffer.getSize());
 			outputBufferOffset=0;
 		}
-		else /*if(changer.isEmpty())*/
+		else /*if(changer.numSamples() <= 0)*/
 		{	// write more data to changer
 			if(pos<srcEnd)
 			{
