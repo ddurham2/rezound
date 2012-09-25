@@ -22,6 +22,8 @@
 
 #ifdef ENABLE_PORTAUDIO
 
+#include <stdio.h>
+
 #include <stdexcept>
 
 #include "settings.h"

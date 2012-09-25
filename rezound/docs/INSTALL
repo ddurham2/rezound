@@ -45,6 +45,9 @@ Before attempting to build ReZound you will need to have (or are encouraged to h
 	the the actions that change pitch without changing tempo and that change tempo without 
 	changing pitch.
 
+	- libasound -- To enable alsa I/O
+			--enable-alsa
+
 	- libportaudio -- http://www.portaudio.com -- This can be used if you know what you're
 	doing and need it for some reason.  Support for it can be enabled with the configure 
 	flag: 

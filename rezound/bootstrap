@@ -4,6 +4,7 @@ cat >&2 <<EOF
 The following packages (some version at least) are required to bootstrap:
 	autoconf2.5
 	automake1.7
+	autopoint
 	m4-1.4
 	pkgconfig
 	libtool

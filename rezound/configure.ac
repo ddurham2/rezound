@@ -710,7 +710,7 @@ AC_SUBST(MAYBE_LADSPA_LIB)
 AH_TEMPLATE(HAVE_LIBSOUNDTOUCH)
 PKG_CHECK_MODULES(
 	[soundtouch],
-	[soundtouch-1.0 >= 1.0],
+	[soundtouch >= 1.0],
 	[AC_DEFINE(HAVE_LIBSOUNDTOUCH)],
 	[AC_MSG_WARN(***** libsoundtouch not found.  Tempo and pitch changing will not be supported.)]
 )
