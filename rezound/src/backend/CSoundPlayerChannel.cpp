@@ -107,12 +107,31 @@ CSoundPlayerChannel::CSoundPlayerChannel(ASoundPlayer *_player,CSound *_sound) :
 
 	player(_player),
 
+	prebuffering(false),
 	playing(false),
+	paused(false),
+	playSelectionOnly(false),
+	loopType(ltLoopNone),
+	lastBufferWasGapSignal(false),
+	playPosition(0),
 	seekSpeed(1.0),
 	playSpeedForMixer(1.0),
-	playSpeedForPrebuffering(0)
+	playSpeedForPrebuffering(0),
+		// start out with something selected
+	startPosition(sound->getLength()/2-sound->getLength()/4),
+	stopPosition(sound->getLength()/2+sound->getLength()/4),
+	outputRoute(0)
 {
-	init();
+	for(size_t t=0;t<MAX_CHANNELS;t++) {
+		muted[t]=false;
+	}
+
+	player->addSoundPlayerChannel(this);
+
+	updateAfterEdit(vector<int16_t>());
+
+	prebufferThread.kill=false;
+	prebufferThread.start();
 }
 
 CSoundPlayerChannel::~CSoundPlayerChannel()
@@ -123,31 +142,6 @@ CSoundPlayerChannel::~CSoundPlayerChannel()
 CSound *CSoundPlayerChannel::getSound() const
 {
 	return sound;
-}
-
-void CSoundPlayerChannel::init()
-{
-	player->addSoundPlayerChannel(this);
-
-
-	prebuffering=false;
-	playing=false;
-	lastBufferWasGapSignal=false;
-	playPosition=0;
-
-	// start out with something selected
-	startPosition=sound->getLength()/2-sound->getLength()/4;
-	stopPosition=sound->getLength()/2+sound->getLength()/4;
-
-	outputRoute=0;
-
-	for(size_t t=0;t<MAX_CHANNELS;t++)
-		muted[t]=false;
-
-	updateAfterEdit(vector<int16_t>());
-
-	prebufferThread.kill=false;
-	prebufferThread.start();
 }
 
 void CSoundPlayerChannel::deinit()
@@ -611,7 +605,7 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 		return;
 
 	// protecting from any method that also reads/clears the prebuffering queue
-	CMutexTryLocker l(prebufferReadingMutex); // ??? the mutex needs to be locked in RAM (perhaps just the whole *this object if possible)
+	CMutexLocker l(prebufferReadingMutex, 0); // ??? the mutex needs to be locked in RAM (perhaps just the whole *this object if possible)
 	if(!l.didLock())
 		return;
 

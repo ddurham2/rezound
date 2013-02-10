@@ -120,8 +120,8 @@ public:
 
 	virtual ~FXMyScrollWindow() {}
 
-	FXScrollWindow::startAutoScroll;
-	FXScrollWindow::stopAutoScroll;
+	using FXScrollWindow::startAutoScroll;
+	using FXScrollWindow::stopAutoScroll;
 };
 
 /*****************************/

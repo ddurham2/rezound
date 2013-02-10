@@ -240,10 +240,10 @@ void COSSSoundPlayer::initialize()
 
 			// start play thread
 			playThread.kill=false;
-			playThread.start();
 
 			ASoundPlayer::initialize();
 			initialized=true;
+			playThread.start();
 			fprintf(stderr, "OSS player initialized\n");
 		}
 		catch(...)
@@ -320,11 +320,11 @@ void COSSSoundPlayer::CPlayThread::main()
 		 * 	I think it was sending a signal that perhaps I should catch.
 		 *      So, I'm just making it bigger than necessary
 		 */
-		TAutoBuffer<sample_t> buffer(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount*2); 
+		TAutoBuffer<sample_t> buffer(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount*2, true); 
 			// these are possibly used if sample format conversion is required
-		TAutoBuffer<int16_t> buffer__int16_t(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount);
-		TAutoBuffer<int32_t> buffer__int32_t(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount);
-		TAutoBuffer<float> buffer__float(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount);
+		TAutoBuffer<int16_t> buffer__int16_t(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount, true);
+		TAutoBuffer<int32_t> buffer__int32_t(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount, true);
+		TAutoBuffer<float> buffer__float(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount, true);
 
 		while(!kill)
 		{

@@ -225,6 +225,7 @@ AAction::AAction(const AActionFactory *_factory,const CActionSound *_actionSound
 	restoreLength2(0),
 	restoreTotalLength(0),
 
+	didCrossfadeEdges(cetNone),
 
 	tempCrossfadePoolKeyStart(-1),
 	tempCrossfadePoolKeyStop(-1),
@@ -346,10 +347,13 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 				channel->updateAfterEdit(dummy);
 			}
 
-			// explicitly unlock now
+			// before flushing, upgrade to an exclusive lock
 			sl.unlock();
+			CSoundLocker sl2(actionSound->sound, true);
 
 			actionSound->sound->flush();
+
+			sl2.unlock();
 
 			if(channel!=NULL)
 				setSelection(_actionSound->start,_actionSound->stop,channel);
@@ -435,6 +439,9 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 			else if(_actionSound->stop>=_actionSound->sound->getLength())
 				_actionSound->stop=_actionSound->sound->getLength()-1;
 		
+			// before altering the cue pool or flushing, upgrade to an exclusive lock
+			sl.unlock();
+			CSoundLocker sl2(actionSound->sound, true);
 
 			// restore the cues
 			actionSound->sound->clearCues();
@@ -448,10 +455,9 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 				channel->updateAfterEdit(restoreOutputRoutes);
 
 
-			// explicitly unlock now
-			sl.unlock();
-
 			actionSound->sound->flush();
+
+			sl2.unlock();
 
 			// restore the selection position
 			if(channel!=NULL)

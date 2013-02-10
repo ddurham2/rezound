@@ -115,7 +115,8 @@
 // lock on the pool file ( exclusiveLock() ).  When a routine is not going to change
 // the size of a pool, it can get a shared lock ( sharedLock() ) which allows multiple locks
 // to be obtained while only one exclusive lock can be obtained at a time, only when no shared
-// locks are existing.
+// locks are existing.  There are exceptions of course.  Anything that calls backupSAT() should
+// obtain an exclusive lock.
 
 // -- I still have yet to resolve all the places where we find an inconsistance and printf-then-exit
 // Some of these could be converted to exceptions where it's on startup (like constructing the SAT)
@@ -2407,6 +2408,8 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::invalidateAllCachedBlocks(bool allPools,poolId_t poolId)
 {
+	CMutexLocker lock(accesserInfoMutex);
+
 	for(typename set<RCachedBlock *>::iterator i=activeCachedBlocks.begin();i!=activeCachedBlocks.end();)
 	{
 		typename set<RCachedBlock *>::iterator ii=i;
@@ -2480,10 +2483,10 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::RPoolInfo::writeToFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle) /*const  makes typeof create const types */
+	void TPoolFile<l_addr_t,p_addr_t>::RPoolInfo::writeToFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle) const
 {
 	p_addr_t tSize=size; // always write size as a p_addr_t because l_addr_t can change in ReZound
-	typeof(alignment) tAlignment=alignment;
+	alignment_t tAlignment=alignment;
 
 	hetle(&tSize);
 	f->write(&tSize,sizeof(tSize),multiFileHandle);
@@ -2602,19 +2605,19 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	void TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::writeToMem(uint8_t *mem,size_t &offset) /*const  makes typeof cause const types */
+	void TPoolFile<l_addr_t,p_addr_t>::RLogicalBlock::writeToMem(uint8_t *mem,size_t &offset) const
 {
 	p_addr_t _logicalStart=logicalStart;
 	memcpy(mem+offset,&_logicalStart,sizeof(_logicalStart));
-	hetle((typeof(_logicalStart) *)(mem+offset));
+	hetle((p_addr_t *)(mem+offset));
 	offset+=sizeof(_logicalStart);
 
 	memcpy(mem+offset,&size,sizeof(size));
-	hetle((typeof(size) *)(mem+offset));
+	hetle((size_t *)(mem+offset));
 	offset+=sizeof(size);
 	
 	memcpy(mem+offset,&physicalStart,sizeof(physicalStart));
-	hetle((typeof(physicalStart) *)(mem+offset));
+	hetle((p_addr_t *)(mem+offset));
 	offset+=sizeof(physicalStart);
 }
 

@@ -1,7 +1,7 @@
 
 In addition to what's listed in the INSTALL doc...
 
-   The CVS sources do not come with a configure script, but all the requirements to make configure are contained in the sources. 
+   The subversion sources do not come with a configure script, but all the requirements to make configure are contained in the sources. 
 
    In order to make the configure script you should have installed:
 
@@ -11,6 +11,7 @@ In addition to what's listed in the INSTALL doc...
 	libtool-1.4.2 (or higher)
 	pkgconfig-0.12.0 (or higher)
 	gettext-0.11.5 (or higher)
+	autopoint
 
 	These minimum version numbers may not be exactly right.  The version numbers listed have worked for me and a few others on particular distros.  Even though it should not be the case, I have come across users with different distros where they had to have higher versions than the minumums listed here.
 
@@ -35,6 +36,6 @@ In addition to what's listed in the INSTALL doc...
    This gives other paths to the .m4 files that contain any macro definitions that need to be found by aclocal
 
 
-   bison and flex will also be necessary if compiling from CVS
+   bison and flex will also be necessary if compiling from subversion
 
 

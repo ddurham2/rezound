@@ -109,7 +109,8 @@ _rezound_LDADD= libfrontend.la\
 	$(top_builddir)/src/backend/Generate/libGenerate.la \
 	@MAYBE_LADSPA_LIB@ \
 	$(top_builddir)/src/misc/CNestedDataFile/libmiscCN.la \
-	$(top_builddir)/src/PoolFile/libPoolFile.la
+	$(top_builddir)/src/PoolFile/libPoolFile.la \
+	$(top_builddir)/src/misc/libmisc.la
 
 rezound_LDADD=$(_rezound_LDADD) @FOX_LIBS@
 

@@ -25,6 +25,7 @@
 #include <stdio.h>
 
 #include <istring>
+#include <cmath>
 
 
 CGraphParamValueNode::CGraphParamValueNode()
@@ -232,7 +233,7 @@ const double CGraphParamValueIterator::next()
 	{
 			// ??? this multiplication may cause problems when the values are very large
 		const double d=segmentStartValue+(((segmentStopValueStartValueDiff)*(t++))/(segmentLengthSub1));
-		return isnan(d) ? segmentStartValue : d;
+		return std::isnan(d) ? segmentStartValue : d;
 	}
 	else
 	{

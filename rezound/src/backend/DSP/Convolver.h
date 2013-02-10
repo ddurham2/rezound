@@ -352,7 +352,7 @@ public:
 	/* the responseSize must match the original responseSize at construction or results are undefined */
 	void setNewMagnitudeArray(const coefficient_t magnitude[],size_t responseSize,const coefficient_t phase[]=NULL)
 	{
-		setNewFilterKernel(convertToTimeDomain(magnitude,phase,responseSize));
+		this->setNewFilterKernel(convertToTimeDomain(magnitude,phase,responseSize));
 		delete [] tempKernel;
 	}
 

@@ -41,12 +41,15 @@ Before attempting to build ReZound you will need to have (or are encouraged to h
 	- libFLAC, libFLAC++ -- http://flac.sourceforge.net/ -- These are required for loading
 	and saving FLAC files
 
-	- libSoundTouch -- http://www.iki.fi/oparviai/soundtouch This library is required for 
+	- libSoundTouch -- http://www.surina.net/soundtouch/ This library is required for 
 	the the actions that change pitch without changing tempo and that change tempo without 
 	changing pitch.
 
-	- libasound -- To enable alsa I/O
+	- libasound2 -- To enable alsa I/O
 			--enable-alsa
+
+	- libpulseaudio -- (often libpulse-dev) This can be used to use the pulseaudio daemon 
+	for sound output
 
 	- libportaudio -- http://www.portaudio.com -- This can be used if you know what you're
 	doing and need it for some reason.  Support for it can be enabled with the configure 

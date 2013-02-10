@@ -23,6 +23,8 @@
 
 #include "../../config/common.h"
 
+#include <string.h>
+
 #include <string>
 #include <map>
 
@@ -315,7 +317,7 @@ public:
 			memcpy(r+offset,&isAnchored,sizeof(isAnchored));
 			offset+=sizeof(isAnchored);
 
-			typeof(time) tTime=hetle(time);
+			uint64_t tTime=hetle(time);
 			memcpy(r+offset,&tTime,sizeof(time));
 			offset+=sizeof(time);
 		}

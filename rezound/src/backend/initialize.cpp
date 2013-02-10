@@ -376,6 +376,9 @@ static void printUsage(const string app)
 #ifdef ENABLE_PORTAUDIO
 	printf("\t\tportaudio\n");
 #endif
+#ifdef ENABLE_PULSE
+	printf("\t\tpulse\n");
+#endif
 	printf("\t\tnull\n");
 
 	printf("\n");

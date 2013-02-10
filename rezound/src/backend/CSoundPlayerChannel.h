@@ -27,7 +27,6 @@
 class CSoundPlayerChannel;
 
 #include <CMutex.h>
-#include <CRWLock.h>
 #include <CConditionVariable.h>
 #include <AThread.h>
 #include <TMemoryPipe.h>
@@ -154,7 +153,8 @@ private: /* for ASoundPlayer only */
 	bool lastBufferWasGapSignal; // true if the last buffer that was processed in mixOntoBuffer had its isGap flag turned on (if this is the case, then I have to handle setting the play position in the setSeekSpeed() method a little different)
 	sample_pos_t playPosition;
 	float seekSpeed;
-		float playSpeedForMixer; int playSpeedForPrebuffering;
+	float playSpeedForMixer;
+	int playSpeedForPrebuffering;
 	volatile sample_pos_t startPosition,stopPosition;
 
 	// Mute
@@ -166,7 +166,6 @@ private: /* for ASoundPlayer only */
 	CTrigger playTrigger,pauseTrigger;
 
 	void deinit();
-	void init();
 
 	// by examining the data currently in queue, this returns the most likely position of the oldest frame in the prebuffered pipe.  It is best to call this method with the prebufferReadingMutex locked
 	sample_pos_t estimateOldestPrebufferedPosition(float origSeekSpeed,sample_pos_t origStartPosition,sample_pos_t origStopPosition);

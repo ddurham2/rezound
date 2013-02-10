@@ -109,9 +109,9 @@ void CPulseSoundPlayer::initialize()
 
 			// start play thread
 			playThread.kill=false;
-			playThread.start();
 
 			ASoundPlayer::initialize();
+			playThread.start();
 			initialized=true;
 			fprintf(stderr, "PulseAudio player initialized\n");
 		}
@@ -195,7 +195,7 @@ void CPulseSoundPlayer::CPlayThread::main()
 	{
 		// ??? when I start to more fully support multiple devices I need to read from the devices array and not from the global settings here
 
-		TAutoBuffer<sample_t> buffer(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount*2/*<--padding*/); 
+		TAutoBuffer<sample_t> buffer(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount*2/*<--padding*/, true); 
 
 		while(!kill)
 		{

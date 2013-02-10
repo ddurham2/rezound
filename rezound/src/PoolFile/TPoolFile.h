@@ -35,7 +35,7 @@
 #include <set>
 
 #include <CMutex.h>
-#include <CRWLock.h>
+#include <CRWMutex.h>
 
 #include "CMultiFile.h"
 
@@ -55,10 +55,6 @@ template<class pool_element_t,class pool_file_t> class TStaticPoolAccesser;
 
  - Use getPoolAccesser to retrieve a pool accesser object to manipulate the
    size of and data within a pool.
-
- - The idea of thread-safeness is that the TPoolFile object's interface
-   methods are thread-safe, but PoolAccessers are not.  They do however, have
-   lock, unlock, and trylock methods for mutual exclusion.
 */
 template<class _l_addr_t,class _p_addr_t> class TPoolFile
 {
@@ -182,7 +178,7 @@ private:
 
 	friend struct RLogicalBlock;
 
-	mutable CRWLock structureMutex;
+	mutable CRWMutex structureMutex;
 
 	mutable CMutex accesserInfoMutex;
 
@@ -208,7 +204,7 @@ private:
 		RPoolInfo(const RPoolInfo &src);
 		RPoolInfo &operator=(const RPoolInfo &src);
 
-		void writeToFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle) /*const*/;
+		void writeToFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle) const;
 		void readFromFile(CMultiFile *f,CMultiFile::RHandle &multiFileHandle,int formatVersion);
 	};
 
@@ -310,7 +306,7 @@ private:
 		const bool operator<=(const RLogicalBlock &src) const { return operator<(src) || operator==(src); }
 
 		const size_t getMemSize(int formatVersion);
-		void writeToMem(uint8_t *mem,size_t &offset) /*const*/;
+		void writeToMem(uint8_t *mem,size_t &offset) const;
 		void readFromMem(const uint8_t *mem,size_t &offset,int formatVersion);
 
 		void print() const;

@@ -214,10 +214,10 @@ void CALSASoundPlayer::initialize()
 
 			// start play thread
 			playThread.kill=false;
-			playThread.start();
 
 			ASoundPlayer::initialize();
 			initialized=true;
+			playThread.start();
 			fprintf(stderr, "ALSA player initialized\n");
 		}
 		catch(...)
@@ -285,11 +285,11 @@ void CALSASoundPlayer::CPlayThread::main()
 	try
 	{
 		int err;
-		TAutoBuffer<sample_t> buffer(PERIOD_SIZE_FRAMES*parent->devices[0].channelCount*2); 
+		TAutoBuffer<sample_t> buffer(PERIOD_SIZE_FRAMES*parent->devices[0].channelCount*2, true); 
 			// these are possibly used if sample format conversion is required
-		TAutoBuffer<int16_t> buffer__int16_t(PERIOD_SIZE_FRAMES*parent->devices[0].channelCount);
-		TAutoBuffer<int32_t> buffer__int32_t(PERIOD_SIZE_FRAMES*parent->devices[0].channelCount);
-		TAutoBuffer<float> buffer__float(PERIOD_SIZE_FRAMES*parent->devices[0].channelCount);
+		TAutoBuffer<int16_t> buffer__int16_t(PERIOD_SIZE_FRAMES*parent->devices[0].channelCount, true);
+		TAutoBuffer<int32_t> buffer__int32_t(PERIOD_SIZE_FRAMES*parent->devices[0].channelCount, true);
+		TAutoBuffer<float> buffer__float(PERIOD_SIZE_FRAMES*parent->devices[0].channelCount, true);
 
 		snd_pcm_format_t format=parent->playback_format;
 

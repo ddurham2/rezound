@@ -187,6 +187,10 @@ int CJACKSoundPlayer::processAudio(jack_nframes_t nframes,void *arg)
  */
 
 	CJACKSoundPlayer *that=(CJACKSoundPlayer *)arg;
+	if(!that->initialized) {
+		return 0;
+	}
+
 	try
 	{
 		sample_t *tempBuffer=that->tempBuffer;

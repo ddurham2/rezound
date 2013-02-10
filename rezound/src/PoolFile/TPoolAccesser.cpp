@@ -98,7 +98,7 @@ template <class pool_element_t,class pool_file_t> void TPoolAccesser<pool_elemen
 
 template <class pool_element_t,class pool_file_t> void TPoolAccesser<pool_element_t,pool_file_t>::write(const pool_element_t buffer[],const l_addr_t count,const bool append)
 {
-	overflowWrite(buffer,count,append);
+	this->overflowWrite(buffer,count,append);
 }
 
 #endif

@@ -60,7 +60,7 @@ AAction::CanUndoResults CAddCueAction::canUndo(const CActionSound *actionSound) 
 // -----------------------------------
 
 CAddCueActionFactory::CAddCueActionFactory(AActionDialog *dialog) :
-	AActionFactory(N_("Add Cue"),"",NULL,dialog,false,false)
+	AActionFactory(N_("Add Cue"),"",NULL,dialog,true,false)
 {
 	selectionPositionsAreApplicable=false;
 }
@@ -84,7 +84,7 @@ CAddCueAction *CAddCueActionFactory::manufactureAction(const CActionSound *actio
 // -----------------------------------
 
 CAddCueWhilePlayingActionFactory::CAddCueWhilePlayingActionFactory() :
-	AActionFactory(N_("Add Cue While Playing"),"",NULL,NULL,false,false)
+	AActionFactory(N_("Add Cue While Playing"),"",NULL,NULL,true,false)
 {
 	selectionPositionsAreApplicable=false;
 }
@@ -140,7 +140,7 @@ AAction::CanUndoResults CRemoveCueAction::canUndo(const CActionSound *actionSoun
 // ----------------------------------- 
 
 CRemoveCueActionFactory::CRemoveCueActionFactory() :
-	AActionFactory(N_("Remove Cue"),"",NULL,NULL,false,false)
+	AActionFactory(N_("Remove Cue"),"",NULL,NULL,true,false)
 {
 	selectionPositionsAreApplicable=false;
 }
@@ -199,7 +199,7 @@ AAction::CanUndoResults CReplaceCueAction::canUndo(const CActionSound *actionSou
 // -----------------------------------
 
 CReplaceCueActionFactory::CReplaceCueActionFactory(AActionDialog *dialog) :
-	AActionFactory(N_("Replace Cue"),"",NULL,dialog,false,false)
+	AActionFactory(N_("Replace Cue"),"",NULL,dialog,true,false)
 {
 	selectionPositionsAreApplicable=false;
 }

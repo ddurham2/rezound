@@ -12,7 +12,7 @@ public:
 	auto_array(unsigned n_elements)
 	{
 		for(unsigned t=0;t<n_elements;t++)
-			push_back((T *)NULL);
+			this->push_back((T *)NULL);
 	}
 
 	virtual ~auto_array()

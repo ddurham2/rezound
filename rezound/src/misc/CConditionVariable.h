@@ -17,31 +17,37 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
-
 #ifndef __CConditionVariable_H__
 #define __CConditionVariable_H__
 
 #include "../../config/common.h"
 
 /*
- * This is a quick and dirty conditional variable wrapper. See AThread.h for more details
- */
+ * This is a multi-platform condition variable wrapper.
+ *
+ * Its public interface looks like:
+ 
+	class CConditionVariable
+	{
+	public:
+		CConditionVariable();
+		virtual ~CConditionVariable() throw();
 
-#include <pthread.h>
+		// returns false if it timed out, else true
+		// NOTE: if timeout is >= 0, and wait() returns false, there's no guarantee that the condition-predicate is false, so it may need to be checked
+		bool wait(CMutex &mutex,int timeout=-1);
 
-#include <errno.h>	// for EBUSY
-#include <string.h>	// for strerror()
+		void signal();		// slightly more efficient if there is only going to be a single waiter
+		void broadcast();	// use if there are multiple waiters
+	};
 
-#include <stdexcept>
-#include <string>
+ 
+	---------------------------------------------------------------------------
 
-#include "CMutex.h"
-
-/*
 	Example use:
 
 	CMutex m;
-	CConditionalVariable c;
+	CConditionVariable c;
 
 	// --- code that waits for condition to be true -----
 
@@ -60,68 +66,92 @@
 
 	m.lock();
 	... something that causes condition to be true ...
-	c.broadcast();
+	c.broadcast(); (or c.signal())
 	m.unlock();
 
 	...
 
 
 
-	Now, if it can be known that only two threads will ever 
-	be dealing with the condition, c.signal() can be used 
+	Now, if it can be known that only one thread will ever 
+	be waiting on the condition, c.signal() can be used 
 	to be more efficient.  In doubt, use c.broadcast()
+	broadcast() wakes up all the threads waiting
+
+	Also, a waiting thread is not supposed to wake up until
+	a signaler *unlocks* the mutex.  Hence signal() can
+	be called before or after the condition is actually true
+	as long as it's done while the mutex is locked.
 */
 
-class CConditionVariable
-{
-public:
+#include "CMutex.h"
 
-	CConditionVariable()
+#if defined(_WIN32)
+	// *** WIN32 implementation ***
+
+	// doing this to avoid including windows.h
+	//   must use this below because CRITICAL_SECTION is a typedef and it causes internal compiler errors
+	struct _RTL_CRITICAL_SECTION;
+
+	class CConditionVariable
 	{
-		pthread_cond_init(&cond,NULL);
-	}
+	public:
 
-	virtual ~CConditionVariable()
+		CConditionVariable();	
+		~CConditionVariable() throw();
+
+		// returns false if it timed out, else true
+		// NOTE: if timeout is >= 0, and wait() returns false, there's no guarantee that the condition-predicate is false, so it may need to be checked
+		bool wait(CMutex &mutex,int timeout_ms=-1);
+
+		void signal();
+
+		void broadcast();
+
+	private:
+
+		enum {
+			SIGNAL = 0,
+			BROADCAST = 1,
+			MAX_EVENTS = 2
+		};
+
+		// Count of the number of waiters.
+		unsigned waiters_count_;
+
+		// Serialize access to <waiters_count_>.
+		_RTL_CRITICAL_SECTION *waiters_count_lock_;
+
+		// Signal and broadcast event HANDLEs.
+		void* events_[MAX_EVENTS]; // ??? would make this HANDLE, but really don't think I need to include a huge windows.h header file for a void * typedef
+
+	};
+
+#else
+	// *** posix implementation ***
+
+	#include <pthread.h>
+	
+	class CConditionVariable
 	{
-		const int ret=pthread_cond_destroy(&cond);
-		if(ret)
-			throw(runtime_error(string(__func__)+" -- error destroying conditional variable -- "+strerror(ret))); // may not care tho
-	}
+	public:
 
-	void wait(CMutex &mutex)
-	{
-		const int ret=pthread_cond_wait(&cond,&mutex.mutex);
-		if(ret)
-			throw(runtime_error(string(__func__)+" -- error waiting -- "+strerror(ret)));
-	}
+		CConditionVariable();
+		virtual ~CConditionVariable() throw();
 
-/*
-	void wait(int timeout,CMutex &mutex)
-	{
-		const int ret=pthread_cond_timedwait(&cond,&mutex.mutex,...);
-		if(ret)
-			throw(runtime_error(string(__func__)+" -- error waiting -- "+strerror(ret)));
-	}
-*/
+		// returns false if it timed out, else true
+		// NOTE: if timeout is >= 0, and wait() returns false, there's no guarantee that the condition-predicate is false, so it may need to be checked
+		bool wait(CMutex &mutex,int timeout=-1);
 
-	void signal()
-	{
-		const int ret=pthread_cond_signal(&cond);
-		if(ret)
-			throw(runtime_error(string(__func__)+" -- error signaling -- "+strerror(ret)));
-	}
+		void signal();
 
-	void broadcast()
-	{
-		const int ret=pthread_cond_broadcast(&cond);
-		if(ret)
-			throw(runtime_error(string(__func__)+" -- error broadcasting -- "+strerror(ret)));
-	}
+		void broadcast();
 
-private:
-	pthread_cond_t cond;
+	private:
+		pthread_cond_t cond;
 
-};
+	};
 
+#endif
 
 #endif

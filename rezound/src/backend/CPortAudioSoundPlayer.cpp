@@ -183,10 +183,15 @@ int CPortAudioSoundPlayer::PortAudioCallback(const void *inputBuffer,void *outpu
 int CPortAudioSoundPlayer::PortAudioCallback(void *inputBuffer,void *outputBuffer,unsigned long framesPerBuffer,PaTimestamp outTime,void *userData)
 #endif
 {
+	CPortAudioSoundPlayer* that = (CPortAudioSoundPlayer *)userData;
+	if(!that->initialized) {
+		return 0;
+	}
+
 	try
 	{
 		// no conversion necessary because we initialized it with the type of sample_t (if portaudio didn't support our sample_t type natively then we would need to do conversion here)
-		((CPortAudioSoundPlayer *)userData)->mixSoundPlayerChannels(gDesiredOutputChannelCount,(sample_t *)outputBuffer,framesPerBuffer);
+		that->mixSoundPlayerChannels(gDesiredOutputChannelCount,(sample_t *)outputBuffer,framesPerBuffer);
 	}
 	catch(exception &e)
 	{

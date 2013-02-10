@@ -18,8 +18,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef rezound_COMMON_H
+#define rezound_COMMON_H
+
+/* for things like UINT64_C() and PRIx64 from stdint.h */
+#define __STDC_CONSTANT_MACROS
+#define __STDC_FORMAT_MACROS
 
 /* common.h -- This file will deal with low-level portability problems. It
  * should be includede at the top of every package file. */

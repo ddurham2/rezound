@@ -151,7 +151,7 @@ struct RFormatInfo3
 		
 		register unsigned offset=0;
 
-		typeof(version) tVersion=hetle(version);
+		uint32_t tVersion=hetle(version);
 		memcpy(r+offset,&tVersion,sizeof(version));
 		offset+=sizeof(version);
 

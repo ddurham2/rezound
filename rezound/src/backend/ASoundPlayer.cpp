@@ -318,7 +318,7 @@ void ASoundPlayer::calculateAnalyzerBandIndexRanges() const
 TAutoBuffer<fftw_real> *ASoundPlayer::createHammingWindow(size_t windowSize)
 {
 //printf("creating for length %d\n",windowSize);
-	TAutoBuffer<fftw_real> *h=new TAutoBuffer<fftw_real>(windowSize);
+	TAutoBuffer<fftw_real> *h=new TAutoBuffer<fftw_real>(windowSize, true);
 	
 	for(size_t t=0;t<windowSize;t++)
 		(*h)[t]=0.54-0.46*cos(2.0*M_PI*t/windowSize);
