@@ -999,8 +999,8 @@ bool CSoundPlayerChannel::prebufferChunk()
 		RChunkPosition pos;
 		pos.position=prebufferPositionToWrite;
 		pos.produceGapSignal=queueUpAGap;
-		prebufferedPositionsPipe.write(&pos,1);
-		const int lengthWritten=prebufferedAudioPipe.write(buffer,bufferUsed);
+		prebufferedPositionsPipe.write(&pos,1,true);
+		const int lengthWritten=prebufferedAudioPipe.write(buffer,bufferUsed,true);
 	}
 	catch(TMemoryPipe<sample_t>::EPipeClosed &e)
 	{

@@ -66,7 +66,7 @@ typedef double fftw_real;
 class CSoundPlayerChannel;
 
 #include "DSP/LevelDetector.h"
-#include "../misc/TRingBuffer.h"
+#include "../misc/TMemoryPipe.h"
 	
 #define MAX_OUTPUT_DEVICES 16
 class ASoundPlayer
@@ -155,6 +155,7 @@ private:
 
 	friend class CSoundPlayerChannel;
 
+	CMutex m; // protects soundPlayerChannels
 	set<CSoundPlayerChannel *> soundPlayerChannels; // ??? might as well be a vector
 	void addSoundPlayerChannel(CSoundPlayerChannel *soundPlayerChannel);
 	void removeSoundPlayerChannel(CSoundPlayerChannel *soundPlayerChannel);
@@ -184,7 +185,7 @@ private:
 	static TAutoBuffer<fftw_real> *createHammingWindow(size_t windowSize);
 #endif
 
-	mutable TRingBuffer<sample_t> samplingForStereoPhaseMeters;
+	mutable TMemoryPipe<sample_t> samplingForStereoPhaseMeters;
 };
 
 

@@ -58,7 +58,7 @@ public:
 
 	 // the write method always blocks
 	 // an EPipeClosed is thrown if the write end of the pipe is closed
-	int write(const type *buffer,int size);
+	int write(const type *buffer,int size, bool block);
 
 	void open(); // note, pipe is open after construction
 	void closeRead();
@@ -67,7 +67,7 @@ public:
 	bool isReadOpened() const;
 	bool isWriteOpened() const;
 
-	void setSize(int pipeSize); // set the amount of compacity, this can only be done when both ends of the pipe are closed
+	void setSize(int pipeSize); // set the amount of capacity, this clear all data in the pipe
 	int getSize() const; // get available read space
 	int clear(); // remove all data currently in pipe, returns the number of elements cleared
 
@@ -83,10 +83,13 @@ private:
 	type *buffer;
 	int bufferSize;
 
-	CMutex readerMutex; // use to prevent more than one reader at the same time
-	CMutex writerMutex; // use to prevent more than one writer at the same time
-
+	// protects the data-structure
 	CMutex waitStateMutex;
+
+	// use to ensure that only a single read() call is in progress
+	CMutex readerMutex;
+	// use to ensure that only a single write() call is in progress
+	CMutex writerMutex;
 
 	CConditionVariable fullCond;
 	CConditionVariable emptyCond;

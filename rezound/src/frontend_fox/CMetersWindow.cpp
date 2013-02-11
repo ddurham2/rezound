@@ -114,7 +114,7 @@ public:
 		//static char pix[]={0x55,0x2a};
 		//stipplePattern=new FXBitmap(getApp(),pix,0,8,2);
 		
-		static char pix[]={0xaa,0x55};
+		static unsigned char pix[]={0xaa,0x55};
 		stipplePattern=new FXBitmap(getApp(),pix,0,8,2);
 
 		stipplePattern->create();
@@ -354,7 +354,7 @@ public:
 		rightLabel->setTextColor(M_TEXT_COLOR);
 		rightLabel->setBackColor(M_BACKGROUND);
 
-		static char pix[]={0xaa,0x55};
+		static unsigned char pix[]={0xaa,0x55};
 		stipplePattern=new FXBitmap(getApp(),pix,0,8,2);
 
 		stipplePattern->create();

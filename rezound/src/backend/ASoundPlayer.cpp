@@ -95,12 +95,15 @@ CSoundPlayerChannel *ASoundPlayer::newSoundPlayerChannel(CSound *sound)
 
 void ASoundPlayer::addSoundPlayerChannel(CSoundPlayerChannel *soundPlayerChannel)
 {
+	CMutexLocker ml(m);
 	if(!soundPlayerChannels.insert(soundPlayerChannel).second)
 		throw(runtime_error(string(__func__)+" -- sound player channel already in list"));
 }
 
 void ASoundPlayer::removeSoundPlayerChannel(CSoundPlayerChannel *soundPlayerChannel)
 {
+	CMutexLocker ml(m);
+
 	soundPlayerChannel->stop();
 	
 	set<CSoundPlayerChannel *>::const_iterator i=soundPlayerChannels.find(soundPlayerChannel);
@@ -115,8 +118,11 @@ void ASoundPlayer::mixSoundPlayerChannels(const unsigned nChannels,sample_t * co
 	// ??? it might be nice that if no sound player channel object is playing that this method would not return
 	// so that the caller wouldn't eat any CPU time doing anything with the silence returned
 
-	for(set<CSoundPlayerChannel *>::iterator i=soundPlayerChannels.begin();i!=soundPlayerChannels.end();i++)
-		(*i)->mixOntoBuffer(nChannels,buffer,bufferSize);
+	{
+		CMutexLocker ml(m);
+		for(set<CSoundPlayerChannel *>::iterator i=soundPlayerChannels.begin();i!=soundPlayerChannels.end();i++)
+			(*i)->mixOntoBuffer(nChannels,buffer,bufferSize);
+	}
 
 
 // ??? could just schedule this to occur (by making a copy of the buffer) the next time getLevel or getAnalysis is called rather than doing it here in the callback for mixing audio
@@ -161,7 +167,7 @@ void ASoundPlayer::mixSoundPlayerChannels(const unsigned nChannels,sample_t * co
 	}
 
 	if(gStereoPhaseMetersEnabled)
-		samplingForStereoPhaseMeters.write(buffer,bufferSize*nChannels); // NOTE: nChannels is supposed to equal devices[0].channelCount
+		samplingForStereoPhaseMeters.write(buffer,bufferSize*nChannels, false); // NOTE: nChannels is supposed to equal devices[0].channelCount
 
 #ifdef HAVE_FFTW
 	if(gFrequencyAnalyzerEnabled)
@@ -198,6 +204,7 @@ void ASoundPlayer::mixSoundPlayerChannels(const unsigned nChannels,sample_t * co
 
 void ASoundPlayer::stopAll()
 {
+	CMutexLocker ml(m);
 	for(set<CSoundPlayerChannel *>::iterator i=soundPlayerChannels.begin();i!=soundPlayerChannels.end();i++)
 		(*i)->stop();
 }
@@ -226,7 +233,7 @@ const sample_t ASoundPlayer::getPeakLevel(unsigned channel) const
 
 const size_t ASoundPlayer::getSamplingForStereoPhaseMeters(sample_t *buffer,size_t bufferSizeInSamples) const
 {
-	return samplingForStereoPhaseMeters.read(buffer,min(bufferSizeInSamples,(size_t)(gStereoPhaseMeterPointCount*devices[0].channelCount)))/devices[0].channelCount; // ??? only device zero
+	return samplingForStereoPhaseMeters.read(buffer,min(bufferSizeInSamples,(size_t)(gStereoPhaseMeterPointCount*devices[0].channelCount)), false)/devices[0].channelCount; // ??? only device zero
 }
 
 #ifdef HAVE_FFTW

@@ -34,7 +34,6 @@ noinst_HEADERS=\
 		CPath.h \
 		CRWMutex.h \
 		TAutoBuffer.h \
-		TRingBuffer.h \
 		TTempVarSetter.h \
 		TMemoryPipe.h \
 		TMemoryPipe.cpp		

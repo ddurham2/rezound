@@ -311,7 +311,6 @@ src/misc/AThread.h
 src/misc/TTempVarSetter.h
 src/misc/endian_util.h
 src/misc/CMutex.h
-src/misc/TRingBuffer.h
 src/misc/CConditionVariable.h
 src/frontend_fox/CRezSaveParametersDialog.h
 src/frontend_fox/CVoxDialog.h

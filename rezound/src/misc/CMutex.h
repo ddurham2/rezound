@@ -195,8 +195,11 @@ public:
 	// construct a locker object with no mutex assigned
 	CMutexLocker();
 
-	// construct a locker object with the given mutex.. the mutex is locked/try-locked on construction
-	CMutexLocker(AMutex &_m,int timeout_ms=-1);
+	// construct a locker object with the given mutex.. it blocks until the mutex is locked
+	CMutexLocker(AMutex &_m);
+
+	// construct a locker object with the given mutex.. the mutex lock is attemped for the given timeout, -1 implies infinite
+	CMutexLocker(AMutex &_m,int timeout_ms);
 
 	// the destructor unlocks the mutex iff it was locked
 	virtual ~CMutexLocker() throw() ;

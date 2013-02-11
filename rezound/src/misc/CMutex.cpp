@@ -346,6 +346,12 @@ CMutexLocker::CMutexLocker() :
 {
 }
 
+CMutexLocker::CMutexLocker(AMutex &_m) :
+	m(NULL)
+{
+	reassign(_m,-1);
+}
+
 CMutexLocker::CMutexLocker(AMutex &_m,int timeout_ms) :
 	m(NULL)
 {

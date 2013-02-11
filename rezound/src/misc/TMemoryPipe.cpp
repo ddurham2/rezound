@@ -31,7 +31,7 @@
 #include <istring>
 
 
-template <class type> TMemoryPipe<type>::TMemoryPipe(int pipeSize) :
+template <class type> TMemoryPipe<type>::TMemoryPipe(int pipeSize = 1024) :
 	readOpened(false),
 	writeOpened(false),
 	buffer(NULL),
@@ -54,10 +54,7 @@ template <class type> TMemoryPipe<type>::~TMemoryPipe()
 
 template <class type> void TMemoryPipe<type>::setSize(int pipeSize)
 {
-	if(isReadOpened())
-		throw runtime_error(string(__func__)+" -- read end is opened");
-	if(isWriteOpened())
-		throw runtime_error(string(__func__)+" -- write end is opened");
+	CMutexLocker ml(waitStateMutex);
 
 	if(pipeSize<=0)
 		throw runtime_error(string(__func__)+" -- invalid pipeSize: "+istring(pipeSize));
@@ -115,7 +112,7 @@ template <class type> int TMemoryPipe<type>::privateRead(type *dest,int size,boo
 	if(size<=0)
 		return 0;
 
-	CMutexLocker l(readerMutex,block); // protect from more than one reader
+	CMutexLocker l(readerMutex, (block ? -1 : 0)); // prevent multiple simultaneous read()s
 	if(! l.didLock())
 		return 0;
 
@@ -153,8 +150,9 @@ template <class type> int TMemoryPipe<type>::privateRead(type *dest,int size,boo
 
 		if(sizeAvailable==0)
 		{
-			if(!block)	
+			if(!block) {
 				goto done;
+			}
 
 			fullCond.signal();
 			emptyCond.wait(waitStateMutex);
@@ -178,8 +176,9 @@ template <class type> int TMemoryPipe<type>::privateRead(type *dest,int size,boo
 
 		if((sizeAvailable1+sizeAvailable2)==0)
 		{
-			if(!block)	
+			if(!block) {
 				goto done;
+			}
 
 			fullCond.signal();
 			emptyCond.wait(waitStateMutex);
@@ -213,8 +212,9 @@ template <class type> int TMemoryPipe<type>::privateRead(type *dest,int size,boo
 	}
 	else // buffer is empty
 	{
-		if(!block)
+		if(!block) {
 			goto done;
+		}
 
 		fullCond.signal();
 		emptyCond.wait(waitStateMutex);
@@ -234,12 +234,12 @@ template <class type> int TMemoryPipe<type>::privateRead(type *dest,int size,boo
 	return totalRead;
 }
 
-template <class type> int TMemoryPipe<type>::write(const type *_src,int size)
+template <class type> int TMemoryPipe<type>::write(const type *_src,int size,bool block)
 {
 	if(size<=0)
 		return 0;
 
-	CMutexLocker l(writerMutex); // protect from more than one writer
+	CMutexLocker l(writerMutex); // prevent multiple simultaneous write()s
 	CMutexLocker wsl(waitStateMutex);
 
 	const type *src=(const type *)_src;
@@ -264,8 +264,11 @@ template <class type> int TMemoryPipe<type>::write(const type *_src,int size)
 	if(writePos<_readPos)
 	{
 		const int spaceAvailable=(_readPos-writePos)-1;
-		if(spaceAvailable==0)
+		if(spaceAvailable<=0)
 		{ // buffer is full
+			if(!block) {
+				goto done;
+			} 
 			emptyCond.signal();
 			fullCond.wait(waitStateMutex);
 			goto restart;
@@ -287,8 +290,11 @@ template <class type> int TMemoryPipe<type>::write(const type *_src,int size)
 
 		const int spaceAvailable=spaceAvailable1+spaceAvailable2;
 
-		if(spaceAvailable==0)
+		if(spaceAvailable<=0)
 		{ // buffer is full
+			if(!block) {
+				goto done;
+			} 
 			emptyCond.signal();
 			fullCond.wait(waitStateMutex);
 			goto restart;
@@ -381,7 +387,6 @@ template <class type> int TMemoryPipe<type>::getSize() const
 
 template <class type> int TMemoryPipe<type>::clear()
 {
-	CMutexLocker l(readerMutex);
 	CMutexLocker l2(waitStateMutex);
 	const int len=getSize();
 	readPos=writePos=0;
