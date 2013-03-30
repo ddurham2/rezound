@@ -29,8 +29,6 @@
 
 #include "TPoolFile.h"
 
-// ??? make the parameters const than can be
-
 template <class pool_element_t,class pool_file_t> class TStaticPoolAccesser
 {
 public:
@@ -41,19 +39,19 @@ public:
 	TStaticPoolAccesser(const TStaticPoolAccesser<pool_element_t,pool_file_t> &src);
 	virtual ~TStaticPoolAccesser();
 
-	const l_addr_t getSize() const { return poolFile->getPoolSize(poolId)/sizeof(pool_element_t); }
+	l_addr_t getSize() const { return poolFile->getPoolSize(poolId)/sizeof(pool_element_t); }
 
 
 	// stream-like access methods
-	void read(pool_element_t buffer[],const l_addr_t count) const;
-	void write(const pool_element_t buffer[],const l_addr_t count);
+	void read(pool_element_t buffer[],l_addr_t count) const;
+	void write(const pool_element_t buffer[],l_addr_t count);
 
-	void seek(const l_addr_t where);
-	const l_addr_t tell() const;
+	void seek(l_addr_t where);
+	l_addr_t tell() const;
 
 
 	// random access methods (best performance when consecutive indexes are within the same maxBlockSize alignments)
-	inline pool_element_t &operator[](const l_addr_t where)
+	inline pool_element_t &operator[](l_addr_t where)
 	{
 		if(where>endAddress || where<startAddress)
 		{
@@ -73,7 +71,7 @@ public:
 	 * and the data will be written back to disk even though it did not
 	 * need to be.
 	 */
-	inline pool_element_t operator[](const l_addr_t where) const
+	inline pool_element_t operator[](l_addr_t where) const
 	{
 		if(where>endAddress || where<startAddress)
 		{
@@ -88,8 +86,8 @@ public:
 
 
 	// bulk transfer methods
-	void copyData(const l_addr_t destWhere,const TStaticPoolAccesser<pool_element_t,pool_file_t> &src,const l_addr_t srcWhere,const l_addr_t length);
-	void zeroData(const l_addr_t where,const l_addr_t length);
+	void copyData(l_addr_t destWhere,const TStaticPoolAccesser<pool_element_t,pool_file_t> &src,l_addr_t srcWhere,l_addr_t length);
+	void zeroData(l_addr_t where,l_addr_t length);
 
 
 	// invalid operations
@@ -114,16 +112,16 @@ public:
 	mutable l_addr_t position;
 
 
-	void overflowWrite(const pool_element_t buffer[],const l_addr_t count,const bool append);
+	void overflowWrite(const pool_element_t buffer[],l_addr_t count,bool append);
 
-	void cacheBlock(const l_addr_t where) const;
+	void cacheBlock(l_addr_t where) const;
 
 //private:
 
 
 	// stuff managed by TPoolFile
 	mutable typename TPoolFile<l_addr_t,p_addr_t>::RCachedBlock *cachedBlock;
-	TStaticPoolAccesser(pool_file_t * const _poolFile,const poolId_t _poolId);
+	TStaticPoolAccesser(pool_file_t * _poolFile,poolId_t _poolId);
 
 	void init() const;
 

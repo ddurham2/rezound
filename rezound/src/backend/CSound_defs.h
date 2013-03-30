@@ -44,7 +44,7 @@ class CSound;
 #ifdef ENABLE_LARGEFILE
 
 	// 64 bit
-	typedef uint64_t 	sample_pos_t;	// integer sample position
+	typedef int64_t 	sample_pos_t;	// integer sample position
 	typedef long double 	sample_fpos_t;	// floating-point sample position
 
 	#define MAX_LENGTH (0x7fffffffffffffffLL-(1024LL*1024LL))
@@ -62,7 +62,7 @@ class CSound;
 #else
 
 	// 32 bit
-	typedef uint32_t 	sample_pos_t;	// integer sample count
+	typedef int32_t 	sample_pos_t;	// integer sample count
 	typedef double		sample_fpos_t;	// floating-point sample count
 
 	#define MAX_LENGTH (0x7fffffff-(1024*1024))

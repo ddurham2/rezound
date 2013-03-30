@@ -31,7 +31,7 @@
 
 #include <istring>
 
-template<class pool_element_t,class pool_file_t> TStaticPoolAccesser<pool_element_t,pool_file_t>::TStaticPoolAccesser(pool_file_t * const _poolFile,const poolId_t _poolId) :
+template<class pool_element_t,class pool_file_t> TStaticPoolAccesser<pool_element_t,pool_file_t>::TStaticPoolAccesser(pool_file_t * _poolFile,poolId_t _poolId) :
 	poolFile(_poolFile),
 	poolId(_poolId),
 
@@ -85,14 +85,14 @@ template <class pool_element_t,class pool_file_t> TStaticPoolAccesser<pool_eleme
 	throw(runtime_error(string(__func__)+" -- it is invalid to assign TStaticPoolAccesser<pool_element_t,pool_file_t> objects; the copy constructor must be used"));
 }
 
-template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_element_t,pool_file_t>::seek(const l_addr_t where)
+template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_element_t,pool_file_t>::seek(l_addr_t where)
 {
 	if(where>getSize())
 		throw(runtime_error(string(__func__)+" -- out of bounds: "+istring(where)));
 	position=where;
 }
 
-template <class pool_element_t,class pool_file_t> const typename TStaticPoolAccesser<pool_element_t,pool_file_t>::l_addr_t TStaticPoolAccesser<pool_element_t,pool_file_t>::tell() const
+template <class pool_element_t,class pool_file_t> typename TStaticPoolAccesser<pool_element_t,pool_file_t>::l_addr_t TStaticPoolAccesser<pool_element_t,pool_file_t>::tell() const
 {
 	return(position);
 }
@@ -123,12 +123,12 @@ template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_
 	}
 }
 
-template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_element_t,pool_file_t>::write(const pool_element_t buffer[],const l_addr_t count)
+template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_element_t,pool_file_t>::write(const pool_element_t buffer[],l_addr_t count)
 {
 	overflowWrite(buffer,count,false);
 }
 
-template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_element_t,pool_file_t>::overflowWrite(const pool_element_t buffer[],l_addr_t count,const bool append)
+template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_element_t,pool_file_t>::overflowWrite(const pool_element_t buffer[],l_addr_t count,bool append)
 {
 	if(count==0)
 		return;
@@ -163,7 +163,7 @@ template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_
 	}
 }
 
-template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_element_t,pool_file_t>::copyData(const l_addr_t destWhere,const TStaticPoolAccesser<pool_element_t,pool_file_t> &src,const l_addr_t srcWhere,l_addr_t const length)
+template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_element_t,pool_file_t>::copyData(l_addr_t destWhere,const TStaticPoolAccesser<pool_element_t,pool_file_t> &src,l_addr_t srcWhere,l_addr_t length)
 {
 	if(srcWhere>src.getSize())
 		throw(runtime_error(string(__func__)+" -- invalid srcWhere parameter: "+istring(srcWhere)));
@@ -183,7 +183,7 @@ template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_
 		operator[](destP++)=src[srcP++];
 }
 
-template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_element_t,pool_file_t>::zeroData(const l_addr_t where,const l_addr_t length)
+template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_element_t,pool_file_t>::zeroData(l_addr_t where,l_addr_t length)
 {
 	if((getSize()-where)<length)
 		throw(runtime_error(string(__func__)+" -- invalid where/length parameters: "+istring(where)+"/"+istring(length)));
@@ -195,7 +195,7 @@ template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_
 		operator[](t)=0;
 }
 
-template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_element_t,pool_file_t>::cacheBlock(const l_addr_t where) const
+template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_element_t,pool_file_t>::cacheBlock(l_addr_t where) const
 {
 	poolFile->cacheBlock(where,this);
 }

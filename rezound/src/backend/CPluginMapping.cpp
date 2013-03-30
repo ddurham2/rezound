@@ -350,7 +350,7 @@ void CPluginMapping::print() const
 	printf("passThrus:\n");
 	for(size_t t=0;t<passThrus.size();t++)
 	{
-		printf("\tchannel: %3d\n",t);
+		printf("\tchannel: %3d\n",(int)t);
 		for(size_t i=0;i<passThrus[t].size();i++)
 			printf("\t\t%3d -- loadedIndex: %3d channel: %3d wdro: %1d howMuch: %1d gain: %3.2f\n",(int)i,passThrus[t][i].soundFileManagerIndex,passThrus[t][i].channel,passThrus[t][i].wdro,passThrus[t][i].howMuch,passThrus[t][i].gain);
 	}

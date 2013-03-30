@@ -203,7 +203,7 @@ bool CGenerateNoiseAction::doActionSizeSafe(CActionSound *actionSound,bool prepa
 				switch(stereoImage) 
 				{
 					case siMono: 
-						randval=randval; 
+						//randval=randval; 
 						break;
 
 					case siInverse: 

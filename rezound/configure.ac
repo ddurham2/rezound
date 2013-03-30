@@ -80,16 +80,18 @@ AC_PATH_PROG(CDRDAO, cdrdao)
 
 
 
-
 ############################################################################
 # Set some compiler flags if they're available                             #
 ############################################################################
 ajv_CXX_FLAG(-g)
 ajv_CXX_FLAG(-Wall)
 ajv_CXX_FLAG(-std=c++0x)
+ajv_CXX_FLAG(-stdlib=libstdc++)
 ajv_CXX_FLAG(-Wno-unused-function)
 ajv_CXX_FLAG(-Wno-unused-variable)
 ajv_CXX_FLAG(-Wno-unused)
+ajv_CXX_FLAG(-fexceptions)
+ajv_CXX_FLAG(-fcolor-diagnostics)
 
 
 
@@ -131,7 +133,9 @@ AC_CHECK_HEADER(sstream,
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS([fcntl.h limits.h stddef.h stdlib.h string.h sys/ioctl.h sys/vfs.h sys/statvfs.h sys/statfs.h unistd.h])
-
+AC_CHECK_HEADERS([boost/detail/atomic_count.hpp], [], [
+	AC_MSG_ERROR([boost header not found])
+])
 
 
 
@@ -215,7 +219,6 @@ AC_ARG_ENABLE(
 # Checks for library functions/classes                                     #
 ############################################################################
 AC_FUNC_FORK
-AC_PROG_GCC_TRADITIONAL
 AC_FUNC_MALLOC
 AC_TYPE_SIGNAL
 AC_FUNC_STAT

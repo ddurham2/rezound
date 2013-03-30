@@ -31,7 +31,7 @@
 #include <istring>
 
 
-template <class type> TMemoryPipe<type>::TMemoryPipe(int pipeSize = 1024) :
+template <class type> TMemoryPipe<type>::TMemoryPipe(int pipeSize) :
 	readOpened(false),
 	writeOpened(false),
 	buffer(NULL),

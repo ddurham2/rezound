@@ -29,13 +29,18 @@
  * should be includede at the top of every package file. */
 
 //This is added for g++-3.0 and later, which requires it
+// TODO work to remove this global namespace directive and support things properly in the .h and .cpp
+namespace std {}
 using namespace std;
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#ifdef __GNUC__
+#if defined(__clang__)
+#	define STATIC_TPL
+
+#elif defined(__GNUC__)
 #	ifndef GCC_VERSION
 #		define GCC_VERSION (__GNUC__ * 100 + __GNUC_MINOR__)
 #	endif

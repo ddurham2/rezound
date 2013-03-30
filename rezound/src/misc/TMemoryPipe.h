@@ -48,7 +48,7 @@
 template <class type> class TMemoryPipe
 {
 public:
-	TMemoryPipe(int pipeSize); 
+	TMemoryPipe(int pipeSize = 1024); 
 	virtual ~TMemoryPipe();
 
 	 // an EPipeClosed is thrown if the read end of the pipe is closed (all 3 methods)

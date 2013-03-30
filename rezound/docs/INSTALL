@@ -8,7 +8,22 @@ REQUIRED OR RECOMMENDED LIBRARIES AND APPLICATIONS:
 
 Before attempting to build ReZound you will need to have (or are encouraged to have) the following:
 
-1. Libraries: 
+1. Compiler:
+	- gcc -- ReZound was originally developed using gcc/g++.  A typical system will be set up for
+	configure to find gcc/g++ automatically and use it.
+
+	- clang -- some effort has been made to support compiling against clang/clang++.  To compile
+	using clang, some environment variables may need to be set before running configure:
+		CXX=clang++ CC=clang ./configure 
+
+			OR
+
+		export CXX=clang++
+		export CC=clang
+		./configure
+
+
+2. Libraries: 
 
 	- libaudiofile v0.2.3 (or later) -- http://www.68k.org/~michael/audiofile/ --
 	Development was done with v0.2.3, but earlier versions above than v0.1.9-0.1 
@@ -72,18 +87,18 @@ Before attempting to build ReZound you will need to have (or are encouraged to h
 	rather few people I think.  THESE ARE TWO APPLICATIONS NOT LIBRARIES
 
 
-2. You should also have a working C++ compiler (g++ is preferred) as well as the 
+3. You should also have a working C++ compiler (g++ is preferred) as well as the 
 normal group of regular libraries and headers for compiling packages. 
 
 
-3. -- PROBLEMS WITH yacc (shipped with SuSE) -- the file, 
+4. -- PROBLEMS WITH yacc (shipped with SuSE) -- the file, 
 src/misc/CNestedDataFile/cfg.y will have problems if you do not have bison 
 installed.  I am using some features from bison that yacc does not have.  
 Perhaps when ReZound is ported to other operatings systems I will resolve any 
 yacc related issues.   However, this whole issue may be avoided if the .cc file 
 generated from the .y file is intact.
 
-4. flex -- (free-lex) This is commonly installed, but there should be a package 
+5. flex -- (free-lex) This is commonly installed, but there should be a package 
 for your distro.  I have not tried building ReZound using lex.  Like bison, 
 flex should not even have to run if the .c file created from the .l file is
 intact.
