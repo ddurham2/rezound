@@ -24,6 +24,7 @@
 #include "../../config/common.h"
 
 #include <math.h>
+#include <string.h>
 
 #include "../CSound_defs.h"
 

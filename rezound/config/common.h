@@ -37,6 +37,8 @@ using namespace std;
 #include "config.h"
 #endif
 
+#include <stddef.h>
+
 #if defined(__clang__)
 #	define STATIC_TPL
 
