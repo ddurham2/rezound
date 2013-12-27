@@ -1,7 +1,7 @@
 $Id$
 
 This is a todo list for things we need to do for an official release. In
-other words, it's what we'll want to change between the cvs sources and a
+other words, it's what we'll want to change between the svn sources and a
 distro tarball(eg: removing warning flags)
 
 1. Remove -Wall and all -W flags from CXXFLAGS -- comment out checks for
@@ -9,7 +9,7 @@ distro tarball(eg: removing warning flags)
 
 2. Revise docs/AUTHORS to give proper credit, and only list files included in final release. Might want to save separate version to keep in CVS.
 
-3. Revise docs/NEWS and docs/Features.txt (use cvs2cl.pl to determine what significant things have changed since the previous release)
+3. Revise docs/NEWS and docs/Features.txt (use svn2cl to determine what significant things have changed since the previous release)
 
 4. in po/ to make POTFILES.in-update, configure and (back in the po directory) make rezound.pot-update
 
@@ -45,8 +45,8 @@ distro tarball(eg: removing warning flags)
 
 12. get .deb from Anthony
 
-13. Make a cvs release tag (but check in any files that may have been changed first)
-	- cvs tag rezound-1_2_3alpha
+13. Make a svn release tag (but check in any files that may have been changed first)
+	- svn copy trunk tags/rezound-1_2_3alpha
 
 14. announce:
 	- make release on sourceforge.net

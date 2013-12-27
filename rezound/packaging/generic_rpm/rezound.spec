@@ -1,5 +1,5 @@
 %define name	rezound
-%define version	0.11.0beta
+%define version	0.13.0beta
 %define release 1
 
 Summary:	ReZound is a sound file editor and recorder

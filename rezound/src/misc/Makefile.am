@@ -36,7 +36,9 @@ noinst_HEADERS=\
 		TAutoBuffer.h \
 		TTempVarSetter.h \
 		TMemoryPipe.h \
-		TMemoryPipe.cpp		
+		TMemoryPipe.cpp \
+		clocks.h \
+		ScopedAutoReleasePool.h
 
 EXTRA_DIST= \
 	istring \
