@@ -462,7 +462,7 @@ void CSoundPlayerChannel::setSeekSpeed(float _seekSpeed)
 	   (seekSpeed*origSeekSpeed)<0.0)
 	{ 
 		unprebuffer(origSeekSpeed,getStartPosition(),getStopPosition());
-		prebufferChunk(); // prime the pipe immediately
+		//prebufferChunk(); // prime the pipe immediately  .. work-around for bug #1558155
 	}
 
 	
@@ -511,7 +511,7 @@ void CSoundPlayerChannel::setStartPosition(sample_pos_t newPosition)
 		{ // start position moved rightward and new start position is beyond the beginning of the prebuffered window
 			//printf("clear from start change 1 (%d)\n",g++);
 			unprebuffer(seekSpeed,origStartPosition,origStopPosition,startPosition);
-			prebufferChunk();
+			//prebufferChunk();  .. work-around for bug #1558155
 		}
 		else if(
 			startPosition<origStartPosition && 
@@ -520,7 +520,7 @@ void CSoundPlayerChannel::setStartPosition(sample_pos_t newPosition)
 		{ // start position moved leftward and the old loop window was shorter than the prebuffered window
 			//printf("clear from start change 2 (%d)\n",g++);
 			unprebuffer(seekSpeed,origStartPosition,origStopPosition);
-			prebufferChunk();
+			//prebufferChunk();  .. work-around for bug #1558155
 		}
 	}
 }
@@ -549,7 +549,7 @@ void CSoundPlayerChannel::setStopPosition(sample_pos_t newPosition)
 		{ // stop position moved leftward and new position moves into or preceeds the currently prebuffered window
 			//printf("clear from stop change 1 (%d)\n",g++);
 			unprebuffer(seekSpeed,origStartPosition,origStopPosition);
-			prebufferChunk();
+			//prebufferChunk();  .. work-around for bug #1558155
 		}
 		else if(
 			stopPosition>origStopPosition && 
@@ -558,7 +558,7 @@ void CSoundPlayerChannel::setStopPosition(sample_pos_t newPosition)
 		{ // stop position moved rightward and old position is before or within the currently prebuffered window (so a repeat at old loop point is prebuffered)
 			//printf("clear from stop change 2 (%d)\n",g++);
 			unprebuffer(seekSpeed,origStartPosition,origStopPosition);
-			prebufferChunk();
+			//prebufferChunk();  .. work-around for bug #1558155
 		}
 	}
 }
