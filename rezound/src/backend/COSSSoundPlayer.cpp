@@ -83,7 +83,7 @@ void COSSSoundPlayer::initialize()
 			int sampleSize=0;
 			string sSampleFormat="none";
 #warning need to change this to try several formats for a supported implementation because float is being reduced to 16bit right now
-#ifndef WORDS_BIGENDIN
+#ifndef WORDS_BIGENDIAN
 			// little endian platform
 	#if defined(SAMPLE_TYPE_S16)
 			sampleFormat=AFMT_S16_LE;

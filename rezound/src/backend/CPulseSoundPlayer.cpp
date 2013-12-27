@@ -65,7 +65,7 @@ void CPulseSoundPlayer::initialize()
 		try
 		{
 			pa_sample_spec ss;
-#ifndef WORDS_BIGENDIN
+#ifndef WORDS_BIGENDIAN
 	#if defined(SAMPLE_TYPE_S16)
 			ss.format = PA_SAMPLE_S16LE;
 	#elif defined(SAMPLE_TYPE_FLOAT)
