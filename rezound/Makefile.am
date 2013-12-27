@@ -59,6 +59,7 @@ EXTRA_DIST= \
 	libtool.GL.patch \
 	README.GL_PROBLEMS \
 	packaging
+	ChangeLog
 	
 
 ## This removes stuff from the distribution which may be present

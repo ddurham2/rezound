@@ -9,7 +9,7 @@ distro tarball(eg: removing warning flags)
 
 2. Revise docs/AUTHORS to give proper credit, and only list files included in final release. Might want to save separate version to keep in CVS.
 
-3. Revise docs/NEWS and docs/Features.txt (use svn2cl to determine what significant things have changed since the previous release)
+3. Revise docs/NEWS and docs/Features.txt (use `e.g. svn2cl -i -r "HEAD:r1961"` to determine what significant things have changed since the previous release)
 
 4. in po/ to make POTFILES.in-update, configure and (back in the po directory) make rezound.pot-update
 
