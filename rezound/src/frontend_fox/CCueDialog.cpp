@@ -76,7 +76,7 @@ bool CCueDialog::show(CActionSound *_actionSound,CActionParameters *actionParame
 	cueTimeTextBox->setText(actionSound->sound->getTimePosition(actionParameters->getValue<sample_pos_t>("position"),5,false).c_str());
 	isAnchoredCheckButton->setCheck(actionParameters->getValue<bool>("isAnchored"));
 
-	cueNameTextBox->setFocus();
+	//cueNameTextBox->setFocus();
 
 	if(execute(PLACEMENT_CURSOR))
 	{

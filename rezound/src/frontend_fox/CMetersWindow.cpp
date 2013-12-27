@@ -1153,7 +1153,7 @@ long CMetersWindow::onUpdateMeters(FXObject *sender,FXSelector sel,void *ptr)
 			}
 		}
 
-		if(gStereoPhaseMetersEnabled)
+		if(gStereoPhaseMetersEnabled && !stereoPhaseMeters.empty())
 		{
 			soundPlayer->getSamplingForStereoPhaseMeters(samplingForStereoPhaseMeters,samplingForStereoPhaseMeters.getSize());
 			for(size_t t=0;t<stereoPhaseMeters.size();t++)
