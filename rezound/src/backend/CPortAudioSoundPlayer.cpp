@@ -23,6 +23,7 @@
 #ifdef ENABLE_PORTAUDIO
 
 #include <stdio.h>
+#include <string.h>
 
 #include <stdexcept>
 
