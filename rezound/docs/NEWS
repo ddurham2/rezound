@@ -1,3 +1,6 @@
+rezound-0.13.1beta -- 12/29/2013
+	- Czech translation fixes
+
 rezound-0.13.0beta -- 12/26/2013
 	- Many bug fixes 
 	- Many compile fixes (newer autotools, newer gcc, clang, 64bit, etc)
