@@ -1,34 +1,34 @@
-# French translations for ReZound package.
-# Copyright (C) 2010 David W. Durham
+# Czech translations for ReZound package.
+# Copyright (C) 2013 Pavel Fric
 # This file is distributed under the same license as the PACKAGE package.
 #
-# Pavel Fric <pavelfric@seznam.cz>, 2009.
+# Pavel Fric <pavelfric@seznam.cz>, 2009, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: rezound\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-12-26 22:39-0600\n"
-"PO-Revision-Date: 2009-08-01 22:28+0200\n"
+"PO-Revision-Date: 2013-12-29 20:27+0100\n"
 "Last-Translator: Pavel Fric <pavelfric@seznam.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 0.3\n"
+"X-Generator: Lokalize 1.5\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
 #: src/frontend_fox/COggDialog.cpp:56
 msgid "Ogg Compression Parameters"
-msgstr "Parametry stlačení Ogg"
+msgstr "Parametry komprese Ogg"
 
 #: src/frontend_fox/COggDialog.cpp:63
 msgid "Quality Setting"
-msgstr "Nastavení kvality"
+msgstr "Nastavení jakosti"
 
 #: src/frontend_fox/COggDialog.cpp:65 src/frontend_fox/CMp3Dialog.cpp:99
 msgid "Quality: "
-msgstr "Kvalita:"
+msgstr "Jakost:"
 
 #: src/frontend_fox/COggDialog.cpp:69
 msgid "0 (lowest) to 1 (highest)"
@@ -48,43 +48,43 @@ msgstr "Proměnlivý datový tok"
 
 #: src/frontend_fox/COggDialog.cpp:83 src/frontend_fox/CMp3Dialog.cpp:85
 msgid "Minimum Bit Rate: "
-msgstr "Nejmenší datový tok:"
+msgstr "Nejmenší datový tok: "
 
 #: src/frontend_fox/COggDialog.cpp:86
 msgid "Normal Bit Rate: "
-msgstr "Obvyklý datový tok:"
+msgstr "Obvyklý datový tok: "
 
 #: src/frontend_fox/COggDialog.cpp:89 src/frontend_fox/CMp3Dialog.cpp:91
 msgid "Maximum Bit Rate: "
-msgstr "Největší datový tok:"
+msgstr "Největší datový tok: "
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:32
 #: src/frontend_fox/LoopingActionDialogs.cpp:58
 msgid "Cue Name"
-msgstr "Název ukazatele"
+msgstr "Název značky"
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:34
 #: src/frontend_fox/LoopingActionDialogs.cpp:60
 msgid "What to Name the New Cues"
-msgstr ""
+msgstr "Jak pojmenovávat nové značky"
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:38
 msgid "Cue Count"
-msgstr "Počet ukazatelů"
+msgstr "Počet značek"
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:43
 msgid "How Many Cues to Place Equally Spaced within the Selection"
-msgstr ""
+msgstr "Kolik značek umístit stejnoměrně rozestavených v rámci výběru"
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:47
 #: src/frontend_fox/LoopingActionDialogs.cpp:72
 msgid "Anchor Cues in Time"
-msgstr "Ukotvit ukazatel v čase"
+msgstr "Ukotvit značky v čase"
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:49
 #: src/frontend_fox/LoopingActionDialogs.cpp:74
 msgid "Set the Cues to be Anchored in Time or Not"
-msgstr ""
+msgstr "Nastavit značky tak, aby byly ukotveny v čase, anebo nebyly"
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:64
 msgid "Time Interval"
@@ -101,7 +101,7 @@ msgstr "Název makra:"
 
 #: src/frontend_fox/CLADSPAActionDialog.cpp:87
 msgid "Controls"
-msgstr "Prvky ovládání"
+msgstr "Ovládací prvky"
 
 #: src/frontend_fox/CLADSPAActionDialog.cpp:192
 msgid "Routing"
@@ -122,6 +122,17 @@ msgid ""
 "receive garbage from the LADSPA plugin.  If this is the case, then either "
 "rebuild ReZound or the LADSPA plugins to make the types match."
 msgstr ""
+"TOTO JE JEDINKRÁT, KDY SE UKÁŽE TOTO VAROVÁNÍ. TAK SI HO PŘEČTĚTE!\n"
+"\n"
+"NĚKTERÉ přídavné moduly LADSPA používají libfftw.  libfftw lze nastavit buď "
+"tak, "
+"aby používalo floats, nebo doubles, jako své nativní vzorkovací formáty (ale "
+"ne obojí ve stejnou dobu).  Pokud byly přídavné moduly LADSPA na tomto "
+"systému sestaveny s "
+"jinak nastaveným libfftw, než s jakým byl sestaven ReZound, pak můžete od "
+"přídavného modulu LADSPA dostat neplatná/chybná data.  Jestli je to tento "
+"případ, potom sestavte buď ReZound nebo přídavné moduly LADSPA tak, aby se "
+"typy shodovaly."
 
 #: src/frontend_fox/CStatusComm.cpp:93
 msgid "Warning"
@@ -165,7 +176,7 @@ msgstr "Všechny soubory"
 
 #: src/frontend_fox/CMp3Dialog.cpp:68
 msgid "mp3 Compression Parameters"
-msgstr "Parametry stlačení MP3"
+msgstr "Parametry komprese MP3"
 
 #: src/frontend_fox/CMp3Dialog.cpp:83
 msgid "Average Bit Rate"
@@ -173,7 +184,7 @@ msgstr "Průměrný datový tok"
 
 #: src/frontend_fox/CMp3Dialog.cpp:88
 msgid "Average Bit Rate: "
-msgstr "Průměrný datový tok:"
+msgstr "Průměrný datový tok: "
 
 #: src/frontend_fox/CMp3Dialog.cpp:97
 msgid "Variable Bit Rate Quality Setting"
@@ -250,7 +261,7 @@ msgstr "Přiřadit klávesové zkratky"
 
 #: src/frontend_fox/CKeyBindingsDialog.cpp:180
 msgid "Action"
-msgstr "Krok"
+msgstr "Činnost"
 
 #: src/frontend_fox/CKeyBindingsDialog.cpp:181
 msgid "Hot Key"
@@ -287,7 +298,7 @@ msgstr "&Procházet"
 
 #: src/frontend_fox/CNewSoundDialog.cpp:59
 msgid "Raw Format"
-msgstr "Surový formát"
+msgstr "Nezpracovaný formát"
 
 #: src/frontend_fox/CNewSoundDialog.cpp:62 src/frontend_fox/CVoxDialog.cpp:47
 #: src/frontend_fox/CRawDialog.cpp:51
@@ -328,11 +339,12 @@ msgid "Please supply a filename"
 msgstr "Prosím, zadejte název souboru"
 
 #: src/frontend_fox/CNewSoundDialog.cpp:204
-#, fuzzy
 msgid ""
 "Are you sure you want to overwrite the existing file:\n"
 "   "
-msgstr "Opravdu chcete přepsat existující soubor:\n"
+msgstr ""
+"Opravdu chcete přepsat stávající soubor:\n"
+"   "
 
 #: src/frontend_fox/CNewSoundDialog.cpp:217
 msgid "Invalid number of channels"
@@ -368,11 +380,11 @@ msgstr "Přizpůsobit\tPřiblížit kvůli přizpůsobení výběru"
 
 #: src/frontend_fox/CSoundWindow.cpp:152 src/frontend_fox/CSoundWindow.cpp:160
 msgid "Zoom Out Full"
-msgstr "Zcela oddálit"
+msgstr "Oddálit zcela"
 
 #: src/frontend_fox/CSoundWindow.cpp:154 src/frontend_fox/CSoundWindow.cpp:158
 msgid "Zoom In Full"
-msgstr "Zcela přiblížit"
+msgstr "Přiblížit zcela"
 
 #: src/frontend_fox/CSoundWindow.cpp:156
 msgid "Horizontally and Vertically Zoom Out Full"
@@ -387,6 +399,8 @@ msgid ""
 "!\tInvert the Muted State of Each Channel or (right click) Unmute All "
 "Channels"
 msgstr ""
+"!\tObrátit ztlumený stav každého kanálu nebo (klepnutí pravým tlačítkem myši) "
+"zrušit ztlumení všech kanálů"
 
 #: src/frontend_fox/CSoundWindow.cpp:201 src/frontend_fox/CSoundWindow.cpp:202
 msgid "Playing:"
@@ -398,7 +412,7 @@ msgstr "Pozastaveno:"
 
 #: src/frontend_fox/CSoundWindow.cpp:209
 msgid "Sample Rate; "
-msgstr "Vzorkovací kmitočet;"
+msgstr "Vzorkovací kmitočet; "
 
 #: src/frontend_fox/CSoundWindow.cpp:211
 msgid "Channel Count: "
@@ -422,7 +436,7 @@ msgstr "Výběr:"
 
 #: src/frontend_fox/CSoundWindow.cpp:250
 msgid "Increase/Decrease Start Position by One Sample"
-msgstr "Zvětšit/Zmenšit polohu začátku o jeden vzorek"
+msgstr "Zvětšit/Zmenšit začátek výběru o jeden vzorek"
 
 #: src/frontend_fox/CSoundWindow.cpp:251
 msgid "Start: "
@@ -430,15 +444,15 @@ msgstr "Začátek:"
 
 #: src/frontend_fox/CSoundWindow.cpp:263
 msgid "Increase/Decrease Stop Position by One Sample"
-msgstr "Zvětšit/Zmenšit polohu zastavení o jeden vzorek"
+msgstr "Zvětšit/Zmenšit konec výběru o jeden vzorek"
 
 #: src/frontend_fox/CSoundWindow.cpp:264
 msgid "Stop: "
-msgstr "Zastavení:"
+msgstr "Zastavení: "
 
 #: src/frontend_fox/CSoundWindow.cpp:462
 msgid "Rate: "
-msgstr "Kmitočet:"
+msgstr "Hladina: "
 
 #: src/frontend_fox/CSoundWindow.cpp:463
 msgid "Channels: "
@@ -540,21 +554,25 @@ msgid ""
 "Adjust Zoom Factor for Stereo Phase Meter\n"
 "All the way down means no zooming"
 msgstr ""
+"Upravit násobek zvětšení měřiče fáze sterea.\n"
+"Vše dolů znamená žádné zvětšení"
 
 #: src/frontend_fox/CMetersWindow.cpp:602
 #: src/frontend_fox/CMetersWindow.cpp:604
 msgid "Unrotate from Natural 45 Degree Line"
-msgstr ""
+msgstr "Otočit zpět z přirozené 45 stupňové čáry"
 
 #: src/frontend_fox/CMetersWindow.cpp:760
 msgid ""
 "Adjust Zoom Factor for Analyzer\n"
 "Right-click for Default"
 msgstr ""
+"Upravit násobek zvětšení pro analyzátor\n"
+"Klepnutí pravým tlačítkem myši pro výchozí nastavení"
 
 #: src/frontend_fox/CMetersWindow.cpp:836
 msgid "Configure with FFTW"
-msgstr ""
+msgstr "Nastavit s FFTW"
 
 #: src/frontend_fox/CMetersWindow.cpp:837
 msgid "for Freq. Analysis"
@@ -586,12 +604,12 @@ msgstr "Přesné vyvážení"
 #: src/frontend_fox/RemasterActionDialogs.cpp:73
 #: src/frontend_fox/RemasterActionDialogs.cpp:150
 msgid "1x Pan"
-msgstr "1x Pan"
+msgstr "1 x Pan"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:74
 #: src/frontend_fox/RemasterActionDialogs.cpp:151
 msgid "2x Pan"
-msgstr "2x Pan"
+msgstr "2 x Pan"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:76
 #: src/frontend_fox/RemasterActionDialogs.cpp:153
@@ -631,7 +649,7 @@ msgstr "Čas náběhu zesílení"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:264
 msgid "Gain Release Time"
-msgstr "Uvolnění zesílení"
+msgstr "Čas uvolnění zesílení"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:304
 msgid "Ratio"
@@ -643,7 +661,7 @@ msgstr "Čas náběhu"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:320
 msgid "Release Time"
-msgstr "Uvolnění"
+msgstr "Čas uvolnění"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:328
 #: src/frontend_fox/FilterActionDialogs.cpp:80
@@ -668,6 +686,8 @@ msgid ""
 "This Toggles That Compression Should be Applied to Both Channels when Either "
 "Channel Needs Compression"
 msgstr ""
+"Tento přepínač by se měl zapnout, když se má komprese použít na oba kanály, "
+"ať už kompresi potřebuje kterýkoli z nich"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:351
 msgid "Look Ahead For Level"
@@ -678,11 +698,13 @@ msgid ""
 "This Toggles That the Compressor Should Look Ahead (by Half the Window Time "
 "Amount) in the Input Signal When Calculating the Level of the Input Signal"
 msgstr ""
+"Toto zapne, že kompresor má předvídat, (půl dobyí časového okna) "
+"ve vstupním signálu během počítání úrovně vstupního signálu"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:373
 #: src/frontend_fox/RemasterActionDialogs.cpp:407
 msgid "Normalization Level"
-msgstr "Úroveň uvedení do obvyklého stavu"
+msgstr "Úroveň normalizace"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:383
 msgid "Region Count"
@@ -690,15 +712,15 @@ msgstr "Počítadlo oblastí"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:394
 msgid "Calculate Maximum Sample Value in a Region Across All Channels"
-msgstr ""
+msgstr "Spočítat největší hodnotu vzorku v oblasti přes všechny kanály"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:423
 msgid "Maximum Gain"
-msgstr "Největší možné zesílení"
+msgstr "Největší zesílení"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:434
 msgid "Calculate Signal Level Across All Channels Simultaneously"
-msgstr ""
+msgstr "Spočítat největší hodnotu úrovně signálu současně přes všechny kanály"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:453
 #: src/frontend_fox/RemasterActionDialogs.cpp:512
@@ -708,12 +730,12 @@ msgstr "Hodnota prahu pro ticho"
 #: src/frontend_fox/RemasterActionDialogs.cpp:459
 #: src/frontend_fox/RemasterActionDialogs.cpp:518
 msgid "An audio level below this threshold is considered to be quiet."
-msgstr ""
+msgstr "Úroveň hlasitosti, pod níž jsou hodnoty považovány za ticho."
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:462
 #: src/frontend_fox/RemasterActionDialogs.cpp:521
 msgid "Must Remain Quiet for"
-msgstr "Musí zůstat tiché pro"
+msgstr "Musí zůstat tiché po"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:468
 #: src/frontend_fox/RemasterActionDialogs.cpp:527
@@ -721,11 +743,13 @@ msgid ""
 "The audio level must remain below the threshold for this long before a "
 "beginning cue will be added."
 msgstr ""
+"Úroveň zvuku musí zůstat pod prahem po tak dlouho, předtím než "
+"bude přidána značka začátku."
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:471
 #: src/frontend_fox/RemasterActionDialogs.cpp:530
 msgid "Must Remain Unquiet for"
-msgstr "Nesmí zůstat tiché pro"
+msgstr "Nesmí zůstat tiché po"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:477
 #: src/frontend_fox/RemasterActionDialogs.cpp:536
@@ -733,6 +757,8 @@ msgid ""
 "After the beginning of a quiet area has been detected the audio level must "
 "rise above the threshold for this long for an ending cue to be added."
 msgstr ""
+"Dokud je určena oblast ticha, dotud musí úroveň hlasitosti stoupat nad "
+"prahovou hodnotu, dokud není vložena značka konce."
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:480
 #: src/frontend_fox/RemasterActionDialogs.cpp:539
@@ -745,22 +771,24 @@ msgid ""
 "This is the length of the window of audio to analyze for detecting the audio "
 "level."
 msgstr ""
+"Toto je délka okna se zvukem, v němž jsou zvuková data zkoumána, aby se "
+"zjistil zvuk."
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:490
 msgid "Quiet Begin Cue Name"
-msgstr "Název ukazatele začátku ticha"
+msgstr "Název značky pro začátek ticha"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:492
 msgid "What to Name a Cue That Marks Beginning of a Quiet Region"
-msgstr ""
+msgstr "Jak se pojmenuje značka, která označuje začátek oblasti ticha"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:496
 msgid "Quiet End Cue Name"
-msgstr "Název ukazatele konce ticha"
+msgstr "Název značky pro konec ticha"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:498
 msgid "What to Name a Cue That Marks End of a Quiet Region"
-msgstr ""
+msgstr "Jak se pojmenuje značka, která označuje konec oblasti ticha"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:548
 msgid "Shorten Found Area To"
@@ -771,6 +799,8 @@ msgid ""
 "When a quiet area is found it will be shorted to this much of its original "
 "length."
 msgstr ""
+"Když je nalezena tichá oblast, potom bude zkrácena na tuto hodnotu původní "
+"délky."
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:575
 msgid "New Sample Rate"
@@ -783,14 +813,14 @@ msgstr "Výška tónu"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:597
 msgid "Semitones"
-msgstr "Polotóny"
+msgstr "Půltóny"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:598
 #: src/frontend_fox/CMainWindow.cpp:1703 src/frontend_fox/CMainWindow.cpp:1737
 #: src/frontend_fox/CMainWindow.cpp:1797 src/frontend_fox/CMainWindow.cpp:1835
 #: src/frontend_fox/CMainWindow.cpp:1836
 msgid "semitones"
-msgstr ""
+msgstr "Půltóny"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:605
 #: src/frontend_fox/RemasterActionDialogs.cpp:687
@@ -809,6 +839,16 @@ msgid ""
 " Hopefully this issue will be worked out in the future.\n"
 "See the SoundTouch header file for more information about these parameters."
 msgstr ""
+"POZOR: Některá spojení těchto parametrů zapříčiňují, že knihovna "
+"SoundTouch vytváří jako výstup chyby ohledně trvání, \n"
+"jež mohou zabít nynější proces.  Není těžké způsobit, aby po úpravě "
+"těchto parametrů ReZound skončil.  \n"
+" Hrajte si s těmito parametry s využitím pokusných dat, a pak uložte "
+"přednastavení, "
+"která nezpůsobují potíže.  \n"
+" Je naděje, že se na tomto podaří zapracovat v budoucnosti.\n"
+"Podívejte se na hlavičku souboru SoundTouch, kde o těchto "
+"parametrech naleznete více informací."
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:610
 #: src/frontend_fox/RemasterActionDialogs.cpp:692
@@ -853,6 +893,11 @@ msgid ""
 "in processing. In principle a bigger value sounds better when slowing down "
 "tempo, but worse when increasing tempo and vice versa."
 msgstr ""
+"Toto je výchozí délka jedné sekvence zpracování v milisekundách. "
+"Určuje, na jak velké sekvence je původní zvuk nasekán v algoritmu "
+"pro roztažení času. Čím vyšší je hodnota, tím menší "
+"sekvence se při zpracování používají. Obecně zní vyšší hodnota lépe "
+"při zpomalení tempa, ale hůře, když je tempo zvýšeno, a obráceně."
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:645
 #: src/frontend_fox/RemasterActionDialogs.cpp:727
@@ -872,6 +917,15 @@ msgid ""
 "intervals. If there's a disturbing artifact that sounds as if a constant "
 "frequency was drifting around, try reducing this setting."
 msgstr ""
+"Výchozí délka okna hledání v milisekundách, která hledá po nejlepší "
+"možné poloze překrytí. Toto určuje, jak daleko v okně vzorku může"
+"algoritmus hledat, aby určil nejlepší polohu smíchání, když se mají zvukové "
+"sekvence znovu spojit dohromady. Čím větší je nastavení okna, tím větší je "
+"možnost najít lepší polohu smíchání. Ale současně mohou vyšší hodnoty "
+"vést k tomu, že zvuk tvoří nestálé artefakty, protože sousedící sekvence "
+"mohou být voleny v nestejných intervalech. pokud je přítomen rušivý "
+"artefakt, který zní jako by stálý kmitočet, který bzučí, potom zmenšete "
+"tuto hodnotu."
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:656
 #: src/frontend_fox/RemasterActionDialogs.cpp:738
@@ -888,6 +942,12 @@ msgid ""
 "reduce the 'Sequence Length' setting by a large amount, you might wish to "
 "try a smaller value on this."
 msgstr ""
+"Délka překrytí v milisekundách. Když jsou nasekané zvukové sekvence "
+"míchány zpět dohromady, aby opět vytvořily nepřetržitý proud zvuku, "
+"potom tento parametr určuje, jak dlouho se smí překrývat obě po sobě "
+"jdoucí sekvence. To by nemělo být tak kritické při jednom parametru. "
+"Pokud je délka sekvence silně zmenšena, člověk si rychle začne přát "
+"mít u tohoto menší hodnotu."
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:679
 msgid "Tempo Change"
@@ -916,7 +976,7 @@ msgstr "Okraj konce prolínání"
 
 #: src/frontend_fox/CCrossfadeEdgesDialog.cpp:42
 msgid "Linear Fade"
-msgstr "Přímočaré slábnutí"
+msgstr "Lineární slábnutí"
 
 #: src/frontend_fox/CCrossfadeEdgesDialog.cpp:43
 msgid "Parabolic Fade"
@@ -932,14 +992,14 @@ msgid ""
 "Parabolic sounds a bit more natural\n"
 "For very quick fades (less than 250ms) linear is recommended"
 msgstr ""
-"Přímočaré bude udržovat stálé zesílení 1.0\n"
+"Lineární bude udržovat stálé zesílení 1.0\n"
 "Parabolické zní o něco více přirozeně\n"
-"Přímočaré se doporučuje u velmi rychlých slábnutí (trvajících méně než "
+"Lineární se doporučuje u velmi rychlých slábnutí (trvajících méně než "
 "250 ms)"
 
 #: src/frontend_fox/CJACKPortChoiceDialog.cpp:40
 msgid "JACK Port Selection"
-msgstr "Výběr portu JACK"
+msgstr "Výběr přípojky (port) JACK"
 
 #: src/frontend_fox/CAboutDialog.cpp:43
 msgid "About ReZound"
@@ -947,7 +1007,7 @@ msgstr "&O programu ReZound"
 
 #: src/frontend_fox/CAboutDialog.cpp:69
 msgid "Please Read"
-msgstr "Prosím, přečtěte si"
+msgstr "Čtěte"
 
 #: src/frontend_fox/CAboutDialog.cpp:73
 msgid ""
@@ -973,29 +1033,30 @@ msgid ""
 msgstr ""
 "*** PŘEČTĚTE SI, PROSÍM ***\n"
 "\n"
-"   Vítejte u tohoto beta vydání programu ReZound. Prvotním cílem tohoto "
-"beta údobí je získat zpětnou vazbu k potížím, které má ReZound při svém "
-"běhu, a stejně tak přidání stanoveného (ne tak dobře) seznamu funkcí, "
-"které bych v ReZoundu rád měl předtím, než se bude zvát '1.0'. Hlašte "
-"mi, prosím, jakékoli potíže, které byste měli s procesem nastavení/"
-"sestavení/běhu prostřednictvím odkazu na hlášení chyb na další kartě "
-"tohoto dialogu \"O programu\".\n"
-"   Počet funkcí roste. Plánuji, že bych případně napsal krátký dokument "
-"o tom, jak provést nové kroky/efekty/úpravy. ReZound jsem navrhl "
-"obzvláště tak, aby bylo možné snadno vytvořit nové kroky.\n"
+"   Vítejte u tohoto beta vydání programu ReZound. Hlavním cílem tohoto "
+"zkušebního období je získání zpětné vazby, co se týče potíží, které má "
+"ReZound při svém "
+"běhu, a stejně tak přidání (ne tak dobře) stanoveného seznamu funkcí, "
+"které by chtěl jeho autor mít v ReZoundu předtím, než se tento bude zvát "
+"'1.0'. Hlašte, "
+"prosím, jakékoli potíže, které byste měli s procesem nastavení/"
+"sestavení/běhu programu prostřednictvím odkazu na hlášení chyb na další kartě "
+"tohoto dialogu PrograV plánu je, že by se případně napsal krátký dokument "
+"o tom, jak udělat nové činnosti/efekty/úpravy. ReZound byl navržen "
+"obzvláště tak, aby bylo možné snadno vytvořit nové činnosti.\n"
 "   Pokud máte jakékoli návrhy ohledně uživatelského rozhraní nebo "
-"týkající se jiné funkcionality, oznamte je, prosím, také prostřednictvím "
+"týkající se jiné funkcionality, oznamte je také prostřednictvím "
 "uvedeného odkazu nebo odkazu pro požadavek na funkci na další kartě. "
-"Děkuji vám za to, že dáváte ReZoundu šanci. Doufám, že vaše "
-"zkušenost je dobrá a že tuto aplikaci shledáte užitečnou, když budete "
-"potřebovat upravit zvuk, tak jako jsem ji shledal užitečnou já.\n"
+"Děkujeme vám za to, že dáváte ReZoundu šanci. Doufáme, že vaše "
+"zkušenost s jeho používáním je dobrá a že tento program shledáte užitečným, "
+"když budete potřebovat upravit zvuk, tak jako ji shledal užitečnou autor.\n"
 "\n"
 "   -- Davy\n"
 "\t\t"
 
 #: src/frontend_fox/CAboutDialog.cpp:91
 msgid "About"
-msgstr ""
+msgstr "Program"
 
 #: src/frontend_fox/CAboutDialog.cpp:95
 msgid "Author"
@@ -1003,7 +1064,7 @@ msgstr "Autor"
 
 #: src/frontend_fox/CAboutDialog.cpp:96
 msgid "Original Autoconfiscation"
-msgstr "Původní myšlenka programu"
+msgstr "Původní myšlenka"
 
 #: src/frontend_fox/CAboutDialog.cpp:97
 msgid "Additional Programming"
@@ -1019,7 +1080,7 @@ msgstr "Domovská stránka"
 
 #: src/frontend_fox/CAboutDialog.cpp:100
 msgid "Mailing List"
-msgstr "Seznam adres"
+msgstr "Poštovní seznam"
 
 #: src/frontend_fox/CAboutDialog.cpp:101
 msgid "Bug Reports"
@@ -1043,27 +1104,27 @@ msgstr "Poděkování"
 
 #: src/frontend_fox/CAboutDialog.cpp:112
 msgid "Russian Translation"
-msgstr "Ruský překlad"
+msgstr "Překlad do ruštiny"
 
 #: src/frontend_fox/CAboutDialog.cpp:113
 msgid "German Translation"
-msgstr "Německý překlad"
+msgstr "Překlad do němčiny"
 
 #: src/frontend_fox/CAboutDialog.cpp:114
 msgid "Spanish Translation"
-msgstr "Španělský překlad"
+msgstr "Překlad do španělštiny"
 
 #: src/frontend_fox/CAboutDialog.cpp:115
 msgid "Finnish Translation"
-msgstr "Finský překlad"
+msgstr "Překlad do finštiny"
 
 #: src/frontend_fox/CAboutDialog.cpp:116
 msgid "French Translation"
-msgstr "Francouzský překlad"
+msgstr "Překlad do francouzštiny"
 
 #: src/frontend_fox/CAboutDialog.cpp:117
 msgid "Testing/Porting"
-msgstr "Zkoušení/Přenos"
+msgstr "Zkoušení/Převedení"
 
 #: src/frontend_fox/CAboutDialog.cpp:118 src/frontend_fox/CAboutDialog.cpp:119
 #: src/frontend_fox/CAboutDialog.cpp:120 src/frontend_fox/CAboutDialog.cpp:121
@@ -1083,11 +1144,11 @@ msgstr "Hledání chyb/Opravy"
 
 #: src/frontend_fox/CAboutDialog.cpp:126
 msgid "Semitones Shuttle Wheel Feature Patch"
-msgstr ""
+msgstr "Záplata funkce kyvadlového kola půltónů"
 
 #: src/frontend_fox/CAboutDialog.cpp:133
 msgid "License"
-msgstr "Licence"
+msgstr "Povolení"
 
 #: src/frontend_fox/CAboutDialog.cpp:141
 #: src/frontend_fox/CCueListDialog.cpp:74 src/frontend_fox/CMainWindow.cpp:838
@@ -1105,7 +1166,7 @@ msgstr "Skalár"
 
 #: src/frontend_fox/CCueListDialog.cpp:66
 msgid "Cue List"
-msgstr "Seznam ukazatelů"
+msgstr "Seznam značek"
 
 #: src/frontend_fox/CCueListDialog.cpp:76
 msgid "&Add"
@@ -1119,7 +1180,7 @@ msgstr "&Odstranit"
 #: src/frontend_fox/CCueListDialog.cpp:78
 #: src/frontend_fox/CMainWindow.cpp:1030
 msgid "&Edit"
-msgstr "&Úpravy"
+msgstr "Úp&ravy"
 
 #: src/frontend_fox/FXDiskEntityParamValue.cpp:64
 msgid "Open as &Raw"
@@ -1129,15 +1190,15 @@ msgstr "Otevřít jako &RAW"
 #: src/frontend_fox/FilterActionDialogs.cpp:257
 #: src/frontend_fox/FilterActionDialogs.cpp:393
 msgid "Wet/Dry Mix"
-msgstr "Mokré/Suché míchání"
+msgstr "Míchání filtrovaného/nefiltrovaného signálu"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:72
 msgid "Input Lowpass"
-msgstr "Vstupní nízké pásmo"
+msgstr "Vstupní nízká propust"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:96
 msgid "Predelay"
-msgstr "Předzpoždění"
+msgstr "Předzpoždění (ozvěna)"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:105
 msgid "Filter Kernel"
@@ -1145,7 +1206,7 @@ msgstr "Jádro filtru"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:105
 msgid "The Audio File to Use as the Filter Kernel"
-msgstr ""
+msgstr "Zvukový soubor, jenž se má používat jako jádro filtru"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:109
 msgid "FK Gain"
@@ -1153,11 +1214,11 @@ msgstr "Zesílení FK"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:117
 msgid "FK Lowpass"
-msgstr "Nízké pásmo FK"
+msgstr "Nízká propust FK"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:126
 msgid "FK Rate"
-msgstr "Rychlost FK"
+msgstr "Hladina FK"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:133
 #: src/backend/Effects/CReverseEffect.cpp:144
@@ -1166,7 +1227,7 @@ msgstr "Obrácení"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:135
 msgid "Wrap Decay back to Beginning"
-msgstr ""
+msgstr "Přesunout pokles zpět na začátek"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:266
 msgid "Frequency Response"
@@ -1197,6 +1258,8 @@ msgid ""
 "This Sets the Lowest Frequency Displayed on the Graph.\n"
 "This is the Frequency of the First Octave."
 msgstr ""
+"Zde se nastaví nejnižší kmitočet zobrazený na grafu.\n"
+"Toto je kmitočet pro první oktávu."
 
 #: src/frontend_fox/FilterActionDialogs.cpp:289
 #: src/frontend_fox/FilterActionDialogs.cpp:452
@@ -1210,11 +1273,15 @@ msgid ""
 "But Note that no Frequency Higher than Half of the Sound's Sampling Rate can "
 "be Affected Since it Cannot Contain a Frequency Higher than That."
 msgstr ""
+"Zde se nastaví počet oktáv zobrazených na grafu.\n"
+"Všimněte si ale, že nesmí být žádný kmitočet, který je vyšší než polovina "
+"vzorkovacího kmitočtu zvuku, protože vzorek nemůže obsahovat žádný "
+"vyšší kmitočet."
 
 #: src/frontend_fox/FilterActionDialogs.cpp:301
 #: src/frontend_fox/FilterActionDialogs.cpp:422
 msgid "Kernel Length"
-msgstr ""
+msgstr "Délka jádra"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:307
 #: src/frontend_fox/FilterActionDialogs.cpp:428
@@ -1222,16 +1289,20 @@ msgid ""
 "This is the Size of the Filter Kernel Computed (in samples) From Your Curve "
 "to be Convolved with the Audio"
 msgstr ""
+"Toto je z vašeho vzorku (ve vzorcích) vypočtená velikost jádra filtru, "
+"která je započtena dovnitř zvukových dat"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:310
 #: src/frontend_fox/FilterActionDialogs.cpp:432
 msgid "Undelay"
-msgstr "Zrušit zpoždění"
+msgstr "Zrušit zpoždění (ozvěnu)"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:312
 #: src/frontend_fox/FilterActionDialogs.cpp:434
 msgid "This Counteracts the Delay Side-Effect of Custom FIR Filters"
 msgstr ""
+"Toto má účinkovat proti zpožďovacím postranním účinkům vlastního "
+"filtru omezené odezvy impulzu (FIR)"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:360
 msgid "Frequency Response 1"
@@ -1255,11 +1326,11 @@ msgstr "Kmitočtová křivka 2"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:403
 msgid "Use LFO"
-msgstr "Použít LFO"
+msgstr "Použít nízkokmitočtový oscilátor"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:410
 msgid "Sweep LFO"
-msgstr "Vyměnit LFO"
+msgstr "Vyměnit nízkokmitočtový oscilátor"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:516
 msgid ""
@@ -1288,13 +1359,13 @@ msgstr "Zesílení"
 #: src/frontend_fox/FilterActionDialogs.cpp:661
 #: src/frontend_fox/FilterActionDialogs.cpp:692
 msgid "Cutoff Frequency"
-msgstr "Oříznout kmitočet"
+msgstr "Oříznutí kmitočtu"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:597
 #: src/frontend_fox/FilterActionDialogs.cpp:628
 #: src/frontend_fox/FilterActionDialogs.cpp:723
 msgid "Center Frequency"
-msgstr "Kmitočet umístit do středu"
+msgstr "Středový kmitočet"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:605
 #: src/frontend_fox/FilterActionDialogs.cpp:636
@@ -1305,7 +1376,7 @@ msgstr "Šířka pásma"
 #: src/frontend_fox/FilterActionDialogs.cpp:700
 #: src/frontend_fox/FilterActionDialogs.cpp:731
 msgid "Resonance"
-msgstr "Odezva"
+msgstr "Zvučnost"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:47
 msgid "Macro Action Parameters"
@@ -1313,39 +1384,39 @@ msgstr "Parametry kroku makra"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:62
 msgid "When the Macro is Played Back and This Action is to be Performed..."
-msgstr ""
+msgstr "Když je odehráno Makro a provádí se tato činnost..."
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:71
 msgid "Set the Start Position..."
-msgstr "Nastavit polohu začátku..."
+msgstr "Nastavit začátek výběru..."
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:72
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:82
 msgid "Same Proportionate Time"
-msgstr "Stejný úměrný čas"
+msgstr "Stejný poměrný čas"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:73
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:83
 msgid "Same Absolute Time From the Beginning of the Audio File"
-msgstr "Stejný naprostý čas od začátku zvukového souboru"
+msgstr "Stejný absolutní čas od začátku zvukového souboru"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:74
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:84
 msgid "Same Absolute Time From the End of the Audio File"
-msgstr "Stejný naprostý čas od konce zvukového souboru"
+msgstr "Stejný absolutní čas od konce zvukového souboru"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:75
 msgid "Same Absolute Time Before the Stop Position"
-msgstr "Stejný naprostý čas před polohou zastavení"
+msgstr "Stejný absolutní čas před polohou konce výběru"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:76
 msgid "Same Proportionate Time Before the Stop Position"
-msgstr "Stejný úměrný čas před polohou zastavení"
+msgstr "Stejný poměrný čas před polohou konce výběru"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:77
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:87
 msgid "Same Cue Name"
-msgstr "Stejný název ukazatele"
+msgstr "Stejný název značky"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:78
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:88
@@ -1354,21 +1425,21 @@ msgstr "Držet ve stejné poloze, jako při předcházejícím kroku"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:81
 msgid "Set the Stop Position..."
-msgstr "Nastavit polohu zastavení..."
+msgstr "Nastavit polohu konce výběru..."
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:85
 msgid "Same Absolute Time After the Start Position"
-msgstr "Stejný naprostý čas po poloze začátku"
+msgstr "Stejný absolutní čas po poloze začátku"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:86
 msgid "Same Proportionate Time After the Start Position"
-msgstr "Stejný úměrný čas po poloze začátku"
+msgstr "Stejný poměrný čas po poloze začátku"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:201
 msgid ""
 "The positioning of the start and stop positions cannot be relative to each "
 "other."
-msgstr ""
+msgstr "Umístění poloh začátku a konce výběru nemohou být navzájem závislá."
 
 #: src/frontend_fox/CChannelSelectDialog.cpp:58
 msgid "Channel Select"
@@ -1376,7 +1447,7 @@ msgstr "Výběr kanálu"
 
 #: src/frontend_fox/CChannelSelectDialog.cpp:60
 msgid "Channels to Which This Action Should Apply:"
-msgstr ""
+msgstr "Kanály, na něž se má tato činnost použít:"
 
 #: src/frontend_fox/FileActionDialogs.cpp:127
 msgid "Save to Directory"
@@ -1396,7 +1467,7 @@ msgstr "Část#"
 
 #: src/frontend_fox/FileActionDialogs.cpp:128
 msgid "This will be added to the front of the filename"
-msgstr ""
+msgstr "Toto bude přidáno před název souboru"
 
 #: src/frontend_fox/FileActionDialogs.cpp:129
 msgid "Filename Suffix"
@@ -1404,7 +1475,7 @@ msgstr "Přípona názvu souboru"
 
 #: src/frontend_fox/FileActionDialogs.cpp:129
 msgid "This will be added to the end of the filename"
-msgstr ""
+msgstr "Toto bude přidáno na konec názvu souboru"
 
 #: src/frontend_fox/FileActionDialogs.cpp:130
 msgid "Format"
@@ -1412,7 +1483,7 @@ msgstr "Formát"
 
 #: src/frontend_fox/FileActionDialogs.cpp:130
 msgid "The format to save each segment as"
-msgstr ""
+msgstr "Formát, v němž bude uložena každá část"
 
 #: src/frontend_fox/FileActionDialogs.cpp:131
 msgid "Segment Number Start"
@@ -1423,6 +1494,8 @@ msgid ""
 "The Number to Start With When Substituting the Track Number For '#' in the "
 "Filenames"
 msgstr ""
+"Toto je číslo, jímž se začíná při nahrazování čísla stopy pro '#' v názvu "
+"souboru"
 
 #: src/frontend_fox/FileActionDialogs.cpp:132
 msgid "Open Saved Segments"
@@ -1430,17 +1503,17 @@ msgstr "Otevřít uložené části"
 
 #: src/frontend_fox/FileActionDialogs.cpp:132
 msgid "Open the Segments After Saving Them"
-msgstr ""
+msgstr "Otevřít části, poté co byly uloženy"
 
 #: src/frontend_fox/FileActionDialogs.cpp:134
 #: src/frontend_fox/FileActionDialogs.cpp:183
 msgid "Entire File"
-msgstr "na celý soubor"
+msgstr "Celý soubor"
 
 #: src/frontend_fox/FileActionDialogs.cpp:135
 #: src/frontend_fox/FileActionDialogs.cpp:184
 msgid "Selection Only"
-msgstr "na výběr"
+msgstr "Pouze výběr"
 
 #: src/frontend_fox/FileActionDialogs.cpp:136
 #: src/frontend_fox/FileActionDialogs.cpp:185
@@ -1449,7 +1522,7 @@ msgstr "Použije na"
 
 #: src/frontend_fox/FileActionDialogs.cpp:137
 msgid "Prompt Only Once for Save Parameters"
-msgstr ""
+msgstr "Zeptat se na parametry uložení jen jednou"
 
 #: src/frontend_fox/FileActionDialogs.cpp:137
 msgid ""
@@ -1458,10 +1531,15 @@ msgid ""
 "file if necessary.  All other saved files will use the previous parameters "
 "if possible."
 msgstr ""
+"Některé formáty vyžadují nastavení parametrů uživatelem (např. typ komprese, "
+"formát zvuku atd.). Při zaškrtnutí tohoto zaškrtávacího políčka bude vznesen "
+"dotaz jen u prvního souboru, za předpokladu, že to bude nutné. Všechny "
+"ostatní uložené "
+"soubory budou používat předtím nastavené parametry, pokud to bude možné."
 
 #: src/frontend_fox/FileActionDialogs.cpp:165
 msgid "Temp Space Directory"
-msgstr ""
+msgstr "Dočasný adresář"
 
 #: src/frontend_fox/FileActionDialogs.cpp:165
 msgid ""
@@ -1469,6 +1547,9 @@ msgid ""
 "will be needed for CD quality audio of the length of the audio to be burned "
 "to the CD"
 msgstr ""
+"Dočasný soubor k vypálení bude umístěn do tohoto adresáře. Bude potřeba "
+"dostatek místa na ukládání pro zvuková data v kvalitě CD, aby se z nich dalo "
+"vypálit CD"
 
 #: src/frontend_fox/FileActionDialogs.cpp:168
 msgid "Path to cdrdao"
@@ -1480,7 +1561,7 @@ msgstr "Rychlost vypalování"
 
 #: src/frontend_fox/FileActionDialogs.cpp:179
 msgid "Gap Between Tracks"
-msgstr "Mezera mezi stopami"
+msgstr "Odstup mezi stopami"
 
 #: src/frontend_fox/FileActionDialogs.cpp:179
 msgid "The Gap of Silence to Place Between Each Track"
@@ -1499,14 +1580,16 @@ msgid ""
 "In linux >2.6, scanbus may not work and it may be\n"
 "necessary to specify: for example: ATAPI:0,0,0"
 msgstr ""
+"V Linux > 2.6 nemusí scanbus pracovat správně.\n"
+"Z toho důvodu by se mělo stanovit: např. ATAPI:0,0,0"
 
 #: src/frontend_fox/FileActionDialogs.cpp:192
 msgid "Also, cdrdao-1.1.9 has much better drive support."
-msgstr ""
+msgstr "Kromě toho má cdrdao-1.1.9 lepší podporu ovladačů."
 
 #: src/frontend_fox/FileActionDialogs.cpp:194
 msgid "Extra cdrdao Options"
-msgstr "Volby cdrdao navíc"
+msgstr "Další volby pro cdrdao"
 
 #: src/frontend_fox/FileActionDialogs.cpp:195
 msgid "Simulate Burn Only"
@@ -1514,7 +1597,7 @@ msgstr "Pouze napodobit vypalování"
 
 #: src/frontend_fox/FileActionDialogs.cpp:195
 msgid "Don't Turn on Burn Laser"
-msgstr ""
+msgstr "Nezapínat vypalovací laser"
 
 #: src/frontend_fox/FileActionDialogs.cpp:230
 msgid "Macro Name"
@@ -1526,45 +1609,47 @@ msgstr "Odstranit makro"
 
 #: src/frontend_fox/FileActionDialogs.cpp:246
 msgid "Are you sure you want to delete the macro: "
-msgstr ""
+msgstr "Jste si jistý, že chcete smazat makro: "
 
 #: src/frontend_fox/CCueDialog.cpp:48
 msgid "Cue Properties"
-msgstr "Vlastnosti ukazatelů"
+msgstr "Vlastnosti značky"
 
 #: src/frontend_fox/CCueDialog.cpp:51
 msgid "Cue Name:"
-msgstr "Název ukazatele:"
+msgstr "Název značky:"
 
 #: src/frontend_fox/CCueDialog.cpp:55
 msgid " Cue Time:"
-msgstr "Čas ukazatele:"
+msgstr "Čas značky:"
 
 #: src/frontend_fox/CCueDialog.cpp:59
 msgid ""
 "Anchored in Time\tMeaning That This Cue's Position Will Not Be Affected by "
 "Adding and Removing Space Within the Audio"
 msgstr ""
+"Ukotvení času\tZnamená, že poloha značky není ovlivněna přidáním "
+"a odstraněním oblastí"
 
 #: src/frontend_fox/CCueDialog.cpp:103
 msgid "Cue Name Too Long"
-msgstr "Název ukazatele je příliš dlouhý"
+msgstr "Název značky je příliš dlouhý"
 
 #: src/frontend_fox/CCueDialog.cpp:111
 msgid "Invalid Cue Time.  Format: HH:MM:SS.sssss or MM:SS.sssss"
-msgstr "Neplatný název ukazatele. Formát: HH:MM:SS.sssss nebo MM:SS.sssss"
+msgstr "Neplatný název značky. Formát: HH:MM:SS.sssss nebo MM:SS.sssss"
 
 #: src/frontend_fox/FXGraphParamValue.cpp:380
 msgid "Clear to Normal"
-msgstr "Smazat po obvyklý"
+msgstr "Smazat po normální"
 
 #: src/frontend_fox/FXGraphParamValue.cpp:381
 msgid "Flip Graph Horizontally"
-msgstr "Obrátit obrazec vodorovně"
+msgstr "Převrátit obrazec vodorovně"
 
 #: src/frontend_fox/FXGraphParamValue.cpp:382
 msgid "Flip Graph Vertically"
-msgstr "Obrátit obrazec svisle"
+msgstr "Převrátit obrazec svisle"
 
 #: src/frontend_fox/FXGraphParamValue.cpp:383
 msgid "Smooth Graph Nodes"
@@ -1598,11 +1683,11 @@ msgstr "Typ smyčky"
 #: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:102
 #: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:139
 msgid "Waveform IDs must be from 0 to 16384"
-msgstr ""
+msgstr "ID časového průběhu vlny jde od 0 do 16384"
 
 #: src/frontend_fox/CMIDIDumpSampleIdDialog.cpp:148
 msgid "Loop type must be from 0 to 127"
-msgstr ""
+msgstr "Typ smyčky jde od 0 do 127"
 
 #: src/frontend_fox/ClibaudiofileSaveParametersDialog.cpp:40
 msgid "Save Parameters"
@@ -1614,16 +1699,17 @@ msgstr "Šířka vzorku"
 
 #: src/frontend_fox/ClibaudiofileSaveParametersDialog.cpp:66
 msgid "Compression Type"
-msgstr "Typ stlačení"
+msgstr "Typ komprese"
 
 #: src/frontend_fox/ClibaudiofileSaveParametersDialog.cpp:68
 msgid "Save Cues"
-msgstr "Uložit ukazatel"
+msgstr "Uložit značky"
 
 #: src/frontend_fox/ClibaudiofileSaveParametersDialog.cpp:68
 msgid ""
 "Enable or Disable the saving of cues to the file if the format supports it"
 msgstr ""
+"Povolit nebo zakázat ukládání značek do souboru, pokud to podporuje formát"
 
 #: src/frontend_fox/ClibaudiofileSaveParametersDialog.cpp:69
 msgid "Save User Notes"
@@ -1634,12 +1720,17 @@ msgid ""
 "Enable or Disable the saving of user notes to the file if the format "
 "supports it"
 msgstr ""
+"Povolit nebo zakázat ukládání uživatelských poznámek do souboru, pokud to "
+"podporuje formát"
 
 #: src/frontend_fox/ClibaudiofileSaveParametersDialog.cpp:70
 msgid ""
 "Some software may not handle files containing cues or user notes.\n"
 "So, you can disable their being saved to the file."
 msgstr ""
+"Některé programy neumí zpracovat žádné soubory, jež obsahují značky "
+"nebo uživatelské poznámky.\n"
+"Takže můžete zakázat, aby se ukládaly do souboru."
 
 #: src/frontend_fox/ClibaudiofileSaveParametersDialog.cpp:165
 msgid ""
@@ -1647,49 +1738,52 @@ msgid ""
 "This is because ReZound cannot tell enough from the libaudiofile library "
 "what is valid."
 msgstr ""
+"Některá spojení hodnot mohou působit potíže.\n"
+"To se děje, protože ReZound se z knihovny libaudiofile nedozví,t "
+"co je platné."
 
 #: src/frontend_fox/FXRezWaveView.cpp:511
 #: src/frontend_fox/FXRezWaveView.cpp:516
 msgid "Set Start Position to Cue"
-msgstr "Nastavit polohu začátku k ukazateli"
+msgstr "Nastavit začátek výběru ke značce"
 
 #: src/frontend_fox/FXRezWaveView.cpp:513
 #: src/frontend_fox/FXRezWaveView.cpp:517
 msgid "Set Stop Position to Cue"
-msgstr "Nastavit polohu zastavení k ukazateli"
+msgstr "Nastavit konec výběru ke značce"
 
 #: src/frontend_fox/FXRezWaveView.cpp:521
 msgid "&Edit Cue"
-msgstr "&Upravit ukazatel"
+msgstr "&Upravit značku"
 
 #: src/frontend_fox/FXRezWaveView.cpp:522
 msgid "&Remove Cue"
-msgstr "&Odstranit ukazatel"
+msgstr "&Odstranit značku"
 
 #: src/frontend_fox/FXRezWaveView.cpp:524
 #: src/frontend_fox/FXRezWaveView.cpp:543
 msgid "Show Cues &List"
-msgstr "Ukázat &seznam ukazatelů"
+msgstr "Ukázat &seznam značek"
 
 #: src/frontend_fox/FXRezWaveView.cpp:536
 msgid "Center Start Position"
-msgstr "Polohu začátku umístit do středu"
+msgstr "Začátek výběru umístit do středu"
 
 #: src/frontend_fox/FXRezWaveView.cpp:537
 msgid "Center Stop Position"
-msgstr "Polohu zastavení umístit do středu"
+msgstr "Konec výběru umístit do středu"
 
 #: src/frontend_fox/FXRezWaveView.cpp:539
 msgid "Add Cue at This Position"
-msgstr "Přidat ukazatel v této poloze"
+msgstr "Přidat značku v této poloze"
 
 #: src/frontend_fox/FXRezWaveView.cpp:540
 msgid "Add Cue at Start Position"
-msgstr "Přidat ukazatel v poloze začátku"
+msgstr "Přidat značku v poloze začátku výběru"
 
 #: src/frontend_fox/FXRezWaveView.cpp:541
 msgid "Add Cue at Stop Position"
-msgstr "Přidat ukazatel v poloze zastavení"
+msgstr "Přidat značku v poloze konce výběru"
 
 #: src/frontend_fox/CProgressDialog.cpp:47
 #: src/frontend_fox/FXModalDialogBox.cpp:58
@@ -1698,19 +1792,19 @@ msgstr "&Zrušit"
 
 #: src/frontend_fox/CProgressDialog.cpp:84
 msgid "Time Elapsed "
-msgstr "Uplynulý čas"
+msgstr "Uplynulý čas "
 
 #: src/frontend_fox/CProgressDialog.cpp:96
 msgid "Estimated Time Remaining "
-msgstr "Odhadovaný zbývající čas"
+msgstr "Odhadovaný zbývající čas "
 
 #: src/frontend_fox/CMainWindow.cpp:223 src/frontend_fox/CMainWindow.cpp:859
 msgid "Play All Once"
-msgstr "Vše přehrát jednou"
+msgstr "Přehrát vše jednou"
 
 #: src/frontend_fox/CMainWindow.cpp:224 src/frontend_fox/CMainWindow.cpp:861
 msgid "Play Selection Once"
-msgstr "Výběr přehrát jednou"
+msgstr "Přehrát výběr jednou"
 
 #: src/frontend_fox/CMainWindow.cpp:225 src/frontend_fox/CMainWindow.cpp:863
 msgid "Play From Selection Start to End"
@@ -1734,8 +1828,7 @@ msgstr "Přehrávat výběr ve smyčce, ale prostřední část přeskočit"
 
 #: src/frontend_fox/CMainWindow.cpp:230
 msgid "Play Selection Looped and Play a Gap Before Repeating"
-msgstr ""
-"Přehrávat výběr ve smyčce a přehrát před každým opakováním přestávku"
+msgstr "Přehrávat výběr ve smyčce a přehrát před každým opakováním přestávku"
 
 #: src/frontend_fox/CMainWindow.cpp:232 src/frontend_fox/CMainWindow.cpp:867
 msgid "Stop"
@@ -1755,21 +1848,23 @@ msgstr "Skočit na začátek"
 
 #: src/frontend_fox/CMainWindow.cpp:238
 msgid "Jump to Start Position"
-msgstr "Skočit na polohu začátku"
+msgstr "Skočit na začátek výběru"
 
 #: src/frontend_fox/CMainWindow.cpp:240 src/frontend_fox/CMainWindow.cpp:872
 msgid "Jump to Previous Cue"
-msgstr "Skočit k předchozímu ukazateli"
+msgstr "Skočit na předchozí značku"
 
 #: src/frontend_fox/CMainWindow.cpp:241 src/frontend_fox/CMainWindow.cpp:873
 msgid "Jump to Next Cue"
-msgstr "Skočit k dalšímu ukazateli"
+msgstr "Skočit k další značku"
 
 #: src/frontend_fox/CMainWindow.cpp:256
 msgid ""
 "Shuttle Seek While Playing\n"
 "(right-click to return to middle)"
 msgstr ""
+"Kyvadlové posunování během přehrávání\n"
+"(klepnutí pravým tlačítkem myši pro návrat doprostřed)"
 
 #: src/frontend_fox/CMainWindow.cpp:262
 msgid "free"
@@ -1781,11 +1876,11 @@ msgstr "skočit"
 
 #: src/frontend_fox/CMainWindow.cpp:263
 msgid "Set the Shuttle Wheel to Spring Back to the Middle or Not"
-msgstr "Nastavit kyvadlové kolo, zda má skákat zpět doprostřed, nebo ne"
+msgstr "Nastavit kyvadlové kolo, zda se má skákat zpět doprostřed, nebo ne"
 
 #: src/frontend_fox/CMainWindow.cpp:267
 msgid "Set the Maximum Rate Change of the Shuttle Wheel"
-msgstr "Nastavit nejvyšší možnou hodnotu změny kyvadlového kola"
+msgstr "Nastavit nejvyšší možnou hodnotu změny rychlosti kyvadlového kola"
 
 #: src/frontend_fox/CMainWindow.cpp:275
 msgid "Follow Play Position"
@@ -1793,11 +1888,11 @@ msgstr "Sledovat průběh přehrávání"
 
 #: src/frontend_fox/CMainWindow.cpp:277
 msgid "Clipping Warning"
-msgstr "Varování ohledně stříhání"
+msgstr "Varování ohledně přebuzení"
 
 #: src/frontend_fox/CMainWindow.cpp:279
 msgid "Draw Vertical Cue Positions"
-msgstr "Kreslit svislé polohy ukazatelů"
+msgstr "Kreslit svislé polohy značek"
 
 #: src/frontend_fox/CMainWindow.cpp:284
 msgid ""
@@ -1805,6 +1900,9 @@ msgid ""
 "Positions to Give a Smoother Transition in to and out of the Modified "
 "Selection"
 msgstr ""
+"Po většině činností lze prolínání stanovit v polohách začátku \n"
+"a zastavení pro umožnění jemnějšího přechodu do, z nebo\n"
+"k výběru"
 
 #: src/frontend_fox/CMainWindow.cpp:285
 msgid "No Crossfade"
@@ -1835,6 +1933,8 @@ msgid ""
 "You have changed the selected audio file while a macro is being recorded to "
 "position: "
 msgstr ""
+"Změnil jste vybraný zvukový soubor, zatímco bylo nahráváno makro, "
+"nahráváno do polohy: "
 
 #: src/frontend_fox/CMainWindow.cpp:452
 msgid ""
@@ -1842,14 +1942,16 @@ msgid ""
 "position in the loaded sounds list will be selected at this step in the "
 "macro."
 msgstr ""
+"Uvažte, že, když je makro přehráváno, bude při tomto kroku v makru "
+"vybrán zvukový soubor nahraný v téže poloze v seznamu nahraných zvuků."
 
 #: src/frontend_fox/CMainWindow.cpp:831
 msgid "&Reopen"
-msgstr "&Znovuotevřít"
+msgstr "Otevřít &znovu"
 
 #: src/frontend_fox/CMainWindow.cpp:839
 msgid "Re&vert"
-msgstr "&Vrátit"
+msgstr "Na&hrát znovu"
 
 #: src/frontend_fox/CMainWindow.cpp:842
 msgid "Record Macro..."
@@ -1877,12 +1979,11 @@ msgstr "Nahrát..."
 
 #: src/frontend_fox/CMainWindow.cpp:865
 msgid "Loop Selection but Skip Most of the Middle"
-msgstr "Výběr přehrávat ve smyčce, ale prostřední část přeskočit"
+msgstr "Přehrávat výběr ve smyčce a prostředek přeskočit"
 
 #: src/frontend_fox/CMainWindow.cpp:866
 msgid "Loop Selection and Play a Gap Before Repeating"
-msgstr ""
-"Výběr přehrávat ve smyčce a přehrát před každým opakováním přestávku"
+msgstr "Přehrávat výběr ve smyčce a přehrát tón před opakováním"
 
 #: src/frontend_fox/CMainWindow.cpp:871
 msgid "Jump to Selection Start"
@@ -1890,19 +1991,19 @@ msgstr "Skočit na začátek výběru"
 
 #: src/frontend_fox/CMainWindow.cpp:875
 msgid "Shuttle Rewind"
-msgstr "Kyvadlové převíjení zpět"
+msgstr "Přehrávat kyvadlově dozadu"
 
 #: src/frontend_fox/CMainWindow.cpp:876
 msgid "Shuttle Amount"
-msgstr "Kyvadlové množství"
+msgstr "Rozsah kyvadlového přehrávání"
 
 #: src/frontend_fox/CMainWindow.cpp:877
 msgid "Shuttle Forward"
-msgstr "Kyvadlově dopředu"
+msgstr "Přehrávat kyvadlově dopředu"
 
 #: src/frontend_fox/CMainWindow.cpp:881
 msgid "Zoom Out F&ull"
-msgstr "Zcela &oddálit"
+msgstr "O&ddálit zcela"
 
 #: src/frontend_fox/CMainWindow.cpp:882
 msgid "Zoom &Out"
@@ -1914,15 +2015,15 @@ msgstr "&Přiblížit"
 
 #: src/frontend_fox/CMainWindow.cpp:884
 msgid "Zoom &Fit Selection"
-msgstr "Přiblížit kvůli &přizpůsobení výběru"
+msgstr "Přiblížit &přizpůsobit výběr"
 
 #: src/frontend_fox/CMainWindow.cpp:886
 msgid "Find &Start Position"
-msgstr "Najít &polohu počátku"
+msgstr "Najít &začátek výběru"
 
 #: src/frontend_fox/CMainWindow.cpp:887
 msgid "Find Sto&p Position"
-msgstr "Najít &polohu zastavení"
+msgstr "Najít &konec výběru"
 
 #: src/frontend_fox/CMainWindow.cpp:889
 msgid "&Redraw"
@@ -1990,11 +2091,11 @@ msgstr "Zpět"
 
 #: src/frontend_fox/CMainWindow.cpp:916
 msgid "Clear Undo History"
-msgstr "Smazat historii kroků zpět"
+msgstr "Vymazat historii činností"
 
 #: src/frontend_fox/CMainWindow.cpp:918
 msgid "&Recent Actions"
-msgstr "&Poslední kroky"
+msgstr "&Poslední činnosti"
 
 #: src/frontend_fox/CMainWindow.cpp:1029
 msgid "&File"
@@ -2019,7 +2120,7 @@ msgstr "&Efekty"
 
 #: src/frontend_fox/CMainWindow.cpp:1035
 msgid "&Looping"
-msgstr "&Smyčka"
+msgstr "S&myčka"
 
 #: src/frontend_fox/CMainWindow.cpp:1036
 msgid "F&ilters"
@@ -2027,43 +2128,43 @@ msgstr "&Filtry"
 
 #: src/frontend_fox/CMainWindow.cpp:1037
 msgid "&Remaster"
-msgstr "&Nové zpracování"
+msgstr "&Zpracování"
 
 #: src/frontend_fox/CMainWindow.cpp:1038
 msgid "&Generate"
-msgstr "&Vytvořit"
+msgstr "&Vytvoření"
 
 #: src/frontend_fox/CMainWindow.cpp:1196
 msgid "No LADSPA Plugins Found"
-msgstr ""
+msgstr "Nenalezeny žádné přídavné moduly LADSPA"
 
 #: src/frontend_fox/CMainWindow.cpp:1198
 msgid "Like PATH, set LADSPA_PATH to point"
-msgstr ""
+msgstr "Jako PATH, musí být nastavena i LADSPA_PATH"
 
 #: src/frontend_fox/CMainWindow.cpp:1199
 msgid "to a directory(s) containing LADSPA"
-msgstr ""
+msgstr "na adresář(e) obsahující LADSPA"
 
 #: src/frontend_fox/CMainWindow.cpp:1200
 msgid "plugin .so file at least once.  Or"
-msgstr ""
+msgstr "přídavný modul, soubor .so alespoň jednou. Nebo"
 
 #: src/frontend_fox/CMainWindow.cpp:1201
 msgid "edit the value in ~/.rezound/registry.dat"
-msgstr ""
+msgstr "upravit hodnotu v ~/.rezound/registry.dat"
 
 #: src/frontend_fox/CMainWindow.cpp:1424
 msgid "Cannot close a file while recording a macro"
-msgstr ""
+msgstr "Nelze zavřít žádný soubor, dokud makro není nahráno"
 
 #: src/frontend_fox/CMainWindow.cpp:1433
 msgid "Cannot revert a file while recording a macro"
-msgstr ""
+msgstr "Nelze obnovit žádný soubor, dokud makro není nahráno"
 
 #: src/frontend_fox/CMainWindow.cpp:1559
 msgid "Cannot record audio while recording a macro"
-msgstr ""
+msgstr "Nelze nahrát žádný zvuk, dokud makro není nahráno"
 
 #: src/frontend_fox/CUserNotesDialog.cpp:43
 msgid "User Notes"
@@ -2148,7 +2249,7 @@ msgstr "Obvykle nastaveno na 0"
 
 #: src/frontend_fox/CRawDialog.cpp:104
 msgid "in audio frames"
-msgstr "ve zvukových snímcích"
+msgstr "Ve zvukových snímcích"
 
 #: src/frontend_fox/CRawDialog.cpp:168
 msgid "invalid negative data offset"
@@ -2229,15 +2330,15 @@ msgstr "Křivka zesílení"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:80
 msgid "Rate Change"
-msgstr "Změna kmitočtu"
+msgstr "Změna hladiny"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:93
 msgid "Rate Curve"
-msgstr "Křivka kmitočtu"
+msgstr "Křivka hladiny"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:94
 msgid "Rate"
-msgstr "Kmitočet"
+msgstr "Hladina"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:112
 #: src/frontend_fox/EffectActionDialogs.cpp:165
@@ -2246,19 +2347,19 @@ msgstr "Zpoždění"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:120
 msgid "Wet Gain"
-msgstr "Mokré zesílení"
+msgstr "Zesílení filtrovaného signálu"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:128
 msgid "Dry Gain"
-msgstr "Suché zesílení"
+msgstr "Zesílení nefiltrovaného signálu"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:136
 msgid "Flange LFO"
-msgstr "LFO opatřit obrubou"
+msgstr "Nízkokmitočtový oscilátor opatřit přírubou"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:138
 msgid "LFO Depth"
-msgstr "Hloubka LFO"
+msgstr "Hloubka nízkokmitočtového oscilátoru"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:146
 #: src/frontend_fox/EffectActionDialogs.cpp:181
@@ -2271,7 +2372,7 @@ msgstr "Celkové množství"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:216
 msgid "The Number of Possible Sample Values Above Zero"
-msgstr ""
+msgstr "Počet možných hodnot vzorku větších než nula"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:239
 msgid "Curve"
@@ -2288,7 +2389,7 @@ msgstr "Výstup"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:261
 msgid "LFO"
-msgstr "LFO"
+msgstr "Nízkokmitočtový oscilátor"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:271
 msgid "Time"
@@ -2325,7 +2426,7 @@ msgstr "Barva šumu"
 
 #: src/frontend_fox/GenerateActionDialogs.cpp:91
 msgid "Independent Channels"
-msgstr "Volné kanály"
+msgstr "Samostatné kanály"
 
 #: src/frontend_fox/GenerateActionDialogs.cpp:92
 msgid "Mono"
@@ -2337,7 +2438,7 @@ msgstr "Obrátit mono"
 
 #: src/frontend_fox/GenerateActionDialogs.cpp:96
 msgid "Stereo Image"
-msgstr "Obbraz sterea"
+msgstr "Obraz sterea"
 
 #: src/frontend_fox/GenerateActionDialogs.cpp:155
 msgid "Sine Wave"
@@ -2365,19 +2466,19 @@ msgstr "Druh tónu"
 
 #: src/frontend_fox/CRecordDialog.cpp:84
 msgid "   Cue Prefix:"
-msgstr "Předpona ukazatele:"
+msgstr "Předpona značky:"
 
 #: src/frontend_fox/CRecordDialog.cpp:88
 msgid "Cue Number:"
-msgstr "Počet ukazatelů:"
+msgstr "Počet značek:"
 
 #: src/frontend_fox/CRecordDialog.cpp:91 src/backend/Edits/CCueAction.cpp:63
 msgid "Add Cue"
-msgstr "Přidat ukazatel"
+msgstr "Přidat značku"
 
 #: src/frontend_fox/CRecordDialog.cpp:92
 msgid "Add Anchored Cue"
-msgstr "Přidat ukotvený ukazatel"
+msgstr "Přidat ukotvenou značku"
 
 #: src/frontend_fox/CRecordDialog.cpp:98 src/frontend_fox/CRecordDialog.cpp:99
 msgid "Recording:"
@@ -2402,7 +2503,7 @@ msgstr "Mez nahrávky:"
 
 #: src/frontend_fox/CRecordDialog.cpp:115
 msgid "DCOffset: "
-msgstr "Posun DC:"
+msgstr "Stejnosměrná složka (DC offset): "
 
 #: src/frontend_fox/CRecordDialog.cpp:116
 msgid "Reported Every 5 Seconds"
@@ -2413,16 +2514,17 @@ msgid ""
 "Compensate\tSubtract out the currently reported DC Offset from any further "
 "recorded data"
 msgstr ""
+"Vyrovnávat\tOdečítání právě hlášené stejnosměrná složky každé další nahrávky"
 
 #: src/frontend_fox/CRecordDialog.cpp:120
 msgid "Reset"
-msgstr "Znovu nastavit"
+msgstr "Nastavit znovu"
 
 #: src/frontend_fox/CRecordDialog.cpp:121
 #: src/frontend_fox/CRecordDialog.cpp:183
 #: src/frontend_fox/CRecordDialog.cpp:360
 msgid "Clip Count: "
-msgstr "Počet ukázek:"
+msgstr "Počet přebuzení:"
 
 #: src/frontend_fox/CRecordDialog.cpp:125
 msgid ""
@@ -2458,25 +2560,28 @@ msgstr "Platný pro práh"
 
 #: src/frontend_fox/CRecordDialog.cpp:234
 msgid "DC Offset: "
-msgstr "Posun DC:"
+msgstr "Stejnosměrná složka (DC offset):"
 
 #: src/frontend_fox/CRecordDialog.cpp:290
 msgid ""
 "Invalid record time limit -- Should be in the form of HH:MM:SS.sss, MM:SS."
 "sss or SS.sss"
 msgstr ""
+"Neplatné omezení doby nahrávání-- Mělo by být ve tvaru, jako je tento "
+"HH:MM:SS.sss, MM:SS."
+"sss nebo SS.sss"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:196
 msgid "Use Sound ->\tAdd the Selected Sound as a Source Above"
-msgstr ""
+msgstr "Použít zvuk ->\tPřidat vybraný zvuk hořejšího zdroje"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:197
 msgid "New Instance\tCreate a New Instance of the Plugin"
-msgstr ""
+msgstr "Nová instance\tVytvořit novou instanci přídavného modulu"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:198
 msgid "Default\tGuess at the Desired Routing"
-msgstr "Výchozí\tOdhadnout v požadovaném vedení signálu"
+msgstr "Výchozí\tOdhadnout požadované vedení signálu"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:672
 msgid "Remove Connection"
@@ -2532,14 +2637,14 @@ msgstr "Nelze odstranit poslední výstupní kanál"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1566
 msgid "Are you sure you want to clear the routing?"
-msgstr "Jste si jist, že chcete smazat vedení signálu?"
+msgstr "Jste si jistý, že chcete smazat vedení signálu?"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1577
 msgid ""
 "Are you sure you want to discard the current routing and guess at the "
 "desired routing?"
 msgstr ""
-"Jste si jist, že chcete odhodit nynější vedení signálu a odhadovat "
+"Jste si jistý, že chcete odhodit nynější vedení signálu a odhadovat "
 "požadované vedení signálu?"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1744
@@ -2548,39 +2653,49 @@ msgid ""
 "preset was saved is now the action sound.  Some connections will likely be "
 "missing or wrong."
 msgstr ""
+"Tento zdroj, odkazovaný v přednastavení, který nebyl zvukem činnosti, když "
+"bylo přednastavení uloženo, je nyní zvukem činnosti. Některá spojení budou "
+"pravděpodobně chybět, anebo budou špatná."
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1762
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1779
 msgid "When this preset was saved there was a file loaded named:"
-msgstr ""
+msgstr "Když bylo toto přednastavení uloženo, byl nahrán soubor pojmenovaný:"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1762
 msgid ""
 "This file is currently not loaded.\n"
 "Would you like to load it now?"
 msgstr ""
+"Tento soubor není nyní nahrán.\n"
+"Chcete jej nahrát nyní?"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1762
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1779
 msgid "If you do not, then the preset cannot not be fully recreated."
 msgstr ""
+"Pokud to neuděláte, přednastavení nebude moci být plně vytvořeno znovu."
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1772
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1789
 msgid "The preset cannot be fully recreated."
-msgstr ""
+msgstr "Přednastavení nelze plně vytvořit znovu."
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1779
 msgid ""
 "This file now does not exist.\n"
 "Would you like to load another file in its place?"
 msgstr ""
+"Tento soubor nyní neexistuje.\n"
+"Chcete na jeho místě nahrát jiný soubor?"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1799
 msgid ""
 "This file has fewer channels than the one used when the preset was saved.  "
 "It may not be possible to restore some of the connections."
 msgstr ""
+"Tento soubor má méně kanálů, než měl ten, který se použil, když bylo "
+"přednastavení uloženo. Nemusí být možné obnovit některá spojení."
 
 #: src/frontend_fox/FXLFOParamValue.cpp:77
 msgid "Phase"
@@ -2641,23 +2756,23 @@ msgid ""
 "desired amount of cues would be added"
 msgstr ""
 "Časová vzdálenost byla pro vybranou oblast příliš malá, takže by nebyl "
-"vložen požadovaný počet ukazatelů"
+"vložen požadovaný počet značek"
 
 #: src/backend/Looping/CAddCuesAction.cpp:97
 msgid "Add N Cues"
-msgstr "Přidat N ukazatelů"
+msgstr "Přidat n-značek"
 
 #: src/backend/Looping/CAddCuesAction.cpp:97
 msgid "Add N Cues at Evenly Spaced Intervals"
-msgstr "Přidat N ukazatelů v pravidelně rozložených vzdálenostech"
+msgstr "Přidat n-značek v pravidelně rozložených vzdálenostech"
 
 #: src/backend/Looping/CAddCuesAction.cpp:120
 msgid "Add Timed Cues"
-msgstr "Přidat načasované ukazatele"
+msgstr "Přidat načasované značky"
 
 #: src/backend/Looping/CAddCuesAction.cpp:120
 msgid "Add a Cue Every X Seconds"
-msgstr "Přidat ukazatel každých x sekund"
+msgstr "Přidat značku každých x sekund"
 
 #: src/backend/Looping/CMakeSymetricAction.cpp:56
 msgid "Make Symetric -- Channel "
@@ -2688,7 +2803,7 @@ msgstr ""
 
 #: src/backend/Filters/CArbitraryFIRFilter.cpp:204
 msgid "Arbitrary FIR Filter"
-msgstr "Volně volitelný FIR filtr"
+msgstr "Volně volitelný filtr omezené odezvy impulzu (FIR)"
 
 #: src/backend/Filters/CArbitraryFIRFilter.cpp:204
 msgid ""
@@ -2700,53 +2815,54 @@ msgstr ""
 #: src/backend/Filters/CBiquadResFilter.cpp:75
 #: src/backend/Filters/CSinglePoleFilter.cpp:75
 msgid "Lowpass Filter -- Channel "
-msgstr "Nízkoprocházející filtr -- Kanál"
+msgstr "Filtr nízké propusti -- Kanál "
 
 #: src/backend/Filters/CBiquadResFilter.cpp:88
 #: src/backend/Filters/CSinglePoleFilter.cpp:88
 msgid "Highpass Filter -- Channel "
-msgstr "Vysokoprocházející filtr -- Kanál"
+msgstr "Filtr vysoké propusti -- Kanál"
 
 #: src/backend/Filters/CBiquadResFilter.cpp:101
 #: src/backend/Filters/CSinglePoleFilter.cpp:101
 msgid "Bandpass Filter -- Channel "
-msgstr "Pásmem procházející filtr -- Kanál"
+msgstr "Filtr pásma propustnosti -- Kanál"
 
 #: src/backend/Filters/CBiquadResFilter.cpp:139
 msgid "Biquad Resonant Lowpass Filter"
-msgstr "Nízkoprocházející filtr odrážející zvuk čtvrtého stupně"
+msgstr "Filtr nízké propusti odrážející zvuk čtvrtého stupně"
 
 #: src/backend/Filters/CBiquadResFilter.cpp:162
 msgid "Biquad Resonant Highpass Filter"
-msgstr "Vysokoprocházející filtr odrážející zvuk čtvrtého stupně"
+msgstr "Filtr vysoké propusti odrážející zvuk čtvrtého stupně"
 
 #: src/backend/Filters/CBiquadResFilter.cpp:185
 msgid "Biquad Resonant Bandpass Filter"
-msgstr "Pásmem procházející filtr odrážející zvuk čtvrtého stupně"
+msgstr "Filtr pásma propustnosti odrážející zvuk čtvrtého stupně"
 
 #: src/backend/Filters/CSinglePoleFilter.cpp:114
 msgid "Notch Filter -- Channel "
-msgstr "Vroubkový filtr -- Kanál"
+msgstr "Filtr pro odfiltrování určitého kmitočtu -- Kanál"
 
 #: src/backend/Filters/CSinglePoleFilter.cpp:151
 msgid "Single Pole Lowpass Filter"
-msgstr "Jednoduchý pólový nízkoprocházející filtr"
+msgstr "Filtr nízké propusti jednopólový"
 
 #: src/backend/Filters/CSinglePoleFilter.cpp:173
 msgid "Single Pole Highpass Filter"
-msgstr "Jednoduchý pólový vysokoprocházející filtr"
+msgstr "Filtr vysoké propusti jednopólový"
 
 #: src/backend/Filters/CSinglePoleFilter.cpp:195
 msgid "Bandpass Filter"
-msgstr "Pásmem procházející filtr"
+msgstr "Filtr pásma propustnosti"
 
 #: src/backend/Filters/CSinglePoleFilter.cpp:218
 msgid "Notch Filter"
-msgstr "Vroubkový filtr"
+msgstr "Filtr pro odfiltrování určitého kmitočtu"
 
 #: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:45
 msgid " -- sweepLFODesc.amp is negative"
-msgstr " -- Snímání rozkmitu poklesu LFO je záporné"
+msgstr ""
+" -- Snímání rozkmitu poklesu nízkokmitočtového oscilátoru (LFO) je záporné"
 
 #: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:47
 msgid ""
@@ -2771,16 +2887,36 @@ msgid ""
 "long of a Kernel Length will cause `steps` in the morphing to be audible "
 "depending on how different the two responses are.\n"
 msgstr ""
+"\n"
+"Tato činnost začne filtrování a první kmitočtovou křivkou a přizpůsobí filtr "
+"až ke "
+"druhé kmitočtové křivce.\n"
+"Obě kmitočtové křivky musí mít stejný počet bodů.\n"
+"Změna se spočítá tak, že každý bod kmitočtové křivky se posune k "
+"poloze odpovídajícího bodu druhé kmitočtové křivky. "
+"Bod odpovídá dalšímu bodu, pokud se objevuje ve stejném pořadí "
+"zleva doprava.\n"
+"Pokud není zapnuto Použít nízkokmitočtový oscilátor, filtr použije celý čas "
+"výběru, aby postupně provedl přeměnu od první kmitočtové křivky "
+"ke druhé kmitočtové křivce.\n"
+"Pokud je zapnuto Použít nízkokmitočtový oscilátor, postupná přeměna "
+"bude kolísat podle nízkokmitočtového oscilátoru (LFO).\n"
+"Delší délka jádra bude mít lepší rozlišení kmitočtu filtru, ale "
+"Příliš dlouhá délka jádra vytvoří v závislosti na rozdílech v obou "
+"kmitočtových křivkách, "
+"slyšitelné stupně v postupné přeměně.\n"
 
 #: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:245
 msgid "Morphing Arbitrary FIR Filter"
-msgstr ""
+msgstr "Filtr omezené odezvy impulzu (FIR) pro nahodilé morfování"
 
 #: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:245
 msgid ""
 "Animated Finite Impulse Response Filter Given two Custom/User-Defined "
 "Frequency Responses"
 msgstr ""
+"Animovaný filtr omezené odezvy impulzu založený na dvou "
+"uživatelsky stanovených kmitočtových odpovědích"
 
 #: src/backend/Filters/CConvolutionFilter.cpp:85
 msgid " -- cannot read kernel filter file '"
@@ -2804,7 +2940,7 @@ msgid ""
 "Do you wish to continue?"
 msgstr ""
 "MPEG Layer-3 nepodporuje ukládání uživatelských poznámek nebo "
-"ukazatelů\n"
+"značek\n"
 "Chtěl byste pokračovat?"
 
 #: src/backend/ClameSoundTranslator.cpp:354
@@ -2819,11 +2955,11 @@ msgstr " -- Chyba při připojení k jack serveru -- jackd není spuštěn?"
 
 #: src/backend/CJACKSoundRecorder.cpp:110
 msgid "Choose Port for Input Channel "
-msgstr "Vyberte port pro vstupní kanál"
+msgstr "Vyberte přípojku (port) pro vstupní kanál"
 
 #: src/backend/CJACKSoundRecorder.cpp:116 src/backend/CJACKSoundPlayer.cpp:131
 msgid "Cannot connect to JACK port, "
-msgstr "Žádné spojení s portem JACK"
+msgstr "Žádné spojení s přípojkou (port) JACK"
 
 #: src/backend/CJACKSoundRecorder.cpp:116 src/backend/CJACKSoundPlayer.cpp:131
 msgid ", please choose a different one"
@@ -2846,6 +2982,9 @@ msgid ""
 "No appropriately named cues found to define segments to save.  See the "
 "'explain' button on the previous window for how to name the cues."
 msgstr ""
+"Nenalezeny žádné správně pojmenované značky pro stanovení částí "
+"k uložení. Stiskněte tlačítko Vysvětlit v předchozím okně, abyste se "
+"o tom, jak pojmenovávat značky, dozvěděl více."
 
 #: src/backend/File/CSaveAsMultipleFilesAction.cpp:98
 msgid "These are the files about to be created..."
@@ -2912,6 +3051,51 @@ msgid ""
 "same save parameters to be applied to all files (i.e compression type, audio "
 "format, etc).\n"
 msgstr ""
+"\n"
+"Pro uložení většího souboru (nebo jen výběru z něj) jako více menších částí "
+"můžete vytvořit/přidat značky, které tyto části stanovují, a potom "
+"klepnout na Uložit jako více souborů v nabídce Soubor.\n"
+"\n"
+"Obecně lze značky pojmenovat jako '(' a ')' pro stanovení začátku a konce "
+"každé části, která se má uložit.\n"
+"Každopádně lze značku ')' (uzavírající předchozí značku '(' ) vynechat, pokud "
+"je část ke konci na začátku nové části.\n"
+"Úplně poslední značku ')' lze také vypustit, pokud poslední stanovená "
+"část leží na konci zvukového souboru (nebo na konci "
+"výběru).\n"
+"Mimo to lze značku '(' volitelně pojmenovat také '(xyz', pokud "
+"'xyz' je zahrnuto v názvu souboru části.\n"
+"\n"
+"Je několik parametrů, které se objeví v dialogu po vybrání nabídky pro soubor "
+"Uložit "
+"jako více souborů.\n"
+"Parametr Adresář pro ukládání je adresář, v němž se bude každá "
+"část ukládat jako samostatný soubor.\n"
+"Předpona názvu souboru je zapsána před volitelné xyzs' z názvu značky "
+"'(xyz'.\n"
+"Přípona názvu souboru je zapsána za volitelné xyzs' z názvu značky '(xyz'.\n"
+"Parametr Formát stanovuje zvukový formát, ve kterém se mají ukládat "
+"části.\n"
+"Poté co je vytvořen souborový název části poskládáním "
+"[adresář]/[předpona][xyz][přípona]."
+"[přípona souboru], pokud obsahuje '#', potom bude křížek nahrazen "
+"číslem, v závislosti na tom, že byly příslušné části stanoveny.\n"
+"    Například: \"/home/john/sounds/track #.wav\" bude přeměněn na \"/"
+"home/john/sounds/track 1.wav\" pro první uloženou část a všechny další "
+"části obdrží stoupající číslo.\n"
+"    Podle toho byste měli vložit '#' do adresáře, předpony názvu souboru, "
+"xyz, "
+"nebo přípony názvu souboru, abyste při ukládání části dostali "
+"jednoznačné souborové názvy.\n"
+"Parametr Začátek čísla části může mít počáteční hodnotu '1' změněnu, "
+"aby nahrazování '#' začínalo jinou hodnotou.\n"
+"Parametr Otevřít uložené části je možné jednoduše vybrat, když chcete části "
+"otevřít, poté co byly uloženy.\n"
+"Parametr Použije na stanovuje, že nynější činnost se použije pouze na nynější "
+"výběr nebo na celý soubor.\n"
+"Zeptat se na parametry uložení jen jednou lze vybrat, když se mají tytéž "
+"parametry uložení použít na všechny soubory (např. "
+"typ komprese, zvukový formát atd.).\n"
 
 #: src/backend/File/CSaveAsMultipleFilesAction.cpp:174
 msgid "Save As Multiple Files"
@@ -2939,8 +3123,7 @@ msgstr "V zadané cestě nebylo cdrdao nalezeno:"
 
 #: src/backend/File/CBurnToCDAction.cpp:96
 msgid "Too many tracks defined by cues.  99 is the maximum."
-msgstr ""
-"Ukazatelem bylo stanoveno příliš mnoho stop. Největší možný počet je 99."
+msgstr "Značkami bylo vymezeno příliš mnoho stop. Největší možný počet je 99."
 
 #: src/backend/File/CBurnToCDAction.cpp:99
 msgid ""
@@ -2948,6 +3131,11 @@ msgid ""
 "'explain' button on the previous window for how to name the cues.\n"
 "Would you like to continue burning the audio as one track?"
 msgstr ""
+"Nenalezeny žádné správně pojmenované značky pro stanovení stop k uložení "
+"pro vypálení. Stiskněte tlačítko Vysvětlit v předchozím okně, abyste se o "
+"tom, "
+"jak pojmenovávat značky, dozvěděli více.\n"
+"Chcete pokračovat ve vypalování zvuku jako jedné stopy?"
 
 #: src/backend/File/CBurnToCDAction.cpp:121
 msgid "Track is less than 4 seconds long."
@@ -2981,6 +3169,9 @@ msgid ""
 "You will probably need to enable an --overburn or --full-burn option to "
 "cdrdao.  See cdrdao for details.  Do this at your own risk.\n"
 msgstr ""
+"Zřejmě bude potřeba, abyste zapnul volbu --overburn nebo --full-burn pro "
+"cdrdao.  Podívejte se na cdrdao na podrobnosti.  Udělejte to na vlastní "
+"nebezpečí.\n"
 
 #: src/backend/File/CBurnToCDAction.cpp:167
 msgid "Writing Data to Burn"
@@ -2991,6 +3182,8 @@ msgid ""
 "cdrdao returned non-zero exit status.  Consult standard output/error for "
 "problems."
 msgstr ""
+"cdrdao vrátilo chybu. Najděte si informace o běžném výstupu/chybě, "
+"co se týče k potíží a chybových hlášení."
 
 #: src/backend/File/CBurnToCDAction.cpp:377
 msgid "Successful Burn Count: "
@@ -3019,6 +3212,20 @@ msgid ""
 "the path to it on the action dialog.\n"
 "\t"
 msgstr ""
+"\n"
+"Tuto činnost lze použít na vypálení nahraných zvukových souborů. Používá "
+"se nástroj cdrdao (CD-R Disk-At-Once).\n"
+"\n"
+"Stopy jsou stanoveny pomocí značek pojmenovaných způsobem  '('... [')']. "
+"Podívejte se na tlačítko Vysvětlit v činosti Soubor -> Uložit jako více "
+"souborů "
+"abyste dostali další informace. Některým částem vysvětlení se nedá tak "
+"lehce porozumět.\n"
+"\n"
+"cdrdao musí být nainstalován v systému. $PATH bude prohledávána na 'cdrdao' "
+"při spuštění ReZoundu, ale když nebude nalezena, bude cestu potřeba nastavit "
+"v dialogu činností.\n"
+"\t"
 
 #: src/backend/File/CBurnToCDAction.cpp:451
 msgid "Burning..."
@@ -3094,7 +3301,7 @@ msgstr "Nenalezen žádný rutinní program pro podporu formátu"
 
 #: src/backend/ASoundTranslator.cpp:146
 msgid "Would you like to use a raw format?"
-msgstr "Chtěl byste použít původní formát?"
+msgstr "Chtěl byste použít původní formát (nezpracovaný)?"
 
 #: src/backend/ASoundTranslator.cpp:150
 msgid " -- unhandled format/extension for the filename"
@@ -3110,7 +3317,7 @@ msgstr " -- soubor je nyní otevřen"
 
 #: src/backend/ASoundFileManager.cpp:274 src/backend/ASoundFileManager.cpp:329
 msgid "Overwrite Existing File"
-msgstr "Přepsat existující soubor"
+msgstr "Přepsat stávající soubor"
 
 #: src/backend/ASoundFileManager.cpp:353 src/backend/ASoundFileManager.cpp:360
 msgid "Save Modified Sound"
@@ -3126,7 +3333,7 @@ msgstr "Chtěl byste nahrát zvuk z posledního sezení?"
 
 #: src/backend/CJACKSoundPlayer.cpp:125
 msgid "Choose Port for Output Channel "
-msgstr "Vyberte port pro výstupní kanál"
+msgstr "Vyberte přípojku (port) pro výstupní kanál"
 
 #: src/backend/CSound.cpp:1088
 msgid "Copying/Fitting Data -- Channel "
@@ -3180,6 +3387,11 @@ msgid ""
 "Do you wish to attempt to recover from this temporary file (otherwise the "
 "file will be deleted)?"
 msgstr ""
+"Byl nalezen dočasný soubor, který ukazuje to, že tento soubor byl "
+"předtím upravován během vyskytnuvšího se pádu nebo při zabití procesu.\n"
+"\n"
+"Chcete se pokusit tento soubor obnovit (v opačném případě bude tento soubor "
+"smazán)?"
 
 #: src/backend/ALFO.cpp:489
 msgid "Sine Wave [-1,1]"
@@ -3239,11 +3451,11 @@ msgstr " -- Rozkmit flangeLFO.amp je záporný"
 
 #: src/backend/Effects/CFlangeEffect.cpp:69
 msgid "Flange -- Channel "
-msgstr "Obruba -- Kanál"
+msgstr "Příruba (Flanger)-- Kanál"
 
 #: src/backend/Effects/CFlangeEffect.cpp:129
 msgid "Flange"
-msgstr "Obruba"
+msgstr "Příruba"
 
 #: src/backend/Effects/CReverseEffect.cpp:53
 msgid "Reversing -- Channel "
@@ -3260,7 +3472,7 @@ msgstr "Změnit rozkmit -- Kanál"
 
 #: src/backend/Effects/CChangeAmplitudeEffect.cpp:94
 msgid "Change Volume"
-msgstr "Změnit hlasitost"
+msgstr "Změna hlasitosti"
 
 #: src/backend/Effects/CChangeAmplitudeEffect.cpp:133
 msgid "Curved Gain"
@@ -3280,27 +3492,28 @@ msgstr "Obměňované opakování"
 
 #: src/backend/Effects/CVariedRepeatEffect.cpp:91
 msgid "Repeat the Selection Variably According to an LFO"
-msgstr "Opakovat obměňování výběru na základě LFO"
+msgstr ""
+"Opakovat obměňování výběru na základě nízkokmitočtového oscilátoru (LFO)"
 
 #: src/backend/Effects/CChangeRateEffect.cpp:61
 msgid "newLength calulated out of range -- action not taken"
-msgstr "Nově spočítaná délka mimo rozsah -- Krok se neprovede"
+msgstr "Nově spočítaná délka mimo rozsah -- Činnost se neprovede"
 
 #: src/backend/Effects/CChangeRateEffect.cpp:74
 msgid "Changing Rate -- Channel "
-msgstr "Změnit kmitočet -- Kanál"
+msgstr "Změnit hladinu -- Kanál"
 
 #: src/backend/Effects/CChangeRateEffect.cpp:234
 msgid "Change Rate"
-msgstr "Změnit kmitočet"
+msgstr "Změna hladiny"
 
 #: src/backend/Effects/CChangeRateEffect.cpp:253
 msgid "Curved Change Rate"
-msgstr "Zakřivená změna kmitočtu"
+msgstr "Zakřivená změna hladiny"
 
 #: src/backend/Effects/CChangeRateEffect.cpp:253
 msgid "Change Rate According to a Curve"
-msgstr "Změna kmitočtu na základě křivky"
+msgstr "Změna hladiny na základě křivky"
 
 #: src/backend/Effects/CQuantizeEffect.cpp:56
 msgid "Quantize -- Channel "
@@ -3308,7 +3521,7 @@ msgstr "Kvantovat -- Kanál"
 
 #: src/backend/Effects/CQuantizeEffect.cpp:102
 msgid "Quantize"
-msgstr "Kvantovat"
+msgstr "Kvantizace"
 
 #: src/backend/Effects/CQuantizeEffect.cpp:102
 msgid "Quantize the Number of Possible Sample Levels"
@@ -3348,40 +3561,35 @@ msgstr "Zpět na konec"
 
 #: src/backend/Edits/CSelectionEdit.cpp:32
 msgid "Move Stop to Start Position"
-msgstr ""
-"Přesunout polohu zastavení přehrávání na polohu začátku přehrávání"
+msgstr "Přesunout konec výběru na začátek výběru"
 
 #: src/backend/Edits/CSelectionEdit.cpp:33
 msgid "Move Start to Stop Position"
-msgstr ""
-"Přesunout polohu začátku přehrávání na polohu zastavení přehrávání"
+msgstr "Přesunout začátek výběru na konec výběru"
 
 #: src/backend/Edits/CSelectionEdit.cpp:39
 msgid "Move Start Position to Beginning"
-msgstr "Přesunout polohu začátku přehrávání na začátek"
+msgstr "Přesunout začátek výběru na začátek"
 
 #: src/backend/Edits/CSelectionEdit.cpp:40
 msgid "Move Stop Position to End"
-msgstr "Přesunout polohu zastavení přehrávání na konec"
+msgstr "Přesunout konec výběru na konec"
 
 #: src/backend/Edits/CSelectionEdit.cpp:41
 msgid "Move Stop Position to Beginning"
-msgstr "Přesunout polohu zastavení přehrávání na začátek"
+msgstr "Přesunout konec výběru na začátek"
 
 #: src/backend/Edits/CSelectionEdit.cpp:42
 msgid "Move Start Position to End"
-msgstr "Přesunout polohu začátku přehrávání na konec"
+msgstr "Přesunout začátek výběru na konec"
 
 #: src/backend/Edits/CSelectionEdit.cpp:43
 msgid "Move Stop Position Backward to Start Position"
-msgstr ""
-"Přesunout polohu zastavení přehrávání zpět na polohu začátku přehrávání"
+msgstr "Přesunout konec výběru dozadu na začátek výběru"
 
 #: src/backend/Edits/CSelectionEdit.cpp:44
 msgid "Move Start Position Forward to Stop Position"
-msgstr ""
-"Přesunout polohu začátku přehrávání dopředu na polohu zastavení "
-"přehrávání"
+msgstr "Přesunout začátek výběru dopředu na konec výběru"
 
 #: src/backend/Edits/CSelectionEdit.cpp:250
 msgid "Selection Change"
@@ -3400,6 +3608,8 @@ msgid ""
 "Inserting this many more channels will add more than the maximum allowed "
 "channels."
 msgstr ""
+"Vložení tak velkého počtu kanálů přidá více kanálů, než jaký je jejich "
+"povolený počet."
 
 #: src/backend/Edits/CDuplicateChannelEdit.cpp:79
 msgid "Duplicate Channel"
@@ -3407,19 +3617,19 @@ msgstr "Zdvojit kanál"
 
 #: src/backend/Edits/CCueAction.cpp:87
 msgid "Add Cue While Playing"
-msgstr "Přidat ukazatel během přehrávání"
+msgstr "Přidat značku během přehrávání"
 
 #: src/backend/Edits/CCueAction.cpp:143
 msgid "Remove Cue"
-msgstr "Odstranit ukazatel"
+msgstr "Odstranit značku"
 
 #: src/backend/Edits/CCueAction.cpp:202
 msgid "Replace Cue"
-msgstr "Nahradit ukazatel"
+msgstr "Nahradit značku"
 
 #: src/backend/Edits/CCueAction.cpp:269
 msgid "Move Cue"
-msgstr "Přesunout ukazatel"
+msgstr "Přesunout značku"
 
 #: src/backend/Edits/CCopyCutToNewEdit.cpp:99
 msgid "Copy to New"
@@ -3435,7 +3645,7 @@ msgstr "Vyjmout do nového"
 
 #: src/backend/Edits/CCopyCutToNewEdit.cpp:118
 msgid "Cut and Move the Selection to a Newly Created Sound Window"
-msgstr "Vyjmout a přesunout výběru do nově vytvořeného zvukového okna"
+msgstr "Vyjmout a přesunout výběr do nově vytvořeného zvukového okna"
 
 #: src/backend/Edits/CAddChannelsEdit.cpp:60
 msgid "Add Channels"
@@ -3447,11 +3657,11 @@ msgstr "Přidat nové zvukové kanály"
 
 #: src/backend/Edits/CRemoveChannelsEdit.cpp:76
 msgid "Remove Channels"
-msgstr ""
+msgstr "Odstranit kanály"
 
 #: src/backend/Edits/CRemoveChannelsEdit.cpp:76
 msgid "Remove Channels of Audio"
-msgstr ""
+msgstr "Odstranit kanály ze zvuku"
 
 #: src/backend/Edits/CPasteAsNewEdit.cpp:92
 msgid "Paste As New"
@@ -3464,7 +3674,7 @@ msgstr "Vložit obsah schránky do nově vytvořeného zvukového okna"
 #: src/backend/Edits/CPasteAsNewEdit.cpp:114
 #: src/backend/Edits/CPasteEdit.cpp:410
 msgid "No data has been cut or copied to the selected clipboard yet."
-msgstr ""
+msgstr "Žádná data ještě nebyla vyjmuta nebo zkopírována do vybrané schránky."
 
 #: src/backend/Edits/CRotateEdit.cpp:33
 msgid " -- amount is negative"
@@ -3480,7 +3690,7 @@ msgstr ">> Otočit vpravo"
 
 #: src/backend/Edits/CCopyCutDeleteEdit.cpp:48
 msgid "cannot copy/cut to clipboard: "
-msgstr ""
+msgstr "Nelze kopírovat/vyjmout do schránky: "
 
 #: src/backend/Edits/CCopyCutDeleteEdit.cpp:91
 msgid "Copy"
@@ -3505,7 +3715,7 @@ msgstr "Vložit obsah schránky"
 
 #: src/backend/Edits/CPasteEdit.cpp:465
 msgid "Insert at the Start Position"
-msgstr "Vložit v poloze začátku přehrávání"
+msgstr "Vložit v poloze začátku výběru"
 
 #: src/backend/Edits/CPasteEdit.cpp:485
 msgid "Replace Paste"
@@ -3517,22 +3727,21 @@ msgstr "Nahradit výběr"
 
 #: src/backend/Edits/CPasteEdit.cpp:504
 msgid "Overwrite Paste"
-msgstr "Přepsání vložení"
+msgstr "Přepsat vložení"
 
 #: src/backend/Edits/CPasteEdit.cpp:504
 msgid "Overwrite Starting at the Start Position"
-msgstr "Přepsání od polohy začátku přehrávání"
+msgstr "Přepsat počínaje od polohy začátku výběru"
 
 #: src/backend/Edits/CPasteEdit.cpp:524
 msgid "Limited Overwrite Paste"
-msgstr "Omezené přepsání vložení"
+msgstr "Přepsat omezeně z obsahu schránky"
 
 #: src/backend/Edits/CPasteEdit.cpp:524
 msgid ""
 "Overwrite Starting at the Start Position But Not Beyond the Stop Position"
 msgstr ""
-"Přepsat od polohy začátku přehrávání, ale ne za polohu zastavení "
-"přehrávání"
+"Přepsat počínaje od polohy začátku výběru, ale ne za polohu konce výběru"
 
 #: src/backend/Edits/CPasteEdit.cpp:544
 msgid "Mix Paste"
@@ -3540,29 +3749,27 @@ msgstr "Míchat z obsahu schránky"
 
 #: src/backend/Edits/CPasteEdit.cpp:544
 msgid "Mix Starting at the Start Position"
-msgstr "Míchat od polohy začátku přehrávání"
+msgstr "Míchat počínaje od polohy začátku výběru"
 
 #: src/backend/Edits/CPasteEdit.cpp:563
 msgid "Limited Mix Paste"
-msgstr "Omezené míchání z obsahu schránky"
+msgstr "Míchat omezeně z obsahu schránky"
 
 #: src/backend/Edits/CPasteEdit.cpp:563
 msgid "Mix Starting at the Start Position But Not Beyond the Stop Position"
-msgstr ""
-"Míchat od polohy začátku přehrávání, ale ne za polohu zastavení "
-"přehrávání"
+msgstr "Míchat od polohy začátku výběru, ale ne za polohu konce výběru"
 
 #: src/backend/Edits/CPasteEdit.cpp:582
 msgid "Fit Mix Paste"
-msgstr "Přizpůsobení míchání z obsahu schránky"
+msgstr "Přizpůsobit míchání z obsahu schránky"
 
 #: src/backend/Edits/CPasteEdit.cpp:582
 msgid ""
 "Mix Starting at the Start Position But Change the Rate of the Clipboard to "
 "Fit Within the Selection"
 msgstr ""
-"Míchat od polohy začátku přehrávání, ale změnit kmitočet schránky, aby "
-"se přizpůsobil výběru"
+"Míchat od polohy začátku výběru, ale změnit úroveň schránky, aby "
+"se přizpůsobila výběru"
 
 #: src/backend/Edits/CInsertSilenceEdit.cpp:31
 msgid " -- silenceLength is less than zero: "
@@ -3589,6 +3796,8 @@ msgid ""
 "At this point when the macro was recorded the selected sound was changed to "
 "position: "
 msgstr ""
+"Na tomto místě byl, když bylo makro nahráno, vybraný zvuk "
+"přesunut na následující místo: "
 
 #: src/backend/CMacroPlayer.cpp:61
 msgid ""
@@ -3597,34 +3806,47 @@ msgid ""
 "\n"
 "The macro playback is bailing."
 msgstr ""
+"Na toto místo nelze nyní nahrát žádný zvukový soubor, dokud je "
+"makro přehráváno.\n"
+"\n"
+"Přehrávání makra vystupuje."
 
 #: src/backend/CMacroPlayer.cpp:120
 msgid ""
 "The macro being played was flagged to set the start position to the position "
 "of a cue with the name: "
 msgstr ""
+"Právě přehrávanému makru bylo přikázáno, aby nastavilo polohu začátku "
+"výběru na následující značku: "
 
 #: src/backend/CMacroPlayer.cpp:120
 msgid ""
 "However, no cue by that name can be found.  The start position will be left "
 "unchanged."
 msgstr ""
+"Žádná značka s tímto názvem však nebyla nalezena. Poloha začátku výběru "
+"zůstane "
+"nezměněna."
 
 #: src/backend/CMacroPlayer.cpp:149
 msgid ""
 "The macro being played was flagged to set the stop position to the position "
 "of a cue with the name: "
 msgstr ""
+"Právě přehrávanému makru bylo přikázáno, aby nastavilo polohu konce výběru na "
+"následující značku: "
 
 #: src/backend/CMacroPlayer.cpp:149
 msgid ""
 "However, no cue by that name can be found.  The stop position will be left "
 "unchanged."
 msgstr ""
+"Žádná značka s tímto názvem však nebyla nalezena. Poloha konce výběru zůstane "
+"nezměněna."
 
 #: src/backend/CMacroPlayer.cpp:190
 msgid "Action: "
-msgstr "Akce:"
+msgstr "Činnost: "
 
 #: src/backend/CMacroPlayer.cpp:190
 msgid ""
@@ -3634,14 +3856,19 @@ msgid ""
 "Would you like to use choose new action parameters now, overriding the ones "
 "chosen when the macro was recorded?"
 msgstr ""
+"Tato činnost v makru byla označena, aby položila tuto otázku, když "
+"bylo makro nahráno.\n"
+"\n"
+"Chcete nyní vybrat nové parametry činnosti, které přepíšou ony, "
+"jež byly vybrány při nahrání makra?"
 
 #: src/backend/CMacroPlayer.cpp:210
 msgid "When the macro was recorded a clipboard existed with the description: "
-msgstr ""
+msgstr "Když bylo makro nahráno, existovala schránka s popisem: "
 
 #: src/backend/CMacroPlayer.cpp:210
 msgid "However, now there is no clipboard with that description."
-msgstr ""
+msgstr "Nyní však není žádná schránka s oním popisem."
 
 #: src/backend/CMacroPlayer.cpp:230
 msgid ""
@@ -3649,6 +3876,9 @@ msgid ""
 "\n"
 "Do you want to continue running the macro's remaining actions?"
 msgstr ""
+"Činnost nebyla úspěšná.\n"
+"\n"
+"Chcete, aby byly provedeny zbývající činnosti makra?"
 
 #: src/backend/LADSPA/CLADSPAAction.cpp:85
 msgid ""
@@ -3663,18 +3893,29 @@ msgid ""
 "to the index of the loaded file rather than the name of the file.  This "
 "could be improved later."
 msgstr ""
+"Nahráváte makro.\n"
+"\n"
+"Kvůli tomu, jak je LADSPA udělán, když je makro přehráváno pro "
+"opakování přednastavených činností, musí se soubory, které "
+"jsou používány parametry pro vedení signály (včetně "
+"změněného souboru), nahrát do těchže umístění, jak se také "
+"zobrazují v okně s nahranými zvuky.\n"
+"\n"
+"Je to tak na základě skutečnosti, že uložené parametry LADSPA v "
+"makru odkazují na číslo nahraného souboru, namísto na název nahraného "
+"souboru. To by se dalo později ještě zlepšit."
 
 #: src/backend/LADSPA/CLADSPAAction.cpp:424
 msgid "Pass Through "
-msgstr ""
+msgstr "Prostrčit"
 
 #: src/backend/CStubAction.cpp:46
 msgid "Stub Action -- Channel "
-msgstr "Zmrzačení -- Kanál"
+msgstr "Zkomolení -- Kanál"
 
 #: src/backend/CStubAction.cpp:101
 msgid "Stub"
-msgstr "Zmrzačit"
+msgstr "Zkomolit"
 
 #: src/backend/CNativeSoundClipboard.cpp:72
 msgid "Copying to Clipboard -- Channel "
@@ -3697,6 +3938,8 @@ msgid ""
 "There is already data on this recording clipboard.  Do you want to record "
 "something new?"
 msgstr ""
+"V nahrávací schránce se již nachází data. Chcete nahrát něco "
+"nového?"
 
 #: src/backend/ClibaudiofileSoundTranslator.cpp:88
 msgid " -- error opening"
@@ -3705,17 +3948,19 @@ msgstr " -- Chyba při otevírání"
 #: src/backend/ClibaudiofileSoundTranslator.cpp:212
 #: src/backend/CFLACSoundTranslator.cpp:67
 msgid "Loading Sound"
-msgstr ""
+msgstr "Nahrává se zvuk"
 
 #: src/backend/ClibaudiofileSoundTranslator.cpp:438
 msgid "This format does not support saving cues"
-msgstr "Tento formát nepodporuje ukládání ukazatelů"
+msgstr "Tento formát nepodporuje ukládání značek"
 
 #: src/backend/CFLACSoundTranslator.cpp:255
 msgid ""
 "Saving user notes or cues is unimplemented for FLAC\n"
 "Do you wish to continue?"
 msgstr ""
+"V FLAC není ukládání uživatelských poznámek nebo značek provedeno.\n"
+"Chcete pokračovat?"
 
 #: src/backend/Generate/CGenerateNoiseAction.cpp:258
 msgid "Generate Noise"
@@ -3757,10 +4002,12 @@ msgid ""
 "Either no audio output method was enabled at configure-time, or no method "
 "was recognized in the registry:AudioOutputMethods[] setting"
 msgstr ""
+"Buď nebyl žádný způsob zvukového výstupu nastaven, nebo nebyl žádný "
+"způsob v nastavení registry:AudioOutputMethods[] určen"
 
 #: src/backend/main_controls.cpp:157
 msgid "Are you sure you want to quit?"
-msgstr "Jste si jist, že chcete skončit?"
+msgstr "Jste si jistý, že chcete skončit?"
 
 #: src/backend/Remaster/CNormalizeAction.cpp:72
 msgid "Analyzing -- Channel "
@@ -3769,36 +4016,38 @@ msgstr "Provést rozbor -- Kanál"
 #: src/backend/Remaster/CNormalizeAction.cpp:145
 #: src/backend/Remaster/CNormalizeAction.cpp:199
 msgid "Normalizing -- Channel "
-msgstr "Uvést do obvyklého stavu -- Kanál"
+msgstr "Normalizace -- Kanál"
 
 #: src/backend/Remaster/CNormalizeAction.cpp:254
 msgid "Normalize"
-msgstr "Uvést do obvyklého stavu"
+msgstr "Normalizovat"
 
 #: src/backend/Remaster/CNormalizeAction.cpp:254
 msgid "Normalize Amplitude"
-msgstr "Rozkmit uvést do obvyklého stavu"
+msgstr "Normalizovat rozkmit"
 
 #: src/backend/Remaster/CNormalizeAction.cpp:273
 msgid ""
 "Normalize Amplitude (Some of this technique is experimental, please let me "
 "know if you approve or disapprove of the result's quality)"
 msgstr ""
-"Rozkmit uvést do obvyklého stavu (Tato technika je částečně "
+"Normalizovat rozkmit (Tato technika je částečně "
 "experimentální. Dejte mi, prosím, vědět, zda je výsledná kvalita dobrá "
 "nebo špatná.)"
 
 #: src/backend/Remaster/CRemoveDCAction.cpp:76
 msgid "Remove DC Component -- Channel "
-msgstr "Odstranit komponentu DC -- Kanál"
+msgstr "Odstranit složku DC -- Kanál"
 
 #: src/backend/Remaster/CRemoveDCAction.cpp:118
 msgid "Remove DC Component"
-msgstr "Odstranit komponentu DC"
+msgstr "Odstranit složku DC"
 
 #: src/backend/Remaster/CRemoveDCAction.cpp:133
 msgid "Removes a DC offset from the audio, recentering it around zero"
-msgstr "Odstraní posun DC ze zvukového signálu a vyrovná jej kolem nuly"
+msgstr ""
+"Odstraní posun stejnosměrné složky (DC offset) ze zvukového signálu a vyrovná "
+"jej kolem nuly"
 
 #: src/backend/Remaster/CInvertPhaseAction.cpp:43
 msgid "Inverting Phase -- Channel "
@@ -3835,7 +4084,7 @@ msgstr "Označit tiché oblasti"
 
 #: src/backend/Remaster/CMarkQuietAreasAction.cpp:157
 msgid "Mark Quiet Areas with Cues"
-msgstr "Označit tiché oblasti s ukazateli"
+msgstr "Označit tiché oblasti se značkami"
 
 #: src/backend/Remaster/CMonoizeAction.cpp:85
 #: src/backend/Remaster/CMonoizeAction.cpp:191
@@ -3856,14 +4105,14 @@ msgstr "Zkrátit tiché oblasti"
 
 #: src/backend/Remaster/CShortenQuietAreasAction.cpp:294
 msgid "Shorten Quiet Areas with Cues"
-msgstr "Zkrátit tiché oblasti s ukazateli"
+msgstr "Zkrátit tiché oblasti se značkami"
 
 #: src/backend/Remaster/CBalanceAction.cpp:57
 msgid "Changing Balance"
 msgstr "Změnit vyvážení"
 
 #: src/backend/Remaster/CBalanceAction.cpp:181
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Strict Balance: -100% means normal A and no B, 0 means normal A and normal "
 "B, 100% means no A and normal B\n"
@@ -3872,12 +4121,14 @@ msgid ""
 "2x Balance: -100% means 2x A and no B, 0 means normal A and normal B, "
 "100% means no A and 2x B"
 msgstr ""
-"Přesné vyvážení: -100% znamená normální A a žádné B, 0 znamená "
-"normální A a normální B, 100% means no A a normální B\n"
-"1x Balance: -100% znamená normální A a no B, 0 znamená půl A a půl B, "
-"100% znamená žádné A a normální B\n"
-"2x Balance: -100% znamená 2x A a žádné B, 0 znamená normální A a "
-"normální B, 100% znamená žádné A a 2x B"
+"Přesné vyvážení: -100 %% znamená normální A a žádné B, 0 znamená normální A a "
+"normální "
+"B, 100 %% znamená žádné A a normální B\n"
+"1x vyvážení: -100 %% znamená normální A a žádné B, 0 znamená půl A a půl B, "
+"100 %% znamená žádné A a normální B\n"
+"2x vyvážení: -100 %% znamená 2x A a žádné B, 0 znamená normální A a normální "
+"B, "
+"100 %% znamená žádné A a 2x B"
 
 #: src/backend/Remaster/CBalanceAction.cpp:222
 msgid "Curved Balance"
@@ -3885,7 +4136,7 @@ msgstr "Zakřivené vyvážení"
 
 #: src/backend/Remaster/CUnclipAction.cpp:355
 msgid "Unclip (just messing around)"
-msgstr "Odstranit stříhání (experimentální)"
+msgstr "Odstranit přebuzení (pokusné)"
 
 #: src/backend/Remaster/CUnclipAction.cpp:355
 msgid ""
@@ -3894,6 +4145,13 @@ msgid ""
 "of a very short\n"
 "regions in the audio where the peak of a waveform was clipped"
 msgstr ""
+"(Poznámka: Jen jsem se tak na to díval, když jsem to zkoušel. Opravdu to není "
+"upotřebitelné. později "
+"na tom zapracuji) Odstranění přebuzení se používá na uhlazení vrcholu vlny "
+"odhadnutím "
+"přirozeného tvaru křivky ve velice krátkých oblastech zvukového signálu, kde "
+"byl vrchol časového "
+"průběhu vlny přebuzen"
 
 #: src/backend/Remaster/CChangePitchAction.cpp:63
 msgid "Changing Pitch -- Channel "
@@ -3957,6 +4215,14 @@ msgid ""
 "one better, then please contact me.  Contact information is in the about "
 "dialog under the file menu"
 msgstr ""
+"Toto je můj první pokus o vytvoření algoritmu kompresoru. Nejsem si jistý, "
+"jak dobré to je při porovnání s jinými profesionálními nástroji. Osobně mám s "
+"hardwarovými kompresory opravdu málo zkušeností. pokud jste zkušený "
+"uživatel kompresorů a dokážete podat chytré návrhy k tomu, jak tento "
+"vylepšit, "
+"potom se se mnou, prosím, spojte. Spojovací údaje je v dialogu o programu, "
+"který "
+"se nachází v nabídce Soubor"
 
 #: src/backend/Remaster/CCompressorAction.cpp:282
 msgid "Dynamic Range Compressor"
@@ -3964,7 +4230,7 @@ msgstr "Dynamický kompresor rozsahu"
 
 #: src/backend/Remaster/CAdaptiveNormalizeAction.cpp:78
 msgid "Adaptive Normalize -- Channel "
-msgstr "Přizpůsobující se uvedení do normálu -- Kanál"
+msgstr "Přizpůsobující se normalizace -- Kanál"
 
 #: src/backend/Remaster/CAdaptiveNormalizeAction.cpp:286
 msgid "Adaptive Normalize"
@@ -3975,13 +4241,21 @@ msgid ""
 " -- syntax error in cue names -- expected to find a cue beginning with '(' "
 "at time: "
 msgstr ""
+" -- Chyba ve skladbě v názvech značek -- Očekáván nález značky začínající na "
+"'(' v "
+"čase: "
 
 #: src/backend/File/parse_segment_cues.h:98
 msgid ""
 " -- syntax error in cue names -- expected to find a cue beginning with '(' "
 "or ')' at time: "
 msgstr ""
+" -- Chyba ve skladbě v názvech značek -- Očekáván nález značky začínající na "
+"'(' "
+"nebo na ')' v čase: "
 
 #: src/backend/File/parse_segment_cues.h:103
 msgid " -- internal error -- invalid state: "
-msgstr ""
+msgstr " -- vnitřní chyba -- neplatný stav: "
+
+
