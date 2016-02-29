@@ -14,10 +14,10 @@ EOF
 
 if [ "$1" = "--clean" ]
 then
-	if [ -a Makefile ]
+	if [ -f Makefile ]
 	then
 		make maintainer-clean
-	elif [ -a configure ]
+	elif [ -f configure ]
 	then
 		configure && $0 --clean
 	else 
