@@ -1,7 +1,7 @@
 # translation of English to Spanish
-# Copyright (C) 2004 Bernardo Arlandis Mañó
+# Copyright (C) 2004 Bernardo Arlandis MaÃ±Ã³
 # This file is distributed under the same license as the ReZound package.
-# Bernardo Arlandis Mañó <berarma@ya.com>, 2004.
+# Bernardo Arlandis MaÃ±Ã³ <berarma@ya.com>, 2004.
 #
 msgid ""
 msgstr ""
@@ -9,16 +9,16 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-12-26 22:39-0600\n"
 "PO-Revision-Date: 2004-01-29 16:29+0100\n"
-"Last-Translator: Bernardo Arlandis Mañó <berarma@ya.com>\n"
+"Last-Translator: Bernardo Arlandis MaÃ±Ã³ <berarma@ya.com>\n"
 "Language-Team: \n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/frontend_fox/COggDialog.cpp:56
 msgid "Ogg Compression Parameters"
-msgstr "Parámetros de compresión ogg"
+msgstr "ParÃ¡metros de compresiÃ³n ogg"
 
 #: src/frontend_fox/COggDialog.cpp:63
 msgid "Quality Setting"
@@ -30,7 +30,7 @@ msgstr "Calidad:"
 
 #: src/frontend_fox/COggDialog.cpp:69
 msgid "0 (lowest) to 1 (highest)"
-msgstr "0 (más baja) a 1 (más alta)"
+msgstr "0 (mÃ¡s baja) a 1 (mÃ¡s alta)"
 
 #: src/frontend_fox/COggDialog.cpp:73 src/frontend_fox/CMp3Dialog.cpp:75
 msgid "Constant Bit Rate"
@@ -46,7 +46,7 @@ msgstr "Tasa de bits variable"
 
 #: src/frontend_fox/COggDialog.cpp:83 src/frontend_fox/CMp3Dialog.cpp:85
 msgid "Minimum Bit Rate: "
-msgstr "Tasa mínima de bits"
+msgstr "Tasa mÃ­nima de bits"
 
 #: src/frontend_fox/COggDialog.cpp:86
 msgid "Normal Bit Rate: "
@@ -54,7 +54,7 @@ msgstr "Tasa de bits normal:"
 
 #: src/frontend_fox/COggDialog.cpp:89 src/frontend_fox/CMp3Dialog.cpp:91
 msgid "Maximum Bit Rate: "
-msgstr "Tasa máxima de bits:"
+msgstr "Tasa mÃ¡xima de bits:"
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:32
 #: src/frontend_fox/LoopingActionDialogs.cpp:58
@@ -64,7 +64,7 @@ msgstr "Nombre de marca"
 #: src/frontend_fox/LoopingActionDialogs.cpp:34
 #: src/frontend_fox/LoopingActionDialogs.cpp:60
 msgid "What to Name the New Cues"
-msgstr "Cómo nombrar las marcas nuevas"
+msgstr "CÃ³mo nombrar las marcas nuevas"
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:38
 msgid "Cue Count"
@@ -72,7 +72,7 @@ msgstr "Contador de marcas"
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:43
 msgid "How Many Cues to Place Equally Spaced within the Selection"
-msgstr "Cuantas marcas colocar igualmente espaciadas dentro de la selección"
+msgstr "Cuantas marcas colocar igualmente espaciadas dentro de la selecciÃ³n"
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:47
 #: src/frontend_fox/LoopingActionDialogs.cpp:72
@@ -82,7 +82,7 @@ msgstr "Sujetar las marcas en el tiempo"
 #: src/frontend_fox/LoopingActionDialogs.cpp:49
 #: src/frontend_fox/LoopingActionDialogs.cpp:74
 msgid "Set the Cues to be Anchored in Time or Not"
-msgstr "Establecer que las marcas estén sujetas al tiempo o no"
+msgstr "Establecer que las marcas estÃ©n sujetas al tiempo o no"
 
 #: src/frontend_fox/LoopingActionDialogs.cpp:64
 msgid "Time Interval"
@@ -122,12 +122,12 @@ msgid ""
 "receive garbage from the LADSPA plugin.  If this is the case, then either "
 "rebuild ReZound or the LADSPA plugins to make the types match."
 msgstr ""
-"ESTA ES LA ÚNICA VEZ QUE SE MOSTRARÁ ESTA ADVERTENCIA. ASÍ QUE LÉALA!!!\n"
+"ESTA ES LA ÃšNICA VEZ QUE SE MOSTRARÃ ESTA ADVERTENCIA. ASÃ QUE LÃ‰ALA!!!\n"
 "\n"
 "ALGUNOS plugins LADSPA usan libfftw. libfftw se puede configurar para usar "
 "floats o doubles como formato nativo de las muestras (pero no ambos al mismo "
 "tiempo). Si los plugins LADSPA en este sistema han sido compilados con un "
-"libfftw configurado de forma diferente a la que se usó para compilar "
+"libfftw configurado de forma diferente a la que se usÃ³ para compilar "
 "ReZound, puede recibir basura del plugin LADSPA. Si este es el caso, "
 "reconstruya ReZound, o los plugins LADSPA para hacer que los tipos coincidan."
 
@@ -173,7 +173,7 @@ msgstr "Todos los archivos"
 
 #: src/frontend_fox/CMp3Dialog.cpp:68
 msgid "mp3 Compression Parameters"
-msgstr "Parámetros de compresión mp3"
+msgstr "ParÃ¡metros de compresiÃ³n mp3"
 
 #: src/frontend_fox/CMp3Dialog.cpp:83
 msgid "Average Bit Rate"
@@ -189,11 +189,11 @@ msgstr "Ajuste de calidad para tasa de bits variable"
 
 #: src/frontend_fox/CMp3Dialog.cpp:105
 msgid "0(Highest Quality -> 9(Lowest Quality)"
-msgstr "0(más alta) -> 9(más baja)"
+msgstr "0(mÃ¡s alta) -> 9(mÃ¡s baja)"
 
 #: src/frontend_fox/CMp3Dialog.cpp:110
 msgid "Use Only These Flags"
-msgstr "Usar sólo estos indicadores"
+msgstr "Usar sÃ³lo estos indicadores"
 
 #: src/frontend_fox/CMp3Dialog.cpp:114
 msgid "Additional Flags: "
@@ -205,7 +205,7 @@ msgstr "para lame"
 
 #: src/frontend_fox/CRezSaveParametersDialog.cpp:40
 msgid "ReZound Save Parameters"
-msgstr "Guardar parámetros de ReZound"
+msgstr "Guardar parÃ¡metros de ReZound"
 
 #: src/frontend_fox/CRezSaveParametersDialog.cpp:44
 msgid "8 Bit Integer"
@@ -260,7 +260,7 @@ msgstr ""
 #: src/frontend_fox/CKeyBindingsDialog.cpp:180
 #, fuzzy
 msgid "Action"
-msgstr "Selección"
+msgstr "SelecciÃ³n"
 
 #: src/frontend_fox/CKeyBindingsDialog.cpp:181
 msgid "Hot Key"
@@ -269,7 +269,7 @@ msgstr ""
 #: src/frontend_fox/CKeyBindingsDialog.cpp:185
 #, fuzzy
 msgid "Assign\tOr Double-Click An Item"
-msgstr "&Usar\tO doble clic en un artículo de la lista"
+msgstr "&Usar\tO doble clic en un artÃ­culo de la lista"
 
 #: src/frontend_fox/CKeyBindingsDialog.cpp:213
 msgid "Unhandled Key Combination"
@@ -283,7 +283,7 @@ msgstr ""
 #, fuzzy
 msgid "Do you want to override the existing key assignment?"
 msgstr ""
-"Está seguro de que quiere sobreescribir el archivo existente:\n"
+"EstÃ¡ seguro de que quiere sobreescribir el archivo existente:\n"
 "   "
 
 #: src/frontend_fox/CNewSoundDialog.cpp:52
@@ -315,7 +315,7 @@ msgstr "Tasa de muestreo:"
 
 #: src/frontend_fox/CNewSoundDialog.cpp:68
 msgid "Length:"
-msgstr "Duración:"
+msgstr "DuraciÃ³n:"
 
 #: src/frontend_fox/CNewSoundDialog.cpp:71
 msgid "second(s)"
@@ -339,7 +339,7 @@ msgstr "0.75"
 
 #: src/frontend_fox/CNewSoundDialog.cpp:193
 msgid "Please supply a filename"
-msgstr "Por favor, dé un nombre de archivo"
+msgstr "Por favor, dÃ© un nombre de archivo"
 
 #: src/frontend_fox/CNewSoundDialog.cpp:204
 #, fuzzy
@@ -347,20 +347,20 @@ msgid ""
 "Are you sure you want to overwrite the existing file:\n"
 "   "
 msgstr ""
-"Está seguro de que quiere sobreescribir el archivo existente:\n"
+"EstÃ¡ seguro de que quiere sobreescribir el archivo existente:\n"
 "   "
 
 #: src/frontend_fox/CNewSoundDialog.cpp:217
 msgid "Invalid number of channels"
-msgstr "Número de canales inválido"
+msgstr "NÃºmero de canales invÃ¡lido"
 
 #: src/frontend_fox/CNewSoundDialog.cpp:226
 msgid "Invalid sample rate"
-msgstr "Tasa de muestreo inválida"
+msgstr "Tasa de muestreo invÃ¡lida"
 
 #: src/frontend_fox/CNewSoundDialog.cpp:236
 msgid "Invalid length"
-msgstr "Duración inválida"
+msgstr "DuraciÃ³n invÃ¡lida"
 
 #: src/frontend_fox/settings.cpp:81
 msgid "Show Time Units in..."
@@ -383,7 +383,7 @@ msgstr "en bytes"
 
 #: src/frontend_fox/CSoundWindow.cpp:151
 msgid "Fit\tZoom to Fit Selection"
-msgstr "Encajar\tAmpliar a la selección"
+msgstr "Encajar\tAmpliar a la selecciÃ³n"
 
 #: src/frontend_fox/CSoundWindow.cpp:152 src/frontend_fox/CSoundWindow.cpp:160
 msgid "Zoom Out Full"
@@ -395,7 +395,7 @@ msgstr "Ampliar completamente"
 
 #: src/frontend_fox/CSoundWindow.cpp:156
 msgid "Horizontally and Vertically Zoom Out Full"
-msgstr "Reducir al máximo horizontal y verticalmente"
+msgstr "Reducir al mÃ¡ximo horizontal y verticalmente"
 
 #: src/frontend_fox/CSoundWindow.cpp:162
 msgid "M\tMute Channels"
@@ -406,7 +406,7 @@ msgid ""
 "!\tInvert the Muted State of Each Channel or (right click) Unmute All "
 "Channels"
 msgstr ""
-"!\tInvertir el estado enmudecido de cada canal o (clic con el botón derecho) "
+"!\tInvertir el estado enmudecido de cada canal o (clic con el botÃ³n derecho) "
 "desenmudecer todos los canales"
 
 #: src/frontend_fox/CSoundWindow.cpp:201 src/frontend_fox/CSoundWindow.cpp:202
@@ -427,7 +427,7 @@ msgstr "Contador de canales:"
 
 #: src/frontend_fox/CSoundWindow.cpp:216
 msgid "Audio Size; "
-msgstr "Tamaño de audio:"
+msgstr "TamaÃ±o de audio:"
 
 #: src/frontend_fox/CSoundWindow.cpp:218 src/frontend_fox/CSoundWindow.cpp:466
 msgid "Working File: "
@@ -439,11 +439,11 @@ msgstr "Total:"
 
 #: src/frontend_fox/CSoundWindow.cpp:235
 msgid "Selection: "
-msgstr "Selección:"
+msgstr "SelecciÃ³n:"
 
 #: src/frontend_fox/CSoundWindow.cpp:250
 msgid "Increase/Decrease Start Position by One Sample"
-msgstr "Incrementar/Decrementar la el inicio de la seleccíon en una muestra"
+msgstr "Incrementar/Decrementar la el inicio de la seleccÃ­on en una muestra"
 
 #: src/frontend_fox/CSoundWindow.cpp:251
 msgid "Start: "
@@ -451,7 +451,7 @@ msgstr "Inicio:"
 
 #: src/frontend_fox/CSoundWindow.cpp:263
 msgid "Increase/Decrease Stop Position by One Sample"
-msgstr "Incrementar/Decrementar el final de la selección en una muestra"
+msgstr "Incrementar/Decrementar el final de la selecciÃ³n en una muestra"
 
 #: src/frontend_fox/CSoundWindow.cpp:264
 msgid "Stop: "
@@ -467,7 +467,7 @@ msgstr "Canales:"
 
 #: src/frontend_fox/CSoundWindow.cpp:465
 msgid "Audio Size: "
-msgstr "Tamaño audio:"
+msgstr "TamaÃ±o audio:"
 
 #: src/frontend_fox/CSoundWindow.cpp:498
 msgid "Playing: "
@@ -479,7 +479,7 @@ msgstr "Pega canales"
 
 #: src/frontend_fox/CPasteChannelsDialog.cpp:62
 msgid "Pasting Parameters:"
-msgstr "Parámetros de pegar:"
+msgstr "ParÃ¡metros de pegar:"
 
 #: src/frontend_fox/CPasteChannelsDialog.cpp:77
 #: src/frontend_fox/CPasteChannelsDialog.cpp:213
@@ -489,7 +489,7 @@ msgstr "Contador de repeticiones"
 
 #: src/frontend_fox/CPasteChannelsDialog.cpp:85
 msgid "Repeat Time"
-msgstr "Tiempo de repetición"
+msgstr "Tiempo de repeticiÃ³n"
 
 #: src/frontend_fox/CPasteChannelsDialog.cpp:93
 msgid "Repeat X Times"
@@ -561,8 +561,8 @@ msgid ""
 "Adjust Zoom Factor for Stereo Phase Meter\n"
 "All the way down means no zooming"
 msgstr ""
-"Ajustar el factor de ampliación para el medidor de fase estéreo\n"
-"Abajo del todo significa sin ampliación"
+"Ajustar el factor de ampliaciÃ³n para el medidor de fase estÃ©reo\n"
+"Abajo del todo significa sin ampliaciÃ³n"
 
 #: src/frontend_fox/CMetersWindow.cpp:602
 #: src/frontend_fox/CMetersWindow.cpp:604
@@ -574,8 +574,8 @@ msgid ""
 "Adjust Zoom Factor for Analyzer\n"
 "Right-click for Default"
 msgstr ""
-"Ajustar el factor de ampliación para el analizador\n"
-"Haga clic con el botón derecho para usar el predeterminado"
+"Ajustar el factor de ampliaciÃ³n para el analizador\n"
+"Haga clic con el botÃ³n derecho para usar el predeterminado"
 
 #: src/frontend_fox/CMetersWindow.cpp:836
 msgid "Configure with FFTW"
@@ -637,7 +637,7 @@ msgstr "Hacer todos los canales el mismo"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:213
 msgid "Method"
-msgstr "Método"
+msgstr "MÃ©todo"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:240
 #: src/frontend_fox/RemasterActionDialogs.cpp:288
@@ -656,11 +656,11 @@ msgstr "Tiempo de ataque de la ganancia"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:264
 msgid "Gain Release Time"
-msgstr "Tiempo de liberación de la ganancia"
+msgstr "Tiempo de liberaciÃ³n de la ganancia"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:304
 msgid "Ratio"
-msgstr "Razón"
+msgstr "RazÃ³n"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:312
 msgid "Attack Time"
@@ -668,7 +668,7 @@ msgstr "Tiempo de ataque"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:320
 msgid "Release Time"
-msgstr "Tiempo de liberación"
+msgstr "Tiempo de liberaciÃ³n"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:328
 #: src/frontend_fox/FilterActionDialogs.cpp:80
@@ -693,8 +693,8 @@ msgid ""
 "This Toggles That Compression Should be Applied to Both Channels when Either "
 "Channel Needs Compression"
 msgstr ""
-"Esto conmuta que la compresión debería ser aplicada a ambos canales cuando "
-"algún canal necesita compresión"
+"Esto conmuta que la compresiÃ³n deberÃ­a ser aplicada a ambos canales cuando "
+"algÃºn canal necesita compresiÃ³n"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:351
 msgid "Look Ahead For Level"
@@ -709,7 +709,7 @@ msgstr ""
 #: src/frontend_fox/RemasterActionDialogs.cpp:373
 #: src/frontend_fox/RemasterActionDialogs.cpp:407
 msgid "Normalization Level"
-msgstr "Nivel de normalización"
+msgstr "Nivel de normalizaciÃ³n"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:383
 msgid "Region Count"
@@ -717,17 +717,17 @@ msgstr "Contador de regiones"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:394
 msgid "Calculate Maximum Sample Value in a Region Across All Channels"
-msgstr "Calcula valor máximo de muestra en una region por todos los canales"
+msgstr "Calcula valor mÃ¡ximo de muestra en una region por todos los canales"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:423
 #, fuzzy
 msgid "Maximum Gain"
-msgstr "Tasa máxima de bits:"
+msgstr "Tasa mÃ¡xima de bits:"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:434
 #, fuzzy
 msgid "Calculate Signal Level Across All Channels Simultaneously"
-msgstr "Calcula valor máximo de muestra en una region por todos los canales"
+msgstr "Calcula valor mÃ¡ximo de muestra en una region por todos los canales"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:453
 #: src/frontend_fox/RemasterActionDialogs.cpp:512
@@ -751,7 +751,7 @@ msgid ""
 "beginning cue will be added."
 msgstr ""
 "El nivel de audio debe permanecer por debajo del umbral durante este tiempo "
-"antes de que se añada una marca inicial."
+"antes de que se aÃ±ada una marca inicial."
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:471
 #: src/frontend_fox/RemasterActionDialogs.cpp:530
@@ -764,9 +764,9 @@ msgid ""
 "After the beginning of a quiet area has been detected the audio level must "
 "rise above the threshold for this long for an ending cue to be added."
 msgstr ""
-"Después de que se haya detectado el comienzo de una área de silencio el "
+"DespuÃ©s de que se haya detectado el comienzo de una Ã¡rea de silencio el "
 "nivel de audio debe subir por encima del umbral durante este tiempo para que "
-"se añada una marca de final."
+"se aÃ±ada una marca de final."
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:480
 #: src/frontend_fox/RemasterActionDialogs.cpp:539
@@ -779,7 +779,7 @@ msgid ""
 "This is the length of the window of audio to analyze for detecting the audio "
 "level."
 msgstr ""
-"Esto es la duración de la ventana de audio para analizar la detección del "
+"Esto es la duraciÃ³n de la ventana de audio para analizar la detecciÃ³n del "
 "nivel de audio"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:490
@@ -789,7 +789,7 @@ msgstr "Nombre de la marca de comienzo de silencio"
 #: src/frontend_fox/RemasterActionDialogs.cpp:492
 msgid "What to Name a Cue That Marks Beginning of a Quiet Region"
 msgstr ""
-"Cómo nombrar una marca que señala el comienzo de una región de silencio"
+"CÃ³mo nombrar una marca que seÃ±ala el comienzo de una regiÃ³n de silencio"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:496
 msgid "Quiet End Cue Name"
@@ -797,7 +797,7 @@ msgstr "Nombre de la marca de final de silencio"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:498
 msgid "What to Name a Cue That Marks End of a Quiet Region"
-msgstr "Cómo nombrar una marca que señala el final de una región de silencio"
+msgstr "CÃ³mo nombrar una marca que seÃ±ala el final de una regiÃ³n de silencio"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:548
 msgid "Shorten Found Area To"
@@ -880,7 +880,7 @@ msgstr ""
 #: src/frontend_fox/RemasterActionDialogs.cpp:716
 #, fuzzy
 msgid "Sequence Length"
-msgstr "Longitud del núcleo"
+msgstr "Longitud del nÃºcleo"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:640
 #: src/frontend_fox/RemasterActionDialogs.cpp:722
@@ -915,7 +915,7 @@ msgstr ""
 #: src/frontend_fox/RemasterActionDialogs.cpp:738
 #, fuzzy
 msgid "Overlap Length"
-msgstr "Longitud del núcleo"
+msgstr "Longitud del nÃºcleo"
 
 #: src/frontend_fox/RemasterActionDialogs.cpp:662
 #: src/frontend_fox/RemasterActionDialogs.cpp:744
@@ -934,7 +934,7 @@ msgstr "Cambio de velocidad"
 
 #: src/frontend_fox/CVoxDialog.cpp:42
 msgid "Vox Parameters"
-msgstr "Parámetros de voz"
+msgstr "ParÃ¡metros de voz"
 
 #: src/frontend_fox/CCrossfadeEdgesDialog.cpp:33
 msgid "Crossfade Edges Settings"
@@ -959,11 +959,11 @@ msgstr "Desvanecimiento linear"
 
 #: src/frontend_fox/CCrossfadeEdgesDialog.cpp:43
 msgid "Parabolic Fade"
-msgstr "Desvanecimiento parabólico"
+msgstr "Desvanecimiento parabÃ³lico"
 
 #: src/frontend_fox/CCrossfadeEdgesDialog.cpp:44
 msgid "Crossfade Fade Method"
-msgstr "Método de desvanecimiento del crossfade"
+msgstr "MÃ©todo de desvanecimiento del crossfade"
 
 #: src/frontend_fox/CCrossfadeEdgesDialog.cpp:44
 msgid ""
@@ -971,13 +971,13 @@ msgid ""
 "Parabolic sounds a bit more natural\n"
 "For very quick fades (less than 250ms) linear is recommended"
 msgstr ""
-"Linear mantendrá una ganancia constante de 1.0\n"
-"Parabólico suan un poco más natural\n"
-"Para desvanecimientos muy rápidos (menos d 250ms) se recomiendo el linear"
+"Linear mantendrÃ¡ una ganancia constante de 1.0\n"
+"ParabÃ³lico suan un poco mÃ¡s natural\n"
+"Para desvanecimientos muy rÃ¡pidos (menos d 250ms) se recomiendo el linear"
 
 #: src/frontend_fox/CJACKPortChoiceDialog.cpp:40
 msgid "JACK Port Selection"
-msgstr "Selección del puerto JACK"
+msgstr "SelecciÃ³n del puerto JACK"
 
 #: src/frontend_fox/CAboutDialog.cpp:43
 msgid "About ReZound"
@@ -1011,20 +1011,20 @@ msgid ""
 msgstr ""
 "*** POR FAVOR LEA ***\n"
 "\n"
-"  Bienvenido a esta versión beta de ReZound. El objetivo principal para esta "
-"versión beta es obtener información sobre qué problemas tiene ReZound "
-"funcionando y además añadir una lista (no demasiado bien) definida de "
-"funciones que me gustaría que ReZound tuviese antes de llamarlo '1.0'. Por "
-"favor, infórmeme de cualquier problema que tenga en el proceso de "
-"configuración/compilación/funcionamiento a través del enlace de envío de "
-"partes en la siguiente pestaña de esta ventana.\n"
-"  Las funciones van incrementándose. Tengo planeado escribir un breve "
-"documento que explique como añadir nuevas acciones/efectos/ediciones. Diseñé "
-"ReZound específicamente para que fuese fácil crear nuevas acciones.\n"
+"  Bienvenido a esta versiÃ³n beta de ReZound. El objetivo principal para esta "
+"versiÃ³n beta es obtener informaciÃ³n sobre quÃ© problemas tiene ReZound "
+"funcionando y ademÃ¡s aÃ±adir una lista (no demasiado bien) definida de "
+"funciones que me gustarÃ­a que ReZound tuviese antes de llamarlo '1.0'. Por "
+"favor, infÃ³rmeme de cualquier problema que tenga en el proceso de "
+"configuraciÃ³n/compilaciÃ³n/funcionamiento a travÃ©s del enlace de envÃ­o de "
+"partes en la siguiente pestaÃ±a de esta ventana.\n"
+"  Las funciones van incrementÃ¡ndose. Tengo planeado escribir un breve "
+"documento que explique como aÃ±adir nuevas acciones/efectos/ediciones. DiseÃ±Ã© "
+"ReZound especÃ­ficamente para que fuese fÃ¡cil crear nuevas acciones.\n"
 "  Si tiene alguna sugerencia sobre la IU o cualquier otra funcionalidad, por "
-"favor, envíemelas también a través del enlace de soporte o petición de "
-"funcionalidad en la pestaña siguiente. Gracias por probar ReZound. Espero "
-"que la experiencia sea buena y que encuentre esta aplicación tan útil cuando "
+"favor, envÃ­emelas tambiÃ©n a travÃ©s del enlace de soporte o peticiÃ³n de "
+"funcionalidad en la pestaÃ±a siguiente. Gracias por probar ReZound. Espero "
+"que la experiencia sea buena y que encuentre esta aplicaciÃ³n tan Ãºtil cuando "
 "necesite editar audio como yo.\n"
 "\n"
 "  -- Davy\n"
@@ -1040,15 +1040,15 @@ msgstr "Autor"
 
 #: src/frontend_fox/CAboutDialog.cpp:96
 msgid "Original Autoconfiscation"
-msgstr "Autoconfiscación original"
+msgstr "AutoconfiscaciÃ³n original"
 
 #: src/frontend_fox/CAboutDialog.cpp:97
 msgid "Additional Programming"
-msgstr "Programación adicional"
+msgstr "ProgramaciÃ³n adicional"
 
 #: src/frontend_fox/CAboutDialog.cpp:98
 msgid "Artistic Consultant"
-msgstr "Asesor artístico"
+msgstr "Asesor artÃ­stico"
 
 #: src/frontend_fox/CAboutDialog.cpp:99
 msgid "Home Page"
@@ -1072,7 +1072,7 @@ msgstr "Peticiones de funcionalidad"
 
 #: src/frontend_fox/CAboutDialog.cpp:105
 msgid "Also Please Read"
-msgstr "Por favor, lea también"
+msgstr "Por favor, lea tambiÃ©n"
 
 #: src/frontend_fox/CAboutDialog.cpp:108
 msgid "Thanks To"
@@ -1080,25 +1080,25 @@ msgstr "Gracias a"
 
 #: src/frontend_fox/CAboutDialog.cpp:112
 msgid "Russian Translation"
-msgstr "Traducción al ruso"
+msgstr "TraducciÃ³n al ruso"
 
 #: src/frontend_fox/CAboutDialog.cpp:113
 msgid "German Translation"
-msgstr "Traducción al alemán"
+msgstr "TraducciÃ³n al alemÃ¡n"
 
 #: src/frontend_fox/CAboutDialog.cpp:114
 msgid "Spanish Translation"
-msgstr "Traducción al español"
+msgstr "TraducciÃ³n al espaÃ±ol"
 
 #: src/frontend_fox/CAboutDialog.cpp:115
 #, fuzzy
 msgid "Finnish Translation"
-msgstr "Traducción al español"
+msgstr "TraducciÃ³n al espaÃ±ol"
 
 #: src/frontend_fox/CAboutDialog.cpp:116
 #, fuzzy
 msgid "French Translation"
-msgstr "Traducción al español"
+msgstr "TraducciÃ³n al espaÃ±ol"
 
 #: src/frontend_fox/CAboutDialog.cpp:117
 msgid "Testing/Porting"
@@ -1122,7 +1122,7 @@ msgstr "Encontrar/arreglar errores"
 
 #: src/frontend_fox/CAboutDialog.cpp:126
 msgid "Semitones Shuttle Wheel Feature Patch"
-msgstr "Parche para la función de rueda de traslación en semitonos"
+msgstr "Parche para la funciÃ³n de rueda de traslaciÃ³n en semitonos"
 
 #: src/frontend_fox/CAboutDialog.cpp:133
 msgid "License"
@@ -1148,7 +1148,7 @@ msgstr "Lista de marcas"
 
 #: src/frontend_fox/CCueListDialog.cpp:76
 msgid "&Add"
-msgstr "&Añadir"
+msgstr "&AÃ±adir"
 
 #: src/frontend_fox/CCueListDialog.cpp:77
 #: src/frontend_fox/CActionParamDialog.cpp:944
@@ -1180,11 +1180,11 @@ msgstr "Pre-retardo"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:105
 msgid "Filter Kernel"
-msgstr "Núcleo del filtro"
+msgstr "NÃºcleo del filtro"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:105
 msgid "The Audio File to Use as the Filter Kernel"
-msgstr "El archivo de audio a usar como núcleo del filtro"
+msgstr "El archivo de audio a usar como nÃºcleo del filtro"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:109
 msgid "FK Gain"
@@ -1236,13 +1236,13 @@ msgid ""
 "This Sets the Lowest Frequency Displayed on the Graph.\n"
 "This is the Frequency of the First Octave."
 msgstr ""
-"Esto establece la frecuencia más baja visualizada en el gráfico.\n"
+"Esto establece la frecuencia mÃ¡s baja visualizada en el grÃ¡fico.\n"
 "Esta es la frecuencia en la primera octava."
 
 #: src/frontend_fox/FilterActionDialogs.cpp:289
 #: src/frontend_fox/FilterActionDialogs.cpp:452
 msgid "Number of Octaves"
-msgstr "Número de octavas"
+msgstr "NÃºmero de octavas"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:294
 #: src/frontend_fox/FilterActionDialogs.cpp:457
@@ -1251,15 +1251,15 @@ msgid ""
 "But Note that no Frequency Higher than Half of the Sound's Sampling Rate can "
 "be Affected Since it Cannot Contain a Frequency Higher than That."
 msgstr ""
-"Esto establece el número de octavas visualizadas en el gráfico.\n"
-"Pero observe que ninguna frecuencia por más alta que la mitad de la tasa de "
+"Esto establece el nÃºmero de octavas visualizadas en el grÃ¡fico.\n"
+"Pero observe que ninguna frecuencia por mÃ¡s alta que la mitad de la tasa de "
 "muestreo del sonido se puede modificar ya que no puede contener una "
 "frecuencia mayor que eso."
 
 #: src/frontend_fox/FilterActionDialogs.cpp:301
 #: src/frontend_fox/FilterActionDialogs.cpp:422
 msgid "Kernel Length"
-msgstr "Longitud del núcleo"
+msgstr "Longitud del nÃºcleo"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:307
 #: src/frontend_fox/FilterActionDialogs.cpp:428
@@ -1267,7 +1267,7 @@ msgid ""
 "This is the Size of the Filter Kernel Computed (in samples) From Your Curve "
 "to be Convolved with the Audio"
 msgstr ""
-"Este es el tamaño del núcleo del filtro calculado (en muestras) de su curvar "
+"Este es el tamaÃ±o del nÃºcleo del filtro calculado (en muestras) de su curvar "
 "que se va a convolucionar con el audio"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:310
@@ -1316,7 +1316,7 @@ msgid ""
 "of nodes"
 msgstr ""
 "La respuesta de frecuencia 1 y la respuesta de frecuencia 2 deben contener "
-"el mismo número de nodos"
+"el mismo nÃºmero de nodos"
 
 #: src/frontend_fox/FilterActionDialogs.cpp:543
 #: src/frontend_fox/FilterActionDialogs.cpp:566
@@ -1359,7 +1359,7 @@ msgstr "Resonancia"
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:47
 #, fuzzy
 msgid "Macro Action Parameters"
-msgstr "Parámetros de pegar:"
+msgstr "ParÃ¡metros de pegar:"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:62
 msgid "When the Macro is Played Back and This Action is to be Performed..."
@@ -1368,7 +1368,7 @@ msgstr ""
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:71
 #, fuzzy
 msgid "Set the Start Position..."
-msgstr "Insertar al principio de la selección"
+msgstr "Insertar al principio de la selecciÃ³n"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:72
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:82
@@ -1392,7 +1392,7 @@ msgstr ""
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:76
 #, fuzzy
 msgid "Same Proportionate Time Before the Stop Position"
-msgstr "Mover el inicio de la selección hacia el final de la misma"
+msgstr "Mover el inicio de la selecciÃ³n hacia el final de la misma"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:77
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:87
@@ -1408,17 +1408,17 @@ msgstr ""
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:81
 #, fuzzy
 msgid "Set the Stop Position..."
-msgstr "Centrar el final de la selección"
+msgstr "Centrar el final de la selecciÃ³n"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:85
 #, fuzzy
 msgid "Same Absolute Time After the Start Position"
-msgstr "Mezclar empezando en el prinicipio de la selección"
+msgstr "Mezclar empezando en el prinicipio de la selecciÃ³n"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:86
 #, fuzzy
 msgid "Same Proportionate Time After the Start Position"
-msgstr "Sobreescribir empezando en el prinicipio de la selección"
+msgstr "Sobreescribir empezando en el prinicipio de la selecciÃ³n"
 
 #: src/frontend_fox/CMacroActionParamsDialog.cpp:201
 msgid ""
@@ -1432,7 +1432,7 @@ msgstr "Seleccionar canal"
 
 #: src/frontend_fox/CChannelSelectDialog.cpp:60
 msgid "Channels to Which This Action Should Apply:"
-msgstr "Canales a los que se debería aplicar esta acción:"
+msgstr "Canales a los que se deberÃ­a aplicar esta acciÃ³n:"
 
 #: src/frontend_fox/FileActionDialogs.cpp:127
 msgid "Save to Directory"
@@ -1440,7 +1440,7 @@ msgstr "Guardar al directorio"
 
 #: src/frontend_fox/FileActionDialogs.cpp:127
 msgid "All the files will be saved into this directory"
-msgstr "Todos los archivos se guardarán en este directorio"
+msgstr "Todos los archivos se guardarÃ¡n en este directorio"
 
 #: src/frontend_fox/FileActionDialogs.cpp:128
 msgid "Filename Prefix"
@@ -1452,7 +1452,7 @@ msgstr "Part#"
 
 #: src/frontend_fox/FileActionDialogs.cpp:128
 msgid "This will be added to the front of the filename"
-msgstr "Esto se añadirá al principio del nombre de archivo"
+msgstr "Esto se aÃ±adirÃ¡ al principio del nombre de archivo"
 
 #: src/frontend_fox/FileActionDialogs.cpp:129
 msgid "Filename Suffix"
@@ -1460,7 +1460,7 @@ msgstr "Sufijo del nombre de archivo"
 
 #: src/frontend_fox/FileActionDialogs.cpp:129
 msgid "This will be added to the end of the filename"
-msgstr "Esto se añadirá al final del nombre de archivo"
+msgstr "Esto se aÃ±adirÃ¡ al final del nombre de archivo"
 
 #: src/frontend_fox/FileActionDialogs.cpp:130
 msgid "Format"
@@ -1468,18 +1468,18 @@ msgstr "Formato"
 
 #: src/frontend_fox/FileActionDialogs.cpp:130
 msgid "The format to save each segment as"
-msgstr "El formato en que se guardará cada segmento es"
+msgstr "El formato en que se guardarÃ¡ cada segmento es"
 
 #: src/frontend_fox/FileActionDialogs.cpp:131
 msgid "Segment Number Start"
-msgstr "Número del segmento inicial"
+msgstr "NÃºmero del segmento inicial"
 
 #: src/frontend_fox/FileActionDialogs.cpp:131
 msgid ""
 "The Number to Start With When Substituting the Track Number For '#' in the "
 "Filenames"
 msgstr ""
-"El número con el que empezar a sustituir el número de pista por '#' en los "
+"El nÃºmero con el que empezar a sustituir el nÃºmero de pista por '#' en los "
 "nombres de archivo"
 
 #: src/frontend_fox/FileActionDialogs.cpp:132
@@ -1488,7 +1488,7 @@ msgstr "Abrir segmentos guardados"
 
 #: src/frontend_fox/FileActionDialogs.cpp:132
 msgid "Open the Segments After Saving Them"
-msgstr "Abrir los segmentos después de guardarlos"
+msgstr "Abrir los segmentos despuÃ©s de guardarlos"
 
 #: src/frontend_fox/FileActionDialogs.cpp:134
 #: src/frontend_fox/FileActionDialogs.cpp:183
@@ -1498,7 +1498,7 @@ msgstr "Archivo entero"
 #: src/frontend_fox/FileActionDialogs.cpp:135
 #: src/frontend_fox/FileActionDialogs.cpp:184
 msgid "Selection Only"
-msgstr "Sólo la selección"
+msgstr "SÃ³lo la selecciÃ³n"
 
 #: src/frontend_fox/FileActionDialogs.cpp:136
 #: src/frontend_fox/FileActionDialogs.cpp:185
@@ -1507,7 +1507,7 @@ msgstr "Se aplica a"
 
 #: src/frontend_fox/FileActionDialogs.cpp:137
 msgid "Prompt Only Once for Save Parameters"
-msgstr "Pedir sólo una vez los parámetros para guardar"
+msgstr "Pedir sÃ³lo una vez los parÃ¡metros para guardar"
 
 #: src/frontend_fox/FileActionDialogs.cpp:137
 msgid ""
@@ -1516,10 +1516,10 @@ msgid ""
 "file if necessary.  All other saved files will use the previous parameters "
 "if possible."
 msgstr ""
-"Algunos formatos necesitan parámetros del usuario (p.e. tipo de compresión, "
-"formato de audio, etc).  Activando esta casilla sólo se preguntará en el "
-"primer archivo si es necesario. Todos los demás archivos guardados usarán "
-"los parámetros anteriores si es posible."
+"Algunos formatos necesitan parÃ¡metros del usuario (p.e. tipo de compresiÃ³n, "
+"formato de audio, etc).  Activando esta casilla sÃ³lo se preguntarÃ¡ en el "
+"primer archivo si es necesario. Todos los demÃ¡s archivos guardados usarÃ¡n "
+"los parÃ¡metros anteriores si es posible."
 
 #: src/frontend_fox/FileActionDialogs.cpp:165
 msgid "Temp Space Directory"
@@ -1531,8 +1531,8 @@ msgid ""
 "will be needed for CD quality audio of the length of the audio to be burned "
 "to the CD"
 msgstr ""
-"Un archivo temporal para grabar se guardará en este directorio.  Se "
-"necesitará suficiente espacio para un CD de audio de la duración del audio "
+"Un archivo temporal para grabar se guardarÃ¡ en este directorio.  Se "
+"necesitarÃ¡ suficiente espacio para un CD de audio de la duraciÃ³n del audio "
 "que se va a grabar al CD"
 
 #: src/frontend_fox/FileActionDialogs.cpp:168
@@ -1541,7 +1541,7 @@ msgstr "Ruta a cdrdao"
 
 #: src/frontend_fox/FileActionDialogs.cpp:173
 msgid "Burn Speed"
-msgstr "Velocidad de grabación"
+msgstr "Velocidad de grabaciÃ³n"
 
 #: src/frontend_fox/FileActionDialogs.cpp:179
 msgid "Gap Between Tracks"
@@ -1575,11 +1575,11 @@ msgstr "Opciones extra de cdrdao"
 
 #: src/frontend_fox/FileActionDialogs.cpp:195
 msgid "Simulate Burn Only"
-msgstr "Simular la grabación sólo"
+msgstr "Simular la grabaciÃ³n sÃ³lo"
 
 #: src/frontend_fox/FileActionDialogs.cpp:195
 msgid "Don't Turn on Burn Laser"
-msgstr "No activar el láser de grabación"
+msgstr "No activar el lÃ¡ser de grabaciÃ³n"
 
 #: src/frontend_fox/FileActionDialogs.cpp:230
 msgid "Macro Name"
@@ -1593,7 +1593,7 @@ msgstr "Borrar preajuste"
 #: src/frontend_fox/FileActionDialogs.cpp:246
 #, fuzzy
 msgid "Are you sure you want to delete the macro: "
-msgstr "¿Está seguro que quiere eliminar el enrutamiento?"
+msgstr "Â¿EstÃ¡ seguro que quiere eliminar el enrutamiento?"
 
 #: src/frontend_fox/CCueDialog.cpp:48
 msgid "Cue Properties"
@@ -1612,7 +1612,7 @@ msgid ""
 "Anchored in Time\tMeaning That This Cue's Position Will Not Be Affected by "
 "Adding and Removing Space Within the Audio"
 msgstr ""
-"Zeit-Verankerung\tBedeutet, daß die Markerposition nicht durch Hinzufügen "
+"Zeit-Verankerung\tBedeutet, daÃŸ die Markerposition nicht durch HinzufÃ¼gen "
 "und Entfernen von Bereichen beeinflusst wird"
 
 #: src/frontend_fox/CCueDialog.cpp:103
@@ -1621,7 +1621,7 @@ msgstr "Nombre de la marca demasiado largo"
 
 #: src/frontend_fox/CCueDialog.cpp:111
 msgid "Invalid Cue Time.  Format: HH:MM:SS.sssss or MM:SS.sssss"
-msgstr "Tiempo de la marca inválido. Formato: HH:MM:SS.sssss o MM:SS.sssss"
+msgstr "Tiempo de la marca invÃ¡lido. Formato: HH:MM:SS.sssss o MM:SS.sssss"
 
 #: src/frontend_fox/FXGraphParamValue.cpp:380
 msgid "Clear to Normal"
@@ -1629,15 +1629,15 @@ msgstr "Limpiar"
 
 #: src/frontend_fox/FXGraphParamValue.cpp:381
 msgid "Flip Graph Horizontally"
-msgstr "Invertir el gráfico horizontalmente"
+msgstr "Invertir el grÃ¡fico horizontalmente"
 
 #: src/frontend_fox/FXGraphParamValue.cpp:382
 msgid "Flip Graph Vertically"
-msgstr "Invertir el gráfico verticalmente"
+msgstr "Invertir el grÃ¡fico verticalmente"
 
 #: src/frontend_fox/FXGraphParamValue.cpp:383
 msgid "Smooth Graph Nodes"
-msgstr "Suavizar los nodos del gráfico"
+msgstr "Suavizar los nodos del grÃ¡fico"
 
 #: src/frontend_fox/FXGraphParamValue.cpp:1025
 #: src/frontend_fox/FXGraphParamValue.cpp:1041
@@ -1676,15 +1676,15 @@ msgstr "El tipo de bucle debe estar entre 0 y 127"
 
 #: src/frontend_fox/ClibaudiofileSaveParametersDialog.cpp:40
 msgid "Save Parameters"
-msgstr "Guardar parámetros"
+msgstr "Guardar parÃ¡metros"
 
 #: src/frontend_fox/ClibaudiofileSaveParametersDialog.cpp:62
 msgid "Sample Width"
-msgstr "Tamaño de muestra"
+msgstr "TamaÃ±o de muestra"
 
 #: src/frontend_fox/ClibaudiofileSaveParametersDialog.cpp:66
 msgid "Compression Type"
-msgstr "Tipo de compresión"
+msgstr "Tipo de compresiÃ³n"
 
 #: src/frontend_fox/ClibaudiofileSaveParametersDialog.cpp:68
 #, fuzzy
@@ -1720,18 +1720,18 @@ msgid ""
 "what is valid."
 msgstr ""
 "Algunas combinaciones de valores puede causar problemas.\n"
-"Esto es porque ReZound no puede saber de la librería libaudiofile qué es "
-"válido."
+"Esto es porque ReZound no puede saber de la librerÃ­a libaudiofile quÃ© es "
+"vÃ¡lido."
 
 #: src/frontend_fox/FXRezWaveView.cpp:511
 #: src/frontend_fox/FXRezWaveView.cpp:516
 msgid "Set Start Position to Cue"
-msgstr "Ajustar el inicio de la selección a la marca"
+msgstr "Ajustar el inicio de la selecciÃ³n a la marca"
 
 #: src/frontend_fox/FXRezWaveView.cpp:513
 #: src/frontend_fox/FXRezWaveView.cpp:517
 msgid "Set Stop Position to Cue"
-msgstr "Ajustar el final de la selección a la marca"
+msgstr "Ajustar el final de la selecciÃ³n a la marca"
 
 #: src/frontend_fox/FXRezWaveView.cpp:521
 msgid "&Edit Cue"
@@ -1748,23 +1748,23 @@ msgstr "Mostra &listado de marcas"
 
 #: src/frontend_fox/FXRezWaveView.cpp:536
 msgid "Center Start Position"
-msgstr "Centrar el inicio de la selección"
+msgstr "Centrar el inicio de la selecciÃ³n"
 
 #: src/frontend_fox/FXRezWaveView.cpp:537
 msgid "Center Stop Position"
-msgstr "Centrar el final de la selección"
+msgstr "Centrar el final de la selecciÃ³n"
 
 #: src/frontend_fox/FXRezWaveView.cpp:539
 msgid "Add Cue at This Position"
-msgstr "Añadir marca en esta posición"
+msgstr "AÃ±adir marca en esta posiciÃ³n"
 
 #: src/frontend_fox/FXRezWaveView.cpp:540
 msgid "Add Cue at Start Position"
-msgstr "Añadir marca en el inicio de la selección"
+msgstr "AÃ±adir marca en el inicio de la selecciÃ³n"
 
 #: src/frontend_fox/FXRezWaveView.cpp:541
 msgid "Add Cue at Stop Position"
-msgstr "Añadir marca en el final de la selección"
+msgstr "AÃ±adir marca en el final de la selecciÃ³n"
 
 #: src/frontend_fox/CProgressDialog.cpp:47
 #: src/frontend_fox/FXModalDialogBox.cpp:58
@@ -1785,17 +1785,17 @@ msgstr "Reproducir todo una vez"
 
 #: src/frontend_fox/CMainWindow.cpp:224 src/frontend_fox/CMainWindow.cpp:861
 msgid "Play Selection Once"
-msgstr "Reproducir la selección una vez"
+msgstr "Reproducir la selecciÃ³n una vez"
 
 #: src/frontend_fox/CMainWindow.cpp:225 src/frontend_fox/CMainWindow.cpp:863
 #, fuzzy
 msgid "Play From Selection Start to End"
-msgstr "Reproducir desde el principio de la selección hasta el final"
+msgstr "Reproducir desde el principio de la selecciÃ³n hasta el final"
 
 #: src/frontend_fox/CMainWindow.cpp:226 src/frontend_fox/CMainWindow.cpp:862
 #, fuzzy
 msgid "Play From Left Edge of Screen to End"
-msgstr "Reproducir desde el principio de la selección hasta el final"
+msgstr "Reproducir desde el principio de la selecciÃ³n hasta el final"
 
 #: src/frontend_fox/CMainWindow.cpp:227 src/frontend_fox/CMainWindow.cpp:860
 msgid "Play All Looped"
@@ -1803,15 +1803,15 @@ msgstr "Reproducir todo repetidamente"
 
 #: src/frontend_fox/CMainWindow.cpp:228 src/frontend_fox/CMainWindow.cpp:864
 msgid "Play Selection Looped"
-msgstr "Reproducir selección repetidamente"
+msgstr "Reproducir selecciÃ³n repetidamente"
 
 #: src/frontend_fox/CMainWindow.cpp:229
 msgid "Play Selection Looped but Skip Most of the Middle"
-msgstr "Reproducir la selección repetidamente saltando gran parte del medio"
+msgstr "Reproducir la selecciÃ³n repetidamente saltando gran parte del medio"
 
 #: src/frontend_fox/CMainWindow.cpp:230
 msgid "Play Selection Looped and Play a Gap Before Repeating"
-msgstr "Reproducir la selección repetidamente y silencio antes de repetir"
+msgstr "Reproducir la selecciÃ³n repetidamente y silencio antes de repetir"
 
 #: src/frontend_fox/CMainWindow.cpp:232 src/frontend_fox/CMainWindow.cpp:867
 msgid "Stop"
@@ -1831,7 +1831,7 @@ msgstr "Saltar al principio"
 
 #: src/frontend_fox/CMainWindow.cpp:238
 msgid "Jump to Start Position"
-msgstr "Saltar al inicio de la selección"
+msgstr "Saltar al inicio de la selecciÃ³n"
 
 #: src/frontend_fox/CMainWindow.cpp:240 src/frontend_fox/CMainWindow.cpp:872
 msgid "Jump to Previous Cue"
@@ -1847,7 +1847,7 @@ msgid ""
 "(right-click to return to middle)"
 msgstr ""
 "Trasladar busqueda mientras se reproduce\n"
-"(clic con el botón central vuelve al medio)"
+"(clic con el botÃ³n central vuelve al medio)"
 
 #: src/frontend_fox/CMainWindow.cpp:262
 msgid "free"
@@ -1863,11 +1863,11 @@ msgstr "Devuelve la rueda de transporte al medio o no"
 
 #: src/frontend_fox/CMainWindow.cpp:267
 msgid "Set the Maximum Rate Change of the Shuttle Wheel"
-msgstr "Ajusta la velocidad de cambio de la rueda de transporte al máximo"
+msgstr "Ajusta la velocidad de cambio de la rueda de transporte al mÃ¡ximo"
 
 #: src/frontend_fox/CMainWindow.cpp:275
 msgid "Follow Play Position"
-msgstr "Sigue la posición de reproducción"
+msgstr "Sigue la posiciÃ³n de reproducciÃ³n"
 
 #: src/frontend_fox/CMainWindow.cpp:277
 msgid "Clipping Warning"
@@ -1883,10 +1883,10 @@ msgid ""
 "Positions to Give a Smoother Transition in to and out of the Modified "
 "Selection"
 msgstr ""
-"Después de la mayoría de acciones se puede hacer un crossfade en el inicio y "
-"el final de la selección \n"
-"Las posiciones para hacer una transición suave entrando y saliendo de la "
-"selección modificada"
+"DespuÃ©s de la mayorÃ­a de acciones se puede hacer un crossfade en el inicio y "
+"el final de la selecciÃ³n \n"
+"Las posiciones para hacer una transiciÃ³n suave entrando y saliendo de la "
+"selecciÃ³n modificada"
 
 #: src/frontend_fox/CMainWindow.cpp:285
 msgid "No Crossfade"
@@ -1961,15 +1961,15 @@ msgstr "Grabar"
 
 #: src/frontend_fox/CMainWindow.cpp:865
 msgid "Loop Selection but Skip Most of the Middle"
-msgstr "Repetir la selección ignorando gran parte del medio"
+msgstr "Repetir la selecciÃ³n ignorando gran parte del medio"
 
 #: src/frontend_fox/CMainWindow.cpp:866
 msgid "Loop Selection and Play a Gap Before Repeating"
-msgstr "Repetir la selección y reproducir silencio antes de repetir"
+msgstr "Repetir la selecciÃ³n y reproducir silencio antes de repetir"
 
 #: src/frontend_fox/CMainWindow.cpp:871
 msgid "Jump to Selection Start"
-msgstr "Saltar al inicio de la selección"
+msgstr "Saltar al inicio de la selecciÃ³n"
 
 #: src/frontend_fox/CMainWindow.cpp:875
 msgid "Shuttle Rewind"
@@ -1977,7 +1977,7 @@ msgstr "Transportar abajo"
 
 #: src/frontend_fox/CMainWindow.cpp:876
 msgid "Shuttle Amount"
-msgstr "Transportar más"
+msgstr "Transportar mÃ¡s"
 
 #: src/frontend_fox/CMainWindow.cpp:877
 msgid "Shuttle Forward"
@@ -1985,7 +1985,7 @@ msgstr "Transportar arriba"
 
 #: src/frontend_fox/CMainWindow.cpp:881
 msgid "Zoom Out F&ull"
-msgstr "Reducir al &máximo"
+msgstr "Reducir al &mÃ¡ximo"
 
 #: src/frontend_fox/CMainWindow.cpp:882
 msgid "Zoom &Out"
@@ -1997,15 +1997,15 @@ msgstr "&Ampliar"
 
 #: src/frontend_fox/CMainWindow.cpp:884
 msgid "Zoom &Fit Selection"
-msgstr "Ampliar a la s&elección"
+msgstr "Ampliar a la s&elecciÃ³n"
 
 #: src/frontend_fox/CMainWindow.cpp:886
 msgid "Find &Start Position"
-msgstr "Encontrar el &inicio de la selección"
+msgstr "Encontrar el &inicio de la selecciÃ³n"
 
 #: src/frontend_fox/CMainWindow.cpp:887
 msgid "Find Sto&p Position"
-msgstr "Encontrar el &final de la selección"
+msgstr "Encontrar el &final de la selecciÃ³n"
 
 #: src/frontend_fox/CMainWindow.cpp:889
 msgid "&Redraw"
@@ -2017,7 +2017,7 @@ msgstr "Conmutar medidores de nive&l"
 
 #: src/frontend_fox/CMainWindow.cpp:893 src/frontend_fox/CMainWindow.cpp:897
 msgid "Toggle &Stereo Phase Meters"
-msgstr "Conmutar medidores de fase e&stéreo"
+msgstr "Conmutar medidores de fase e&stÃ©reo"
 
 #: src/frontend_fox/CMainWindow.cpp:894 src/frontend_fox/CMainWindow.cpp:898
 msgid "Toggle Frequency &Analyzer"
@@ -2084,7 +2084,7 @@ msgstr "Deshacer"
 
 #: src/frontend_fox/CMainWindow.cpp:916
 msgid "Clear Undo History"
-msgstr "Limpiar histórico de deshacer"
+msgstr "Limpiar histÃ³rico de deshacer"
 
 #: src/frontend_fox/CMainWindow.cpp:918
 msgid "&Recent Actions"
@@ -2097,7 +2097,7 @@ msgstr "&Archivo"
 #: src/frontend_fox/CMainWindow.cpp:1031
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1071
 msgid "Selection"
-msgstr "Selección"
+msgstr "SelecciÃ³n"
 
 #: src/frontend_fox/CMainWindow.cpp:1032
 #, fuzzy
@@ -2166,7 +2166,7 @@ msgstr "Notas de usuario"
 
 #: src/frontend_fox/CRawDialog.cpp:46
 msgid "Raw Parameters"
-msgstr "Parámetros sin formato"
+msgstr "ParÃ¡metros sin formato"
 
 #: src/frontend_fox/CRawDialog.cpp:72
 msgid "Sample Format:"
@@ -2247,17 +2247,17 @@ msgstr "en cuadros de audio"
 
 #: src/frontend_fox/CRawDialog.cpp:168
 msgid "invalid negative data offset"
-msgstr "desplazamiento de datos negativo inválido"
+msgstr "desplazamiento de datos negativo invÃ¡lido"
 
 #: src/frontend_fox/CRawDialog.cpp:175
 msgid "invalid negative data length"
-msgstr "longitud de datos negativo inválido"
+msgstr "longitud de datos negativo invÃ¡lido"
 
 #: src/frontend_fox/EditActionDialogs.cpp:38
 #: src/frontend_fox/GenerateActionDialogs.cpp:45
 #: src/frontend_fox/GenerateActionDialogs.cpp:138
 msgid "Length"
-msgstr "Duración"
+msgstr "DuraciÃ³n"
 
 #: src/frontend_fox/EditActionDialogs.cpp:38
 #: src/frontend_fox/EditActionDialogs.cpp:49
@@ -2272,7 +2272,7 @@ msgstr "Cantidad"
 #: src/frontend_fox/EditActionDialogs.cpp:103
 #: src/frontend_fox/EditActionDialogs.cpp:117
 msgid "Insert Where"
-msgstr "Dónde insertar"
+msgstr "DÃ³nde insertar"
 
 #: src/frontend_fox/EditActionDialogs.cpp:104
 msgid "Insert Count"
@@ -2280,7 +2280,7 @@ msgstr "Cuantos insertar"
 
 #: src/frontend_fox/EditActionDialogs.cpp:116
 msgid "Which Channel"
-msgstr "Qué canal"
+msgstr "QuÃ© canal"
 
 #: src/frontend_fox/EditActionDialogs.cpp:118
 msgid "How Many Times"
@@ -2288,27 +2288,27 @@ msgstr "Cuantas veces"
 
 #: src/frontend_fox/EditActionDialogs.cpp:153
 msgid "Amount to Affect the Selection in Seconds"
-msgstr "Cantidad a afectar a la selección en segundos"
+msgstr "Cantidad a afectar a la selecciÃ³n en segundos"
 
 #: src/frontend_fox/EditActionDialogs.cpp:156
 msgid "Grow Selection to the Left"
-msgstr "Ampliar la selección a la izquierda"
+msgstr "Ampliar la selecciÃ³n a la izquierda"
 
 #: src/frontend_fox/EditActionDialogs.cpp:157
 msgid "Grow Selection to the Right"
-msgstr "Ampliar la selección a la derecha"
+msgstr "Ampliar la selecciÃ³n a la derecha"
 
 #: src/frontend_fox/EditActionDialogs.cpp:158
 msgid "Grow Selection in Both Directions"
-msgstr "Ampliar la selección en ambos sentidos"
+msgstr "Ampliar la selecciÃ³n en ambos sentidos"
 
 #: src/frontend_fox/EditActionDialogs.cpp:159
 msgid "Slide Selection to the Left"
-msgstr "Desplazar la selección a la izquierda"
+msgstr "Desplazar la selecciÃ³n a la izquierda"
 
 #: src/frontend_fox/EditActionDialogs.cpp:160
 msgid "Slide Selection to the Right"
-msgstr "Desplazar la selección a la derecha"
+msgstr "Desplazar la selecciÃ³n a la derecha"
 
 #: src/frontend_fox/EditActionDialogs.cpp:161
 msgid "How"
@@ -2358,7 +2358,7 @@ msgstr ""
 #: src/frontend_fox/EffectActionDialogs.cpp:146
 #: src/frontend_fox/EffectActionDialogs.cpp:181
 msgid "Feedback"
-msgstr "Realimentación"
+msgstr "RealimentaciÃ³n"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:210
 msgid "Quantum Count"
@@ -2366,7 +2366,7 @@ msgstr "Contador de quantum"
 
 #: src/frontend_fox/EffectActionDialogs.cpp:216
 msgid "The Number of Possible Sample Values Above Zero"
-msgstr "El número de valores de muestra posibles sobre cero."
+msgstr "El nÃºmero de valores de muestra posibles sobre cero."
 
 #: src/frontend_fox/EffectActionDialogs.cpp:239
 msgid "Curve"
@@ -2396,19 +2396,19 @@ msgstr "Volumen"
 
 #: src/frontend_fox/GenerateActionDialogs.cpp:61
 msgid "Max Particle Velocity"
-msgstr "Velocidad máxima de las partículas"
+msgstr "Velocidad mÃ¡xima de las partÃ­culas"
 
 #: src/frontend_fox/GenerateActionDialogs.cpp:70
 msgid "White (Equal Energy per Frequency)"
-msgstr "Blanco (igual energía por frecuencia)"
+msgstr "Blanco (igual energÃ­a por frecuencia)"
 
 #: src/frontend_fox/GenerateActionDialogs.cpp:71
 msgid "Pink (Natural, Equal Energy per Octave; response: f^(-1))"
-msgstr "Rosa (natural, igual energía por octava; respuesta: f^(-1))"
+msgstr "Rosa (natural, igual energÃ­a por octava; respuesta: f^(-1))"
 
 #: src/frontend_fox/GenerateActionDialogs.cpp:72
 msgid "Brown (as in Brownian Motion; response: f^(-2))"
-msgstr "Marrón (como en Brownian Motion; respuesta: f^(-2))"
+msgstr "MarrÃ³n (como en Brownian Motion; respuesta: f^(-2))"
 
 #: src/frontend_fox/GenerateActionDialogs.cpp:73
 msgid "Black :)"
@@ -2432,7 +2432,7 @@ msgstr "Invertir mono"
 
 #: src/frontend_fox/GenerateActionDialogs.cpp:96
 msgid "Stereo Image"
-msgstr "Imagen estéreo"
+msgstr "Imagen estÃ©reo"
 
 #: src/frontend_fox/GenerateActionDialogs.cpp:155
 msgid "Sine Wave"
@@ -2464,15 +2464,15 @@ msgstr "   Prefijo de la marca:"
 
 #: src/frontend_fox/CRecordDialog.cpp:88
 msgid "Cue Number:"
-msgstr "Número de marca:"
+msgstr "NÃºmero de marca:"
 
 #: src/frontend_fox/CRecordDialog.cpp:91 src/backend/Edits/CCueAction.cpp:63
 msgid "Add Cue"
-msgstr "Añadir marca"
+msgstr "AÃ±adir marca"
 
 #: src/frontend_fox/CRecordDialog.cpp:92
 msgid "Add Anchored Cue"
-msgstr "Añadir marca sujeta"
+msgstr "AÃ±adir marca sujeta"
 
 #: src/frontend_fox/CRecordDialog.cpp:98 src/frontend_fox/CRecordDialog.cpp:99
 msgid "Recording:"
@@ -2485,15 +2485,15 @@ msgstr "Esperando el umbral:"
 
 #: src/frontend_fox/CRecordDialog.cpp:107
 msgid "Record Length: "
-msgstr "Duración de la grabación:"
+msgstr "DuraciÃ³n de la grabaciÃ³n:"
 
 #: src/frontend_fox/CRecordDialog.cpp:108
 msgid "Record Size: "
-msgstr "Tamaño de la grabación:"
+msgstr "TamaÃ±o de la grabaciÃ³n:"
 
 #: src/frontend_fox/CRecordDialog.cpp:109
 msgid "Record Limit: "
-msgstr "Límite de la grabación:"
+msgstr "LÃ­mite de la grabaciÃ³n:"
 
 #: src/frontend_fox/CRecordDialog.cpp:115
 msgid "DCOffset: "
@@ -2509,7 +2509,7 @@ msgid ""
 "recorded data"
 msgstr ""
 "Compensar/sustraer el desplazamiento DC mostrado actualmente de los datos "
-"grabados a continuación"
+"grabados a continuaciÃ³n"
 
 #: src/frontend_fox/CRecordDialog.cpp:120
 msgid "Reset"
@@ -2547,7 +2547,7 @@ msgstr ""
 
 #: src/frontend_fox/CRecordDialog.cpp:130
 msgid "Limit Duration to "
-msgstr "Limitar la duración a"
+msgstr "Limitar la duraciÃ³n a"
 
 #: src/frontend_fox/CRecordDialog.cpp:137
 msgid "Effective on Threshold "
@@ -2562,12 +2562,12 @@ msgid ""
 "Invalid record time limit -- Should be in the form of HH:MM:SS.sss, MM:SS."
 "sss or SS.sss"
 msgstr ""
-"Límite de tiempo de la grabación inválido -- Debería estar como HH:MM:SS."
+"LÃ­mite de tiempo de la grabaciÃ³n invÃ¡lido -- DeberÃ­a estar como HH:MM:SS."
 "sss, MM:SS.sss o SS.sss"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:196
 msgid "Use Sound ->\tAdd the Selected Sound as a Source Above"
-msgstr "Use Sonido->\tAñadir el sonido seleccionado como una fuente arriba"
+msgstr "Use Sonido->\tAÃ±adir el sonido seleccionado como una fuente arriba"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:197
 msgid "New Instance\tCreate a New Instance of the Plugin"
@@ -2579,7 +2579,7 @@ msgstr "Predeterminado\tSuponer el enrutamiento deseado"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:672
 msgid "Remove Connection"
-msgstr "Borrar conexión"
+msgstr "Borrar conexiÃ³n"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:817
 msgid "Nothing mapped to an output; check the routing"
@@ -2607,38 +2607,38 @@ msgstr "Bucle"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1452
 msgid "Are you sure you want to remove this instance?"
-msgstr "¿Está seguro que quiere borrar esta instancia?"
+msgstr "Â¿EstÃ¡ seguro que quiere borrar esta instancia?"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1474
 msgid "Are you sure you want to remove this source?"
-msgstr "¿Está seguro que quiere borrar esta fuente?"
+msgstr "Â¿EstÃ¡ seguro que quiere borrar esta fuente?"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1529
 msgid "Append New Channel"
-msgstr "Añadir un nuevo canal"
+msgstr "AÃ±adir un nuevo canal"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1530
 msgid "Remove Last Channel"
-msgstr "Borrar último canal"
+msgstr "Borrar Ãºltimo canal"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1548
 msgid "Cannot exceed maximum number of channels: "
-msgstr "No puede exceder el número máximo de canales"
+msgstr "No puede exceder el nÃºmero mÃ¡ximo de canales"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1560
 msgid "Cannot remove the last output channel"
-msgstr "No se puede borrar el último canal de la salida"
+msgstr "No se puede borrar el Ãºltimo canal de la salida"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1566
 msgid "Are you sure you want to clear the routing?"
-msgstr "¿Está seguro que quiere eliminar el enrutamiento?"
+msgstr "Â¿EstÃ¡ seguro que quiere eliminar el enrutamiento?"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1577
 msgid ""
 "Are you sure you want to discard the current routing and guess at the "
 "desired routing?"
 msgstr ""
-"¿Está seguro que quiere descartar el enrutamiento actual y adivinar el "
+"Â¿EstÃ¡ seguro que quiere descartar el enrutamiento actual y adivinar el "
 "enrutamiento deseado?"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1744
@@ -2647,22 +2647,22 @@ msgid ""
 "preset was saved is now the action sound.  Some connections will likely be "
 "missing or wrong."
 msgstr ""
-"Esta fuente referenciada en el preajuste que no era el sonido de acción "
-"cuando se guardó el preajuste es ahora el sonido de acción. Seguramente, "
-"faltaran algunas conexiones o estarán equivocadas."
+"Esta fuente referenciada en el preajuste que no era el sonido de acciÃ³n "
+"cuando se guardÃ³ el preajuste es ahora el sonido de acciÃ³n. Seguramente, "
+"faltaran algunas conexiones o estarÃ¡n equivocadas."
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1762
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1779
 msgid "When this preset was saved there was a file loaded named:"
-msgstr "Cuando este preajuste se guardó había cargado un archivo llamado:"
+msgstr "Cuando este preajuste se guardÃ³ habÃ­a cargado un archivo llamado:"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1762
 msgid ""
 "This file is currently not loaded.\n"
 "Would you like to load it now?"
 msgstr ""
-"Este archivo no está cargado actualmente.\n"
-"¿Quiere cargarlo ahora?"
+"Este archivo no estÃ¡ cargado actualmente.\n"
+"Â¿Quiere cargarlo ahora?"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1762
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1779
@@ -2680,14 +2680,14 @@ msgid ""
 "Would you like to load another file in its place?"
 msgstr ""
 "Este archivo no existe ahora.\n"
-"¿Quiere cargar otro archivo en su lugar?"
+"Â¿Quiere cargar otro archivo en su lugar?"
 
 #: src/frontend_fox/FXPluginRoutingParamValue.cpp:1799
 msgid ""
 "This file has fewer channels than the one used when the preset was saved.  "
 "It may not be possible to restore some of the connections."
 msgstr ""
-"Este archivo tiene menos canales que el usado cuando se guardó el preajuste. "
+"Este archivo tiene menos canales que el usado cuando se guardÃ³ el preajuste. "
 "Puede que no sea posible restaurar algunas de las conexiones."
 
 #: src/frontend_fox/FXLFOParamValue.cpp:77
@@ -2704,7 +2704,7 @@ msgstr "Nombre del preajuste"
 
 #: src/frontend_fox/CActionParamDialog.cpp:784
 msgid "Invalid Preset Name"
-msgstr "Nombre de preajuste inválido"
+msgstr "Nombre de preajuste invÃ¡lido"
 
 #: src/frontend_fox/CActionParamDialog.cpp:793
 msgid "Preset Name cannot contain"
@@ -2721,7 +2721,7 @@ msgstr "Borrar preajuste"
 #: src/frontend_fox/CActionParamDialog.cpp:928
 #: src/frontend_fox/CActionParamDialog.cpp:942
 msgid "&Use\tOr Double-Click an Item in the List"
-msgstr "&Usar\tO doble clic en un artículo de la lista"
+msgstr "&Usar\tO doble clic en un artÃ­culo de la lista"
 
 #: src/frontend_fox/CActionParamDialog.cpp:943
 msgid "&Save"
@@ -2737,7 +2737,7 @@ msgstr "Portapapeles nativo "
 
 #: src/backend/initialize.cpp:175
 msgid "Record Clipboard "
-msgstr "Portapapeles de grabación "
+msgstr "Portapapeles de grabaciÃ³n "
 
 #: src/backend/Looping/CAddCuesAction.cpp:58
 msgid "The time interval was zero"
@@ -2748,36 +2748,36 @@ msgid ""
 "The time interval was so small for the selected area that an unlikely "
 "desired amount of cues would be added"
 msgstr ""
-"El intervalo de tiempo era tan pequeño para el área seleccionada que se "
-"añadiría un número no deseado de marcas"
+"El intervalo de tiempo era tan pequeÃ±o para el Ã¡rea seleccionada que se "
+"aÃ±adirÃ­a un nÃºmero no deseado de marcas"
 
 #: src/backend/Looping/CAddCuesAction.cpp:97
 msgid "Add N Cues"
-msgstr "Añadir N marcas"
+msgstr "AÃ±adir N marcas"
 
 #: src/backend/Looping/CAddCuesAction.cpp:97
 msgid "Add N Cues at Evenly Spaced Intervals"
-msgstr "Añadir N marcas a intervalos iguales"
+msgstr "AÃ±adir N marcas a intervalos iguales"
 
 #: src/backend/Looping/CAddCuesAction.cpp:120
 msgid "Add Timed Cues"
-msgstr "Añadir marcas temporizadas"
+msgstr "AÃ±adir marcas temporizadas"
 
 #: src/backend/Looping/CAddCuesAction.cpp:120
 msgid "Add a Cue Every X Seconds"
-msgstr "Añadir una marca cada X segundos"
+msgstr "AÃ±adir una marca cada X segundos"
 
 #: src/backend/Looping/CMakeSymetricAction.cpp:56
 msgid "Make Symetric -- Channel "
-msgstr "Hacer simétrico -- Canal"
+msgstr "Hacer simÃ©trico -- Canal"
 
 #: src/backend/Looping/CMakeSymetricAction.cpp:98
 msgid "Make Symetric"
-msgstr "Hacer simétrico"
+msgstr "Hacer simÃ©trico"
 
 #: src/backend/Looping/CMakeSymetricAction.cpp:98
 msgid "Make Symetric For Noise Loops"
-msgstr "Hacer simétrico para bucles de ruido"
+msgstr "Hacer simÃ©trico para bucles de ruido"
 
 #: src/backend/Filters/CArbitraryFIRFilter.cpp:92
 #: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:85
@@ -2791,8 +2791,8 @@ msgid ""
 " -- feature disabled because the fftw/rfftw library was not installed or "
 "detected when configure was run"
 msgstr ""
-" -- función desactivada porque la librería fftw/rfftw no estaba instalada o "
-"no fue detectada cuando se ejecutó configure"
+" -- funciÃ³n desactivada porque la librerÃ­a fftw/rfftw no estaba instalada o "
+"no fue detectada cuando se ejecutÃ³ configure"
 
 #: src/backend/Filters/CArbitraryFIRFilter.cpp:204
 msgid "Arbitrary FIR Filter"
@@ -2860,7 +2860,7 @@ msgstr " -- sweepLFODesc.amp es negativo"
 msgid ""
 " -- freqResponse1 and freqResonse2 do not contain the same number of nodes"
 msgstr ""
-" -- freqResponse1 y freqResponse2 no contienen el mismo número de nodos"
+" -- freqResponse1 y freqResponse2 no contienen el mismo nÃºmero de nodos"
 
 #: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:232
 msgid ""
@@ -2881,20 +2881,20 @@ msgid ""
 "depending on how different the two responses are.\n"
 msgstr ""
 "\n"
-"Esta acción empezará a filtrar con la primera respuesta de frecuencia y "
-"transformará el filtro a la segunda respuesta de frecuencia.\n"
-"Ambas respuestas de frecuencia deben tener el mismo número de puntos.\n"
-"La transformación se calcula tomando cada punto en la primera respuesta de "
-"frecuencia y moviendolo hacia la posición del punto correspondiente en la "
+"Esta acciÃ³n empezarÃ¡ a filtrar con la primera respuesta de frecuencia y "
+"transformarÃ¡ el filtro a la segunda respuesta de frecuencia.\n"
+"Ambas respuestas de frecuencia deben tener el mismo nÃºmero de puntos.\n"
+"La transformaciÃ³n se calcula tomando cada punto en la primera respuesta de "
+"frecuencia y moviendolo hacia la posiciÃ³n del punto correspondiente en la "
 "segunda respuesta de frecuencia. Un punto se corresponde con otro punto si "
-"está en el mismo orden de la izquierda a la derecha.\n"
-"Si 'Usar LFO' no está activado, el filtro usará el tiempo completo de la "
-"selección para transformar de la primera a la segunda respuesta de "
+"estÃ¡ en el mismo orden de la izquierda a la derecha.\n"
+"Si 'Usar LFO' no estÃ¡ activado, el filtro usarÃ¡ el tiempo completo de la "
+"selecciÃ³n para transformar de la primera a la segunda respuesta de "
 "frecuencia.\n"
-"Si 'Usar LFO' está activado, la transformación oscilará de acuerdo al LFO.\n"
-"Una mayor longitud de núcleo tendrá una mejor resolución del filtro de "
-"frecuencias, pero una longitud de núcleo demasiado grande causará 'pasos' en "
-"la transformación audibles según lo diferentes que sean las respuestas.\n"
+"Si 'Usar LFO' estÃ¡ activado, la transformaciÃ³n oscilarÃ¡ de acuerdo al LFO.\n"
+"Una mayor longitud de nÃºcleo tendrÃ¡ una mejor resoluciÃ³n del filtro de "
+"frecuencias, pero una longitud de nÃºcleo demasiado grande causarÃ¡ 'pasos' en "
+"la transformaciÃ³n audibles segÃºn lo diferentes que sean las respuestas.\n"
 
 #: src/backend/Filters/CMorphingArbitraryFIRFilter.cpp:245
 msgid "Morphing Arbitrary FIR Filter"
@@ -2918,11 +2918,11 @@ msgstr "Convolucionando -- Canal"
 
 #: src/backend/Filters/CConvolutionFilter.cpp:271
 msgid "Convolution Filter"
-msgstr "Filtro de convolución"
+msgstr "Filtro de convoluciÃ³n"
 
 #: src/backend/Filters/CConvolutionFilter.cpp:271
 msgid "Convolve One Audio File with this One"
-msgstr "Convolucionar un archivo de audio con éste"
+msgstr "Convolucionar un archivo de audio con Ã©ste"
 
 #: src/backend/ClameSoundTranslator.cpp:278
 msgid ""
@@ -2930,7 +2930,7 @@ msgid ""
 "Do you wish to continue?"
 msgstr ""
 "MPEG Layer-3 no soporta guardar notas o marcas de usuario\n"
-"¿Desea continuar?"
+"Â¿Desea continuar?"
 
 #: src/backend/ClameSoundTranslator.cpp:354
 #: src/backend/ClibaudiofileSoundTranslator.cpp:521
@@ -2940,7 +2940,7 @@ msgstr "Guardando sonido"
 
 #: src/backend/CJACKSoundRecorder.cpp:65 src/backend/CJACKSoundPlayer.cpp:78
 msgid " -- error connecting to jack server -- jackd not running?"
-msgstr " -- error conectando al servidor jack -- ¿jackd no está en marcha?"
+msgstr " -- error conectando al servidor jack -- Â¿jackd no estÃ¡ en marcha?"
 
 #: src/backend/CJACKSoundRecorder.cpp:110
 msgid "Choose Port for Input Channel "
@@ -2956,7 +2956,7 @@ msgstr ", por favor, elija uno diferente"
 
 #: src/backend/File/CSaveSelectionAsAction.cpp:61
 msgid "Save Selection As..."
-msgstr "Guardar selección como..."
+msgstr "Guardar selecciÃ³n como..."
 
 #: src/backend/File/CSaveAudioFileAction.cpp:45
 #, fuzzy
@@ -2974,26 +2974,26 @@ msgid ""
 "'explain' button on the previous window for how to name the cues."
 msgstr ""
 "No se han encontrado marcas nombradas apropiadamente para definir los "
-"segmentos a guardar. Vea el botón 'explicación' en la ventana previa para "
-"ver cómo nombrar las marcas."
+"segmentos a guardar. Vea el botÃ³n 'explicaciÃ³n' en la ventana previa para "
+"ver cÃ³mo nombrar las marcas."
 
 #: src/backend/File/CSaveAsMultipleFilesAction.cpp:98
 msgid "These are the files about to be created..."
-msgstr "Estos son los archivos que están a punto de crearse..."
+msgstr "Estos son los archivos que estÃ¡n a punto de crearse..."
 
 #: src/backend/File/CSaveAsMultipleFilesAction.cpp:102
 #: src/backend/File/CBurnToCDAction.cpp:140
 #: src/backend/File/CBurnToCDAction.cpp:146
 #: src/backend/File/CBurnToCDAction.cpp:151
 msgid "Do you want to continue?"
-msgstr "¿Quiere continuar?"
+msgstr "Â¿Quiere continuar?"
 
 #: src/backend/File/CSaveAsMultipleFilesAction.cpp:115
 msgid ""
 "The file was not saved successfully.  Do you wish to abort saving any other "
 "files?"
 msgstr ""
-"El archivo no se ha guardado correctamente. ¿Desea abandonar la grabación "
+"El archivo no se ha guardado correctamente. Â¿Desea abandonar la grabaciÃ³n "
 "del resto de archivos?"
 
 #: src/backend/File/CSaveAsMultipleFilesAction.cpp:147
@@ -3043,48 +3043,48 @@ msgid ""
 "format, etc).\n"
 msgstr ""
 "\n"
-"Para guardar un archivo grande (o solo una selección) como varios segmentos "
-"más pequeños puede crear marcas que definen los segmentos y pulsar en "
-"\"Guardar como varios archivos\" en el menú \"Archivo\".\n"
+"Para guardar un archivo grande (o solo una selecciÃ³n) como varios segmentos "
+"mÃ¡s pequeÃ±os puede crear marcas que definen los segmentos y pulsar en "
+"\"Guardar como varios archivos\" en el menÃº \"Archivo\".\n"
 "\n"
 "En general, las marcas pueden nombrarse '(' y ')'  para definir el comienzo "
 "y el final de cada segmento a guardar.\n"
 "Sin embargo, un marca ')' (cerrando una marca '(' anterior= se puede omitir "
 "si el segmento llega hasta el comienzo del siguiente segmento.\n"
-"La última marca ')' se puede omitir también si el último segmento definido "
+"La Ãºltima marca ')' se puede omitir tambiÃ©n si el Ãºltimo segmento definido "
 "llega hasta el final del archivo de audio original (o el final de la "
-"selección).\n"
-"Además, la marca '(' se puede opcionalmente nombrar '(xyz' si 'xyz' se tiene "
+"selecciÃ³n).\n"
+"AdemÃ¡s, la marca '(' se puede opcionalmente nombrar '(xyz' si 'xyz' se tiene "
 "que incluir en el nombre de archivo del segmento.\n"
 "\n"
-"Hay varios parámetros en la caja de diálogo que se muestra después de "
-"seleccionar \"Guardar como varios archivos\" en el menú \"Archivo\".\n"
-"El parámetro \"Guardar al directorio\" es el directorio donde colocar cada "
+"Hay varios parÃ¡metros en la caja de diÃ¡logo que se muestra despuÃ©s de "
+"seleccionar \"Guardar como varios archivos\" en el menÃº \"Archivo\".\n"
+"El parÃ¡metro \"Guardar al directorio\" es el directorio donde colocar cada "
 "archivo de segmento.\n"
-"El \"Prefijo del nombre de archivo\" se colocará antes del 'xyz' opcional "
+"El \"Prefijo del nombre de archivo\" se colocarÃ¡ antes del 'xyz' opcional "
 "del nombre de marca '(xyz'.\n"
-"El \"Sufijo del nombre de archivo\" se colocará después del 'xyz' opcional "
+"El \"Sufijo del nombre de archivo\" se colocarÃ¡ despuÃ©s del 'xyz' opcional "
 "del nombre de marca '(xyz'.\n"
-"El parámetro \"Formato\" especifica el formato en que se deben guardar los "
+"El parÃ¡metro \"Formato\" especifica el formato en que se deben guardar los "
 "segmentos.\n"
-"Después de que un nombre de archivo de segmento se haya formado juntando "
-"[directorio]/[prefijo][xyz][sufijo].[extensión del formato], si contiene "
-"'#', el '#' será reemplazado por un número basado en el orden en que se han "
+"DespuÃ©s de que un nombre de archivo de segmento se haya formado juntando "
+"[directorio]/[prefijo][xyz][sufijo].[extensiÃ³n del formato], si contiene "
+"'#', el '#' serÃ¡ reemplazado por un nÃºmero basado en el orden en que se han "
 "definido los segmentos.\n"
-"  Por ejemplo: \"/home/john/sounds/track #.wav\" se cambiará a \"/home/john/"
+"  Por ejemplo: \"/home/john/sounds/track #.wav\" se cambiarÃ¡ a \"/home/john/"
 "sounds/track 1.wav\" para el primer segmento que se guarde, y todos los "
-"segmentos siguientes contendrán un número incremental.\n"
-"  Así que, debe usar un '#' en el directorio, prefijo, xyz, o el sufijo para "
-"crear nombres de archivos únicos cuando guarde los segmentos.\n"
-"El parámetro \"Número de segmento inicial\" se puede cambiar del '1' para "
-"empezar las sustituciónes del '#' en algo diferente.\n"
+"segmentos siguientes contendrÃ¡n un nÃºmero incremental.\n"
+"  AsÃ­ que, debe usar un '#' en el directorio, prefijo, xyz, o el sufijo para "
+"crear nombres de archivos Ãºnicos cuando guarde los segmentos.\n"
+"El parÃ¡metro \"NÃºmero de segmento inicial\" se puede cambiar del '1' para "
+"empezar las sustituciÃ³nes del '#' en algo diferente.\n"
 "Se puede seleccionar \"Abrir segmentos guardados\" si quiere abrir los "
-"segmentos después de que hayan sido guardados.\n"
-"El parámetro \"Aplicable a\" indica si la acción debería afectar solo la "
-"selección actual o el archivo entero.\n"
-"Se puede seleccionar \"Preguntar una sola vez los parámetros para guardar\" "
-"si quiere que los mismos parámetros de guardar se apliquen a todos los "
-"archivos (esto es, tipo de compresión, formato de audio, etc.).\n"
+"segmentos despuÃ©s de que hayan sido guardados.\n"
+"El parÃ¡metro \"Aplicable a\" indica si la acciÃ³n deberÃ­a afectar solo la "
+"selecciÃ³n actual o el archivo entero.\n"
+"Se puede seleccionar \"Preguntar una sola vez los parÃ¡metros para guardar\" "
+"si quiere que los mismos parÃ¡metros de guardar se apliquen a todos los "
+"archivos (esto es, tipo de compresiÃ³n, formato de audio, etc.).\n"
 
 #: src/backend/File/CSaveAsMultipleFilesAction.cpp:174
 msgid "Save As Multiple Files"
@@ -3107,7 +3107,7 @@ msgstr "Guardar &como"
 #: src/backend/File/CSaveAsAudioFileAction.cpp:46
 #, fuzzy
 msgid "Save an Audio File as a Chosen Filename"
-msgstr "El archivo de audio a usar como núcleo del filtro"
+msgstr "El archivo de audio a usar como nÃºcleo del filtro"
 
 #: src/backend/File/CBurnToCDAction.cpp:68
 msgid "cdrdao not found in the given path: "
@@ -3115,7 +3115,7 @@ msgstr "no se ha encontrado cdrdao en la ruta:"
 
 #: src/backend/File/CBurnToCDAction.cpp:96
 msgid "Too many tracks defined by cues.  99 is the maximum."
-msgstr "Demasiadas pistas definidas por marcas. 99 es el máximo."
+msgstr "Demasiadas pistas definidas por marcas. 99 es el mÃ¡ximo."
 
 #: src/backend/File/CBurnToCDAction.cpp:99
 msgid ""
@@ -3124,9 +3124,9 @@ msgid ""
 "Would you like to continue burning the audio as one track?"
 msgstr ""
 "No se han encontrado marcas nombradas apropiadamente para definir las pistas "
-"a grabar. Vea el botón 'explicación' en la ventana previa para ver cómo "
+"a grabar. Vea el botÃ³n 'explicaciÃ³n' en la ventana previa para ver cÃ³mo "
 "nombrar las marcas.\n"
-"¿Quiere continuar grabando el audio como una pista?"
+"Â¿Quiere continuar grabando el audio como una pista?"
 
 #: src/backend/File/CBurnToCDAction.cpp:121
 msgid "Track is less than 4 seconds long."
@@ -3138,7 +3138,7 @@ msgstr "Espacio entre pistas:"
 
 #: src/backend/File/CBurnToCDAction.cpp:138
 msgid "Total Burn Length: "
-msgstr "Duración total de la grabación:"
+msgstr "DuraciÃ³n total de la grabaciÃ³n:"
 
 #: src/backend/File/CBurnToCDAction.cpp:138
 #: src/backend/File/CBurnToCDAction.cpp:146
@@ -3153,7 +3153,7 @@ msgstr "El total de datos a escribir es"
 
 #: src/backend/File/CBurnToCDAction.cpp:146
 msgid "You will need an 80 minute CD\n"
-msgstr "Necesitará un CD de 80 minutos\n"
+msgstr "NecesitarÃ¡ un CD de 80 minutos\n"
 
 #: src/backend/File/CBurnToCDAction.cpp:151
 msgid ""
@@ -3170,8 +3170,8 @@ msgid ""
 "cdrdao returned non-zero exit status.  Consult standard output/error for "
 "problems."
 msgstr ""
-"cdrado devolvió un código de estado diferente de cero. Consulte los "
-"problemas en la salida estándar y de errores."
+"cdrado devolviÃ³ un cÃ³digo de estado diferente de cero. Consulte los "
+"problemas en la salida estÃ¡ndar y de errores."
 
 #: src/backend/File/CBurnToCDAction.cpp:377
 msgid "Successful Burn Count: "
@@ -3179,11 +3179,11 @@ msgstr "Contador de grabaciones correctas:"
 
 #: src/backend/File/CBurnToCDAction.cpp:377
 msgid "Would you like to burn another?"
-msgstr "¿Quiere grabar otro?"
+msgstr "Â¿Quiere grabar otro?"
 
 #: src/backend/File/CBurnToCDAction.cpp:377
 msgid "(Insert a new blank, and then press 'Yes'.)"
-msgstr "(Inserte un nuevo cd virgen y pulse 'Sí'.)"
+msgstr "(Inserte un nuevo cd virgen y pulse 'SÃ­'.)"
 
 #: src/backend/File/CBurnToCDAction.cpp:405
 #, fuzzy
@@ -3202,17 +3202,17 @@ msgid ""
 "\t"
 msgstr ""
 "\n"
-"Esta acción se puede usar para grabar el archivo de audio cargado en un CD "
+"Esta acciÃ³n se puede usar para grabar el archivo de audio cargado en un CD "
 "usando la utilidad cdrdao (CD-R Disk-At-Once).\n"
 "\n"
 "Las pistas se definen por marcas nombradas de la forma '('...[')']. Vea con "
-"el botón 'Explicación' en la acción 'Archivo->Guardar como varios ficheros' "
-"cómo se hace. Algunas partes de esa explicación deberían ser obviamente no "
+"el botÃ³n 'ExplicaciÃ³n' en la acciÃ³n 'Archivo->Guardar como varios ficheros' "
+"cÃ³mo se hace. Algunas partes de esa explicaciÃ³n deberÃ­an ser obviamente no "
 "aplicables.\n"
 "\n"
 "cdrdao debe estar instalado en el sistema. El comando 'cdrdao' se busca en "
-"$PATH cuando ReZound arranca, pero si no se encuentra tendrá que "
-"proporcionar la ruta al comando en la ventana de diálogo de la acción.\n"
+"$PATH cuando ReZound arranca, pero si no se encuentra tendrÃ¡ que "
+"proporcionar la ruta al comando en la ventana de diÃ¡logo de la acciÃ³n.\n"
 "\t"
 
 #: src/backend/File/CBurnToCDAction.cpp:451
@@ -3240,7 +3240,7 @@ msgstr ""
 #: src/backend/CMacroRecorder.cpp:44
 #, fuzzy
 msgid "Do you want to overwrite it?"
-msgstr "¿Quiere continuar?"
+msgstr "Â¿Quiere continuar?"
 
 #: src/backend/CMacroRecorder.cpp:66
 msgid "Nothing was recorded in the macro: "
@@ -3290,11 +3290,11 @@ msgstr "No se ha encontrado manejador para soportar el formato de"
 
 #: src/backend/ASoundTranslator.cpp:146
 msgid "Would you like to use a raw format?"
-msgstr "¿Sin formato?"
+msgstr "Â¿Sin formato?"
 
 #: src/backend/ASoundTranslator.cpp:150
 msgid " -- unhandled format/extension for the filename"
-msgstr " -- formato/extensión no manejado para el nombre de archivo"
+msgstr " -- formato/extensiÃ³n no manejado para el nombre de archivo"
 
 #: src/backend/ASoundFileManager.cpp:141
 msgid " -- file already opened"
@@ -3302,7 +3302,7 @@ msgstr " -- archivo ya abierto"
 
 #: src/backend/ASoundFileManager.cpp:268 src/backend/ASoundFileManager.cpp:325
 msgid " -- file is currently opened"
-msgstr " -- el archivo está actualmente abierto"
+msgstr " -- el archivo estÃ¡ actualmente abierto"
 
 #: src/backend/ASoundFileManager.cpp:274 src/backend/ASoundFileManager.cpp:329
 msgid "Overwrite Existing File"
@@ -3314,11 +3314,11 @@ msgstr "Guardar sonido modificado"
 
 #: src/backend/ASoundFileManager.cpp:410
 msgid "Are you sure you want to revert to the last saved copy of"
-msgstr "¿Está seguro de que quiere volver a la última copia guardada de"
+msgstr "Â¿EstÃ¡ seguro de que quiere volver a la Ãºltima copia guardada de"
 
 #: src/backend/ASoundFileManager.cpp:521
 msgid "Load sound from previous session?"
-msgstr "¿Cargar sonido de la sesión previa?"
+msgstr "Â¿Cargar sonido de la sesiÃ³n previa?"
 
 #: src/backend/CJACKSoundPlayer.cpp:125
 msgid "Choose Port for Output Channel "
@@ -3377,9 +3377,9 @@ msgid ""
 "file will be deleted)?"
 msgstr ""
 "Se ha encontrado un archivo temporal que indica que este archivo estaba "
-"siendo editado anteriormente y se murio el proceso o se colgó.\n"
+"siendo editado anteriormente y se murio el proceso o se colgÃ³.\n"
 "\n"
-"¿Desea intentar recuperar de este archivo temporal (sino el archivo será "
+"Â¿Desea intentar recuperar de este archivo temporal (sino el archivo serÃ¡ "
 "borrado)?"
 
 #: src/backend/ALFO.cpp:489
@@ -3424,11 +3424,11 @@ msgstr "Onda cuadrada [0,1]"
 
 #: src/backend/Effects/CDistortionEffect.cpp:32
 msgid "Distortion -- Channel "
-msgstr "Distorsión -- Canal"
+msgstr "DistorsiÃ³n -- Canal"
 
 #: src/backend/Effects/CDistortionEffect.cpp:87
 msgid "Distortion"
-msgstr "Distorsión"
+msgstr "DistorsiÃ³n"
 
 #: src/backend/Effects/CFlangeEffect.cpp:47
 msgid " -- _delayTime is negative"
@@ -3453,7 +3453,7 @@ msgstr "Invirtiendo -- Canal"
 #: src/backend/Effects/CReverseEffect.cpp:71
 #: src/backend/Effects/CReverseEffect.cpp:94
 msgid "Cancelling Reverse -- Channel "
-msgstr "Cancelando inversión -- Canal"
+msgstr "Cancelando inversiÃ³n -- Canal"
 
 #: src/backend/Effects/CChangeAmplitudeEffect.cpp:49
 msgid "Changing Amplitude -- Channel "
@@ -3473,19 +3473,19 @@ msgstr "Cambiar la ganancia de acuerdo a una curva"
 
 #: src/backend/Effects/CVariedRepeatEffect.cpp:43
 msgid "Varied Repeat -- Channel "
-msgstr "Repertición variable -- Canal"
+msgstr "ReperticiÃ³n variable -- Canal"
 
 #: src/backend/Effects/CVariedRepeatEffect.cpp:91
 msgid "Varied Repeat"
-msgstr "Repetición variable"
+msgstr "RepeticiÃ³n variable"
 
 #: src/backend/Effects/CVariedRepeatEffect.cpp:91
 msgid "Repeat the Selection Variably According to an LFO"
-msgstr "Repetir la selección variablemente de acuerdo a un LFO"
+msgstr "Repetir la selecciÃ³n variablemente de acuerdo a un LFO"
 
 #: src/backend/Effects/CChangeRateEffect.cpp:61
 msgid "newLength calulated out of range -- action not taken"
-msgstr "newLength calculado fuera de rango -- acción no realizada"
+msgstr "newLength calculado fuera de rango -- acciÃ³n no realizada"
 
 #: src/backend/Effects/CChangeRateEffect.cpp:74
 msgid "Changing Rate -- Channel "
@@ -3513,7 +3513,7 @@ msgstr "Cuantificar"
 
 #: src/backend/Effects/CQuantizeEffect.cpp:102
 msgid "Quantize the Number of Possible Sample Levels"
-msgstr "Cuantificar el número de niveles posibles de muestreo"
+msgstr "Cuantificar el nÃºmero de niveles posibles de muestreo"
 
 #: src/backend/Effects/CDelayEffect.cpp:87
 msgid "Delay -- Channel "
@@ -3549,54 +3549,54 @@ msgstr "Voltear hasta el final"
 
 #: src/backend/Edits/CSelectionEdit.cpp:32
 msgid "Move Stop to Start Position"
-msgstr "Mover el final de la selección al inicio de la misma"
+msgstr "Mover el final de la selecciÃ³n al inicio de la misma"
 
 #: src/backend/Edits/CSelectionEdit.cpp:33
 msgid "Move Start to Stop Position"
-msgstr "Mover el inicio de la selección al final de la misma"
+msgstr "Mover el inicio de la selecciÃ³n al final de la misma"
 
 #: src/backend/Edits/CSelectionEdit.cpp:39
 msgid "Move Start Position to Beginning"
-msgstr "Mover el inicio de la selección al principio"
+msgstr "Mover el inicio de la selecciÃ³n al principio"
 
 #: src/backend/Edits/CSelectionEdit.cpp:40
 msgid "Move Stop Position to End"
-msgstr "Mover el final de la selección al final"
+msgstr "Mover el final de la selecciÃ³n al final"
 
 #: src/backend/Edits/CSelectionEdit.cpp:41
 msgid "Move Stop Position to Beginning"
-msgstr "Mover la posición de para al principio"
+msgstr "Mover la posiciÃ³n de para al principio"
 
 #: src/backend/Edits/CSelectionEdit.cpp:42
 msgid "Move Start Position to End"
-msgstr "Mover el inicio de la selección al final"
+msgstr "Mover el inicio de la selecciÃ³n al final"
 
 #: src/backend/Edits/CSelectionEdit.cpp:43
 msgid "Move Stop Position Backward to Start Position"
-msgstr "Mover el final de la selección hacia atrás hasta el inicio de la misma"
+msgstr "Mover el final de la selecciÃ³n hacia atrÃ¡s hasta el inicio de la misma"
 
 #: src/backend/Edits/CSelectionEdit.cpp:44
 msgid "Move Start Position Forward to Stop Position"
-msgstr "Mover el inicio de la selección hacia el final de la misma"
+msgstr "Mover el inicio de la selecciÃ³n hacia el final de la misma"
 
 #: src/backend/Edits/CSelectionEdit.cpp:250
 msgid "Selection Change"
-msgstr "Cambio de selección"
+msgstr "Cambio de selecciÃ³n"
 
 #: src/backend/Edits/CSelectionEdit.cpp:250
 msgid "Selection Change From Mouse"
-msgstr "Cambio de selección con el ratón"
+msgstr "Cambio de selecciÃ³n con el ratÃ³n"
 
 #: src/backend/Edits/CSelectionEdit.cpp:271
 msgid "Grow or Slide Selection"
-msgstr "Aumentar o desplazar la selección"
+msgstr "Aumentar o desplazar la selecciÃ³n"
 
 #: src/backend/Edits/CDuplicateChannelEdit.cpp:48
 msgid ""
 "Inserting this many more channels will add more than the maximum allowed "
 "channels."
 msgstr ""
-"Insertar todos estos canales añadirá más del máximo de canales permitido."
+"Insertar todos estos canales aÃ±adirÃ¡ mÃ¡s del mÃ¡ximo de canales permitido."
 
 #: src/backend/Edits/CDuplicateChannelEdit.cpp:79
 msgid "Duplicate Channel"
@@ -3605,7 +3605,7 @@ msgstr "Duplicar canal"
 #: src/backend/Edits/CCueAction.cpp:87
 #, fuzzy
 msgid "Add Cue While Playing"
-msgstr "Añadir marca en esta posición"
+msgstr "AÃ±adir marca en esta posiciÃ³n"
 
 #: src/backend/Edits/CCueAction.cpp:143
 msgid "Remove Cue"
@@ -3625,7 +3625,7 @@ msgstr "Copiar a nuevo"
 
 #: src/backend/Edits/CCopyCutToNewEdit.cpp:99
 msgid "Copy to Selection to a Newly Created Sound Window"
-msgstr "Copiar selección a una ventana creada nueva de sonido"
+msgstr "Copiar selecciÃ³n a una ventana creada nueva de sonido"
 
 #: src/backend/Edits/CCopyCutToNewEdit.cpp:118
 msgid "Cut to New"
@@ -3633,15 +3633,15 @@ msgstr "Cortar a nuevo"
 
 #: src/backend/Edits/CCopyCutToNewEdit.cpp:118
 msgid "Cut and Move the Selection to a Newly Created Sound Window"
-msgstr "Cortar y mover la selección a una ventana creada nueva de sonido"
+msgstr "Cortar y mover la selecciÃ³n a una ventana creada nueva de sonido"
 
 #: src/backend/Edits/CAddChannelsEdit.cpp:60
 msgid "Add Channels"
-msgstr "Añadir canales"
+msgstr "AÃ±adir canales"
 
 #: src/backend/Edits/CAddChannelsEdit.cpp:60
 msgid "Add New Channels of Audio"
-msgstr "Añadir nuevos canales de audio"
+msgstr "AÃ±adir nuevos canales de audio"
 
 #: src/backend/Edits/CRemoveChannelsEdit.cpp:76
 msgid "Remove Channels"
@@ -3663,7 +3663,7 @@ msgstr ""
 #: src/backend/Edits/CPasteAsNewEdit.cpp:114
 #: src/backend/Edits/CPasteEdit.cpp:410
 msgid "No data has been cut or copied to the selected clipboard yet."
-msgstr "Todavía no se han cortado o copiado datos al portapapeles."
+msgstr "TodavÃ­a no se han cortado o copiado datos al portapapeles."
 
 #: src/backend/Edits/CRotateEdit.cpp:33
 msgid " -- amount is negative"
@@ -3704,7 +3704,7 @@ msgstr "Pegar insertando"
 
 #: src/backend/Edits/CPasteEdit.cpp:465
 msgid "Insert at the Start Position"
-msgstr "Insertar al principio de la selección"
+msgstr "Insertar al principio de la selecciÃ³n"
 
 #: src/backend/Edits/CPasteEdit.cpp:485
 msgid "Replace Paste"
@@ -3712,7 +3712,7 @@ msgstr "Pegar reemplazando"
 
 #: src/backend/Edits/CPasteEdit.cpp:485
 msgid "Replace the Selection"
-msgstr "Reemplazar la selección"
+msgstr "Reemplazar la selecciÃ³n"
 
 #: src/backend/Edits/CPasteEdit.cpp:504
 msgid "Overwrite Paste"
@@ -3720,7 +3720,7 @@ msgstr "Pegar sobreescribiendo"
 
 #: src/backend/Edits/CPasteEdit.cpp:504
 msgid "Overwrite Starting at the Start Position"
-msgstr "Sobreescribir empezando en el prinicipio de la selección"
+msgstr "Sobreescribir empezando en el prinicipio de la selecciÃ³n"
 
 #: src/backend/Edits/CPasteEdit.cpp:524
 msgid "Limited Overwrite Paste"
@@ -3730,8 +3730,8 @@ msgstr "Pegar sobreescribiendo limitado"
 msgid ""
 "Overwrite Starting at the Start Position But Not Beyond the Stop Position"
 msgstr ""
-"Sobreescribir empezando en el principio de la selección pero sin sobrepasar "
-"el final de la selección"
+"Sobreescribir empezando en el principio de la selecciÃ³n pero sin sobrepasar "
+"el final de la selecciÃ³n"
 
 #: src/backend/Edits/CPasteEdit.cpp:544
 msgid "Mix Paste"
@@ -3739,7 +3739,7 @@ msgstr "Pegar mezclando"
 
 #: src/backend/Edits/CPasteEdit.cpp:544
 msgid "Mix Starting at the Start Position"
-msgstr "Mezclar empezando en el prinicipio de la selección"
+msgstr "Mezclar empezando en el prinicipio de la selecciÃ³n"
 
 #: src/backend/Edits/CPasteEdit.cpp:563
 msgid "Limited Mix Paste"
@@ -3748,8 +3748,8 @@ msgstr "Pegar mezclando limitado"
 #: src/backend/Edits/CPasteEdit.cpp:563
 msgid "Mix Starting at the Start Position But Not Beyond the Stop Position"
 msgstr ""
-"Mezclar empezando en el principio de la selección pero sin sobrepasar el "
-"final de la selección"
+"Mezclar empezando en el principio de la selecciÃ³n pero sin sobrepasar el "
+"final de la selecciÃ³n"
 
 #: src/backend/Edits/CPasteEdit.cpp:582
 msgid "Fit Mix Paste"
@@ -3760,8 +3760,8 @@ msgid ""
 "Mix Starting at the Start Position But Change the Rate of the Clipboard to "
 "Fit Within the Selection"
 msgstr ""
-"Mezclar empezando en el principio de la selección pero cambiando la tasa de "
-"muestreo para encajar en la selección"
+"Mezclar empezando en el principio de la selecciÃ³n pero cambiando la tasa de "
+"muestreo para encajar en la selecciÃ³n"
 
 #: src/backend/Edits/CInsertSilenceEdit.cpp:31
 msgid " -- silenceLength is less than zero: "
@@ -3824,7 +3824,7 @@ msgstr ""
 #: src/backend/CMacroPlayer.cpp:190
 #, fuzzy
 msgid "Action: "
-msgstr "Selección:"
+msgstr "SelecciÃ³n:"
 
 #: src/backend/CMacroPlayer.cpp:190
 msgid ""
@@ -3897,7 +3897,7 @@ msgid ""
 "There is already data on this recording clipboard.  Do you want to record "
 "something new?"
 msgstr ""
-"Ya hay datos en este portapapeles de grabación. ¿Quiere grabar algo nuevo?"
+"Ya hay datos en este portapapeles de grabaciÃ³n. Â¿Quiere grabar algo nuevo?"
 
 #: src/backend/ClibaudiofileSoundTranslator.cpp:88
 msgid " -- error opening"
@@ -3917,8 +3917,8 @@ msgid ""
 "Saving user notes or cues is unimplemented for FLAC\n"
 "Do you wish to continue?"
 msgstr ""
-"Guardar notas o marcas del usuario no está implementado para FLAC\n"
-"¿Quiere continuar?"
+"Guardar notas o marcas del usuario no estÃ¡ implementado para FLAC\n"
+"Â¿Quiere continuar?"
 
 #: src/backend/Generate/CGenerateNoiseAction.cpp:258
 msgid "Generate Noise"
@@ -3938,34 +3938,34 @@ msgstr "Genera tono"
 
 #: src/backend/ASoundRecorder.cpp:536
 msgid "No audio input method could be initialized"
-msgstr "Ningún método de entrada de audio se ha podido inicializar"
+msgstr "NingÃºn mÃ©todo de entrada de audio se ha podido inicializar"
 
 #: src/backend/ASoundRecorder.cpp:542
 msgid ""
 "Either no audio input method was enabled at configure-time, or no method was "
 "recognized in the registry:AudioInputMethods[] setting"
 msgstr ""
-"Ningún método de entrada de audio se ha habilitado en la configuración, o "
-"ningún método se ha reconocido en el registro: ajuste AudioInputMethods[]"
+"NingÃºn mÃ©todo de entrada de audio se ha habilitado en la configuraciÃ³n, o "
+"ningÃºn mÃ©todo se ha reconocido en el registro: ajuste AudioInputMethods[]"
 
 #: src/backend/ASoundPlayer.cpp:585
 msgid ""
 "No audio output method could be initialized -- Playing will be disabled."
 msgstr ""
-"No se ha podido inicializar ningún método de salida de audio -- La "
-"reproducción estará desactivada."
+"No se ha podido inicializar ningÃºn mÃ©todo de salida de audio -- La "
+"reproducciÃ³n estarÃ¡ desactivada."
 
 #: src/backend/ASoundPlayer.cpp:590
 msgid ""
 "Either no audio output method was enabled at configure-time, or no method "
 "was recognized in the registry:AudioOutputMethods[] setting"
 msgstr ""
-"Ningún método de salida de audio se ha habilitado en la configuración, o "
-"ningún método se ha reconocido en el registro: ajuste AudioOutputMethods[]"
+"NingÃºn mÃ©todo de salida de audio se ha habilitado en la configuraciÃ³n, o "
+"ningÃºn mÃ©todo se ha reconocido en el registro: ajuste AudioOutputMethods[]"
 
 #: src/backend/main_controls.cpp:157
 msgid "Are you sure you want to quit?"
-msgstr "¿Está seguro de querer salir?"
+msgstr "Â¿EstÃ¡ seguro de querer salir?"
 
 #: src/backend/Remaster/CNormalizeAction.cpp:72
 msgid "Analyzing -- Channel "
@@ -3989,7 +3989,7 @@ msgid ""
 "Normalize Amplitude (Some of this technique is experimental, please let me "
 "know if you approve or disapprove of the result's quality)"
 msgstr ""
-"Normalizar amplitud (Parte de esta técnica es experimental, por favor, hazme "
+"Normalizar amplitud (Parte de esta tÃ©cnica es experimental, por favor, hazme "
 "saber si apruebas o desapruebas la calidad del resultado)"
 
 #: src/backend/Remaster/CRemoveDCAction.cpp:76
@@ -4011,7 +4011,7 @@ msgstr "Invirtiendo fase - Canal"
 #: src/backend/Remaster/CInvertPhaseAction.cpp:57
 #: src/backend/Remaster/CInvertPhaseAction.cpp:71
 msgid "Cancelling Invert Phase -- Channel "
-msgstr "Cancelando inversión de fase -- Canal"
+msgstr "Cancelando inversiÃ³n de fase -- Canal"
 
 #: src/backend/Remaster/CInvertPhaseAction.cpp:116
 msgid "Invert Phase"
@@ -4035,11 +4035,11 @@ msgstr "Cambiar la tasa de muestreo"
 
 #: src/backend/Remaster/CMarkQuietAreasAction.cpp:157
 msgid "Mark Quiet Areas"
-msgstr "Marcar las áreas silenciosas"
+msgstr "Marcar las Ã¡reas silenciosas"
 
 #: src/backend/Remaster/CMarkQuietAreasAction.cpp:157
 msgid "Mark Quiet Areas with Cues"
-msgstr "Marcar las áreas silenciosas con marcas"
+msgstr "Marcar las Ã¡reas silenciosas con marcas"
 
 #: src/backend/Remaster/CMonoizeAction.cpp:85
 #: src/backend/Remaster/CMonoizeAction.cpp:191
@@ -4053,17 +4053,17 @@ msgstr "Pasar a mono"
 #: src/backend/Remaster/CShortenQuietAreasAction.cpp:112
 #, fuzzy
 msgid "Shortening Quiet Areas"
-msgstr "Marcar las áreas silenciosas"
+msgstr "Marcar las Ã¡reas silenciosas"
 
 #: src/backend/Remaster/CShortenQuietAreasAction.cpp:294
 #, fuzzy
 msgid "Shorten Quiet Areas"
-msgstr "Marcar las áreas silenciosas"
+msgstr "Marcar las Ã¡reas silenciosas"
 
 #: src/backend/Remaster/CShortenQuietAreasAction.cpp:294
 #, fuzzy
 msgid "Shorten Quiet Areas with Cues"
-msgstr "Marcar las áreas silenciosas con marcas"
+msgstr "Marcar las Ã¡reas silenciosas con marcas"
 
 #: src/backend/Remaster/CBalanceAction.cpp:57
 msgid "Changing Balance"
@@ -4101,9 +4101,9 @@ msgid ""
 "of a very short\n"
 "regions in the audio where the peak of a waveform was clipped"
 msgstr ""
-"(NOTA: Estaba sólo tonteando al intentar esto. Es realmente inútil como "
-"está. Lo trabajaré mejor más adelante) Eliminar recortes sirve para "
-"arreglar, adivinando la forma natural de una pequeña región de audio donde "
+"(NOTA: Estaba sÃ³lo tonteando al intentar esto. Es realmente inÃºtil como "
+"estÃ¡. Lo trabajarÃ© mejor mÃ¡s adelante) Eliminar recortes sirve para "
+"arreglar, adivinando la forma natural de una pequeÃ±a regiÃ³n de audio donde "
 "la forma de onda ha sido recortada"
 
 #: src/backend/Remaster/CChangePitchAction.cpp:63
@@ -4113,7 +4113,7 @@ msgstr "Cambiando tono -- Canal"
 #: src/backend/Remaster/CChangePitchAction.cpp:98
 msgid "No library was found at configure time to enable pitch changing"
 msgstr ""
-"No se ha encontrado la librería al configurar para permitir el cambio de tono"
+"No se ha encontrado la librerÃ­a al configurar para permitir el cambio de tono"
 
 #: src/backend/Remaster/CChangePitchAction.cpp:117
 msgid "Change Pitch"
@@ -4126,7 +4126,7 @@ msgstr "Cambiando velocidad -- Canal"
 #: src/backend/Remaster/CChangeTempoAction.cpp:116
 msgid "No library was found at configure time to enable tempo changing"
 msgstr ""
-"No se ha encontrado la librería al configurar para permitir el cambio de "
+"No se ha encontrado la librerÃ­a al configurar para permitir el cambio de "
 "velocidad"
 
 #: src/backend/Remaster/CChangeTempoAction.cpp:136
@@ -4146,7 +4146,7 @@ msgstr ""
 "Aplica una ganancia [0,1] al sonido cuando el nivel cae por debajo del "
 "umbral.\n"
 "La ganancia cambia con una velocidad de acuerdo a los tiempos de ataque y "
-"liberación."
+"liberaciÃ³n."
 
 #: src/backend/Remaster/CNoiseGateAction.cpp:133
 msgid "Noise Gate"
@@ -4169,16 +4169,16 @@ msgid ""
 "one better, then please contact me.  Contact information is in the about "
 "dialog under the file menu"
 msgstr ""
-"Este es mi primer intento creando un algoritmo de compresión. No estoy "
-"seguro como se comparará con otras herramientas profesionales. Realmente, "
+"Este es mi primer intento creando un algoritmo de compresiÃ³n. No estoy "
+"seguro como se compararÃ¡ con otras herramientas profesionales. Realmente, "
 "tengo poca experiencia con compresores hardware. Si eres un usuario "
-"experimentado y puedes dar sugerencias inteligentes sobre cómo mejorar lo "
-"presente, contáctame. Mi información de contacto está en la ventana sobre "
-"ReZound en el menú archivo"
+"experimentado y puedes dar sugerencias inteligentes sobre cÃ³mo mejorar lo "
+"presente, contÃ¡ctame. Mi informaciÃ³n de contacto estÃ¡ en la ventana sobre "
+"ReZound en el menÃº archivo"
 
 #: src/backend/Remaster/CCompressorAction.cpp:282
 msgid "Dynamic Range Compressor"
-msgstr "Compresor de rango dinámico"
+msgstr "Compresor de rango dinÃ¡mico"
 
 #: src/backend/Remaster/CAdaptiveNormalizeAction.cpp:78
 #, fuzzy
@@ -4208,15 +4208,15 @@ msgstr ""
 
 #: src/backend/File/parse_segment_cues.h:103
 msgid " -- internal error -- invalid state: "
-msgstr " -- error interno -- estado inválido:"
+msgstr " -- error interno -- estado invÃ¡lido:"
 
 #~ msgid ""
 #~ "About to write data to burn.  Afterwards burning will begin.  Watch "
 #~ "standard output/error for progress information, or just wait for cdrdao "
 #~ "to finish."
 #~ msgstr ""
-#~ "Se van a escribir los datos a grabar. Después empezará la grabación. Vea "
-#~ "en la salida estándar y de errores la información de progreso, o espere a "
+#~ "Se van a escribir los datos a grabar. DespuÃ©s empezarÃ¡ la grabaciÃ³n. Vea "
+#~ "en la salida estÃ¡ndar y de errores la informaciÃ³n de progreso, o espere a "
 #~ "que cdrdao termine."
 
 #~ msgid "Total data to be burned is too large: "
