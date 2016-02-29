@@ -25,11 +25,11 @@
 ## by automake, so it's ok to have @MACROS@ that will be set by configure
 
 
-## INCLUDES is automatically added to CXXFLAGS at compile time. The
+## AM_CPPFLAGS is automatically added to CXXFLAGS at compile time. The
 ## $(top_srcdir) macro is set by configure. It's important to use $(top_srcdir)
 ## in case a user decides to build in a separate directory from the base package
 ## directory. Using absolute, or relative paths is a bad idea.
-INCLUDES=\
+AM_CPPFLAGS=\
 	 -I$(top_srcdir)/src/misc \
 	 -I$(top_builddir)/src/misc/missing/generated \
 	 -I$(top_srcdir)/src/PoolFile
