@@ -774,9 +774,12 @@ AC_DEFINE_DIR(DATA_DIR,datadir,[ This the --datadir (share) set by configure ])
 # Internationalization and Localization                                    #
 ############################################################################
 
+orig_CPPFLAGS="$CPPFLAGS"
+CPPFLAGS="-fpermissive $CPPFLAGS" # working around a 64bit compiling bug in gettext.m4 (which comes from a tarball packaged with autopoint)
 AC_CHECK_HEADERS(libintl.h)
 AM_GNU_GETTEXT_VERSION([0.11.5])
 AM_GNU_GETTEXT([external])
+CPPFLAGS="$orig_CPPFLAGS"
 
 
 

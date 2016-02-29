@@ -51,7 +51,7 @@ DECLARE_STATIC_CPATH // to declare CPath::dirDelim
 
 static void setupWindows(CMainWindow *mainWindow);
 
-static void setLocaleFont(FXApp *application);
+static void setupLocale(FXApp *application);
 
 // QQQ
 void enableAutoRepeat(void *display,bool enable);
@@ -81,7 +81,7 @@ int main(int argc,char* argv[])
 			enableAutoRepeat(application->getDisplay(),true);
 
 #ifdef ENABLE_NLS
-		setLocaleFont(application);
+		setupLocale(application);
 #endif
 
 		//printNormalFontProperties(application);
@@ -221,78 +221,14 @@ void setupWindows(CMainWindow *mainWindow)
 }
 
 #ifdef ENABLE_NLS
-void setLocaleFont(FXApp *application)
+void setupLocale(FXApp *application)
 {
 	/*??? it'd be nice if I knew if the font choice was overridden in the FOX registry... I should also have a font dialog for choosing in the config system later */
 	string lang=setlocale(LC_MESSAGES,NULL);
 
-	// it's important to set the default locale for STL streams too (but remove the numeric puctuation because the STL putting punctuation in a number doesn't jive when atoi/f parses it)
+	// it's important to set the default locale for STL streams too (but remove the numeric punctuation because the STL putting punctuation in a number doesn't jive when atoi/f parses it)
 	locale loc(lang.c_str());
 	std::locale::global(std::locale(loc,std::locale::classic(),std::locale::numeric));
-
-	if(lang=="")
-		return;
-	else if(lang=="ru" || lang=="ru_RU")
-	{ // setup KOI-8 encoded font
-		FXFontDesc desc={
-			"helvetica",
-			100,
-			FONTWEIGHT_BOLD,
-			FONTSLANT_REGULAR,
-			FONTENCODING_KOI8_R,
-		};
-
-		application->setNormalFont(new FXFont(application,desc));
-	}
-	else if(lang=="de" || lang=="de_DE")
-	{ // setup ISO_8859-2 encoded font
-		FXFontDesc desc={
-			"helvetica",
-			90,
-			FONTWEIGHT_BOLD,
-			FONTSLANT_REGULAR,
-			FONTENCODING_ISO_8859_1,
-		};
-
-		application->setNormalFont(new FXFont(application,desc));
-	}
-	else if(lang=="es" || lang=="es_ES")
-	{ // setup ISO_8859-1 encoded font
-		FXFontDesc desc={
-			"helvetica",
-			90,
-			FONTWEIGHT_BOLD,
-			FONTSLANT_REGULAR,
-			FONTENCODING_ISO_8859_1,
-		};
-
-		application->setNormalFont(new FXFont(application,desc));
-	}
-	else if(lang=="fi" || lang=="fi_FI")
-	{ // setup ISO_8859-1 encoded font
-		FXFontDesc desc={
-			"helvetica",
-			90,
-			FONTWEIGHT_BOLD,
-			FONTSLANT_REGULAR,
-			FONTENCODING_ISO_8859_1,
-		};
-
-		application->setNormalFont(new FXFont(application,desc));
-	}
-	else if(lang=="fr" || lang=="fr_FR")
-	{ // setup ISO_8859-1 encoded font
-		FXFontDesc desc={
-			"helvetica",
-			90,
-			FONTWEIGHT_BOLD,
-			FONTSLANT_REGULAR,
-			FONTENCODING_ISO_8859_1,
-		};
-
-		application->setNormalFont(new FXFont(application,desc));
-	}
-
 }
 #endif
 
