@@ -65,18 +65,8 @@ CPasteEdit::~CPasteEdit()
 {
 }
 
-#include <stdio.h> // ??? just for the printf below
 bool CPasteEdit::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo)
 {
-	for(unsigned y=0;y<MAX_CHANNELS;y++)
-	{
-		for(unsigned x=0;x<MAX_CHANNELS;x++)
-		{
-			printf("%d ",(int)pasteChannels[y][x]);
-		}
-		printf("\n");
-	}
-
 	ASoundClipboard *clipboard=clipboards[gWhichClipboard];
 	const sample_pos_t clipboardLength=clipboard->getLength(actionSound->sound->getSampleRate());
 	
