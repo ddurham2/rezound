@@ -41,10 +41,6 @@ CrezSoundTranslator::~CrezSoundTranslator()
 {
 }
 
-// need to include this I use some of the template *methods* for types that are no where else
-// so the explicit instantation at the bottom of CSound.cpp doesn't instantiate everything
-#include <TPoolFile.cpp>
-
 struct RFormatInfo1
 {
 	uint32_t version;

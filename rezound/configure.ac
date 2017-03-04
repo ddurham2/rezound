@@ -85,7 +85,7 @@ AC_PATH_PROG(CDRDAO, cdrdao)
 ############################################################################
 ajv_CXX_FLAG(-g)
 ajv_CXX_FLAG(-Wall)
-ajv_CXX_FLAG(-std=c++0x)
+ajv_CXX_FLAG(-std=c++11)
 ajv_CXX_FLAG(-stdlib=libstdc++)
 ajv_CXX_FLAG(-Wno-unused-function)
 ajv_CXX_FLAG(-Wno-unused-variable)

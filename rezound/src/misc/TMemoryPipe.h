@@ -24,6 +24,7 @@
 #include "../../config/common.h"
 
 #include <stdexcept>
+#include <string>
 
 #include "CMutex.h"
 #include "CConditionVariable.h"

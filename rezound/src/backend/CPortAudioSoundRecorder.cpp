@@ -70,7 +70,7 @@ void CPortAudioSoundRecorder::initialize(CSound *sound)
 #ifdef ENABLE_PORTAUDIO_V19
 		PaStreamParameters input = { 
                         gPortAudioOutputDevice, 
-                        sound->getChannelCount(), 
+                        static_cast<int>(sound->getChannelCount()),
                         sampleFormat, 
                         Pa_GetDeviceInfo(gPortAudioOutputDevice)->defaultLowInputLatency ,
                         NULL};

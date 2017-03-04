@@ -2289,7 +2289,6 @@ void CSound::setUserNotes(const string &notes)
 
 
 // this is the explicit instantiation of the TPoolFile for CSound's purposes 
-#include <TPoolFile.cpp>
 template class TPoolFile<sample_pos_t,uint64_t>;
 
 // Some explicit template method instantiations (not sure why some are necessary and some aren't)

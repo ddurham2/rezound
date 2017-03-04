@@ -73,7 +73,7 @@ void CPortAudioSoundPlayer::initialize()
 		// open a PortAudio stream
 #ifdef ENABLE_PORTAUDIO_V19
 		PaStreamParameters output = { gPortAudioOutputDevice, 
-			gDesiredOutputChannelCount, 
+			static_cast<int>(gDesiredOutputChannelCount),
 			sampleFormat,
 			Pa_GetDeviceInfo(gPortAudioOutputDevice)->defaultLowOutputLatency ,
 			NULL};
