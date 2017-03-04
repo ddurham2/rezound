@@ -133,9 +133,6 @@ AC_CHECK_HEADER(sstream,
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS([fcntl.h limits.h stddef.h stdlib.h string.h sys/ioctl.h sys/vfs.h sys/statvfs.h sys/statfs.h unistd.h])
-AC_CHECK_HEADERS([boost/detail/atomic_count.hpp], [], [
-	AC_MSG_ERROR([boost header not found])
-])
 
 
 
