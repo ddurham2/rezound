@@ -573,7 +573,7 @@ template<class l_addr_t,class p_addr_t>
 	invalidateAllCachedBlocks(false,poolId);
 
 	// remove poolName with poolId of the parameter
-	for(map<const string,poolId_t>::const_iterator t=poolNames.begin();t!=poolNames.end();t++)
+	for(auto t=poolNames.begin();t!=poolNames.end();t++)
 	{
 		if(t->second==poolId)
 		{
@@ -744,7 +744,7 @@ template<class l_addr_t,class p_addr_t>
 	if(!isValidPoolId(poolId))
 		throw runtime_error(string(__func__)+" -- poolId parameter out of bounds: "+istring(poolId));
 
-	for(map<const string,poolId_t>::const_iterator i=poolNames.begin();i!=poolNames.end();i++)
+	for(auto i=poolNames.begin();i!=poolNames.end();i++)
 	{
 		if(i->second==poolId)
 			return i->first;
@@ -1141,12 +1141,12 @@ template<class l_addr_t,class p_addr_t>
 {
 	if(add_or_sub>0)
 	{
-		for(typename vector<RLogicalBlock>::iterator i=first;i!=end;i++)
+		for(auto i=first;i!=end;i++)
 			i->logicalStart+=offset;
 	}
 	else
 	{
-		for(typename vector<RLogicalBlock>::iterator i=first;i!=end;i++)
+		for(auto i=first;i!=end;i++)
 			i->logicalStart-=offset;
 	}
 }
@@ -1578,7 +1578,7 @@ template<class l_addr_t,class p_addr_t>
 					p_addr_t moveTo=0;
 
 					// find a new place to put b (look backwards, because we're building up the beginning)
-					for(typename map<p_addr_t,p_addr_t>::reverse_iterator i=physicalBlockList.rbegin();i!=physicalBlockList.rend();i++)
+					for(auto i=physicalBlockList.rbegin();i!=physicalBlockList.rend();i++)
 					{
 						typename map<p_addr_t,p_addr_t>::reverse_iterator prev_i=i; prev_i++;
 						if(prev_i!=physicalBlockList.rend())
@@ -2250,7 +2250,7 @@ template<class l_addr_t,class p_addr_t>
 	RCachedBlock *found=NULL;
 
 	// look to see if this block is already cached in the active cached blocks
-	for(typename set<RCachedBlock *>::iterator i=activeCachedBlocks.begin();i!=activeCachedBlocks.end();i++)
+	for(auto i=activeCachedBlocks.begin();i!=activeCachedBlocks.end();i++)
 	{
 		RCachedBlock *cachedBlock=(*i);
 		if(cachedBlock->poolId==poolId && cachedBlock->containsAddress(byteWhere))
@@ -2263,7 +2263,7 @@ template<class l_addr_t,class p_addr_t>
 	// if not found then look to see if this block is already cached in the unreferenced cached blocks
 	if(found==NULL)
 	{
-		for(typename set<RCachedBlock *>::iterator i=unreferencedCachedBlocks.begin();i!=unreferencedCachedBlocks.end();i++)
+		for(auto i=unreferencedCachedBlocks.begin();i!=unreferencedCachedBlocks.end();i++)
 		{
 			RCachedBlock *cachedBlock=(*i);
 			if(cachedBlock->poolId==poolId && cachedBlock->containsAddress(byteWhere))
@@ -2408,14 +2408,14 @@ template<class l_addr_t,class p_addr_t>
 {
 	CMutexLocker lock(accesserInfoMutex);
 
-	for(typename set<RCachedBlock *>::iterator i=activeCachedBlocks.begin();i!=activeCachedBlocks.end();)
+	for(auto i=activeCachedBlocks.begin();i!=activeCachedBlocks.end();)
 	{
 		typename set<RCachedBlock *>::iterator ii=i;
 		i++;
 		if(allPools || (*ii)->poolId==poolId)
 			invalidateCachedBlock(*ii);
 	}
-	for(typename set<RCachedBlock *>::iterator i=unreferencedCachedBlocks.begin();i!=unreferencedCachedBlocks.end();)
+	for(auto i=unreferencedCachedBlocks.begin();i!=unreferencedCachedBlocks.end();)
 	{
 		typename set<RCachedBlock *>::iterator ii=i;
 		i++;
@@ -3048,7 +3048,7 @@ template<class l_addr_t,class p_addr_t>
 		}
 	
 		// create holes that are between any alloced blocks
-		for(typename alloced_t::const_iterator i=alloced.begin();i!=alloced.end();i++)
+		for(auto i=alloced.begin();i!=alloced.end();i++)
 		{
 			typename alloced_t::const_iterator next_i=i; next_i++;
 			if(next_i!=alloced.end())
@@ -3132,7 +3132,7 @@ template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::verify(bool expectContinuousPhysicalAllocs)
 {
 	// make sure no alloced blocks overlap
-	for(typename alloced_t::const_iterator alloced_i=alloced.begin();alloced_i!=alloced.end();alloced_i++)
+	for(auto alloced_i=alloced.begin();alloced_i!=alloced.end();alloced_i++)
 	{
 		typename alloced_t::const_iterator next_alloced_i=alloced_i; next_alloced_i++;
 		if(next_alloced_i!=alloced.end())
@@ -3143,7 +3143,7 @@ template<class l_addr_t,class p_addr_t>
 	}
 	
 	// make sure no holes overlap or are consecutive(needing joining)
-	for(typename holes_t::const_iterator holes_i=holes.begin();holes_i!=holes.end();holes_i++)
+	for(auto holes_i=holes.begin();holes_i!=holes.end();holes_i++)
 	{
 		typename holes_t::const_iterator next_holes_i=holes_i; next_holes_i++;
 		if(next_holes_i!=holes.end())
@@ -3155,9 +3155,9 @@ template<class l_addr_t,class p_addr_t>
 	
 
 	// make sure no alloced block overlaps with a holes
-	for(typename alloced_t::const_iterator alloced_i=alloced.begin();alloced_i!=alloced.end();alloced_i++)
+	for(auto alloced_i=alloced.begin();alloced_i!=alloced.end();alloced_i++)
 	{
-		for(typename holes_t::const_iterator holes_i=holes.begin();holes_i!=holes.end();holes_i++)
+		for(auto holes_i=holes.begin();holes_i!=holes.end();holes_i++)
 		{
 			if(overlap(holes_i->first,holes_i->second,alloced_i->first,alloced_i->second))
 				printf("*** FAILURE overlapping hole and alloced:\n\talloced: %lld %lld\t\n\thole:  %lld %lld\n",(long long)alloced_i->first,(long long)alloced_i->second,(long long)holes_i->first,(long long)holes_i->second);
@@ -3166,23 +3166,23 @@ template<class l_addr_t,class p_addr_t>
 
 	// make sure that holes + alloced == file size
 	p_addr_t total=0;
-	for(typename alloced_t::const_iterator alloced_i=alloced.begin();alloced_i!=alloced.end();alloced_i++)
+	for(auto alloced_i=alloced.begin();alloced_i!=alloced.end();alloced_i++)
 		total+=alloced_i->second;
-	for(typename holes_t::const_iterator holes_i=holes.begin();holes_i!=holes.end();holes_i++)
+	for(auto holes_i=holes.begin();holes_i!=holes.end();holes_i++)
 		total+=holes_i->second;
 	if(total>get_file_size())
 		printf("*** FAILURE alloced + holes > file size :   %lld>%lld\n",(long long)total,(long long)get_file_size());
 
 	// validate that holeSizeIndex is correct by building one from scratch and comparing it to the one we have
 	holeSizeIndex_t temp;
-	for(typename holes_t::iterator holes_i=holes.begin();holes_i!=holes.end();holes_i++)
+	for(auto holes_i=holes.begin();holes_i!=holes.end();holes_i++)
 		temp.insert(make_pair(holes_i->second,holes_i));
 
 	if(temp.size()!=holeSizeIndex.size())
 		printf("*** FAILURE holeSizeIndex is out of sync (size differs)\n");
 
 		// for each element in temp, look for it in holeSizeIndex
-	for(typename holeSizeIndex_t::iterator i=temp.begin();i!=temp.end();i++)
+	for(auto i=temp.begin();i!=temp.end();i++)
 	{
 		try
 		{
@@ -3199,7 +3199,7 @@ template<class l_addr_t,class p_addr_t>
 	if(expectContinuousPhysicalAllocs)
 	{
 		p_addr_t expectedStart=0;
-		for(typename alloced_t::iterator i=alloced.begin();i!=alloced.end();i++)
+		for(auto i=alloced.begin();i!=alloced.end();i++)
 		{
 			if(i->first!=expectedStart)
 			{
@@ -3217,15 +3217,15 @@ template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::CPhysicalAddressSpaceManager::print() const
 {
 	printf("\nAllocated Physical Blocks:\n");
-	for(typename alloced_t::const_iterator t=alloced.begin();t!=alloced.end();t++)
+	for(auto t=alloced.begin();t!=alloced.end();t++)
 		printf("physicalStart: %-10lld size: %-5lld\n",(long long)t->first,(long long)t->second);
 
 	printf("\nUnallocated Physical Blocks:\n");
-	for(typename holes_t::const_iterator t=holes.begin();t!=holes.end();t++)
+	for(auto t=holes.begin();t!=holes.end();t++)
 		printf("physicalStart: %-10lld size: %-5lld\n",(long long)t->first,(long long)t->second);
 
 	printf("\nIndex into Unallocated Physical Blocks:\n");
-	for(typename holeSizeIndex_t::const_iterator t=holeSizeIndex.begin();t!=holeSizeIndex.end();t++)
+	for(auto t=holeSizeIndex.begin();t!=holeSizeIndex.end();t++)
 		printf("size: %-10lld addr: %-5lld\n",(long long)t->first,(long long)t->second->first);
 
 	printf("\n\n");
