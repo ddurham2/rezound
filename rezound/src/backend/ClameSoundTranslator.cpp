@@ -29,6 +29,7 @@
 #include "ClameSoundTranslator.h"
 
 #include <stdexcept>
+#include <stdint.h>
 
 #include <CPath.h>
 #include <TAutoBuffer.h>
@@ -210,16 +211,22 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 			pos+=chunkSize;
 
 			// read and parse the stderr of 'lame' to determine the progress of the load
-			while(fgets(errBuffer,BUFFER_SIZE,errStream)!=NULL) // non-blocking i/o set by mypopen on this stream
+			if(fgets(errBuffer,BUFFER_SIZE,errStream)!=NULL) // non-blocking i/o set by mypopen on this stream
 			{
-				int frameNumber,totalFrames;
-				sscanf(errBuffer,"%*s %d%*c%d ",&frameNumber,&totalFrames);
-				printf("%s",errBuffer);
-				if(statusBar.update(frameNumber*100/totalFrames))
-				{ // cancelled
-					ret=false;
-					goto cancelled;
+				errBuffer[sizeof(errBuffer)-1] = 0; // avoid any possible overrun
+				if (const char* p = strstr(errBuffer, "Frame#"))
+				{
+					int frameNumber = 1,totalFrames = 1;
+					sscanf(p + 6,"%d%*c%d ",&frameNumber,&totalFrames);
+					if(statusBar.update((uint64_t)frameNumber*100/totalFrames))
+					{ // cancelled
+						ret=false;
+						goto cancelled;
+					}
 				}
+
+				// read the remainder until we read again later
+				while(fgets(errBuffer,BUFFER_SIZE,errStream)!=NULL);
 			}
 
 		}
