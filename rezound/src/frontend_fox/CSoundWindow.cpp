@@ -108,6 +108,8 @@ FXDEFMAP(CSoundWindow) CSoundWindowMap[]=
 
 	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	CSoundWindow::ID_TIME_UNITS_SETTING,		CSoundWindow::onTimeUnitsSetting),
 
+	FXMAPFUNC(SEL_RIGHTBUTTONRELEASE,	CSoundWindow::ID_SAMPLE_RATE_LABEL,		CSoundWindow::onEditSampleRate),
+
 
 	FXMAPFUNC(SEL_CLOSE,			0,						CSoundWindow::onCloseWindow),
 };
@@ -208,6 +210,8 @@ CSoundWindow::CSoundWindow(FXComposite *parent,CLoadedSound *_loadedSound) :
 	t=new FXVerticalFrame(statusPanel,FRAME_NONE|LAYOUT_FILL_Y, 0,0,0,0, 2,0,0,0, 0,0);
 		sampleRateLabel=new FXLabel(t,_("Sample Rate; "),NULL,LAYOUT_LEFT|LAYOUT_FILL_Y);
 		sampleRateLabel->setFont(statusFont);
+		sampleRateLabel->setTarget(this);
+		sampleRateLabel->setSelector(ID_SAMPLE_RATE_LABEL);
 		channelCountLabel=new FXLabel(t,_("Channel Count: "),NULL,LAYOUT_LEFT|LAYOUT_FILL_Y);
 		channelCountLabel->setFont(statusFont);
 
@@ -881,6 +885,19 @@ long CSoundWindow::onTimeUnitsSetting(FXObject *sender,FXSelector sel,void *ptr)
 {
 	popupTimeUnitsSelectionMenu((FXWindow *)sender,(FXEvent *)ptr);
 	updateAllStatusInfo();
+	return 1;
+}
+
+long CSoundWindow::onEditSampleRate(FXObject *sender,FXSelector sel,void *ptr)
+{
+	printf("HELLO!");
+	int sampleRate = loadedSound->sound->getSampleRate();
+	if(FXInputDialog::getInteger(sampleRate,this,_("Sample Rate"),_("Sample Rate"), NULL, 1))
+	{
+		CSoundLocker l(loadedSound->sound, true);
+		loadedSound->sound->setSampleRate(sampleRate);
+		loadedSound->sound->flush();
+	}
 	return 1;
 }
 

@@ -91,6 +91,8 @@ public:
 
 		ID_TIME_UNITS_SETTING,
 
+		ID_SAMPLE_RATE_LABEL,
+
 		ID_LAST
 	};
 
@@ -148,6 +150,8 @@ public:
 	long onShowCueList(FXObject *sender,FXSelector sel,void *ptr);
 
 	long onCloseWindow(FXObject *sender,FXSelector sel,void *ptr);
+
+	long onEditSampleRate(FXObject *sender,FXSelector sel,void *ptr);
 
 	long onTimeUnitsSetting(FXObject *sender,FXSelector sel,void *ptr);
 
