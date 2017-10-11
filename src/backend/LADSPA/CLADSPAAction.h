@@ -23,6 +23,7 @@
 
 #include "../../../config/common.h"
 
+#ifdef ENABLE_LADSPA
 
 class CLADSPAAction;
 class CLADSPAActionFactory;
@@ -75,4 +76,5 @@ private:
 	const LADSPA_Descriptor *desc;
 };
 
+#endif
 #endif

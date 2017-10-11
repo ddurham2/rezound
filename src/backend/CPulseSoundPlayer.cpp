@@ -97,7 +97,7 @@ void CPulseSoundPlayer::initialize()
 			buffattr.maxlength=2*buffattr.tlength;
 
 			int error;
-			if (!(stream = pa_simple_new(NULL, PACKAGE_STRING, PA_STREAM_PLAYBACK, NULL, "playback", &ss, NULL, &buffattr, &error))) {
+			if (!(stream = pa_simple_new(NULL, REZOUND_PACKAGE, PA_STREAM_PLAYBACK, NULL, "playback", &ss, NULL, &buffattr, &error))) {
 				throw runtime_error(string(__func__)+" -- error opening Pulse device -- " + pa_strerror(error));
 			}
 

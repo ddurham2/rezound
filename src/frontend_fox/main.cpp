@@ -62,11 +62,14 @@ static void printNormalFontProperties(FXApp *application);
 static void listFonts();
 // ---
 
+// TODO put some of this stuff into a main.cpp which is frontend non-specific.. then define a frontend_main(argc, argv) which is defined
+
 int main(int argc,char* argv[])
 {
+	readBackendSettings();  // just so gSysDataDirectory is populated
 #ifdef ENABLE_NLS
 	setlocale(LC_ALL,"");
-	bindtextdomain(REZOUND_PACKAGE,DATA_DIR"/locale");
+	bindtextdomain(REZOUND_PACKAGE,(gSysDataDirectory + "/../locale").c_str());
 	textdomain(REZOUND_PACKAGE);
 #endif
 

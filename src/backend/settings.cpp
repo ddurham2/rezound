@@ -157,6 +157,30 @@ map<string,AActionFactory *> gRegisteredActionFactories;
 /* read backend setting variables with the exception of gUserDataDir */
 void readBackendSettings()
 {
+		// if there is an error opening the registry file then
+		// the system probably crashed... delete the registry file and
+		// warn user that the previous run history is lost.. but that
+		// they may beable to recover the last edits if they go load
+		// the files that were being edited (since the pool files will
+		// still exist for all previously open files)
+	const string registryFilename=gUserDataDirectory+istring(CPath::dirDelim)+"registry.dat";
+		// ??? this can be more easily handled with a createIfMissing flag 
+	try
+	{
+		delete gSettingsRegistry;
+		gSettingsRegistry=new CNestedDataFile(registryFilename,true);
+	}
+	catch(exception &e)
+	{
+		// well, then start with an empty one
+				// ??? call a function to setup the initial registry, we could either insert values manually, or copy a file from the share dir and maybe have to change a couple of things specific to this user
+				// 	because later I expect there to be many necesary default settings
+		gSettingsRegistry=new CNestedDataFile("",true);
+		gSettingsRegistry->setFilename(gUserDataDirectory+"/registry.dat");
+
+		Error(string("Error reading registry -- ")+e.what());
+	}
+
 	// determine where the share data is located
 	{
 		// first try env var
@@ -170,6 +194,7 @@ void readBackendSettings()
 		else if(CPath(SOURCE_DIR"/share").exists())
 			gSysDataDirectory=SOURCE_DIR"/share";
 		// next try the registry setting
+		// TODO this needs to be something we can alter at install time.. at least the whole prefix may need to be re-written or simply computed from the location of the binary.. and let all values which are based on prefix use the variable rather than hardcoding it.. rather, hardcode a single instance of prefix within the binary or none.. and always compute based on binary location?.. unless it was specified at configure time.. actually need it to not be configurable if we're going to assume relative path from binary
 		else if(gSettingsRegistry->keyExists("shareDirectory") && CPath(gSettingsRegistry->getValue<string>("shareDirectory")).exists())
 			gSysDataDirectory=gSettingsRegistry->getValue<string>("shareDirectory");
 		// finally fall back on the #define set by configure saying where ReZound will be installed

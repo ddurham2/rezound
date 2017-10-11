@@ -23,13 +23,13 @@
 
 #include "../../../config/common.h"
 
-#ifdef USE_LADSPA
+#ifdef ENABLE_LADSPA
 
 #include "CLADSPAAction.h"
 
 #include <vector>
 const vector<CLADSPAActionFactory *> getLADSPAActionFactories();
 
-#endif // USE_LADSPA
+#endif // ENABLE_LADSPA
 
 #endif

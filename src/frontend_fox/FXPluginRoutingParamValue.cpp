@@ -1592,7 +1592,7 @@ long FXPluginRoutingParamValue::onDefaultButton(FXObject *sender,FXSelector sel,
 
 void FXPluginRoutingParamValue::guessAtRouting()
 {
-#ifdef USE_LADSPA
+#ifdef ENABLE_LADSPA
 	const CPluginMapping mapping=getLADSPADefaultMapping(pluginDesc,actionSound);
 #else
 	const CPluginMapping mapping;

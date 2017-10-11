@@ -23,6 +23,8 @@
 
 #include "utils.h"
 
+#ifdef ENABLE_LADSPA
+
 #include <dirent.h>
 #include <dlfcn.h>
 #include <stdio.h>
@@ -257,3 +259,4 @@ const CPluginMapping getLADSPADefaultMapping(const LADSPA_Descriptor *plugin,con
 	return CPluginMapping::getDefaultMapping(plugin->Name,inputPortCount,outputPortCount,sound);
 }
 
+#endif

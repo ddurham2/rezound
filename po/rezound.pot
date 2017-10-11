@@ -3580,7 +3580,7 @@ msgstr ""
 
 #: src/backend/CMacroPlayer.cpp:230
 msgid ""
-"The action did not succeed.\n"
+"The BAR action did not succeed.\n"
 "\n"
 "Do you want to continue running the macro's remaining actions?"
 msgstr ""

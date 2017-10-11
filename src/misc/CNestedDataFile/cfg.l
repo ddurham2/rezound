@@ -30,6 +30,20 @@
 
 #include <istring>
 
+#include "src/misc/CNestedDataFile/CNestedDataFile.h"
+#include "src/misc/CNestedDataFile/cfg_types.h"
+
+#include "cfg.tab.hpp"
+
+using namespace std;
+
+extern int mycfg_nerrs;
+extern void cfg_includeFile(const char *filename);
+extern void cfg_error(const CFG_LTYPE &pos,const char *msg);
+extern void cfg_error(const char *msg);
+extern stack<string> cfg_scopeStack;
+
+
 /* some changes needed to be made to the implementation when flex changed how some things worked */
 #ifndef YY_FLEX_SUBMINOR_VERSION
 	#define YY_FLEX_SUBMINOR_VERSION 0
@@ -53,7 +67,7 @@ string currentFilename;
 //#define PRINTF printf
 
 #define YY_USER_ACTION  			\
-	yylloc.first_line=yylineno; 		\
+	cfg_lloc.first_line=yylineno; 		\
 	for(int t=0;t<yyleng;t++) 		\
 		if(yytext[t]=='\n') 		\
 			yylineno++; 		
@@ -62,6 +76,7 @@ string currentFilename;
 
 %}
 
+%option prefix="cfg_"
 %option never-interactive
 %option stack
 
@@ -80,7 +95,7 @@ string currentFilename;
 
 
 
-(([0-9]*\.[0-9]+(e[\-+]?[0-9]+)?)|([0-9]+))		{ yylval.stringValue=strdup(yytext); return LIT_NUMBER; }
+(([0-9]*\.[0-9]+(e[\-+]?[0-9]+)?)|([0-9]+))		{ cfg_lval.stringValue=strdup(yytext); return LIT_NUMBER; }
 
 ([_0-9A-Za-z]|(\\[\x20-\xff]))+	{ 
 		if(strcmp(yytext,"include")==0)
@@ -95,21 +110,21 @@ string currentFilename;
 			return GETTEXT;
 		else
 		{
-			yylval.stringValue=strdup(yytext); 
+			cfg_lval.stringValue=strdup(yytext); 
 
 			// parse error if it contains CNestedDataFile::delim
-			if(strstr(yylval.stringValue,CNestedDataFile::delim.c_str())!=NULL)
+			if(strstr(cfg_lval.stringValue,CNestedDataFile::delim.c_str())!=NULL)
 			{
-				cfg_error(yylloc,("key name contains '"+CNestedDataFile::delim+"'").c_str());
+				cfg_error(cfg_lloc,("key name contains '"+CNestedDataFile::delim+"'").c_str());
 				return 0;
 			}
 			
 
 			// convert remove the '\' from '\char'
-			for(size_t t=0;t<strlen(yylval.stringValue);t++)
+			for(size_t t=0;t<strlen(cfg_lval.stringValue);t++)
 			{
-				if(yylval.stringValue[t]=='\\')
-					memmove(yylval.stringValue+t,yylval.stringValue+t+1,strlen(yylval.stringValue+t+1)+1);
+				if(cfg_lval.stringValue[t]=='\\')
+					memmove(cfg_lval.stringValue+t,cfg_lval.stringValue+t+1,strlen(cfg_lval.stringValue+t+1)+1);
 			}
 
 			return IDENT;
@@ -121,7 +136,7 @@ string currentFilename;
 \"(\\.|[^\\"\n])*\"			{         
 	int length;
 	char *data=quote(yytext,length);
-	yylval.stringValue=data;
+	cfg_lval.stringValue=data;
 	return LIT_STRING;
 }
 
@@ -379,10 +394,10 @@ static char *quote(const char *input,int &length)
 void cfg_init()
 {
 	yylineno=0;
-	myyynerrs=0;
+	mycfg_nerrs=0;
 
-	while(!scopeStack.empty())
-		scopeStack.pop();
+	while(!cfg_scopeStack.empty())
+		cfg_scopeStack.pop();
 
 	while(!filenameStack.empty())
 		filenameStack.pop();

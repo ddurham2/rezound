@@ -83,7 +83,7 @@ public:
 	bool promptForMp3CompressionParameters(Mp3CompressionParameters &parameters);
 	bool promptForVoxParameters(VoxParameters &parameters);
 
-#ifdef USE_LADSPA
+#ifdef ENABLE_LADSPA
 	AActionDialog *getChannelSelectDialog();
 	AActionDialog *getLADSPAActionDialog(const LADSPA_Descriptor *desc);
 #endif

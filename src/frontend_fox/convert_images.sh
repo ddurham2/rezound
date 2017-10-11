@@ -5,9 +5,9 @@
 
 set +u
 
-if [ -z $2 ]
+if [ -z $3 ]
 then
-	echo "usage: $0 /path/reswrap /path/to/icons" >&2
+	echo "usage: $0 /path/reswrap /path/to/icons /path/for/output" >&2
 	exit 1
 fi
 
@@ -36,16 +36,16 @@ else				# version 3
 fi
 
 
-H_FILE=CFOXIcons.h.tmp
-C_FILE=CFOXIcons.cpp
+H_FILE=$3/CFOXIcons.h.tmp
+C_FILE=$3/CFOXIcons.cpp
 
 # create the CFOXIcons.h file 
 echo "/* script generated source code */" > $H_FILE
 echo "#ifndef __CFOXIcons_H__" >> $H_FILE
 echo "#define __CFOXIcons_H__" >> $H_FILE
-echo "#include \"../../config/common.h\"" >> $H_FILE
+echo "#include \"config/common.h\"" >> $H_FILE
 echo  >> $H_FILE
-echo "#include \"fox_compat.h\"" >> $H_FILE
+echo "#include \"src/frontend_fox/fox_compat.h\"" >> $H_FILE
 echo  >> $H_FILE
 echo "class CFOXIcons" >> $H_FILE
 echo "{" >> $H_FILE

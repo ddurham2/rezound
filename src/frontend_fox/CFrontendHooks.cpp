@@ -362,7 +362,7 @@ bool CFrontendHooks::promptForVoxParameters(VoxParameters &parameters)
 	return voxDialog->show(parameters);
 }
 
-#ifdef USE_LADSPA
+#ifdef ENABLE_LADSPA
 
 #include "CChannelSelectDialog.h"
 #include "CLADSPAActionDialog.h"

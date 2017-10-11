@@ -1185,9 +1185,9 @@ void CMainWindow::createMenus()
 
 void CMainWindow::buildLADSPAMenus()
 {
-#ifdef USE_LADSPA
+#ifdef ENABLE_LADSPA
 	// now stick the LADSPA menu in there if it needs to be
-	// ??? (with dynamic menus, maybe let the layout define WHERE the ladspa submenu goes, (except it might not always be compiled for ladspa, so we wouldn't want to add it to the map if USE_LADSPA wasn't defined)
+	// ??? (with dynamic menus, maybe let the layout define WHERE the ladspa submenu goes, (except it might not always be compiled for ladspa, so we wouldn't want to add it to the map if ENABLE_LADSPA wasn't defined)
 	FXMenuPane *menu=new FXMenuPane(this);
 	new FXMenuTitle(menubar,"L&ADSPA",NULL,menu);
 		const vector<CLADSPAActionFactory *> LADSPAActionFactories=getLADSPAActionFactories();

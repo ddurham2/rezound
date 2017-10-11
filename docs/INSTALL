@@ -1,5 +1,7 @@
 ReZound 0.13.0beta Installation instructions 
 
+TODO -- shorten this up.. at least have a quick read section at the top.. exampling how to use cmake configuration varaibles
+
 If building/installing directly from the CVS repository see CVS-INSTALL
 
 Run 'configure --help' for additional information about configuration options.

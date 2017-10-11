@@ -1,0 +1,48 @@
+
+#cmakedefine REZOUND_PACKAGE "@REZOUND_PACKAGE@"
+#cmakedefine REZOUND_VERSION "@REZOUND_VERSION@"
+#cmakedefine PACKAGE_BUGREPORT "@PACKAGE_BUGREPORT@"
+#cmakedefine PACKAGE_URL "@PACKAGE_URL@"
+#cmakedefine INSTALL_PREFIX "@CMAKE_INSTALL_PREFIX@"
+#cmakedefine DATA_DIR "@DATA_DIR@"
+#cmakedefine SOURCE_DIR "@SOURCE_DIR@"
+
+
+#cmakedefine ENABLE_OSS
+#cmakedefine ENABLE_ALSA
+#cmakedefine ENABLE_JACK
+#cmakedefine ENABLE_PORTAUDIO
+#cmakedefine ENABLE_PORTAUDIO_V19
+#cmakedefine ENABLE_PULSE
+
+/* Define to 1 if translation of program messages to the user's native language is requested. */
+#cmakedefine ENABLE_NLS
+
+#cmakedefine HAVE_LIBINTL
+
+
+#cmakedefine HAVE_LIBAUDIOFILE
+
+#cmakedefine HAVE_LIBFLAC
+#cmakedefine HAVE_LIBFLACPP
+
+#cmakedefine HAVE_LIBOGG
+#cmakedefine HAVE_LIBVORBIS
+#cmakedefine HAVE_LIBVORBISENC
+#cmakedefine HAVE_LIBVORBISFILE
+
+#cmakedefine HAVE_LIBSOUNDTOUCH
+
+#cmakedefine HAVE_FFTW
+
+
+#cmakedefine HAVE_LIBFOX
+
+
+#cmakedefine SAMPLE_TYPE_FLOAT
+#cmakedefine SAMPLE_TYPE_S16
+
+#cmakedefine ENABLE_LADSPA
+
+#cmakedefine WORDS_BIGENDIAN
+

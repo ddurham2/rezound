@@ -7,7 +7,7 @@ be aware of this convention.
 
 ** To create a new translation:
 	- You will need to have a fairly recent version of gettext installed 
-	  (perhaps gettext-devel on your distro).
+	  (perhaps gettext on your distro).
 
 	- At a prompt:
 		$ cd rezound-...
@@ -58,8 +58,12 @@ Also, I discovered on Mandrake that a package named 'locales-ll_CC' has to be
 installed before gettext will work.  Something similar may be necessary on other
 distroes, however I don't know exactly what that would be.
 
-If you type 'locale -a' I think it is necessary that the language you're working 
-with show up in that list of installed locales.
+It is necessary that for a language to work, it must show up in the output of
+'locale -a'.  Other locales can be installed by installing a locale package
+specific to the linux distribution or by choosing to install them via the 
+window manager's settings tools (usually a 'Language' area of the settings).
+If any locales are installed, they should be of the UTF-8 character encoding
+variety
 
 
 

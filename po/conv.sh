@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# convert the specified po files which aren't using UTF-8 to use UTF-8 instead.
+
 function conv # input file
 {
 	file=$1

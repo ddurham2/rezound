@@ -19,6 +19,7 @@
  */
 
 #include "CLADSPAAction.h"
+#ifdef ENABLE_LADSPA
 
 #include "../CActionSound.h"
 #include "../AActionDialog.h"
@@ -558,4 +559,4 @@ CLADSPAAction *CLADSPAActionFactory::manufactureAction(const CActionSound *actio
 	);
 }
 
-
+#endif

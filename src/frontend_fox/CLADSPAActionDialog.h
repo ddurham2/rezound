@@ -23,7 +23,7 @@
 
 #include "../../config/common.h"
 
-#ifdef USE_LADSPA
+#ifdef ENABLE_LADSPA
 
 #include "fox_compat.h"
 
@@ -49,6 +49,6 @@ private:
 	vector<pair<string, AActionParamMapper *> > sampleRateMappers;
 };
 
-#endif // USE_LADSPA
+#endif // ENABLE_LADSPA
 
 #endif

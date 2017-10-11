@@ -20,7 +20,7 @@
 
 #include "LADSPAActions.h"
 
-#ifdef USE_LADSPA
+#ifdef ENABLE_LADSPA
 
 #include "utils.h"
 

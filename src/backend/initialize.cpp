@@ -99,29 +99,6 @@ bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[])
 
 
 		// -- 1
-			// if there is an error opening the registry file then
-			// the system probably crashed... delete the registry file and
-			// warn user that the previous run history is lost.. but that
-			// they may beable to recover the last edits if they go load
-			// the files that were being edited (since the pool files will
-			// still exist for all previously open files)
-		const string registryFilename=gUserDataDirectory+istring(CPath::dirDelim)+"registry.dat";
-			// ??? this can be more easily handled with a createIfMissing flag 
-		try
-		{
-			gSettingsRegistry=new CNestedDataFile(registryFilename,true);
-		}
-		catch(exception &e)
-		{
-			// well, then start with an empty one
-					// ??? call a function to setup the initial registry, we could either insert values manually, or copy a file from the share dir and maybe have to change a couple of things specific to this user
-					// 	because later I expect there to be many necesary default settings
-			gSettingsRegistry=new CNestedDataFile("",true);
-			gSettingsRegistry->setFilename(gUserDataDirectory+"/registry.dat");
-
-			Error(string("Error reading registry -- ")+e.what());
-		}
-
 		// read backend setting variables from registry
 		readBackendSettings();
 		readFrontendSettings();

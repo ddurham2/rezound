@@ -1,3 +1,4 @@
+%define api.prefix {cfg_}
 %{
 
 /*
@@ -34,7 +35,7 @@
  * datafile... But, currently I see no reason for that to happen (unless I one day
  * implement array subscripting in the arithmetic expression stuff.)
  */
-#include "../../../config/common.h"
+#include "config/common.h"
 
 #include <math.h>
 #include <string.h>
@@ -42,23 +43,19 @@
 #include <stack>
 #include <stdexcept>
 
-#include "CNestedDataFile.h"
-#include "anytype.h"
+#include "src/misc/CNestedDataFile/CNestedDataFile.h"
+#include "src/misc/CNestedDataFile/anytype.h"
+#include "src/misc/CNestedDataFile/cfg_types.h"
 
-struct RTokenPosition
-{
-	int first_line,last_line;
-	int first_column,last_column;
-	const char *text;
-};
-#define YYLTYPE RTokenPosition
+using namespace std;
+
 #define YYLSP_NEEDED 1
 #define YYERROR_VERBOSE
 
-stack<string> scopeStack;
+stack<string> cfg_scopeStack;
 
 void cfg_error(int line,const char *msg);
-void cfg_error(const YYLTYPE &pos,const char *msg);
+void cfg_error(const CFG_LTYPE &pos,const char *msg);
 void cfg_error(const char *msg);
 
 int cfg_lex();
@@ -72,7 +69,8 @@ void checkForDupMember(int line,const char *key);
 
 static const string getCurrentScope();
 
-int myyynerrs=0;
+int mycfg_nerrs=0;
+extern string currentFilename;
 
 #define VERIFY_TYPE(ap,a)				\
 	if(a->type!=CNestedDataFile::ktValue)		\
@@ -86,13 +84,6 @@ int myyynerrs=0;
 	r->stringValue = strdup( anytype_to_string<double>(string_to_anytype<double>(r->stringValue,x1) o string_to_anytype<double>(b->stringValue,x2)).c_str() );	\
 	delete b;
 
-
-union cfg_parse_union
-{
-	char *				stringValue;
-	CNestedDataFile::CVariant *	variant;
-};
-#define YYSTYPE union cfg_parse_union
 
 %}
 
@@ -156,13 +147,13 @@ start
 	{
 		cfg_deinit();
 
-		return myyynerrs!=0;
+		return mycfg_nerrs!=0;
 	}
 
 	| init '~' s2at_array_body
 	{
 		cfg_deinit();
-		return myyynerrs!=0;
+		return mycfg_nerrs!=0;
 	}
 	;
 
@@ -173,13 +164,13 @@ scope
 
 		checkForDupMember(@1.first_line,$1);
 
-		scopeStack.push($1);
+		cfg_scopeStack.push($1);
 
 		free($1);
 
 		/* now continue parsing for new scope's body */
 	} scope_body '}' {
-		scopeStack.pop();
+		cfg_scopeStack.pop();
 	}
 	;
 
@@ -482,11 +473,9 @@ s2at_array_item
 
 %%
 
-#include "cfg.lex.c"
-
 void cfg_error(int line,const char *msg)
 {
-	myyynerrs++;
+	mycfg_nerrs++;
 
 	if(CNestedDataFile::s2at_string.size()>0)
 		// suppress error messages when in s2at mode
@@ -494,7 +483,7 @@ void cfg_error(int line,const char *msg)
 
 	fprintf(stderr,"%s:%d: %s\n",currentFilename.c_str(),line,msg);
 
-	if(myyynerrs>25)
+	if(mycfg_nerrs>25)
 		throw runtime_error("cfg_error -- more than 25 errors; bailing");
 }
 
@@ -516,7 +505,7 @@ void checkForDupMember(int line,const char *key)
 
 static const string getCurrentScope()
 {
-	stack<string> copy=scopeStack;
+	stack<string> copy=cfg_scopeStack;
 	string s;
 	while(!copy.empty())
 	{

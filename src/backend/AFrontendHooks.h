@@ -30,7 +30,7 @@ class AFrontendHooks;
 
 #include "CSound_defs.h"
 
-#ifdef USE_LADSPA
+#ifdef ENABLE_LADSPA
 	#include "AActionDialog.h"
 	#include "LADSPA/ladspa.h"
 #endif
@@ -214,7 +214,7 @@ public:
 
 
 	// stuff to handle frontend interfaces to LADSPA plugins
-#ifdef USE_LADSPA
+#ifdef ENABLE_LADSPA
 	virtual AActionDialog *getChannelSelectDialog()=0;
 	// should return a frontend dialog which can handle the given LADSPA plugin descriptor
 		// the backend will be responsible for deleteing the returned object

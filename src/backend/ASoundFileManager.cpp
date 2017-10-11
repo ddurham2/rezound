@@ -254,11 +254,11 @@ bool ASoundFileManager::saveAs(const string _filename,bool _saveAsRaw)
 		}
 
 		bool reregisterFilenameOnError=false;
-		if(loaded->getFilename()==filename && compareBool(loaded->translator->handlesRaw(),saveAsRaw))
+		if(loaded->getFilename()==filename && loaded->translator->handlesRaw() == saveAsRaw)
 		{ // the user chose the same name (and didn't change whether to save as raw or not)
 			return save();
 		}
-		else if(loaded->getFilename()==filename && !compareBool(loaded->translator->handlesRaw(),saveAsRaw))
+		else if(loaded->getFilename()==filename && loaded->translator->handlesRaw() != saveAsRaw)
 		{ // same name, but now saving as raw
 			unregisterFilename(loaded->getFilename());
 			reregisterFilenameOnError=true;

@@ -23,6 +23,7 @@
 
 #include "../../../config/common.h"
 
+#ifdef ENABLE_LADSPA
 
 #include "ladspa.h"
 
@@ -42,4 +43,5 @@ int getLADSPADefault(const LADSPA_PortRangeHint * psPortRangeHint,const unsigned
 const CPluginMapping getLADSPADefaultMapping(const LADSPA_Descriptor *plugin,const CSound *sound);
 
 
+#endif
 #endif

@@ -20,7 +20,9 @@
 
 #include "AStatusComm.h"
 
+#include <assert.h>
 #include <ctype.h>
+#include <sys/timeb.h> // TODO use std::chrono
 
 AStatusComm *gStatusComm=NULL;
 
@@ -60,21 +62,34 @@ const string AStatusComm::breakIntoLines(const string _s)
 
 void Error(const string &message,VSeverity severity,bool reformatIfNeeded)
 {
-	gStatusComm->error(message,severity,reformatIfNeeded);
+	if (gStatusComm) {
+		gStatusComm->error(message,severity,reformatIfNeeded);
+	} else {
+		fprintf(stderr, "error -- %s", message.c_str());
+	}
 }
 
 void Warning(const string &message,bool reformatIfNeeded)
 {
-	gStatusComm->warning(message,reformatIfNeeded);
+	if (gStatusComm) {
+		gStatusComm->warning(message,reformatIfNeeded);
+	} else {
+		fprintf(stderr, "warning -- %s", message.c_str());
+	}
 }
 
 void Message(const string &message,bool reformatIfNeeded)
 {
-	gStatusComm->message(message,reformatIfNeeded);
+	if (gStatusComm) {
+		gStatusComm->message(message,reformatIfNeeded);
+	} else {
+		fprintf(stderr, "%s", message.c_str());
+	}
 }
 
 VAnswer Question(const string &message,/*VQuestion*/int options,bool reformatIfNeeded)
 {
+	assert(gStatusComm);
 	return(gStatusComm->question(message,options,reformatIfNeeded));
 }
 

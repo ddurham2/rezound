@@ -20,7 +20,7 @@
 
 #include "CLADSPAActionDialog.h"
 
-#ifdef USE_LADSPA
+#ifdef ENABLE_LADSPA
 
 #include <string>
 #include <algorithm>
@@ -241,4 +241,4 @@ CLADSPAActionDialog::~CLADSPAActionDialog()
 {
 }
 
-#endif // USE_LADSPA
+#endif // ENABLE_LADSPA
