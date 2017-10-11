@@ -28,7 +28,7 @@ $Id$
 # Marc R. J. Brevoort - Initial development of dynamic menu configuration
 # Marc R. J. Brevoort - Original coding of Generate Noise and R&D of colors' algorithms
 
-# Gerhard Zintel - Implementation of semitone shuttle wheel feature (src/frontend_foxCMainWindow.cpp)
+# Gerhard Zintel - Implementation of semitone shuttle wheel feature (src/frontend_fox/CMainWindow.cpp)
 
 # - ENHANCEMENTS
 # James Vega - https://sourceforge.net/tracker/?func=detail&aid=1919151&group_id=5056&atid=305056

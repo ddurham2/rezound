@@ -27,6 +27,8 @@ if (GETTEXT_FOUND)
 
 	endforeach(lang)
 
+	# TODO define a custom target that regenerates the rezound.pot file by enumerating all files in git and running xgettext.. refer to what the old autotools did
+
 
 else()
 	message(WARNING "gettext tools not found.  Internationalization may not work correctly")

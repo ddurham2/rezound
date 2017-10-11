@@ -2,28 +2,20 @@ ReZound 0.13.0beta Installation instructions
 
 TODO -- shorten this up.. at least have a quick read section at the top.. exampling how to use cmake configuration varaibles
 
-If building/installing directly from the CVS repository see CVS-INSTALL
-
-Run 'configure --help' for additional information about configuration options.
-	
 REQUIRED OR RECOMMENDED LIBRARIES AND APPLICATIONS:
 
 Before attempting to build ReZound you will need to have (or are encouraged to have) the following:
 
 1. Compiler:
+	- cmake -- ReZound uses cmake for platform detection and generating build files.
+
 	- gcc -- ReZound was originally developed using gcc/g++.  A typical system will be set up for
-	configure to find gcc/g++ automatically and use it.
+	cmake to find gcc/g++ automatically and use it.
 
-	- clang -- some effort has been made to support compiling against clang/clang++.  To compile
-	using clang, some environment variables may need to be set before running configure:
-		CXX=clang++ CC=clang ./configure 
-
-			OR
-
-		export CXX=clang++
-		export CC=clang
-		./configure
-
+	- clang -- effort has been made to support compiling against clang/clang++.  To compile using
+	clang, some cmake variables may need to be set before running configure:
+		
+		cmake -DCMAKE_CXX_COMPILER=clang++ ...
 
 2. Libraries: 
 
@@ -36,14 +28,10 @@ Before attempting to build ReZound you will need to have (or are encouraged to h
 		- NOTE: reswrap comes with fox.  If you install from the fox tarball
 			then you should not have any problems.  If your distro's fox
 			package is split into more than 1 package, then you made need
-			to install the package containing the reswrap executable.  It
-			is only needed for fox development and shouldn't actually have
-			to run unless the files in src/images are newer than 
-			src/frontend_fox/CFOXIcons.h|cpp
+			to install the package containing the reswrap executable.
 
 	- libfftw v3.0.0 (or later) -- http://www.fftw.org -- This is required for 
-	convolution filtering, arbitrary FIR filtering and the frequency analyzer and 
-	will be required for planned features.
+	convolution filtering, arbitrary FIR filtering, the frequency analyzer, etc.
 
 	- lame v3.92 (or later) -- http://www.mp3dev.org/mp3 -- It is recommended that 
 	you have lame installed because it provides ReZound with the ability to load and 
@@ -62,49 +50,33 @@ Before attempting to build ReZound you will need to have (or are encouraged to h
 	the the actions that change pitch without changing tempo and that change tempo without 
 	changing pitch.
 
-	- libasound2 -- To enable alsa I/O
-			--enable-alsa
+	- libasound2 -- This is the ALSA library so that audio I/O can use ALSA.
 
 	- libpulseaudio -- (often libpulse-dev) This can be used to use the pulseaudio daemon 
 	for sound output
 
 	- libportaudio -- http://www.portaudio.com -- This can be used if you know what you're
-	doing and need it for some reason.  Support for it can be enabled with the configure 
-	flag: 
-			--enable-portaudio
+	doing and need it for some reason.
 
 	- libjack -- http://jackit.sourceforge.net -- This can be used to enable JACK 
 	support.  JACK is a really nice system where the jackd server runs and JACK 
 	enabled applications connect to it.  Then you can route audio between applications
 	instead of being limited in that applications alway do I/O with the hardware device 
-	itself.  JACK support can be enabled with the configure flag:
-			--enable-jack
-
-	- libpthreads -- This is pretty much standard on all Linux systems' glibc 
-	package now. If you don't have it already, It should be available on your 
-	distribution discs. [Exceptions: freebsd uses libc_r and netbsd needs libPTL]
+	itself.
 
 	- vox/devox -- http://www.cis.ksu.edu/~tim/vox/ -- required if you want to load 
 	.vox files.  This seems to be a quite obscure format, so support would be for 
-	rather few people I think.  THESE ARE TWO APPLICATIONS NOT LIBRARIES
+	rather few people I think.  THESE TWO ARE APPLICATIONS, NOT LIBRARIES
 
 
 3. You should also have a working C++ compiler (g++ is preferred) as well as the 
 normal group of regular libraries and headers for compiling packages. 
 
 
-4. -- PROBLEMS WITH yacc (shipped with SuSE) -- the file, 
-src/misc/CNestedDataFile/cfg.y will have problems if you do not have bison 
-installed.  I am using some features from bison that yacc does not have.  
-Perhaps when ReZound is ported to other operatings systems I will resolve any 
-yacc related issues.   However, this whole issue may be avoided if the .cc file 
-generated from the .y file is intact.
+4. bison -- This is required for building the config file parser.
 
 5. flex -- (free-lex) This is commonly installed, but there should be a package 
-for your distro.  I have not tried building ReZound using lex.  Like bison, 
-flex should not even have to run if the .c file created from the .l file is
-intact.
-
+for your distro.  I have not tried building ReZound using lex.
 
 
 
@@ -119,202 +91,25 @@ If at all possible try to send details, preferably a screen dump or script file.
 
 The ReZound homepage is at http://rezound.sourceforge.net
 
-To strip the rezound binary, use `make install-strip' as the final installation step.
-
-To build a stand alone binary use the configure flag: --enable-standalone.  However,
-this requires having all the static libraries that may be depended on by ReZound's 
-dependancies (i.e. FOX depends on libjpeg, libpng, libtiff, etc, so libjpeg.a, 
-libpng.a, libtiff.a, etc would be required to link.  But that is, only if FOX was not 
-configured with --disable-... flags to remove FOX's depenance on these libs.)
+# REMOVED To build a stand alone binary use the configure flag: --enable-standalone.  However,
+# this requires having all the static libraries that may be depended on by ReZound's 
+# dependancies (i.e. FOX depends on libjpeg, libpng, libtiff, etc, so libjpeg.a, 
+# libpng.a, libtiff.a, etc would be required to link.  But that is, only if FOX was not 
+# configured with --disable-... flags to remove FOX's depenance on these libs.)
 
 
+=======================
+cmake quick usage guide
+=======================
 
+	- cd rezound-src
+	- mkdir build
+	- cd build
+	- cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/rezound
+	- (optional)   cmake-gui .   then tweak values then press 'generate'
+	- make
+	- make install/strip
+	- (optional cleanup) cd .. ; rm -rf build
+	- $HOME/rezound/bin/rezound
 
-
-Below is the Generic GNU Installation Bit:
-
-Basic Installation
-==================
-
-   These are generic installation instructions.
-
-   The `configure' shell script attempts to guess correct values for
-various system-dependent variables used during compilation.  It uses
-those values to create a `Makefile' in each directory of the package.
-It may also create one or more `.h' files containing system-dependent
-definitions.  Finally, it creates a shell script `config.status' that
-you can run in the future to recreate the current configuration, a file
-`config.cache' that saves the results of its tests to speed up
-reconfiguring, and a file `config.log' containing compiler output
-(useful mainly for debugging `configure').
-
-   If you need to do unusual things to compile the package, please try
-to figure out how `configure' could check whether to do them, and mail
-diffs or instructions to the address given in the `README' so they can
-be considered for the next release.  If at some point `config.cache'
-contains results you don't want to keep, you may remove or edit it.
-
-   The file `configure.in' is used to create `configure' by a program
-called `autoconf'.  You only need `configure.in' if you want to change
-it or regenerate `configure' using a newer version of `autoconf'.
-
-The simplest way to compile this package is:
-
-  1. `cd' to the directory containing the package's source code and type
-     `./configure' to configure the package for your system.  If you're
-     using `csh' on an old version of System V, you might need to type
-     `sh ./configure' instead to prevent `csh' from trying to execute
-     `configure' itself.
-
-     Running `configure' takes awhile.  While running, it prints some
-     messages telling which features it is checking for.
-
-  2. Type `make' to compile the package.
-
-  3. Optionally, type `make check' to run any self-tests that come with
-     the package.
-
-  4. Type `make install' to install the programs and any data files and
-     documentation.
-
-  5. You can remove the program binaries and object files from the
-     source code directory by typing `make clean'.  To also remove the
-     files that `configure' created (so you can compile the package for
-     a different kind of computer), type `make distclean'.  There is
-     also a `make maintainer-clean' target, but that is intended mainly
-     for the package's developers.  If you use it, you may have to get
-     all sorts of other programs in order to regenerate files that came
-     with the distribution.
-
-Compilers and Options
-=====================
-
-   Some systems require unusual options for compilation or linking that
-the `configure' script does not know about.  You can give `configure'
-initial values for variables by setting them in the environment.  Using
-a Bourne-compatible shell, you can do that on the command line like
-this:
-     CC=c89 CFLAGS=-O2 LIBS=-lposix ./configure
-
-Or on systems that have the `env' program, you can do it like this:
-     env CPPFLAGS=-I/usr/local/include LDFLAGS=-s ./configure
-
-Compiling For Multiple Architectures
-====================================
-
-   You can compile the package for more than one kind of computer at the
-same time, by placing the object files for each architecture in their
-own directory.  To do this, you must use a version of `make' that
-supports the `VPATH' variable, such as GNU `make'.  `cd' to the
-directory where you want the object files and executables to go and run
-the `configure' script.  `configure' automatically checks for the
-source code in the directory that `configure' is in and in `..'.
-
-   If you have to use a `make' that does not supports the `VPATH'
-variable, you have to compile the package for one architecture at a time
-in the source code directory.  After you have installed the package for
-one architecture, use `make distclean' before reconfiguring for another
-architecture.
-
-Installation Names
-==================
-
-   By default, `make install' will install the package's files in
-`/usr/local/bin', `/usr/local/man', etc.  You can specify an
-installation prefix other than `/usr/local' by giving `configure' the
-option `--prefix=PATH'.
-
-   You can specify separate installation prefixes for
-architecture-specific files and architecture-independent files.  If you
-give `configure' the option `--exec-prefix=PATH', the package will use
-PATH as the prefix for installing programs and libraries.
-Documentation and other data files will still use the regular prefix.
-
-   In addition, if you use an unusual directory layout you can give
-options like `--bindir=PATH' to specify different values for particular
-kinds of files.  Run `configure --help' for a list of the directories
-you can set and what kinds of files go in them.
-
-   If the package supports it, you can cause programs to be installed
-with an extra prefix or suffix on their names by giving `configure' the
-option `--program-prefix=PREFIX' or `--program-suffix=SUFFIX'.
-
-Optional Features
-=================
-
-   Some packages pay attention to `--enable-FEATURE' options to
-`configure', where FEATURE indicates an optional part of the package.
-They may also pay attention to `--with-PACKAGE' options, where PACKAGE
-is something like `gnu-as' or `x' (for the X Window System).  The
-`README' should mention any `--enable-' and `--with-' options that the
-package recognizes.
-
-   For packages that use the X Window System, `configure' can usually
-find the X include and library files automatically, but if it doesn't,
-you can use the `configure' options `--x-includes=DIR' and
-`--x-libraries=DIR' to specify their locations.
-
-Specifying the System Type
-==========================
-
-   There may be some features `configure' can not figure out
-automatically, but needs to determine by the type of host the package
-will run on.  Usually `configure' can figure that out, but if it prints
-a message saying it can not guess the host type, give it the
-`--host=TYPE' option.  TYPE can either be a short name for the system
-type, such as `sun4', or a canonical name with three fields:
-     CPU-COMPANY-SYSTEM
-
-See the file `config.sub' for the possible values of each field.  If
-`config.sub' isn't included in this package, then this package doesn't
-need to know the host type.
-
-   If you are building compiler tools for cross-compiling, you can also
-use the `--target=TYPE' option to select the type of system they will
-produce code for and the `--build=TYPE' option to select the type of
-system on which you are compiling the package.
-
-Sharing Defaults
-================
-
-   If you want to set default values for `configure' scripts to share,
-you can create a site shell script called `config.site' that gives
-default values for variables like `CC', `cache_file', and `prefix'.
-`configure' looks for `PREFIX/share/config.site' if it exists, then
-`PREFIX/etc/config.site' if it exists.  Or, you can set the
-`CONFIG_SITE' environment variable to the location of the site script.
-A warning: not all `configure' scripts look for a site script.
-
-Operation Controls
-==================
-
-   `configure' recognizes the following options to control how it
-operates.
-
-`--cache-file=FILE'
-     Use and save the results of the tests in FILE instead of
-     `./config.cache'.  Set FILE to `/dev/null' to disable caching, for
-     debugging `configure'.
-
-`--help'
-     Print a summary of the options to `configure', and exit.
-
-`--quiet'
-`--silent'
-`-q'
-     Do not print messages saying which checks are being made.  To
-     suppress all normal output, redirect it to `/dev/null' (any error
-     messages will still be shown).
-
-`--srcdir=DIR'
-     Look for the package's source code in directory DIR.  Usually
-     `configure' can determine that directory automatically.
-
-`--version'
-     Print the version of Autoconf used to generate the `configure'
-     script, and exit.
-
-`configure' also accepts some other, not widely useful, options.
-
-run `configure --help' for more build-time options
 

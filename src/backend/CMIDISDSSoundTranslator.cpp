@@ -517,7 +517,7 @@ bool CMIDISDSSoundTranslator::onSaveSound(const string filename,const CSound *so
 #ifdef DEBUG_PRINT
 	printf("opening: %s\n",filename.c_str());
 #endif
-	int fd=open(filename.c_str(),!isDevice ? O_RDWR|O_CREAT|O_TRUNC : O_WRONLY);
+	int fd=open(filename.c_str(),!isDevice ? O_RDWR|O_CREAT|O_TRUNC : O_WRONLY, 0777);
 	if(fd==-1)
 		throw runtime_error(string(__func__)+" -- error opening file: "+filename+" -- "+strerror(errno));
 	try

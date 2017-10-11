@@ -1,10 +1,11 @@
 
+- give a way to build a completely static binary for standalone distribution (if required).. Qt is coming and would have to statically link to that
 
 - convolution filter doesn't seem to be working properly.  Doing any of the reverbs add some odd echo.o
-- also the gain is way off.  I can't simply give input and output gains of 0db and have it not clip
+	- also the gain is way off.  I can't simply give input and output gains of 0db and have it not clip
 
-- no my laptop recording with the alsa method is dropping a bit of data and the UV meters appear to be missing a lot of updates.
-	- I think this was using portaudio.. alsa method seemed to work fine
+- on my laptop recording with the portaudio method is dropping a bit of data and the UV meters appear to be missing a lot of updates. (needs more buffers?)
 
 - make TPoolFile use mmap().. then the whole file could be mapped into memory (x64 eh?) and the logical mappings could just point to the address space and not have to actually swap anything in/out myself nor have to maintain any sort of cache of buffers.. do sync() when needed
 
+- include an uncrustify conf file and use it

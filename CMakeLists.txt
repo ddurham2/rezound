@@ -87,8 +87,6 @@ else()
 endif()
 
 
-# TODO should this not belong in src/backend/CMakeLists.txt?.. well yes, but then the variables don't survive the add_subdirectory() boundary and the config subtutitions don't work. unless I made them cache values
-
 ### NLS #############################################################
 
 set(ENABLE_NLS OFF CACHE INTERNAL "")
@@ -107,7 +105,6 @@ endif()
 
 
 
-# TODO create kde desktop files
 
 
 
@@ -117,7 +114,7 @@ add_subdirectory(src/PoolFile)
 add_subdirectory(src/backend)
 add_subdirectory(src/frontend_fox)
 
-configure_file(${CMAKE_CURRENT_LIST_DIR}/src/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/config/config.h)
+configure_file(${CMAKE_CURRENT_LIST_DIR}/config/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/config/config.h)
 
 
 # ### local install #########################################################
@@ -143,6 +140,8 @@ install(
 		docs/Features.txt
 	DESTINATION doc/${REZOUND_PACKAGE}
 )
+
+# TODO create kde desktop files like Makefile.am used to do .. use files in packaging/generic_rpm/ ... do gnome too
 
 # uninstall target
 configure_file(
@@ -183,7 +182,8 @@ include(CPack)
 
 # source tarball (tar up all the files tracked by git in the current checkout)
 add_custom_target(tarball
-	git ls-files "${SRC_ROOT}" -z | tar -cj --transform 's|^|${REZOUND_PACKAGE}-${REZOUND_VERSION}/|' --null --files-from=- -f ${REZOUND_PACKAGE}-${REZOUND_VERSION}.tar.bz2
+	cd "${SRC_ROOT}" \;
+	git ls-files . -z | tar -cvj --exclude WORK --transform 's|^|${REZOUND_PACKAGE}-${REZOUND_VERSION}/|' --null --files-from=- -f "${CMAKE_CURRENT_BINARY_DIR}/${REZOUND_PACKAGE}-${REZOUND_VERSION}.tar.bz2"
 )
 
 

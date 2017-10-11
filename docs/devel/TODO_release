@@ -4,37 +4,27 @@ This is a todo list for things we need to do for an official release. In
 other words, it's what we'll want to change between the svn sources and a
 distro tarball(eg: removing warning flags)
 
-1. Remove -Wall and all -W flags from CXXFLAGS -- comment out checks for
--Wno... flags in configure.in and remove -Wall from am_include.mk CXXFLAGS
+1. Revise docs/AUTHORS to give proper credit, and only list files included in final release. Might want to save separate version to keep in CVS.
 
-2. Revise docs/AUTHORS to give proper credit, and only list files included in final release. Might want to save separate version to keep in CVS.
+2. Revise docs/NEWS and docs/Features.txt (use `e.g. svn2cl -i -r "HEAD:r1961"` to determine what significant things have changed since the previous release)
 
-3. Revise docs/NEWS and docs/Features.txt (use `e.g. svn2cl -i -r "HEAD:r1961"` to determine what significant things have changed since the previous release)
+3. Update the version number in CMakeLists.txt and docs/INSTALL
 
-4. in po/ to make POTFILES.in-update, configure and (back in the po directory) make rezound.pot-update
-
-5. Update the version number in configure.ac and docs/INSTALL
-	- and then do a bootstrap && configure
-
-6. PROOF-READ ALL CHANGES YOU JUST MADE!
-
-7. Remove any files: rm `find . -name ".#*"`
+4. PROOF-READ ALL CHANGES YOU JUST MADE!
 
 --- EITHER -------------
 
-8. update the rpm spec file
+7. update the rpm spec file
 
-9. rebuild FOX with all the possible --disable flags, --with-opengl=no, and probably CPPFLAGS=-DNO_XIM
+8. rebuild FOX with all the possible --disable flags, --with-opengl=no, and probably CPPFLAGS=-DNO_XIM
 	CPPFLAGS=-DNO_XIM configure --with-opengl=no --disable-jpeg --disable-png --disable-tiff --disable-zlib --disable-bz2lib
 	- Sometimes fox needs --disable-shared with gcc-3.2 on some platforms to make the rezound FOX test succeed [linking issues]
 
-10. run build_packages_for_release.sh (which is only local to me -- not in CVS)
-
 --- OR -----------------
+# TODO revise for CPack instructions
 
-8. 'make distcheck'
-9. rebuild FOX with all the possible --disable flags, --with-opengl=no, and probably CPPFLAGS=-NO_XIM then 'make_standalone.sh'
-10. create .rpm as standalone
+8. rebuild FOX with all the possible --disable flags, --with-opengl=no, and probably CPPFLAGS=-NO_XIM then 'make_standalone.sh'
+9. create .rpm as standalone
 	- update the rpm spec file
 	- copy the source tarball to /usr/src/RPM/SOURCES
 	- rpmbuild -ba rezound.spec

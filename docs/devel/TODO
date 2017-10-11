@@ -2,9 +2,6 @@
 
 	- Create an implementation of CRWLock (rename to CRWMutex) that doesn't use rwlock's when they're unavailable (netbsd)
 
-	- need a prefix flag for fftw libs in configure.ac
-		- or see if there's an .m4 that comes with the lib
-
 
 	- Create a crossfade feature when pasting and a gain parameter.
 
@@ -18,8 +15,6 @@
 	- Implement createKey and getValue methods in CNestedData file and use them properly so I'm not doing string conversions everywhere in there
 
 	- Make a links section on the homepage about who is/has-used ReZound
-
-	- I might want to make sure that gcc is some minimum version in configure.in.. I really don't think gcc2.8 will cut it
 
 	- if any problem shows up with reswrap not being found causing problems... then it would be quite simple to write a very simple .c file that for every argument outputs stdout the array definition
 
@@ -84,8 +79,6 @@
 			- libsndfile has more formats than libaudiofile but has no API provisions for arbitrary data. AND it isn't packaged on hardly any distroes
 			- Now another possiblity for at least giving a decent effort toward being able to load and save numerous other formats could be done by making a CSOXSoundTranslator : ASoundTranslator and have it shell out and actually run the sox command.  Maybe sox can even read and write to std i/o so I could avoid intermediate copies by sending it and receiving from it raw PCM data.
 				- This would be under an explicit import/export set of buttons under the file actions because it would probably support no form of saving the cues and notes and such and the user could be warned that none of this information will be preserved.
-				- configure should test for `sox` being valid and make it a depenancy... If it's not found, then the import and export file operations will be disabled
-					- the configure script should make a big note of this on screen that import/export will be disabled
 			- But I should still use libaudiofile to load and save wav, aiff, (ogg and mp3 if/when it's available)
 
 	- always make sure that the actions accessers are const so that it's not causing the data to be written back to disk
@@ -404,8 +397,6 @@
 
 	- use home directory / .rezound instead of the current directory for settings registry
 
-	- When it's on sourceforge put out a call for icon artists and for someone to autoconfiscate it
-
 	- When it's on sourceforge create mailing lists or forums for:
 		- bugs
 		- feature requests
@@ -491,8 +482,6 @@
 
 	- add a "sync channels" for noise gate just like the compressor.. probably have it gate only when both channels are below the treshold or maybe a radio button for "gate when all are below threshold.. or any is below threshold"
 
-	- Make sure to have the configure script check for the minimal version of libaudiofile
-
 	- There needs to be a dialog for choosing the mix method for mix pasting
 
 	- I could create an adaptive remove-DC action which looks at a window at a time of data  (window-time given by the user) and the DC offset determined for each window would form a set of line segments to be the subtraction from the sound.
@@ -537,9 +526,6 @@
 
 	- Put in the documentation or application help somewhere a brief description about how recording works in linux (you have a recording source selected, then igain which is the recording gain of that source)
 		- mention somewhere that people will surely read that the playback on a not-so-fast computer or cheap sound card may exhibit occational clicks or pops and that this is because of the low latency requirements that ReZound has right now... This requirement may go away and it may not be a problem at all with ALSA
-
-	- I discovered that the M_PI (and others) #defines are not in the C/C++ specification... So I might want to test for them in configure.in and define them if they're not found in common.h ( M_PI=atan(1)*4; )
-		NAH - I'll just fix this when/if it becomes a problem since just about every system I can think that I might want to compile on has it
 
 	- Change all the status bars to say "Channel X/Y" so that they know how many iterations to expect (and 'i' will have to be a count instead of literally 'i')
 
