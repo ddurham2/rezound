@@ -268,7 +268,7 @@ void CConvolutionFilter::undoActionSizeSafe(const CActionSound *actionSound)
 // --------------------------------------------------
 
 CConvolutionFilterFactory::CConvolutionFilterFactory(AActionDialog *channelSelectDialog,AActionDialog *dialog) :
-	AActionFactory(N_("Convolution Filter"),_("Convolve One Audio File with this One"),channelSelectDialog,dialog)
+	AActionFactory(N_("Convolution Filter"),_("Convolve One Audio File with this One.\nFree impulse files here: https://www.propellerheads.se/blog/free-reverb-resources-where-to-find-impulse-responses"),channelSelectDialog,dialog)
 {
 }
 
