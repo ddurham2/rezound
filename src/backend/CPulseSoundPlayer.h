@@ -25,9 +25,10 @@
 
 #ifdef ENABLE_PULSE
 
-#include "ASoundPlayer.h"
+#include <memory>
+#include "stdx/thread"
 
-#include <AThread.h>
+#include "ASoundPlayer.h"
 
 struct pa_simple;
 
@@ -51,22 +52,9 @@ private:
 	//bool supportsFullDuplex;
 	//bool wasInitializedBeforeRecording;
 
-	class CPlayThread : public AThread
-	{
-	public:
-		CPlayThread(CPulseSoundPlayer *parent);
-		virtual ~CPlayThread();
+	std::unique_ptr<stdx::thread> playThread;
 
-		bool kill;
-
-	protected:
-		void main();
-
-		CPulseSoundPlayer *parent;
-	};
-
-	CPlayThread playThread;
-	friend class CPlayThread;
+	void threadWork();
 };
 
 #endif // ENABLE_PULSE

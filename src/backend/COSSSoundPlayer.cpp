@@ -18,6 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
+// TODO this implementation may be outdated.. not sure any distros still include OSS?
+
 #include "COSSSoundPlayer.h"
 
 #ifdef ENABLE_OSS
@@ -57,9 +59,7 @@ COSSSoundPlayer::COSSSoundPlayer() :
 	initialized(false),
 	audio_fd(-1),
 	supportsFullDuplex(false),
-	wasInitializedBeforeRecording(false),
-
-	playThread(this)
+	wasInitializedBeforeRecording(false)
 {
 }
 
@@ -238,20 +238,20 @@ void COSSSoundPlayer::initialize()
 			printf("OSS player: supportsFullDuplex: %d\n",supportsFullDuplex);
 			*/
 
-			// start play thread
-			playThread.kill=false;
 
 			ASoundPlayer::initialize();
+
+			// start play thread
+			playThread = std::make_unique<stdx::thread>([this]() { threadWork(); });
+
 			initialized=true;
-			playThread.start();
 			fprintf(stderr, "OSS player initialized\n");
 		}
 		catch(...)
 		{
-			if(playThread.isRunning())
+			if(playThread && playThread->joinable())
 			{
-				playThread.kill=true;
-				playThread.wait();
+				playThread->join();
 			}
 			close(audio_fd);
 			audio_fd=-1;
@@ -271,8 +271,7 @@ void COSSSoundPlayer::deinitialize()
 		ASoundPlayer::deinitialize();
 
 		// stop play thread
-		playThread.kill=true;
-		playThread.wait();
+		playThread->join();
 		
 		// close OSS audio device
 		close(audio_fd);
@@ -296,19 +295,7 @@ void COSSSoundPlayer::doneRecording()
 }
 
 
-COSSSoundPlayer::CPlayThread::CPlayThread(COSSSoundPlayer *_parent) :
-	AThread(),
-
-	kill(false),
-	parent(_parent)
-{
-}
-
-COSSSoundPlayer::CPlayThread::~CPlayThread()
-{
-}
-
-void COSSSoundPlayer::CPlayThread::main()
+void COSSSoundPlayer::threadWork()
 {
 	try
 	{
@@ -326,10 +313,10 @@ void COSSSoundPlayer::CPlayThread::main()
 		TAutoBuffer<int32_t> buffer__int32_t(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount, true);
 		TAutoBuffer<float> buffer__float(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount, true);
 
-		while(!kill)
+		while(!stdx::this_thread::is_cancelled())
 		{
 			// can mixChannels throw any exception?
-			parent->mixSoundPlayerChannels(gDesiredOutputChannelCount,buffer,BUFFER_SIZE_FRAMES);
+			mixSoundPlayerChannels(gDesiredOutputChannelCount,buffer,BUFFER_SIZE_FRAMES);
 
 			int len;
 
@@ -337,7 +324,7 @@ void COSSSoundPlayer::CPlayThread::main()
 #if defined(SAMPLE_TYPE_S16)
 			// if(initialize to S16) ???
 			{ // no conversion necessary
-				if((len=write(parent->audio_fd,buffer,BUFFER_SIZE_FRAMES*sizeof(sample_t)*gDesiredOutputChannelCount))!=(int)BUFFER_SIZE_BYTES(sizeof(int16_t)))
+				if((len=write(audio_fd,buffer,BUFFER_SIZE_FRAMES*sizeof(sample_t)*gDesiredOutputChannelCount))!=(int)BUFFER_SIZE_BYTES(sizeof(int16_t)))
 					fprintf(stderr,"warning: didn't write whole buffer -- only wrote %d of %d bytes\n",len,BUFFER_SIZE_BYTES((int)sizeof(int16_t)));
 			}
 
@@ -348,7 +335,7 @@ void COSSSoundPlayer::CPlayThread::main()
 				unsigned l=BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount;
 				for(unsigned t=0;t<l;t++)
 					buffer__int16_t[t]=convert_sample<float,int16_t>(buffer[t]);
-				if((len=write(parent->audio_fd,buffer__int16_t,BUFFER_SIZE_FRAMES*sizeof(int16_t)*gDesiredOutputChannelCount))!=(int)BUFFER_SIZE_BYTES(sizeof(int16_t)))
+				if((len=write(audio_fd,buffer__int16_t,BUFFER_SIZE_FRAMES*sizeof(int16_t)*gDesiredOutputChannelCount))!=(int)BUFFER_SIZE_BYTES(sizeof(int16_t)))
 					fprintf(stderr,"warning: didn't write whole buffer -- only wrote %d of %d bytes\n",len,BUFFER_SIZE_BYTES((int)sizeof(int16_t)));
 			}
 

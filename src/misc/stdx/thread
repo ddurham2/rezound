@@ -1,0 +1,122 @@
+#ifndef stdx_thread_H__
+#define stdx_thread_H__
+#pragma once
+
+#include <assert.h>
+
+#include <atomic>
+#include <memory>
+#include <string>
+#include <thread>
+
+namespace stdx {
+
+extern thread_local std::shared_ptr<std::atomic_bool> thread_is_cancelled_sp__; // private
+extern thread_local std::atomic_bool* thread_is_cancelled__; // private
+
+namespace this_thread {
+	using namespace std::this_thread;
+
+	// gets the calling thread's name
+	extern std::string get_thread_name();
+
+	// sets the calling thread's name
+	extern void set_thread_name(const std::string& name);
+
+
+	// sets whether the calling thread is cancelled.
+	//  "cancelled" is just a flag that may be checked and does not interrupt any execution.
+	//  It is no relation to pthread's cancellation points.
+	extern void set_is_cancelled(bool cancelled);
+
+	// gets whether the calling thread is cancelled
+	static bool is_cancelled() { return *thread_is_cancelled__; } // inline because it could be called so often
+}
+
+//
+// Yes, you're not supposed to derive from STL types, but the inability to set the stack size is, IMO, inexcusable.
+//
+// There's not even a way to get the size of the stack to know if there would be problems.  Yet, they do have a
+// method informing of the platform limit on the number of threads.
+//
+// Common lame excuses for not including some way of specifying stack size are:
+//	1. "you can just set the stack size using the native handle"
+//		- no you can't change the stack size after it's started
+//  2. "not all platforms even have stacks"
+//		- so what?  not all platforms even support threads
+//  3. "just use setrlimit or ulimit -s"
+//		- this has been shown not to work, or that it affects all threads created
+//  4. "the default __MB is enough for anyone else you're doing it wrong"
+//		- really Bill Gates?
+//  4. "the default __MB isn't too large when you're on 64bit system"
+//		- wait a second... I thought we were trying to be system agnostic here
+//  5. "just use setcontext()"
+//		- if one is trying to limit the space to something smaller, this is useless
+//
+// I don't think it would kill them to provide a default which is ignored on platforms where it's not applicable.
+//
+// I'm not insisting that it should be done the way I do it below.
+// 
+//
+// Also, setting the thread name falls into this category too.  Widely used thread libs do support it, and it would
+// be good if they'd set it so debuggers show it.  Even still, a built in thread-local value would be nearly as
+// useful.  So I do that here.
+//
+// The cancel flag is my own idea.  I don't necessarily recommend standardizing it either.
+//
+class thread : public std::thread
+{
+public:
+	static size_t default_stack_size;
+
+	thread() noexcept;
+
+	thread(thread&& other) noexcept;
+
+	template<class Function, class... Args>
+	explicit thread(Function&& f, Args&&... args, size_t thread_size = default_stack_size)
+		: std::thread([ this, f{std::move(f)} ](Args&&... args) { 
+			// this is now running in he new thread
+
+			this_thread::set_thread_name("");
+
+			// keep the shared pointer around until thread ends
+			thread_is_cancelled_sp__ = this->thread_is_cancelled;
+
+			// save a direct pointer so it's a little cheaper to check the flag since it might be done often
+			thread_is_cancelled__ = this->thread_is_cancelled.get();
+
+			f(std::forward<Args>(args)...);
+		})
+	{
+		// not yet implementing this .. but I expect to need to
+		assert(thread_size == default_stack_size);
+	}
+
+	thread(const thread&) = delete;
+
+	// sets the cancel flag to true and then blocks until the object's associate thread finishes
+	void join();
+
+	// Sets whether the thread associated with this object has been cancelled.
+	void set_cancelled(bool cancelled) { 
+		assert(thread_is_cancelled); // being called on a thread with no associate object
+		*thread_is_cancelled = cancelled;
+	}
+
+	// Gets whether the thread associated with this object has been cancelled.
+	bool is_cancelled() const { 
+		return *thread_is_cancelled;
+	}
+
+private:
+	friend void swap( thread &lhs, thread &rhs ) noexcept;
+
+	std::shared_ptr<std::atomic_bool> thread_is_cancelled{std::make_shared<std::atomic_bool>(false)};
+};
+
+extern void swap( thread &lhs, thread &rhs ) noexcept;
+
+}
+
+#endif // stdx_thread_H__

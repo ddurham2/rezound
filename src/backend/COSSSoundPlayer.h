@@ -25,9 +25,10 @@
 
 #ifdef ENABLE_OSS
 
-#include "ASoundPlayer.h"
+#include <memory>
+#include "stdx/thread"
 
-#include <AThread.h>
+#include "ASoundPlayer.h"
 
 class COSSSoundPlayer : public ASoundPlayer
 {
@@ -49,24 +50,9 @@ private:
 	bool supportsFullDuplex;
 	bool wasInitializedBeforeRecording;
 
-	class CPlayThread : public AThread
-	{
-	public:
-		CPlayThread(COSSSoundPlayer *parent);
-		virtual ~CPlayThread();
+	std::unique_ptr<stdx::thread> playThread;
 
-		bool kill;
-
-	protected:
-		void main();
-
-		COSSSoundPlayer *parent;
-
-
-	};
-
-	CPlayThread playThread;
-	friend class CPlayThread;
+	void threadWork();
 };
 
 #endif // ENABLE_OSS

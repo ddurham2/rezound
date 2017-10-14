@@ -25,9 +25,10 @@
 
 #ifdef ENABLE_OSS
 
-#include "ASoundRecorder.h"
+#include <memory>
+#include "stdx/thread"
 
-#include <AThread.h>
+#include "ASoundRecorder.h"
 
 class COSSSoundRecorder : public ASoundRecorder
 {
@@ -45,23 +46,9 @@ private:
 	int audio_fd;
 	bool initialized;
 
-	class CRecordThread : public AThread
-	{
-	public:
-		CRecordThread(COSSSoundRecorder *parent);
-		virtual ~CRecordThread();
+	std::unique_ptr<stdx::thread> recordThread;
 
-		bool kill;
-
-	protected:
-		void main();
-
-		COSSSoundRecorder *parent;
-	};
-
-	CRecordThread recordThread;
-
-	friend class CRecordThread;
+	void threadWork();
 };
 
 #endif // ENABLE_OSS

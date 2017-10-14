@@ -64,9 +64,7 @@ COSSSoundRecorder::COSSSoundRecorder() :
 	ASoundRecorder(),
 
 	audio_fd(-1),
-	initialized(false),
-
-	recordThread(this)
+	initialized(false)
 {
 }
 
@@ -190,17 +188,15 @@ void COSSSoundRecorder::initialize(CSound *sound)
 			
 
 			// start record thread
-			recordThread.kill=false;
-			recordThread.start();
+			recordThread = std::make_unique<stdx::thread>([this]() { threadWork(); });
 
 			initialized=true;
 		}
 		catch(...)
 		{
-			if(recordThread.isRunning())
+			if(recordThread && recordThread->joinable())
 			{
-				recordThread.kill=true;
-				recordThread.wait();
+				recordThread->join();
 			}
 			close(audio_fd);
 			audio_fd=-1;
@@ -218,8 +214,7 @@ void COSSSoundRecorder::deinitialize()
 	if(initialized)
 	{
 		// stop record thread
-		recordThread.kill=true;
-		recordThread.wait();
+		recordThread->join();
 
 		// close OSS audio device (which should cause the read to finish)
 		close(audio_fd);
@@ -292,19 +287,7 @@ void COSSSoundRecorder::redo()
 */
 }
 
-COSSSoundRecorder::CRecordThread::CRecordThread(COSSSoundRecorder *_parent) :
-	AThread(),
-
-	kill(false),
-	parent(_parent)
-{
-}
-
-COSSSoundRecorder::CRecordThread::~CRecordThread()
-{
-}
-
-void COSSSoundRecorder::CRecordThread::main()
+void COSSSoundRecorder::threadWork()
 {
 /*
 	bool redoMutexLocked=false;
@@ -316,16 +299,16 @@ void COSSSoundRecorder::CRecordThread::main()
 		sample_t _converted_buffer[BUFFER_SIZE_BYTES/sizeof(sample_t)];
 		void *write_buffer;
 
-		while(!kill)
+		while(!stdx::this_thread::is_cancelled())
 		{
 /*
-			parent->redoMutex.lock();
+			redoMutex.lock();
 			redoMutexLocked=true;
 */
 
 			int len,err;
 
-			if((len=read(parent->audio_fd,read_buffer,BUFFER_SIZE_BYTES))!=BUFFER_SIZE_BYTES)
+			if((len=read(audio_fd,read_buffer,BUFFER_SIZE_BYTES))!=BUFFER_SIZE_BYTES)
 			{
 				if(len==-1)
 					fprintf(stderr,"warning: error returned by read() function -- %s\n",strerror(errno));
@@ -333,7 +316,7 @@ void COSSSoundRecorder::CRecordThread::main()
 					fprintf(stderr,"warning: didn't read whole buffer -- only read %d of %d bytes\n",len,BUFFER_SIZE_BYTES);
 			}
 			const int samplesRead=len/(bits/8);
-			const int framesRead=samplesRead/parent->getChannelCount();
+			const int framesRead=samplesRead/getChannelCount();
 
 			if(len!=-1)
 			{
@@ -354,13 +337,13 @@ void COSSSoundRecorder::CRecordThread::main()
 #endif
 				else
 					throw runtime_error(string(__func__)+" -- internal error -- unhandled bit rate: "+istring(bits));
-				parent->onData((sample_t *)write_buffer,framesRead);
+				onData((sample_t *)write_buffer,framesRead);
 			}
 			// else wait a few milliseconds?
 
 /*
 			redoMutexLocked=false;
-			parent->redoMutex.unlock();
+			redoMutex.unlock();
 */
 		}
 	}
@@ -368,7 +351,7 @@ void COSSSoundRecorder::CRecordThread::main()
 	{
 /*
 		if(redoMutexLocked)
-			parent->redoMutex.unlock();
+			redoMutex.unlock();
 */
 		fprintf(stderr,"exception caught in record thread: %s\n",e.what());
 
@@ -377,7 +360,7 @@ void COSSSoundRecorder::CRecordThread::main()
 	{
 /*
 		if(redoMutexLocked)
-			parent->redoMutex.unlock();
+			redoMutex.unlock();
 */
 		fprintf(stderr,"unknown exception caught in record thread\n");
 

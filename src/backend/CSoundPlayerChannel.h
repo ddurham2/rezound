@@ -21,6 +21,8 @@
 #ifndef __CSoundPlayerChannel_H__
 #define __CSoundPlayerChannel_H__
 
+#include <memory>
+#include "stdx/thread"
 
 #include "../../config/common.h"
 
@@ -28,7 +30,6 @@ class CSoundPlayerChannel;
 
 #include <CMutex.h>
 #include <CConditionVariable.h>
-#include <AThread.h>
 #include <TMemoryPipe.h>
 #include <TAutoBuffer.h>
 
@@ -107,16 +108,17 @@ private: /* for ASoundPlayer only */
 
 	void playingHasEnded();
 
-	class CPrebufferThread : public AThread
+	class CPrebufferThread
 	{
 	public:
 		CPrebufferThread(CSoundPlayerChannel *parent);
-		void main();
+		std::unique_ptr<stdx::thread> thread;
 
 		CSoundPlayerChannel *parent;
-		bool kill;
 		CConditionVariable waitForPlay;
 		mutable CMutex waitForPlayMutex;
+
+		void threadWork();
 	} prebufferThread;
 
 	friend class CPrebufferThread;

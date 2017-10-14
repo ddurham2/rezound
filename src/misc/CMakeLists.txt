@@ -11,8 +11,8 @@ FLEX_TARGET(cfg_lex CNestedDataFile/cfg.l "${CMAKE_CURRENT_BINARY_DIR}/cfg.lex.c
 ADD_FLEX_BISON_DEPENDENCY(cfg_lex cfg_tab)
 
 add_library(misc STATIC
-	AThread.cpp
-	AThread.h
+	stdx/stdx.cpp 
+
 	auto_array.h
 	CAtomicCounter.h
 	CConditionVariable.cpp

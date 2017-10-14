@@ -25,11 +25,12 @@
 
 #ifdef ENABLE_ALSA
 
+#include <memory>
+#include "stdx/thread"
+
 #include <alsa/asoundlib.h>
 
 #include "ASoundRecorder.h"
-
-#include <AThread.h>
 
 class CALSASoundRecorder : public ASoundRecorder
 {
@@ -47,23 +48,9 @@ private:
 	snd_pcm_t *capture_handle;
 	snd_pcm_format_t capture_format;
 
-	class CRecordThread : public AThread
-	{
-	public:
-		CRecordThread(CALSASoundRecorder *parent);
-		virtual ~CRecordThread();
+	std::unique_ptr<stdx::thread> recordThread;
 
-		bool kill;
-
-	protected:
-		void main();
-
-		CALSASoundRecorder *parent;
-	};
-
-	CRecordThread recordThread;
-
-	friend class CRecordThread;
+	void threadWork();
 };
 
 #endif // ENABLE_ALSA

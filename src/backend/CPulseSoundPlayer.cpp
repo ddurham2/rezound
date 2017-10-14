@@ -40,11 +40,9 @@ CPulseSoundPlayer::CPulseSoundPlayer() :
 	ASoundPlayer(),
 
 	initialized(false),
-	stream(NULL),
+	stream(NULL)
 	//supportsFullDuplex(false),
 	//wasInitializedBeforeRecording(false),
-
-	playThread(this)
 {
 }
 
@@ -107,20 +105,19 @@ void CPulseSoundPlayer::initialize()
 
 			// set parameters and latency???
 
-			// start play thread
-			playThread.kill=false;
-
 			ASoundPlayer::initialize();
-			playThread.start();
+
+			// start play thread
+			playThread = std::make_unique<stdx::thread>([this]() { threadWork(); });
+
 			initialized=true;
 			fprintf(stderr, "PulseAudio player initialized\n");
 		}
 		catch(...)
 		{
-			if(playThread.isRunning())
+			if(playThread && playThread->joinable())
 			{
-				playThread.kill=true;
-				playThread.wait();
+				playThread->join();
 			}
 			if(stream)
 			{
@@ -143,8 +140,7 @@ void CPulseSoundPlayer::deinitialize()
 		ASoundPlayer::deinitialize();
 
 		// stop play thread
-		playThread.kill=true;
-		playThread.wait();
+		playThread->join();
 		
 		// close Pulse audio device
 		if(stream)
@@ -176,20 +172,7 @@ void CPulseSoundPlayer::doneRecording()
 */
 }
 
-
-CPulseSoundPlayer::CPlayThread::CPlayThread(CPulseSoundPlayer *_parent) :
-	AThread(),
-
-	kill(false),
-	parent(_parent)
-{
-}
-
-CPulseSoundPlayer::CPlayThread::~CPlayThread()
-{
-}
-
-void CPulseSoundPlayer::CPlayThread::main()
+void CPulseSoundPlayer::threadWork()
 {
 	try
 	{
@@ -197,14 +180,14 @@ void CPulseSoundPlayer::CPlayThread::main()
 
 		TAutoBuffer<sample_t> buffer(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount*2/*<--padding*/, true); 
 
-		while(!kill)
+		while(!stdx::this_thread::is_cancelled())
 		{
 			// can mixChannels throw any exception?
-			parent->mixSoundPlayerChannels(gDesiredOutputChannelCount,buffer,BUFFER_SIZE_FRAMES);
+			mixSoundPlayerChannels(gDesiredOutputChannelCount,buffer,BUFFER_SIZE_FRAMES);
 
 
 			int error;
-			if(pa_simple_write(parent->stream, buffer, BUFFER_SIZE_BYTES(sizeof(sample_t)), &error)) {
+			if(pa_simple_write(stream, buffer, BUFFER_SIZE_BYTES(sizeof(sample_t)), &error)) {
 				fprintf(stderr,"warning: error writing buffer to pulse audio -- %s\n", pa_strerror(error));
 			}
 		}

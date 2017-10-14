@@ -168,10 +168,8 @@ using namespace std;
 
 	#include <string.h>	// for strerror()
 	#include <errno.h>	// for EBUSY
-	#include "AThread.h"
 
 	CRWMutex::CRWMutex()
-		: writeLockOwner(NULL)
 	{
 		const int ret=pthread_rwlock_init(&rwlock,NULL);
 		if(ret)
@@ -209,7 +207,7 @@ using namespace std;
 	void CRWMutex::writeLock()
 	{
 		// handle recursive write-locks (this check does not contain race conditions because they're true iff we already have an exclusive lock)
-		if(writeLockOwner==AThread::getCurrentThreadID())
+		if(writeLockOwner==std::this_thread::get_id())
 		{
 			writeLockCount.inc();
 			return;
@@ -218,14 +216,14 @@ using namespace std;
 		const int ret=pthread_rwlock_wrlock(&rwlock);
 		if(ret)
 			throw runtime_error(string(__func__)+" -- error aquiring write lock -- "+strerror(ret));
-		writeLockOwner=AThread::getCurrentThreadID();
+		writeLockOwner=std::this_thread::get_id();
 		writeLockCount.inc(); // = 1
 	}
 
 	bool CRWMutex::tryWriteLock()
 	{
 		// handle recursive write-locks (this check does not contain race conditions because they're true iff we already have an exclusive lock)
-		if(writeLockOwner==AThread::getCurrentThreadID())
+		if(writeLockOwner==std::this_thread::get_id())
 		{
 			writeLockCount.inc();
 			return true;
@@ -238,19 +236,20 @@ using namespace std;
 		if(ret!=0)
 			throw runtime_error(string(__func__)+" -- error doing try write lock -- "+strerror(ret));
 
-		writeLockOwner=AThread::getCurrentThreadID();
+		writeLockOwner=std::this_thread::get_id();
 		writeLockCount.inc(); // = 1
 		return true;
 	}
 
 	void CRWMutex::unlock()
 	{
+// TODO I need to make sure I don't attempt to do recursive write locks.. check source history to see when/why it was added
 		// handle recursive write-locks (this check of flags does not contain race conditions because they're true iff we already have an exclusive lock)
-		if(writeLockOwner==AThread::getCurrentThreadID())
+		if(writeLockOwner==std::this_thread::get_id())
 		{ // we currently have the write lock
 			writeLockCount.dec();
 			if(writeLockCount.value()<=0) {
-				writeLockOwner=0;
+				writeLockOwner=std::thread::id();
 				const int ret=pthread_rwlock_unlock(&rwlock);
 				if(ret)
 					throw runtime_error(string(__func__)+" -- error unlocking -- "+strerror(ret));

@@ -44,9 +44,7 @@ CALSASoundPlayer::CALSASoundPlayer() :
 	ASoundPlayer(),
 
 	initialized(false),
-	playback_handle(NULL),
-
-	playThread(this)
+	playback_handle(NULL)
 {
 }
 
@@ -211,21 +209,19 @@ void CALSASoundPlayer::initialize()
 				throw runtime_error(string(__func__)+" -- cannot prepare audio interface for use -- "+snd_strerror(err));
 
 
+			ASoundPlayer::initialize();
 
 			// start play thread
-			playThread.kill=false;
+			playThread = std::make_unique<stdx::thread>([this]() { threadWork(); });
 
-			ASoundPlayer::initialize();
 			initialized=true;
-			playThread.start();
 			fprintf(stderr, "ALSA player initialized\n");
 		}
 		catch(...)
 		{
-			if(playThread.isRunning())
+			if(playThread && playThread->joinable())
 			{
-				playThread.kill=true;
-				playThread.wait();
+				playThread->join();
 			}
 			if(playback_handle)
 				snd_pcm_close(playback_handle);
@@ -246,8 +242,7 @@ void CALSASoundPlayer::deinitialize()
 		ASoundPlayer::deinitialize();
 
 		// stop play thread
-		playThread.kill=true;
-		playThread.wait();
+		playThread->join();
 		
 		// close ALSA audio device
 		if(playback_handle!=NULL)
@@ -267,31 +262,18 @@ void CALSASoundPlayer::doneRecording()
 {
 }
 
-
-CALSASoundPlayer::CPlayThread::CPlayThread(CALSASoundPlayer *_parent) :
-	AThread(),
-
-	kill(false),
-	parent(_parent)
-{
-}
-
-CALSASoundPlayer::CPlayThread::~CPlayThread()
-{
-}
-
-void CALSASoundPlayer::CPlayThread::main()
+void CALSASoundPlayer::threadWork()
 {
 	try
 	{
 		int err;
-		TAutoBuffer<sample_t> buffer(PERIOD_SIZE_FRAMES*parent->devices[0].channelCount*2, true); 
+		TAutoBuffer<sample_t> buffer(PERIOD_SIZE_FRAMES*devices[0].channelCount*2, true); 
 			// these are possibly used if sample format conversion is required
-		TAutoBuffer<int16_t> buffer__int16_t(PERIOD_SIZE_FRAMES*parent->devices[0].channelCount, true);
-		TAutoBuffer<int32_t> buffer__int32_t(PERIOD_SIZE_FRAMES*parent->devices[0].channelCount, true);
-		TAutoBuffer<float> buffer__float(PERIOD_SIZE_FRAMES*parent->devices[0].channelCount, true);
+		TAutoBuffer<int16_t> buffer__int16_t(PERIOD_SIZE_FRAMES*devices[0].channelCount, true);
+		TAutoBuffer<int32_t> buffer__int32_t(PERIOD_SIZE_FRAMES*devices[0].channelCount, true);
+		TAutoBuffer<float> buffer__float(PERIOD_SIZE_FRAMES*devices[0].channelCount, true);
 
-		snd_pcm_format_t format=parent->playback_format;
+		snd_pcm_format_t format=playback_format;
 
 		// must do conversion of sample_t type -> initialized format type if necessary
 		int conv=-1;
@@ -333,18 +315,18 @@ void CALSASoundPlayer::CPlayThread::main()
 	#endif
 #endif
 
-		while(!kill)
+		while(!stdx::this_thread::is_cancelled())
 		{
 			// can mixChannels throw any exception???
-			parent->mixSoundPlayerChannels(parent->devices[0].channelCount,buffer,PERIOD_SIZE_FRAMES);
+			mixSoundPlayerChannels(devices[0].channelCount,buffer,PERIOD_SIZE_FRAMES);
 
 			// wait till the interface is ready for data, or 1 second has elapsed.
-			if((err = snd_pcm_wait (parent->playback_handle, 1000)) < 0)
+			if((err = snd_pcm_wait (playback_handle, 1000)) < 0)
 				throw runtime_error(string(__func__)+" -- snd_pcm_wait failed -- "+snd_strerror(err));
 
 			// find out how much space is available for playback data 
 			snd_pcm_sframes_t frames_to_deliver;
-			if((frames_to_deliver = snd_pcm_avail_update(parent->playback_handle)) < 0) 
+			if((frames_to_deliver = snd_pcm_avail_update(playback_handle)) < 0) 
 			{
 				if (frames_to_deliver == -EPIPE) 
 				{
@@ -362,47 +344,47 @@ void CALSASoundPlayer::CPlayThread::main()
 			{
 				case 0:	// no conversion necessary
 				{
-					if((err=snd_pcm_writei(parent->playback_handle, buffer, PERIOD_SIZE_FRAMES)) < 0)
+					if((err=snd_pcm_writei(playback_handle, buffer, PERIOD_SIZE_FRAMES)) < 0)
 						fprintf(stderr, "ALSA write failed (%s)\n", snd_strerror(err));
 				}
 				break;
 
 				case 1:	// we need to convert float->int16_t
 				{ 
-					unsigned l=PERIOD_SIZE_FRAMES*parent->devices[0].channelCount;
+					unsigned l=PERIOD_SIZE_FRAMES*devices[0].channelCount;
 					for(unsigned t=0;t<l;t++)
 						buffer__int16_t[t]=convert_sample<float,int16_t>((float)buffer[t]);
-					if((err=snd_pcm_writei(parent->playback_handle, buffer__int16_t, PERIOD_SIZE_FRAMES)) < 0)
+					if((err=snd_pcm_writei(playback_handle, buffer__int16_t, PERIOD_SIZE_FRAMES)) < 0)
 						fprintf(stderr, "ALSA write failed (%s)\n", snd_strerror(err));
 				}
 				break;
 
 				case 2:	// we need to convert int16_t->float
 				{ 
-					unsigned l=PERIOD_SIZE_FRAMES*parent->devices[0].channelCount;
+					unsigned l=PERIOD_SIZE_FRAMES*devices[0].channelCount;
 					for(unsigned t=0;t<l;t++)
 						buffer__float[t]=convert_sample<int16_t,float>((int16_t)buffer[t]);
-					if((err=snd_pcm_writei(parent->playback_handle, buffer__float, PERIOD_SIZE_FRAMES)) < 0)
+					if((err=snd_pcm_writei(playback_handle, buffer__float, PERIOD_SIZE_FRAMES)) < 0)
 						fprintf(stderr, "ALSA write failed (%s)\n", snd_strerror(err));
 				}
 				break;
 
 				case 3:	// we need to convert float->int32_t
 				{ 
-					unsigned l=PERIOD_SIZE_FRAMES*parent->devices[0].channelCount;
+					unsigned l=PERIOD_SIZE_FRAMES*devices[0].channelCount;
 					for(unsigned t=0;t<l;t++)
 						buffer__int32_t[t]=convert_sample<float,int32_t>((float)buffer[t]);
-					if((err=snd_pcm_writei(parent->playback_handle, buffer__int32_t, PERIOD_SIZE_FRAMES)) < 0)
+					if((err=snd_pcm_writei(playback_handle, buffer__int32_t, PERIOD_SIZE_FRAMES)) < 0)
 						fprintf(stderr, "ALSA write failed (%s)\n", snd_strerror(err));
 				}
 				break;
 
 				case 4:	// we need to convert int16_t->int32_t
 				{ 
-					unsigned l=PERIOD_SIZE_FRAMES*parent->devices[0].channelCount;
+					unsigned l=PERIOD_SIZE_FRAMES*devices[0].channelCount;
 					for(unsigned t=0;t<l;t++)
 						buffer__int32_t[t]=convert_sample<int16_t,int32_t>((int16_t)buffer[t]);
-					if((err=snd_pcm_writei(parent->playback_handle, buffer__int32_t, PERIOD_SIZE_FRAMES)) < 0)
+					if((err=snd_pcm_writei(playback_handle, buffer__int32_t, PERIOD_SIZE_FRAMES)) < 0)
 						fprintf(stderr, "ALSA write failed (%s)\n", snd_strerror(err));
 				}
 				break;

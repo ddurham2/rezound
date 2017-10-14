@@ -25,11 +25,12 @@
 
 #ifdef ENABLE_ALSA
 
+#include <memory>
+#include "stdx/thread"
+
 #include <alsa/asoundlib.h>
 
 #include "ASoundPlayer.h"
-
-#include <AThread.h>
 
 class CALSASoundPlayer : public ASoundPlayer
 {
@@ -50,23 +51,9 @@ private:
 	snd_pcm_t *playback_handle;
 	snd_pcm_format_t playback_format;
 
-	class CPlayThread : public AThread
-	{
-	public:
-		CPlayThread(CALSASoundPlayer *parent);
-		virtual ~CPlayThread();
+	std::unique_ptr<stdx::thread> playThread;
 
-		bool kill;
-
-	protected:
-		void main();
-
-		CALSASoundPlayer *parent;
-
-	};
-
-	CPlayThread playThread;
-	friend class CPlayThread;
+	void threadWork();
 };
 
 #endif // ENABLE_ALSA

@@ -136,6 +136,8 @@ public:
 #else
 	// *** posix implementation ***
 
+	#include <thread>
+
 	#include <pthread.h>
 	#include "CAtomicCounter.h"
 
@@ -162,7 +164,7 @@ public:
 		// even though only one write lock can be aquired, it can be locked more than once 
 		// if the thread currently holding the write-lock locks again (which is allowed)
 		mutable CAtomicCounter writeLockCount; 
-		void *writeLockOwner;
+		std::thread::id writeLockOwner;
 
 		mutable CAtomicCounter readLockCount;
 

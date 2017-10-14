@@ -49,7 +49,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_LDFLAGS_FLAGS} -Xlinker --allow-multiple-def
 
 	# TODO see about eliminating all but this first one and let everything include src/...
 include_directories("${SRC_ROOT}")
-include_directories("${SRC_ROOT}/src/misc")
+include_directories("${SRC_ROOT}/src/misc") # for stdx
 include_directories("${SRC_ROOT}/src/PoolFile")
 include_directories("${SRC_ROOT}/src/backend")
 

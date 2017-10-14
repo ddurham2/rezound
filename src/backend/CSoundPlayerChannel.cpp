@@ -130,8 +130,7 @@ CSoundPlayerChannel::CSoundPlayerChannel(ASoundPlayer *_player,CSound *_sound) :
 
 	updateAfterEdit(vector<int16_t>());
 
-	prebufferThread.kill=false;
-	prebufferThread.start();
+	prebufferThread.thread = std::make_unique<stdx::thread>([this]() { prebufferThread.threadWork(); });
 }
 
 CSoundPlayerChannel::~CSoundPlayerChannel()
@@ -148,12 +147,12 @@ void CSoundPlayerChannel::deinit()
 {
 	{
 		CMutexLocker l(prebufferThread.waitForPlayMutex);
-		prebufferThread.kill=true;
+		prebufferThread.thread->set_cancelled(true);
 		stop();
-		prebufferThread.waitForPlay.signal(); // so the prebuffering thread will for sure catch kill==true
+		prebufferThread.waitForPlay.signal(); // so the prebuffering thread will for sure catch set_cancelled(true)
 	}
 
-	prebufferThread.wait();
+	prebufferThread.thread->join();
 	prebufferedAudioPipe.closeWrite();
 	prebufferedPositionsPipe.closeWrite();
 
@@ -793,7 +792,7 @@ bool CSoundPlayerChannel::prebufferChunk()
 {
 	if(somethingWantsToClearThePrebufferQueue)
 	{ // check this flag and don't prebuffer any more data since something might clear the pipes so that this method finishes a blocked write, but then immediately fills the queue back up before getting the chance to lock the mutex
-		AThread::yield();
+		stdx::this_thread::yield();
 		return false;
 	}
 
@@ -1278,18 +1277,16 @@ const vector<bool> CSoundPlayerChannel::getOutputRoute(unsigned deviceIndex,unsi
 // --- Prebuffering Thread ---------------------------
 
 CSoundPlayerChannel::CPrebufferThread::CPrebufferThread(CSoundPlayerChannel *_parent) :
-	AThread(),
-	parent(_parent),
-	kill(false)
+	parent(_parent)
 {
 }
 
 
 // This is the thread function that constantly calls prebufferChunk() which writes prebuffered data into prebufferedChunkPipe
 // This thread also goes into a wait-state while the channel is not playing
-void CSoundPlayerChannel::CPrebufferThread::main()
+void CSoundPlayerChannel::CPrebufferThread::threadWork()
 {
-	while(!kill)
+	while(!stdx::this_thread::is_cancelled())
 	{
 		/* 
 		 * This code puts this thread into a wait state while the 
@@ -1301,7 +1298,7 @@ void CSoundPlayerChannel::CPrebufferThread::main()
 		CMutexLocker l(waitForPlayMutex);
 		while(!parent->prebuffering || (parent->paused && parent->seekSpeed==1.0))
 		{
-			if(kill)
+			if(stdx::this_thread::is_cancelled())
 				break;
 			waitForPlay.wait(waitForPlayMutex);
 		}
