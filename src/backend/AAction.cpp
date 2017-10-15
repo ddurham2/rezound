@@ -86,7 +86,7 @@ bool AActionFactory::performAction(CLoadedSound *loadedSound,CActionParameters *
 		if(!doPreActionSetup(loadedSound))
 			return false;
 
-		auto_ptr<CActionSound> actionSound(requiresALoadedSound ? new CActionSound(loadedSound->channel,gCrossfadeEdges) : NULL);
+		std::unique_ptr<CActionSound> actionSound(requiresALoadedSound ? new CActionSound(loadedSound->channel,gCrossfadeEdges) : NULL);
 
 		if(!actionParametersAlreadySetup)
 		{
@@ -299,7 +299,7 @@ bool AAction::doAction(CSoundPlayerChannel *channel,bool prepareForUndo,bool _wi
 					restoreOutputRoutes=channel->getOutputRoutes();
 			}
 
-			auto_ptr<CActionSound> _actionSound(actionSound.get() ? new CActionSound(*actionSound) : NULL);
+			std::unique_ptr<CActionSound> _actionSound(actionSound.get() ? new CActionSound(*actionSound) : NULL);
 
 			if(crossfadeEdgesIsApplicable)
 				prepareForInnerCrossfade(_actionSound.get());
@@ -424,7 +424,7 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 
 			uncrossfadeEdges();
 
-			auto_ptr<const CActionSound> _actionSound(actionSound.get() ? new CActionSound(*actionSound) : NULL);
+			std::unique_ptr<const CActionSound> _actionSound(actionSound.get() ? new CActionSound(*actionSound) : NULL);
 
 			undoActionSizeSafe(_actionSound.get());
 
@@ -491,7 +491,7 @@ void AAction::undoAction(CSoundPlayerChannel *channel)
 		undoActionRecursionCount++;
 		try
 		{
-			auto_ptr<const CActionSound> _actionSound(actionSound.get() ? new CActionSound(*actionSound) : NULL);
+			std::unique_ptr<const CActionSound> _actionSound(actionSound.get() ? new CActionSound(*actionSound) : NULL);
 			undoActionSizeSafe(_actionSound.get());
 			done=false;
 		}

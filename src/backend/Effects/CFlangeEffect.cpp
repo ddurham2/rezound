@@ -71,7 +71,7 @@ bool CFlangeEffect::doActionSizeSafe(CActionSound *actionSound,bool prepareForUn
 			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
 			const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);
 
-			auto_ptr<ALFO> LFO(gLFORegistry.createLFO(flangeLFO,actionSound->sound->getSampleRate()));
+			std::unique_ptr<ALFO> LFO(gLFORegistry.createLFO(flangeLFO,actionSound->sound->getSampleRate()));
 
 			CDSPFlangeEffect flangeEffect(
 				ms_to_samples(delayTime,actionSound->sound->getSampleRate()),

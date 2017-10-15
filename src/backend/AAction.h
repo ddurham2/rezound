@@ -279,7 +279,7 @@ private:
 
 	const AActionFactory * const factory; 	// the AActionFactory that created this object
 
-	auto_ptr<CActionSound> actionSound;	// a copy of the CActionSound this action was constructed with
+	std::unique_ptr<CActionSound> actionSound;	// a copy of the CActionSound this action was constructed with
 	bool willResize;
 	bool done;				// true if this action has already been done
 

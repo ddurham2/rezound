@@ -1,7 +1,7 @@
 #ifndef __auto_array_H__
 #define __auto_array_H__
 
-// like auto_ptr, is an array of pointers of the type that will get freed at destruction
+// TODO replace with std::unique_ptr<[]>
 #include <vector>
 
 namespace std {

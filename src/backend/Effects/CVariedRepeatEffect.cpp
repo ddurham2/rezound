@@ -45,7 +45,7 @@ bool CVariedRepeatEffect::doActionSizeSafe(CActionSound *actionSound,bool prepar
 			const CRezPoolAccesser src=actionSound->sound->getTempAudio(tempAudioPoolKey,i);
 			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
 
-			auto_ptr<ALFO> LFO(gLFORegistry.createLFO(LFODescription,actionSound->sound->getSampleRate()));
+			std::unique_ptr<ALFO> LFO(gLFORegistry.createLFO(LFODescription,actionSound->sound->getSampleRate()));
 			
 			for(sample_pos_t t=0;t<lTime;t++)
 			{

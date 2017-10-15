@@ -84,7 +84,7 @@ bool CMorphingArbitraryFIRFilter::doActionSizeSafe(CActionSound *actionSound,boo
 
 			CStatusBar statusBar(_("Filtering -- Channel ")+istring(++channelsDoneCount)+"/"+istring(actionSound->countChannels()),start,stop,true); 
 
-			auto_ptr<ALFO> sweepLFO(gLFORegistry.createLFO(sweepLFODesc,actionSound->sound->getSampleRate()));
+			std::unique_ptr<ALFO> sweepLFO(gLFORegistry.createLFO(sweepLFODesc,actionSound->sound->getSampleRate()));
 
 			// #defined because this occurs between both the removeDelay and !removeDelay code
 			#define RECALC_FILTER_KERNEL 										\
