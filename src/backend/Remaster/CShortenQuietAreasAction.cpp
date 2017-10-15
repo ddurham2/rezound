@@ -94,19 +94,19 @@ bool CShortenQuietAreasAction::doActionSizeSafe(CActionSound *actionSound,bool p
 	sample_pos_t unquietCounter;
 	CDSPRMSLevelDetector levelDetector(max((sample_pos_t)1,ms_to_samples(detectorWindow,actionSound->sound->getSampleRate())));
 
-	auto_array<const CRezPoolAccesser> srces(MAX_CHANNELS);
-	auto_array<const CRezPoolAccesser> alt_srces(MAX_CHANNELS); // used in order to be more efficient.. the crossfade code reads from two positions in the src data
+	std::unique_ptr<const CRezPoolAccesser> srces[MAX_CHANNELS];
+	std::unique_ptr<const CRezPoolAccesser> alt_srces[MAX_CHANNELS]; // used in order to be more efficient.. the crossfade code reads from two positions in the src data
 	
 	sample_pos_t destPos=start;
-	auto_array<CRezPoolAccesser> dests(MAX_CHANNELS);
+	std::unique_ptr<CRezPoolAccesser> dests[MAX_CHANNELS];
 
 	// create accessors to write to
 	const unsigned channelCount=actionSound->sound->getChannelCount();
 	for(unsigned i=0;i<channelCount;i++)
 	{
-		srces[i]=new CRezPoolAccesser(actionSound->sound->getTempAudio(tempAudioPoolKey,i));
-		alt_srces[i]=new CRezPoolAccesser(actionSound->sound->getTempAudio(tempAudioPoolKey,i));
-		dests[i]=new CRezPoolAccesser(actionSound->sound->getAudio(i));
+		srces[i] = std::make_unique<CRezPoolAccesser>(actionSound->sound->getTempAudio(tempAudioPoolKey,i));
+		alt_srces[i] = std::make_unique<CRezPoolAccesser>(actionSound->sound->getTempAudio(tempAudioPoolKey,i));
+		dests[i] = std::make_unique<CRezPoolAccesser>(actionSound->sound->getAudio(i));
 	}
 
 	CStatusBar statusBar(_("Shortening Quiet Areas"),0,selectionLength,true);
@@ -211,7 +211,7 @@ bool CShortenQuietAreasAction::doActionSizeSafe(CActionSound *actionSound,bool p
 	return true;
 }
 
-void CShortenQuietAreasAction::alterQuietAreaLength(CActionSound *actionSound,sample_pos_t &destPos,const sample_pos_t unquietCounter,const sample_pos_t dQuietBeginPos,const sample_pos_t dQuietEndPos,const sample_pos_t sQuietBeginPos,const sample_pos_t sQuietEndPos,auto_array<const CRezPoolAccesser> &srces,auto_array<const CRezPoolAccesser> &alt_srces,auto_array<CRezPoolAccesser> &dests)
+void CShortenQuietAreasAction::alterQuietAreaLength(CActionSound *actionSound,sample_pos_t &destPos,const sample_pos_t unquietCounter,const sample_pos_t dQuietBeginPos,const sample_pos_t dQuietEndPos,const sample_pos_t sQuietBeginPos,const sample_pos_t sQuietEndPos,std::unique_ptr<const CRezPoolAccesser> srces[],std::unique_ptr<const CRezPoolAccesser> alt_srces[],std::unique_ptr<CRezPoolAccesser> dests[])
 {
 	// it's time to alter length of quiet area 
 	// 	- remove an appropriately sized section between the dQuietBeginPos and dQuietEndPos

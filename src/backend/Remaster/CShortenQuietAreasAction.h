@@ -21,14 +21,14 @@
 #ifndef __CShortenQuietAreasAction_H__
 #define __CShortenQuietAreasAction_H__
 
+#include <memory>
+
 #include "../../../config/common.h"
 
 class CShortenQuietAreasAction;
 class CShortenQuietAreasActionFactory;
 
 #include "../AAction.h"
-
-#include <auto_array.h> // from misc/
 
 class CShortenQuietAreasAction : public AAction
 {
@@ -50,7 +50,7 @@ private:
 
 	sample_pos_t undoRemoveLength;
 
-	void alterQuietAreaLength(CActionSound *actionSound,sample_pos_t &destPos,const sample_pos_t unquietCounter,const sample_pos_t dQuietBeginPos,const sample_pos_t dQuietEndPos,const sample_pos_t sQuietBeginPos,const sample_pos_t sQuietEndPos,auto_array<const CRezPoolAccesser> &srces,auto_array<const CRezPoolAccesser> &alt_srces,auto_array<CRezPoolAccesser> &dests);
+	void alterQuietAreaLength(CActionSound *actionSound,sample_pos_t &destPos,const sample_pos_t unquietCounter,const sample_pos_t dQuietBeginPos,const sample_pos_t dQuietEndPos,const sample_pos_t sQuietBeginPos,const sample_pos_t sQuietEndPos,std::unique_ptr<const CRezPoolAccesser> srces[],std::unique_ptr<const CRezPoolAccesser> alt_srces[],std::unique_ptr<CRezPoolAccesser> dests[]);
 };
 
 class CShortenQuietAreasActionFactory : public AActionFactory
