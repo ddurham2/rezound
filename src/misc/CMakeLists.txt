@@ -13,7 +13,6 @@ ADD_FLEX_BISON_DEPENDENCY(cfg_lex cfg_tab)
 add_library(misc STATIC
 	stdx/stdx.cpp 
 
-	CAtomicCounter.h
 	CConditionVariable.cpp
 	CConditionVariable.h
 	clocks.cpp
