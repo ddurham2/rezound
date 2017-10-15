@@ -22,8 +22,6 @@ add_library(misc STATIC
 	CMutex.cpp
 	CMutex.h
 	CPath.h
-	CRWMutex.cpp
-	CRWMutex.h
 	endian_util.h
 	ScopedAutoReleasePool.h
 	TAutoBuffer.h

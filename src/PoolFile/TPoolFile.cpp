@@ -60,6 +60,7 @@
 // restore to the backed up SAT just before the space modification method began if there was an error either in the logic or in
 // extending the file's length
 
+#include <assert.h>
 #include <stdio.h> // for the printf errors... should probably use assert (but assumably temporary)  (It's also for printSAT())
 
 #if defined(__GNUC__) && (__GNUC__>=3)
@@ -774,49 +775,63 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::sharedLock() const
 {
-	structureMutex.readLock();
+	structureMutex.lock_shared();
+	++m_sharedLockCount;
 }
 
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::sharedTrylock() const
 {
-	return structureMutex.tryReadLock();
+	if (structureMutex.try_lock_shared()) {
+		++m_sharedLockCount;
+		return true;
+	}
+	return false;
 }
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::sharedUnlock() const
 {
-	structureMutex.unlock();
+	--m_sharedLockCount;
+	structureMutex.unlock_shared();
 }
 
 template<class l_addr_t,class p_addr_t>
 	const size_t TPoolFile<l_addr_t,p_addr_t>::getSharedLockCount() const
 {
-	return structureMutex.getReadLockCount();
+	return m_sharedLockCount;
 }
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::exclusiveLock() const
 {
-	structureMutex.writeLock();
+	structureMutex.lock();
+	assert(!m_isExclusiveLocked);
+	m_isExclusiveLocked = true;
 }
 
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::exclusiveTrylock() const
 {
-	return structureMutex.tryWriteLock();
+	if (structureMutex.try_lock()) {
+		assert(!m_isExclusiveLocked);
+		m_isExclusiveLocked = true;
+		return true;
+	}
+	return false;
 }
 
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::exclusiveUnlock() const
 {
+	m_isExclusiveLocked = false;
 	structureMutex.unlock();
 }
 
 template<class l_addr_t,class p_addr_t>
 	const bool TPoolFile<l_addr_t,p_addr_t>::isExclusiveLocked() const
 {
-	return structureMutex.isLockedForWrite();
+	return m_isExclusiveLocked;
 }
 
 

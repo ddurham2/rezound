@@ -28,14 +28,15 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <string>
+#include <atomic>
 #include <map>
-#include <vector>
 #include <queue>
 #include <set>
+#include <shared_mutex>
+#include <string>
+#include <vector>
 
 #include <CMutex.h>
-#include <CRWMutex.h>
 
 #include "CMultiFile.h"
 
@@ -178,7 +179,9 @@ private:
 
 	friend struct RLogicalBlock;
 
-	mutable CRWMutex structureMutex;
+	mutable std::shared_timed_mutex structureMutex; // only need std::shared_mutex, but that's c++17
+	mutable std::atomic<size_t> m_sharedLockCount{0};
+	mutable std::atomic<bool> m_isExclusiveLocked{false};
 
 	mutable CMutex accesserInfoMutex;
 

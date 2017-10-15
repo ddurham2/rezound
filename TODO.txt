@@ -6,3 +6,8 @@
 - make TPoolFile use mmap().. then the whole file could be mapped into memory (x64 eh?) and the logical mappings could just point to the address space and not have to actually swap anything in/out myself nor have to maintain any sort of cache of buffers.. do sync() when needed
 
 - include an uncrustify conf file and use it
+
+- glitches:
+	- if edits are done while the sound is playing, then glitches can appear
+		- reproduce: load a sound with quiet/smooth tone, then start adjusting gain and undoing repeatedly while it's playing and it will have a glitch after a few attempts
+			- I believe there's something going on with TPoolFile's cache.. while the player is playing the processing catches maybe a cached block in memory which is not correct.. seems like maybe the rw lock is not keeping shared locks out while we're writing .. perhaps I don't hold the lock the whole time.. or I failed to originally realize the the PoolFile cache is a resource that needs to be protected across threads.
