@@ -86,7 +86,7 @@ private:
 
 #include <fftw3.h>
 
-#include <TAutoBuffer.h>
+#include <vector>
 
 typedef double fftw_real;
 
@@ -140,8 +140,8 @@ public:
 		data(W),dataPos(0),
 		xform(W+1),
 
-		p   (fftw_plan_r2r_1d(W, data, xform, FFTW_R2HC, FFTW_ESTIMATE)),
-		un_p(fftw_plan_r2r_1d(W, xform, data, FFTW_HC2R, FFTW_ESTIMATE)),
+		p   (fftw_plan_r2r_1d(W, data.data(), xform.data(), FFTW_R2HC, FFTW_ESTIMATE)),
+		un_p(fftw_plan_r2r_1d(W, xform.data(), data.data(), FFTW_HC2R, FFTW_ESTIMATE)),
 
 		kernel_real(W/2+1),
 		kernel_img(W/2+1),
@@ -154,7 +154,7 @@ public:
 
 		// ??? might want to check coefficient_t against fftw_real
 		
-		prepareFilterKernel(filterKernel,data,xform,p,un_p);
+		prepareFilterKernel(filterKernel,data.data(),xform.data(),p,un_p);
 		//printf("chosen window size: %d\n",W);
 
 		reset();
@@ -169,11 +169,11 @@ public:
 	// the NEW set of coefficients MUST be the same size as the original one at construction
 	void setNewFilterKernel(const coefficient_t filterKernel[])
 	{
-		TAutoBuffer<fftw_real> data(W),xform(W+1);
-		fftw_plan p    = fftw_plan_r2r_1d(W, data, xform, FFTW_R2HC, FFTW_ESTIMATE);
-		fftw_plan un_p = fftw_plan_r2r_1d(W, xform, data, FFTW_HC2R, FFTW_ESTIMATE);
+		std::vector<fftw_real> data(W), xform(W+1);
+		fftw_plan p    = fftw_plan_r2r_1d(W, data.data(), xform.data(), FFTW_R2HC, FFTW_ESTIMATE);
+		fftw_plan un_p = fftw_plan_r2r_1d(W, xform.data(), data.data(), FFTW_HC2R, FFTW_ESTIMATE);
 
-		prepareFilterKernel(filterKernel,data,xform,p,un_p);
+		prepareFilterKernel(filterKernel,data.data(),xform.data(),p,un_p);
 
 		fftw_destroy_plan(p);
 		fftw_destroy_plan(un_p);
@@ -278,18 +278,18 @@ private:
 		const fftw_real fW;
 	const size_t N; // length of audio chunk to be processed each fft window (W-M+1)
 
-	TAutoBuffer<fftw_real> data;
+	std::vector<fftw_real> data;
 	size_t dataPos;
 
-	TAutoBuffer<fftw_real> xform;
+	std::vector<fftw_real> xform;
 
 	fftw_plan p;
 	fftw_plan un_p;
 
-	TAutoBuffer<fftw_real> kernel_real;
-	TAutoBuffer<fftw_real> kernel_img;
+	std::vector<fftw_real> kernel_real;
+	std::vector<fftw_real> kernel_img;
 
-	TAutoBuffer<fftw_real> overlap;
+	std::vector<fftw_real> overlap;
 	size_t overlapPos;
 
 
@@ -393,8 +393,8 @@ private:
 		}
 
 		// convert given polar coordinate frequency domain kernel to rectangular coordinates
-		TAutoBuffer<coefficient_t> real(responseSize);
-		TAutoBuffer<coefficient_t> imaginary(responseSize);
+		std::vector<coefficient_t> real(responseSize);
+		std::vector<coefficient_t> imaginary(responseSize);
 		for(size_t t=0;t<responseSize;t++)
 		{
 			real[t]=polar_to_rec_real(magnitude[t],phase[t]);
@@ -404,15 +404,15 @@ private:
 
 		// convert rectangular coordinate frequency domain kernel to the time domain
 		const size_t W=(responseSize-1)*2;
-		TAutoBuffer<fftw_real> xform(W);
+		std::vector<fftw_real> xform(W);
 		for(size_t t=0;t<responseSize;t++)
 		{ // setup the array in the form fftw expects: [  r0,r1,r2, ... rW/2, iW/2-1, ... i2, i1 ]
 			xform[t]=real[t];
 			if(t!=0 && t!=W/2)
 				xform[W-t]=imaginary[t];
 		}
-		TAutoBuffer<fftw_real> data(W);
-		fftw_plan un_p = fftw_plan_r2r_1d(W, xform, data, FFTW_HC2R, FFTW_ESTIMATE);
+		std::vector<fftw_real> data(W);
+		fftw_plan un_p = fftw_plan_r2r_1d(W, xform.data(), data.data(), FFTW_HC2R, FFTW_ESTIMATE);
 		fftw_execute(un_p);	// xform -> data
 		fftw_destroy_plan(un_p);
 
@@ -428,7 +428,7 @@ private:
 		const size_t M=responseSize;
 
 		// rotate the kernel forward by M/2 (also unfortunately causes a delay in the filtered signal by M/2 samples)
-		TAutoBuffer<coefficient_t> temp(W);
+		std::vector<coefficient_t> temp(W);
 		for(size_t t=0;t<W;t++)
 			temp[(t+M/2)%W]=data[t];
 
@@ -448,8 +448,8 @@ private:
 #if 0
 		// test the filter kernel
 		{
-			TAutoBuffer<fftw_real> data(W);
-			TAutoBuffer<fftw_real> xform(W);
+			std::vector<fftw_real> data(W);
+			std::vector<fftw_real> xform(W);
 
 			for(size_t t=0;t<W;t++)
 				data[t]=tempKernel[t];

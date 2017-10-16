@@ -29,7 +29,6 @@
 #include <utility>
 
 #include <istring>
-#include <TAutoBuffer.h>
 
 #include <CPath.h>
 
@@ -138,8 +137,8 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 		{
 			sound->clearCues();
 
-			TAutoBuffer<int> markIDs(cueCount);
-			afGetMarkIDs(h,AF_DEFAULT_TRACK,markIDs);
+			std::vector<int> markIDs(cueCount);
+			afGetMarkIDs(h,AF_DEFAULT_TRACK,markIDs.data());
 			for(size_t t=0;t<cueCount;t++)
 			{
 				string name=afGetMarkName(h,AF_DEFAULT_TRACK,markIDs[t]);
@@ -179,8 +178,8 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 			// find the misc ID of the user notes
 			int _v;
 			const int userNotesMiscType=getUserNotesMiscType(afGetFileFormat(h,&_v));
-			TAutoBuffer<int> miscIDs(afGetMiscIDs(h,NULL));
-			const int miscIDCount=afGetMiscIDs(h,miscIDs);
+			std::vector<int> miscIDs(afGetMiscIDs(h,NULL));
+			const int miscIDCount=afGetMiscIDs(h,miscIDs.data());
 			int userNotesMiscID=-1;
 			for(int t=0;t<miscIDCount;t++)
 			{
@@ -194,9 +193,9 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 			if(userNotesMiscID!=-1) // was found
 			{
 				const int userNotesLength=afGetMiscSize(h,userNotesMiscID);
-				TAutoBuffer<int8_t> buf(userNotesLength);
-				afReadMisc(h,userNotesMiscID,(void *)buf,userNotesLength);
-				sound->setUserNotes(string((char *)((void *)buf),userNotesLength));
+				std::vector<int8_t> buf(userNotesLength);
+				afReadMisc(h,userNotesMiscID,buf.data(),userNotesLength);
+				sound->setUserNotes(string((char *)(buf.data()),userNotesLength));
 			}
 		}
 		
@@ -207,12 +206,12 @@ bool ClibaudiofileSoundTranslator::loadSoundGivenSetup(const string filename,CSo
 		for(unsigned t=0;t<channelCount;t++)
 			accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
 
-		TAutoBuffer<sample_t> buffer((size_t)(afGetVirtualFrameSize(h,AF_DEFAULT_TRACK,1)*4096/sizeof(sample_t)));
+		std::vector<sample_t> buffer((size_t)(afGetVirtualFrameSize(h,AF_DEFAULT_TRACK,1)*4096/sizeof(sample_t)));
 		sample_pos_t pos=0;
 		CStatusBar statusBar(_("Loading Sound"),0,afGetFrameCount(h,AF_DEFAULT_TRACK),true);
 		for(;;)
 		{
-			const int read=afReadFrames(h,AF_DEFAULT_TRACK,(void *)buffer,4096);
+			const int read=afReadFrames(h,AF_DEFAULT_TRACK,buffer.data(),4096);
 			if(read>0)
 			{
 				// increase length of file by 10 seconds if necessary
@@ -421,7 +420,7 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,con
 #ifdef HANDLE_CUES_AND_MISC
 
 	// setup for saving the cues (except for positions)
-	TAutoBuffer<int> markIDs(sound->getCueCount());
+	std::vector<int> markIDs(sound->getCueCount());
 	if(saveCues)
 	{
 		size_t cueCount=0;
@@ -440,7 +439,7 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,con
 			else
 			{
 
-				afInitMarkIDs(initialSetup,AF_DEFAULT_TRACK,markIDs,(int)cueCount);
+				afInitMarkIDs(initialSetup,AF_DEFAULT_TRACK,markIDs.data(),(int)cueCount);
 				size_t temp=0;
 				for(size_t t=0;t<sound->getCueCount();t++)
 				{
@@ -515,7 +514,7 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,con
 				accessers[t]=new CRezPoolAccesser(sound->getAudio(t));
 			
 			// save the audio data
-			TAutoBuffer<sample_t> buffer((size_t)(channelCount*4096));
+			std::vector<sample_t> buffer((size_t)(channelCount*4096));
 			sample_pos_t pos=0;
 			AFframecount count=saveLength/4096;
 			CStatusBar statusBar(_("Saving Sound"),0,saveLength,true);
@@ -529,7 +528,7 @@ bool ClibaudiofileSoundTranslator::saveSoundGivenSetup(const string filename,con
 						for(int i=0;i<chunkSize;i++)
 							buffer[i*channelCount+c]=(*(accessers[c]))[pos+i+saveStart];
 					}
-					if(afWriteFrames(h,AF_DEFAULT_TRACK,(void *)buffer,chunkSize)!=chunkSize)
+					if(afWriteFrames(h,AF_DEFAULT_TRACK,buffer.data(),chunkSize)!=chunkSize)
 						throw runtime_error(string(__func__)+" -- error writing audio data -- "+errorMessage);
 					pos+=chunkSize;
 				}

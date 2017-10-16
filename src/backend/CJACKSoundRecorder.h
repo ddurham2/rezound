@@ -25,11 +25,11 @@
 
 #ifdef ENABLE_JACK
 
+#include <vector>
+
 #include "ASoundRecorder.h"
 
 #include <jack/jack.h>
-
-#include <TAutoBuffer.h>
 
 class CJACKSoundRecorder : public ASoundRecorder
 {
@@ -48,7 +48,7 @@ private:
 	jack_port_t *input_ports[MAX_CHANNELS];
 	unsigned channelCount;
 
-	TAutoBuffer<sample_t> tempBuffer;
+	std::vector<sample_t> tempBuffer;
 
 	static int processAudio(jack_nframes_t nframes,void *arg);
 	static int sampleRateChanged(jack_nframes_t nframes,void *arg);

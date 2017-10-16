@@ -29,9 +29,9 @@
 
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 #include <istring>
-#include <TAutoBuffer.h>
 
 #include "settings.h"
 
@@ -267,11 +267,11 @@ void CALSASoundPlayer::threadWork()
 	try
 	{
 		int err;
-		TAutoBuffer<sample_t> buffer(PERIOD_SIZE_FRAMES*devices[0].channelCount*2, true); 
+		std::vector<sample_t> buffer(PERIOD_SIZE_FRAMES*devices[0].channelCount*2); 
 			// these are possibly used if sample format conversion is required
-		TAutoBuffer<int16_t> buffer__int16_t(PERIOD_SIZE_FRAMES*devices[0].channelCount, true);
-		TAutoBuffer<int32_t> buffer__int32_t(PERIOD_SIZE_FRAMES*devices[0].channelCount, true);
-		TAutoBuffer<float> buffer__float(PERIOD_SIZE_FRAMES*devices[0].channelCount, true);
+		std::vector<int16_t> buffer__int16_t(PERIOD_SIZE_FRAMES*devices[0].channelCount);
+		std::vector<int32_t> buffer__int32_t(PERIOD_SIZE_FRAMES*devices[0].channelCount);
+		std::vector<float> buffer__float(PERIOD_SIZE_FRAMES*devices[0].channelCount);
 
 		snd_pcm_format_t format=playback_format;
 
@@ -318,7 +318,7 @@ void CALSASoundPlayer::threadWork()
 		while(!stdx::this_thread::is_cancelled())
 		{
 			// can mixChannels throw any exception???
-			mixSoundPlayerChannels(devices[0].channelCount,buffer,PERIOD_SIZE_FRAMES);
+			mixSoundPlayerChannels(devices[0].channelCount,buffer.data(),PERIOD_SIZE_FRAMES);
 
 			// wait till the interface is ready for data, or 1 second has elapsed.
 			if((err = snd_pcm_wait (playback_handle, 1000)) < 0)
@@ -344,7 +344,7 @@ void CALSASoundPlayer::threadWork()
 			{
 				case 0:	// no conversion necessary
 				{
-					if((err=snd_pcm_writei(playback_handle, buffer, PERIOD_SIZE_FRAMES)) < 0)
+					if((err=snd_pcm_writei(playback_handle, buffer.data(), PERIOD_SIZE_FRAMES)) < 0)
 						fprintf(stderr, "ALSA write failed (%s)\n", snd_strerror(err));
 				}
 				break;
@@ -354,7 +354,7 @@ void CALSASoundPlayer::threadWork()
 					unsigned l=PERIOD_SIZE_FRAMES*devices[0].channelCount;
 					for(unsigned t=0;t<l;t++)
 						buffer__int16_t[t]=convert_sample<float,int16_t>((float)buffer[t]);
-					if((err=snd_pcm_writei(playback_handle, buffer__int16_t, PERIOD_SIZE_FRAMES)) < 0)
+					if((err=snd_pcm_writei(playback_handle, buffer__int16_t.data(), PERIOD_SIZE_FRAMES)) < 0)
 						fprintf(stderr, "ALSA write failed (%s)\n", snd_strerror(err));
 				}
 				break;
@@ -364,7 +364,7 @@ void CALSASoundPlayer::threadWork()
 					unsigned l=PERIOD_SIZE_FRAMES*devices[0].channelCount;
 					for(unsigned t=0;t<l;t++)
 						buffer__float[t]=convert_sample<int16_t,float>((int16_t)buffer[t]);
-					if((err=snd_pcm_writei(playback_handle, buffer__float, PERIOD_SIZE_FRAMES)) < 0)
+					if((err=snd_pcm_writei(playback_handle, buffer__float.data(), PERIOD_SIZE_FRAMES)) < 0)
 						fprintf(stderr, "ALSA write failed (%s)\n", snd_strerror(err));
 				}
 				break;
@@ -374,7 +374,7 @@ void CALSASoundPlayer::threadWork()
 					unsigned l=PERIOD_SIZE_FRAMES*devices[0].channelCount;
 					for(unsigned t=0;t<l;t++)
 						buffer__int32_t[t]=convert_sample<float,int32_t>((float)buffer[t]);
-					if((err=snd_pcm_writei(playback_handle, buffer__int32_t, PERIOD_SIZE_FRAMES)) < 0)
+					if((err=snd_pcm_writei(playback_handle, buffer__int32_t.data(), PERIOD_SIZE_FRAMES)) < 0)
 						fprintf(stderr, "ALSA write failed (%s)\n", snd_strerror(err));
 				}
 				break;
@@ -384,7 +384,7 @@ void CALSASoundPlayer::threadWork()
 					unsigned l=PERIOD_SIZE_FRAMES*devices[0].channelCount;
 					for(unsigned t=0;t<l;t++)
 						buffer__int32_t[t]=convert_sample<int16_t,int32_t>((int16_t)buffer[t]);
-					if((err=snd_pcm_writei(playback_handle, buffer__int32_t, PERIOD_SIZE_FRAMES)) < 0)
+					if((err=snd_pcm_writei(playback_handle, buffer__int32_t.data(), PERIOD_SIZE_FRAMES)) < 0)
 						fprintf(stderr, "ALSA write failed (%s)\n", snd_strerror(err));
 				}
 				break;

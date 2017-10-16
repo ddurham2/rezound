@@ -103,7 +103,6 @@ CSoundPlayerChannel::CSoundPlayerChannel(ASoundPlayer *_player,CSound *_sound) :
 
 	gapSignalPosition(0),
 	gapSignalLength(0),
-	gapSignalBuffer(0),
 
 	player(_player),
 
@@ -357,8 +356,8 @@ sample_pos_t CSoundPlayerChannel::estimateOldestPrebufferedPosition(float origSe
 void CSoundPlayerChannel::estimateLowestAndHighestPrebufferedPosition(sample_pos_t &lowestPosition,sample_pos_t &highestPosition,float origSeekSpeed,sample_pos_t origStartPosition,sample_pos_t origStopPosition)
 {
 	CMutexLocker l(prebufferReadingMutex); // make sure mixOntoBuffer isn't running
-	TAutoBuffer<RChunkPosition> positions(prebufferedPositionsPipe.getSize());
-	int read=prebufferedPositionsPipe.peek(positions,positions.getSize(),false);
+	std::vector<RChunkPosition> positions(prebufferedPositionsPipe.getSize());
+	int read=prebufferedPositionsPipe.peek(positions.data(),positions.size(),false);
 
 	lowestPosition=MAX_LENGTH;
 	highestPosition=0;
@@ -631,7 +630,7 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 	const unsigned channelCount=prepared_channelCount;
 
 	#define READ_SIZE ((size_t)4096)
-	sample_t _readBuffer[(READ_SIZE+2)*MAX_CHANNELS]; /* ??? for JACK, needs to be locked from swapping out .. is stack, so can that happen?  perhaps this needs to point to a TAutoBuffer declared in the object that is locked from being swapped out*/
+	sample_t _readBuffer[(READ_SIZE+2)*MAX_CHANNELS]; /* ??? for JACK, needs to be locked from swapping out .. is stack, so can that happen?  perhaps this needs to point to a std::vector with locked-memory allocator*/
 	sample_t *readBuffer=_readBuffer+(2*MAX_CHANNELS); // make readBuffer have two valid frames worth of space before the pointer for interpolation purposes
 
 	sample_t *oBuffer=_oBuffer;
@@ -666,7 +665,7 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 			framesRead=min(gapSignalLength-gapSignalPosition,
 					min((sample_pos_t)READ_SIZE, (sample_pos_t)maxFramesToRead)
 				);
-			memcpy(readBuffer,gapSignalBuffer+(gapSignalPosition*channelCount),framesRead*channelCount*sizeof(sample_t));
+			memcpy(readBuffer,gapSignalBuffer.data()+(gapSignalPosition*channelCount),framesRead*channelCount*sizeof(sample_t));
 			gapSignalPosition+=framesRead;
 		}
 		else
@@ -1091,7 +1090,7 @@ void CSoundPlayerChannel::createGapSignal()
 	const unsigned sampleRate=sound->getSampleRate();
 
 	gapSignalPosition=gapSignalLength=(sample_pos_t)(gLoopGapLengthSeconds*sampleRate);
-	gapSignalBuffer.setSize(gapSignalLength*channelCount);
+	gapSignalBuffer.resize(gapSignalLength*channelCount);
 
 	/* I should make this load a wav now that it can be any length (round-robin the channels, convert sample rate .. I suppose generate if I can't load it .. let registry define file location) */
 

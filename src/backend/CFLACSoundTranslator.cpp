@@ -32,12 +32,12 @@
 #include <string>
 #include <stdexcept>
 #include <utility>
+#include <vector>
 
 #include <FLAC++/all.h>
 
 #include <istring>
 #include <CPath.h>
-#include <TAutoBuffer.h>
 
 #include "CSound.h"
 #include "AStatusComm.h"
@@ -278,13 +278,13 @@ bool CFLACSoundTranslator::onSaveSound(const string filename,const CSound *sound
 	if(s==FLAC__STREAM_ENCODER_INIT_STATUS_OK)
 	{
 		#define BUFFER_SIZE 65536
-		TAutoBuffer<FLAC__int32> buffers[MAX_CHANNELS];
-		FLAC__int32 *_buffers[MAX_CHANNELS];
+		std::vector<FLAC__int32> buffers_[MAX_CHANNELS];
+		FLAC__int32 *buffers[MAX_CHANNELS];
 
 		for(unsigned t=0;t<sound->getChannelCount();t++)
 		{
-			buffers[t].setSize(BUFFER_SIZE);
-			_buffers[t]=buffers[t]; // get point of buffer[t] to be able to pass to f.process()
+			buffers_[t].resize(BUFFER_SIZE);
+			buffers[t]=buffers_[t].data(); // get pointer of buffer[t] to be able to pass to f.process()
 		}
 
 
@@ -306,7 +306,7 @@ bool CFLACSoundTranslator::onSaveSound(const string filename,const CSound *sound
 					throw runtime_error(string(__func__)+" -- internal error -- unhandled bitRate: "+istring(bitRate));
 			}
 
-			if(!f.process(_buffers,len))
+			if(!f.process(buffers,len))
 			{
 				const int errNO=errno;
 				f.finish();

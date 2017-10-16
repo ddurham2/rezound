@@ -27,6 +27,8 @@ using namespace std;
 
 #include <stdio.h>
 
+#include <vector>
+
 #include <pulse/simple.h>
 #include <pulse/error.h>
 
@@ -178,16 +180,16 @@ void CPulseSoundPlayer::threadWork()
 	{
 		// ??? when I start to more fully support multiple devices I need to read from the devices array and not from the global settings here
 
-		TAutoBuffer<sample_t> buffer(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount*2/*<--padding*/, true); 
+		std::vector<sample_t> buffer(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount*2/*<--padding*/); 
 
 		while(!stdx::this_thread::is_cancelled())
 		{
 			// can mixChannels throw any exception?
-			mixSoundPlayerChannels(gDesiredOutputChannelCount,buffer,BUFFER_SIZE_FRAMES);
+			mixSoundPlayerChannels(gDesiredOutputChannelCount,buffer.data(),BUFFER_SIZE_FRAMES);
 
 
 			int error;
-			if(pa_simple_write(stream, buffer, BUFFER_SIZE_BYTES(sizeof(sample_t)), &error)) {
+			if(pa_simple_write(stream, buffer.data(), BUFFER_SIZE_BYTES(sizeof(sample_t)), &error)) {
 				fprintf(stderr,"warning: error writing buffer to pulse audio -- %s\n", pa_strerror(error));
 			}
 		}

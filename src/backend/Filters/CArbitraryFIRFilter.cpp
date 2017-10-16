@@ -21,6 +21,7 @@
 #include "CArbitraryFIRFilter.h"
 
 #include <algorithm>
+#include <vector>
 
 #include "../CActionParameters.h"
 
@@ -63,7 +64,7 @@ bool CArbitraryFIRFilter::doActionSizeSafe(CActionSound *actionSound,bool prepar
 		   time domain kernel.. perhaps I could fudge the plus one value in convolver instead of here and not cause the 4x issue 
 		*/
 	const sample_pos_t filterKernelLength=kernelLength+1;
-	TAutoBuffer<float> filterKernel(filterKernelLength);
+	std::vector<float> filterKernel(filterKernelLength);
 	CGraphParamValueIterator fr_i(freqResponse,filterKernelLength);
 	for(size_t t=0;t<filterKernelLength;t++)
 		filterKernel[t]=fr_i.next();
@@ -83,7 +84,7 @@ bool CArbitraryFIRFilter::doActionSizeSafe(CActionSound *actionSound,bool prepar
 	{
 		if(actionSound->doChannel[i])
 		{
-			TFFTConvolverFrequencyDomainKernel<float,float> convolver(filterKernel,filterKernelLength);
+			TFFTConvolverFrequencyDomainKernel<float,float> convolver(filterKernel.data(),filterKernelLength);
 
 			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
 			const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);

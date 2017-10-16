@@ -40,9 +40,7 @@ CJACKSoundRecorder::CJACKSoundRecorder() :
 	ASoundRecorder(),
 
 	initialized(false),
-	client(NULL),
-
-	tempBuffer(1)
+	client(NULL)
 {
 	for(unsigned t=0;t<MAX_CHANNELS;t++)
 		input_ports[t]=NULL;
@@ -76,7 +74,7 @@ void CJACKSoundRecorder::initialize(CSound *sound)
 
 			sampleRateChanged(jack_get_sample_rate(client),this); // make note of the sample rate for this device
 
-			tempBuffer.setSize(jack_get_buffer_size(client)*sound->getChannelCount());
+			tempBuffer.resize(jack_get_buffer_size(client)*sound->getChannelCount());
 
 			// create two ports
 			channelCount=sound->getChannelCount(); // saved for later in deinitialize too
@@ -164,7 +162,7 @@ int CJACKSoundRecorder::processAudio(jack_nframes_t nframes,void *arg)
 	CJACKSoundRecorder *that=(CJACKSoundRecorder *)arg;
 	try
 	{
-		sample_t *tempBuffer=that->tempBuffer;
+		sample_t * const tempBuffer=that->tempBuffer.data();
 
 		// convert the recorded buffer to the native type and give to ASoundRecorder::onData
 		const unsigned channelCount=that->getSound()->getChannelCount();
@@ -176,7 +174,7 @@ int CJACKSoundRecorder::processAudio(jack_nframes_t nframes,void *arg)
 			for(unsigned t=0;t<nframes;t++,tt+=channelCount)
 				(*tt)=convert_sample<jack_default_audio_sample_t,sample_t>(in[t]);
 		}
-		that->onData(that->tempBuffer,nframes);
+		that->onData(tempBuffer,nframes);
 	}
 	catch(exception &e)
 	{

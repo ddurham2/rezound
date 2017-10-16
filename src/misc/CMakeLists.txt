@@ -11,6 +11,8 @@ FLEX_TARGET(cfg_lex CNestedDataFile/cfg.l "${CMAKE_CURRENT_BINARY_DIR}/cfg.lex.c
 ADD_FLEX_BISON_DEPENDENCY(cfg_lex cfg_tab)
 
 add_library(misc STATIC
+	stdx/latch
+	stdx/thread
 	stdx/stdx.cpp 
 
 	CConditionVariable.cpp
@@ -22,7 +24,6 @@ add_library(misc STATIC
 	CPath.h
 	endian_util.h
 	ScopedAutoReleasePool.h
-	TAutoBuffer.h
 	#TMemoryPipe.cpp
 	TMemoryPipe.h
 	TTempVarSetter.h

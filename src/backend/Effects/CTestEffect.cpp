@@ -20,7 +20,7 @@
 
 #include "CTestEffect.h"
 
-#include <TAutoBuffer.h>
+#include <vector>
 
 #include "../DSP/Convolver.h"
 
@@ -53,7 +53,7 @@ bool CTestEffect::doActionSizeSafe(CActionSound *actionSound,bool prepareForUndo
 	#include "/home/ddurham/impulse/impulse.h"
 	
 	const sample_pos_t M=IMPULSE_LENGTH; // length of filter kernel
-	TAutoBuffer<float> filter_kernel(M);
+	std::vector<float> filter_kernel(M);
 	for(sample_pos_t t=0;t<M;t++)
 		filter_kernel[t]=impulse[t];
 

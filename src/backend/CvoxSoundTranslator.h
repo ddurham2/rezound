@@ -21,6 +21,8 @@
 #ifndef __CvoxSoundTranslator_H__
 #define __CvoxSoundTranslator_H__
 
+#include <vector>
+
 #include "../../config/common.h"
 
 #include "ApipedSoundTranslator.h"

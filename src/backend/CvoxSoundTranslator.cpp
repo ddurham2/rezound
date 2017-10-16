@@ -30,7 +30,6 @@
 #include <stdexcept>
 
 #include <CPath.h>
-#include <TAutoBuffer.h>
 
 #include "CSound.h"
 #include "AFrontendHooks.h"
@@ -115,11 +114,11 @@ bool CvoxSoundTranslator::onLoadSound(const string filename,CSound *sound) const
 
 		if(bits==16)
 		{
-			TAutoBuffer<int16_t> buffer(BUFFER_SIZE*channelCount);
+			std::vector<int16_t> buffer(BUFFER_SIZE*channelCount);
 
 			for(;;)
 			{
-				size_t chunkSize=fread((void *)((int16_t *)buffer),sizeof(int16_t)*channelCount,BUFFER_SIZE,p);
+				size_t chunkSize=fread(buffer.data(),sizeof(int16_t)*channelCount,BUFFER_SIZE,p);
 				if(chunkSize<=0)
 					break;
 
@@ -210,7 +209,7 @@ bool CvoxSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 
 		if(bits==16)
 		{
-			TAutoBuffer<int16_t> buffer(BUFFER_SIZE*channelCount);
+			std::vector<int16_t> buffer(BUFFER_SIZE*channelCount);
 	
 			while(pos<saveLength)
 			{
@@ -229,7 +228,7 @@ bool CvoxSoundTranslator::onSaveSound(const string filename,const CSound *sound,
 				if(SIGPIPECaught)
 					throw runtime_error(string(__func__)+" -- lame aborted -- check stderr for more information");
 
-				if(fwrite(buffer,sizeof(int16_t)*channelCount,chunkSize,p)!=chunkSize)
+				if(fwrite(buffer.data(),sizeof(int16_t)*channelCount,chunkSize,p)!=chunkSize)
 					fprintf(stderr,"%s -- dropped some data while writing\n",__func__);
 
 				if(statusBar.update(pos))

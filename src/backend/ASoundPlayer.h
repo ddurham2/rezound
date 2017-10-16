@@ -26,14 +26,13 @@
 class ASoundPlayer;
 
 #include <set>
-
 #include <vector>
 
 #ifdef HAVE_FFTW
+#include <memory>
 #include <map>
 #include <fftw3.h>
 #include <CMutex.h>
-#include <TAutoBuffer.h>
 
 typedef double fftw_real;
 
@@ -175,14 +174,14 @@ private:
 	mutable bool frequencyAnalysisBufferPrepared;
 	mutable fftw_real frequencyAnalysisBuffer[ASP_ANALYSIS_BUFFER_SIZE];
 	size_t frequencyAnalysisBufferLength; // the amount of data that mixSoundPlayerChannels copied into the buffer
-	mutable map<size_t,TAutoBuffer<fftw_real> *> hammingWindows; // create and save Hamming windows for any length needed
+	mutable map<size_t,std::unique_ptr<std::vector<fftw_real>>> hammingWindows; // create and save Hamming windows for any length needed
 	fftw_plan analyzerPlan;
 	fftw_real data[ASP_ANALYSIS_BUFFER_SIZE];
 	mutable vector<size_t> bandLowerIndexes; // mutable because calculateAnalyzerBandIndexRanges is called from getFrequencyAnalysis
 	mutable vector<size_t> bandUpperIndexes;
 
 	void calculateAnalyzerBandIndexRanges() const; // const because it is called from getFrequencyAnalysis
-	static TAutoBuffer<fftw_real> *createHammingWindow(size_t windowSize);
+	static std::unique_ptr<std::vector<fftw_real>> createHammingWindow(size_t windowSize);
 #endif
 
 	mutable TMemoryPipe<sample_t> samplingForStereoPhaseMeters;

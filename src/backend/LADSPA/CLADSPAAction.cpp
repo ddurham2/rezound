@@ -27,8 +27,6 @@
 #include "../CSoundPlayerChannel.h"
 #include "../CLoadedSound.h"
 
-#include <TAutoBuffer.h>
-
 // ??? technically need to lock the size of any sounds that I'm going to access in doActionSizeSafe, except currently there's no way for other sounds to be altered while this is running so I will delay implementing that
 /*
  * Some LADSPA actions use fftw.  If ladspa actions are loaded that were compiled with fftw 
@@ -123,32 +121,30 @@ bool CLADSPAAction::doActionSizeSafe(CActionSound *actionSound,bool prepareForUn
 
 
 	// set up the memory pointers for the plugin's ports
-	TAutoBuffer<LADSPA_Data> inputBuffers[MAX_CHANNELS];
+	LADSPA_Data inputBuffers[MAX_CHANNELS][BUFFER_SIZE];
 	for(size_t t=0;t<inputAudioPorts.size();t++)
 	{
-		inputBuffers[t].setSize(BUFFER_SIZE);
 		desc->connect_port(instance,inputAudioPorts[t],inputBuffers[t]);
 	}
 
-	TAutoBuffer<LADSPA_Data> outputBuffers[MAX_CHANNELS];
+	LADSPA_Data outputBuffers[MAX_CHANNELS][BUFFER_SIZE];
 	for(size_t t=0;t<outputAudioPorts.size();t++)
 	{
-		outputBuffers[t].setSize(BUFFER_SIZE);
 		desc->connect_port(instance,outputAudioPorts[t],outputBuffers[t]);
 	}
 
-	TAutoBuffer<LADSPA_Data> controlValues(inputControlPorts.size());
+	std::vector<LADSPA_Data> controlValues(inputControlPorts.size());
 	for(size_t t=0;t<inputControlPorts.size();t++)
 	{
 		controlValues[t]=actionParameters.getValue<double>(desc->PortNames[inputControlPorts[t]]);
 		//printf("parameter:\t%s\t%f\n",desc->PortNames[inputControlPorts[t]],controlValues[t]);
-		desc->connect_port(instance,inputControlPorts[t],((LADSPA_Data *)controlValues)+t);
+		desc->connect_port(instance,inputControlPorts[t],controlValues.data()+t);
 	}
 
 	// I bind to these because some plugins don't check that they haven't been bound to
-	TAutoBuffer<LADSPA_Data> unusedOutputValues(outputControlPorts.size());
+	std::vector<LADSPA_Data> unusedOutputValues(outputControlPorts.size());
 	for(size_t t=0;t<outputControlPorts.size();t++)
-		desc->connect_port(instance,outputControlPorts[t],((LADSPA_Data *)unusedOutputValues)+t);
+		desc->connect_port(instance,outputControlPorts[t],unusedOutputValues.data()+t);
 
 
 	// append new channels if requested

@@ -23,6 +23,7 @@
 
 #include <memory>
 #include "stdx/thread"
+#include <vector>
 
 #include "../../config/common.h"
 
@@ -31,7 +32,6 @@ class CSoundPlayerChannel;
 #include <CMutex.h>
 #include <CConditionVariable.h>
 #include <TMemoryPipe.h>
-#include <TAutoBuffer.h>
 
 #include "CTrigger.h"
 #include "CSound_defs.h"
@@ -144,7 +144,7 @@ private: /* for ASoundPlayer only */
 
 	sample_pos_t gapSignalPosition;
 	sample_pos_t gapSignalLength; // in frames
-	TAutoBuffer<sample_t> gapSignalBuffer;
+	std::vector<sample_t> gapSignalBuffer;
 	void createGapSignal();
 
 	ASoundPlayer *player;

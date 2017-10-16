@@ -74,6 +74,7 @@
 #endif
 
 
+#include <memory>
 #include <stdexcept>
 #include <utility>
 #include <algorithm>
@@ -85,8 +86,6 @@
 
 #include "TPoolFile.h"
 #include "TStaticPoolAccesser.h"
-
-#include <TAutoBuffer.h>
 
 
 // -- Structural integrity is ensured by keeping a separate file to contain the SAT
@@ -347,7 +346,7 @@ template<class l_addr_t,class p_addr_t>
 
 	try
 	{
-		TAutoBuffer<int8_t> temp(maxBlockSize);
+		std::unique_ptr<int8_t> temp(new int8_t[maxBlockSize]);
 
 		const p_addr_t length=blockFile.getSize();
 
@@ -356,13 +355,13 @@ template<class l_addr_t,class p_addr_t>
 	
 		for(blocksize_t t=0;t<length/maxBlockSize;t++)
 		{
-			blockFile.read(temp,maxBlockSize,multiFileHandle1);
-			copyFile.write(temp,maxBlockSize,multiFileHandle2);
+			blockFile.read(temp.get(),maxBlockSize,multiFileHandle1);
+			copyFile.write(temp.get(),maxBlockSize,multiFileHandle2);
 		}
 		if((length%maxBlockSize)!=0)
 		{
-			blockFile.read(temp,length%maxBlockSize,multiFileHandle1);
-			copyFile.write(temp,length%maxBlockSize,multiFileHandle2);
+			blockFile.read(temp.get(),length%maxBlockSize,multiFileHandle1);
+			copyFile.write(temp.get(),length%maxBlockSize,multiFileHandle2);
 		}
 
 		writeMetaData(&copyFile,true);
@@ -1237,14 +1236,15 @@ template<class l_addr_t,class p_addr_t>
 		f->write(&SATSize,sizeof(SATSize),multiFileHandle);
 		}
 
-		TAutoBuffer<uint8_t> mem(SAT[poolId].size()*RLogicalBlock().getMemSize(FORMAT_VERSION));
+		const size_t memSize = SAT[poolId].size()*RLogicalBlock().getMemSize(FORMAT_VERSION);
+		std::unique_ptr<uint8_t> mem(new uint8_t[memSize]);
 
 		// write each SAT entry
 		size_t offset=0;
 		for(size_t t=0;t<SAT[poolId].size();t++)
-			SAT[poolId][t].writeToMem(mem,offset);
+			SAT[poolId][t].writeToMem(mem.get(),offset);
 
-		f->write(mem,mem.getSize(),multiFileHandle);
+		f->write(mem.get(),memSize,multiFileHandle);
 	}
 }
 
@@ -1320,8 +1320,9 @@ template<class l_addr_t,class p_addr_t>
 			throw runtime_error(string(__func__)+" -- SATSize is >0 on an invalid pool: '"+poolName+"'");
 
 		// read SAT into mem buffer
-		TAutoBuffer<uint8_t> mem(SATSize*RLogicalBlock().getMemSize(formatVersion));
-		f->read(mem,mem.getSize(),multiFileHandle);
+		const size_t memSize = SATSize*RLogicalBlock().getMemSize(formatVersion);
+		std::unique_ptr<uint8_t> mem(new uint8_t[memSize]);
+		f->read(mem.get(),memSize,multiFileHandle);
 
 		const blocksize_t maxBlockSize=poolInfo.isValid ? getMaxBlockSizeFromAlignment(poolInfo.alignment) : 0;
 
@@ -1330,7 +1331,7 @@ template<class l_addr_t,class p_addr_t>
 		for(size_t t=0;t<SATSize;t++)
 		{
 			RLogicalBlock logicalBlock;
-			logicalBlock.readFromMem(mem,offset,formatVersion);
+			logicalBlock.readFromMem(mem.get(),offset,formatVersion);
 
 			// divide the size of the block just read into pieces that will fit into maxBlockSize sizes blocks
 			// just in case the maxBlockSize is smaller than it used to be
@@ -1499,7 +1500,7 @@ template<class l_addr_t,class p_addr_t>
 	 */
 
 	bool didSomething=false;
-	TAutoBuffer<int8_t> temp(maxBlockSize);
+	std::unique_ptr<int8_t> temp(new int8_t[maxBlockSize]);
 
 	//    addr     size
 	map<p_addr_t,p_addr_t> physicalBlockList;
@@ -1527,7 +1528,7 @@ template<class l_addr_t,class p_addr_t>
 		for(size_t t=0;t<SAT[poolId].size();t++)
 		{
 			RLogicalBlock &b=SAT[poolId][t];
-			didSomething|=physicallyMoveBlock(b,physicallyWhere,physicalBlockList,temp);
+			didSomething|=physicallyMoveBlock(b,physicallyWhere,physicalBlockList,temp.get());
 			physicallyWhere+=b.size;
 		}
 	}

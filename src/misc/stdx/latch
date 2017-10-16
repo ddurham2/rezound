@@ -1,0 +1,44 @@
+#ifndef stdx_latch_H__
+#define stdx_latch_H__
+#pragma once
+
+#include <mutex>
+#include <condition_variable>
+
+namespace stdx {
+
+// one time use barrier -- see http://en.cppreference.com/w/cpp/experimental/latch
+class latch
+{
+public:
+	// construct with how many waiters there will be
+    explicit latch(std::size_t count)
+		: m_count(count)
+	{}
+
+	// wait on all the waiters to get to an agreed-upon point
+    void wait()
+    {
+        std::unique_lock<std::mutex> lock(m_mutex);
+        if (--m_count == 0) {
+            m_conditionVariable.notify_all();
+        } else {
+            m_conditionVariable.wait(lock,
+				[this] {
+					return m_count <= 0;
+				}
+			);
+        }
+    }
+
+private:
+    std::size_t m_count;
+    std::mutex m_mutex;
+    std::condition_variable m_conditionVariable;
+};
+
+
+
+}
+
+#endif // stdx_latch_H__

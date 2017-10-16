@@ -24,9 +24,9 @@
 
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 #include <istring>
-#include <TAutoBuffer.h>
 
 #include "settings.h"
 #include "AStatusComm.h"
@@ -317,11 +317,11 @@ void CALSASoundRecorder::threadWork()
 		const unsigned channelCount=getSound()->getChannelCount();
 
 		int err;
-		TAutoBuffer<sample_t> buffer(PERIOD_SIZE_FRAMES*channelCount*2); 
+		std::vector<sample_t> buffer(PERIOD_SIZE_FRAMES*channelCount*2); 
 			// these are possibly used if sample format conversion is required
-		TAutoBuffer<int16_t> buffer__int16_t(PERIOD_SIZE_FRAMES*channelCount);
-		TAutoBuffer<int32_t> buffer__int32_t(PERIOD_SIZE_FRAMES*channelCount);
-		TAutoBuffer<float> buffer__float(PERIOD_SIZE_FRAMES*channelCount);
+		std::vector<int16_t> buffer__int16_t(PERIOD_SIZE_FRAMES*channelCount);
+		std::vector<int32_t> buffer__int32_t(PERIOD_SIZE_FRAMES*channelCount);
+		std::vector<float> buffer__float(PERIOD_SIZE_FRAMES*channelCount);
 
 		snd_pcm_format_t format=capture_format;
 
@@ -388,7 +388,7 @@ void CALSASoundRecorder::threadWork()
 			{
 				case 0:	// no conversion necessary
 				{
-					if((len=snd_pcm_readi(capture_handle, buffer, PERIOD_SIZE_FRAMES)) < 0)
+					if((len=snd_pcm_readi(capture_handle, buffer.data(), PERIOD_SIZE_FRAMES)) < 0)
 						fprintf(stderr, "ALSA read failed (%s)\n", snd_strerror(len));
 				}
 				break;
@@ -396,7 +396,7 @@ void CALSASoundRecorder::threadWork()
 				case 1:	// we need to convert int16_t->sample_t
 				{ 
 					unsigned l=PERIOD_SIZE_FRAMES*channelCount;
-					if((err=snd_pcm_readi(capture_handle, buffer__int16_t, PERIOD_SIZE_FRAMES)) < 0)
+					if((err=snd_pcm_readi(capture_handle, buffer__int16_t.data(), PERIOD_SIZE_FRAMES)) < 0)
 						fprintf(stderr, "ALSA read failed (%s)\n", snd_strerror(err));
 					for(unsigned t=0;t<l;t++)
 						buffer[t]=convert_sample<int16_t,sample_t>(buffer__int16_t[t]);
@@ -406,7 +406,7 @@ void CALSASoundRecorder::threadWork()
 				case 2:	// we need to convert int32_t->sample_t
 				{ 
 					unsigned l=PERIOD_SIZE_FRAMES*channelCount;
-					if((err=snd_pcm_readi(capture_handle, buffer__int32_t, PERIOD_SIZE_FRAMES)) < 0)
+					if((err=snd_pcm_readi(capture_handle, buffer__int32_t.data(), PERIOD_SIZE_FRAMES)) < 0)
 						fprintf(stderr, "ALSA read failed (%s)\n", snd_strerror(err));
 					for(unsigned t=0;t<l;t++)
 						buffer[t]=convert_sample<int32_t,sample_t>(buffer__int32_t[t]);
@@ -416,7 +416,7 @@ void CALSASoundRecorder::threadWork()
 				case 3:	// we need to convert float->sample_t
 				{ 
 					unsigned l=PERIOD_SIZE_FRAMES*channelCount;
-					if((err=snd_pcm_readi(capture_handle, buffer__float, PERIOD_SIZE_FRAMES)) < 0)
+					if((err=snd_pcm_readi(capture_handle, buffer__float.data(), PERIOD_SIZE_FRAMES)) < 0)
 						fprintf(stderr, "ALSA read failed (%s)\n", snd_strerror(err));
 					for(unsigned t=0;t<l;t++)
 						buffer[t]=convert_sample<float,sample_t>(buffer__float[t]);
@@ -427,7 +427,7 @@ void CALSASoundRecorder::threadWork()
 					throw runtime_error(string(__func__)+" -- no conversion determined");
 			}
 
-			onData(buffer,PERIOD_SIZE_FRAMES);
+			onData(buffer.data(),PERIOD_SIZE_FRAMES);
 
 		}
 	}

@@ -13,13 +13,3 @@ particular distribution or platform.
 
 - CPath is used to perform various operations on pathnames (i.e. does exist?, 
   touch, size of file).
-
-- TAutoBuffer is used to allocate buffer of memory that will be freed when 
-  the object goes out of scope.
-
-- AThread is a posix (pthread) thread wrapper class
-
-- CMutex is a posix (pthread) mutex wrapper class
-
-- CRWLock is a posix (pthread) rwlock wrapper class
-

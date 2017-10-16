@@ -20,6 +20,8 @@
 
 #include "CConvolutionFilter.h"
 
+#include <vector>
+
 #include <CPath.h>
 
 #include "../DSP/Convolver.h"
@@ -119,7 +121,7 @@ bool CConvolutionFilter::doActionSizeSafe(CActionSound *actionSound,bool prepare
 					const CRezPoolAccesser filterKernelAccesser=filterKernelFile.getAudio(i%filterKernelFile.getChannelCount());
 
 					const sample_pos_t filterKernelLength=(sample_pos_t)(filterKernelAccesser.getSize()*rateAdjustment/filterKernelRate);
-					TAutoBuffer<float> filterKernel(filterKernelLength);
+					std::vector<float> filterKernel(filterKernelLength);
 
 					TSoundStretcher<const CRezPoolAccesser> filterKernelStretcher(filterKernelAccesser,0,filterKernelAccesser.getSize(),filterKernelLength);
 
@@ -150,8 +152,8 @@ bool CConvolutionFilter::doActionSizeSafe(CActionSound *actionSound,bool prepare
 						filterKernelLengthSub++;
 					}
 
-					//TSimpleConvolver<mix_sample_t,float> convolver(filterKernel,filterKernelLength-filterKernelLengthSub);
-					TFFTConvolverTimeDomainKernel<float,float> convolver(filterKernel,filterKernelLength-filterKernelLengthSub);
+					//TSimpleConvolver<mix_sample_t,float> convolver(filterKernel.data(),filterKernelLength-filterKernelLengthSub);
+					TFFTConvolverTimeDomainKernel<float,float> convolver(filterKernel.data(),filterKernelLength-filterKernelLengthSub);
 
 					TDSPSinglePoleLowpassFilter<float,float> inputLowpassFilter(freq_to_fraction(inputLowpassFreq,actionSound->sound->getSampleRate()));
 

@@ -28,11 +28,12 @@
 
 #include "ClameSoundTranslator.h"
 
-#include <stdexcept>
 #include <stdint.h>
 
+#include <stdexcept>
+#include <vector>
+
 #include <CPath.h>
-#include <TAutoBuffer.h>
 #include <endian_util.h>
 
 #include "CSound.h"
@@ -181,8 +182,8 @@ bool ClameSoundTranslator::onLoadSound(const string filename,CSound *sound) cons
 		while(fgets(errBuffer,BUFFER_SIZE,errStream)!=NULL) // non-blocking i/o set by mypopen on this stream
 			printf("%s",errBuffer);
 
-		TAutoBuffer<int8_t> mem_buffer((bits/8)*BUFFER_SIZE*channelCount); // set this up so it deallocates itself
-		void * const buffer=mem_buffer;
+		std::vector<int8_t> mem_buffer((bits/8)*BUFFER_SIZE*channelCount); // set this up so it deallocates itself
+		void * const buffer=mem_buffer.data();
 
 		sample_pos_t pos=0;
 
@@ -355,7 +356,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound
 
 		#define BUFFER_SIZE 4096
 
-		TAutoBuffer<int16_t> buffer(BUFFER_SIZE*channelCount);
+		std::vector<int16_t> buffer(BUFFER_SIZE*channelCount);
 		sample_pos_t pos=0;
 
 		CStatusBar statusBar(_("Saving Sound"),0,saveLength,true);
@@ -376,7 +377,7 @@ bool ClameSoundTranslator::onSaveSound(const string filename,const CSound *sound
 
 			if(SIGPIPECaught)
 				throw runtime_error(string(__func__)+" -- lame aborted -- check stderr for more information");
-			if(fwrite(buffer,sizeof(int16_t)*channelCount,chunkSize,p)!=chunkSize)
+			if(fwrite(buffer.data(),sizeof(int16_t)*channelCount,chunkSize,p)!=chunkSize)
 				fprintf(stderr,"%s -- dropped some data while writing\n",__func__);
 
 			if(statusBar.update(pos))

@@ -67,7 +67,7 @@ bool CMorphingArbitraryFIRFilter::doActionSizeSafe(CActionSound *actionSound,boo
 
 	// given the user defined curve, now create the array of frequency component coefficients
 	const sample_pos_t filterKernelLength=kernelLength+1;
-	TAutoBuffer<float> filterKernel(filterKernelLength);
+	std::vector<float> filterKernel(filterKernelLength);
 
 
 	unsigned channelsDoneCount=0;
@@ -76,7 +76,7 @@ bool CMorphingArbitraryFIRFilter::doActionSizeSafe(CActionSound *actionSound,boo
 		if(actionSound->doChannel[i])
 		{
 										/* constructing with bogus kernel values right now */
-			TFFTConvolverFrequencyDomainKernel<float,float> convolver(filterKernel,filterKernelLength);
+			TFFTConvolverFrequencyDomainKernel<float,float> convolver(filterKernel.data(),filterKernelLength);
 
 			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
 			const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);
@@ -112,7 +112,7 @@ bool CMorphingArbitraryFIRFilter::doActionSizeSafe(CActionSound *actionSound,boo
 				CGraphParamValueIterator fr_i(normFreqResponse,filterKernelLength); 				\
 				for(size_t t=0;t<filterKernelLength;t++) 							\
 					filterKernel[t]=fr_i.next(); 								\
-				convolver.setNewMagnitudeArray(filterKernel,filterKernelLength); 				\
+				convolver.setNewMagnitudeArray(filterKernel.data(),filterKernelLength); 				\
 			}
 
 			if(removeDelay)

@@ -38,12 +38,11 @@
 
 #include <sys/soundcard.h>
 
-
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 #include <istring>
-#include <TAutoBuffer.h>
 
 #include "settings.h"
 
@@ -307,16 +306,16 @@ void COSSSoundPlayer::threadWork()
 		 * 	I think it was sending a signal that perhaps I should catch.
 		 *      So, I'm just making it bigger than necessary
 		 */
-		TAutoBuffer<sample_t> buffer(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount*2, true); 
+		std::vector<sample_t> buffer(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount*2); 
 			// these are possibly used if sample format conversion is required
-		TAutoBuffer<int16_t> buffer__int16_t(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount, true);
-		TAutoBuffer<int32_t> buffer__int32_t(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount, true);
-		TAutoBuffer<float> buffer__float(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount, true);
+		std::vector<int16_t> buffer__int16_t(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount);
+		std::vector<int32_t> buffer__int32_t(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount);
+		std::vector<float> buffer__float(BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount);
 
 		while(!stdx::this_thread::is_cancelled())
 		{
 			// can mixChannels throw any exception?
-			mixSoundPlayerChannels(gDesiredOutputChannelCount,buffer,BUFFER_SIZE_FRAMES);
+			mixSoundPlayerChannels(gDesiredOutputChannelCount,buffer.data(),BUFFER_SIZE_FRAMES);
 
 			int len;
 
@@ -324,7 +323,7 @@ void COSSSoundPlayer::threadWork()
 #if defined(SAMPLE_TYPE_S16)
 			// if(initialize to S16) ???
 			{ // no conversion necessary
-				if((len=write(audio_fd,buffer,BUFFER_SIZE_FRAMES*sizeof(sample_t)*gDesiredOutputChannelCount))!=(int)BUFFER_SIZE_BYTES(sizeof(int16_t)))
+				if((len=write(audio_fd,buffer.data(),BUFFER_SIZE_FRAMES*sizeof(sample_t)*gDesiredOutputChannelCount))!=(int)BUFFER_SIZE_BYTES(sizeof(int16_t)))
 					fprintf(stderr,"warning: didn't write whole buffer -- only wrote %d of %d bytes\n",len,BUFFER_SIZE_BYTES((int)sizeof(int16_t)));
 			}
 
@@ -335,7 +334,7 @@ void COSSSoundPlayer::threadWork()
 				unsigned l=BUFFER_SIZE_FRAMES*gDesiredOutputChannelCount;
 				for(unsigned t=0;t<l;t++)
 					buffer__int16_t[t]=convert_sample<float,int16_t>(buffer[t]);
-				if((len=write(audio_fd,buffer__int16_t,BUFFER_SIZE_FRAMES*sizeof(int16_t)*gDesiredOutputChannelCount))!=(int)BUFFER_SIZE_BYTES(sizeof(int16_t)))
+				if((len=write(audio_fd,buffer__int16_t.data(),BUFFER_SIZE_FRAMES*sizeof(int16_t)*gDesiredOutputChannelCount))!=(int)BUFFER_SIZE_BYTES(sizeof(int16_t)))
 					fprintf(stderr,"warning: didn't write whole buffer -- only wrote %d of %d bytes\n",len,BUFFER_SIZE_BYTES((int)sizeof(int16_t)));
 			}
 

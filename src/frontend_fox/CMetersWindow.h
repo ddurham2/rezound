@@ -27,7 +27,6 @@
 #include <vector>
 
 #include "../backend/CSound_defs.h"
-#include "../misc/TAutoBuffer.h"
 
 class CLevelMeter;
 class CBalanceMeter;
@@ -88,7 +87,7 @@ private:
 
 	CAnalyzer *analyzer;
 
-	TAutoBuffer<sample_t> samplingForStereoPhaseMeters;
+	std::vector<sample_t> samplingForStereoPhaseMeters;
 	vector<CStereoPhaseMeter *> stereoPhaseMeters;
 
 	vector<CLevelMeter *> levelMeters;

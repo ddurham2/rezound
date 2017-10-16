@@ -49,9 +49,7 @@ CJACKSoundPlayer::CJACKSoundPlayer() :
 	ASoundPlayer(),
 
 	initialized(false),
-	client(NULL),
-
-	tempBuffer(1)
+	client(NULL)
 {
 	for(unsigned t=0;t<MAX_CHANNELS;t++)
 		output_ports[t]=NULL;
@@ -91,7 +89,7 @@ void CJACKSoundPlayer::initialize()
 			sampleRateChanged(jack_get_sample_rate(client),this); // make note of the sample rate for this device
 			devices[0].channelCount=gDesiredOutputChannelCount;
 
-			tempBuffer.setSize(jack_get_buffer_size(client)*devices[0].channelCount); // ??? this is simply always device zero for now
+			tempBuffer.resize(jack_get_buffer_size(client)*devices[0].channelCount); // ??? this is simply always device zero for now
 
 
 			// create two ports
@@ -193,7 +191,7 @@ int CJACKSoundPlayer::processAudio(jack_nframes_t nframes,void *arg)
 
 	try
 	{
-		sample_t *tempBuffer=that->tempBuffer;
+		sample_t *tempBuffer=that->tempBuffer.data();
 
 		that->mixSoundPlayerChannels(gDesiredOutputChannelCount,tempBuffer,(unsigned)nframes);
 

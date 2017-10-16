@@ -9,6 +9,8 @@
 #include <string>
 #include <thread>
 
+#include "latch"
+
 namespace stdx {
 
 extern thread_local std::shared_ptr<std::atomic_bool> thread_is_cancelled_sp__; // private
@@ -32,6 +34,7 @@ namespace this_thread {
 	// gets whether the calling thread is cancelled
 	static bool is_cancelled() { return *thread_is_cancelled__; } // inline because it could be called so often
 }
+
 
 //
 // Yes, you're not supposed to derive from STL types, but the inability to set the stack size is, IMO, inexcusable.
@@ -74,11 +77,13 @@ public:
 	thread(thread&& other) noexcept;
 
 	template<class Function, class... Args>
-	explicit thread(Function&& f, Args&&... args, size_t thread_size = default_stack_size)
-		: std::thread([ this, f{std::move(f)} ](Args&&... args) { 
-			// this is now running in he new thread
+	explicit thread(Function&& f, Args&&... args, size_t thread_size = default_stack_size, /*private arg*/std::shared_ptr<stdx::latch> latch = std::make_shared<stdx::latch>(2))
+		: std::thread([ this, f{std::move(f)}, latch](Args&&... args) { 
 
 			this_thread::set_thread_name("");
+
+			// ensure the object is fully constructed before we use its data-members
+			latch->wait();
 
 			// keep the shared pointer around until thread ends
 			thread_is_cancelled_sp__ = this->thread_is_cancelled;
@@ -89,6 +94,9 @@ public:
 			f(std::forward<Args>(args)...);
 		})
 	{
+		// used to ensure we're fully constructed before the thread uses our data-members
+		latch->wait();
+
 		// not yet implementing this .. but I expect to need to
 		assert(thread_size == default_stack_size);
 	}
@@ -97,6 +105,10 @@ public:
 
 	// sets the cancel flag to true and then blocks until the object's associate thread finishes
 	void join();
+
+	// add swap TODO 
+
+	thread& operator=( thread&& other ) noexcept = default;
 
 	// Sets whether the thread associated with this object has been cancelled.
 	void set_cancelled(bool cancelled) { 

@@ -44,12 +44,10 @@
 #include "vorbis/vorbisfile.h"
 #include "vorbis/vorbisenc.h"
 
-
 #include <stdexcept>
 #include <vector>
 
 #include <istring>
-#include <TAutoBuffer.h>
 
 #include <CPath.h>
 
@@ -273,7 +271,7 @@ bool ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 			// ??? float is supported by ov_read_float
 		#define BIT_RATE 16
 
-		TAutoBuffer<sample_t> mem_buffer(4096);
+		std::vector<sample_t> mem_buffer(4096);
 		sample_pos_t pos=0;
 		
 		int eof=0;
@@ -281,13 +279,13 @@ bool ClibvorbisSoundTranslator::onLoadSound(const string filename,CSound *sound)
 		for(;;)
 		{
 #if defined(SAMPLE_TYPE_S16)
-			sample_t * const buffer=mem_buffer;
-			const long read_ret=ov_read(&vf,(char *)buffer,mem_buffer.getSize()*sizeof(sample_t),ENDIAN,sizeof(sample_t),1,&current_section);
+			sample_t * const buffer=mem_buffer.data();
+			const long read_ret=ov_read(&vf,(char *)buffer,mem_buffer.size()*sizeof(sample_t),ENDIAN,sizeof(sample_t),1,&current_section);
 			const int readLength=read_ret/(sizeof(sample_t)*channelCount);
 
 #elif defined(SAMPLE_TYPE_FLOAT)
 			float **buffer;
-			const long read_ret=ov_read_float(&vf,&buffer,mem_buffer.getSize(),&current_section);
+			const long read_ret=ov_read_float(&vf,&buffer,mem_buffer.size(),&current_section);
 			const int readLength=read_ret;
 
 #else

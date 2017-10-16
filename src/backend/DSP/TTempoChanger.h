@@ -32,8 +32,7 @@
  */
 
 #include <algorithm>
-
-#include <TAutoBuffer.h>
+#include <vector>
 
 #include "../CSound_defs.h"
 
@@ -63,11 +62,11 @@ public:
 		srcEnd(srcOffset+srcLength),
 		flushed(false),
 
-		outputBuffer(1024),
+		outputBuffer(1024), // TODO consider different sizes here.. see if any offer better performance
 		outputBufferOffset(0),
 		outputBufferSize(0),
 
-		inputBuffer(outputBuffer.getSize())
+		inputBuffer(outputBuffer.size())
 	{
 		if(frameSize==0)
 			throw(runtime_error(string(__func__)+" -- frameSize is 0"));
@@ -90,19 +89,19 @@ public:
 			return convert_sample<soundtouch::SAMPLETYPE,sample_t>(outputBuffer[outputBufferOffset++]);
 		else if(!changer.isEmpty())
 		{	// read more data from changer
-			outputBufferSize=changer.receiveSamples(outputBuffer,outputBuffer.getSize());
+			outputBufferSize=changer.receiveSamples(outputBuffer.data(),outputBuffer.size());
 			outputBufferOffset=0;
 		}
 		else /*if(changer.isEmpty())*/
 		{	// write more data to changer
 			if(pos<srcEnd)
 			{
-				const size_t chunkSize=min((sample_pos_t)inputBuffer.getSize(),srcEnd-pos);
+				const size_t chunkSize=min((sample_pos_t)inputBuffer.size(),srcEnd-pos);
 				size_t t;
 				// unfortunately I'm having to make a copy into inputBuffer before giving it to changer
 				for(t=0;t<chunkSize;t++)
 					inputBuffer[t]=convert_sample<sample_t,soundtouch::SAMPLETYPE>(src[((pos++)*frameSize)+frameOffset]);
-				changer.putSamples(inputBuffer,t);
+				changer.putSamples(inputBuffer.data(),t);
 			}
 			else
 			{	// no input to give to changer
@@ -138,11 +137,11 @@ private:
 	sample_pos_t srcEnd;
 	bool flushed;
 
-	TAutoBuffer<soundtouch::SAMPLETYPE> outputBuffer;
+	std::vector<soundtouch::SAMPLETYPE> outputBuffer;
 	int outputBufferOffset;
 	int outputBufferSize;
 
-	TAutoBuffer<soundtouch::SAMPLETYPE> inputBuffer;
+	std::vector<soundtouch::SAMPLETYPE> inputBuffer;
 
 	SoundTouch changer;
 };

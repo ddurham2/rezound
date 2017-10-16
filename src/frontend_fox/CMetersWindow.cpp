@@ -665,14 +665,14 @@ private:
 
 	float zoom;
 
-	TAutoBuffer<FXint> unrotateMapping; // width*height number of pixels mapping
+	std::vector<FXint> unrotateMapping; // width*height number of pixels mapping
 
 	void recalcRotateLookup()
 	{
 		const FXint width=canvas->getWidth();
 		const FXint height=canvas->getHeight();
 
-		unrotateMapping.setSize(width*height);
+		unrotateMapping.resize(width*height);
 
 		const double ang=-M_PI_4; // -45 degrees
 
@@ -1155,7 +1155,7 @@ long CMetersWindow::onUpdateMeters(FXObject *sender,FXSelector sel,void *ptr)
 
 		if(gStereoPhaseMetersEnabled && !stereoPhaseMeters.empty())
 		{
-			soundPlayer->getSamplingForStereoPhaseMeters(samplingForStereoPhaseMeters,samplingForStereoPhaseMeters.getSize());
+			soundPlayer->getSamplingForStereoPhaseMeters(samplingForStereoPhaseMeters.data(),samplingForStereoPhaseMeters.size());
 			for(size_t t=0;t<stereoPhaseMeters.size();t++)
 				stereoPhaseMeters[t]->updateCanvas();
 		}
@@ -1218,13 +1218,13 @@ void CMetersWindow::setSoundPlayer(ASoundPlayer *_soundPlayer)
 	for(size_t t=0;t<soundPlayer->devices[0].channelCount/2;t++)
 		balanceMeters.push_back(new CBalanceMeter(balanceMetersFrame));
 
-	samplingForStereoPhaseMeters.setSize(gStereoPhaseMeterPointCount*soundPlayer->devices[0].channelCount);
+	samplingForStereoPhaseMeters.resize(gStereoPhaseMeterPointCount*soundPlayer->devices[0].channelCount);
 	for(size_t t=0;t<soundPlayer->devices[0].channelCount/2;t++)
 	{
 		stereoPhaseMeters.insert(stereoPhaseMeters.begin(),
 			new CStereoPhaseMeter(
 				this,
-				samplingForStereoPhaseMeters,
+				samplingForStereoPhaseMeters.data(),
 				gStereoPhaseMeterPointCount,
 				soundPlayer->devices[0].channelCount,
 				t*2+0,

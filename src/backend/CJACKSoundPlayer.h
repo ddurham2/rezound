@@ -25,11 +25,11 @@
 
 #ifdef ENABLE_JACK
 
+#include <vector>
+
 #include "ASoundPlayer.h"
 
 #include <jack/jack.h>
-
-#include <TAutoBuffer.h>
 
 class CJACKSoundPlayer : public ASoundPlayer
 {
@@ -53,7 +53,7 @@ private:
 	jack_client_t *client;
 	jack_port_t *output_ports[MAX_CHANNELS];
 
-	TAutoBuffer<sample_t> tempBuffer;
+	std::vector<sample_t> tempBuffer;
 
 	static int processAudio(jack_nframes_t nframes,void *arg);
 	static int sampleRateChanged(jack_nframes_t nframes,void *arg);
