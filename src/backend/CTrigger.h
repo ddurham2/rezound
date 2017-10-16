@@ -26,11 +26,10 @@
 
 #include <stddef.h>
 
+#include <mutex>
 #include <stdexcept>
 #include <string>
 #include <vector>
-
-#include <CMutex.h>
 
 typedef void (* TriggerFunc)(void *data);
 
@@ -77,7 +76,7 @@ private:
 	};
 
 	vector<REvent> events;
-	CMutex mutex;
+	std::mutex mutex;
 
 
 };

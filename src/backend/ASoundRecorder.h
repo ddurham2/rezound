@@ -53,9 +53,8 @@
 
 */
 
+#include <mutex>
 #include <string>
-
-#include <CMutex.h>
 
 class CSound;
 
@@ -129,7 +128,7 @@ private:
 
 	sample_t DCOffsetCompensation[MAX_CHANNELS];
 
-	CMutex mutex;
+	std::mutex mutex;
 
 	// deinitialize invokes this to cleanup any unnecessary prealloced space
 	// and actually adds the cues to the sound if any were requested

@@ -273,40 +273,27 @@ void CALSASoundRecorder::redo()
 	loaded machine where the recording thread wouldn't be able to get
 	around to reading as readily.
 
-	redoMutex.lock();
-	try
-	{
-*/
-		ASoundRecorder::redo();
+	std::unique_lock<std::mutex> ml(redoMutex);
+	ASoundRecorder::redo();
 /*
+	// I want to clear out the buffers already recorded that I haven't read yet
+	fcntl(audio_fd,F_SETFL,O_NONBLOCK);
 
-		// I want to clear out the buffers already recorded that I haven't read yet
-		fcntl(audio_fd,F_SETFL,O_NONBLOCK);
-
-		audio_buf_info info;
-		if(ioctl(audio_fd, SNDCTL_DSP_GETISPACE, &info)==-1)
-		{
-			close(audio_fd);
-			throw(runtime_error(string(__func__)+" -- error getting the buffering parameters -- "+strerror(errno)));
-		}
-		printf("ALSA record: info.fragments: %d\n",info.fragments);
-
-		sample_t buffer[BUFFER_SIZE_BYTES/sizeof(sample_t)]; 
-		for(int t=0;t<info.fragments+1;t++)
-			read(audio_fd,buffer,BUFFER_SIZE_BYTES);
-
-		int f=fcntl(audio_fd,F_GETFL);
-		f&=~O_NONBLOCK;
-		fcntl(audio_fd,F_SETFL,f);
-
-		redoMutex.unlock();
-	}
-	catch(...)
+	audio_buf_info info;
+	if(ioctl(audio_fd, SNDCTL_DSP_GETISPACE, &info)==-1)
 	{
-		redoMutex.unlock();
-		throw;
+		close(audio_fd);
+		throw(runtime_error(string(__func__)+" -- error getting the buffering parameters -- "+strerror(errno)));
 	}
+	printf("ALSA record: info.fragments: %d\n",info.fragments);
 
+	sample_t buffer[BUFFER_SIZE_BYTES/sizeof(sample_t)]; 
+	for(int t=0;t<info.fragments+1;t++)
+		read(audio_fd,buffer,BUFFER_SIZE_BYTES);
+
+	int f=fcntl(audio_fd,F_GETFL);
+	f&=~O_NONBLOCK;
+	fcntl(audio_fd,F_SETFL,f);
 */
 }
 
@@ -379,7 +366,7 @@ void CALSASoundRecorder::threadWork()
 			}
 
 /*
-			CMutexLocker redoMutexLocker(redoMutex);
+			std::unique_lock<std::mutex> redoMutexLocker(redoMutex);
 */
 
 			snd_pcm_sframes_t len;

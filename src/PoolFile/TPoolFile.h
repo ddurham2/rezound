@@ -30,13 +30,12 @@
 
 #include <atomic>
 #include <map>
+#include <mutex>
 #include <queue>
 #include <set>
 #include <shared_mutex>
 #include <string>
 #include <vector>
-
-#include <CMutex.h>
 
 #include "CMultiFile.h"
 
@@ -183,7 +182,7 @@ private:
 	mutable std::atomic<size_t> m_sharedLockCount{0};
 	mutable std::atomic<bool> m_isExclusiveLocked{false};
 
-	mutable CMutex accesserInfoMutex;
+	mutable std::mutex accesserInfoMutex;
 
 	const char *formatSignature;
 

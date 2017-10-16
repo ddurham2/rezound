@@ -24,52 +24,24 @@
 
 void CTrigger::set(TriggerFunc triggerFunc,void *data)
 {
-	mutex.lock();
-	try
-	{
-		REvent e(triggerFunc,data);
-		events.push_back(e);
-		mutex.unlock();
-	}
-	catch(...)
-	{
-		mutex.unlock();
-		throw;
-	}
+	std::unique_lock<std::mutex> l(mutex);
+	REvent e(triggerFunc,data);
+	events.push_back(e);
 }
 
 void CTrigger::unset(TriggerFunc triggerFunc,void *data)
 {
-	mutex.lock();
-	try
-	{
-		vector<REvent>::iterator i=find(events.begin(),events.end(),REvent(triggerFunc,data));
-		if(i!=events.end())
-			events.erase(i);
-
-		mutex.unlock();
-	}
-	catch(...)
-	{
-		mutex.unlock();
-		throw;
-	}
+	std::unique_lock<std::mutex> l(mutex);
+	vector<REvent>::iterator i=find(events.begin(),events.end(),REvent(triggerFunc,data));
+	if(i!=events.end())
+		events.erase(i);
 }
 
 void CTrigger::trip()
 {
-	mutex.lock();
-	try
-	{
-		for(size_t t=0;t<events.size();t++)
-			events[t].triggerFunc(events[t].data);
-		mutex.unlock();
-	}
-	catch(...)
-	{
-		mutex.unlock();
-		throw;
-	}
+	std::unique_lock<std::mutex> l(mutex);
+	for(size_t t=0;t<events.size();t++)
+		events[t].triggerFunc(events[t].data);
 }
 
 

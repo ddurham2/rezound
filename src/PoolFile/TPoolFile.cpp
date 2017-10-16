@@ -2251,7 +2251,7 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	template<class pool_element_t> void TPoolFile<l_addr_t,p_addr_t>::cacheBlock(const l_addr_t peWhere,const TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > *accesser)
 {
-	CMutexLocker lock(accesserInfoMutex);
+	std::unique_lock<std::mutex> lock(accesserInfoMutex);
 
 		// assume is valid
 	const poolId_t poolId=accesser->poolId;
@@ -2422,7 +2422,7 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	void TPoolFile<l_addr_t,p_addr_t>::invalidateAllCachedBlocks(bool allPools,poolId_t poolId)
 {
-	CMutexLocker lock(accesserInfoMutex);
+	std::unique_lock<std::mutex> lock(accesserInfoMutex);
 
 	for(auto i=activeCachedBlocks.begin();i!=activeCachedBlocks.end();)
 	{
@@ -2443,7 +2443,7 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	template<class pool_element_t> void TPoolFile<l_addr_t,p_addr_t>::addAccesser(const TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > *accesser)
 {
-	CMutexLocker lock(accesserInfoMutex);
+	std::unique_lock<std::mutex> lock(accesserInfoMutex);
 	accessers.push_back((const CGenericPoolAccesser *)accesser);
 		// ??? I used to make sure that it wasn't already there
 }
@@ -2451,7 +2451,7 @@ template<class l_addr_t,class p_addr_t>
 template<class l_addr_t,class p_addr_t>
 	template<class pool_element_t> void TPoolFile<l_addr_t,p_addr_t>::removeAccesser(const TStaticPoolAccesser<pool_element_t,TPoolFile<l_addr_t,p_addr_t> > *accesser)
 {
-	CMutexLocker lock(accesserInfoMutex);
+	std::unique_lock<std::mutex> lock(accesserInfoMutex);
 	invalidateAccesser(accesser);
 
 	//						??? see about changing this to lower_bound... figure out just if lower_bound-1 or upper_bound-1 should be used

@@ -23,11 +23,10 @@
 
 #include "../../config/common.h"
 
+#include <condition_variable>
+#include <mutex>
 #include <stdexcept>
 #include <string>
-
-#include "CMutex.h"
-#include "CConditionVariable.h"
 
 #define EOP (-1)
 
@@ -85,15 +84,15 @@ private:
 	int bufferSize;
 
 	// protects the data-structure
-	CMutex waitStateMutex;
+	std::mutex waitStateMutex;
 
 	// use to ensure that only a single read() call is in progress
-	CMutex readerMutex;
+	std::mutex readerMutex;
 	// use to ensure that only a single write() call is in progress
-	CMutex writerMutex;
+	std::mutex writerMutex;
 
-	CConditionVariable fullCond;
-	CConditionVariable emptyCond;
+	std::condition_variable fullCond;
+	std::condition_variable emptyCond;
 
 	int privateRead(type *buffer,int size,bool block,int &readPos);
 

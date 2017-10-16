@@ -52,7 +52,7 @@ string CNestedDataFile::initialFilename;
 vector<string> CNestedDataFile::s2at_return_value;
 string CNestedDataFile::s2at_string;
 
-CMutex CNestedDataFile::cfg_parse_mutex;
+std::mutex CNestedDataFile::cfg_parse_mutex;
 
 static const string escapeIdent(const string &_name)
 {
@@ -128,7 +128,7 @@ void CNestedDataFile::parseString(const string str,bool clearExisting)
 
 	try
 	{
-		CMutexLocker l(cfg_parse_mutex); // because bison/flex aren't thread-safe
+		std::unique_lock<std::mutex> l(cfg_parse_mutex); // because bison/flex aren't thread-safe
 
 		initialFilename="";	// make sure the lexer is not in read-file mode
 		s2at_string=str;
@@ -160,7 +160,7 @@ void CNestedDataFile::parseFile(const string _filename,bool clearExisting)
 
 	try
 	{
-		CMutexLocker l(cfg_parse_mutex); // because bison/flex aren't thread-safe
+		std::unique_lock<std::mutex> l(cfg_parse_mutex); // because bison/flex aren't thread-safe
 		filename=_filename;
 
 		if(CPath(filename).exists())
@@ -384,7 +384,7 @@ void CNestedDataFile::writeFile(const string filename) const
 	string acc;
 	root->asString(acc,-1,"");
 
-	CMutexLocker l(cfg_parse_mutex);  // just to keep two threads from writing the file at the same time
+	std::unique_lock<std::mutex> l(cfg_parse_mutex);  // just to keep two threads from writing the file at the same time
 
 	FILE *f=fopen(filename.c_str(),"wt");
 	if(f==NULL)

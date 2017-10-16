@@ -25,6 +25,7 @@
 
 class ASoundPlayer;
 
+#include <mutex>
 #include <set>
 #include <vector>
 
@@ -32,7 +33,6 @@ class ASoundPlayer;
 #include <memory>
 #include <map>
 #include <fftw3.h>
-#include <CMutex.h>
 
 typedef double fftw_real;
 
@@ -154,7 +154,7 @@ private:
 
 	friend class CSoundPlayerChannel;
 
-	CMutex m; // protects soundPlayerChannels
+	std::mutex m; // protects soundPlayerChannels
 	set<CSoundPlayerChannel *> soundPlayerChannels; // ??? might as well be a vector
 	void addSoundPlayerChannel(CSoundPlayerChannel *soundPlayerChannel);
 	void removeSoundPlayerChannel(CSoundPlayerChannel *soundPlayerChannel);
@@ -170,7 +170,7 @@ private:
 
 #ifdef HAVE_FFTW
 	#define ASP_ANALYSIS_BUFFER_SIZE 8192
-	mutable CMutex frequencyAnalysisBufferMutex;
+	mutable std::mutex frequencyAnalysisBufferMutex;
 	mutable bool frequencyAnalysisBufferPrepared;
 	mutable fftw_real frequencyAnalysisBuffer[ASP_ANALYSIS_BUFFER_SIZE];
 	size_t frequencyAnalysisBufferLength; // the amount of data that mixSoundPlayerChannels copied into the buffer

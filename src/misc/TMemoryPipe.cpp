@@ -54,7 +54,7 @@ template <class type> TMemoryPipe<type>::~TMemoryPipe()
 
 template <class type> void TMemoryPipe<type>::setSize(int pipeSize)
 {
-	CMutexLocker ml(waitStateMutex);
+	std::unique_lock<std::mutex> ml(waitStateMutex);
 
 	if(pipeSize<=0)
 		throw runtime_error(string(__func__)+" -- invalid pipeSize: "+istring(pipeSize));
@@ -112,11 +112,16 @@ template <class type> int TMemoryPipe<type>::privateRead(type *dest,int size,boo
 	if(size<=0)
 		return 0;
 
-	CMutexLocker l(readerMutex, (block ? -1 : 0)); // prevent multiple simultaneous read()s
-	if(! l.didLock())
-		return 0;
+	// prevent simultaneous read()s
+	std::unique_lock<std::mutex> l(readerMutex, std::defer_lock);
+	if (block) {
+		l.lock();
+	} else {
+		if(! l.try_lock())
+			return 0;
+	}
 
-	CMutexLocker wsl(waitStateMutex);
+	std::unique_lock<std::mutex> wsl(waitStateMutex);
 
 	int _writePos;
 
@@ -154,8 +159,8 @@ template <class type> int TMemoryPipe<type>::privateRead(type *dest,int size,boo
 				goto done;
 			}
 
-			fullCond.signal();
-			emptyCond.wait(waitStateMutex);
+			fullCond.notify_one();
+			emptyCond.wait(wsl);
 			goto restart;
 		}
 
@@ -180,8 +185,8 @@ template <class type> int TMemoryPipe<type>::privateRead(type *dest,int size,boo
 				goto done;
 			}
 
-			fullCond.signal();
-			emptyCond.wait(waitStateMutex);
+			fullCond.notify_one();
+			emptyCond.wait(wsl);
 			goto restart;
 		}
 
@@ -216,21 +221,21 @@ template <class type> int TMemoryPipe<type>::privateRead(type *dest,int size,boo
 			goto done;
 		}
 
-		fullCond.signal();
-		emptyCond.wait(waitStateMutex);
+		fullCond.notify_one();
+		emptyCond.wait(wsl);
 		goto restart;
 	}
 
 	if(sizeNeeded>0 && block)
 	{
-		fullCond.signal();
-		emptyCond.wait(waitStateMutex);
+		fullCond.notify_one();
+		emptyCond.wait(wsl);
 		goto restart;
 	}
 
 	done:
 
-	fullCond.signal();
+	fullCond.notify_one();
 	return totalRead;
 }
 
@@ -239,8 +244,16 @@ template <class type> int TMemoryPipe<type>::write(const type *_src,int size,boo
 	if(size<=0)
 		return 0;
 
-	CMutexLocker l(writerMutex); // prevent multiple simultaneous write()s
-	CMutexLocker wsl(waitStateMutex);
+	// prevent simultaneous write()s
+	std::unique_lock<std::mutex> l(writerMutex, std::defer_lock);
+	if (block) {
+		l.lock();
+	} else {
+		if(! l.try_lock())
+			return 0;
+	}
+
+	std::unique_lock<std::mutex> wsl(waitStateMutex);
 
 	const type *src=(const type *)_src;
 	int _readPos;
@@ -269,8 +282,8 @@ template <class type> int TMemoryPipe<type>::write(const type *_src,int size,boo
 			if(!block) {
 				goto done;
 			} 
-			emptyCond.signal();
-			fullCond.wait(waitStateMutex);
+			emptyCond.notify_one();
+			fullCond.wait(wsl);
 			goto restart;
 		}
 
@@ -295,8 +308,8 @@ template <class type> int TMemoryPipe<type>::write(const type *_src,int size,boo
 			if(!block) {
 				goto done;
 			} 
-			emptyCond.signal();
-			fullCond.wait(waitStateMutex);
+			emptyCond.notify_one();
+			fullCond.wait(wsl);
 			goto restart;
 		}
 				
@@ -324,13 +337,13 @@ template <class type> int TMemoryPipe<type>::write(const type *_src,int size,boo
 
 	if(sizeToGive>0)
 	{
-		emptyCond.signal();
+		emptyCond.notify_one();
 		goto restart;
 	}
 
 	done:
 
-	emptyCond.signal();
+	emptyCond.notify_one();
 	return totalWritten;
 }
 
@@ -338,10 +351,10 @@ template <class type> void TMemoryPipe<type>::closeRead()
 {
 	if(readOpened)
 	{
-		CMutexLocker l(waitStateMutex);
+		std::unique_lock<std::mutex> ml(waitStateMutex);
 		readOpened=false;
-		emptyCond.broadcast();
-		fullCond.broadcast();
+		emptyCond.notify_all();
+		fullCond.notify_all();
 	}
 }
 
@@ -349,10 +362,10 @@ template <class type> void TMemoryPipe<type>::closeWrite()
 {
 	if(writeOpened)
 	{
-		CMutexLocker l(waitStateMutex);
+		std::unique_lock<std::mutex> ml(waitStateMutex);
 		writeOpened=false;
-		fullCond.broadcast();
-		emptyCond.broadcast();
+		fullCond.notify_all();
+		emptyCond.notify_all();
 	}
 }
 
@@ -387,10 +400,10 @@ template <class type> int TMemoryPipe<type>::getSize() const
 
 template <class type> int TMemoryPipe<type>::clear()
 {
-	CMutexLocker l2(waitStateMutex);
+	std::unique_lock<std::mutex> ml(waitStateMutex);
 	const int len=getSize();
 	readPos=writePos=0;
-	fullCond.signal();
+	fullCond.notify_one();
 	return len;
 }
 

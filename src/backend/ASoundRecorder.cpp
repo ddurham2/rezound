@@ -41,7 +41,7 @@ ASoundRecorder::~ASoundRecorder()
 
 void ASoundRecorder::start(const double _startThreshold,const sample_pos_t maxDuration)
 {
-	CMutexLocker l(mutex);
+	std::unique_lock<std::mutex> l(mutex);
 	if(!started)
 	{
 		if(_startThreshold>0)
@@ -59,7 +59,7 @@ void ASoundRecorder::start(const double _startThreshold,const sample_pos_t maxDu
 
 void ASoundRecorder::stop()
 {
-	CMutexLocker l(mutex);
+	std::unique_lock<std::mutex> l(mutex);
 	prvStop();
 
 }
@@ -90,7 +90,7 @@ void ASoundRecorder::redo(const sample_pos_t maxDuration)
 	// any extra allocated space beyond what was recorded that doesn't need to be
 	// there
 
-	CMutexLocker l(mutex);
+	std::unique_lock<std::mutex> l(mutex);
 	// clear all cues that were added during the last record
 	addedCues.clear();
 
@@ -192,7 +192,7 @@ void ASoundRecorder::onData(sample_t *samples,const size_t _sampleFramesRecorded
 */
 
 	size_t sampleFramesRecorded=_sampleFramesRecorded;
-	CMutexLocker l(mutex);
+	std::unique_lock<std::mutex> l(mutex);
 	const unsigned channelCount=sound->getChannelCount();
 
 	// modify samples by the DC Offset compensation

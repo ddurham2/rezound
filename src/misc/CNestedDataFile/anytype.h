@@ -22,6 +22,7 @@
 
 #include "../../../config/common.h"
 
+#include <mutex>
 #include <sstream>
 #include <string>
 #include <vector> // for the vector implemenation to/from string
@@ -94,7 +95,6 @@ template<> STATIC_TPL const double string_to_anytype<double>(const string &str,d
 template<> STATIC_TPL const long double string_to_anytype<long double>(const string &str,long double &ret)               { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0.0; if(str=="inf") ret=INFINITY; else if(str=="-inf") ret=-INFINITY; else ss >> ret; return ret; }
 
 // I really wished that I didn't have to explicitly use 'vector' in the definition; I'd have like to use any container with an iterator interface
-#include <CMutex.h>
 #include <CNestedDataFile/CNestedDataFile.h>
 extern int cfg_parse();
 template<class Type> STATIC_TPL const vector<Type> &string_to_anytype(const string &str,vector<Type> &ret)
@@ -103,7 +103,7 @@ template<class Type> STATIC_TPL const vector<Type> &string_to_anytype(const stri
 	// bodies, quoted strings, numbers, etc; but we only want the outermost list as vector,
 	// the rest as a string
 
-	CMutexLocker l(CNestedDataFile::cfg_parse_mutex);
+	std::unique_lock<std::mutex> l(CNestedDataFile::cfg_parse_mutex);
 	ret.clear();
 	
 	CNestedDataFile::s2at_string="~"+str;           // the parser knows '~' sets off an s2at_array_body

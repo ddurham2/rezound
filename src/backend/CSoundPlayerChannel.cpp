@@ -145,10 +145,10 @@ CSound *CSoundPlayerChannel::getSound() const
 void CSoundPlayerChannel::deinit()
 {
 	{
-		CMutexLocker l(prebufferThread.waitForPlayMutex);
+		std::unique_lock<std::mutex> l(prebufferThread.waitForPlayMutex);
 		prebufferThread.thread->set_cancelled(true);
 		stop();
-		prebufferThread.waitForPlay.signal(); // so the prebuffering thread will for sure catch set_cancelled(true)
+		prebufferThread.waitForPlay.notify_one(); // so the prebuffering thread will for sure catch set_cancelled(true)
 	}
 
 	prebufferThread.thread->join();
@@ -208,8 +208,8 @@ void CSoundPlayerChannel::play(sample_pos_t position,LoopTypes _loopType,bool _p
 	// prime the fifos with a couple of chunks of data /* maybe just one would do ??? */
 	if(!prebufferChunk() && !prebufferChunk())
 	{
-		CMutexLocker l(prebufferThread.waitForPlayMutex);
-		prebufferThread.waitForPlay.signal(); // take the prebuffer thread out of its wait-state
+		std::unique_lock<std::mutex> l(prebufferThread.waitForPlayMutex);
+		prebufferThread.waitForPlay.notify_one(); // take the prebuffer thread out of its wait-state
 	}
 }
 
@@ -218,11 +218,11 @@ void CSoundPlayerChannel::pause()
 	if(playing)
 	{
 		// would do, but I don't think it's absolutely necessary and it does cause unpausing to lock up
-		//CMutexLocker(prebufferThread.waitForPlayMutex);
+		//std::unique_lock<std::mutex>(prebufferThread.waitForPlayMutex);
 
 		paused=!paused;
 		pauseTrigger.trip();
-		prebufferThread.waitForPlay.signal(); // take the prebuffer thread out of its wait-state
+		prebufferThread.waitForPlay.notify_one(); // take the prebuffer thread out of its wait-state
 		
 	}
 }
@@ -241,7 +241,7 @@ void CSoundPlayerChannel::stop()
 
 		// no need to set the somethingWantsToClearThePrebufferQueue because we've set prebuffering to false already which will cause it to not prebuffer any more data
 	
-		CMutexLocker l(prebufferPositionMutex);
+		std::unique_lock<std::mutex> l(prebufferPositionMutex);
 
 		// remove any more prebuffered data that might have been just waiting to be written into the pipe
 		prebufferedAudioPipe.clear();
@@ -355,7 +355,7 @@ sample_pos_t CSoundPlayerChannel::estimateOldestPrebufferedPosition(float origSe
 // ??? could be estimated better
 void CSoundPlayerChannel::estimateLowestAndHighestPrebufferedPosition(sample_pos_t &lowestPosition,sample_pos_t &highestPosition,float origSeekSpeed,sample_pos_t origStartPosition,sample_pos_t origStopPosition)
 {
-	CMutexLocker l(prebufferReadingMutex); // make sure mixOntoBuffer isn't running
+	std::unique_lock<std::mutex> l(prebufferReadingMutex); // make sure mixOntoBuffer isn't running
 	std::vector<RChunkPosition> positions(prebufferedPositionsPipe.getSize());
 	int read=prebufferedPositionsPipe.peek(positions.data(),positions.size(),false);
 
@@ -379,7 +379,7 @@ void CSoundPlayerChannel::unprebuffer(float origSeekSpeed,sample_pos_t origStart
 		return;
 
 	// block mixOntoBuffer() from running (so we're not consuming anything from the prebuffered queue)
-	CMutexLocker readLocker(prebufferReadingMutex); 
+	std::unique_lock<std::mutex> readLocker(prebufferReadingMutex); 
 
 	// set this flag to cause prebufferChunk() to yield instead of do its thing
 	somethingWantsToClearThePrebufferQueue=true;	
@@ -391,7 +391,7 @@ void CSoundPlayerChannel::unprebuffer(float origSeekSpeed,sample_pos_t origStart
 	prebufferedPositionsPipe.clear();
 
 	// block prebufferChunk from running
-	CMutexLocker writeLocker(prebufferPositionMutex); 
+	std::unique_lock<std::mutex> writeLocker(prebufferPositionMutex); 
 	somethingWantsToClearThePrebufferQueue=false; // now we can unset this
 
 
@@ -408,7 +408,7 @@ void CSoundPlayerChannel::unprebuffer(float origSeekSpeed,sample_pos_t origStart
 	if(playing && !prebuffering)
 	{
 		prebuffering=true;	
-		prebufferThread.waitForPlay.signal();
+		prebufferThread.waitForPlay.notify_one();
 	}
 }
 
@@ -467,8 +467,8 @@ void CSoundPlayerChannel::setSeekSpeed(float _seekSpeed)
 	// if the channel was paused, but we just set the play speed to something not 1.0, then start playing again
 	if(paused && seekSpeed!=1.0 && origSeekSpeed==1.0)
 	{
-		CMutexLocker l(prebufferThread.waitForPlayMutex);
-		prebufferThread.waitForPlay.signal();
+		std::unique_lock<std::mutex> l(prebufferThread.waitForPlayMutex);
+		prebufferThread.waitForPlay.notify_one();
 	}
 }
 
@@ -603,8 +603,8 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 		return;
 
 	// protecting from any method that also reads/clears the prebuffering queue
-	CMutexLocker l(prebufferReadingMutex, 0); // ??? the mutex needs to be locked in RAM (perhaps just the whole *this object if possible)
-	if(!l.didLock())
+	std::unique_lock<std::mutex> l(prebufferReadingMutex, std::try_to_lock); // ??? the mutex needs to be locked in RAM (perhaps just the whole *this object if possible)
+	if(!l.owns_lock())
 		return;
 
 #if 0 // printout of prebuffered status
@@ -805,7 +805,7 @@ bool CSoundPlayerChannel::prebufferChunk()
 		return false;
 
 	CSoundLocker sl(sound, false);
-	CMutexLocker l(prebufferPositionMutex); /* ??? might be renaming this to prebufferWritingMutex */ 
+	std::unique_lock<std::mutex> l(prebufferPositionMutex); /* ??? might be renaming this to prebufferWritingMutex */ 
 
 	// used if loopType==ltLoopSkipMost
 	const sample_pos_t skipMiddleMargin=(sample_pos_t)(gSkipMiddleMarginSeconds*prepared_sampleRate);
@@ -1030,7 +1030,7 @@ void CSoundPlayerChannel::updateAfterEdit(const vector<int16_t> &restoreOutputRo
 	{ // channel count or sample rate has changed (or this object is just being constructed)
 
 		// prevent mixOntoBuffer() from running
-		CMutexLocker readLock(prebufferReadingMutex);
+		std::unique_lock<std::mutex> readLock(prebufferReadingMutex);
 
 		// prepare for locking the prebufferPositionMutex
 		somethingWantsToClearThePrebufferQueue=true;
@@ -1038,7 +1038,7 @@ void CSoundPlayerChannel::updateAfterEdit(const vector<int16_t> &restoreOutputRo
 		prebufferedPositionsPipe.clear();
 
 		// prevent prebufferChunk() from running
-		CMutexLocker writeLock(prebufferPositionMutex);
+		std::unique_lock<std::mutex> writeLock(prebufferPositionMutex);
 		somethingWantsToClearThePrebufferQueue=false;
 			
 		// close the prebuffering queue
@@ -1294,12 +1294,12 @@ void CSoundPlayerChannel::CPrebufferThread::threadWork()
 		 * prebufferChunk() will return true if this channel 
 		 * is not in a playing state or is finished prebuffering.
 		 */
-		CMutexLocker l(waitForPlayMutex);
+		std::unique_lock<std::mutex> l(waitForPlayMutex);
 		while(!parent->prebuffering || (parent->paused && parent->seekSpeed==1.0))
 		{
 			if(stdx::this_thread::is_cancelled())
 				break;
-			waitForPlay.wait(waitForPlayMutex);
+			waitForPlay.wait(l);
 		}
 		parent->prebufferChunk();
 	}

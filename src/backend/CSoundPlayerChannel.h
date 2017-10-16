@@ -24,13 +24,13 @@
 #include <memory>
 #include "stdx/thread"
 #include <vector>
+#include <condition_variable>
+#include <mutex>
 
 #include "../../config/common.h"
 
 class CSoundPlayerChannel;
 
-#include <CMutex.h>
-#include <CConditionVariable.h>
 #include <TMemoryPipe.h>
 
 #include "CTrigger.h"
@@ -101,8 +101,8 @@ private: /* for ASoundPlayer only */
 
 	volatile mutable bool somethingWantsToClearThePrebufferQueue;
 				// ??? perhaps everywhere that I set the prebufferPosition I also write/clear the pipe
-	mutable CMutex prebufferPositionMutex;	// restricts critical sections that write to the prebuffer queue
-	mutable CMutex prebufferReadingMutex;	// restricts critical sections that read from the prebuffer queue
+	mutable std::mutex prebufferPositionMutex;	// restricts critical sections that write to the prebuffer queue
+	mutable std::mutex prebufferReadingMutex;	// restricts critical sections that read from the prebuffer queue
 	sample_pos_t prebufferPosition;
 	bool prebufferChunk();
 
@@ -115,8 +115,8 @@ private: /* for ASoundPlayer only */
 		std::unique_ptr<stdx::thread> thread;
 
 		CSoundPlayerChannel *parent;
-		CConditionVariable waitForPlay;
-		mutable CMutex waitForPlayMutex;
+		std::condition_variable waitForPlay;
+		mutable std::mutex waitForPlayMutex;
 
 		void threadWork();
 	} prebufferThread;

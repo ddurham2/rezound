@@ -15,12 +15,6 @@ add_library(misc STATIC
 	stdx/thread
 	stdx/stdx.cpp 
 
-	CConditionVariable.cpp
-	CConditionVariable.h
-	clocks.cpp
-	clocks.h
-	CMutex.cpp
-	CMutex.h
 	CPath.h
 	endian_util.h
 	ScopedAutoReleasePool.h

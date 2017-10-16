@@ -91,14 +91,14 @@ CSoundPlayerChannel *ASoundPlayer::newSoundPlayerChannel(CSound *sound)
 
 void ASoundPlayer::addSoundPlayerChannel(CSoundPlayerChannel *soundPlayerChannel)
 {
-	CMutexLocker ml(m);
+	std::unique_lock<std::mutex> ml(m);
 	if(!soundPlayerChannels.insert(soundPlayerChannel).second)
 		throw(runtime_error(string(__func__)+" -- sound player channel already in list"));
 }
 
 void ASoundPlayer::removeSoundPlayerChannel(CSoundPlayerChannel *soundPlayerChannel)
 {
-	CMutexLocker ml(m);
+	std::unique_lock<std::mutex> ml(m);
 
 	soundPlayerChannel->stop();
 	
@@ -115,7 +115,7 @@ void ASoundPlayer::mixSoundPlayerChannels(const unsigned nChannels,sample_t * co
 	// so that the caller wouldn't eat any CPU time doing anything with the silence returned
 
 	{
-		CMutexLocker ml(m);
+		std::unique_lock<std::mutex> ml(m);
 		for(set<CSoundPlayerChannel *>::iterator i=soundPlayerChannels.begin();i!=soundPlayerChannels.end();i++)
 			(*i)->mixOntoBuffer(nChannels,buffer,bufferSize);
 	}
@@ -168,7 +168,7 @@ void ASoundPlayer::mixSoundPlayerChannels(const unsigned nChannels,sample_t * co
 #ifdef HAVE_FFTW
 	if(gFrequencyAnalyzerEnabled)
 	{
-		CMutexLocker l(frequencyAnalysisBufferMutex);
+		std::unique_lock<std::mutex> l(frequencyAnalysisBufferMutex);
 
 		// put data into the frequency analysis buffer
 		const size_t copyAmount=min((size_t)ASP_ANALYSIS_BUFFER_SIZE,(size_t)bufferSize); // only copy part of the output buffer (whichever is smaller)
@@ -200,7 +200,7 @@ void ASoundPlayer::mixSoundPlayerChannels(const unsigned nChannels,sample_t * co
 
 void ASoundPlayer::stopAll()
 {
-	CMutexLocker ml(m);
+	std::unique_lock<std::mutex> ml(m);
 	for(set<CSoundPlayerChannel *>::iterator i=soundPlayerChannels.begin();i!=soundPlayerChannels.end();i++)
 		(*i)->stop();
 }
@@ -341,7 +341,7 @@ const vector<float> ASoundPlayer::getFrequencyAnalysis() const
 		return v;
 
 #ifdef HAVE_FFTW
-	CMutexLocker l(frequencyAnalysisBufferMutex);
+	std::unique_lock<std::mutex> l(frequencyAnalysisBufferMutex);
 
 	if(!frequencyAnalysisBufferPrepared)
 	{

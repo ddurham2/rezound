@@ -23,13 +23,12 @@
 
 #include "../../../config/common.h"
 
+#include <mutex>
 #include <stdexcept>
 #include <string>
 #include <vector>
 #include <map>
 using namespace std; // maybe see about removing this?
-
-#include <CMutex.h>
 
 class CNestedDataFile
 {
@@ -148,7 +147,7 @@ private:
 	static vector<string> s2at_return_value;	// what the yacc parser should put things into when parsing s2at mode (NULL when not s2at mode)
 	static string s2at_string;			// what the yacc parser should parse when in s2at mode
 
-	static CMutex cfg_parse_mutex;
+	static std::mutex cfg_parse_mutex;
 
 	static const string stripLeadingDOTs(const string &key);
 
