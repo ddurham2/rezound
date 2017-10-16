@@ -29,8 +29,6 @@
 	
 	- definiately look into prebuffering a lot more data to the card, but knowing the sample rate (and remembering past chunks' positions written to the card) and the time passed since last redrawing the play position estimate the current output position in the file.  This will allow much more data to be buffered and remove those pesky audio output glitches people are complaining about.
 
-	- possibly rename ClibvorbisSoundTranslator.* to COggVorbisSoundTranslator.*
-
 	- Added a "Lock Channels" check box feature to the noise gate, also it would be better if noise gate has a choice of dBFS or percent for the threshold
 
 	DONE - create separate CDSPLevelDetectorRMS and CDSPPeakLevelDetectorPeak dsp blocks

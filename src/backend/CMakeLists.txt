@@ -1,11 +1,6 @@
 cmake_minimum_required(VERSION 3.1)	
 project(backend)
 
-#include("../../cmake/base.cmake")
-
-#add_subdirectory("${SRC_ROOT}/src/misc" misc)
-#add_subdirectory("${SRC_ROOT}/src/PoolFile" PoolFile)
-
 add_library(backend STATIC
 	AAction.cpp
 	AActionDialog.cpp

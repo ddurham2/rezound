@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.1)	
 project(misc)
 
-#include("../../cmake/base.cmake")
-
 find_package(BISON)
 BISON_TARGET(cfg_tab CNestedDataFile/cfg.y "${CMAKE_CURRENT_BINARY_DIR}/cfg.tab.cpp" COMPILE_FLAGS "-b cfg")
 
@@ -17,7 +15,6 @@ add_library(misc STATIC
 
 	CPath.h
 	endian_util.h
-	ScopedAutoReleasePool.h
 	#TMemoryPipe.cpp
 	TMemoryPipe.h
 	TTempVarSetter.h
