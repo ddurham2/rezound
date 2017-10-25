@@ -1,0 +1,74 @@
+<ui version="4.0" >
+ <class>SoundListWindow</class>
+ <widget class="QWidget" name="SoundListWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>632</width>
+    <height>146</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Loaded Sounds</string>
+  </property>
+  <layout class="QHBoxLayout" >
+   <property name="spacing" >
+    <number>2</number>
+   </property>
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QTreeWidget" name="loadedSoundsList" >
+     <property name="rootIsDecorated" >
+      <bool>false</bool>
+     </property>
+     <property name="uniformRowHeights" >
+      <bool>true</bool>
+     </property>
+     <property name="itemsExpandable" >
+      <bool>false</bool>
+     </property>
+     <property name="sortingEnabled" >
+      <bool>true</bool>
+     </property>
+     <property name="columnCount" >
+      <number>4</number>
+     </property>
+     <column>
+      <property name="text" >
+       <string>1</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>2</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>3</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>4</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

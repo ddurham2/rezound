@@ -1,0 +1,232 @@
+<ui version="4.0" >
+ <class>CPasteChannelsDialogContent</class>
+ <widget class="QWidget" name="CPasteChannelsDialogContent" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>395</width>
+    <height>251</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>0</number>
+   </property>
+   <property name="spacing" >
+    <number>4</number>
+   </property>
+   <item>
+    <widget class="QLabel" name="label" >
+     <property name="text" >
+      <string>Pasting Parameters:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line_2" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="frame" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>5</hsizetype>
+       <vsizetype>7</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="frameShape" >
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" >
+      <property name="margin" >
+       <number>0</number>
+      </property>
+      <property name="spacing" >
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QFrame" name="frame_2" >
+        <property name="frameShape" >
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow" >
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>6</number>
+         </property>
+         <property name="spacing" >
+          <number>4</number>
+         </property>
+         <item row="1" column="1" >
+          <widget class="QFrame" name="checkBoxFrame" >
+           <property name="frameShadow" >
+            <enum>QFrame::Raised</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QLabel" name="horzLabel" >
+           <property name="font" >
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text" >
+            <string>Clipboard</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="vertLabel" >
+           <property name="font" >
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text" >
+            <string>Destination</string>
+           </property>
+           <property name="scaledContents" >
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="vertLine" >
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame_3" >
+        <property name="frameShape" >
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow" >
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QVBoxLayout" >
+         <property name="margin" >
+          <number>6</number>
+         </property>
+         <property name="spacing" >
+          <number>4</number>
+         </property>
+         <item>
+          <widget class="QStackedWidget" name="repeatStackedWidget" >
+           <property name="currentIndex" >
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="page_2" />
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="repeatTypeComboBox" />
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="clearButton" >
+       <property name="text" >
+        <string>&amp;Clear</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="defaultButton" >
+       <property name="text" >
+        <string>&amp;Default</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>5</width>
+         <height>5</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="mixTypeLabel" >
+       <property name="text" >
+        <string>Mix Type:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="mixTypeComboBox" />
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

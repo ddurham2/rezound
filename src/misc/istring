@@ -21,8 +21,6 @@
 #ifndef __istring_h__
 #define __istring_h__
 
-#include "../../config/common.h"
-
 /* --- istring class - "improved" string
  * 
  * - This file contains a derived class, istring, to be used in place of the
@@ -33,7 +31,7 @@
  * STL but are often quite awkward, roundabout, and wordy to accomplish.  -
  * Hopefully, this class will become obsolete when/if the
  * C++-ANSI-standard-making-people add more functionality to the STL string
- * class.
+ * class (minus perhaps the file operations).
  *
  * - TODO: - Make this a template derived from basic_string and typedef istring
  * as i_basic_string<char> just like string is I didn't do this already because
@@ -48,30 +46,155 @@
  */
 
 #include <stddef.h>
+#include <stdlib.h>
 #include <ctype.h>
+
+#ifdef QT_CORE_LIB
+#include <QString>
+#endif
+
+#ifdef ISTRING_FILE_FUNCS
+#	include <stdio.h> 
+#	include <errno.h>
+#	if defined(_WIN32)
+#		include <string.h>
+#	else
+		extern "C" char *strerror(int) throw();
+#	endif
+#endif
 
 #include <string>
 
 #include <sstream>
+#include <stdexcept>
+#include <algorithm> // for max()
+#include <assert.h>
 
+#if defined(_WIN32)
+#	pragma warning(disable: 4267) // 'argument' : conversion from 'size_t' to 'int', possible loss of data
+#	include <windows.h>  // Davy hates this... :-)
+#	include <tchar.h>
+#	ifndef __func__
+#		ifdef _MSC_VER
+			// Microsoft compiler specific
+#			define __func__	__FUNCTION__
+#		endif
+#	endif
+#elif defined(__APPLE__)
+#	define _T(x) x
+#	include <CoreFoundation/CoreFoundation.h>
+#else
+#	define _T(x) x
+#endif
+
+static std::wstring convertFromString(const std::string &str){
+	std::wstring ret;
+	if(!str.empty()){
+		wchar_t *wtemp=new wchar_t[str.length()+2];
+#if defined(_WIN32)
+		assert(MultiByteToWideChar(CP_UTF8,0,str.c_str(),(int)str.length(),NULL,0)<(int)(str.length()+1));
+		int count=MultiByteToWideChar(CP_UTF8,0,str.c_str(),(int)str.length(),wtemp,str.length()+1);
+#else			
+		assert((int)mbstowcs(NULL,str.c_str(),0)<(int)(str.length()+1));
+		int count=mbstowcs(wtemp,str.c_str(),str.length()+1);
+#endif			
+		if(count>0){
+			ret.assign(wtemp,count);
+		}
+		delete [] wtemp;
+	}
+	return ret;
+}	
+
+static std::string convertFromWString(const std::wstring &wstr){
+	std::string ret;
+	if(!wstr.empty()){
+		char *stemp=new char[(wstr.length()+2)*4];
+#if defined(_WIN32)
+		assert(WideCharToMultiByte(CP_UTF8,0,wstr.c_str(),(int)wstr.length(),NULL,0,0,NULL)<(int)((wstr.length()+1)*4));
+		int count=WideCharToMultiByte(CP_UTF8,0,wstr.c_str(),(int)wstr.length(),stemp,(wstr.length()+1)*4,0,NULL);
+#else
+		assert(wcstombs(NULL,wstr.c_str(),0)<((wstr.length()+1)*4));
+		int count=wcstombs(stemp,wstr.c_str(),(wstr.length()+1)*4);
+#endif			
+		if(count>0){
+			ret.assign(stemp,count);
+		}
+		delete [] stemp;
+	}
+	return ret;
+}
+
+#if defined(__APPLE__)
+static std::string convertFromCFString(CFStringRef s){
+	std::string ret;
+	if(s != NULL){
+		int len=CFStringGetMaximumSizeForEncoding( CFStringGetLength(s), kCFStringEncodingUTF8);
+		if(len>0){
+			char *cString = (char*)new char[len];
+			if(CFStringGetCString(s, cString, len, kCFStringEncodingUTF8)){
+				ret.assign(cString);
+			}
+			delete [] cString;
+		}
+	}
+	return ret;
+}
+
+class CFStringHelper {
+public:
+	CFStringHelper() : m_string(NULL) {}
+	~CFStringHelper() throw() {	release();	}
+	CFStringRef operator =(CFStringRef s) {	release(); m_string=s; return s; }
+	operator CFStringRef() const { return m_string; }
+private:
+	void release() { if(m_string){ CFRelease(m_string); m_string=NULL; } }
+	CFStringRef m_string;
+};
+#endif
+	
 namespace std {
+
+class iwstring : public std::wstring
+{
+public:
+	// --- constructors
+	explicit iwstring() : wstring() { }
+	iwstring(const wchar_t *s) : wstring(s) { }
+	iwstring(const wchar_t *s,unsigned length) : wstring(s,length) { }
+	iwstring(const wstring &s) : wstring(s) { }
+	iwstring(const string &s) : wstring(convertFromString(s)) {}
+	explicit iwstring(const char *s) : wstring(convertFromString(s)) {}
+	explicit iwstring(const char *s,unsigned length) : wstring(convertFromString(string(s,length))) {}
+	
+	// --- auto-cast to const wchar_t * or string
+	operator const wchar_t * const() const { return c_str(); }
+	operator const string() const { return convertFromWString(*this); }
+};
 
 class istring : public std::string
 {
 public:
 	// --- constructors
-	explicit istring(const allocator_type &a=allocator_type()) : string(a){}
+	explicit istring(const allocator_type &a=allocator_type()) : string(){}
 	istring(const string &str,size_type pos=0,size_type n=npos, const 
-		allocator_type &a=allocator_type()) : string(str,pos,n,a){}
+		allocator_type &a=allocator_type()) : string(str,pos,n){}
 	istring(const char *s,size_type n,const allocator_type 
-			&a=allocator_type()) : string(s,n,a) { }
+			&a=allocator_type()) : string(s,n) { }
 	istring(const char *s,const allocator_type &a=allocator_type()) 
-		: string(s,a) { }
+		: string(s) { }
 	istring(size_type n,char c,const allocator_type &a=allocator_type()) 
-		: string(n,c,a) { }
+		: string(n,c) { }
+	istring(const wstring &s) : string(convertFromWString(s)) {}
+	explicit istring(const iwstring &s) : string(convertFromWString(s)) {}
+	explicit istring(const wchar_t *s) : string(convertFromWString(s)) {}
+	#if defined(__APPLE__)
+	explicit istring(CFStringRef s) : string(convertFromCFString(s)) {}
+	#endif
+
 	template<class InputIterator> istring(InputIterator begin,InputIterator
 		end,const allocator_type &a=allocator_type()) 
-		: string(begin,end,a) { }
+		: string(begin,end) { }
 	
 	// --- explicit number conversion constructors
 		// integer or floating point type to string
@@ -79,23 +202,41 @@ public:
 		ostringstream ss; 
 		ss << val; assign(ss.str()); 
 	}
+	istring(bool boolean) : string(boolean?"true":"false"){ }
 		// formatted integer type to string (min_width can be <0 to left justify or >=0 to right justify)
 	template<class T> explicit istring(const T val,const int min_width,const bool zero_pad=false) { ostringstream ss; ss.width((min_width<0) ? -min_width : min_width); ss.setf((min_width<0) ? ios::left : ios::right); ss.fill((zero_pad && min_width>=0) ? '0' : ' '); ss << val; assign(ss.str()); }
 		// formatted floating point type to string (min_width can be <0 to left justify or >=0 to right justify, precision is the number of place to show after the decimal place)
 	template<class T> explicit istring(const T val,const int min_width,const int precision,const bool zero_pad=false) { ostringstream ss; ss.width((min_width<0) ? -min_width : min_width); ss.precision(precision); ss.setf(ios::fixed); ss.setf((min_width<0) ? ios::left : ios::right); ss.fill((zero_pad && min_width>=0) ? '0' : ' '); ss << val; assign(ss.str()); }
 
 
-	// --- auto-cast to const char *
+	// --- auto-cast to const char * or wstring
 	operator const char * const() const { return c_str(); }
-
+	operator const wstring() const { return convertFromString(*this); }
+	
+	#if defined(QT_CORE_LIB)
+		operator const QString() const { return QString(c_str()); }
+	#elif defined(__APPLE__)
+		mutable CFStringHelper	m_cfstring;
+		operator const CFStringRef() const {
+			m_cfstring=CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, c_str(), kCFStringEncodingUTF8, kCFAllocatorNull);
+			return m_cfstring;
+		}
+	#endif
 
 	// --- trim/pad operations
 		// remove white-space from the left side of the string
-	istring &ltrim() { const size_type len=length(); size_type i=0; while(i<len && isspace(operator[](i))) i++; erase(0,i); return *this; }
+	istring &ltrim() { const size_type len=length(); size_type i=0; while(i<len && ((unsigned)(operator[](i)+1)<=256 && isspace(operator[](i)))) i++; erase(0,i); return *this; }
 		// remove white-space from the right side of the string
-	istring &rtrim() { const size_type len=length(); size_type i=len; if(i>0) { i--; while(i>0 && isspace(operator[](i))) i--; if(i==0 && isspace(operator[](0))) erase(); else erase(i+1,(len-i)-1); } return *this; }
+	istring &rtrim() { const size_type len=length(); size_type i=len; if(i>0) { i--; while(i>0 && ((unsigned)(operator[](i)+1)<=256 && isspace(operator[](i)))) i--; if( i==0 && ((unsigned)(operator[](0)+1)<=256 && isspace(operator[](0))) ) erase(); else erase(i+1,(len-i)-1); } return *this; }
 		// remove white-space from the left and right side of the string
 	istring &trim() { return ltrim().rtrim(); }
+	
+		// remove a particular char from the left side of the string
+	istring &ltrim(const char ch) { const size_type len=length(); size_type i=0; while(i<len && ((unsigned)(operator[](i)+1)<=256 && (operator[](i)==ch))) i++; erase(0,i); return *this; }
+		// remove a particular char from the right side of the string
+	istring &rtrim(const char ch) { const size_type len=length(); size_type i=len; if(i>0) { i--; while(i>0 && ((unsigned)(operator[](i)+1)<=256 && (operator[](i)==ch))) i--; if( i==0 && ((unsigned)(operator[](0)+1)<=256 && (operator[](0)==ch)) ) erase(); else erase(i+1,(len-i)-1); } return *this; }
+		// remove a particular chat from the left and right side of the string
+	istring &trim(const char ch) { return ltrim(ch).rtrim(ch); }
 
 		// add pad_char characters to the left side of the string such that the string is no shorter than min_length
 	istring &lpad(const size_type min_length,const char pad_char=' ') { const size_type len=length(); if(len<min_length) insert((size_type)0,min_length-len,pad_char); return *this; }
@@ -120,15 +261,201 @@ public:
 	// --- count strings
 		// returns how many times str appears in the string from the optional pos and len parameters
 	const size_type count(const string str,const size_type pos=0,size_type len=npos) { if(len==npos) len=size()-pos; size_type last=pos+len; size_type str_len=str.length(); if(last>str_len) last-=str_len; else return 0; size_type count=0; for(size_type t=pos;t<last;t++) { if(substr(t,str_len)==str) { t+=str_len; count++; } } return count; }
-	
+
 
 	// --- search and replace
 		// returns self; replaces needle in the this, the haystack, with replacement; looks again if recur is true
-	string &searchAndReplace(const string needle,const string replacement,bool recur=false) { size_type pos=0; while((pos=find(needle,pos))!=string::npos) { replace(pos,needle.size(),replacement); if(!recur) break; } return *this; }
+		// when recur==true the replaced region is not searched again
+	istring &searchAndReplace(const string &needle,const string &replacement,bool recur=false) 
+	{ 
+		if(needle==replacement)
+			return *this;
+		size_type pos=0; 
+		size_type offset=replacement.size();
+		while(pos<length() && (pos=find(needle,pos))!=string::npos) 
+		{ 
+			replace(pos,needle.size(),replacement); 
+			pos+=offset;
+			if(!recur) 
+				break; 
+		} 
+		return *this; 
+	}
+		// returns self; replaces needle in the this, the haystack, with replacement; looks again if recur is true
+		// as much of the replaced region is searched again without causing infinite iteration
+	istring &maximalSearchAndReplace(const string &needle,const string &replacement) 
+	{ 
+		if(needle==replacement)
+			return *this;
+		size_type pos=0; 
+		size_type offset=replacement.find(needle)!=string::npos ? replacement.size() : 0;
+		while(pos<length() && (pos=find(needle,pos))!=string::npos) 
+		{ 
+			replace(pos,needle.size(),replacement); 
+			pos+=offset;
+		} 
+		return *this; 
+	}
+
+
+	// --- delimited string util
+	//	searches for the first delimiter in the string, returns what's in front of it and modifies the string to contain only what's after it
+	istring eatField(const string &delimiter) { size_type pos=find(delimiter); if(pos!=string::npos) { const istring r=substr(0,pos); erase(0,pos+delimiter.length()); return r; } const istring r=*this; clear(); return r; }
+	istring eatField(const string &delimiter,size_t n)
+	{
+		istring r;
+		for(size_t t=0;t<n;t++)
+			r=eatField(delimiter);
+		return r;
+	}
+
+	// convert a string to some variant type based on if istream can do it
+	template<typename Type_t> void convertTo(Type_t &variant) const
+	{
+		if(empty())
+			variant=0;
+		else
+		{
+			istringstream ss(*this);
+			ss >> variant;
+		}
+	}
+
 	
+	// convert a string to some variant type based on if istream can do it
+	template<typename Type_t> Type_t to() const
+	{
+		if(empty())
+			return 0;
+		Type_t variant;
+		istringstream ss(*this);
+		ss >> variant;
+		return variant;
+	}
+
+	// --- file operations
+#ifdef ISTRING_FILE_FUNCS
+	const size_type readFromFILE(FILE *f,size_type len=npos)
+	{
+		char buffer[512];
+		size_type amountRead=0;
+		
+		if(len==npos)
+		{ // if length was not given, read rest of file
+			const size_type origPos=ftell(f);
+			fseek(f,0,SEEK_END);
+			const size_type fileSize=ftell(f);
+			fseek(f,origPos,SEEK_SET);
+
+			len=fileSize-origPos;
+		}
+
+		for(size_t t=0;t<len/sizeof(buffer);t++)
+		{
+			size_type l;
+			if((l=fread(buffer,1,sizeof(buffer),f))>0)
+			{
+				append(buffer,l);
+				amountRead+=l;
+			}
+			else
+				return amountRead;
+		}
+		for(size_t t=0;t<len%sizeof(buffer);t++)
+		{
+			if(fread(buffer,1,1,f)>0)
+			{
+				append(buffer,1);
+				amountRead++;
+			}
+			else
+				return amountRead;
+		}
+		return amountRead;
+	}
+
+	const size_type readFromFilename(const string filename,size_type off=0,size_type len=npos)
+	{
+		FILE *f=fopen(filename.c_str(),"r");
+		if(f!=NULL)
+		{
+			try
+			{
+				if(off==0 || fseek(f,(long)off,SEEK_SET)==0)
+				{
+					size_type amountRead=readFromFILE(f,len);
+					fclose(f);
+					return amountRead;
+				}
+				else
+				{
+					int errno_ret=errno;
+					throw runtime_error(string(__func__)+" -- error seeking in file: "+filename+" -- "+strerror(errno_ret));
+				}
+			}
+			catch(...)
+			{
+				fclose(f);
+				throw;
+			}
+		}
+		else
+		{
+			int errno_ret=errno;
+			throw runtime_error(string(__func__)+" -- error opening file: "+filename+" -- "+strerror(errno_ret));
+		}
+	}
+
+	const size_type writeToFILE(FILE *f,size_type len=npos) const
+	{
+		if(len==npos) len=size();
+		size_t amountWritten=0;
+		
+		while(amountWritten<len)
+		{
+			size_t n=fwrite(data()+amountWritten,1,len-amountWritten,f);
+			if(n<=0)
+			{
+				int errno_ret=errno;
+				throw runtime_error(string(__func__)+" -- error while writing to file -- "+strerror(errno_ret));
+			}
+			amountWritten+=n;
+		}
+		
+		return amountWritten;
+	}
+
+	const size_type writeToFilename(const string filename) const
+	{
+		FILE *f=fopen(filename.c_str(),"w");
+		if(f!=NULL)
+		{
+			try
+			{
+				size_t r=writeToFILE(f,size());
+				fclose(f);
+				return r;
+			}
+			catch(...)
+			{
+				fclose(f);
+				throw;
+			}
+		}
+		else
+		{
+			int errno_ret=errno;
+			throw runtime_error(string(__func__)+" -- error opening file: "+filename+" -- "+strerror(errno_ret));
+		}
+	}
+#endif
 };
 
-
+#if defined(_UNICODE) || defined(UNICODE)
+#	define itstring iwstring
+#else
+#	define itstring istring
+#endif
 
 /* 
  *	- mnn -- 'make not null'

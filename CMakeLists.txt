@@ -37,6 +37,7 @@ endif()
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC") # for qt5
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_LDFLAGS_FLAGS} -Xlinker --allow-multiple-definition")
 
 # (enabled by default on x64)
@@ -112,7 +113,8 @@ add_subdirectory(po)
 add_subdirectory(src/misc)
 add_subdirectory(src/PoolFile)
 add_subdirectory(src/backend)
-add_subdirectory(src/frontend_fox)
+#add_subdirectory(src/frontend_fox)
+add_subdirectory(src/qt)
 
 configure_file(${CMAKE_CURRENT_LIST_DIR}/config/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/config/config.h)
 

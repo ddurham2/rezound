@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __unit_conv_h__
-#define __unit_conv_h__
+#ifndef unit_conv_h__
+#define unit_conv_h__
 
 
 #include "../../config/common.h"
@@ -33,6 +33,7 @@
 #include <algorithm>
 #include <istring>
 #include "CSound_defs.h"
+#include "../misc/istring"
 
 // volume
 static inline const double scalar_to_dB(const double scalar) { return 20.0*log10(scalar); }
@@ -100,6 +101,28 @@ static inline const string seconds_to_string(const sample_fpos_t sTime,int secon
 		return(time);
 }
 
+// returns seconds
+static inline sample_fpos_t string_to_seconds(const string &sTime)
+{
+	istring t=sTime;
+
+		// ??? decimal delimiter depends on locale.. ask for it
+	istring whole=t.eatField(".");
+	istring decimal="0."+t;
+
+	istring p1=whole.eatField(":");
+	istring p2=whole.eatField(":");
+	istring p3=whole;
+
+	if(p3=="")
+	{ // sTime == MM:SS.sss
+		return p1.to<sample_fpos_t>()*60 + p2.to<sample_fpos_t>() + decimal.to<sample_fpos_t>();
+	}
+	else
+	{ // sTime == HH:MM:SS.sss
+		return p1.to<sample_fpos_t>()*60*60 + p2.to<sample_fpos_t>()*60 + p3.to<sample_fpos_t>() + decimal.to<sample_fpos_t>();
+	}
+}
 
 // angles
 static inline const double degrees_to_radians(const double degrees) { return degrees*(2.0*M_PI)/360.0; }

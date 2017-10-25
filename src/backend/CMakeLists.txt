@@ -472,4 +472,8 @@ if (TARGET SOUNDTOUCH)
 	target_link_libraries(backend SOUNDTOUCH)
 endif()
 
+if (ENABLE_LADSPA)
+	target_link_libraries(backend dl)
+endif()
+
 

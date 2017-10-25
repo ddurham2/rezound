@@ -1,0 +1,74 @@
+/* 
+ * Copyright (C) 2007 - David W. Durham
+ * 
+ * This file is part of ReZound, an audio editing application.
+ * 
+ * ReZound is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation; either version 2 of the License,
+ * or (at your option) any later version.
+ * 
+ * ReZound is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
+ */
+
+#ifndef __CChannelSelectDialog_H__
+#define __CChannelSelectDialog_H__
+
+#include "../../../config/common.h"
+#include "../qt_compat.h"
+
+#include <QCheckBox>
+
+
+class CChannelSelectDialog;
+
+#include "../CModalDialog.h"
+#include "ui_CChannelSelectDialogContent.h"
+
+#include "../../backend/AActionDialog.h"
+#include "../../backend/CActionSound.h"
+
+extern CChannelSelectDialog *gChannelSelectDialog;
+
+#warning see about getting this put into a tab on all applicable CActionParamDialogs .. there may be a challenge if the selection of channels comes first and then that determines how the action param dialog looks.. I could use a wizard style dialog for that
+/*
+ * This is the implementation of AActionDialog that the backend
+ * asks to show whenever there is a question of what channels to 
+ * apply to action to...   This dialog's show method returns
+ * true if the user presses okay.. or false if they hit cancel.  
+ *
+ * The show method upon returning true should have also set 
+ * actionSound's doChannel values according to the checkboxes
+ * on the dialog
+ */
+class CChannelSelectDialog : public CModalDialog, public AActionDialog
+{
+	Q_OBJECT
+public:
+	CChannelSelectDialog(QWidget *mainWindow);
+	virtual ~CChannelSelectDialog();
+
+	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
+	void hide();
+
+	void setTitle(const string title) { CModalDialog::setTitle(title.c_str()); }
+
+private Q_SLOTS:
+	void onDefaultButton();
+	void onClearButton();
+
+private:
+	Ui::CChannelSelectDialogContent csdc;
+	const CActionSound *actionSound;
+
+	QCheckBox *checkBoxes[MAX_CHANNELS];
+};
+
+#endif
