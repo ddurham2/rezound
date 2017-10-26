@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __PluginRoutingParamValue_H__
-#define __PluginRoutingParamValue_H__
+#ifndef PluginRoutingParamValue_H__
+#define PluginRoutingParamValue_H__
 
 #include "../../config/common.h"
 #include "qt_compat.h"

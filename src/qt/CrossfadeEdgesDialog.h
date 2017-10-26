@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __CrossfadeEdgesDialog_H__
-#define __CrossfadeEdgesDialog_H__
+#ifndef CrossfadeEdgesDialog_H_
+#define CrossfadeEdgesDialog_H__
 
 #include "../../config/common.h"
 #include "qt_compat.h"

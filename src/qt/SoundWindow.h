@@ -1,5 +1,5 @@
-#ifndef __SoundWindow_H__
-#define __SoundWindow_H__
+#ifndef SoundWindow_H__
+#define SoundWindow_H__
 
 #include "../../config/common.h"
 

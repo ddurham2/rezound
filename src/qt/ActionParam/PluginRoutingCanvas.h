@@ -1,5 +1,5 @@
-#ifndef __PluginRoutingCanvas_H__
-#define __PluginRoutingCanvas_H__
+#ifndef PluginRoutingCanvas_H__
+#define PluginRoutingCanvas_H__
 
 #include <QWidget>
 

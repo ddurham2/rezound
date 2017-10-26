@@ -1,5 +1,5 @@
-#ifndef __MiscControlsWindow_H__
-#define __MiscControlsWindow_H__
+#ifndef MiscControlsWindow_H__
+#define MiscControlsWindow_H__
 
 #include "../../config/common.h"
 

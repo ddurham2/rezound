@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __rememberShow_H__
-#define __rememberShow_H__
+#ifndef rememberShow_H__
+#define rememberShow_H__
 
 #include "../../config/common.h"
 #include "qt_compat.h"

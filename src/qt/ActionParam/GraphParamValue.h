@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __GraphParamValue_H__
-#define __GraphParamValue_H__
+#ifndef GraphParamValue_H__
+#define GraphParamValue_H__
 
 
 #include "../../../config/common.h"

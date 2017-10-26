@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __LFOParamValue_H__
-#define __LFOParamValue_H__
+#ifndef LFOParamValue_H__
+#define LFOParamValue_H__
 
 #include "../../../config/common.h"
 #include "../qt_compat.h"

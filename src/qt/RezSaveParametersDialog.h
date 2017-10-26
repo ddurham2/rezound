@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __RezSaveParametersDialog_H__
-#define __RezSaveParametersDialog_H__
+#ifndef RezSaveParametersDialog_H__
+#define RezSaveParametersDialog_H__
 
 #include "../../config/common.h"
 

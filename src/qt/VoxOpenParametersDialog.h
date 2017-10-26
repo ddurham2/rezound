@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __VoxOpenParametersDialog_H__
-#define __VoxOpenParametersDialog_H__
+#ifndef VoxOpenParametersDialog_H__
+#define VoxOpenParametersDialog_H__
 
 #include "../../config/common.h"
 

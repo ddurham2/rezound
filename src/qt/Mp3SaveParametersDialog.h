@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __Mp3SaveParametersDialog_H__
-#define __Mp3SaveParametersDialog_H__
+#ifndef Mp3SaveParametersDialog_H__
+#define Mp3SaveParametersDialog_H__
 
 #include <QGroupBox>
 

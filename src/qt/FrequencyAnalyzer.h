@@ -1,5 +1,5 @@
-#ifndef __CFrequencyAnalyzer_H__
-#define __CFrequencyAnalyzer_H__
+#ifndef FrequencyAnalyzer_H__
+#define FrequencyAnalyzer_H__
 
 #include <vector>
 using namespace std;

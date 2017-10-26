@@ -1,5 +1,5 @@
-#ifndef __CSoundListWindow_H__
-#define __CSoundListWindow_H__
+#ifndef SoundListWindow_H__
+#define SoundListWindow_H__
 
 #include "../../config/common.h"
 

@@ -1,5 +1,5 @@
-#ifndef __ProgressDialog_H__
-#define __ProgressDialog_H__
+#ifndef ProgressDialog_H__
+#define ProgressDialog_H__
 
 #include "../../config/common.h"
 

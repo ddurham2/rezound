@@ -1,5 +1,5 @@
-#ifndef __LevelMeters_H__
-#define __LevelMeters_H__
+#ifndef LevelMeters_H__
+#define LevelMeters_H__
 
 #include <vector>
 using namespace std;

@@ -1,5 +1,5 @@
-#ifndef __CTransportWindow_H__
-#define __CTransportWindow_H__
+#ifndef TransportWindow_H__
+#define TransportWindow_H__
 
 #include "../../config/common.h"
 

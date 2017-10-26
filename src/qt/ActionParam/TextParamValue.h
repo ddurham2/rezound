@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __TextParamValue_H__
-#define __TextParamValue_H__
+#ifndef TextParamValue_H__
+#define TextParamValue_H__
 
 #include <QWidget>
 

@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __EffectActionDialogs_H__
-#define __EffectActionDialogs_H__
+#ifndef EffectActionDialogs_H__
+#define EffectActionDialogs_H__
 
 #include "../../config/common.h"
 #include "qt_compat.h"

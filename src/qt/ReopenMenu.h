@@ -1,5 +1,5 @@
-#ifndef __ReopenMenu_H__
-#define __ReopenMenu_H__
+#ifndef ReopenMenu_H__
+#define ReopenMenu_H__
 
 #include <QMenu>
 

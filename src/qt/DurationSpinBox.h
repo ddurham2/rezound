@@ -1,5 +1,5 @@
-#ifndef __DurationSpinBox_H__
-#define __DurationSpinBox_H__
+#ifndef DurationSpinBox_H__
+#define DurationSpinBox_H__
 
 #include <QSpinBox>
 #include "../backend/unit_conv.h"

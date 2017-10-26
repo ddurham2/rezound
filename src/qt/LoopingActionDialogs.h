@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __LoopingActionDialogs_H__
-#define __LoopingActionDialogs_H__
+#ifndef LoopingActionDialogs_H__
+#define LoopingActionDialogs_H__
 
 #include "../../config/common.h"
 #include "qt_compat.h"

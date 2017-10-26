@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __StatusComm_H__
-#define __StatusComm_H__
+#ifndef StatusComm_H__
+#define StatusComm_H__
 
 #include "../../config/common.h"
 #include "qt_compat.h"

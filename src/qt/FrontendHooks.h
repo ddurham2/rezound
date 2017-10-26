@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __FrontendHooks_H__
-#define __FrontendHooks_H__
+#ifndef FrontendHooks_H__
+#define FrontendHooks_H__
 
 #include "../../config/common.h"
 #include "qt_compat.h"

@@ -1,5 +1,5 @@
-#ifndef __StereoPhaseMeters_H__
-#define __StereoPhaseMeters_H__
+#ifndef StereoPhaseMeters_H__
+#define StereoPhaseMeters_H__
 
 #include <vector>
 using namespace std;

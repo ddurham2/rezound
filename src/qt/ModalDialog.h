@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __ModalDialog_H__
-#define __ModalDialog_H__
+#ifndef ModalDialog_H__
+#define ModalDialog_H__
 
 #include "../../config/common.h"
 

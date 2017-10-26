@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __PasteChannelsDialog_H__
-#define __PasteChannelsDialog_H__
+#ifndef PasteChannelsDialog_H__
+#define PasteChannelsDialog_H__
 
 #include "../../../config/common.h"
 #include "../qt_compat.h"

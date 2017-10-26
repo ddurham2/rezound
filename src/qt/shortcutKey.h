@@ -1,5 +1,5 @@
-#ifndef __shortcutKey_H__
-#define __shortcutKey_H__
+#ifndef shortcutKey_H__
+#define shortcutKey_H__
 
 #include <QKeySequence>
 #include "../misc/istring"

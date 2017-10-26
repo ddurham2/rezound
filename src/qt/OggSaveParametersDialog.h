@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __OggSaveParametersDialog_H__
-#define __OggSaveParametersDialog_H__
+#ifndef OggSaveParametersDialog_H__
+#define OggSaveParametersDialog_H__
 
 #include <QGroupBox>
 

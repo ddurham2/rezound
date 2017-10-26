@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __FileActionDialogs_H__
-#define __FileActionDialogs_H__
+#ifndef FileActionDialogs_H__
+#define FileActionDialogs_H__
 
 #include "../../config/common.h"
 

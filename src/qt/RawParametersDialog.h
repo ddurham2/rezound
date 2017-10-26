@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __RawParametersDialog_H__
-#define __RawParametersDialog_H__
+#ifndef RawParametersDialog_H__
+#define RawParametersDialog_H__
 
 #include "../../config/common.h"
 

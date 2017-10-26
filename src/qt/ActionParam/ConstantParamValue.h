@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __ConstantParamValue_H__
-#define __ConstantParamValue_H__
+#ifndef ConstantParamValue_H__
+#define ConstantParamValue_H__
 
 class ConstantParamValue;
 

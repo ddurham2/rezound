@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __LibaudiofileSaveParametersDialog_H__
-#define __LibaudiofileSaveParametersDialog_H__
+#ifndef LibaudiofileSaveParametersDialog_H__
+#define LibaudiofileSaveParametersDialog_H__
 
 #include <QLabel>
 

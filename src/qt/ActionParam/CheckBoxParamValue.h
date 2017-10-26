@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __CheckBoxParamValue_H__
-#define __CheckBoxParamValue_H__
+#ifndef CheckBoxParamValue_H__
+#define CheckBoxParamValue_H__
 
 #include <QWidget>
 

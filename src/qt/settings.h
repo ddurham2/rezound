@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __frontend_setting_H__
-#define __frontend_setting_H__
+#ifndef frontend_setting_H__
+#define frontend_setting_H__
 
 #include "config/common.h"
 

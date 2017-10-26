@@ -1,5 +1,5 @@
-#ifndef __RecentActionsMenu_H__
-#define __RecentActionsMenu_H__
+#ifndef RecentActionsMenu_H__
+#define RecentActionsMenu_H__
 
 #include <QMenu>
 #include <QVariant>

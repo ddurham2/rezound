@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __LADSPAActionDialog_H__
-#define __LADSPAActionDialog_H__
+#ifndef LADSPAActionDialog_H__
+#define LADSPAActionDialog_H__
 
 #include "../../config/common.h"
 

@@ -1,5 +1,5 @@
-#ifndef __MeterColors_H__
-#define __MeterColors_H__
+#ifndef MeterColors_H__
+#define MeterColors_H__
 
 #define M_BACKGROUND QColor(0,0,0)
 

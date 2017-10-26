@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
  */
 
-#ifndef __ActionParamDialog_H__
-#define __ActionParamDialog_H__
+#ifndef ActionParamDialog_H__
+#define ActionParamDialog_H__
 
 #include "../../../config/common.h"
 #include "../qt_compat.h"
