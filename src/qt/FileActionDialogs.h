@@ -25,15 +25,15 @@
 
 #include "qt_compat.h"
 
-#include "ActionParam/CActionParamDialog.h"
+#include "ActionParam/ActionParamDialog.h"
 
 // --- new audio file --------------------
 
-class CNewAudioFileActionDialog : public CActionParamDialog
+class NewAudioFileActionDialog : public ActionParamDialog
 {
 public:
-	CNewAudioFileActionDialog(QWidget *mainWindow);
-	virtual ~CNewAudioFileActionDialog(){}
+    NewAudioFileActionDialog(QWidget *mainWindow);
+    virtual ~NewAudioFileActionDialog(){}
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 };
@@ -41,33 +41,33 @@ public:
 
 // --- open audio file --------------------
 
-class COpenAudioFileActionDialog : public CActionParamDialog
+class OpenAudioFileActionDialog : public ActionParamDialog
 {
 public:
-	COpenAudioFileActionDialog(QWidget *mainWindow);
-	virtual ~COpenAudioFileActionDialog(){}
+    OpenAudioFileActionDialog(QWidget *mainWindow);
+    virtual ~OpenAudioFileActionDialog(){}
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 };
 
 // --- save as -----------------
 
-class CSaveAsAudioFileActionDialog : public CActionParamDialog
+class SaveAsAudioFileActionDialog : public ActionParamDialog
 {
 public:
-	CSaveAsAudioFileActionDialog(QWidget *mainWindow);
-	virtual ~CSaveAsAudioFileActionDialog(){}
+    SaveAsAudioFileActionDialog(QWidget *mainWindow);
+    virtual ~SaveAsAudioFileActionDialog(){}
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 };
 
 // --- save as multiple filenames --------
 
-class CSaveAsMultipleFilesDialog : public CActionParamDialog
+class SaveAsMultipleFilesDialog : public ActionParamDialog
 {
 public:
-	CSaveAsMultipleFilesDialog(QWidget *mainWindow);
-	virtual ~CSaveAsMultipleFilesDialog(){}
+    SaveAsMultipleFilesDialog(QWidget *mainWindow);
+    virtual ~SaveAsMultipleFilesDialog(){}
 
 protected:
 	const string getExplanation() const;
@@ -75,12 +75,12 @@ protected:
 
 // --- burn to CD ------------------------
 
-class CBurnToCDDialog : public CActionParamDialog
+class BurnToCDDialog : public ActionParamDialog
 {
 	Q_OBJECT
 public:
-	CBurnToCDDialog(QWidget *mainWindow);
-	virtual ~CBurnToCDDialog(){}
+    BurnToCDDialog(QWidget *mainWindow);
+    virtual ~BurnToCDDialog(){}
 
 protected:
 	const string getExplanation() const;
@@ -91,12 +91,12 @@ private Q_SLOTS:
 
 // --- run macro dialog -------------------
 
-class CRunMacroDialog : public CActionParamDialog
+class RunMacroDialog : public ActionParamDialog
 {
 	Q_OBJECT
 public:
-	CRunMacroDialog(QWidget *mainWindow);
-	virtual ~CRunMacroDialog(){}
+    RunMacroDialog(QWidget *mainWindow);
+    virtual ~RunMacroDialog(){}
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 

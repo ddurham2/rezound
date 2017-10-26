@@ -31,8 +31,8 @@
 
 // --- insert silence -------------------------
 
-CInsertSilenceDialog::CInsertSilenceDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+InsertSilenceDialog::InsertSilenceDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL);
 		addNumericTextEntry(p,N_("Length"),_("seconds"),1.0,0,10000);
@@ -42,8 +42,8 @@ CInsertSilenceDialog::CInsertSilenceDialog(QWidget *mainWindow) :
 
 // --- rotate ---------------------------------
 
-CRotateDialog::CRotateDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+RotateDialog::RotateDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL);
 		addNumericTextEntry(p,N_("Amount"),_("seconds"),1.0,0,10000);
@@ -53,18 +53,18 @@ CRotateDialog::CRotateDialog(QWidget *mainWindow) :
 
 // --- swap channels --------------------------
 
-CSwapChannelsDialog::CSwapChannelsDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+SwapChannelsDialog::SwapChannelsDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newVertPanel(NULL);
 		vector<string> items;
-		addComboTextEntry(p,N_("Channel A"),items,CActionParamDialog::cpvtAsInteger,"");
-		addComboTextEntry(p,N_("Channel B"),items,CActionParamDialog::cpvtAsInteger,"");
+		addComboTextEntry(p,N_("Channel A"),items,ActionParamDialog::cpvtAsInteger,"");
+		addComboTextEntry(p,N_("Channel B"),items,ActionParamDialog::cpvtAsInteger,"");
 }
 
 #include "../backend/CActionParameters.h"
 
-bool CSwapChannelsDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
+bool SwapChannelsDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
 	if(actionSound->sound->getChannelCount()<2)
 		return false;
@@ -89,15 +89,15 @@ bool CSwapChannelsDialog::show(CActionSound *actionSound,CActionParameters *acti
 			getComboText("Channel B")->setCurrentItem(1);
 		}
 
-		return CActionParamDialog::show(actionSound,actionParameters);
+		return ActionParamDialog::show(actionSound,actionParameters);
 	}
 }
 
 
 // --- add channels ---------------------------
 
-CAddChannelsDialog::CAddChannelsDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+AddChannelsDialog::AddChannelsDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newVertPanel(NULL);
 		addNumericTextEntry(p,N_("Insert Where"),"",0,0,MAX_CHANNELS);
@@ -108,17 +108,17 @@ CAddChannelsDialog::CAddChannelsDialog(QWidget *mainWindow) :
 
 // --- duplicate channel ----------------------
 
-CDuplicateChannelDialog::CDuplicateChannelDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+DuplicateChannelDialog::DuplicateChannelDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newVertPanel(NULL);
 		vector<string> items;
-		addComboTextEntry(p,N_("Which Channel"),items,CActionParamDialog::cpvtAsInteger,"");
-		addComboTextEntry(p,N_("Insert Where"),items,CActionParamDialog::cpvtAsInteger,"");
+		addComboTextEntry(p,N_("Which Channel"),items,ActionParamDialog::cpvtAsInteger,"");
+		addComboTextEntry(p,N_("Insert Where"),items,ActionParamDialog::cpvtAsInteger,"");
 		addNumericTextEntry(p,N_("How Many Times"),"",1,1,MAX_CHANNELS);
 }
 
-bool CDuplicateChannelDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
+bool DuplicateChannelDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
 	if(getComboText("Which Channel")->getItems().size()!=actionSound->sound->getChannelCount())
 	{
@@ -135,12 +135,12 @@ bool CDuplicateChannelDialog::show(CActionSound *actionSound,CActionParameters *
 		getComboText("Insert Where")->setCurrentItem(1);
 	}
 
-	return CActionParamDialog::show(actionSound,actionParameters);
+	return ActionParamDialog::show(actionSound,actionParameters);
 }
 // --- grow or slide selection dialog ---------
 
-CGrowOrSlideSelectionDialog::CGrowOrSlideSelectionDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+GrowOrSlideSelectionDialog::GrowOrSlideSelectionDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newVertPanel(NULL);
 		addSlider(p,
@@ -158,7 +158,7 @@ CGrowOrSlideSelectionDialog::CGrowOrSlideSelectionDialog(QWidget *mainWindow) :
 			items.push_back(N_("Grow Selection in Both Directions"));
 			items.push_back(N_("Slide Selection to the Left"));
 			items.push_back(N_("Slide Selection to the Right"));
-		addComboTextEntry(p,N_("How"),items,CActionParamDialog::cpvtAsInteger);
+		addComboTextEntry(p,N_("How"),items,ActionParamDialog::cpvtAsInteger);
 		getComboText("How")->setCurrentItem(1);
 }
 

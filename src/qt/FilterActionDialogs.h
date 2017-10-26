@@ -24,28 +24,28 @@
 #include "../../config/common.h"
 #include "qt_compat.h"
 
-#include "ActionParam/CActionParamDialog.h"
+#include "ActionParam/ActionParamDialog.h"
 
 
 // --- convolution -----------------------
 
-class CConvolutionFilterDialog : public CActionParamDialog
+class ConvolutionFilterDialog : public ActionParamDialog
 {
 public:
-	CConvolutionFilterDialog(QWidget *mainWindow);
-	virtual ~CConvolutionFilterDialog(){}
+    ConvolutionFilterDialog(QWidget *mainWindow);
+    virtual ~ConvolutionFilterDialog(){}
 };
 
 
 // --- arbitrary FIR filter --------------
 
-class CActionParamMapper_arbitraryFIRFilter_freq;
-class CArbitraryFIRFilterDialog : public CActionParamDialog
+class ActionParamMapper_arbitraryFIRFilter_freq;
+class ArbitraryFIRFilterDialog : public ActionParamDialog
 {
 	Q_OBJECT
 public:
-	CArbitraryFIRFilterDialog(QWidget *mainWindow);
-	virtual ~CArbitraryFIRFilterDialog(){}
+    ArbitraryFIRFilterDialog(QWidget *mainWindow);
+    virtual ~ArbitraryFIRFilterDialog(){}
 
 	//long onFrequencyRangeChange(FXObject *sender,FXSelector sel,void *ptr);
 private Q_SLOTS:
@@ -54,25 +54,25 @@ private Q_SLOTS:
 /*
 	enum
 	{
-		ID_BASE_FREQUENCY=CActionParamDialog::ID_LAST,
+		ID_BASE_FREQUENCY=ActionParamDialog::ID_LAST,
 		ID_NUMBER_OF_OCTAVES,
 		ID_LAST
 	};
 */
 
 private:
-	CActionParamMapper_arbitraryFIRFilter_freq *freqMapper;
+    ActionParamMapper_arbitraryFIRFilter_freq *freqMapper;
 };
 
 
 // --- morphing arbitrary FIR filter --------------
 
-class CMorphingArbitraryFIRFilterDialog : public CActionParamDialog
+class MorphingArbitraryFIRFilterDialog : public ActionParamDialog
 {
 	Q_OBJECT
 public:
-	CMorphingArbitraryFIRFilterDialog(QWidget *mainWindow);
-	virtual ~CMorphingArbitraryFIRFilterDialog(){}
+    MorphingArbitraryFIRFilterDialog(QWidget *mainWindow);
+    virtual ~MorphingArbitraryFIRFilterDialog(){}
 
 private Q_SLOTS:
 	void on_frequencyRange_changed();
@@ -82,80 +82,80 @@ private Q_SLOTS:
 	void on_copy2To1();
 
 protected:
-	// gets called by CModalDialog before the okay button is accepted
+	// gets called by ModalDialog before the okay button is accepted
 	bool validateOnOkay();
 
 	const string getExplanation() const;
 
-	CActionParamMapper_arbitraryFIRFilter_freq *freqMapper;
+    ActionParamMapper_arbitraryFIRFilter_freq *freqMapper;
 };
 
 
 // --- single pole lowpass ---------------
 
-class CSinglePoleLowpassFilterDialog : public CActionParamDialog
+class SinglePoleLowpassFilterDialog : public ActionParamDialog
 {
 public:
-	CSinglePoleLowpassFilterDialog(QWidget *mainWindow);
-	virtual ~CSinglePoleLowpassFilterDialog(){}
+    SinglePoleLowpassFilterDialog(QWidget *mainWindow);
+    virtual ~SinglePoleLowpassFilterDialog(){}
 };
 
 
 // --- single pole highpass --------------
 
-class CSinglePoleHighpassFilterDialog : public CActionParamDialog
+class SinglePoleHighpassFilterDialog : public ActionParamDialog
 {
 public:
-	CSinglePoleHighpassFilterDialog(QWidget *mainWindow);
-	virtual ~CSinglePoleHighpassFilterDialog(){}
+    SinglePoleHighpassFilterDialog(QWidget *mainWindow);
+    virtual ~SinglePoleHighpassFilterDialog(){}
 };
 
 
 // --- bandpass --------------------------
 
-class CBandpassFilterDialog : public CActionParamDialog
+class BandpassFilterDialog : public ActionParamDialog
 {
 public:
-	CBandpassFilterDialog(QWidget *mainWindow);
-	virtual ~CBandpassFilterDialog(){}
+    BandpassFilterDialog(QWidget *mainWindow);
+    virtual ~BandpassFilterDialog(){}
 };
 
 
 // --- notch -----------------------------
 
-class CNotchFilterDialog : public CActionParamDialog
+class NotchFilterDialog : public ActionParamDialog
 {
 public:
-	CNotchFilterDialog(QWidget *mainWindow);
-	virtual ~CNotchFilterDialog(){}
+    NotchFilterDialog(QWidget *mainWindow);
+    virtual ~NotchFilterDialog(){}
 };
 
 
 // --- biquad resonant lowpass -----------
 
-class CBiquadResLowpassFilterDialog : public CActionParamDialog
+class BiquadResLowpassFilterDialog : public ActionParamDialog
 {
 public:
-	CBiquadResLowpassFilterDialog(QWidget *mainWindow);
-	virtual ~CBiquadResLowpassFilterDialog(){}
+    BiquadResLowpassFilterDialog(QWidget *mainWindow);
+    virtual ~BiquadResLowpassFilterDialog(){}
 };
 
 // --- biquad resonant highpass ----------
 
-class CBiquadResHighpassFilterDialog : public CActionParamDialog
+class BiquadResHighpassFilterDialog : public ActionParamDialog
 {
 public:
-	CBiquadResHighpassFilterDialog(QWidget *mainWindow);
-	virtual ~CBiquadResHighpassFilterDialog(){}
+    BiquadResHighpassFilterDialog(QWidget *mainWindow);
+    virtual ~BiquadResHighpassFilterDialog(){}
 };
 
 // --- biquad resonant bandpass ----------
 
-class CBiquadResBandpassFilterDialog : public CActionParamDialog
+class BiquadResBandpassFilterDialog : public ActionParamDialog
 {
 public:
-	CBiquadResBandpassFilterDialog(QWidget *mainWindow);
-	virtual ~CBiquadResBandpassFilterDialog(){}
+    BiquadResBandpassFilterDialog(QWidget *mainWindow);
+    virtual ~BiquadResBandpassFilterDialog(){}
 };
 
 

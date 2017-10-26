@@ -35,9 +35,9 @@ class CLoadedSound
 {
 public:
 											// translator can be NULL
-	CLoadedSound(const string filename,CSoundPlayerChannel *channel,bool isReadOnly,const ASoundTranslator *translator);
-	CLoadedSound(const CLoadedSound &src);
-	virtual ~CLoadedSound();
+    CLoadedSound(const string filename,CSoundPlayerChannel *channel,bool isReadOnly,const ASoundTranslator *translator);
+    CLoadedSound(const CLoadedSound &src);
+    virtual ~CLoadedSound();
 
 	void clearUndoHistory();
 

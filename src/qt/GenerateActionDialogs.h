@@ -24,17 +24,17 @@
 #include "../../config/common.h"
 #include "qt_compat.h"
 
-#include "ActionParam/CActionParamDialog.h"
+#include "ActionParam/ActionParamDialog.h"
 
 
 // --- Generate Noise --------------------
 
-class CGenerateNoiseDialog : public CActionParamDialog
+class GenerateNoiseDialog : public ActionParamDialog
 {
 	Q_OBJECT
 public:
-	CGenerateNoiseDialog(QWidget *mainWindow);
-	virtual ~CGenerateNoiseDialog(){}
+    GenerateNoiseDialog(QWidget *mainWindow);
+    virtual ~GenerateNoiseDialog(){}
 
 private Q_SLOTS:
 	void on_noiseColor_changed();
@@ -42,11 +42,11 @@ private Q_SLOTS:
 
 // --- Generate Tone --------------------
 
-class CGenerateToneDialog : public CActionParamDialog
+class GenerateToneDialog : public ActionParamDialog
 {
 public:
-	CGenerateToneDialog(QWidget *mainWindow);
-	virtual ~CGenerateToneDialog(){}
+    GenerateToneDialog(QWidget *mainWindow);
+    virtual ~GenerateToneDialog(){}
 };
 
 #endif

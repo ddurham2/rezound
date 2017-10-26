@@ -25,17 +25,17 @@
 #include "../backend/CLoadedSound.h"
 #include "../backend/CActionSound.h"
 #include "settings.h"
-#include "CFrontendHooks.h"
+#include "FrontendHooks.h"
 
 
 // --- create new audio file ------------------------
 
-CNewAudioFileActionDialog::CNewAudioFileActionDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+NewAudioFileActionDialog::NewAudioFileActionDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 }
 
-bool CNewAudioFileActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
+bool NewAudioFileActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
 	string filename=actionParameters->getSoundFileManager()->getUntitledFilename(gPromptDialogDirectory,"rez");
 	bool rawFormat=false;
@@ -58,12 +58,12 @@ bool CNewAudioFileActionDialog::show(CActionSound *actionSound,CActionParameters
 
 // --- open audio file ------------------------
 
-COpenAudioFileActionDialog::COpenAudioFileActionDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+OpenAudioFileActionDialog::OpenAudioFileActionDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 }
 
-bool COpenAudioFileActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
+bool OpenAudioFileActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
 	vector<string> filenames;
 	bool readOnly=false;
@@ -81,12 +81,12 @@ bool COpenAudioFileActionDialog::show(CActionSound *actionSound,CActionParameter
 
 // --- save audio file as ---------------------
 
-CSaveAsAudioFileActionDialog::CSaveAsAudioFileActionDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+SaveAsAudioFileActionDialog::SaveAsAudioFileActionDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 }
 
-bool CSaveAsAudioFileActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
+bool SaveAsAudioFileActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
 	// find the CLoadedSound object in the ASoundFileManager object (??? would be nice if this were just passed in as some of the info)
 	ASoundFileManager *sfm=actionParameters->getSoundFileManager();
@@ -120,24 +120,24 @@ bool CSaveAsAudioFileActionDialog::show(CActionSound *actionSound,CActionParamet
 
 #include "../backend/ASoundTranslator.h"
 #include "../backend/File/CSaveAsMultipleFilesAction.h"
-CSaveAsMultipleFilesDialog::CSaveAsMultipleFilesDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+SaveAsMultipleFilesDialog::SaveAsMultipleFilesDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p1=newVertPanel(NULL);
-		addDiskEntityEntry(p1,N_("Save to Directory"),".",CDiskEntityParamValue::detDirectory,_("All the files will be saved into this directory"));
+		addDiskEntityEntry(p1,N_("Save to Directory"),".",DiskEntityParamValue::detDirectory,_("All the files will be saved into this directory"));
 		addStringTextEntry(p1,N_("Filename Prefix"),_("Part#"),_("This will be added to the front of the filename"));
 		addStringTextEntry(p1,N_("Filename Suffix"),"",_("This will be added to the end of the filename"));
-		addComboTextEntry(p1,N_("Format"),ASoundTranslator::getFlatFormatList(),CActionParamDialog::cpvtAsInteger,_("The format to save each segment as"),false);
+		addComboTextEntry(p1,N_("Format"),ASoundTranslator::getFlatFormatList(),ActionParamDialog::cpvtAsInteger,_("The format to save each segment as"),false);
 		addNumericTextEntry(p1,N_("Segment Number Start"),"",1,0,1000,_("The Number to Start With When Substituting the Track Number For '#' in the Filenames"));
 		addCheckBoxEntry(p1,N_("Open Saved Segments"),false,_("Open the Segments After Saving Them"));
 		vector<string> items;
 			items.push_back(N_("Entire File"));
 			items.push_back(N_("Selection Only"));
-		addComboTextEntry(p1,N_("Applies to"),items,CActionParamDialog::cpvtAsInteger);
+		addComboTextEntry(p1,N_("Applies to"),items,ActionParamDialog::cpvtAsInteger);
 		addCheckBoxEntry(p1,N_("Prompt Only Once for Save Parameters"),false,_("Some formats require parameters from the user (i.e. compression type, audio format, etc).  Checking this checkbox will make it only prompt on the first file if necessary.  All other saved files will use the previous parameters if possible."));
 }
 
-const string CSaveAsMultipleFilesDialog::getExplanation() const
+const string SaveAsMultipleFilesDialog::getExplanation() const
 {
 	return CSaveAsMultipleFilesAction::getExplanation();
 }
@@ -149,36 +149,36 @@ const string CSaveAsMultipleFilesDialog::getExplanation() const
 #include <CPath.h>
 #include "../backend/File/CBurnToCDAction.h"
 
-CBurnToCDDialog::CBurnToCDDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+BurnToCDDialog::BurnToCDDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p1=newVertPanel(NULL);
 			// ??? default to file location or fallback work dir
-		addDiskEntityEntry(p1,N_("Temp Space Directory"),gFallbackWorkDir,CDiskEntityParamValue::detDirectory,_("A temporary file for burning will be placed in this location.  Enough space will be needed for CD quality audio of the length of the audio to be burned to the CD"));
+		addDiskEntityEntry(p1,N_("Temp Space Directory"),gFallbackWorkDir,DiskEntityParamValue::detDirectory,_("A temporary file for burning will be placed in this location.  Enough space will be needed for CD quality audio of the length of the audio to be burned to the CD"));
 
 			// ??? default to `which cdrdao` or if not found, blank
-		addDiskEntityEntry(p1,N_("Path to cdrdao"),CPath::which("cdrdao"),CDiskEntityParamValue::detGeneralFilename);
+		addDiskEntityEntry(p1,N_("Path to cdrdao"),CPath::which("cdrdao"),DiskEntityParamValue::detGeneralFilename);
 
 		vector<string> burnSpeeds;
 		for(unsigned t=1;t<=50;t++)
 			burnSpeeds.push_back(istring(t)+"x");
-		CComboTextParamValue *burnSpeed=addComboTextEntry(p1,N_("Burn Speed"),burnSpeeds,CActionParamDialog::cpvtAsInteger);
+		ComboTextParamValue *burnSpeed=addComboTextEntry(p1,N_("Burn Speed"),burnSpeeds,ActionParamDialog::cpvtAsInteger);
 			burnSpeed->setIntegerValue(7);
 
 		vector<string> trackGaps;
 		for(unsigned t=0;t<=10;t++)
 			trackGaps.push_back(istring(t)+"s");
-		CComboTextParamValue *trackGap=addComboTextEntry(p1,N_("Gap Between Tracks"),trackGaps,CActionParamDialog::cpvtAsInteger,_("The Gap of Silence to Place Between Each Track"));
+		ComboTextParamValue *trackGap=addComboTextEntry(p1,N_("Gap Between Tracks"),trackGaps,ActionParamDialog::cpvtAsInteger,_("The Gap of Silence to Place Between Each Track"));
 			trackGap->setIntegerValue(0);
 
 		vector<string> appliesTo;
 			appliesTo.push_back(N_("Entire File"));
 			appliesTo.push_back(N_("Selection Only"));
-		addComboTextEntry(p1,N_("Applies to"),appliesTo,CActionParamDialog::cpvtAsInteger);
+		addComboTextEntry(p1,N_("Applies to"),appliesTo,ActionParamDialog::cpvtAsInteger);
 
 		QWidget *p2=newVertPanel(p1,false);
 			QWidget *p3=newHorzPanel(p2);
-				CTextParamValue *device=addStringTextEntry(p3,N_("Device"),"0,0,0");
+				TextParamValue *device=addStringTextEntry(p3,N_("Device"),"0,0,0");
 					QPushButton *detectDevice=new QPushButton(_("Detect"));
 					connect(detectDevice,SIGNAL(clicked()),this,SLOT(onDetectDeviceClicked()));
 					device->layout()->addWidget(detectDevice);
@@ -189,14 +189,14 @@ CBurnToCDDialog::CBurnToCDDialog(QWidget *mainWindow) :
 		addCheckBoxEntry(p1,N_("Simulate Burn Only"),false,_("Don't Turn on Burn Laser"));
 }
 
-void CBurnToCDDialog::onDetectDeviceClicked()
+void BurnToCDDialog::onDetectDeviceClicked()
 {
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 	getTextParam("Device")->setText(CBurnToCDAction::detectDevice(getDiskEntityParam("Path to cdrdao")->getEntityName()));
 	QApplication::restoreOverrideCursor();
 }
 
-const string CBurnToCDDialog::getExplanation() const
+const string BurnToCDDialog::getExplanation() const
 {
 	return CBurnToCDAction::getExplanation();
 }
@@ -209,28 +209,28 @@ const string CBurnToCDDialog::getExplanation() const
 #include <CNestedDataFile/CNestedDataFile.h>
 #include <CPath.h>
 
-CRunMacroDialog::CRunMacroDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow,false)
+RunMacroDialog::RunMacroDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow,false)
 {
 	QWidget *p=newVertPanel(NULL);
 		vector<string> items;
-		addComboTextEntry(p,N_("Macro Name"),items,CActionParamDialog::cpvtAsString);
+		addComboTextEntry(p,N_("Macro Name"),items,ActionParamDialog::cpvtAsString);
 		QPushButton *removeButton=new QPushButton(_("Remove Macro"));
 		connect(removeButton,SIGNAL(clicked()),this,SLOT(onRemoveClicked()));
 		p->layout()->addWidget(removeButton);
 }
 
-bool CRunMacroDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
+bool RunMacroDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
 	vector<string> items=gUserMacroStore->getValue<vector<string> >("MacroNames");
 	getComboText("Macro Name")->setItems(items);
 
-	return CActionParamDialog::show(actionSound,actionParameters);
+	return ActionParamDialog::show(actionSound,actionParameters);
 }
 
-void CRunMacroDialog::onRemoveClicked()
+void RunMacroDialog::onRemoveClicked()
 {
-	CComboTextParamValue *cb=getComboText("Macro Name");
+	ComboTextParamValue *cb=getComboText("Macro Name");
 	const string macroName=cb->getStringValue();
 	if(Question(_("Are you sure you want to delete the macro: ")+macroName,yesnoQues)==yesAns)
 	{

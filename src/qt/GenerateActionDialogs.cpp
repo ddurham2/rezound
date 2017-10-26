@@ -25,8 +25,8 @@
 
 // --- Generate Noise -------------------------
 
-CGenerateNoiseDialog::CGenerateNoiseDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+GenerateNoiseDialog::GenerateNoiseDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	vector<string> items;
 
@@ -67,10 +67,10 @@ CGenerateNoiseDialog::CGenerateNoiseDialog(QWidget *mainWindow) :
 	//items.push_back("Blue");
 	//items.push_back("Violet");
 	//items.push_back("Binary");
-	CComboTextParamValue *noiseColorComboBox=addComboTextEntry(p0,
+	ComboTextParamValue *noiseColorComboBox=addComboTextEntry(p0,
 		N_("Noise Color"),
 		items,
-		CActionParamDialog::cpvtAsInteger
+		ActionParamDialog::cpvtAsInteger
 	);
 	connect(noiseColorComboBox,SIGNAL(changed()),this,SLOT(on_noiseColor_changed()));
 
@@ -86,12 +86,12 @@ CGenerateNoiseDialog::CGenerateNoiseDialog(QWidget *mainWindow) :
 	addComboTextEntry(p0,
 		N_("Stereo Image"),
 		items,
-		CActionParamDialog::cpvtAsInteger
+		ActionParamDialog::cpvtAsInteger
 	);
 		
 }
 
-void CGenerateNoiseDialog::on_noiseColor_changed()
+void GenerateNoiseDialog::on_noiseColor_changed()
 {
 	if(getComboText("Noise Color")->getIntegerValue()==2)
 		getSliderParam("Max Particle Velocity")->enable();
@@ -102,8 +102,8 @@ void CGenerateNoiseDialog::on_noiseColor_changed()
 
 // --- Generate Tone -------------------------
 
-CGenerateToneDialog::CGenerateToneDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+GenerateToneDialog::GenerateToneDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 #warning make some presets
 	QWidget *p0=newVertPanel(NULL);
@@ -142,7 +142,7 @@ CGenerateToneDialog::CGenerateToneDialog(QWidget *mainWindow) :
 		addComboTextEntry(p0,
 			N_("Tone Type"),
 			toneTypes,
-			CActionParamDialog::cpvtAsInteger
+			ActionParamDialog::cpvtAsInteger
 		); 
 }
 

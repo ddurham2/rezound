@@ -24,23 +24,23 @@
 #include "../../config/common.h"
 #include "qt_compat.h"
 
-#include "ActionParam/CActionParamDialog.h"
+#include "ActionParam/ActionParamDialog.h"
 
 
 // --- add cues --------------------------
 
-class CAddNCuesDialog : public CActionParamDialog
+class AddNCuesDialog : public ActionParamDialog
 {
 public:
-	CAddNCuesDialog(QWidget *mainWindow);
-	virtual ~CAddNCuesDialog(){}
+    AddNCuesDialog(QWidget *mainWindow);
+    virtual ~AddNCuesDialog(){}
 };
 
-class CAddTimedCuesDialog : public CActionParamDialog
+class AddTimedCuesDialog : public ActionParamDialog
 {
 public:
-	CAddTimedCuesDialog(QWidget *mainWindow);
-	virtual ~CAddTimedCuesDialog(){}
+    AddTimedCuesDialog(QWidget *mainWindow);
+    virtual ~AddTimedCuesDialog(){}
 };
 
 

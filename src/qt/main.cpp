@@ -22,10 +22,10 @@
 
 #include "qt_compat.h"
 
-#include "CMainWindow.h"
-#include "CStatusComm.h"
-#include "CSoundFileManager.h"
-#include "CFrontendHooks.h"
+#include "MainWindow.h"
+#include "StatusComm.h"
+#include "SoundFileManager.h"
+#include "FrontendHooks.h"
 #include "../backend/initialize.h"
 #include "settings.h"
 
@@ -33,24 +33,24 @@
 DECLARE_STATIC_CPATH // to declare CPath::dirDelim
 
 /*
-#include "CAboutDialog.h"
+#include "AboutDialog.h"
 */
 
-static void setupWindows(CMainWindow *mainWindow);
+static void setupWindows(MainWindow *mainWindow);
 
-int main( int argc, char ** argv )
+int main(int argc, char** argv)
 {
 	QApplication a( argc, argv );
 	try
 	{
-		CMainWindow mainWindow;
+		MainWindow mainWindow;
 
 		// unfortunately we have to create main window before we can pop up error messages
 		// which means we will have to load plugins and add their buttons to an already
 		// created window... because there could be errors while loading
 		// ??? I could fix this by delaying the creation of buttons after the creation of the main window.. and I should do this, since if I ever support loading plugins, I need to be able to popup error dialogs while loading them
-		gStatusComm=new CStatusComm(&mainWindow);
-		gFrontendHooks=new CFrontendHooks(&mainWindow);
+		gStatusComm=new StatusComm(&mainWindow);
+		gFrontendHooks=new FrontendHooks(&mainWindow);
 
 		// from here on we can create error messages
 		//   ??? I suppose I could atleast print to strerr if gStatusComm was not created yet
@@ -62,9 +62,9 @@ int main( int argc, char ** argv )
 		mainWindow.backendInitialized();
 
 		// the backend needed to be setup before this stuff was done
-		static_cast<CFrontendHooks *>(gFrontendHooks)->doSetupAfterBackendIsSetup();
+		static_cast<FrontendHooks *>(gFrontendHooks)->doSetupAfterBackendIsSetup();
 
-		gSoundFileManager=new CSoundFileManager(&mainWindow,soundPlayer,gSettingsRegistry);
+		gSoundFileManager=new SoundFileManager(&mainWindow,soundPlayer,gSettingsRegistry);
 
 		mainWindow.setSoundPlayerForMeters(soundPlayer);
 
@@ -100,7 +100,7 @@ int main( int argc, char ** argv )
 // ??? I think it does no good to use statuscomm here
 		if(gStatusComm!=NULL)
 		{
-			((CStatusComm*)gStatusComm)->noMainWindow();
+			((StatusComm*)gStatusComm)->noMainWindow();
 			Error(e.what());
 		}
 		else
@@ -112,7 +112,7 @@ int main( int argc, char ** argv )
 	{
 		if(gStatusComm!=NULL)
 		{
-			((CStatusComm*)gStatusComm)->noMainWindow();
+			((StatusComm*)gStatusComm)->noMainWindow();
 			Error("unknown exception caught\n");
 		}
 		else
@@ -122,47 +122,47 @@ int main( int argc, char ** argv )
 	}
 }
 
-#include "ActionParam/CChannelSelectDialog.h"
-#include "ActionParam/CPasteChannelsDialog.h"
-#include "CUserNotesDialog.h"
-CUserNotesDialog *gUserNotesDialog;
-#include "CKeyBindingsDialog.h"
-CKeyBindingsDialog *gKeyBindingsDialog;
+#include "ActionParam/ChannelSelectDialog.h"
+#include "ActionParam/PasteChannelsDialog.h"
+#include "UserNotesDialog.h"
+UserNotesDialog *gUserNotesDialog;
+#include "KeyBindingsDialog.h"
+KeyBindingsDialog *gKeyBindingsDialog;
 /*
-#include "CCueDialog.h"
-#include "CCueListDialog.h"
+#include "CueDialog.h"
+#include "CueListDialog.h"
 */
-#include "CCrossfadeEdgesDialog.h"
+#include "CrossfadeEdgesDialog.h"
 
-void setupWindows(CMainWindow *mainWindow)
+void setupWindows(MainWindow *mainWindow)
 {
 	/*
-		gAboutDialog=new CAboutDialog(mainWindow);
+		gAboutDialog=new AboutDialog(mainWindow);
 	*/
 
 		// create the channel select dialog that AActionFactory is given to use often
-		gChannelSelectDialog=new CChannelSelectDialog(mainWindow);
+		gChannelSelectDialog=new ChannelSelectDialog(mainWindow);
 
 		// create the channel select dialog that AActionFactory uses for selecting channels to paste to
-		gPasteChannelsDialog=new CPasteChannelsDialog(mainWindow);
+		gPasteChannelsDialog=new PasteChannelsDialog(mainWindow);
 
 	/* ???
 		// create the dialog used to obtain the name for a new cue
-		gCueDialog=new CCueDialog(mainWindow);
+		gCueDialog=new CueDialog(mainWindow);
 
 		// create the dialog used to manipulate a list of cues
-		gCueListDialog=new CCueListDialog(mainWindow);
+		gCueListDialog=new CueListDialog(mainWindow);
 	*/
 
 		// create the dialog used to make user notes saved with the sound
-		gUserNotesDialog=new CUserNotesDialog(mainWindow);
+		gUserNotesDialog=new UserNotesDialog(mainWindow);
 
 		// create the dialog use for the user to re-bind keys to actions
-		gKeyBindingsDialog=new CKeyBindingsDialog(mainWindow);
+		gKeyBindingsDialog=new KeyBindingsDialog(mainWindow);
 
 		// create the dialog used to set the length of the crossfade on the edges
-		gCrossfadeEdgesDialog=new CCrossfadeEdgesDialog(mainWindow);
+		gCrossfadeEdgesDialog=new CrossfadeEdgesDialog(mainWindow);
 
-		// create the tool bars in CMainWindow
+		// create the tool bars in MainWindow
 		mainWindow->createMenus();
 }

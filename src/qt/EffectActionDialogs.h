@@ -24,48 +24,48 @@
 #include "../../config/common.h"
 #include "qt_compat.h"
 
-#include "ActionParam/CActionParamDialog.h"
+#include "ActionParam/ActionParamDialog.h"
 
 
 // --- volume ----------------------------
 
-class CNormalVolumeChangeDialog : public CActionParamDialog
+class NormalVolumeChangeDialog : public ActionParamDialog
 {
 public:
-	CNormalVolumeChangeDialog(QWidget *mainWindow);
-	virtual ~CNormalVolumeChangeDialog(){}
+    NormalVolumeChangeDialog(QWidget *mainWindow);
+    virtual ~NormalVolumeChangeDialog(){}
 };
 
-class CNormalGainDialog : public CActionParamDialog
+class NormalGainDialog : public ActionParamDialog
 {
 public:
-	CNormalGainDialog(QWidget *mainWindow);
-	virtual ~CNormalGainDialog(){}
+    NormalGainDialog(QWidget *mainWindow);
+    virtual ~NormalGainDialog(){}
 };
 
-class CAdvancedGainDialog : public CActionParamDialog
+class AdvancedGainDialog : public ActionParamDialog
 {
 public:
-	CAdvancedGainDialog(QWidget *mainWindow);
-	virtual ~CAdvancedGainDialog(){}
+    AdvancedGainDialog(QWidget *mainWindow);
+    virtual ~AdvancedGainDialog(){}
 };
 
 
 
 // --- rate ------------------------------
 
-class CNormalRateChangeDialog : public CActionParamDialog
+class NormalRateChangeDialog : public ActionParamDialog
 {
 public:
-	CNormalRateChangeDialog(QWidget *mainWindow);
-	virtual ~CNormalRateChangeDialog(){}
+    NormalRateChangeDialog(QWidget *mainWindow);
+    virtual ~NormalRateChangeDialog(){}
 };
 
-class CAdvancedRateChangeDialog : public CActionParamDialog
+class AdvancedRateChangeDialog : public ActionParamDialog
 {
 public:
-	CAdvancedRateChangeDialog(QWidget *mainWindow);
-	virtual ~CAdvancedRateChangeDialog(){}
+    AdvancedRateChangeDialog(QWidget *mainWindow);
+    virtual ~AdvancedRateChangeDialog(){}
 };
 
 
@@ -74,11 +74,11 @@ public:
 
 // --- flange ----------------------------
 
-class CFlangeDialog : public CActionParamDialog
+class FlangeDialog : public ActionParamDialog
 {
 public:
-	CFlangeDialog(QWidget *mainWindow);
-	virtual ~CFlangeDialog(){}
+    FlangeDialog(QWidget *mainWindow);
+    virtual ~FlangeDialog(){}
 };
 
 
@@ -87,11 +87,11 @@ public:
 
 // --- delay -----------------------------
 
-class CSimpleDelayDialog : public CActionParamDialog
+class SimpleDelayDialog : public ActionParamDialog
 {
 public:
-	CSimpleDelayDialog(QWidget *mainWindow);
-	virtual ~CSimpleDelayDialog(){}
+    SimpleDelayDialog(QWidget *mainWindow);
+    virtual ~SimpleDelayDialog(){}
 };
 
 
@@ -100,11 +100,11 @@ public:
 
 // --- quantize --------------------------
 
-class CQuantizeDialog : public CActionParamDialog
+class QuantizeDialog : public ActionParamDialog
 {
 public:
-	CQuantizeDialog(QWidget *mainWindow);
-	virtual ~CQuantizeDialog(){}
+    QuantizeDialog(QWidget *mainWindow);
+    virtual ~QuantizeDialog(){}
 };
 
 
@@ -113,11 +113,11 @@ public:
 
 // --- distortion ------------------------
 
-class CDistortionDialog : public CActionParamDialog
+class DistortionDialog : public ActionParamDialog
 {
 public:
-	CDistortionDialog(QWidget *mainWindow);
-	virtual ~CDistortionDialog(){}
+    DistortionDialog(QWidget *mainWindow);
+    virtual ~DistortionDialog(){}
 };
 
 
@@ -126,11 +126,11 @@ public:
 
 // --- varied repeat ---------------------
 
-class CVariedRepeatDialog : public CActionParamDialog
+class VariedRepeatDialog : public ActionParamDialog
 {
 public:
-	CVariedRepeatDialog(QWidget *mainWindow);
-	virtual ~CVariedRepeatDialog(){}
+    VariedRepeatDialog(QWidget *mainWindow);
+    virtual ~VariedRepeatDialog(){}
 };
 
 

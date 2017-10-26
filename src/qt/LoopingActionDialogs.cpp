@@ -24,8 +24,8 @@
 
 // --- add cues -------------------------------
 
-CAddNCuesDialog::CAddNCuesDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+AddNCuesDialog::AddNCuesDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newVertPanel(NULL,false);
 		addStringTextEntry(p,
@@ -50,8 +50,8 @@ CAddNCuesDialog::CAddNCuesDialog(QWidget *mainWindow) :
 		);
 }
 
-CAddTimedCuesDialog::CAddTimedCuesDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+AddTimedCuesDialog::AddTimedCuesDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newVertPanel(NULL,false);
 		addStringTextEntry(p,

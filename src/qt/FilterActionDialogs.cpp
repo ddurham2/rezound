@@ -20,7 +20,7 @@
 
 #include "FilterActionDialogs.h"
 
-#include "CStatusComm.h"
+#include "StatusComm.h"
 
 #include "../backend/ActionParamMappers.h"
 #include "../backend/unit_conv.h"
@@ -54,8 +54,8 @@ public:
 };
 
 
-CConvolutionFilterDialog::CConvolutionFilterDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+ConvolutionFilterDialog::ConvolutionFilterDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	// ??? still need predelay sliders
 	QWidget *p0=newVertPanel(NULL,true);
@@ -102,7 +102,7 @@ CConvolutionFilterDialog::CConvolutionFilterDialog(QWidget *mainWindow) :
 
 
 				QWidget *p2=newVertPanel(p1,false);
-					addDiskEntityEntry(p2,N_("Filter Kernel"),"$share/impulse_hall1.wav",CDiskEntityParamValue::detAudioFilename,_("The Audio File to Use as the Filter Kernel"));
+					addDiskEntityEntry(p2,N_("Filter Kernel"),"$share/impulse_hall1.wav",DiskEntityParamValue::detAudioFilename,_("The Audio File to Use as the Filter Kernel"));
 
 					QWidget *p3=newHorzPanel(p2,false);
 						addSlider(p3,
@@ -142,21 +142,21 @@ CConvolutionFilterDialog::CConvolutionFilterDialog(QWidget *mainWindow) :
 
 // --- arbitrary FIR filter --------------
 
-class CActionParamMapper_arbitraryFIRFilter_freq : public AActionParamMapper
+class ActionParamMapper_arbitraryFIRFilter_freq : public AActionParamMapper
 {
 public:
 	// is set dynamically at runtime in by CArbitraryFIRFilterDialog
 	unsigned baseFrequency;
 	unsigned numberOfOctaves;
 
-	CActionParamMapper_arbitraryFIRFilter_freq() :
+    ActionParamMapper_arbitraryFIRFilter_freq() :
 		AActionParamMapper(),
 		baseFrequency(20),
 		numberOfOctaves(11)
 	{
 	}
 
-	virtual ~CActionParamMapper_arbitraryFIRFilter_freq() {}
+    virtual ~ActionParamMapper_arbitraryFIRFilter_freq() {}
 
 	double interpretValue(const double x)
 	{
@@ -249,11 +249,11 @@ FXDEFMAP(CArbitraryFIRFilterDialog) CArbitraryFIRFilterDialogMap[]=
 	FXMAPFUNC(SEL_COMMAND,		CArbitraryFIRFilterDialog::ID_NUMBER_OF_OCTAVES,	CArbitraryFIRFilterDialog::onFrequencyRangeChange),
 };
 
-FXIMPLEMENT(CArbitraryFIRFilterDialog,CActionParamDialog,CArbitraryFIRFilterDialogMap,ARRAYNUMBER(CArbitraryFIRFilterDialogMap))
+FXIMPLEMENT(CArbitraryFIRFilterDialog,ActionParamDialog,CArbitraryFIRFilterDialogMap,ARRAYNUMBER(CArbitraryFIRFilterDialogMap))
 */
 
-CArbitraryFIRFilterDialog::CArbitraryFIRFilterDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+ArbitraryFIRFilterDialog::ArbitraryFIRFilterDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p0=newHorzPanel(NULL);
 		addSlider(p0,
@@ -269,7 +269,7 @@ CArbitraryFIRFilterDialog::CArbitraryFIRFilterDialog(QWidget *mainWindow) :
 				N_("Frequency Response"),
 				N_("Frequency"),
 				"Hz",
-				freqMapper=new CActionParamMapper_arbitraryFIRFilter_freq,
+                freqMapper=new ActionParamMapper_arbitraryFIRFilter_freq,
 				N_("Change"),
 				"dB",
 				new CActionParamMapper_arbitraryFIRFilter_amp(0.0,20,-100,100),
@@ -277,7 +277,7 @@ CArbitraryFIRFilterDialog::CArbitraryFIRFilterDialog(QWidget *mainWindow) :
 			);
 
 			QWidget *p2=newHorzPanel(p1,false);
-				CTextParamValue *baseFreq=addNumericTextEntry(p2,
+				TextParamValue *baseFreq=addNumericTextEntry(p2,
 					N_("Base Frequency"),
 					"Hz",
 					20,
@@ -289,7 +289,7 @@ CArbitraryFIRFilterDialog::CArbitraryFIRFilterDialog(QWidget *mainWindow) :
 				//baseFreq->setSelector(ID_BASE_FREQUENCY);
 				connect(baseFreq,SIGNAL(changed()),this,SLOT(on_frequencyRange_changed()));
 
-				CTextParamValue *numberOfOctaves=addNumericTextEntry(p2,
+				TextParamValue *numberOfOctaves=addNumericTextEntry(p2,
 					N_("Number of Octaves"),
 					"",
 					11,
@@ -320,12 +320,12 @@ CArbitraryFIRFilterDialog::CArbitraryFIRFilterDialog(QWidget *mainWindow) :
 	on_frequencyRange_changed();
 }
 
-void CArbitraryFIRFilterDialog::on_frequencyRange_changed()
+void ArbitraryFIRFilterDialog::on_frequencyRange_changed()
 {
-	CGraphParamValue *g=getGraphParam("Frequency Response");
+	GraphParamValue *g=getGraphParam("Frequency Response");
 
-	CTextParamValue *baseFrequency=getTextParam("Base Frequency");
-	CTextParamValue *numberOfOctaves=getTextParam("Number of Octaves");
+	TextParamValue *baseFrequency=getTextParam("Base Frequency");
+	TextParamValue *numberOfOctaves=getTextParam("Number of Octaves");
 
 	freqMapper->baseFrequency=(unsigned)baseFrequency->getValue();
 	freqMapper->numberOfOctaves=(unsigned)numberOfOctaves->getValue();
@@ -351,21 +351,21 @@ FXDEFMAP(CMorphingArbitraryFIRFilterDialog) CMorphingArbitraryFIRFilterDialogMap
 	FXMAPFUNC(SEL_COMMAND,		CMorphingArbitraryFIRFilterDialog::ID_SWAP_1_AND_2,		CMorphingArbitraryFIRFilterDialog::on1To2Button),
 };
 
-FXIMPLEMENT(CMorphingArbitraryFIRFilterDialog,CActionParamDialog,CMorphingArbitraryFIRFilterDialogMap,ARRAYNUMBER(CMorphingArbitraryFIRFilterDialogMap))
+FXIMPLEMENT(CMorphingArbitraryFIRFilterDialog,ActionParamDialog,CMorphingArbitraryFIRFilterDialogMap,ARRAYNUMBER(CMorphingArbitraryFIRFilterDialogMap))
 #endif
 
-CMorphingArbitraryFIRFilterDialog::CMorphingArbitraryFIRFilterDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+MorphingArbitraryFIRFilterDialog::MorphingArbitraryFIRFilterDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p0,*p1,*p2,*p3;
 
 	p0=newVertPanel(NULL);
 		p1=newHorzPanel(p0,false);
-			CGraphParamValue *g1=addGraph(p1,
+			GraphParamValue *g1=addGraph(p1,
 				N_("Frequency Response 1"),
 				N_("Frequency"),
 				"Hz",
-				freqMapper=new CActionParamMapper_arbitraryFIRFilter_freq,
+                freqMapper=new ActionParamMapper_arbitraryFIRFilter_freq,
 				N_("Change"),
 				"dB",
 				new CActionParamMapper_arbitraryFIRFilter_amp(0.0,20,-100,100),
@@ -401,7 +401,7 @@ CMorphingArbitraryFIRFilterDialog::CMorphingArbitraryFIRFilterDialog(QWidget *ma
 
 				p2->layout()->addItem(new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
-			CGraphParamValue *g2=addGraph(p1,
+			GraphParamValue *g2=addGraph(p1,
 				N_("Frequency Response 2"),
 				N_("Frequency"),
 				"Hz",
@@ -417,7 +417,7 @@ CMorphingArbitraryFIRFilterDialog::CMorphingArbitraryFIRFilterDialog(QWidget *ma
 			p2=newHorzPanel(p1,false);
 			//p2->setLayoutHints(p2->getLayoutHints()&(~LAYOUT_FILL_X));
 
-				CConstantParamValue *wetdryMix=addSlider(p2,
+				ConstantParamValue *wetdryMix=addSlider(p2,
 					N_("Wet/Dry Mix"),
 					"%",
 					new CActionParamMapper_linear_range(100.0,-100,100),
@@ -427,7 +427,7 @@ CMorphingArbitraryFIRFilterDialog::CMorphingArbitraryFIRFilterDialog(QWidget *ma
 				wetdryMix->setMinSize(0,150);
 
 				p3=newVertPanel(p2,false);
-					CCheckBoxParamValue *useLFOCheckBox=addCheckBoxEntry(p3,
+					CheckBoxParamValue *useLFOCheckBox=addCheckBoxEntry(p3,
 						N_("Use LFO"),
 						false
 					);
@@ -435,7 +435,7 @@ CMorphingArbitraryFIRFilterDialog::CMorphingArbitraryFIRFilterDialog(QWidget *ma
 					//useLFOCheckBox->setSelector(ID_USE_LFO_CHECKBOX);
 					connect(useLFOCheckBox,SIGNAL(changed()),this,SLOT(on_useLFOCheckBox_changed()));
 
-					CLFOParamValue *lfo=addLFO(p3,
+					LFOParamValue *lfo=addLFO(p3,
 						N_("Sweep LFO"),
 						"ms",
 						"",
@@ -447,7 +447,7 @@ CMorphingArbitraryFIRFilterDialog::CMorphingArbitraryFIRFilterDialog(QWidget *ma
 					lfo->setMinSize(0,170);
 
 				p3=newVertPanel(p2,false);
-					CConstantParamValue *kernelLength=addSlider(p3,
+					ConstantParamValue *kernelLength=addSlider(p3,
 						N_("Kernel Length"),
 						"",
 						new CActionParamMapper_arbitraryFIRFilter_kernelLength(1024),
@@ -466,7 +466,7 @@ CMorphingArbitraryFIRFilterDialog::CMorphingArbitraryFIRFilterDialog(QWidget *ma
 			p2=newVertPanel(p1,false);
 			//p2->setLayoutHints(p2->getLayoutHints()&(~LAYOUT_FILL_Y));
 			//p2->setLayoutHints(p2->getLayoutHints()&(~LAYOUT_FILL_X));
-				CTextParamValue *baseFrequency=addNumericTextEntry(p2,
+				TextParamValue *baseFrequency=addNumericTextEntry(p2,
 					N_("Base Frequency"),
 					"Hz",
 					20,
@@ -478,7 +478,7 @@ CMorphingArbitraryFIRFilterDialog::CMorphingArbitraryFIRFilterDialog(QWidget *ma
 					//baseFrequency->setSelector(ID_BASE_FREQUENCY);
 					connect(baseFrequency,SIGNAL(changed()),this,SLOT(on_frequencyRange_changed()));
 	
-				CTextParamValue *numberOfOctaves=addNumericTextEntry(p2,
+				TextParamValue *numberOfOctaves=addNumericTextEntry(p2,
 					N_("Number of Octaves"),
 					"",
 					11,
@@ -495,13 +495,13 @@ CMorphingArbitraryFIRFilterDialog::CMorphingArbitraryFIRFilterDialog(QWidget *ma
 	on_useLFOCheckBox_changed();
 }
 
-void CMorphingArbitraryFIRFilterDialog::on_frequencyRange_changed()
+void MorphingArbitraryFIRFilterDialog::on_frequencyRange_changed()
 {
-	CGraphParamValue *g1=getGraphParam("Frequency Response 1");
-	CGraphParamValue *g2=getGraphParam("Frequency Response 2");
+	GraphParamValue *g1=getGraphParam("Frequency Response 1");
+	GraphParamValue *g2=getGraphParam("Frequency Response 2");
 
-	CTextParamValue *baseFrequency=getTextParam("Base Frequency");
-	CTextParamValue *numberOfOctaves=getTextParam("Number of Octaves");
+	TextParamValue *baseFrequency=getTextParam("Base Frequency");
+	TextParamValue *numberOfOctaves=getTextParam("Number of Octaves");
 
 	freqMapper->baseFrequency=(unsigned)baseFrequency->getValue();
 	freqMapper->numberOfOctaves=(unsigned)numberOfOctaves->getValue();
@@ -510,27 +510,27 @@ void CMorphingArbitraryFIRFilterDialog::on_frequencyRange_changed()
 	g2->updateNumbers();
 }
 
-void CMorphingArbitraryFIRFilterDialog::on_useLFOCheckBox_changed()
+void MorphingArbitraryFIRFilterDialog::on_useLFOCheckBox_changed()
 {
 	getLFOParam("Sweep LFO")->setEnabled(getCheckBoxParam("Use LFO")->getValue());
 }
 
-void CMorphingArbitraryFIRFilterDialog::on_copy1To2()
+void MorphingArbitraryFIRFilterDialog::on_copy1To2()
 {
 	getGraphParam("Frequency Response 2")->copyFrom(getGraphParam("Frequency Response 1"));
 }
 
-void CMorphingArbitraryFIRFilterDialog::on_swap1And2()
+void MorphingArbitraryFIRFilterDialog::on_swap1And2()
 {
 	getGraphParam("Frequency Response 1")->swapWith(getGraphParam("Frequency Response 2"));
 }
 
-void CMorphingArbitraryFIRFilterDialog::on_copy2To1()
+void MorphingArbitraryFIRFilterDialog::on_copy2To1()
 {
 	getGraphParam("Frequency Response 1")->copyFrom(getGraphParam("Frequency Response 2"));
 }
 
-bool CMorphingArbitraryFIRFilterDialog::validateOnOkay()
+bool MorphingArbitraryFIRFilterDialog::validateOnOkay()
 {
 	if(getGraphParam("Frequency Response 1")->getNodes().size()!=getGraphParam("Frequency Response 2")->getNodes().size())
 	{
@@ -541,7 +541,7 @@ bool CMorphingArbitraryFIRFilterDialog::validateOnOkay()
 }
 
 #include "../backend/Filters/CMorphingArbitraryFIRFilter.h"
-const string CMorphingArbitraryFIRFilterDialog::getExplanation() const
+const string MorphingArbitraryFIRFilterDialog::getExplanation() const
 {
 	return CMorphingArbitraryFIRFilter::getExplanation();
 }
@@ -556,8 +556,8 @@ const string CMorphingArbitraryFIRFilterDialog::getExplanation() const
 
 // --- single pole lowpass ---------------
 
-CSinglePoleLowpassFilterDialog::CSinglePoleLowpassFilterDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+SinglePoleLowpassFilterDialog::SinglePoleLowpassFilterDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL);
 		addSlider(p,
@@ -579,8 +579,8 @@ CSinglePoleLowpassFilterDialog::CSinglePoleLowpassFilterDialog(QWidget *mainWind
 
 // --- single pole highpass --------------
 
-CSinglePoleHighpassFilterDialog::CSinglePoleHighpassFilterDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+SinglePoleHighpassFilterDialog::SinglePoleHighpassFilterDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL);
 		addSlider(p,
@@ -602,8 +602,8 @@ CSinglePoleHighpassFilterDialog::CSinglePoleHighpassFilterDialog(QWidget *mainWi
 
 // --- bandpass --------------------------
 
-CBandpassFilterDialog::CBandpassFilterDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+BandpassFilterDialog::BandpassFilterDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL);
 		addSlider(p,
@@ -633,8 +633,8 @@ CBandpassFilterDialog::CBandpassFilterDialog(QWidget *mainWindow) :
 
 // --- notch -----------------------------
 
-CNotchFilterDialog::CNotchFilterDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+NotchFilterDialog::NotchFilterDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL);
 		addSlider(p,
@@ -666,8 +666,8 @@ CNotchFilterDialog::CNotchFilterDialog(QWidget *mainWindow) :
 
 // --- biquad resonant lowpass -----------
 
-CBiquadResLowpassFilterDialog::CBiquadResLowpassFilterDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+BiquadResLowpassFilterDialog::BiquadResLowpassFilterDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL);
 		addSlider(p,
@@ -697,8 +697,8 @@ CBiquadResLowpassFilterDialog::CBiquadResLowpassFilterDialog(QWidget *mainWindow
 
 // --- biquad resonant highpass ----------
 
-CBiquadResHighpassFilterDialog::CBiquadResHighpassFilterDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+BiquadResHighpassFilterDialog::BiquadResHighpassFilterDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL);
 		addSlider(p,
@@ -728,8 +728,8 @@ CBiquadResHighpassFilterDialog::CBiquadResHighpassFilterDialog(QWidget *mainWind
 
 // --- biquad resonant bandpass ----------
 
-CBiquadResBandpassFilterDialog::CBiquadResBandpassFilterDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+BiquadResBandpassFilterDialog::BiquadResBandpassFilterDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL);
 		addSlider(p,

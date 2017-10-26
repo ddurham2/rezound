@@ -38,8 +38,8 @@
 #include "../backend/Remaster/CBalanceAction.h"
 static const double ret_balance(const double x) { return x/100.0; }
 
-CSimpleBalanceActionDialog::CSimpleBalanceActionDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+SimpleBalanceActionDialog::SimpleBalanceActionDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p0=newVertPanel(NULL,true);
 		QWidget *p1=newHorzPanel(p0,false);
@@ -48,14 +48,14 @@ CSimpleBalanceActionDialog::CSimpleBalanceActionDialog(QWidget *mainWindow) :
 				addComboTextEntry(p2,
 					N_("Channel A"),
 					items,
-					CActionParamDialog::cpvtAsInteger,
+					ActionParamDialog::cpvtAsInteger,
 					""
 				);
 
 				addComboTextEntry(p2,
 					N_("Channel B"),
 					items,
-					CActionParamDialog::cpvtAsInteger,
+					ActionParamDialog::cpvtAsInteger,
 					""
 				);
 
@@ -77,7 +77,7 @@ CSimpleBalanceActionDialog::CSimpleBalanceActionDialog(QWidget *mainWindow) :
 		addComboTextEntry(p0,
 			N_("Balance Type"),
 			balanceTypes,
-			CActionParamDialog::cpvtAsInteger,
+			ActionParamDialog::cpvtAsInteger,
 			CBalanceAction::getBalanceTypeExplanation()
 		);
 		/* not possible
@@ -89,7 +89,7 @@ CSimpleBalanceActionDialog::CSimpleBalanceActionDialog(QWidget *mainWindow) :
 		*/
 }
 
-bool CSimpleBalanceActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
+bool SimpleBalanceActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
 	// exact same implementation as CCurvedBalanceActionDialog::show()
 
@@ -110,14 +110,14 @@ bool CSimpleBalanceActionDialog::show(CActionSound *actionSound,CActionParameter
 			getComboText("Channel B")->setCurrentItem(1);
 		}
 
-		return CActionParamDialog::show(actionSound,actionParameters);
+		return ActionParamDialog::show(actionSound,actionParameters);
 	}
 }
 
 
 
-CCurvedBalanceActionDialog::CCurvedBalanceActionDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+CurvedBalanceActionDialog::CurvedBalanceActionDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p0=newVertPanel(NULL,true);
 		QWidget *p1=newHorzPanel(p0,false);
@@ -126,14 +126,14 @@ CCurvedBalanceActionDialog::CCurvedBalanceActionDialog(QWidget *mainWindow) :
 				addComboTextEntry(p2,
 					N_("Channel A"),
 					items,
-					CActionParamDialog::cpvtAsInteger,
+					ActionParamDialog::cpvtAsInteger,
 					""
 				);
 
 				addComboTextEntry(p2,
 					N_("Channel B"),
 					items,
-					CActionParamDialog::cpvtAsInteger,
+					ActionParamDialog::cpvtAsInteger,
 					""
 				);
 
@@ -154,12 +154,12 @@ CCurvedBalanceActionDialog::CCurvedBalanceActionDialog(QWidget *mainWindow) :
 		addComboTextEntry(p0,
 			N_("Balance Type"),
 			balanceTypes,
-			CActionParamDialog::cpvtAsInteger,
+			ActionParamDialog::cpvtAsInteger,
 			CBalanceAction::getBalanceTypeExplanation()
 		);
 }
 
-bool CCurvedBalanceActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
+bool CurvedBalanceActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
 	// exact same implementation as CSimpleBalanceActionDialog::show()
 
@@ -180,7 +180,7 @@ bool CCurvedBalanceActionDialog::show(CActionSound *actionSound,CActionParameter
 			getComboText("Channel B")->setCurrentItem(1);
 		}
 
-		return CActionParamDialog::show(actionSound,actionParameters);
+		return ActionParamDialog::show(actionSound,actionParameters);
 	}
 }
 
@@ -192,8 +192,8 @@ bool CCurvedBalanceActionDialog::show(CActionSound *actionSound,CActionParameter
 
 static const double retconv_monoize(const double x) { return x/100.0 ; }
 
-CMonoizeActionDialog::CMonoizeActionDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow,true,"",CModalDialog::stShrinkWrap)
+MonoizeActionDialog::MonoizeActionDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow,true,"",ModalDialog::stShrinkWrap)
 {
 		QWidget *p0=newVertPanel(NULL);
 			QWidget *p1=newHorzPanel(p0,false);
@@ -214,11 +214,11 @@ CMonoizeActionDialog::CMonoizeActionDialog(QWidget *mainWindow) :
 			addComboTextEntry(p0,
 				N_("Method"),
 				options,
-				CActionParamDialog::cpvtAsInteger
+				ActionParamDialog::cpvtAsInteger
 			);
 }
 
-bool CMonoizeActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
+bool MonoizeActionDialog::show(CActionSound *actionSound,CActionParameters *actionParameters)
 {
 	if(actionSound->sound->getChannelCount()<1)
 		return false;
@@ -227,15 +227,15 @@ bool CMonoizeActionDialog::show(CActionSound *actionSound,CActionParameters *act
 		for(unsigned t=0;t<MAX_CHANNELS;t++)
 			showControl(N_("Channel ")+istring(t), t<actionSound->sound->getChannelCount() );
 
-		return CActionParamDialog::show(actionSound,actionParameters);
+		return ActionParamDialog::show(actionSound,actionParameters);
 	}
 }
 
 
 // --- noise gate --------------------------
 
-CNoiseGateDialog::CNoiseGateDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+NoiseGateDialog::NoiseGateDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL);
 		addSlider(p,
@@ -272,7 +272,7 @@ CNoiseGateDialog::CNoiseGateDialog(QWidget *mainWindow) :
 }
 
 #include "../backend/Remaster/CNoiseGateAction.h"
-const string CNoiseGateDialog::getExplanation() const
+const string NoiseGateDialog::getExplanation() const
 {
 	return CNoiseGateAction::getExplanation();
 }
@@ -281,8 +281,8 @@ const string CNoiseGateDialog::getExplanation() const
 
 // --- compressor --------------------------
 
-CCompressorDialog::CCompressorDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+CompressorDialog::CompressorDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p0=newVertPanel(NULL,true);
 		QWidget *p1=newHorzPanel(p0,false);
@@ -358,7 +358,7 @@ CCompressorDialog::CCompressorDialog(QWidget *mainWindow) :
 
 // ??? remove this before 1.0 and make sure it is up-to-standard as far as a compressor goes before 1.0
 #include "../backend/Remaster/CCompressorAction.h"
-const string CCompressorDialog::getExplanation() const
+const string CompressorDialog::getExplanation() const
 {
 	return CCompressorAction::getExplanation();
 }
@@ -366,8 +366,8 @@ const string CCompressorDialog::getExplanation() const
 
 // --- normalize ---------------------------
 
-CNormalizeDialog::CNormalizeDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+NormalizeDialog::NormalizeDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p1=newVertPanel(NULL);
 		QWidget *p2=newHorzPanel(p1,false);
@@ -400,8 +400,8 @@ CNormalizeDialog::CNormalizeDialog(QWidget *mainWindow) :
 
 // --- adaptive normalize ------------------
 
-CAdaptiveNormalizeDialog::CAdaptiveNormalizeDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+AdaptiveNormalizeDialog::AdaptiveNormalizeDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p1=newVertPanel(NULL);
 		QWidget *p2=newHorzPanel(p1,false);
@@ -438,17 +438,17 @@ CAdaptiveNormalizeDialog::CAdaptiveNormalizeDialog(QWidget *mainWindow) :
 }
 
 #include "../backend/Remaster/CAdaptiveNormalizeAction.h"
-const string CAdaptiveNormalizeDialog::getExplanation() const
+const string AdaptiveNormalizeDialog::getExplanation() const
 {
 	return CAdaptiveNormalizeAction::getExplanation();
 }
 
 // --- mark quiet areas --------------------
 
-CMarkQuietAreasDialog::CMarkQuietAreasDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+MarkQuietAreasDialog::MarkQuietAreasDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
-	CConstantParamValue *t;
+	ConstantParamValue *t;
 	QWidget *p1=newVertPanel(NULL);
 		QWidget *p2=newHorzPanel(p1,false);
 			t=addSlider(p2,
@@ -504,10 +504,10 @@ CMarkQuietAreasDialog::CMarkQuietAreasDialog(QWidget *mainWindow) :
 
 // --- shorten quiet areas --------------------
 
-CShortenQuietAreasDialog::CShortenQuietAreasDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+ShortenQuietAreasDialog::ShortenQuietAreasDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
-	CConstantParamValue *t;
+	ConstantParamValue *t;
 	QWidget *p1=newVertPanel(NULL);
 		QWidget *p2=newHorzPanel(p1,false);
 			t=addSlider(p2,
@@ -559,8 +559,8 @@ CShortenQuietAreasDialog::CShortenQuietAreasDialog(QWidget *mainWindow) :
 
 // --- resample ----------------------------
 
-CResampleDialog::CResampleDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow,false)
+ResampleDialog::ResampleDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow,false)
 {
 	vector<string> items;
 	items.push_back("4000");
@@ -576,7 +576,7 @@ CResampleDialog::CResampleDialog(QWidget *mainWindow) :
 		addComboTextEntry(p0,
 			N_("New Sample Rate"),
 			items,
-			CActionParamDialog::cpvtAsInteger,
+			ActionParamDialog::cpvtAsInteger,
 			"",
 			true
 		);
@@ -586,8 +586,8 @@ CResampleDialog::CResampleDialog(QWidget *mainWindow) :
 
 // --- change pitch ------------------------
 
-CChangePitchDialog::CChangePitchDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow,false)
+ChangePitchDialog::ChangePitchDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow,false)
 {
 	QWidget *p0=newVertPanel(NULL,false);
 	QTabWidget *p1=new QTabWidget;
@@ -604,7 +604,7 @@ CChangePitchDialog::CChangePitchDialog(QWidget *mainWindow) :
 				true);
 		
 
-		CConstantParamValue *s;
+		ConstantParamValue *s;
 
 		p2=newVertPanel(NULL);
 		p1->addTab(p2,_("Tweaking"));
@@ -670,8 +670,8 @@ CChangePitchDialog::CChangePitchDialog(QWidget *mainWindow) :
 
 // --- change tempo ------------------------
 
-CChangeTempoDialog::CChangeTempoDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow,false)
+ChangeTempoDialog::ChangeTempoDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow,false)
 {
 	QWidget *p0=newVertPanel(NULL,false);
 	QTabWidget *p1=new QTabWidget;
@@ -687,7 +687,7 @@ CChangeTempoDialog::CChangeTempoDialog(QWidget *mainWindow) :
 				NULL,
 				true);
 
-		CConstantParamValue *s;
+		ConstantParamValue *s;
 
 		p2=newVertPanel(NULL);
 		p1->addTab(p2,_("Tweaking"));

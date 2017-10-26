@@ -24,38 +24,38 @@
 #include "../../config/common.h"
 #include "qt_compat.h"
 
-#include "ActionParam/CActionParamDialog.h"
+#include "ActionParam/ActionParamDialog.h"
 
 
 // --- insert silence --------------------
 
-class CInsertSilenceDialog : public CActionParamDialog
+class InsertSilenceDialog : public ActionParamDialog
 {
 public:
-	CInsertSilenceDialog(QWidget *mainWindow);
-	virtual ~CInsertSilenceDialog(){}
+    InsertSilenceDialog(QWidget *mainWindow);
+    virtual ~InsertSilenceDialog(){}
 };
 
 
 
 // --- rotate ----------------------------
 
-class CRotateDialog : public CActionParamDialog
+class RotateDialog : public ActionParamDialog
 {
 public:
-	CRotateDialog(QWidget *mainWindow);
-	virtual ~CRotateDialog(){}
+    RotateDialog(QWidget *mainWindow);
+    virtual ~RotateDialog(){}
 };
 
 
 
 // --- swap channels ---------------------
 
-class CSwapChannelsDialog : public CActionParamDialog
+class SwapChannelsDialog : public ActionParamDialog
 {
 public:
-	CSwapChannelsDialog(QWidget *mainWindow);
-	virtual ~CSwapChannelsDialog(){}
+    SwapChannelsDialog(QWidget *mainWindow);
+    virtual ~SwapChannelsDialog(){}
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 };
@@ -64,22 +64,22 @@ public:
 
 // --- add channels ----------------------
 
-class CAddChannelsDialog : public CActionParamDialog
+class AddChannelsDialog : public ActionParamDialog
 {
 public:
-	CAddChannelsDialog(QWidget *mainWindow);
-	virtual ~CAddChannelsDialog(){}
+    AddChannelsDialog(QWidget *mainWindow);
+    virtual ~AddChannelsDialog(){}
 };
 
 
 
 // --- duplicate channel -----------------
 
-class CDuplicateChannelDialog : public CActionParamDialog
+class DuplicateChannelDialog : public ActionParamDialog
 {
 public:
-	CDuplicateChannelDialog(QWidget *mainWindow);
-	virtual ~CDuplicateChannelDialog(){}
+    DuplicateChannelDialog(QWidget *mainWindow);
+    virtual ~DuplicateChannelDialog(){}
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 };
@@ -88,11 +88,11 @@ public:
 
 // --- grow or slide selection dialog -----
 
-class CGrowOrSlideSelectionDialog : public CActionParamDialog
+class GrowOrSlideSelectionDialog : public ActionParamDialog
 {
 public:
-	CGrowOrSlideSelectionDialog(QWidget *mainWindow);
-	virtual ~CGrowOrSlideSelectionDialog(){}
+    GrowOrSlideSelectionDialog(QWidget *mainWindow);
+    virtual ~GrowOrSlideSelectionDialog(){}
 };
 
 

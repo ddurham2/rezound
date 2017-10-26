@@ -34,84 +34,34 @@ add_definitions(-DQT_NO_SIGNALS_SLOTS_KEYWORDS)
 
 
 set(srcs
-	ActionParam/CActionParamDialog.cpp
-	ActionParam/CActionParamDialog.h
-	ActionParam/CChannelSelectDialog.cpp
-	ActionParam/CChannelSelectDialog.h
-	ActionParam/CCheckBoxParamValue.cpp
-	ActionParam/CCheckBoxParamValue.h
-	ActionParam/CComboTextParamValue.cpp
-	ActionParam/CComboTextParamValue.h
-	ActionParam/CConstantParamValue.cpp
-	ActionParam/CConstantParamValue.h
-	ActionParam/CDiskEntityParamValue.cpp
-	ActionParam/CDiskEntityParamValue.h
-	ActionParam/CGraphParamValue.cpp
-	ActionParam/CGraphParamValue.h
-	ActionParam/CLFOParamValue.cpp
-	ActionParam/CLFOParamValue.h
-	ActionParam/CPasteChannelsDialog.cpp
-	ActionParam/CPasteChannelsDialog.h
-	ActionParam/CPluginRoutingCanvas.h
-	ActionParam/CPluginRoutingParamValue.cpp
-	ActionParam/CPluginRoutingParamValue.h
-	ActionParam/CTextParamValue.cpp
-	ActionParam/CTextParamValue.h
-	CCrossfadeEdgesDialog.cpp
-	CCrossfadeEdgesDialog.h
-	CDurationSpinBox.h
-	CFrequencyAnalyzer.cpp
-	CFrequencyAnalyzer.h
-	CFrontendHooks.cpp
-	CFrontendHooks.h
-	CKeyBindingsDialog.h
-	CLADSPAActionDialog.cpp
-	CLADSPAActionDialog.h
-	CLevelMeters.cpp
-	CLevelMeters.h
-	ClibaudiofileSaveParametersDialog.cpp
-	ClibaudiofileSaveParametersDialog.h
-	CMacroActionParamsDialog.h
-	CMainWindow.cpp
-	CMainWindow.h
-	CMIDISampleDumpParametersDialog.cpp
-	CMIDISampleDumpParametersDialog.h
-	CMiscControlsWindow.cpp
-	CMiscControlsWindow.h
-	CModalDialog.cpp
-	CModalDialog.h
-	CMp3SaveParametersDialog.cpp
-	CMp3SaveParametersDialog.h
-	CNewSoundDialog.h
-	COggSaveParametersDialog.cpp
-	COggSaveParametersDialog.h
-	CProgressDialog.h
-	CRawParametersDialog.cpp
-	CRawParametersDialog.h
-	CRecentActionsMenu.h
-	CRecordDialog.h
-	CReopenMenu.h
-	CRezAction.cpp
-	CRezAction.h
-	CRezSaveParametersDialog.cpp
-	CRezSaveParametersDialog.h
-	CSoundFileManager.cpp
-	CSoundFileManager.h
-	CSoundListWindow.cpp
-	CSoundListWindow.h
-	CSoundWindow.cpp
-	CSoundWindow.h
-	CStatusComm.cpp
-	CStatusComm.h
-	CStereoPhaseMeters.cpp
-	CStereoPhaseMeters.h
-	CTransportWindow.cpp
-	CTransportWindow.h
-	CUserNotesDialog.h
-	CVoxOpenParametersDialog.cpp
-	CVoxOpenParametersDialog.h
+	ActionParam/ActionParamDialog.cpp
+	ActionParam/ActionParamDialog.h
+	ActionParam/ChannelSelectDialog.cpp
+	ActionParam/ChannelSelectDialog.h
+	ActionParam/CheckBoxParamValue.cpp
+	ActionParam/CheckBoxParamValue.h
+	ActionParam/ComboTextParamValue.cpp
+	ActionParam/ComboTextParamValue.h
+	ActionParam/ConstantParamValue.cpp
+	ActionParam/ConstantParamValue.h
+	ActionParam/DiskEntityParamValue.cpp
+	ActionParam/DiskEntityParamValue.h
+	ActionParam/GraphParamValue.cpp
+	ActionParam/GraphParamValue.h
+	ActionParam/LFOParamValue.cpp
+	ActionParam/LFOParamValue.h
+	ActionParam/PasteChannelsDialog.cpp
+	ActionParam/PasteChannelsDialog.h
+	ActionParam/PluginRoutingCanvas.h
+	ActionParam/PluginRoutingParamValue.cpp
+	ActionParam/PluginRoutingParamValue.h
+	ActionParam/TextParamValue.cpp
+	ActionParam/TextParamValue.h
+	CrossfadeEdgesDialog.cpp
+	CrossfadeEdgesDialog.h
 	drawPortion.cpp
 	drawPortion.h
+	DurationSpinBox.h
 	EditActionDialogs.cpp
 	EditActionDialogs.h
 	EffectActionDialogs.cpp
@@ -120,50 +70,100 @@ set(srcs
 	FileActionDialogs.h
 	FilterActionDialogs.cpp
 	FilterActionDialogs.h
+	FrequencyAnalyzer.cpp
+	FrequencyAnalyzer.h
+	FrontendHooks.cpp
+	FrontendHooks.h
 	GenerateActionDialogs.cpp
 	GenerateActionDialogs.h
+	KeyBindingsDialog.h
+	LADSPAActionDialog.cpp
+	LADSPAActionDialog.h
+	LevelMeters.cpp
+	LevelMeters.h
+	LibaudiofileSaveParametersDialog.cpp
+	LibaudiofileSaveParametersDialog.h
 	LoopingActionDialogs.cpp
 	LoopingActionDialogs.h
+	MacroActionParamsDialog.h
 	main.cpp
+	MainWindow.cpp
+	MainWindow.h
 	MeterColors.h
+	MIDISampleDumpParametersDialog.cpp
+	MIDISampleDumpParametersDialog.h
+	MiscControlsWindow.cpp
+	MiscControlsWindow.h
+	ModalDialog.cpp
+	ModalDialog.h
+	Mp3SaveParametersDialog.cpp
+	Mp3SaveParametersDialog.h
+	NewSoundDialog.h
+	OggSaveParametersDialog.cpp
+	OggSaveParametersDialog.h
+	ProgressDialog.h
 	qt_compat.h
 	QThumbWheel.cpp
 	QThumbWheel.h
+	RawParametersDialog.cpp
+	RawParametersDialog.h
+	RecentActionsMenu.h
+	RecordDialog.h
 	RemasterActionDialogs.cpp
 	RemasterActionDialogs.h
 	rememberShow.cpp
 	rememberShow.h
+	ReopenMenu.h
+	RezAction.cpp
+	RezAction.h
+	RezSaveParametersDialog.cpp
+	RezSaveParametersDialog.h
 	settings.cpp
 	settings.h
 	shortcutKey.h
+	SoundFileManager.cpp
+	SoundFileManager.h
+	SoundListWindow.cpp
+	SoundListWindow.h
+	SoundWindow.cpp
+	SoundWindow.h
+	StatusComm.cpp
+	StatusComm.h
+	StereoPhaseMeters.cpp
+	StereoPhaseMeters.h
+	TransportWindow.cpp
+	TransportWindow.h
+	UserNotesDialog.h
+	VoxOpenParametersDialog.cpp
+	VoxOpenParametersDialog.h
 
 	resources.qrc
 )
 	
 set(uis
-	ActionParam/CActionParamDialogContent.ui
-	ActionParam/CChannelSelectDialogContent.ui
-	ActionParam/CCheckBoxParamValue.ui
-	ActionParam/CComboTextParamValue.ui
-	ActionParam/CConstantParamValue.ui
-	ActionParam/CDiskEntityParamValue.ui
-	ActionParam/CGraphParamValue.ui
-	ActionParam/CLFOParamValue.ui
-	ActionParam/CPasteChannelsDialogContent.ui
-	ActionParam/CPluginRoutingParamValue.ui
-	ActionParam/CTextParamValue.ui
-	CKeyBindingsDialogContent.ui
-	CMacroActionParamsDialogContent.ui
-	CMainWindow.ui
-	CMiscControlsWindow.ui
-	CModalDialog.ui
-	CNewSoundDialogContent.ui
-	CProgressDialog.ui
-	CRecordDialogContent.ui
-	CSoundListWindow.ui
-	CSoundWindow.ui
-	CTransportWindow.ui
-	CUserNotesDialogContent.ui
+	ActionParam/ActionParamDialogContent.ui
+	ActionParam/ChannelSelectDialogContent.ui
+	ActionParam/CheckBoxParamValue.ui
+	ActionParam/ComboTextParamValue.ui
+	ActionParam/ConstantParamValue.ui
+	ActionParam/DiskEntityParamValue.ui
+	ActionParam/GraphParamValue.ui
+	ActionParam/LFOParamValue.ui
+	ActionParam/PasteChannelsDialogContent.ui
+	ActionParam/PluginRoutingParamValue.ui
+	ActionParam/TextParamValue.ui
+	KeyBindingsDialogContent.ui
+	MacroActionParamsDialogContent.ui
+	MainWindow.ui
+	MiscControlsWindow.ui
+	ModalDialog.ui
+	NewSoundDialogContent.ui
+	ProgressDialog.ui
+	RecordDialogContent.ui
+	SoundListWindow.ui
+	SoundWindow.ui
+	TransportWindow.ui
+	UserNotesDialogContent.ui
 )
 
 

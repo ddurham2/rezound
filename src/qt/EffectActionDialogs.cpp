@@ -25,8 +25,8 @@
 
 // --- volume ---------------------------------
 
-CNormalVolumeChangeDialog::CNormalVolumeChangeDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+NormalVolumeChangeDialog::NormalVolumeChangeDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL,false);
 		addSlider(p,
@@ -40,8 +40,8 @@ CNormalVolumeChangeDialog::CNormalVolumeChangeDialog(QWidget *mainWindow) :
 
 
 
-CNormalGainDialog::CNormalGainDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+NormalGainDialog::NormalGainDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL,false);
 		addSlider(p,
@@ -55,8 +55,8 @@ CNormalGainDialog::CNormalGainDialog(QWidget *mainWindow) :
 		// ??? add a check box for negation of gain
 }
 
-CAdvancedGainDialog::CAdvancedGainDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+AdvancedGainDialog::AdvancedGainDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL,false);
 		addGraphWithWaveform(p,
@@ -72,8 +72,8 @@ CAdvancedGainDialog::CAdvancedGainDialog(QWidget *mainWindow) :
 
 // --- rate -----------------------------------
 
-CNormalRateChangeDialog::CNormalRateChangeDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+NormalRateChangeDialog::NormalRateChangeDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL,false);
 		addSlider(p,
@@ -85,8 +85,8 @@ CNormalRateChangeDialog::CNormalRateChangeDialog(QWidget *mainWindow) :
 		);
 }
 
-CAdvancedRateChangeDialog::CAdvancedRateChangeDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+AdvancedRateChangeDialog::AdvancedRateChangeDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL,false);
 		addGraphWithWaveform(p,
@@ -104,8 +104,8 @@ CAdvancedRateChangeDialog::CAdvancedRateChangeDialog(QWidget *mainWindow) :
 
 // --- flange ------------------------------
 
-CFlangeDialog::CFlangeDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+FlangeDialog::FlangeDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL);
 		addSlider(p,
@@ -157,8 +157,8 @@ CFlangeDialog::CFlangeDialog(QWidget *mainWindow) :
 
 // --- delay -------------------------------
 
-CSimpleDelayDialog::CSimpleDelayDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+SimpleDelayDialog::SimpleDelayDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL);
 		addSlider(p,
@@ -192,8 +192,8 @@ CSimpleDelayDialog::CSimpleDelayDialog(QWidget *mainWindow) :
 
 // --- quantize ----------------------------
 
-CQuantizeDialog::CQuantizeDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+QuantizeDialog::QuantizeDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL);
 		addSlider(p,
@@ -231,8 +231,8 @@ CQuantizeDialog::CQuantizeDialog(QWidget *mainWindow) :
 
 // --- distortion --------------------------
 
-CDistortionDialog::CDistortionDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+DistortionDialog::DistortionDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL);
 		addGraph(p,
@@ -253,8 +253,8 @@ CDistortionDialog::CDistortionDialog(QWidget *mainWindow) :
 
 // --- varied repeat -----------------------
 
-CVariedRepeatDialog::CVariedRepeatDialog(QWidget *mainWindow) :
-	CActionParamDialog(mainWindow)
+VariedRepeatDialog::VariedRepeatDialog(QWidget *mainWindow) :
+	ActionParamDialog(mainWindow)
 {
 	QWidget *p=newHorzPanel(NULL);
 		addLFO(p,

@@ -24,25 +24,25 @@
 #include "../../config/common.h"
 #include "qt_compat.h"
 
-#include "ActionParam/CActionParamDialog.h"
+#include "ActionParam/ActionParamDialog.h"
 
 
 // --- balance ------------------------
 
-class CSimpleBalanceActionDialog : public CActionParamDialog
+class SimpleBalanceActionDialog : public ActionParamDialog
 {
 public:
-	CSimpleBalanceActionDialog(QWidget *mainWindow);
-	virtual ~CSimpleBalanceActionDialog(){}
+    SimpleBalanceActionDialog(QWidget *mainWindow);
+    virtual ~SimpleBalanceActionDialog(){}
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 };
 
-class CCurvedBalanceActionDialog : public CActionParamDialog
+class CurvedBalanceActionDialog : public ActionParamDialog
 {
 public:
-	CCurvedBalanceActionDialog(QWidget *mainWindow);
-	virtual ~CCurvedBalanceActionDialog(){}
+    CurvedBalanceActionDialog(QWidget *mainWindow);
+    virtual ~CurvedBalanceActionDialog(){}
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 };
@@ -51,11 +51,11 @@ public:
 
 // --- monoize ------------------------
 
-class CMonoizeActionDialog : public CActionParamDialog
+class MonoizeActionDialog : public ActionParamDialog
 {
 public:
-	CMonoizeActionDialog(QWidget *mainWindow);
-	virtual ~CMonoizeActionDialog(){}
+    MonoizeActionDialog(QWidget *mainWindow);
+    virtual ~MonoizeActionDialog(){}
 
 	bool show(CActionSound *actionSound,CActionParameters *actionParameters);
 };
@@ -64,11 +64,11 @@ public:
 
 // --- noise gate ------------------------
 
-class CNoiseGateDialog : public CActionParamDialog
+class NoiseGateDialog : public ActionParamDialog
 {
 public:
-	CNoiseGateDialog(QWidget *mainWindow);
-	virtual ~CNoiseGateDialog(){}
+    NoiseGateDialog(QWidget *mainWindow);
+    virtual ~NoiseGateDialog(){}
 
 	const string getExplanation() const;
 };
@@ -77,11 +77,11 @@ public:
 
 // --- compressor ------------------------
 
-class CCompressorDialog : public CActionParamDialog
+class CompressorDialog : public ActionParamDialog
 {
 public:
-	CCompressorDialog(QWidget *mainWindow);
-	virtual ~CCompressorDialog(){}
+    CompressorDialog(QWidget *mainWindow);
+    virtual ~CompressorDialog(){}
 
 protected:
 	const string getExplanation() const;
@@ -91,22 +91,22 @@ protected:
 
 // --- normalize -------------------------
 
-class CNormalizeDialog : public CActionParamDialog
+class NormalizeDialog : public ActionParamDialog
 {
 public:
-	CNormalizeDialog(QWidget *mainWindow);
-	virtual ~CNormalizeDialog(){}
+    NormalizeDialog(QWidget *mainWindow);
+    virtual ~NormalizeDialog(){}
 };
 
 
 
 // --- adaptive normalize ----------------
 
-class CAdaptiveNormalizeDialog : public CActionParamDialog
+class AdaptiveNormalizeDialog : public ActionParamDialog
 {
 public:
-	CAdaptiveNormalizeDialog(QWidget *mainWindow);
-	virtual ~CAdaptiveNormalizeDialog(){}
+    AdaptiveNormalizeDialog(QWidget *mainWindow);
+    virtual ~AdaptiveNormalizeDialog(){}
 
 protected:
 	const string getExplanation() const;
@@ -116,55 +116,55 @@ protected:
 
 // --- mark quiet areas ------------------
 
-class CMarkQuietAreasDialog : public CActionParamDialog
+class MarkQuietAreasDialog : public ActionParamDialog
 {
 public:
-	CMarkQuietAreasDialog(QWidget *mainWindow);
-	virtual ~CMarkQuietAreasDialog(){}
+    MarkQuietAreasDialog(QWidget *mainWindow);
+    virtual ~MarkQuietAreasDialog(){}
 };
 
 
 
 // --- shorten quiet areas ------------------
 
-class CShortenQuietAreasDialog : public CActionParamDialog
+class ShortenQuietAreasDialog : public ActionParamDialog
 {
 public:
-	CShortenQuietAreasDialog(QWidget *mainWindow);
-	virtual ~CShortenQuietAreasDialog(){}
+    ShortenQuietAreasDialog(QWidget *mainWindow);
+    virtual ~ShortenQuietAreasDialog(){}
 };
 
 
 
 // --- resample --------------------------
 
-class CResampleDialog : public CActionParamDialog
+class ResampleDialog : public ActionParamDialog
 {
 public:
-	CResampleDialog(QWidget *mainWindow);
-	virtual ~CResampleDialog(){}
+    ResampleDialog(QWidget *mainWindow);
+    virtual ~ResampleDialog(){}
 };
 
 
 
 // --- change pitch ----------------------
 
-class CChangePitchDialog : public CActionParamDialog
+class ChangePitchDialog : public ActionParamDialog
 {
 public:
-	CChangePitchDialog(QWidget *mainWindow);
-	virtual ~CChangePitchDialog(){}
+    ChangePitchDialog(QWidget *mainWindow);
+    virtual ~ChangePitchDialog(){}
 };
 
 
 
 // --- change tempo ----------------------
 
-class CChangeTempoDialog : public CActionParamDialog
+class ChangeTempoDialog : public ActionParamDialog
 {
 public:
-	CChangeTempoDialog(QWidget *mainWindow);
-	virtual ~CChangeTempoDialog(){}
+    ChangeTempoDialog(QWidget *mainWindow);
+    virtual ~ChangeTempoDialog(){}
 };
 
 
