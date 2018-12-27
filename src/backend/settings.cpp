@@ -157,6 +157,14 @@ map<string,AActionFactory *> gRegisteredActionFactories;
 /* read backend setting variables with the exception of gUserDataDir */
 void readBackendSettings()
 {
+	// make sure that ~/.rezound exists
+	gUserDataDirectory=string(getenv("HOME"))+istring(CPath::dirDelim)+".rezound";
+	const int mkdirResult=mkdir(gUserDataDirectory.c_str(),0700);
+	const int mkdirErrno=errno;
+	if(mkdirResult!=0 && mkdirErrno!=EEXIST)
+		throw(runtime_error(string(__func__)+" -- error creating "+gUserDataDirectory+" -- "+strerror(mkdirErrno)));
+
+
 		// if there is an error opening the registry file then
 		// the system probably crashed... delete the registry file and
 		// warn user that the previous run history is lost.. but that
