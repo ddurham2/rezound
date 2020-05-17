@@ -674,7 +674,8 @@ run-through on paper would help
 			{
 				float g1=(float)srcPos/(float)(crossfadeStartTime-1);
 				float g2=1.0-g1;
-				if(crossfadeFadeMethod==cfmParabolic) { g1*=g1; g2*=g2; }
+				if(crossfadeFadeMethod==cfmEqualPower) { g1=sqrtf(g1); g2=sqrtf(g2); }
+				else if(crossfadeFadeMethod==cfmParabolic) { g1*=g1; g2*=g2; }
 				dest[t]=(sample_t)(dest[t]*g1 + src[srcPos]*g2);
 			}
 		}
@@ -705,7 +706,8 @@ run-through on paper would help
 			{
 				float g1=(float)srcPos/(float)(crossfadeStopTime-1);
 				float g2=1.0-g1;
-				if(crossfadeFadeMethod==cfmParabolic) { g1*=g1; g2*=g2; }
+				if(crossfadeFadeMethod==cfmEqualPower) { g1=sqrtf(g1); g2=sqrtf(g2); }
+				else if(crossfadeFadeMethod==cfmParabolic) { g1*=g1; g2*=g2; }
 				dest[t]=(sample_t)(dest[t]*g2 + src[srcPos]*g1);
 			}
 		}
@@ -772,7 +774,8 @@ void AAction::crossfadeEdgesOuter(const CActionSound *actionSound)
 			for(sample_pos_t t=actionSound->start-crossfadeTime;t<actionSound->start;t++,srcPos++)
 			{
 				float g=1.0-((float)srcPos/(float)(crossfadeTime-1));
-				if(crossfadeFadeMethod==cfmParabolic) g*=g;
+				if(crossfadeFadeMethod==cfmEqualPower) g=sqrtf(g);
+				else if(crossfadeFadeMethod==cfmParabolic) g*=g;
 				dest[t]=(sample_t)(src[srcPos]*g);
 			}
 
@@ -782,7 +785,8 @@ void AAction::crossfadeEdgesOuter(const CActionSound *actionSound)
 			for(sample_pos_t t=actionSound->start-crossfadeTime;t<actionSound->start;t++,srcPos++)
 			{
 				float g=(float)(srcPos-crossfadeTime)/(float)(crossfadeTime-1);
-				if(crossfadeFadeMethod==cfmParabolic) g*=g;
+				if(crossfadeFadeMethod==cfmEqualPower) g=sqrtf(g);
+				else if(crossfadeFadeMethod==cfmParabolic) g*=g;
 				dest[t]+=(sample_t)(src[srcPos]*g);
 			}
 
@@ -834,7 +838,8 @@ void AAction::crossfadeEdgesOuter(const CActionSound *actionSound)
 				for(sample_pos_t t=actionSound->stop-crossfadeTime;t<actionSound->stop;t++,srcPos++)
 				{
 					float g=1.0-((float)srcPos/(float)(crossfadeTime-1));
-					if(crossfadeFadeMethod==cfmParabolic) g*=g;
+					if(crossfadeFadeMethod==cfmEqualPower) g=sqrtf(g);
+					else if(crossfadeFadeMethod==cfmParabolic) g*=g;
 					dest[t]=(sample_t)(src[srcPos]*g);
 				}
 
@@ -844,7 +849,8 @@ void AAction::crossfadeEdgesOuter(const CActionSound *actionSound)
 				for(sample_pos_t t=actionSound->stop-crossfadeTime;t<actionSound->stop;t++,srcPos++)
 				{
 					float g=(float)(srcPos-crossfadeTime)/(float)(crossfadeTime-1);
-					if(crossfadeFadeMethod==cfmParabolic) g*=g;
+					if(crossfadeFadeMethod==cfmEqualPower) g=sqrtf(g);
+					else if(crossfadeFadeMethod==cfmParabolic) g*=g;
 					dest[t]+=(sample_t)(src[srcPos]*g);
 				}
 
