@@ -30,7 +30,7 @@ void TransportWindow::setMainWindow(MainWindow *mainWindow)
 	m_mainWindow=mainWindow;
 	m_mainWindow->installEventFilter(this);
 
-/*	stopButton->setIcon(loadIcon("stop.png"));
+	stopButton->setIcon(loadIcon(":/transports/stop.png"));
 	playAllButton->setIcon(loadIcon("play_all_once.png"));
 	playSelectionOnceButton->setIcon(loadIcon("play_selection_once.png"));
 	playSelectionLoopedGapBeforeRepeatButton->setIcon(loadIcon("play_selection_looped_gap_before_repeat.png"));
@@ -45,7 +45,6 @@ void TransportWindow::setMainWindow(MainWindow *mainWindow)
 	jumpToPrevCueButton->setIcon(loadIcon("jump_to_previous_q.png"));
 	jumpToNextCueButton->setIcon(loadIcon("jump_to_next_q.png"));
 	recordButton->setIcon(loadIcon("record.png"));
-	*/
 }
 
 //void positionShuttleGivenSpeed(double seekSpeed,const string shuttleControlScalar,bool springBack); ??? I think I'm needed when switching between windows
