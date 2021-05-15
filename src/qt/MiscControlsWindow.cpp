@@ -9,8 +9,8 @@
 
 #include "CrossfadeEdgesDialog.h"
 
-MiscControlsWindow::MiscControlsWindow(QWidget *parent, Qt::WindowFlags flags) :
-	QWidget(parent,flags),
+MiscControlsWindow::MiscControlsWindow(QWidget *parent) :
+	QWidget(parent),
 	m_mainWindow(NULL)
 {
 	setupUi(this);

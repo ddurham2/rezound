@@ -59,7 +59,7 @@ public:
 			v.push_back(i->second->shortcut().toString());
 			QTreeWidgetItem *item=new QTreeWidgetItem(v);
 			item->setFlags(item->flags() | Qt::ItemIsEditable);
-			item->setData(0,Qt::UserRole,qVariantFromValue(i->second));
+			item->setData(0,Qt::UserRole,QVariant::fromValue(i->second));
 			list->addTopLevelItem(item);
 		}
 		if(list->topLevelItemCount()>0)
@@ -134,8 +134,9 @@ private Q_SLOTS:
 			QMessageBox::Question,
 			_("Assign Hotkey"),
 			_("Press a Key Combination"),
-			0,
-			this);
+			QMessageBox::NoButton,
+			this,
+            Qt::Popup);
 		QAbstractButton *noneButton=mb->addButton(_("Assign No Key"),QMessageBox::NoRole);
 		QAbstractButton *cancelButton=mb->addButton(_("Cancel"),QMessageBox::RejectRole);
 		mb->setDefaultButton(NULL);

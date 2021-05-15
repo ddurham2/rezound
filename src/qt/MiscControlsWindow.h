@@ -13,7 +13,7 @@ class MiscControlsWindow : public QWidget, public Ui::MiscControlsWindow
 	Q_OBJECT
 
 public:
-    MiscControlsWindow(QWidget *parent, Qt::WindowFlags flags = 0);
+    MiscControlsWindow(QWidget *parent);
     virtual ~MiscControlsWindow();
 
 	void setMainWindow(MainWindow *mainWindow);

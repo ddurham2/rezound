@@ -11,7 +11,7 @@
 
 Q_DECLARE_METATYPE(SoundWindow*)
 
-SoundListWindow::SoundListWindow(QWidget * parent, Qt::WindowFlags flags)
+SoundListWindow::SoundListWindow(QWidget * parent)
 {
 	setupUi(this);
 

@@ -12,7 +12,7 @@ class SoundListWindow : public QWidget, private Ui::SoundListWindow
 	Q_OBJECT
 
 public:
-    SoundListWindow(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+    SoundListWindow(QWidget * parent = 0);
     virtual ~SoundListWindow();
 
 	void rebuildSoundWindowList();
