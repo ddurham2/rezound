@@ -157,7 +157,7 @@ ConstantParamValue *ActionParamDialog::addSlider(QWidget *parent,const string na
 ConstantParamValue *ActionParamDialog::getSliderParam(const string name)
 {
 	const unsigned index=findParamByName(name);
-	if(parameters[index].first==ptConstant);
+	if(parameters[index].first==ptConstant)
 		return (ConstantParamValue *)parameters[index].second;
 	throw runtime_error(string(__func__)+" -- widget with name, "+name+", is not a slider");
 }
