@@ -33,7 +33,7 @@
 #include "../../backend/AActionParamMapper.h"
 #include "ui_GraphParamValue.h"
 
-#include <QLinkedList>
+//#include <QLinkedList>
 
 class QImage;
 class CGraphParamNode;
@@ -165,8 +165,8 @@ private:
 		int horzDeform;
 		int vertDeform;
 	};
-	QLinkedList<RState *> undoStack;
-	QLinkedList<RState *> redoStack;
+	std::list<RState *> undoStack;
+	std::list<RState *> redoStack;
 	void pushUndo();
 	void popUndo();
 	void popRedo();

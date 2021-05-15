@@ -1034,7 +1034,7 @@ void GraphParamValue::pushUndo()
 	clearRedo();
 
 	// keep stack to a bounded size
-	while(undoStack.count()>100) {
+	while(undoStack.size()>100) {
 		delete undoStack.front();
 		undoStack.pop_front();
 	}
@@ -1046,7 +1046,7 @@ void GraphParamValue::pushUndo()
 
 void GraphParamValue::popUndo()
 {
-	if(undoStack.count()<2)
+	if(undoStack.size()<2)
 		return;
 
 	// the undoStack always has the current state at the top
@@ -1063,7 +1063,7 @@ void GraphParamValue::popUndo()
 
 void GraphParamValue::popRedo()
 {
-	if(redoStack.count()<1)
+	if(redoStack.size()<1)
 		return;
 
 	// pop from the redo stack and push onto the undo stack
@@ -1091,7 +1091,7 @@ void GraphParamValue::applyState(RState *s)
 
 void GraphParamValue::clearUndo()
 {
-	while(undoStack.count()>0) {
+	while(undoStack.size()>0) {
 		delete undoStack.front();
 		undoStack.pop_front();
 	}
@@ -1103,7 +1103,7 @@ void GraphParamValue::clearUndo()
 
 void GraphParamValue::clearRedo()
 {
-	while(redoStack.count()>0) {
+	while(redoStack.size()>0) {
 		delete redoStack.front();
 		redoStack.pop_front();
 	}
@@ -1113,7 +1113,7 @@ void GraphParamValue::clearRedo()
 
 void GraphParamValue::setUndoButtonsState()
 {
-	undoButton->setEnabled(undoStack.count()>1);
+	undoButton->setEnabled(undoStack.size()>1);
 	redoButton->setEnabled(!redoStack.empty());
 }
 
