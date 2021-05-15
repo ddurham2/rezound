@@ -914,7 +914,7 @@ void PluginRoutingParamValue::createOutput()
 	output->layout()->setSpacing(3);
 
 	QLabel *label=new QLabel(_("Output"));
-	label->setStyleSheet("border:1px solid black; background-color: "COL_FILENAME_STRING);
+	label->setStyleSheet("border:1px solid black; background-color: " COL_FILENAME_STRING);
 	output->layout()->addWidget(label);
 
 	N_output.paramValue=this;
@@ -982,7 +982,7 @@ void PluginRoutingParamValue::newInstance()
 		QLabel *label=new QLabel(pluginDesc->Name/*,NULL,FRAME_LINE|LABEL_NORMAL | LAYOUT_FILL_X*/);
 		//label->setTarget(this);
 		//label->setSelector(ID_INSTANCE_TITLE);
-		label->setStyleSheet("border:1px solid black; background-color: "COL_FILENAME_STRING);
+		label->setStyleSheet("border:1px solid black; background-color: " COL_FILENAME_STRING);
 		instance->layout()->addWidget(label);
 
 		// input audio ports
@@ -1054,7 +1054,7 @@ void PluginRoutingParamValue::newSource(CLoadedSound *loaded,size_t soundFileMan
 		//label->setSelector(ID_SOURCE_TITLE);
 		//label->setBackColor(COL_FILENAME);
 		N_source.data=loaded->getFilename();
-		label->setStyleSheet("border:1px solid black; background-color: "COL_FILENAME_STRING);
+		label->setStyleSheet("border:1px solid black; background-color: " COL_FILENAME_STRING);
 		source->layout()->addWidget(label);
 
 		if(loaded->sound!=actionSound)
