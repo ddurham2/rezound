@@ -1,0 +1,10 @@
+The LFOs.xcf file is the original gimp file for creating the LFO shape icons.
+
+To generate the gifs: 
+	- opened the LFOs.xcf file
+	- rclick->image->scale to 45x25
+	- used the layer window and did a show only of the background, guide, and the shape's layer to create
+		- did save-as file.gif for each shape
+
+The frontend FXLFOParamValue class queries the generated CFOXIcons object by name for each LFO to see if there's an icon for it.
+
