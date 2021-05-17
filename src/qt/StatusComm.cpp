@@ -155,7 +155,7 @@ int StatusComm::beginProgressBar(const string &title,bool showCancelButton)
 		{
 			try
 			{
-				progressDialogs[handle]=new ProgressDialog(mainWindow,0);
+				progressDialogs[handle]=new ProgressDialog(mainWindow,title,showCancelButton);
 				progressDialogs[handle]->show();
 				return handle;
 			}

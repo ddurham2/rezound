@@ -14,14 +14,14 @@ class ProgressDialog : public QDialog, private Ui::ProgressDialog
 	Q_OBJECT
 
 public:
-    ProgressDialog(QWidget * parent, Qt::WindowFlags()) :
+    ProgressDialog(QWidget * parent , const string title, bool showCancelButton) :
 		QDialog(parent)
 	{
 		setupUi(this);
 
-//		setWindowTitle(title.c_str());
+		setWindowTitle(title.c_str());
 
-//		cancelButton->setVisible(showCancelButton);
+		cancelButton->setVisible(showCancelButton);
 	}
 
     virtual ~ProgressDialog()
