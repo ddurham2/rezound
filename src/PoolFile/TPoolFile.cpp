@@ -152,8 +152,8 @@ template<class l_addr_t,class p_addr_t>
 	formatSignature(_formatSignature),
 
 	maxBlockSize(_maxBlockSize),
-	maxLogicalAddress(~((l_addr_t)0)),
-	maxPhysicalAddress(~((p_addr_t)0)),
+	maxLogicalAddress(std::numeric_limits<l_addr_t>::max()),
+	maxPhysicalAddress(std::numeric_limits<p_addr_t>::max()),
 
 	pasm(blockFile)
 {

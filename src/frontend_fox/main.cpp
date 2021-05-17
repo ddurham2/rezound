@@ -108,6 +108,10 @@ int main(int argc,char* argv[])
 		// you have to do this for hints to be activated
 		new FXToolTip(application,TOOLTIP_VARIABLE);
 
+		ASoundPlayer *soundPlayer=NULL;
+		if(!initializeBackend(soundPlayer, argc, argv))
+			return 0;
+
 		// create the main window 
 		CMainWindow *mainWindow=new CMainWindow(application);
 		application->create();
@@ -121,10 +125,6 @@ int main(int argc,char* argv[])
 
 		// from here on we can create error messages
 		//   ??? I suppose I could atleast print to strerr if gStatusComm was not created yet
-
-		ASoundPlayer *soundPlayer=NULL;
-		if(!initializeBackend(soundPlayer, argc, argv))
-			return 0;
 
 		// the backend needed to be setup before this stuff was done
 		static_cast<CFrontendHooks *>(gFrontendHooks)->doSetupAfterBackendIsSetup();

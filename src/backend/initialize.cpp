@@ -89,14 +89,6 @@ bool initializeBackend(ASoundPlayer *&soundPlayer,int argc,char *argv[])
 		checkForAudioMethodFlag(argc,argv);
 
 
-		// make sure that ~/.rezound exists
-		gUserDataDirectory=string(getenv("HOME"))+istring(CPath::dirDelim)+".rezound";
-		const int mkdirResult=mkdir(gUserDataDirectory.c_str(),0700);
-		const int mkdirErrno=errno;
-		if(mkdirResult!=0 && mkdirErrno!=EEXIST)
-			throw(runtime_error(string(__func__)+" -- error creating "+gUserDataDirectory+" -- "+strerror(mkdirErrno)));
-
-
 
 		// -- 1
 		// read backend setting variables from registry
