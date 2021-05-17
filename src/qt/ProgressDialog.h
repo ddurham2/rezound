@@ -15,7 +15,8 @@ class ProgressDialog : public QDialog, private Ui::ProgressDialog
 
 public:
     ProgressDialog(QWidget * parent , const string title, bool showCancelButton) :
-		QDialog(parent)
+		QDialog(parent,0),
+		isCancelled(false)
 	{
 		setupUi(this);
 
