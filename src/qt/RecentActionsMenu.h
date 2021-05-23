@@ -38,7 +38,7 @@ private Q_SLOTS:
 		for(size_t t=0;t<recentActions.size();t++)
 		{
 			QAction *action=addAction(recentActions[t]->text());
-			action->setData(qVariantFromValue( (void *)(recentActions[t]) ));
+			action->setData(QVariant::fromValue( (void *)(recentActions[t]) ));
 			connect(action,SIGNAL(triggered()),this,SLOT(onItem_triggered()));
 		}
 	}

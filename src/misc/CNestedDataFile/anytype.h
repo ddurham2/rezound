@@ -73,7 +73,7 @@ template<class Type> STATIC_TPL const string anytype_to_string(const vector<Type
 
 template<> STATIC_TPL const string string_to_anytype<string>(const string &str,string &ret)                         { return ret=s2at::unescape_chars(s2at::remove_surrounding_quotes(str)); }
 
-template<> STATIC_TPL const bool string_to_anytype<bool>(const string &str,bool &ret)                             { return s2at::remove_surrounding_quotes(str)=="true" ? ret=true : ret=false; }
+template<> STATIC_TPL const bool string_to_anytype<bool>(const string &str,bool &ret)                             { return s2at::remove_surrounding_quotes(str)=="true" ? (ret=true) : (ret=false); }
 
 template<> STATIC_TPL const char string_to_anytype<char>(const string &str,char &ret)                             { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }
 template<> STATIC_TPL const unsigned char string_to_anytype<unsigned char>(const string &str,unsigned char &ret)           { istringstream ss(s2at::remove_surrounding_quotes(str)); NO_LOCALE(ss) ret=0; ss >> ret; return ret; }

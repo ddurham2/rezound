@@ -62,8 +62,8 @@
 
 #define DOCK_STATE_INFO_VERSION 0
 
-MainWindow::MainWindow(QWidget * parent, Qt::WindowFlags flags) :
-	QMainWindow(parent,flags),
+MainWindow::MainWindow(QWidget * parent) :
+	QMainWindow(parent),
 
 	m_lastToolbarsMenuAction(NULL)
 {

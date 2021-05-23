@@ -11,8 +11,8 @@
 #include "../backend/CLoadedSound.h"
 #include "../backend/AAction.h"
 
-TransportWindow::TransportWindow(QWidget *parent, Qt::WindowFlags flags) :
-	QWidget(parent,flags),
+TransportWindow::TransportWindow(QWidget *parent) :
+	QWidget(parent),
 	m_mainWindow(NULL)
 {
 	setupUi(this);
@@ -30,21 +30,25 @@ void TransportWindow::setMainWindow(MainWindow *mainWindow)
 	m_mainWindow=mainWindow;
 	m_mainWindow->installEventFilter(this);
 
-	stopButton->setIcon(loadIcon("stop.png"));
-	playAllButton->setIcon(loadIcon("play_all_once.png"));
-	playSelectionOnceButton->setIcon(loadIcon("play_selection_once.png"));
-	playSelectionLoopedGapBeforeRepeatButton->setIcon(loadIcon("play_selection_looped_gap_before_repeat.png"));
-	playAllLoopedButton->setIcon(loadIcon("play_all_looped.png"));
-	playSelectionLoopedButton->setIcon(loadIcon("play_selection_looped.png"));
-	playSelectionLoopedSkipMostButton->setIcon(loadIcon("play_selection_looped_skip_most.png"));
-	playFromStartPositionButton->setIcon(loadIcon("play_selection_start_to_end.png"));
-	playFromLeftEdgeOfScreenToEndButton->setIcon(loadIcon("play_screen.png"));
-	pauseButton->setIcon(loadIcon("pause.png"));
-	jumpToBeginningButton->setIcon(loadIcon("jump_to_beginning.png"));
-	jumpToStartPositionButton->setIcon(loadIcon("jump_to_selection.png"));
-	jumpToPrevCueButton->setIcon(loadIcon("jump_to_previous_q.png"));
-	jumpToNextCueButton->setIcon(loadIcon("jump_to_next_q.png"));
-	recordButton->setIcon(loadIcon("record.png"));
+/*
+ *  icons are defined in .ui and loaded via resource mechanism already
+ *
+ *	stopButton->setIcon(loadIcon(":/transports/images/stop.png"));
+	playAllButton->setIcon(loadIcon(":/transports/images/play_all_once.png"));
+	playSelectionOnceButton->setIcon(loadIcon(":/transports/images/play_selection_once.png"));
+	playSelectionLoopedGapBeforeRepeatButton->setIcon(loadIcon(":/transports/images/play_selection_looped_gap_before_repeat.png"));
+	playAllLoopedButton->setIcon(loadIcon(":/transports/images/play_all_looped.png"));
+	playSelectionLoopedButton->setIcon(loadIcon(":/transports/images/play_selection_looped.png"));
+	playSelectionLoopedSkipMostButton->setIcon(loadIcon(":/transports/images/play_selection_looped_skip_most.png"));
+	playFromStartPositionButton->setIcon(loadIcon(":/transports/images/play_selection_start_to_end.png"));
+	playFromLeftEdgeOfScreenToEndButton->setIcon(loadIcon(":/transports/images/play_screen.png"));
+	pauseButton->setIcon(loadIcon(":/transports/images/pause.png"));
+	jumpToBeginningButton->setIcon(loadIcon(":/transports/images/jump_to_beginning.png"));
+	jumpToStartPositionButton->setIcon(loadIcon(":/transports/images/jump_to_selection.png"));
+	jumpToPrevCueButton->setIcon(loadIcon(":/transports/images/jump_to_previous_q.png"));
+	jumpToNextCueButton->setIcon(loadIcon(":/transports/images/jump_to_next_q.png"));
+	recordButton->setIcon(loadIcon(":/transports/images/record.png"));
+*/
 }
 
 //void positionShuttleGivenSpeed(double seekSpeed,const string shuttleControlScalar,bool springBack); ??? I think I'm needed when switching between windows

@@ -3,7 +3,11 @@ project(rezound)
 
 #TODO QMAKE_UIC += -tr qt_gettext
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#if(CMAKE_VERSION VERSION_LESS "3.7.0")
+    set(CMAKE_INCLUDE_CURRENT_DIR ON)
+#endif()
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
@@ -18,7 +22,8 @@ set(CMAKE_AUTORCC ON)
 #	message(FATAL_ERROR "Qt5Widgets package not found")
 #endif()
 
-find_package(Qt5Widgets QUIET)
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
+#find_package(Qt5Widgets QUIET)
 if (TARGET Qt5::Widgets)
 	message(STATUS "Qt5Widgets Found")
 else()
@@ -166,7 +171,7 @@ set(uis
 	UserNotesDialogContent.ui
 )
 
-
+qt5_add_resources(srcs resources.qrc)
 
 add_executable(rezound ${srcs} ${uis})
 

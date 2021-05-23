@@ -1,19 +1,19 @@
-<RCC>
+<!DOCTYPE RCC><RCC version="1.0">
   <qresource prefix="transport">
-    <file>../images/pause.gif</file>
-    <file>../images/play_all_looped.gif</file>
-    <file>../images/play_all_once.gif</file>
-    <file>../images/play_screen.gif</file>
-    <file>../images/play_selection_looped_gap_before_repeat.gif</file>
-    <file>../images/play_selection_looped_skip_most.gif</file>
-    <file>../images/play_selection_looped.gif</file>
-    <file>../images/play_selection_once.gif</file>
-    <file>../images/play_selection_start_to_end.gif</file>
-    <file>../images/record.gif</file>
-    <file>../images/stop.gif</file>
-    <file>../images/jump_to_beginning.gif</file>
-    <file>../images/jump_to_next_q.gif</file>
-    <file>../images/jump_to_selection.gif</file>
-    <file>../images/jump_to_previous_q.gif</file>
+    <file>images/pause.png</file>
+    <file>images/play_all_looped.png</file>
+    <file>images/play_all_once.png</file>
+    <file>images/play_screen.png</file>
+    <file>images/play_selection_looped_gap_before_repeat.png</file>
+    <file>images/play_selection_looped_skip_most.png</file>
+    <file>images/play_selection_looped.png</file>
+    <file>images/play_selection_once.png</file>
+    <file>images/play_selection_start_to_end.png</file>
+    <file>images/record.png</file>
+    <file>images/stop.png</file>
+    <file>images/jump_to_beginning.png</file>
+    <file>images/jump_to_next_q.png</file>
+    <file>images/jump_to_selection.png</file>
+    <file>images/jump_to_previous_q.png</file>
   </qresource>
 </RCC>

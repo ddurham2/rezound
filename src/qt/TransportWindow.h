@@ -16,7 +16,7 @@ public:
 	RezAction *m_shuttleAmountAction;
 	RezAction *m_shuttleForwardAction;
 
-    TransportWindow(QWidget *parent, Qt::WindowFlags flags = 0);
+    TransportWindow(QWidget *parent);
     virtual ~TransportWindow();
 
 	void setMainWindow(MainWindow *mainWindow);
