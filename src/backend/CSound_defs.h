@@ -41,7 +41,7 @@ class CSound;
  *    sample_pos_t should always be unsigned since I use this assumption and never check for < 0 in the code
  *    sample_fpos_t should be floating point, but big enough to hold all values of sample_pos_t
  */
-#ifdef ENABLE_LARGEFILE
+#ifdef _LARGEFILE_SOURCE
 
 	// 64 bit
 	typedef int64_t 	sample_pos_t;	// integer sample position
