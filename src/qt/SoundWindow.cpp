@@ -216,7 +216,7 @@ protected:
 			delta=viewport()->width()/3;
 
 		// handle direction
-		if(e->delta()<0)
+		if(e->angleDelta().y()<0)
 			delta=delta;
 		else
 			delta=-delta;
@@ -244,7 +244,7 @@ protected:
 	void mousePressEvent(QMouseEvent *e)
 	{
 		e->ignore();
-		const sample_pos_t X=e->x();
+		const sample_pos_t X=e->pos().x();
 
 		if(e->button()==Qt::LeftButton && e->modifiers()&Qt::ControlModifier) // left button pressed while holding control
 		{
@@ -378,20 +378,20 @@ protected:
 		if(draggingSelectStart || draggingSelectStop)
 			e->accept();
 
-		autoScroll_win_x=e->x();
-		autoScroll_win_y=e->y();
+		autoScroll_win_x=e->pos().x();
+		autoScroll_win_y=e->pos().y();
 
 		// Here we detect if the mouse is against the side walls and scroll that way if the mouse is down
 		if(draggingSelectStart || draggingSelectStop)
 		{
 			if(!(e->modifiers()&Qt::ShiftModifier))
 			{
-				if(startAutoScroll(e->x(),e->y()))
+				if(startAutoScroll(e->pos().x(),e->pos().y()))
 					return;
 			}
 		}
 
-		handleMouseMoveSelectChange(e->x());
+		handleMouseMoveSelectChange(e->pos().x());
 	}
 
 private:
@@ -757,7 +757,7 @@ protected:
 
 		//??? handle(this,FXSEL(SEL_FOCUS_SELF,0),ptr);
 
-		cueClicked=getClickedCue(e->x(),e->y()); // setting data member
+		cueClicked=getClickedCue(e->pos().x(),e->pos().y()); // setting data member
 		if(cueClicked<wv->loadedSound->sound->getCueCount())
 		{
 			origCueClickedTime=wv->loadedSound->sound->getCueTime(cueClicked);
@@ -771,7 +771,7 @@ protected:
 				origCueClickedTime==wv->loadedSound->channel->getStopPosition());
 
 			// show tip text showing position of cue
-			QToolTip::showText(e->globalPos(),wv->loadedSound->sound->getTimePosition(origCueClickedTime,wv->getZoomDecimalPlaces()).c_str());
+			QToolTip::showText(e->pos(),wv->loadedSound->sound->getTimePosition(origCueClickedTime,wv->getZoomDecimalPlaces()).c_str());
 			
 			// set focused cue
 			focusedCueIndex=cueClicked;
@@ -790,7 +790,7 @@ protected:
 
 			const string cueName=wv->loadedSound->sound->getCueName(cueClicked);
 			const sample_pos_t cueTime=wv->loadedSound->sound->getCueTime(cueClicked);
-			const int cueTextWidth=QFontMetrics(rulerFont).width(cueName.c_str());
+			const int cueTextWidth=QFontMetrics(rulerFont).horizontalAdvance(cueName.c_str());
 
 			// last_x is where the cue is on the screen now (possibly after autoscrolling)
 			const int last_x=wv->getCueScreenX(cueClicked);
@@ -819,7 +819,7 @@ protected:
 #endif
 
 
-			sample_pos_t newTime=wv->getSamplePosForScreenX(e->x()-cueClickedOffset);
+			sample_pos_t newTime=wv->getSamplePosForScreenX(e->pos().x()-cueClickedOffset);
 			
 			if(draggingSelectionToo)
 			{
@@ -870,23 +870,23 @@ protected:
 
 			// draw vertical cue line at new position
 			if(gDrawVerticalCuePositions) 
-				wv->wvsa->viewport()->update((e->x()-cueClickedOffset)-5,0,10,wv->wvsa->viewport()->height()); 
+				wv->wvsa->viewport()->update((e->pos().x()-cueClickedOffset)-5,0,10,wv->wvsa->viewport()->height()); 
 
 			// show tip text showing position of cue
-			QToolTip::showText(e->globalPos(),wv->loadedSound->sound->getTimePosition(newTime,wv->getZoomDecimalPlaces()).c_str());
+			QToolTip::showText(e->pos(),wv->loadedSound->sound->getTimePosition(newTime,wv->getZoomDecimalPlaces()).c_str());
 
 			// have to call canvas->repaint() on real mouse moves because if while autoscrolling a real (that is, object!=NULL) mouse move event occurs, then the window may or may not have been blitted leftward or rightward yet and we will erase the vertical cue position at the wrong position (or something like that, I really had a hard time figuring out the problem that shows up if you omit this call to repaint() )
 		//	if(/*?object &&*/ gDrawVerticalCuePositions)
 				//wv->wvsa->viewport()->update();
 
-			if(e->x()<0 || e->x()>=width())
+			if(e->pos().x()<0 || e->pos().x()>=width())
 			{ // scroll parent window leftwards or rightwards if mouse is beyond the window edges
 				// ??? some horrible flicker.. not sure of the cause
-				wv->wvsa->autoScroll_win_x=e->x();
-				wv->wvsa->autoScroll_win_y=e->y();
-				wv->wvsa->startAutoScroll(e->x(),e->y());
+				wv->wvsa->autoScroll_win_x=e->pos().x();
+				wv->wvsa->autoScroll_win_y=e->pos().y();
+				wv->wvsa->startAutoScroll(e->pos().x(),e->pos().y());
 			}
-			else if(e->x()>0 && e->x()<(width()-1)) // just inside the view
+			else if(e->pos().x()>0 && e->pos().x()<(width()-1)) // just inside the view
 				// ??? hmm
 				wv->wvsa->stopAutoScroll();
 
@@ -927,7 +927,7 @@ protected:
 		if(e->button()!=Qt::LeftButton)
 			return;
 
-		cueClicked=getClickedCue(e->x(),e->y()); // setting data member
+		cueClicked=getClickedCue(e->pos().x(),e->pos().y()); // setting data member
 		if(cueClicked<wv->loadedSound->sound->getCueCount())
 			onEditCue();
 		else
@@ -935,7 +935,7 @@ protected:
 			size_t index;
 			sample_pos_t startPos=0;
 			sample_pos_t stopPos=wv->loadedSound->sound->getLength()-1;
-			sample_pos_t clickedPos=wv->getSamplePosForScreenX(e->x());
+			sample_pos_t clickedPos=wv->getSamplePosForScreenX(e->pos().x());
 
 			if(wv->loadedSound->sound->findPrevCueInTime(clickedPos,index))
 				startPos=wv->loadedSound->sound->getCueTime(index);
@@ -1313,7 +1313,7 @@ void drawWaveRuler(IWaveDrawing *wd,QWidget *w,QPaintEvent *e,int offsetX,int to
 				option.initFrom(wd);
 				option.rect=focusRect;
 				option.rect.adjust(-2,-2,2,2);
-				option.backgroundColor = pal.color(QPalette::Background);
+				option.backgroundColor = pal.color(QPalette::Window);
 				w->style()->drawPrimitive(QStyle::PE_FrameFocusRect, &option, &dc, wd);
 			}
 
@@ -1463,7 +1463,7 @@ SoundWindow::SoundWindow(QLayout * parent,CLoadedSound *_loadedSound) :
 
 	// set a fixed width on the playPositionLabel which reduces CPU since it doesn't have to layout every time the text changes
 	playPositionLabel->setFixedWidth(
-		playPositionLabel->fontMetrics().width(
+		playPositionLabel->fontMetrics().horizontalAdvance(
 			(string(_("Playing: "))+"000:00:00.00000").c_str()
 		)
 	);
@@ -1485,7 +1485,7 @@ SoundWindow::SoundWindow(QLayout * parent,CLoadedSound *_loadedSound) :
 	// add scroll area and ruler
 	{
 		contentsFrame->setLayout(new QVBoxLayout);
-		contentsFrame->layout()->setMargin(0);
+		contentsFrame->layout()->setContentsMargins(0,0,0,0);
 		contentsFrame->layout()->setSpacing(0);
 
 		ruler=new WaveRuler(this);
@@ -1600,7 +1600,7 @@ void SoundWindow::recreateMuteButtons()
 	qDeleteAll(muteButtonFrame->children());
 	muteButtonFrame->setLayout(new QVBoxLayout);
 	((QVBoxLayout*)muteButtonFrame->layout())->setSpacing(0);
-	((QVBoxLayout*)muteButtonFrame->layout())->setMargin(1);
+	((QVBoxLayout*)muteButtonFrame->layout())->setContentsMargins(1,1,1,1);
 
 	// set the sizing for mute buttons to look right
 	{

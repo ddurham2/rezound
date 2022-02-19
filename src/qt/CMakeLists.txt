@@ -15,20 +15,20 @@ set(CMAKE_AUTORCC ON)
 
 # https://cmake.org/cmake/help/v3.5/manual/cmake-qt.7.html#manual:cmake-qt(7)
 # This is how it is documented to work.. but versions aren't yet up to date.. so we'll use pkg-config for now
-#find_package(Qt5Widgets REQUIRED)
-#if (Qt5Widgets_FOUND)
-#	message(STATUS "Qt5Widgets package found: ${QTVERSION}")
+#find_package(Qt6Widgets REQUIRED)
+#if (Qt6Widgets_FOUND)
+#	message(STATUS "Qt6Widgets package found: ${QTVERSION}")
 #else()
-#	message(FATAL_ERROR "Qt5Widgets package not found")
+#	message(FATAL_ERROR "Qt6Widgets package not found")
 #endif()
 
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
-#find_package(Qt5Widgets QUIET)
-if (TARGET Qt5::Widgets)
-	message(STATUS "Qt5Widgets Found")
+find_package(Qt6 COMPONENTS Widgets REQUIRED)
+#find_package(Qt6Widgets QUIET)
+if (TARGET Qt6::Widgets)
+	message(STATUS "Qt6Widgets Found")
 else()
-	message(WARNING "\nQt5Widgets not found\ninstall: qtbase5-dev  and also ensure that CMAKE_PREFIX_PATH is set to the directory containing the /.../cmake/ folder which contains a Qt5Widgets/ folder.\ne.g. export CMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake")
-	find_package(Qt5Widgets REQUIRED)
+	message(WARNING "\nQt6Widgets not found\ninstall: qtbase6-dev  and also ensure that CMAKE_PREFIX_PATH is set to the directory containing the /.../cmake/ folder which contains a Qt6Widgets/ folder.\ne.g. export CMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake")
+	find_package(Qt6Widgets REQUIRED)
 endif()
 
 
@@ -171,14 +171,14 @@ set(uis
 	UserNotesDialogContent.ui
 )
 
-qt5_add_resources(srcs resources.qrc)
+qt6_add_resources(srcs resources.qrc)
 
 add_executable(rezound ${srcs} ${uis})
 
 #target_include_directories(rezound PUBLIC ${AUTOGEN_BUILD_DIR}) # for generated Qt files.. remove when using cmake 3.8
 
 target_link_libraries(rezound backend)
-target_link_libraries(rezound Qt5::Widgets)
+target_link_libraries(rezound Qt6::Widgets)
 
 set_target_properties(rezound
     PROPERTIES

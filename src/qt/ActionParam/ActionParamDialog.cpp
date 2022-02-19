@@ -58,7 +58,7 @@ ActionParamDialog::ActionParamDialog(QWidget *mainWindow,bool _showPresetPanel,c
 {
 	apdc.setupUi(getFrame());
 	apdc.controlsFrame->setLayout(new QHBoxLayout);
-	apdc.controlsFrame->layout()->setMargin(0);
+	apdc.controlsFrame->layout()->setContentsMargins(0,0,0,0);
 	apdc.controlsFrame->layout()->setSpacing(0);
 
 	connect(apdc.nativePresetList,SIGNAL(itemDoubleClicked(QListWidgetItem *)),this,SLOT(onPresetUseButton()));
@@ -120,9 +120,9 @@ QWidget *ActionParamDialog::newPanel(bool horz,QWidget *parent,bool createMargin
 
 
 	if(createMargin)
-		f->layout()->setMargin(6);
+		f->layout()->setContentsMargins(6,6,6,6);
 	else
-		f->layout()->setMargin(0);
+		f->layout()->setContentsMargins(0,0,0,0);
 	f->layout()->setSpacing(4);
 
 	parent->layout()->addWidget(f);

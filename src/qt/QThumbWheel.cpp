@@ -164,7 +164,7 @@ void QThumbWheel::mouseMoveEvent( QMouseEvent *e )
 void QThumbWheel::wheelEvent( QWheelEvent *e )
 {
     int step = ( e->modifiers() & Qt::ControlModifier ) ? singleStep() : pageStep();
-    setValue( value() - e->delta()*step/120 );
+    setValue( value() - e->angleDelta().y()*step/120 );
     e->accept();
 }
 

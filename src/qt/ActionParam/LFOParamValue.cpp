@@ -68,7 +68,7 @@ LFOParamValue::LFOParamValue(const char *_name,const string ampUnits,const strin
 	phaseSlider->setMinSize(0,0);
 
 	sliderBox->setLayout(new QHBoxLayout());
-	sliderBox->layout()->setMargin(0);
+	sliderBox->layout()->setContentsMargins(0,0,0,0);
 	sliderBox->layout()->setSpacing(4);
 	sliderBox->layout()->addWidget(amplitudeSlider);
 	sliderBox->layout()->addWidget(frequencySlider);

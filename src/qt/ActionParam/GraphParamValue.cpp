@@ -673,10 +673,10 @@ int GraphParamValue::insertIntoNodes(const CGraphParamValueNode &node)
 
 void GraphParamValue::onCreateOrStartDragNode(QMouseEvent *ev)
 {
-	int nodeIndex=findNodeAt(ev->x(),ev->y());
+	int nodeIndex=findNodeAt(ev->pos().x(),ev->pos().y());
 	if(nodeIndex==-1)
 	{ // create a new node
-		CGraphParamValueNode node(screenToNodeHorzValue(ev->x()),screenToNodeVertValue(ev->y()));
+		CGraphParamValueNode node(screenToNodeHorzValue(ev->pos().x()),screenToNodeVertValue(ev->pos().y()));
 		draggingNode=insertIntoNodes(node);
 
 		dragOffsetX=0;
@@ -684,8 +684,8 @@ void GraphParamValue::onCreateOrStartDragNode(QMouseEvent *ev)
 	}
 	else
 	{
-		dragOffsetX=ev->x()-nodeToScreenX(nodes[nodeIndex]);
-		dragOffsetY=ev->y()-nodeToScreenY(nodes[nodeIndex]);
+		dragOffsetX=ev->pos().x()-nodeToScreenX(nodes[nodeIndex]);
+		dragOffsetY=ev->pos().y()-nodeToScreenY(nodes[nodeIndex]);
 		draggingNode=nodeIndex;
 	}
 	
@@ -712,8 +712,8 @@ void GraphParamValue::onDragNode(QMouseEvent *ev)
 		CGraphParamValueNode node=nodes[draggingNode];
 
 		// calculate the new positions
-		node.x=	lockX ? node.x : screenToNodeHorzValue(ev->x()-dragOffsetX);
-		node.y=	lockY ? node.y : screenToNodeVertValue(ev->y()-dragOffsetY);
+		node.x=	lockX ? node.x : screenToNodeHorzValue(ev->pos().x()-dragOffsetX);
+		node.y=	lockY ? node.y : screenToNodeVertValue(ev->pos().y()-dragOffsetY);
 
 		// update the node within the vector
 		if(draggingNode!=0 && draggingNode!=(int)nodes.size()-1)
@@ -739,7 +739,7 @@ void GraphParamValue::onStopDragNode(QMouseEvent *e)
 
 void GraphParamValue::onDestroyNode(QMouseEvent *ev)
 {
-	int nodeIndex=findNodeAt(ev->x(),ev->y());
+	int nodeIndex=findNodeAt(ev->pos().x(),ev->pos().y());
 	if(nodeIndex!=-1 && nodeIndex!=0 && nodeIndex!=(int)(nodes.size()-1)) // not the first or the last node
 	{
 		nodes.erase(nodes.begin()+nodeIndex);

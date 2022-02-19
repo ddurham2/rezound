@@ -36,7 +36,7 @@ static QColor invertColor(QColor &col,bool darkened)
 {
 	QColor c(255-col.red(),255-col.green(),255-col.blue());
 	if(darkened)
-		return c.dark(400);
+		return c.darker(400);
 	return c;
 }
 
@@ -51,7 +51,7 @@ static QColor waveformColor(255,255,255);
 
 //#define DARKENED_ADD (-192)
 //static QColor darkenedWaveformColor(min(255, waveformColor.red()+DARKENED_WAVE_ADD),min(255,waveformColor.green()+DARKENED_WAVE_ADD),min(255,waveformColor.blue()+DARKENED_WAVE_ADD)); // waveformColor + DARKENED_WAVE_ADD
-static QColor darkenedWaveformColor(waveformColor.dark(400));
+static QColor darkenedWaveformColor(waveformColor.darker(400));
 
 
 #define SELECTED_WAVE_ADD 142

@@ -37,8 +37,10 @@ endif()
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC") # for qt5
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC") # for qt6
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_LDFLAGS_FLAGS} -Xlinker --allow-multiple-definition")
+
+#add_compile_definitions(QT_DISABLE_DEPRECATED_BEFORE=0x060200)
 
 # (enabled by default on x64)
 ## enable large file support

@@ -486,8 +486,8 @@ bool PluginRoutingParamValue::isValidConnection(const RNodeDesc &desc1,const RNo
 // ??? this needs to be events on the canvas
 void PluginRoutingParamValue::mouseMoveEvent(QMouseEvent *ev)
 {
-	int x=ev->x();
-	int y=ev->y();
+	int x=ev->pos().x();
+	int y=ev->pos().y();
 
 #warning ??? reimplement me
 #if 0
@@ -516,8 +516,8 @@ void PluginRoutingParamValue::mouseMoveEvent(QMouseEvent *ev)
 
 void PluginRoutingParamValue::mousePressEvent(QMouseEvent *ev)
 {
-	int x=ev->x();
-	int y=ev->y();
+	int x=ev->pos().x();
+	int y=ev->pos().y();
 
 	if(ev->buttons()&Qt::LeftButton)
 	{ // left button pressed
@@ -591,8 +591,8 @@ void PluginRoutingParamValue::mouseReleaseEvent(QMouseEvent *ev)
 	}
 	else if(ev->button()==Qt::RightButton)
 	{ // right button up
-		int x=ev->x();
-		int y=ev->y();
+		int x=ev->pos().x();
+		int y=ev->pos().y();
 
 		// detect a right-click on a wire
 		for(size_t t=0;t<connections.size();t++)
@@ -612,7 +612,7 @@ void PluginRoutingParamValue::mouseReleaseEvent(QMouseEvent *ev)
 				menu.layout()->setSpacing(1);
 					QAction *removeAction=menu.addAction(_("Remove Connection"));
 					menu.addSeparator();
-					menu.popup(ev->globalPos()); // if we don't popup() now, then it doesn't know geometry of action(s)
+					menu.popup(ev->pos()); // if we don't popup() now, then it doesn't know geometry of action(s)
 					((QBoxLayout*)(menu.layout()))->addSpacing(menu.actionGeometry(removeAction).height());
 
 					// create gain control: "Gain [---#---] 32.2x [Reset]"
@@ -635,7 +635,7 @@ void PluginRoutingParamValue::mouseReleaseEvent(QMouseEvent *ev)
 					menu.layout()->addWidget(w);
 
 				menu.hide();
-				QAction *a=menu.exec(ev->globalPos());
+				QAction *a=menu.exec(ev->pos());
 				if(a==removeAction)
 				{
 					connections.erase(connections.begin()+t);

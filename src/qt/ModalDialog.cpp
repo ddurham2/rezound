@@ -23,7 +23,7 @@
 #include "rememberShow.h"
 
 ModalDialog::ModalDialog(QWidget *parent,const QString title/*,int w,int h*/,FrameTypes frameType,ShowTypes showType) :
-	QDialog(parent,0),
+	QDialog(parent,Qt::Widget),
 	m_showType(showType),
 	m_firstShowing(true)
 {

@@ -37,7 +37,7 @@
 #include "settings.h"
 
 #include <QWidget>
-#include <QDesktopWidget>
+#include <QScreen>
 
 #if 0
 static int decorWidth=-1;
