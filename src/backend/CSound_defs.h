@@ -41,7 +41,7 @@ class CSound;
  *    sample_pos_t should always be unsigned since I use this assumption and never check for < 0 in the code
  *    sample_fpos_t should be floating point, but big enough to hold all values of sample_pos_t
  */
-#ifdef ENABLE_LARGEFILE
+#ifdef _LARGEFILE_SOURCE
 
 	// 64 bit
 	typedef int64_t 	sample_pos_t;	// integer sample position
@@ -161,46 +161,46 @@ struct int24_t // int24_t -> unsigned char[3]
 // ??? Some of the implementation may one day need conditional expressions to handle the 
 // possibility that the negative range is one sample value larger than the positive range
 	/* just going to have to get a linker error now with gcc>=3.4 */
-template<typename from_sample_t,typename to_sample_t> static inline const to_sample_t convert_sample(const register from_sample_t sample) ;//{ sample_type_conversion_for_this_combination_unimplemented; }
+template<typename from_sample_t,typename to_sample_t> static inline const to_sample_t convert_sample(const from_sample_t sample) ;//{ sample_type_conversion_for_this_combination_unimplemented; }
 
 // int8_t -> ...
 	// int8_t -> int8_t
-	template<> STATIC_TPL inline const int8_t convert_sample<int8_t,int8_t>(const register int8_t sample) { return sample; }
+	template<> STATIC_TPL inline const int8_t convert_sample<int8_t,int8_t>(const int8_t sample) { return sample; }
 
 	// int8_t -> int16_t
-	template<> STATIC_TPL inline const int16_t convert_sample<int8_t,int16_t>(const register int8_t sample) { return sample*256; }
+	template<> STATIC_TPL inline const int16_t convert_sample<int8_t,int16_t>(const int8_t sample) { return sample*256; }
 
 	// int8_t -> int24_t
-	//template<> static inline const int24_t convert_sample<int8_t,int24_t>(const register int8_t sample) { }
+	//template<> static inline const int24_t convert_sample<int8_t,int24_t>(const int8_t sample) { }
 
 	// int8_t -> int32_t
-	//template<> static inline const int32_t convert_sample<int8_t,int32_t>(const register int8_t sample) { }
+	//template<> static inline const int32_t convert_sample<int8_t,int32_t>(const int8_t sample) { }
 
 	// int8_t -> float
-	template<> STATIC_TPL inline const float convert_sample<int8_t,float>(const register int8_t sample) { return ((float)sample)/127.0f; }
+	template<> STATIC_TPL inline const float convert_sample<int8_t,float>(const int8_t sample) { return ((float)sample)/127.0f; }
 
 	// int8_t -> double
-	//template<> static inline const double convert_sample<int8_t,double>(const register int8_t sample) { }
+	//template<> static inline const double convert_sample<int8_t,double>(const int8_t sample) { }
 
 
 // int16_t -> ...
 	// int16_t -> int8_t
-	template<> STATIC_TPL inline const int8_t convert_sample<int16_t,int8_t>(const register int16_t sample) { return sample/256; }
+	template<> STATIC_TPL inline const int8_t convert_sample<int16_t,int8_t>(const int16_t sample) { return sample/256; }
 
 	// int16_t -> int16_t
-	template<> STATIC_TPL inline const int16_t convert_sample<int16_t,int16_t>(const register int16_t sample) { return sample; }
+	template<> STATIC_TPL inline const int16_t convert_sample<int16_t,int16_t>(const int16_t sample) { return sample; }
 
 	// int16_t -> int24_t
-	template<> STATIC_TPL inline const int24_t convert_sample<int16_t,int24_t>(const register int16_t sample) { int24_t r; r.set(sample*256); return r; }
+	template<> STATIC_TPL inline const int24_t convert_sample<int16_t,int24_t>(const int16_t sample) { int24_t r; r.set(sample*256); return r; }
 
 	// int16_t -> int32_t
-	template<> STATIC_TPL inline const int32_t convert_sample<int16_t,int32_t>(const register int16_t sample) { return sample*65536; }
+	template<> STATIC_TPL inline const int32_t convert_sample<int16_t,int32_t>(const int16_t sample) { return sample*65536; }
 
 	// int16_t -> float
-	template<> STATIC_TPL inline const float convert_sample<int16_t,float>(const register int16_t sample) { return (float)sample/32767.0f; }
+	template<> STATIC_TPL inline const float convert_sample<int16_t,float>(const int16_t sample) { return (float)sample/32767.0f; }
 
 	// int16_t -> double
-	template<> STATIC_TPL inline const double convert_sample<int16_t,double>(const register int16_t sample) { return (double)sample/32767.0; }
+	template<> STATIC_TPL inline const double convert_sample<int16_t,double>(const int16_t sample) { return (double)sample/32767.0; }
 
 
 // int24_t -> ...
@@ -225,62 +225,62 @@ template<typename from_sample_t,typename to_sample_t> static inline const to_sam
 
 // int32_t -> ...
 	// int32_t -> int8_t
-	//template<> static inline const int8_t convert_sample<int32_t,int8_t>(const register int32_t sample) { }
+	//template<> static inline const int8_t convert_sample<int32_t,int8_t>(const int32_t sample) { }
 
 	// int32_t -> int16_t
-	template<> STATIC_TPL inline const int16_t convert_sample<int32_t,int16_t>(const register int32_t sample) { return sample/65536; }
+	template<> STATIC_TPL inline const int16_t convert_sample<int32_t,int16_t>(const int32_t sample) { return sample/65536; }
 
 	// int32_t -> int24_t
-	//template<> static inline const int24_t convert_sample<int32_t,int24_t>(const register int32_t sample) { }
+	//template<> static inline const int24_t convert_sample<int32_t,int24_t>(const int32_t sample) { }
 
 	// int32_t -> int32_t
-	template<> STATIC_TPL inline const int32_t convert_sample<int32_t,int32_t>(const register int32_t sample) { return sample; }
+	template<> STATIC_TPL inline const int32_t convert_sample<int32_t,int32_t>(const int32_t sample) { return sample; }
 
 	// int32_t -> float
-	template<> STATIC_TPL inline const float convert_sample<int32_t,float>(const register int32_t sample) { return ((double)sample)/2147483647.0; }
+	template<> STATIC_TPL inline const float convert_sample<int32_t,float>(const int32_t sample) { return ((double)sample)/2147483647.0; }
 
 	// int32_t -> double
-	//template<> static inline const double  convert_sample<int32_t,double >(const register int32_t sample) { }
+	//template<> static inline const double  convert_sample<int32_t,double >(const int32_t sample) { }
 
 
 // float -> ...
 	// float -> int8_t
-	template<> STATIC_TPL inline const int8_t convert_sample<float,int8_t>(const register float sample) { return (int8_t)floorf((sample>1.0f ? 1.0f : (sample<-1.0f ? -1.0f : sample))*127.0f); }
+	template<> STATIC_TPL inline const int8_t convert_sample<float,int8_t>(const float sample) { return (int8_t)floorf((sample>1.0f ? 1.0f : (sample<-1.0f ? -1.0f : sample))*127.0f); }
 
 	// float -> int16_t
-	template<> STATIC_TPL inline const int16_t convert_sample<float,int16_t>(const register float sample) { return (int16_t)floorf((sample>1.0f ? 1.0f : (sample<-1.0f ? -1.0f : sample))*32767.0f); }
+	template<> STATIC_TPL inline const int16_t convert_sample<float,int16_t>(const float sample) { return (int16_t)floorf((sample>1.0f ? 1.0f : (sample<-1.0f ? -1.0f : sample))*32767.0f); }
 
 	// float -> int24_t
-	template<> STATIC_TPL inline const int24_t convert_sample<float,int24_t>(const register float sample) { int24_t r; r.set((int_fast32_t)floorf((sample>1.0f ? 1.0f : (sample<-1.0f ? -1.0f : sample))*8388607.0f)); return r; }
+	template<> STATIC_TPL inline const int24_t convert_sample<float,int24_t>(const float sample) { int24_t r; r.set((int_fast32_t)floorf((sample>1.0f ? 1.0f : (sample<-1.0f ? -1.0f : sample))*8388607.0f)); return r; }
 
 	// float -> int32_t
-	template<> STATIC_TPL inline const int32_t convert_sample<float,int32_t>(const register float sample) { return (int32_t) floor((double)(sample>1.0f ? 1.0f : (sample<-1.0f ? -1.0f : sample)) * 2147483647.0); }
+	template<> STATIC_TPL inline const int32_t convert_sample<float,int32_t>(const float sample) { return (int32_t) floor((double)(sample>1.0f ? 1.0f : (sample<-1.0f ? -1.0f : sample)) * 2147483647.0); }
 
 	// float -> float
-	template<> STATIC_TPL inline const float convert_sample<float,float>(const register float sample) { return sample; }
+	template<> STATIC_TPL inline const float convert_sample<float,float>(const float sample) { return sample; }
 
 	// float -> double
-	template<> STATIC_TPL inline const double convert_sample<float,double>(const register float sample) { return (double)sample; }
+	template<> STATIC_TPL inline const double convert_sample<float,double>(const float sample) { return (double)sample; }
 
 
 // double -> ...
 	// double -> int8_t
-	//template<> static inline const int8_t convert_sample<double,int8_t>(const register double sample) { }
+	//template<> static inline const int8_t convert_sample<double,int8_t>(const double sample) { }
 
 	// double -> int16_t
-	template<> STATIC_TPL inline const int16_t convert_sample<double,int16_t>(const register double sample) { return (int16_t)floor((sample>1.0 ? 1.0 : (sample<-1.0 ? -1.0 : sample))*32767.0); }
+	template<> STATIC_TPL inline const int16_t convert_sample<double,int16_t>(const double sample) { return (int16_t)floor((sample>1.0 ? 1.0 : (sample<-1.0 ? -1.0 : sample))*32767.0); }
 
 	// double -> int24_t
-	//template<> static inline const int24_t convert_sample<double,int24_t>(const register double sample) { }
+	//template<> static inline const int24_t convert_sample<double,int24_t>(const double sample) { }
 
 	// double -> int32_t
-	//template<> static inline const int32_t convert_sample<double,int32_t>(const register double sample) { }
+	//template<> static inline const int32_t convert_sample<double,int32_t>(const double sample) { }
 
 	// double -> float
-	template<> STATIC_TPL inline const float convert_sample<double,float>(const register double sample) { return (float)sample; }
+	template<> STATIC_TPL inline const float convert_sample<double,float>(const double sample) { return (float)sample; }
 
 	// double -> double
-	template<> STATIC_TPL inline const double convert_sample<double,double>(const register double sample) { return sample; }
+	template<> STATIC_TPL inline const double convert_sample<double,double>(const double sample) { return sample; }
 
 
 

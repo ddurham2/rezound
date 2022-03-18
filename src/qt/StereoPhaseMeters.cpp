@@ -210,7 +210,7 @@ void StereoPhaseMeters::setSoundPlayer(ASoundPlayer *soundPlayer)
 
 	int row=0;
 	setLayout(new QHBoxLayout); // could re-orient depending on where it's docked top/bottom or left/right ???
-	layout()->setMargin(2);
+	layout()->setContentsMargins(2,2,2,2);
 	layout()->setSpacing(2);
 
 	// create zoom dial
@@ -243,7 +243,7 @@ void StereoPhaseMeters::setSoundPlayer(ASoundPlayer *soundPlayer)
 			frame->setFrameShadow(QFrame::Sunken);
 			frame->setLineWidth(2);
 			frame->setLayout(new QHBoxLayout);
-			frame->layout()->setMargin(0);
+			frame->layout()->setContentsMargins(0,0,0,0);
 			frame->layout()->addWidget(spm);
 			frame->setFixedSize(frame->minimumSizeHint());
 

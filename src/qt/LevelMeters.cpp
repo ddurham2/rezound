@@ -508,7 +508,7 @@ void LevelMeters::initialize(unsigned channelCount,bool justCleanup)
 		return;
 
 	setLayout(new QHBoxLayout);
-	layout()->setMargin(0);
+	layout()->setContentsMargins(0,0,0,0);
 
 	// add frame around phase meter
 	QFrame *frame=new QFrame(this);
@@ -521,7 +521,7 @@ void LevelMeters::initialize(unsigned channelCount,bool justCleanup)
 	int row=0;
 	QGridLayout *gridLayout=new QGridLayout;
 	frame->setLayout(gridLayout);
-	gridLayout->setMargin(4);
+	gridLayout->setContentsMargins(4,4,4,4);
 	gridLayout->setSpacing(2);
 
 	// create labels to db units
@@ -559,7 +559,7 @@ void LevelMeters::initialize(unsigned channelCount,bool justCleanup)
 		QLabel *l=new QLabel(frame);
 		l->setPalette(palette());
 		// set a fixed width which reduces CPU since it doesn't have to layout every time the text changes
-		l->setFixedWidth(l->fontMetrics().width(lm->getGrandMaxPeakLevelString(dBFS_to_amp(-100)).c_str()));
+		l->setFixedWidth(l->fontMetrics().horizontalAdvance(lm->getGrandMaxPeakLevelString(dBFS_to_amp(-100)).c_str()));
 		l->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
 		gridLayout->addWidget(l,row,1);
 		lm->grandMaxPeakLevelLabel=l;
@@ -574,7 +574,7 @@ void LevelMeters::initialize(unsigned channelCount,bool justCleanup)
 			QLabel *l;
 			QWidget *c=new QWidget(frame);
 			c->setLayout(new QHBoxLayout);
-			c->layout()->setMargin(0);
+			c->layout()->setContentsMargins(0,0,0,0);
 			c->layout()->setSpacing(2);
 
 			l=new QLabel(c);
@@ -631,7 +631,7 @@ printf("hello from LevelMeters::setGeometry\n");
 bool LevelMeters::recreateLevelLabels(int containerWidth)
 {
 	QFontMetrics m(labelContainer->font());
-	int labelWidth=qMax(1,m.width("-100.0"));
+	int labelWidth=qMax(1,m.horizontalAdvance("-100.0"));
 	int nLabels=qMax(2,containerWidth/labelWidth*7/8); // calculate how many labels need to be shown
 
 printf("nLabels: %d  width: %d\n",nLabels,containerWidth);

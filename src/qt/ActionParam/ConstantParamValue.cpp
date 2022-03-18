@@ -132,7 +132,7 @@ void ConstantParamValue::on_inverseButton_clicked()
 bool ConstantParamValue::eventFilter(QObject *w,QEvent *e)
 {
 	if(
-		(w==slider && e->type()==QEvent::MouseButtonPress && ((QMouseEvent*)e)->button()==Qt::MidButton) || 
+		(w==slider && e->type()==QEvent::MouseButtonPress && ((QMouseEvent*)e)->button()==Qt::MiddleButton) ||
 		(w==halfLabel && e->type()==QEvent::MouseButtonPress && ((QMouseEvent*)e)->button()==Qt::LeftButton)
 	)
 	{ // middle button pressed on slider or middle value label clicked

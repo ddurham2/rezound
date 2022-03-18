@@ -36,13 +36,13 @@ public:
 		{
 			// prefix the action name with where it falls in the menus
 			QString prefix;
-			QList<QWidget *> ws=i->second->associatedWidgets();
+			QList<QObject *> ws=i->second->associatedObjects();
 			bool foundMenu=false;
 			// for each widget associated with the menu
 			for(int t=0;t<ws.size() && !foundMenu;t++)
 			{
 				// walk up the parent chain finding QMenus
-				QWidget *w=ws[t];
+				QObject *w=ws[t];
 				while(w)
 				{
 					if(dynamic_cast<QMenu *>(w))
@@ -50,7 +50,7 @@ public:
 						prefix=((QMenu*)w)->title().replace("&","")+" -> "+prefix;
 						foundMenu=true;
 					}
-					w=w->parentWidget();
+					w=w->parent();
 				}
 			}
 

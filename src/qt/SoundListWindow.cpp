@@ -49,7 +49,7 @@ void SoundListWindow::rebuildSoundWindowList()
 		fields.push_back(CPath(p.realPath()).dirName().c_str());
 
 		QTreeWidgetItem *twi=new QTreeWidgetItem(fields);
-		twi->setData(0,Qt::UserRole,qVariantFromValue(win));
+		twi->setData(0,Qt::UserRole,QVariant::fromValue(win));
 
 		loadedSoundsList->addTopLevelItem(twi);
 	}

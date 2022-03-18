@@ -66,10 +66,9 @@ public:
 	typedef size_t poolId_t;
 
 
-	// formatSignature MUST be an 8 byte (not counting an unncessary null terminator) signature to look for when opening a file
 	TPoolFile(const blocksize_t maxBlockSize=32768,const char *formatSignature="DavyBlox");
 	explicit TPoolFile(const TPoolFile<l_addr_t,p_addr_t> &src); //INVALID
-	virtual ~TPoolFile();
+	virtual ~TPoolFile() noexcept;
 
 	// open/close methods
 	void openFile(const string _filename,const bool canCreate=true);
@@ -119,8 +118,8 @@ public:
 	l_addr_t readPoolRaw(const string poolName,void *buffer,l_addr_t readSize,l_addr_t pos=0);
 
 	// these methods can be used to write raw data to a pool disregarding the alignment of the pool (the pool must already be the correct size before writing)
-	l_addr_t writePoolRaw(const poolId_t poolId,void *buffer,l_addr_t writeSize,l_addr_t pos=0);
-	l_addr_t writePoolRaw(const string poolName,void *buffer,l_addr_t writeSize,l_addr_t pos=0);
+	l_addr_t writePoolRaw(const poolId_t poolId,const void *buffer,l_addr_t writeSize,l_addr_t pos=0);
+	l_addr_t writePoolRaw(const string poolName,const void *buffer,l_addr_t writeSize,l_addr_t pos=0);
 
 
 	// pool information/managment methods
@@ -265,7 +264,7 @@ private:
 		blocksize_t size;
 
 		RCachedBlock(const blocksize_t maxBlockSize);
-		virtual ~RCachedBlock();
+		virtual ~RCachedBlock() noexcept;
 		bool containsAddress(l_addr_t where) const;
 		void init(const poolId_t _poolId,const l_addr_t _logicalStart,const blocksize_t _size);
 	};

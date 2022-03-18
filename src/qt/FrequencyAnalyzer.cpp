@@ -118,7 +118,7 @@ protected:
 		if(analysis.size()>0 && drawBarFreq && barFreqIndex<frequencies.size())
 		{
 			const string f=istring(frequencies[barFreqIndex])+"Hz";
-			const int w=QFontMetrics(font()).width(f.c_str(),f.length());
+			const int w=QFontMetrics(font()).horizontalAdvance(f.c_str(),f.length());
 			p.fillRect(0,0,w+3,QFontMetrics(font()).height()+2,QColor(M_METER_OFF));
 			p.setPen(QColor(M_TEXT_COLOR));
 			p.drawText(1,QFontMetrics(font()).height()-2,f.c_str());
@@ -240,7 +240,7 @@ FrequencyAnalyzer::FrequencyAnalyzer(QWidget *parent) :
 	setFont(statusFont);
 
 	setLayout(new QHBoxLayout);
-	layout()->setMargin(2);
+	layout()->setContentsMargins(2,2,2,2);
 	layout()->setSpacing(2);
 
 	// create zoom dial
@@ -262,7 +262,7 @@ FrequencyAnalyzer::FrequencyAnalyzer(QWidget *parent) :
 	right->setAutoFillBackground(true);
 
 	right->setLayout(new QVBoxLayout);
-	right->layout()->setMargin(0);
+	right->layout()->setContentsMargins(0,0,0,0);
 	right->layout()->setSpacing(0);
     right->layout()->addWidget(canvas=new FrequencyAnalyzerCanvas(this));
 	right->layout()->addWidget(labelsFrame=new QWidget(this));
@@ -273,7 +273,7 @@ FrequencyAnalyzer::FrequencyAnalyzer(QWidget *parent) :
 		frame->setFrameShadow(QFrame::Sunken);
 		frame->setLineWidth(2);
 		frame->setLayout(new QHBoxLayout);
-		frame->layout()->setMargin(0);
+		frame->layout()->setContentsMargins(0,0,0,0);
 		frame->layout()->addWidget(right);
 		//labels aren't added yet frame->setFixedWidth(frame->minimumSizeHint().width());
 
@@ -346,7 +346,7 @@ void FrequencyAnalyzer::rebuildLabels(const vector<size_t> _frequencies,size_t o
 	while(labelsFrame->children().size()>0)
 		delete labelsFrame->children()[0];
 	labelsFrame->setLayout(new QHBoxLayout);
-	labelsFrame->layout()->setMargin(0);
+	labelsFrame->layout()->setContentsMargins(0,0,0,0);
 	labelsFrame->layout()->setSpacing(0);
 
 	labelsFrame->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);

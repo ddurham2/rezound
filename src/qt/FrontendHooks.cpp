@@ -99,7 +99,7 @@ void FrontendHooks::doSetupAfterBackendIsSetup()
 	openDialog->setAcceptMode(QFileDialog::AcceptOpen);
 	openDialog->setNameFilters(getQtFileTypes());
 	//openDialog->setReadOnly(true); // would be true if I supported it
-	openDialog->setReadOnly(false);
+	openDialog->setOption(QFileDialog::ReadOnly, "on");
 	if(openDialog->directory().absolutePath()!=gPromptDialogDirectory.c_str())
 		openDialog->setDirectory(gPromptDialogDirectory.c_str());
 /*
@@ -134,7 +134,7 @@ void FrontendHooks::doSetupAfterBackendIsSetup()
 
 	dirDialog=new QFileDialog(mainWindow);
 	dirDialog->setWindowTitle(_("Select Directory"));
-	dirDialog->setFileMode(QFileDialog::DirectoryOnly);
+	dirDialog->setFileMode(QFileDialog::Directory);
 	if(dirDialog->directory().absolutePath()!=gPromptDialogDirectory.c_str())
 		dirDialog->setDirectory(gPromptDialogDirectory.c_str());
 
@@ -225,7 +225,7 @@ bool FrontendHooks::promptForOpenSoundFilename(string &filename,bool &readOnly,b
 		gPromptDialogDirectory=openDialog->directory().absolutePath().toStdString();
 
 		filename=openDialog->selectedFiles()[0].toStdString();
-		readOnly=openDialog->isReadOnly();
+		readOnly=openDialog->testOption(QFileDialog::ReadOnly);
 		openAsRaw=false;
 		//openAsRaw=openAsRawCheckButton->getCheck();
 
@@ -264,7 +264,7 @@ bool FrontendHooks::promptForOpenSoundFilenames(vector<string> &filenames,bool &
 		for(int t=0;t<files.size();t++)
 			filenames.push_back(files[t].toStdString());
 
-		readOnly=openDialog->isReadOnly();
+		readOnly=openDialog->testOption(QFileDialog::ReadOnly);
 		openAsRaw=false;
 		//openAsRaw=openAsRawCheckButton->getCheck();
 
