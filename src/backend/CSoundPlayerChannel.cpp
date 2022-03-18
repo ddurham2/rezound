@@ -727,7 +727,7 @@ void CSoundPlayerChannel::mixOntoBuffer(const unsigned nChannels,sample_t * cons
 
 						if(tPlaySpeed==1.0)
 						{ // simple 1.0 speed copy
-							register size_t p=i;
+							size_t p=i;
 							for(size_t t=0;t<_outputLengthToUse;t+=nChannels)
 							{
 								ooBuffer[t]=ClipSample((mix_sample_t)ooBuffer[t]+rreadBuffer[p]);

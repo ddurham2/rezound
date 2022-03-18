@@ -60,6 +60,10 @@ template <class pool_element_t,class pool_file_t> void TPoolAccesser<pool_elemen
 
 template <class pool_element_t,class pool_file_t> void TPoolAccesser<pool_element_t,pool_file_t>::copyData(const l_addr_t destWhere,const TStaticPoolAccesser<pool_element_t,pool_file_t> &src,const l_addr_t srcWhere,const l_addr_t length,const bool appendIfShort)
 {
+	if (&src == this) {
+		throw runtime_error(string(__func__)+" -- src and dest accesser cannot be the same");
+	}
+
 	if(destWhere>this->getSize())
 		throw runtime_error(string(__func__)+" -- out of range destWhere parameter: "+istring(destWhere));
 		

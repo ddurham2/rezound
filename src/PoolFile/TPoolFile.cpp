@@ -149,7 +149,7 @@
 template<class l_addr_t,class p_addr_t>
 	TPoolFile<l_addr_t,p_addr_t>::TPoolFile(const blocksize_t _maxBlockSize,const char *_formatSignature) :
 
-	formatSignature(_formatSignature),
+	formatSignature(_formatSignature), // TODO no longer used anyway remove it
 
 	maxBlockSize(_maxBlockSize),
 	maxLogicalAddress(std::numeric_limits<l_addr_t>::max()),
@@ -182,7 +182,7 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	TPoolFile<l_addr_t,p_addr_t>::~TPoolFile()
+	TPoolFile<l_addr_t,p_addr_t>::~TPoolFile() noexcept
 {
 	exclusiveLock();
 	try
@@ -207,7 +207,8 @@ template<class l_addr_t,class p_addr_t>
 	{
 		exclusiveUnlock();
 		// throw exceptions from the destructor ???
-		throw;
+		//TODO log or something 
+		//throw;
 	}
 }
 
@@ -426,6 +427,7 @@ template<class l_addr_t,class p_addr_t>
 	blockFile.rename(newFilename);
 	SATFiles[0].rename(newFilename+".SAT1");
 	SATFiles[1].rename(newFilename+".SAT2");
+	filename = newFilename;
 }
 
 
@@ -502,7 +504,7 @@ template<class l_addr_t,class p_addr_t>
 
 	TStaticPoolAccesser<uint8_t,TPoolFile<l_addr_t,p_addr_t> > accesser(const_cast<TPoolFile<l_addr_t,p_addr_t> *>(this),poolId);
 	accesser.seek(pos);
-	readSize=min(readSize,accesser.getSize()-pos);
+	readSize=min<l_addr_t>(readSize,accesser.getSize()-pos);
 	accesser.read((uint8_t *)buffer,readSize);
 	return readSize;
 }
@@ -514,7 +516,7 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	l_addr_t TPoolFile<l_addr_t,p_addr_t>::writePoolRaw(const poolId_t poolId,void *buffer,l_addr_t writeSize,l_addr_t pos)
+	l_addr_t TPoolFile<l_addr_t,p_addr_t>::writePoolRaw(const poolId_t poolId,const void *buffer,l_addr_t writeSize,l_addr_t pos)
 {
 	if(!opened)
 		throw runtime_error(string(__func__)+" -- no file is open");
@@ -523,13 +525,13 @@ template<class l_addr_t,class p_addr_t>
 
 	TStaticPoolAccesser<uint8_t,TPoolFile<l_addr_t,p_addr_t> > accesser(const_cast<TPoolFile<l_addr_t,p_addr_t> *>(this),poolId);
 	accesser.seek(pos);
-	writeSize=min(writeSize,accesser.getSize()-pos);
+	writeSize=min<l_addr_t>(writeSize,accesser.getSize()-pos);
 	accesser.write((uint8_t *)buffer,writeSize);
 	return writeSize;
 }
 
 template<class l_addr_t,class p_addr_t>
-	l_addr_t TPoolFile<l_addr_t,p_addr_t>::writePoolRaw(const string poolName,void *buffer,l_addr_t writeSize,l_addr_t pos)
+	l_addr_t TPoolFile<l_addr_t,p_addr_t>::writePoolRaw(const string poolName,const void *buffer,l_addr_t writeSize,l_addr_t pos)
 {
 	return writePoolRaw(getPoolIdByName(poolName),buffer,writeSize,pos);
 }
@@ -2541,7 +2543,7 @@ template<class l_addr_t,class p_addr_t>
 }
 
 template<class l_addr_t,class p_addr_t>
-	TPoolFile<l_addr_t,p_addr_t>::RCachedBlock::~RCachedBlock()
+	TPoolFile<l_addr_t,p_addr_t>::RCachedBlock::~RCachedBlock() noexcept
 {
 	free(buffer);
 }

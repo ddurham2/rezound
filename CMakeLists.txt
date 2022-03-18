@@ -118,6 +118,8 @@ add_subdirectory(src/backend)
 #add_subdirectory(src/frontend_fox)
 add_subdirectory(src/qt)
 
+add_subdirectory(src/PoolFile/test)
+
 configure_file(${CMAKE_CURRENT_LIST_DIR}/config/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/config/config.h)
 
 

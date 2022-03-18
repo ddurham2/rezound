@@ -306,7 +306,7 @@ public:
 		{
 			// pack the values of the data members into r in little-endian
 			
-			register unsigned offset=0;
+			unsigned offset=0;
 
 			memcpy(r+offset,name,sizeof(name));
 			offset+=sizeof(name);
@@ -326,7 +326,7 @@ public:
 		{
 			// unpack the little-endian values from r into the data members
 
-			register unsigned offset=0;
+			unsigned offset=0;
 
 			memcpy(&name,r+offset,sizeof(name));
 			offset+=sizeof(name);

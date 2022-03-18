@@ -56,7 +56,7 @@ bool CSinglePoleFilter::doActionSizeSafe(CActionSound *actionSound,bool prepareF
 			CRezPoolAccesser dest=actionSound->sound->getAudio(i);
 			const CRezPoolAccesser src=prepareForUndo ? actionSound->sound->getTempAudio(tempAudioPoolKey,i) : actionSound->sound->getAudio(i);
 			sample_pos_t srcOffset=prepareForUndo ? start : 0;
-			const register float gain=this->gain;
+			const float gain=this->gain;
 
 			#define STATUS_BAR_UPDATE(t) \
 				if(statusBar.update(t)) \

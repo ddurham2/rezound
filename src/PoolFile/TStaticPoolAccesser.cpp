@@ -165,6 +165,10 @@ template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_
 
 template <class pool_element_t,class pool_file_t> void TStaticPoolAccesser<pool_element_t,pool_file_t>::copyData(l_addr_t destWhere,const TStaticPoolAccesser<pool_element_t,pool_file_t> &src,l_addr_t srcWhere,l_addr_t length)
 {
+	if (&src == this) {
+		throw runtime_error(string(__func__)+" -- src and dest accesser cannot be the same");
+	}
+
 	if(srcWhere>src.getSize())
 		throw(runtime_error(string(__func__)+" -- invalid srcWhere parameter: "+istring(srcWhere)));
 	if((src.getSize()-srcWhere)<length)
