@@ -149,7 +149,7 @@
 template<class l_addr_t,class p_addr_t>
 	TPoolFile<l_addr_t,p_addr_t>::TPoolFile(const blocksize_t _maxBlockSize,const char *_formatSignature) :
 
-	formatSignature(_formatSignature), // TODO no longer used anyway remove it
+	formatSignature(_formatSignature),
 
 	maxBlockSize(_maxBlockSize),
 	maxLogicalAddress(std::numeric_limits<l_addr_t>::max()),
@@ -203,11 +203,10 @@ template<class l_addr_t,class p_addr_t>
 		init(false);
 		exclusiveUnlock();
 	}
-	catch(...)
+	catch(std::exception& e)
 	{
 		exclusiveUnlock();
-		// throw exceptions from the destructor ???
-		//TODO log or something 
+		dprintf("exception in ~TPoolFile -- %s\n", e.what());
 		//throw;
 	}
 }
