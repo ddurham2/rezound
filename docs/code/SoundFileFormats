@@ -14,7 +14,7 @@ CSound has a getAudio method which returns a TPoolFileAccessor that allows acces
 Changing the size of the audio pools is done through methods in the CSound class.
 
 The derived ASoundTranslator class should implement the abstract methods... In short, it should just 
-call createWorkingPoolFile given the numer of channels, sample rate, and length.  Then it should read 
+call createWorkingPoolFile given the number of channels, sample rate, and length.  Then it should read 
 the audio out of the foreign format and use the getAudio's returned TPoolFileAccessor to copy data 
 into the audio pools.  Then if there is any available other data like user notes or cue 
 positions/names there are methods in the CSound class to add that information.
@@ -25,7 +25,7 @@ requires little work.
 TPoolFile is explained more in TPoolFile.cpp/h, but basically it is a container of arbitrary
 data, but manages its space in chunks which allow it to add and remove space very quickly.  
 Hence, delete or adding space anywhere in the sound file is not laborious, as the new space
-can be added physically whereever there is available space, but logically anywhere else, and 
+can be added physically wherever there is available space, but logically anywhere else, and 
 deleted space just becomes logically unused.  All the data lives on disk, except there is 
 considerable caching which speeds up usual data access.  However, TPoolFile has a higher 
 level of organization called 'pools' in which a TPoolFile is a collection of many pools where

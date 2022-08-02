@@ -5,7 +5,7 @@ platform specific code, there is a system in the backend code which tells the fr
 render.
 
 - The wave form is rendered with peak chunk data in the following manner:
-	- Each screen X position coresponds to a data position in the sample data depending of the horizontal scroll 
+	- Each screen X position corresponds to a data position in the sample data depending of the horizontal scroll 
  	  bar position and the horizontal zoom amount, basically 
 		data_position == (screen_X+horz_scroll_pos)*horz_zoom_scalar
 	  (although, these are not necessarily the names of the variables I use in the implementation)
@@ -26,14 +26,14 @@ render.
 		- This information is stored in a pool of RPeakChunk objects (declared in ASound.cpp) which has a 
 		  min, max, and dirty flag
 		- The dirty flag gets set to true when the min and max for that chunk of samples that the RPeakChunk
-		  represents (PEAK_CHUNK_SIZE number of samples to be exacty)
+		  represents (PEAK_CHUNK_SIZE number of samples to be exactly)
 		- So, the method, ASound::getPeakData() which returns this peak chunk data will check this dirty value
 		  and recalculate on the fly.
 		
 	- However, sometimes I shouldn't use this precalculated data to render because each X position on the screen
 	  may represent less than PEAK_CHUNK_SIZE samples... In this sitution, I have the caller give
 	  ASound::getPeakData() the next data position it's going to ask for, and if this position is less than
-	  PEAK_CHUNK_SIZE samples from the given dataPosition, then I don't use the precalculated data, but actualy
+	  PEAK_CHUNK_SIZE samples from the given dataPosition, then I don't use the precalculated data, but actually
 	  go to the data itself to calculate the min and max.
 
 	

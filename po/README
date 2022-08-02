@@ -24,7 +24,7 @@ be aware of this convention.
 	  should also verify that the information at the top is correct.
 
 
-** To test while creating/editing a tranlation:
+** To test while creating/editing a translation:
 	- After editing and saving your ll_CC.po file run 'make' from the top 
 	  rezound source directory.  This will process the modified ll_CC.po
 	  file to ll_CC.gmo which is the binary version of the .po
@@ -49,7 +49,7 @@ be aware of this convention.
 		make && cp po/$LANGUAGE.gmo /usr/local/share/locale/$LANGUAGE/LC_MESSAGES/rezound.mo && ./rezound
 
 	  could be run after saving the modified ll_CC.po file to do all the
-	  necessary tasks.  Of couse, you will need to make the LC_MESSAGES
+	  necessary tasks.  Of course, you will need to make the LC_MESSAGES
 	  directory writable by the user doing the translation and make any
 	  existing rezound.mo file overwritable by that user.  
 
@@ -67,7 +67,7 @@ variety
 	- rezound.pot is created by gettext scanning the source code for
 	  strings in the form: _("..string..")  Not all strings that need to be
 	  translated are tagged in this manner yet.  If you want to go looking
-	  trough the code for more things to translate just surround the strings
+	  through the code for more things to translate just surround the strings
 	  by _( ... ) and then:
 	  
 	  cd to the 'po' directory

@@ -28,7 +28,7 @@
 	- eventually need to go through and remove all the unneeded commented code
 
 	- HMM... I've been thinking about a decision I made a long time ago about selected regions...
-		- I decided back then that I would have a start and a stop postion int stored internally
+		- I decided back then that I would have a start and a stop position int stored internally
 		- However, if there's one thing C teaches you, it's that for a region, a start/length combination is better.
 		- In many places I have to have a +1, -1, max(1,...) etc.. also, the stop could wind up being less than the start
 		- if I used a start/length combination, I would have a fair amount of code to modify, but I think border conditions would be less of a problem.
@@ -57,7 +57,7 @@
 		- the few individuals that reponded to my developer call on demudi
 
 		- note: (something like this)
-			   I'm annoucing the release of my sound editor, ReZound, on sourceforge now.  This message is going to many people
+			   I'm announcing the release of my sound editor, ReZound, on sourceforge now.  This message is going to many people
 			and lists which I posted messages concerning it over the past few months.  Any developers out there interested in
 			developing for it, I have written a document which explains the basics of creating new actions for it.  And any 
 			one else out there willing to run it, please do.  However, you can make a personal note of any bugs, but I have
@@ -73,16 +73,16 @@
 	- Create a little description of how to make some interesting sound from a sample I give them.. show them how to take a small piece of it.. make it loop able.. then slow it down.. filter.. etc.. 
 		- post several examples of my _alt# files
 
-	- XXX I've been in contact with the libsndfile maintainer and the library looks quite good.  He's working on a few features like cues and user notes so that I can put it in without loosing functionality
-		- I've said that I want to support another audio file libary in the future, but I did find that libaudiofile's API at least has support for loop points, cues, notes and arbitrary data, but it doesn't seem to even be implemented on wave save.
+	- XXX I've been in contact with the libsndfile maintainer and the library looks quite good.  He's working on a few features like cues and user notes so that I can put it in without losing functionality
+		- I've said that I want to support another audio file library in the future, but I did find that libaudiofile's API at least has support for loop points, cues, notes and arbitrary data, but it doesn't seem to even be implemented on wave save.
 			- DONE Perhaps I will work to patch libaudiofile to get this functionality working.  Because SOX's lib form is far from existing
 			- libsndfile has more formats than libaudiofile but has no API provisions for arbitrary data. AND it isn't packaged on hardly any distroes
-			- Now another possiblity for at least giving a decent effort toward being able to load and save numerous other formats could be done by making a CSOXSoundTranslator : ASoundTranslator and have it shell out and actually run the sox command.  Maybe sox can even read and write to std i/o so I could avoid intermediate copies by sending it and receiving from it raw PCM data.
+			- Now another possibility for at least giving a decent effort toward being able to load and save numerous other formats could be done by making a CSOXSoundTranslator : ASoundTranslator and have it shell out and actually run the sox command.  Maybe sox can even read and write to std i/o so I could avoid intermediate copies by sending it and receiving from it raw PCM data.
 				- This would be under an explicit import/export set of buttons under the file actions because it would probably support no form of saving the cues and notes and such and the user could be warned that none of this information will be preserved.
 			- But I should still use libaudiofile to load and save wav, aiff, (ogg and mp3 if/when it's available)
 
 	- always make sure that the actions accessers are const so that it's not causing the data to be written back to disk
-		- infact, grep for Accesser and make sure than any are const whenever possible to avoid writing that data back to disk
+		- in fact, grep for Accesser and make sure than any are const whenever possible to avoid writing that data back to disk
 
 	- in ddd, step thru a copy/insert action to make sure nothing unexpected is happening
 		- when I was taking a file up above 2gb, I copied a 1.2g selection and it seemed to do something for a long time before growing the clipboard file during the copy action
@@ -105,7 +105,7 @@
 	- Now in at least two modules (LADSPA and CSoundPlayerChannel) and then perhaps in more than one place in each module I iterate over the sound in either looped or non-looped mode
 		- I could create an iterator for a CSound object that would return data in the native format
 		- In LADSPA where I might produce silence, I could either have the iterator that doesn't loop return zeros, or just check for end and produce zeros in the LADSPA code itself
-		- If I implemented the pause before looping and durring selection I could even theoretically use that in LADSPA actions (although I don't know why)
+		- If I implemented the pause before looping and during selection I could even theoretically use that in LADSPA actions (although I don't know why)
 
 	- There is a project called 'audiere' which I might be able to use to load .s3m, .it, .mod, etc if it was found.  I couldn't save, but I could at least load.
 
@@ -118,7 +118,7 @@
 
 	- since I use my DAT to record long concerts, it would be nice if either while dumping after dumping, to have it create multiple sounds each time a certain length of silence has been encountered
 		- then I wouldn't have to go find the tracks myself
-		- OR, I could just have the record function automatically add markers after a what it thinks is a track delimeter
+		- OR, I could just have the record function automatically add markers after a what it thinks is a track delimiter
 			- then I could create an action that says to cut/copy-to-new the selection as a new sound file... so the user would select the beginning, then snap to the next cue, then to the cut/copy-to-new action, then select the stop to the next cue and repeat
 				- the user is going to have to choose a name for each track anyway.. so it can never really be fully automatic.. the user in this case just has an extra mouse click and menu click before typing in each name
 
@@ -128,13 +128,13 @@
 			- I could predefine some to support sox functionality
 			- the user should be able to define their own and them appear in a "Custom" menu
 
-	- allow displaying of rulers input widgets in other units... after implementing more stuff, I should be able to determine that there are just a handleful of paramter classes, some that determine length or amplitude or time etc.. so these classes of parameter types could have changable units on the frontend, but the backend would always be dealing with a single unit type
+	- allow displaying of rulers input widgets in other units... after implementing more stuff, I should be able to determine that there are just a handleful of parameter classes, some that determine length or amplitude or time etc.. so these classes of parameter types could have changeable units on the frontend, but the backend would always be dealing with a single unit type
 
 	- add an edit->enter-selection which brings up a dialog for the user to type in exactly the selection to make.. the start would be typed in and the stop would either be typed in, or a length beyond the start would be typed in
 
 	- Create sliders or knobs next to the VU meters in the record dialog to be able to set a gain on the recording source per channel
 
-	- If CActionParameters could have a getText() method, then I could log all of the actions on the sound incase someone wanted to know
+	- If CActionParameters could have a getText() method, then I could log all of the actions on the sound in case someone wanted to know
 
 	- If I really create some decent FFT actions and a filter toolkit of some kind, then it would be nice to have the backend somehow interact more actively with the frontend while selecting parameters like the cutoff frequency and ripple parameters of the filters, etc...
 
@@ -145,19 +145,19 @@
 				- so the front end would create a quick CActionParameters object an construct the actual action class and ask it for the frontend feedback data... 
 				- for now I have a void * as what is returned.. I suppose it could be more structured.. but I don't know right now what might be required for the frontend to show.
 				- I could imaging that a pixel area which would be the filter's various responses might be nice... 
-				- but other actions may need different informations... PERHAPS a little preview of the sound could be returned as well
+				- but other actions may need different information... PERHAPS a little preview of the sound could be returned as well
 				- perhaps I could return a CActionParameters which may contain images, or audio or many things as long as I added these types to CActionParameters.
 				- I may then want to make CActionParameters accessed by name instead of index so that in development it would be easier to know what parameter failed and also the order wouldn't matter at all ... 
 					- because at the moment, the order of the sliders totally matters because the backend has to know the order of the frontend sliders
 						- I should do this first.. then attempt to allow an action to give feedback to the frontend
 
-	- DONE A simple thing that could avoid errors later... create a template class that is used that locks a given mutex on construction and unlock on deconstruction... this would let me remove the try catchs that are just there to unlock the mutex and would keep me from having to remember to write code later that will unlock the mutex... just declare local variable of one of these and it will do it
+	- DONE A simple thing that could avoid errors later... create a template class that is used that locks a given mutex on construction and unlock on deconstruction... this would let me remove the try catches that are just there to unlock the mutex and would keep me from having to remember to write code later that will unlock the mutex... just declare local variable of one of these and it will do it
 		- need to use it more through out the code
 
 	- After reading more of the DSP book about filters
 		- create a data type in CActionParameters which is the filter to apply to the sound
 		- then this filter data should be convolved with a selected region
-		- or this filter data should be applied to the data in a windowed fasion...  As far as I know, it has no name.. but say I wanted to set every 8th sample to zero to add a ringing noise... then I would create a filter window of width 8 where the first sample is 0 and the rest are 1.0... then I would apply this window to the first 8 samples [0..7], then apply it to the next 8, [8..15] and so on
+		- or this filter data should be applied to the data in a windowed fashion...  As far as I know, it has no name.. but say I wanted to set every 8th sample to zero to add a ringing noise... then I would create a filter window of width 8 where the first sample is 0 and the rest are 1.0... then I would apply this window to the first 8 samples [0..7], then apply it to the next 8, [8..15] and so on
 			- maybe this is possible with the convolution method
 		- see what it sounds like to apply a lowpass or highpass filter on the frequency domain's magnitude and/or phase buffers
 
@@ -184,7 +184,7 @@
 	- could easily make the play buttons stop if playing and then do their action so that they don't do nothing while it's playing
 		- plus you have to hit stop and play to make it do something else... stop needs to be nice and big anyway
 
-	- it may be more intutive/user-friendly/athetically-pleasing to have the channel select dialog start out all unchecked so I acutally click on the channels I want to apply the action to, rather than the inverse of the channels...
+	- it may be more intuitive/user-friendly/athetically-pleasing to have the channel select dialog start out all unchecked so I actually click on the channels I want to apply the action to, rather than the inverse of the channels...
 		DONE - I should also probably add a button that selects all channels or unselects all channels
 			- this would be stupid right now, but more useful if I support 5 channel sounds or something
 		DONE - I should put a button on the channel select dialog (and paste channel dialog) which set it to a normal state
@@ -210,7 +210,7 @@
 	- a very nice project called 'ardour' on sourceforge.net has setup a paypal account to receive donations, perhaps I should do the same
 
 	- I think it's fine for now, but gWhichClipboard is essentially a global which specifies which clipboard to use from the time the pasteChannelSelect dialog shows, to the time the factory is constructed, to the time the action runs
-		- it would be better if this were something passed on the action parameters or action sound to make SURE it would be consitant through out each stage
+		- it would be better if this were something passed on the action parameters or action sound to make SURE it would be consistent through out each stage
 
 
 
@@ -218,17 +218,17 @@
 	- OUTSTANDING -
 		- I've seen it once hang when closing the application... I attached to the process with the debugger and it was stuck waiting on a mutex of loaded->getSound()->lockForResize() in ASoundFileManager::close ... so perhaps some condition happened which left a mutex unlocked
 
-		- I accidently recorded for 8.5 hours and when I stopped it it it segfaulted... 
+		- I accidentally recorded for 8.5 hours and when I stopped it it it segfaulted... 
 			- I'm sure that most of the problem was that I only had 32bit address space compiled in...
 			- When I add the length limit based on the address space this wouldn't have been a problem
 
 		- It segfaulted while I defragged an 800 meg file after having deleted some at the beginning and some at the end
-			- load in debugger and watch what happend.. it could have been a stack overflow.. if so, then I need to simulate the recursion instead of using real recursion
+			- load in debugger and watch what happened.. it could have been a stack overflow.. if so, then I need to simulate the recursion instead of using real recursion
 
 		- There's a slight drawing glitch in the wave form: if you zoom all the way in, then select just one sample about 3 or 4 samples from then end.. then proceed to slowly zoom out, the one selected sample region will blink in and out occasionally
 			- what's happening is that in drawPortion() on the last drawn position with data, it's saying that dataPostition is >= the sound's length, so it skips down to the section where it just draws blank background
-			- I (temporarily) solved that by just also conditionally setting the background color in the else part of that if statment just like I conditionally set it in the drawing-wave
-			- but then, I set the last selected sample to a gain of 100x or so, so it would draw pink (clipped), but then when I would zoom out, the pink would also flicker because that last drawn sample position thought it was beyond the sound's length after offseting and scaling the pixel position to a data position
+			- I (temporarily) solved that by just also conditionally setting the background color in the else part of that if statement just like I conditionally set it in the drawing-wave
+			- but then, I set the last selected sample to a gain of 100x or so, so it would draw pink (clipped), but then when I would zoom out, the pink would also flicker because that last drawn sample position thought it was beyond the sound's length after offsetting and scaling the pixel position to a data position
 			- so if I fixed the problem well, it would probably look smoother altogether while zooming
 			- this must have something to do with floating point or integer truncation or rounding error
 
@@ -241,7 +241,7 @@
 		- goofy stuff happens with the graph param value widget... orphaned nodes and stuff
 		- pressing the space bar key on the loaded sound listbox while it's empty causes a segfault.. I think it's a problem with fox itself
 			- I think it's trying to focus an item that doesn't exist (Jeroen fixed it in fox)
-		- It's not reproducable, but I've seen Xlib return something which causes the application to lock up; fox even prints an 'unexpected ...' message, VERY seldom though
+		- It's not reproducible, but I've seen Xlib return something which causes the application to lock up; fox even prints an 'unexpected ...' message, VERY seldom though
 			- I think this is because I'm modifying FOX widgets in the play/pause triggers in CSoundWindow
 
 		- fixed by grouping metadata writes into a memory chunk and writing all that all at once
@@ -270,7 +270,7 @@
 
 	- I could create an event manager that could act as a multitrack editor, by just knowing when and where to stop and start sounds
 		- then how to scale their volume... or more generally, what filter(s) to sent the data-buffers thru before playing
-			- the filters should be instantiated AFilter objects that are attatched to the sound, in a chain and they were instantiated with parameters on how to do their realtime processing
+			- the filters should be instantiated AFilter objects that are attached to the sound, in a chain and they were instantiated with parameters on how to do their realtime processing
 			- if I thought it would be that beneficial, I could make all the non-realtime actions use the filters to do their work
 		- it would then be just a matter of GUI creation to have ReZound act something like audacity
 
@@ -283,7 +283,7 @@
 
 	- I could determine the most recent cue passed while playing at the beginning of each time I go to mix some sound... and set just an integer index in the ASoundPlayerChannel object for the frontend to read and display the current playing cue name in a status bar
 		- I'm not implementing this right away because I don't know how useful it would be... But there were lots of off screen cues, it could be useful to have an idea of where the sound was playing 
-		- If I do implement this, I should create a method in ASound which returns the most recent cue, and call it at each mix buffer call... This method should use the cue index in ASound for effient finding of this value
+		- If I do implement this, I should create a method in ASound which returns the most recent cue, and call it at each mix buffer call... This method should use the cue index in ASound for efficient finding of this value
 
 	- I could have copy and cut's copy to the clipboard delayed until a non-paste function and a not a paste function to the same range and sound that we cut/copied from
 		- that way, a copy from one sound and an immediate paste into another would not require but one copy
@@ -298,11 +298,11 @@
 
 	- if a button like: undo, play, stop, etc does not perform its action (make return value bool) then call a method, incompleteAction() that either beeps or buzzes just to let the user know that there was no action take...
 
-	- one cool set of plugins might be ones that have tools for doing manipulations that loop symetrically, for example:
+	- one cool set of plugins might be ones that have tools for doing manipulations that loop symmetrically, for example:
 		- copy the selection, reverse the original, insert the copy in front, the we have a loop-able sound
-		- some variations on the previous that break the selection into smaller peices of size X to which it does this action where where X is a parameter set in a dialog
-			- or breaks the selection into N peices
-		- apply some symetric envelope to the sound (i.e. /|_|\, /\, /W\, \/, \M/, etc)
+		- some variations on the previous that break the selection into smaller pieces of size X to which it does this action where where X is a parameter set in a dialog
+			- or breaks the selection into N pieces
+		- apply some symmetric envelope to the sound (i.e. /|_|\, /\, /W\, \/, \M/, etc)
 		- apply some envelope that gives the sound a beat (i.e. ||_|_|_|_ or //_/_/_/_ or \\_\_\_\_  (that is, an accent on the first beat))
 		- vibrato
 
@@ -324,7 +324,7 @@
 		- have a set of buttons that place a tone or other sample over the selected sound
 		- or one that quickly fade out and in the selection
 
-	- be able to stream CActionParameters to a file and then be able to recall them in a batch type fasion...
+	- be able to stream CActionParameters to a file and then be able to recall them in a batch type fashion...
 
 	- I could conceive of a dialog for rate and/or pitch changes that has a place for you to enter the original frequency of the sound (could be detected with fft), and then allow you do select a particular pitch/freq/note value (i.e. Bb) to transpose it to
 		- this would be useful for making sampled patches for a synthesizer
@@ -378,12 +378,12 @@
 
 	- put some 'mute channel' check boxes for each channel of a loaded sound in the frontend and and be able to mute channels within CSoundPlayerChannel
 
-	- create TStaticPoolAccesser::copyData(from another accesser of same alignement) and TStaticPoolAccesser::zeroData() 
+	- create TStaticPoolAccesser::copyData(from another accesser of same alignment) and TStaticPoolAccesser::zeroData() 
 		- which will use memcpy to speed up data copying and initialization by removing the overhead of calling operator[] so much
 
 	- I should also probably have a 'clear undo history' button that frees up used space in the pool file... 
 
-	- CPoolFile may need a flush method.. (if it doesn't already have one.. ) then after every action, we should flush the pool file incase of a subsequent crash
+	- CPoolFile may need a flush method.. (if it doesn't already have one.. ) then after every action, we should flush the pool file in case of a subsequent crash
 
 	- it segfaulted once upon closing while playing... but calling deinitialize should fix that 
 
@@ -393,7 +393,7 @@
 			- perhaps the implementation of ASound::addSpaceToChannel,removeSpaceFromChannel,moveSpaceOutOfChannel where it handles the peak chunk accessers isn't quite right
 		- but I suspect that it has to do with my not recalculating all the peak chunks
 		XXX - sometimes if you delete data from a sound, then hit redraw, the rendering changes slightly
-		XXX - also, when I mute some space, then have that muted space at the end of a crop, there is sometimes a sample that shows up at the end of the new selection that will go away if I just hit redraw, so it's a peak chunk data inconsistancy rather than non-muted audio data being there
+		XXX - also, when I mute some space, then have that muted space at the end of a crop, there is sometimes a sample that shows up at the end of the new selection that will go away if I just hit redraw, so it's a peak chunk data inconsistency rather than non-muted audio data being there
 
 	- use home directory / .rezound instead of the current directory for settings registry
 
@@ -406,7 +406,7 @@
 
 	- make sure I've run dos2unix on all the code before checking it into any version control system
 
-	- for additional bookmark niceness... make a way to set either the start or stop position to a bookmark choosen from a drop down menu
+	- for additional bookmark niceness... make a way to set either the start or stop position to a bookmark chosen from a drop down menu
 		- also make a seek button that cycles to the next nearest book bark forward or backward from the current play position
 
 	- need a shuttle control
@@ -456,7 +456,7 @@
 
 	- need to make front and backend provisions for letting the user specify the export format parameters... some of the parameters depend on the export format... Perhaps I could have a dialog with a tabbed bar which has different parameters on each... which ever bar was activated would be the export format type... Either use the tabbar or radio buttons (real buttons) and a switcher like the switcher test that comes with fox
 		- should be somewhat easier now with the code reorganization
-		- I should quite easily be able to do with with the existance of AFrontendHooks
+		- I should quite easily be able to do with with the existence of AFrontendHooks
 
 	- it is evidently invalid to call ftruncate to make a file bigger if it's on a fat32 mounted device
 		- There is a specific errno that comes back from this, I should test for it and fwrite zeros to make the file bigger
@@ -480,7 +480,7 @@
 
 	- add a 'Resampling' action where it's basically just a rate change with a constant value, but also sets the sample rate to a new value afterwards
 
-	- add a "sync channels" for noise gate just like the compressor.. probably have it gate only when both channels are below the treshold or maybe a radio button for "gate when all are below threshold.. or any is below threshold"
+	- add a "sync channels" for noise gate just like the compressor.. probably have it gate only when both channels are below the threshold or maybe a radio button for "gate when all are below threshold.. or any is below threshold"
 
 	- There needs to be a dialog for choosing the mix method for mix pasting
 
@@ -505,7 +505,7 @@
 			- by moving the stop position
 
 		- grow or shrink the selection by detecting with the audio level rises above or falls below a threshold
-			- either symetrically 
+			- either symmetrically 
 			- by moving the start position
 			- by moving the stop position
 
@@ -525,7 +525,7 @@
 	- when editing large files it would be nice to have play selection buttons (once and looped), but it plays a few seconds before the start to a few seconds after the stop so that you don't have to play from the beginning and seek forward to or play the selection and seek backwards a little bit
 
 	- Put in the documentation or application help somewhere a brief description about how recording works in linux (you have a recording source selected, then igain which is the recording gain of that source)
-		- mention somewhere that people will surely read that the playback on a not-so-fast computer or cheap sound card may exhibit occational clicks or pops and that this is because of the low latency requirements that ReZound has right now... This requirement may go away and it may not be a problem at all with ALSA
+		- mention somewhere that people will surely read that the playback on a not-so-fast computer or cheap sound card may exhibit occasional clicks or pops and that this is because of the low latency requirements that ReZound has right now... This requirement may go away and it may not be a problem at all with ALSA
 
 	- Change all the status bars to say "Channel X/Y" so that they know how many iterations to expect (and 'i' will have to be a count instead of literally 'i')
 

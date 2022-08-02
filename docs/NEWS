@@ -51,7 +51,7 @@ rezound-0.11.0beta -- 10/21/2004
 	- Fixed a compiler error that everyone was having
 
 rezound-0.10.0beta -- 7/19/2004
-	- Added support for libSoundTouch which gives decent results for changing the speed and pitch independantly
+	- Added support for libSoundTouch which gives decent results for changing the speed and pitch independently
 	- Added a Change Pitch action
 	- Added a Change Tempo action
 	- Added an Adaptive Normalize action which is a cross between compression and normalization
@@ -82,7 +82,7 @@ rezound-0.10.0beta -- 7/19/2004
 
 rezound-0.9.0beta -- 11/7/2003
 	- Added LADSPA support (make sure LADSPA_PATH is defined before running)
-	- Added support for floating point as the interal type (use --enable-internal-sample-type= configure flag)
+	- Added support for floating point as the internal type (use --enable-internal-sample-type= configure flag)
 	- Added support for big endian platforms [efficiently]
 	- Built/Tested on Solaris/Sun, Debian/alpha, Debian/x86, FreeBSD/x86(somewhat tested), RH9/x86, RH7.3/x86 and Mandrake 9.1/x86
 	- Added a Morphing Arbitrary FIR Filter
@@ -154,7 +154,7 @@ rezound-0.8.0beta -- 6/24/2003
 
 rezound-0.7.0beta -- 2/26/2003
 	This is a new feature release.  Changes include:
-	- Added preliminary JACK support (the speed of and load on your computer will deterine how well this works)
+	- Added preliminary JACK support (the speed of and load on your computer will determine how well this works)
 	- Added a "Repeat Count" or "Repeat Time" when pasting from any clipboard
 	- Added a "Balance" action which can change the balance or pan audio between two channels
 	- Added some symmetry changing buttons and smoothing feature to the graph parameter widget
@@ -178,7 +178,7 @@ rezound-0.6.0beta -- 1/29/2003
 	- Holding Ctrl and Left clicking in a sound window starts playing from the clicked position
 	- Holding Ctrl and holding the Right mouse button in a sound window starts playing from the clicked position until the mouse button is released
 	- Added a "Save Selection as" feature
-	- Added a "Save as Multiple Files" feature that can save an audio file into several peices based on properly defined cues
+	- Added a "Save as Multiple Files" feature that can save an audio file into several pieces based on properly defined cues
 	- Added a "Paste as New" Edit action
 	- Added "Copy to New" and "Cut to New" Edit actions
 	- Added a "Control" Menu which is mostly for just displaying the keyboard mappings for various actions and play controls

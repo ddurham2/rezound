@@ -23,7 +23,7 @@
 	- Save As Multiple Files (according to cue positions)
 	- Burn to CD
 
-- Either 16bit integer or 32bit floating point can be chosen as the interal sample format
+- Either 16bit integer or 32bit floating point can be chosen as the internal sample format
 
 - Fast Editing of Large Files
 
@@ -130,7 +130,7 @@
 	- Bandpass
 
 - Looping Tools (much more to come)
-	- Make Selection Symetric
+	- Make Selection Symmetric
 	- Add N Equally Spaced Cues
 	- Add a Cue Every X Seconds
 

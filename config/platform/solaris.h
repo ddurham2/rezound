@@ -26,7 +26,7 @@
 	/*
 	 * kludge: fox is redefining these in fxdef.h when __USE_ISOC99 isn't defined
 	 * I don't think it's proper for it to do that in public header files (sure do
-	 * it in the private implemenation.  So I define this so it won't #define these
+	 * it in the private implementation.  So I define this so it won't #define these
 	 * (then again, I may be doing sort of the same thing since things such as
 	 * istring include common.h (but don't have to)
 	 */

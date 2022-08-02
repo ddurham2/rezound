@@ -29,7 +29,7 @@
 		- If the start or stop position is exactly on a cue position when dragging the cue starts then that start or stop position will be dragged too. Holding SHIFT when starting the drag disables this action.
 	- LEFT clicking a cue focuses that cue.  
 		- Cues can be deleted by pressing DELETE 
-		- The LEFT, RIGHT, HOME and END cursor keys will focues the next or previous cue.  When the next or previous cue is focued that cue's position will be centered (useful when zoomed in)
+		- The LEFT, RIGHT, HOME and END cursor keys will focues the next or previous cue.  When the next or previous cue is focused that cue's position will be centered (useful when zoomed in)
 		- Pressing RETURN will bring up the edit dialog for that focused cue
 
 	- Holding SHIFT while changing the horizontal zoom level dial will center the start position on screen
@@ -49,7 +49,7 @@
 	- The buttons on either side of the horizontal or vertical zoom dials zooms in or out full
 	- The button at the bottom right corner of the waveform zooms out full horizontally and vertically
 
-	- ReZound will attempt to maintain the visibility of either the start or stop positions while changing the horizontal zoom dial depending on wether the start or stop position was last changed and one is on screen
+	- ReZound will attempt to maintain the visibility of either the start or stop positions while changing the horizontal zoom dial depending on whether the start or stop position was last changed and one is on screen
 		- If neither the start or stop position is visible on screen it attempts to keep the left most sample at the left edge of the waveform view
 
 
