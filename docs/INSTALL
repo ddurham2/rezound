@@ -1,6 +1,6 @@
 ReZound 0.13.0beta Installation instructions 
 
-TODO -- shorten this up.. at least have a quick read section at the top.. exampling how to use cmake configuration varaibles
+TODO -- shorten this up.. at least have a quick read section at the top.. exampling how to use cmake configuration variables
 
 REQUIRED OR RECOMMENDED LIBRARIES AND APPLICATIONS:
 
@@ -61,7 +61,7 @@ Before attempting to build ReZound you will need to have (or are encouraged to h
 	- libjack -- http://jackit.sourceforge.net -- This can be used to enable JACK 
 	support.  JACK is a really nice system where the jackd server runs and JACK 
 	enabled applications connect to it.  Then you can route audio between applications
-	instead of being limited in that applications alway do I/O with the hardware device 
+	instead of being limited in that applications always do I/O with the hardware device 
 	itself.
 
 	- vox/devox -- http://www.cis.ksu.edu/~tim/vox/ -- required if you want to load 
@@ -93,7 +93,7 @@ The ReZound homepage is at http://rezound.sourceforge.net
 
 # REMOVED To build a stand alone binary use the configure flag: --enable-standalone.  However,
 # this requires having all the static libraries that may be depended on by ReZound's 
-# dependancies (i.e. FOX depends on libjpeg, libpng, libtiff, etc, so libjpeg.a, 
+# dependencies (i.e. FOX depends on libjpeg, libpng, libtiff, etc, so libjpeg.a, 
 # libpng.a, libtiff.a, etc would be required to link.  But that is, only if FOX was not 
 # configured with --disable-... flags to remove FOX's depenance on these libs.)
 

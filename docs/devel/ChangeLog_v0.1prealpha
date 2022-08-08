@@ -72,7 +72,7 @@ Wrote config/common.h which will be used to handle low level portability
 problems. common.h is included in every header file, so every file sees
 common.h and config.h
 
-Put URL's in relevent places in the documentation and configure scripts. 
+Put URL's in relevant places in the documentation and configure scripts. 
 That's really all I'll do for now. Still some stuff to do, but I think we're
 ready to release on my end. 
 ----------------------------------------------------

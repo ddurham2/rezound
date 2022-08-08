@@ -17,7 +17,7 @@ BuildRoot: 	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 ReZound aims to be a stable, open source, and graphical audio file editor 
 primarily for but not limited to the Linux operating system.  This rpm is
 based on the statically linked binary so as to eliminate nearly all
-dependancies.
+dependencies.
 
 
 %prep

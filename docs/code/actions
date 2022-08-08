@@ -8,7 +8,7 @@
 
 	- perhaps another method that doesn't lock at all.. that is it leaves the responsibility up to the action's implementation
 		- sometimes we know that we have to change the size but then do much work afterwards
-		- but this probably isn't that benefitial... sure the sound can continue to play while the action works.. but it will be playing garbage
+		- but this probably isn't that beneficial... sure the sound can continue to play while the action works.. but it will be playing garbage
 			- and after changing the size, 'theoretically', we'd have to lock the size from changing again to ensure that before we started working, that it wouldn't change
 
 
@@ -36,7 +36,7 @@ But that is not to say that the action won't affect data around the applied area
 section of audio may affect data outside the area).
 
 
-- Also, the AAction::doActionSizeSafe and AAction::undoActionSizeSafe implementations are reponsible for calling 
+- Also, the AAction::doActionSizeSafe and AAction::undoActionSizeSafe implementations are responsible for calling 
 	ASound::invalidPeakData(start,stop) for any data that they modified.  HOWEVER, it is not necessary to
 	call it for any data that was modified/added/removed/etc by the methods within ASound... It wouldn't hurt 
 	anything except be inefficient and redundant.
