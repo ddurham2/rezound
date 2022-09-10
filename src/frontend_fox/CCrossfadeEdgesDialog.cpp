@@ -42,8 +42,8 @@ CCrossfadeEdgesDialog::CCrossfadeEdgesDialog(FXWindow *mainWindow) :
 			fadeMethods.push_back(N_("Linear Fade"));
 			fadeMethods.push_back(N_("Parabolic Fade"));
 			fadeMethods.push_back(N_("Equal Power Fade"));
-		addComboTextEntry(p,N_("Crossfade Fade Method"),fadeMethods,CActionParamDialog::cpvtAsInteger,_("Equal Power will maintain a constant power across the fade (if the two signals are uncorrelated) and sounds the most natural.\nFor very quick fades linear may produce better results."));
-
+		auto c = addComboTextEntry(p,N_("Crossfade Fade Method"),fadeMethods,CActionParamDialog::cpvtAsInteger,_("Equal Power will maintain a constant power across the fade (if the two signals are uncorrelated) and sounds the most natural.\nFor very quick fades linear may produce better results."));
+		c->setCurrentItem(2);
 }
 
 CCrossfadeEdgesDialog::~CCrossfadeEdgesDialog()

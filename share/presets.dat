@@ -498,6 +498,10 @@ Crossfade\ Edges\ Settings
 	names={"Default 1/100 Second", "1/10 Second", "1/4 Second", "1/2 Second", "1 Second", "2 Seconds", "3 Seconds", "4 Seconds", "5 Seconds"};
 	Default\ 1\/100\ Second
 	{
+		Crossfade\ Fade\ Method
+		{
+			index=2;
+		}
 		Crossfade\ Start\ Edge
 		{
 			value="10";
@@ -511,6 +515,10 @@ Crossfade\ Edges\ Settings
 	}
 	1\/10\ Second
 	{
+		Crossfade\ Fade\ Method
+		{
+			index=2;
+		}
 		Crossfade\ Start\ Edge
 		{
 			value="100";
@@ -524,6 +532,10 @@ Crossfade\ Edges\ Settings
 	}
 	1\/4\ Second
 	{
+		Crossfade\ Fade\ Method
+		{
+			index=2;
+		}
 		Crossfade\ Start\ Edge
 		{
 			value="250";
@@ -537,6 +549,10 @@ Crossfade\ Edges\ Settings
 	}
 	1\/2\ Second
 	{
+		Crossfade\ Fade\ Method
+		{
+			index=2;
+		}
 		Crossfade\ Start\ Edge
 		{
 			value="500";
@@ -550,6 +566,10 @@ Crossfade\ Edges\ Settings
 	}
 	1\ Second
 	{
+		Crossfade\ Fade\ Method
+		{
+			index=2;
+		}
 		Crossfade\ Start\ Edge
 		{
 			value="1000";
@@ -563,6 +583,10 @@ Crossfade\ Edges\ Settings
 	}
 	2\ Seconds
 	{
+		Crossfade\ Fade\ Method
+		{
+			index=2;
+		}
 		Crossfade\ Start\ Edge
 		{
 			value="2000";
@@ -576,6 +600,10 @@ Crossfade\ Edges\ Settings
 	}
 	3\ Seconds
 	{
+		Crossfade\ Fade\ Method
+		{
+			index=2;
+		}
 		Crossfade\ Start\ Edge
 		{
 			value="3000";
@@ -589,6 +617,10 @@ Crossfade\ Edges\ Settings
 	}
 	4\ Seconds
 	{
+		Crossfade\ Fade\ Method
+		{
+			index=2;
+		}
 		Crossfade\ Start\ Edge
 		{
 			value="4000";
@@ -602,6 +634,10 @@ Crossfade\ Edges\ Settings
 	}
 	5\ Seconds
 	{
+		Crossfade\ Fade\ Method
+		{
+			index=2;
+		}
 		Crossfade\ Start\ Edge
 		{
 			value="5000";
