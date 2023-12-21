@@ -43,7 +43,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,0755)
 %doc /usr/doc/%name/AUTHORS
-%doc /usr/doc/%name/COPYING
+%doc /usr/doc/%name/LICENSE
 %doc /usr/doc/%name/NEWS
 %doc /usr/doc/%name/README
 %doc /usr/doc/%name/FrontendFoxFeatures.txt
