@@ -66,27 +66,27 @@ void StatusComm::error(const string &message,VSeverity severity,bool reformatIfN
 	{
 	case none:
 		fprintf(stderr,"error - %s\n",message.c_str());
-		QMessageBox::critical(mainWindow,_("Error"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str(),QMessageBox::Ok,0,0);
+		QMessageBox::critical(mainWindow,_("Error"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str());
 		break;
 	case light:
 		fprintf(stderr,"light error - %s\n",message.c_str());
-		QMessageBox::critical(mainWindow,_("Light Error"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str(),QMessageBox::Ok,0,0);
+		QMessageBox::critical(mainWindow,_("Light Error"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str());
 		break;
 	case medium:
 		fprintf(stderr,"medium error - %s\n",message.c_str());
-		QMessageBox::critical(mainWindow,_("Medium Error"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str(),QMessageBox::Ok,0,0);
+		QMessageBox::critical(mainWindow,_("Medium Error"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str());
 		break;
 	case hard:
 		fprintf(stderr,"hard error - %s\n",message.c_str());
-		QMessageBox::critical(mainWindow,_("Hard Error"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str(),QMessageBox::Ok,0,0);
+		QMessageBox::critical(mainWindow,_("Hard Error"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str());
 		break;
 	case fatal:
 		fprintf(stderr,"fatal error - %s\n",message.c_str());
-		QMessageBox::critical(mainWindow,_("Fatal Error"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str(),QMessageBox::Ok,0,0);
+		QMessageBox::critical(mainWindow,_("Fatal Error"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str());
 		break;
 	default:
 		fprintf(stderr,"unknwon severity error - %s\n",message.c_str());
-		QMessageBox::critical(mainWindow,"Error -- unknown severity",escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str(),QMessageBox::Ok,0,0);
+		QMessageBox::critical(mainWindow,"Error -- unknown severity",escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str());
 		break;
 	}
 }
@@ -94,39 +94,33 @@ void StatusComm::error(const string &message,VSeverity severity,bool reformatIfN
 void StatusComm::warning(const string &message,bool reformatIfNeeded)
 {
 	fprintf(stderr,"warning -- %s\n",message.c_str());
-	QMessageBox::warning(mainWindow,_("Warning"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str(),QMessageBox::Ok,0,0);
+	QMessageBox::warning(mainWindow,_("Warning"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str());
 }
 
 void StatusComm::message(const string &message,bool reformatIfNeeded)
 {
 	fprintf(stderr,"message -- %s\n",message.c_str());
-	QMessageBox::information(mainWindow,_("Note"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str(),QMessageBox::Ok,0,0);
+	QMessageBox::information(mainWindow,_("Note"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str());
 }
 
 VAnswer StatusComm::question(const string &message,/*VQuestion*/int options,bool reformatIfNeeded)
 {
-	int button0=0;
-	int button1=0;
-	int button2=0;
+	QMessageBox::StandardButtons buttons;
 
 	if((options&yesnoQues)==yesnoQues)
 	{
-		button0=QMessageBox::Yes;
-		button1=QMessageBox::No;
+		buttons=QMessageBox::Yes | QMessageBox::No;
 	}
-	if((options&cancelQues)==cancelQues)
+	else if((options&cancelQues)==cancelQues)
 	{
-		button0=QMessageBox::Yes;
-		button1=QMessageBox::No;
-		button2=QMessageBox::Cancel;
+		buttons=QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
+	}
+	else
+	{
+		buttons=QMessageBox::Ok;
 	}
 
-	if(button0==0 && button1==0 && button2==0)
-	{
-		button0=QMessageBox::Ok;
-	}
-
-	switch(QMessageBox::question(mainWindow,_("Question"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str(),button0,button1,button2))
+	switch(QMessageBox::question(mainWindow,_("Question"),escapeAmpersand(reformatIfNeeded ? breakIntoLines(message) : message).c_str(),buttons))
 	{
 	case QMessageBox::Yes:
 		return yesAns;
